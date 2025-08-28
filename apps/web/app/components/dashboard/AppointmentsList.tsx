@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Calendar, Clock, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -29,12 +35,12 @@ export function AppointmentsList({
   todaysAppointments,
 }: AppointmentsListProps) {
   const router = useRouter();
-  
+
   // Enhanced appointments with risk predictions
-  const { 
-    appointments: enhancedAppointments, 
+  const {
+    appointments: enhancedAppointments,
     isLoading: predictionsLoading,
-    error: predictionsError 
+    error: predictionsError,
   } = useEnhancedAppointments(todaysAppointments);
 
   const handleViewAllAppointments = () => {
@@ -66,15 +72,15 @@ export function AppointmentsList({
         {limitedAppointments.map((appointment) => {
           const prediction = appointment.riskPrediction;
           const hasRiskData = prediction && !predictionsLoading;
-          
+
           return (
             <div
               className={`flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted/30 ${
-                hasRiskData && prediction.riskLevel === 'critical' 
-                  ? 'border-red-200 bg-red-50/30' 
-                  : hasRiskData && prediction.riskLevel === 'high'
-                  ? 'border-orange-200 bg-orange-50/30'
-                  : ''
+                hasRiskData && prediction.riskLevel === "critical"
+                  ? "border-red-200 bg-red-50/30"
+                  : hasRiskData && prediction.riskLevel === "high"
+                    ? "border-orange-200 bg-orange-50/30"
+                    : ""
               }`}
               key={appointment.id}
             >
@@ -92,25 +98,25 @@ export function AppointmentsList({
                       tooltipContent={{
                         confidence: prediction.confidence,
                         topFactors: prediction.factors.slice(0, 3),
-                        recommendedActions: INTERVENTION_ACTIONS_PT[prediction.riskLevel] || []
+                        recommendedActions:
+                          INTERVENTION_ACTIONS_PT[prediction.riskLevel] || [],
                       }}
                     />
                   )}
-                  {predictionsLoading && (
-                    <Skeleton className="h-4 w-12" />
-                  )}
+                  {predictionsLoading && <Skeleton className="h-4 w-12" />}
                 </div>
                 <p className="text-muted-foreground text-xs">
                   {appointment.type || "Consulta"}
                 </p>
-                {hasRiskData && prediction.riskLevel in ['high', 'critical'] && (
-                  <div className="flex items-center gap-1 mt-1">
-                    <AlertTriangle className="h-3 w-3 text-orange-500" />
-                    <span className="text-xs text-orange-600">
-                      Ação preventiva recomendada
-                    </span>
-                  </div>
-                )}
+                {hasRiskData &&
+                  prediction.riskLevel in ["high", "critical"] && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <AlertTriangle className="h-3 w-3 text-orange-500" />
+                      <span className="text-xs text-orange-600">
+                        Ação preventiva recomendada
+                      </span>
+                    </div>
+                  )}
               </div>
               <div className="flex items-center text-muted-foreground text-sm">
                 <Clock className="mr-1 h-3 w-3" />
@@ -143,11 +149,15 @@ export function AppointmentsList({
 
   // Risk statistics for the header
   const getRiskStats = () => {
-    const appointmentsWithRisk = enhancedAppointments.filter(apt => apt.riskPrediction);
-    const highRiskCount = appointmentsWithRisk.filter(apt => 
-      apt.riskPrediction && ['high', 'critical'].includes(apt.riskPrediction.riskLevel)
+    const appointmentsWithRisk = enhancedAppointments.filter(
+      (apt) => apt.riskPrediction,
+    );
+    const highRiskCount = appointmentsWithRisk.filter(
+      (apt) =>
+        apt.riskPrediction &&
+        ["high", "critical"].includes(apt.riskPrediction.riskLevel),
     ).length;
-    
+
     return { total: appointmentsWithRisk.length, highRisk: highRiskCount };
   };
 
@@ -155,8 +165,9 @@ export function AppointmentsList({
 
   const shouldShowViewAllButton = () => {
     return (
-      !appointmentsLoading
-      && enhancedAppointments.length > DASHBOARD_CONSTANTS.TODAYS_APPOINTMENTS_LIMIT
+      !appointmentsLoading &&
+      enhancedAppointments.length >
+        DASHBOARD_CONSTANTS.TODAYS_APPOINTMENTS_LIMIT
     );
   };
 
@@ -178,10 +189,9 @@ export function AppointmentsList({
           )}
         </CardTitle>
         <CardDescription>
-          {riskStats.total > 0 
+          {riskStats.total > 0
             ? `Agenda de hoje • ${riskStats.total} com predição de risco`
-            : "Agenda de hoje"
-          }
+            : "Agenda de hoje"}
           {predictionsError && (
             <span className="text-red-500"> • Erro ao carregar predições</span>
           )}

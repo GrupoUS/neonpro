@@ -7,9 +7,9 @@
   :root {
     /* TweakCN NEONPRO Base Colors */
     --background: 0 0% 98.8%; /* #fcfcfc - Clean medical white */
-    --foreground: 0 0% 9.0%; /* #171717 - Professional dark */
+    --foreground: 0 0% 9%; /* #171717 - Professional dark */
     --card: 0 0% 98.8%; /* #fcfcfc - Card background */
-    --card-foreground: 0 0% 9.0%; /* #171717 - Card text */
+    --card-foreground: 0 0% 9%; /* #171717 - Card text */
     --popover: 0 0% 98.8%; /* #fcfcfc - Popover background */
     --popover-foreground: 0 0% 32.2%; /* #525252 - Popover text */
 
@@ -19,7 +19,7 @@
 
     /* TweakCN Secondary & Accent */
     --secondary: 0 0% 99.2%; /* #fdfdfd - Secondary background */
-    --secondary-foreground: 0 0% 9.0%; /* #171717 - Secondary text */
+    --secondary-foreground: 0 0% 9%; /* #171717 - Secondary text */
     --accent: 0 0% 92.9%; /* #ededed - Accent background */
     --accent-foreground: 0 0% 12.5%; /* #202020 - Accent text */
     --muted: 0 0% 92.9%; /* #ededed - Muted background */
@@ -69,7 +69,7 @@
     --emergency-background: 0 0% 100%; /* Pure white for emergency */
     --emergency-foreground: 0 0% 0%; /* Pure black for emergency */
     --emergency-critical: 0 100% 50%; /* Pure red for life-critical */
-    --emergency-contrast-ratio: 21:1; /* Maximum contrast for emergency */
+    --emergency-contrast-ratio: 21: 1; /* Maximum contrast for emergency */
   }
 
   .dark {
@@ -136,7 +136,7 @@
     --emergency-background: 0 0% 0%; /* Pure black for emergency */
     --emergency-foreground: 0 0% 100%; /* Pure white for emergency */
     --emergency-critical: 0 100% 70%; /* Bright red for dark mode emergency */
-    --emergency-contrast-ratio: 21:1; /* Maximum contrast maintained */
+    --emergency-contrast-ratio: 21: 1; /* Maximum contrast maintained */
   }
 }
 
@@ -147,9 +147,18 @@
 
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
     font-family:
-      system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
       sans-serif;
   }
 
@@ -230,7 +239,11 @@
   /* Healthcare Metric Cards - TweakCN Inspired */
   .healthcare-metric-card {
     @apply bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all;
-    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.5) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--card)) 0%,
+      hsl(var(--muted) / 0.5) 100%
+    );
   }
 
   .healthcare-metric-value {
@@ -310,7 +323,11 @@
 
   /* TweakCN Healthcare Gradient */
   .healthcare-gradient {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--chart-5)) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--chart-5)) 100%
+    );
   }
 
   /* Emergency High-Contrast Mode */

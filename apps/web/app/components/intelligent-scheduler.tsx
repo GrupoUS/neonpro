@@ -39,7 +39,8 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
   // State management for AI scheduling
   const [isScheduling, setIsScheduling] = useState(false);
   const [availableSlots, setAvailableSlots] = useState<AppointmentSlot[]>([]);
-  const [schedulingResult, setSchedulingResult] = useState<SchedulingResult | null>();
+  const [schedulingResult, setSchedulingResult] =
+    useState<SchedulingResult | null>();
   const [selectedTreatment, setSelectedTreatment] = useState<string>("");
   const [selectedPatient, setSelectedPatient] = useState<string>(
     patientId || "",
@@ -177,12 +178,13 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           success: result.success,
           appointmentSlot: result.success ? slot : undefined,
           conflicts: [],
-          optimizationRecommendations: result.recommendations?.map((rec) => ({
-            type: "time_adjustment" as const,
-            impact: "efficiency" as const,
-            description: `High confidence scheduling option (${rec.confidence_score}% accuracy)`,
-            expectedImprovement: rec.confidence_score,
-          })) || [],
+          optimizationRecommendations:
+            result.recommendations?.map((rec) => ({
+              type: "time_adjustment" as const,
+              impact: "efficiency" as const,
+              description: `High confidence scheduling option (${rec.confidence_score}% accuracy)`,
+              expectedImprovement: rec.confidence_score,
+            })) || [],
           confidenceScore: result.success
             ? (result.recommendations?.[0]?.confidence_score || 85) / 100
             : 0,
@@ -337,7 +339,10 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
               id="urgency-select"
               className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={(e) =>
-                setUrgencyLevel(e.target.value as "low" | "medium" | "high" | "emergency")}
+                setUrgencyLevel(
+                  e.target.value as "low" | "medium" | "high" | "emergency",
+                )
+              }
               value={urgencyLevel}
             >
               <option value="low">Low Priority</option>
@@ -359,7 +364,9 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
               className="w-full"
               max="14"
               min="0"
-              onChange={(e) => setFlexibilityDays(Number.parseInt(e.target.value, 10))}
+              onChange={(e) =>
+                setFlexibilityDays(Number.parseInt(e.target.value, 10))
+              }
               type="range"
               value={flexibilityDays}
             />
@@ -380,7 +387,7 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
                 <span
                   className={`ml-2 rounded px-2 py-1 text-xs ${
                     (patients.find((p) => p.id === selectedPatient)
-                        ?.noShowProbability || 0) > 0.3
+                      ?.noShowProbability || 0) > 0.3
                       ? "bg-red-100 text-red-800"
                       : "bg-green-100 text-green-800"
                   }`}
@@ -397,10 +404,10 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
                 <span className="font-medium">Optimal Duration:</span>
                 <span className="ml-2 text-gray-700">
                   {treatmentTypes.find((t) => t.id === selectedTreatment)
-                    ?.averageDuration
-                    || treatmentTypes.find((t) => t.id === selectedTreatment)
-                      ?.duration
-                    || 0}
+                    ?.averageDuration ||
+                    treatmentTypes.find((t) => t.id === selectedTreatment)
+                      ?.duration ||
+                    0}
                   min
                 </span>
               </div>
@@ -534,7 +541,8 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
                   schedulingResult.success ? "text-green-600" : "text-red-600"
                 }`}
               >
-                Confidence: {(schedulingResult.confidenceScore * 100).toFixed(1)}%
+                Confidence:{" "}
+                {(schedulingResult.confidenceScore * 100).toFixed(1)}%
               </div>
             </div>
 
@@ -563,9 +571,12 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
                   )}
                 </div>
                 <div>
-                  <span className="font-medium">Staff:</span> {staff.find(
-                    (s) => s.id === schedulingResult.appointmentSlot?.staffId,
-                  )?.name}
+                  <span className="font-medium">Staff:</span>{" "}
+                  {
+                    staff.find(
+                      (s) => s.id === schedulingResult.appointmentSlot?.staffId,
+                    )?.name
+                  }
                 </div>
               </div>
             )}

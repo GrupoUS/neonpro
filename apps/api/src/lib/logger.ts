@@ -56,7 +56,11 @@ class NeonProLogger implements Logger {
     }
   }
 
-  error(_message: string, _error?: Error | unknown, _context?: LogContext): void {
+  error(
+    _message: string,
+    _error?: Error | unknown,
+    _context?: LogContext,
+  ): void {
     // Error context preparation for future logging implementation
     // const errorContext = error instanceof Error
     //   ? { ...context, error: error.message, stack: error.stack }

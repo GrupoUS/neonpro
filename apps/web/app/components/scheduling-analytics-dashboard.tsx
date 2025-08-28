@@ -6,8 +6,8 @@ import { useEffect, useMemo, useState } from "react";
 
 interface SchedulingAnalyticsDashboardProps {
   tenantId: string;
-  timeRange: { start: Date; end: Date; };
-  onTimeRangeChange: (range: { start: Date; end: Date; }) => void;
+  timeRange: { start: Date; end: Date };
+  onTimeRangeChange: (range: { start: Date; end: Date }) => void;
 }
 
 interface MetricCardProps {
@@ -50,8 +50,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
                 trend > 0
                   ? "text-green-600"
                   : trend < 0
-                  ? "text-red-600"
-                  : "text-gray-600"
+                    ? "text-red-600"
+                    : "text-gray-600"
               }`}
             >
               <span className="mr-1">
@@ -219,8 +219,13 @@ export const SchedulingAnalyticsDashboard: React.FC<
               className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={(e) =>
                 setSelectedView(
-                  e.target.value as "staff" | "efficiency" | "overview" | "predictions",
-                )}
+                  e.target.value as
+                    | "staff"
+                    | "efficiency"
+                    | "overview"
+                    | "predictions",
+                )
+              }
               value={selectedView}
             >
               <option value="overview">Overview</option>
@@ -236,7 +241,8 @@ export const SchedulingAnalyticsDashboard: React.FC<
                   onTimeRangeChange({
                     start: new Date(e.target.value),
                     end: timeRange.end,
-                  })}
+                  })
+                }
                 type="date"
                 value={timeRange.start.toISOString().split("T")[0]}
               />
@@ -247,7 +253,8 @@ export const SchedulingAnalyticsDashboard: React.FC<
                   onTimeRangeChange({
                     start: timeRange.start,
                     end: new Date(e.target.value),
-                  })}
+                  })
+                }
                 type="date"
                 value={timeRange.end.toISOString().split("T")[0]}
               />

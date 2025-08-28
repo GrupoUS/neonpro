@@ -7,7 +7,9 @@ import { expect, test } from "@playwright/test";
  */
 
 test.describe("Accessibility Compliance", () => {
-  test("should meet WCAG 2.1 AA standards on main dashboard", async ({ page }) => {
+  test("should meet WCAG 2.1 AA standards on main dashboard", async ({
+    page,
+  }) => {
     await page.goto("/professional/dashboard");
 
     // Run axe accessibility scan
@@ -18,7 +20,9 @@ test.describe("Accessibility Compliance", () => {
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 
-  test("should support keyboard navigation throughout healthcare workflows", async ({ page }) => {
+  test("should support keyboard navigation throughout healthcare workflows", async ({
+    page,
+  }) => {
     await page.goto("/professional/dashboard");
 
     // Test keyboard navigation
@@ -41,7 +45,9 @@ test.describe("Accessibility Compliance", () => {
     ).toBeVisible();
   });
 
-  test("should provide proper ARIA labels for medical forms", async ({ page }) => {
+  test("should provide proper ARIA labels for medical forms", async ({
+    page,
+  }) => {
     await page.goto("/professional/patient/new");
 
     // Check form accessibility
@@ -60,7 +66,10 @@ test.describe("Accessibility Compliance", () => {
     ).toBeVisible();
   });
 
-  test("should support high contrast mode for visual impairments", async ({ page, context }) => {
+  test("should support high contrast mode for visual impairments", async ({
+    page,
+    context,
+  }) => {
     // Emulate high contrast mode
     await context.addInitScript(() => {
       Object.defineProperty(window, "matchMedia", {
@@ -91,7 +100,9 @@ test.describe("Accessibility Compliance", () => {
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 
-  test("should support screen reader navigation with medical content", async ({ page }) => {
+  test("should support screen reader navigation with medical content", async ({
+    page,
+  }) => {
     await page.goto("/professional/patient/12345");
 
     // Verify screen reader landmarks
@@ -113,7 +124,9 @@ test.describe("Accessibility Compliance", () => {
     ).toBeVisible();
   });
 
-  test("should provide proper focus management in AI chat interface", async ({ page }) => {
+  test("should provide proper focus management in AI chat interface", async ({
+    page,
+  }) => {
     await page.goto("/professional/dashboard");
     await page.click('[data-testid="ai-chat-assistant"]');
 

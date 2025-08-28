@@ -3,7 +3,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -53,7 +59,11 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import type { CommunicationPriority, PatientHandoff, TeamMessage } from "@/types/team-coordination"; // Mock team messages with Brazilian healthcare context
+import type {
+  CommunicationPriority,
+  PatientHandoff,
+  TeamMessage,
+} from "@/types/team-coordination"; // Mock team messages with Brazilian healthcare context
 
 const mockTeamMessages: TeamMessage[] = [
   {
@@ -168,7 +178,8 @@ const mockPatientHandoffs: PatientHandoff[] = [
     fromProfessionalId: "prof-001", // Dra. Maria Silva
     toProfessionalId: "prof-002", // Dr. Roberto Oliveira
     handoffType: "transfer",
-    currentCondition: "Paciente estável após episódio de arritmia. Ritmo sinusal restabelecido.",
+    currentCondition:
+      "Paciente estável após episódio de arritmia. Ritmo sinusal restabelecido.",
     vitalSigns: {
       pa: "130/80 mmHg",
       fc: "78 bpm",
@@ -220,7 +231,8 @@ const mockPatientHandoffs: PatientHandoff[] = [
     fromProfessionalId: "prof-003", // Enf. Ana Paula
     toProfessionalId: "prof-004", // Próximo enfermeiro
     handoffType: "shift_change",
-    currentCondition: "Paciente crítico em VM, sedado e em uso de drogas vasoativas.",
+    currentCondition:
+      "Paciente crítico em VM, sedado e em uso de drogas vasoativas.",
     vitalSigns: {
       pa: "90/60 mmHg (com noradrenalina)",
       fc: "110 bpm",
@@ -435,9 +447,10 @@ export function CommunicationHub({
       if (searchQuery) {
         const searchLower = searchQuery.toLowerCase();
         const staff = mockStaffForComms.find((s) => s.id === message.senderId);
-        const matchesSearch = message.subject.toLowerCase().includes(searchLower)
-          || message.content.toLowerCase().includes(searchLower)
-          || staff?.name.toLowerCase().includes(searchLower);
+        const matchesSearch =
+          message.subject.toLowerCase().includes(searchLower) ||
+          message.content.toLowerCase().includes(searchLower) ||
+          staff?.name.toLowerCase().includes(searchLower);
 
         if (!matchesSearch) {
           return false;
@@ -514,7 +527,8 @@ export function CommunicationHub({
                 Modo de Emergência Ativo - Comunicações Prioritárias
               </p>
               <p className="text-red-700 text-sm">
-                Mensagens de emergência têm prioridade automática e notificação imediata
+                Mensagens de emergência têm prioridade automática e notificação
+                imediata
               </p>
             </div>
           </div>
@@ -570,7 +584,8 @@ export function CommunicationHub({
                 {/* Priority Filter */}
                 <Select
                   onValueChange={(value) =>
-                    setPriorityFilter(value as CommunicationPriority | "all")}
+                    setPriorityFilter(value as CommunicationPriority | "all")
+                  }
                   value={priorityFilter}
                 >
                   <SelectTrigger>
@@ -731,16 +746,20 @@ export function CommunicationHub({
                               {message.requiresAcknowledgment && (
                                 <Badge
                                   className="text-xs"
-                                  variant={message.acknowledgedBy.length > 0
-                                    ? "default"
-                                    : "secondary"}
+                                  variant={
+                                    message.acknowledgedBy.length > 0
+                                      ? "default"
+                                      : "secondary"
+                                  }
                                 >
                                   {message.acknowledgedBy.length > 0
                                     ? "✓ Confirmado"
                                     : "Aguarda Confirmação"}
                                 </Badge>
                               )}
-                              {isUnread && <div className="h-2 w-2 rounded-full bg-blue-500" />}
+                              {isUnread && (
+                                <div className="h-2 w-2 rounded-full bg-blue-500" />
+                              )}
                             </div>
                           </div>
                         </div>
@@ -771,15 +790,15 @@ export function CommunicationHub({
                               <Star className="mr-2 h-4 w-4" />
                               Marcar como Importante
                             </DropdownMenuItem>
-                            {message.requiresAcknowledgment
-                              && !message.acknowledgedBy.includes(
+                            {message.requiresAcknowledgment &&
+                              !message.acknowledgedBy.includes(
                                 "current-user",
                               ) && (
-                              <DropdownMenuItem>
-                                <CheckCircle2 className="mr-2 h-4 w-4" />
-                                Confirmar Leitura
-                              </DropdownMenuItem>
-                            )}
+                                <DropdownMenuItem>
+                                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                                  Confirmar Leitura
+                                </DropdownMenuItem>
+                              )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
@@ -883,10 +902,10 @@ export function CommunicationHub({
                               {handoff.handoffType === "transfer"
                                 ? "Transferência"
                                 : handoff.handoffType === "shift_change"
-                                ? "Troca de Plantão"
-                                : handoff.handoffType === "discharge"
-                                ? "Alta"
-                                : "Consulta"}
+                                  ? "Troca de Plantão"
+                                  : handoff.handoffType === "discharge"
+                                    ? "Alta"
+                                    : "Consulta"}
                             </Badge>
                           </div>
                           <p className="text-muted-foreground text-sm">
@@ -906,12 +925,12 @@ export function CommunicationHub({
                                   {key === "pa"
                                     ? "PA"
                                     : key === "fc"
-                                    ? "FC"
-                                    : key === "fr"
-                                    ? "FR"
-                                    : key === "temp"
-                                    ? "T°"
-                                    : "SpO₂"}
+                                      ? "FC"
+                                      : key === "fr"
+                                        ? "FR"
+                                        : key === "temp"
+                                          ? "T°"
+                                          : "SpO₂"}
                                 </div>
                                 <div className="mt-1 font-medium text-sm">
                                   {value}
@@ -1007,10 +1026,12 @@ export function CommunicationHub({
                         {/* Actions */}
                         <div className="flex items-center justify-between border-t pt-3">
                           <div className="text-muted-foreground text-xs">
-                            Criado em: {handoff.createdAt.toLocaleString("pt-BR")}
+                            Criado em:{" "}
+                            {handoff.createdAt.toLocaleString("pt-BR")}
                             {handoff.acknowledgedAt && (
                               <span className="ml-3">
-                                Confirmado em: {handoff.acknowledgedAt.toLocaleString("pt-BR")}
+                                Confirmado em:{" "}
+                                {handoff.acknowledgedAt.toLocaleString("pt-BR")}
                               </span>
                             )}
                           </div>
@@ -1332,7 +1353,10 @@ export function CommunicationHub({
           <div className="space-y-4">
             {/* Recipients */}
             <div>
-              <label htmlFor="recipients-select" className="mb-2 block font-medium text-sm">
+              <label
+                htmlFor="recipients-select"
+                className="mb-2 block font-medium text-sm"
+              >
                 Destinatários
               </label>
               <Select>
@@ -1351,7 +1375,10 @@ export function CommunicationHub({
 
             {/* Priority */}
             <div>
-              <label htmlFor="priority-select" className="mb-2 block font-medium text-sm">
+              <label
+                htmlFor="priority-select"
+                className="mb-2 block font-medium text-sm"
+              >
                 Prioridade
               </label>
               <Select
@@ -1359,7 +1386,8 @@ export function CommunicationHub({
                   setNewMessage((prev) => ({
                     ...prev,
                     priority: value as CommunicationPriority,
-                  }))}
+                  }))
+                }
                 value={newMessage.priority}
               >
                 <SelectTrigger id="priority-select">
@@ -1377,7 +1405,10 @@ export function CommunicationHub({
 
             {/* Subject */}
             <div>
-              <label htmlFor="subject-input" className="mb-2 block font-medium text-sm">
+              <label
+                htmlFor="subject-input"
+                className="mb-2 block font-medium text-sm"
+              >
                 Assunto
               </label>
               <Input
@@ -1386,7 +1417,8 @@ export function CommunicationHub({
                   setNewMessage((prev) => ({
                     ...prev,
                     subject: e.target.value,
-                  }))}
+                  }))
+                }
                 placeholder="Assunto da mensagem..."
                 value={newMessage.subject}
               />
@@ -1394,7 +1426,10 @@ export function CommunicationHub({
 
             {/* Content */}
             <div>
-              <label htmlFor="message-textarea" className="mb-2 block font-medium text-sm">
+              <label
+                htmlFor="message-textarea"
+                className="mb-2 block font-medium text-sm"
+              >
                 Mensagem
               </label>
               <Textarea
@@ -1403,7 +1438,8 @@ export function CommunicationHub({
                   setNewMessage((prev) => ({
                     ...prev,
                     content: e.target.value,
-                  }))}
+                  }))
+                }
                 placeholder="Digite sua mensagem..."
                 rows={6}
                 value={newMessage.content}
@@ -1421,7 +1457,8 @@ export function CommunicationHub({
                     setNewMessage((prev) => ({
                       ...prev,
                       isEmergency: e.target.checked,
-                    }))}
+                    }))
+                  }
                   type="checkbox"
                 />
                 <label className="text-sm" htmlFor="emergency">
@@ -1438,7 +1475,8 @@ export function CommunicationHub({
                     setNewMessage((prev) => ({
                       ...prev,
                       requiresAcknowledgment: e.target.checked,
-                    }))}
+                    }))
+                  }
                   type="checkbox"
                 />
                 <label className="text-sm" htmlFor="acknowledgment">
@@ -1454,8 +1492,9 @@ export function CommunicationHub({
                 <div className="text-sm">
                   <p className="font-medium text-yellow-800">Aviso LGPD</p>
                   <p className="text-yellow-700">
-                    Esta mensagem pode conter dados pessoais sensíveis. Certifique-se de que todos
-                    os destinatários têm autorização para acessar essas informações.
+                    Esta mensagem pode conter dados pessoais sensíveis.
+                    Certifique-se de que todos os destinatários têm autorização
+                    para acessar essas informações.
                   </p>
                 </div>
               </div>

@@ -38,7 +38,7 @@ export class AuditService {
   async logEvent(
     tenantId: string,
     event: AuditEvent,
-  ): Promise<{ success: boolean; auditLogId?: string; error?: string; }> {
+  ): Promise<{ success: boolean; auditLogId?: string; error?: string }> {
     try {
       // Validate event data
       const validatedEvent = AuditEventSchema.parse(event);
@@ -96,7 +96,7 @@ export class AuditService {
    */
   async queryLogs(
     filters: AuditFilters,
-  ): Promise<{ success: boolean; logs?: AuditLog[]; error?: string; }> {
+  ): Promise<{ success: boolean; logs?: AuditLog[]; error?: string }> {
     try {
       // Validate filters
       const validatedFilters = AuditFiltersSchema.parse(filters);
@@ -114,15 +114,15 @@ export class AuditService {
       }
 
       if (
-        validatedFilters.eventTypes
-        && validatedFilters.eventTypes.length > 0
+        validatedFilters.eventTypes &&
+        validatedFilters.eventTypes.length > 0
       ) {
         query = query.in("event_type", validatedFilters.eventTypes);
       }
 
       if (
-        validatedFilters.severities
-        && validatedFilters.severities.length > 0
+        validatedFilters.severities &&
+        validatedFilters.severities.length > 0
       ) {
         query = query.in("severity", validatedFilters.severities);
       }
@@ -219,7 +219,9 @@ export class AuditService {
         AuditEventType.SYSTEM_CONFIGURATION_CHANGE,
       ];
 
-      const loggedEventTypes = new Set(logs.map((log: unknown) => log.event_type));
+      const loggedEventTypes = new Set(
+        logs.map((log: unknown) => log.event_type),
+      );
 
       for (const requiredType of requiredEventTypes) {
         if (!loggedEventTypes.has(requiredType)) {
@@ -301,7 +303,7 @@ export class AuditService {
    */
   async configureAudit(
     config: AuditConfig,
-  ): Promise<{ success: boolean; error?: string; }> {
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       // Validate configuration
       const validatedConfig = AuditConfigSchema.parse(config);

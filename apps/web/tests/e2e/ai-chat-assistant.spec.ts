@@ -45,7 +45,9 @@ test.describe("AI Chat Assistant", () => {
     ).toBeVisible();
   });
 
-  test("should provide treatment recommendations with safety protocols", async ({ page }) => {
+  test("should provide treatment recommendations with safety protocols", async ({
+    page,
+  }) => {
     await page.click('[data-testid="ai-chat-assistant"]');
 
     // Query for treatment recommendations
@@ -75,7 +77,9 @@ test.describe("AI Chat Assistant", () => {
     ).toBeVisible();
   });
 
-  test("should handle emergency medical queries with priority escalation", async ({ page }) => {
+  test("should handle emergency medical queries with priority escalation", async ({
+    page,
+  }) => {
     await page.click('[data-testid="ai-chat-assistant"]');
 
     // Emergency scenario query
@@ -103,7 +107,9 @@ test.describe("AI Chat Assistant", () => {
     ).toBeVisible();
   });
 
-  test("should maintain conversation context and medical history integration", async ({ page }) => {
+  test("should maintain conversation context and medical history integration", async ({
+    page,
+  }) => {
     await page.click('[data-testid="ai-chat-assistant"]');
 
     // First query about patient
@@ -156,7 +162,9 @@ test.describe("AI Chat Assistant", () => {
     ).toBeVisible();
   });
 
-  test("should provide drug interaction and dosage guidance", async ({ page }) => {
+  test("should provide drug interaction and dosage guidance", async ({
+    page,
+  }) => {
     await page.click('[data-testid="ai-chat-assistant"]');
 
     // Drug interaction query

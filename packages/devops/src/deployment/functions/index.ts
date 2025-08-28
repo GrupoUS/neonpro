@@ -24,11 +24,7 @@ export const subscriptionBilling = {
 
 // Function deployment manifest
 export const deploymentManifest = {
-  functions: [
-    stockAlerts,
-    stockReports,
-    subscriptionBilling,
-  ],
+  functions: [stockAlerts, stockReports, subscriptionBilling],
   runtime: "deno",
   version: "1.0.0",
 };

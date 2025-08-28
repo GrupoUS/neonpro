@@ -1,7 +1,118 @@
 {
-    "folders": [
-        {
-            "path": "."
-        }
-    ]
+  "folders": [
+    {
+      "name": "neonpro",
+      "path": ".",
+    },
+  ],
+  "settings": {
+    "editor.fontSize": 16,
+    "files.autoSave": "afterDelay",
+    "editor.defaultFormatter": "GitHub.copilot",
+    "workbench.colorTheme": "One Hunter Flexoki Dark",
+    "github.copilot.enable": {
+      "*": true,
+      "plaintext": true,
+      "markdown": true,
+      "typescript": true,
+      "javascript": true,
+      "python": true,
+    },
+    "github.copilot.editor.enableAutoCompletions": true,
+    "github.copilot.chat.useProjectTemplates": false,
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+    "github.copilot.chat.instructionsFiles": [
+      ".github/copilot-instructions.md",
+      ".github/instructions/intelligent-orchestrator.instructions.md",
+      ".github/instructions/master-rules.instructions.md",
+      ".github/prompts/promptsgeral.prompt.md",
+      ".trae/rules/user_rules.md",
+    ],
+    "github.copilot.chat.modeFilesLocations": {
+      ".github/chatmodes": true,
+    },
+    "github.copilot.chat.implicitContext": "disabled",
+    "github.copilot.chat.folderTreeContext": "disabled",
+    "github.copilot.chat.modeFiles": "disabled",
+    "github.copilot.advanced": {
+      "context.includeWorkspace": false,
+    },
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit",
+    },
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.suggest.autoImports": true,
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/.git": true,
+      "**/.next": true,
+      "**/dist": true,
+      "**/coverage": true,
+      "**/__pycache__": true,
+      "**/.vercel": true,
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "extensions.autoUpdate": true,
+    "git.enableSmartCommit": true,
+    "git.autofetch": true,
+    "github.copilot.chat.useInstructions": false,
+    "markdown.validate.enabled": true,
+    "[jsonc]": {
+      "editor.defaultFormatter": "vscode.json-language-features",
+    },
+    "[markdown]": {
+      "editor.defaultFormatter": "dprint.dprint",
+    },
+    "oxc.enable": true,
+  },
+  "extensions": {
+    "recommendations": [
+      "GitHub.copilot",
+      "GitHub.copilot-chat",
+      "ms-vscode.vscode-typescript-next",
+      "bradlc.vscode-tailwindcss",
+      "ms-python.python",
+      "esbenp.prettier-vscode",
+      "ms-vscode.vscode-json",
+    ],
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "NeonPro: Dev Server",
+        "type": "shell",
+        "command": "pnpm dev",
+        "options": {
+          "cwd": "${workspaceFolder}/neonpro",
+        },
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "new",
+        },
+        "problemMatcher": [],
+      },
+      {
+        "label": "NeonPro: Build",
+        "type": "shell",
+        "command": "pnpm build",
+        "options": {
+          "cwd": "${workspaceFolder}/neonpro",
+        },
+        "group": "build",
+      },
+      {
+        "label": "VIBECODE: System Validation",
+        "type": "shell",
+        "command": "python memory-bank/python/copilot_config_validator.py",
+        "group": "test",
+      },
+    ],
+  },
 }

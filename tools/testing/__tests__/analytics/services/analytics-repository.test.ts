@@ -77,10 +77,8 @@ describe("analytics Repository Utils", () => {
     ];
 
     it("should aggregate revenue by month", () => {
-      const aggregated = aggregateMetricsByPeriod(
-        testData,
-        "month",
-        (items) => items.reduce((sum, item) => sum + item.revenue, 0),
+      const aggregated = aggregateMetricsByPeriod(testData, "month", (items) =>
+        items.reduce((sum, item) => sum + item.revenue, 0),
       );
 
       expect(aggregated).toHaveLength(2);
@@ -91,10 +89,8 @@ describe("analytics Repository Utils", () => {
     });
 
     it("should aggregate customers by month", () => {
-      const aggregated = aggregateMetricsByPeriod(
-        testData,
-        "month",
-        (items) => Math.max(...items.map((item) => item.customers)),
+      const aggregated = aggregateMetricsByPeriod(testData, "month", (items) =>
+        Math.max(...items.map((item) => item.customers)),
       );
 
       expect(aggregated).toHaveLength(2);
@@ -103,10 +99,8 @@ describe("analytics Repository Utils", () => {
     });
 
     it("should handle day aggregation", () => {
-      const aggregated = aggregateMetricsByPeriod(
-        testData,
-        "day",
-        (items) => items.reduce((sum, item) => sum + item.subscriptions, 0),
+      const aggregated = aggregateMetricsByPeriod(testData, "day", (items) =>
+        items.reduce((sum, item) => sum + item.subscriptions, 0),
       );
 
       expect(aggregated).toHaveLength(4);
@@ -195,10 +189,8 @@ describe("analytics Repository Utils", () => {
 
   describe("data Edge Cases", () => {
     it("should handle empty datasets gracefully", () => {
-      const aggregated = aggregateMetricsByPeriod(
-        [],
-        "month",
-        (items) => items.reduce((sum, item) => sum + (item as unknown).value, 0),
+      const aggregated = aggregateMetricsByPeriod([], "month", (items) =>
+        items.reduce((sum, item) => sum + (item as unknown).value, 0),
       );
 
       expect(aggregated).toStrictEqual([]);
@@ -220,7 +212,8 @@ describe("analytics Repository Utils", () => {
       const aggregated = aggregateMetricsByPeriod(
         dataWithNullDates.filter((item) => item.date),
         "day",
-        (items) => items.reduce((sum, item) => sum + (item as unknown).value, 0),
+        (items) =>
+          items.reduce((sum, item) => sum + (item as unknown).value, 0),
       );
 
       expect(aggregated).toHaveLength(1);
@@ -240,7 +233,8 @@ describe("analytics Repository Utils", () => {
       const aggregated = aggregateMetricsByPeriod(
         largeDataset,
         "month",
-        (items) => items.reduce((sum, item) => sum + (item as unknown).value, 0),
+        (items) =>
+          items.reduce((sum, item) => sum + (item as unknown).value, 0),
       );
       const end = performance.now();
 

@@ -29,8 +29,8 @@ interface ReportElement {
   type: "chart" | "table" | "metric" | "text" | "image";
   title: string;
   config: unknown;
-  position: { x: number; y: number; };
-  size: { width: number; height: number; };
+  position: { x: number; y: number };
+  size: { width: number; height: number };
 }
 
 interface ReportTemplate {
@@ -90,7 +90,8 @@ const CosmicGlowButton = ({
   disabled?: boolean;
 }) => {
   const variants = {
-    primary: "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
+    primary:
+      "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
     secondary:
       "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800",
     success:
@@ -389,8 +390,11 @@ export default function CustomReportBuilder() {
                         </h3>
                         <div className="rounded-lg bg-white/5 p-3">
                           <p className="text-slate-300 text-sm">
-                            Elemento selecionado: {elements.find((el) => el.id === selectedElement)
-                              ?.title}
+                            Elemento selecionado:{" "}
+                            {
+                              elements.find((el) => el.id === selectedElement)
+                                ?.title
+                            }
                           </p>
                           <div className="mt-2 space-y-2">
                             <Label className="text-slate-400">
@@ -433,51 +437,50 @@ export default function CustomReportBuilder() {
 
                     {/* Canvas Area */}
                     <div className="relative h-96 overflow-hidden rounded-lg border-2 border-slate-600 border-dashed bg-slate-800/30">
-                      {elements.length === 0
-                        ? (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="text-center text-slate-400">
-                              <Layers className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                              <p>Arraste elementos da paleta para começar</p>
-                            </div>
+                      {elements.length === 0 ? (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-center text-slate-400">
+                            <Layers className="mx-auto mb-4 h-12 w-12 opacity-50" />
+                            <p>Arraste elementos da paleta para começar</p>
                           </div>
-                        )
-                        : (
-                          <div className="space-y-2 p-4">
-                            {elements.map((element, _index) => (
-                              <div
-                                className="flex items-center justify-between rounded-lg border border-slate-700 bg-white/5 p-3"
-                                key={element.id}
-                              >
-                                <div className="flex items-center space-x-3">
-                                  <BarChart3 className="h-5 w-5 text-blue-400" />
-                                  <div>
-                                    <div className="font-medium text-white">
-                                      {element.title}
-                                    </div>
-                                    <div className="text-slate-400 text-sm">
-                                      Tipo: {element.type}
-                                    </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-2 p-4">
+                          {elements.map((element, _index) => (
+                            <div
+                              className="flex items-center justify-between rounded-lg border border-slate-700 bg-white/5 p-3"
+                              key={element.id}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <BarChart3 className="h-5 w-5 text-blue-400" />
+                                <div>
+                                  <div className="font-medium text-white">
+                                    {element.title}
+                                  </div>
+                                  <div className="text-slate-400 text-sm">
+                                    Tipo: {element.type}
                                   </div>
                                 </div>
-                                <Button
-                                  className="h-8 w-8 p-0 hover:bg-red-500/20"
-                                  onClick={() => deleteElement(element.id)}
-                                  size="sm"
-                                  variant="ghost"
-                                >
-                                  <Trash2 className="h-4 w-4 text-red-400" />
-                                </Button>
                               </div>
-                            ))}
-                          </div>
-                        )}
+                              <Button
+                                className="h-8 w-8 p-0 hover:bg-red-500/20"
+                                onClick={() => deleteElement(element.id)}
+                                size="sm"
+                                variant="ghost"
+                              >
+                                <Trash2 className="h-4 w-4 text-red-400" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     {/* Canvas Tools */}
                     <div className="flex items-center justify-between">
                       <div className="text-slate-400 text-sm">
-                        Clique nos elementos da paleta para adicionar ao relatório
+                        Clique nos elementos da paleta para adicionar ao
+                        relatório
                       </div>
                       <div className="flex items-center space-x-2">
                         <Button

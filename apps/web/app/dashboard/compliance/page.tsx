@@ -12,7 +12,9 @@ interface CompliancePageProps {
   searchParams?: Record<string, string | string[] | undefined>;
 }
 
-export default function CompliancePage({ searchParams: _searchParams }: CompliancePageProps) {
+export default function CompliancePage({
+  searchParams: _searchParams,
+}: CompliancePageProps) {
   return (
     <main
       className="min-h-screen bg-background p-4 md:p-6"

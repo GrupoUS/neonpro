@@ -8,7 +8,13 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -164,7 +170,8 @@ export default function BehavioralCRM() {
         {
           type: "engagement",
           title: "Série de Conteúdo Educativo",
-          description: "Enviar dicas de saúde personalizadas baseadas no perfil analítico",
+          description:
+            "Enviar dicas de saúde personalizadas baseadas no perfil analítico",
           expectedOutcome: "+15% engagement",
           confidence: 82,
         },
@@ -220,7 +227,8 @@ export default function BehavioralCRM() {
         {
           type: "recovery",
           title: "Campanha de Recuperação",
-          description: "Contato direto via telefone para entender motivos de distanciamento",
+          description:
+            "Contato direto via telefone para entender motivos de distanciamento",
           expectedOutcome: "+40% retenção",
           confidence: 75,
         },
@@ -272,9 +280,8 @@ export default function BehavioralCRM() {
   ]);
 
   const [loading, setLoading] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<PatientBehaviorProfile | null>(
-    patients[0],
-  );
+  const [selectedPatient, setSelectedPatient] =
+    useState<PatientBehaviorProfile | null>(patients[0]);
 
   // =============================================================================
   // HANDLERS
@@ -361,7 +368,8 @@ export default function BehavioralCRM() {
             <span>CRM Comportamental</span>
           </h1>
           <p className="text-muted-foreground">
-            Sistema inteligente de relacionamento com análise comportamental avançada
+            Sistema inteligente de relacionamento com análise comportamental
+            avançada
           </p>
         </div>
 
@@ -771,9 +779,11 @@ export default function BehavioralCRM() {
                         <div className="flex items-center space-x-2 mt-1">
                           <Badge variant="outline">{campaign.type}</Badge>
                           <Badge
-                            variant={campaign.status === "active"
-                              ? "default"
-                              : "secondary"}
+                            variant={
+                              campaign.status === "active"
+                                ? "default"
+                                : "secondary"
+                            }
                           >
                             {campaign.status}
                           </Badge>

@@ -127,8 +127,9 @@ class InstallmentManager {
   }
 }
 
-const getInstallmentManager = function getInstallmentManager(): InstallmentManager {
-  return new InstallmentManager();
-};
+const getInstallmentManager =
+  function getInstallmentManager(): InstallmentManager {
+    return new InstallmentManager();
+  };
 
 export { getInstallmentManager };

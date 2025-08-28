@@ -30,8 +30,8 @@ export function LoginPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;Sistema completo de gestão para clínicas estéticas com compliance LGPD, ANVISA
-              e CFM integrado.&rdquo;
+              &ldquo;Sistema completo de gestão para clínicas estéticas com
+              compliance LGPD, ANVISA e CFM integrado.&rdquo;
             </p>
             <footer className="text-sm">Equipe NeonPro Healthcare</footer>
           </blockquote>

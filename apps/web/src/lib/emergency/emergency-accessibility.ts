@@ -52,7 +52,8 @@ class EmergencyAccessibilityValidator {
 
   public static getInstance(): EmergencyAccessibilityValidator {
     if (!EmergencyAccessibilityValidator.instance) {
-      EmergencyAccessibilityValidator.instance = new EmergencyAccessibilityValidator();
+      EmergencyAccessibilityValidator.instance =
+        new EmergencyAccessibilityValidator();
     }
     return EmergencyAccessibilityValidator.instance;
   }
@@ -62,7 +63,7 @@ class EmergencyAccessibilityValidator {
    */
   async validateComponent(
     componentName: string,
-    element: HTMLElement
+    element: HTMLElement,
   ): Promise<AccessibilityTestResult> {
     const issues: AccessibilityIssue[] = [];
     let score = 100;
@@ -94,7 +95,8 @@ class EmergencyAccessibilityValidator {
 
     // Calculate score based on issues
     score = this.calculateAccessibilityScore(issues);
-    const passed = score >= 95 && issues.filter(i => i.severity === "error").length === 0;
+    const passed =
+      score >= 95 && issues.filter((i) => i.severity === "error").length === 0;
 
     const result: AccessibilityTestResult = {
       component: componentName,
@@ -112,15 +114,17 @@ class EmergencyAccessibilityValidator {
   /**
    * Validate ARIA attributes and roles
    */
-  private async validateARIA(element: HTMLElement): Promise<AccessibilityIssue[]> {
+  private async validateARIA(
+    element: HTMLElement,
+  ): Promise<AccessibilityIssue[]> {
     const issues: AccessibilityIssue[] = [];
 
     // Check for proper ARIA roles on emergency components
-    const emergencyElements = element.querySelectorAll('[data-emergency]');
+    const emergencyElements = element.querySelectorAll("[data-emergency]");
     emergencyElements.forEach((el, index) => {
-      const role = el.getAttribute('role');
-      const ariaLabel = el.getAttribute('aria-label');
-      const ariaLabelledBy = el.getAttribute('aria-labelledby');
+      const role = el.getAttribute("role");
+      const ariaLabel = el.getAttribute("aria-label");
+      const ariaLabelledBy = el.getAttribute("aria-labelledby");
 
       if (!role) {
         issues.push({
@@ -128,9 +132,10 @@ class EmergencyAccessibilityValidator {
           rule: "ARIA Role Required",
           wcagCriterion: "4.1.2",
           element: `Emergency element ${index}`,
-          description: "Emergency interface elements must have explicit ARIA roles",
+          description:
+            "Emergency interface elements must have explicit ARIA roles",
           solution: "Add role='region', role='alert', or appropriate ARIA role",
-          impact: "critical"
+          impact: "critical",
         });
       }
 
@@ -142,35 +147,41 @@ class EmergencyAccessibilityValidator {
           element: `Emergency element ${index}`,
           description: "Emergency elements must have accessible names",
           solution: "Add aria-label or aria-labelledby attribute",
-          impact: "critical"
+          impact: "critical",
         });
       }
     });
 
     // Check for proper alert announcements
-    const alerts = element.querySelectorAll('[role="alert"], .alert, [data-alert]');
+    const alerts = element.querySelectorAll(
+      '[role="alert"], .alert, [data-alert]',
+    );
     alerts.forEach((alert, index) => {
-      const liveRegion = alert.getAttribute('aria-live');
-      if (!liveRegion || liveRegion !== 'assertive') {
+      const liveRegion = alert.getAttribute("aria-live");
+      if (!liveRegion || liveRegion !== "assertive") {
         issues.push({
           severity: "error",
           rule: "Emergency Alerts Live Region",
           wcagCriterion: "4.1.3",
           element: `Alert ${index}`,
-          description: "Emergency alerts must use aria-live='assertive' for immediate announcement",
+          description:
+            "Emergency alerts must use aria-live='assertive' for immediate announcement",
           solution: "Add aria-live='assertive' to emergency alerts",
-          impact: "critical"
+          impact: "critical",
         });
       }
     });
 
     // Check for proper headings hierarchy
-    const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"]');
+    const headings = element.querySelectorAll(
+      'h1, h2, h3, h4, h5, h6, [role="heading"]',
+    );
     let previousLevel = 0;
     headings.forEach((heading, index) => {
-      const level = heading.tagName ? parseInt(heading.tagName.charAt(1)) : 
-                   parseInt(heading.getAttribute('aria-level') || '1');
-      
+      const level = heading.tagName
+        ? parseInt(heading.tagName.charAt(1))
+        : parseInt(heading.getAttribute("aria-level") || "1");
+
       if (level - previousLevel > 1) {
         issues.push({
           severity: "warning",
@@ -179,7 +190,7 @@ class EmergencyAccessibilityValidator {
           element: `Heading ${index}`,
           description: "Heading levels should not skip hierarchical levels",
           solution: "Adjust heading levels to follow proper hierarchy",
-          impact: "moderate"
+          impact: "moderate",
         });
       }
       previousLevel = level;
@@ -191,17 +202,19 @@ class EmergencyAccessibilityValidator {
   /**
    * Validate keyboard navigation
    */
-  private async validateKeyboardNavigation(element: HTMLElement): Promise<AccessibilityIssue[]> {
+  private async validateKeyboardNavigation(
+    element: HTMLElement,
+  ): Promise<AccessibilityIssue[]> {
     const issues: AccessibilityIssue[] = [];
 
     // Check focusable elements have proper focus management
     const focusableElements = element.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
 
     focusableElements.forEach((el, index) => {
-      const tabIndex = el.getAttribute('tabindex');
-      
+      const tabIndex = el.getAttribute("tabindex");
+
       // Check for positive tabindex values (anti-pattern)
       if (tabIndex && parseInt(tabIndex) > 0) {
         issues.push({
@@ -211,36 +224,43 @@ class EmergencyAccessibilityValidator {
           element: `Focusable element ${index}`,
           description: "Positive tabindex values disrupt natural tab order",
           solution: "Remove positive tabindex or use tabindex='0'",
-          impact: "moderate"
+          impact: "moderate",
         });
       }
 
       // Check for focus indicators
       const computedStyle = window.getComputedStyle(el as Element);
-      if (computedStyle.outlineStyle === 'none' && computedStyle.boxShadow === 'none') {
+      if (
+        computedStyle.outlineStyle === "none" &&
+        computedStyle.boxShadow === "none"
+      ) {
         issues.push({
           severity: "error",
           rule: "Focus Indicator Required",
           wcagCriterion: "2.4.7",
           element: `Focusable element ${index}`,
-          description: "All focusable elements must have visible focus indicators",
+          description:
+            "All focusable elements must have visible focus indicators",
           solution: "Add focus styles with outline or box-shadow",
-          impact: "serious"
+          impact: "serious",
         });
       }
     });
 
     // Check for skip navigation for emergency interfaces
-    const skipLinks = element.querySelectorAll('a[href^="#"], [data-skip-link]');
+    const skipLinks = element.querySelectorAll(
+      'a[href^="#"], [data-skip-link]',
+    );
     if (focusableElements.length > 5 && skipLinks.length === 0) {
       issues.push({
         severity: "warning",
         rule: "Skip Navigation",
         wcagCriterion: "2.4.1",
         element: "Component container",
-        description: "Complex emergency interfaces should provide skip navigation",
+        description:
+          "Complex emergency interfaces should provide skip navigation",
         solution: "Add skip links to main content areas",
-        impact: "moderate"
+        impact: "moderate",
       });
     }
 
@@ -250,31 +270,46 @@ class EmergencyAccessibilityValidator {
   /**
    * Validate color contrast ratios
    */
-  private async validateColorContrast(element: HTMLElement): Promise<AccessibilityIssue[]> {
+  private async validateColorContrast(
+    element: HTMLElement,
+  ): Promise<AccessibilityIssue[]> {
     const issues: AccessibilityIssue[] = [];
 
-    const textElements = element.querySelectorAll('*');
+    const textElements = element.querySelectorAll("*");
     const checkedElements = new Set<Element>();
 
     textElements.forEach((el, index) => {
-      if (checkedElements.has(el)) {return;}
-      
+      if (checkedElements.has(el)) {
+        return;
+      }
+
       const style = window.getComputedStyle(el);
       const hasText = el.textContent && el.textContent.trim().length > 0;
-      
+
       if (hasText) {
         const textColor = style.color;
         const backgroundColor = style.backgroundColor;
-        
+
         // Only check elements with both colors defined
-        if (textColor !== 'rgba(0, 0, 0, 0)' && backgroundColor !== 'rgba(0, 0, 0, 0)') {
-          const contrast = this.calculateContrastRatio(textColor, backgroundColor);
+        if (
+          textColor !== "rgba(0, 0, 0, 0)" &&
+          backgroundColor !== "rgba(0, 0, 0, 0)"
+        ) {
+          const contrast = this.calculateContrastRatio(
+            textColor,
+            backgroundColor,
+          );
           const fontSize = parseFloat(style.fontSize);
           const fontWeight = style.fontWeight;
-          
-          const isLargeText = fontSize >= 18 || (fontSize >= 14 && (fontWeight === 'bold' || parseInt(fontWeight) >= 700));
-          const requiredRatio = isLargeText ? 4.5 : this.config.minimumContrastRatio;
-          
+
+          const isLargeText =
+            fontSize >= 18 ||
+            (fontSize >= 14 &&
+              (fontWeight === "bold" || parseInt(fontWeight) >= 700));
+          const requiredRatio = isLargeText
+            ? 4.5
+            : this.config.minimumContrastRatio;
+
           if (contrast < requiredRatio) {
             issues.push({
               severity: "error",
@@ -282,12 +317,13 @@ class EmergencyAccessibilityValidator {
               wcagCriterion: isLargeText ? "1.4.6" : "1.4.11",
               element: `Text element ${index}`,
               description: `Contrast ratio ${contrast.toFixed(2)}:1 is below required ${requiredRatio}:1`,
-              solution: "Adjust text or background colors to meet contrast requirements",
-              impact: "serious"
+              solution:
+                "Adjust text or background colors to meet contrast requirements",
+              impact: "serious",
             });
           }
         }
-        
+
         checkedElements.add(el);
       }
     });
@@ -298,32 +334,37 @@ class EmergencyAccessibilityValidator {
   /**
    * Validate screen reader compatibility
    */
-  private async validateScreenReader(element: HTMLElement): Promise<AccessibilityIssue[]> {
+  private async validateScreenReader(
+    element: HTMLElement,
+  ): Promise<AccessibilityIssue[]> {
     const issues: AccessibilityIssue[] = [];
 
     // Check for proper semantic markup
-    const semanticElements = element.querySelectorAll('main, nav, section, article, aside, header, footer');
-    const divSpanElements = element.querySelectorAll('div, span');
-    
+    const semanticElements = element.querySelectorAll(
+      "main, nav, section, article, aside, header, footer",
+    );
+    const divSpanElements = element.querySelectorAll("div, span");
+
     if (divSpanElements.length > semanticElements.length * 3) {
       issues.push({
         severity: "warning",
         rule: "Semantic Markup",
         wcagCriterion: "1.3.1",
         element: "Component structure",
-        description: "Excessive use of div/span elements instead of semantic HTML",
+        description:
+          "Excessive use of div/span elements instead of semantic HTML",
         solution: "Replace generic elements with semantic HTML5 elements",
-        impact: "moderate"
+        impact: "moderate",
       });
     }
 
     // Check for alt text on images
     const images = element.querySelectorAll('img, [role="img"]');
     images.forEach((img, index) => {
-      const alt = img.getAttribute('alt');
-      const ariaLabel = img.getAttribute('aria-label');
-      const ariaLabelledBy = img.getAttribute('aria-labelledby');
-      
+      const alt = img.getAttribute("alt");
+      const ariaLabel = img.getAttribute("aria-label");
+      const ariaLabelledBy = img.getAttribute("aria-labelledby");
+
       if (!alt && !ariaLabel && !ariaLabelledBy) {
         issues.push({
           severity: "error",
@@ -332,19 +373,19 @@ class EmergencyAccessibilityValidator {
           element: `Image ${index}`,
           description: "Images must have alternative text for screen readers",
           solution: "Add alt attribute or aria-label to images",
-          impact: "serious"
+          impact: "serious",
         });
       }
     });
 
     // Check for form labels
-    const inputs = element.querySelectorAll('input, textarea, select');
+    const inputs = element.querySelectorAll("input, textarea, select");
     inputs.forEach((input, index) => {
       const id = input.id;
-      const ariaLabel = input.getAttribute('aria-label');
-      const ariaLabelledBy = input.getAttribute('aria-labelledby');
+      const ariaLabel = input.getAttribute("aria-label");
+      const ariaLabelledBy = input.getAttribute("aria-labelledby");
       const label = id ? element.querySelector(`label[for="${id}"]`) : null;
-      
+
       if (!label && !ariaLabel && !ariaLabelledBy) {
         issues.push({
           severity: "error",
@@ -353,7 +394,7 @@ class EmergencyAccessibilityValidator {
           element: `Input ${index}`,
           description: "Form inputs must have associated labels",
           solution: "Add label element or aria-label to form inputs",
-          impact: "serious"
+          impact: "serious",
         });
       }
     });
@@ -364,50 +405,60 @@ class EmergencyAccessibilityValidator {
   /**
    * Validate emergency-specific accessibility requirements
    */
-  private async validateEmergencySpecificA11y(element: HTMLElement): Promise<AccessibilityIssue[]> {
+  private async validateEmergencySpecificA11y(
+    element: HTMLElement,
+  ): Promise<AccessibilityIssue[]> {
     const issues: AccessibilityIssue[] = [];
 
     // Check for emergency alert announcements
-    const emergencyAlerts = element.querySelectorAll('[data-emergency-level="life-threatening"]');
+    const emergencyAlerts = element.querySelectorAll(
+      '[data-emergency-level="life-threatening"]',
+    );
     emergencyAlerts.forEach((alert, index) => {
-      const ariaLive = alert.getAttribute('aria-live');
-      const role = alert.getAttribute('role');
-      
-      if (ariaLive !== 'assertive' || role !== 'alert') {
+      const ariaLive = alert.getAttribute("aria-live");
+      const role = alert.getAttribute("role");
+
+      if (ariaLive !== "assertive" || role !== "alert") {
         issues.push({
           severity: "error",
           rule: "Life-Threatening Alert Accessibility",
           wcagCriterion: "4.1.3",
           element: `Life-threatening alert ${index}`,
-          description: "Life-threatening alerts must be immediately announced to screen readers",
+          description:
+            "Life-threatening alerts must be immediately announced to screen readers",
           solution: "Add role='alert' and aria-live='assertive'",
-          impact: "critical"
+          impact: "critical",
         });
       }
     });
 
     // Check for emergency contact accessibility
-    const emergencyContacts = element.querySelectorAll('[data-emergency-contact]');
+    const emergencyContacts = element.querySelectorAll(
+      "[data-emergency-contact]",
+    );
     emergencyContacts.forEach((contact, index) => {
       const accessibleName = this.getAccessibleName(contact as HTMLElement);
-      if (!accessibleName || !accessibleName.includes('emergency')) {
+      if (!accessibleName || !accessibleName.includes("emergency")) {
         issues.push({
           severity: "error",
           rule: "Emergency Contact Identification",
           wcagCriterion: "2.4.6",
           element: `Emergency contact ${index}`,
-          description: "Emergency contacts must be clearly identified for screen readers",
+          description:
+            "Emergency contacts must be clearly identified for screen readers",
           solution: "Include 'emergency' in accessible name or aria-label",
-          impact: "critical"
+          impact: "critical",
         });
       }
     });
 
     // Check for medication allergy warnings
-    const allergyWarnings = element.querySelectorAll('[data-allergy-severity="life-threatening"]');
+    const allergyWarnings = element.querySelectorAll(
+      '[data-allergy-severity="life-threatening"]',
+    );
     allergyWarnings.forEach((warning, index) => {
-      const ariaLabel = warning.getAttribute('aria-label');
-      if (!ariaLabel || !ariaLabel.toLowerCase().includes('life-threatening')) {
+      const ariaLabel = warning.getAttribute("aria-label");
+      if (!ariaLabel || !ariaLabel.toLowerCase().includes("life-threatening")) {
         issues.push({
           severity: "error",
           rule: "Critical Allergy Warning",
@@ -415,7 +466,7 @@ class EmergencyAccessibilityValidator {
           element: `Allergy warning ${index}`,
           description: "Life-threatening allergies must be clearly announced",
           solution: "Add explicit 'life-threatening' to aria-label",
-          impact: "critical"
+          impact: "critical",
         });
       }
     });
@@ -428,8 +479,8 @@ class EmergencyAccessibilityValidator {
    */
   private calculateAccessibilityScore(issues: AccessibilityIssue[]): number {
     let score = 100;
-    
-    issues.forEach(issue => {
+
+    issues.forEach((issue) => {
       switch (issue.impact) {
         case "critical":
           score -= 25;
@@ -456,13 +507,13 @@ class EmergencyAccessibilityValidator {
     // Simplified contrast calculation - in production use a proper color library
     const rgb1 = this.parseColor(color1);
     const rgb2 = this.parseColor(color2);
-    
+
     const l1 = this.relativeLuminance(rgb1);
     const l2 = this.relativeLuminance(rgb2);
-    
+
     const lighter = Math.max(l1, l2);
     const darker = Math.min(l1, l2);
-    
+
     return (lighter + 0.05) / (darker + 0.05);
   }
 
@@ -471,12 +522,12 @@ class EmergencyAccessibilityValidator {
    */
   private parseColor(color: string): [number, number, number] {
     // Simplified color parsing - in production use a proper color library
-    const div = document.createElement('div');
+    const div = document.createElement("div");
     div.style.color = color;
     document.body.append(div);
     const rgbString = window.getComputedStyle(div).color;
     document.body.removeChild(div);
-    
+
     const matches = rgbString.match(/\d+/g);
     if (matches) {
       return [parseInt(matches[0]), parseInt(matches[1]), parseInt(matches[2])];
@@ -488,11 +539,11 @@ class EmergencyAccessibilityValidator {
    * Calculate relative luminance for contrast ratio
    */
   private relativeLuminance([r, g, b]: [number, number, number]): number {
-    const [rs, gs, bs] = [r, g, b].map(c => {
+    const [rs, gs, bs] = [r, g, b].map((c) => {
       c = c / 255;
       return c <= 0.039_28 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
-    
+
     return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
   }
 
@@ -500,16 +551,20 @@ class EmergencyAccessibilityValidator {
    * Get accessible name for element
    */
   private getAccessibleName(element: HTMLElement): string {
-    const ariaLabel = element.getAttribute('aria-label');
-    if (ariaLabel) {return ariaLabel;}
-    
-    const ariaLabelledBy = element.getAttribute('aria-labelledby');
+    const ariaLabel = element.getAttribute("aria-label");
+    if (ariaLabel) {
+      return ariaLabel;
+    }
+
+    const ariaLabelledBy = element.getAttribute("aria-labelledby");
     if (ariaLabelledBy) {
       const labelElement = document.getElementById(ariaLabelledBy);
-      if (labelElement) {return labelElement.textContent || '';}
+      if (labelElement) {
+        return labelElement.textContent || "";
+      }
     }
-    
-    return element.textContent || '';
+
+    return element.textContent || "";
   }
 
   /**
@@ -526,15 +581,19 @@ class EmergencyAccessibilityValidator {
     testResults: AccessibilityTestResult[];
     lgpdCompliance: boolean;
   } {
-    const criticalIssues = this.testResults.flatMap(r => r.issues)
-      .filter(i => i.impact === "critical");
-    
-    const overallScore = this.testResults.length > 0 
-      ? this.testResults.reduce((sum, r) => sum + r.score, 0) / this.testResults.length
-      : 0;
-    
-    const wcagLevel = overallScore >= 95 ? "AAA" : overallScore >= 85 ? "AA" : "A";
-    
+    const criticalIssues = this.testResults
+      .flatMap((r) => r.issues)
+      .filter((i) => i.impact === "critical");
+
+    const overallScore =
+      this.testResults.length > 0
+        ? this.testResults.reduce((sum, r) => sum + r.score, 0) /
+          this.testResults.length
+        : 0;
+
+    const wcagLevel =
+      overallScore >= 95 ? "AAA" : overallScore >= 85 ? "AA" : "A";
+
     let summary = `Emergency interface accessibility: ${overallScore.toFixed(1)}% (WCAG ${wcagLevel})`;
     if (criticalIssues.length > 0) {
       summary += ` ⚠️ ${criticalIssues.length} critical accessibility issues`;
@@ -571,12 +630,13 @@ class EmergencyAccessibilityValidator {
 }
 
 // Export singleton instance
-export const emergencyAccessibility = EmergencyAccessibilityValidator.getInstance();
+export const emergencyAccessibility =
+  EmergencyAccessibilityValidator.getInstance();
 
 // Utility functions for component testing
 export const testEmergencyComponentAccessibility = async (
   componentName: string,
-  element: HTMLElement
+  element: HTMLElement,
 ): Promise<AccessibilityTestResult> => {
   return emergencyAccessibility.validateComponent(componentName, element);
 };

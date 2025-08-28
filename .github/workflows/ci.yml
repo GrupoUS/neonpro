@@ -6,18 +6,18 @@ name: 🚀 CI/CD Pipeline
 
 on:
   push:
-    branches: ['main', 'develop']
-    paths-ignore: ['docs/**', '*.md', '.gitignore', 'LICENSE']
+    branches: ["main", "develop"]
+    paths-ignore: ["docs/**", "*.md", ".gitignore", "LICENSE"]
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: "Deployment environment"
         required: true
-        default: 'preview'
+        default: "preview"
         type: choice
-        options: ['preview', 'production']
+        options: ["preview", "production"]
       skip_tests:
-        description: 'Skip tests (emergency deployment only)'
+        description: "Skip tests (emergency deployment only)"
         required: false
         default: false
         type: boolean
@@ -62,7 +62,7 @@ jobs:
         id: env-setup
         run: |
           echo "🎯 Setting up CI environment..."
-          
+
           # Determine deployment environment
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             deployment_env="${{ github.event.inputs.environment }}"
@@ -74,10 +74,10 @@ jobs:
             deployment_env="preview"
             skip_tests="false"
           fi
-          
+
           echo "deployment-env=$deployment_env" >> $GITHUB_OUTPUT
           echo "skip-tests=$skip_tests" >> $GITHUB_OUTPUT
-          
+
           echo "🎯 Deployment environment: $deployment_env"
           echo "🧪 Skip tests: $skip_tests"
 
@@ -128,7 +128,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📁 Cache Turbo
         uses: actions/cache@v4
@@ -142,7 +142,7 @@ jobs:
         run: |
           echo "📥 Installing dependencies..."
           pnpm install --frozen-lockfile
-          
+
           echo "📊 Dependency summary:"
           echo "- pnpm version: $(pnpm --version)"
           echo "- Node version: $(node --version)"
@@ -153,7 +153,7 @@ jobs:
           echo "🔍 Running dependency security audit..."
           audit_exit_code=0
           pnpm audit --audit-level moderate || audit_exit_code=$?
-          
+
           if [ $audit_exit_code -eq 0 ]; then
             echo "✅ No moderate+ security vulnerabilities found"
           else
@@ -186,7 +186,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📁 Restore Turbo cache
         uses: actions/cache@v4
@@ -237,7 +237,7 @@ jobs:
           echo "🔍 Running code linting..."
           lint_exit_code=0
           pnpm lint:oxlint || lint_exit_code=$?
-          
+
           if [ $lint_exit_code -eq 0 ]; then
             echo "✅ Linting validation passed"
           else
@@ -269,11 +269,11 @@ jobs:
         target: [web, api]
         include:
           - target: web
-            build-output: 'apps/web/.next'
-            test-pattern: 'apps/web/**/*.{test,spec}.{ts,tsx}'
+            build-output: "apps/web/.next"
+            test-pattern: "apps/web/**/*.{test,spec}.{ts,tsx}"
           - target: api
-            build-output: 'apps/api/dist'
-            test-pattern: 'apps/api/**/*.{test,spec}.{ts,tsx}'
+            build-output: "apps/api/dist"
+            test-pattern: "apps/api/**/*.{test,spec}.{ts,tsx}"
     env:
       TURBO_TOKEN: ${{ vars.TURBO_TOKEN }}
       NODE_ENV: production
@@ -290,7 +290,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📁 Restore Turbo cache
         uses: actions/cache@v4
@@ -306,13 +306,13 @@ jobs:
       - name: 🏗️ Build ${{ matrix.target }}
         run: |
           echo "🏗️ Building ${{ matrix.target }} application..."
-          
+
           # Set appropriate environment variables for build
           if [[ "${{ matrix.target }}" == "web" ]]; then
             export NEXT_PUBLIC_APP_URL="https://neonpro.app"
             export NEXT_PUBLIC_ENV="${{ needs.ci-initialization.outputs.deployment-env }}"
           fi
-          
+
           if pnpm build --filter=${{ matrix.target }}; then
             echo "✅ Build successful for ${{ matrix.target }}"
             
@@ -341,10 +341,10 @@ jobs:
         if: needs.ci-initialization.outputs.skip-tests != 'true'
         run: |
           echo "🧪 Running tests for ${{ matrix.target }}..."
-          
+
           # Try different test commands based on availability
           test_exit_code=0
-          
+
           # Try target-specific test command
           if pnpm test --filter=${{ matrix.target }} 2>/dev/null; then
             echo "✅ Target-specific tests passed for ${{ matrix.target }}"
@@ -363,27 +363,27 @@ jobs:
       - name: 🏥 Healthcare compliance validation
         run: |
           echo "🏥 Running healthcare compliance validation for ${{ matrix.target }}..."
-          
+
           # Check for healthcare-specific patterns
           echo "🔍 Checking healthcare compliance patterns..."
-          
+
           # Look for LGPD/ANVISA compliance markers
           compliance_found=false
           if grep -r "lgpd\|anvisa\|cfm\|compliance" "apps/${{ matrix.target }}" --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
             echo "✅ Healthcare compliance patterns found"
             compliance_found=true
           fi
-          
+
           # Check for data validation patterns
           if grep -r "validate\|schema\|zod" "apps/${{ matrix.target }}" --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
             echo "✅ Data validation patterns found"
           fi
-          
+
           # Check for security patterns
           if grep -r "encrypt\|secure\|auth" "apps/${{ matrix.target }}" --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
             echo "✅ Security patterns found"
           fi
-          
+
           echo "### 🏥 Healthcare Compliance - ${{ matrix.target }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Compliance markers**: $($compliance_found && echo '✅ Found' || echo 'ℹ️ Basic')" >> $GITHUB_STEP_SUMMARY
           echo "- **Data validation**: ✅ Implemented" >> $GITHUB_STEP_SUMMARY
@@ -425,7 +425,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -457,17 +457,17 @@ jobs:
       - name: 🏥 Healthcare data security audit
         run: |
           echo "🏥 Performing healthcare-specific security audit..."
-          
+
           # Check for potential PHI exposure
           echo "🔍 Scanning for potential PHI exposure patterns..."
           phi_patterns=false
-          
+
           # Look for hardcoded sensitive data
           if grep -r "cpf\|rg\|patient.*id\|medical.*record" apps/ packages/ --include="*.ts" --include="*.tsx" 2>/dev/null | grep -v "Type\|Interface\|type\|interface\|test\|mock" | head -3; then
             echo "⚠️ Found potential PHI patterns - review for data handling"
             phi_patterns=true
           fi
-          
+
           # Check for encryption patterns
           echo "🔍 Checking encryption implementation..."
           if grep -r "encrypt\|decrypt\|crypto\|hash" apps/ packages/ --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
@@ -475,7 +475,7 @@ jobs:
           else
             echo "💡 Consider implementing encryption for sensitive healthcare data"
           fi
-          
+
           # Check for audit trail patterns
           echo "🔍 Checking audit trail implementation..."
           if grep -r "audit\|log\|track\|history" apps/ packages/ --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
@@ -483,7 +483,7 @@ jobs:
           else
             echo "💡 Consider implementing audit trails for healthcare compliance"
           fi
-          
+
           echo "### 🔒 Security Analysis Results" >> $GITHUB_STEP_SUMMARY
           echo "- **CodeQL**: ✅ Executed" >> $GITHUB_STEP_SUMMARY
           echo "- **Semgrep**: ✅ Executed" >> $GITHUB_STEP_SUMMARY
@@ -516,7 +516,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -540,7 +540,7 @@ jobs:
           echo "🎭 Running end-to-end tests..."
           e2e_exit_code=0
           npx playwright test || e2e_exit_code=$?
-          
+
           if [ $e2e_exit_code -eq 0 ]; then
             echo "✅ E2E tests passed successfully"
           else
@@ -580,26 +580,26 @@ jobs:
         id: deployment-check
         run: |
           echo "🔍 Checking deployment readiness..."
-          
+
           ready=true
-          
+
           # Check build artifacts exist
           echo "📦 Checking build artifacts..."
-          
+
           # Check security scan status
           security_status="${{ needs.security-scanning.result }}"
           if [[ "$security_status" != "success" ]]; then
             echo "⚠️ Security scanning had issues (status: $security_status)"
             echo "Continuing with deployment but review security results"
           fi
-          
+
           # Check build status
           build_status="${{ needs.build-and-test.result }}"
           if [[ "$build_status" != "success" ]]; then
             echo "❌ Build failed - deployment not possible"
             ready=false
           fi
-          
+
           echo "ready=$ready" >> $GITHUB_OUTPUT
           echo "🚀 Deployment ready: $ready"
 
@@ -638,7 +638,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -654,7 +654,7 @@ jobs:
       - name: 🌍 Deploy to Vercel
         run: |
           echo "🌍 Deploying to Vercel..."
-          
+
           # Determine deployment type
           if [[ "${{ needs.ci-initialization.outputs.deployment-env }}" == "production" ]]; then
             echo "🚀 Production deployment"
@@ -663,17 +663,17 @@ jobs:
             echo "🔍 Preview deployment"
             deployment_url=$(vercel deploy --token=${{ env.VERCEL_TOKEN }})
           fi
-          
+
           echo "✅ Deployment successful"
           echo "🌍 Deployment URL: $deployment_url"
-          
+
           # Save deployment URL for later steps
           echo "DEPLOYMENT_URL=$deployment_url" >> $GITHUB_ENV
 
       - name: 🏥 Post-deployment healthcare checks
         run: |
           echo "🏥 Running post-deployment healthcare compliance checks..."
-          
+
           if [[ -n "$DEPLOYMENT_URL" ]]; then
             echo "🔍 Checking deployment accessibility..."
             
@@ -717,10 +717,10 @@ jobs:
       - name: 🔍 Deployment validation
         run: |
           echo "🔍 Running post-deployment validation..."
-          
+
           # Wait for deployment to be fully ready
           sleep 30
-          
+
           echo "✅ Deployment validation completed"
 
       - name: 📊 Pipeline summary

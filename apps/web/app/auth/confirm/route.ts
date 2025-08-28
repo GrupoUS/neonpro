@@ -69,9 +69,10 @@ export async function GET(request: NextRequest) {
       if (session?.user) {
         // Healthcare audit logging for successful email confirmation
         await logHealthcareEmailConfirmation(session.user.id, type, {
-          ip_address: request.headers.get("x-forwarded-for")
-            || request.headers.get("x-real-ip")
-            || "unknown",
+          ip_address:
+            request.headers.get("x-forwarded-for") ||
+            request.headers.get("x-real-ip") ||
+            "unknown",
           user_agent: request.headers.get("user-agent") || "unknown",
         });
 

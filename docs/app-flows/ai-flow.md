@@ -15,24 +15,28 @@ This flow documents AI interactions and workflows within the **NeonPro Healthcar
 ## Implementation Guidelines
 
 ### Phase 1: Data Preparation & Sanitization
+
 1. **Data Collection**: Gather relevant healthcare data for AI processing
 2. **PHI Identification**: Automatically identify all Protected Health Information
 3. **Data Sanitization**: Remove or anonymize PHI before AI processing
 4. **Context Preservation**: Maintain clinical relevance while protecting privacy
 
 ### Phase 2: AI Processing & Analysis
+
 1. **Service Selection**: Choose appropriate AI provider (OpenAI/Anthropic)
 2. **Prompt Engineering**: Use healthcare-optimized prompts with safety guidelines
 3. **Request Processing**: Send sanitized data to AI service via Vercel AI SDK
 4. **Response Processing**: Receive and validate AI-generated insights
 
 ### Phase 3: Professional Validation & Integration
+
 1. **Human Review**: Professional validates all AI-generated content
 2. **Clinical Context**: Integrate AI insights with professional knowledge
 3. **Documentation**: Record AI assistance in patient documentation
 4. **Decision Support**: Use AI as decision support tool, not decision maker
 
 ### Phase 4: Audit & Monitoring
+
 1. **Usage Logging**: Log all AI interactions without sensitive data
 2. **Bias Monitoring**: Track AI outputs for potential biases or errors
 3. **Performance Metrics**: Monitor AI accuracy and professional satisfaction
@@ -49,27 +53,27 @@ sequenceDiagram
     participant V as Validation Service
     participant A as Audit Logger
     participant DB as Database
-    
+
     %% Phase 1: Data Preparation
     P->>UI: Request AI analysis
     UI->>S: Send healthcare data
     S->>S: Identify PHI elements
     S->>S: Sanitize/anonymize data
     S->>A: Log sanitization process (no PHI)
-    
+
     %% Phase 2: AI Processing
     S->>AI: Send sanitized data
     AI->>AI: Process with healthcare prompts
     AI-->>S: Return AI-generated insights
     S->>A: Log AI interaction (sanitized)
-    
+
     %% Phase 3: Professional Validation
     S->>V: Submit AI response for validation
     V->>UI: Present AI insights to professional
     UI-->>P: Display AI suggestions + warnings
     P->>P: Review and validate AI insights
     P->>UI: Approve/reject/modify AI suggestions
-    
+
     alt AI Approved
         UI->>V: Professional approval confirmed
         V->>DB: Store validated AI insights
@@ -80,7 +84,7 @@ sequenceDiagram
         V->>A: Log rejection/modification reason
         V-->>P: Manual process continues
     end
-    
+
     %% Phase 4: Continuous Monitoring
     V->>A: Record usage metrics
     A->>A: Analyze for bias/patterns
@@ -111,7 +115,7 @@ sequenceDiagram
     participant P as Predictor
     participant AI as AI Model
     participant A as Actions
-    
+
     S->>P: Upcoming appointments list
     P->>P: Extract patterns (anonymized)
     P->>AI: Predict no-show probability
@@ -138,6 +142,7 @@ flowchart LR
 ## PHI Sanitization Patterns
 
 ### Automatic PHI Detection
+
 ```typescript
 interface PHISanitizer {
   // Personal Identifiers
@@ -152,6 +157,7 @@ interface PHISanitizer {
 ```
 
 ### Sanitization Rules
+
 - **Names**: Replace with generic identifiers (Patient A, Doctor B)
 - **Dates**: Convert to relative time periods (3 days ago, last week)
 - **Medical IDs**: Replace with randomized identifiers
@@ -162,7 +168,8 @@ interface PHISanitizer {
 ## Error Handling
 
 ### AI Service Failures
-- **Service Unavailable**: 
+
+- **Service Unavailable**:
   - Fallback: Manual workflow continuation
   - User Notice: "AI assistant temporarily unavailable"
   - Logging: Service outage with duration tracking
@@ -178,6 +185,7 @@ interface PHISanitizer {
   - Alternative: Manual process with AI retry later
 
 ### Sanitization Failures
+
 - **PHI Detection Missed**:
   - Block: Prevent request to AI service
   - Alert: Security team notification
@@ -191,18 +199,21 @@ interface PHISanitizer {
 ## Security & Audit
 
 ### AI Processing Security
+
 - **Data in Transit**: All AI requests over HTTPS/TLS 1.3
 - **No Data Storage**: External AI services cannot store healthcare data
 - **Access Logging**: Every AI request logged with non-PHI metadata
 - **Token Management**: Secure API key rotation and management
 
 ### Professional Oversight Requirements
+
 - **Clinical Decisions**: AI cannot make final clinical decisions
 - **Documentation**: Clear marking of AI-assisted vs human content
 - **Validation**: Professional must review and approve AI suggestions
 - **Liability**: Professional maintains full responsibility for patient care
 
 ### Audit Requirements
+
 - **AI Usage**: Track professional adoption and usage patterns
 - **Accuracy Monitoring**: Compare AI suggestions with professional decisions
 - **Bias Detection**: Monitor for demographic or clinical biases
@@ -211,9 +222,10 @@ interface PHISanitizer {
 ## AI Model Management
 
 ### Provider Configuration
+
 ```typescript
 interface AIProvider {
-  name: 'openai' | 'anthropic';
+  name: "openai" | "anthropic";
   model: string;
   temperature: number;
   maxTokens: number;
@@ -222,12 +234,14 @@ interface AIProvider {
 ```
 
 ### Healthcare-Specific Prompts
+
 - **Medical Context**: Prompts optimized for healthcare scenarios
 - **Safety Guidelines**: Built-in medical safety and ethics constraints
 - **Limitation Awareness**: AI acknowledges scope limitations
 - **Professional Deference**: AI defers to professional judgment
 
 ### Model Selection Criteria
+
 - **Clinical Accuracy**: Validated performance on healthcare data
 - **Safety Profile**: Low risk of harmful or inappropriate suggestions
 - **Regulatory Compliance**: Meets medical AI regulatory requirements
@@ -236,12 +250,14 @@ interface AIProvider {
 ## Performance Considerations
 
 ### Target Metrics
+
 - **AI Response Time**: < 5 seconds for standard queries
 - **Sanitization Speed**: < 1 second for typical clinical notes
 - **Professional Review Time**: < 30 seconds for AI suggestions
 - **System Availability**: 99.9% uptime for AI features
 
 ### Optimization Strategies
+
 - **Prompt Caching**: Cache common healthcare prompt patterns
 - **Batch Processing**: Group similar AI requests for efficiency
 - **Edge Processing**: Local AI for non-sensitive tasks
@@ -250,12 +266,14 @@ interface AIProvider {
 ## Integration Points
 
 ### External AI Services
+
 - **OpenAI**: GPT-4 for complex medical reasoning tasks
 - **Anthropic**: Claude for safety-critical healthcare applications
 - **Vercel AI SDK**: Unified interface for multiple AI providers
 - **Custom Models**: Healthcare-specific fine-tuned models (future)
 
 ### Internal Services
+
 - **PHI Sanitizer**: Centralized PHI detection and removal service
 - **Audit Service**: AI interaction logging and monitoring
 - **Validation Service**: Professional oversight and approval workflows
@@ -264,12 +282,14 @@ interface AIProvider {
 ## Bias Prevention & Monitoring
 
 ### Bias Detection
+
 - **Demographic Analysis**: Monitor AI responses across patient demographics
 - **Clinical Pattern Analysis**: Detect systematic biases in clinical recommendations
 - **Professional Feedback**: Collect feedback on AI suggestion appropriateness
 - **Regular Audits**: Quarterly bias assessment and model adjustment
 
 ### Mitigation Strategies
+
 - **Diverse Training Data**: Ensure AI training represents diverse populations
 - **Regular Model Updates**: Continuous improvement based on bias detection
 - **Professional Education**: Train professionals to recognize and correct AI biases
@@ -278,12 +298,14 @@ interface AIProvider {
 ## Future Enhancements
 
 ### Planned Features
+
 - **Voice Integration**: AI-powered medical dictation and note-taking
 - **Image Analysis**: AI assistance for medical imaging interpretation
 - **Drug Interaction Checking**: AI-powered medication safety analysis
 - **Clinical Decision Support**: Advanced diagnostic assistance tools
 
 ### Research Areas
+
 - **Federated Learning**: Privacy-preserving AI training across healthcare networks
 - **Explainable AI**: Better transparency in AI medical decision-making
 - **Real-time Analytics**: Live clinical decision support during patient interactions

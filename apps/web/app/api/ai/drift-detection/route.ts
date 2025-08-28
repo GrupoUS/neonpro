@@ -99,16 +99,14 @@ export async function GET(request: NextRequest) {
           alertsSent: driftHistory?.filter((d) => d.alert_sent).length || 0,
           modelsAffected: new Set(driftHistory?.map((d) => d.model_id)).size,
           averageDriftScore: driftHistory?.length
-            ? `${
-              (
+            ? `${(
                 (driftHistory.reduce(
                   (sum, d) => sum + (d.drift_score || 0),
                   0,
-                )
-                  / driftHistory.length)
-                * 100
-              ).toFixed(2)
-            }%`
+                ) /
+                  driftHistory.length) *
+                100
+              ).toFixed(2)}%`
             : "0%",
           period: `Last ${days} days`,
         };
@@ -156,24 +154,25 @@ export async function GET(request: NextRequest) {
 
         const modelStatus = latestDrift
           ? {
-            modelId: latestDrift.model_id,
-            modelName: latestDrift.ai_models?.name || "Unknown",
-            currentDriftScore: `${((latestDrift.drift_score || 0) * 100).toFixed(2)}%`,
-            driftType: latestDrift.drift_type,
-            status: (latestDrift.drift_score || 0) > 0.1
-              ? "HIGH_DRIFT"
-              : (latestDrift.drift_score || 0) > 0.05
-              ? "MEDIUM_DRIFT"
-              : "STABLE",
-            lastChecked: latestDrift.created_at,
-            thresholdBreached: latestDrift.threshold_breached,
-            alertSent: latestDrift.alert_sent,
-          }
+              modelId: latestDrift.model_id,
+              modelName: latestDrift.ai_models?.name || "Unknown",
+              currentDriftScore: `${((latestDrift.drift_score || 0) * 100).toFixed(2)}%`,
+              driftType: latestDrift.drift_type,
+              status:
+                (latestDrift.drift_score || 0) > 0.1
+                  ? "HIGH_DRIFT"
+                  : (latestDrift.drift_score || 0) > 0.05
+                    ? "MEDIUM_DRIFT"
+                    : "STABLE",
+              lastChecked: latestDrift.created_at,
+              thresholdBreached: latestDrift.threshold_breached,
+              alertSent: latestDrift.alert_sent,
+            }
           : {
-            modelId,
-            status: "NO_DATA",
-            message: "No drift detection data available",
-          };
+              modelId,
+              status: "NO_DATA",
+              message: "No drift detection data available",
+            };
 
         return NextResponse.json({
           success: true,
@@ -201,16 +200,14 @@ export async function GET(request: NextRequest) {
             detections: recentActivity?.length || 0,
             alerts: recentActivity?.filter((a) => a.alert_sent).length || 0,
             averageDrift: recentActivity?.length
-              ? `${
-                (
+              ? `${(
                   (recentActivity.reduce(
                     (sum, a) => sum + (a.drift_score || 0),
                     0,
-                  )
-                    / recentActivity.length)
-                  * 100
-                ).toFixed(2)
-              }%`
+                  ) /
+                    recentActivity.length) *
+                  100
+                ).toFixed(2)}%`
               : "0%",
           },
           monitoring: {
@@ -233,7 +230,8 @@ export async function GET(request: NextRequest) {
       default: {
         return NextResponse.json(
           {
-            error: "Invalid action. Use: run-detection, history, model-status, or system-health",
+            error:
+              "Invalid action. Use: run-detection, history, model-status, or system-health",
           },
           { status: 400 },
         );

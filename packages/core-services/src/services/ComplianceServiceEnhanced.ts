@@ -422,7 +422,8 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
       rules: [
         {
           name: "Consentimento Explícito",
-          description: "Verificar consentimento antes de processar dados pessoais",
+          description:
+            "Verificar consentimento antes de processar dados pessoais",
           type: RuleType.PREVENTIVE,
           severity: SeverityLevel.HIGH,
         },
@@ -664,8 +665,8 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
         // Auto-assign based on severity
         if (
-          incident.severity === SeverityLevel.CRITICAL
-          || incident.severity === SeverityLevel.HIGH
+          incident.severity === SeverityLevel.CRITICAL ||
+          incident.severity === SeverityLevel.HIGH
         ) {
           await this.autoAssignIncident(incident);
         }
@@ -899,9 +900,9 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     tenantId: string,
     context: ServiceContext,
   ): Promise<{
-    lgpd: { compliant: boolean; issues: string[]; };
-    anvisa: { compliant: boolean; issues: string[]; };
-    cfm: { compliant: boolean; issues: string[]; };
+    lgpd: { compliant: boolean; issues: string[] };
+    anvisa: { compliant: boolean; issues: string[] };
+    cfm: { compliant: boolean; issues: string[] };
     overall: {
       score: number;
       status: "compliant" | "non-compliant" | "warning";
@@ -1002,15 +1003,17 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     >,
   ): Promise<DataImpactAssessment> {
     // Assess notification requirements based on Brazilian laws
-    const notificationRequired = affectedData.recordsAffected > 100
-      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED
-      || affectedData.estimatedImpact === ImpactLevel.MAJOR
-      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
+    const notificationRequired =
+      affectedData.recordsAffected > 100 ||
+      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED ||
+      affectedData.estimatedImpact === ImpactLevel.MAJOR ||
+      affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
 
-    const regulatoryReportingRequired = affectedData.recordsAffected > 500
-      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED
-      || affectedData.estimatedImpact === ImpactLevel.MAJOR
-      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
+    const regulatoryReportingRequired =
+      affectedData.recordsAffected > 500 ||
+      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED ||
+      affectedData.estimatedImpact === ImpactLevel.MAJOR ||
+      affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
 
     return {
       ...affectedData,
@@ -1049,7 +1052,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   private async checkLGPDCompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     // Mock LGPD compliance check
     return {
       compliant: true,
@@ -1060,7 +1063,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   private async checkANVISACompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     // Mock ANVISA compliance check
     return {
       compliant: true,
@@ -1071,7 +1074,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   private async checkCFMCompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     // Mock CFM compliance check
     return {
       compliant: true,

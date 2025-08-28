@@ -51,7 +51,7 @@ interface DbMetricRecord {
 interface MetricStats {
   count: number;
   values: number[];
-  grades: { good: number; "needs-improvement": number; poor: number; };
+  grades: { good: number; "needs-improvement": number; poor: number };
   min?: number;
   max?: number;
   average?: number;
@@ -61,7 +61,7 @@ interface MetricStats {
   p99?: number;
 }
 
-type MetricStatsResponse = Omit<MetricStats, 'values'>;
+type MetricStatsResponse = Omit<MetricStats, "values">;
 
 // Supported metric types
 const SUPPORTED_METRICS = [
@@ -115,15 +115,16 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
 
     // Parse request body
-    const metrics: PerformanceMetric | PerformanceMetric[] = await request.json();
+    const metrics: PerformanceMetric | PerformanceMetric[] =
+      await request.json();
     const metricsArray = Array.isArray(metrics) ? metrics : [metrics];
 
     // Validate metrics
     const validMetrics = metricsArray.filter(
       (metric): metric is PerformanceMetric =>
-        typeof metric.name === "string"
-        && typeof metric.value === "number"
-        && (SUPPORTED_METRICS as readonly string[]).includes(metric.name),
+        typeof metric.name === "string" &&
+        typeof metric.value === "number" &&
+        (SUPPORTED_METRICS as readonly string[]).includes(metric.name),
     );
 
     if (validMetrics.length === 0) {
@@ -145,10 +146,11 @@ export async function POST(request: NextRequest) {
       userId: userId || undefined,
       sessionId: generateSessionId(request),
       url: metric.url || request.headers.get("referer") || "unknown",
-      userAgent: metric.userAgent || request.headers.get("user-agent") || "unknown",
+      userAgent:
+        metric.userAgent || request.headers.get("user-agent") || "unknown",
       timestamp: metric.timestamp || Date.now(),
-      grade: metric.grade
-        || calculateGrade(metric.name as MetricType, metric.value),
+      grade:
+        metric.grade || calculateGrade(metric.name as MetricType, metric.value),
       ip_address: getClientIP(request),
       country: (request as RequestWithGeo).geo?.country || "unknown",
       city: (request as RequestWithGeo).geo?.city || "unknown",
@@ -283,10 +285,10 @@ function generateSessionId(request: NextRequest): string {
 
 function getClientIP(request: NextRequest): string {
   return (
-    request.headers.get("x-forwarded-for")?.split(",")[0]
-    || request.headers.get("x-real-ip")
-    || (request as { ip?: string; }).ip
-    || "unknown"
+    request.headers.get("x-forwarded-for")?.split(",")[0] ||
+    request.headers.get("x-real-ip") ||
+    (request as { ip?: string }).ip ||
+    "unknown"
   );
 }
 
@@ -294,7 +296,8 @@ function calculateGrade(
   metric: MetricType,
   value: number,
 ): "good" | "needs-improvement" | "poor" {
-  const thresholds = PERFORMANCE_ALERTS[metric as keyof typeof PERFORMANCE_ALERTS];
+  const thresholds =
+    PERFORMANCE_ALERTS[metric as keyof typeof PERFORMANCE_ALERTS];
 
   if (!thresholds) {
     return "poor";
@@ -320,7 +323,9 @@ function _parseTimeRange(timeRange: string): number {
   return ranges[timeRange] || 0;
 }
 
-function _calculateAggregatedStats(metrics: DbMetricRecord[]): Record<string, MetricStatsResponse> {
+function _calculateAggregatedStats(
+  metrics: DbMetricRecord[],
+): Record<string, MetricStatsResponse> {
   if (metrics.length === 0) {
     return {};
   }
@@ -351,7 +356,8 @@ function _calculateAggregatedStats(metrics: DbMetricRecord[]): Record<string, Me
       ...stats,
       min: values[0],
       max: values[count - 1],
-      average: values.reduce((sum: number, val: number) => sum + val, 0) / count,
+      average:
+        values.reduce((sum: number, val: number) => sum + val, 0) / count,
       median: values[Math.floor(count / 2)],
       p75: values[Math.floor(count * 0.75)],
       p95: values[Math.floor(count * 0.95)],
@@ -371,9 +377,8 @@ async function checkPerformanceAlerts(
   _supabase: Awaited<ReturnType<typeof createClient>>,
 ) {
   for (const metric of metrics) {
-    const threshold = PERFORMANCE_ALERTS[
-      metric.name as keyof typeof PERFORMANCE_ALERTS
-    ];
+    const threshold =
+      PERFORMANCE_ALERTS[metric.name as keyof typeof PERFORMANCE_ALERTS];
 
     if (threshold && metric.grade === "poor") {
       // Store alert (you could extend this to send notifications)

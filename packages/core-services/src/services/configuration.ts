@@ -55,7 +55,8 @@ interface ConfigurationUpdate {
 // ================================================
 
 class ConfigurationCache {
-  private readonly cache: Map<string, { value: unknown; expiry: number; }> = new Map();
+  private readonly cache: Map<string, { value: unknown; expiry: number }> =
+    new Map();
   private readonly defaultTtl = 5 * 60 * 1000; // 5 minutes
   private readonly secretTtl = 60 * 1000; // 1 minute for secrets
 
@@ -469,18 +470,18 @@ export class ConfigurationService {
 
     // Check tenant restriction
     if (
-      flag.tenantIds
-      && flag.tenantIds.length > 0
-      && !(context.tenantId && flag.tenantIds.includes(context.tenantId))
+      flag.tenantIds &&
+      flag.tenantIds.length > 0 &&
+      !(context.tenantId && flag.tenantIds.includes(context.tenantId))
     ) {
       return false;
     }
 
     // Check role restriction
     if (
-      flag.userRoles
-      && flag.userRoles.length > 0
-      && !context.userRoles?.some((role) => flag.userRoles?.includes(role))
+      flag.userRoles &&
+      flag.userRoles.length > 0 &&
+      !context.userRoles?.some((role) => flag.userRoles?.includes(role))
     ) {
       return false;
     }
@@ -537,9 +538,9 @@ export class ConfigurationService {
         (payload) => {
           // Invalidate relevant cache entries
           if (
-            payload.new
-            && typeof payload.new === "object"
-            && "key" in payload.new
+            payload.new &&
+            typeof payload.new === "object" &&
+            "key" in payload.new
           ) {
             const config = payload.new as ConfigurationValue;
             // Invalidate all cache entries for this key
@@ -561,16 +562,17 @@ export class ConfigurationService {
         (payload) => {
           // Invalidate relevant cache entries
           if (
-            payload.new
-            && typeof payload.new === "object"
-            && "key" in payload.new
+            payload.new &&
+            typeof payload.new === "object" &&
+            "key" in payload.new
           ) {
             const flag = payload.new as FeatureFlag;
             // Invalidate all cache entries for this feature flag
             this.cache
               .keys()
               .filter(
-                (key) => key.includes("feature:") && key.endsWith(`:${flag.key}`),
+                (key) =>
+                  key.includes("feature:") && key.endsWith(`:${flag.key}`),
               )
               .forEach((key) => this.cache.invalidate(key));
           }

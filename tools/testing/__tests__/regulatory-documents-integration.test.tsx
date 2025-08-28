@@ -4,7 +4,13 @@ import { vi } from "vitest";
 import "@testing-library/jest-dom";
 import { RegulatoryDocumentsList } from "@/components/regulatory-documents/regulatory-documents-list";
 import { useRegulatoryDocuments } from "@/hooks/use-regulatory-documents";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 
 // Mock the custom hook
 vi.mock("@/hooks/use-regulatory-documents");

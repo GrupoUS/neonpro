@@ -122,7 +122,8 @@ export class CriticalErrorBoundary extends Component<
             </div>
 
             <p className="text-muted-foreground">
-              Um erro crítico ocorreu nesta seção. Recarregue a página para tentar novamente.
+              Um erro crítico ocorreu nesta seção. Recarregue a página para
+              tentar novamente.
             </p>
 
             <button

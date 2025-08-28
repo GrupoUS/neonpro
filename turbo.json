@@ -30,16 +30,10 @@
   "remoteCache": {
     "signature": true
   },
-  "globalPassThroughEnv": [
-    "CI",
-    "NODE_ENV",
-    "VERCEL_ENV"
-  ],
+  "globalPassThroughEnv": ["CI", "NODE_ENV", "VERCEL_ENV"],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "styles/**/*.{css,scss}",
@@ -52,12 +46,7 @@
         "!*/**/*.test.*",
         "!*/**/*.spec.*"
       ],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        "dist/**",
-        "build/**"
-      ],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"],
       "env": [
         "NODE_ENV",
         "NEXT_PUBLIC_SUPABASE_URL",
@@ -67,19 +56,11 @@
       "outputLogs": "hash-only"
     },
     "@neonpro/types#build": {
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/database#build": {
-      "dependsOn": [
-        "@neonpro/types#build"
-      ],
+      "dependsOn": ["@neonpro/types#build"],
       "inputs": [
         "src/**/*.{ts,js}",
         "prisma/**/*.prisma",
@@ -88,52 +69,22 @@
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": [
-        "dist/**",
-        "prisma/generated/**"
-      ]
+      "outputs": ["dist/**", "prisma/generated/**"]
     },
     "@neonpro/cache#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/database#build"
-      ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/audit-trail#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/database#build"
-      ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/compliance#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/audit-trail#build"
-      ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["@neonpro/types#build", "@neonpro/audit-trail#build"],
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/constitutional-layer#build": {
       "dependsOn": [
@@ -141,28 +92,13 @@
         "@neonpro/compliance#build",
         "@neonpro/audit-trail#build"
       ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/auth#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/database#build"
-      ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/shared#build": {
       "dependsOn": [
@@ -170,14 +106,8 @@
         "@neonpro/database#build",
         "@neonpro/auth#build"
       ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/monitoring#build": {
       "dependsOn": [
@@ -185,14 +115,8 @@
         "@neonpro/database#build",
         "@neonpro/shared#build"
       ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/devops#build": {
       "dependsOn": [
@@ -200,29 +124,18 @@
         "@neonpro/database#build",
         "@neonpro/monitoring#build"
       ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/ui#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/shared#build"
-      ],
+      "dependsOn": ["@neonpro/types#build", "@neonpro/shared#build"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "styles/**/*.{css,scss}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": [
-        "dist/**"
-      ]
+      "outputs": ["dist/**"]
     },
     "@neonpro/domain#build": {
       "dependsOn": [
@@ -230,14 +143,8 @@
         "@neonpro/database#build",
         "@neonpro/shared#build"
       ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/ai#build": {
       "dependsOn": [
@@ -245,14 +152,8 @@
         "@neonpro/cache#build",
         "@neonpro/constitutional-layer#build"
       ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/core-services#build": {
       "dependsOn": [
@@ -260,40 +161,18 @@
         "@neonpro/database#build",
         "@neonpro/shared#build"
       ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/config#build": {
-      "dependsOn": [
-        "@neonpro/types#build"
-      ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["@neonpro/types#build"],
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/utils#build": {
-      "dependsOn": [
-        "@neonpro/types#build"
-      ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["@neonpro/types#build"],
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/security#build": {
       "dependsOn": [
@@ -301,14 +180,8 @@
         "@neonpro/database#build",
         "@neonpro/audit-trail#build"
       ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/integrations#build": {
       "dependsOn": [
@@ -316,14 +189,8 @@
         "@neonpro/database#build",
         "@neonpro/auth#build"
       ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/brazilian-healthcare-ui#build": {
       "dependsOn": [
@@ -337,9 +204,7 @@
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": [
-        "dist/**"
-      ]
+      "outputs": ["dist/**"]
     },
     "@neonpro/health-dashboard#build": {
       "dependsOn": [
@@ -354,9 +219,7 @@
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": [
-        "dist/**"
-      ]
+      "outputs": ["dist/**"]
     },
     "@neonpro/enterprise#build": {
       "dependsOn": [
@@ -366,55 +229,28 @@
         "@neonpro/security#build",
         "@neonpro/compliance#build"
       ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "@neonpro/docs#build": {
-      "dependsOn": [
-        "@neonpro/types#build"
-      ],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["@neonpro/types#build"],
+      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
     },
     "lint": {
-      "inputs": [
-        "**/*.{ts,tsx,js,jsx}",
-        "dprint.json"
-      ],
+      "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json"],
       "outputs": [],
       "outputLogs": "new-only"
     },
     "lint:fix": {
-      "inputs": [
-        "**/*.{ts,tsx,js,jsx}",
-        "dprint.json"
-      ],
+      "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json"],
       "outputs": [],
       "outputLogs": "new-only"
     },
     "type-check": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "**/*.{ts,tsx}",
-        "**/tsconfig.json"
-      ],
-      "outputs": [
-        "**/*.tsbuildinfo"
-      ],
+      "dependsOn": ["^build"],
+      "inputs": ["**/*.{ts,tsx}", "**/tsconfig.json"],
+      "outputs": ["**/*.tsbuildinfo"],
       "outputLogs": "errors-only"
     },
     "format": {
@@ -434,46 +270,20 @@
       "outputLogs": "new-only"
     },
     "test": {
-      "dependsOn": [
-        "build"
-      ],
-      "inputs": [
-        "**/*.test.*",
-        "**/*.spec.*",
-        "**/vitest.config.*"
-      ],
-      "outputs": [
-        "coverage/**",
-        "tools/testing/reports/**"
-      ],
+      "dependsOn": ["build"],
+      "inputs": ["**/*.test.*", "**/*.spec.*", "**/vitest.config.*"],
+      "outputs": ["coverage/**", "tools/testing/reports/**"],
       "outputLogs": "full"
     },
     "test:unit": {
-      "dependsOn": [
-        "build"
-      ],
-      "inputs": [
-        "**/*.test.*",
-        "**/*.spec.*",
-        "vitest.config.*"
-      ],
-      "outputs": [
-        "coverage/**"
-      ]
+      "dependsOn": ["build"],
+      "inputs": ["**/*.test.*", "**/*.spec.*", "vitest.config.*"],
+      "outputs": ["coverage/**"]
     },
     "test:e2e": {
-      "dependsOn": [
-        "build"
-      ],
-      "inputs": [
-        "**/*.e2e.*",
-        "**/e2e/**",
-        "playwright.config.*"
-      ],
-      "outputs": [
-        "playwright-report/**",
-        "test-results/**"
-      ]
+      "dependsOn": ["build"],
+      "inputs": ["**/*.e2e.*", "**/e2e/**", "playwright.config.*"],
+      "outputs": ["playwright-report/**", "test-results/**"]
     },
     "test:e2e:install": {
       "cache": false,
@@ -491,9 +301,7 @@
         "**/anvisa*.test.*",
         "**/lgpd*.spec.*"
       ],
-      "outputs": [
-        "coverage/healthcare/**"
-      ]
+      "outputs": ["coverage/healthcare/**"]
     },
     "compliance:validate": {
       "dependsOn": [
@@ -506,56 +314,27 @@
         "packages/audit-trail/src/**/*.{ts,js}",
         "packages/constitutional-layer/src/**/*.{ts,js}"
       ],
-      "outputs": [
-        "compliance-reports/**"
-      ]
+      "outputs": ["compliance-reports/**"]
     },
     "compliance:lgpd": {
-      "dependsOn": [
-        "@neonpro/compliance#build"
-      ],
-      "inputs": [
-        "packages/compliance/src/lgpd/**/*.{ts,js}"
-      ],
-      "outputs": [
-        "compliance-reports/lgpd/**"
-      ]
+      "dependsOn": ["@neonpro/compliance#build"],
+      "inputs": ["packages/compliance/src/lgpd/**/*.{ts,js}"],
+      "outputs": ["compliance-reports/lgpd/**"]
     },
     "compliance:anvisa": {
-      "dependsOn": [
-        "@neonpro/compliance#build"
-      ],
-      "inputs": [
-        "packages/compliance/src/anvisa/**/*.{ts,js}"
-      ],
-      "outputs": [
-        "compliance-reports/anvisa/**"
-      ]
+      "dependsOn": ["@neonpro/compliance#build"],
+      "inputs": ["packages/compliance/src/anvisa/**/*.{ts,js}"],
+      "outputs": ["compliance-reports/anvisa/**"]
     },
     "ci:check": {
-      "dependsOn": [
-        "format:check",
-        "lint",
-        "type-check",
-        "test:healthcare"
-      ],
-      "inputs": [
-        "**/*.{ts,tsx,js,jsx}",
-        "dprint.json"
-      ],
+      "dependsOn": ["format:check", "lint", "type-check", "test:healthcare"],
+      "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json"],
       "outputs": [],
       "outputLogs": "full"
     },
     "ci-check": {
-      "dependsOn": [
-        "lint",
-        "type-check",
-        "test:healthcare"
-      ],
-      "inputs": [
-        "**/*.{ts,tsx,js,jsx}",
-        "dprint.json"
-      ],
+      "dependsOn": ["lint", "type-check", "test:healthcare"],
+      "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json"],
       "outputs": [],
       "outputLogs": "full"
     },
@@ -574,9 +353,7 @@
       "outputs": []
     },
     "deploy:staging": {
-      "dependsOn": [
-        "deploy:blue-green"
-      ],
+      "dependsOn": ["deploy:blue-green"],
       "cache": false,
       "outputs": []
     },
@@ -590,10 +367,7 @@
       "outputs": []
     },
     "health:check": {
-      "dependsOn": [
-        "@neonpro/devops#build",
-        "@neonpro/monitoring#build"
-      ],
+      "dependsOn": ["@neonpro/devops#build", "@neonpro/monitoring#build"],
       "cache": false,
       "inputs": [
         "packages/devops/src/deployment/**/*.{ts,js}",
@@ -602,41 +376,25 @@
       "outputs": []
     },
     "monitoring:start": {
-      "dependsOn": [
-        "@neonpro/monitoring#build"
-      ],
+      "dependsOn": ["@neonpro/monitoring#build"],
       "cache": false,
       "persistent": true
     },
     "supabase:build": {
-      "dependsOn": [
-        "@neonpro/database#build"
-      ],
+      "dependsOn": ["@neonpro/database#build"],
       "inputs": [
         "supabase/**/*.sql",
         "packages/database/prisma/**/*.prisma",
         "infrastructure/database/**/*.sql"
       ],
-      "outputs": [
-        "supabase/generated/**"
-      ],
-      "env": [
-        "SUPABASE_URL",
-        "SUPABASE_SERVICE_ROLE_KEY",
-        "DATABASE_URL"
-      ]
+      "outputs": ["supabase/generated/**"],
+      "env": ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "DATABASE_URL"]
     },
     "supabase:generate": {
-      "dependsOn": [
-        "supabase:build"
-      ],
+      "dependsOn": ["supabase:build"],
       "cache": true,
-      "inputs": [
-        "packages/database/prisma/schema.prisma"
-      ],
-      "outputs": [
-        "packages/database/prisma/generated/**"
-      ]
+      "inputs": ["packages/database/prisma/schema.prisma"],
+      "outputs": ["packages/database/prisma/generated/**"]
     },
     "dev": {
       "cache": false,

@@ -5,15 +5,17 @@
 This documentation covers the NeonPro AI Healthcare Platform database schema, built on **Supabase PostgreSQL 17** with advanced healthcare compliance features. The database supports over 200 tables organized around core business domains: patient management, AI-powered features, compliance tracking, and financial operations.
 
 ### Key Features
+
 - **LGPD/ANVISA/CFM Compliance**: Built-in regulatory compliance for Brazilian healthcare
 - **Row Level Security (RLS)**: Constitutional security patterns for healthcare data
-- **AI Integration**: Native support for Vercel AI SDK and healthcare AI features  
+- **AI Integration**: Native support for Vercel AI SDK and healthcare AI features
 - **Audit Trail**: Immutable logging for all medical data operations
 - **Multi-tenant Architecture**: Secure clinic isolation and data segregation
 
 ### Database Architecture
+
 - **Engine**: PostgreSQL 17.4.1.057 on Supabase
-- **Region**: South America East (sa-east-1) 
+- **Region**: South America East (sa-east-1)
 - **Extensions**: pgvector for AI embeddings, various healthcare-specific extensions
 - **Performance**: Optimized for <200ms critical healthcare operations
 
@@ -40,8 +42,8 @@ const adminClient = createAdminClient(); // Bypasses RLS
 CREATE POLICY "professionals_access_own_patients" ON patients
   FOR ALL USING (
     EXISTS (
-      SELECT 1 FROM professional_patient_access 
-      WHERE patient_id = patients.id 
+      SELECT 1 FROM professional_patient_access
+      WHERE patient_id = patients.id
       AND professional_id = auth.uid()
     )
   );
@@ -69,19 +71,22 @@ docs/database-schema/
 The NeonPro database contains **200+ tables** organized into logical domains:
 
 #### Core Business Tables (Priority 1)
+
 - **patients** - Patient records and demographics
-- **appointments** - Appointment scheduling and management  
+- **appointments** - Appointment scheduling and management
 - **professionals** - Healthcare professionals and staff
 - **clinics** - Clinic information and settings
 - **services** - Medical services and procedures
 
-#### AI & Intelligence Tables (Priority 2)  
+#### AI & Intelligence Tables (Priority 2)
+
 - **ai_chat_sessions** - AI chat conversation sessions
 - **ai_chat_messages** - Individual AI chat messages
 - **ai_no_show_predictions** - No-show prediction analytics
 - **ai_performance_metrics** - AI system performance tracking
 
 #### Compliance & Audit Tables (Priority 3)
+
 - **compliance_tracking** - LGPD/ANVISA compliance monitoring
 - **audit_logs** - System audit trail
 - **medical_records** - Protected medical information
@@ -124,11 +129,11 @@ The NeonPro database contains **200+ tables** organized into logical domains:
 
 ## Schema
 
-| Column | Type | Constraints | Default | Description | LGPD Classification |
-| ------ | ---- | ----------- | ------- | ----------- | ------------------ |
-| id     | uuid | PRIMARY KEY | gen_random_uuid() | Primary identifier | Public |
-| patient_id | uuid | FK, NOT NULL | - | Patient reference | Personal Data |
-| created_at | timestamptz | NOT NULL | NOW() | Record creation | Metadata |
+| Column     | Type        | Constraints  | Default           | Description        | LGPD Classification |
+| ---------- | ----------- | ------------ | ----------------- | ------------------ | ------------------- |
+| id         | uuid        | PRIMARY KEY  | gen_random_uuid() | Primary identifier | Public              |
+| patient_id | uuid        | FK, NOT NULL | -                 | Patient reference  | Personal Data       |
+| created_at | timestamptz | NOT NULL     | NOW()             | Record creation    | Metadata            |
 
 ## Healthcare Compliance
 
@@ -152,12 +157,12 @@ The NeonPro database contains **200+ tables** organized into logical domains:
 CREATE POLICY "professionals_own_patients" ON table_name
   FOR ALL USING (
     professional_id = auth.uid() OR
-    EXISTS (SELECT 1 FROM professional_patient_access 
-            WHERE patient_id = table_name.patient_id 
+    EXISTS (SELECT 1 FROM professional_patient_access
+            WHERE patient_id = table_name.patient_id
             AND professional_id = auth.uid())
   );
 
--- Patients access own data only  
+-- Patients access own data only
 CREATE POLICY "patients_own_data" ON table_name
   FOR SELECT USING (patient_id = auth.uid());
 ```
@@ -167,7 +172,6 @@ CREATE POLICY "patients_own_data" ON table_name
 **Triggers**: ✅ Audit trail enabled for all CUD operations
 **Encryption**: ✅ AES-256 for sensitive fields
 **Anonymization**: ✅ LGPD compliance functions available
-
 ````
 
 ````
@@ -224,7 +228,7 @@ CREATE TRIGGER trigger_name
 1. **Compliance First**: Ensure all changes meet LGPD/ANVISA/CFM requirements before implementation
 2. **RLS by Design**: Every new table with healthcare data MUST have RLS policies from creation
 3. **Audit Everything**: All patient data operations require audit trail triggers
-4. **Test in Staging**: Healthcare changes must be tested in staging environment first  
+4. **Test in Staging**: Healthcare changes must be tested in staging environment first
 5. **Document Security**: Always document encryption, access patterns, and data classification
 6. **Migration Safety**: Use Supabase migrations for all schema changes with rollback plans
 7. **Professional Validation**: Healthcare professionals must validate data access patterns
@@ -266,8 +270,8 @@ CREATE TRIGGER trigger_name
 CREATE POLICY "professionals_clinic_patients" ON patients
   FOR ALL USING (
     EXISTS (
-      SELECT 1 FROM professionals p 
-      WHERE p.user_id = auth.uid() 
+      SELECT 1 FROM professionals p
+      WHERE p.user_id = auth.uid()
       AND p.clinic_id = patients.clinic_id
       AND p.active = true
     )
@@ -345,3 +349,4 @@ CREATE TRIGGER update_user_timestamp
 > **Healthcare Compliance Note**: This documentation is maintained according to Brazilian healthcare regulations (LGPD, ANVISA, CFM). All schema changes must preserve audit trails and comply with medical data protection requirements.
 
 > **Last Updated**: August 28, 2025 - NeonPro Database Schema v2.0.0
+```

@@ -13,13 +13,21 @@ import { MainNavigation } from "@/components/main-navigation";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
 import { Link, Outlet, useLocation } from "@tanstack/react-router";
-import { Bell, Building, CreditCard, Plug, Settings, Shield, User } from "lucide-react";
+import {
+  Bell,
+  Building,
+  CreditCard,
+  Plug,
+  Settings,
+  Shield,
+  User,
+} from "lucide-react";
 import type React from "react";
 
 interface SettingsTab {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string; }>;
+  icon: React.ComponentType<{ className?: string }>;
   permission?: () => boolean;
 }
 

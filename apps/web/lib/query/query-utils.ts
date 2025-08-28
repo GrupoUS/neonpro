@@ -9,7 +9,12 @@
 // Import our enhanced API client and schemas
 import { apiClient, ApiHelpers } from "@neonpro/shared/api-client";
 import type { ApiClient, ApiResponse } from "@neonpro/shared/api-client";
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import type {
   InfiniteData,
   QueryClient,
@@ -37,12 +42,11 @@ export interface PaginatedResponse<T> {
 }
 
 // Generic query options with healthcare-specific defaults
-export interface HealthcareQueryOptions<TData, TError = unknown> extends
-  Omit<
+export interface HealthcareQueryOptions<TData, TError = unknown>
+  extends Omit<
     UseQueryOptions<ApiResponse<TData>, TError, TData>,
     "queryKey" | "queryFn"
-  >
-{
+  > {
   // Healthcare-specific options
   enableAuditLogging?: boolean;
   sensitiveData?: boolean;
@@ -55,12 +59,10 @@ export interface HealthcareMutationOptions<
   TError,
   TVariables,
   TContext = unknown,
-> extends
-  Omit<
+> extends Omit<
     UseMutationOptions<ApiResponse<TData>, TError, TVariables, TContext>,
     "mutationFn"
-  >
-{
+  > {
   // Healthcare-specific options
   enableAuditLogging?: boolean;
   requiresConsent?: boolean;
@@ -95,20 +97,17 @@ export class HealthcareQueryUtils {
     sensitiveData = false,
     lgpdCompliant = true,
     ...options
-  }:
-    & {
-      queryKey: QueryKey;
-      queryFn: () => Promise<ApiResponse<TData>>;
-      validator?: (data: unknown) => TData;
-      enableAuditLogging?: boolean;
-      sensitiveData?: boolean;
-      lgpdCompliant?: boolean;
-    }
-    & Omit<
-      UseQueryOptions<ApiResponse<TData>, unknown, TData>,
-      "queryKey" | "queryFn"
-    >)
-  {
+  }: {
+    queryKey: QueryKey;
+    queryFn: () => Promise<ApiResponse<TData>>;
+    validator?: (data: unknown) => TData;
+    enableAuditLogging?: boolean;
+    sensitiveData?: boolean;
+    lgpdCompliant?: boolean;
+  } & Omit<
+    UseQueryOptions<ApiResponse<TData>, unknown, TData>,
+    "queryKey" | "queryFn"
+  >) {
     return useQuery({
       queryKey,
       queryFn: async () => {
@@ -154,7 +153,8 @@ export class HealthcareQueryUtils {
               ip_address: this.apiClient.utils.getClientIP(),
               user_agent: this.apiClient.utils.getUserAgent(),
               success: false,
-              error_message: error instanceof Error ? error.message : "Unknown error",
+              error_message:
+                error instanceof Error ? error.message : "Unknown error",
               request_duration: Date.now() - startTime,
             });
           }
@@ -244,7 +244,8 @@ export class HealthcareQueryUtils {
               ip_address: this.apiClient.utils.getClientIP(),
               user_agent: this.apiClient.utils.getUserAgent(),
               success: false,
-              error_message: error instanceof Error ? error.message : "Unknown error",
+              error_message:
+                error instanceof Error ? error.message : "Unknown error",
               request_duration: Date.now() - startTime,
             });
           }
@@ -299,25 +300,22 @@ export class HealthcareQueryUtils {
     validator,
     enableAuditLogging = true,
     ...options
-  }:
-    & {
-      queryKey: QueryKey;
-      queryFn: ({
-        pageParam,
-      }: {
-        pageParam: number;
-      }) => Promise<ApiResponse<PaginatedResponse<TData>>>;
-      validator?: (data: unknown) => TData[];
-    }
-    & Omit<
-      UseInfiniteQueryOptions<
-        ApiResponse<PaginatedResponse<TData>>,
-        unknown,
-        InfiniteData<TData[]>
-      >,
-      "queryKey" | "queryFn" | "getNextPageParam"
-    >)
-  {
+  }: {
+    queryKey: QueryKey;
+    queryFn: ({
+      pageParam,
+    }: {
+      pageParam: number;
+    }) => Promise<ApiResponse<PaginatedResponse<TData>>>;
+    validator?: (data: unknown) => TData[];
+  } & Omit<
+    UseInfiniteQueryOptions<
+      ApiResponse<PaginatedResponse<TData>>,
+      unknown,
+      InfiniteData<TData[]>
+    >,
+    "queryKey" | "queryFn" | "getNextPageParam"
+  >) {
     return useInfiniteQuery({
       queryKey,
       queryFn: async ({ pageParam = 1 }) => {
@@ -328,7 +326,9 @@ export class HealthcareQueryUtils {
 
           // Validate response if validator provided
           if (validator && response.data?.items) {
-            response.data.items = response.data.items.map((item) => validator(item));
+            response.data.items = response.data.items.map((item) =>
+              validator(item),
+            );
           }
 
           // Audit logging
@@ -362,7 +362,8 @@ export class HealthcareQueryUtils {
               ip_address: this.apiClient.utils.getClientIP(),
               user_agent: this.apiClient.utils.getUserAgent(),
               success: false,
-              error_message: error instanceof Error ? error.message : "Unknown error",
+              error_message:
+                error instanceof Error ? error.message : "Unknown error",
               request_duration: Date.now() - startTime,
             });
           }
@@ -411,7 +412,7 @@ export class HealthcareQueryUtils {
       onError: (
         error: unknown,
         variables: unknown,
-        context: { previousData?: T; },
+        context: { previousData?: T },
       ) => {
         // Rollback on error
         if (context?.previousData) {

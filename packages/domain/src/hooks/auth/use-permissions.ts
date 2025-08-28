@@ -102,9 +102,10 @@ export function usePermissions(
       setPermissions(mockPermissions);
       setRoles(mockRoles);
     } catch (error) {
-      const errorMessage = error instanceof Error
-        ? error.message
-        : "Failed to refresh permissions";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to refresh permissions";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -166,7 +167,8 @@ export function usePermissions(
           hasPermission: true,
         };
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Permission check failed";
+        const errorMessage =
+          error instanceof Error ? error.message : "Permission check failed";
         setError(errorMessage);
         return {
           hasPermission: false,
@@ -247,7 +249,8 @@ export function usePermissions(
         toast.success();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Failed to grant permission";
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to grant permission";
         setError(errorMessage);
         toast.error();
         return false;
@@ -270,9 +273,10 @@ export function usePermissions(
         toast.success();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : "Failed to revoke permission";
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to revoke permission";
         setError(errorMessage);
         toast.error();
         return false;
@@ -291,7 +295,8 @@ export function usePermissions(
         clearCache();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Failed to assign role";
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to assign role";
         setError(errorMessage);
         return false;
       }
@@ -314,7 +319,8 @@ export function usePermissions(
 
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Failed to remove role";
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to remove role";
         setError(errorMessage);
         return false;
       }

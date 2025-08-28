@@ -213,7 +213,8 @@ export class BlueGreenDeployer {
     const results = await Promise.allSettled(checks);
     const failures = results
       .filter(
-        (result): result is PromiseRejectedResult => result.status === "rejected",
+        (result): result is PromiseRejectedResult =>
+          result.status === "rejected",
       )
       .map((result) => result.reason);
 
@@ -339,7 +340,8 @@ export class BlueGreenDeployer {
     const results = await Promise.allSettled(validations);
     const failures = results
       .filter(
-        (result): result is PromiseRejectedResult => result.status === "rejected",
+        (result): result is PromiseRejectedResult =>
+          result.status === "rejected",
       )
       .map((result) => result.reason);
 

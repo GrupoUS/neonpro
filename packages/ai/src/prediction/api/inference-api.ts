@@ -17,7 +17,7 @@ import type {
 export class AestheticInferenceAPI {
   private readonly cache = new Map<
     string,
-    { data: unknown; timestamp: number; ttl: number; }
+    { data: unknown; timestamp: number; ttl: number }
   >();
   private readonly isInitialized = false;
   private requestCount = 0;
@@ -71,10 +71,11 @@ export class AestheticInferenceAPI {
       }
 
       // Make prediction
-      const prediction = await aestheticPredictionEngine.predictTreatmentOutcome(
-        patient,
-        treatment,
-      );
+      const prediction =
+        await aestheticPredictionEngine.predictTreatmentOutcome(
+          patient,
+          treatment,
+        );
 
       // Cache result for 1 hour
       this.setCache(cacheKey, prediction, 3_600_000);
@@ -133,10 +134,11 @@ export class AestheticInferenceAPI {
         );
       }
 
-      const prediction = await aestheticPredictionEngine.getComprehensivePrediction(
-        patient,
-        treatment,
-      );
+      const prediction =
+        await aestheticPredictionEngine.getComprehensivePrediction(
+          patient,
+          treatment,
+        );
 
       this.setCache(cacheKey, prediction, 1_800_000); // Cache for 30 minutes
       this.trackPerformance(startTime);
@@ -177,9 +179,10 @@ export class AestheticInferenceAPI {
       };
 
       return {
-        status: this.isInitialized && engineHealth.status === "healthy"
-          ? "healthy"
-          : engineHealth.status,
+        status:
+          this.isInitialized && engineHealth.status === "healthy"
+            ? "healthy"
+            : engineHealth.status,
         details: apiDetails,
       };
     } catch (error) {

@@ -334,7 +334,7 @@ export class OpenAPIGenerator {
 
     // Check for required healthcare tags
     const healthcareTags = (spec as any).tags?.some((tag: any) =>
-      (tag as any).name.toLowerCase().includes("healthcare")
+      (tag as any).name.toLowerCase().includes("healthcare"),
     );
     if (!healthcareTags) {
       warnings.push("No healthcare-specific tags found");
@@ -380,7 +380,8 @@ export class OpenAPIGenerator {
 export const defaultConfig: OpenAPIConfig = {
   title: "NeonPro Healthcare API",
   version: "1.0.0",
-  description: "Enterprise-grade healthcare platform API - HIPAA, LGPD, and ANVISA compliant",
+  description:
+    "Enterprise-grade healthcare platform API - HIPAA, LGPD, and ANVISA compliant",
   servers: [
     {
       url: "https://api.neonpro.com.br",

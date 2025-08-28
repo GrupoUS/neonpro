@@ -954,7 +954,8 @@ export class HealthcareAI {
       messages: [
         {
           role: "system",
-          content: "You are a healthcare AI assistant. Never store or log patient data.",
+          content:
+            "You are a healthcare AI assistant. Never store or log patient data.",
         },
         { role: "user", content: sanitized },
       ],
@@ -1022,14 +1023,17 @@ try {
 // Custom span instrumentation for healthcare operations
 function HealthcareComponent() {
   const handlePatientAccess = () => {
-    Sentry.startSpan({
-      op: "healthcare.patient.access",
-      name: "Patient Data Access",
-    }, (span) => {
-      span.setAttribute("compliance", "LGPD");
-      span.setAttribute("access_type", "emergency");
-      // healthcare operation
-    });
+    Sentry.startSpan(
+      {
+        op: "healthcare.patient.access",
+        name: "Patient Data Access",
+      },
+      (span) => {
+        span.setAttribute("compliance", "LGPD");
+        span.setAttribute("access_type", "emergency");
+        // healthcare operation
+      },
+    );
   };
 }
 ```
@@ -1041,7 +1045,9 @@ const { logger } = Sentry;
 
 logger.info("Patient accessed", { patientId: 123, professionalId: 456 });
 logger.warn("LGPD consent expiring", { patientId: 123, expiresIn: "7days" });
-logger.error("ANVISA compliance violation", { violation: "missing_audit_trail" });
+logger.error("ANVISA compliance violation", {
+  violation: "missing_audit_trail",
+});
 ```
 
 ---
@@ -1372,7 +1378,7 @@ export const patientSchema = z.object({
   phone: z.string().regex(/^\+?[1-9]\d{1,14}$/),
   birth_date: z.date(),
   cpf: z.string().regex(/^\d{11}$/),
-  lgpd_consent: z.boolean().refine(val => val === true),
+  lgpd_consent: z.boolean().refine((val) => val === true),
 });
 
 export const appointmentSchema = z.object({
@@ -1401,7 +1407,7 @@ export function useChatAI(patientId?: string) {
     });
 
     const aiResponse = await response.json();
-    setMessages(prev => [...prev, aiResponse]);
+    setMessages((prev) => [...prev, aiResponse]);
   };
 
   return { messages, sendMessage };

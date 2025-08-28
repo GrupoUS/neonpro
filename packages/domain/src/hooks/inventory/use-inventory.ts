@@ -93,7 +93,9 @@ export function useInventory(
     async (id: string, updates: Partial<InventoryItem>) => {
       setState((prev) => ({
         ...prev,
-        items: prev.items.map((item) => item.id === id ? { ...item, ...updates } : item),
+        items: prev.items.map((item) =>
+          item.id === id ? { ...item, ...updates } : item,
+        ),
       }));
     },
     [],

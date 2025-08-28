@@ -1,15 +1,15 @@
 /**
- * Payment Status Table Component  
+ * Payment Status Table Component
  * Based on TweakCN NEONPRO theme with status badges (success/processing/failed/pending)
  * Optimized for Brazilian healthcare payment tracking
  */
 
-import React, { useState, useMemo } from 'react';
-import { cn } from '@neonpro/utils';
-import { 
-  CheckCircle, 
-  Clock, 
-  XCircle, 
+import React, { useState, useMemo } from "react";
+import { cn } from "@neonpro/utils";
+import {
+  CheckCircle,
+  Clock,
+  XCircle,
   AlertCircle,
   Search,
   Filter,
@@ -17,31 +17,31 @@ import {
   Eye,
   CreditCard,
   Calendar,
-  User
-} from 'lucide-react';
+  User,
+} from "lucide-react";
 
 // Brazilian payment methods
-export type BrazilianPaymentMethod = 
-  | 'pix'
-  | 'cartao-credito'
-  | 'cartao-debito' 
-  | 'boleto'
-  | 'dinheiro'
-  | 'convenio'
-  | 'transferencia'
-  | 'parcelamento';
+export type BrazilianPaymentMethod =
+  | "pix"
+  | "cartao-credito"
+  | "cartao-debito"
+  | "boleto"
+  | "dinheiro"
+  | "convenio"
+  | "transferencia"
+  | "parcelamento";
 
 export interface PaymentRecord {
   id: string;
   patientName: string;
   patientEmail: string;
   amount: number;
-  currency: 'BRL' | 'USD';
+  currency: "BRL" | "USD";
   method: BrazilianPaymentMethod;
-  status: 'success' | 'processing' | 'failed' | 'pending';
+  status: "success" | "processing" | "failed" | "pending";
   createdAt: Date;
   updatedAt?: Date;
-  
+
   // Brazilian healthcare specific
   treatmentType?: string;
   professionalName?: string;
@@ -50,7 +50,7 @@ export interface PaymentRecord {
     current: number;
     total: number;
   };
-  
+
   // Compliance tracking
   receiptUrl?: string;
   taxDocumentUrl?: string;
@@ -61,28 +61,28 @@ export interface PaymentStatusTableProps {
   // Data
   payments: PaymentRecord[];
   loading?: boolean;
-  
+
   // Pagination
   currentPage?: number;
   totalPages?: number;
   itemsPerPage?: number;
   onPageChange?: (page: number) => void;
-  
+
   // Filtering & Search
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
-  statusFilter?: PaymentRecord['status'] | 'all';
-  onStatusFilterChange?: (status: PaymentRecord['status'] | 'all') => void;
-  methodFilter?: BrazilianPaymentMethod | 'all';
-  onMethodFilterChange?: (method: BrazilianPaymentMethod | 'all') => void;
-  
+  statusFilter?: PaymentRecord["status"] | "all";
+  onStatusFilterChange?: (status: PaymentRecord["status"] | "all") => void;
+  methodFilter?: BrazilianPaymentMethod | "all";
+  onMethodFilterChange?: (method: BrazilianPaymentMethod | "all") => void;
+
   // Actions
   onPaymentView?: (payment: PaymentRecord) => void;
   onPaymentRefund?: (payment: PaymentRecord) => void;
   onExportData?: () => void;
-  
+
   // Customization
-  variant?: 'default' | 'compact' | 'detailed';
+  variant?: "default" | "compact" | "detailed";
   showFilters?: boolean;
   showExport?: boolean;
   className?: string;
@@ -91,64 +91,68 @@ export interface PaymentStatusTableProps {
 // Status configuration (NEONPRO theme colors)
 const STATUS_CONFIG = {
   success: {
-    label: 'Pago',
+    label: "Pago",
     icon: CheckCircle,
-    bg: 'bg-green-50',
-    text: 'text-green-700',
-    border: 'border-green-200',
-    dot: 'bg-green-500',
+    bg: "bg-green-50",
+    text: "text-green-700",
+    border: "border-green-200",
+    dot: "bg-green-500",
   },
   processing: {
-    label: 'Processando',
+    label: "Processando",
     icon: Clock,
-    bg: 'bg-yellow-50',
-    text: 'text-yellow-700', 
-    border: 'border-yellow-200',
-    dot: 'bg-yellow-500',
+    bg: "bg-yellow-50",
+    text: "text-yellow-700",
+    border: "border-yellow-200",
+    dot: "bg-yellow-500",
   },
   failed: {
-    label: 'Falhou',
+    label: "Falhou",
     icon: XCircle,
-    bg: 'bg-red-50',
-    text: 'text-red-700',
-    border: 'border-red-200',
-    dot: 'bg-red-500',
+    bg: "bg-red-50",
+    text: "text-red-700",
+    border: "border-red-200",
+    dot: "bg-red-500",
   },
   pending: {
-    label: 'Pendente',
+    label: "Pendente",
     icon: AlertCircle,
-    bg: 'bg-gray-50',
-    text: 'text-gray-700',
-    border: 'border-gray-200',
-    dot: 'bg-gray-500',
+    bg: "bg-gray-50",
+    text: "text-gray-700",
+    border: "border-gray-200",
+    dot: "bg-gray-500",
   },
 } as const;
 
 // Payment method labels (Portuguese)
 const PAYMENT_METHOD_LABELS = {
-  'pix': 'PIX',
-  'cartao-credito': 'Cartão Crédito',
-  'cartao-debito': 'Cartão Débito',
-  'boleto': 'Boleto',
-  'dinheiro': 'Dinheiro',
-  'convenio': 'Convênio',
-  'transferencia': 'Transferência',
-  'parcelamento': 'Parcelamento',
+  pix: "PIX",
+  "cartao-credito": "Cartão Crédito",
+  "cartao-debito": "Cartão Débito",
+  boleto: "Boleto",
+  dinheiro: "Dinheiro",
+  convenio: "Convênio",
+  transferencia: "Transferência",
+  parcelamento: "Parcelamento",
 } as const;
 
 // Status badge component
-const StatusBadge: React.FC<{ status: PaymentRecord['status'] }> = ({ status }) => {
+const StatusBadge: React.FC<{ status: PaymentRecord["status"] }> = ({
+  status,
+}) => {
   const config = STATUS_CONFIG[status];
   const Icon = config.icon;
-  
+
   return (
-    <div className={cn(
-      'inline-flex items-center gap-2 px-2.5 py-1.5 rounded-full text-sm font-medium border',
-      config.bg,
-      config.text,
-      config.border
-    )}>
-      <div className={cn('w-1.5 h-1.5 rounded-full', config.dot)} />
+    <div
+      className={cn(
+        "inline-flex items-center gap-2 px-2.5 py-1.5 rounded-full text-sm font-medium border",
+        config.bg,
+        config.text,
+        config.border,
+      )}
+    >
+      <div className={cn("w-1.5 h-1.5 rounded-full", config.dot)} />
       <Icon className="w-4 h-4" />
       <span>{config.label}</span>
     </div>
@@ -156,7 +160,9 @@ const StatusBadge: React.FC<{ status: PaymentRecord['status'] }> = ({ status }) 
 };
 
 // Payment method badge
-const PaymentMethodBadge: React.FC<{ method: BrazilianPaymentMethod }> = ({ method }) => {
+const PaymentMethodBadge: React.FC<{ method: BrazilianPaymentMethod }> = ({
+  method,
+}) => {
   return (
     <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-sm font-medium">
       <CreditCard className="w-3.5 h-3.5" />
@@ -167,50 +173,53 @@ const PaymentMethodBadge: React.FC<{ method: BrazilianPaymentMethod }> = ({ meth
 
 // Format Brazilian currency
 const formatBRL = (amount: number) => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
   }).format(amount);
 };
 
 // Format date in Brazilian format
 const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit', 
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(date);
 };
 
 // Email masking for privacy (NEONPRO style)
 const maskEmail = (email: string) => {
-  const [local, domain] = email.split('@');
-  if (local.length <= 2) {return email;}
-  
-  const masked = local.charAt(0) + '*'.repeat(local.length - 2) + local.charAt(local.length - 1);
+  const [local, domain] = email.split("@");
+  if (local.length <= 2) {
+    return email;
+  }
+
+  const masked =
+    local.charAt(0) +
+    "*".repeat(local.length - 2) +
+    local.charAt(local.length - 1);
   return `${masked}@${domain}`;
 };
 
 // Table row component
 const PaymentRow: React.FC<{
   payment: PaymentRecord;
-  variant: 'default' | 'compact' | 'detailed';
+  variant: "default" | "compact" | "detailed";
   onView?: (payment: PaymentRecord) => void;
   onRefund?: (payment: PaymentRecord) => void;
 }> = ({ payment, variant, onView, onRefund }) => {
-  const isCompact = variant === 'compact';
-  const isDetailed = variant === 'detailed';
-  
+  const isCompact = variant === "compact";
+  const isDetailed = variant === "detailed";
+
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
       {/* Patient Info */}
       <td className="px-4 py-3">
         <div className="space-y-1">
-          <div className="font-medium text-gray-900">
-            {payment.patientName}
-          </div>
+          <div className="font-medium text-gray-900">{payment.patientName}</div>
           {!isCompact && (
             <div className="text-sm text-gray-500">
               {maskEmail(payment.patientEmail)}
@@ -218,7 +227,7 @@ const PaymentRow: React.FC<{
           )}
         </div>
       </td>
-      
+
       {/* Amount */}
       <td className="px-4 py-3">
         <div className="space-y-1">
@@ -227,27 +236,28 @@ const PaymentRow: React.FC<{
           </div>
           {isDetailed && payment.installmentInfo && (
             <div className="text-xs text-gray-500">
-              {payment.installmentInfo.current}/{payment.installmentInfo.total} parcelas
+              {payment.installmentInfo.current}/{payment.installmentInfo.total}{" "}
+              parcelas
             </div>
           )}
         </div>
       </td>
-      
+
       {/* Payment Method */}
       <td className="px-4 py-3">
         <PaymentMethodBadge method={payment.method} />
       </td>
-      
+
       {/* Status */}
       <td className="px-4 py-3">
         <StatusBadge status={payment.status} />
       </td>
-      
+
       {/* Date */}
       <td className="px-4 py-3 text-sm text-gray-600">
         {formatDate(payment.createdAt)}
       </td>
-      
+
       {/* Treatment (if detailed) */}
       {isDetailed && (
         <td className="px-4 py-3">
@@ -265,7 +275,7 @@ const PaymentRow: React.FC<{
           </div>
         </td>
       )}
-      
+
       {/* Actions */}
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
@@ -276,8 +286,8 @@ const PaymentRow: React.FC<{
           >
             <Eye className="w-4 h-4" />
           </button>
-          
-          {payment.status === 'success' && onRefund && (
+
+          {payment.status === "success" && onRefund && (
             <button
               onClick={() => onRefund(payment)}
               className="p-1.5 hover:bg-red-100 rounded-lg transition-colors text-red-600"
@@ -299,35 +309,42 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
   totalPages = 1,
   itemsPerPage = 10,
   onPageChange,
-  searchQuery = '',
+  searchQuery = "",
   onSearchChange,
-  statusFilter = 'all',
+  statusFilter = "all",
   onStatusFilterChange,
-  methodFilter = 'all',
+  methodFilter = "all",
   onMethodFilterChange,
   onPaymentView,
   onPaymentRefund,
   onExportData,
-  variant = 'default',
+  variant = "default",
   showFilters = true,
   showExport = true,
   className,
 }) => {
   // Filter and search payments
   const filteredPayments = useMemo(() => {
-    return payments.filter(payment => {
-      const matchesSearch = !searchQuery || 
+    return payments.filter((payment) => {
+      const matchesSearch =
+        !searchQuery ||
         payment.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        payment.patientEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        payment.invoiceNumber?.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesStatus = statusFilter === 'all' || payment.status === statusFilter;
-      const matchesMethod = methodFilter === 'all' || payment.method === methodFilter;
-      
+        payment.patientEmail
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        payment.invoiceNumber
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "all" || payment.status === statusFilter;
+      const matchesMethod =
+        methodFilter === "all" || payment.method === methodFilter;
+
       return matchesSearch && matchesStatus && matchesMethod;
     });
   }, [payments, searchQuery, statusFilter, methodFilter]);
-  
+
   // Status summary
   const statusSummary = useMemo(() => {
     const summary = {
@@ -335,25 +352,25 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
       processing: 0,
       failed: 0,
       pending: 0,
-      total: filteredPayments.length
+      total: filteredPayments.length,
     };
-    
-    filteredPayments.forEach(payment => {
+
+    filteredPayments.forEach((payment) => {
       summary[payment.status]++;
     });
-    
+
     return summary;
   }, [filteredPayments]);
-  
+
   return (
-    <div className={cn('bg-white rounded-xl border border-gray-200', className)}>
+    <div
+      className={cn("bg-white rounded-xl border border-gray-200", className)}
+    >
       {/* Header */}
       <div className="p-6 border-b border-gray-100">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Pagamentos
-          </h3>
-          
+          <h3 className="text-lg font-semibold text-gray-900">Pagamentos</h3>
+
           {showExport && (
             <button
               onClick={onExportData}
@@ -364,20 +381,19 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
             </button>
           )}
         </div>
-        
+
         {/* Status Summary */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
           {Object.entries(statusSummary).map(([status, count]) => (
-            <div
-              key={status}
-              className="flex items-center gap-2 text-sm"
-            >
-              {status !== 'total' ? (
+            <div key={status} className="flex items-center gap-2 text-sm">
+              {status !== "total" ? (
                 <>
-                  <div className={cn(
-                    'w-2 h-2 rounded-full',
-                    STATUS_CONFIG[status as keyof typeof STATUS_CONFIG].dot
-                  )} />
+                  <div
+                    className={cn(
+                      "w-2 h-2 rounded-full",
+                      STATUS_CONFIG[status as keyof typeof STATUS_CONFIG].dot,
+                    )}
+                  />
                   <span className="text-gray-600">
                     {STATUS_CONFIG[status as keyof typeof STATUS_CONFIG].label}:
                   </span>
@@ -389,7 +405,7 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
             </div>
           ))}
         </div>
-        
+
         {/* Filters */}
         {showFilters && (
           <div className="flex flex-wrap items-center gap-4">
@@ -404,7 +420,7 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
                 className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            
+
             {/* Status Filter */}
             <select
               value={statusFilter}
@@ -418,7 +434,7 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
                 </option>
               ))}
             </select>
-            
+
             {/* Method Filter */}
             <select
               value={methodFilter}
@@ -435,7 +451,7 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
           </div>
         )}
       </div>
-      
+
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -456,7 +472,7 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
                 Data
               </th>
-              {variant === 'detailed' && (
+              {variant === "detailed" && (
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
                   Tratamento
                 </th>
@@ -469,18 +485,24 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={variant === 'detailed' ? 7 : 6} className="px-4 py-8 text-center text-gray-500">
+                <td
+                  colSpan={variant === "detailed" ? 7 : 6}
+                  className="px-4 py-8 text-center text-gray-500"
+                >
                   Carregando pagamentos...
                 </td>
               </tr>
             ) : filteredPayments.length === 0 ? (
               <tr>
-                <td colSpan={variant === 'detailed' ? 7 : 6} className="px-4 py-8 text-center text-gray-500">
+                <td
+                  colSpan={variant === "detailed" ? 7 : 6}
+                  className="px-4 py-8 text-center text-gray-500"
+                >
                   Nenhum pagamento encontrado
                 </td>
               </tr>
             ) : (
-              filteredPayments.map(payment => (
+              filteredPayments.map((payment) => (
                 <PaymentRow
                   key={payment.id}
                   payment={payment}
@@ -493,14 +515,15 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
           </tbody>
         </table>
       </div>
-      
+
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
           <div className="text-sm text-gray-600">
-            Página {currentPage} de {totalPages} • {filteredPayments.length} resultados
+            Página {currentPage} de {totalPages} • {filteredPayments.length}{" "}
+            resultados
           </div>
-          
+
           <div className="flex items-center gap-2">
             <button
               onClick={() => onPageChange?.(currentPage - 1)}

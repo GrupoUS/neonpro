@@ -2,7 +2,7 @@ import * as React from "react";
 import { DefaultErrorFallback } from "./default-error-fallback";
 
 interface ErrorBoundaryProps {
-  fallback?: React.ComponentType<{ error: Error; resetError: () => void; }>;
+  fallback?: React.ComponentType<{ error: Error; resetError: () => void }>;
   children: React.ReactNode;
 }
 
@@ -11,7 +11,10 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: undefined };
@@ -38,7 +41,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         });
       }
 
-      return <DefaultErrorFallback error={this.state.error!} resetError={resetError} />;
+      return (
+        <DefaultErrorFallback
+          error={this.state.error!}
+          resetError={resetError}
+        />
+      );
     }
 
     return this.props.children;

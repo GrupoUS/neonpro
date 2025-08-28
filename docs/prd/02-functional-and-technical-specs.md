@@ -5,6 +5,7 @@
 ### 4.1 Essential Features (MVP)
 
 **Sistema Universal de Chat IA**
+
 - Assistente conversacional especializado em estética
 - Integração com WhatsApp Business API
 - Processamento de linguagem natural em português
@@ -14,6 +15,7 @@
 - Suporte 24/7 automatizado
 
 **Engine Anti-No-Show**
+
 - Análise comportamental preditiva de pacientes
 - Scoring de risco de falta em consultas (0.00 a 1.00)
 - Automação de lembretes personalizados
@@ -23,6 +25,7 @@
 - Redução de 78% em no-shows (meta)
 
 **Dashboard de Comando Unificado**
+
 - Visão consolidada de todas as operações
 - Métricas em tempo real
 - Alertas inteligentes
@@ -32,6 +35,7 @@
 - Interface responsiva para mobile
 
 **Sistema de Agendamento Inteligente**
+
 - Calendário drag-and-drop
 - Sincronização em tempo real
 - Otimização automática de horários
@@ -45,6 +49,7 @@
 ### 5.1 Technology Stack
 
 **Frontend**
+
 - Next.js 15 (App Router)
 - React 19 (Server Components)
 - TypeScript 5.0+
@@ -53,12 +58,14 @@
 - Framer Motion (Animations)
 
 **Backend & Database**
+
 - Supabase (PostgreSQL + Auth + Storage)
 - Redis (Caching & Sessions)
 - Prisma (ORM)
 - tRPC (Type-safe APIs)
 
 **Development & Deploy**
+
 - Turborepo (Monorepo)
 - Docker (Containerization)
 - Vercel (Deployment)
@@ -66,6 +73,7 @@
 - ESLint + Prettier (Code Quality)
 
 **AI & ML Layer**
+
 - OpenAI GPT-4 (Conversational AI)
 - Custom ML Models (Anti-No-Show)
 - Vector Database (Knowledge Base)
@@ -73,6 +81,7 @@
 - Hugging Face (NLP Models)
 
 **Communication & Integration**
+
 - WebSockets (Real-time)
 - Server-Sent Events (Live Updates)
 - WhatsApp Business API
@@ -127,48 +136,48 @@ graph TB
         MOBILE[Mobile App]
         API_CLIENT[API Clients]
     end
-    
+
     subgraph "API Gateway"
         GATEWAY[Next.js API Routes]
         AUTH[Authentication]
         RATE_LIMIT[Rate Limiting]
     end
-    
+
     subgraph "Core Services"
         USER_SVC[User Service]
         APPOINTMENT_SVC[Appointment Service]
         PATIENT_SVC[Patient Service]
         NOTIFICATION_SVC[Notification Service]
     end
-    
+
     subgraph "AI Services"
         ANTI_NOSHOW[Anti-No-Show Engine]
         AI_CHAT[Universal AI Chat]
         PREDICTION[Prediction Service]
     end
-    
+
     subgraph "Data Layer"
         POSTGRES[(PostgreSQL)]
         REDIS[(Redis Cache)]
         VECTOR_DB[(Vector Database)]
     end
-    
+
     WEB --> GATEWAY
     MOBILE --> GATEWAY
     API_CLIENT --> GATEWAY
-    
+
     GATEWAY --> USER_SVC
     GATEWAY --> APPOINTMENT_SVC
     GATEWAY --> PATIENT_SVC
-    
+
     USER_SVC --> POSTGRES
     APPOINTMENT_SVC --> POSTGRES
     PATIENT_SVC --> POSTGRES
-    
+
     ANTI_NOSHOW --> VECTOR_DB
     AI_CHAT --> VECTOR_DB
     PREDICTION --> POSTGRES
-    
+
     NOTIFICATION_SVC --> REDIS
 ```
 

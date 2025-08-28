@@ -2,7 +2,13 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Calendar, Clock, Filter, Plus, Search, User } from "lucide-react";
 import Link from "next/link";
@@ -149,10 +155,7 @@ export default function AppointmentsPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <Input
-                placeholder="Buscar agendamentos..."
-                className="pl-10"
-              />
+              <Input placeholder="Buscar agendamentos..." className="pl-10" />
             </div>
             <Input type="date" className="w-auto" />
             <Button variant="outline">
@@ -211,9 +214,7 @@ export default function AppointmentsPage() {
 
                   <div className="flex space-x-2">
                     <Button size="sm" variant="outline" asChild>
-                      <Link href={`/appointments/${appointment.id}`}>
-                        Ver
-                      </Link>
+                      <Link href={`/appointments/${appointment.id}`}>Ver</Link>
                     </Button>
                     <Button size="sm" variant="outline" asChild>
                       <Link href={`/appointments/${appointment.id}/edit`}>

@@ -31,8 +31,8 @@ export interface FinancialSummary {
 }
 
 export interface RevenueAnalytics {
-  daily_revenue: { date: string; amount: number; }[];
-  monthly_revenue: { month: string; amount: number; }[];
+  daily_revenue: { date: string; amount: number }[];
+  monthly_revenue: { month: string; amount: number }[];
   revenue_by_service: {
     service: string;
     amount: number;
@@ -48,7 +48,7 @@ export interface RevenueAnalytics {
 export class FinancialService {
   async createTransaction(
     transaction: Omit<FinancialTransaction, "id" | "created_at" | "updated_at">,
-  ): Promise<{ transaction?: FinancialTransaction; error?: string; }> {
+  ): Promise<{ transaction?: FinancialTransaction; error?: string }> {
     try {
       const { data, error } = await supabase
         .from("financial_transactions")
@@ -70,9 +70,10 @@ export class FinancialService {
       return { transaction: data };
     } catch (error) {
       return {
-        error: error instanceof Error
-          ? error.message
-          : "Failed to create transaction",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to create transaction",
       };
     }
   }
@@ -140,7 +141,8 @@ export class FinancialService {
       return { transactions: data, total: count || 0 };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Failed to get transactions",
+        error:
+          error instanceof Error ? error.message : "Failed to get transactions",
       };
     }
   }
@@ -149,7 +151,7 @@ export class FinancialService {
     id: string,
     tenantId: string,
     updates: Partial<FinancialTransaction>,
-  ): Promise<{ transaction?: FinancialTransaction; error?: string; }> {
+  ): Promise<{ transaction?: FinancialTransaction; error?: string }> {
     try {
       const { data, error } = await supabase
         .from("financial_transactions")
@@ -172,9 +174,10 @@ export class FinancialService {
       return { transaction: data };
     } catch (error) {
       return {
-        error: error instanceof Error
-          ? error.message
-          : "Failed to update transaction",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to update transaction",
       };
     }
   }
@@ -182,7 +185,7 @@ export class FinancialService {
   async deleteTransaction(
     id: string,
     tenantId: string,
-  ): Promise<{ success?: boolean; error?: string; }> {
+  ): Promise<{ success?: boolean; error?: string }> {
     try {
       const { error } = await supabase
         .from("financial_transactions")
@@ -200,9 +203,10 @@ export class FinancialService {
       return { success: true };
     } catch (error) {
       return {
-        error: error instanceof Error
-          ? error.message
-          : "Failed to delete transaction",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to delete transaction",
       };
     }
   }
@@ -211,7 +215,7 @@ export class FinancialService {
     tenantId: string,
     startDate: string,
     endDate: string,
-  ): Promise<{ summary?: FinancialSummary; error?: string; }> {
+  ): Promise<{ summary?: FinancialSummary; error?: string }> {
     try {
       // Get income transactions
       const { data: incomeData, error: incomeError } = await supabase
@@ -269,10 +273,14 @@ export class FinancialService {
         return { error: payablesError.message };
       }
 
-      const totalIncome = incomeData?.reduce((sum, t) => sum + t.amount, 0) || 0;
-      const totalExpenses = expenseData?.reduce((sum, t) => sum + t.amount, 0) || 0;
-      const pendingReceivables = receivablesData?.reduce((sum, t) => sum + t.amount, 0) || 0;
-      const pendingPayables = payablesData?.reduce((sum, t) => sum + t.amount, 0) || 0;
+      const totalIncome =
+        incomeData?.reduce((sum, t) => sum + t.amount, 0) || 0;
+      const totalExpenses =
+        expenseData?.reduce((sum, t) => sum + t.amount, 0) || 0;
+      const pendingReceivables =
+        receivablesData?.reduce((sum, t) => sum + t.amount, 0) || 0;
+      const pendingPayables =
+        payablesData?.reduce((sum, t) => sum + t.amount, 0) || 0;
 
       const summary: FinancialSummary = {
         total_income: totalIncome,
@@ -288,9 +296,10 @@ export class FinancialService {
       return { summary };
     } catch (error) {
       return {
-        error: error instanceof Error
-          ? error.message
-          : "Failed to get financial summary",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to get financial summary",
       };
     }
   }
@@ -299,7 +308,7 @@ export class FinancialService {
     tenantId: string,
     startDate: string,
     endDate: string,
-  ): Promise<{ analytics?: RevenueAnalytics; error?: string; }> {
+  ): Promise<{ analytics?: RevenueAnalytics; error?: string }> {
     try {
       // Get daily revenue
       const { data: dailyData, error: dailyError } = await supabase.rpc(
@@ -367,9 +376,10 @@ export class FinancialService {
       return { analytics };
     } catch (error) {
       return {
-        error: error instanceof Error
-          ? error.message
-          : "Failed to get revenue analytics",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to get revenue analytics",
       };
     }
   }
@@ -380,7 +390,7 @@ export class FinancialService {
     amount: number,
     paymentMethod: string,
     description?: string,
-  ): Promise<{ transaction?: FinancialTransaction; error?: string; }> {
+  ): Promise<{ transaction?: FinancialTransaction; error?: string }> {
     try {
       const transaction: Omit<
         FinancialTransaction,
@@ -402,9 +412,10 @@ export class FinancialService {
       return this.createTransaction(transaction);
     } catch (error) {
       return {
-        error: error instanceof Error
-          ? error.message
-          : "Failed to record appointment payment",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to record appointment payment",
       };
     }
   }

@@ -211,7 +211,8 @@ export const requireTenant = createMiddleware(async (c, next) => {
   }
 
   const { user: user } = authContext;
-  const requestedTenantId = c.req.header("x-tenant-id") || c.req.param("tenantId");
+  const requestedTenantId =
+    c.req.header("x-tenant-id") || c.req.param("tenantId");
 
   if (!user.tenantId) {
     throw new HTTPException(403, {
@@ -231,9 +232,11 @@ export const requireTenant = createMiddleware(async (c, next) => {
 /**
  * Utility para obter dados de autenticação do contexto
  */
-export function getAuthContext(c: { get: (key: string) => unknown }): AuthContext | null {
+export function getAuthContext(c: {
+  get: (key: string) => unknown;
+}): AuthContext | null {
   try {
-    return c.get("auth") as AuthContext || null;
+    return (c.get("auth") as AuthContext) || null;
   } catch {
     return null;
   }
@@ -242,7 +245,9 @@ export function getAuthContext(c: { get: (key: string) => unknown }): AuthContex
 /**
  * Utility para obter usuário atual
  */
-export function getCurrentUser(c: { get: (key: string) => unknown }): AuthUser | null {
+export function getCurrentUser(c: {
+  get: (key: string) => unknown;
+}): AuthUser | null {
   const authContext = getAuthContext(c);
   return authContext?.user || null;
 }

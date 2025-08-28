@@ -54,8 +54,12 @@ type MyMetadata = {
 };
 
 type MyDataParts = {
-  "data-weather": { city: string; weather?: string; status: "loading" | "success"; };
-  "data-notification": { message: string; level: "info" | "warning" | "error"; };
+  "data-weather": {
+    city: string;
+    weather?: string;
+    status: "loading" | "success";
+  };
+  "data-notification": { message: string; level: "info" | "warning" | "error" };
 };
 
 type MyUITools = InferUITools<typeof tools>;
@@ -221,7 +225,9 @@ import { hasToolCall, stepCountIs } from "ai";
 
 const result = await generateText({
   model: openai("gpt-4o"),
-  tools: {/* your tools */},
+  tools: {
+    /* your tools */
+  },
   // Stop after 5 steps OR when finalAnswer tool is called
   stopWhen: [stepCountIs(5), hasToolCall("finalAnswer")],
 });
@@ -236,7 +242,9 @@ const result = await generateText({
 const result = await streamText({
   model: openai("gpt-4o"),
   messages: convertToModelMessages(messages),
-  tools: {/* your tools */},
+  tools: {
+    /* your tools */
+  },
   prepareStep: async ({ stepNumber, messages }) => {
     if (stepNumber === 0) {
       return {
@@ -268,7 +276,9 @@ const codingAgent = new Agent({
   model: openai("gpt-4o"),
   system: "You are a coding agent specializing in Next.js and TypeScript.",
   stopWhen: stepCountIs(10),
-  tools: {/* your tools */},
+  tools: {
+    /* your tools */
+  },
 });
 
 // Use with generate or stream
@@ -371,7 +381,7 @@ import { dynamicTool } from "ai";
 const customDynamicTool = dynamicTool({
   description: "Execute a custom user-defined function",
   inputSchema: z.object({}),
-  execute: async input => {
+  execute: async (input) => {
     const { action, parameters } = input as any;
     return { result: `Executed ${action} with ${JSON.stringify(parameters)}` };
   },
@@ -436,7 +446,7 @@ const result = streamText({
 
 // ✅ DO: Server error handling
 return result.toUIMessageStreamResponse({
-  onError: error => {
+  onError: (error) => {
     if (error instanceof Error) {
       return error.message;
     }
@@ -592,7 +602,8 @@ const result = streamText({
 
 // ✅ DO: Custom transformation
 const upperCaseTransform =
-  <TOOLS extends ToolSet>() => (options: { tools: TOOLS; stopStream: () => void; }) =>
+  <TOOLS extends ToolSet>() =>
+  (options: { tools: TOOLS; stopStream: () => void }) =>
     new TransformStream<TextStreamPart<TOOLS>, TextStreamPart<TOOLS>>({
       transform(chunk, controller) {
         controller.enqueue(
@@ -632,7 +643,9 @@ const { messages, input, handleInputChange, handleSubmit } = useChat();
 // Tool definition
 const tool = {
   parameters: z.object({ location: z.string() }),
-  execute: async ({ location }) => {/* ... */},
+  execute: async ({ location }) => {
+    /* ... */
+  },
 };
 
 // ✅ DO: v5.0 patterns
@@ -643,7 +656,9 @@ const [input, setInput] = useState("");
 const tool = {
   inputSchema: z.object({ location: z.string() }),
   outputSchema: z.string(), // Optional but recommended
-  execute: async ({ location }) => {/* ... */},
+  execute: async ({ location }) => {
+    /* ... */
+  },
 };
 ```
 

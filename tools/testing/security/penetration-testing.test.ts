@@ -124,8 +124,11 @@ class PenetrationTester {
           /Microsoft.*ODBC.*SQL Server/i,
         ];
 
-        const hasErrors = sqlErrorPatterns.some((pattern) => pattern.test(responseText));
-        const unexpectedSuccess = response.status === 200 && responseText.includes("admin");
+        const hasErrors = sqlErrorPatterns.some((pattern) =>
+          pattern.test(responseText),
+        );
+        const unexpectedSuccess =
+          response.status === 200 && responseText.includes("admin");
 
         if (hasErrors || unexpectedSuccess) {
           results.push({
@@ -172,15 +175,16 @@ class PenetrationTester {
 
         // Check if payload is reflected without encoding
         if (
-          responseText.includes(payload)
-          && !responseText.includes("&lt;script&gt;")
+          responseText.includes(payload) &&
+          !responseText.includes("&lt;script&gt;")
         ) {
           results.push({
             vulnerability: "Cross-Site Scripting (XSS)",
             severity: "HIGH",
             exploitable: true,
             details: `XSS vulnerability detected with payload: ${payload}`,
-            remediation: "Implement output encoding and Content Security Policy",
+            remediation:
+              "Implement output encoding and Content Security Policy",
             cvssScore: 8.1,
           });
         }
@@ -284,7 +288,8 @@ describe("🎯 Comprehensive Penetration Testing", () => {
             severity: "CRITICAL",
             exploitable: true,
             details: `Weak credentials accepted: ${creds.username}/${creds.password}`,
-            remediation: "Implement strong password policies and account lockouts",
+            remediation:
+              "Implement strong password policies and account lockouts",
             cvssScore: 9.8,
           });
         }
@@ -320,7 +325,9 @@ describe("🎯 Comprehensive Penetration Testing", () => {
             /Bearer\s+[a-zA-Z0-9\-_.]+/,
           ];
 
-          const hasSensitiveData = sensitivePatterns.some((pattern) => pattern.test(responseText));
+          const hasSensitiveData = sensitivePatterns.some((pattern) =>
+            pattern.test(responseText),
+          );
 
           if (hasSensitiveData) {
             penTester.recordVulnerability({
@@ -328,7 +335,8 @@ describe("🎯 Comprehensive Penetration Testing", () => {
               severity: "CRITICAL",
               exploitable: true,
               details: `Sensitive data exposed at ${endpoint} without authentication`,
-              remediation: "Implement proper authentication and data encryption",
+              remediation:
+                "Implement proper authentication and data encryption",
               cvssScore: 9.1,
             });
           }
@@ -368,7 +376,8 @@ describe("🎯 Comprehensive Penetration Testing", () => {
         expect(deviceBypassTest.bypassSuccessful).toBeFalsy();
 
         // Test device command injection
-        const commandInjectionTest = await testMedicalDeviceCommandInjection(endpoint);
+        const commandInjectionTest =
+          await testMedicalDeviceCommandInjection(endpoint);
         expect(commandInjectionTest.vulnerabilityFound).toBeFalsy();
 
         // Test unauthorized device control
@@ -731,7 +740,8 @@ function generateSecurityAssessmentReport(
     return sum + riskScores[vuln.severity];
   }, 0);
 
-  const averageRisk = vulnerabilities.length > 0 ? totalRisk / vulnerabilities.length : 0;
+  const averageRisk =
+    vulnerabilities.length > 0 ? totalRisk / vulnerabilities.length : 0;
 
   return {
     overallRiskScore: averageRisk,

@@ -13,8 +13,9 @@
 NeonPro representa uma revolução na gestão de clínicas de estética avançada brasileiras através da implementação de uma arquitetura de inovação de três níveis, focando na "Transformação IA" com recursos revolucionários como Universal AI Chat, Engine Anti-No-Show e CRM Comportamental.
 
 **Estratégia de Implementação Revolucionária:**
+
 - **Tier 1 (2025-2026)**: Smart Advanced Aesthetic Platform - Foundation com IA
-- **Tier 2 (2026-2027)**: Autonomous Advanced Aesthetic Intelligence - Automação avançada  
+- **Tier 2 (2026-2027)**: Autonomous Advanced Aesthetic Intelligence - Automação avançada
 - **Tier 3 (2027-2028)**: Sentient Advanced Aesthetic Ecosystem - Operações autônomas
 
 ### **Business Impact & ROI**
@@ -28,6 +29,7 @@ NeonPro representa uma revolução na gestão de clínicas de estética avançad
 ### **Filosofia de Design Estética Avançada-First**
 
 **Princípios Fundamentais TweakCN-Inspired:**
+
 - **🎯 Accessibility First**: WCAG 2.1 AA+ compliance obrigatório
 - **🌍 Design for All**: Interfaces inclusivas para todos os usuários
 - **🏥 Advanced Aesthetic Excellence**: Otimizado para ambientes de estética avançada críticos
@@ -54,7 +56,7 @@ const frontendStack = {
   testing: "Vitest + Testing Library + Playwright",
   monitoring: "Sentry + Web Vitals + Custom Healthcare Metrics",
   integrations: "WhatsApp Business API + SMS + Calendar APIs",
-  compliance: "LGPD/ANVISA/CFM Automated Validation"
+  compliance: "LGPD/ANVISA/CFM Automated Validation",
 };
 ```
 
@@ -65,6 +67,7 @@ const frontendStack = {
 ### **Must Have Features (Priority: High | Critical)**
 
 #### **1. Universal AI Chat System**
+
 - Chat inteligente bilíngue (português/inglês) para pacientes e equipe
 - Integração com WhatsApp Business API, SMS e interface web/mobile
 - Respostas contextuais baseadas em histórico do paciente
@@ -73,6 +76,7 @@ const frontendStack = {
 - **Accuracy Target**: >90% de respostas relevantes e precisas
 
 #### **2. Engine Anti-No-Show**
+
 - Análise preditiva de risco de no-show por paciente
 - Sistema de pontuação baseado em ML (0-100)
 - Intervenções automatizadas escalonadas
@@ -81,6 +85,7 @@ const frontendStack = {
 - **Revenue Protection**: $468.750+ anuais
 
 #### **3. Dashboard de Comando Unificado**
+
 - Visão 360° da clínica em tempo real
 - Métricas de performance e KPIs executivos
 - Alertas inteligentes e notificações
@@ -88,6 +93,7 @@ const frontendStack = {
 - Personalização por perfil de usuário (Proprietário/Coordenadora/Paciente)
 
 #### **4. Sistema de Agendamento Inteligente**
+
 - Agendamento online com disponibilidade em tempo real
 - Otimização automática de horários
 - Gestão de salas e recursos
@@ -97,6 +103,7 @@ const frontendStack = {
 ### **Enhanced Features (Priority: Medium)**
 
 #### **5. CRM Comportamental**
+
 - Perfil comportamental detalhado de cada paciente
 - Análise de preferências e padrões de consumo
 - Comunicação personalizada baseada em IA
@@ -104,6 +111,7 @@ const frontendStack = {
 - Otimização de tempo de tratamento
 
 #### **6. Gestor de Estoque Preditivo**
+
 - Controle de estoque com IA preditiva
 - Reabastecimento automático baseado em padrões
 - Gestão de validade e alertas de vencimento
@@ -111,6 +119,7 @@ const frontendStack = {
 - Integração com fornecedores
 
 #### **7. Assistente de Gestão IA**
+
 - Insights preditivos para tomada de decisão
 - Otimização de processos operacionais
 - Análise de performance da equipe
@@ -118,6 +127,7 @@ const frontendStack = {
 - Relatórios executivos inteligentes
 
 #### **8. Sistema de Compliance Automatizado**
+
 - Conformidade automática com LGPD, ANVISA, CFM
 - Auditoria contínua de processos
 - Documentação automática de conformidade
@@ -131,24 +141,28 @@ const frontendStack = {
 ### **Design Principles TweakCN-Inspired**
 
 #### **Mobile-First Philosophy**
+
 - Prioridade absoluta para experiência mobile (95% dos pacientes)
 - Interface touch-optimized com gestos intuitivos
 - Carregamento rápido mesmo em conexões lentas brasileiras
 - Offline-first para funcionalidades críticas
 
 #### **Simplicidade Inteligente**
+
 - Interface limpa com foco em ações principais
 - Redução de cliques para tarefas frequentes
 - Navegação contextual baseada no perfil do usuário
 - Feedback visual imediato para todas as ações
 
 #### **Acessibilidade Universal**
+
 - Conformidade com WCAG 2.1 AA
 - Suporte a leitores de tela
 - Alto contraste e fontes legíveis
 - Navegação por teclado completa
 
 #### **Personalização Inteligente**
+
 - Interface adaptativa baseada em uso
 - Dashboards personalizados por perfil
 - Preferências de notificação granulares
@@ -157,6 +171,7 @@ const frontendStack = {
 ### **User Personas & Access Patterns**
 
 #### **Persona 1: Dr. Ana Silva - Proprietária de Clínica**
+
 - **Perfil**: Dermatologista, 42 anos, proprietária de clínica de médio porte
 - **Dores**: Alto índice de no-shows (30%), dificuldade em gestão financeira, sobrecarga administrativa
 - **Objetivos**: Aumentar receita, reduzir custos operacionais, focar mais no atendimento
@@ -165,6 +180,7 @@ const frontendStack = {
 - **Dashboard Personalizado**: Executive Dashboard com KPIs financeiros e operacionais
 
 #### **Persona 2: Carla Santos - Coordenadora Administrativa**
+
 - **Perfil**: Administradora, 35 anos, responsável pela gestão operacional
 - **Dores**: Agendamentos complexos, controle de estoque manual, relatórios demorados
 - **Objetivos**: Automatizar processos, ter visibilidade em tempo real, reduzir retrabalho
@@ -173,6 +189,7 @@ const frontendStack = {
 - **Dashboard Personalizado**: Operational Dashboard com métricas operacionais em tempo real
 
 #### **Persona 3: Marina Costa - Paciente Premium**
+
 - **Perfil**: Executiva, 38 anos, cliente frequente de tratamentos estéticos
 - **Dores**: Dificuldade para agendar, falta de informações sobre tratamentos, comunicação limitada
 - **Objetivos**: Conveniência no agendamento, informações claras, experiência personalizada
@@ -183,18 +200,21 @@ const frontendStack = {
 ### **Key User Flows**
 
 #### **Fluxo de Agendamento (Paciente)**
+
 - **Entry points**: Chat IA, app mobile, website, WhatsApp
 - **Happy path**: Acesso → Seleção de serviço → Escolha de horário → Confirmação → Lembrete
 - **Alternative paths**: Reagendamento, cancelamento, lista de espera
 - **Error handling**: Horários indisponíveis, dados incompletos, falhas de conexão
 
 #### **Fluxo de Gestão (Proprietário)**
+
 - **Entry points**: Dashboard web, app mobile, notificações push
 - **Happy path**: Login → Dashboard executivo → Análise de KPIs → Ações estratégicas
 - **Alternative paths**: Relatórios detalhados, configurações, gestão de equipe
 - **Error handling**: Dados não carregados, permissões insuficientes, timeouts
 
 #### **Fluxo de Atendimento (Equipe)**
+
 - **Entry points**: App mobile, terminal da clínica, tablet
 - **Happy path**: Check-in → Histórico do paciente → Atendimento → Follow-up
 - **Alternative paths**: Emergências, transferências, reagendamentos
@@ -207,6 +227,7 @@ const frontendStack = {
 ### **KPIs de Impacto Operacional**
 
 #### **Redução de No-Show**
+
 - **Meta**: Redução de 25% em no-shows em 6 meses
 - **Baseline**: 30% de no-shows (média do setor)
 - **Target**: ≤22.5% de no-shows
@@ -214,18 +235,21 @@ const frontendStack = {
 - **Ferramentas**: Dashboard analytics + relatórios automáticos
 
 #### **Performance da IA**
+
 - **Tempo de Resposta**: <2 segundos para 95% das consultas
 - **Precisão**: >90% de respostas corretas validadas
 - **Disponibilidade**: 99.9% uptime do sistema de chat
 - **Satisfação**: NPS >70 para interações com IA
 
 #### **Eficiência Administrativa**
+
 - **Redução de Tempo**: 40% menos tempo em tarefas administrativas
 - **Automação**: 80% dos agendamentos via sistema automatizado
 - **Produtividade**: 25% aumento na capacidade de atendimento
 - **ROI**: Retorno positivo em 12 meses
 
 #### **Proteção de Receita**
+
 - **Receita Protegida**: R$ 50k+ por clínica/ano via redução de no-shows
 - **Otimização de Agenda**: 15% aumento na ocupação de horários
 - **Upselling**: 20% aumento em vendas de tratamentos adicionais
@@ -234,18 +258,21 @@ const frontendStack = {
 ### **KPIs de Qualidade Técnica**
 
 #### **Performance & Reliability**
+
 - **Uptime**: 99.9% disponibilidade do sistema
 - **Response Time**: <100ms para 95% das requisições
 - **Error Rate**: <0.1% de erros críticos
 - **Load Time**: <2s carregamento inicial em 3G
 
 #### **Security & Compliance**
+
 - **LGPD Compliance**: 100% conformidade auditada
 - **Data Breach**: Zero incidentes de segurança
 - **Audit Score**: >95% em auditorias de conformidade
 - **Privacy**: 100% dos dados criptografados
 
 #### **User Experience**
+
 - **User Satisfaction**: NPS >70
 - **Task Completion**: >95% de conclusão de tarefas principais
 - **Support Tickets**: <2% de tickets por usuário ativo/mês
@@ -254,12 +281,14 @@ const frontendStack = {
 ### **KPIs de Crescimento de Negócio**
 
 #### **Adoption & Retention**
+
 - **Clínicas Ativas**: 100+ clínicas em 12 meses
 - **Pacientes Ativos**: 10k+ pacientes em 12 meses
 - **Monthly Active Users**: 80% dos usuários registrados
 - **Churn Rate**: <5% mensal para clínicas
 
 #### **Market Impact**
+
 - **Market Share**: 5% do mercado de clínicas estéticas em SP
 - **Revenue Growth**: 200% crescimento anual
 - **Customer Acquisition**: <R$ 500 CAC por clínica
@@ -268,28 +297,30 @@ const frontendStack = {
 ### **Ferramentas de Monitoramento**
 
 #### **Analytics Stack**
+
 ```typescript
 // Monitoramento integrado
 const monitoringStack = {
   performance: {
-    vercel: 'Vercel Analytics - Core Web Vitals',
-    lighthouse: 'Lighthouse CI - Performance budgets',
-    sentry: 'Sentry - Error tracking & performance'
+    vercel: "Vercel Analytics - Core Web Vitals",
+    lighthouse: "Lighthouse CI - Performance budgets",
+    sentry: "Sentry - Error tracking & performance",
   },
   business: {
-    ga4: 'Google Analytics 4 - User behavior',
-    hotjar: 'Hotjar - User experience insights',
-    mixpanel: 'Mixpanel - Product analytics'
+    ga4: "Google Analytics 4 - User behavior",
+    hotjar: "Hotjar - User experience insights",
+    mixpanel: "Mixpanel - Product analytics",
   },
   technical: {
-    supabase: 'Supabase Analytics - Database performance',
-    uptime: 'UptimeRobot - Service availability',
-    security: 'Security audits - Compliance monitoring'
-  }
-}
+    supabase: "Supabase Analytics - Database performance",
+    uptime: "UptimeRobot - Service availability",
+    security: "Security audits - Compliance monitoring",
+  },
+};
 ```
 
 #### **Dashboard de Métricas**
+
 - **Executive Dashboard**: KPIs de alto nível para proprietários
 - **Operational Dashboard**: Métricas operacionais para coordenadores
 - **Technical Dashboard**: Métricas técnicas para desenvolvedores
@@ -302,15 +333,17 @@ const monitoringStack = {
 ### **Riscos Técnicos**
 
 #### **Performance & Scalability**
+
 - **Risco**: Degradação de performance com crescimento de usuários
 - **Probabilidade**: Média | **Impacto**: Alto
-- **Mitigação**: 
+- **Mitigação**:
   - Implementação de CDN global (Vercel Edge)
   - Cache inteligente com Redis
   - Monitoramento proativo com alertas
   - Load testing contínuo
 
 #### **Integration Complexity**
+
 - **Risco**: Falhas em integrações críticas (WhatsApp, SMS, Calendar)
 - **Probabilidade**: Média | **Impacto**: Alto
 - **Mitigação**:
@@ -322,6 +355,7 @@ const monitoringStack = {
 ### **Riscos de Segurança**
 
 #### **Data Privacy & LGPD**
+
 - **Risco**: Vazamento de dados sensíveis de pacientes
 - **Probabilidade**: Baixa | **Impacto**: Crítico
 - **Mitigação**:
@@ -331,6 +365,7 @@ const monitoringStack = {
   - Incident response plan
 
 #### **API Security**
+
 - **Risco**: Ataques de injection e unauthorized access
 - **Probabilidade**: Média | **Impacto**: Alto
 - **Mitigação**:
@@ -342,6 +377,7 @@ const monitoringStack = {
 ### **Riscos de Negócio**
 
 #### **User Adoption**
+
 - **Risco**: Baixa adoção por resistência à mudança
 - **Probabilidade**: Média | **Impacto**: Alto
 - **Mitigação**:
@@ -351,6 +387,7 @@ const monitoringStack = {
   - Incentivos para early adopters
 
 #### **Market Competition**
+
 - **Risco**: Entrada de concorrentes com recursos superiores
 - **Probabilidade**: Alta | **Impacto**: Médio
 - **Mitigação**:
@@ -362,12 +399,14 @@ const monitoringStack = {
 ### **Plano de Contingência**
 
 #### **Disaster Recovery**
+
 - **RTO**: 4 horas para restauração completa
 - **RPO**: 15 minutos de perda máxima de dados
 - **Backup Strategy**: Multi-region com replicação automática
 - **Failover**: Automático com health checks
 
 #### **Communication Plan**
+
 - **Internal**: Slack alerts + email escalation
 - **External**: Status page + proactive customer communication
 - **Media**: PR team preparada para crisis management
@@ -380,12 +419,14 @@ const monitoringStack = {
 ### **Phase 1: Foundation (Meses 1-2)**
 
 #### **Sprint 1-2: Core Infrastructure**
+
 - Setup do projeto Next.js 15 + TypeScript
 - Configuração do TweakCN NEONPRO theme
 - Integração Supabase + autenticação
 - CI/CD pipeline com Vercel
 
 #### **Sprint 3-4: Basic Features**
+
 - Sistema de agendamento básico
 - Dashboard inicial para clínicas
 - Portal do paciente MVP
@@ -394,12 +435,14 @@ const monitoringStack = {
 ### **Phase 2: Core Features (Meses 3-4)**
 
 #### **Sprint 5-6: AI Chat System**
+
 - Universal AI Chat implementation
 - Natural language processing em português
 - Integration com knowledge base
 - Real-time messaging infrastructure
 
 #### **Sprint 7-8: Anti-No-Show Engine**
+
 - Algoritmo preditivo de no-shows
 - Sistema de lembretes inteligentes
 - Analytics e reporting
@@ -408,12 +451,14 @@ const monitoringStack = {
 ### **Phase 3: Advanced Features (Meses 5-6)**
 
 #### **Sprint 9-10: Mobile Emergency Interface**
+
 - Interface crítica <100ms response
 - Offline-first architecture
 - Integration com SAMU
 - Emergency protocols automation
 
 #### **Sprint 11-12: Compliance & Security**
+
 - LGPD compliance automation
 - ANVISA integration
 - CFM validation systems
@@ -422,16 +467,19 @@ const monitoringStack = {
 ### **Critical Path & Dependencies**
 
 #### **Milestone 1**: MVP Launch (Mês 2)
+
 - Core agendamento + chat básico
 - 5 clínicas piloto
 - Basic analytics
 
 #### **Milestone 2**: Beta Release (Mês 4)
+
 - AI chat completo + anti-no-show
 - 25 clínicas beta
 - Full compliance
 
 #### **Milestone 3**: Production Launch (Mês 6)
+
 - Todas as features core
 - 100+ clínicas
 - Full monitoring & support
@@ -443,6 +491,7 @@ const monitoringStack = {
 ### **Filosofia de Cores Healthcare**
 
 **Design Principles:**
+
 - **Medical Clarity**: Contraste mínimo 4.5:1 para texto normal, 3:1 para texto grande
 - **Stress-Resistant**: Cores que funcionam sob pressão e fadiga
 - **Universal Access**: Compatível com daltonismo e baixa visão
@@ -454,86 +503,86 @@ const monitoringStack = {
 /* TweakCN NEONPRO Healthcare Theme */
 :root {
   /* === CORES PRIMÁRIAS HEALTHCARE === */
-  --background: 252 252 252;        /* #fcfcfc - Ultra-clean medical white */
-  --foreground: 23 23 23;           /* #171717 - High contrast text */
-  --primary: 114 227 173;           /* #72e3ad - NEONPRO signature green */
-  --primary-foreground: 30 39 35;   /* #1e2723 - Dark green for contrast */
-  
+  --background: 252 252 252; /* #fcfcfc - Ultra-clean medical white */
+  --foreground: 23 23 23; /* #171717 - High contrast text */
+  --primary: 114 227 173; /* #72e3ad - NEONPRO signature green */
+  --primary-foreground: 30 39 35; /* #1e2723 - Dark green for contrast */
+
   /* === CORES SECUNDÁRIAS === */
-  --secondary: 253 253 253;         /* #fdfdfd - Subtle background variation */
+  --secondary: 253 253 253; /* #fdfdfd - Subtle background variation */
   --secondary-foreground: 23 23 23; /* #171717 - Consistent text */
-  --accent: 237 237 237;            /* #ededed - Gentle accent */
-  --accent-foreground: 32 32 32;    /* #202020 - Readable accent text */
-  
+  --accent: 237 237 237; /* #ededed - Gentle accent */
+  --accent-foreground: 32 32 32; /* #202020 - Readable accent text */
+
   /* === COMPONENTES UI === */
-  --card: 252 252 252;              /* #fcfcfc - Card backgrounds */
-  --card-foreground: 23 23 23;      /* #171717 - Card text */
-  --popover: 252 252 252;           /* #fcfcfc - Popover backgrounds */
-  --popover-foreground: 82 82 82;   /* #525252 - Popover text */
-  --muted: 237 237 237;             /* #ededed - Muted backgrounds */
-  --muted-foreground: 32 32 32;     /* #202020 - Muted text */
-  
+  --card: 252 252 252; /* #fcfcfc - Card backgrounds */
+  --card-foreground: 23 23 23; /* #171717 - Card text */
+  --popover: 252 252 252; /* #fcfcfc - Popover backgrounds */
+  --popover-foreground: 82 82 82; /* #525252 - Popover text */
+  --muted: 237 237 237; /* #ededed - Muted backgrounds */
+  --muted-foreground: 32 32 32; /* #202020 - Muted text */
+
   /* === UTILITÁRIOS === */
-  --border: 223 223 223;            /* #dfdfdf - Subtle borders */
-  --input: 246 246 246;             /* #f6f6f6 - Input backgrounds */
-  --ring: 114 227 173;              /* #72e3ad - Focus rings */
-  
+  --border: 223 223 223; /* #dfdfdf - Subtle borders */
+  --input: 246 246 246; /* #f6f6f6 - Input backgrounds */
+  --ring: 114 227 173; /* #72e3ad - Focus rings */
+
   /* === ESTADOS CRÍTICOS === */
-  --destructive: 202 50 20;         /* #ca3214 - Error/danger states */
+  --destructive: 202 50 20; /* #ca3214 - Error/danger states */
   --destructive-foreground: 255 252 252; /* #fffcfc - Error text */
-  --warning: 245 158 11;            /* #f59e0b - Warning states */
-  --warning-foreground: 26 26 26;   /* #1a1a1a - Warning text */
-  --success: 16 185 129;            /* #10b981 - Success states */
+  --warning: 245 158 11; /* #f59e0b - Warning states */
+  --warning-foreground: 26 26 26; /* #1a1a1a - Warning text */
+  --success: 16 185 129; /* #10b981 - Success states */
   --success-foreground: 255 255 255; /* #ffffff - Success text */
-  
+
   /* === GRÁFICOS MÉDICOS === */
-  --chart-1: 114 227 173;           /* #72e3ad - Primary data */
-  --chart-2: 59 130 246;            /* #3b82f6 - Secondary data */
-  --chart-3: 139 92 246;            /* #8b5cf6 - Tertiary data */
-  --chart-4: 245 158 11;            /* #f59e0b - Warning data */
-  --chart-5: 16 185 129;            /* #10b981 - Success data */
-  
+  --chart-1: 114 227 173; /* #72e3ad - Primary data */
+  --chart-2: 59 130 246; /* #3b82f6 - Secondary data */
+  --chart-3: 139 92 246; /* #8b5cf6 - Tertiary data */
+  --chart-4: 245 158 11; /* #f59e0b - Warning data */
+  --chart-5: 16 185 129; /* #10b981 - Success data */
+
   /* === NAVEGAÇÃO === */
   --sidebar-background: 252 252 252; /* #fcfcfc - Sidebar background */
   --sidebar-foreground: 112 112 112; /* #707070 - Sidebar text */
-  --sidebar-primary: 114 227 173;   /* #72e3ad - Active sidebar items */
+  --sidebar-primary: 114 227 173; /* #72e3ad - Active sidebar items */
   --sidebar-primary-foreground: 30 39 35; /* #1e2723 - Active text */
-  
+
   /* === HEALTHCARE ESPECÍFICO === */
-  --emergency: 220 38 38;           /* #dc2626 - Emergency alerts */
+  --emergency: 220 38 38; /* #dc2626 - Emergency alerts */
   --emergency-foreground: 255 255 255; /* #ffffff - Emergency text */
-  --patient-info: 59 130 246;       /* #3b82f6 - Patient data */
+  --patient-info: 59 130 246; /* #3b82f6 - Patient data */
   --patient-info-foreground: 255 255 255; /* #ffffff - Patient text */
-  --compliance: 5 150 105;          /* #059669 - LGPD/ANVISA compliance */
+  --compliance: 5 150 105; /* #059669 - LGPD/ANVISA compliance */
   --compliance-foreground: 255 255 255; /* #ffffff - Compliance text */
-  
+
   /* === SINAIS VITAIS === */
-  --vital-normal: 16 185 129;       /* #10b981 - Normal range */
-  --vital-warning: 245 158 11;      /* #f59e0b - Warning range */
-  --vital-critical: 220 38 38;      /* #dc2626 - Critical range */
-  --vital-unknown: 156 163 175;     /* #9ca3af - Unknown/unavailable */
+  --vital-normal: 16 185 129; /* #10b981 - Normal range */
+  --vital-warning: 245 158 11; /* #f59e0b - Warning range */
+  --vital-critical: 220 38 38; /* #dc2626 - Critical range */
+  --vital-unknown: 156 163 175; /* #9ca3af - Unknown/unavailable */
 }
 
 /* Dark Mode Healthcare Theme */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: 9 9 11;           /* #09090b - Dark background */
-    --foreground: 250 250 250;      /* #fafafa - Light text */
-    --card: 24 24 27;               /* #18181b - Dark cards */
+    --background: 9 9 11; /* #09090b - Dark background */
+    --foreground: 250 250 250; /* #fafafa - Light text */
+    --card: 24 24 27; /* #18181b - Dark cards */
     --card-foreground: 250 250 250; /* #fafafa - Card text */
-    --popover: 24 24 27;            /* #18181b - Dark popover */
+    --popover: 24 24 27; /* #18181b - Dark popover */
     --popover-foreground: 250 250 250; /* #fafafa - Popover text */
-    --primary: 114 227 173;         /* #72e3ad - Keep NEONPRO green */
-    --primary-foreground: 9 9 11;   /* #09090b - Dark text on green */
-    --secondary: 39 39 42;          /* #27272a - Dark secondary */
+    --primary: 114 227 173; /* #72e3ad - Keep NEONPRO green */
+    --primary-foreground: 9 9 11; /* #09090b - Dark text on green */
+    --secondary: 39 39 42; /* #27272a - Dark secondary */
     --secondary-foreground: 250 250 250; /* #fafafa - Light text */
-    --muted: 39 39 42;              /* #27272a - Dark muted */
+    --muted: 39 39 42; /* #27272a - Dark muted */
     --muted-foreground: 161 161 170; /* #a1a1aa - Muted text */
-    --accent: 39 39 42;             /* #27272a - Dark accent */
+    --accent: 39 39 42; /* #27272a - Dark accent */
     --accent-foreground: 250 250 250; /* #fafafa - Accent text */
-    --border: 39 39 42;             /* #27272a - Dark borders */
-    --input: 39 39 42;              /* #27272a - Dark inputs */
-    --ring: 114 227 173;            /* #72e3ad - Keep green focus */
+    --border: 39 39 42; /* #27272a - Dark borders */
+    --input: 39 39 42; /* #27272a - Dark inputs */
+    --ring: 114 227 173; /* #72e3ad - Keep green focus */
   }
 }
 ```
@@ -546,38 +595,38 @@ export const neonproTheme = {
   name: "NEONPRO Healthcare",
   description: "Tema otimizado para clínicas de estética brasileiras",
   colors: {
-    primary: "hsl(142, 71%, 78%)",     // #72e3ad
-    secondary: "hsl(0, 0%, 99%)",       // #fdfdfd
-    accent: "hsl(0, 0%, 93%)",          // #ededed
-    background: "hsl(0, 0%, 99%)",      // #fcfcfc
-    foreground: "hsl(0, 0%, 9%)",       // #171717
-    muted: "hsl(0, 0%, 93%)",           // #ededed
-    border: "hsl(0, 0%, 87%)",          // #dfdfdf
-    input: "hsl(0, 0%, 96%)",           // #f6f6f6
-    ring: "hsl(142, 71%, 78%)",         // #72e3ad
-    destructive: "hsl(9, 82%, 44%)",    // #ca3214
-    warning: "hsl(38, 92%, 50%)",       // #f59e0b
-    success: "hsl(160, 84%, 39%)",      // #10b981
-    emergency: "hsl(0, 84%, 60%)",      // #dc2626
-    compliance: "hsl(160, 95%, 30%)",   // #059669
+    primary: "hsl(142, 71%, 78%)", // #72e3ad
+    secondary: "hsl(0, 0%, 99%)", // #fdfdfd
+    accent: "hsl(0, 0%, 93%)", // #ededed
+    background: "hsl(0, 0%, 99%)", // #fcfcfc
+    foreground: "hsl(0, 0%, 9%)", // #171717
+    muted: "hsl(0, 0%, 93%)", // #ededed
+    border: "hsl(0, 0%, 87%)", // #dfdfdf
+    input: "hsl(0, 0%, 96%)", // #f6f6f6
+    ring: "hsl(142, 71%, 78%)", // #72e3ad
+    destructive: "hsl(9, 82%, 44%)", // #ca3214
+    warning: "hsl(38, 92%, 50%)", // #f59e0b
+    success: "hsl(160, 84%, 39%)", // #10b981
+    emergency: "hsl(0, 84%, 60%)", // #dc2626
+    compliance: "hsl(160, 95%, 30%)", // #059669
   },
   accessibility: {
-    contrastRatio: "AAA",               // WCAG AAA compliance
-    reducedMotion: true,                // Respect prefers-reduced-motion
-    highContrast: true,                 // High contrast mode support
-    colorBlindness: "deuteranopia",     // Optimized for most common type
+    contrastRatio: "AAA", // WCAG AAA compliance
+    reducedMotion: true, // Respect prefers-reduced-motion
+    highContrast: true, // High contrast mode support
+    colorBlindness: "deuteranopia", // Optimized for most common type
   },
   healthcare: {
     vitalSigns: {
-      normal: "hsl(160, 84%, 39%)",     // #10b981
-      warning: "hsl(38, 92%, 50%)",     // #f59e0b
-      critical: "hsl(0, 84%, 60%)",     // #dc2626
-      unknown: "hsl(220, 9%, 46%)",     // #9ca3af
+      normal: "hsl(160, 84%, 39%)", // #10b981
+      warning: "hsl(38, 92%, 50%)", // #f59e0b
+      critical: "hsl(0, 84%, 60%)", // #dc2626
+      unknown: "hsl(220, 9%, 46%)", // #9ca3af
     },
     compliance: {
-      lgpd: "hsl(160, 95%, 30%)",       // #059669
-      anvisa: "hsl(220, 91%, 56%)",     // #3b82f6
-      cfm: "hsl(262, 83%, 58%)",        // #8b5cf6
+      lgpd: "hsl(160, 95%, 30%)", // #059669
+      anvisa: "hsl(220, 91%, 56%)", // #3b82f6
+      cfm: "hsl(262, 83%, 58%)", // #8b5cf6
     },
   },
 };
@@ -655,11 +704,11 @@ interface UniversalChatProps {
   onEmergencyDetected?: () => void;
 }
 
-export function UniversalChat({ 
-  context = 'general', 
-  patientId, 
+export function UniversalChat({
+  context = 'general',
+  patientId,
   className,
-  onEmergencyDetected 
+  onEmergencyDetected
 }: UniversalChatProps) {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/ai/chat',
@@ -800,8 +849,8 @@ export function UniversalChat({
           >
             <Mic className={cn('h-4 w-4', isListening && 'text-destructive')} />
           </Button>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={isLoading || !input.trim()}
             aria-label="Enviar mensagem"
           >
@@ -916,12 +965,12 @@ export function HealthcareMetricCard({
             </div>
           )}
         </div>
-        
+
         {progress !== undefined && (
           <div className="mt-3">
-            <Progress 
-              value={progress} 
-              className="h-2" 
+            <Progress
+              value={progress}
+              className="h-2"
               aria-label={`Progresso: ${progress}%`}
             />
             <div className="flex justify-between text-xs text-muted-foreground mt-1">
@@ -930,7 +979,7 @@ export function HealthcareMetricCard({
             </div>
           </div>
         )}
-        
+
         {description && (
           <p className="text-xs text-muted-foreground mt-2">{description}</p>
         )}
@@ -1296,15 +1345,15 @@ export function EmergencyButton({
   const handleMouseDown = () => {
     setIsPressed(true);
     setCountdown(3);
-    
+
     const timer = setTimeout(() => {
       onEmergencyActivated();
       setIsPressed(false);
       setCountdown(0);
     }, PRESS_DURATION);
-    
+
     setPressTimer(timer);
-    
+
     // Countdown animation
     const countdownInterval = setInterval(() => {
       setCountdown((prev) => {
@@ -1518,12 +1567,12 @@ export const wcagCompliance = {
 
 ```typescript
 // hooks/use-accessibility.ts
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 interface AccessibilityPreferences {
   reducedMotion: boolean;
   highContrast: boolean;
-  fontSize: 'small' | 'medium' | 'large' | 'extra-large';
+  fontSize: "small" | "medium" | "large" | "extra-large";
   screenReader: boolean;
 }
 
@@ -1531,19 +1580,22 @@ export function useAccessibility() {
   const [preferences, setPreferences] = useState<AccessibilityPreferences>({
     reducedMotion: false,
     highContrast: false,
-    fontSize: 'medium',
+    fontSize: "medium",
     screenReader: false,
   });
 
   useEffect(() => {
     // Detect user preferences
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const highContrast = window.matchMedia('(prefers-contrast: high)').matches;
-    const screenReader = window.navigator.userAgent.includes('NVDA') || 
-                        window.navigator.userAgent.includes('JAWS') ||
-                        window.speechSynthesis !== undefined;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const highContrast = window.matchMedia("(prefers-contrast: high)").matches;
+    const screenReader =
+      window.navigator.userAgent.includes("NVDA") ||
+      window.navigator.userAgent.includes("JAWS") ||
+      window.speechSynthesis !== undefined;
 
-    setPreferences(prev => ({
+    setPreferences((prev) => ({
       ...prev,
       reducedMotion,
       highContrast,
@@ -1552,40 +1604,40 @@ export function useAccessibility() {
 
     // Apply CSS custom properties
     document.documentElement.style.setProperty(
-      '--animation-duration',
-      reducedMotion ? '0ms' : '200ms'
+      "--animation-duration",
+      reducedMotion ? "0ms" : "200ms",
     );
 
     if (highContrast) {
-      document.documentElement.classList.add('high-contrast');
+      document.documentElement.classList.add("high-contrast");
     }
   }, []);
 
-  const updateFontSize = (size: AccessibilityPreferences['fontSize']) => {
-    setPreferences(prev => ({ ...prev, fontSize: size }));
-    
+  const updateFontSize = (size: AccessibilityPreferences["fontSize"]) => {
+    setPreferences((prev) => ({ ...prev, fontSize: size }));
+
     const sizeMap = {
-      small: '14px',
-      medium: '16px',
-      large: '18px',
-      'extra-large': '20px',
+      small: "14px",
+      medium: "16px",
+      large: "18px",
+      "extra-large": "20px",
     };
-    
+
     document.documentElement.style.setProperty(
-      '--base-font-size',
-      sizeMap[size]
+      "--base-font-size",
+      sizeMap[size],
     );
   };
 
   const announceToScreenReader = (message: string) => {
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', 'polite');
-    announcement.setAttribute('aria-atomic', 'true');
-    announcement.className = 'sr-only';
+    const announcement = document.createElement("div");
+    announcement.setAttribute("aria-live", "polite");
+    announcement.setAttribute("aria-atomic", "true");
+    announcement.className = "sr-only";
     announcement.textContent = message;
-    
+
     document.body.appendChild(announcement);
-    
+
     setTimeout(() => {
       document.body.removeChild(announcement);
     }, 1000);
@@ -1595,7 +1647,7 @@ export function useAccessibility() {
     const element = document.querySelector(selector) as HTMLElement;
     if (element) {
       element.focus();
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   };
 
@@ -1672,18 +1724,18 @@ export const webVitalsTargets = {
 
 ```typescript
 // lib/performance/monitoring.ts
-import { getCLS, getFCP, getFID, getLCP, getTTFB } from 'web-vitals';
+import { getCLS, getFCP, getFID, getLCP, getTTFB } from "web-vitals";
 
 interface PerformanceMetric {
   name: string;
   value: number;
-  rating: 'good' | 'needs-improvement' | 'poor';
+  rating: "good" | "needs-improvement" | "poor";
   timestamp: number;
 }
 
 class PerformanceMonitor {
   private metrics: PerformanceMetric[] = [];
-  private endpoint = '/api/analytics/performance';
+  private endpoint = "/api/analytics/performance";
 
   constructor() {
     this.initializeWebVitals();
@@ -1712,9 +1764,9 @@ class PerformanceMonitor {
   private async sendMetric(metric: PerformanceMetric) {
     try {
       await fetch(this.endpoint, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...metric,
@@ -1724,7 +1776,7 @@ class PerformanceMonitor {
         }),
       });
     } catch (error) {
-      console.warn('Failed to send performance metric:', error);
+      console.warn("Failed to send performance metric:", error);
     }
   }
 
@@ -1733,9 +1785,9 @@ class PerformanceMonitor {
   }
 
   public getAverageMetric(name: string): number {
-    const relevantMetrics = this.metrics.filter(m => m.name === name);
+    const relevantMetrics = this.metrics.filter((m) => m.name === name);
     if (relevantMetrics.length === 0) return 0;
-    
+
     const sum = relevantMetrics.reduce((acc, m) => acc + m.value, 0);
     return sum / relevantMetrics.length;
   }
@@ -1752,21 +1804,21 @@ export const performanceMonitor = new PerformanceMonitor();
 
 ```typescript
 // vitest.config.ts
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
   plugins: [react()],
   test: {
-    environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
+    environment: "jsdom",
+    setupFiles: ["./src/test/setup.ts"],
     globals: true,
     css: true,
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
 });
@@ -1774,8 +1826,8 @@ export default defineConfig({
 
 ```typescript
 // src/test/setup.ts
-import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
 // Mock IntersectionObserver
 global.IntersectionObserver = vi.fn().mockImplementation(() => ({
@@ -1792,9 +1844,9 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 }));
 
 // Mock matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -1882,378 +1934,378 @@ describe('HealthcareMetricCard', () => {
      expect(screen.getByText('-2kg')).toBeInTheDocument();
    });
  });
- ```
+```
 
- ---
+---
 
- ## 🚀 **Deployment & Monitoring**
+## 🚀 **Deployment & Monitoring**
 
- ### **Vercel Deployment Configuration**
+### **Vercel Deployment Configuration**
 
- ```json
- // vercel.json
- {
-   "version": 2,
-   "framework": "nextjs",
-   "buildCommand": "npm run build",
-   "devCommand": "npm run dev",
-   "installCommand": "npm install",
-   "env": {
-     "NEXT_PUBLIC_APP_ENV": "production",
-     "NEXT_PUBLIC_SUPABASE_URL": "@supabase-url",
-     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase-anon-key",
-     "OPENAI_API_KEY": "@openai-api-key"
-   },
-   "headers": [
-     {
-       "source": "/(.*)",
-       "headers": [
-         {
-           "key": "X-Content-Type-Options",
-           "value": "nosniff"
-         },
-         {
-           "key": "X-Frame-Options",
-           "value": "DENY"
-         },
-         {
-           "key": "X-XSS-Protection",
-           "value": "1; mode=block"
-         },
-         {
-           "key": "Strict-Transport-Security",
-           "value": "max-age=31536000; includeSubDomains"
-         },
-         {
-           "key": "Content-Security-Policy",
-           "value": "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.openai.com https://*.supabase.co wss://*.supabase.co;"
-         }
-       ]
-     }
-   ],
-   "rewrites": [
-     {
-       "source": "/api/(.*)",
-       "destination": "/api/$1"
-     }
-   ]
- }
- ```
+```json
+// vercel.json
+{
+  "version": 2,
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_APP_ENV": "production",
+    "NEXT_PUBLIC_SUPABASE_URL": "@supabase-url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase-anon-key",
+    "OPENAI_API_KEY": "@openai-api-key"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.openai.com https://*.supabase.co wss://*.supabase.co;"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ]
+}
+```
 
- ### **Next.js Configuration**
+### **Next.js Configuration**
 
- ```typescript
- // next.config.js
- /** @type {import('next').NextConfig} */
- const nextConfig = {
-   experimental: {
-     appDir: true,
-     serverComponentsExternalPackages: ['@supabase/supabase-js'],
-   },
-   images: {
-     domains: ['images.unsplash.com', 'avatars.githubusercontent.com'],
-     formats: ['image/webp', 'image/avif'],
-   },
-   async headers() {
-     return [
-       {
-         source: '/(.*)',
-         headers: [
-           {
-             key: 'X-Content-Type-Options',
-             value: 'nosniff',
-           },
-           {
-             key: 'X-Frame-Options',
-             value: 'DENY',
-           },
-           {
-             key: 'X-XSS-Protection',
-             value: '1; mode=block',
-           },
-         ],
-       },
-     ];
-   },
-   webpack: (config, { isServer }) => {
-     if (!isServer) {
-       config.resolve.fallback = {
-         ...config.resolve.fallback,
-         fs: false,
-       };
-     }
-     return config;
-   },
- };
+```typescript
+// next.config.js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  experimental: {
+    appDir: true,
+    serverComponentsExternalPackages: ["@supabase/supabase-js"],
+  },
+  images: {
+    domains: ["images.unsplash.com", "avatars.githubusercontent.com"],
+    formats: ["image/webp", "image/avif"],
+  },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+        ],
+      },
+    ];
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
+  },
+};
 
- module.exports = nextConfig;
- ```
+module.exports = nextConfig;
+```
 
- ### **Performance Monitoring Dashboard**
+### **Performance Monitoring Dashboard**
 
- ```typescript
- // components/monitoring/performance-dashboard.tsx
- import { useEffect, useState } from 'react';
- import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
- import { Badge } from '@/components/ui/badge';
- import { Progress } from '@/components/ui/progress';
- import { Activity, Zap, Clock, TrendingUp, AlertTriangle } from 'lucide-react';
- import { performanceMonitor } from '@/lib/performance/monitoring';
+```typescript
+// components/monitoring/performance-dashboard.tsx
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Activity, Zap, Clock, TrendingUp, AlertTriangle } from 'lucide-react';
+import { performanceMonitor } from '@/lib/performance/monitoring';
 
- export function PerformanceDashboard() {
-   const [metrics, setMetrics] = useState<any[]>([]);
-   const [overallScore, setOverallScore] = useState(0);
+export function PerformanceDashboard() {
+  const [metrics, setMetrics] = useState<any[]>([]);
+  const [overallScore, setOverallScore] = useState(0);
 
-   useEffect(() => {
-     const updateMetrics = () => {
-       const currentMetrics = performanceMonitor.getMetrics();
-       setMetrics(currentMetrics);
-       
-       // Calculate overall performance score
-       const scores = {
-         LCP: performanceMonitor.getAverageMetric('LCP'),
-         FID: performanceMonitor.getAverageMetric('FID'),
-         CLS: performanceMonitor.getAverageMetric('CLS'),
-       };
-       
-       const lcpScore = scores.LCP < 2500 ? 100 : scores.LCP < 4000 ? 50 : 0;
-       const fidScore = scores.FID < 100 ? 100 : scores.FID < 300 ? 50 : 0;
-       const clsScore = scores.CLS < 0.1 ? 100 : scores.CLS < 0.25 ? 50 : 0;
-       
-       const overall = Math.round((lcpScore + fidScore + clsScore) / 3);
-       setOverallScore(overall);
-     };
+  useEffect(() => {
+    const updateMetrics = () => {
+      const currentMetrics = performanceMonitor.getMetrics();
+      setMetrics(currentMetrics);
 
-     updateMetrics();
-     const interval = setInterval(updateMetrics, 5000);
-     
-     return () => clearInterval(interval);
-   }, []);
+      // Calculate overall performance score
+      const scores = {
+        LCP: performanceMonitor.getAverageMetric('LCP'),
+        FID: performanceMonitor.getAverageMetric('FID'),
+        CLS: performanceMonitor.getAverageMetric('CLS'),
+      };
 
-   const getScoreColor = (score: number) => {
-     if (score >= 90) return 'text-success';
-     if (score >= 50) return 'text-warning';
-     return 'text-destructive';
-   };
+      const lcpScore = scores.LCP < 2500 ? 100 : scores.LCP < 4000 ? 50 : 0;
+      const fidScore = scores.FID < 100 ? 100 : scores.FID < 300 ? 50 : 0;
+      const clsScore = scores.CLS < 0.1 ? 100 : scores.CLS < 0.25 ? 50 : 0;
 
-   const getScoreBadge = (score: number) => {
-     if (score >= 90) return { variant: 'default' as const, label: 'Excelente' };
-     if (score >= 50) return { variant: 'secondary' as const, label: 'Bom' };
-     return { variant: 'destructive' as const, label: 'Precisa Melhorar' };
-   };
+      const overall = Math.round((lcpScore + fidScore + clsScore) / 3);
+      setOverallScore(overall);
+    };
 
-   return (
-     <div className="space-y-6">
-       {/* Overall Performance Score */}
-       <Card className="border-primary/20 bg-primary/5">
-         <CardHeader>
-           <CardTitle className="flex items-center gap-2">
-             <Activity className="h-5 w-5 text-primary" />
-             Performance Geral do Sistema
-           </CardTitle>
-         </CardHeader>
-         <CardContent>
-           <div className="flex items-center justify-between mb-4">
-             <div>
-               <div className={`text-3xl font-bold ${getScoreColor(overallScore)}`}>
-                 {overallScore}/100
-               </div>
-               <div className="text-sm text-muted-foreground">Score de Performance</div>
-             </div>
-             <Badge variant={getScoreBadge(overallScore).variant}>
-               {getScoreBadge(overallScore).label}
-             </Badge>
-           </div>
-           <Progress value={overallScore} className="h-3" />
-         </CardContent>
-       </Card>
+    updateMetrics();
+    const interval = setInterval(updateMetrics, 5000);
 
-       {/* Core Web Vitals */}
-       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-         <Card>
-           <CardHeader className="pb-3">
-             <CardTitle className="text-sm flex items-center gap-2">
-               <Clock className="h-4 w-4" />
-               Largest Contentful Paint
-             </CardTitle>
-           </CardHeader>
-           <CardContent>
-             <div className="space-y-2">
-               <div className="text-2xl font-bold">
-                 {(performanceMonitor.getAverageMetric('LCP') / 1000).toFixed(2)}s
-               </div>
-               <div className="text-xs text-muted-foreground">
-                 Target: &lt; 2.5s
-               </div>
-               <Progress 
-                 value={Math.min(100, (2500 / performanceMonitor.getAverageMetric('LCP')) * 100)} 
-                 className="h-2" 
-               />
-             </div>
-           </CardContent>
-         </Card>
+    return () => clearInterval(interval);
+  }, []);
 
-         <Card>
-           <CardHeader className="pb-3">
-             <CardTitle className="text-sm flex items-center gap-2">
-               <Zap className="h-4 w-4" />
-               First Input Delay
-             </CardTitle>
-           </CardHeader>
-           <CardContent>
-             <div className="space-y-2">
-               <div className="text-2xl font-bold">
-                 {performanceMonitor.getAverageMetric('FID').toFixed(0)}ms
-               </div>
-               <div className="text-xs text-muted-foreground">
-                 Target: &lt; 100ms
-               </div>
-               <Progress 
-                 value={Math.min(100, (100 / performanceMonitor.getAverageMetric('FID')) * 100)} 
-                 className="h-2" 
-               />
-             </div>
-           </CardContent>
-         </Card>
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return 'text-success';
+    if (score >= 50) return 'text-warning';
+    return 'text-destructive';
+  };
 
-         <Card>
-           <CardHeader className="pb-3">
-             <CardTitle className="text-sm flex items-center gap-2">
-               <TrendingUp className="h-4 w-4" />
-               Cumulative Layout Shift
-             </CardTitle>
-           </CardHeader>
-           <CardContent>
-             <div className="space-y-2">
-               <div className="text-2xl font-bold">
-                 {performanceMonitor.getAverageMetric('CLS').toFixed(3)}
-               </div>
-               <div className="text-xs text-muted-foreground">
-                 Target: &lt; 0.1
-               </div>
-               <Progress 
-                 value={Math.min(100, (0.1 / performanceMonitor.getAverageMetric('CLS')) * 100)} 
-                 className="h-2" 
-               />
-             </div>
-           </CardContent>
-         </Card>
-       </div>
+  const getScoreBadge = (score: number) => {
+    if (score >= 90) return { variant: 'default' as const, label: 'Excelente' };
+    if (score >= 50) return { variant: 'secondary' as const, label: 'Bom' };
+    return { variant: 'destructive' as const, label: 'Precisa Melhorar' };
+  };
 
-       {/* Performance Alerts */}
-       {overallScore < 70 && (
-         <Card className="border-warning/20 bg-warning/5">
-           <CardHeader>
-             <CardTitle className="text-sm flex items-center gap-2 text-warning">
-               <AlertTriangle className="h-4 w-4" />
-               Alertas de Performance
-             </CardTitle>
-           </CardHeader>
-           <CardContent>
-             <div className="space-y-2 text-sm">
-               {performanceMonitor.getAverageMetric('LCP') > 2500 && (
-                 <div className="flex items-center gap-2">
-                   <span className="text-warning">•</span>
-                   <span>LCP acima do recomendado - Otimize o carregamento de recursos críticos</span>
-                 </div>
-               )}
-               {performanceMonitor.getAverageMetric('FID') > 100 && (
-                 <div className="flex items-center gap-2">
-                   <span className="text-warning">•</span>
-                   <span>FID alto - Reduza o tempo de execução do JavaScript</span>
-                 </div>
-               )}
-               {performanceMonitor.getAverageMetric('CLS') > 0.1 && (
-                 <div className="flex items-center gap-2">
-                   <span className="text-warning">•</span>
-                   <span>CLS alto - Defina dimensões para elementos dinâmicos</span>
-                 </div>
-               )}
-             </div>
-           </CardContent>
-         </Card>
-       )}
-     </div>
-   );
- }
- ```
+  return (
+    <div className="space-y-6">
+      {/* Overall Performance Score */}
+      <Card className="border-primary/20 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Activity className="h-5 w-5 text-primary" />
+            Performance Geral do Sistema
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className={`text-3xl font-bold ${getScoreColor(overallScore)}`}>
+                {overallScore}/100
+              </div>
+              <div className="text-sm text-muted-foreground">Score de Performance</div>
+            </div>
+            <Badge variant={getScoreBadge(overallScore).variant}>
+              {getScoreBadge(overallScore).label}
+            </Badge>
+          </div>
+          <Progress value={overallScore} className="h-3" />
+        </CardContent>
+      </Card>
 
- ---
+      {/* Core Web Vitals */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Largest Contentful Paint
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="text-2xl font-bold">
+                {(performanceMonitor.getAverageMetric('LCP') / 1000).toFixed(2)}s
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Target: &lt; 2.5s
+              </div>
+              <Progress
+                value={Math.min(100, (2500 / performanceMonitor.getAverageMetric('LCP')) * 100)}
+                className="h-2"
+              />
+            </div>
+          </CardContent>
+        </Card>
 
- ## 📚 **Recursos Adicionais**
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Zap className="h-4 w-4" />
+              First Input Delay
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="text-2xl font-bold">
+                {performanceMonitor.getAverageMetric('FID').toFixed(0)}ms
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Target: &lt; 100ms
+              </div>
+              <Progress
+                value={Math.min(100, (100 / performanceMonitor.getAverageMetric('FID')) * 100)}
+                className="h-2"
+              />
+            </div>
+          </CardContent>
+        </Card>
 
- ### **Links de Documentação**
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Cumulative Layout Shift
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="text-2xl font-bold">
+                {performanceMonitor.getAverageMetric('CLS').toFixed(3)}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Target: &lt; 0.1
+              </div>
+              <Progress
+                value={Math.min(100, (0.1 / performanceMonitor.getAverageMetric('CLS')) * 100)}
+                className="h-2"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
- - **Next.js 15**: [https://nextjs.org/docs](https://nextjs.org/docs)
- - **React 19**: [https://react.dev](https://react.dev)
- - **Tailwind CSS**: [https://tailwindcss.com/docs](https://tailwindcss.com/docs)
- - **shadcn/ui**: [https://ui.shadcn.com](https://ui.shadcn.com)
- - **TweakCN**: [https://tweakcn.com](https://tweakcn.com)
- - **Vercel AI SDK**: [https://sdk.vercel.ai](https://sdk.vercel.ai)
- - **Supabase**: [https://supabase.com/docs](https://supabase.com/docs)
+      {/* Performance Alerts */}
+      {overallScore < 70 && (
+        <Card className="border-warning/20 bg-warning/5">
+          <CardHeader>
+            <CardTitle className="text-sm flex items-center gap-2 text-warning">
+              <AlertTriangle className="h-4 w-4" />
+              Alertas de Performance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2 text-sm">
+              {performanceMonitor.getAverageMetric('LCP') > 2500 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-warning">•</span>
+                  <span>LCP acima do recomendado - Otimize o carregamento de recursos críticos</span>
+                </div>
+              )}
+              {performanceMonitor.getAverageMetric('FID') > 100 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-warning">•</span>
+                  <span>FID alto - Reduza o tempo de execução do JavaScript</span>
+                </div>
+              )}
+              {performanceMonitor.getAverageMetric('CLS') > 0.1 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-warning">•</span>
+                  <span>CLS alto - Defina dimensões para elementos dinâmicos</span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+```
 
- ### **Compliance e Regulamentações**
+---
 
- - **LGPD**: [https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm)
- - **ANVISA**: [https://www.gov.br/anvisa/pt-br](https://www.gov.br/anvisa/pt-br)
- - **WCAG 2.1**: [https://www.w3.org/WAI/WCAG21/quickref/](https://www.w3.org/WAI/WCAG21/quickref/)
+## 📚 **Recursos Adicionais**
 
- ### **Padrões de Saúde**
+### **Links de Documentação**
 
- - **HL7 FHIR**: [https://www.hl7.org/fhir/](https://www.hl7.org/fhir/)
- - **ICD-11**: [https://icd.who.int/en](https://icd.who.int/en)
- - **SNOMED CT**: [https://www.snomed.org](https://www.snomed.org)
- - **DICOM**: [https://www.dicomstandard.org](https://www.dicomstandard.org)
+- **Next.js 15**: [https://nextjs.org/docs](https://nextjs.org/docs)
+- **React 19**: [https://react.dev](https://react.dev)
+- **Tailwind CSS**: [https://tailwindcss.com/docs](https://tailwindcss.com/docs)
+- **shadcn/ui**: [https://ui.shadcn.com](https://ui.shadcn.com)
+- **TweakCN**: [https://tweakcn.com](https://tweakcn.com)
+- **Vercel AI SDK**: [https://sdk.vercel.ai](https://sdk.vercel.ai)
+- **Supabase**: [https://supabase.com/docs](https://supabase.com/docs)
 
- ### **Ferramentas de Desenvolvimento**
+### **Compliance e Regulamentações**
 
- - **Vitest**: [https://vitest.dev](https://vitest.dev)
- - **Testing Library**: [https://testing-library.com](https://testing-library.com)
- - **Playwright**: [https://playwright.dev](https://playwright.dev)
- - **Framer Motion**: [https://www.framer.com/motion/](https://www.framer.com/motion/)
- - **Lucide React**: [https://lucide.dev](https://lucide.dev)
+- **LGPD**: [https://www.planalto.gov.br/ccivil_03/\_ato2015-2018/2018/lei/l13709.htm](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm)
+- **ANVISA**: [https://www.gov.br/anvisa/pt-br](https://www.gov.br/anvisa/pt-br)
+- **WCAG 2.1**: [https://www.w3.org/WAI/WCAG21/quickref/](https://www.w3.org/WAI/WCAG21/quickref/)
 
- ---
+### **Padrões de Saúde**
 
- ## 🎯 **Próximos Passos**
+- **HL7 FHIR**: [https://www.hl7.org/fhir/](https://www.hl7.org/fhir/)
+- **ICD-11**: [https://icd.who.int/en](https://icd.who.int/en)
+- **SNOMED CT**: [https://www.snomed.org](https://www.snomed.org)
+- **DICOM**: [https://www.dicomstandard.org](https://www.dicomstandard.org)
 
- ### **Implementação Prioritária**
+### **Ferramentas de Desenvolvimento**
 
- 1. **🎨 Setup do Tema TweakCN NEONPRO**
+- **Vitest**: [https://vitest.dev](https://vitest.dev)
+- **Testing Library**: [https://testing-library.com](https://testing-library.com)
+- **Playwright**: [https://playwright.dev](https://playwright.dev)
+- **Framer Motion**: [https://www.framer.com/motion/](https://www.framer.com/motion/)
+- **Lucide React**: [https://lucide.dev](https://lucide.dev)
+
+---
+
+## 🎯 **Próximos Passos**
+
+### **Implementação Prioritária**
+
+1.  **🎨 Setup do Tema TweakCN NEONPRO**
     - Configurar paleta de cores healthcare
     - Implementar variáveis CSS customizadas
     - Testar contraste e acessibilidade
 
- 2. **🤖 Sistema de Chat IA Universal**
+2.  **🤖 Sistema de Chat IA Universal**
     - Integrar Vercel AI SDK
     - Configurar contextos específicos
     - Implementar detecção de emergência
 
- 3. **🏥 Componentes Healthcare**
+3.  **🏥 Componentes Healthcare**
     - Desenvolver cards de métricas médicas
     - Criar indicadores de sinais vitais
     - Implementar alertas de emergência
 
- 4. **🇧🇷 Compliance Brasileiro**
+4.  **🇧🇷 Compliance Brasileiro**
     - Configurar validações LGPD
     - Implementar checklist ANVISA
     - Integrar requisitos CFM
 
- 5. **♿ Acessibilidade WCAG 2.1 AA+**
+5.  **♿ Acessibilidade WCAG 2.1 AA+**
     - Implementar navegação por teclado
     - Configurar leitores de tela
     - Testar com usuários reais
 
- ### **Métricas de Sucesso**
+### **Métricas de Sucesso**
 
- - **Performance**: Core Web Vitals > 90/100
- - **Acessibilidade**: WCAG 2.1 AA+ compliance
- - **Compliance**: 100% conformidade LGPD/ANVISA/CFM
- - **UX**: Tempo de resposta < 200ms para emergências
- - **AI**: Precisão > 95% na detecção de contexto médico
+- **Performance**: Core Web Vitals > 90/100
+- **Acessibilidade**: WCAG 2.1 AA+ compliance
+- **Compliance**: 100% conformidade LGPD/ANVISA/CFM
+- **UX**: Tempo de resposta < 200ms para emergências
+- **AI**: Precisão > 95% na detecção de contexto médico
 
- ---
+---
 
- > **🚀 Conclusão**: Esta arquitetura frontend estabelece as bases para uma plataforma de saúde digital de classe mundial, otimizada para o mercado brasileiro e focada na excelência em experiência do usuário, performance e compliance regulatório.
+> **🚀 Conclusão**: Esta arquitetura frontend estabelece as bases para uma plataforma de saúde digital de classe mundial, otimizada para o mercado brasileiro e focada na excelência em experiência do usuário, performance e compliance regulatório.
 
- > **📝 Nota**: Todos os componentes devem seguir rigorosamente estas diretrizes para garantir consistência, acessibilidade e conformidade com as regulamentações brasileiras de saúde.
+> **📝 Nota**: Todos os componentes devem seguir rigorosamente estas diretrizes para garantir consistência, acessibilidade e conformidade com as regulamentações brasileiras de saúde.

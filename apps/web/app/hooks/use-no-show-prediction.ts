@@ -1,12 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import type { 
-  NoShowPrediction, 
-  AppointmentWithRisk} from '@/types/no-show-prediction';
-import {
-  RISK_THRESHOLDS 
-} from '@/types/no-show-prediction';
+import { useState, useEffect, useCallback } from "react";
+import type {
+  NoShowPrediction,
+  AppointmentWithRisk,
+} from "@/types/no-show-prediction";
+import { RISK_THRESHOLDS } from "@/types/no-show-prediction";
 
 interface UseNoShowPredictionOptions {
   appointmentIds?: string[];
@@ -21,88 +20,112 @@ interface UseNoShowPredictionReturn {
   fetchPrediction: (appointmentId: string) => Promise<void>;
   fetchMultiplePredictions: (appointmentIds: string[]) => Promise<void>;
   refreshPredictions: () => Promise<void>;
-  getPredictionForAppointment: (appointmentId: string) => NoShowPrediction | undefined;
-  getRiskLevel: (riskScore: number) => 'low' | 'medium' | 'high' | 'critical';
+  getPredictionForAppointment: (
+    appointmentId: string,
+  ) => NoShowPrediction | undefined;
+  getRiskLevel: (riskScore: number) => "low" | "medium" | "high" | "critical";
 }
 
 /**
  * Hook for managing no-show predictions
  * Provides real-time updates and caching for risk scoring data
  */
-export function useNoShowPrediction({ 
+export function useNoShowPrediction({
   appointmentIds = [],
   realTimeUpdates = false,
-  refreshInterval = 30_000 
+  refreshInterval = 30_000,
 }: UseNoShowPredictionOptions = {}): UseNoShowPredictionReturn {
-  
-  const [predictions, setPredictions] = useState<Record<string, NoShowPrediction>>({});
+  const [predictions, setPredictions] = useState<
+    Record<string, NoShowPrediction>
+  >({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getRiskLevel = useCallback((riskScore: number): 'low' | 'medium' | 'high' | 'critical' => {
-    if (riskScore >= RISK_THRESHOLDS.CRITICAL) {return 'critical';}
-    if (riskScore >= RISK_THRESHOLDS.HIGH) {return 'high';}
-    if (riskScore >= RISK_THRESHOLDS.MEDIUM) {return 'medium';}
-    return 'low';
-  }, []);
-
-  const fetchPrediction = useCallback(async (appointmentId: string) => {
-    try {
-      setError(null);
-      const response = await fetch(`/api/ai/no-show-prediction/predict`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ appointmentId }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch prediction: ${response.statusText}`);
+  const getRiskLevel = useCallback(
+    (riskScore: number): "low" | "medium" | "high" | "critical" => {
+      if (riskScore >= RISK_THRESHOLDS.CRITICAL) {
+        return "critical";
       }
+      if (riskScore >= RISK_THRESHOLDS.HIGH) {
+        return "high";
+      }
+      if (riskScore >= RISK_THRESHOLDS.MEDIUM) {
+        return "medium";
+      }
+      return "low";
+    },
+    [],
+  );
 
-      const data = await response.json();
-      
-      if (data.success && data.prediction) {
-        setPredictions(prev => ({
-          ...prev,
-          [appointmentId]: {
-            ...data.prediction,
-            riskLevel: getRiskLevel(data.prediction.riskScore),
-            predictedAt: new Date(data.prediction.predictedAt),
+  const fetchPrediction = useCallback(
+    async (appointmentId: string) => {
+      try {
+        setError(null);
+        const response = await fetch(`/api/ai/no-show-prediction/predict`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }));
-      }
-    } catch (err) {
-      console.error('Error fetching no-show prediction:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch prediction');
-    }
-  }, [getRiskLevel]);
+          body: JSON.stringify({ appointmentId }),
+        });
 
-  const fetchMultiplePredictions = useCallback(async (appointmentIds: string[]) => {
-    if (appointmentIds.length === 0) {return;}
+        if (!response.ok) {
+          throw new Error(`Failed to fetch prediction: ${response.statusText}`);
+        }
 
-    setIsLoading(true);
-    try {
-      setError(null);
-      
-      // Fetch predictions in batches to avoid overwhelming the API
-      const batchSize = 10;
-      const batches = [];
-      for (let i = 0; i < appointmentIds.length; i += batchSize) {
-        batches.push(appointmentIds.slice(i, i + batchSize));
+        const data = await response.json();
+
+        if (data.success && data.prediction) {
+          setPredictions((prev) => ({
+            ...prev,
+            [appointmentId]: {
+              ...data.prediction,
+              riskLevel: getRiskLevel(data.prediction.riskScore),
+              predictedAt: new Date(data.prediction.predictedAt),
+            },
+          }));
+        }
+      } catch (err) {
+        console.error("Error fetching no-show prediction:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch prediction",
+        );
+      }
+    },
+    [getRiskLevel],
+  );
+
+  const fetchMultiplePredictions = useCallback(
+    async (appointmentIds: string[]) => {
+      if (appointmentIds.length === 0) {
+        return;
       }
 
-      for (const batch of batches) {
-        await Promise.all(batch.map(id => fetchPrediction(id)));
+      setIsLoading(true);
+      try {
+        setError(null);
+
+        // Fetch predictions in batches to avoid overwhelming the API
+        const batchSize = 10;
+        const batches = [];
+        for (let i = 0; i < appointmentIds.length; i += batchSize) {
+          batches.push(appointmentIds.slice(i, i + batchSize));
+        }
+
+        for (const batch of batches) {
+          await Promise.all(batch.map((id) => fetchPrediction(id)));
+        }
+      } catch (err) {
+        console.error("Error fetching multiple predictions:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch predictions",
+        );
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching multiple predictions:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch predictions');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [fetchPrediction]);
+    },
+    [fetchPrediction],
+  );
 
   const refreshPredictions = useCallback(async () => {
     const appointmentIds = Object.keys(predictions);
@@ -111,9 +134,12 @@ export function useNoShowPrediction({
     }
   }, [predictions, fetchMultiplePredictions]);
 
-  const getPredictionForAppointment = useCallback((appointmentId: string) => {
-    return predictions[appointmentId];
-  }, [predictions]);
+  const getPredictionForAppointment = useCallback(
+    (appointmentId: string) => {
+      return predictions[appointmentId];
+    },
+    [predictions],
+  );
 
   // Initial fetch for provided appointment IDs
   useEffect(() => {
@@ -124,7 +150,9 @@ export function useNoShowPrediction({
 
   // Set up real-time updates if enabled
   useEffect(() => {
-    if (!realTimeUpdates || refreshInterval <= 0) {return;}
+    if (!realTimeUpdates || refreshInterval <= 0) {
+      return;
+    }
 
     const interval = setInterval(() => {
       refreshPredictions();
@@ -149,22 +177,20 @@ export function useNoShowPrediction({
  * Enhanced hook that enriches appointments with risk predictions
  */
 export function useEnhancedAppointments(appointments: any[]) {
-  const appointmentIds = appointments.map(apt => apt.id);
-  const { 
-    predictions, 
-    isLoading, 
-    error, 
-    getPredictionForAppointment 
-  } = useNoShowPrediction({ 
-    appointmentIds,
-    realTimeUpdates: true,
-    refreshInterval: 60_000 // 1 minute
-  });
+  const appointmentIds = appointments.map((apt) => apt.id);
+  const { predictions, isLoading, error, getPredictionForAppointment } =
+    useNoShowPrediction({
+      appointmentIds,
+      realTimeUpdates: true,
+      refreshInterval: 60_000, // 1 minute
+    });
 
-  const enhancedAppointments: AppointmentWithRisk[] = appointments.map(appointment => ({
-    ...appointment,
-    riskPrediction: getPredictionForAppointment(appointment.id),
-  }));
+  const enhancedAppointments: AppointmentWithRisk[] = appointments.map(
+    (appointment) => ({
+      ...appointment,
+      riskPrediction: getPredictionForAppointment(appointment.id),
+    }),
+  );
 
   return {
     appointments: enhancedAppointments,

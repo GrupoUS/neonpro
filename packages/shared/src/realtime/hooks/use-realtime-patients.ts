@@ -85,7 +85,9 @@ export function useRealtimePatients(
 
             case "UPDATE": {
               if (newData) {
-                return oldCache.map((patient) => patient.id === newData.id ? newData : patient);
+                return oldCache.map((patient) =>
+                  patient.id === newData.id ? newData : patient,
+                );
               }
               return oldCache;
             }
@@ -241,7 +243,7 @@ export function useOptimisticPatients(tenantId: string) {
             return oldCache;
           }
           return oldCache.map((patient) =>
-            patient.id === patientId ? { ...patient, ...updates } : patient
+            patient.id === patientId ? { ...patient, ...updates } : patient,
           );
         },
       );

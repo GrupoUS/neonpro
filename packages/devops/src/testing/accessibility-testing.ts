@@ -62,17 +62,17 @@ export class AccessibilityTester {
 
   private async validateScreenReaderCompatibility(): Promise<boolean> {
     return (
-      this.checkAriaLabels()
-      && this.checkSemanticHTML()
-      && this.checkScreenReaderFlow()
+      this.checkAriaLabels() &&
+      this.checkSemanticHTML() &&
+      this.checkScreenReaderFlow()
     );
   }
 
   private async validateKeyboardNavigation(): Promise<boolean> {
     return (
-      this.checkTabOrder()
-      && this.checkKeyboardShortcuts()
-      && this.checkFocusTrapping()
+      this.checkTabOrder() &&
+      this.checkKeyboardShortcuts() &&
+      this.checkFocusTrapping()
     );
   }
 
@@ -83,51 +83,51 @@ export class AccessibilityTester {
 
   private async validateTextScaling(): Promise<boolean> {
     return (
-      this.checkTextScaling200()
-      && this.checkLayoutReflow()
-      && this.checkContentVisibility()
+      this.checkTextScaling200() &&
+      this.checkLayoutReflow() &&
+      this.checkContentVisibility()
     );
   }
 
   private async validateFocusManagement(): Promise<boolean> {
     return (
-      this.checkFocusIndicators()
-      && this.checkFocusOrder()
-      && this.checkFocusReturn()
+      this.checkFocusIndicators() &&
+      this.checkFocusOrder() &&
+      this.checkFocusReturn()
     );
   }
 
   private async validatePerceivable(): Promise<boolean> {
     return (
-      this.checkTextAlternatives()
-      && this.checkCaptions()
-      && this.checkColorContrast()
-      && this.checkResize()
+      this.checkTextAlternatives() &&
+      this.checkCaptions() &&
+      this.checkColorContrast() &&
+      this.checkResize()
     );
   }
 
   private async validateOperable(): Promise<boolean> {
     return (
-      this.checkKeyboardAccessible()
-      && this.checkNoSeizures()
-      && this.checkNavigable()
-      && this.checkInputModalities()
+      this.checkKeyboardAccessible() &&
+      this.checkNoSeizures() &&
+      this.checkNavigable() &&
+      this.checkInputModalities()
     );
   }
 
   private async validateUnderstandable(): Promise<boolean> {
     return (
-      this.checkReadable()
-      && this.checkPredictable()
-      && this.checkInputAssistance()
+      this.checkReadable() &&
+      this.checkPredictable() &&
+      this.checkInputAssistance()
     );
   }
 
   private async validateRobust(): Promise<boolean> {
     return (
-      this.checkCompatible()
-      && this.checkValidHTML()
-      && this.checkAccessibilityAPI()
+      this.checkCompatible() &&
+      this.checkValidHTML() &&
+      this.checkAccessibilityAPI()
     );
   }
 
@@ -260,7 +260,8 @@ export function createAccessibilityTestSuite(
     });
 
     it("healthcare Accessibility Validation", async () => {
-      const result = await accessibilityTester.validateHealthcareAccessibility();
+      const result =
+        await accessibilityTester.validateHealthcareAccessibility();
       expect(result.passed).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);
     });

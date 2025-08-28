@@ -114,7 +114,7 @@ const exportToCSV = (
           }
           return String(value);
         })
-        .join(",")
+        .join(","),
     ),
   ].join("\n");
 

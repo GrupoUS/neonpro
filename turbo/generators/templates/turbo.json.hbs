@@ -1,28 +1,19 @@
-{
-  "extends": ["//"],
-  "tasks": {
-    "build": {
-      {{#if healthcare}}
-      "tags": ["{{kebabCase name}}", "shared", "healthcare"]
-      {{else}}
-      "tags": ["{{kebabCase name}}", "shared"]
-      {{/if}}
-    },
-    "test": {
-      {{#if healthcare}}
-      "tags": ["{{kebabCase name}}", "shared", "healthcare"]
-      {{else}}
-      "tags": ["{{kebabCase name}}", "shared"]
-      {{/if}}
-    }
-    {{#if healthcare}}
-    ,
-    "test:compliance": {
-      "tags": ["{{kebabCase name}}", "compliance", "healthcare"]
-    },
-    "test:healthcare": {
-      "tags": ["{{kebabCase name}}", "healthcare"]
-    }
-    {{/if}}
-  }
+{ "extends": ["//"], "tasks": { "build": {
+{{#if healthcare}}
+  "tags": ["{{kebabCase name}}", "shared", "healthcare"]
+{{else}}
+  "tags": ["{{kebabCase name}}", "shared"]
+{{/if}}
+}, "test": {
+{{#if healthcare}}
+  "tags": ["{{kebabCase name}}", "shared", "healthcare"]
+{{else}}
+  "tags": ["{{kebabCase name}}", "shared"]
+{{/if}}
 }
+{{#if healthcare}}
+  , "test:compliance": { "tags": ["{{kebabCase name}}", "compliance",
+  "healthcare"] }, "test:healthcare": { "tags": ["{{kebabCase name}}",
+  "healthcare"] }
+{{/if}}
+} }

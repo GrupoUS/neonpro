@@ -8,7 +8,13 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
   Activity,
@@ -114,7 +120,7 @@ export function HealthMonitoringDashboard() {
 
   const getHealthStatus = (
     value: number,
-    thresholds: { good: number; warning: number; },
+    thresholds: { good: number; warning: number },
   ) => {
     if (value >= thresholds.good) {
       return "success";
@@ -298,28 +304,26 @@ export function HealthMonitoringDashboard() {
                 {metrics.apiResponseTime}ms
               </div>
               <div
-                className={`text-xs ${
-                  getHealthColor(
-                    getHealthStatus(300 - metrics.apiResponseTime, {
-                      good: 150,
-                      warning: 100,
-                    }),
-                  )
-                }`}
+                className={`text-xs ${getHealthColor(
+                  getHealthStatus(300 - metrics.apiResponseTime, {
+                    good: 150,
+                    warning: 100,
+                  }),
+                )}`}
                 role="status"
                 aria-label={`Status: ${
                   metrics.apiResponseTime < 200
                     ? "Excelente"
                     : metrics.apiResponseTime < 300
-                    ? "Bom"
-                    : "Atenção"
+                      ? "Bom"
+                      : "Atenção"
                 }`}
               >
                 {metrics.apiResponseTime < 200
                   ? "Excelente"
                   : metrics.apiResponseTime < 300
-                  ? "Bom"
-                  : "Atenção"}
+                    ? "Bom"
+                    : "Atenção"}
               </div>
             </div>
           </CardContent>
@@ -507,7 +511,8 @@ export function HealthMonitoringDashboard() {
                 <span className="text-sm font-medium">Backup Completo</span>
               </div>
               <div className="text-xs text-muted-foreground">
-                Último backup: {new Date(metrics.lastBackup).toLocaleString("pt-BR")}
+                Último backup:{" "}
+                {new Date(metrics.lastBackup).toLocaleString("pt-BR")}
               </div>
               <div className="space-y-1 text-xs">
                 <div className="flex justify-between">

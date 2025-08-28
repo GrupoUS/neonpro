@@ -127,8 +127,8 @@ describe("patient Management API - NeonPro Healthcare", () => {
 
         // Validate CNS if provided
         if (
-          patientData.cns
-          && !mockPatientService.validateCNS(patientData.cns)
+          patientData.cns &&
+          !mockPatientService.validateCNS(patientData.cns)
         ) {
           return c.json({ error: "CNS inválido" }, 400);
         }
@@ -277,7 +277,8 @@ describe("patient Management API - NeonPro Healthcare", () => {
           return c.json(
             {
               success: false,
-              error: "Consentimento para processamento de dados é obrigatório (LGPD)",
+              error:
+                "Consentimento para processamento de dados é obrigatório (LGPD)",
               code: "LGPD_CONSENT_REQUIRED",
             },
             400,
@@ -337,9 +338,10 @@ describe("patient Management API - NeonPro Healthcare", () => {
         }
 
         // Apply data masking based on user role
-        const responseData = role === "NURSE"
-          ? mockLGPDService.maskSensitiveData(patient, role)
-          : patient;
+        const responseData =
+          role === "NURSE"
+            ? mockLGPDService.maskSensitiveData(patient, role)
+            : patient;
 
         // Log data access
         await mockLGPDService.logDataAccess({

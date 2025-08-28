@@ -61,7 +61,7 @@ export interface EmergencyPatientCardProps {
   onAccessMedicalHistory: () => void;
   emergencyMode?: boolean;
   className?: string;
-}// Emergency Status Colors with TweakCN Integration
+} // Emergency Status Colors with TweakCN Integration
 const getStatusStyles = (status: EmergencyPatientData["currentStatus"]) => {
   switch (status) {
     case "life-threatening":
@@ -104,13 +104,14 @@ export function EmergencyPatientCard({
   className,
 }: EmergencyPatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(emergencyMode);
-  const statusStyles = getStatusStyles(patient.currentStatus);  return (
+  const statusStyles = getStatusStyles(patient.currentStatus);
+  return (
     <Card
       className={cn(
         "w-full transition-all duration-200 hover:shadow-neonpro-glow/30",
         statusStyles.card,
         emergencyMode && "border-2 shadow-2xl scale-[1.02]",
-        className
+        className,
       )}
       role="alert"
       aria-live="polite"
@@ -134,7 +135,7 @@ export function EmergencyPatientCard({
               )}
             </div>
             <div>
-              <CardTitle 
+              <CardTitle
                 id={`emergency-patient-${patient.id}`}
                 className="text-xl font-bold flex items-center gap-2"
               >
@@ -143,14 +144,15 @@ export function EmergencyPatientCard({
                   ({patient.age} anos)
                 </span>
               </CardTitle>
-              <Badge 
+              <Badge
                 className={statusStyles.badge}
                 aria-label={`Status: ${statusStyles.priority}`}
               >
                 {statusStyles.priority}
               </Badge>
             </div>
-          </div>          {/* Emergency Actions */}
+          </div>{" "}
+          {/* Emergency Actions */}
           <div className="flex flex-col gap-2">
             <Button
               onClick={onCallSAMU}
@@ -164,7 +166,9 @@ export function EmergencyPatientCard({
             </Button>
             {patient.emergencyContacts.length > 0 && (
               <Button
-                onClick={() => onCallEmergencyContact(patient.emergencyContacts[0])}
+                onClick={() =>
+                  onCallEmergencyContact(patient.emergencyContacts[0])
+                }
                 variant="outline"
                 size="sm"
                 className="border-orange-500 text-orange-600 hover:bg-orange-50"
@@ -191,7 +195,8 @@ export function EmergencyPatientCard({
               <Badge variant="destructive" className="font-bold">
                 {patient.bloodType}
               </Badge>
-            </div>            {patient.allergies.length > 0 && (
+            </div>{" "}
+            {patient.allergies.length > 0 && (
               <div className="space-y-1">
                 <span className="font-semibold text-sm text-red-600 flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3" aria-hidden="true" />
@@ -199,9 +204,9 @@ export function EmergencyPatientCard({
                 </span>
                 <div className="flex flex-wrap gap-1">
                   {patient.allergies.map((allergy, index) => (
-                    <Badge 
-                      key={index} 
-                      variant="destructive" 
+                    <Badge
+                      key={index}
+                      variant="destructive"
                       className="text-xs bg-red-100 text-red-800 border border-red-300"
                       aria-label={`Alergia: ${allergy}`}
                     >
@@ -222,8 +227,8 @@ export function EmergencyPatientCard({
               </span>
               <div className="space-y-1">
                 {patient.criticalConditions.map((condition, index) => (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className="text-sm bg-orange-50 dark:bg-orange-950/20 px-2 py-1 rounded border-l-4 border-orange-500"
                   >
                     {condition}
@@ -232,8 +237,9 @@ export function EmergencyPatientCard({
               </div>
             </div>
           )}
-        </div>        {/* Critical Medications */}
-        {patient.medications.some(med => med.isCritical) && (
+        </div>{" "}
+        {/* Critical Medications */}
+        {patient.medications.some((med) => med.isCritical) && (
           <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-lg border border-yellow-300">
             <span className="font-semibold text-sm text-yellow-800 dark:text-yellow-200 flex items-center gap-1 mb-2">
               <Zap className="h-4 w-4" aria-hidden="true" />
@@ -241,7 +247,7 @@ export function EmergencyPatientCard({
             </span>
             <div className="space-y-2">
               {patient.medications
-                .filter(med => med.isCritical)
+                .filter((med) => med.isCritical)
                 .map((medication, index) => (
                   <div key={index} className="text-sm space-y-1">
                     <div className="font-medium">{medication.name}</div>
@@ -258,7 +264,6 @@ export function EmergencyPatientCard({
             </div>
           </div>
         )}
-
         {/* Location Information */}
         {patient.lastKnownLocation && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -266,7 +271,6 @@ export function EmergencyPatientCard({
             <span>Última localização: {patient.lastKnownLocation.address}</span>
           </div>
         )}
-
         {/* Additional Actions */}
         <div className="flex flex-wrap gap-2 pt-2">
           <Button
@@ -280,7 +284,7 @@ export function EmergencyPatientCard({
             <FileText className="h-4 w-4 mr-1" aria-hidden="true" />
             {isExpanded ? "Menos Detalhes" : "Mais Detalhes"}
           </Button>
-          
+
           <Button
             onClick={onAccessMedicalHistory}
             variant="ghost"
@@ -291,7 +295,8 @@ export function EmergencyPatientCard({
             <Clock className="h-4 w-4 mr-1" aria-hidden="true" />
             Histórico
           </Button>
-        </div>        {/* Expanded Details */}
+        </div>{" "}
+        {/* Expanded Details */}
         {isExpanded && (
           <div
             id={`emergency-details-${patient.id}`}
@@ -305,9 +310,14 @@ export function EmergencyPatientCard({
                 </span>
                 <div className="space-y-2">
                   {patient.emergencyContacts.map((contact, index) => (
-                    <div key={index} className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-800/50 rounded">
+                    <div
+                      key={index}
+                      className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-800/50 rounded"
+                    >
                       <div>
-                        <div className="font-medium text-sm">{contact.name}</div>
+                        <div className="font-medium text-sm">
+                          {contact.name}
+                        </div>
                         <div className="text-xs text-muted-foreground">
                           {contact.relationship} • {contact.phone}
                         </div>
@@ -341,7 +351,8 @@ export function EmergencyPatientCard({
                   ))}
                   {patient.medicalHistory.length > 3 && (
                     <div className="text-xs text-muted-foreground italic">
-                      +{patient.medicalHistory.length - 3} mais itens no histórico completo
+                      +{patient.medicalHistory.length - 3} mais itens no
+                      histórico completo
                     </div>
                   )}
                 </div>

@@ -177,7 +177,8 @@ export const useDataClassification = () => {
 
         return data;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error occurred";
         setError(errorMessage);
         throw error;
       } finally {
@@ -222,7 +223,8 @@ export const useDataSubjectRequests = () => {
 
       return data;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
       setError(errorMessage);
       throw error;
     } finally {
@@ -313,7 +315,8 @@ export const useSoftwareValidation = () => {
 
         return data;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error occurred";
         setError(errorMessage);
         throw error;
       } finally {
@@ -406,7 +409,8 @@ export const useProfessionalValidation = () => {
 
         return data;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error occurred";
         setError(errorMessage);
         throw error;
       } finally {
@@ -503,7 +507,8 @@ export const useComplianceAlerts = () => {
 
         return data;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error occurred";
         setError(errorMessage);
         throw error;
       } finally {
@@ -565,7 +570,8 @@ export const useComplianceReport = () => {
 
         return { success: true };
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error occurred";
         setError(errorMessage);
         throw error;
       } finally {

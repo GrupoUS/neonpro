@@ -16,7 +16,12 @@ import {
   EnterpriseSecurityService,
 } from "../enterprise";
 import { EnterpriseHealthCheckService } from "../health";
-import type { AuditEvent, PerformanceMetrics, SecurityConfig, ServiceContext } from "../types";
+import type {
+  AuditEvent,
+  PerformanceMetrics,
+  SecurityConfig,
+  ServiceContext,
+} from "../types";
 
 // Core service interfaces
 interface ICacheService {
@@ -39,7 +44,11 @@ interface ISecurityService {
   auditOperation(event: AuditEvent): Promise<void>;
   encryptSensitiveData<T>(data: T): Promise<string>;
   decryptSensitiveData<T>(encrypted: string): Promise<T>;
-  checkRateLimit(identifier: string, limit: number, windowMs: number): Promise<boolean>;
+  checkRateLimit(
+    identifier: string,
+    limit: number,
+    windowMs: number,
+  ): Promise<boolean>;
   clearRateLimit(identifier: string): Promise<void>;
 }
 
@@ -330,7 +339,10 @@ export abstract class EnhancedServiceBase {
   /**
    * Audit operation with LGPD/ANVISA compliance
    */
-  private async auditOperation(eventType: string, details: unknown): Promise<void> {
+  private async auditOperation(
+    eventType: string,
+    details: unknown,
+  ): Promise<void> {
     const auditEvent: AuditEvent = {
       id: `${this.config.serviceName}_${Date.now()}_${Math.random()}`,
       service: this.config.serviceName,
@@ -399,7 +411,7 @@ export abstract class EnhancedServiceBase {
    * Initialize cache service
    */
   private initializeCacheService(): ICacheService {
-// Remove self=this assignment since we'll use arrow functions
+    // Remove self=this assignment since we'll use arrow functions
     // Remove self=this assignment and use arrow functions instead
     return {
       async get<T>(key: string): Promise<T | null> {
@@ -505,8 +517,16 @@ export abstract class EnhancedServiceBase {
         const decrypted = await this.enterpriseSecurity.decryptData(encrypted);
         return JSON.parse(decrypted);
       },
-      async checkRateLimit(identifier: string, limit: number, windowMs: number): Promise<boolean> {
-        return this.enterpriseSecurity.checkRateLimit(identifier, limit, windowMs);
+      async checkRateLimit(
+        identifier: string,
+        limit: number,
+        windowMs: number,
+      ): Promise<boolean> {
+        return this.enterpriseSecurity.checkRateLimit(
+          identifier,
+          limit,
+          windowMs,
+        );
       },
       async clearRateLimit(identifier: string): Promise<void> {
         return this.enterpriseSecurity.clearRateLimit(identifier);
@@ -576,18 +596,22 @@ export abstract class EnhancedServiceBase {
 
     try {
       // Test audit service
-      const auditStats = await this.audit.getAuditStats() as Record<string, unknown>;
+      const auditStats = (await this.audit.getAuditStats()) as Record<
+        string,
+        unknown
+      >;
       results.audit = { status: "healthy", ...auditStats };
     } catch (error) {
       results.audit = { status: "unhealthy", error: (error as Error).message };
       errors.push(`Audit service error: ${(error as Error).message}`);
     }
 
-    const status = errors.length === 0
-      ? "healthy"
-      : errors.length <= 2
-      ? "degraded"
-      : "unhealthy";
+    const status =
+      errors.length === 0
+        ? "healthy"
+        : errors.length <= 2
+          ? "degraded"
+          : "unhealthy";
 
     return { status, services: results, errors };
   }

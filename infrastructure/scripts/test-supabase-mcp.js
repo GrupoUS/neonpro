@@ -46,7 +46,8 @@ async function testSupabaseMCP() {
     } else {
     }
 
-    const { data: authConfig, error: authError } = await supabase.auth.getUser();
+    const { data: authConfig, error: authError } =
+      await supabase.auth.getUser();
 
     if (authError) {
     } else {

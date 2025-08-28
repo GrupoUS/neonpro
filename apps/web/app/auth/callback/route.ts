@@ -15,7 +15,8 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     try {
-      const { error: authError } = await supabase.auth.exchangeCodeForSession(code);
+      const { error: authError } =
+        await supabase.auth.exchangeCodeForSession(code);
 
       if (authError) {
         return NextResponse.redirect(

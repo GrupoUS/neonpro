@@ -12,7 +12,8 @@ import type { Database } from "@/types/supabase";
 
 type AIModel = Database["public"]["Tables"]["ai_models"]["Row"];
 type AIModelInsert = Database["public"]["Tables"]["ai_models"]["Insert"];
-type ModelDriftMonitoring = Database["public"]["Tables"]["model_drift_monitoring"]["Row"];
+type ModelDriftMonitoring =
+  Database["public"]["Tables"]["model_drift_monitoring"]["Row"];
 type ModelABTest = Database["public"]["Tables"]["model_ab_tests"]["Row"];
 
 export interface ModelPerformanceMetrics {
@@ -315,7 +316,8 @@ export class ModelManagementSystem {
     const recommendations = models.map((model) => {
       const currentCost = model.cost_per_prediction || 0.01;
       const optimizedCost = currentCost * 0.6; // 40% reduction target
-      const savings = (currentCost - optimizedCost) * (model.predictions_count || 0);
+      const savings =
+        (currentCost - optimizedCost) * (model.predictions_count || 0);
 
       return {
         modelId: model.id,
@@ -429,4 +431,9 @@ export class ModelManagementSystem {
 export const modelManager = new ModelManagementSystem();
 
 // Export types for use in other modules
-export type { AIModel, DriftDetectionConfig, ModelConfig, ModelPerformanceMetrics };
+export type {
+  AIModel,
+  DriftDetectionConfig,
+  ModelConfig,
+  ModelPerformanceMetrics,
+};

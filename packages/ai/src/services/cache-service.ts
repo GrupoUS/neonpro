@@ -101,7 +101,9 @@ export class SupabaseCacheService implements CacheService {
 
       if (this.config.enableMetrics) {
         await this.metrics.recordCounter("cache_hits", 1, { key });
-        await this.metrics.recordTimer("cache_get_duration", responseTime, { key });
+        await this.metrics.recordTimer("cache_get_duration", responseTime, {
+          key,
+        });
       }
 
       return this.deserializeValue(data.value);
@@ -119,7 +121,10 @@ export class SupabaseCacheService implements CacheService {
     try {
       const fullKey = `${this.config.supabase.keyPrefix}${key}`;
       const serializedValue = this.serializeValue(value);
-      const expiresAt = effectiveTTL > 0 ? new Date(Date.now() + effectiveTTL * 1000) : undefined;
+      const expiresAt =
+        effectiveTTL > 0
+          ? new Date(Date.now() + effectiveTTL * 1000)
+          : undefined;
 
       const { error } = await this.supabase
         .from(this.config.supabase.tableName)
@@ -143,7 +148,9 @@ export class SupabaseCacheService implements CacheService {
 
       if (this.config.enableMetrics) {
         await this.metrics.recordCounter("cache_sets", 1, { key });
-        await this.metrics.recordTimer("cache_set_duration", responseTime, { key });
+        await this.metrics.recordTimer("cache_set_duration", responseTime, {
+          key,
+        });
       }
 
       await this.logger.debug("Cache set", { key, ttl: effectiveTTL });
@@ -177,13 +184,18 @@ export class SupabaseCacheService implements CacheService {
 
       if (this.config.enableMetrics) {
         await this.metrics.recordCounter("cache_deletes", 1, { key });
-        await this.metrics.recordTimer("cache_delete_duration", responseTime, { key });
+        await this.metrics.recordTimer("cache_delete_duration", responseTime, {
+          key,
+        });
       }
 
       await this.logger.debug("Cache delete", { key });
     } catch (error) {
       this.operationMetrics.errors++;
-      await this.logger.error("Cache delete error", { key, error: error.message });
+      await this.logger.error("Cache delete error", {
+        key,
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -193,7 +205,7 @@ export class SupabaseCacheService implements CacheService {
     return value !== null;
   }
 
-  async clear(pattern?: string): Promise<{ deletedKeys: string[]; }> {
+  async clear(pattern?: string): Promise<{ deletedKeys: string[] }> {
     const startTime = Date.now();
     let deletedKeys: string[] = [];
 
@@ -210,7 +222,7 @@ export class SupabaseCacheService implements CacheService {
         }
 
         if (data && data.length > 0) {
-          const keysToDelete = data.map(item => item.key);
+          const keysToDelete = data.map((item) => item.key);
 
           const { error: deleteError } = await this.supabase
             .from(this.config.supabase.tableName)
@@ -240,12 +252,18 @@ export class SupabaseCacheService implements CacheService {
       const responseTime = Date.now() - startTime;
       this.recordResponseTime(responseTime);
 
-      await this.logger.info("Cache cleared", { pattern, deletedCount: deletedKeys.length });
+      await this.logger.info("Cache cleared", {
+        pattern,
+        deletedCount: deletedKeys.length,
+      });
 
       return { deletedKeys };
     } catch (error) {
       this.operationMetrics.errors++;
-      await this.logger.error("Cache clear error", { pattern, error: error.message });
+      await this.logger.error("Cache clear error", {
+        pattern,
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -323,15 +341,18 @@ export class SupabaseCacheService implements CacheService {
       this.responseTimes.shift();
     }
 
-    this.operationMetrics.avgResponseTime = this.responseTimes.reduce((sum, time) => sum + time, 0)
-      / this.responseTimes.length;
+    this.operationMetrics.avgResponseTime =
+      this.responseTimes.reduce((sum, time) => sum + time, 0) /
+      this.responseTimes.length;
   }
 
   private updateHitRate(): void {
-    const totalHitsAndMisses = this.operationMetrics.hits + this.operationMetrics.misses;
-    this.operationMetrics.hitRate = totalHitsAndMisses > 0
-      ? (this.operationMetrics.hits / totalHitsAndMisses) * 100
-      : 0;
+    const totalHitsAndMisses =
+      this.operationMetrics.hits + this.operationMetrics.misses;
+    this.operationMetrics.hitRate =
+      totalHitsAndMisses > 0
+        ? (this.operationMetrics.hits / totalHitsAndMisses) * 100
+        : 0;
   }
 
   // Cleanup method

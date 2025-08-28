@@ -4,11 +4,20 @@
  * Gerencia conexão global e estado para toda aplicação
  */
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import type { ReactNode } from "react";
 import { getRealtimeConfig } from "../config";
 import { getRealtimeManager } from "../connection-manager";
-import type { ConnectionStatus, SupabaseRealtimeManager } from "../connection-manager";
+import type {
+  ConnectionStatus,
+  SupabaseRealtimeManager,
+} from "../connection-manager";
 
 interface RealtimeContextValue {
   manager: SupabaseRealtimeManager | null;
@@ -134,7 +143,8 @@ export function RealtimeProvider({
             detail: {
               tenantId,
               status,
-              message: "Conexão instável detectada. Verificar conectividade de rede.",
+              message:
+                "Conexão instável detectada. Verificar conectividade de rede.",
             },
           }),
         );

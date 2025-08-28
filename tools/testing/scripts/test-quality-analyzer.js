@@ -76,20 +76,28 @@ class TestQualityAnalyzer {
 
       // Healthcare compliance patterns
       lgpdCompliance: content.includes("lgpd") || content.includes("LGPD"),
-      anvisaCompliance: content.includes("anvisa") || content.includes("ANVISA"),
+      anvisaCompliance:
+        content.includes("anvisa") || content.includes("ANVISA"),
       cfmCompliance: content.includes("cfm") || content.includes("CFM"),
       auditTrail: content.includes("audit") || content.includes("Audit"),
 
       // Security patterns
-      authenticationTests: content.includes("authentication") || content.includes("auth"),
-      authorizationTests: content.includes("authorization") || content.includes("rbac"),
-      encryptionTests: content.includes("encryption") || content.includes("encrypt"),
-      sqlInjectionTests: content.includes("injection") || content.includes("malicious"),
+      authenticationTests:
+        content.includes("authentication") || content.includes("auth"),
+      authorizationTests:
+        content.includes("authorization") || content.includes("rbac"),
+      encryptionTests:
+        content.includes("encryption") || content.includes("encrypt"),
+      sqlInjectionTests:
+        content.includes("injection") || content.includes("malicious"),
 
       // Performance patterns
-      performanceTests: content.includes("performance") || content.includes("load"),
-      concurrencyTests: content.includes("concurrent") || content.includes("parallel"),
-      timeoutValidation: content.includes("timeout") || content.includes("executionTime"),
+      performanceTests:
+        content.includes("performance") || content.includes("load"),
+      concurrencyTests:
+        content.includes("concurrent") || content.includes("parallel"),
+      timeoutValidation:
+        content.includes("timeout") || content.includes("executionTime"),
 
       // Quality patterns
       errorHandling: (content.match(/catch|error|Error/g) || []).length,
@@ -97,9 +105,12 @@ class TestQualityAnalyzer {
       mockingPatterns: content.includes("mock") || content.includes("jest.fn"),
 
       // Healthcare-specific patterns
-      patientDataProtection: content.includes("patient") && content.includes("privacy"),
-      clinicIsolation: content.includes("clinic") && content.includes("isolation"),
-      medicalCompliance: content.includes("medical") || content.includes("healthcare"),
+      patientDataProtection:
+        content.includes("patient") && content.includes("privacy"),
+      clinicIsolation:
+        content.includes("clinic") && content.includes("isolation"),
+      medicalCompliance:
+        content.includes("medical") || content.includes("healthcare"),
     };
 
     return analysis;
@@ -261,10 +272,11 @@ class TestQualityAnalyzer {
       };
     });
 
-    const avgCompliance = Object.values(complianceResults).reduce(
-      (sum, result) => sum + result.percentage,
-      0,
-    ) / Object.keys(complianceResults).length;
+    const avgCompliance =
+      Object.values(complianceResults).reduce(
+        (sum, result) => sum + result.percentage,
+        0,
+      ) / Object.keys(complianceResults).length;
 
     this.analysisResults.complianceValidation = {
       complianceResults,
@@ -275,20 +287,24 @@ class TestQualityAnalyzer {
   // Generate production readiness report
   generateProductionReadinessReport() {
     const metrics = {
-      testFilesComplete: this.testFiles.filter((f) => f.exists).length / this.testFiles.length,
-      syntaxQuality: Object.values(this.analysisResults.syntaxValidation).reduce(
-        (sum, result) => sum + result.quality,
-        0,
-      ) / this.testFiles.filter((f) => f.exists).length,
+      testFilesComplete:
+        this.testFiles.filter((f) => f.exists).length / this.testFiles.length,
+      syntaxQuality:
+        Object.values(this.analysisResults.syntaxValidation).reduce(
+          (sum, result) => sum + result.quality,
+          0,
+        ) / this.testFiles.filter((f) => f.exists).length,
       complianceScore: this.analysisResults.complianceValidation.avgCompliance,
       totalTestCount: this.analysisResults.coverageAnalysis.totalTests,
-      totalExpectations: this.analysisResults.coverageAnalysis.totalExpectations,
+      totalExpectations:
+        this.analysisResults.coverageAnalysis.totalExpectations,
     };
 
-    const readinessScore = metrics.testFilesComplete * 25
-      + metrics.syntaxQuality * 0.25
-      + metrics.complianceScore * 0.3
-      + Math.min(100, metrics.totalTestCount * 2) * 0.2;
+    const readinessScore =
+      metrics.testFilesComplete * 25 +
+      metrics.syntaxQuality * 0.25 +
+      metrics.complianceScore * 0.3 +
+      Math.min(100, metrics.totalTestCount * 2) * 0.2;
 
     if (readinessScore >= 85) {
     } else if (readinessScore >= 70) {
@@ -314,10 +330,13 @@ class TestQualityAnalyzer {
       summary: {
         filesAnalyzed: this.testFiles.filter((f) => f.exists).length,
         totalTests: this.analysisResults.coverageAnalysis.totalTests,
-        totalExpectations: this.analysisResults.coverageAnalysis.totalExpectations,
-        complianceScore: this.analysisResults.complianceValidation.avgCompliance,
+        totalExpectations:
+          this.analysisResults.coverageAnalysis.totalExpectations,
+        complianceScore:
+          this.analysisResults.complianceValidation.avgCompliance,
         readinessScore: this.analysisResults.productionReadiness.readinessScore,
-        productionReady: this.analysisResults.productionReadiness.readinessScore >= 70,
+        productionReady:
+          this.analysisResults.productionReadiness.readinessScore >= 70,
       },
     };
 

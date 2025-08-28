@@ -5,7 +5,7 @@ export interface NoShowPrediction {
   appointmentId: string;
   patientId: string;
   riskScore: number;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   confidence: number;
   factors: RiskFactor[];
   recommendation: string;
@@ -21,18 +21,33 @@ export interface RiskFactor {
   description: string;
   weight: number;
   value: string | number | boolean;
-  impact: 'positive' | 'negative' | 'neutral';
-  category: 'historical' | 'demographic' | 'behavioral' | 'contextual' | 'external';
+  impact: "positive" | "negative" | "neutral";
+  category:
+    | "historical"
+    | "demographic"
+    | "behavioral"
+    | "contextual"
+    | "external";
 }
 
 export interface InterventionStrategy {
   id: string;
   name: string;
   description: string;
-  type: 'reminder' | 'confirmation' | 'incentive' | 'rescheduling' | 'personal_contact';
-  timing: 'immediate' | '24h_before' | '48h_before' | '72h_before' | 'week_before';
-  channel: 'sms' | 'whatsapp' | 'email' | 'phone' | 'app_notification';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  type:
+    | "reminder"
+    | "confirmation"
+    | "incentive"
+    | "rescheduling"
+    | "personal_contact";
+  timing:
+    | "immediate"
+    | "24h_before"
+    | "48h_before"
+    | "72h_before"
+    | "week_before";
+  channel: "sms" | "whatsapp" | "email" | "phone" | "app_notification";
+  priority: "low" | "medium" | "high" | "urgent";
   estimatedEffectiveness: number; // 0-100%
   cost: number;
 }
@@ -67,7 +82,7 @@ export interface NoShowMetrics {
 export interface PatientRiskProfile {
   patientId: string;
   overallRiskScore: number;
-  riskTrend: 'improving' | 'stable' | 'worsening';
+  riskTrend: "improving" | "stable" | "worsening";
   historicalNoShows: number;
   totalAppointments: number;
   noShowRate: number;
@@ -82,7 +97,7 @@ export interface AppointmentRiskAssessment {
   patientRiskProfile: PatientRiskProfile;
   contextualFactors: RiskFactor[];
   finalRiskScore: number;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   recommendedInterventions: InterventionStrategy[];
   confidence: number;
   reasoning: string;
@@ -92,7 +107,7 @@ export interface NoShowModel {
   id: string;
   name: string;
   version: string;
-  type: 'ml' | 'rule_based' | 'hybrid';
+  type: "ml" | "rule_based" | "hybrid";
   accuracy: number;
   precision: number;
   recall: number;
@@ -112,7 +127,7 @@ export interface NoShowModel {
 
 export interface ModelFeature {
   name: string;
-  type: 'categorical' | 'numerical' | 'boolean' | 'datetime';
+  type: "categorical" | "numerical" | "boolean" | "datetime";
   importance: number;
   description: string;
 }
@@ -132,7 +147,7 @@ export interface NoShowPredictionRequest {
 
 export interface WeatherConditions {
   temperature: number;
-  condition: 'sunny' | 'cloudy' | 'rainy' | 'stormy' | 'snowy';
+  condition: "sunny" | "cloudy" | "rainy" | "stormy" | "snowy";
   precipitation: number;
   windSpeed: number;
 }
@@ -192,7 +207,7 @@ export interface NoShowPredictionApiResponse {
 
 // Event types for real-time updates
 export interface NoShowPredictionEvent {
-  type: 'prediction_updated' | 'intervention_triggered' | 'outcome_recorded';
+  type: "prediction_updated" | "intervention_triggered" | "outcome_recorded";
   appointmentId: string;
   patientId: string;
   data: any;
@@ -200,9 +215,9 @@ export interface NoShowPredictionEvent {
 }
 
 // Utility types
-export type RiskLevelType = NoShowPrediction['riskLevel'];
-export type InterventionType = InterventionStrategy['type'];
-export type RiskFactorCategory = RiskFactor['category'];
+export type RiskLevelType = NoShowPrediction["riskLevel"];
+export type InterventionType = InterventionStrategy["type"];
+export type RiskFactorCategory = RiskFactor["category"];
 
 // Form types for UI
 export interface NoShowPredictionFilters {
@@ -217,60 +232,60 @@ export interface NoShowPredictionFilters {
 }
 
 export interface NoShowPredictionSort {
-  field: 'riskScore' | 'appointmentDate' | 'patientName' | 'createdAt';
-  direction: 'asc' | 'desc';
+  field: "riskScore" | "appointmentDate" | "patientName" | "createdAt";
+  direction: "asc" | "desc";
 }
 
 // Constants
 export const RISK_LEVEL_COLORS = {
-  low: '#10B981',
-  medium: '#F59E0B',
-  high: '#EF4444',
-  critical: '#DC2626'
+  low: "#10B981",
+  medium: "#F59E0B",
+  high: "#EF4444",
+  critical: "#DC2626",
 } as const;
 
 export const RISK_LEVEL_LABELS = {
-  low: 'Baixo Risco',
-  medium: 'Risco Médio',
-  high: 'Alto Risco',
-  critical: 'Risco Crítico'
+  low: "Baixo Risco",
+  medium: "Risco Médio",
+  high: "Alto Risco",
+  critical: "Risco Crítico",
 } as const;
 
 export const INTERVENTION_TYPE_LABELS = {
-  reminder: 'Lembrete',
-  confirmation: 'Confirmação',
-  incentive: 'Incentivo',
-  rescheduling: 'Reagendamento',
-  personal_contact: 'Contato Pessoal'
+  reminder: "Lembrete",
+  confirmation: "Confirmação",
+  incentive: "Incentivo",
+  rescheduling: "Reagendamento",
+  personal_contact: "Contato Pessoal",
 } as const;
 
 export const INTERVENTION_ACTIONS_PT = {
-  reminder: 'Enviar Lembrete',
-  confirmation: 'Solicitar Confirmação',
-  incentive: 'Oferecer Incentivo',
-  rescheduling: 'Sugerir Reagendamento',
-  personal_contact: 'Contato Direto'
+  reminder: "Enviar Lembrete",
+  confirmation: "Solicitar Confirmação",
+  incentive: "Oferecer Incentivo",
+  rescheduling: "Sugerir Reagendamento",
+  personal_contact: "Contato Direto",
 } as const;
 
 // Type guards
 export function isNoShowPrediction(obj: any): obj is NoShowPrediction {
   return (
-    typeof obj === 'object' &&
+    typeof obj === "object" &&
     obj !== null &&
-    typeof obj.id === 'string' &&
-    typeof obj.appointmentId === 'string' &&
-    typeof obj.riskScore === 'number' &&
-    ['low', 'medium', 'high', 'critical'].includes(obj.riskLevel)
+    typeof obj.id === "string" &&
+    typeof obj.appointmentId === "string" &&
+    typeof obj.riskScore === "number" &&
+    ["low", "medium", "high", "critical"].includes(obj.riskLevel)
   );
 }
 
 export function isRiskFactor(obj: any): obj is RiskFactor {
   return (
-    typeof obj === 'object' &&
+    typeof obj === "object" &&
     obj !== null &&
-    typeof obj.id === 'string' &&
-    typeof obj.name === 'string' &&
-    typeof obj.weight === 'number'
+    typeof obj.id === "string" &&
+    typeof obj.name === "string" &&
+    typeof obj.weight === "number"
   );
 }
 

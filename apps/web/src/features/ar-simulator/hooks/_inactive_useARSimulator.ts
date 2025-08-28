@@ -36,7 +36,7 @@ export interface SimulationRequest {
       priority: number;
       technique: string;
       units?: number;
-      coordinates?: { x: number; y: number; z: number; }[];
+      coordinates?: { x: number; y: number; z: number }[];
     }[];
     technique: string;
     expectedUnits?: number;
@@ -146,7 +146,8 @@ async function compareSimulations(simulationIds: string[]): Promise<unknown> {
 
 export function useARSimulator(patientId: string) {
   const queryClient = useQueryClient();
-  const [currentSimulation, setCurrentSimulation] = useState<ARSimulation | null>();
+  const [currentSimulation, setCurrentSimulation] =
+    useState<ARSimulation | null>();
   const [isPolling, setIsPolling] = useState(false);
 
   // Query for patient simulations
@@ -203,9 +204,9 @@ export function useARSimulator(patientId: string) {
   // Stop polling when simulation is complete
   useEffect(() => {
     if (
-      simulationDetails?.status === "ready"
-      || simulationDetails?.status === "completed"
-      || simulationDetails?.status === "failed"
+      simulationDetails?.status === "ready" ||
+      simulationDetails?.status === "completed" ||
+      simulationDetails?.status === "failed"
     ) {
       setIsPolling(false);
     }
@@ -236,8 +237,8 @@ export function useARSimulator(patientId: string) {
 
     // Start polling if simulation is still processing
     if (
-      simulation.status === "initializing"
-      || simulation.status === "processing"
+      simulation.status === "initializing" ||
+      simulation.status === "processing"
     ) {
       setIsPolling(true);
     } else {
@@ -255,9 +256,10 @@ export function useARSimulator(patientId: string) {
   );
 
   // Check if any simulation is processing
-  const hasProcessingSimulation = simulations?.some(
-    (s) => s.status === "initializing" || s.status === "processing",
-  ) || false;
+  const hasProcessingSimulation =
+    simulations?.some(
+      (s) => s.status === "initializing" || s.status === "processing",
+    ) || false;
 
   return {
     // State
@@ -273,10 +275,11 @@ export function useARSimulator(patientId: string) {
     hasProcessingSimulation,
 
     // Errors
-    error: simulationsError
-      || detailsError
-      || createSimulationMutation.error
-      || compareSimulationsMutation.error,
+    error:
+      simulationsError ||
+      detailsError ||
+      createSimulationMutation.error ||
+      compareSimulationsMutation.error,
 
     // Actions
     startSimulation,
@@ -286,7 +289,8 @@ export function useARSimulator(patientId: string) {
     refetchSimulations,
 
     // Utils
-    canStartNewSimulation: !hasProcessingSimulation && !createSimulationMutation.isPending,
+    canStartNewSimulation:
+      !hasProcessingSimulation && !createSimulationMutation.isPending,
   };
 }
 
@@ -309,19 +313,21 @@ export function useSimulationMetrics(patientId: string) {
     totalSimulations: simulations.length,
     completedSimulations: simulations.filter((s) => s.status === "completed")
       .length,
-    averageConfidence: simulations.length > 0
-      ? simulations.reduce(
-        (acc, s) => acc + (s.outputData?.confidenceScore || 0),
-        0,
-      ) / simulations.length
-      : 0,
+    averageConfidence:
+      simulations.length > 0
+        ? simulations.reduce(
+            (acc, s) => acc + (s.outputData?.confidenceScore || 0),
+            0,
+          ) / simulations.length
+        : 0,
     mostRecentSimulation: simulations[0], // Assuming sorted by date
-    processingTime: simulations.length > 0
-      ? simulations.reduce(
-        (acc, s) => acc + (s.metadata?.processingTime || 0),
-        0,
-      ) / simulations.length
-      : 0,
+    processingTime:
+      simulations.length > 0
+        ? simulations.reduce(
+            (acc, s) => acc + (s.metadata?.processingTime || 0),
+            0,
+          ) / simulations.length
+        : 0,
   };
 
   return metrics;

@@ -43,6 +43,7 @@ src/
 ### Data Access Patterns
 
 - **Efficient Queries:** Use `.select()` to specify only the columns needed, reducing data transfer.
+
   ```typescript
   // ✅ DO: Select specific columns
   const { data, error } = await supabase
@@ -52,6 +53,7 @@ src/
   // ❌ DON'T: Select everything if not needed
   const { data, error } = await supabase.from("events").select("*");
   ```
+
 - **Pagination:** Implement pagination using `.range(from, to)` for large datasets.
   ```typescript
   const PAGE_SIZE = 20;
@@ -76,7 +78,8 @@ import { PostgrestError } from "@supabase/supabase-js";
 
 async function createEvent(eventData: any) {
   const supabase = await createServerSupabaseClient(); // Or appropriate client
-  if (!supabase) throw new Error("Unauthorized or Supabase client unavailable.");
+  if (!supabase)
+    throw new Error("Unauthorized or Supabase client unavailable.");
 
   try {
     const { data, error } = await supabase
@@ -86,7 +89,12 @@ async function createEvent(eventData: any) {
       .single(); // Use single() if expecting one row
 
     if (error) {
-      console.error("Supabase Error Code:", error.code, "Message:", error.message);
+      console.error(
+        "Supabase Error Code:",
+        error.code,
+        "Message:",
+        error.message,
+      );
       // Handle specific errors, e.g., unique violation
       if (error.code === "23505") {
         throw new Error("An event with this name already exists.");

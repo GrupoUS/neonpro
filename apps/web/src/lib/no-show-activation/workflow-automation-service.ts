@@ -12,7 +12,11 @@
  * - Performance monitoring and ROI tracking
  */
 
-import type { RiskScoreData, StaffAlert, StaffMember } from "@/components/no-show-activation";
+import type {
+  RiskScoreData,
+  StaffAlert,
+  StaffMember,
+} from "@/components/no-show-activation";
 
 // Workflow Configuration Types
 export interface WorkflowRule {
@@ -30,7 +34,12 @@ export interface WorkflowRule {
 }
 
 export interface WorkflowTrigger {
-  type: "risk_threshold" | "time_based" | "manual" | "appointment_created" | "patient_behavior";
+  type:
+    | "risk_threshold"
+    | "time_based"
+    | "manual"
+    | "appointment_created"
+    | "patient_behavior";
   config: {
     riskThreshold?: number;
     timeBeforeAppointment?: number;
@@ -48,7 +57,12 @@ export interface WorkflowCondition {
 }
 
 export interface WorkflowAction {
-  type: "send_alert" | "schedule_intervention" | "assign_staff" | "update_status" | "log_event";
+  type:
+    | "send_alert"
+    | "schedule_intervention"
+    | "assign_staff"
+    | "update_status"
+    | "log_event";
   config: {
     alertType?: "high_risk" | "critical_risk" | "intervention_needed";
     staffRole?: string[];
@@ -130,7 +144,9 @@ class WorkflowAutomationService {
   }
 
   // Rule Management
-  public addRule(rule: Omit<WorkflowRule, "id" | "createdAt" | "updatedAt">): string {
+  public addRule(
+    rule: Omit<WorkflowRule, "id" | "createdAt" | "updatedAt">,
+  ): string {
     const ruleId = `rule_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     const fullRule: WorkflowRule = {
       ...rule,
@@ -146,7 +162,9 @@ class WorkflowAutomationService {
 
   public updateRule(ruleId: string, updates: Partial<WorkflowRule>): boolean {
     const rule = this.rules.get(ruleId);
-    if (!rule) {return false;}
+    if (!rule) {
+      return false;
+    }
 
     const updatedRule = {
       ...rule,
@@ -168,7 +186,9 @@ class WorkflowAutomationService {
   }
 
   public getRules(): WorkflowRule[] {
-    return Array.from(this.rules.values()).sort((a, b) => b.priority - a.priority);
+    return Array.from(this.rules.values()).sort(
+      (a, b) => b.priority - a.priority,
+    );
   }
 
   // Workflow Execution
@@ -179,16 +199,18 @@ class WorkflowAutomationService {
     staffMembers: StaffMember[],
   ): Promise<string[]> {
     console.log(
-      `🤖 Processing risk score for appointment ${appointmentId}: ${
-        Math.round(riskData.noShowProbability * 100)
-      }%`,
+      `🤖 Processing risk score for appointment ${appointmentId}: ${Math.round(
+        riskData.noShowProbability * 100,
+      )}%`,
     );
 
     const applicableRules = this.findApplicableRules(riskData, appointmentId);
     const executionIds: string[] = [];
 
     for (const rule of applicableRules) {
-      if (!rule.enabled) {continue;}
+      if (!rule.enabled) {
+        continue;
+      }
 
       const executionId = await this.executeWorkflow(
         rule,
@@ -230,7 +252,9 @@ class WorkflowAutomationService {
 
     try {
       execution.status = "running";
-      console.log(`⚡ Executing workflow: ${rule.name} for appointment ${appointmentId}`);
+      console.log(
+        `⚡ Executing workflow: ${rule.name} for appointment ${appointmentId}`,
+      );
 
       // Execute each action in the workflow
       for (let i = 0; i < rule.actions.length; i++) {
@@ -303,10 +327,21 @@ class WorkflowAutomationService {
   ): Promise<any> {
     switch (action.type) {
       case "send_alert":
-        return this.sendStaffAlert(action, appointmentId, patientId, riskData, staffMembers);
+        return this.sendStaffAlert(
+          action,
+          appointmentId,
+          patientId,
+          riskData,
+          staffMembers,
+        );
 
       case "schedule_intervention":
-        return this.scheduleIntervention(action, appointmentId, patientId, riskData);
+        return this.scheduleIntervention(
+          action,
+          appointmentId,
+          patientId,
+          riskData,
+        );
 
       case "assign_staff":
         return this.assignStaff(action, appointmentId, staffMembers);
@@ -315,7 +350,12 @@ class WorkflowAutomationService {
         return this.updateAppointmentStatus(action, appointmentId);
 
       case "log_event":
-        return this.logWorkflowEvent(action, appointmentId, patientId, riskData);
+        return this.logWorkflowEvent(
+          action,
+          appointmentId,
+          patientId,
+          riskData,
+        );
 
       default:
         throw new Error(`Unknown action type: ${action.type}`);
@@ -336,11 +376,12 @@ class WorkflowAutomationService {
       const alert: StaffAlert = {
         id: `alert_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         type: alertType,
-        priority: riskData.riskCategory === "critical"
-          ? "critical"
-          : riskData.riskCategory === "high"
-          ? "high"
-          : "medium",
+        priority:
+          riskData.riskCategory === "critical"
+            ? "critical"
+            : riskData.riskCategory === "high"
+              ? "high"
+              : "medium",
         title: this.generateAlertTitle(alertType, riskData),
         message: this.generateAlertMessage(alertType, riskData, appointmentId),
         appointmentId,
@@ -358,10 +399,13 @@ class WorkflowAutomationService {
       };
 
       // Send alert through callbacks
-      this.alertCallbacks.forEach(callback => callback(alert));
+      this.alertCallbacks.forEach((callback) => callback(alert));
     }
 
-    return { alertsSent: targetStaff.length, targetStaff: targetStaff.map(s => s.id) };
+    return {
+      alertsSent: targetStaff.length,
+      targetStaff: targetStaff.map((s) => s.id),
+    };
   }
 
   private async scheduleIntervention(
@@ -399,7 +443,9 @@ class WorkflowAutomationService {
     }
 
     const assignedStaff = targetStaff[0]; // Assign to first available
-    console.log(`👤 Assigning appointment ${appointmentId} to ${assignedStaff.name}`);
+    console.log(
+      `👤 Assigning appointment ${appointmentId} to ${assignedStaff.name}`,
+    );
 
     return {
       assigned: true,
@@ -414,7 +460,9 @@ class WorkflowAutomationService {
     appointmentId: string,
   ): Promise<any> {
     const newStatus = action.config.status || "flagged_for_intervention";
-    console.log(`🔄 Updating appointment ${appointmentId} status to ${newStatus}`);
+    console.log(
+      `🔄 Updating appointment ${appointmentId} status to ${newStatus}`,
+    );
 
     return {
       updated: true,
@@ -446,12 +494,18 @@ class WorkflowAutomationService {
   }
 
   // Utility Methods
-  private findApplicableRules(riskData: RiskScoreData, appointmentId: string): WorkflowRule[] {
-    return Array.from(this.rules.values()).filter(rule => {
-      return rule.triggers.some(trigger => {
+  private findApplicableRules(
+    riskData: RiskScoreData,
+    appointmentId: string,
+  ): WorkflowRule[] {
+    return Array.from(this.rules.values()).filter((rule) => {
+      return rule.triggers.some((trigger) => {
         switch (trigger.type) {
           case "risk_threshold":
-            return riskData.noShowProbability >= (trigger.config.riskThreshold || 0.75);
+            return (
+              riskData.noShowProbability >=
+              (trigger.config.riskThreshold || 0.75)
+            );
           case "time_based":
             // Would implement time-based triggers
             return true;
@@ -462,21 +516,29 @@ class WorkflowAutomationService {
     });
   }
 
-  private findTargetStaff(config: any, staffMembers: StaffMember[]): StaffMember[] {
+  private findTargetStaff(
+    config: any,
+    staffMembers: StaffMember[],
+  ): StaffMember[] {
     if (config.staffMember) {
-      const staff = staffMembers.find(s => s.id === config.staffMember);
+      const staff = staffMembers.find((s) => s.id === config.staffMember);
       return staff ? [staff] : [];
     }
 
     if (config.staffRole && Array.isArray(config.staffRole)) {
-      return staffMembers.filter(staff => config.staffRole.includes(staff.role) && staff.online);
+      return staffMembers.filter(
+        (staff) => config.staffRole.includes(staff.role) && staff.online,
+      );
     }
 
     // Default: return all online staff
-    return staffMembers.filter(staff => staff.online);
+    return staffMembers.filter((staff) => staff.online);
   }
 
-  private generateAlertTitle(alertType: string, riskData: RiskScoreData): string {
+  private generateAlertTitle(
+    alertType: string,
+    riskData: RiskScoreData,
+  ): string {
     const riskPercentage = Math.round(riskData.noShowProbability * 100);
 
     switch (alertType) {
@@ -503,14 +565,22 @@ class WorkflowAutomationService {
       alertType === "critical_risk"
         ? "Ação imediata recomendada."
         : alertType === "high_risk"
-        ? "Considere entrar em contato com o paciente."
-        : "Monitore a situação e considere intervenção."
+          ? "Considere entrar em contato com o paciente."
+          : "Monitore a situação e considere intervenção."
     }`;
   }
 
-  private generateAlertActions(alertType: string, appointmentId: string): any[] {
+  private generateAlertActions(
+    alertType: string,
+    appointmentId: string,
+  ): any[] {
     const baseActions = [
-      { id: "acknowledge", label: "Reconhecer", type: "secondary", handler: "acknowledge_alert" },
+      {
+        id: "acknowledge",
+        label: "Reconhecer",
+        type: "secondary",
+        handler: "acknowledge_alert",
+      },
       {
         id: "view_details",
         label: "Ver Detalhes",
@@ -543,34 +613,42 @@ class WorkflowAutomationService {
     // Critical Risk Alert Rule
     this.addRule({
       name: "Alerta de Risco Crítico",
-      description: "Envia alerta para equipe quando risco de falta for crítico (>85%)",
+      description:
+        "Envia alerta para equipe quando risco de falta for crítico (>85%)",
       enabled: true,
       priority: 100,
-      triggers: [{
-        type: "risk_threshold",
-        config: { riskThreshold: 0.85 },
-      }],
-      conditions: [],
-      actions: [{
-        type: "send_alert",
-        config: {
-          alertType: "critical_risk",
-          staffRole: ["reception", "nurse", "coordinator"],
+      triggers: [
+        {
+          type: "risk_threshold",
+          config: { riskThreshold: 0.85 },
         },
-      }],
+      ],
+      conditions: [],
+      actions: [
+        {
+          type: "send_alert",
+          config: {
+            alertType: "critical_risk",
+            staffRole: ["reception", "nurse", "coordinator"],
+          },
+        },
+      ],
       createdBy: "system",
     });
 
     // High Risk Intervention Rule
     this.addRule({
       name: "Intervenção Alto Risco",
-      description: "Agenda intervenção automática para consultas de alto risco (>65%)",
+      description:
+        "Agenda intervenção automática para consultas de alto risco (>65%)",
       enabled: true,
       priority: 80,
-      triggers: [{
-        type: "risk_threshold",
-        config: { riskThreshold: 0.65 },
-      }],
+      triggers: [
+        {
+          type: "risk_threshold",
+          config: { riskThreshold: 0.65 },
+        },
+      ],
       conditions: [],
       actions: [
         {
@@ -604,7 +682,7 @@ class WorkflowAutomationService {
 
   private runPeriodicTasks(): void {
     // Clean up old executions
-    const cutoffTime = Date.now() - (24 * 60 * 60 * 1000); // 24 hours
+    const cutoffTime = Date.now() - 24 * 60 * 60 * 1000; // 24 hours
 
     for (const [id, execution] of this.executions) {
       if (new Date(execution.triggeredAt).getTime() < cutoffTime) {
@@ -625,8 +703,8 @@ class WorkflowAutomationService {
   // Metrics and Monitoring
   public getExecutionMetrics(): AutomationMetrics {
     const executions = Array.from(this.executions.values());
-    const successful = executions.filter(e => e.status === "completed");
-    const failed = executions.filter(e => e.status === "failed");
+    const successful = executions.filter((e) => e.status === "completed");
+    const failed = executions.filter((e) => e.status === "failed");
 
     const totalExecTime = successful.reduce((sum, exec) => {
       const start = new Date(exec.triggeredAt).getTime();
@@ -642,7 +720,8 @@ class WorkflowAutomationService {
       totalExecutions: executions.length,
       successfulExecutions: successful.length,
       failedExecutions: failed.length,
-      averageExecutionTime: successful.length > 0 ? totalExecTime / successful.length : 0,
+      averageExecutionTime:
+        successful.length > 0 ? totalExecTime / successful.length : 0,
       alertsSent: this.countActionResults("send_alert"),
       interventionsTriggered: this.countActionResults("schedule_intervention"),
       staffEngagement: {
@@ -661,10 +740,12 @@ class WorkflowAutomationService {
   private countActionResults(actionType: string): number {
     let count = 0;
     for (const execution of this.executions.values()) {
-      count += execution.results.filter(r =>
-        r.success && execution.steps.find(s =>
-          s.id === r.stepId && s.actionType === actionType
-        )
+      count += execution.results.filter(
+        (r) =>
+          r.success &&
+          execution.steps.find(
+            (s) => s.id === r.stepId && s.actionType === actionType,
+          ),
       ).length;
     }
     return count;
@@ -672,11 +753,13 @@ class WorkflowAutomationService {
 
   public getExecutions(): WorkflowExecution[] {
     return Array.from(this.executions.values()).sort(
-      (a, b) => new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime(),
+      (a, b) =>
+        new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime(),
     );
   }
 }
 
 // Export singleton instance
-export const workflowAutomationService = WorkflowAutomationService.getInstance();
+export const workflowAutomationService =
+  WorkflowAutomationService.getInstance();
 export default WorkflowAutomationService;

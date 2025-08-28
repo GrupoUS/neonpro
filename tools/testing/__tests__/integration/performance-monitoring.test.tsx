@@ -3,7 +3,14 @@
  * Comprehensive testing for performance monitoring system
  */
 
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { vi } from "vitest";
 import "@testing-library/jest-dom";
 
@@ -391,7 +398,8 @@ describe("performance Monitoring Integration", () => {
           score -= 5;
         }
 
-        const category = score >= 90 ? "good" : score >= 70 ? "needs-improvement" : "poor";
+        const category =
+          score >= 90 ? "good" : score >= 70 ? "needs-improvement" : "poor";
         expect(category).toBe(expected);
       });
     });

@@ -33,12 +33,14 @@ export function LoadingSpinner({
           sizeClasses[size],
         )}
       />
-      {text && <p className="animate-pulse text-muted-foreground text-sm">{text}</p>}
+      {text && (
+        <p className="animate-pulse text-muted-foreground text-sm">{text}</p>
+      )}
     </div>
   );
 }
 
-export function PageLoader({ text = "Carregando..." }: { text?: string; }) {
+export function PageLoader({ text = "Carregando..." }: { text?: string }) {
   return (
     <div className="flex min-h-[400px] items-center justify-center">
       <LoadingSpinner size="lg" text={text} />

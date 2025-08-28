@@ -10,7 +10,11 @@ import type {
   MonitoringConfig,
   MonitoringHooks,
 } from "../types";
-import { getPerformanceMonitor, initPerformanceMonitoring, PerformanceMonitor } from "./client";
+import {
+  getPerformanceMonitor,
+  initPerformanceMonitoring,
+  PerformanceMonitor,
+} from "./client";
 
 // Constants for healthcare monitoring
 const CACHE_DURATION_HOUR = 3_600_000;

@@ -2,19 +2,19 @@
 
 ## Schema
 
-| Column | Type | Constraints | Default | Description | LGPD Classification |
-|--------|------|-------------|---------|-------------|-------------------|
-| id | uuid | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique message identifier | Public |
-| session_id | uuid | FK, NOT NULL | - | AI chat session reference | Personal Data |
-| role | varchar(20) | NOT NULL | - | Message role (user, assistant, system, tool) | Metadata |
-| content | text | NOT NULL | - | Message content (PHI-sanitized) | Health Data (Sanitized) |
-| tokens_used | integer | - | 0 | Number of tokens consumed | Metadata |
-| model_used | varchar(100) | - | - | AI model used for response | Metadata |
-| response_time_ms | integer | - | - | AI response time in milliseconds | Metadata |
-| confidence_score | numeric | - | - | AI confidence score (0.0-1.0) | Metadata |
-| compliance_flags | jsonb | - | '{}' | Compliance and safety flags | Compliance Data |
-| metadata | jsonb | - | '{}' | Additional message metadata | Metadata |
-| created_at | timestamptz | - | now() | Message creation timestamp | Metadata |
+| Column           | Type         | Constraints           | Default           | Description                                  | LGPD Classification     |
+| ---------------- | ------------ | --------------------- | ----------------- | -------------------------------------------- | ----------------------- |
+| id               | uuid         | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique message identifier                    | Public                  |
+| session_id       | uuid         | FK, NOT NULL          | -                 | AI chat session reference                    | Personal Data           |
+| role             | varchar(20)  | NOT NULL              | -                 | Message role (user, assistant, system, tool) | Metadata                |
+| content          | text         | NOT NULL              | -                 | Message content (PHI-sanitized)              | Health Data (Sanitized) |
+| tokens_used      | integer      | -                     | 0                 | Number of tokens consumed                    | Metadata                |
+| model_used       | varchar(100) | -                     | -                 | AI model used for response                   | Metadata                |
+| response_time_ms | integer      | -                     | -                 | AI response time in milliseconds             | Metadata                |
+| confidence_score | numeric      | -                     | -                 | AI confidence score (0.0-1.0)                | Metadata                |
+| compliance_flags | jsonb        | -                     | '{}'              | Compliance and safety flags                  | Compliance Data         |
+| metadata         | jsonb        | -                     | '{}'              | Additional message metadata                  | Metadata                |
+| created_at       | timestamptz  | -                     | now()             | Message creation timestamp                   | Metadata                |
 
 ## Healthcare Compliance
 
@@ -41,7 +41,7 @@
 CREATE POLICY "ai_messages_via_session" ON ai_chat_messages
   FOR ALL USING (
     session_id IN (
-      SELECT id FROM ai_chat_sessions 
+      SELECT id FROM ai_chat_sessions
       WHERE user_id = auth.uid()
     )
   );
@@ -71,12 +71,14 @@ CREATE POLICY "ai_research_access" ON ai_chat_messages
 ## Message Roles & Types
 
 ### Standard AI Message Roles
+
 - **user** - Healthcare professional input messages
 - **assistant** - AI model responses and recommendations
 - **system** - System messages and instructions
 - **tool** - Function call results and tool outputs
 
 ### Healthcare-Specific Message Types
+
 - **clinical_query** - Clinical questions and consultations
 - **diagnostic_support** - Diagnostic assistance requests
 - **treatment_recommendation** - Treatment planning assistance
@@ -89,6 +91,7 @@ CREATE POLICY "ai_research_access" ON ai_chat_messages
 ## PHI Sanitization & Compliance
 
 ### Automatic PHI Detection & Removal
+
 ```json
 // compliance_flags structure
 {
@@ -96,7 +99,7 @@ CREATE POLICY "ai_research_access" ON ai_chat_messages
   "phi_sanitized": true,
   "sanitization_applied": [
     "cpf_removal",
-    "name_anonymization", 
+    "name_anonymization",
     "phone_masking",
     "address_redaction"
   ],
@@ -114,6 +117,7 @@ CREATE POLICY "ai_research_access" ON ai_chat_messages
 ```
 
 ### Content Sanitization Process
+
 1. **Input Sanitization**: PHI removed from user messages before AI processing
 2. **AI Response Filtering**: AI responses filtered for PHI and safety concerns
 3. **Storage Sanitization**: Only sanitized content stored in database
@@ -123,6 +127,7 @@ CREATE POLICY "ai_research_access" ON ai_chat_messages
 ## AI Performance Metrics
 
 ### Message-Level Metrics
+
 - **Response Time**: AI model response latency tracking
 - **Token Usage**: Token consumption for cost and performance optimization
 - **Confidence Score**: AI model confidence in responses
@@ -130,6 +135,7 @@ CREATE POLICY "ai_research_access" ON ai_chat_messages
 - **Safety Triggers**: Safety and compliance issue detection
 
 ### Model Performance Tracking
+
 ```json
 // metadata structure for performance tracking
 {
@@ -158,6 +164,7 @@ CREATE POLICY "ai_research_access" ON ai_chat_messages
 ## Healthcare AI Safety Features
 
 ### Safety Monitoring
+
 - **Emergency Detection**: Automatic detection of emergency situations
 - **Medication Safety**: Drug interaction and contraindication alerts
 - **Dosage Validation**: Medication dosage safety verification
@@ -165,6 +172,7 @@ CREATE POLICY "ai_research_access" ON ai_chat_messages
 - **Compliance Monitoring**: Real-time regulatory compliance checking
 
 ### Clinical Decision Support Safeguards
+
 - **Disclaimer Integration**: Automatic medical disclaimer inclusion
 - **Professional Oversight**: Clear indication of professional judgment requirement
 - **Evidence-Based Recommendations**: AI responses linked to clinical evidence
@@ -174,6 +182,7 @@ CREATE POLICY "ai_research_access" ON ai_chat_messages
 ## Performance Optimizations
 
 ### Indexes
+
 ```sql
 -- Core message queries
 CREATE INDEX idx_ai_chat_messages_session_id ON ai_chat_messages (session_id);
@@ -191,10 +200,11 @@ CREATE INDEX idx_ai_chat_messages_confidence ON ai_chat_messages (confidence_sco
 ```
 
 ### Query Optimizations
+
 ```sql
 -- Get session conversation
 SELECT role, content, created_at, confidence_score
-FROM ai_chat_messages 
+FROM ai_chat_messages
 WHERE session_id = 'session_uuid'
 ORDER BY created_at ASC;
 
@@ -205,7 +215,7 @@ WHERE compliance_flags->>'professional_review_required' = 'true'
   AND created_at > NOW() - INTERVAL '24 hours';
 
 -- Performance analytics
-SELECT 
+SELECT
   model_used,
   AVG(response_time_ms) as avg_response_time,
   AVG(tokens_used) as avg_tokens,
@@ -218,6 +228,7 @@ GROUP BY model_used;
 ## Integration Points
 
 ### Vercel AI SDK Integration
+
 - **Streaming Support**: Real-time message streaming to frontend
 - **Function Calling**: Integration with healthcare-specific functions
 - **Model Switching**: Dynamic model selection based on query type
@@ -225,6 +236,7 @@ GROUP BY model_used;
 - **Error Handling**: Robust error handling and fallback mechanisms
 
 ### Healthcare System Integration
+
 - **EMR Integration**: Link AI insights to electronic medical records
 - **Appointment System**: AI-powered scheduling optimization
 - **Billing Integration**: AI-assisted coding and billing support
@@ -234,6 +246,7 @@ GROUP BY model_used;
 ## Audit & Compliance Monitoring
 
 ### Message Audit Trail
+
 ```sql
 -- Message lifecycle tracking
 CREATE TRIGGER ai_chat_messages_audit_trigger
@@ -255,6 +268,7 @@ CREATE TRIGGER ai_message_safety_monitor_trigger
 ```
 
 ### Regulatory Compliance Tracking
+
 - **LGPD Compliance**: Complete data protection audit trail
 - **CFM Guidelines**: Medical professional AI usage compliance
 - **ANVISA Requirements**: Medical device software AI compliance

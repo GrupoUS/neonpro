@@ -98,7 +98,8 @@ export class ErrorBoundary extends Component<
                         </p>
                         {this.state.errorInfo && (
                           <p>
-                            <strong>Component Stack:</strong> {this.state.errorInfo.componentStack}
+                            <strong>Component Stack:</strong>{" "}
+                            {this.state.errorInfo.componentStack}
                           </p>
                         )}
                       </div>

@@ -17,7 +17,8 @@ export * from "./jobs/billing-emails";
  */
 export const HEALTHCARE_AUTOMATION_CONFIG = {
   name: "neonpro-clinic-automation",
-  description: "Healthcare deployment automation with constitutional compliance",
+  description:
+    "Healthcare deployment automation with constitutional compliance",
 
   // Healthcare compliance requirements
   compliance: {

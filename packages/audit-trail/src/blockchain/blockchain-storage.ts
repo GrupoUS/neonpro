@@ -275,7 +275,8 @@ export class BlockchainStorage {
         verified: false,
         confirmations: 0,
         timestamp: new Date().toISOString(),
-        proofOfIntegrity: (await this.getProofOfIntegrity(blockId)) || ({} as ProofOfIntegrity),
+        proofOfIntegrity:
+          (await this.getProofOfIntegrity(blockId)) || ({} as ProofOfIntegrity),
         errors: [(error as Error).message],
       };
     }
@@ -305,7 +306,9 @@ export class BlockchainStorage {
     proof: ProofOfIntegrity,
   ): Promise<BlockchainTransaction> {
     // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000 + 500));
+    await new Promise((resolve) =>
+      setTimeout(resolve, Math.random() * 1000 + 500),
+    );
 
     const transaction: BlockchainTransaction = {
       id: transactionId,
@@ -351,8 +354,8 @@ export class BlockchainStorage {
       );
 
       if (
-        updatedTransaction.status === "CONFIRMED"
-        && updatedTransaction.confirmations >= this.config.requiredConfirmations
+        updatedTransaction.status === "CONFIRMED" &&
+        updatedTransaction.confirmations >= this.config.requiredConfirmations
       ) {
         return {
           blockId: transaction.blockId,
@@ -360,8 +363,9 @@ export class BlockchainStorage {
           transactionHash: updatedTransaction.transactionHash,
           confirmations: updatedTransaction.confirmations,
           timestamp: updatedTransaction.timestamp,
-          proofOfIntegrity: (await this.getProofOfIntegrity(transaction.blockId))
-            || ({} as ProofOfIntegrity),
+          proofOfIntegrity:
+            (await this.getProofOfIntegrity(transaction.blockId)) ||
+            ({} as ProofOfIntegrity),
         };
       }
 
@@ -371,16 +375,17 @@ export class BlockchainStorage {
           verified: false,
           confirmations: 0,
           timestamp: updatedTransaction.timestamp,
-          proofOfIntegrity: (await this.getProofOfIntegrity(transaction.blockId))
-            || ({} as ProofOfIntegrity),
+          proofOfIntegrity:
+            (await this.getProofOfIntegrity(transaction.blockId)) ||
+            ({} as ProofOfIntegrity),
           errors: ["Transaction failed on blockchain"],
         };
       }
 
       // Simulate confirmation progress for mock blockchain
       if (
-        this.config.enableMockBlockchain
-        && updatedTransaction.status === "PENDING"
+        this.config.enableMockBlockchain &&
+        updatedTransaction.status === "PENDING"
       ) {
         await this.simulateConfirmationProgress(transaction.id);
       }
@@ -394,8 +399,9 @@ export class BlockchainStorage {
       verified: false,
       confirmations: 0,
       timestamp: new Date().toISOString(),
-      proofOfIntegrity: (await this.getProofOfIntegrity(transaction.blockId))
-        || ({} as ProofOfIntegrity),
+      proofOfIntegrity:
+        (await this.getProofOfIntegrity(transaction.blockId)) ||
+        ({} as ProofOfIntegrity),
       errors: ["Confirmation timeout"],
     };
   }
@@ -698,20 +704,23 @@ export class BlockchainStorage {
    * Get blockchain metrics
    */
   public getMetrics(): BlockchainMetrics {
-    const averageConfirmationTime = this.confirmationTimes.length > 0
-      ? this.confirmationTimes.reduce((sum, time) => sum + time, 0)
-        / this.confirmationTimes.length
-      : 0;
+    const averageConfirmationTime =
+      this.confirmationTimes.length > 0
+        ? this.confirmationTimes.reduce((sum, time) => sum + time, 0) /
+          this.confirmationTimes.length
+        : 0;
 
-    const successRate = this.totalTransactions > 0
-      ? this.confirmedTransactions / this.totalTransactions
-      : 0;
+    const successRate =
+      this.totalTransactions > 0
+        ? this.confirmedTransactions / this.totalTransactions
+        : 0;
 
-    const networkHealth: "HEALTHY" | "DEGRADED" | "UNHEALTHY" = successRate > 0.95
-      ? "HEALTHY"
-      : successRate > 0.8
-      ? "DEGRADED"
-      : "UNHEALTHY";
+    const networkHealth: "HEALTHY" | "DEGRADED" | "UNHEALTHY" =
+      successRate > 0.95
+        ? "HEALTHY"
+        : successRate > 0.8
+          ? "DEGRADED"
+          : "UNHEALTHY";
 
     const gasEfficiency = 85; // Mock value
     const verificationRate = successRate * 100;
@@ -783,8 +792,9 @@ export class BlockchainStorage {
           );
           transactionHash = transaction.transactionHash;
           confirmations = transaction.confirmations;
-          blockVerified = transaction.status === "CONFIRMED"
-            && confirmations >= this.config.requiredConfirmations;
+          blockVerified =
+            transaction.status === "CONFIRMED" &&
+            confirmations >= this.config.requiredConfirmations;
         } catch (error) {
           // console.error(
           //   `Failed to get transaction details for ${proof.blockchainTxId}:`,

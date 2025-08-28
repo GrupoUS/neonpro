@@ -53,8 +53,9 @@ export class ANVISAProductManager {
       // Check if product is approved and not expired
       const isApproved = product.regulatory_status === "approved";
       const notExpired = new Date(product.expiry_date) > new Date();
-      const hasValidRegistration = product.registration_number
-        && product.registration_number.length > EMPTY_STRING_LENGTH;
+      const hasValidRegistration =
+        product.registration_number &&
+        product.registration_number.length > EMPTY_STRING_LENGTH;
 
       return isApproved && notExpired && hasValidRegistration;
     } catch {

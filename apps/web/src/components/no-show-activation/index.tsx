@@ -18,7 +18,10 @@
  */
 
 // Core Risk Scoring Components
-export { type AppointmentData, default as AppointmentRiskList } from "./AppointmentRiskList";
+export {
+  type AppointmentData,
+  default as AppointmentRiskList,
+} from "./AppointmentRiskList";
 export {
   default as RiskScoreIndicator,
   type RiskFactor,
@@ -48,11 +51,7 @@ export const NoShowActivationComponents = {
 // Utility constants
 export const PHASE_4_CONFIG = {
   version: "1.0.0",
-  components: [
-    "RiskScoreIndicator",
-    "AppointmentRiskList",
-    "StaffAlertSystem",
-  ],
+  components: ["RiskScoreIndicator", "AppointmentRiskList", "StaffAlertSystem"],
   features: [
     "risk-scoring-ui",
     "staff-alert-workflows",

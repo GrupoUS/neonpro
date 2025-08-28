@@ -79,7 +79,8 @@ export function useRealtimeNotifications(
   const [isConnected, setIsConnected] = useState(false);
   const [connectionHealth, setConnectionHealth] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [lastNotification, setLastNotification] = useState<NotificationRow | null>(null);
+  const [lastNotification, setLastNotification] =
+    useState<NotificationRow | null>(null);
   const [emergencyCount, setEmergencyCount] = useState(0);
   const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -117,8 +118,8 @@ export function useRealtimeNotifications(
           playPromise.catch((_error) => {
             // Fallback to system notification sound
             if (
-              "Notification" in window
-              && Notification.permission === "granted"
+              "Notification" in window &&
+              Notification.permission === "granted"
             ) {
               new Notification("NeonPro Healthcare", {
                 body: "Nova notificação recebida",
@@ -171,7 +172,7 @@ export function useRealtimeNotifications(
             case "UPDATE": {
               if (newData) {
                 return oldCache.map((notification) =>
-                  notification.id === newData.id ? newData : notification
+                  notification.id === newData.id ? newData : notification,
                 );
               }
               return oldCache;

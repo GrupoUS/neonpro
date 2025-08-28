@@ -39,7 +39,9 @@ describe("🔒 Security Assessment - Authentication & Authorization", () => {
     // Test routes with different security levels
     app.get("/api/v1/public", (c) => c.json({ message: "public" }));
 
-    app.get("/api/v1/authenticated", authMiddleware(), (c) => c.json({ message: "authenticated" }));
+    app.get("/api/v1/authenticated", authMiddleware(), (c) =>
+      c.json({ message: "authenticated" }),
+    );
 
     app.get(
       "/api/v1/admin-only",

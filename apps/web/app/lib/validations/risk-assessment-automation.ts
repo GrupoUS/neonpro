@@ -250,7 +250,8 @@ const environmentalSchema = z.object({
  */
 const lgpdConsentSchema = z.object({
   consentGiven: z.boolean().refine((val) => val === true, {
-    message: "Consentimento LGPD é obrigatório para processamento de dados de saúde",
+    message:
+      "Consentimento LGPD é obrigatório para processamento de dados de saúde",
   }),
   consentDate: z
     .date()
@@ -497,9 +498,9 @@ export const riskAssessmentConfigSchema = z.object({
       (data) => {
         // Validate threshold ranges don't overlap
         return (
-          data.low.max < data.medium.min
-          && data.medium.max < data.high.min
-          && data.high.max < data.critical.min
+          data.low.max < data.medium.min &&
+          data.medium.max < data.high.min &&
+          data.high.max < data.critical.min
         );
       },
       {

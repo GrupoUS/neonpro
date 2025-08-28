@@ -177,7 +177,8 @@ export async function runAuthE2ETest(
 
     return result;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     result.errors.push(`Test execution error: ${errorMessage}`);
 
     // Limpar estado em caso de erro

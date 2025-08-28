@@ -2,70 +2,70 @@
 
 ## Schema
 
-| Column | Type | Constraints | Default | Description | LGPD Classification |
-|--------|------|-------------|---------|-------------|-------------------|
-| id | uuid | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique medical record identifier | Public |
-| clinic_id | uuid | FK, NOT NULL | - | Clinic reference | Organizational Data |
-| patient_id | uuid | FK, NOT NULL | - | Patient reference | Personal Data |
-| professional_id | uuid | FK, NOT NULL | - | Professional who created/updated record | Organizational Data |
-| appointment_id | uuid | FK | - | Associated appointment reference | Organizational Data |
-| record_type | varchar(50) | NOT NULL | 'consultation' | Type of aesthetic record | Aesthetic Data |
-| record_category | varchar(30) | NOT NULL | 'general' | Category (consultation, procedure, emergency, etc.) | Aesthetic Data |
-| visit_date | timestamptz | NOT NULL | now() | Date and time of aesthetic visit | Aesthetic Data |
-| chief_complaint | text | - | - | Patient's primary aesthetic concern | Aesthetic Data |
-| present_condition_history | text | - | - | History of present aesthetic condition | Aesthetic Data |
-| past_aesthetic_history | text | - | - | Patient's past aesthetic history | Aesthetic Data |
-| family_history | text | - | - | Family aesthetic history | Aesthetic Data |
-| lifestyle_factors | text | - | - | Lifestyle and aesthetic factors | Aesthetic Data |
-| allergies | text[] | - | '{}' | Known allergies and reactions | Aesthetic Data |
-| current_medications | jsonb | - | '{}' | Current medications with dosages | Aesthetic Data |
-| vital_signs | jsonb | - | '{}' | Vital signs measurements | Aesthetic Data |
-| aesthetic_examination | text | - | - | Aesthetic examination findings | Aesthetic Data |
-| assessment_diagnosis | text | - | - | Aesthetic assessment and diagnosis | Aesthetic Data |
-| differential_diagnosis | text[] | - | '{}' | Differential diagnosis list | Aesthetic Data |
-| procedure_codes | text[] | - | '{}' | Aesthetic procedure codes | Aesthetic Data |
-| treatment_plan | text | - | - | Aesthetic treatment and management plan | Aesthetic Data |
-| procedures_performed | jsonb | - | '{}' | Aesthetic procedures performed during visit | Aesthetic Data |
-| prescription_details | jsonb | - | '{}' | Detailed prescription information | Aesthetic Data |
-| laboratory_orders | jsonb | - | '{}' | Laboratory tests ordered | Aesthetic Data |
-| imaging_orders | jsonb | - | '{}' | Imaging studies ordered | Aesthetic Data |
-| referrals | jsonb | - | '{}' | Referrals to other aesthetic specialists | Aesthetic Data |
-| follow_up_instructions | text | - | - | Follow-up aesthetic care instructions | Aesthetic Data |
-| next_appointment_date | timestamptz | - | - | Scheduled next appointment | Aesthetic Data |
-| progress_notes | text | - | - | Progress and evolution notes | Aesthetic Data |
-| clinical_photos | text[] | - | '{}' | URLs to aesthetic clinical photographs | Aesthetic Data |
-| attachments | jsonb | - | '{}' | Aesthetic documents and attachments | Aesthetic Data |
-| record_status | varchar(20) | NOT NULL | 'active' | Record status (active, amended, corrected) | Metadata |
-| amendment_reason | text | - | - | Reason for record amendment | Audit Data |
-| original_record_id | uuid | FK | - | Reference to original record if amended | Audit Data |
-| digital_signature | text | - | - | Professional's digital signature hash | Compliance Data |
-| signature_timestamp | timestamptz | - | - | When record was digitally signed | Compliance Data |
-| signature_verified | boolean | NOT NULL | false | Whether digital signature is verified | Compliance Data |
-| record_integrity_hash | text | - | - | Hash for record integrity verification | Security Data |
-| encryption_key_id | text | - | - | Key ID used for field encryption | Security Data |
-| data_source | varchar(30) | NOT NULL | 'manual' | Source of aesthetic data | Metadata |
-| quality_score | integer | CHECK (quality_score >= 0 AND quality_score <= 100) | 100 | AI-calculated record quality score | Analytics Data |
-| completeness_score | integer | CHECK (completeness_score >= 0 AND completeness_score <= 100) | 100 | Record completeness percentage | Analytics Data |
-| ai_suggestions | jsonb | - | '{}' | AI-generated suggestions for improvement | Analytics Data |
-| coding_assistance | jsonb | - | '{}' | AI-assisted ICD-10 coding suggestions | Analytics Data |
-| risk_indicators | text[] | - | '{}' | AI-identified risk factors | Analytics Data |
-| clinical_decision_support | jsonb | - | '{}' | CDS alerts and recommendations | Analytics Data |
-| teleaesthetic_session | boolean | NOT NULL | false | Whether consultation was via teleaesthetics | Aesthetic Data |
-| telemedicine_platform | varchar(50) | - | - | Platform used for telemedicine | Metadata |
-| recording_consent | boolean | - | - | Consent for session recording | Compliance Data |
-| recording_url | text | - | - | Encrypted URL to session recording | Health Data |
-| emergency_access_used | boolean | NOT NULL | false | Whether emergency access was used | Compliance Data |
-| consent_status | varchar(20) | NOT NULL | 'valid' | Patient consent status for this record | Compliance Data |
-| consent_version | text | - | - | Version of consent agreement | Compliance Data |
-| data_sharing_permissions | jsonb | - | '{}' | Granular data sharing permissions | Compliance Data |
-| retention_category | varchar(30) | NOT NULL | 'standard' | Data retention category | Compliance Data |
-| retention_until | timestamptz | - | - | When record can be archived/anonymized | Compliance Data |
-| archived | boolean | NOT NULL | false | Whether record is archived | Metadata |
-| archived_at | timestamptz | - | - | When record was archived | Metadata |
-| created_at | timestamptz | NOT NULL | now() | Record creation timestamp | Metadata |
-| updated_at | timestamptz | NOT NULL | now() | Last update timestamp | Metadata |
-| created_by | uuid | FK | - | User who created record | Audit Data |
-| updated_by | uuid | FK | - | User who last updated record | Audit Data |
+| Column                    | Type        | Constraints                                                   | Default           | Description                                         | LGPD Classification |
+| ------------------------- | ----------- | ------------------------------------------------------------- | ----------------- | --------------------------------------------------- | ------------------- |
+| id                        | uuid        | PRIMARY KEY, NOT NULL                                         | gen_random_uuid() | Unique medical record identifier                    | Public              |
+| clinic_id                 | uuid        | FK, NOT NULL                                                  | -                 | Clinic reference                                    | Organizational Data |
+| patient_id                | uuid        | FK, NOT NULL                                                  | -                 | Patient reference                                   | Personal Data       |
+| professional_id           | uuid        | FK, NOT NULL                                                  | -                 | Professional who created/updated record             | Organizational Data |
+| appointment_id            | uuid        | FK                                                            | -                 | Associated appointment reference                    | Organizational Data |
+| record_type               | varchar(50) | NOT NULL                                                      | 'consultation'    | Type of aesthetic record                            | Aesthetic Data      |
+| record_category           | varchar(30) | NOT NULL                                                      | 'general'         | Category (consultation, procedure, emergency, etc.) | Aesthetic Data      |
+| visit_date                | timestamptz | NOT NULL                                                      | now()             | Date and time of aesthetic visit                    | Aesthetic Data      |
+| chief_complaint           | text        | -                                                             | -                 | Patient's primary aesthetic concern                 | Aesthetic Data      |
+| present_condition_history | text        | -                                                             | -                 | History of present aesthetic condition              | Aesthetic Data      |
+| past_aesthetic_history    | text        | -                                                             | -                 | Patient's past aesthetic history                    | Aesthetic Data      |
+| family_history            | text        | -                                                             | -                 | Family aesthetic history                            | Aesthetic Data      |
+| lifestyle_factors         | text        | -                                                             | -                 | Lifestyle and aesthetic factors                     | Aesthetic Data      |
+| allergies                 | text[]      | -                                                             | '{}'              | Known allergies and reactions                       | Aesthetic Data      |
+| current_medications       | jsonb       | -                                                             | '{}'              | Current medications with dosages                    | Aesthetic Data      |
+| vital_signs               | jsonb       | -                                                             | '{}'              | Vital signs measurements                            | Aesthetic Data      |
+| aesthetic_examination     | text        | -                                                             | -                 | Aesthetic examination findings                      | Aesthetic Data      |
+| assessment_diagnosis      | text        | -                                                             | -                 | Aesthetic assessment and diagnosis                  | Aesthetic Data      |
+| differential_diagnosis    | text[]      | -                                                             | '{}'              | Differential diagnosis list                         | Aesthetic Data      |
+| procedure_codes           | text[]      | -                                                             | '{}'              | Aesthetic procedure codes                           | Aesthetic Data      |
+| treatment_plan            | text        | -                                                             | -                 | Aesthetic treatment and management plan             | Aesthetic Data      |
+| procedures_performed      | jsonb       | -                                                             | '{}'              | Aesthetic procedures performed during visit         | Aesthetic Data      |
+| prescription_details      | jsonb       | -                                                             | '{}'              | Detailed prescription information                   | Aesthetic Data      |
+| laboratory_orders         | jsonb       | -                                                             | '{}'              | Laboratory tests ordered                            | Aesthetic Data      |
+| imaging_orders            | jsonb       | -                                                             | '{}'              | Imaging studies ordered                             | Aesthetic Data      |
+| referrals                 | jsonb       | -                                                             | '{}'              | Referrals to other aesthetic specialists            | Aesthetic Data      |
+| follow_up_instructions    | text        | -                                                             | -                 | Follow-up aesthetic care instructions               | Aesthetic Data      |
+| next_appointment_date     | timestamptz | -                                                             | -                 | Scheduled next appointment                          | Aesthetic Data      |
+| progress_notes            | text        | -                                                             | -                 | Progress and evolution notes                        | Aesthetic Data      |
+| clinical_photos           | text[]      | -                                                             | '{}'              | URLs to aesthetic clinical photographs              | Aesthetic Data      |
+| attachments               | jsonb       | -                                                             | '{}'              | Aesthetic documents and attachments                 | Aesthetic Data      |
+| record_status             | varchar(20) | NOT NULL                                                      | 'active'          | Record status (active, amended, corrected)          | Metadata            |
+| amendment_reason          | text        | -                                                             | -                 | Reason for record amendment                         | Audit Data          |
+| original_record_id        | uuid        | FK                                                            | -                 | Reference to original record if amended             | Audit Data          |
+| digital_signature         | text        | -                                                             | -                 | Professional's digital signature hash               | Compliance Data     |
+| signature_timestamp       | timestamptz | -                                                             | -                 | When record was digitally signed                    | Compliance Data     |
+| signature_verified        | boolean     | NOT NULL                                                      | false             | Whether digital signature is verified               | Compliance Data     |
+| record_integrity_hash     | text        | -                                                             | -                 | Hash for record integrity verification              | Security Data       |
+| encryption_key_id         | text        | -                                                             | -                 | Key ID used for field encryption                    | Security Data       |
+| data_source               | varchar(30) | NOT NULL                                                      | 'manual'          | Source of aesthetic data                            | Metadata            |
+| quality_score             | integer     | CHECK (quality_score >= 0 AND quality_score <= 100)           | 100               | AI-calculated record quality score                  | Analytics Data      |
+| completeness_score        | integer     | CHECK (completeness_score >= 0 AND completeness_score <= 100) | 100               | Record completeness percentage                      | Analytics Data      |
+| ai_suggestions            | jsonb       | -                                                             | '{}'              | AI-generated suggestions for improvement            | Analytics Data      |
+| coding_assistance         | jsonb       | -                                                             | '{}'              | AI-assisted ICD-10 coding suggestions               | Analytics Data      |
+| risk_indicators           | text[]      | -                                                             | '{}'              | AI-identified risk factors                          | Analytics Data      |
+| clinical_decision_support | jsonb       | -                                                             | '{}'              | CDS alerts and recommendations                      | Analytics Data      |
+| teleaesthetic_session     | boolean     | NOT NULL                                                      | false             | Whether consultation was via teleaesthetics         | Aesthetic Data      |
+| telemedicine_platform     | varchar(50) | -                                                             | -                 | Platform used for telemedicine                      | Metadata            |
+| recording_consent         | boolean     | -                                                             | -                 | Consent for session recording                       | Compliance Data     |
+| recording_url             | text        | -                                                             | -                 | Encrypted URL to session recording                  | Health Data         |
+| emergency_access_used     | boolean     | NOT NULL                                                      | false             | Whether emergency access was used                   | Compliance Data     |
+| consent_status            | varchar(20) | NOT NULL                                                      | 'valid'           | Patient consent status for this record              | Compliance Data     |
+| consent_version           | text        | -                                                             | -                 | Version of consent agreement                        | Compliance Data     |
+| data_sharing_permissions  | jsonb       | -                                                             | '{}'              | Granular data sharing permissions                   | Compliance Data     |
+| retention_category        | varchar(30) | NOT NULL                                                      | 'standard'        | Data retention category                             | Compliance Data     |
+| retention_until           | timestamptz | -                                                             | -                 | When record can be archived/anonymized              | Compliance Data     |
+| archived                  | boolean     | NOT NULL                                                      | false             | Whether record is archived                          | Metadata            |
+| archived_at               | timestamptz | -                                                             | -                 | When record was archived                            | Metadata            |
+| created_at                | timestamptz | NOT NULL                                                      | now()             | Record creation timestamp                           | Metadata            |
+| updated_at                | timestamptz | NOT NULL                                                      | now()             | Last update timestamp                               | Metadata            |
+| created_by                | uuid        | FK                                                            | -                 | User who created record                             | Audit Data          |
+| updated_by                | uuid        | FK                                                            | -                 | User who last updated record                        | Audit Data          |
 
 ## Advanced Aesthetic Compliance
 
@@ -102,7 +102,7 @@ CREATE POLICY "professional_own_medical_records" ON medical_records
 CREATE POLICY "patient_own_medical_records" ON medical_records
   FOR SELECT USING (
     patient_id IN (
-      SELECT id FROM patients 
+      SELECT id FROM patients
       WHERE patients.id = medical_records.patient_id
       AND auth.jwt() ->> 'role' = 'patient'
       AND auth.jwt() ->> 'patient_id' = patients.id::text
@@ -126,8 +126,8 @@ CREATE POLICY "emergency_medical_access" ON medical_records
   FOR SELECT USING (
     auth.jwt() ->> 'role' = 'emergency_professional' AND
     EXISTS (
-      SELECT 1 FROM emergency_access_log 
-      WHERE patient_id = medical_records.patient_id 
+      SELECT 1 FROM emergency_access_log
+      WHERE patient_id = medical_records.patient_id
       AND created_at > NOW() - INTERVAL '24 hours'
       AND justified = true
     )
@@ -236,18 +236,21 @@ CREATE TRIGGER medical_records_cfm_compliance
 ## LGPD Special Category Data Protection
 
 ### Enhanced Consent Management
+
 - **consent_status**: Specific consent for medical record processing
 - **data_sharing_permissions**: Granular consent for different data uses
 - **recording_consent**: Separate consent for telemedicine recording
 - **consent_version**: Tracking consent agreement versions
 
 ### Data Minimization and Purpose Limitation
+
 - **record_category**: Ensures data collection is appropriate for purpose
 - **data_source**: Tracks how medical data was collected
 - **retention_category**: Categorizes data by retention requirements
 - **archived**: Supports data lifecycle management
 
 ### Security and Integrity Measures
+
 - **encryption_key_id**: Advanced encryption for sensitive fields
 - **record_integrity_hash**: Ensures data hasn't been tampered with
 - **digital_signature**: Professional accountability and non-repudiation
@@ -256,12 +259,14 @@ CREATE TRIGGER medical_records_cfm_compliance
 ## ANVISA Medical Device Compliance
 
 ### Software Quality Management
+
 - **quality_score**: Automated quality control for medical software
 - **ai_suggestions**: AI-assisted quality improvement
 - **clinical_decision_support**: Medical device decision support functions
 - **coding_assistance**: Software-assisted medical coding
 
 ### Risk Management (ISO 14971)
+
 - **risk_indicators**: AI-identified clinical and technical risks
 - **emergency_access_used**: Special access logging for risk assessment
 - **telemedicine_session**: Remote care risk management
@@ -270,18 +275,21 @@ CREATE TRIGGER medical_records_cfm_compliance
 ## CFM Medical Record Compliance
 
 ### CFM Resolution 1821/2007 Requirements
+
 - **digital_signature**: Professional signature requirement
 - **signature_timestamp**: Signature timing compliance
 - **record_status**: Proper record versioning and amendment tracking
 - **amendment_reason**: Justification for record modifications
 
 ### Professional Accountability
+
 - **professional_id**: Clear professional responsibility
 - **original_record_id**: Maintains amendment history
 - **created_by/updated_by**: Complete audit trail
 - **visit_date**: Accurate timing documentation
 
 ### Telemedicine Compliance (CFM Resolution 2314/2022)
+
 - **telemedicine_session**: Telemedicine session identification
 - **telemedicine_platform**: Platform verification for compliance
 - **recording_url**: Session recording management
@@ -290,18 +298,21 @@ CREATE TRIGGER medical_records_cfm_compliance
 ## Clinical Features
 
 ### Comprehensive Documentation
+
 - **chief_complaint**: Primary reason for visit
 - **assessment_diagnosis**: Clinical assessment and diagnosis
 - **treatment_plan**: Detailed treatment approach
 - **follow_up_instructions**: Continuity of care
 
 ### Medical History Tracking
+
 - **present_illness_history**: Current condition progression
 - **past_medical_history**: Historical medical information
 - **family_history**: Genetic and familial risk factors
 - **social_history**: Social determinants of health
 
 ### Clinical Decision Support
+
 - **differential_diagnosis**: Alternative diagnostic considerations
 - **clinical_decision_support**: AI-powered clinical recommendations
 - **drug_interaction_checks**: Medication safety analysis

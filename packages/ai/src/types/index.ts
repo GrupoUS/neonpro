@@ -297,9 +297,9 @@ export interface AppointmentPreferences {
   preferredTimes: TimeSlot[];
   advanceBookingPreference: number; // days in advance
   reminderPreferences: {
-    sms: { enabled: boolean; hoursBeforeH; boolean; };
-    email: { enabled: boolean; hoursBeforeemphasis: number; };
-    phone: { enabled: boolean; hoursBeforeemphasis: number; };
+    sms: { enabled: boolean; hoursBeforeH; boolean };
+    email: { enabled: boolean; hoursBeforeemphasis: number };
+    phone: { enabled: boolean; hoursBeforeemphasis: number };
   };
 }
 

@@ -234,10 +234,11 @@ class QualityReportGenerator {
 
   private calculateSecurityScore(audit: unknown): number {
     const vulnerabilities = audit.metadata?.vulnerabilities || {};
-    const total = (vulnerabilities.critical || 0) * 4
-      + (vulnerabilities.high || 0) * 3
-      + (vulnerabilities.moderate || 0) * 2
-      + (vulnerabilities.low || 0) * 1;
+    const total =
+      (vulnerabilities.critical || 0) * 4 +
+      (vulnerabilities.high || 0) * 3 +
+      (vulnerabilities.moderate || 0) * 2 +
+      (vulnerabilities.low || 0) * 1;
 
     return Math.max(0, 10 - total * 0.1);
   }
@@ -332,13 +333,14 @@ class QualityReportGenerator {
   private createCoverageCard(): string {
     const coverage = this.metrics.coverage!;
     const overallScore = Math.round(
-      (coverage.statements
-        + coverage.branches
-        + coverage.functions
-        + coverage.lines)
-        / 4,
+      (coverage.statements +
+        coverage.branches +
+        coverage.functions +
+        coverage.lines) /
+        4,
     );
-    const statusClass = overallScore >= 90 ? "pass" : overallScore >= 80 ? "warn" : "fail";
+    const statusClass =
+      overallScore >= 90 ? "pass" : overallScore >= 80 ? "warn" : "fail";
 
     return `
     <div class="metric-card">
@@ -350,22 +352,23 @@ class QualityReportGenerator {
         <div>Lines: ${coverage.lines}%</div>
         <div class="progress-bar">
             <div class="progress-fill ${statusClass}" style="width: ${overallScore}%; background-color: ${
-      statusClass === "pass"
-        ? "#4CAF50"
-        : statusClass === "warn"
-        ? "#FF9800"
-        : "#F44336"
-    };"></div>
+              statusClass === "pass"
+                ? "#4CAF50"
+                : statusClass === "warn"
+                  ? "#FF9800"
+                  : "#F44336"
+            };"></div>
         </div>
     </div>`;
   }
 
   private createSecurityCard(): string {
     const security = this.metrics.security!;
-    const statusClass = security.vulnerabilities.critical === 0
-        && security.vulnerabilities.high === 0
-      ? "pass"
-      : "fail";
+    const statusClass =
+      security.vulnerabilities.critical === 0 &&
+      security.vulnerabilities.high === 0
+        ? "pass"
+        : "fail";
 
     return `
     <div class="metric-card">
@@ -380,11 +383,12 @@ class QualityReportGenerator {
 
   private createPerformanceCard(): string {
     const performance = this.metrics.performance!;
-    const statusClass = performance.bundleSize < 2
-      ? "pass"
-      : performance.bundleSize < 3
-      ? "warn"
-      : "fail";
+    const statusClass =
+      performance.bundleSize < 2
+        ? "pass"
+        : performance.bundleSize < 3
+          ? "warn"
+          : "fail";
 
     return `
     <div class="metric-card">
@@ -398,11 +402,12 @@ class QualityReportGenerator {
 
   private createAccessibilityCard(): string {
     const accessibility = this.metrics.accessibility!;
-    const statusClass = accessibility.score >= 95
-      ? "pass"
-      : accessibility.score >= 80
-      ? "warn"
-      : "fail";
+    const statusClass =
+      accessibility.score >= 95
+        ? "pass"
+        : accessibility.score >= 80
+          ? "warn"
+          : "fail";
 
     return `
     <div class="metric-card">
@@ -415,11 +420,12 @@ class QualityReportGenerator {
 
   private createComplianceCard(): string {
     const compliance = this.metrics.compliance!;
-    const statusClass = compliance.overallScore >= 90
-      ? "pass"
-      : compliance.overallScore >= 80
-      ? "warn"
-      : "fail";
+    const statusClass =
+      compliance.overallScore >= 90
+        ? "pass"
+        : compliance.overallScore >= 80
+          ? "warn"
+          : "fail";
 
     return `
     <div class="metric-card">
@@ -434,11 +440,12 @@ class QualityReportGenerator {
 
   private createComplexityCard(): string {
     const complexity = this.metrics.complexity!;
-    const statusClass = complexity.averageCyclomatic <= 5
-      ? "pass"
-      : complexity.averageCyclomatic <= 10
-      ? "warn"
-      : "fail";
+    const statusClass =
+      complexity.averageCyclomatic <= 5
+        ? "pass"
+        : complexity.averageCyclomatic <= 10
+          ? "warn"
+          : "fail";
 
     return `
     <div class="metric-card">
@@ -457,12 +464,12 @@ class QualityReportGenerator {
     const performance = this.metrics.performance!;
 
     if (
-      (coverage.statements
-            + coverage.branches
-            + coverage.functions
-            + coverage.lines)
-          / 4
-        < 90
+      (coverage.statements +
+        coverage.branches +
+        coverage.functions +
+        coverage.lines) /
+        4 <
+      90
     ) {
       recommendations.push("• Increase test coverage to at least 90%");
     }
@@ -500,25 +507,27 @@ class QualityReportGenerator {
     const accessibility = this.metrics.accessibility!;
     const compliance = this.metrics.compliance!;
 
-    const coverageScore = (coverage.statements
-      + coverage.branches
-      + coverage.functions
-      + coverage.lines)
-      / 4;
+    const coverageScore =
+      (coverage.statements +
+        coverage.branches +
+        coverage.functions +
+        coverage.lines) /
+      4;
     const securityScore = security.securityScore * 10;
-    const performanceScore = performance.bundleSize < 2
-      ? 100
-      : 100 - (performance.bundleSize - 2) * 20;
+    const performanceScore =
+      performance.bundleSize < 2
+        ? 100
+        : 100 - (performance.bundleSize - 2) * 20;
     const { score: accessibilityScore } = accessibility;
     const { overallScore: complianceScore } = compliance;
 
     return Math.round(
-      (coverageScore
-        + securityScore
-        + performanceScore
-        + accessibilityScore
-        + complianceScore)
-        / 5,
+      (coverageScore +
+        securityScore +
+        performanceScore +
+        accessibilityScore +
+        complianceScore) /
+        5,
     );
   }
 
@@ -528,18 +537,18 @@ class QualityReportGenerator {
     const security = this.metrics.security!;
 
     if (
-      (coverage.statements
-            + coverage.branches
-            + coverage.functions
-            + coverage.lines)
-          / 4
-        >= 90
+      (coverage.statements +
+        coverage.branches +
+        coverage.functions +
+        coverage.lines) /
+        4 >=
+      90
     ) {
       passed++;
     }
     if (
-      security.vulnerabilities.critical === 0
-      && security.vulnerabilities.high === 0
+      security.vulnerabilities.critical === 0 &&
+      security.vulnerabilities.high === 0
     ) {
       passed++;
     }
@@ -571,15 +580,13 @@ class QualityReportGenerator {
     const summary = this.generateSummaryData();
     // biome-ignore lint/suspicious/noConsole: Required for quality report output
     console.log(
-      `   • Coverage: ${
-        Math.round(
-          (this.metrics.coverage?.statements
-            + this.metrics.coverage?.branches
-            + this.metrics.coverage?.functions
-            + this.metrics.coverage?.lines)
-            / 4,
-        )
-      }%`,
+      `   • Coverage: ${Math.round(
+        (this.metrics.coverage?.statements +
+          this.metrics.coverage?.branches +
+          this.metrics.coverage?.functions +
+          this.metrics.coverage?.lines) /
+          4,
+      )}%`,
     );
     // biome-ignore lint/suspicious/noConsole: Required for quality report output
     console.log(

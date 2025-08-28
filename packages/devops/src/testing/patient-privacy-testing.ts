@@ -241,9 +241,9 @@ export class PatientPrivacyTester {
 
   private validateInformedConsent(consent: PatientConsent): boolean {
     return (
-      consent.informationProvided
-      && consent.processingBasis !== null
-      && consent.retentionPeriod !== null
+      consent.informationProvided &&
+      consent.processingBasis !== null &&
+      consent.retentionPeriod !== null
     );
   }
 
@@ -301,8 +301,8 @@ export class PatientPrivacyTester {
 
   private async validateEncryption(patientData: PatientData): Promise<boolean> {
     return (
-      patientData.encryptionStatus === "encrypted"
-      && this.config.enableDataEncryption
+      patientData.encryptionStatus === "encrypted" &&
+      this.config.enableDataEncryption
     );
   }
 
@@ -310,8 +310,8 @@ export class PatientPrivacyTester {
     patientData: PatientData,
   ): Promise<boolean> {
     return (
-      patientData.accessControls.length > 0
-      && patientData.accessControls.includes("rbac")
+      patientData.accessControls.length > 0 &&
+      patientData.accessControls.includes("rbac")
     );
   }
 
@@ -357,8 +357,8 @@ export class PatientPrivacyTester {
 
   private hasAppropriateSafeguards(transfer: DataTransfer): boolean {
     return (
-      transfer.safeguards.includes("standard_contractual_clauses")
-      || transfer.safeguards.includes("binding_corporate_rules")
+      transfer.safeguards.includes("standard_contractual_clauses") ||
+      transfer.safeguards.includes("binding_corporate_rules")
     );
   }
 
@@ -374,7 +374,7 @@ export class PatientPrivacyTester {
     return processing.dataCategories.some((category) =>
       ["health", "genetic", "biometric", "racial", "religious"].includes(
         category,
-      )
+      ),
     );
   }
 
@@ -388,22 +388,23 @@ export class PatientPrivacyTester {
 
   private involvesVulnerableSubjects(processing: DataProcessing): boolean {
     return (
-      processing.subjectCategories.includes("children")
-      || processing.subjectCategories.includes("elderly")
-      || processing.subjectCategories.includes("patients")
+      processing.subjectCategories.includes("children") ||
+      processing.subjectCategories.includes("elderly") ||
+      processing.subjectCategories.includes("patients")
     );
   }
 
   private involvesNewTechnology(processing: DataProcessing): boolean {
     return processing.technologies.some((tech) =>
-      ["ai", "machine_learning", "biometric_recognition"].includes(tech)
+      ["ai", "machine_learning", "biometric_recognition"].includes(tech),
     );
   }
 
   // Public methods for test creation
   generateComplianceReport(): PatientPrivacyComplianceReport {
     const results = [...this.testResults.values()];
-    const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
+    const averageScore =
+      results.reduce((sum, r) => sum + r.score, 0) / results.length;
     const allPassed = results.every((r) => r.passed);
 
     return {
@@ -460,13 +461,15 @@ export function createPatientPrivacyTestSuite(
         withdrawalMechanism: "email_request",
       };
 
-      const result = await privacyTester.validateConsentRequirements(mockConsent);
+      const result =
+        await privacyTester.validateConsentRequirements(mockConsent);
       expect(result.isValid).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);
     });
 
     it("data Subject Rights Implementation", async () => {
-      const result = await privacyTester.validateDataSubjectRights("test-patient-id");
+      const result =
+        await privacyTester.validateDataSubjectRights("test-patient-id");
       expect(result.allImplemented).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);
     });
@@ -521,7 +524,7 @@ export async function testLGPDCompliance(
 interface PatientData {
   encryptionStatus: "encrypted" | "not_encrypted";
   accessControls: string[];
-  auditLog: { enabled: boolean; } | null;
+  auditLog: { enabled: boolean } | null;
   backupStatus: "encrypted_backup" | "unencrypted_backup" | "no_backup";
   transmissionSecurity: "tls_1_3" | "tls_1_2" | "unencrypted";
   processingBasis: string;

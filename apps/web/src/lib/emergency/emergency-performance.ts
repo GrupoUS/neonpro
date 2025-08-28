@@ -22,8 +22,8 @@ export interface PerformanceMetric {
 
 export interface EmergencyPerformanceConfig {
   criticalThreshold: number; // 50ms for life-threatening
-  urgentThreshold: number;   // 100ms for urgent
-  normalThreshold: number;   // 200ms for normal
+  urgentThreshold: number; // 100ms for urgent
+  normalThreshold: number; // 200ms for normal
   enableProfiling: boolean;
   enableAlerts: boolean;
   maxMetricsHistory: number;
@@ -38,14 +38,14 @@ class EmergencyPerformanceMonitor {
 
   constructor() {
     this.config = {
-      criticalThreshold: 50,   // 50ms for life-threatening operations
-      urgentThreshold: 100,    // 100ms for urgent operations  
-      normalThreshold: 200,    // 200ms for normal operations
+      criticalThreshold: 50, // 50ms for life-threatening operations
+      urgentThreshold: 100, // 100ms for urgent operations
+      normalThreshold: 200, // 200ms for normal operations
       enableProfiling: true,
       enableAlerts: true,
       maxMetricsHistory: 1000,
     };
-    
+
     this.initializePreloading();
   }
 
@@ -59,27 +59,39 @@ class EmergencyPerformanceMonitor {
   /**
    * Start performance tracking for an operation
    */
-  startOperation(operationId: string, context: PerformanceMetric["context"]): void {
-    if (!this.config.enableProfiling) {return;}
-    
+  startOperation(
+    operationId: string,
+    context: PerformanceMetric["context"],
+  ): void {
+    if (!this.config.enableProfiling) {
+      return;
+    }
+
     const startTime = performance.now();
     this.activeOperations.set(operationId, startTime);
 
     // Log start of critical operations
     if (context.emergencyLevel === "life-threatening") {
-      console.log(`🚨 CRITICAL OPERATION STARTED: ${operationId} (${context.componentName})`);
+      console.log(
+        `🚨 CRITICAL OPERATION STARTED: ${operationId} (${context.componentName})`,
+      );
     }
   }
 
   /**
    * End performance tracking and analyze results
    */
-  endOperation(operationId: string, context: PerformanceMetric["context"]): PerformanceMetric {
+  endOperation(
+    operationId: string,
+    context: PerformanceMetric["context"],
+  ): PerformanceMetric {
     const startTime = this.activeOperations.get(operationId);
     const endTime = performance.now();
-    
+
     if (!startTime) {
-      console.warn(`Performance tracking not found for operation: ${operationId}`);
+      console.warn(
+        `Performance tracking not found for operation: ${operationId}`,
+      );
       return this.createEmptyMetric(operationId, context);
     }
 
@@ -114,14 +126,18 @@ class EmergencyPerformanceMonitor {
     // Log critical operation completion
     if (context.emergencyLevel === "life-threatening") {
       const status = success ? "✅ SUCCESS" : "❌ VIOLATION";
-      console.log(`🚨 CRITICAL OPERATION COMPLETED: ${operationId} - ${duration.toFixed(2)}ms (${status})`);
+      console.log(
+        `🚨 CRITICAL OPERATION COMPLETED: ${operationId} - ${duration.toFixed(2)}ms (${status})`,
+      );
     }
 
     return metric;
-  }  /**
+  } /**
    * Get performance threshold based on emergency level
    */
-  private getThreshold(emergencyLevel: PerformanceMetric["context"]["emergencyLevel"]): number {
+  private getThreshold(
+    emergencyLevel: PerformanceMetric["context"]["emergencyLevel"],
+  ): number {
     switch (emergencyLevel) {
       case "life-threatening":
         return this.config.criticalThreshold;
@@ -137,10 +153,12 @@ class EmergencyPerformanceMonitor {
    */
   private handlePerformanceViolation(metric: PerformanceMetric): void {
     const { operation, duration, threshold, context } = metric;
-    
+
     if (this.config.enableAlerts) {
       console.error(`🚨 PERFORMANCE VIOLATION: ${operation}`);
-      console.error(`Duration: ${duration.toFixed(2)}ms (threshold: ${threshold}ms)`);
+      console.error(
+        `Duration: ${duration.toFixed(2)}ms (threshold: ${threshold}ms)`,
+      );
       console.error(`Context:`, context);
 
       // For life-threatening violations, trigger immediate optimization
@@ -159,7 +177,7 @@ class EmergencyPerformanceMonitor {
   private initializePreloading(): void {
     // Preload common emergency protocols
     this.preloadEmergencyProtocols();
-    
+
     // Preload critical UI components
     this.preloadCriticalComponents();
 
@@ -178,7 +196,12 @@ class EmergencyPerformanceMonitor {
         samu: "192",
       },
       "allergic-reaction": {
-        steps: ["Remove allergen", "Epinephrine", "Antihistamines", "Corticosteroids"],
+        steps: [
+          "Remove allergen",
+          "Epinephrine",
+          "Antihistamines",
+          "Corticosteroids",
+        ],
         medications: ["EpiPen", "Benadryl", "Prednisone"],
         samu: "192",
       },
@@ -199,7 +222,7 @@ class EmergencyPerformanceMonitor {
     // This would be implemented with dynamic imports in a real application
     const criticalComponents = [
       "EmergencyPatientCard",
-      "CriticalAllergiesPanel", 
+      "CriticalAllergiesPanel",
       "SAMUDialButton",
     ];
 
@@ -210,20 +233,23 @@ class EmergencyPerformanceMonitor {
    * Setup service worker for aggressive caching
    */
   private setupServiceWorkerCache(): void {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/emergency-sw.js')
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/emergency-sw.js")
         .then((registration) => {
-          console.log('Emergency service worker registered');
+          console.log("Emergency service worker registered");
         })
         .catch((error) => {
-          console.error('Emergency service worker registration failed:', error);
+          console.error("Emergency service worker registration failed:", error);
         });
     }
-  }  /**
+  } /**
    * Trigger emergency optimization for critical performance issues
    */
   private triggerEmergencyOptimization(patientId: string): void {
-    console.log(`🚨 TRIGGERING EMERGENCY OPTIMIZATION for patient: ${patientId}`);
+    console.log(
+      `🚨 TRIGGERING EMERGENCY OPTIMIZATION for patient: ${patientId}`,
+    );
 
     // Clear non-critical cache to free memory
     this.clearNonCriticalCache();
@@ -243,8 +269,8 @@ class EmergencyPerformanceMonitor {
    */
   private clearNonCriticalCache(): void {
     // Clear browser cache for non-critical resources
-    if ('storage' in navigator && 'estimate' in navigator.storage) {
-      navigator.storage.estimate().then(estimate => {
+    if ("storage" in navigator && "estimate" in navigator.storage) {
+      navigator.storage.estimate().then((estimate) => {
         if (estimate.usage && estimate.quota) {
           const usagePercentage = (estimate.usage / estimate.quota) * 100;
           if (usagePercentage > 80) {
@@ -268,7 +294,7 @@ class EmergencyPerformanceMonitor {
     ];
 
     // This would integrate with the emergency cache
-    criticalDataKeys.forEach(key => {
+    criticalDataKeys.forEach((key) => {
       // Preload into memory for instant access
       console.log(`Preloading critical data: ${key}`);
     });
@@ -299,12 +325,15 @@ class EmergencyPerformanceMonitor {
     }, 0);
 
     // Request high priority for critical operations
-    if ('scheduler' in window && 'postTask' in (window as any).scheduler) {
-      (window as any).scheduler.postTask(() => {
-        // Critical operations get high priority
-      }, { priority: 'user-blocking' });
+    if ("scheduler" in window && "postTask" in (window as any).scheduler) {
+      (window as any).scheduler.postTask(
+        () => {
+          // Critical operations get high priority
+        },
+        { priority: "user-blocking" },
+      );
     }
-  }  /**
+  } /**
    * Get performance statistics for monitoring
    */
   getPerformanceStats(): {
@@ -316,20 +345,21 @@ class EmergencyPerformanceMonitor {
     worstPerformers: PerformanceMetric[];
   } {
     const total = this.metrics.length;
-    const successful = this.metrics.filter(m => m.success).length;
+    const successful = this.metrics.filter((m) => m.success).length;
     const criticalViolations = this.metrics.filter(
-      m => !m.success && m.context.emergencyLevel === "life-threatening"
+      (m) => !m.success && m.context.emergencyLevel === "life-threatening",
     ).length;
     const urgentViolations = this.metrics.filter(
-      m => !m.success && m.context.emergencyLevel === "urgent"
+      (m) => !m.success && m.context.emergencyLevel === "urgent",
     ).length;
 
-    const averageDuration = total > 0 
-      ? this.metrics.reduce((sum, m) => sum + m.duration, 0) / total
-      : 0;
+    const averageDuration =
+      total > 0
+        ? this.metrics.reduce((sum, m) => sum + m.duration, 0) / total
+        : 0;
 
     const worstPerformers = [...this.metrics]
-      .filter(m => !m.success)
+      .filter((m) => !m.success)
       .sort((a, b) => b.duration - a.duration)
       .slice(0, 10);
 
@@ -362,12 +392,16 @@ class EmergencyPerformanceMonitor {
     }
 
     const recommendations: string[] = [];
-    
+
     if (stats.criticalViolations > 0) {
-      recommendations.push("Immediate optimization required for life-threatening operations");
+      recommendations.push(
+        "Immediate optimization required for life-threatening operations",
+      );
     }
     if (stats.successRate < 95) {
-      recommendations.push("Overall performance below healthcare standards (95% target)");
+      recommendations.push(
+        "Overall performance below healthcare standards (95% target)",
+      );
     }
     if (stats.averageDuration > 100) {
       recommendations.push("Average response time exceeds emergency threshold");
@@ -405,7 +439,10 @@ class EmergencyPerformanceMonitor {
   /**
    * Create empty metric for error cases
    */
-  private createEmptyMetric(operationId: string, context: PerformanceMetric["context"]): PerformanceMetric {
+  private createEmptyMetric(
+    operationId: string,
+    context: PerformanceMetric["context"],
+  ): PerformanceMetric {
     return {
       operation: operationId,
       startTime: 0,
@@ -431,12 +468,12 @@ class EmergencyPerformanceMonitor {
 export const measureEmergencyOperation = async <T>(
   operationId: string,
   operation: () => Promise<T> | T,
-  context: PerformanceMetric["context"]
+  context: PerformanceMetric["context"],
 ): Promise<T> => {
   const monitor = EmergencyPerformanceMonitor.getInstance();
-  
+
   monitor.startOperation(operationId, context);
-  
+
   try {
     const result = await Promise.resolve(operation());
     monitor.endOperation(operationId, context);

@@ -45,9 +45,10 @@ export function ResponsiveLayout({
   // Monitor connectivity for Brazilian network conditions
   useEffect(() => {
     if (connectivity) {
-      const isSlow = connectivity.type === "2G"
-        || (connectivity.type === "3G" && connectivity.strength === "weak")
-        || connectivity.latency > 1000;
+      const isSlow =
+        connectivity.type === "2G" ||
+        (connectivity.type === "3G" && connectivity.strength === "weak") ||
+        connectivity.latency > 1000;
       setIsLowBandwidth(isSlow);
       setConnectionSpeed(`${connectivity.type} ${connectivity.strength}`);
     }
@@ -58,15 +59,16 @@ export function ResponsiveLayout({
       const updateConnectionInfo = () => {
         setConnectionSpeed(connection?.effectiveType || "unknown");
         setIsLowBandwidth(
-          connection?.effectiveType === "slow-2g"
-            || connection?.effectiveType === "2g",
+          connection?.effectiveType === "slow-2g" ||
+            connection?.effectiveType === "2g",
         );
       };
 
       updateConnectionInfo();
       connection.addEventListener("change", updateConnectionInfo);
 
-      return () => connection.removeEventListener("change", updateConnectionInfo);
+      return () =>
+        connection.removeEventListener("change", updateConnectionInfo);
     }
   }, [connectivity]);
 
@@ -119,9 +121,12 @@ export function ResponsiveLayout({
       } ${className}`}
       data-connectivity={connectionSpeed}
       data-viewport={viewport}
-      style={{
-        "--min-touch-target": (optimizations as any)?.minTouchTarget || "48px",
-      } as React.CSSProperties}
+      style={
+        {
+          "--min-touch-target":
+            (optimizations as any)?.minTouchTarget || "48px",
+        } as React.CSSProperties
+      }
     >
       {/* Connectivity Status Bar - Critical for Brazilian healthcare */}
       <div
@@ -159,8 +164,8 @@ export function ResponsiveLayout({
           viewport === "mobile"
             ? "mobile-layout"
             : viewport === "tablet"
-            ? "tablet-layout"
-            : "desktop-layout"
+              ? "tablet-layout"
+              : "desktop-layout"
         }`}
       >
         {viewport === "mobile" && (

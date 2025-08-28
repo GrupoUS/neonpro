@@ -41,7 +41,7 @@ describe("subscription Hooks", () => {
   describe("useSubscriptionStatus", () => {
     it("should return subscription data correctly", () => {
       const { result } = renderHook(() => mockUseSubscriptionStatus(), {
-        wrapper: ({ children }: { children: React.ReactNode; }) =>
+        wrapper: ({ children }: { children: React.ReactNode }) =>
           AllTheProviders({ queryClient, children }),
       });
 

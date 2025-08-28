@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { DateSchema, EmailSchema, NotificationType, PhoneSchema, UUIDSchema } from "../types";
+import {
+  DateSchema,
+  EmailSchema,
+  NotificationType,
+  PhoneSchema,
+  UUIDSchema,
+} from "../types";
 import type { BaseEntity } from "../types";
 
 // Notification interfaces for aesthetic clinic communications
@@ -78,11 +84,11 @@ export interface NotificationCampaign extends BaseEntity {
 export interface AudienceFilter {
   patientIds?: string[];
   tags?: string[];
-  ageRange?: { min: number; max: number; };
+  ageRange?: { min: number; max: number };
   gender?: string;
   treatmentHistory?: string[];
-  lastVisitDate?: { from: Date; to: Date; };
-  totalSpent?: { min: number; max: number; };
+  lastVisitDate?: { from: Date; to: Date };
+  totalSpent?: { min: number; max: number };
   city?: string[];
   marketingConsent: boolean;
   excludePatientIds?: string[];

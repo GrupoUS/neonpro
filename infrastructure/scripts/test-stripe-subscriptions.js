@@ -92,10 +92,10 @@ async function testEnvironmentVariables() {
       throw new Error(`Variável ${varName} não configurada`);
     }
     if (
-      varName.includes("STRIPE")
-      && !value.startsWith("pk_")
-      && !value.startsWith("sk_")
-      && !value.startsWith("whsec_")
+      varName.includes("STRIPE") &&
+      !value.startsWith("pk_") &&
+      !value.startsWith("sk_") &&
+      !value.startsWith("whsec_")
     ) {
       throw new Error(`Variável ${varName} tem formato inválido`);
     }
@@ -251,9 +251,9 @@ async function testUserInterface() {
       const response = await makeRequest(`${BASE_URL}${page}`);
 
       if (
-        response.status === 200
-        || response.status === 401
-        || response.status === 302
+        response.status === 200 ||
+        response.status === 401 ||
+        response.status === 302
       ) {
       } else if (response.status >= 500) {
         throw new Error(`Página ${page} retornando erro: ${response.status}`);

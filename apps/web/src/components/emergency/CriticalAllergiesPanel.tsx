@@ -80,7 +80,8 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
         priority: "LEVE",
       };
   }
-};export function CriticalAllergiesPanel({
+};
+export function CriticalAllergiesPanel({
   allergies,
   patientName,
   onCallEmergency,
@@ -90,17 +91,24 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
   className,
 }: CriticalAllergiesPanelProps) {
   const [expandedAllergy, setExpandedAllergy] = useState<string | null>(
-    emergencyMode ? null : null
+    emergencyMode ? null : null,
   );
   const [isVisible, setIsVisible] = useState(true);
 
   // Sort allergies by severity (life-threatening first)
   const sortedAllergies = [...allergies].sort((a, b) => {
-    const severityOrder = { "life-threatening": 0, severe: 1, moderate: 2, mild: 3 };
+    const severityOrder = {
+      "life-threatening": 0,
+      severe: 1,
+      moderate: 2,
+      mild: 3,
+    };
     return severityOrder[a.severity] - severityOrder[b.severity];
   });
 
-  const lifeThreatening = allergies.filter(a => a.severity === "life-threatening");
+  const lifeThreatening = allergies.filter(
+    (a) => a.severity === "life-threatening",
+  );
   const hasLifeThreatening = lifeThreatening.length > 0;
 
   if (!isVisible) {
@@ -118,13 +126,15 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
         </Button>
       </div>
     );
-  }  return (
+  }
+  return (
     <Card
       className={cn(
         "w-full transition-all duration-200",
-        hasLifeThreatening && "border-2 border-red-500 shadow-red-500/50 shadow-lg",
+        hasLifeThreatening &&
+          "border-2 border-red-500 shadow-red-500/50 shadow-lg",
         emergencyMode && "shadow-2xl scale-[1.01]",
-        className
+        className,
       )}
       role="alert"
       aria-live="assertive"
@@ -135,10 +145,16 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
           <div className="flex items-center gap-3">
             <div className="relative">
               {hasLifeThreatening && (
-                <Zap className="h-6 w-6 text-red-600 animate-bounce" aria-hidden="true" />
+                <Zap
+                  className="h-6 w-6 text-red-600 animate-bounce"
+                  aria-hidden="true"
+                />
               )}
               {!hasLifeThreatening && (
-                <Shield className="h-6 w-6 text-orange-600" aria-hidden="true" />
+                <Shield
+                  className="h-6 w-6 text-orange-600"
+                  aria-hidden="true"
+                />
               )}
             </div>
             <div>
@@ -150,9 +166,9 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
                 <Badge
                   className={cn(
                     "text-xs",
-                    hasLifeThreatening 
-                      ? "bg-red-600 text-white animate-pulse" 
-                      : "bg-orange-600 text-white"
+                    hasLifeThreatening
+                      ? "bg-red-600 text-white animate-pulse"
+                      : "bg-orange-600 text-white",
                   )}
                 >
                   {allergies.length}
@@ -188,17 +204,22 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
             )}
           </div>
         </div>
-      </CardHeader>      <CardContent className="space-y-3">
+      </CardHeader>{" "}
+      <CardContent className="space-y-3">
         {/* Life-threatening Alert */}
         {hasLifeThreatening && (
           <div className="bg-red-100 dark:bg-red-950/30 border border-red-500 rounded-lg p-3 mb-4">
             <div className="flex items-center gap-2 font-bold text-red-800 dark:text-red-200 mb-2">
-              <AlertTriangle className="h-5 w-5 animate-bounce" aria-hidden="true" />
+              <AlertTriangle
+                className="h-5 w-5 animate-bounce"
+                aria-hidden="true"
+              />
               ATENÇÃO: ALERGIAS COM RISCO DE VIDA DETECTADAS
             </div>
             <div className="text-sm text-red-700 dark:text-red-300">
-              {lifeThreatening.length} alergia{lifeThreatening.length > 1 ? 's' : ''} 
-              pode{lifeThreatening.length === 1 ? '' : 'm'} causar reação fatal. 
+              {lifeThreatening.length} alergia
+              {lifeThreatening.length > 1 ? "s" : ""}
+              pode{lifeThreatening.length === 1 ? "" : "m"} causar reação fatal.
               Verificar medicações e tratamentos antes de qualquer procedimento.
             </div>
           </div>
@@ -216,13 +237,15 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
                 className={cn(
                   "border rounded-lg transition-all duration-200",
                   severityStyles.card,
-                  allergy.severity === "life-threatening" && "shadow-lg"
+                  allergy.severity === "life-threatening" && "shadow-lg",
                 )}
               >
                 {/* Allergy Header */}
                 <div
                   className="p-3 cursor-pointer"
-                  onClick={() => setExpandedAllergy(isExpanded ? null : allergy.id)}
+                  onClick={() =>
+                    setExpandedAllergy(isExpanded ? null : allergy.id)
+                  }
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
@@ -241,7 +264,10 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
                           <Zap className="h-5 w-5" aria-hidden="true" />
                         )}
                         {allergy.severity === "severe" && (
-                          <AlertTriangle className="h-5 w-5" aria-hidden="true" />
+                          <AlertTriangle
+                            className="h-5 w-5"
+                            aria-hidden="true"
+                          />
                         )}
                         {allergy.severity === "moderate" && (
                           <Shield className="h-4 w-4" aria-hidden="true" />
@@ -260,7 +286,8 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
                     <div className="flex items-center gap-2">
                       {allergy.reactions.length > 0 && (
                         <div className="text-xs text-muted-foreground">
-                          {allergy.reactions.length} reação{allergy.reactions.length > 1 ? 'ões' : ''}
+                          {allergy.reactions.length} reação
+                          {allergy.reactions.length > 1 ? "ões" : ""}
                         </div>
                       )}
                       {isExpanded ? (
@@ -270,7 +297,8 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
                       )}
                     </div>
                   </div>
-                </div>                {/* Expanded Details */}
+                </div>{" "}
+                {/* Expanded Details */}
                 {isExpanded && (
                   <div
                     id={`allergy-details-${allergy.id}`}
@@ -295,7 +323,6 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
                         </div>
                       </div>
                     )}
-
                     {/* Treatments */}
                     {allergy.treatments.length > 0 && (
                       <div>
@@ -304,64 +331,78 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
                         </span>
                         <div className="space-y-1">
                           {allergy.treatments.map((treatment, index) => (
-                            <div key={index} className="text-sm bg-green-50 dark:bg-green-950/20 px-2 py-1 rounded">
+                            <div
+                              key={index}
+                              className="text-sm bg-green-50 dark:bg-green-950/20 px-2 py-1 rounded"
+                            >
                               • {treatment}
                             </div>
                           ))}
                         </div>
                       </div>
                     )}
-
                     {/* Medications to Avoid */}
-                    {showMedications && allergy.medications && allergy.medications.length > 0 && (
-                      <div>
-                        <span className="font-semibold text-sm text-red-700 dark:text-red-300 mb-2 block">
-                          Medicações a Evitar:
-                        </span>
-                        <div className="flex flex-wrap gap-1">
-                          {allergy.medications.map((medication, index) => (
-                            <Badge
-                              key={index}
-                              variant="destructive"
-                              className="text-xs bg-red-100 text-red-800 border border-red-300"
-                            >
-                              {medication}
-                            </Badge>
-                          ))}
+                    {showMedications &&
+                      allergy.medications &&
+                      allergy.medications.length > 0 && (
+                        <div>
+                          <span className="font-semibold text-sm text-red-700 dark:text-red-300 mb-2 block">
+                            Medicações a Evitar:
+                          </span>
+                          <div className="flex flex-wrap gap-1">
+                            {allergy.medications.map((medication, index) => (
+                              <Badge
+                                key={index}
+                                variant="destructive"
+                                className="text-xs bg-red-100 text-red-800 border border-red-300"
+                              >
+                                {medication}
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
-
+                      )}
                     {/* Cross-reactivities */}
-                    {allergy.crossReactivities && allergy.crossReactivities.length > 0 && (
-                      <div>
-                        <span className="font-semibold text-sm text-orange-700 dark:text-orange-300 mb-2 block">
-                          Reatividade Cruzada:
-                        </span>
-                        <div className="flex flex-wrap gap-1">
-                          {allergy.crossReactivities.map((item, index) => (
-                            <Badge
-                              key={index}
-                              variant="outline"
-                              className="text-xs border-orange-300 text-orange-700"
-                            >
-                              {item}
-                            </Badge>
-                          ))}
+                    {allergy.crossReactivities &&
+                      allergy.crossReactivities.length > 0 && (
+                        <div>
+                          <span className="font-semibold text-sm text-orange-700 dark:text-orange-300 mb-2 block">
+                            Reatividade Cruzada:
+                          </span>
+                          <div className="flex flex-wrap gap-1">
+                            {allergy.crossReactivities.map((item, index) => (
+                              <Badge
+                                key={index}
+                                variant="outline"
+                                className="text-xs border-orange-300 text-orange-700"
+                              >
+                                {item}
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}                    {/* Last Known Reaction */}
+                      )}{" "}
+                    {/* Last Known Reaction */}
                     {allergy.lastReaction && (
                       <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded">
                         <div className="flex items-center gap-2 mb-2">
-                          <Clock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                          <Clock
+                            className="h-4 w-4 text-muted-foreground"
+                            aria-hidden="true"
+                          />
                           <span className="font-semibold text-sm text-muted-foreground">
                             Última Reação ({allergy.lastReaction.date}):
                           </span>
                         </div>
                         <div className="text-sm space-y-1">
-                          <div><strong>Descrição:</strong> {allergy.lastReaction.description}</div>
-                          <div><strong>Tratamento:</strong> {allergy.lastReaction.treatment}</div>
+                          <div>
+                            <strong>Descrição:</strong>{" "}
+                            {allergy.lastReaction.description}
+                          </div>
+                          <div>
+                            <strong>Tratamento:</strong>{" "}
+                            {allergy.lastReaction.treatment}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -403,10 +444,15 @@ const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
         <div className="text-xs text-muted-foreground pt-2 border-t border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
             <span>
-              {allergies.filter(a => a.severity === "life-threatening").length} risco de vida • 
-              {allergies.filter(a => a.severity === "severe").length} graves • 
-              {allergies.filter(a => a.severity === "moderate").length} moderadas • 
-              {allergies.filter(a => a.severity === "mild").length} leves
+              {
+                allergies.filter((a) => a.severity === "life-threatening")
+                  .length
+              }{" "}
+              risco de vida •
+              {allergies.filter((a) => a.severity === "severe").length} graves •
+              {allergies.filter((a) => a.severity === "moderate").length}{" "}
+              moderadas •{allergies.filter((a) => a.severity === "mild").length}{" "}
+              leves
             </span>
             <span>LGPD: Dados médicos críticos</span>
           </div>

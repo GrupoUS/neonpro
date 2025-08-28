@@ -4,9 +4,19 @@
  * Based on TweakCN NEONPRO design patterns
  */
 
-import React, { useState } from 'react';
-import { HealthcareMetricCard, AppointmentCalendar, PaymentStatusTable, TeamMembersList } from '../components';
-import type { HealthcareMetricCardProps, Appointment, PaymentRecord, TeamMember } from '../components';
+import React, { useState } from "react";
+import {
+  HealthcareMetricCard,
+  AppointmentCalendar,
+  PaymentStatusTable,
+  TeamMembersList,
+} from "../components";
+import type {
+  HealthcareMetricCardProps,
+  Appointment,
+  PaymentRecord,
+  TeamMember,
+} from "../components";
 
 // Mock data for demonstration
 const mockMetrics = [
@@ -19,12 +29,12 @@ const mockMetrics = [
     growth: {
       value: 20.1,
       period: "vs. mês anterior",
-      isPositive: true
+      isPositive: true,
     },
     complianceIndicator: {
       type: "LGPD" as const,
-      status: "compliant" as const
-    }
+      status: "compliant" as const,
+    },
   },
   {
     title: "Pacientes Atendidos",
@@ -34,8 +44,8 @@ const mockMetrics = [
     growth: {
       value: 180.1,
       period: "vs. mês anterior",
-      isPositive: true
-    }
+      isPositive: true,
+    },
   },
   {
     title: "Consultas Agendadas",
@@ -45,8 +55,8 @@ const mockMetrics = [
     growth: {
       value: 15.2,
       period: "vs. semana anterior",
-      isPositive: true
-    }
+      isPositive: true,
+    },
   },
   {
     title: "Taxa de Conversão",
@@ -56,13 +66,13 @@ const mockMetrics = [
     growth: {
       value: -2.1,
       period: "vs. mês anterior",
-      isPositive: false
+      isPositive: false,
     },
     complianceIndicator: {
       type: "CFM" as const,
-      status: "compliant" as const
-    }
-  }
+      status: "compliant" as const,
+    },
+  },
 ];
 
 const mockAppointments: Appointment[] = [
@@ -75,18 +85,18 @@ const mockAppointments: Appointment[] = [
     endTime: new Date("2025-08-28T10:00:00"),
     status: "confirmed",
     professional: "Dr. João Santos",
-    room: "Sala 101"
+    room: "Sala 101",
   },
   {
     id: "2",
     patientName: "Carlos Oliveira",
-    patientId: "patient-2", 
+    patientId: "patient-2",
     type: "retorno",
     startTime: new Date("2025-08-28T10:30:00"),
     endTime: new Date("2025-08-28T11:00:00"),
     status: "scheduled",
     professional: "Dr. Ana Costa",
-    room: "Sala 102"
+    room: "Sala 102",
   },
   {
     id: "3",
@@ -97,7 +107,7 @@ const mockAppointments: Appointment[] = [
     endTime: new Date("2025-08-28T15:30:00"),
     status: "confirmed",
     professional: "Dr. Roberto Lima",
-    room: "Sala Emergency"
+    room: "Sala Emergency",
   },
   {
     id: "4",
@@ -108,8 +118,8 @@ const mockAppointments: Appointment[] = [
     endTime: new Date("2025-08-29T12:00:00"),
     status: "scheduled",
     professional: "Dr. Marina Rodrigues",
-    room: "Centro Cirúrgico"
-  }
+    room: "Centro Cirúrgico",
+  },
 ];
 
 const mockPayments: PaymentRecord[] = [
@@ -124,10 +134,10 @@ const mockPayments: PaymentRecord[] = [
     createdAt: new Date("2025-08-27T10:30:00"),
     treatmentType: "Consulta + Botox",
     professionalName: "Dr. João Santos",
-    invoiceNumber: "INV-2025-001"
+    invoiceNumber: "INV-2025-001",
   },
   {
-    id: "pay-2", 
+    id: "pay-2",
     patientName: "Jackson Lee",
     patientEmail: "jackson.lee@example.com",
     amount: 850,
@@ -139,33 +149,33 @@ const mockPayments: PaymentRecord[] = [
     professionalName: "Dra. Ana Costa",
     installmentInfo: {
       current: 1,
-      total: 3
-    }
+      total: 3,
+    },
   },
   {
     id: "pay-3",
     patientName: "Isabella Nguyen",
-    patientEmail: "isabella.nguyen@example.com", 
+    patientEmail: "isabella.nguyen@example.com",
     amount: 2100,
     currency: "BRL",
     method: "boleto",
     status: "pending",
     createdAt: new Date("2025-08-26T16:45:00"),
     treatmentType: "Preenchimento Facial",
-    professionalName: "Dr. Roberto Lima"
+    professionalName: "Dr. Roberto Lima",
   },
   {
     id: "pay-4",
     patientName: "Carlos Silva",
     patientEmail: "carlos.silva@example.com",
     amount: 480,
-    currency: "BRL", 
+    currency: "BRL",
     method: "convenio",
     status: "failed",
     createdAt: new Date("2025-08-25T09:20:00"),
     treatmentType: "Consulta Dermatológica",
-    professionalName: "Dra. Patricia Santos"
-  }
+    professionalName: "Dra. Patricia Santos",
+  },
 ];
 
 const mockTeamMembers: TeamMember[] = [
@@ -178,10 +188,10 @@ const mockTeamMembers: TeamMember[] = [
     status: "active",
     permissions: ["all"],
     joinedAt: new Date("2024-01-15"),
-    lastActive: new Date("2025-08-28T08:30:00")
+    lastActive: new Date("2025-08-28T08:30:00"),
   },
   {
-    id: "team-2", 
+    id: "team-2",
     name: "Dr. Jackson Lee",
     email: "jackson.lee@neonpro.com",
     role: "doctor",
@@ -191,18 +201,18 @@ const mockTeamMembers: TeamMember[] = [
     status: "active",
     permissions: ["patients", "appointments", "treatments"],
     joinedAt: new Date("2024-03-10"),
-    lastActive: new Date("2025-08-28T07:45:00")
+    lastActive: new Date("2025-08-28T07:45:00"),
   },
   {
     id: "team-3",
-    name: "Isabella Nguyen", 
+    name: "Isabella Nguyen",
     email: "isabella.nguyen@neonpro.com",
     role: "billing",
     phone: "+55 11 99999-9012",
-    status: "active", 
+    status: "active",
     permissions: ["billing", "payments", "reports"],
     joinedAt: new Date("2024-02-20"),
-    lastActive: new Date("2025-08-27T18:15:00")
+    lastActive: new Date("2025-08-27T18:15:00"),
   },
   {
     id: "team-4",
@@ -214,37 +224,37 @@ const mockTeamMembers: TeamMember[] = [
     status: "active",
     permissions: ["patients", "appointments"],
     joinedAt: new Date("2024-05-08"),
-    lastActive: new Date("2025-08-28T06:30:00")
+    lastActive: new Date("2025-08-28T06:30:00"),
   },
   {
     id: "team-5",
     name: "Roberto Lima",
-    email: "roberto.lima@neonpro.com", 
+    email: "roberto.lima@neonpro.com",
     role: "receptionist",
     phone: "+55 11 99999-7890",
     status: "inactive",
     permissions: ["appointments", "patients"],
     joinedAt: new Date("2024-07-12"),
-    lastActive: new Date("2025-08-25T17:00:00")
-  }
+    lastActive: new Date("2025-08-25T17:00:00"),
+  },
 ];
 
 const brazilianHolidays = [
   {
     date: new Date("2025-12-25"),
     name: "Natal",
-    type: "national" as const
+    type: "national" as const,
   },
   {
-    date: new Date("2025-09-07"), 
+    date: new Date("2025-09-07"),
     name: "Independência",
-    type: "national" as const
+    type: "national" as const,
   },
   {
     date: new Date("2025-10-12"),
     name: "Nossa Senhora Aparecida",
-    type: "national" as const
-  }
+    type: "national" as const,
+  },
 ];
 
 export const HealthcareDashboardExample: React.FC = () => {
@@ -309,11 +319,11 @@ export const HealthcareDashboardExample: React.FC = () => {
             onAppointmentClick={handleAppointmentClick}
             variant="default"
           />
-          
+
           {selectedDate && (
             <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
               <p className="text-blue-800 font-medium">
-                Data Selecionada: {selectedDate.toLocaleDateString('pt-BR')}
+                Data Selecionada: {selectedDate.toLocaleDateString("pt-BR")}
               </p>
             </div>
           )}
@@ -321,9 +331,7 @@ export const HealthcareDashboardExample: React.FC = () => {
 
         {/* Team Members */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Equipe Médica
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900">Equipe Médica</h2>
           <TeamMembersList
             members={mockTeamMembers}
             variant="card"
@@ -360,7 +368,8 @@ export const HealthcareDashboardExample: React.FC = () => {
             🎨 Powered by <strong>TweakCN NEONPRO Healthcare Theme</strong>
           </p>
           <p className="text-sm">
-            Designed for Brazilian aesthetic clinics • LGPD Compliant • CFM Validated
+            Designed for Brazilian aesthetic clinics • LGPD Compliant • CFM
+            Validated
           </p>
           <div className="flex justify-center gap-4 mt-4 text-sm">
             <span className="flex items-center gap-1">
@@ -392,7 +401,7 @@ export const CompactHealthcareDashboard: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             NEONPRO Healthcare - Visão Compacta
           </h1>
-          
+
           {/* Compact Metrics */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {mockMetrics.map((metric, index) => (
@@ -416,7 +425,7 @@ export const CompactHealthcareDashboard: React.FC = () => {
               showDensityIndicators={false}
             />
           </div>
-          
+
           {/* Team - Compact */}
           <div>
             <TeamMembersList

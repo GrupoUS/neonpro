@@ -5,9 +5,15 @@
  */
 
 import type { RateLimitConfig } from "./api-rate-limiting";
-import { createApiRateLimitingService, validateApiRateLimiting } from "./api-rate-limiting";
+import {
+  createApiRateLimitingService,
+  validateApiRateLimiting,
+} from "./api-rate-limiting";
 import type { RbacConfig } from "./healthcare-rbac";
-import { createHealthcareRbacService, validateHealthcareRbac } from "./healthcare-rbac";
+import {
+  createHealthcareRbacService,
+  validateHealthcareRbac,
+} from "./healthcare-rbac";
 
 // API Rate Limiting Service
 export {
@@ -186,7 +192,8 @@ export const ENTERPRISE_SECURITY_MODULE = {
   services: [
     {
       name: "Healthcare RBAC",
-      description: "Constitutional healthcare access control with patient privacy protection",
+      description:
+        "Constitutional healthcare access control with patient privacy protection",
       compliance_features: [
         "Role-Based Access Control",
         "CFM Professional Validation",
@@ -196,7 +203,8 @@ export const ENTERPRISE_SECURITY_MODULE = {
     },
     {
       name: "API Rate Limiting",
-      description: "Constitutional healthcare API protection with intelligent throttling",
+      description:
+        "Constitutional healthcare API protection with intelligent throttling",
       compliance_features: [
         "Intelligent Throttling",
         "Healthcare Priority Routing",

@@ -274,41 +274,41 @@ const NotificationCard: React.FC<{
       <div className="flex items-start gap-3">
         {/* Icon/Avatar */}
         <div className="flex-shrink-0">
-          {showAvatar
-              && (notification.patientAvatar || notification.staffAvatar)
-            ? (
-              <Avatar size="sm">
-                <AvatarImage
-                  alt={notification.patientName || notification.staffName || "User"}
-                  src={notification.patientAvatar || notification.staffAvatar}
-                />
-                <AvatarFallback>
-                  {(notification.patientName || notification.staffName || "U")
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .toUpperCase()
-                    .slice(0, 2)}
-                </AvatarFallback>
-              </Avatar>
-            )
-            : (
-              <div
-                className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full",
-                  notification.priority === "critical"
-                    && "bg-red-100 text-red-700",
-                  notification.priority === "high"
-                    && "bg-orange-100 text-orange-700",
-                  notification.priority === "medium"
-                    && "bg-yellow-100 text-yellow-700",
-                  notification.priority === "low"
-                    && "bg-green-100 text-green-700",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-              </div>
-            )}
+          {showAvatar &&
+          (notification.patientAvatar || notification.staffAvatar) ? (
+            <Avatar size="sm">
+              <AvatarImage
+                alt={
+                  notification.patientName || notification.staffName || "User"
+                }
+                src={notification.patientAvatar || notification.staffAvatar}
+              />
+              <AvatarFallback>
+                {(notification.patientName || notification.staffName || "U")
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()
+                  .slice(0, 2)}
+              </AvatarFallback>
+            </Avatar>
+          ) : (
+            <div
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-full",
+                notification.priority === "critical" &&
+                  "bg-red-100 text-red-700",
+                notification.priority === "high" &&
+                  "bg-orange-100 text-orange-700",
+                notification.priority === "medium" &&
+                  "bg-yellow-100 text-yellow-700",
+                notification.priority === "low" &&
+                  "bg-green-100 text-green-700",
+              )}
+            >
+              <Icon className="h-4 w-4" />
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -340,8 +340,8 @@ const NotificationCard: React.FC<{
               {/* Patient/Staff Info */}
               {(notification.patientName || notification.staffName) && (
                 <p className="mt-1 text-muted-foreground text-xs">
-                  {notification.patientName
-                    && `Paciente: ${notification.patientName}`}
+                  {notification.patientName &&
+                    `Paciente: ${notification.patientName}`}
                   {notification.patientName && notification.staffName && " • "}
                   {notification.staffName && `Staff: ${notification.staffName}`}
                 </p>
@@ -446,9 +446,11 @@ const NotificationBell: React.FC<{
             size="sm"
             variant="ghost"
           >
-            {soundEnabled
-              ? <Bell className="mr-2 h-4 w-4" />
-              : <BellOff className="mr-2 h-4 w-4" />}
+            {soundEnabled ? (
+              <Bell className="mr-2 h-4 w-4" />
+            ) : (
+              <BellOff className="mr-2 h-4 w-4" />
+            )}
             {soundEnabled ? "Desativar Som" : "Ativar Som"}
           </Button>
 
@@ -505,7 +507,8 @@ export const RealTimeNotifications = React.forwardRef<
     },
     ref,
   ) => {
-    const [localSoundEnabled, setLocalSoundEnabled] = React.useState(soundEnabled);
+    const [localSoundEnabled, setLocalSoundEnabled] =
+      React.useState(soundEnabled);
     const [visibleNotifications, setVisibleNotifications] = React.useState<
       string[]
     >([]);
@@ -529,7 +532,9 @@ export const RealTimeNotifications = React.forwardRef<
 
       if (newNotifications.length > 0) {
         const newIds = newNotifications.slice(0, maxVisible).map((n) => n.id);
-        setVisibleNotifications((prev) => [...prev, ...newIds].slice(-maxVisible));
+        setVisibleNotifications((prev) =>
+          [...prev, ...newIds].slice(-maxVisible),
+        );
 
         // Play sound for critical notifications if enabled
         if (localSoundEnabled) {
@@ -547,7 +552,9 @@ export const RealTimeNotifications = React.forwardRef<
     };
 
     const handleDismiss = (notificationId: string) => {
-      setVisibleNotifications((prev) => prev.filter((id) => id !== notificationId));
+      setVisibleNotifications((prev) =>
+        prev.filter((id) => id !== notificationId),
+      );
       onNotificationDismiss?.(notificationId);
     };
 
@@ -587,26 +594,24 @@ export const RealTimeNotifications = React.forwardRef<
             </div>
 
             <div className="h-full space-y-3 overflow-y-auto p-4">
-              {notifications.length === 0
-                ? (
-                  <div className="py-8 text-center text-muted-foreground">
-                    <Bell className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                    <p>Nenhuma notificação</p>
-                  </div>
-                )
-                : (
-                  notifications.map((notification) => (
-                    <NotificationCard
-                      allowDismiss={allowDismiss}
-                      key={notification.id}
-                      notification={notification}
-                      onAction={onNotificationAction}
-                      onClick={onNotificationClick}
-                      onDismiss={handleDismiss}
-                      showAvatar
-                    />
-                  ))
-                )}
+              {notifications.length === 0 ? (
+                <div className="py-8 text-center text-muted-foreground">
+                  <Bell className="mx-auto mb-4 h-12 w-12 opacity-50" />
+                  <p>Nenhuma notificação</p>
+                </div>
+              ) : (
+                notifications.map((notification) => (
+                  <NotificationCard
+                    allowDismiss={allowDismiss}
+                    key={notification.id}
+                    notification={notification}
+                    onAction={onNotificationAction}
+                    onClick={onNotificationClick}
+                    onDismiss={handleDismiss}
+                    showAvatar
+                  />
+                ))
+              )}
             </div>
           </div>
         )}

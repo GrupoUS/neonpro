@@ -163,8 +163,8 @@ async function testTriggersAndFunctions() {
   });
 
   if (
-    error
-    && !error.message.includes('function "get_function_exists" does not exist')
+    error &&
+    !error.message.includes('function "get_function_exists" does not exist')
   ) {
     throw new Error(`Erro ao verificar functions: ${error.message}`);
   }

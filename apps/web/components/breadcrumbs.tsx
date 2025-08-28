@@ -17,10 +17,10 @@ interface BreadcrumbItem {
   label: string;
   href?: string;
   isActive?: boolean;
-  icon?: React.ComponentType<{ className?: string; }>;
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
-export function Breadcrumbs({ className }: { className?: string; }) {
+export function Breadcrumbs({ className }: { className?: string }) {
   const location = useLocation();
   const params = useParams({ strict: false });
 
@@ -114,36 +114,40 @@ export function Breadcrumbs({ className }: { className?: string; }) {
 
           return (
             <li className="flex items-center" key={index}>
-              {index > 0 && <ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />}
+              {index > 0 && (
+                <ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
+              )}
 
-              {item.href && !isLast
-                ? (
-                  <Link
-                    aria-current={isLast ? "page" : undefined}
-                    className={cn(
-                      "flex items-center transition-colors hover:text-foreground",
-                      index === 0 && "hover:text-primary",
-                    )}
-                    to={item.href}
-                  >
-                    {item.icon && index === 0 && <item.icon className="mr-1 h-4 w-4" />}
-                    <span className="max-w-32 truncate">{item.label}</span>
-                  </Link>
-                )
-                : (
-                  <span
-                    aria-current={isLast ? "page" : undefined}
-                    className={cn(
-                      "flex items-center",
-                      isLast
-                        ? "font-medium text-foreground"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    {item.icon && index === 0 && <item.icon className="mr-1 h-4 w-4" />}
-                    <span className="max-w-32 truncate">{item.label}</span>
-                  </span>
-                )}
+              {item.href && !isLast ? (
+                <Link
+                  aria-current={isLast ? "page" : undefined}
+                  className={cn(
+                    "flex items-center transition-colors hover:text-foreground",
+                    index === 0 && "hover:text-primary",
+                  )}
+                  to={item.href}
+                >
+                  {item.icon && index === 0 && (
+                    <item.icon className="mr-1 h-4 w-4" />
+                  )}
+                  <span className="max-w-32 truncate">{item.label}</span>
+                </Link>
+              ) : (
+                <span
+                  aria-current={isLast ? "page" : undefined}
+                  className={cn(
+                    "flex items-center",
+                    isLast
+                      ? "font-medium text-foreground"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {item.icon && index === 0 && (
+                    <item.icon className="mr-1 h-4 w-4" />
+                  )}
+                  <span className="max-w-32 truncate">{item.label}</span>
+                </span>
+              )}
             </li>
           );
         })}

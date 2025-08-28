@@ -46,7 +46,7 @@ export function useAuth(): UseAuthReturn {
       //   const userData = await fetchUserProfile(user.id);
       //   setUser(userData);
       // }
-      
+
       // Placeholder implementation
       const storedUser = localStorage.getItem("auth_user");
       if (storedUser) {
@@ -62,13 +62,13 @@ export function useAuth(): UseAuthReturn {
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
-      
+
       // TODO: Implement actual login with Supabase
       // const { data, error } = await supabase.auth.signInWithPassword({
       //   email,
       //   password,
       // });
-      
+
       // Placeholder implementation
       const mockUser: User = {
         id: "mock-user-id",
@@ -77,10 +77,9 @@ export function useAuth(): UseAuthReturn {
         role: "healthcare_provider",
         clinic_id: "mock-clinic-id",
       };
-      
+
       setUser(mockUser);
       localStorage.setItem("auth_user", JSON.stringify(mockUser));
-      
     } catch (error) {
       console.error("Login failed:", error);
       throw error;
@@ -92,13 +91,12 @@ export function useAuth(): UseAuthReturn {
   const logout = async () => {
     try {
       setIsLoading(true);
-      
+
       // TODO: Implement actual logout with Supabase
       // await supabase.auth.signOut();
-      
+
       setUser(null);
       localStorage.removeItem("auth_user");
-      
     } catch (error) {
       console.error("Logout failed:", error);
       throw error;
@@ -110,13 +108,13 @@ export function useAuth(): UseAuthReturn {
   const register = async (userData: RegisterData) => {
     try {
       setIsLoading(true);
-      
+
       // TODO: Implement actual registration with Supabase
       // const { data, error } = await supabase.auth.signUp({
       //   email: userData.email,
       //   password: userData.password,
       // });
-      
+
       // Placeholder implementation
       const newUser: User = {
         id: "new-user-id",
@@ -125,10 +123,9 @@ export function useAuth(): UseAuthReturn {
         role: userData.role,
         clinic_id: userData.clinic_id,
       };
-      
+
       setUser(newUser);
       localStorage.setItem("auth_user", JSON.stringify(newUser));
-      
     } catch (error) {
       console.error("Registration failed:", error);
       throw error;

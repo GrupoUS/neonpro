@@ -229,9 +229,7 @@ export const useAIScheduling = (
         ]);
 
         // AI-powered scheduling
-        const result = await aiEngineRef.current.optimizeSchedule(
-          request,
-        );
+        const result = await aiEngineRef.current.optimizeSchedule(request);
 
         // Adapt result to match SchedulingResult interface
         const adaptedResult = {
@@ -258,7 +256,8 @@ export const useAIScheduling = (
 
         return adaptedResult;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Scheduling failed";
+        const errorMessage =
+          error instanceof Error ? error.message : "Scheduling failed";
         setError(errorMessage);
         throw new Error(errorMessage);
       } finally {
@@ -356,9 +355,9 @@ export const useAIScheduling = (
         if (autoOptimize) {
           const autoActions = actions.filter(
             (action) =>
-              action.impact.efficiencyChange > 10
-              && action.executionTime < 60
-              && action.impact.patientSatisfactionChange >= 0,
+              action.impact.efficiencyChange > 10 &&
+              action.executionTime < 60 &&
+              action.impact.patientSatisfactionChange >= 0,
           );
 
           for (const action of autoActions) {

@@ -102,7 +102,11 @@ const HealthRecordViewer = React.forwardRef<
           <div className="flex items-center gap-2">
             {onToggleSensitive && (
               <Button onClick={onToggleSensitive} size="sm" variant="outline">
-                {showSensitiveData ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showSensitiveData ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
                 {showSensitiveData ? "Ocultar" : "Mostrar"} Dados Sensíveis
               </Button>
             )}
@@ -267,8 +271,8 @@ const HealthRecordViewer = React.forwardRef<
                   </label>
                   <div className="mt-2">
                     {renderSensitiveContent(
-                      record.medicalHistory?.conditions?.join(", ")
-                        || "Nenhuma condição registrada",
+                      record.medicalHistory?.conditions?.join(", ") ||
+                        "Nenhuma condição registrada",
                       "medicalHistory",
                     )}
                   </div>
@@ -280,8 +284,8 @@ const HealthRecordViewer = React.forwardRef<
                   </label>
                   <div className="mt-2">
                     {renderSensitiveContent(
-                      record.medications?.join(", ")
-                        || "Nenhum medicamento registrado",
+                      record.medications?.join(", ") ||
+                        "Nenhum medicamento registrado",
                       "medications",
                     )}
                   </div>
@@ -293,8 +297,8 @@ const HealthRecordViewer = React.forwardRef<
                   </label>
                   <div className="mt-2">
                     {renderSensitiveContent(
-                      record.allergies?.join(", ")
-                        || "Nenhuma alergia registrada",
+                      record.allergies?.join(", ") ||
+                        "Nenhuma alergia registrada",
                       "allergies",
                     )}
                   </div>
@@ -302,40 +306,43 @@ const HealthRecordViewer = React.forwardRef<
               </div>
             </div>{" "}
             {/* Previous Procedures */}
-            {record.previousProcedures
-              && record.previousProcedures.length > 0 && (
-              <div className="rounded-lg border p-6">
-                <h3 className="mb-4 font-semibold text-lg">
-                  Procedimentos Anteriores
-                </h3>
+            {record.previousProcedures &&
+              record.previousProcedures.length > 0 && (
+                <div className="rounded-lg border p-6">
+                  <h3 className="mb-4 font-semibold text-lg">
+                    Procedimentos Anteriores
+                  </h3>
 
-                <div className="space-y-3">
-                  {record.previousProcedures.map((procedure, index) => (
-                    <div
-                      className="flex items-center justify-between rounded bg-muted/30 p-3"
-                      key={index}
-                    >
-                      <div>
-                        <div className="font-medium">{procedure.name}</div>
-                        <div className="text-muted-foreground text-sm">
-                          {formatters.date(procedure.date)} - {procedure.practitioner}
+                  <div className="space-y-3">
+                    {record.previousProcedures.map((procedure, index) => (
+                      <div
+                        className="flex items-center justify-between rounded bg-muted/30 p-3"
+                        key={index}
+                      >
+                        <div>
+                          <div className="font-medium">{procedure.name}</div>
+                          <div className="text-muted-foreground text-sm">
+                            {formatters.date(procedure.date)} -{" "}
+                            {procedure.practitioner}
+                          </div>
                         </div>
-                      </div>
 
-                      {procedure.status && (
-                        <Badge
-                          variant={procedure.status === "completed"
-                            ? "confirmed"
-                            : "secondary"}
-                        >
-                          {procedure.status}
-                        </Badge>
-                      )}
-                    </div>
-                  ))}
+                        {procedure.status && (
+                          <Badge
+                            variant={
+                              procedure.status === "completed"
+                                ? "confirmed"
+                                : "secondary"
+                            }
+                          >
+                            {procedure.status}
+                          </Badge>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </TabsContent>
           {/* Procedures Tab */}
           <TabsContent className="space-y-6" value="procedures">
@@ -344,48 +351,53 @@ const HealthRecordViewer = React.forwardRef<
                 Procedimentos Realizados
               </h3>
 
-              {record.procedures && record.procedures.length > 0
-                ? (
-                  <div className="space-y-4">
-                    {record.procedures.map((procedure, index) => (
-                      <div className="rounded-lg border p-4" key={index}>
-                        <div className="flex items-start justify-between">
-                          <div className="space-y-2">
-                            <div className="font-medium">{procedure.name}</div>
-                            <div className="text-muted-foreground text-sm">
-                              {formatters.date(procedure.date)} às {procedure.time}
-                            </div>
-                            {procedure.notes && <div className="text-sm">{procedure.notes}</div>}
-                          </div>{" "}
-                          <div className="flex items-center gap-2">
-                            <Badge
-                              variant={procedure.status === "completed"
-                                ? "confirmed"
-                                : "default"}
-                            >
-                              {procedure.status}
-                            </Badge>
-
-                            {onViewDetails && (
-                              <Button
-                                onClick={() => onViewDetails(`procedure-${index}`)}
-                                size="sm"
-                                variant="outline"
-                              >
-                                Ver Detalhes
-                              </Button>
-                            )}
+              {record.procedures && record.procedures.length > 0 ? (
+                <div className="space-y-4">
+                  {record.procedures.map((procedure, index) => (
+                    <div className="rounded-lg border p-4" key={index}>
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-2">
+                          <div className="font-medium">{procedure.name}</div>
+                          <div className="text-muted-foreground text-sm">
+                            {formatters.date(procedure.date)} às{" "}
+                            {procedure.time}
                           </div>
+                          {procedure.notes && (
+                            <div className="text-sm">{procedure.notes}</div>
+                          )}
+                        </div>{" "}
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            variant={
+                              procedure.status === "completed"
+                                ? "confirmed"
+                                : "default"
+                            }
+                          >
+                            {procedure.status}
+                          </Badge>
+
+                          {onViewDetails && (
+                            <Button
+                              onClick={() =>
+                                onViewDetails(`procedure-${index}`)
+                              }
+                              size="sm"
+                              variant="outline"
+                            >
+                              Ver Detalhes
+                            </Button>
+                          )}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )
-                : (
-                  <div className="py-8 text-center text-muted-foreground">
-                    Nenhum procedimento registrado
-                  </div>
-                )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center text-muted-foreground">
+                  Nenhum procedimento registrado
+                </div>
+              )}
             </div>
           </TabsContent>
           {/* Documents Tab */}
@@ -393,43 +405,42 @@ const HealthRecordViewer = React.forwardRef<
             <div className="rounded-lg border p-6">
               <h3 className="mb-4 font-semibold text-lg">Documentos</h3>
 
-              {record.documents && record.documents.length > 0
-                ? (
-                  <div className="space-y-3">
-                    {record.documents.map((document, index) => (
-                      <div
-                        className="flex items-center justify-between rounded border p-3"
-                        key={index}
-                      >
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-5 w-5 text-muted-foreground" />
-                          <div>
-                            <div className="font-medium">{document.name}</div>
-                            <div className="text-muted-foreground text-sm">
-                              {document.type} - {formatters.date(document.uploadDate)}
-                            </div>
+              {record.documents && record.documents.length > 0 ? (
+                <div className="space-y-3">
+                  {record.documents.map((document, index) => (
+                    <div
+                      className="flex items-center justify-between rounded border p-3"
+                      key={index}
+                    >
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <div className="font-medium">{document.name}</div>
+                          <div className="text-muted-foreground text-sm">
+                            {document.type} -{" "}
+                            {formatters.date(document.uploadDate)}
                           </div>
                         </div>
-
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline">{document.size}</Badge>
-                          <Button
-                            onClick={() => document.onDownload?.(document.id)}
-                            size="sm"
-                            variant="outline"
-                          >
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
                       </div>
-                    ))}
-                  </div>
-                )
-                : (
-                  <div className="py-8 text-center text-muted-foreground">
-                    Nenhum documento anexado
-                  </div>
-                )}
+
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">{document.size}</Badge>
+                        <Button
+                          onClick={() => document.onDownload?.(document.id)}
+                          size="sm"
+                          variant="outline"
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center text-muted-foreground">
+                  Nenhum documento anexado
+                </div>
+              )}
             </div>
           </TabsContent>
         </Tabs>{" "}
@@ -440,9 +451,10 @@ const HealthRecordViewer = React.forwardRef<
             <div className="space-y-1">
               <div className="font-medium">Proteção de Dados - LGPD</div>
               <div className="text-muted-foreground text-sm">
-                Este prontuário contém dados pessoais sensíveis protegidos pela Lei Geral de
-                Proteção de Dados (LGPD). O acesso e tratamento destes dados são registrados e
-                auditados para garantir a segurança e privacidade do paciente.
+                Este prontuário contém dados pessoais sensíveis protegidos pela
+                Lei Geral de Proteção de Dados (LGPD). O acesso e tratamento
+                destes dados são registrados e auditados para garantir a
+                segurança e privacidade do paciente.
               </div>
             </div>
           </div>

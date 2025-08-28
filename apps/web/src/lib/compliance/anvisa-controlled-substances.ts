@@ -11,119 +11,140 @@ import type {
   ControlledPrescription,
   AuditTrailEntry,
   ComplianceAPIResponse,
-  ValidationResponse
-} from '../../types/compliance';
+  ValidationResponse,
+} from "../../types/compliance";
 
 // ANVISA controlled substance classifications
 const ANVISA_CLASSIFICATIONS = {
-  'A1': {
-    name: 'Lista A1 - Entorpecentes',
-    prescriptionType: 'receituario-a' as PrescriptionType,
-    color: '#dc2626', // Red
+  A1: {
+    name: "Lista A1 - Entorpecentes",
+    prescriptionType: "receituario-a" as PrescriptionType,
+    color: "#dc2626", // Red
     maxDays: 30,
-    specialRequirements: ['Receituário Amarelo', 'Notificação de Receita A', 'Controle rigoroso'],
-    examples: ['Morfina', 'Heroína', 'Cocaína']
+    specialRequirements: [
+      "Receituário Amarelo",
+      "Notificação de Receita A",
+      "Controle rigoroso",
+    ],
+    examples: ["Morfina", "Heroína", "Cocaína"],
   },
-  'A2': {
-    name: 'Lista A2 - Entorpecentes permitidos',
-    prescriptionType: 'receituario-a' as PrescriptionType,
-    color: '#ea580c', // Orange
+  A2: {
+    name: "Lista A2 - Entorpecentes permitidos",
+    prescriptionType: "receituario-a" as PrescriptionType,
+    color: "#ea580c", // Orange
     maxDays: 30,
-    specialRequirements: ['Receituário Amarelo', 'Notificação de Receita A'],
-    examples: ['Codeína', 'Tramadol', 'Oximorfona']
+    specialRequirements: ["Receituário Amarelo", "Notificação de Receita A"],
+    examples: ["Codeína", "Tramadol", "Oximorfona"],
   },
-  'A3': {
-    name: 'Lista A3 - Psicotrópicos',
-    prescriptionType: 'receituario-a' as PrescriptionType,
-    color: '#d97706', // Amber
+  A3: {
+    name: "Lista A3 - Psicotrópicos",
+    prescriptionType: "receituario-a" as PrescriptionType,
+    color: "#d97706", // Amber
     maxDays: 30,
-    specialRequirements: ['Receituário Amarelo', 'Notificação de Receita A'],
-    examples: ['Anfetamina', 'LSD', 'Ecstasy']
+    specialRequirements: ["Receituário Amarelo", "Notificação de Receita A"],
+    examples: ["Anfetamina", "LSD", "Ecstasy"],
   },
-  'B1': {
-    name: 'Lista B1 - Psicotrópicos',
-    prescriptionType: 'receituario-b' as PrescriptionType,
-    color: '#2563eb', // Blue
+  B1: {
+    name: "Lista B1 - Psicotrópicos",
+    prescriptionType: "receituario-b" as PrescriptionType,
+    color: "#2563eb", // Blue
     maxDays: 60,
-    specialRequirements: ['Receituário Azul', 'Notificação de Receita B1'],
-    examples: ['Diazepam', 'Alprazolam', 'Clonazepam']
+    specialRequirements: ["Receituário Azul", "Notificação de Receita B1"],
+    examples: ["Diazepam", "Alprazolam", "Clonazepam"],
   },
-  'B2': {
-    name: 'Lista B2 - Psicotrópicos anorexígenos',
-    prescriptionType: 'receituario-b' as PrescriptionType,
-    color: '#1d4ed8', // Blue (darker)
+  B2: {
+    name: "Lista B2 - Psicotrópicos anorexígenos",
+    prescriptionType: "receituario-b" as PrescriptionType,
+    color: "#1d4ed8", // Blue (darker)
     maxDays: 30,
-    specialRequirements: ['Receituário Azul', 'Notificação de Receita B2'],
-    examples: ['Sibutramina', 'Femproporex', 'Mazindol']
+    specialRequirements: ["Receituário Azul", "Notificação de Receita B2"],
+    examples: ["Sibutramina", "Femproporex", "Mazindol"],
   },
-  'C1': {
-    name: 'Lista C1 - Outras substâncias sujeitas a controle especial',
-    prescriptionType: 'receituario-c' as PrescriptionType,
-    color: '#059669', // Green
+  C1: {
+    name: "Lista C1 - Outras substâncias sujeitas a controle especial",
+    prescriptionType: "receituario-c" as PrescriptionType,
+    color: "#059669", // Green
     maxDays: 60,
-    specialRequirements: ['Receituário Branco', 'Retenção da receita'],
-    examples: ['Anticonvulsivantes', 'Antidepressivos']
+    specialRequirements: ["Receituário Branco", "Retenção da receita"],
+    examples: ["Anticonvulsivantes", "Antidepressivos"],
   },
-  'C2': {
-    name: 'Lista C2 - Retinóides de uso sistêmico e imunossupressores',
-    prescriptionType: 'receituario-c' as PrescriptionType,
-    color: '#047857', // Green (darker)
+  C2: {
+    name: "Lista C2 - Retinóides de uso sistêmico e imunossupressores",
+    prescriptionType: "receituario-c" as PrescriptionType,
+    color: "#047857", // Green (darker)
     maxDays: 30,
-    specialRequirements: ['Receituário Branco', 'Notificação de Receita Especial'],
-    examples: ['Isotretinoína', 'Talidomida', 'Micofenolato']
-  }
+    specialRequirements: [
+      "Receituário Branco",
+      "Notificação de Receita Especial",
+    ],
+    examples: ["Isotretinoína", "Talidomida", "Micofenolato"],
+  },
 } as const;
 
 // Mock controlled substances database
 const MOCK_SUBSTANCES_DATABASE: ANVISASubstance[] = [
   {
-    id: 'anvisa-001',
-    substanceName: 'Diazepam',
-    commercialName: 'Valium',
-    controlledClass: 'B1',
-    prescriptionType: 'receituario-b',
-    activeIngredient: 'Diazepam',
-    concentration: '5mg, 10mg',
-    pharmaceuticalForm: 'Comprimido',
-    restrictions: ['Uso adulto', 'Contraindicado na gravidez'],
+    id: "anvisa-001",
+    substanceName: "Diazepam",
+    commercialName: "Valium",
+    controlledClass: "B1",
+    prescriptionType: "receituario-b",
+    activeIngredient: "Diazepam",
+    concentration: "5mg, 10mg",
+    pharmaceuticalForm: "Comprimido",
+    restrictions: ["Uso adulto", "Contraindicado na gravidez"],
     maxDailyDose: 40,
     maxTreatmentDays: 60,
     requiresSpecialHandling: true,
-    storageRequirements: ['Local seco', 'Temperatura ambiente', 'Cofre para medicamentos controlados'],
-    disposalRequirements: ['Incineração controlada', 'Registro de descarte']
+    storageRequirements: [
+      "Local seco",
+      "Temperatura ambiente",
+      "Cofre para medicamentos controlados",
+    ],
+    disposalRequirements: ["Incineração controlada", "Registro de descarte"],
   },
   {
-    id: 'anvisa-002',
-    substanceName: 'Morfina',
-    commercialName: 'Dimorf',
-    controlledClass: 'A1',
-    prescriptionType: 'receituario-a',
-    activeIngredient: 'Sulfato de Morfina',
-    concentration: '10mg/ml, 30mg',
-    pharmaceuticalForm: 'Solução injetável, Comprimido',
-    restrictions: ['Uso hospitalar preferencial', 'Alta dependência'],
+    id: "anvisa-002",
+    substanceName: "Morfina",
+    commercialName: "Dimorf",
+    controlledClass: "A1",
+    prescriptionType: "receituario-a",
+    activeIngredient: "Sulfato de Morfina",
+    concentration: "10mg/ml, 30mg",
+    pharmaceuticalForm: "Solução injetável, Comprimido",
+    restrictions: ["Uso hospitalar preferencial", "Alta dependência"],
     maxDailyDose: 200,
     maxTreatmentDays: 30,
     requiresSpecialHandling: true,
-    storageRequirements: ['Cofre blindado', 'Dupla chave', 'Controle rigoroso'],
-    disposalRequirements: ['Incineração controlada com testemunhas', 'Ata de destruição']
+    storageRequirements: ["Cofre blindado", "Dupla chave", "Controle rigoroso"],
+    disposalRequirements: [
+      "Incineração controlada com testemunhas",
+      "Ata de destruição",
+    ],
   },
   {
-    id: 'anvisa-003',
-    substanceName: 'Isotretinoína',
-    commercialName: 'Roacutan',
-    controlledClass: 'C2',
-    prescriptionType: 'receituario-c',
-    activeIngredient: 'Isotretinoína',
-    concentration: '10mg, 20mg',
-    pharmaceuticalForm: 'Cápsula',
-    restrictions: ['Mulheres em idade fértil requerem teste de gravidez', 'Acompanhamento médico mensal'],
+    id: "anvisa-003",
+    substanceName: "Isotretinoína",
+    commercialName: "Roacutan",
+    controlledClass: "C2",
+    prescriptionType: "receituario-c",
+    activeIngredient: "Isotretinoína",
+    concentration: "10mg, 20mg",
+    pharmaceuticalForm: "Cápsula",
+    restrictions: [
+      "Mulheres em idade fértil requerem teste de gravidez",
+      "Acompanhamento médico mensal",
+    ],
     maxDailyDose: 80,
     maxTreatmentDays: 180,
     requiresSpecialHandling: false,
-    storageRequirements: ['Local seco', 'Proteger da luz', 'Temperatura ambiente'],
-    disposalRequirements: ['Descarte conforme RDC 222/2018']
-  }
+    storageRequirements: [
+      "Local seco",
+      "Proteger da luz",
+      "Temperatura ambiente",
+    ],
+    disposalRequirements: ["Descarte conforme RDC 222/2018"],
+  },
 ];
 
 /**
@@ -141,7 +162,8 @@ export class ANVISAControlledSubstancesService {
 
   public static getInstance(): ANVISAControlledSubstancesService {
     if (!ANVISAControlledSubstancesService.instance) {
-      ANVISAControlledSubstancesService.instance = new ANVISAControlledSubstancesService();
+      ANVISAControlledSubstancesService.instance =
+        new ANVISAControlledSubstancesService();
     }
     return ANVISAControlledSubstancesService.instance;
   }
@@ -150,7 +172,7 @@ export class ANVISAControlledSubstancesService {
    * Load substances database (mock data)
    */
   private loadSubstancesDatabase(): void {
-    MOCK_SUBSTANCES_DATABASE.forEach(substance => {
+    MOCK_SUBSTANCES_DATABASE.forEach((substance) => {
       this.substances.set(substance.id, substance);
     });
   }
@@ -172,7 +194,9 @@ export class ANVISAControlledSubstancesService {
       }
     }
 
-    return results.sort((a, b) => a.substanceName.localeCompare(b.substanceName));
+    return results.sort((a, b) =>
+      a.substanceName.localeCompare(b.substanceName),
+    );
   }
 
   /**
@@ -185,16 +209,20 @@ export class ANVISAControlledSubstancesService {
   /**
    * Get substances by controlled class
    */
-  public getSubstancesByClass(controlledClass: ANVISAControlledClass): ANVISASubstance[] {
+  public getSubstancesByClass(
+    controlledClass: ANVISAControlledClass,
+  ): ANVISASubstance[] {
     const results: ANVISASubstance[] = [];
-    
+
     for (const substance of this.substances.values()) {
       if (substance.controlledClass === controlledClass) {
         results.push(substance);
       }
     }
 
-    return results.sort((a, b) => a.substanceName.localeCompare(b.substanceName));
+    return results.sort((a, b) =>
+      a.substanceName.localeCompare(b.substanceName),
+    );
   }
 
   /**
@@ -208,7 +236,10 @@ export class ANVISAControlledSubstancesService {
    * Create controlled prescription
    */
   public async createControlledPrescription(
-    prescriptionData: Omit<ControlledPrescription, 'id' | 'prescriptionDate' | 'status' | 'validUntil'>
+    prescriptionData: Omit<
+      ControlledPrescription,
+      "id" | "prescriptionDate" | "status" | "validUntil"
+    >,
   ): Promise<ValidationResponse<ControlledPrescription>> {
     try {
       // Validate substance exists
@@ -216,10 +247,10 @@ export class ANVISAControlledSubstancesService {
       if (!substance) {
         return {
           isValid: false,
-          errors: ['Substância não encontrada na base de dados ANVISA'],
+          errors: ["Substância não encontrada na base de dados ANVISA"],
           warnings: [],
           timestamp: new Date(),
-          source: 'anvisa-controlled-substances'
+          source: "anvisa-controlled-substances",
         };
       }
 
@@ -227,10 +258,12 @@ export class ANVISAControlledSubstancesService {
       if (substance.prescriptionType !== prescriptionData.prescriptionType) {
         return {
           isValid: false,
-          errors: [`Tipo de receituário incorreto. ${substance.substanceName} requer ${substance.prescriptionType}`],
+          errors: [
+            `Tipo de receituário incorreto. ${substance.substanceName} requer ${substance.prescriptionType}`,
+          ],
           warnings: [],
           timestamp: new Date(),
-          source: 'anvisa-controlled-substances'
+          source: "anvisa-controlled-substances",
         };
       }
 
@@ -239,24 +272,28 @@ export class ANVISAControlledSubstancesService {
       if (prescriptionData.treatmentDays > classInfo.maxDays) {
         return {
           isValid: false,
-          errors: [`Duração do tratamento excede o máximo permitido de ${classInfo.maxDays} dias para classe ${substance.controlledClass}`],
+          errors: [
+            `Duração do tratamento excede o máximo permitido de ${classInfo.maxDays} dias para classe ${substance.controlledClass}`,
+          ],
           warnings: [],
           timestamp: new Date(),
-          source: 'anvisa-controlled-substances'
+          source: "anvisa-controlled-substances",
         };
       }
 
       // Generate prescription ID and dates
       const prescriptionId = `ANV-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
       const prescriptionDate = new Date();
-      const validUntil = new Date(prescriptionDate.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days validity
+      const validUntil = new Date(
+        prescriptionDate.getTime() + 30 * 24 * 60 * 60 * 1000,
+      ); // 30 days validity
 
       const prescription: ControlledPrescription = {
         id: prescriptionId,
         prescriptionDate,
-        status: 'prescribed',
+        status: "prescribed",
         validUntil,
-        ...prescriptionData
+        ...prescriptionData,
       };
 
       // Store prescription
@@ -265,17 +302,19 @@ export class ANVISAControlledSubstancesService {
       // Add audit trail
       this.addAuditEntry({
         timestamp: new Date(),
-        userId: 'system',
-        userRole: 'system',
-        action: 'substance-prescribed',
-        entityType: 'prescription',
+        userId: "system",
+        userRole: "system",
+        action: "substance-prescribed",
+        entityType: "prescription",
         entityId: prescriptionId,
-        ipAddress: '127.0.0.1',
-        userAgent: 'ANVISA Tracking Service',
+        ipAddress: "127.0.0.1",
+        userAgent: "ANVISA Tracking Service",
         sessionId: `anvisa-${Date.now()}`,
-        complianceType: 'anvisa',
-        riskLevel: substance.controlledClass.startsWith('A') ? 'high' : 'medium',
-        description: `Prescribed ${substance.substanceName} (${substance.controlledClass}) - ${prescriptionData.quantity} units`
+        complianceType: "anvisa",
+        riskLevel: substance.controlledClass.startsWith("A")
+          ? "high"
+          : "medium",
+        description: `Prescribed ${substance.substanceName} (${substance.controlledClass}) - ${prescriptionData.quantity} units`,
       });
 
       return {
@@ -284,16 +323,18 @@ export class ANVISAControlledSubstancesService {
         errors: [],
         warnings: substance.restrictions,
         timestamp: new Date(),
-        source: 'anvisa-controlled-substances'
+        source: "anvisa-controlled-substances",
       };
-
     } catch (error) {
       return {
         isValid: false,
-        errors: ['Erro interno ao criar prescrição: ' + (error instanceof Error ? error.message : 'Erro desconhecido')],
+        errors: [
+          "Erro interno ao criar prescrição: " +
+            (error instanceof Error ? error.message : "Erro desconhecido"),
+        ],
         warnings: [],
         timestamp: new Date(),
-        source: 'anvisa-controlled-substances'
+        source: "anvisa-controlled-substances",
       };
     }
   }
@@ -304,48 +345,55 @@ export class ANVISAControlledSubstancesService {
   public async recordDispensation(
     prescriptionId: string,
     dispensedQuantity: number,
-    pharmacyId: string
+    pharmacyId: string,
   ): Promise<ValidationResponse<ControlledPrescription>> {
     const prescription = this.prescriptions.get(prescriptionId);
-    
+
     if (!prescription) {
       return {
         isValid: false,
-        errors: ['Prescrição não encontrada'],
+        errors: ["Prescrição não encontrada"],
         warnings: [],
         timestamp: new Date(),
-        source: 'anvisa-dispensation'
+        source: "anvisa-dispensation",
       };
     }
 
-    if (prescription.status !== 'prescribed' && prescription.status !== 'partially-dispensed') {
+    if (
+      prescription.status !== "prescribed" &&
+      prescription.status !== "partially-dispensed"
+    ) {
       return {
         isValid: false,
-        errors: ['Prescrição não pode ser dispensada no status atual: ' + prescription.status],
+        errors: [
+          "Prescrição não pode ser dispensada no status atual: " +
+            prescription.status,
+        ],
         warnings: [],
         timestamp: new Date(),
-        source: 'anvisa-dispensation'
+        source: "anvisa-dispensation",
       };
     }
 
     if (prescription.validUntil < new Date()) {
       return {
         isValid: false,
-        errors: ['Prescrição expirada'],
+        errors: ["Prescrição expirada"],
         warnings: [],
         timestamp: new Date(),
-        source: 'anvisa-dispensation'
+        source: "anvisa-dispensation",
       };
     }
 
-    const totalDispensed = (prescription.dispensedQuantity || 0) + dispensedQuantity;
+    const totalDispensed =
+      (prescription.dispensedQuantity || 0) + dispensedQuantity;
     if (totalDispensed > prescription.quantity) {
       return {
         isValid: false,
-        errors: ['Quantidade a dispensar excede o prescrito'],
+        errors: ["Quantidade a dispensar excede o prescrito"],
         warnings: [],
         timestamp: new Date(),
-        source: 'anvisa-dispensation'
+        source: "anvisa-dispensation",
       };
     }
 
@@ -355,7 +403,10 @@ export class ANVISAControlledSubstancesService {
       dispensedQuantity: totalDispensed,
       dispensedDate: new Date(),
       pharmacyId,
-      status: totalDispensed === prescription.quantity ? 'dispensed' : 'partially-dispensed'
+      status:
+        totalDispensed === prescription.quantity
+          ? "dispensed"
+          : "partially-dispensed",
     };
 
     this.prescriptions.set(prescriptionId, updatedPrescription);
@@ -363,19 +414,19 @@ export class ANVISAControlledSubstancesService {
     // Add audit trail
     this.addAuditEntry({
       timestamp: new Date(),
-      userId: 'pharmacy-system',
-      userRole: 'pharmacy',
-      action: 'update',
-      entityType: 'prescription',
+      userId: "pharmacy-system",
+      userRole: "pharmacy",
+      action: "update",
+      entityType: "prescription",
       entityId: prescriptionId,
       oldValue: prescription,
       newValue: updatedPrescription,
-      ipAddress: '127.0.0.1',
-      userAgent: 'ANVISA Tracking Service',
+      ipAddress: "127.0.0.1",
+      userAgent: "ANVISA Tracking Service",
       sessionId: `anvisa-disp-${Date.now()}`,
-      complianceType: 'anvisa',
-      riskLevel: 'medium',
-      description: `Dispensed ${dispensedQuantity} units at pharmacy ${pharmacyId}`
+      complianceType: "anvisa",
+      riskLevel: "medium",
+      description: `Dispensed ${dispensedQuantity} units at pharmacy ${pharmacyId}`,
     });
 
     return {
@@ -384,23 +435,27 @@ export class ANVISAControlledSubstancesService {
       errors: [],
       warnings: [],
       timestamp: new Date(),
-      source: 'anvisa-dispensation'
+      source: "anvisa-dispensation",
     };
   }
 
   /**
    * Get prescriptions by patient
    */
-  public getPrescriptionsByPatient(patientId: string): ControlledPrescription[] {
+  public getPrescriptionsByPatient(
+    patientId: string,
+  ): ControlledPrescription[] {
     const results: ControlledPrescription[] = [];
-    
+
     for (const prescription of this.prescriptions.values()) {
       if (prescription.patientId === patientId) {
         results.push(prescription);
       }
     }
 
-    return results.sort((a, b) => b.prescriptionDate.getTime() - a.prescriptionDate.getTime());
+    return results.sort(
+      (a, b) => b.prescriptionDate.getTime() - a.prescriptionDate.getTime(),
+    );
   }
 
   /**
@@ -408,14 +463,16 @@ export class ANVISAControlledSubstancesService {
    */
   public getPrescriptionsByDoctor(doctorCRM: string): ControlledPrescription[] {
     const results: ControlledPrescription[] = [];
-    
+
     for (const prescription of this.prescriptions.values()) {
       if (prescription.doctorCRM === doctorCRM) {
         results.push(prescription);
       }
     }
 
-    return results.sort((a, b) => b.prescriptionDate.getTime() - a.prescriptionDate.getTime());
+    return results.sort(
+      (a, b) => b.prescriptionDate.getTime() - a.prescriptionDate.getTime(),
+    );
   }
 
   /**
@@ -428,13 +485,16 @@ export class ANVISAControlledSubstancesService {
     for (const prescription of this.prescriptions.values()) {
       if (
         prescription.validUntil <= cutoffDate &&
-        (prescription.status === 'prescribed' || prescription.status === 'partially-dispensed')
+        (prescription.status === "prescribed" ||
+          prescription.status === "partially-dispensed")
       ) {
         results.push(prescription);
       }
     }
 
-    return results.sort((a, b) => a.validUntil.getTime() - b.validUntil.getTime());
+    return results.sort(
+      (a, b) => a.validUntil.getTime() - b.validUntil.getTime(),
+    );
   }
 
   /**
@@ -454,12 +514,20 @@ export class ANVISAControlledSubstancesService {
       dispensedPrescriptions: 0,
       expiredPrescriptions: 0,
       totalSubstances: this.substances.size,
-      substancesPerClass: {} as Record<ANVISAControlledClass, number>
+      substancesPerClass: {} as Record<ANVISAControlledClass, number>,
     };
 
     // Initialize class counters
-    const classes: ANVISAControlledClass[] = ['A1', 'A2', 'A3', 'B1', 'B2', 'C1', 'C2'];
-    classes.forEach(cls => {
+    const classes: ANVISAControlledClass[] = [
+      "A1",
+      "A2",
+      "A3",
+      "B1",
+      "B2",
+      "C1",
+      "C2",
+    ];
+    classes.forEach((cls) => {
       stats.prescriptionsPerClass[cls] = 0;
       stats.substancesPerClass[cls] = 0;
     });
@@ -471,11 +539,11 @@ export class ANVISAControlledSubstancesService {
         stats.prescriptionsPerClass[substance.controlledClass]++;
       }
 
-      if (prescription.status === 'dispensed') {
+      if (prescription.status === "dispensed") {
         stats.dispensedPrescriptions++;
       }
 
-      if (prescription.status === 'expired') {
+      if (prescription.status === "expired") {
         stats.expiredPrescriptions++;
       }
     }
@@ -494,7 +562,9 @@ export class ANVISAControlledSubstancesService {
   public generateComplianceReport(): ComplianceAPIResponse<{
     reportId: string;
     generatedAt: Date;
-    statistics: ReturnType<ANVISAControlledSubstancesService['getTrackingStatistics']>;
+    statistics: ReturnType<
+      ANVISAControlledSubstancesService["getTrackingStatistics"]
+    >;
     expiringPrescriptions: ControlledPrescription[];
     recentAuditEntries: AuditTrailEntry[];
     complianceScore: number;
@@ -514,15 +584,15 @@ export class ANVISAControlledSubstancesService {
         statistics,
         expiringPrescriptions,
         recentAuditEntries,
-        complianceScore
+        complianceScore,
       },
-      message: 'Relatório de conformidade ANVISA gerado com sucesso',
+      message: "Relatório de conformidade ANVISA gerado com sucesso",
       metadata: {
         requestId: `req-${Date.now()}`,
         processedAt: new Date(),
-        source: 'anvisa-controlled-substances',
-        version: '1.0.0'
-      }
+        source: "anvisa-controlled-substances",
+        version: "1.0.0",
+      },
     };
   }
 
@@ -532,7 +602,7 @@ export class ANVISAControlledSubstancesService {
   private calculateComplianceScore(): number {
     const stats = this.getTrackingStatistics();
     const expiringCount = this.getExpiringPrescriptions().length;
-    
+
     let score = 100;
 
     // Deduct points for expired prescriptions
@@ -554,7 +624,7 @@ export class ANVISAControlledSubstancesService {
    */
   private addAuditEntry(entry: AuditTrailEntry): void {
     this.auditTrail.push(entry);
-    
+
     // Keep only last 1000 entries
     if (this.auditTrail.length > 1000) {
       this.auditTrail = this.auditTrail.slice(-1000);
@@ -566,7 +636,7 @@ export class ANVISAControlledSubstancesService {
    */
   public getAuditTrail(limit: number = 100): AuditTrailEntry[] {
     return this.auditTrail
-      .filter(entry => entry.complianceType === 'anvisa')
+      .filter((entry) => entry.complianceType === "anvisa")
       .slice(-limit)
       .reverse();
   }
@@ -582,7 +652,8 @@ export class ANVISAControlledSubstancesService {
 }
 
 // Export singleton instance
-export const anvisaControlledSubstancesService = ANVISAControlledSubstancesService.getInstance();
+export const anvisaControlledSubstancesService =
+  ANVISAControlledSubstancesService.getInstance();
 
 // Utility functions
 export const anvisaUtils = {
@@ -598,20 +669,20 @@ export const anvisaUtils = {
    */
   getPrescriptionTypeColor: (prescriptionType: PrescriptionType): string => {
     const colors = {
-      'receituario-a': '#fef3c7',      // Yellow background
-      'receituario-b': '#dbeafe',      // Blue background
-      'receituario-c': '#f3f4f6',      // White/gray background
-      'receituario-especial': '#fce7f3', // Pink background
-      'notificacao-receita': '#ecfdf5' // Green background
+      "receituario-a": "#fef3c7", // Yellow background
+      "receituario-b": "#dbeafe", // Blue background
+      "receituario-c": "#f3f4f6", // White/gray background
+      "receituario-especial": "#fce7f3", // Pink background
+      "notificacao-receita": "#ecfdf5", // Green background
     };
-    return colors[prescriptionType] || colors['receituario-c'];
+    return colors[prescriptionType] || colors["receituario-c"];
   },
 
   /**
    * Format prescription number
    */
   formatPrescriptionNumber: (prescriptionNumber: string): string => {
-    return prescriptionNumber.replace(/(\w{3})-(\d+)-(\w+)/, '$1-$2-$3');
+    return prescriptionNumber.replace(/(\w{3})-(\d+)-(\w+)/, "$1-$2-$3");
   },
 
   /**
@@ -625,15 +696,21 @@ export const anvisaUtils = {
   /**
    * Get controlled class risk level
    */
-  getClassRiskLevel: (controlledClass: ANVISAControlledClass): 'low' | 'medium' | 'high' => {
-    const highRisk: ANVISAControlledClass[] = ['A1', 'A2', 'A3'];
-    const mediumRisk: ANVISAControlledClass[] = ['B1', 'B2'];
-    const lowRisk: ANVISAControlledClass[] = ['C1', 'C2'];
+  getClassRiskLevel: (
+    controlledClass: ANVISAControlledClass,
+  ): "low" | "medium" | "high" => {
+    const highRisk: ANVISAControlledClass[] = ["A1", "A2", "A3"];
+    const mediumRisk: ANVISAControlledClass[] = ["B1", "B2"];
+    const lowRisk: ANVISAControlledClass[] = ["C1", "C2"];
 
-    if (highRisk.includes(controlledClass)) {return 'high';}
-    if (mediumRisk.includes(controlledClass)) {return 'medium';}
-    return 'low';
-  }
+    if (highRisk.includes(controlledClass)) {
+      return "high";
+    }
+    if (mediumRisk.includes(controlledClass)) {
+      return "medium";
+    }
+    return "low";
+  },
 };
 
 export default ANVISAControlledSubstancesService;

@@ -6,7 +6,15 @@
 
 "use client";
 
-import { Activity, CheckCircle2, Clock, Shield, TrendingUp, Users, XCircle } from "lucide-react";
+import {
+  Activity,
+  CheckCircle2,
+  Clock,
+  Shield,
+  TrendingUp,
+  Users,
+  XCircle,
+} from "lucide-react";
 import type { SecurityMetrics } from "../../../lib/utils";
 import { Badge } from "../../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
@@ -82,7 +90,9 @@ export function SecurityMetricsOverview({
           <div className="mt-2 flex items-center space-x-2">
             <Badge
               className="text-xs"
-              variant={metrics.threat_level === "low" ? "default" : "destructive"}
+              variant={
+                metrics.threat_level === "low" ? "default" : "destructive"
+              }
             >
               {metrics.unresolved_alerts} unresolved alerts
             </Badge>
@@ -102,7 +112,9 @@ export function SecurityMetricsOverview({
             <span className="text-gray-600 text-xs">High risk:</span>
             <Badge
               className="text-xs"
-              variant={metrics.high_risk_sessions > 0 ? "destructive" : "secondary"}
+              variant={
+                metrics.high_risk_sessions > 0 ? "destructive" : "secondary"
+              }
             >
               {metrics.high_risk_sessions}
             </Badge>
@@ -124,7 +136,9 @@ export function SecurityMetricsOverview({
             <span className="text-gray-600 text-xs">Failed logins:</span>
             <Badge
               className="text-xs"
-              variant={metrics.failed_attempts_24h > 10 ? "destructive" : "secondary"}
+              variant={
+                metrics.failed_attempts_24h > 10 ? "destructive" : "secondary"
+              }
             >
               {metrics.failed_attempts_24h}
             </Badge>
@@ -138,9 +152,11 @@ export function SecurityMetricsOverview({
           <CardTitle className="font-medium text-sm">
             Compliance Score
           </CardTitle>
-          {metrics.compliance_score >= 95
-            ? <CheckCircle2 className="h-4 w-4 text-green-600" />
-            : <XCircle className="h-4 w-4 text-red-600" />}
+          {metrics.compliance_score >= 95 ? (
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+          ) : (
+            <XCircle className="h-4 w-4 text-red-600" />
+          )}
         </CardHeader>
         <CardContent>
           <div

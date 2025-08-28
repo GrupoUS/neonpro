@@ -18,7 +18,13 @@ import {
 import { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { Progress } from "../ui/progress";
 
 // Healthcare-specific cache categories
@@ -255,9 +261,11 @@ export function PWAStatusCard() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {sw.isOnline
-              ? <Wifi className="h-5 w-5 text-green-500" />
-              : <WifiOff className="h-5 w-5 text-red-500" />}
+            {sw.isOnline ? (
+              <Wifi className="h-5 w-5 text-green-500" />
+            ) : (
+              <WifiOff className="h-5 w-5 text-red-500" />
+            )}
             <CardTitle>Status PWA - Saúde</CardTitle>
           </div>
           <div className="flex gap-2">
@@ -270,8 +278,8 @@ export function PWAStatusCard() {
         <CardDescription>
           {sw.isOnline ? "Conectado • " : "Offline • "}
           Dados disponíveis offline: {getTotalCachePercentage()}%
-          {sw.lastSyncTime
-            && ` • Última sync: ${sw.lastSyncTime.toLocaleTimeString()}`}
+          {sw.lastSyncTime &&
+            ` • Última sync: ${sw.lastSyncTime.toLocaleTimeString()}`}
         </CardDescription>
       </CardHeader>
 
@@ -279,9 +287,11 @@ export function PWAStatusCard() {
         {/* Connection Status */}
         <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
           <div className="flex items-center gap-3">
-            {sw.isOnline
-              ? <CheckCircle className="h-5 w-5 text-green-500" />
-              : <AlertTriangle className="h-5 w-5 text-orange-500" />}
+            {sw.isOnline ? (
+              <CheckCircle className="h-5 w-5 text-green-500" />
+            ) : (
+              <AlertTriangle className="h-5 w-5 text-orange-500" />
+            )}
             <div>
               <p className="font-medium">
                 {sw.isOnline ? "Sistema Online" : "Modo Offline"}
@@ -293,7 +303,9 @@ export function PWAStatusCard() {
               </p>
             </div>
           </div>
-          {sw.syncInProgress && <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />}
+          {sw.syncInProgress && (
+            <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
+          )}
         </div>
 
         {/* Healthcare Data Cache Status */}
@@ -427,9 +439,11 @@ export function PWAStatusCard() {
             variant="outline"
             className="flex items-center gap-2"
           >
-            {sw.syncInProgress
-              ? <RefreshCw className="h-4 w-4 animate-spin" />
-              : <RefreshCw className="h-4 w-4" />}
+            {sw.syncInProgress ? (
+              <RefreshCw className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
             Sincronizar
           </Button>
 
@@ -458,8 +472,8 @@ export function PWAStatusCard() {
         {/* LGPD Compliance Notice */}
         <div className="text-xs text-muted-foreground p-2 bg-muted/30 rounded border-l-2 border-blue-500">
           <Shield className="h-3 w-3 inline mr-1" />
-          Dados armazenados localmente conforme LGPD. Cache criptografado para proteção de
-          informações médicas.
+          Dados armazenados localmente conforme LGPD. Cache criptografado para
+          proteção de informações médicas.
         </div>
       </CardContent>
     </Card>

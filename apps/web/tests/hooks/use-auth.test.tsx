@@ -43,7 +43,7 @@ describe("useAuth Hook - NeonPro Healthcare Authentication", () => {
       },
     });
 
-    return ({ children }: { children: ReactNode; }) => (
+    return ({ children }: { children: ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
   };

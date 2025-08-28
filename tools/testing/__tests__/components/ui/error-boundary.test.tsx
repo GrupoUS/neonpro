@@ -8,7 +8,7 @@ import {
 } from "../../../../../components/ui/error-boundary";
 
 // Mock component that throws an error
-const ThrowError = ({ shouldThrow = true }: { shouldThrow?: boolean; }) => {
+const ThrowError = ({ shouldThrow = true }: { shouldThrow?: boolean }) => {
   if (shouldThrow) {
     throw new Error("Test error");
   }
@@ -167,7 +167,9 @@ describe("withErrorBoundary HOC", () => {
   });
 
   it("passes props to wrapped component", () => {
-    const TestComponent = ({ message }: { message: string; }) => <div>{message}</div>;
+    const TestComponent = ({ message }: { message: string }) => (
+      <div>{message}</div>
+    );
     const WrappedComponent = withErrorBoundary(TestComponent);
 
     render(<WrappedComponent message="Hello World" />);

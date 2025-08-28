@@ -485,7 +485,11 @@
       }
     },
     {
-      "files": ["**/integration/**", "**/*.integration.*", "**/api/**/*.test.*"],
+      "files": [
+        "**/integration/**",
+        "**/*.integration.*",
+        "**/api/**/*.test.*"
+      ],
       "plugins": ["vitest"],
       "env": {
         "node": true,

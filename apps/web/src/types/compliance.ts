@@ -8,21 +8,63 @@
 // CFM (Conselho Federal de Medicina) Types
 // =============================================================================
 
-export type CFMState = 
-  | 'SP' | 'RJ' | 'MG' | 'RS' | 'PR' | 'SC' | 'BA' | 'GO' | 'ES' | 'PE'
-  | 'CE' | 'PA' | 'MA' | 'PB' | 'RN' | 'AL' | 'PI' | 'SE' | 'RO' | 'AC'
-  | 'AM' | 'RR' | 'AP' | 'TO' | 'MS' | 'MT' | 'DF';
+export type CFMState =
+  | "SP"
+  | "RJ"
+  | "MG"
+  | "RS"
+  | "PR"
+  | "SC"
+  | "BA"
+  | "GO"
+  | "ES"
+  | "PE"
+  | "CE"
+  | "PA"
+  | "MA"
+  | "PB"
+  | "RN"
+  | "AL"
+  | "PI"
+  | "SE"
+  | "RO"
+  | "AC"
+  | "AM"
+  | "RR"
+  | "AP"
+  | "TO"
+  | "MS"
+  | "MT"
+  | "DF";
 
-export type CFMLicenseStatus = 'active' | 'pending' | 'expired' | 'suspended' | 'cancelled';
+export type CFMLicenseStatus =
+  | "active"
+  | "pending"
+  | "expired"
+  | "suspended"
+  | "cancelled";
 
-export type MedicalSpecialty = 
-  | 'cirurgia-plastica' | 'dermatologia' | 'anestesiologia' | 'cardiologia'
-  | 'endocrinologia' | 'ginecologia' | 'neurologia' | 'oftalmologia'
-  | 'ortopedia' | 'pediatria' | 'psiquiatria' | 'urologia' | 'oncologia'
-  | 'radiologia' | 'patologia' | 'medicina-geral' | 'medicina-estetica';
+export type MedicalSpecialty =
+  | "cirurgia-plastica"
+  | "dermatologia"
+  | "anestesiologia"
+  | "cardiologia"
+  | "endocrinologia"
+  | "ginecologia"
+  | "neurologia"
+  | "oftalmologia"
+  | "ortopedia"
+  | "pediatria"
+  | "psiquiatria"
+  | "urologia"
+  | "oncologia"
+  | "radiologia"
+  | "patologia"
+  | "medicina-geral"
+  | "medicina-estetica";
 
 export interface CFMValidationBadgeProps {
-  license: string;                    // e.g., "CRM-SP 123456"
+  license: string; // e.g., "CRM-SP 123456"
   specialty: MedicalSpecialty;
   validUntil: Date;
   status: CFMLicenseStatus;
@@ -42,7 +84,7 @@ export interface CFMValidationResult {
   status: CFMLicenseStatus;
   restrictions: string[];
   lastVerified: Date;
-  verificationSource: 'cfm-api' | 'local-cache' | 'manual';
+  verificationSource: "cfm-api" | "local-cache" | "manual";
 }
 
 export interface CFMProfessional {
@@ -64,17 +106,25 @@ export interface CFMProfessional {
 }
 
 // =============================================================================
-// ANVISA (Agência Nacional de Vigilância Sanitária) Types  
+// ANVISA (Agência Nacional de Vigilância Sanitária) Types
 // =============================================================================
 
-export type ANVISAControlledClass = 'A1' | 'A2' | 'A3' | 'B1' | 'B2' | 'C1' | 'C2' | 'C3';
+export type ANVISAControlledClass =
+  | "A1"
+  | "A2"
+  | "A3"
+  | "B1"
+  | "B2"
+  | "C1"
+  | "C2"
+  | "C3";
 
-export type PrescriptionType = 
-  | 'receituario-a'        // Yellow prescription (A1, A2, A3)
-  | 'receituario-b'        // Blue prescription (B1, B2)  
-  | 'receituario-c'        // White prescription (C1, C2)
-  | 'receituario-especial' // Special prescription
-  | 'notificacao-receita'; // Prescription notification
+export type PrescriptionType =
+  | "receituario-a" // Yellow prescription (A1, A2, A3)
+  | "receituario-b" // Blue prescription (B1, B2)
+  | "receituario-c" // White prescription (C1, C2)
+  | "receituario-especial" // Special prescription
+  | "notificacao-receita"; // Prescription notification
 
 export interface ANVISASubstance {
   id: string;
@@ -118,7 +168,12 @@ export interface ControlledPrescription {
   dispensedDate?: Date;
   dispensedQuantity?: number;
   pharmacyId?: string;
-  status: 'prescribed' | 'dispensed' | 'partially-dispensed' | 'expired' | 'cancelled';
+  status:
+    | "prescribed"
+    | "dispensed"
+    | "partially-dispensed"
+    | "expired"
+    | "cancelled";
   validUntil: Date;
   specialInstructions?: string;
 }
@@ -127,20 +182,25 @@ export interface ControlledPrescription {
 // LGPD (Lei Geral de Proteção de Dados) Types
 // =============================================================================
 
-export type LGPDConsentType = 
-  | 'tratamento-medico'      // Medical treatment
-  | 'dados-biometricos'      // Biometric data  
-  | 'imagens-procedimentos'  // Procedure images
-  | 'marketing-promocional'  // Marketing/promotional
-  | 'pesquisa-satisfacao'    // Satisfaction research
-  | 'compartilhamento-terceiros' // Third-party sharing
-  | 'historico-medico'       // Medical history
-  | 'dados-financeiros'      // Financial data
-  | 'contato-emergencia'     // Emergency contact
-  | 'telemedicina'          // Telemedicine
-  | 'dados-sensivel-saude'; // Sensitive health data
+export type LGPDConsentType =
+  | "tratamento-medico" // Medical treatment
+  | "dados-biometricos" // Biometric data
+  | "imagens-procedimentos" // Procedure images
+  | "marketing-promocional" // Marketing/promotional
+  | "pesquisa-satisfacao" // Satisfaction research
+  | "compartilhamento-terceiros" // Third-party sharing
+  | "historico-medico" // Medical history
+  | "dados-financeiros" // Financial data
+  | "contato-emergencia" // Emergency contact
+  | "telemedicina" // Telemedicine
+  | "dados-sensivel-saude"; // Sensitive health data
 
-export type LGPDConsentStatus = 'given' | 'withdrawn' | 'pending' | 'expired' | 'revoked';
+export type LGPDConsentStatus =
+  | "given"
+  | "withdrawn"
+  | "pending"
+  | "expired"
+  | "revoked";
 
 export interface LGPDConsentRecord {
   id: string;
@@ -153,14 +213,27 @@ export interface LGPDConsentRecord {
   purposes: string[];
   dataCategories: string[];
   retentionPeriod: number; // months
-  consentMethod: 'digital-signature' | 'written-form' | 'verbal-recorded' | 'online-form';
-  legalBasis: 'consent' | 'legitimate-interest' | 'legal-obligation' | 'vital-interest';
+  consentMethod:
+    | "digital-signature"
+    | "written-form"
+    | "verbal-recorded"
+    | "online-form";
+  legalBasis:
+    | "consent"
+    | "legitimate-interest"
+    | "legal-obligation"
+    | "vital-interest";
   auditTrail: LGPDAuditEntry[];
 }
 
 export interface LGPDAuditEntry {
   timestamp: Date;
-  action: 'consent-given' | 'consent-withdrawn' | 'data-accessed' | 'data-modified' | 'data-deleted';
+  action:
+    | "consent-given"
+    | "consent-withdrawn"
+    | "data-accessed"
+    | "data-modified"
+    | "data-deleted";
   userId: string;
   userRole: string;
   ipAddress: string;
@@ -181,10 +254,16 @@ export interface LGPDConsentManagerProps {
 
 export interface LGPDDataSubjectRights {
   patientId: string;
-  rightType: 'access' | 'rectification' | 'erasure' | 'portability' | 'restriction' | 'objection';
+  rightType:
+    | "access"
+    | "rectification"
+    | "erasure"
+    | "portability"
+    | "restriction"
+    | "objection";
   requestDate: Date;
   completionDate?: Date;
-  status: 'pending' | 'in-progress' | 'completed' | 'rejected';
+  status: "pending" | "in-progress" | "completed" | "rejected";
   rejectionReason?: string;
   requestDetails: string;
   responseDetails?: string;
@@ -195,16 +274,20 @@ export interface LGPDDataSubjectRights {
 // ANS (Agência Nacional de Saúde Suplementar) Types
 // =============================================================================
 
-export type ANSPlanType = 
-  | 'ambulatorial'    // Outpatient
-  | 'hospitalar'      // Hospital  
-  | 'odontologico'    // Dental
-  | 'referencia'      // Reference
-  | 'basico'         // Basic
-  | 'essencial'      // Essential
-  | 'completo';      // Complete
+export type ANSPlanType =
+  | "ambulatorial" // Outpatient
+  | "hospitalar" // Hospital
+  | "odontologico" // Dental
+  | "referencia" // Reference
+  | "basico" // Basic
+  | "essencial" // Essential
+  | "completo"; // Complete
 
-export type ANSCoverageStatus = 'covered' | 'partial' | 'denied' | 'pre-authorization-required';
+export type ANSCoverageStatus =
+  | "covered"
+  | "partial"
+  | "denied"
+  | "pre-authorization-required";
 
 export interface ANSBeneficiaryData {
   cardNumber: string;
@@ -246,7 +329,7 @@ export interface ANSVerificationResult {
   requiresPreAuthorization: string[];
   copaymentRequired: boolean;
   copaymentValue?: number;
-  networkStatus: 'in-network' | 'out-network' | 'partial-network';
+  networkStatus: "in-network" | "out-network" | "partial-network";
   verificationDate: Date;
   errors?: string[];
 }
@@ -255,20 +338,20 @@ export interface ANSVerificationResult {
 // Emergency Medical Protocols Types
 // =============================================================================
 
-export type EmergencyProtocolType = 
-  | 'samu'              // SAMU protocols
-  | 'cbmr'              // Military Fire Department  
-  | 'manchester'        // Manchester Triage
-  | 'clinica-interna'   // Internal clinic
-  | 'transferencia'     // Transfer protocols
-  | 'reanimacao'        // Resuscitation
-  | 'intoxicacao'       // Intoxication
-  | 'trauma'            // Trauma
-  | 'cardiovascular'    // Cardiovascular
-  | 'respiratorio'      // Respiratory
-  | 'neurologico';      // Neurological
+export type EmergencyProtocolType =
+  | "samu" // SAMU protocols
+  | "cbmr" // Military Fire Department
+  | "manchester" // Manchester Triage
+  | "clinica-interna" // Internal clinic
+  | "transferencia" // Transfer protocols
+  | "reanimacao" // Resuscitation
+  | "intoxicacao" // Intoxication
+  | "trauma" // Trauma
+  | "cardiovascular" // Cardiovascular
+  | "respiratorio" // Respiratory
+  | "neurologico"; // Neurological
 
-export type TriageLevel = 'azul' | 'verde' | 'amarelo' | 'laranja' | 'vermelho';
+export type TriageLevel = "azul" | "verde" | "amarelo" | "laranja" | "vermelho";
 
 export interface EmergencyProtocol {
   id: string;
@@ -330,10 +413,10 @@ export interface BrazilianAddress {
   logradouro: string; // Street
   numero?: string;
   complemento?: string;
-  bairro: string;     // Neighborhood
+  bairro: string; // Neighborhood
   localidade: string; // City
-  uf: CFMState;       // State
-  region: 'Norte' | 'Nordeste' | 'Centro-Oeste' | 'Sudeste' | 'Sul';
+  uf: CFMState; // State
+  region: "Norte" | "Nordeste" | "Centro-Oeste" | "Sudeste" | "Sul";
   ibge?: string;
   gia?: string;
   ddd?: string;
@@ -355,12 +438,12 @@ export interface BrazilianAddressInputProps {
 // =============================================================================
 
 export interface ComplianceMetrics {
-  cfmValidationRate: number;        // 0-100%
-  lgpdCompliantRecords: number;     // count
-  anvisaControlledTracked: number;  // count
-  ansVerificationAccuracy: number;  // 0-100%
+  cfmValidationRate: number; // 0-100%
+  lgpdCompliantRecords: number; // count
+  anvisaControlledTracked: number; // count
+  ansVerificationAccuracy: number; // 0-100%
   emergencyProtocolsUpdated: number; // count
-  auditTrailIntegrity: number;      // 0-100%
+  auditTrailIntegrity: number; // 0-100%
   lastComplianceAudit: Date;
   nextComplianceDeadline: Date;
   criticalViolations: number;
@@ -369,8 +452,8 @@ export interface ComplianceMetrics {
 
 export interface ComplianceAlert {
   id: string;
-  type: 'cfm' | 'anvisa' | 'lgpd' | 'ans' | 'emergency' | 'audit';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  type: "cfm" | "anvisa" | "lgpd" | "ans" | "emergency" | "audit";
+  severity: "low" | "medium" | "high" | "critical";
   title: string;
   description: string;
   createdAt: Date;
@@ -390,7 +473,7 @@ export interface ComplianceAction {
   completedAt?: Date;
   completedBy?: string;
   estimatedTime: number; // minutes
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
 }
 
 export interface ComplianceDashboardProps {
@@ -415,24 +498,38 @@ export interface AuditTrailEntry {
   userId: string;
   userRole: string;
   action: AuditAction;
-  entityType: 'patient' | 'professional' | 'prescription' | 'consent' | 'insurance';
+  entityType:
+    | "patient"
+    | "professional"
+    | "prescription"
+    | "consent"
+    | "insurance";
   entityId: string;
   oldValue?: any;
   newValue?: any;
   ipAddress: string;
   userAgent: string;
   sessionId: string;
-  complianceType: 'cfm' | 'anvisa' | 'lgpd' | 'ans' | 'emergency';
-  riskLevel: 'low' | 'medium' | 'high';
+  complianceType: "cfm" | "anvisa" | "lgpd" | "ans" | "emergency";
+  riskLevel: "low" | "medium" | "high";
   description: string;
 }
 
-export type AuditAction = 
-  | 'create' | 'read' | 'update' | 'delete'
-  | 'consent-given' | 'consent-withdrawn' | 'data-exported'
-  | 'license-validated' | 'substance-prescribed' | 'insurance-verified'
-  | 'emergency-accessed' | 'protocol-executed'
-  | 'audit-trail-accessed' | 'compliance-report-generated';
+export type AuditAction =
+  | "create"
+  | "read"
+  | "update"
+  | "delete"
+  | "consent-given"
+  | "consent-withdrawn"
+  | "data-exported"
+  | "license-validated"
+  | "substance-prescribed"
+  | "insurance-verified"
+  | "emergency-accessed"
+  | "protocol-executed"
+  | "audit-trail-accessed"
+  | "compliance-report-generated";
 
 // =============================================================================
 // Reporting Types
@@ -440,7 +537,7 @@ export type AuditAction =
 
 export interface ComplianceReport {
   id: string;
-  reportType: 'cfm' | 'anvisa' | 'lgpd' | 'ans' | 'full-compliance';
+  reportType: "cfm" | "anvisa" | "lgpd" | "ans" | "full-compliance";
   generatedAt: Date;
   periodStart: Date;
   periodEnd: Date;
@@ -493,14 +590,14 @@ export type {
   CFMValidationBadgeProps,
   CFMValidationResult,
   CFMProfessional,
-  
-  // ANVISA exports  
+
+  // ANVISA exports
   ANVISAControlledClass,
   PrescriptionType,
   ANVISASubstance,
   ANVISATrackerProps,
   ControlledPrescription,
-  
+
   // LGPD exports
   LGPDConsentType,
   LGPDConsentStatus,
@@ -508,14 +605,14 @@ export type {
   LGPDAuditEntry,
   LGPDConsentManagerProps,
   LGPDDataSubjectRights,
-  
+
   // ANS exports
   ANSPlanType,
   ANSCoverageStatus,
   ANSBeneficiaryData,
   ANSInsuranceCheckerProps,
   ANSVerificationResult,
-  
+
   // Emergency exports
   EmergencyProtocolType,
   TriageLevel,
@@ -523,24 +620,24 @@ export type {
   EmergencyProtocolStep,
   EmergencyProtocolsProps,
   EmergencyContact,
-  
+
   // Address exports
   BrazilianAddress,
   BrazilianAddressInputProps,
-  
+
   // Dashboard exports
   ComplianceMetrics,
   ComplianceAlert,
   ComplianceAction,
   ComplianceDashboardProps,
-  
+
   // Audit exports
   AuditTrailEntry,
   AuditAction,
-  
+
   // Reporting exports
   ComplianceReport,
-  
+
   // Utility exports
   ValidationResponse,
   ComplianceAPIResponse,

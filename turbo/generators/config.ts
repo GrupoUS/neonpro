@@ -26,7 +26,8 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       {
         type: "confirm",
         name: "lgpdCompliant",
-        message: "Should this component handle patient data (LGPD compliance required)?",
+        message:
+          "Should this component handle patient data (LGPD compliance required)?",
         default: false,
       },
     ],
@@ -39,7 +40,8 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       {
         type: "add",
         path: "packages/ui/src/components/{{kebabCase name}}/index.ts",
-        template: "export { {{pascalCase name}} } from './{{pascalCase name}}';\n",
+        template:
+          "export { {{pascalCase name}} } from './{{pascalCase name}}';\n",
       },
       {
         type: "modify",

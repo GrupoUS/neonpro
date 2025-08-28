@@ -30,17 +30,20 @@ Each documented flow must contain:
 ## 🎯 Healthcare Flow Categories
 
 ### Core Application Flows
+
 - `main-flow.md` - Primary user journey in the platform
 - `auth-flow.md` - Authentication and authorization processes
 - `ai-flow.md` - AI interaction patterns and workflows
 
-### Healthcare-Specific Flows  
+### Healthcare-Specific Flows
+
 - `healthcare-patient-flow.md` - Patient registration and management
 - `healthcare-appointment-flow.md` - Appointment booking and management
 - `healthcare-treatment-flow.md` - Treatment tracking and documentation
 - `healthcare-emergency-flow.md` - Emergency access and critical workflows
 
 ### Compliance Flows
+
 - `compliance-lgpd-flow.md` - LGPD consent and data protection workflows
 - `compliance-anvisa-flow.md` - ANVISA regulatory compliance flows
 - `compliance-audit-flow.md` - Audit trail and logging workflows
@@ -53,6 +56,7 @@ Each documented flow must contain:
 **Purpose & Scope:** Document patient data handling with full LGPD compliance and audit trail.
 
 **Compliance Requirements:**
+
 - ✅ LGPD consent validation before any data access
 - ✅ Audit trail for all patient data modifications
 - ✅ Professional license validation for data access
@@ -71,11 +75,11 @@ Each documented flow must contain:
 ```mermaid
 sequenceDiagram
     participant P as Professional
-    participant A as Auth System  
+    participant A as Auth System
     participant D as Database
     participant C as Consent Manager
     participant L as Audit Logger
-    
+
     P->>A: Request patient data
     A->>A: Validate professional credentials
     A->>C: Check patient consent status
@@ -87,11 +91,13 @@ sequenceDiagram
 ```
 
 **Error Handling:**
+
 - **Consent Expired**: Redirect to consent renewal flow
 - **Access Denied**: Log unauthorized access attempt
 - **System Error**: Maintain audit trail even on failures
 
 **Security & Audit:**
+
 - All patient data access logged with timestamp, user, and purpose
 - Sensitive data encrypted at rest and in transit
 - Professional license validation before any healthcare data access
@@ -105,8 +111,9 @@ sequenceDiagram
 **Purpose & Scope:** Ensure all data processing complies with LGPD requirements with proper consent management.
 
 **Compliance Requirements:**
+
 - ✅ Explicit consent for data processing
-- ✅ Right to data portability 
+- ✅ Right to data portability
 - ✅ Right to erasure ("right to be forgotten")
 - ✅ Data processing purpose limitation
 - ✅ Retention period compliance
@@ -139,11 +146,13 @@ flowchart TD
 ```
 
 **Error Handling:**
+
 - **Consent Required**: Redirect to consent management interface
 - **Purpose Mismatch**: Log violation and deny access
 - **Retention Expired**: Automatic data deletion with audit log
 
 **Security & Audit:**
+
 - All consent decisions logged with legal basis
 - Data processing purposes tracked and validated
 - Automatic compliance monitoring and alerts
@@ -157,6 +166,7 @@ flowchart TD
 **Purpose & Scope:** Document AI processing workflows with healthcare data protection and bias prevention.
 
 **Compliance Requirements:**
+
 - ✅ PHI sanitization before AI processing
 - ✅ No sensitive data storage in AI logs
 - ✅ Professional oversight for AI-generated insights
@@ -179,7 +189,7 @@ sequenceDiagram
     participant AI as AI Service
     participant V as Validator
     participant A as Audit
-    
+
     U->>S: Request AI analysis
     S->>S: Remove PHI/PII
     S->>AI: Send sanitized data
@@ -191,11 +201,13 @@ sequenceDiagram
 ```
 
 **Error Handling:**
+
 - **Sanitization Failure**: Block AI processing, log security event
 - **AI Service Down**: Provide manual alternative workflow
 - **Validation Failure**: Require professional review before output
 
 **Security & Audit:**
+
 - No PHI/PII sent to external AI services
 - All AI interactions logged without sensitive data
 - Professional oversight required for clinical AI outputs
@@ -205,12 +217,14 @@ sequenceDiagram
 ## 🔧 Implementation Guidelines
 
 ### Mermaid Diagram Standards
+
 - **Use consistent participant names**: Professional, Patient, System, Database
-- **Include error paths**: Show both success and failure scenarios  
+- **Include error paths**: Show both success and failure scenarios
 - **Add compliance checkpoints**: Highlight LGPD/ANVISA validation points
 - **Color coding**: Use consistent colors for different types of interactions
 
 ### Healthcare-Specific Considerations
+
 - **Patient Privacy**: Always show consent validation steps
 - **Professional Oversight**: Include human validation for critical decisions
 - **Audit Requirements**: Document all audit trail touchpoints
@@ -218,6 +232,7 @@ sequenceDiagram
 - **Compliance Validation**: Show regulatory compliance checkpoints
 
 ### File Naming Conventions
+
 ```
 main-flow.md                    # Core application flow
 auth-flow.md                    # Authentication flow
@@ -233,6 +248,7 @@ compliance-cfm-flow.md         # CFM professional requirements
 ```
 
 ### Quality Checklist
+
 - [ ] Healthcare compliance requirements documented
 - [ ] LGPD consent flows included
 - [ ] Audit trail points identified

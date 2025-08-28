@@ -110,11 +110,13 @@ export function useStaffMembers(): StaffHook {
               prev.map((staff) =>
                 staff.id === payload.new.id
                   ? (payload.new as StaffMember)
-                  : staff
-              )
+                  : staff,
+              ),
             );
           } else if (payload.eventType === "DELETE") {
-            setStaffMembers((prev) => prev.filter((staff) => staff.id !== payload.old.id));
+            setStaffMembers((prev) =>
+              prev.filter((staff) => staff.id !== payload.old.id),
+            );
           }
         },
       )

@@ -26,8 +26,8 @@ export function usePatientRealtime(
   const filter = options.patientId
     ? `id=eq.${options.patientId}`
     : options.clinicId
-    ? `clinic_id=eq.${options.clinicId}`
-    : "";
+      ? `clinic_id=eq.${options.clinicId}`
+      : "";
 
   const config: UseRealtimeQueryConfig = {
     table: "patients",
@@ -60,7 +60,7 @@ export function useAppointmentRealtime(
     patientId?: string;
     professionalId?: string;
     clinicId?: string;
-    dateRange?: { start: string; end: string; };
+    dateRange?: { start: string; end: string };
     enabled?: boolean;
     onAppointmentUpdate?: (appointment: unknown) => void;
   },
@@ -209,9 +209,10 @@ export function useDashboardRealtime(
     appointments: appointmentsRealtime,
     patients: patientsRealtime,
     professionals: professionalsRealtime,
-    isConnected: appointmentsRealtime.isConnected
-      || patientsRealtime.isConnected
-      || professionalsRealtime.isConnected,
+    isConnected:
+      appointmentsRealtime.isConnected ||
+      patientsRealtime.isConnected ||
+      professionalsRealtime.isConnected,
     errors: [
       appointmentsRealtime.error,
       patientsRealtime.error,

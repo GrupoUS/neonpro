@@ -113,8 +113,8 @@ export function useAppointment(id: string) {
 
     retry: (failureCount, error) => {
       if (
-        ApiHelpers.isAuthError(error)
-        || (error as unknown)?.message?.includes("not found")
+        ApiHelpers.isAuthError(error) ||
+        (error as unknown)?.message?.includes("not found")
       ) {
         return false;
       }
@@ -634,11 +634,11 @@ export function useDailySchedule(date: string, professionalId?: string) {
     queryFn: async () => {
       const response = professionalId
         ? await apiClient.api.v1.professionals[":id"].schedule[":date"].$get({
-          param: { id: professionalId, date },
-        })
+            param: { id: professionalId, date },
+          })
         : await apiClient.api.v1.appointments.schedule[":date"].$get({
-          param: { date },
-        });
+            param: { date },
+          });
       return await response.json();
     },
     validator: (data: unknown) => DailyScheduleSchema.parse(data),
@@ -658,19 +658,19 @@ export function useWeeklySchedule(weekStart: string, professionalId?: string) {
   return queryUtils.createQuery({
     queryKey: professionalId
       ? [
-        ...QueryKeys.professionals.schedule(professionalId, weekStart),
-        "weekly",
-      ]
+          ...QueryKeys.professionals.schedule(professionalId, weekStart),
+          "weekly",
+        ]
       : [...QueryKeys.appointments.calendar(weekStart), "weekly"],
     queryFn: async () => {
       const response = professionalId
         ? await apiClient.api.v1.professionals[":id"].schedule.weekly.$get({
-          param: { id: professionalId },
-          query: { week_start: weekStart },
-        })
+            param: { id: professionalId },
+            query: { week_start: weekStart },
+          })
         : await apiClient.api.v1.appointments.schedule.weekly.$get({
-          query: { week_start: weekStart },
-        });
+            query: { week_start: weekStart },
+          });
       return await response.json();
     },
     validator: (data: unknown) => {
@@ -740,7 +740,7 @@ export function useBulkUpdateAppointments() {
   return queryUtils.createMutation({
     mutationFn: async (
       bulkData: BulkUpdateAppointments,
-    ): Promise<ApiResponse<{ updated_count: number; }>> => {
+    ): Promise<ApiResponse<{ updated_count: number }>> => {
       const validatedData = BulkUpdateAppointmentsSchema.parse(bulkData);
 
       const response = await apiClient.api.v1.appointments.bulk.$put({
@@ -857,8 +857,8 @@ export function useAppointmentUtils() {
           `${appointment.scheduled_date}T${appointment.scheduled_time}`,
         );
         return (
-          appointmentTime < new Date()
-          && !["completed", "cancelled", "no_show"].includes(appointment.status)
+          appointmentTime < new Date() &&
+          !["completed", "cancelled", "no_show"].includes(appointment.status)
         );
       },
 

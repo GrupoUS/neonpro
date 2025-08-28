@@ -7,7 +7,7 @@ const service = new PredictiveAnalyticsService();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string; }>; },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -31,7 +31,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; }>; },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -51,7 +51,7 @@ export async function PUT(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string; }>; },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;

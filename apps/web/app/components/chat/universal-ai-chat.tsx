@@ -150,9 +150,10 @@ export function UniversalAIChat({
       const welcomeMessage: ChatMessage = {
         id: `welcome-${Date.now()}`,
         role: "assistant",
-        content: interfaceType === "external"
-          ? "Olá! Sou o assistente de IA da NeonPro. Como posso ajudá-lo hoje? Posso auxiliar com agendamentos, informações sobre tratamentos, ou responder suas dúvidas médicas gerais."
-          : "Olá! Assistente de IA interno da NeonPro. Posso ajudar com análises de pacientes, otimização de agenda, métricas da clínica e suporte operacional.",
+        content:
+          interfaceType === "external"
+            ? "Olá! Sou o assistente de IA da NeonPro. Como posso ajudá-lo hoje? Posso auxiliar com agendamentos, informações sobre tratamentos, ou responder suas dúvidas médicas gerais."
+            : "Olá! Assistente de IA interno da NeonPro. Posso ajudar com análises de pacientes, otimização de agenda, métricas da clínica e suporte operacional.",
         timestamp: new Date(),
         confidence: 1,
       };
@@ -262,15 +263,14 @@ export function UniversalAIChat({
                       assistantMessageId = `assistant-${Date.now()}`;
                       // Handle compliance warnings
                       if (
-                        parsedData.complianceFlags
-                        && parsedData.complianceFlags.length > 0
+                        parsedData.complianceFlags &&
+                        parsedData.complianceFlags.length > 0
                       ) {
                         toast({
                           title: "Aviso de Conformidade",
-                          description:
-                            `${parsedData.complianceFlags.length} avisos de conformidade detectados: ${
-                              parsedData.complianceFlags.join(", ")
-                            }.`,
+                          description: `${parsedData.complianceFlags.length} avisos de conformidade detectados: ${parsedData.complianceFlags.join(
+                            ", ",
+                          )}.`,
                           variant: "destructive",
                         });
                       }
@@ -316,14 +316,15 @@ export function UniversalAIChat({
                         onEscalationTriggered?.(true);
                         toast({
                           title: "📞 Escalação Ativada",
-                          description: "Conectando com um profissional de saúde...",
+                          description:
+                            "Conectando com um profissional de saúde...",
                         });
                       }
 
                       // Show suggested actions
                       if (
-                        parsedData.suggestedActions
-                        && parsedData.suggestedActions.length > 0
+                        parsedData.suggestedActions &&
+                        parsedData.suggestedActions.length > 0
                       ) {
                         toast({
                           title: "Ações Sugeridas",
@@ -368,9 +369,10 @@ export function UniversalAIChat({
 
         toast({
           title: "Erro no chat",
-          description: error instanceof Error
-            ? error.message
-            : "Não foi possível enviar a mensagem.",
+          description:
+            error instanceof Error
+              ? error.message
+              : "Não foi possível enviar a mensagem.",
           variant: "destructive",
         });
       } finally {
@@ -474,15 +476,17 @@ export function UniversalAIChat({
                   connectionStatus === "connected"
                     ? "bg-green-500"
                     : connectionStatus === "connecting"
-                    ? "bg-yellow-500"
-                    : "bg-red-500",
+                      ? "bg-yellow-500"
+                      : "bg-red-500",
                 )}
               />
               <CardTitle className="flex items-center gap-2">
                 <Bot className="h-5 w-5 text-primary" />
                 Chat AI NeonPro
                 <Badge
-                  variant={interfaceType === "internal" ? "default" : "secondary"}
+                  variant={
+                    interfaceType === "internal" ? "default" : "secondary"
+                  }
                 >
                   {interfaceType === "internal" ? "Interno" : "Paciente"}
                 </Badge>
@@ -501,7 +505,11 @@ export function UniversalAIChat({
                 size="sm"
                 variant="ghost"
               >
-                {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                {isListening ? (
+                  <MicOff className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
               </Button>
               <Button
                 disabled={isLoading}
@@ -509,7 +517,11 @@ export function UniversalAIChat({
                 size="sm"
                 variant="ghost"
               >
-                {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                {isSpeaking ? (
+                  <VolumeX className="h-4 w-4" />
+                ) : (
+                  <Volume2 className="h-4 w-4" />
+                )}
               </Button>
               {minimizable && (
                 <Button
@@ -574,27 +586,34 @@ export function UniversalAIChat({
                 disabled={isLoading || connectionStatus !== "connected"}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={interfaceType === "external"
-                  ? "Digite sua mensagem..."
-                  : "Digite sua consulta interna..."}
+                placeholder={
+                  interfaceType === "external"
+                    ? "Digite sua mensagem..."
+                    : "Digite sua consulta interna..."
+                }
                 ref={inputRef}
                 value={inputValue}
               />
               <Button
-                disabled={!inputValue.trim()
-                  || isLoading
-                  || connectionStatus !== "connected"}
+                disabled={
+                  !inputValue.trim() ||
+                  isLoading ||
+                  connectionStatus !== "connected"
+                }
                 size="sm"
                 type="submit"
               >
-                {isLoading
-                  ? <Loader2 className="h-4 w-4 animate-spin" />
-                  : <Send className="h-4 w-4" />}
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
               </Button>
             </form>
             {connectionStatus === "disconnected" && (
               <p className="mt-2 text-muted-foreground text-xs">
-                Reconectando... <Loader2 className="ml-1 inline h-3 w-3 animate-spin" />
+                Reconectando...{" "}
+                <Loader2 className="ml-1 inline h-3 w-3 animate-spin" />
               </p>
             )}
           </div>
@@ -605,7 +624,7 @@ export function UniversalAIChat({
 }
 
 // Individual message component
-function ChatMessageComponent({ message }: { message: ChatMessage; }) {
+function ChatMessageComponent({ message }: { message: ChatMessage }) {
   const isUser = message.role === "user";
 
   return (
@@ -620,7 +639,11 @@ function ChatMessageComponent({ message }: { message: ChatMessage; }) {
           isUser ? "bg-primary text-primary-foreground" : "bg-muted",
         )}
       >
-        {isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4 text-primary" />}
+        {isUser ? (
+          <User className="h-4 w-4" />
+        ) : (
+          <Bot className="h-4 w-4 text-primary" />
+        )}
       </div>
 
       <div className="max-w-[80%] flex-1">

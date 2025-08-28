@@ -23,10 +23,8 @@ const avatarVariants = cva(
 );
 
 export interface AvatarProps
-  extends
-    React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>,
-    VariantProps<typeof avatarVariants>
-{
+  extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>,
+    VariantProps<typeof avatarVariants> {
   /**
    * Image source URL
    */

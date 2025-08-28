@@ -20,10 +20,12 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("auth-token")?.value;
 
   // Check if current path is protected
-  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    pathname.startsWith(route),
+  );
 
   // Check if current path is auth route
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
+  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
 
   // If user is not authenticated and trying to access protected route
   if (isProtectedRoute && !token) {

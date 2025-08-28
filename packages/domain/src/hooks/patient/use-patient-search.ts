@@ -214,7 +214,9 @@ export const usePatientSearch = (
         ];
 
         // Check basic fields
-        const basicMatch = basicFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
+        const basicMatch = basicFields.some((field) =>
+          fuzzyMatch(field, debouncedSearchTerm),
+        );
 
         if (basicMatch) {
           return true;
@@ -227,7 +229,9 @@ export const usePatientSearch = (
           ...(patient.medications || []),
         ];
 
-        const medicalMatch = medicalFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
+        const medicalMatch = medicalFields.some((field) =>
+          fuzzyMatch(field, debouncedSearchTerm),
+        );
 
         return medicalMatch;
       })

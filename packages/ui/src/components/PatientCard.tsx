@@ -109,9 +109,9 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
 
     const age = birthDate
       ? Math.floor(
-        (Date.now() - new Date(birthDate).getTime())
-          / (365.25 * 24 * 60 * 60 * 1000),
-      )
+          (Date.now() - new Date(birthDate).getTime()) /
+            (365.25 * 24 * 60 * 60 * 1000),
+        )
       : undefined;
 
     const getStatusVariant = (patientStatus: string) => {
@@ -163,7 +163,9 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
                 >
                   {name}
                 </h3>
-                {age && <p className="text-muted-foreground text-sm">{age} anos</p>}
+                {age && (
+                  <p className="text-muted-foreground text-sm">{age} anos</p>
+                )}
               </div>
 
               <div className="flex items-center gap-2">

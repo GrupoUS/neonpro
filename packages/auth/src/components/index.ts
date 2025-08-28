@@ -7,7 +7,7 @@ import type { ComponentType } from "react";
 
 // Define component types that will be implemented in the web app
 export interface LoginFormProps {
-  onLogin?: (credentials: { email: string; password: string; }) => Promise<void>;
+  onLogin?: (credentials: { email: string; password: string }) => Promise<void>;
   loading?: boolean;
   error?: string;
 }

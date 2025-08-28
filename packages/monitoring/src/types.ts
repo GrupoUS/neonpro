@@ -18,7 +18,12 @@ export interface PerformanceMetric {
   value: number;
   timestamp: string;
   unit?: string;
-  category: "web-vitals" | "ai-metrics" | "cache-metrics" | "system-metrics" | "database-metrics";
+  category:
+    | "web-vitals"
+    | "ai-metrics"
+    | "cache-metrics"
+    | "system-metrics"
+    | "database-metrics";
   metadata?: Record<string, unknown>;
 }
 
@@ -48,24 +53,26 @@ export interface WebVitalsMetric extends PerformanceMetric {
   id: string;
 }
 
-export interface HealthcareVitalsMetric extends WebVitalsMetric, HealthcareContext {
+export interface HealthcareVitalsMetric
+  extends WebVitalsMetric,
+    HealthcareContext {
   criticalPath: boolean;
   complianceCategory?: "lgpd-sensitive" | "anvisa-regulated" | "cfm-controlled";
 }
 
 export interface PerformanceThresholds {
-  CLS: { good: number; poor: number; };
-  FCP: { good: number; poor: number; };
-  FID: { good: number; poor: number; };
-  LCP: { good: number; poor: number; };
-  TTFB: { good: number; poor: number; };
-  INP: { good: number; poor: number; };
+  CLS: { good: number; poor: number };
+  FCP: { good: number; poor: number };
+  FID: { good: number; poor: number };
+  LCP: { good: number; poor: number };
+  TTFB: { good: number; poor: number };
+  INP: { good: number; poor: number };
 
   // Healthcare-specific thresholds
-  patientLookup: { good: number; poor: number; };
-  medicalFormLoad: { good: number; poor: number; };
-  procedureScheduling: { good: number; poor: number; };
-  realTimeUpdate: { good: number; poor: number; };
+  patientLookup: { good: number; poor: number };
+  medicalFormLoad: { good: number; poor: number };
+  procedureScheduling: { good: number; poor: number };
+  realTimeUpdate: { good: number; poor: number };
 }
 
 export type PerformanceEventHandler = (metric: HealthcareVitalsMetric) => void;
@@ -102,7 +109,12 @@ export interface AIPerformanceConfig {
 
 export interface CacheMetric extends PerformanceMetric {
   category: "cache-metrics";
-  name: "hit-rate" | "miss-rate" | "eviction-rate" | "memory-usage" | "response-time";
+  name:
+    | "hit-rate"
+    | "miss-rate"
+    | "eviction-rate"
+    | "memory-usage"
+    | "response-time";
   cacheLayer: "browser" | "edge" | "supabase" | "ai-context";
   hitCount?: number;
   missCount?: number;
@@ -122,7 +134,12 @@ export interface CachePerformanceConfig {
 
 export interface SystemMetric extends PerformanceMetric {
   category: "system-metrics";
-  name: "cpu-usage" | "memory-usage" | "disk-usage" | "network-latency" | "error-rate";
+  name:
+    | "cpu-usage"
+    | "memory-usage"
+    | "disk-usage"
+    | "network-latency"
+    | "error-rate";
   resourceType: "cpu" | "memory" | "disk" | "network" | "application";
   usage?: number;
   capacity?: number;
@@ -143,7 +160,12 @@ export interface SystemPerformanceConfig {
 
 export interface DatabaseMetric extends PerformanceMetric {
   category: "database-metrics";
-  name: "query-time" | "connection-count" | "transaction-rate" | "cache-hit-rate" | "row-count";
+  name:
+    | "query-time"
+    | "connection-count"
+    | "transaction-rate"
+    | "cache-hit-rate"
+    | "row-count";
   queryType?: "select" | "insert" | "update" | "delete";
   tableId?: string;
   indexUsed?: boolean;
@@ -240,7 +262,11 @@ export interface AlertRule {
   severity: PerformanceAlert["severity"];
   enabled: boolean;
   cooldownPeriod?: number; // minutes
-  healthcareCategory?: "patient-safety" | "data-privacy" | "system-availability" | "compliance";
+  healthcareCategory?:
+    | "patient-safety"
+    | "data-privacy"
+    | "system-availability"
+    | "compliance";
 }
 
 // ============================================================================
@@ -250,22 +276,26 @@ export interface AlertRule {
 export interface PerformanceDashboardData {
   webVitals: {
     current: WebVitalsMetric[];
-    trends: { timestamp: string; value: number; }[];
+    trends: { timestamp: string; value: number }[];
     alerts: PerformanceAlert[];
   };
   aiMetrics: {
     current: AIMetric[];
-    modelPerformance: { modelId: string; accuracy: number; responseTime: number; }[];
-    driftDetection: { timestamp: string; driftScore: number; }[];
+    modelPerformance: {
+      modelId: string;
+      accuracy: number;
+      responseTime: number;
+    }[];
+    driftDetection: { timestamp: string; driftScore: number }[];
   };
   cacheMetrics: {
     current: CacheMetric[];
-    hitRates: { layer: string; hitRate: number; }[];
-    performance: { timestamp: string; responseTime: number; }[];
+    hitRates: { layer: string; hitRate: number }[];
+    performance: { timestamp: string; responseTime: number }[];
   };
   systemMetrics: {
     current: SystemMetric[];
-    resourceUsage: { resource: string; usage: number; capacity: number; }[];
+    resourceUsage: { resource: string; usage: number; capacity: number }[];
     healthStatus: "healthy" | "warning" | "critical";
   };
   lastUpdated: string;
@@ -276,7 +306,7 @@ export interface PerformanceReport {
   id: string;
   title: string;
   generatedAt: string;
-  period: { start: string; end: string; };
+  period: { start: string; end: string };
   summary: {
     totalMetrics: number;
     alertsGenerated: number;
@@ -311,7 +341,10 @@ export interface MetricCollector {
 // ============================================================================
 
 export interface HealthcareComplianceMetric extends PerformanceMetric {
-  complianceCategory: "lgpd-data-access" | "anvisa-audit-trail" | "cfm-patient-privacy";
+  complianceCategory:
+    | "lgpd-data-access"
+    | "anvisa-audit-trail"
+    | "cfm-patient-privacy";
   sensitivityLevel: "public" | "internal" | "confidential" | "restricted";
   accessPattern: "read" | "write" | "update" | "delete";
   dataSubject?: "patient" | "healthcare-professional" | "clinic" | "system";

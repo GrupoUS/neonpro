@@ -169,16 +169,18 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     return this.executeOperation(
       "updatePatient",
       async () => {
-        const existingPatient = await this.repository.getPatient(id) as Patient;
+        const existingPatient = (await this.repository.getPatient(
+          id,
+        )) as Patient;
         if (!existingPatient) {
           throw new Error("Patient not found");
         }
 
         // If email is being updated, check for duplicates
         if (data.email && data.email !== existingPatient.email) {
-          const emailExists = await this.repository.getPatientByEmail(
+          const emailExists = (await this.repository.getPatientByEmail(
             data.email,
-          ) as Patient | null;
+          )) as Patient | null;
           if (emailExists && emailExists.id !== id) {
             throw new Error("Another patient with this email already exists");
           }
@@ -341,9 +343,9 @@ export class EnhancedPatientService extends EnhancedServiceBase {
         const consentForms = await this.repository.getConsentForms(patientId);
         return consentForms.some(
           (form) =>
-            form.treatmentType === treatmentType
-            && form.isActive
-            && form.signedDate,
+            form.treatmentType === treatmentType &&
+            form.isActive &&
+            form.signedDate,
         );
       },
       context,
@@ -366,7 +368,9 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     return this.executeOperation(
       "getPatientAge",
       async () => {
-        const patient = await this.repository.getPatient(patientId) as Patient;
+        const patient = (await this.repository.getPatient(
+          patientId,
+        )) as Patient;
         if (!patient) {
           return null;
         }
@@ -387,10 +391,11 @@ export class EnhancedPatientService extends EnhancedServiceBase {
    * Enhanced service health with patient-specific metrics
    */
   async getServiceHealth(): Promise<unknown> {
-    const baseHealth = await super.getHealthMetrics() as Record<string, any>;
+    const baseHealth = (await super.getHealthMetrics()) as Record<string, any>;
 
     // Add patient-specific metrics
-    const patientStats = await this.repository.getPatientStats() as PatientStats;
+    const patientStats =
+      (await this.repository.getPatientStats()) as PatientStats;
 
     return {
       ...baseHealth,

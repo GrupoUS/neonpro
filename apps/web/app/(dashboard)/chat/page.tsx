@@ -5,7 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
-import { Activity, Globe, Lock, MessageSquare, Shield, Zap } from "lucide-react";
+import {
+  Activity,
+  Globe,
+  Lock,
+  MessageSquare,
+  Shield,
+  Zap,
+} from "lucide-react";
 import { useState } from "react";
 
 interface ChatPageProps {
@@ -30,7 +37,8 @@ export default function ChatPage({ searchParams }: ChatPageProps) {
             Chat Universal com IA
           </h1>
           <p className="text-muted-foreground">
-            Sistema dual de chat: Interface externa para pacientes e interna para equipe médica
+            Sistema dual de chat: Interface externa para pacientes e interna
+            para equipe médica
           </p>
         </div>
 
@@ -81,7 +89,9 @@ export default function ChatPage({ searchParams }: ChatPageProps) {
 
         {/* Main Chat Interface */}
         <Tabs
-          onValueChange={(value) => setActiveInterface(value as "external" | "internal")}
+          onValueChange={(value) =>
+            setActiveInterface(value as "external" | "internal")
+          }
           value={activeInterface}
         >
           <TabsList className="grid w-full grid-cols-2">
@@ -113,8 +123,8 @@ export default function ChatPage({ searchParams }: ChatPageProps) {
                         Ativo
                       </Badge>
                       <p className="text-muted-foreground text-sm">
-                        Atendimento automatizado para pacientes com agendamentos, informações e
-                        orientações médicas básicas.
+                        Atendimento automatizado para pacientes com
+                        agendamentos, informações e orientações médicas básicas.
                       </p>
                     </div>
 
@@ -166,8 +176,8 @@ export default function ChatPage({ searchParams }: ChatPageProps) {
                         Seguro
                       </Badge>
                       <p className="text-muted-foreground text-sm">
-                        Assistente avançado para equipe médica com acesso a dados operacionais,
-                        métricas e insights.
+                        Assistente avançado para equipe médica com acesso a
+                        dados operacionais, métricas e insights.
                       </p>
                     </div>
 

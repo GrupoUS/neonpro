@@ -1,14 +1,30 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";
-import { Bell, Camera, Eye, Mail, MapPin, Phone, Save, Shield, User } from "lucide-react";
+import {
+  Bell,
+  Camera,
+  Eye,
+  Mail,
+  MapPin,
+  Phone,
+  Save,
+  Shield,
+  User,
+} from "lucide-react";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -68,7 +84,9 @@ export default function ProfilePage() {
                   <Label htmlFor="lastName">Sobrenome</Label>
                   <Input
                     id="lastName"
-                    defaultValue={user?.name?.split(" ").slice(1).join(" ") || ""}
+                    defaultValue={
+                      user?.name?.split(" ").slice(1).join(" ") || ""
+                    }
                     placeholder="Seu sobrenome"
                   />
                 </div>
@@ -87,17 +105,11 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
                   <Label htmlFor="phone">Telefone</Label>
-                  <Input
-                    id="phone"
-                    placeholder="(11) 99999-9999"
-                  />
+                  <Input id="phone" placeholder="(11) 99999-9999" />
                 </div>
                 <div>
                   <Label htmlFor="cpf">CPF</Label>
-                  <Input
-                    id="cpf"
-                    placeholder="000.000.000-00"
-                  />
+                  <Input id="cpf" placeholder="000.000.000-00" />
                 </div>
               </div>
 
@@ -142,24 +154,15 @@ export default function ProfilePage() {
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="crm">CRM</Label>
-                <Input
-                  id="crm"
-                  placeholder="123456/SP"
-                />
+                <Input id="crm" placeholder="123456/SP" />
               </div>
               <div>
                 <Label htmlFor="specialty">Especialidade</Label>
-                <Input
-                  id="specialty"
-                  placeholder="Dermatologia"
-                />
+                <Input id="specialty" placeholder="Dermatologia" />
               </div>
               <div>
                 <Label htmlFor="license">Número da Licença</Label>
-                <Input
-                  id="license"
-                  placeholder="ABC123456"
-                />
+                <Input id="license" placeholder="ABC123456" />
               </div>
             </CardContent>
           </Card>

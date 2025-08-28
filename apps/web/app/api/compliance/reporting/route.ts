@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { reportType, periodStart, periodEnd, autoSchedule } = await request.json();
+    const { reportType, periodStart, periodEnd, autoSchedule } =
+      await request.json();
 
     if (!(reportType || autoSchedule)) {
       return NextResponse.json(

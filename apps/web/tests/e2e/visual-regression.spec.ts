@@ -6,7 +6,9 @@ import { expect, test } from "@playwright/test";
  */
 
 test.describe("Visual Regression Tests", () => {
-  test("should maintain consistent healthcare dashboard layout", async ({ page }) => {
+  test("should maintain consistent healthcare dashboard layout", async ({
+    page,
+  }) => {
     await page.goto("/professional/dashboard");
     await page.waitForLoadState("networkidle");
 
@@ -28,7 +30,9 @@ test.describe("Visual Regression Tests", () => {
     });
   });
 
-  test("should maintain consistent patient registration form layout", async ({ page }) => {
+  test("should maintain consistent patient registration form layout", async ({
+    page,
+  }) => {
     await page.goto("/register");
     await page.waitForLoadState("networkidle");
 
@@ -42,7 +46,9 @@ test.describe("Visual Regression Tests", () => {
     });
   });
 
-  test("should maintain consistent AI chat interface design", async ({ page }) => {
+  test("should maintain consistent AI chat interface design", async ({
+    page,
+  }) => {
     await page.goto("/professional/dashboard");
     await page.click('[data-testid="ai-chat-assistant"]');
     await page.waitForTimeout(1000); // Wait for animation
@@ -62,7 +68,9 @@ test.describe("Visual Regression Tests", () => {
     });
   });
 
-  test("should maintain consistent mobile responsive design", async ({ page }) => {
+  test("should maintain consistent mobile responsive design", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 375, height: 667 }); // iPhone SE
     await page.goto("/dashboard");
     await page.waitForLoadState("networkidle");
@@ -93,7 +101,10 @@ test.describe("Visual Regression Tests", () => {
     });
   });
 
-  test("should maintain consistent dark mode appearance", async ({ page, context }) => {
+  test("should maintain consistent dark mode appearance", async ({
+    page,
+    context,
+  }) => {
     // Set dark mode preference
     await context.addInitScript(() => {
       localStorage.setItem("theme", "dark");
@@ -108,7 +119,9 @@ test.describe("Visual Regression Tests", () => {
     });
   });
 
-  test("should maintain consistent healthcare form components", async ({ page }) => {
+  test("should maintain consistent healthcare form components", async ({
+    page,
+  }) => {
     await page.goto("/professional/patient/new");
     await page.waitForLoadState("networkidle");
 
@@ -124,7 +137,9 @@ test.describe("Visual Regression Tests", () => {
     });
   });
 
-  test("should maintain consistent AR simulator interface", async ({ page }) => {
+  test("should maintain consistent AR simulator interface", async ({
+    page,
+  }) => {
     await page.goto("/professional/consultations/ar-simulator");
     await page.waitForLoadState("networkidle");
 
@@ -140,7 +155,9 @@ test.describe("Visual Regression Tests", () => {
     );
   });
 
-  test("should maintain consistent appointment calendar layout", async ({ page }) => {
+  test("should maintain consistent appointment calendar layout", async ({
+    page,
+  }) => {
     await page.goto("/professional/appointments");
     await page.waitForLoadState("networkidle");
 
@@ -155,7 +172,9 @@ test.describe("Visual Regression Tests", () => {
     });
   });
 
-  test("should maintain consistent high contrast mode design", async ({ page }) => {
+  test("should maintain consistent high contrast mode design", async ({
+    page,
+  }) => {
     // Enable high contrast mode
     await page.emulateMedia({ forcedColors: "active" });
     await page.goto("/dashboard");

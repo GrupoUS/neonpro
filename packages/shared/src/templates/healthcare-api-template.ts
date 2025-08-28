@@ -4,14 +4,17 @@
  * with Brazilian regulatory compliance, LGPD audit logging, and proper error handling.
  */
 
-import { Hono } from 'hono';
-import { z } from 'zod';
-import { HTTPException } from 'hono/http-exception';
+import { Hono } from "hono";
+import { z } from "zod";
+import { HTTPException } from "hono/http-exception";
 // TODO: Import from @neonpro/utils when implementing
 // import { Logger } from '@neonpro/utils';
-import type { HealthcareFeatureTemplate, HealthcareContext} from './healthcare-feature-template';
-import { HealthcareFeatureConfig } from './healthcare-feature-template';
-// TODO: Import from @neonpro/api/middleware when implementing  
+import type {
+  HealthcareFeatureTemplate,
+  HealthcareContext,
+} from "./healthcare-feature-template";
+import { HealthcareFeatureConfig } from "./healthcare-feature-template";
+// TODO: Import from @neonpro/api/middleware when implementing
 // import { healthcareSecurityMiddleware, healthcareValidationMiddleware } from '@neonpro/api/middleware';
 
 // Placeholder Logger for template compilation
@@ -24,7 +27,8 @@ const Logger = {
 
 // Placeholder middleware for template compilation
 const healthcareSecurityMiddleware = async (c: any, next: any) => await next();
-const healthcareValidationMiddleware = async (c: any, next: any) => await next();
+const healthcareValidationMiddleware = async (c: any, next: any) =>
+  await next();
 
 // Standard API response types
 export interface HealthcareApiResponse<T> {
@@ -47,7 +51,7 @@ export interface PaginationParams {
   page: number;
   limit: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 export interface PaginatedResponse<T> extends HealthcareApiResponse<T[]> {
@@ -64,49 +68,54 @@ export interface PaginatedResponse<T> extends HealthcareApiResponse<T[]> {
 // Error codes for Brazilian healthcare context
 export const HealthcareErrorCodes = {
   // Authentication & Authorization
-  INVALID_CREDENTIALS: 'HC_AUTH_001',
-  INSUFFICIENT_PERMISSIONS: 'HC_AUTH_002',
-  PROFESSIONAL_LICENSE_REQUIRED: 'HC_AUTH_003',
-  PROFESSIONAL_LICENSE_INVALID: 'HC_AUTH_004',
-  
+  INVALID_CREDENTIALS: "HC_AUTH_001",
+  INSUFFICIENT_PERMISSIONS: "HC_AUTH_002",
+  PROFESSIONAL_LICENSE_REQUIRED: "HC_AUTH_003",
+  PROFESSIONAL_LICENSE_INVALID: "HC_AUTH_004",
+
   // Patient Data & LGPD
-  PATIENT_NOT_FOUND: 'HC_PATIENT_001',
-  LGPD_CONSENT_REQUIRED: 'HC_PATIENT_002',
-  LGPD_CONSENT_WITHDRAWN: 'HC_PATIENT_003',
-  CPF_VALIDATION_FAILED: 'HC_PATIENT_004',
-  
+  PATIENT_NOT_FOUND: "HC_PATIENT_001",
+  LGPD_CONSENT_REQUIRED: "HC_PATIENT_002",
+  LGPD_CONSENT_WITHDRAWN: "HC_PATIENT_003",
+  CPF_VALIDATION_FAILED: "HC_PATIENT_004",
+
   // Medical Operations
-  EMERGENCY_ACCESS_DENIED: 'HC_MEDICAL_001',
-  MEDICAL_RECORD_LOCKED: 'HC_MEDICAL_002',
-  APPOINTMENT_CONFLICT: 'HC_MEDICAL_003',
-  TREATMENT_NOT_AUTHORIZED: 'HC_MEDICAL_004',
-  
+  EMERGENCY_ACCESS_DENIED: "HC_MEDICAL_001",
+  MEDICAL_RECORD_LOCKED: "HC_MEDICAL_002",
+  APPOINTMENT_CONFLICT: "HC_MEDICAL_003",
+  TREATMENT_NOT_AUTHORIZED: "HC_MEDICAL_004",
+
   // System & Compliance
-  ENCRYPTION_FAILED: 'HC_SYSTEM_001',
-  AUDIT_LOG_FAILED: 'HC_SYSTEM_002',
-  RATE_LIMIT_EXCEEDED: 'HC_SYSTEM_003',
-  MAINTENANCE_MODE: 'HC_SYSTEM_004',
-  
+  ENCRYPTION_FAILED: "HC_SYSTEM_001",
+  AUDIT_LOG_FAILED: "HC_SYSTEM_002",
+  RATE_LIMIT_EXCEEDED: "HC_SYSTEM_003",
+  MAINTENANCE_MODE: "HC_SYSTEM_004",
+
   // Validation
-  VALIDATION_FAILED: 'HC_VALID_001',
-  REQUIRED_FIELD_MISSING: 'HC_VALID_002',
-  INVALID_FORMAT: 'HC_VALID_003',
-  BUSINESS_RULE_VIOLATION: 'HC_VALID_004'
+  VALIDATION_FAILED: "HC_VALID_001",
+  REQUIRED_FIELD_MISSING: "HC_VALID_002",
+  INVALID_FORMAT: "HC_VALID_003",
+  BUSINESS_RULE_VIOLATION: "HC_VALID_004",
 } as const;
 
-export type HealthcareErrorCode = typeof HealthcareErrorCodes[keyof typeof HealthcareErrorCodes];
+export type HealthcareErrorCode =
+  (typeof HealthcareErrorCodes)[keyof typeof HealthcareErrorCodes];
 
 // Template for healthcare API endpoint implementation
 export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   protected readonly app: Hono;
-  protected readonly feature: HealthcareFeatureTemplate<T, CreateInput, UpdateInput>;
+  protected readonly feature: HealthcareFeatureTemplate<
+    T,
+    CreateInput,
+    UpdateInput
+  >;
   protected readonly logger: typeof Logger;
   private readonly basePath: string;
 
   constructor(
     basePath: string,
     feature: HealthcareFeatureTemplate<T, CreateInput, UpdateInput>,
-    config?: { enableCors?: boolean; enableRateLimit?: boolean }
+    config?: { enableCors?: boolean; enableRateLimit?: boolean },
   ) {
     this.basePath = basePath;
     this.feature = feature;
@@ -114,8 +123,8 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
     this.app = new Hono();
 
     // Apply healthcare-specific middleware
-    this.app.use('*', healthcareSecurityMiddleware);
-    this.app.use('*', healthcareValidationMiddleware);
+    this.app.use("*", healthcareSecurityMiddleware);
+    this.app.use("*", healthcareValidationMiddleware);
 
     // Setup standard routes
     this.setupRoutes();
@@ -123,11 +132,11 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
 
   private setupRoutes(): void {
     // GET /resource - List with pagination
-    this.app.get('/', async (c) => {
+    this.app.get("/", async (c) => {
       try {
         const context = this.extractHealthcareContext(c);
         const pagination = this.extractPaginationParams(c);
-        
+
         const result = await this.handleList(context, pagination);
         return c.json(this.formatResponse(result));
       } catch (error) {
@@ -136,18 +145,18 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
     });
 
     // GET /resource/:id - Get single item
-    this.app.get('/:id', async (c) => {
+    this.app.get("/:id", async (c) => {
       try {
         const context = this.extractHealthcareContext(c);
-        const id = c.req.param('id');
-        
+        const id = c.req.param("id");
+
         if (!id || !z.string().uuid().safeParse(id).success) {
-          throw new HTTPException(400, { message: 'Invalid ID format' });
+          throw new HTTPException(400, { message: "Invalid ID format" });
         }
 
         const result = await this.feature.read(id, context);
         if (!result) {
-          throw new HTTPException(404, { message: 'Resource not found' });
+          throw new HTTPException(404, { message: "Resource not found" });
         }
 
         return c.json(this.formatResponse(result));
@@ -157,11 +166,11 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
     });
 
     // POST /resource - Create new item
-    this.app.post('/', async (c) => {
+    this.app.post("/", async (c) => {
       try {
         const context = this.extractHealthcareContext(c);
         const input = await c.req.json();
-        
+
         const result = await this.feature.create(input, context);
         return c.json(this.formatResponse(result), 201);
       } catch (error) {
@@ -170,14 +179,14 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
     });
 
     // PUT /resource/:id - Update existing item
-    this.app.put('/:id', async (c) => {
+    this.app.put("/:id", async (c) => {
       try {
         const context = this.extractHealthcareContext(c);
-        const id = c.req.param('id');
+        const id = c.req.param("id");
         const input = await c.req.json();
-        
+
         if (!id || !z.string().uuid().safeParse(id).success) {
-          throw new HTTPException(400, { message: 'Invalid ID format' });
+          throw new HTTPException(400, { message: "Invalid ID format" });
         }
 
         const result = await this.feature.update(id, input, context);
@@ -188,30 +197,32 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
     });
 
     // DELETE /resource/:id - Delete item
-    this.app.delete('/:id', async (c) => {
+    this.app.delete("/:id", async (c) => {
       try {
         const context = this.extractHealthcareContext(c);
-        const id = c.req.param('id');
-        
+        const id = c.req.param("id");
+
         if (!id || !z.string().uuid().safeParse(id).success) {
-          throw new HTTPException(400, { message: 'Invalid ID format' });
+          throw new HTTPException(400, { message: "Invalid ID format" });
         }
 
         await this.feature.delete(id, context);
-        return c.json(this.formatResponse(null, 'Resource deleted successfully'));
+        return c.json(
+          this.formatResponse(null, "Resource deleted successfully"),
+        );
       } catch (error) {
         return this.handleError(c, error);
       }
     });
 
     // POST /resource/batch - Batch create
-    this.app.post('/batch', async (c) => {
+    this.app.post("/batch", async (c) => {
       try {
         const context = this.extractHealthcareContext(c);
         const inputs = await c.req.json();
-        
+
         if (!Array.isArray(inputs)) {
-          throw new HTTPException(400, { message: 'Expected array of items' });
+          throw new HTTPException(400, { message: "Expected array of items" });
         }
 
         const results = await this.feature.batchCreate(inputs, context);
@@ -222,17 +233,23 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
     });
 
     // POST /resource/:id/emergency - Emergency access
-    this.app.post('/:id/emergency', async (c) => {
+    this.app.post("/:id/emergency", async (c) => {
       try {
         const context = this.extractHealthcareContext(c);
-        const id = c.req.param('id');
+        const id = c.req.param("id");
         const { justification } = await c.req.json();
-        
-        if (!justification || typeof justification !== 'string') {
-          throw new HTTPException(400, { message: 'Emergency access justification required' });
+
+        if (!justification || typeof justification !== "string") {
+          throw new HTTPException(400, {
+            message: "Emergency access justification required",
+          });
         }
 
-        const result = await this.feature.emergencyRead(id, context, justification);
+        const result = await this.feature.emergencyRead(
+          id,
+          context,
+          justification,
+        );
         return c.json(this.formatResponse(result));
       } catch (error) {
         return this.handleError(c, error);
@@ -242,58 +259,58 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
 
   // Abstract method for custom list implementation
   protected abstract handleList(
-    context: HealthcareContext, 
-    pagination: PaginationParams
+    context: HealthcareContext,
+    pagination: PaginationParams,
   ): Promise<T[] | PaginatedResponse<T>>;
 
   // Extract healthcare context from request
   private extractHealthcareContext(c: any): HealthcareContext {
-    const user = c.get('user');
-    const isEmergency = c.req.header('X-Emergency-Access') === 'true';
-    const lgpdConsent = c.req.header('X-LGPD-Consent') === 'true';
+    const user = c.get("user");
+    const isEmergency = c.req.header("X-Emergency-Access") === "true";
+    const lgpdConsent = c.req.header("X-LGPD-Consent") === "true";
 
     return {
-      userId: user?.id || 'anonymous',
-      userRole: user?.role || 'anonymous',
+      userId: user?.id || "anonymous",
+      userRole: user?.role || "anonymous",
       professionalLicense: user?.professionalLicense,
-      clinicId: user?.clinicId || c.req.header('X-Clinic-ID'),
+      clinicId: user?.clinicId || c.req.header("X-Clinic-ID"),
       isEmergencyAccess: isEmergency,
-      lgpdConsent: lgpdConsent
+      lgpdConsent: lgpdConsent,
     };
   }
 
   // Extract pagination parameters
   private extractPaginationParams(c: any): PaginationParams {
     const query = c.req.query();
-    
+
     return {
       page: parseInt(query.page) || 1,
       limit: Math.min(parseInt(query.limit) || 20, 100), // Max 100 items per page
       sortBy: query.sortBy,
-      sortOrder: query.sortOrder === 'desc' ? 'desc' : 'asc'
+      sortOrder: query.sortOrder === "desc" ? "desc" : "asc",
     };
   }
 
   // Format standard API response
   private formatResponse<D>(
-    data: D, 
-    message?: string
+    data: D,
+    message?: string,
   ): HealthcareApiResponse<D> {
     return {
       success: true,
       data,
       metadata: {
         timestamp: new Date().toISOString(),
-        requestId: crypto.randomUUID()
-      }
+        requestId: crypto.randomUUID(),
+      },
     };
   }
 
   // Handle errors with proper healthcare context
   private handleError(c: any, error: any): Response {
     let statusCode = 500;
-    let errorCode = 'HC_SYSTEM_001';
-    let message = 'Internal server error';
+    let errorCode = "HC_SYSTEM_001";
+    let message = "Internal server error";
 
     if (error instanceof HTTPException) {
       statusCode = error.status;
@@ -301,26 +318,26 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
     } else if (error instanceof z.ZodError) {
       statusCode = 400;
       errorCode = HealthcareErrorCodes.VALIDATION_FAILED;
-      message = 'Validation failed';
-    } else if (error.message?.includes('Professional license')) {
+      message = "Validation failed";
+    } else if (error.message?.includes("Professional license")) {
       statusCode = 403;
       errorCode = HealthcareErrorCodes.PROFESSIONAL_LICENSE_REQUIRED;
       message = error.message;
-    } else if (error.message?.includes('LGPD consent')) {
+    } else if (error.message?.includes("LGPD consent")) {
       statusCode = 403;
       errorCode = HealthcareErrorCodes.LGPD_CONSENT_REQUIRED;
       message = error.message;
-    } else if (error.message?.includes('Emergency access')) {
+    } else if (error.message?.includes("Emergency access")) {
       statusCode = 403;
       errorCode = HealthcareErrorCodes.EMERGENCY_ACCESS_DENIED;
       message = error.message;
     }
 
-    this.logger.error('API Error', {
+    this.logger.error("API Error", {
       error: error.message,
       stack: error.stack,
       statusCode,
-      errorCode
+      errorCode,
     });
 
     const response: HealthcareApiResponse<never> = {
@@ -332,8 +349,8 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
       },
       metadata: {
         timestamp: new Date().toISOString(),
-        requestId: crypto.randomUUID()
-      }
+        requestId: crypto.randomUUID(),
+      },
     };
 
     return c.json(response, statusCode);
@@ -346,37 +363,37 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
 
   // Health check endpoint
   public addHealthCheck(): void {
-    this.app.get('/health', (c) => {
+    this.app.get("/health", (c) => {
       return c.json({
-        status: 'healthy',
+        status: "healthy",
         timestamp: new Date().toISOString(),
-        service: this.basePath
+        service: this.basePath,
       });
     });
   }
 
   // Add custom routes
   protected addCustomRoute(
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
     path: string,
-    handler: (c: any) => Promise<Response> | Response
+    handler: (c: any) => Promise<Response> | Response,
   ): void {
-    const fullPath = path.startsWith('/') ? path : `/${path}`;
-    
+    const fullPath = path.startsWith("/") ? path : `/${path}`;
+
     switch (method) {
-      case 'GET':
+      case "GET":
         this.app.get(fullPath, handler);
         break;
-      case 'POST':
+      case "POST":
         this.app.post(fullPath, handler);
         break;
-      case 'PUT':
+      case "PUT":
         this.app.put(fullPath, handler);
         break;
-      case 'DELETE':
+      case "DELETE":
         this.app.delete(fullPath, handler);
         break;
-      case 'PATCH':
+      case "PATCH":
         this.app.patch(fullPath, handler);
         break;
     }
@@ -387,21 +404,27 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
 export function createHealthcareApi<T, CreateInput, UpdateInput>(
   basePath: string,
   feature: HealthcareFeatureTemplate<T, CreateInput, UpdateInput>,
-  listHandler: (context: HealthcareContext, pagination: PaginationParams) => Promise<T[] | PaginatedResponse<T>>,
-  options?: { enableHealthCheck?: boolean }
+  listHandler: (
+    context: HealthcareContext,
+    pagination: PaginationParams,
+  ) => Promise<T[] | PaginatedResponse<T>>,
+  options?: { enableHealthCheck?: boolean },
 ): Hono {
-  
-  class ConcreteHealthcareApi extends HealthcareApiTemplate<T, CreateInput, UpdateInput> {
+  class ConcreteHealthcareApi extends HealthcareApiTemplate<
+    T,
+    CreateInput,
+    UpdateInput
+  > {
     protected async handleList(
-      context: HealthcareContext, 
-      pagination: PaginationParams
+      context: HealthcareContext,
+      pagination: PaginationParams,
     ): Promise<T[] | PaginatedResponse<T>> {
       return listHandler(context, pagination);
     }
   }
 
   const api = new ConcreteHealthcareApi(basePath, feature);
-  
+
   if (options?.enableHealthCheck) {
     api.addHealthCheck();
   }
@@ -411,28 +434,48 @@ export function createHealthcareApi<T, CreateInput, UpdateInput>(
 
 // Brazilian healthcare-specific validation schemas
 export const BrazilianHealthcareSchemas = {
-  CPF: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF must be in format 000.000.000-00'),
-  Phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, 'Phone must be in format (00) 0000-0000 or (00) 00000-0000'),
-  CEP: z.string().regex(/^\d{5}-\d{3}$/, 'CEP must be in format 00000-000'),
-  CRM: z.string().regex(/^\d{4,6}\/[A-Z]{2}$/, 'CRM must be in format 0000/UF'),
-  CRF: z.string().regex(/^\d{4,6}-[A-Z]{2}$/, 'CRF must be in format 0000-UF'),
-  CREFITO: z.string().regex(/^\d{5,6}-F$/, 'CREFITO must be in format 00000-F'),
-  
+  CPF: z
+    .string()
+    .regex(
+      /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
+      "CPF must be in format 000.000.000-00",
+    ),
+  Phone: z
+    .string()
+    .regex(
+      /^\(\d{2}\) \d{4,5}-\d{4}$/,
+      "Phone must be in format (00) 0000-0000 or (00) 00000-0000",
+    ),
+  CEP: z.string().regex(/^\d{5}-\d{3}$/, "CEP must be in format 00000-000"),
+  CRM: z.string().regex(/^\d{4,6}\/[A-Z]{2}$/, "CRM must be in format 0000/UF"),
+  CRF: z.string().regex(/^\d{4,6}-[A-Z]{2}$/, "CRF must be in format 0000-UF"),
+  CREFITO: z.string().regex(/^\d{5,6}-F$/, "CREFITO must be in format 00000-F"),
+
   Address: z.object({
     street: z.string().min(5).max(100),
     number: z.string().min(1).max(10),
     complement: z.string().max(50).optional(),
     neighborhood: z.string().min(2).max(50),
     city: z.string().min(2).max(50),
-    state: z.string().length(2).regex(/^[A-Z]{2}$/),
-    zipCode: z.string().regex(/^\d{5}-\d{3}$/)
+    state: z
+      .string()
+      .length(2)
+      .regex(/^[A-Z]{2}$/),
+    zipCode: z.string().regex(/^\d{5}-\d{3}$/),
   }),
 
   EmergencyContact: z.object({
     name: z.string().min(2).max(100),
-    relationship: z.enum(['spouse', 'parent', 'child', 'sibling', 'friend', 'other']),
+    relationship: z.enum([
+      "spouse",
+      "parent",
+      "child",
+      "sibling",
+      "friend",
+      "other",
+    ]),
     phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/),
-    email: z.string().email().optional()
+    email: z.string().email().optional(),
   }),
 
   LGPDConsent: z.object({
@@ -441,8 +484,8 @@ export const BrazilianHealthcareSchemas = {
     timestamp: z.date(),
     ipAddress: z.string().ip(),
     userAgent: z.string().optional(),
-    withdrawalDate: z.date().optional()
-  })
+    withdrawalDate: z.date().optional(),
+  }),
 };
 
 export { HealthcareApiTemplate as default };

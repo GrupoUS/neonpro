@@ -18,8 +18,10 @@
 ```typescript
 const coreFeatures = {
   patients: "CRUD completo + histórico estético avançado",
-  appointments: "Agendamento + calendário + notificações para procedimentos estéticos",
-  professionals: "Gestão de profissionais + especialidades em estética avançada",
+  appointments:
+    "Agendamento + calendário + notificações para procedimentos estéticos",
+  professionals:
+    "Gestão de profissionais + especialidades em estética avançada",
   aiChat: "FAQ inteligente + suporte automatizado para estética",
   noShowPrediction: "ML para reduzir faltas em consultas estéticas",
   lgpdCompliance: "Automatização de compliance LGPD para clínicas estéticas",
@@ -29,15 +31,17 @@ const coreFeatures = {
 ## 🔄 Application Flow Integration
 
 ### **Workflow Documentation**
+
 A arquitetura do NeonPro é complementada por documentação detalhada de fluxos de aplicação que mostram como os componentes interagem em cenários reais:
 
 - **[📋 Main Flow](./app-flows/main-flow.md)**: Fluxo principal da aplicação - jornada completa do profissional
-- **[🔐 Auth Flow](./app-flows/auth-flow.md)**: Autenticação e autorização com validação CFM  
+- **[🔐 Auth Flow](./app-flows/auth-flow.md)**: Autenticação e autorização com validação CFM
 - **[🏥 Patient Flow](./app-flows/healthcare-patient-flow.md)**: Gestão completa do ciclo de vida do paciente de estética avançada
 - **[🤖 AI Flow](./app-flows/ai-flow.md)**: Integração IA com proteção PHI e supervisão profissional
 - **[⚖️ LGPD Flow](./app-flows/compliance-lgpd-flow.md)**: Compliance LGPD e proteção de dados
 
 ### **Architecture-Flow Mapping**
+
 ```mermaid
 graph LR
     subgraph "Architecture Layer"
@@ -45,7 +49,7 @@ graph LR
         A2[Packages: 24 packages]
         A3[Tech Stack: Next.js + Hono]
     end
-    
+
     subgraph "Flow Layer"
         F1[Main Flow]
         F2[Auth Flow]
@@ -53,7 +57,7 @@ graph LR
         F4[AI Flow]
         F5[LGPD Flow]
     end
-    
+
     A1 --> F1
     A2 --> F2
     A2 --> F3
@@ -62,7 +66,9 @@ graph LR
 ```
 
 ### **Compliance Integration**
+
 Os fluxos documentados implementam os requisitos de compliance definidos na arquitetura:
+
 - **LGPD**: [`compliance-lgpd-flow.md`](./app-flows/compliance-lgpd-flow.md) detalha implementação completa
 - **ANVISA**: Workflows de segurança médica integrados nos fluxos de paciente
 - **CFM**: Supervisão profissional documentada no fluxo de autenticação

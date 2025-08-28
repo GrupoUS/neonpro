@@ -37,10 +37,14 @@ export function usePermissions(): PermissionHookReturn {
     return true;
   };
 
-  const canView = (resource: string): boolean => hasPermission("view", resource);
-  const canCreate = (resource: string): boolean => hasPermission("create", resource);
-  const canEdit = (resource: string): boolean => hasPermission("edit", resource);
-  const canDelete = (resource: string): boolean => hasPermission("delete", resource);
+  const canView = (resource: string): boolean =>
+    hasPermission("view", resource);
+  const canCreate = (resource: string): boolean =>
+    hasPermission("create", resource);
+  const canEdit = (resource: string): boolean =>
+    hasPermission("edit", resource);
+  const canDelete = (resource: string): boolean =>
+    hasPermission("delete", resource);
 
   return {
     hasPermission,

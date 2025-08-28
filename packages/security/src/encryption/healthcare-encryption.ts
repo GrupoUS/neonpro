@@ -56,7 +56,8 @@ export const DataClassification = {
   MEDICAL: "MEDICAL",
 } as const;
 
-export type DataClassification = (typeof DataClassification)[keyof typeof DataClassification];
+export type DataClassification =
+  (typeof DataClassification)[keyof typeof DataClassification];
 
 /**
  * Healthcare-grade encryption service
@@ -100,8 +101,8 @@ export class HealthcareEncryption {
 
       // Create audit log for sensitive data encryption
       if (
-        classification === DataClassification.MEDICAL
-        || classification === DataClassification.RESTRICTED
+        classification === DataClassification.MEDICAL ||
+        classification === DataClassification.RESTRICTED
       ) {
         this.auditEncryption("ENCRYPT", classification, plaintext.length);
       }
@@ -148,8 +149,8 @@ export class HealthcareEncryption {
 
       // Create audit log for sensitive data decryption
       if (
-        classification === DataClassification.MEDICAL
-        || classification === DataClassification.RESTRICTED
+        classification === DataClassification.MEDICAL ||
+        classification === DataClassification.RESTRICTED
       ) {
         this.auditEncryption("DECRYPT", classification, decrypted.length);
       }
@@ -209,8 +210,9 @@ export class HealthcareEncryption {
 
   private deriveKeyFromEnvironment(): Buffer {
     // In production, this would use a proper key management system (HSM, AWS KMS, etc.)
-    const envKey = process.env.ENCRYPTION_MASTER_KEY
-      || "default-dev-key-change-in-production";
+    const envKey =
+      process.env.ENCRYPTION_MASTER_KEY ||
+      "default-dev-key-change-in-production";
 
     // Derive key from environment variable
     const salt = Buffer.from("neonpro-healthcare-encryption", "utf8");
@@ -299,7 +301,8 @@ export const encryptionUtils = {
    * Generate secure random password for key derivation
    */
   generateSecurePassword(length = 32): string {
-    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+    const charset =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
     let password = "";
 
     for (let i = 0; i < length; i++) {

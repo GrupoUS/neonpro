@@ -37,10 +37,8 @@ const inputVariants = cva(
 );
 
 export interface InputProps
-  extends
-    Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
-    VariantProps<typeof inputVariants>
-{
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
+    VariantProps<typeof inputVariants> {
   label?: string;
   error?: string;
   helperText?: string;
@@ -177,18 +175,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
           {(rightIcon || loading) && (
             <div className="-translate-y-1/2 absolute top-1/2 right-3 text-muted-foreground">
-              {loading
-                ? (
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                )
-                : rightIcon}
+              {loading ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : (
+                rightIcon
+              )}
             </div>
           )}
         </div>
 
         {error && <p className="text-destructive text-sm">{error}</p>}
 
-        {helperText && !error && <p className="text-muted-foreground text-sm">{helperText}</p>}
+        {helperText && !error && (
+          <p className="text-muted-foreground text-sm">{helperText}</p>
+        )}
       </div>
     );
   },

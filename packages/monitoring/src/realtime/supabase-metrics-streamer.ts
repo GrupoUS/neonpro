@@ -49,7 +49,12 @@ export class SupabaseMetricsStreamer {
         .select("count(*)")
         .limit(1);
 
-      if (error && !error.message?.includes('relation "performance_metrics" does not exist')) {
+      if (
+        error &&
+        !error.message?.includes(
+          'relation "performance_metrics" does not exist',
+        )
+      ) {
         throw error;
       }
 
@@ -136,36 +141,38 @@ export class SupabaseMetricsStreamer {
    * Send real-time alert/event
    */
   async sendRealtimeEvent(event: RealtimeMetricEvent): Promise<void> {
-    if (!this.isConnected) {return;}
+    if (!this.isConnected) {
+      return;
+    }
 
     try {
       // Insert event into alerts table for real-time dashboard updates
-      const { error } = await this.supabase
-        .from("performance_alerts")
-        .insert({
-          type: event.type,
-          severity: event.severity,
-          metric_name: event.metric.name,
-          metric_value: event.metric.value,
-          metric_category: event.metric.category,
-          message: `${event.metric.name} ${event.severity}: ${event.metric.value}${
-            event.metric.unit || ""
-          }`,
-          metadata: {
-            metric: event.metric,
-            healthcare_context: this.healthcareContext,
-            event_data: event,
-          },
-          clinic_id: this.config.clinicId || this.healthcareContext.clinicId,
-          user_id: this.healthcareContext.userId,
-          timestamp: event.timestamp,
-          acknowledged: false,
-        });
+      const { error } = await this.supabase.from("performance_alerts").insert({
+        type: event.type,
+        severity: event.severity,
+        metric_name: event.metric.name,
+        metric_value: event.metric.value,
+        metric_category: event.metric.category,
+        message: `${event.metric.name} ${event.severity}: ${event.metric.value}${
+          event.metric.unit || ""
+        }`,
+        metadata: {
+          metric: event.metric,
+          healthcare_context: this.healthcareContext,
+          event_data: event,
+        },
+        clinic_id: this.config.clinicId || this.healthcareContext.clinicId,
+        user_id: this.healthcareContext.userId,
+        timestamp: event.timestamp,
+        acknowledged: false,
+      });
 
       if (error) {
         console.error("❌ Failed to send real-time event:", error);
       } else {
-        console.log(`📡 Real-time event sent: ${event.type} - ${event.severity}`);
+        console.log(
+          `📡 Real-time event sent: ${event.type} - ${event.severity}`,
+        );
       }
     } catch (error) {
       console.error("❌ Error sending real-time event:", error);
@@ -184,7 +191,10 @@ export class SupabaseMetricsStreamer {
       let query = this.supabase
         .from("performance_metrics")
         .select("*")
-        .gte("timestamp", new Date(Date.now() - this.parseTimeframe(timeframe)).toISOString())
+        .gte(
+          "timestamp",
+          new Date(Date.now() - this.parseTimeframe(timeframe)).toISOString(),
+        )
         .order("timestamp", { ascending: false })
         .limit(limit);
 
@@ -193,12 +203,17 @@ export class SupabaseMetricsStreamer {
       }
 
       if (this.config.clinicId || this.healthcareContext.clinicId) {
-        query = query.eq("clinic_id", this.config.clinicId || this.healthcareContext.clinicId);
+        query = query.eq(
+          "clinic_id",
+          this.config.clinicId || this.healthcareContext.clinicId,
+        );
       }
 
       const { data, error } = await query;
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
 
       return data || [];
     } catch (error) {
@@ -222,21 +237,24 @@ export class SupabaseMetricsStreamer {
    * Flush buffered metrics to Supabase
    */
   private async flushMetrics(): Promise<void> {
-    if (this.metricBuffer.length === 0) {return;}
+    if (this.metricBuffer.length === 0) {
+      return;
+    }
 
     const metricsToFlush = [...this.metricBuffer];
     this.metricBuffer = [];
 
     try {
       // Prepare metrics for insertion
-      const formattedMetrics = metricsToFlush.map(metric => ({
+      const formattedMetrics = metricsToFlush.map((metric) => ({
         name: metric.name,
         value: metric.value,
         unit: metric.unit || null,
         category: metric.category,
         timestamp: metric.timestamp,
         metadata: metric.metadata || {},
-        clinic_id: this.config.clinicId || this.healthcareContext.clinicId || null,
+        clinic_id:
+          this.config.clinicId || this.healthcareContext.clinicId || null,
         user_id: this.healthcareContext.userId || null,
         workflow_type: this.healthcareContext.workflowType || null,
         device_type: this.healthcareContext.deviceType || null,
@@ -253,7 +271,9 @@ export class SupabaseMetricsStreamer {
         // Re-add metrics to buffer for retry
         this.metricBuffer.unshift(...metricsToFlush);
       } else {
-        console.log(`📊 Flushed ${formattedMetrics.length} metrics to Supabase`);
+        console.log(
+          `📊 Flushed ${formattedMetrics.length} metrics to Supabase`,
+        );
       }
     } catch (error) {
       console.error("❌ Error flushing metrics:", error);
@@ -296,8 +316,10 @@ export class SupabaseMetricsStreamer {
       "security-violation",
     ];
 
-    return criticalMetrics.includes(metric.name)
-      || (metric.metadata?.severity === "critical");
+    return (
+      criticalMetrics.includes(metric.name) ||
+      metric.metadata?.severity === "critical"
+    );
   }
 
   /**
@@ -305,14 +327,16 @@ export class SupabaseMetricsStreamer {
    */
   private parseTimeframe(timeframe: string): number {
     const units = {
-      "minute": 60 * 1000,
-      "hour": 60 * 60 * 1000,
-      "day": 24 * 60 * 60 * 1000,
-      "week": 7 * 24 * 60 * 60 * 1000,
+      minute: 60 * 1000,
+      hour: 60 * 60 * 1000,
+      day: 24 * 60 * 60 * 1000,
+      week: 7 * 24 * 60 * 60 * 1000,
     };
 
     const match = timeframe.match(/(\d+)\s*(minute|hour|day|week)s?/);
-    if (!match) {return units.hour;} // default 1 hour
+    if (!match) {
+      return units.hour;
+    } // default 1 hour
 
     const [, num, unit] = match;
     return parseInt(num) * (units[unit as keyof typeof units] || units.hour);

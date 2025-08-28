@@ -97,7 +97,10 @@ export class EnterpriseSecurityService {
   private readonly encryptionConfig: EncryptionConfig;
   private readonly masterKey: Buffer;
   private cleanupInterval: NodeJS.Timeout | null = null;
-  private readonly rateLimitStore: Map<string, { count: number; resetTime: number }> = new Map();
+  private readonly rateLimitStore: Map<
+    string,
+    { count: number; resetTime: number }
+  > = new Map();
 
   constructor(_config?: Partial<SecurityConfig>) {
     this.encryptionConfig = {
@@ -310,13 +313,19 @@ export class EnterpriseSecurityService {
       );
 
       // Encrypt data
-      const cipher = crypto.createCipheriv(this.encryptionConfig.algorithm, key, iv);
+      const cipher = crypto.createCipheriv(
+        this.encryptionConfig.algorithm,
+        key,
+        iv,
+      );
 
       let encrypted = cipher.update(plaintext, "utf8", "hex");
       encrypted += cipher.final("hex");
 
       // For GCM mode, get the authentication tag
-      const tag = (cipher as unknown as { getAuthTag(): Buffer }).getAuthTag?.() ?? Buffer.alloc(0);
+      const tag =
+        (cipher as unknown as { getAuthTag(): Buffer }).getAuthTag?.() ??
+        Buffer.alloc(0);
 
       // Combine salt, iv, tag, and encrypted data
       const result = Buffer.concat([
@@ -354,17 +363,20 @@ export class EnterpriseSecurityService {
       );
       const iv = combined.subarray(
         this.encryptionConfig.keyDerivation.saltSize,
-        this.encryptionConfig.keyDerivation.saltSize + this.encryptionConfig.ivSize,
+        this.encryptionConfig.keyDerivation.saltSize +
+          this.encryptionConfig.ivSize,
       );
       const tag = combined.subarray(
-        this.encryptionConfig.keyDerivation.saltSize + this.encryptionConfig.ivSize,
-        this.encryptionConfig.keyDerivation.saltSize + this.encryptionConfig.ivSize
-          + this.encryptionConfig.tagSize,
+        this.encryptionConfig.keyDerivation.saltSize +
+          this.encryptionConfig.ivSize,
+        this.encryptionConfig.keyDerivation.saltSize +
+          this.encryptionConfig.ivSize +
+          this.encryptionConfig.tagSize,
       );
       const encrypted = combined.subarray(
-        this.encryptionConfig.keyDerivation.saltSize
-          + this.encryptionConfig.ivSize
-          + this.encryptionConfig.tagSize,
+        this.encryptionConfig.keyDerivation.saltSize +
+          this.encryptionConfig.ivSize +
+          this.encryptionConfig.tagSize,
       );
 
       // Derive key
@@ -385,7 +397,9 @@ export class EnterpriseSecurityService {
 
       // Set auth tag for GCM mode
       if (tag.length > 0) {
-        (decipher as unknown as { setAuthTag(tag: Buffer): void }).setAuthTag(tag);
+        (decipher as unknown as { setAuthTag(tag: Buffer): void }).setAuthTag(
+          tag,
+        );
       }
 
       let decrypted = decipher.update(encrypted, undefined, "utf8");
@@ -457,7 +471,9 @@ export class EnterpriseSecurityService {
 
     // Check roles
     if (conditions.roles && conditions.roles.length > 0) {
-      const hasRole = conditions.roles.some((role) => session.roles.includes(role));
+      const hasRole = conditions.roles.some((role) =>
+        session.roles.includes(role),
+      );
       if (!hasRole) {
         return false;
       }
@@ -466,7 +482,7 @@ export class EnterpriseSecurityService {
     // Check permissions
     if (conditions.permissions && conditions.permissions.length > 0) {
       const hasPermission = conditions.permissions.some((perm) =>
-        session.permissions.includes(perm)
+        session.permissions.includes(perm),
       );
       if (!hasPermission) {
         return false;
@@ -480,11 +496,11 @@ export class EnterpriseSecurityService {
 
     // Check IP restrictions
     if (
-      conditions.ipRestrictions
-      && conditions.ipRestrictions.length > 0
-      && !(
-        session.ipAddress
-        && conditions.ipRestrictions.includes(session.ipAddress)
+      conditions.ipRestrictions &&
+      conditions.ipRestrictions.length > 0 &&
+      !(
+        session.ipAddress &&
+        conditions.ipRestrictions.includes(session.ipAddress)
       )
     ) {
       return false;
@@ -650,8 +666,8 @@ export class EnterpriseSecurityService {
   ): "low" | "medium" | "high" | "critical" {
     switch (type) {
       case "multiple_failed_logins": {
-        return (details as { attemptCount?: number; }).attemptCount
-            && (details as { attemptCount: number; }).attemptCount > 10
+        return (details as { attemptCount?: number }).attemptCount &&
+          (details as { attemptCount: number }).attemptCount > 10
           ? "high"
           : "medium";
       }
@@ -849,7 +865,11 @@ export class EnterpriseSecurityService {
   /**
    * Check rate limit for a given key
    */
-  async checkRateLimit(key: string, maxAttempts: number = 5, windowMs: number = 15 * 60 * 1000): Promise<boolean> {
+  async checkRateLimit(
+    key: string,
+    maxAttempts: number = 5,
+    windowMs: number = 15 * 60 * 1000,
+  ): Promise<boolean> {
     const now = Date.now();
     const rateLimitData = this.rateLimitStore.get(key);
 
@@ -857,7 +877,7 @@ export class EnterpriseSecurityService {
     if (!rateLimitData || now > rateLimitData.resetTime) {
       this.rateLimitStore.set(key, {
         count: 1,
-        resetTime: now + windowMs
+        resetTime: now + windowMs,
       });
       return true; // Allow the request
     }
@@ -868,14 +888,14 @@ export class EnterpriseSecurityService {
 
     // Check if limit exceeded
     const limitExceeded = rateLimitData.count > maxAttempts;
-    
+
     // Log if limit exceeded
     if (limitExceeded) {
       await this.logSecurityEvent("RATE_LIMIT_EXCEEDED", {
         key,
         attempts: rateLimitData.count,
         maxAttempts,
-        windowMs
+        windowMs,
       });
     }
 

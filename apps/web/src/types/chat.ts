@@ -8,12 +8,41 @@
 // CORE CHAT TYPES
 // ============================================================================
 
-export type MessageType = 'text' | 'image' | 'file' | 'voice' | 'medical_record' | 'prescription' | 'emergency_alert';
-export type SenderType = 'patient' | 'doctor' | 'nurse' | 'staff' | 'ai_assistant' | 'system';
-export type ConversationType = 'patient_support' | 'pre_consultation' | 'post_procedure' | 'emergency' | 'ai_assistant' | 'staff_coordination';
-export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
-export type PresenceStatus = 'online' | 'offline' | 'busy' | 'away' | 'emergency';
-export type LGPDConsentLevel = 'minimal' | 'functional' | 'analytics' | 'full';
+export type MessageType =
+  | "text"
+  | "image"
+  | "file"
+  | "voice"
+  | "medical_record"
+  | "prescription"
+  | "emergency_alert";
+export type SenderType =
+  | "patient"
+  | "doctor"
+  | "nurse"
+  | "staff"
+  | "ai_assistant"
+  | "system";
+export type ConversationType =
+  | "patient_support"
+  | "pre_consultation"
+  | "post_procedure"
+  | "emergency"
+  | "ai_assistant"
+  | "staff_coordination";
+export type MessageStatus =
+  | "sending"
+  | "sent"
+  | "delivered"
+  | "read"
+  | "failed";
+export type PresenceStatus =
+  | "online"
+  | "offline"
+  | "busy"
+  | "away"
+  | "emergency";
+export type LGPDConsentLevel = "minimal" | "functional" | "analytics" | "full";
 
 // ============================================================================
 // MESSAGE INTERFACES
@@ -57,7 +86,7 @@ export interface MessageMetadata {
   location?: GeoLocation;
   device_info?: DeviceInfo;
   encryption_key?: string;
-  priority: 'low' | 'normal' | 'high' | 'critical';
+  priority: "low" | "normal" | "high" | "critical";
   healthcare_context?: HealthcareContext;
   patient_consent?: PatientConsentData;
 }
@@ -68,18 +97,23 @@ export interface MessageMetadata {
 
 export interface MedicalMessageData {
   patient_id: string;
-  medical_record_type: 'consultation' | 'prescription' | 'exam_result' | 'image' | 'report';
+  medical_record_type:
+    | "consultation"
+    | "prescription"
+    | "exam_result"
+    | "image"
+    | "report";
   cfm_validation?: string;
   anvisa_compliance?: boolean;
   medical_specialty?: BrazilianMedicalSpecialty;
-  urgency_level: 'routine' | 'urgent' | 'critical' | 'emergency';
+  urgency_level: "routine" | "urgent" | "critical" | "emergency";
   hipaa_protected?: boolean;
-  lgpd_category: 'health_data' | 'sensitive_personal' | 'biometric' | 'genetic';
+  lgpd_category: "health_data" | "sensitive_personal" | "biometric" | "genetic";
 }
 
 export interface EmergencyMessageData {
-  emergency_type: 'medical' | 'psychiatric' | 'accident' | 'allergic_reaction';
-  severity_level: 'green' | 'yellow' | 'orange' | 'red';
+  emergency_type: "medical" | "psychiatric" | "accident" | "allergic_reaction";
+  severity_level: "green" | "yellow" | "orange" | "red";
   location: GeoLocation;
   samu_notified?: boolean;
   auto_escalation?: boolean;
@@ -94,19 +128,23 @@ export interface HealthcareContext {
   clinic_id: string;
   department?: string;
   medical_specialty?: BrazilianMedicalSpecialty;
-  consultation_type?: 'primeira_consulta' | 'retorno' | 'emergencia' | 'procedimento';
+  consultation_type?:
+    | "primeira_consulta"
+    | "retorno"
+    | "emergencia"
+    | "procedimento";
   sus_integration?: SUSIntegrationData;
 }
 
-export type BrazilianMedicalSpecialty = 
-  | 'dermatologia'
-  | 'cirurgia_plastica'
-  | 'medicina_estetica'
-  | 'dermatologia_estetica'
-  | 'cirurgia_geral'
-  | 'anestesiologia'
-  | 'clinica_medica'
-  | 'emergencia';
+export type BrazilianMedicalSpecialty =
+  | "dermatologia"
+  | "cirurgia_plastica"
+  | "medicina_estetica"
+  | "dermatologia_estetica"
+  | "cirurgia_geral"
+  | "anestesiologia"
+  | "clinica_medica"
+  | "emergencia";
 
 // ============================================================================
 // CONVERSATION INTERFACES
@@ -165,7 +203,7 @@ export interface ParticipantPermissions {
 // ============================================================================
 
 export interface AIResponseData {
-  ai_model: 'gpt-4-healthcare' | 'claude-medical' | 'neonpro-assistant';
+  ai_model: "gpt-4-healthcare" | "claude-medical" | "neonpro-assistant";
   confidence_score: number;
   response_type: AIResponseType;
   medical_accuracy_validated: boolean;
@@ -175,18 +213,23 @@ export interface AIResponseData {
   brazilian_context?: BrazilianHealthcareContext;
 }
 
-export type AIResponseType = 
-  | 'information'
-  | 'recommendation' 
-  | 'triage'
-  | 'emergency_detection'
-  | 'prescription_assistance'
-  | 'appointment_scheduling'
-  | 'symptoms_analysis'
-  | 'post_care_guidance';
+export type AIResponseType =
+  | "information"
+  | "recommendation"
+  | "triage"
+  | "emergency_detection"
+  | "prescription_assistance"
+  | "appointment_scheduling"
+  | "symptoms_analysis"
+  | "post_care_guidance";
 
 export interface MedicalReference {
-  source: 'cfm_guidelines' | 'anvisa_protocols' | 'sus_guidelines' | 'medical_literature' | 'institutional_protocol';
+  source:
+    | "cfm_guidelines"
+    | "anvisa_protocols"
+    | "sus_guidelines"
+    | "medical_literature"
+    | "institutional_protocol";
   reference_id: string;
   title: string;
   url?: string;
@@ -195,8 +238,14 @@ export interface MedicalReference {
 }
 
 export interface SuggestedAction {
-  action_type: 'schedule_appointment' | 'emergency_call' | 'escalate_to_human' | 'request_exam' | 'medication_reminder' | 'follow_up_care';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  action_type:
+    | "schedule_appointment"
+    | "emergency_call"
+    | "escalate_to_human"
+    | "request_exam"
+    | "medication_reminder"
+    | "follow_up_care";
+  priority: "low" | "medium" | "high" | "urgent";
   description: string;
   parameters?: Record<string, any>;
   estimated_time?: number;
@@ -205,8 +254,12 @@ export interface SuggestedAction {
 
 export interface EscalationRecommendation {
   should_escalate: boolean;
-  escalation_type: 'medical_professional' | 'emergency_services' | 'specialist' | 'supervisor';
-  urgency_level: 'routine' | 'priority' | 'urgent' | 'immediate';
+  escalation_type:
+    | "medical_professional"
+    | "emergency_services"
+    | "specialist"
+    | "supervisor";
+  urgency_level: "routine" | "priority" | "urgent" | "immediate";
   reasoning: string;
   target_professional?: string;
   max_wait_time?: number;
@@ -235,8 +288,8 @@ export interface PresenceUpdate {
 }
 
 export interface DeviceInfo {
-  device_type: 'mobile' | 'tablet' | 'desktop' | 'kiosk';
-  platform: 'ios' | 'android' | 'windows' | 'macos' | 'linux' | 'web';
+  device_type: "mobile" | "tablet" | "desktop" | "kiosk";
+  platform: "ios" | "android" | "windows" | "macos" | "linux" | "web";
   app_version: string;
   browser?: string;
   offline_capable: boolean;
@@ -260,24 +313,24 @@ export interface LGPDConsentData {
   right_to_erasure: boolean;
 }
 
-export type LGPDPurpose = 
-  | 'medical_treatment'
-  | 'emergency_care'
-  | 'appointment_management'
-  | 'medical_research'
-  | 'quality_improvement'
-  | 'legal_compliance'
-  | 'billing_insurance';
+export type LGPDPurpose =
+  | "medical_treatment"
+  | "emergency_care"
+  | "appointment_management"
+  | "medical_research"
+  | "quality_improvement"
+  | "legal_compliance"
+  | "billing_insurance";
 
 export type LGPDDataCategory =
-  | 'health_data'
-  | 'personal_identification'
-  | 'contact_information'
-  | 'financial_data'
-  | 'biometric_data'
-  | 'genetic_data'
-  | 'location_data'
-  | 'communication_content';
+  | "health_data"
+  | "personal_identification"
+  | "contact_information"
+  | "financial_data"
+  | "biometric_data"
+  | "genetic_data"
+  | "location_data"
+  | "communication_content";
 
 export interface PatientConsentData {
   conversation_consent: boolean;
@@ -296,7 +349,7 @@ export interface ConversationPrivacySettings {
   screenshot_prevention: boolean;
   watermark_enabled: boolean;
   audit_trail_enabled: boolean;
-  anonymization_level: 'none' | 'partial' | 'full';
+  anonymization_level: "none" | "partial" | "full";
 }
 
 // ============================================================================
@@ -308,8 +361,8 @@ export interface SUSIntegrationData {
   health_unit_code?: string;
   referral_code?: string;
   priority_code?: string;
-  insurance_type: 'sus' | 'private' | 'mixed';
-  coverage_level: 'basic' | 'intermediate' | 'premium';
+  insurance_type: "sus" | "private" | "mixed";
+  coverage_level: "basic" | "intermediate" | "premium";
 }
 
 export interface BrazilianHealthcareContext {
@@ -321,10 +374,34 @@ export interface BrazilianHealthcareContext {
   cultural_considerations?: CulturalConsideration[];
 }
 
-export type BrazilianState = 
-  | 'AC' | 'AL' | 'AP' | 'AM' | 'BA' | 'CE' | 'DF' | 'ES' | 'GO' | 'MA' 
-  | 'MT' | 'MS' | 'MG' | 'PA' | 'PB' | 'PR' | 'PE' | 'PI' | 'RJ' | 'RN' 
-  | 'RS' | 'RO' | 'RR' | 'SC' | 'SP' | 'SE' | 'TO';
+export type BrazilianState =
+  | "AC"
+  | "AL"
+  | "AP"
+  | "AM"
+  | "BA"
+  | "CE"
+  | "DF"
+  | "ES"
+  | "GO"
+  | "MA"
+  | "MT"
+  | "MS"
+  | "MG"
+  | "PA"
+  | "PB"
+  | "PR"
+  | "PE"
+  | "PI"
+  | "RJ"
+  | "RN"
+  | "RS"
+  | "RO"
+  | "RR"
+  | "SC"
+  | "SP"
+  | "SE"
+  | "TO";
 
 export interface EmergencyProtocol {
   protocol_id: string;
@@ -359,7 +436,7 @@ export interface GeoLocation {
   city?: string;
   state?: BrazilianState;
   postal_code?: string;
-  country: 'BR';
+  country: "BR";
   hospital_proximity?: HospitalProximity[];
 }
 
@@ -373,7 +450,7 @@ export interface HospitalProximity {
 
 export interface MonetaryAmount {
   amount: number;
-  currency: 'BRL';
+  currency: "BRL";
   formatted: string;
 }
 
@@ -381,7 +458,11 @@ export interface EmergencyContact {
   contact_id: string;
   name: string;
   phone: string;
-  relationship: 'family' | 'friend' | 'emergency_service' | 'medical_professional';
+  relationship:
+    | "family"
+    | "friend"
+    | "emergency_service"
+    | "medical_professional";
   priority_order: number;
   available_24h: boolean;
   sms_enabled: boolean;
@@ -395,11 +476,16 @@ export interface OnCallSchedule {
   end_time: string;
   emergency_only: boolean;
   specialties_covered: BrazilianMedicalSpecialty[];
-  contact_methods: ('phone' | 'sms' | 'whatsapp' | 'chat')[];
+  contact_methods: ("phone" | "sms" | "whatsapp" | "chat")[];
 }
 
 export interface CulturalConsideration {
-  consideration_type: 'language' | 'religious' | 'dietary' | 'social' | 'accessibility';
+  consideration_type:
+    | "language"
+    | "religious"
+    | "dietary"
+    | "social"
+    | "accessibility";
   description: string;
   impact_on_treatment: string;
   recommended_approach: string;
@@ -418,7 +504,7 @@ export interface EscalationLevel {
   level: number;
   role_type: SenderType;
   response_time_minutes: number;
-  contact_methods: ('chat' | 'phone' | 'sms' | 'push_notification')[];
+  contact_methods: ("chat" | "phone" | "sms" | "push_notification")[];
   backup_contacts?: string[];
 }
 
@@ -459,7 +545,7 @@ export interface AIAssistantConfig {
 }
 
 export interface PrivacyConfig {
-  encryption_algorithm: 'AES-256' | 'ChaCha20';
+  encryption_algorithm: "AES-256" | "ChaCha20";
   key_rotation_days: number;
   message_retention_days: number;
   auto_deletion_enabled: boolean;
@@ -481,7 +567,7 @@ export interface PerformanceConfig {
 export interface IntegrationConfig {
   supabase_real_time: boolean;
   whatsapp_business_api: boolean;
-  sms_gateway: 'twilio' | 'aws_sns' | 'zenvia';
+  sms_gateway: "twilio" | "aws_sns" | "zenvia";
   email_notifications: boolean;
   push_notifications: boolean;
   calendar_integration: boolean;

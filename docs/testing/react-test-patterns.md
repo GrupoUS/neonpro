@@ -54,7 +54,7 @@ describe('Button Component', () => {
   it('should handle click events', () => {
     const handleClick = vi.fn()
     render(<Button onClick={handleClick}>Click me</Button>)
-    
+
     fireEvent.click(screen.getByRole('button'))
     expect(handleClick).toHaveBeenCalledTimes(1)
   })
@@ -82,7 +82,7 @@ import { mockPatient } from '../../../__tests__/fixtures/patient.fixtures'
 describe('PatientCard Component', () => {
   it('should display patient information correctly', () => {
     render(<PatientCard patient={mockPatient} />)
-    
+
     expect(screen.getByText(mockPatient.name)).toBeInTheDocument()
     expect(screen.getByText(mockPatient.cpf)).toBeInTheDocument()
     expect(screen.getByText(/idade: \d+/i)).toBeInTheDocument()
@@ -90,14 +90,14 @@ describe('PatientCard Component', () => {
 
   it('should mask sensitive information when privacy mode is enabled', () => {
     render(<PatientCard patient={mockPatient} privacyMode />)
-    
+
     expect(screen.getByText('***.***.***-**')).toBeInTheDocument()
     expect(screen.queryByText(mockPatient.cpf)).not.toBeInTheDocument()
   })
 
   it('should meet WCAG accessibility standards', () => {
     render(<PatientCard patient={mockPatient} />)
-    
+
     const card = screen.getByRole('article')
     expect(card).toHaveAttribute('aria-label', expect.stringContaining(mockPatient.name))
   })
@@ -105,7 +105,7 @@ describe('PatientCard Component', () => {
   it('should handle emergency status correctly', () => {
     const emergencyPatient = { ...mockPatient, status: 'emergency' }
     render(<PatientCard patient={emergencyPatient} />)
-    
+
     expect(screen.getByRole('alert')).toBeInTheDocument()
     expect(screen.getByText(/emergência/i)).toBeInTheDocument()
   })
@@ -135,7 +135,7 @@ const createWrapper = () => {
       mutations: { retry: false }
     }
   })
-  
+
   return ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       {children}
@@ -159,7 +159,7 @@ describe('PatientForm Integration', () => {
     await user.type(screen.getByLabelText(/nome completo/i), 'João Silva')
     await user.type(screen.getByLabelText(/cpf/i), '123.456.789-00')
     await user.type(screen.getByLabelText(/email/i), 'joao@email.com')
-    
+
     await user.click(screen.getByRole('button', { name: /salvar/i }))
 
     await waitFor(() => {
@@ -188,42 +188,42 @@ describe('PatientForm Integration', () => {
 ```typescript
 // fixtures/patient.fixtures.ts
 export const mockPatient = {
-  id: '123e4567-e89b-12d3-a456-426614174000',
-  name: 'João Silva Santos',
-  cpf: '123.456.789-00',
-  email: 'joao.silva@email.com',
-  phone: '(11) 99999-9999',
-  birthDate: '1990-01-15',
-  gender: 'M' as const,
+  id: "123e4567-e89b-12d3-a456-426614174000",
+  name: "João Silva Santos",
+  cpf: "123.456.789-00",
+  email: "joao.silva@email.com",
+  phone: "(11) 99999-9999",
+  birthDate: "1990-01-15",
+  gender: "M" as const,
   address: {
-    street: 'Rua das Flores, 123',
-    city: 'São Paulo',
-    state: 'SP',
-    zipCode: '01234-567'
+    street: "Rua das Flores, 123",
+    city: "São Paulo",
+    state: "SP",
+    zipCode: "01234-567",
   },
-  medicalRecord: '2024001',
-  status: 'active' as const,
-  createdAt: '2024-01-01T10:00:00Z',
-  updatedAt: '2024-01-01T10:00:00Z'
-}
+  medicalRecord: "2024001",
+  status: "active" as const,
+  createdAt: "2024-01-01T10:00:00Z",
+  updatedAt: "2024-01-01T10:00:00Z",
+};
 
 export const mockPatients = [
   mockPatient,
   {
     ...mockPatient,
-    id: '456e7890-e89b-12d3-a456-426614174001',
-    name: 'Maria Oliveira',
-    cpf: '987.654.321-00',
-    status: 'emergency' as const
-  }
-]
+    id: "456e7890-e89b-12d3-a456-426614174001",
+    name: "Maria Oliveira",
+    cpf: "987.654.321-00",
+    status: "emergency" as const,
+  },
+];
 ```
 
 ### 2. Mocks de Serviços
 
 ```typescript
 // mocks/supabase.mock.ts
-import { vi } from 'vitest'
+import { vi } from "vitest";
 
 export const mockSupabaseClient = {
   from: vi.fn(() => ({
@@ -233,14 +233,14 @@ export const mockSupabaseClient = {
     delete: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis()
+    limit: vi.fn().mockReturnThis(),
   })),
   auth: {
     getUser: vi.fn(),
     signIn: vi.fn(),
-    signOut: vi.fn()
-  }
-}
+    signOut: vi.fn(),
+  },
+};
 ```
 
 ### 3. Custom Render com Providers
@@ -301,14 +301,14 @@ describe('PatientCard Accessibility', () => {
   it('should support keyboard navigation', () => {
     render(<PatientCard patient={mockPatient} />)
     const card = screen.getByRole('article')
-    
+
     card.focus()
     expect(card).toHaveFocus()
   })
 
   it('should have proper ARIA labels for screen readers', () => {
     render(<PatientCard patient={mockPatient} />)
-    
+
     expect(screen.getByRole('article')).toHaveAttribute(
       'aria-label',
       `Paciente ${mockPatient.name}, CPF ${mockPatient.cpf}`
@@ -324,7 +324,7 @@ describe('Visual Accessibility', () => {
   it('should maintain color contrast ratios', () => {
     render(<Button variant="primary">Primary Button</Button>)
     const button = screen.getByRole('button')
-    
+
     const styles = window.getComputedStyle(button)
     // Verificar se o contraste atende WCAG AA (4.5:1)
     expect(getContrastRatio(styles.color, styles.backgroundColor)).toBeGreaterThan(4.5)
@@ -332,7 +332,7 @@ describe('Visual Accessibility', () => {
 
   it('should be usable without color alone', () => {
     render(<StatusBadge status="error" />)
-    
+
     // Deve ter ícone ou texto além da cor
     expect(screen.getByRole('img', { name: /erro/i })).toBeInTheDocument()
   })
@@ -365,7 +365,7 @@ describe('PatientList Performance', () => {
   it('should implement virtual scrolling for large lists', () => {
     const largeList = Array.from({ length: 10000 }, (_, i) => mockPatient)
     render(<VirtualizedPatientList patients={largeList} />)
-    
+
     // Apenas os itens visíveis devem estar no DOM
     expect(screen.getAllByRole('article')).toHaveLength(10) // viewport size
   })
@@ -387,7 +387,7 @@ const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } }
   })
-  
+
   return ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       {children}
@@ -472,27 +472,27 @@ describe('Form Validation', () => {
 
 ```typescript
 // setup.ts
-import '@testing-library/jest-dom'
-import { vi } from 'vitest'
+import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
 // Mock IntersectionObserver
 global.IntersectionObserver = vi.fn(() => ({
   observe: vi.fn(),
   disconnect: vi.fn(),
-  unobserve: vi.fn()
-}))
+  unobserve: vi.fn(),
+}));
 
 // Mock ResizeObserver
 global.ResizeObserver = vi.fn(() => ({
   observe: vi.fn(),
   disconnect: vi.fn(),
-  unobserve: vi.fn()
-}))
+  unobserve: vi.fn(),
+}));
 
 // Mock matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -500,57 +500,60 @@ Object.defineProperty(window, 'matchMedia', {
     removeListener: vi.fn(),
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn()
-  }))
-})
+    dispatchEvent: vi.fn(),
+  })),
+});
 ```
 
 ### 2. Configuração Vitest
 
 ```typescript
 // vitest.config.ts
-import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./src/__tests__/setup.ts'],
+    environment: "jsdom",
+    setupFiles: ["./src/__tests__/setup.ts"],
     coverage: {
-      reporter: ['text', 'json', 'html'],
+      reporter: ["text", "json", "html"],
       exclude: [
-        'node_modules/',
-        'src/__tests__/',
-        '**/*.d.ts',
-        '**/*.config.*',
-        '**/coverage/**'
-      ]
-    }
+        "node_modules/",
+        "src/__tests__/",
+        "**/*.d.ts",
+        "**/*.config.*",
+        "**/coverage/**",
+      ],
+    },
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
-    }
-  }
-})
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+});
 ```
 
 ## Métricas de Qualidade
 
 ### 1. Cobertura de Testes
+
 - **Mínimo**: 80% de cobertura geral
 - **Componentes críticos**: 95% de cobertura
 - **Utilitários**: 90% de cobertura
 
 ### 2. Performance
+
 - **Renderização**: < 100ms para componentes simples
 - **Interação**: < 50ms para resposta a eventos
 - **Carregamento**: < 200ms para componentes com dados
 
 ### 3. Acessibilidade
+
 - **WCAG AA**: Conformidade obrigatória
 - **Contraste**: Mínimo 4.5:1
 - **Navegação**: Suporte completo ao teclado
@@ -558,6 +561,7 @@ export default defineConfig({
 ## Checklist de Testes
 
 ### Para cada componente:
+
 - [ ] Renderização básica
 - [ ] Props obrigatórias e opcionais
 - [ ] Estados (loading, error, success)
@@ -568,6 +572,7 @@ export default defineConfig({
 - [ ] Casos extremos (edge cases)
 
 ### Para formulários:
+
 - [ ] Validação de campos
 - [ ] Submissão com dados válidos
 - [ ] Tratamento de erros
@@ -575,6 +580,7 @@ export default defineConfig({
 - [ ] Acessibilidade de formulários
 
 ### Para hooks:
+
 - [ ] Estados iniciais
 - [ ] Transições de estado
 - [ ] Cleanup de efeitos

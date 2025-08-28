@@ -46,42 +46,90 @@ export class DashboardPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    
+
     // Initialize main layout locators
-    this.header = page.locator('[data-testid="dashboard-header"], .dashboard-header, header');
-    this.sidebar = page.locator('[data-testid="dashboard-sidebar"], .dashboard-sidebar, .sidebar');
-    this.mainContent = page.locator('[data-testid="dashboard-content"], .dashboard-content, main');
+    this.header = page.locator(
+      '[data-testid="dashboard-header"], .dashboard-header, header',
+    );
+    this.sidebar = page.locator(
+      '[data-testid="dashboard-sidebar"], .dashboard-sidebar, .sidebar',
+    );
+    this.mainContent = page.locator(
+      '[data-testid="dashboard-content"], .dashboard-content, main',
+    );
     this.userMenu = page.locator('[data-testid="user-menu"], .user-menu');
-    this.logoutButton = page.locator('[data-testid="logout-button"], .logout-button');
-    this.profileButton = page.locator('[data-testid="profile-button"], .profile-button');
-    this.settingsButton = page.locator('[data-testid="settings-button"], .settings-button');
-    this.notificationsButton = page.locator('[data-testid="notifications-button"], .notifications-button');
-    this.searchInput = page.locator('[data-testid="search-input"], .search-input, input[placeholder*="Search"]');
+    this.logoutButton = page.locator(
+      '[data-testid="logout-button"], .logout-button',
+    );
+    this.profileButton = page.locator(
+      '[data-testid="profile-button"], .profile-button',
+    );
+    this.settingsButton = page.locator(
+      '[data-testid="settings-button"], .settings-button',
+    );
+    this.notificationsButton = page.locator(
+      '[data-testid="notifications-button"], .notifications-button',
+    );
+    this.searchInput = page.locator(
+      '[data-testid="search-input"], .search-input, input[placeholder*="Search"]',
+    );
 
     // Initialize dashboard widgets
-    this.welcomeCard = page.locator('[data-testid="welcome-card"], .welcome-card');
+    this.welcomeCard = page.locator(
+      '[data-testid="welcome-card"], .welcome-card',
+    );
     this.statsCards = page.locator('[data-testid="stats-card"], .stats-card');
-    this.recentPatientsCard = page.locator('[data-testid="recent-patients-card"], .recent-patients-card');
-    this.appointmentsCard = page.locator('[data-testid="appointments-card"], .appointments-card');
-    this.quickActionsCard = page.locator('[data-testid="quick-actions-card"], .quick-actions-card');
-    this.analyticsCard = page.locator('[data-testid="analytics-card"], .analytics-card');
+    this.recentPatientsCard = page.locator(
+      '[data-testid="recent-patients-card"], .recent-patients-card',
+    );
+    this.appointmentsCard = page.locator(
+      '[data-testid="appointments-card"], .appointments-card',
+    );
+    this.quickActionsCard = page.locator(
+      '[data-testid="quick-actions-card"], .quick-actions-card',
+    );
+    this.analyticsCard = page.locator(
+      '[data-testid="analytics-card"], .analytics-card',
+    );
 
     // Initialize navigation menu items
-    this.patientsMenuItem = page.locator('[data-testid="patients-menu"], a[href*="patients"]');
-    this.appointmentsMenuItem = page.locator('[data-testid="appointments-menu"], a[href*="appointments"]');
-    this.reportsMenuItem = page.locator('[data-testid="reports-menu"], a[href*="reports"]');
-    this.settingsMenuItem = page.locator('[data-testid="settings-menu"], a[href*="settings"]');
-    this.billingMenuItem = page.locator('[data-testid="billing-menu"], a[href*="billing"]');
+    this.patientsMenuItem = page.locator(
+      '[data-testid="patients-menu"], a[href*="patients"]',
+    );
+    this.appointmentsMenuItem = page.locator(
+      '[data-testid="appointments-menu"], a[href*="appointments"]',
+    );
+    this.reportsMenuItem = page.locator(
+      '[data-testid="reports-menu"], a[href*="reports"]',
+    );
+    this.settingsMenuItem = page.locator(
+      '[data-testid="settings-menu"], a[href*="settings"]',
+    );
+    this.billingMenuItem = page.locator(
+      '[data-testid="billing-menu"], a[href*="billing"]',
+    );
 
     // Initialize quick action buttons
-    this.addPatientButton = page.locator('[data-testid="add-patient-button"], .add-patient-button');
-    this.scheduleAppointmentButton = page.locator('[data-testid="schedule-appointment-button"], .schedule-appointment-button');
-    this.generateReportButton = page.locator('[data-testid="generate-report-button"], .generate-report-button');
-    this.viewCalendarButton = page.locator('[data-testid="view-calendar-button"], .view-calendar-button');
+    this.addPatientButton = page.locator(
+      '[data-testid="add-patient-button"], .add-patient-button',
+    );
+    this.scheduleAppointmentButton = page.locator(
+      '[data-testid="schedule-appointment-button"], .schedule-appointment-button',
+    );
+    this.generateReportButton = page.locator(
+      '[data-testid="generate-report-button"], .generate-report-button',
+    );
+    this.viewCalendarButton = page.locator(
+      '[data-testid="view-calendar-button"], .view-calendar-button',
+    );
 
     // Initialize state locators
-    this.loadingSpinner = page.locator('[data-testid="loading"], .loading, .spinner');
-    this.errorMessage = page.locator('[data-testid="error-message"], .error-message');
+    this.loadingSpinner = page.locator(
+      '[data-testid="loading"], .loading, .spinner',
+    );
+    this.errorMessage = page.locator(
+      '[data-testid="error-message"], .error-message',
+    );
     this.emptyState = page.locator('[data-testid="empty-state"], .empty-state');
   }
 
@@ -190,12 +238,16 @@ export class DashboardPage extends BasePage {
   }
 
   async getRecentPatientsCount(): Promise<number> {
-    const patientItems = this.recentPatientsCard.locator('.patient-item, [data-testid="patient-item"]');
+    const patientItems = this.recentPatientsCard.locator(
+      '.patient-item, [data-testid="patient-item"]',
+    );
     return await patientItems.count();
   }
 
   async getUpcomingAppointmentsCount(): Promise<number> {
-    const appointmentItems = this.appointmentsCard.locator('.appointment-item, [data-testid="appointment-item"]');
+    const appointmentItems = this.appointmentsCard.locator(
+      '.appointment-item, [data-testid="appointment-item"]',
+    );
     return await appointmentItems.count();
   }
 
@@ -214,7 +266,9 @@ export class DashboardPage extends BasePage {
     await this.expectElementToBeVisible(this.statsCards.first());
     const actualCount = await this.getStatsCardCount();
     if (actualCount !== expectedCount) {
-      throw new Error(`Expected ${expectedCount} stats cards, but found ${actualCount}`);
+      throw new Error(
+        `Expected ${expectedCount} stats cards, but found ${actualCount}`,
+      );
     }
   }
 
@@ -259,8 +313,10 @@ export class DashboardPage extends BasePage {
   async expectMobileLayoutToBeVisible() {
     // Check if sidebar is collapsed or hidden on mobile
     const sidebarVisible = await this.isElementVisible(this.sidebar);
-    const mobileMenuButton = this.page.locator('[data-testid="mobile-menu-button"], .mobile-menu-button');
-    
+    const mobileMenuButton = this.page.locator(
+      '[data-testid="mobile-menu-button"], .mobile-menu-button',
+    );
+
     if (!sidebarVisible) {
       await this.expectElementToBeVisible(mobileMenuButton);
     }
@@ -280,12 +336,18 @@ export class DashboardPage extends BasePage {
   }
 
   async expectAriaLabelsToBePresent() {
-    const menuItems = [this.patientsMenuItem, this.appointmentsMenuItem, this.reportsMenuItem];
-    
+    const menuItems = [
+      this.patientsMenuItem,
+      this.appointmentsMenuItem,
+      this.reportsMenuItem,
+    ];
+
     for (const item of menuItems) {
       const ariaLabel = await item.getAttribute("aria-label");
       if (!ariaLabel) {
-        throw new Error(`Menu item missing aria-label: ${await item.textContent()}`);
+        throw new Error(
+          `Menu item missing aria-label: ${await item.textContent()}`,
+        );
       }
     }
   }
@@ -295,9 +357,11 @@ export class DashboardPage extends BasePage {
     const startTime = Date.now();
     await this.waitForPageLoad();
     const loadTime = Date.now() - startTime;
-    
+
     if (loadTime > maxLoadTimeMs) {
-      throw new Error(`Dashboard loaded too slowly: ${loadTime}ms (max: ${maxLoadTimeMs}ms)`);
+      throw new Error(
+        `Dashboard loaded too slowly: ${loadTime}ms (max: ${maxLoadTimeMs}ms)`,
+      );
     }
   }
 
@@ -332,9 +396,9 @@ export class DashboardPage extends BasePage {
 
   // Utility methods for testing
   async takeScreenshotOfDashboard(name: string = "dashboard") {
-    await this.page.screenshot({ 
+    await this.page.screenshot({
       path: `tools/e2e/screenshots/${name}-${Date.now()}.png`,
-      fullPage: true 
+      fullPage: true,
     });
   }
 

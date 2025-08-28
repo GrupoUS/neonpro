@@ -2,9 +2,18 @@
 // Complete authentication lifecycle testing for NeonPro Healthcare
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getGlobalSupabaseMock, resetAllGlobalMocks } from "../../../../tools/tests/test-utils";
+import {
+  getGlobalSupabaseMock,
+  resetAllGlobalMocks,
+} from "../../../../tools/tests/test-utils";
 
 // Get the global mock that's configured in vitest.setup.ts
 let mockSupabaseClient: unknown;
@@ -75,7 +84,7 @@ const MockLoginComponent = () => {
 };
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
+const TestWrapper = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -87,7 +96,9 @@ const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
     },
   });
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
 };
 
 describe("authentication Flow Integration", () => {

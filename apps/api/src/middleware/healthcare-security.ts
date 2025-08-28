@@ -19,7 +19,7 @@ export enum HealthcareRole {
   EMERGENCY_PHYSICIAN = "emergency_physician", // Special role for emergency access
   HEALTHCARE_PROVIDER = "healthcare_provider", // Licensed professionals
   CLINIC_MANAGER = "clinic_manager",
-  CLINIC_STAFF = "clinic_staff", 
+  CLINIC_STAFF = "clinic_staff",
   PATIENT = "patient",
 }
 
@@ -52,69 +52,69 @@ interface HealthcareRateLimitConfig {
 // Enhanced healthcare rate limits
 const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
   {
-    endpoint: '/api/v1/patients',
+    endpoint: "/api/v1/patients",
     limits: {
-      general: { requests: 0, window: '1m' }, // No unauthenticated access
-      authenticated: { requests: 100, window: '1m' },
-      privileged: { requests: 500, window: '1m' },
-      emergency: { requests: 1000, window: '1m' }, // Higher limits for emergencies
+      general: { requests: 0, window: "1m" }, // No unauthenticated access
+      authenticated: { requests: 100, window: "1m" },
+      privileged: { requests: 500, window: "1m" },
+      emergency: { requests: 1000, window: "1m" }, // Higher limits for emergencies
     },
     patientDataAccess: true,
     emergencyBypass: true,
     requiresLicense: true,
-    description: 'Patient data CRUD operations',
+    description: "Patient data CRUD operations",
   },
   {
-    endpoint: '/api/v1/appointments',
+    endpoint: "/api/v1/appointments",
     limits: {
-      general: { requests: 10, window: '1m' }, // Limited public access for booking
-      authenticated: { requests: 200, window: '1m' },
-      privileged: { requests: 1000, window: '1m' },
-      emergency: { requests: 2000, window: '1m' },
+      general: { requests: 10, window: "1m" }, // Limited public access for booking
+      authenticated: { requests: 200, window: "1m" },
+      privileged: { requests: 1000, window: "1m" },
+      emergency: { requests: 2000, window: "1m" },
     },
     patientDataAccess: false,
     emergencyBypass: true,
     requiresLicense: false,
-    description: 'Appointment scheduling operations',
+    description: "Appointment scheduling operations",
   },
   {
-    endpoint: '/api/v1/medical-records',
+    endpoint: "/api/v1/medical-records",
     limits: {
-      general: { requests: 0, window: '1m' }, // No public access
-      authenticated: { requests: 50, window: '1m' },
-      privileged: { requests: 200, window: '1m' },
-      emergency: { requests: 500, window: '1m' },
+      general: { requests: 0, window: "1m" }, // No public access
+      authenticated: { requests: 50, window: "1m" },
+      privileged: { requests: 200, window: "1m" },
+      emergency: { requests: 500, window: "1m" },
     },
     patientDataAccess: true,
     emergencyBypass: true,
     requiresLicense: true,
-    description: 'Medical records access',
+    description: "Medical records access",
   },
   {
-    endpoint: '/api/v1/compliance',
+    endpoint: "/api/v1/compliance",
     limits: {
-      general: { requests: 0, window: '1m' },
-      authenticated: { requests: 20, window: '1m' },
-      privileged: { requests: 100, window: '1m' },
-      emergency: { requests: 50, window: '1m' }, // Limited emergency access to compliance
+      general: { requests: 0, window: "1m" },
+      authenticated: { requests: 20, window: "1m" },
+      privileged: { requests: 100, window: "1m" },
+      emergency: { requests: 50, window: "1m" }, // Limited emergency access to compliance
     },
     patientDataAccess: true,
     emergencyBypass: false, // Compliance data doesn't need emergency bypass
     requiresLicense: false,
-    description: 'LGPD compliance operations',
+    description: "LGPD compliance operations",
   },
   {
-    endpoint: '/api/v1/emergency',
+    endpoint: "/api/v1/emergency",
     limits: {
-      general: { requests: 0, window: '1m' },
-      authenticated: { requests: 10, window: '1m' },
-      privileged: { requests: 100, window: '1m' },
-      emergency: { requests: 1000, window: '1m' }, // Very high limits for emergency endpoints
+      general: { requests: 0, window: "1m" },
+      authenticated: { requests: 10, window: "1m" },
+      privileged: { requests: 100, window: "1m" },
+      emergency: { requests: 1000, window: "1m" }, // Very high limits for emergency endpoints
     },
     patientDataAccess: true,
     emergencyBypass: true,
     requiresLicense: true,
-    description: 'Emergency patient access',
+    description: "Emergency patient access",
   },
 ];
 
@@ -146,7 +146,7 @@ export interface EmergencyAccessContext {
   userId: string;
   patientId?: string;
   justification: string;
-  emergencyType: 'medical' | 'life_threatening' | 'urgent_care';
+  emergencyType: "medical" | "life_threatening" | "urgent_care";
   timestamp: Date;
   ipAddress: string;
   userAgent: string;
@@ -155,8 +155,8 @@ export interface EmergencyAccessContext {
 // Security audit logger
 class HealthcareSecurityLogger {
   static logEmergencyAccess(context: EmergencyAccessContext): void {
-    console.log('[EMERGENCY_ACCESS]', {
-      type: 'emergency_access_granted',
+    console.log("[EMERGENCY_ACCESS]", {
+      type: "emergency_access_granted",
       userId: context.userId,
       patientId: context.patientId,
       justification: context.justification,
@@ -177,8 +177,8 @@ class HealthcareSecurityLogger {
     attemptCount: number;
     timestamp: Date;
   }): void {
-    console.log('[SUSPICIOUS_ACTIVITY]', details);
-    
+    console.log("[SUSPICIOUS_ACTIVITY]", details);
+
     // TODO: Integrate with security monitoring system
   }
 
@@ -188,7 +188,7 @@ class HealthcareSecurityLogger {
     attemptedResource: string;
     timestamp: Date;
   }): void {
-    console.log('[LICENSE_VIOLATION]', details);
+    console.log("[LICENSE_VIOLATION]", details);
 
     // TODO: Alert compliance team
   }
@@ -199,7 +199,7 @@ class HealthcareSecurityLogger {
     reason: string;
     timestamp: Date;
   }): void {
-    console.log('[UNAUTHORIZED_ACCESS]', details);
+    console.log("[UNAUTHORIZED_ACCESS]", details);
 
     // TODO: Alert security team
   }
@@ -210,7 +210,7 @@ class HealthcareSecurityLogger {
     cipherSuite?: string;
     timestamp: Date;
   }): void {
-    console.log('[WEAK_TLS]', details);
+    console.log("[WEAK_TLS]", details);
 
     // TODO: Alert infrastructure team
   }
@@ -221,45 +221,51 @@ class HealthcareSecurityLogger {
     timestamp: Date;
     validationSuccess: boolean;
   }): void {
-    console.log('[DATA_VALIDATION]', details);
+    console.log("[DATA_VALIDATION]", details);
   }
 
   static logValidationFailure(details: {
     userId?: string;
-    errors: any[];
+    errors: unknown[];
     endpoint: string;
     timestamp: Date;
   }): void {
-    console.log('[VALIDATION_FAILURE]', details);
+    console.log("[VALIDATION_FAILURE]", details);
   }
 }
 
 // Mock professional license validator (production should integrate with CFM/regional councils)
 class ProfessionalLicenseValidator {
   private static mockLicenses: Map<string, ProfessionalLicense> = new Map([
-    ['CRM123456SP', {
-      licenseNumber: 'CRM123456SP',
-      licenseType: ProfessionalLicenseType.CRM,
-      state: 'SP',
-      issuedDate: new Date('2020-01-01'),
-      expirationDate: new Date('2025-12-31'),
-      isActive: true,
-      lastValidated: new Date(),
-    }],
-    ['CRF789012RJ', {
-      licenseNumber: 'CRF789012RJ',
-      licenseType: ProfessionalLicenseType.CRF,
-      state: 'RJ',
-      issuedDate: new Date('2019-03-15'),
-      expirationDate: new Date('2024-03-14'),
-      isActive: true,
-      lastValidated: new Date(),
-    }],
+    [
+      "CRM123456SP",
+      {
+        licenseNumber: "CRM123456SP",
+        licenseType: ProfessionalLicenseType.CRM,
+        state: "SP",
+        issuedDate: new Date("2020-01-01"),
+        expirationDate: new Date("2025-12-31"),
+        isActive: true,
+        lastValidated: new Date(),
+      },
+    ],
+    [
+      "CRF789012RJ",
+      {
+        licenseNumber: "CRF789012RJ",
+        licenseType: ProfessionalLicenseType.CRF,
+        state: "RJ",
+        issuedDate: new Date("2019-03-15"),
+        expirationDate: new Date("2024-03-14"),
+        isActive: true,
+        lastValidated: new Date(),
+      },
+    ],
   ]);
 
   static async validateLicense(licenseNumber: string): Promise<boolean> {
     const license = this.mockLicenses.get(licenseNumber);
-    
+
     if (!license) {
       return false;
     }
@@ -277,58 +283,70 @@ class ProfessionalLicenseValidator {
     return isValid;
   }
 
-  static async getLicense(licenseNumber: string): Promise<ProfessionalLicense | null> {
+  static async getLicense(
+    licenseNumber: string,
+  ): Promise<ProfessionalLicense | null> {
     return this.mockLicenses.get(licenseNumber) || null;
   }
 }
 
 // Enhanced rate limiting with healthcare context
 export const createHealthcareRateLimiter = (
-  config: HealthcareRateLimitConfig
+  config: HealthcareRateLimitConfig,
 ): MiddlewareHandler => {
   return async (c, next) => {
-    const user = c.get('user') as HealthcareUser;
-    const userRole = user?.role || 'anonymous';
-    const isEmergency = c.req.header('X-Emergency-Access') === 'true';
-    const emergencyJustification = c.req.header('X-Emergency-Justification');
+    const user = c.get("user") as HealthcareUser;
+    const userRole = user?.role || "anonymous";
+    const isEmergency = c.req.header("X-Emergency-Access") === "true";
+    const emergencyJustification = c.req.header("X-Emergency-Justification");
 
     // Emergency bypass for critical patient access
-    if (config.emergencyBypass && isEmergency && userRole === HealthcareRole.EMERGENCY_PHYSICIAN) {
+    if (
+      config.emergencyBypass &&
+      isEmergency &&
+      userRole === HealthcareRole.EMERGENCY_PHYSICIAN
+    ) {
       if (!emergencyJustification) {
-        return c.json({
-          error: 'Emergency access requires justification',
-          code: 'EMERGENCY_JUSTIFICATION_REQUIRED',
-        }, 400);
+        return c.json(
+          {
+            error: "Emergency access requires justification",
+            code: "EMERGENCY_JUSTIFICATION_REQUIRED",
+          },
+          400,
+        );
       }
 
       // Log emergency access for audit
       HealthcareSecurityLogger.logEmergencyAccess({
         userId: user.id,
         justification: emergencyJustification,
-        emergencyType: c.req.header('X-Emergency-Type') as any || 'medical',
+        emergencyType: (c.req.header("X-Emergency-Type") as "medical" | "life_threatening" | "urgent_care") || "medical",
         timestamp: new Date(),
-        ipAddress: c.req.header('CF-Connecting-IP') || 'unknown',
-        userAgent: c.req.header('User-Agent') || 'unknown',
+        ipAddress: c.req.header("CF-Connecting-IP") || "unknown",
+        userAgent: c.req.header("User-Agent") || "unknown",
       });
 
       // Apply emergency rate limits but allow higher throughput
       const emergencyLimit = config.limits.emergency;
       const key = `emergency:${user.id}:${config.endpoint}`;
-      
+
       // TODO: Implement actual rate limit checking with Redis/memory store
       // For now, just log and continue
-      c.res.headers.set('X-Rate-Limit-Emergency', 'true');
-      c.res.headers.set('X-Rate-Limit-Limit', emergencyLimit.requests.toString());
-      
+      c.res.headers.set("X-Rate-Limit-Emergency", "true");
+      c.res.headers.set(
+        "X-Rate-Limit-Limit",
+        emergencyLimit.requests.toString(),
+      );
+
       return next();
     }
 
     // Validate professional license for license-required endpoints
     if (config.requiresLicense && user?.professionalLicense) {
       const licenseValid = await ProfessionalLicenseValidator.validateLicense(
-        user.professionalLicense.licenseNumber
+        user.professionalLicense.licenseNumber,
       );
-      
+
       if (!licenseValid) {
         HealthcareSecurityLogger.logLicenseViolation({
           userId: user.id,
@@ -336,12 +354,15 @@ export const createHealthcareRateLimiter = (
           attemptedResource: config.endpoint,
           timestamp: new Date(),
         });
-        
-        return c.json({
-          error: 'Invalid or expired professional license',
-          code: 'LICENSE_INVALID',
-          licenseNumber: user.professionalLicense.licenseNumber,
-        }, 403);
+
+        return c.json(
+          {
+            error: "Invalid or expired professional license",
+            code: "LICENSE_INVALID",
+            licenseNumber: user.professionalLicense.licenseNumber,
+          },
+          403,
+        );
       }
     }
 
@@ -364,20 +385,27 @@ export const createHealthcareRateLimiter = (
 
     // Generate rate limit key
     const getUserKey = (user: HealthcareUser | null, ip: string) => {
-      return user ? `user:${user.id}:${config.endpoint}` : `ip:${ip}:${config.endpoint}`;
+      return user
+        ? `user:${user.id}:${config.endpoint}`
+        : `ip:${ip}:${config.endpoint}`;
     };
 
     const key = getUserKey(
       user,
-      c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+      c.req.header("CF-Connecting-IP") ||
+        c.req.header("X-Forwarded-For") ||
+        "unknown",
     );
 
     // TODO: Implement actual rate limiting with Redis
     // For now, set headers and continue
-    c.res.headers.set('X-Rate-Limit-Limit', limit.requests.toString());
-    c.res.headers.set('X-Rate-Limit-Window', limit.window);
-    c.res.headers.set('X-Healthcare-Endpoint', 'true');
-    c.res.headers.set('X-Patient-Data-Access', config.patientDataAccess.toString());
+    c.res.headers.set("X-Rate-Limit-Limit", limit.requests.toString());
+    c.res.headers.set("X-Rate-Limit-Window", limit.window);
+    c.res.headers.set("X-Healthcare-Endpoint", "true");
+    c.res.headers.set(
+      "X-Patient-Data-Access",
+      config.patientDataAccess.toString(),
+    );
 
     return next();
   };
@@ -390,18 +418,18 @@ export class HealthcareAuthMiddleware {
     try {
       // TODO: Implement proper JWT verification with jose library
       // Mock implementation for now
-      if (token === 'mock-healthcare-token') {
+      if (token === "mock-healthcare-token") {
         return {
-          id: 'user_123',
-          email: 'doctor@neonpro.com',
+          id: "user_123",
+          email: "doctor@neonpro.com",
           role: HealthcareRole.HEALTHCARE_PROVIDER,
-          clinicId: 'clinic_123',
+          clinicId: "clinic_123",
           professionalLicense: {
-            licenseNumber: 'CRM123456SP',
+            licenseNumber: "CRM123456SP",
             licenseType: ProfessionalLicenseType.CRM,
-            state: 'SP',
-            issuedDate: new Date('2020-01-01'),
-            expirationDate: new Date('2025-12-31'),
+            state: "SP",
+            issuedDate: new Date("2020-01-01"),
+            expirationDate: new Date("2025-12-31"),
             isActive: true,
             lastValidated: new Date(),
           },
@@ -409,9 +437,9 @@ export class HealthcareAuthMiddleware {
         };
       }
 
-      throw new Error('Invalid token');
+      throw new Error("Invalid token");
     } catch (error) {
-      throw new Error('Invalid healthcare credentials');
+      throw new Error("Invalid healthcare credentials");
     }
   }
 
@@ -419,7 +447,7 @@ export class HealthcareAuthMiddleware {
   static async authorizeHealthcareAccess(
     user: HealthcareUser,
     resource: string,
-    action: string
+    action: string,
   ): Promise<boolean> {
     // Admin has full access
     if (user.role === HealthcareRole.ADMIN) {
@@ -447,10 +475,10 @@ export class HealthcareAuthMiddleware {
   private static authorizePatientAccess(
     user: HealthcareUser,
     resource: string,
-    action: string
+    action: string,
   ): boolean {
     // Patients can only read their own data
-    if (action !== 'read') {
+    if (action !== "read") {
       return false;
     }
 
@@ -461,14 +489,14 @@ export class HealthcareAuthMiddleware {
   private static async authorizeProviderAccess(
     user: HealthcareUser,
     resource: string,
-    action: string
+    action: string,
   ): Promise<boolean> {
     // Verify professional license is active
     if (user.professionalLicense) {
       const licenseValid = await ProfessionalLicenseValidator.validateLicense(
-        user.professionalLicense.licenseNumber
+        user.professionalLicense.licenseNumber,
       );
-      
+
       if (!licenseValid) {
         HealthcareSecurityLogger.logLicenseViolation({
           userId: user.id,
@@ -481,15 +509,15 @@ export class HealthcareAuthMiddleware {
     }
 
     // Check clinic access permissions
-    const hasClinicAccess = user.clinicIds?.some(clinicId => 
-      resource.includes(clinicId)
-    ) || (user.clinicId && resource.includes(user.clinicId));
+    const hasClinicAccess =
+      user.clinicIds?.some((clinicId) => resource.includes(clinicId)) ||
+      (user.clinicId && resource.includes(user.clinicId));
 
     if (!hasClinicAccess) {
       HealthcareSecurityLogger.logUnauthorizedAccess({
         userId: user.id,
         resource,
-        reason: 'clinic_access_denied',
+        reason: "clinic_access_denied",
         timestamp: new Date(),
       });
       return false;
@@ -501,15 +529,15 @@ export class HealthcareAuthMiddleware {
   private static authorizeStaffAccess(
     user: HealthcareUser,
     resource: string,
-    action: string
+    action: string,
   ): boolean {
     // Staff can access data within their clinic
-    const hasClinicAccess = user.clinicIds?.some(clinicId => 
-      resource.includes(clinicId)
-    ) || (user.clinicId && resource.includes(user.clinicId));
+    const hasClinicAccess =
+      user.clinicIds?.some((clinicId) => resource.includes(clinicId)) ||
+      (user.clinicId && resource.includes(user.clinicId));
 
     // Staff typically can't delete critical data
-    if (action === 'delete' && resource.includes('patient')) {
+    if (action === "delete" && resource.includes("patient")) {
       return false;
     }
 
@@ -521,21 +549,28 @@ export class HealthcareAuthMiddleware {
 export const validateTLSMiddleware = (): MiddlewareHandler => {
   return async (c, next) => {
     // Verify HTTPS is being used
-    const protocol = c.req.header('x-forwarded-proto') || c.req.header('x-forwarded-protocol');
-    
-    if (!protocol?.includes('https')) {
-      return c.json({
-        error: 'HTTPS required for healthcare data',
-        code: 'HTTPS_REQUIRED',
-      }, 400);
+    const protocol =
+      c.req.header("x-forwarded-proto") || c.req.header("x-forwarded-protocol");
+
+    if (!protocol?.includes("https")) {
+      return c.json(
+        {
+          error: "HTTPS required for healthcare data",
+          code: "HTTPS_REQUIRED",
+        },
+        400,
+      );
     }
 
     // Set security headers
-    c.res.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-    c.res.headers.set('X-Content-Type-Options', 'nosniff');
-    c.res.headers.set('X-Frame-Options', 'DENY');
-    c.res.headers.set('X-XSS-Protection', '1; mode=block');
-    c.res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    c.res.headers.set(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains; preload",
+    );
+    c.res.headers.set("X-Content-Type-Options", "nosniff");
+    c.res.headers.set("X-Frame-Options", "DENY");
+    c.res.headers.set("X-XSS-Protection", "1; mode=block");
+    c.res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
     return next();
   };
@@ -545,23 +580,32 @@ export const validateTLSMiddleware = (): MiddlewareHandler => {
 export const healthcareSecurityUtils = {
   // Validate professional license
   validateLicense: ProfessionalLicenseValidator.validateLicense,
-  
+
   // Get license information
   getLicense: ProfessionalLicenseValidator.getLicense,
-  
+
   // Security logging
   logger: HealthcareSecurityLogger,
-  
+
   // Check emergency access requirements
   requiresEmergencyJustification: (endpoint: string): boolean => {
-    const config = HEALTHCARE_RATE_LIMITS.find(c => endpoint.startsWith(c.endpoint));
+    const config = HEALTHCARE_RATE_LIMITS.find((c) =>
+      endpoint.startsWith(c.endpoint),
+    );
     return config?.emergencyBypass === true;
   },
 
   // Get rate limit configuration for endpoint
   getRateLimitConfig: (endpoint: string): HealthcareRateLimitConfig | null => {
-    return HEALTHCARE_RATE_LIMITS.find(c => endpoint.startsWith(c.endpoint)) || null;
+    return (
+      HEALTHCARE_RATE_LIMITS.find((c) => endpoint.startsWith(c.endpoint)) ||
+      null
+    );
   },
 };
 
-export { HEALTHCARE_RATE_LIMITS, ProfessionalLicenseValidator, HealthcareSecurityLogger };
+export {
+  HEALTHCARE_RATE_LIMITS,
+  ProfessionalLicenseValidator,
+  HealthcareSecurityLogger,
+};

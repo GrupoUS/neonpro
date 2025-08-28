@@ -21,7 +21,7 @@ export { MobileBottomNavigation, MobileNavigation } from "./MobileNavigation";
 export interface MobileNavigationItem {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string; }>;
+  icon: React.ComponentType<{ className?: string }>;
   badge?: string;
   category: "main" | "dashboard" | "tools" | "settings";
   description?: string;

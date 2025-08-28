@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
-  transpilePackages: ["@neonpro/ui", "@neonpro/utils", "@neonpro/domain", "@neonpro/database"],
+  transpilePackages: [
+    "@neonpro/ui",
+    "@neonpro/utils",
+    "@neonpro/domain",
+    "@neonpro/database",
+  ],
 
   // HEALTHCARE PRODUCTION OPTIMIZATION
   compress: true, // Enable gzip compression for production
@@ -16,7 +21,11 @@ const nextConfig = {
 
   // Performance optimization
   experimental: {
-    optimizePackageImports: ["@neonpro/ui", "lucide-react", "@radix-ui/react-icons"],
+    optimizePackageImports: [
+      "@neonpro/ui",
+      "lucide-react",
+      "@radix-ui/react-icons",
+    ],
     turbo: {
       resolveAlias: {
         "@/": "./",

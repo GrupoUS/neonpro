@@ -212,7 +212,8 @@ describe("/api/analytics/export", () => {
           format: "pdf",
           data: mockExportData,
         },
-      }));
+      }),
+    );
 
     const responses = await Promise.all(
       requests.map(({ req, res }) => handler(req, res)),

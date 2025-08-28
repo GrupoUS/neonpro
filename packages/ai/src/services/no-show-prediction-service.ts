@@ -2,7 +2,11 @@
 // Machine learning-powered prediction system to reduce appointment no-shows
 
 import type { LoggerService, MetricsService } from "@neonpro/core-services";
-import type { ABTestResult, DriftDetectionResult, ModelVersion } from "@neonpro/types";
+import type {
+  ABTestResult,
+  DriftDetectionResult,
+  ModelVersion,
+} from "@neonpro/types";
 import type { AIServiceConfig, CacheService } from "./enhanced-service-base";
 import { EnhancedAIService } from "./enhanced-service-base";
 import { MLPipelineManagementService } from "./ml-pipeline-management";
@@ -415,16 +419,22 @@ export class NoShowPredictionService extends EnhancedAIService<
     // Patient features
     features.patient_age = patientProfile.age;
     features.patient_distance_km = patientProfile.location_distance_km;
-    features.chronic_conditions_count = patientProfile.chronic_conditions.length;
-    features.medication_adherence_score = patientProfile.medication_adherence_score;
-    features.communication_channels_count = patientProfile.communication_preferences.length;
+    features.chronic_conditions_count =
+      patientProfile.chronic_conditions.length;
+    features.medication_adherence_score =
+      patientProfile.medication_adherence_score;
+    features.communication_channels_count =
+      patientProfile.communication_preferences.length;
 
     // Categorical patient features (one-hot encoded)
     features.gender_male = patientProfile.gender === "male" ? 1 : 0;
     features.gender_female = patientProfile.gender === "female" ? 1 : 0;
-    features.insurance_private = patientProfile.insurance_type === "private" ? 1 : 0;
-    features.insurance_public = patientProfile.insurance_type === "public" ? 1 : 0;
-    features.employment_employed = patientProfile.employment_status === "employed" ? 1 : 0;
+    features.insurance_private =
+      patientProfile.insurance_type === "private" ? 1 : 0;
+    features.insurance_public =
+      patientProfile.insurance_type === "public" ? 1 : 0;
+    features.employment_employed =
+      patientProfile.employment_status === "employed" ? 1 : 0;
 
     // Appointment features
     features.is_first_appointment = appointmentContext.is_first_appointment
@@ -442,15 +452,18 @@ export class NoShowPredictionService extends EnhancedAIService<
 
     // Preparation complexity (ordinal encoding)
     const complexityMap = { none: 0, simple: 1, moderate: 2, complex: 3 };
-    features.preparation_complexity = complexityMap[appointmentContext.preparation_complexity];
+    features.preparation_complexity =
+      complexityMap[appointmentContext.preparation_complexity];
 
     // Appointment type (one-hot encoded)
-    features.appt_type_consultation = appointmentContext.appointment_type === "consultation"
-      ? 1
-      : 0;
-    features.appt_type_followup = appointmentContext.appointment_type === "follow_up" ? 1 : 0;
-    features.appt_type_exam = appointmentContext.appointment_type === "exam" ? 1 : 0;
-    features.appt_type_procedure = appointmentContext.appointment_type === "procedure" ? 1 : 0;
+    features.appt_type_consultation =
+      appointmentContext.appointment_type === "consultation" ? 1 : 0;
+    features.appt_type_followup =
+      appointmentContext.appointment_type === "follow_up" ? 1 : 0;
+    features.appt_type_exam =
+      appointmentContext.appointment_type === "exam" ? 1 : 0;
+    features.appt_type_procedure =
+      appointmentContext.appointment_type === "procedure" ? 1 : 0;
 
     // Time-based features
     const appointmentDate = new Date(appointmentContext.scheduled_datetime);
@@ -458,7 +471,8 @@ export class NoShowPredictionService extends EnhancedAIService<
     features.day_of_week = appointmentDate.getDay();
     features.day_of_month = appointmentDate.getDate();
     features.month = appointmentDate.getMonth() + 1;
-    features.is_weekend = appointmentDate.getDay() === 0 || appointmentDate.getDay() === 6 ? 1 : 0;
+    features.is_weekend =
+      appointmentDate.getDay() === 0 || appointmentDate.getDay() === 6 ? 1 : 0;
     features.is_monday = appointmentDate.getDay() === 1 ? 1 : 0;
     features.is_friday = appointmentDate.getDay() === 5 ? 1 : 0;
 
@@ -479,29 +493,37 @@ export class NoShowPredictionService extends EnhancedAIService<
       appointmentContext.specialty,
     );
 
-    features.patient_historical_no_show_rate = historicalData.patient_no_show_rate;
-    features.clinic_historical_no_show_rate = historicalData.clinic_no_show_rate;
-    features.doctor_historical_no_show_rate = historicalData.doctor_no_show_rate;
-    features.specialty_historical_no_show_rate = historicalData.specialty_no_show_rate;
-    features.timeslot_historical_no_show_rate = historicalData.time_slot_no_show_rate;
+    features.patient_historical_no_show_rate =
+      historicalData.patient_no_show_rate;
+    features.clinic_historical_no_show_rate =
+      historicalData.clinic_no_show_rate;
+    features.doctor_historical_no_show_rate =
+      historicalData.doctor_no_show_rate;
+    features.specialty_historical_no_show_rate =
+      historicalData.specialty_no_show_rate;
+    features.timeslot_historical_no_show_rate =
+      historicalData.time_slot_no_show_rate;
 
     // External factors
     if (externalFactors) {
-      features.weather_bad = externalFactors.weather_conditions === "rainy"
-          || externalFactors.weather_conditions === "snowy"
-          || externalFactors.weather_conditions === "stormy"
-        ? 1
-        : 0;
+      features.weather_bad =
+        externalFactors.weather_conditions === "rainy" ||
+        externalFactors.weather_conditions === "snowy" ||
+        externalFactors.weather_conditions === "stormy"
+          ? 1
+          : 0;
 
-      features.traffic_heavy = externalFactors.traffic_conditions === "heavy"
-          || externalFactors.traffic_conditions === "severe"
-        ? 1
-        : 0;
+      features.traffic_heavy =
+        externalFactors.traffic_conditions === "heavy" ||
+        externalFactors.traffic_conditions === "severe"
+          ? 1
+          : 0;
 
-      features.transport_disrupted = externalFactors.public_transport_status === "disrupted"
-          || externalFactors.public_transport_status === "strike"
-        ? 1
-        : 0;
+      features.transport_disrupted =
+        externalFactors.public_transport_status === "disrupted" ||
+        externalFactors.public_transport_status === "strike"
+          ? 1
+          : 0;
 
       features.holiday_proximity = Math.max(
         0,
@@ -550,8 +572,9 @@ export class NoShowPredictionService extends EnhancedAIService<
     }
 
     // Calculate confidence based on feature completeness and historical accuracy
-    const featureCompleteness = Object.values(features).filter((v) => v !== 0).length
-      / Object.keys(features).length;
+    const featureCompleteness =
+      Object.values(features).filter((v) => v !== 0).length /
+      Object.keys(features).length;
     const { 7: baseConfidence } = 0; // Base confidence of the model
     const confidence = Math.min(0.95, baseConfidence * featureCompleteness);
 
@@ -764,8 +787,8 @@ export class NoShowPredictionService extends EnhancedAIService<
       }
 
       if (
-        scenario.changes.incentives
-        && scenario.changes.incentives.length > 0
+        scenario.changes.incentives &&
+        scenario.changes.incentives.length > 0
       ) {
         impactReduction += 0.12; // 12% reduction
         implementationCost += 5; // $5 per appointment
@@ -776,19 +799,23 @@ export class NoShowPredictionService extends EnhancedAIService<
         implementationCost += 3; // $3 per appointment
       }
 
-      const costPerAppointment = scenario.estimated_cost_per_appointment || implementationCost;
+      const costPerAppointment =
+        scenario.estimated_cost_per_appointment || implementationCost;
       const estimatedSavings = 15; // Average cost of no-show
-      const roi = ((estimatedSavings * impactReduction - costPerAppointment)
-        / costPerAppointment)
-        * 100;
+      const roi =
+        ((estimatedSavings * impactReduction - costPerAppointment) /
+          costPerAppointment) *
+        100;
 
       analyses.push({
         scenario_name: scenario.name,
         predicted_no_show_reduction: Math.min(0.8, impactReduction), // Cap at 80% reduction
-        cost_benefit_ratio: roi > 0
-          ? (estimatedSavings * impactReduction) / costPerAppointment
-          : 0,
-        implementation_difficulty: this.assessImplementationDifficulty(scenario),
+        cost_benefit_ratio:
+          roi > 0
+            ? (estimatedSavings * impactReduction) / costPerAppointment
+            : 0,
+        implementation_difficulty:
+          this.assessImplementationDifficulty(scenario),
         expected_roi_percent: roi,
         risk_factors: this.identifyRiskFactors(scenario),
         success_prerequisites: this.identifyPrerequisites(scenario),
@@ -957,10 +984,11 @@ export class NoShowPredictionService extends EnhancedAIService<
     deployment_status: string;
   }> {
     try {
-      const modelVersion = await mlPipelineManagementService.createAndDeployModel(
-        config,
-        environment,
-      );
+      const modelVersion =
+        await mlPipelineManagementService.createAndDeployModel(
+          config,
+          environment,
+        );
 
       // Update local model version reference
       this.modelVersion = modelVersion.version_number;
@@ -1027,9 +1055,10 @@ export class NoShowPredictionService extends EnhancedAIService<
     try {
       const driftResult = await mlPipelineManagementService.checkModelHealth();
 
-      const requiresRetraining = driftResult.drift_detected
-        && (driftResult.drift_severity === "high"
-          || driftResult.drift_severity === "critical");
+      const requiresRetraining =
+        driftResult.drift_detected &&
+        (driftResult.drift_severity === "high" ||
+          driftResult.drift_severity === "critical");
 
       if (requiresRetraining) {
       }

@@ -15,7 +15,7 @@ const cancelRequestSchema = z.object({
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string; }>; },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -90,11 +90,13 @@ export async function POST(
     const { data: updatedNfe, error: updateError } = await supabase
       .from("nfe_documents")
       .update({
-        status: cancelResult.status === "cancelled" ? "cancelled" : "authorized",
+        status:
+          cancelResult.status === "cancelled" ? "cancelled" : "authorized",
         cancellation_code: cancelResult.id,
-        cancellation_date: cancelResult.status === "cancelled"
-          ? cancelResult.cancelled_at || new Date().toISOString()
-          : undefined,
+        cancellation_date:
+          cancelResult.status === "cancelled"
+            ? cancelResult.cancelled_at || new Date().toISOString()
+            : undefined,
         cancellation_reason: cancelResult.cancellation_reason || reason,
         updated_at: new Date().toISOString(),
       })

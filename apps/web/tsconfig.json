@@ -7,11 +7,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "target": "es2015",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es2021"
-    ],
+    "lib": ["dom", "dom.iterable", "es2021"],
     "allowJs": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -32,120 +28,45 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@/components/*": [
-        "./components/*"
-      ],
-      "@/lib/*": [
-        "./lib/*"
-      ],
-      "@/styles/*": [
-        "./styles/*"
-      ],
-      "@/types/*": [
-        "./types/*"
-      ],
-      "@/hooks/*": [
-        "./hooks/*"
-      ],
-      "@/utils/*": [
-        "./utils/*"
-      ],
-      "@/app/*": [
-        "./app/*"
-      ],
-      "@neonpro/ui": [
-        "../../packages/ui/src"
-      ],
-      "@neonpro/ui/*": [
-        "../../packages/ui/src/*"
-      ],
-      "@neonpro/ai": [
-        "../../packages/ai/src"
-      ],
-      "@neonpro/ai/*": [
-        "../../packages/ai/src/*"
-      ],
-      "@neonpro/types": [
-        "../../packages/types/src"
-      ],
-      "@neonpro/types/*": [
-        "../../packages/types/src/*"
-      ],
-      "@neonpro/utils": [
-        "../../packages/utils/src"
-      ],
-      "@neonpro/utils/*": [
-        "../../packages/utils/src/*"
-      ],
-      "@neonpro/domain": [
-        "../../packages/domain/src"
-      ],
-      "@neonpro/domain/*": [
-        "../../packages/domain/src/*"
-      ],
-      "@neonpro/core-services": [
-        "../../packages/core-services/src"
-      ],
-      "@neonpro/core-services/*": [
-        "../../packages/core-services/src/*"
-      ],
-      "@neonpro/compliance": [
-        "../../packages/compliance/src"
-      ],
-      "@neonpro/compliance/*": [
-        "../../packages/compliance/src/*"
-      ],
-      "@neonpro/security": [
-        "../../packages/security/src"
-      ],
-      "@neonpro/security/*": [
-        "../../packages/security/src/*"
-      ],
-      "@neonpro/auth": [
-        "../../packages/auth/src"
-      ],
-      "@neonpro/auth/*": [
-        "../../packages/auth/src/*"
-      ],
-      "@neonpro/database": [
-        "../../packages/database/src"
-      ],
-      "@neonpro/database/*": [
-        "../../packages/database/src/*"
-      ],
-      "@neonpro/cache": [
-        "../../packages/cache/src"
-      ],
-      "@neonpro/cache/*": [
-        "../../packages/cache/src/*"
-      ],
-      "@neonpro/monitoring": [
-        "../../packages/monitoring/src"
-      ],
-      "@neonpro/monitoring/*": [
-        "../../packages/monitoring/src/*"
-      ],
-      "@neonpro/enterprise": [
-        "../../packages/enterprise/src"
-      ],
-      "@neonpro/enterprise/*": [
-        "../../packages/enterprise/src/*"
-      ],
-      "qrcode.react": [
-        "./lib/placeholders/qrcode-react"
-      ]
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/styles/*": ["./styles/*"],
+      "@/types/*": ["./types/*"],
+      "@/hooks/*": ["./hooks/*"],
+      "@/utils/*": ["./utils/*"],
+      "@/app/*": ["./app/*"],
+      "@neonpro/ui": ["../../packages/ui/src"],
+      "@neonpro/ui/*": ["../../packages/ui/src/*"],
+      "@neonpro/ai": ["../../packages/ai/src"],
+      "@neonpro/ai/*": ["../../packages/ai/src/*"],
+      "@neonpro/types": ["../../packages/types/src"],
+      "@neonpro/types/*": ["../../packages/types/src/*"],
+      "@neonpro/utils": ["../../packages/utils/src"],
+      "@neonpro/utils/*": ["../../packages/utils/src/*"],
+      "@neonpro/domain": ["../../packages/domain/src"],
+      "@neonpro/domain/*": ["../../packages/domain/src/*"],
+      "@neonpro/core-services": ["../../packages/core-services/src"],
+      "@neonpro/core-services/*": ["../../packages/core-services/src/*"],
+      "@neonpro/compliance": ["../../packages/compliance/src"],
+      "@neonpro/compliance/*": ["../../packages/compliance/src/*"],
+      "@neonpro/security": ["../../packages/security/src"],
+      "@neonpro/security/*": ["../../packages/security/src/*"],
+      "@neonpro/auth": ["../../packages/auth/src"],
+      "@neonpro/auth/*": ["../../packages/auth/src/*"],
+      "@neonpro/database": ["../../packages/database/src"],
+      "@neonpro/database/*": ["../../packages/database/src/*"],
+      "@neonpro/cache": ["../../packages/cache/src"],
+      "@neonpro/cache/*": ["../../packages/cache/src/*"],
+      "@neonpro/monitoring": ["../../packages/monitoring/src"],
+      "@neonpro/monitoring/*": ["../../packages/monitoring/src/*"],
+      "@neonpro/enterprise": ["../../packages/enterprise/src"],
+      "@neonpro/enterprise/*": ["../../packages/enterprise/src/*"],
+      "qrcode.react": ["./lib/placeholders/qrcode-react"]
     },
     "noEmit": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "next-env.d.ts",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
   "exclude": [
     "node_modules",
     ".next/types/**/*",

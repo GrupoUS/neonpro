@@ -151,8 +151,7 @@ const mockCommunications = {
       },
       {
         id: 5,
-        text:
-          "Perfeito! Isso é esperado nas primeiras 24-48h. Continue com os cuidados que orientei.",
+        text: "Perfeito! Isso é esperado nas primeiras 24-48h. Continue com os cuidados que orientei.",
         timestamp: "2024-08-18T14:00:00Z",
         from: "doctor",
         type: "text",
@@ -288,7 +287,9 @@ function ConversationList({
                     <h3 className="truncate font-medium text-sm">
                       {conversation.participant.name}
                     </h3>
-                    {conversation.isPinned && <Pin className="h-3 w-3 text-muted-foreground" />}
+                    {conversation.isPinned && (
+                      <Pin className="h-3 w-3 text-muted-foreground" />
+                    )}
                   </div>
                   <div className="flex items-center space-x-1">
                     <span className="text-muted-foreground text-xs">
@@ -370,7 +371,8 @@ function ChatWindow({ conversation }: unknown) {
             <div>
               <h3 className="font-medium">{conversation.participant.name}</h3>
               <p className="text-muted-foreground text-sm">
-                {conversation.participant.role} • {conversation.participant.clinic}
+                {conversation.participant.role} •{" "}
+                {conversation.participant.clinic}
               </p>
               <p className="text-green-600 text-xs">
                 {conversation.participant.isOnline ? "Online" : "Offline"}
@@ -546,7 +548,9 @@ function NotificationsList({ notifications }: unknown) {
               </div>
 
               <div className="flex items-center space-x-1">
-                {!notification.read && <div className="h-2 w-2 rounded-full bg-primary" />}
+                {!notification.read && (
+                  <div className="h-2 w-2 rounded-full bg-primary" />
+                )}
                 <Button size="sm" variant="ghost">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
@@ -725,16 +729,16 @@ export function CommunicationHub() {
             {/* Chat Window */}
             <div className="lg:col-span-2">
               <Card className="h-[600px]">
-                {selectedConversation
-                  ? <ChatWindow conversation={selectedConversation} />
-                  : (
-                    <CardContent className="flex h-full items-center justify-center">
-                      <div className="text-center text-muted-foreground">
-                        <MessageCircle className="mx-auto mb-4 h-12 w-12" />
-                        <p>Selecione uma conversa para começar</p>
-                      </div>
-                    </CardContent>
-                  )}
+                {selectedConversation ? (
+                  <ChatWindow conversation={selectedConversation} />
+                ) : (
+                  <CardContent className="flex h-full items-center justify-center">
+                    <div className="text-center text-muted-foreground">
+                      <MessageCircle className="mx-auto mb-4 h-12 w-12" />
+                      <p>Selecione uma conversa para começar</p>
+                    </div>
+                  </CardContent>
+                )}
               </Card>
             </div>
           </div>

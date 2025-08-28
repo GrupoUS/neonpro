@@ -282,9 +282,8 @@ export class RequestRouter {
       }
 
       // Route to service
-      const response = await this.circuitBreaker.execute(
-        route.service,
-        () => this.forwardRequest(request, route, authContext),
+      const response = await this.circuitBreaker.execute(route.service, () =>
+        this.forwardRequest(request, route, authContext),
       );
 
       // Record metrics

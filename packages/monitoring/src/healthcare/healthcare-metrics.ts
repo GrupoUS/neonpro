@@ -8,17 +8,17 @@ export interface HealthcareMetrics {
   patientDataAccessTime: number;
   appointmentBookingSuccessRate: number;
   emergencyAccessResponseTime: number;
-  
-  // Compliance Metrics  
+
+  // Compliance Metrics
   auditLogCompleteness: number;
   dataRetentionCompliance: boolean;
   consentValidationRate: number;
-  
+
   // System Performance
   apiResponseTimes: ResponseTimeMetrics;
   databaseQueryPerformance: DatabaseMetrics;
   realTimeEventLatency: number;
-  
+
   // Business Metrics
   systemAvailabilityUptime: number;
   userSessionDuration: number;

@@ -232,7 +232,8 @@ export class EnterpriseAuditService {
 
     if (query.patientId) {
       filteredRecords = filteredRecords.filter(
-        (r) => (r.details as Record<string, unknown>)?.patientId === query.patientId,
+        (r) =>
+          (r.details as Record<string, unknown>)?.patientId === query.patientId,
       );
     }
 
@@ -244,7 +245,8 @@ export class EnterpriseAuditService {
 
     // Sort by timestamp (newest first)
     filteredRecords.sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
 
     const { length: total } = filteredRecords;
@@ -448,7 +450,7 @@ export class EnterpriseAuditService {
   async performForensicAnalysis(
     targetUserId?: string,
     targetPatientId?: string,
-    timeWindow?: { start: Date; end: Date; },
+    timeWindow?: { start: Date; end: Date },
   ): Promise<{
     timeline: AuditRecord[];
     patterns: {
@@ -469,7 +471,8 @@ export class EnterpriseAuditService {
 
     const result = await this.queryAuditRecords(query);
     const timeline = result.records.sort(
-      (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
     );
 
     // Pattern analysis
@@ -557,8 +560,8 @@ export class EnterpriseAuditService {
 
   private getRetentionPolicy(category: string): RetentionPolicy {
     return (
-      this.retentionPolicies.find((p) => p.category === category)
-      || this.retentionPolicies.find((p) => p.category === "general")!
+      this.retentionPolicies.find((p) => p.category === category) ||
+      this.retentionPolicies.find((p) => p.category === "general")!
     );
   }
 
@@ -594,7 +597,11 @@ export class EnterpriseAuditService {
     for (const [key, value] of Object.entries(data)) {
       if (this.isSensitiveField(key)) {
         const iv = crypto.randomBytes(16);
-        const cipher = crypto.createCipheriv("aes-256-cbc", this.encryptionKey, iv);
+        const cipher = crypto.createCipheriv(
+          "aes-256-cbc",
+          this.encryptionKey,
+          iv,
+        );
         let encryptedValue = cipher.update(
           JSON.stringify(value),
           "utf8",
@@ -617,7 +624,9 @@ export class EnterpriseAuditService {
     }
 
     const decrypted: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
+    for (const [key, value] of Object.entries(
+      data as Record<string, unknown>,
+    )) {
       if (typeof value === "string" && value.startsWith("encrypted:")) {
         try {
           const encryptedData = value.replace("encrypted:", "");
@@ -664,33 +673,33 @@ export class EnterpriseAuditService {
 
   private isLGPDRelevant(event: AuditEvent): boolean {
     return (
-      event.eventType.toLowerCase().includes("patient")
-      || event.eventType.toLowerCase().includes("personal")
-      || (event.details as Record<string, unknown>)?.patientId !== undefined
+      event.eventType.toLowerCase().includes("patient") ||
+      event.eventType.toLowerCase().includes("personal") ||
+      (event.details as Record<string, unknown>)?.patientId !== undefined
     );
   }
 
   private isANVISARelevant(event: AuditEvent): boolean {
     return (
-      event.eventType.toLowerCase().includes("medical")
-      || event.eventType.toLowerCase().includes("treatment")
-      || event.eventType.toLowerCase().includes("prescription")
+      event.eventType.toLowerCase().includes("medical") ||
+      event.eventType.toLowerCase().includes("treatment") ||
+      event.eventType.toLowerCase().includes("prescription")
     );
   }
 
   private isCFMRelevant(event: AuditEvent): boolean {
     return (
-      event.eventType.toLowerCase().includes("doctor")
-      || event.eventType.toLowerCase().includes("medical")
-      || (event.details as Record<string, unknown>)?.doctorId !== undefined
+      event.eventType.toLowerCase().includes("doctor") ||
+      event.eventType.toLowerCase().includes("medical") ||
+      (event.details as Record<string, unknown>)?.doctorId !== undefined
     );
   }
 
   private isISO27001Relevant(event: AuditEvent): boolean {
     return (
-      event.eventType.toLowerCase().includes("security")
-      || event.eventType.toLowerCase().includes("access")
-      || event.eventType.toLowerCase().includes("auth")
+      event.eventType.toLowerCase().includes("security") ||
+      event.eventType.toLowerCase().includes("access") ||
+      event.eventType.toLowerCase().includes("auth")
     );
   }
 
@@ -700,8 +709,8 @@ export class EnterpriseAuditService {
 
     // Check for data access without proper authorization
     if (
-      record.eventType.includes("PATIENT_DATA_ACCESS")
-      && !(record.details as Record<string, unknown>)?.authorized
+      record.eventType.includes("PATIENT_DATA_ACCESS") &&
+      !(record.details as Record<string, unknown>)?.authorized
     ) {
       violations.push("Unauthorized patient data access");
     }
@@ -711,9 +720,9 @@ export class EnterpriseAuditService {
       const recentFailures = this.auditChain
         .filter(
           (r) =>
-            r.eventType.includes("LOGIN_FAILED")
-            && (r.details as Record<string, unknown>)?.userId
-              === (record.details as Record<string, unknown>)?.userId,
+            r.eventType.includes("LOGIN_FAILED") &&
+            (r.details as Record<string, unknown>)?.userId ===
+              (record.details as Record<string, unknown>)?.userId,
         )
         .filter(
           (r) => Date.now() - new Date(r.timestamp).getTime() < 60 * 60 * 1000,
@@ -778,14 +787,16 @@ export class EnterpriseAuditService {
 
     // Analyze patterns for compliance violations
     const violations = records.filter(
-      (r) => r.eventType.includes("VIOLATION") || r.eventType.includes("FAILED"),
+      (r) =>
+        r.eventType.includes("VIOLATION") || r.eventType.includes("FAILED"),
     );
 
     if (violations.length > 0) {
       findings.push({
         severity: "high",
         description: `${violations.length} compliance violations detected`,
-        recommendation: "Review security policies and implement additional controls",
+        recommendation:
+          "Review security policies and implement additional controls",
         affectedRecords: violations.length,
       });
     }
@@ -793,12 +804,15 @@ export class EnterpriseAuditService {
     // Type-specific analysis
     switch (type) {
       case "lgpd": {
-        const dataAccess = records.filter((r) => r.eventType.includes("PATIENT_DATA_ACCESS"));
+        const dataAccess = records.filter((r) =>
+          r.eventType.includes("PATIENT_DATA_ACCESS"),
+        );
         if (dataAccess.length > 1000) {
           findings.push({
             severity: "medium",
             description: "High volume of patient data access",
-            recommendation: "Implement additional access controls and monitoring",
+            recommendation:
+              "Implement additional access controls and monitoring",
             affectedRecords: dataAccess.length,
           });
         }
@@ -823,26 +837,27 @@ export class EnterpriseAuditService {
     const highIssues = findings.filter((f) => f.severity === "high").length;
     const mediumIssues = findings.filter((f) => f.severity === "medium").length;
 
-    const score = 100 - criticalIssues * 30 - highIssues * 15 - mediumIssues * 5;
+    const score =
+      100 - criticalIssues * 30 - highIssues * 15 - mediumIssues * 5;
     return Math.max(0, Math.min(100, score));
   }
 
   private getEventSeverity(record: AuditRecord): string {
     if (
-      record.eventType.includes("CRITICAL")
-      || record.eventType.includes("BREACH")
+      record.eventType.includes("CRITICAL") ||
+      record.eventType.includes("BREACH")
     ) {
       return "critical";
     }
     if (
-      record.eventType.includes("VIOLATION")
-      || record.eventType.includes("FAILED")
+      record.eventType.includes("VIOLATION") ||
+      record.eventType.includes("FAILED")
     ) {
       return "high";
     }
     if (
-      record.eventType.includes("WARNING")
-      || record.eventType.includes("SUSPICIOUS")
+      record.eventType.includes("WARNING") ||
+      record.eventType.includes("SUSPICIOUS")
     ) {
       return "medium";
     }
@@ -863,7 +878,9 @@ export class EnterpriseAuditService {
     const patterns = [];
 
     // Analyze access patterns
-    const accessPatterns = records.filter((r) => r.eventType.includes("ACCESS"));
+    const accessPatterns = records.filter((r) =>
+      r.eventType.includes("ACCESS"),
+    );
     if (accessPatterns.length > 0) {
       patterns.push({
         type: "data_access",
@@ -884,8 +901,11 @@ export class EnterpriseAuditService {
     const recommendations = [];
 
     patterns.forEach((pattern) => {
-      const typedPattern = pattern as { riskLevel?: string; type?: string; };
-      if (typedPattern.riskLevel === "high" || typedPattern.riskLevel === "critical") {
+      const typedPattern = pattern as { riskLevel?: string; type?: string };
+      if (
+        typedPattern.riskLevel === "high" ||
+        typedPattern.riskLevel === "critical"
+      ) {
         recommendations.push(
           `Investigate ${typedPattern.type} patterns showing high frequency`,
         );

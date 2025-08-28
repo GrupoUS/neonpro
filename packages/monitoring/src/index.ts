@@ -21,7 +21,10 @@
 // ============================================================================
 
 // Web Vitals monitoring with healthcare optimization
-export { HEALTHCARE_THRESHOLDS, HealthcareWebVitals } from "./web-vitals/core-web-vitals";
+export {
+  HEALTHCARE_THRESHOLDS,
+  HealthcareWebVitals,
+} from "./web-vitals/core-web-vitals";
 
 // Metric collectors for comprehensive monitoring
 export { AIMetricsCollector } from "./collectors/ai-metrics-collector";
@@ -99,7 +102,9 @@ export class HealthcarePerformanceMonitor {
    * Start comprehensive monitoring with real-time streaming
    */
   async startMonitoring(): Promise<void> {
-    if (!this.config.enabled) {return;}
+    if (!this.config.enabled) {
+      return;
+    }
 
     try {
       // Start Web Vitals monitoring
@@ -215,7 +220,9 @@ export class HealthcarePerformanceMonitor {
    */
   private logHealthcareAudit(metric: PerformanceMetric): void {
     // Implementation for healthcare audit logging
-    console.log(`📊 [AUDIT] ${metric.name}: ${metric.value} (${metric.timestamp})`);
+    console.log(
+      `📊 [AUDIT] ${metric.name}: ${metric.value} (${metric.timestamp})`,
+    );
   }
 }
 
@@ -227,7 +234,9 @@ export class HealthcarePerformanceMonitor {
 export const healthcareMonitor = new HealthcarePerformanceMonitor();
 
 // Utility functions for quick setup
-export const startHealthcareMonitoring = async (config?: Partial<ConsolidatedMonitoringConfig>) => {
+export const startHealthcareMonitoring = async (
+  config?: Partial<ConsolidatedMonitoringConfig>,
+) => {
   const monitor = new HealthcarePerformanceMonitor(config);
   await monitor.startMonitoring();
   return monitor;

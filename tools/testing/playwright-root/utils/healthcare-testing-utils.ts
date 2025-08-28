@@ -210,8 +210,8 @@ export class HealthcarePerformanceHelper {
       );
     });
 
-    const [loadTime] = performanceEntries?.loadEventEnd
-      - performanceEntries[0]?.navigationStart;
+    const [loadTime] =
+      performanceEntries?.loadEventEnd - performanceEntries[0]?.navigationStart;
     expect(loadTime).toBeLessThan(2000); // <2s page load
   }
 

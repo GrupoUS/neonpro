@@ -107,7 +107,9 @@ test.describe("Authentication Security Tests", () => {
         );
         await page.fill('[data-testid="professional-password"]', "password123");
 
-        const response = page.waitForResponse((res) => res.url().includes("/api/auth/login"));
+        const response = page.waitForResponse((res) =>
+          res.url().includes("/api/auth/login"),
+        );
         await page.click('[data-testid="login-button"]');
         const loginResponse = await response;
 
@@ -218,7 +220,9 @@ test.describe("Authentication Security Tests", () => {
       );
       await page.fill('[data-testid="professional-password"]', "invalid-pass");
 
-      const response = page.waitForResponse((res) => res.url().includes("/api/auth/login"));
+      const response = page.waitForResponse((res) =>
+        res.url().includes("/api/auth/login"),
+      );
       await page.click('[data-testid="login-button"]');
       const loginResponse = await response;
 
@@ -255,7 +259,8 @@ test.describe("Authentication Security Tests", () => {
     // Check session cookie security
     const cookies = await page.context().cookies();
     const sessionCookie = cookies.find(
-      (cookie) => cookie.name.includes("session") || cookie.name.includes("token"),
+      (cookie) =>
+        cookie.name.includes("session") || cookie.name.includes("token"),
     );
 
     if (sessionCookie) {
@@ -285,7 +290,9 @@ test.describe("Data Protection Security Tests", () => {
     await page.goto("/api/patients/123");
 
     // Intercept API response to check data format
-    const response = await page.waitForResponse((res) => res.url().includes("/api/patients/123"));
+    const response = await page.waitForResponse((res) =>
+      res.url().includes("/api/patients/123"),
+    );
     const data = await response.json();
 
     // Sensitive fields should be encrypted or not directly exposed
@@ -322,12 +329,14 @@ test.describe("Data Protection Security Tests", () => {
           mimeType: file.name.endsWith(".pdf")
             ? "application/pdf"
             : file.name.endsWith(".jpg")
-            ? "image/jpeg"
-            : "application/octet-stream",
+              ? "image/jpeg"
+              : "application/octet-stream",
           buffer,
         });
 
-        const response = page.waitForResponse((res) => res.url().includes("/api/upload"));
+        const response = page.waitForResponse((res) =>
+          res.url().includes("/api/upload"),
+        );
         await page.click('[data-testid="upload-submit"]');
         const uploadResponse = await response;
 
@@ -352,7 +361,7 @@ test.describe("Data Protection Security Tests", () => {
 
     // Should redirect to login or return 401/403
     const response = await page.waitForResponse((res) =>
-      res.url().includes("/api/patients/123/medical-records")
+      res.url().includes("/api/patients/123/medical-records"),
     );
     expect([401, 403]).toContain(response.status());
 
@@ -371,9 +380,10 @@ test.describe("Data Protection Security Tests", () => {
 
     // Should be blocked
     await page.waitForTimeout(2000);
-    const accessDenied = page.url().includes("/access-denied")
-      || page.url().includes("/unauthorized")
-      || (await page.locator('[data-testid="access-denied"]').count()) > 0;
+    const accessDenied =
+      page.url().includes("/access-denied") ||
+      page.url().includes("/unauthorized") ||
+      (await page.locator('[data-testid="access-denied"]').count()) > 0;
 
     expect(accessDenied).toBe(true);
   });
@@ -416,7 +426,8 @@ test.describe("LGPD Compliance Security Tests", () => {
     await page.goto("/patients/register");
 
     // Should still require explicit consent
-    const consentRequired = (await page.locator('[data-testid="lgpd-consent"]').count()) > 0;
+    const consentRequired =
+      (await page.locator('[data-testid="lgpd-consent"]').count()) > 0;
     expect(consentRequired).toBe(true);
   });
 
@@ -493,9 +504,9 @@ test.describe("Infrastructure Security Tests", () => {
     const externalResponses = responses.filter(
       (r) =>
         !(
-          r.url.includes("localhost")
-          || r.url.includes("127.0.0.1")
-          || r.url.startsWith("data:")
+          r.url.includes("localhost") ||
+          r.url.includes("127.0.0.1") ||
+          r.url.startsWith("data:")
         ),
     );
 

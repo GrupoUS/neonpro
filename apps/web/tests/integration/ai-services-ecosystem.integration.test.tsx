@@ -29,15 +29,16 @@ interface TestConfig {
 const TEST_CONFIG: TestConfig = {
   api: {
     test_api_base_url: process.env.TEST_API_BASE_URL || "http://localhost:3000",
-    production_api_base_url: process.env.PRODUCTION_API_BASE_URL
-      || "https://api.neonpro.healthcare",
+    production_api_base_url:
+      process.env.PRODUCTION_API_BASE_URL || "https://api.neonpro.healthcare",
     timeout_ms: 30_000,
     max_retries: 3,
   },
   supabase: {
     test_url: process.env.TEST_SUPABASE_URL || "http://localhost:54321",
     test_anon_key: process.env.TEST_SUPABASE_ANON_KEY || "test-anon-key",
-    test_service_role_key: process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
+    test_service_role_key:
+      process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
   },
   ai_services: {
     feature_flags_enabled: true,
@@ -270,7 +271,8 @@ class AIServicesEcosystemTester {
   }
 
   private static async generateTestReport(): Promise<void> {
-    const testDuration = Date.now() - AIServicesEcosystemTester.context.testStartTime;
+    const testDuration =
+      Date.now() - AIServicesEcosystemTester.context.testStartTime;
     const metrics = Object.fromEntries(
       AIServicesEcosystemTester.context.serviceMetrics,
     );
@@ -797,11 +799,9 @@ class AIServicesEcosystemTester {
     expect(avgResponseTime).toBeLessThan(5000); // Average response time under 5 seconds
 
     console.log(
-      `Load Test Results: ${successRate.toFixed(2)}% success rate, ${
-        avgResponseTime.toFixed(
-          2,
-        )
-      }ms avg response time`,
+      `Load Test Results: ${successRate.toFixed(2)}% success rate, ${avgResponseTime.toFixed(
+        2,
+      )}ms avg response time`,
     );
 
     AIServicesEcosystemTester.context.serviceMetrics.set(

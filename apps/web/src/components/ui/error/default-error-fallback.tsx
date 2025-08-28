@@ -7,13 +7,18 @@ interface DefaultErrorFallbackProps {
   resetError: () => void;
 }
 
-export function DefaultErrorFallback({ error, resetError }: DefaultErrorFallbackProps) {
+export function DefaultErrorFallback({
+  error,
+  resetError,
+}: DefaultErrorFallbackProps) {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-md w-full bg-white border border-red-200 rounded-lg p-6 shadow-lg">
         <div className="flex items-center space-x-3 mb-4">
           <AlertTriangle className="h-6 w-6 text-red-600" />
-          <h2 className="text-lg font-semibold text-red-900">Algo deu errado</h2>
+          <h2 className="text-lg font-semibold text-red-900">
+            Algo deu errado
+          </h2>
         </div>
 
         <p className="text-gray-600 mb-4">

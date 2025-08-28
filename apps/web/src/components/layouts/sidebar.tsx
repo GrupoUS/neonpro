@@ -2,7 +2,16 @@
 
 import { cn } from "@/lib/utils";
 import { Dialog, Transition } from "@headlessui/react";
-import { Calendar, FileText, Home, Menu, Shield, User, Users, X } from "lucide-react";
+import {
+  Calendar,
+  FileText,
+  Home,
+  Menu,
+  Shield,
+  User,
+  Users,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";
@@ -51,7 +60,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     >
                       <item.icon
                         className={cn(
-                          isActive ? "text-white" : "text-blue-200 group-hover:text-white",
+                          isActive
+                            ? "text-white"
+                            : "text-blue-200 group-hover:text-white",
                           "h-6 w-6 shrink-0",
                         )}
                         aria-hidden="true"
@@ -106,7 +117,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   leaveTo="opacity-0"
                 >
                   <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
-                    <button type="button" className="-m-2.5 p-2.5" onClick={onClose}>
+                    <button
+                      type="button"
+                      className="-m-2.5 p-2.5"
+                      onClick={onClose}
+                    >
                       <span className="sr-only">Fechar sidebar</span>
                       <X className="h-6 w-6 text-white" aria-hidden="true" />
                     </button>

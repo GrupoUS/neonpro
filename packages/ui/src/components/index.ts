@@ -27,14 +27,25 @@ export {
 } from "./Breadcrumb";
 export type { ButtonProps } from "./Button";
 export { Button } from "./Button";
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./Card";
+export {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./Card";
 export { Checkbox } from "./Checkbox";
 // Chat Components
 export { default as ChatInterface } from "./chat/ChatInterface";
 export type { DashboardLayoutProps } from "./DashboardLayout";
 // Layout Components
 export { DashboardLayout } from "./DashboardLayout";
-export type { DashboardSidebarProps, SidebarItem, UserProfile } from "./DashboardSidebar";
+export type {
+  DashboardSidebarProps,
+  SidebarItem,
+  UserProfile,
+} from "./DashboardSidebar";
 export { DashboardSidebar } from "./DashboardSidebar";
 export type { DatePickerProps } from "./DatePicker";
 export { DatePicker } from "./DatePicker";
@@ -48,7 +59,10 @@ export type { LabelProps } from "./Label";
 export { Label } from "./Label";
 export type { PatientCardProps, PatientData } from "./PatientCard";
 export { PatientCard } from "./PatientCard";
-export type { PatientDetailLayoutProps, PatientTab } from "./PatientDetailLayout";
+export type {
+  PatientDetailLayoutProps,
+  PatientTab,
+} from "./PatientDetailLayout";
 export { PatientDetailLayout } from "./PatientDetailLayout";
 export type {
   PatientTableAction,

@@ -46,13 +46,20 @@ export function RouterProvider({ children }: RouterProviderProps) {
   return (
     <>
       <TanStackRouterProvider router={router} />
-      {process.env.NODE_ENV === "development" && <TanStackRouterDevtools router={router} />}
+      {process.env.NODE_ENV === "development" && (
+        <TanStackRouterDevtools router={router} />
+      )}
     </>
   );
 }
 
 // Router navigation hooks for use throughout the app
-export { useLocation, useNavigate, useParams, useSearch } from "@tanstack/react-router";
+export {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearch,
+} from "@tanstack/react-router";
 
 // Healthcare-specific navigation utilities
 export function useHealthcareNavigation() {
@@ -153,8 +160,8 @@ export function useRoutePermissions() {
   return {
     canAccessPatients: () => {
       return (
-        user
-        && ["clinic_owner", "clinic_manager", "professional"].includes(user.role)
+        user &&
+        ["clinic_owner", "clinic_manager", "professional"].includes(user.role)
       );
     },
 
@@ -176,8 +183,8 @@ export function useRoutePermissions() {
 
     canCreatePatient: () => {
       return (
-        user
-        && ["clinic_owner", "clinic_manager", "professional"].includes(user.role)
+        user &&
+        ["clinic_owner", "clinic_manager", "professional"].includes(user.role)
       );
     },
 
@@ -203,8 +210,8 @@ export function useRoutePermissions() {
 
     canScheduleAppointment: () => {
       return (
-        user
-        && ["clinic_owner", "clinic_manager", "professional"].includes(user.role)
+        user &&
+        ["clinic_owner", "clinic_manager", "professional"].includes(user.role)
       );
     },
   };

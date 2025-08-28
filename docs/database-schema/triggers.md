@@ -1,11 +1,13 @@
 # Database Triggers - NeonPro Advanced Aesthetic Platform
 
 ## Overview
+
 Automated triggers for audit trails, compliance enforcement, and advanced aesthetic data protection.
 
 ## Audit Trail Triggers
 
 ### patients_audit_trigger
+
 **Table**: patients
 **Event**: INSERT, UPDATE, DELETE
 **Timing**: AFTER
@@ -20,6 +22,7 @@ CREATE TRIGGER patients_audit_trigger
 ```
 
 ### appointments_audit_trigger
+
 **Table**: appointments  
 **Event**: INSERT, UPDATE, DELETE
 **Timing**: AFTER
@@ -34,6 +37,7 @@ CREATE TRIGGER appointments_audit_trigger
 ```
 
 ### medical_records_audit_trigger
+
 **Table**: medical_records
 **Event**: INSERT, UPDATE, DELETE
 **Timing**: AFTER
@@ -50,6 +54,7 @@ CREATE TRIGGER medical_records_audit_trigger
 ## Timestamp Management Triggers
 
 ### patients_updated_at_trigger
+
 **Table**: patients
 **Event**: UPDATE
 **Timing**: BEFORE
@@ -64,6 +69,7 @@ CREATE TRIGGER patients_updated_at_trigger
 ```
 
 ### appointments_updated_at_trigger
+
 **Table**: appointments
 **Event**: UPDATE
 **Timing**: BEFORE
@@ -80,6 +86,7 @@ CREATE TRIGGER appointments_updated_at_trigger
 ## Data Encryption Triggers
 
 ### patients_encrypt_sensitive_data
+
 **Table**: patients
 **Event**: INSERT, UPDATE
 **Timing**: BEFORE
@@ -96,6 +103,7 @@ CREATE TRIGGER patients_encrypt_sensitive_data
 ## Compliance Validation Triggers
 
 ### consent_validation_trigger
+
 **Table**: medical_records, appointments, treatments
 **Event**: INSERT, UPDATE
 **Timing**: BEFORE
@@ -110,6 +118,7 @@ CREATE TRIGGER consent_validation_trigger
 ```
 
 ### professional_access_validation
+
 **Table**: medical_records
 **Event**: INSERT, UPDATE
 **Timing**: BEFORE
@@ -126,6 +135,7 @@ CREATE TRIGGER professional_access_validation
 ## AI Integration Triggers
 
 ### appointment_no_show_prediction
+
 **Table**: appointments
 **Event**: INSERT, UPDATE
 **Timing**: AFTER
@@ -140,6 +150,7 @@ CREATE TRIGGER appointment_no_show_prediction
 ```
 
 ### ai_chat_content_sanitization
+
 **Table**: ai_chat_messages
 **Event**: INSERT, UPDATE
 **Timing**: BEFORE
@@ -156,6 +167,7 @@ CREATE TRIGGER ai_chat_content_sanitization
 ## Financial Triggers
 
 ### payment_transaction_audit
+
 **Table**: payment_transactions
 **Event**: INSERT, UPDATE, DELETE
 **Timing**: AFTER
@@ -170,6 +182,7 @@ CREATE TRIGGER payment_transaction_audit
 ```
 
 ### payment_reconciliation_trigger
+
 **Table**: payment_transactions
 **Event**: UPDATE
 **Timing**: AFTER
@@ -187,6 +200,7 @@ CREATE TRIGGER payment_reconciliation_trigger
 ## Business Rule Enforcement Triggers
 
 ### appointment_conflict_prevention
+
 **Table**: appointments
 **Event**: INSERT, UPDATE
 **Timing**: BEFORE
@@ -201,6 +215,7 @@ CREATE TRIGGER appointment_conflict_prevention
 ```
 
 ### professional_license_validation
+
 **Table**: appointments, medical_records
 **Event**: INSERT, UPDATE
 **Timing**: BEFORE
@@ -217,6 +232,7 @@ CREATE TRIGGER professional_license_validation
 ## Data Retention Triggers
 
 ### automatic_data_archival
+
 **Table**: medical_records, appointments
 **Event**: UPDATE
 **Timing**: AFTER
@@ -234,6 +250,7 @@ CREATE TRIGGER automatic_data_archival
 ## Performance Optimization Triggers
 
 ### search_vector_update
+
 **Table**: patients, professionals
 **Event**: INSERT, UPDATE
 **Timing**: BEFORE
@@ -250,6 +267,7 @@ CREATE TRIGGER search_vector_update
 ## Error Handling Triggers
 
 ### failed_operation_logging
+
 **Table**: ALL (via event triggers)
 **Event**: ERROR
 **Timing**: AFTER

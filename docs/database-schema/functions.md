@@ -1,11 +1,13 @@
 # Database Functions - NeonPro Healthcare Platform
 
 ## Overview
+
 Custom database functions for healthcare operations, compliance automation, and AI integration.
 
 ## Healthcare Compliance Functions
 
 ### encrypt_patient_data
+
 **Purpose**: Encrypt sensitive patient information (CPF, name, birth_date)
 **Parameters**: `data_text text`, `encryption_key text`
 **Returns**: `text` (encrypted data)
@@ -21,6 +23,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
 ### decrypt_patient_data
+
 **Purpose**: Decrypt sensitive patient information for authorized access
 **Parameters**: `encrypted_data text`, `encryption_key text`
 **Returns**: `text` (decrypted data)
@@ -38,6 +41,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ## LGPD Compliance Functions
 
 ### anonymize_patient_data
+
 **Purpose**: Anonymize patient data for LGPD Right to Erasure compliance
 **Parameters**: `patient_uuid uuid`
 **Returns**: `boolean` (success status)
@@ -48,24 +52,25 @@ CREATE OR REPLACE FUNCTION anonymize_patient_data(patient_uuid uuid)
 RETURNS boolean AS $$
 BEGIN
   -- Anonymize patient data while preserving statistical integrity
-  UPDATE patients 
-  SET 
+  UPDATE patients
+  SET
     cpf = 'ANONYMIZED_' || extract(epoch from now()),
     name = 'ANONYMIZED_PATIENT_' || id,
     birth_date = '1900-01-01',
     anonymized_at = NOW()
   WHERE id = patient_uuid;
-  
+
   -- Log anonymization action
   INSERT INTO audit_logs (action, table_name, record_id, performed_by, timestamp)
   VALUES ('ANONYMIZE_PATIENT', 'patients', patient_uuid, 'SYSTEM_LGPD', NOW());
-  
+
   RETURN FOUND;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
 ### validate_lgpd_consent
+
 **Purpose**: Validate patient consent for data processing
 **Parameters**: `patient_uuid uuid`, `purpose text`
 **Returns**: `boolean` (consent valid)
@@ -76,8 +81,8 @@ CREATE OR REPLACE FUNCTION validate_lgpd_consent(patient_uuid uuid, purpose text
 RETURNS boolean AS $$
 BEGIN
   RETURN EXISTS (
-    SELECT 1 FROM consent_records 
-    WHERE patient_id = patient_uuid 
+    SELECT 1 FROM consent_records
+    WHERE patient_id = patient_uuid
     AND purpose = validate_lgpd_consent.purpose
     AND status = 'granted'
     AND expires_at > NOW()
@@ -89,6 +94,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ## AI Integration Functions
 
 ### calculate_no_show_risk
+
 **Purpose**: Calculate no-show risk score for appointments
 **Parameters**: `appointment_uuid uuid`
 **Returns**: `integer` (risk score 0-100)
@@ -101,36 +107,37 @@ DECLARE
   risk_score integer := 0;
   appointment_record appointments%ROWTYPE;
 BEGIN
-  SELECT * INTO appointment_record 
-  FROM appointments 
+  SELECT * INTO appointment_record
+  FROM appointments
   WHERE id = appointment_uuid;
-  
+
   -- Base risk factors calculation
   -- Previous no-shows
   risk_score := risk_score + (
     SELECT COUNT(*) * 15
-    FROM appointments 
-    WHERE patient_id = appointment_record.patient_id 
+    FROM appointments
+    WHERE patient_id = appointment_record.patient_id
     AND status = 'no_show'
     AND created_at > NOW() - INTERVAL '6 months'
   );
-  
+
   -- Weekend appointments (higher risk)
   IF EXTRACT(dow FROM appointment_record.scheduled_at) IN (0, 6) THEN
     risk_score := risk_score + 10;
   END IF;
-  
+
   -- Early morning appointments (higher risk)
   IF EXTRACT(hour FROM appointment_record.scheduled_at) < 9 THEN
     risk_score := risk_score + 5;
   END IF;
-  
+
   RETURN LEAST(risk_score, 100);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
 ### sanitize_for_ai
+
 **Purpose**: Remove PHI from text before AI processing
 **Parameters**: `input_text text`
 **Returns**: `text` (sanitized text)
@@ -142,13 +149,13 @@ RETURNS text AS $$
 BEGIN
   -- Remove CPF patterns
   input_text := regexp_replace(input_text, '\d{3}\.\d{3}\.\d{3}-\d{2}', '[CPF_REMOVED]', 'g');
-  
+
   -- Remove phone patterns
   input_text := regexp_replace(input_text, '\(\d{2}\)\s*\d{4,5}-\d{4}', '[PHONE_REMOVED]', 'g');
-  
+
   -- Remove email patterns
   input_text := regexp_replace(input_text, '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}', '[EMAIL_REMOVED]', 'g');
-  
+
   RETURN input_text;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -157,6 +164,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ## Audit Trail Functions
 
 ### create_audit_log
+
 **Purpose**: Create comprehensive audit log entries
 **Parameters**: `action_type text`, `table_name text`, `record_id uuid`, `old_values jsonb`, `new_values jsonb`
 **Returns**: `uuid` (audit log ID)
@@ -165,7 +173,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```sql
 CREATE OR REPLACE FUNCTION create_audit_log(
   action_type text,
-  table_name text, 
+  table_name text,
   record_id uuid,
   old_values jsonb DEFAULT NULL,
   new_values jsonb DEFAULT NULL
@@ -199,7 +207,7 @@ BEGIN
     current_setting('app.user_agent', true),
     NOW()
   ) RETURNING id INTO audit_id;
-  
+
   RETURN audit_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -208,6 +216,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ## Performance Optimization Functions
 
 ### update_updated_at
+
 **Purpose**: Automatically update updated_at timestamp
 **Parameters**: None (trigger function)
 **Returns**: `trigger`
@@ -224,6 +233,7 @@ $$ LANGUAGE plpgsql;
 ```
 
 ### generate_appointment_id
+
 **Purpose**: Generate human-readable appointment IDs
 **Parameters**: None
 **Returns**: `text`

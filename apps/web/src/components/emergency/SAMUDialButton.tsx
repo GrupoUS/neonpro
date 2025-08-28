@@ -54,7 +54,7 @@ export interface SAMUDialButtonProps {
   size?: "sm" | "default" | "lg";
   showCountdown?: boolean;
   className?: string;
-}// Emergency Level Configurations
+} // Emergency Level Configurations
 const getEmergencyConfig = (level: SAMUCallData["emergencyType"]) => {
   switch (level) {
     case "life-threatening":
@@ -69,8 +69,9 @@ const getEmergencyConfig = (level: SAMUCallData["emergencyType"]) => {
       };
     case "urgent":
       return {
-        color: "bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 border-orange-500",
-        text: "SAMU 192 - URGENTE", 
+        color:
+          "bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 border-orange-500",
+        text: "SAMU 192 - URGENTE",
         icon: AlertTriangle,
         priority: "URGENTE",
         animate: "",
@@ -79,7 +80,8 @@ const getEmergencyConfig = (level: SAMUCallData["emergencyType"]) => {
       };
     case "non-urgent":
       return {
-        color: "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 border-blue-500",
+        color:
+          "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 border-blue-500",
         text: "SAMU 192 - SUPORTE",
         icon: Shield,
         priority: "SUPORTE",
@@ -108,7 +110,7 @@ export function SAMUDialButton({
   const [locationError, setLocationError] = useState<string | null>(null);
 
   const config = getEmergencyConfig(emergencyLevel);
-  const IconComponent = config.icon;  // Get current location on mount for emergency calls
+  const IconComponent = config.icon; // Get current location on mount for emergency calls
   useEffect(() => {
     if (emergencyLevel === "life-threatening") {
       navigator.geolocation.getCurrentPosition(
@@ -124,7 +126,7 @@ export function SAMUDialButton({
           enableHighAccuracy: true,
           timeout: 10_000,
           maximumAge: 300_000, // 5 minutes
-        }
+        },
       );
     }
   }, [emergencyLevel]);
@@ -142,7 +144,9 @@ export function SAMUDialButton({
   }, [callState, countdown]);
 
   const handleCallClick = async () => {
-    if (disabled || callState !== "idle") {return;}
+    if (disabled || callState !== "idle") {
+      return;
+    }
 
     // For life-threatening emergencies, call immediately
     if (emergencyLevel === "life-threatening") {
@@ -171,10 +175,12 @@ export function SAMUDialButton({
       },
       location: {
         address: emergencyData?.location?.address || "Endereço não disponível",
-        coordinates: location ? {
-          lat: location.coords.latitude,
-          lng: location.coords.longitude,
-        } : emergencyData?.location?.coordinates,
+        coordinates: location
+          ? {
+              lat: location.coords.latitude,
+              lng: location.coords.longitude,
+            }
+          : emergencyData?.location?.coordinates,
         landmarks: emergencyData?.location?.landmarks || "",
         accessInstructions: emergencyData?.location?.accessInstructions || "",
       },
@@ -194,13 +200,13 @@ export function SAMUDialButton({
     // Simulate call process
     setTimeout(() => {
       setCallState("connected");
-      
+
       // Generate call ID and complete
       const callId = `SAMU-${Date.now()}-${emergencyLevel}`;
       setTimeout(() => {
         setCallState("completed");
         onCallCompleted?.(callId);
-        
+
         // Reset after completion
         setTimeout(() => {
           setCallState("idle");
@@ -212,7 +218,8 @@ export function SAMUDialButton({
   const cancelCall = () => {
     setCallState("idle");
     setCountdown(0);
-  };  const getSizeClasses = () => {
+  };
+  const getSizeClasses = () => {
     switch (size) {
       case "sm":
         return "h-8 px-3 text-sm";
@@ -230,7 +237,7 @@ export function SAMUDialButton({
         className={cn(
           "border-green-500 bg-green-50 text-green-700 hover:bg-green-100",
           getSizeClasses(),
-          className
+          className,
         )}
         disabled
         aria-label="Chamada SAMU concluída com sucesso"
@@ -249,14 +256,14 @@ export function SAMUDialButton({
           config.color,
           "relative overflow-hidden",
           getSizeClasses(),
-          className
+          className,
         )}
         disabled
         aria-label={`${callState === "calling" ? "Conectando" : "Conectado"} com SAMU 192`}
       >
         <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden="true" />
         {callState === "calling" ? "Conectando..." : "SAMU Online"}
-        
+
         {/* Pulse animation for connected state */}
         {callState === "connected" && (
           <div className="absolute inset-0 bg-white/20 animate-pulse rounded" />
@@ -271,12 +278,7 @@ export function SAMUDialButton({
         <Button
           onClick={cancelCall}
           variant="destructive"
-          className={cn(
-            config.color,
-            "relative",
-            getSizeClasses(),
-            className
-          )}
+          className={cn(config.color, "relative", getSizeClasses(), className)}
           aria-label={`Cancelar chamada SAMU - ${countdown} segundos restantes`}
         >
           <IconComponent className="h-4 w-4 mr-2" aria-hidden="true" />
@@ -289,7 +291,8 @@ export function SAMUDialButton({
         )}
       </div>
     );
-  }  return (
+  }
+  return (
     <div className="flex flex-col items-center gap-2">
       <Button
         onClick={handleCallClick}
@@ -301,18 +304,18 @@ export function SAMUDialButton({
           "focus:ring-4 focus:ring-offset-2",
           getSizeClasses(),
           disabled && "opacity-50 cursor-not-allowed",
-          className
+          className,
         )}
         disabled={disabled}
         aria-label={`Ligar para ${config.text} - ${config.description}`}
       >
-        <IconComponent 
+        <IconComponent
           className={cn(
             "mr-2",
             size === "lg" ? "h-6 w-6" : "h-4 w-4",
-            config.animate
-          )} 
-          aria-hidden="true" 
+            config.animate,
+          )}
+          aria-hidden="true"
         />
         {config.text}
       </Button>
@@ -322,14 +325,15 @@ export function SAMUDialButton({
         <Badge
           className={cn(
             "text-xs",
-            emergencyLevel === "life-threatening" && "bg-red-600 text-white animate-pulse",
+            emergencyLevel === "life-threatening" &&
+              "bg-red-600 text-white animate-pulse",
             emergencyLevel === "urgent" && "bg-orange-600 text-white",
-            emergencyLevel === "non-urgent" && "bg-blue-600 text-white"
+            emergencyLevel === "non-urgent" && "bg-blue-600 text-white",
           )}
         >
           {config.priority}
         </Badge>
-        
+
         <div className="text-xs text-muted-foreground text-center max-w-48">
           {config.description}
         </div>

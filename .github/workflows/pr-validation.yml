@@ -6,10 +6,10 @@ name: 🔍 PR Validation
 
 on:
   pull_request:
-    branches: ['main', 'develop']
+    branches: ["main", "develop"]
     types: [opened, synchronize, reopened, ready_for_review]
   pull_request_target:
-    branches: ['main']
+    branches: ["main"]
     types: [opened, synchronize, reopened]
 
 # Strict concurrency management for PR validation
@@ -51,43 +51,43 @@ jobs:
         id: safety-check
         run: |
           echo "🔍 Validating PR safety..."
-          
+
           # Check if this is a draft PR
           if [[ "${{ github.event.pull_request.draft }}" == "true" ]]; then
             echo "📝 Draft PR detected - limited validation"
           fi
-          
+
           # Check if this is from external repository
           if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
             echo "🔒 External PR detected - enhanced security validation"
           fi
-          
+
           # Check for skip CI markers
           if [[ "${{ github.event.pull_request.title }}" == *"[skip ci]"* ]]; then
             echo "⏭️ CI skip requested"
           fi
-          
+
           # Basic safety validation
           is_safe=true
-          
+
           # Check PR title
           if [[ -z "${{ github.event.pull_request.title }}" ]]; then
             echo "❌ PR title is empty"
             is_safe=false
           fi
-          
+
           # Check if PR has changes
           if [[ "${{ github.event.pull_request.changed_files }}" == "0" ]]; then
             echo "⚠️ PR has no changed files"
           fi
-          
+
           echo "is-safe=$is_safe" >> $GITHUB_OUTPUT
 
       - name: 🤖 Auto-merge candidate check
         id: auto-merge
         run: |
           candidate=false
-          
+
           # Check if this is a dependency update from trusted bots
           if [[ "${{ github.event.pull_request.user.login }}" == "dependabot[bot]" ]] || \
              [[ "${{ github.event.pull_request.user.login }}" == "renovate[bot]" ]]; then
@@ -99,7 +99,7 @@ jobs:
               echo "🤖 Auto-merge candidate: dependency update"
             fi
           fi
-          
+
           echo "candidate=$candidate" >> $GITHUB_OUTPUT
 
       - name: 📊 PR information summary
@@ -223,7 +223,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -260,7 +260,7 @@ jobs:
           echo "🔍 Running code linting..."
           lint_exit_code=0
           pnpm lint:oxlint || lint_exit_code=$?
-          
+
           if [ $lint_exit_code -eq 0 ]; then
             echo "✅ Linting passed successfully"
           else
@@ -315,7 +315,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -323,7 +323,7 @@ jobs:
       - name: 🏗️ Build ${{ matrix.target }}
         run: |
           echo "🏗️ Building ${{ matrix.target }} application..."
-          
+
           if pnpm build --filter=${{ matrix.target }}; then
             echo "✅ Build successful for ${{ matrix.target }}"
           else
@@ -347,9 +347,9 @@ jobs:
               expected_paths=("apps/api/dist" "apps/api/dist/index.js")
               ;;
           esac
-          
+
           echo "🔍 Validating build output for ${{ matrix.target }}..."
-          
+
           for path in "${expected_paths[@]}"; do
             if [ -e "$path" ]; then
               echo "✅ Found expected output: $path"
@@ -387,7 +387,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -397,7 +397,7 @@ jobs:
           echo "🔍 Running dependency security audit..."
           audit_exit_code=0
           pnpm audit --audit-level moderate || audit_exit_code=$?
-          
+
           if [ $audit_exit_code -eq 0 ]; then
             echo "✅ No moderate+ security vulnerabilities found"
           else
@@ -414,17 +414,17 @@ jobs:
       - name: 🏥 Healthcare compliance check
         run: |
           echo "🏥 Validating healthcare compliance patterns..."
-          
+
           # Check for potential sensitive data exposure
           echo "🔍 Scanning for potential data exposure patterns..."
           sensitive_patterns=false
-          
+
           # Look for hardcoded sensitive data patterns
           if grep -r "password\|secret\|key.*=" apps/ packages/ --include="*.ts" --include="*.tsx" 2>/dev/null | grep -v "Type\|Interface\|type\|interface" | head -3; then
             echo "⚠️ Found potential hardcoded sensitive data"
             sensitive_patterns=true
           fi
-          
+
           # Check for medical data validation
           echo "🔍 Checking medical data validation patterns..."
           if grep -r "validate\|schema\|zod" apps/ packages/ --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
@@ -432,7 +432,7 @@ jobs:
           else
             echo "💡 Consider adding data validation for medical information"
           fi
-          
+
           # Check for encryption/security patterns
           echo "🔍 Checking security implementation..."
           if grep -r "encrypt\|hash\|secure" apps/ packages/ --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
@@ -440,7 +440,7 @@ jobs:
           else
             echo "💡 Consider implementing security measures for sensitive data"
           fi
-          
+
           echo "### 🏥 Healthcare Compliance Check" >> $GITHUB_STEP_SUMMARY
           echo "- **Sensitive Data**: $($sensitive_patterns && echo '⚠️ Review needed' || echo '✅ No obvious issues')" >> $GITHUB_STEP_SUMMARY
           echo "- **Data Validation**: ✅ Patterns found" >> $GITHUB_STEP_SUMMARY
@@ -482,7 +482,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -492,7 +492,7 @@ jobs:
           echo "🧪 Running unit tests..."
           test_exit_code=0
           pnpm test 2>/dev/null || test_exit_code=$?
-          
+
           if [ $test_exit_code -eq 0 ]; then
             echo "✅ Unit tests passed"
           else
@@ -505,7 +505,7 @@ jobs:
           echo "🏥 Running healthcare-specific tests..."
           healthcare_test_exit_code=0
           pnpm test:healthcare 2>/dev/null || healthcare_test_exit_code=$?
-          
+
           if [ $healthcare_test_exit_code -eq 0 ]; then
             echo "✅ Healthcare compliance tests passed"
           else
@@ -518,7 +518,7 @@ jobs:
           echo "📊 Checking test coverage..."
           coverage_exit_code=0
           pnpm test:coverage 2>/dev/null || coverage_exit_code=$?
-          
+
           if [ $coverage_exit_code -eq 0 ]; then
             echo "✅ Coverage report generated"
           else
@@ -541,41 +541,49 @@ jobs:
     name: 🤖 Auto-merge Evaluation
     runs-on: ubuntu-22.04
     timeout-minutes: 5
-    needs: [pr-safety, change-detection, code-quality, build-validation, security-validation, test-validation]
+    needs:
+      [
+        pr-safety,
+        change-detection,
+        code-quality,
+        build-validation,
+        security-validation,
+        test-validation,
+      ]
     if: needs.pr-safety.outputs.auto-merge-candidate == 'true' && github.event.pull_request.draft == false
     steps:
       - name: 🤖 Auto-merge validation
         run: |
           echo "🤖 Evaluating auto-merge eligibility..."
-          
+
           # Check if all validation jobs passed
           code_quality_status="${{ needs.code-quality.result }}"
           build_status="${{ needs.build-validation.result }}"
           security_status="${{ needs.security-validation.result }}"
           test_status="${{ needs.test-validation.result }}"
-          
+
           eligible=true
-          
+
           if [[ "$code_quality_status" != "success" ]] && [[ "$code_quality_status" != "skipped" ]]; then
             echo "❌ Code quality check failed"
             eligible=false
           fi
-          
+
           if [[ "$build_status" != "success" ]] && [[ "$build_status" != "skipped" ]]; then
             echo "❌ Build validation failed"
             eligible=false
           fi
-          
+
           if [[ "$security_status" != "success" ]] && [[ "$security_status" != "skipped" ]]; then
             echo "❌ Security validation failed"
             eligible=false
           fi
-          
+
           if [[ "$test_status" != "success" ]] && [[ "$test_status" != "skipped" ]]; then
             echo "❌ Test validation failed"
             eligible=false
           fi
-          
+
           if [[ "$eligible" == "true" ]]; then
             echo "✅ Auto-merge eligible - all validations passed"
           else
@@ -605,7 +613,15 @@ jobs:
     name: 📊 Validation Summary
     runs-on: ubuntu-22.04
     timeout-minutes: 5
-    needs: [pr-safety, change-detection, code-quality, build-validation, security-validation, test-validation]
+    needs:
+      [
+        pr-safety,
+        change-detection,
+        code-quality,
+        build-validation,
+        security-validation,
+        test-validation,
+      ]
     if: always()
     steps:
       - name: 📊 Generate validation report
@@ -623,7 +639,7 @@ jobs:
           echo "- **Security**: ${{ needs.security-validation.result == 'success' && '✅ Passed' || (needs.security-validation.result == 'skipped' && '⏭️ Skipped' || '❌ Failed') }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Testing**: ${{ needs.test-validation.result == 'success' && '✅ Passed' || (needs.test-validation.result == 'skipped' && '⏭️ Skipped' || '❌ Failed') }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Determine overall status
           overall_status="✅ PASSED"
           if [[ "${{ needs.pr-safety.result }}" == "failure" ]] || \
@@ -634,9 +650,9 @@ jobs:
              [[ "${{ needs.test-validation.result }}" == "failure" ]]; then
             overall_status="❌ FAILED"
           fi
-          
+
           echo "**Overall Status**: $overall_status" >> $GITHUB_STEP_SUMMARY
-          
+
           if [[ "$overall_status" == "❌ FAILED" ]]; then
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "❌ **This PR has validation failures and cannot be merged.**" >> $GITHUB_STEP_SUMMARY

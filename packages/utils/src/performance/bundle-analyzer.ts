@@ -34,7 +34,11 @@ export interface BundleDependency {
 }
 
 export interface BundleRecommendation {
-  type: "size-reduction" | "code-splitting" | "dependency-optimization" | "compression";
+  type:
+    | "size-reduction"
+    | "code-splitting"
+    | "dependency-optimization"
+    | "compression";
   severity: "high" | "medium" | "low";
   description: string;
   impact: number; // bytes saved
@@ -51,7 +55,7 @@ export interface OptimizationConfig {
   maxInitialRequests: number;
   healthcareModules: {
     emergency: "high" | "critical";
-    patient: "high" | "critical"; 
+    patient: "high" | "critical";
     ai: "medium" | "low";
     analytics: "low";
   };
@@ -63,7 +67,7 @@ export class BundleAnalyzer {
     critical: ["emergency-protocols", "patient-management", "cfm-compliance"],
     high: ["appointment-booking", "lgpd-compliance", "anvisa-tracking"],
     medium: ["ai-chat", "predictive-analytics", "automated-analysis"],
-    low: ["advanced-reporting", "dashboard-widgets", "export-tools"]
+    low: ["advanced-reporting", "dashboard-widgets", "export-tools"],
   };
 
   constructor(config: Partial<OptimizationConfig> = {}) {
@@ -78,10 +82,10 @@ export class BundleAnalyzer {
       healthcareModules: {
         emergency: "critical",
         patient: "critical",
-        ai: "medium", 
-        analytics: "low"
+        ai: "medium",
+        analytics: "low",
       },
-      ...config
+      ...config,
     };
   }
 
@@ -92,7 +96,7 @@ export class BundleAnalyzer {
     const chunks = await this.analyzeChunks();
     const dependencies = await this.analyzeDependencies();
     const recommendations = this.generateRecommendations(chunks, dependencies);
-    
+
     const totalSize = chunks.reduce((sum, chunk) => sum + chunk.size, 0);
     const gzipSize = chunks.reduce((sum, chunk) => sum + chunk.gzipSize, 0);
     const brotliSize = Math.floor(gzipSize * 0.85); // Brotli typically 15% better than gzip
@@ -104,7 +108,11 @@ export class BundleAnalyzer {
       chunks,
       dependencies,
       recommendations,
-      healthScore: this.calculateHealthScore(totalSize, chunks, recommendations)
+      healthScore: this.calculateHealthScore(
+        totalSize,
+        chunks,
+        recommendations,
+      ),
     };
   }
 
@@ -119,7 +127,7 @@ export class BundleAnalyzer {
         modules: ["@neonpro/core", "@neonpro/auth", "@neonpro/ui"],
         isEntry: true,
         isAsync: false,
-        loadPriority: "high"
+        loadPriority: "high",
       },
       {
         name: "emergency-protocols",
@@ -128,7 +136,7 @@ export class BundleAnalyzer {
         modules: ["@neonpro/emergency", "@neonpro/samu-integration"],
         isEntry: false,
         isAsync: true,
-        loadPriority: "high"
+        loadPriority: "high",
       },
       {
         name: "patient-management",
@@ -137,7 +145,7 @@ export class BundleAnalyzer {
         modules: ["@neonpro/patient", "@neonpro/lgpd", "@neonpro/cfm"],
         isEntry: false,
         isAsync: true,
-        loadPriority: "high"
+        loadPriority: "high",
       },
       {
         name: "ai-features",
@@ -146,17 +154,21 @@ export class BundleAnalyzer {
         modules: ["@neonpro/ai", "@neonpro/ml", "@neonpro/chat"],
         isEntry: false,
         isAsync: true,
-        loadPriority: "medium"
+        loadPriority: "medium",
       },
       {
         name: "analytics",
         size: 200_000, // 200KB
         gzipSize: 65_000, // ~65KB gzipped
-        modules: ["@neonpro/analytics", "@neonpro/reporting", "@neonpro/charts"],
+        modules: [
+          "@neonpro/analytics",
+          "@neonpro/reporting",
+          "@neonpro/charts",
+        ],
         isEntry: false,
         isAsync: true,
-        loadPriority: "low"
-      }
+        loadPriority: "low",
+      },
     ];
 
     return mockChunks;
@@ -171,7 +183,7 @@ export class BundleAnalyzer {
         size: 45_000,
         treeshakeable: false,
         isDevDependency: false,
-        unusedExports: []
+        unusedExports: [],
       },
       {
         name: "lodash",
@@ -180,7 +192,7 @@ export class BundleAnalyzer {
         treeshakeable: true,
         isDevDependency: false,
         unusedExports: ["debounce", "throttle", "merge"],
-        alternatives: ["lodash-es", "ramda"]
+        alternatives: ["lodash-es", "ramda"],
       },
       {
         name: "moment",
@@ -189,7 +201,7 @@ export class BundleAnalyzer {
         treeshakeable: false,
         isDevDependency: false,
         unusedExports: [],
-        alternatives: ["date-fns", "dayjs"]
+        alternatives: ["date-fns", "dayjs"],
       },
       {
         name: "@supabase/supabase-js",
@@ -197,7 +209,7 @@ export class BundleAnalyzer {
         size: 125_000,
         treeshakeable: true,
         isDevDependency: false,
-        unusedExports: []
+        unusedExports: [],
       },
       {
         name: "chart.js",
@@ -205,8 +217,8 @@ export class BundleAnalyzer {
         size: 180_000,
         treeshakeable: true,
         isDevDependency: false,
-        unusedExports: ["ScatterController", "BubbleController"]
-      }
+        unusedExports: ["ScatterController", "BubbleController"],
+      },
     ];
 
     return mockDependencies;
@@ -214,34 +226,35 @@ export class BundleAnalyzer {
 
   private generateRecommendations(
     chunks: BundleChunk[],
-    dependencies: BundleDependency[]
+    dependencies: BundleDependency[],
   ): BundleRecommendation[] {
     const recommendations: BundleRecommendation[] = [];
 
     // Analyze oversized chunks
-    chunks.forEach(chunk => {
+    chunks.forEach((chunk) => {
       if (chunk.size > 300_000 && !chunk.isEntry) {
         recommendations.push({
           type: "code-splitting",
           severity: "high",
           description: `Chunk '${chunk.name}' is ${Math.round(chunk.size / 1024)}KB. Consider splitting further.`,
           impact: Math.floor(chunk.size * 0.3),
-          action: `Split ${chunk.name} into smaller, feature-specific chunks`
+          action: `Split ${chunk.name} into smaller, feature-specific chunks`,
         });
       }
     });
 
     // Analyze dependencies
-    dependencies.forEach(dep => {
+    dependencies.forEach((dep) => {
       if (dep.alternatives && dep.alternatives.length > 0) {
         const potentialSavings = Math.floor(dep.size * 0.4);
-        if (potentialSavings > 10_000) { // Only recommend if >10KB savings
+        if (potentialSavings > 10_000) {
+          // Only recommend if >10KB savings
           recommendations.push({
             type: "dependency-optimization",
             severity: dep.size > 50_000 ? "high" : "medium",
             description: `Replace '${dep.name}' with lighter alternative`,
             impact: potentialSavings,
-            action: `Consider using ${dep.alternatives[0]} instead of ${dep.name}`
+            action: `Consider using ${dep.alternatives[0]} instead of ${dep.name}`,
           });
         }
       }
@@ -252,7 +265,7 @@ export class BundleAnalyzer {
           severity: "medium",
           description: `'${dep.name}' has unused exports that can be tree-shaken`,
           impact: Math.floor(dep.size * 0.2),
-          action: `Remove unused imports: ${dep.unusedExports.join(", ")}`
+          action: `Remove unused imports: ${dep.unusedExports.join(", ")}`,
         });
       }
     });
@@ -265,19 +278,21 @@ export class BundleAnalyzer {
         severity: "high",
         description: "Bundle size exceeds target. Enable advanced compression.",
         impact: Math.floor(totalSize * 0.15),
-        action: "Enable Brotli compression and optimize asset delivery"
+        action: "Enable Brotli compression and optimize asset delivery",
       });
     }
 
     // Healthcare-specific recommendations
-    const aiChunk = chunks.find(c => c.name.includes("ai"));
+    const aiChunk = chunks.find((c) => c.name.includes("ai"));
     if (aiChunk && aiChunk.loadPriority !== "low") {
       recommendations.push({
         type: "code-splitting",
-        severity: "medium", 
-        description: "AI features should be lazy-loaded for Brazilian connectivity",
+        severity: "medium",
+        description:
+          "AI features should be lazy-loaded for Brazilian connectivity",
         impact: aiChunk.size,
-        action: "Set AI chunk load priority to 'low' and implement progressive loading"
+        action:
+          "Set AI chunk load priority to 'low' and implement progressive loading",
       });
     }
 
@@ -290,7 +305,7 @@ export class BundleAnalyzer {
   private calculateHealthScore(
     totalSize: number,
     chunks: BundleChunk[],
-    recommendations: BundleRecommendation[]
+    recommendations: BundleRecommendation[],
   ): number {
     let score = 100;
 
@@ -301,18 +316,22 @@ export class BundleAnalyzer {
     }
 
     // Penalize lack of code splitting
-    const hasProperSplitting = chunks.filter(c => c.isAsync).length >= 3;
+    const hasProperSplitting = chunks.filter((c) => c.isAsync).length >= 3;
     if (!hasProperSplitting) {
       score -= 20;
     }
 
     // Penalize high severity recommendations
-    const highSeverityCount = recommendations.filter(r => r.severity === "high").length;
+    const highSeverityCount = recommendations.filter(
+      (r) => r.severity === "high",
+    ).length;
     score -= highSeverityCount * 10;
 
     // Bonus for healthcare-optimized structure
-    const hasEmergencyChunk = chunks.some(c => 
-      this.BRAZILIAN_HEALTHCARE_MODULES.critical.some(mod => c.name.includes(mod))
+    const hasEmergencyChunk = chunks.some((c) =>
+      this.BRAZILIAN_HEALTHCARE_MODULES.critical.some((mod) =>
+        c.name.includes(mod),
+      ),
     );
     if (hasEmergencyChunk) {
       score += 10;
@@ -338,55 +357,55 @@ export class BundleAnalyzer {
               test: /[\\/]node_modules[\\/]@neonpro[\\/](emergency|samu|protocols)/,
               name: "emergency-critical",
               priority: 100,
-              chunks: "all"
+              chunks: "all",
             },
             patient: {
               test: /[\\/]node_modules[\\/]@neonpro[\\/](patient|lgpd|cfm)/,
-              name: "patient-core", 
+              name: "patient-core",
               priority: 90,
-              chunks: "all"
+              chunks: "all",
             },
             // AI modules - lazy loaded
             ai: {
               test: /[\\/]node_modules[\\/]@neonpro[\\/](ai|ml|chat)/,
               name: "ai-features",
               priority: 30,
-              chunks: "async"
+              chunks: "async",
             },
             // Analytics - lowest priority
             analytics: {
               test: /[\\/]node_modules[\\/]@neonpro[\\/](analytics|reporting|charts)/,
               name: "analytics",
               priority: 20,
-              chunks: "async"
+              chunks: "async",
             },
             // Vendor libraries
             vendors: {
               test: /[\\/]node_modules[\\/]/,
               name: "vendors",
               priority: 10,
-              chunks: "all"
-            }
-          }
+              chunks: "all",
+            },
+          },
         },
         usedExports: this.config.enableTreeShaking,
         sideEffects: false,
         moduleIds: "deterministic",
-        chunkIds: "deterministic"
+        chunkIds: "deterministic",
       },
       resolve: {
         alias: {
           // Optimize common libraries for Brazilian infrastructure
-          "lodash": "lodash-es", // Use ES modules for tree shaking
-          "moment": "dayjs",     // Lighter date library
-          "chart.js": "chart.js/auto" // Optimized chart.js
-        }
+          lodash: "lodash-es", // Use ES modules for tree shaking
+          moment: "dayjs", // Lighter date library
+          "chart.js": "chart.js/auto", // Optimized chart.js
+        },
       },
       output: {
         filename: "static/js/[name].[contenthash:8].js",
         chunkFilename: "static/js/[name].[contenthash:8].chunk.js",
-        assetModuleFilename: "static/media/[name].[contenthash:8][ext]"
-      }
+        assetModuleFilename: "static/media/[name].[contenthash:8][ext]",
+      },
     };
   }
 
@@ -401,25 +420,26 @@ export class BundleAnalyzer {
         esmExternals: true,
         modularizeImports: {
           "@neonpro/ui": {
-            transform: "@neonpro/ui/{{member}}"
+            transform: "@neonpro/ui/{{member}}",
           },
-          "lodash": {
-            transform: "lodash/{{member}}"
-          }
-        }
+          lodash: {
+            transform: "lodash/{{member}}",
+          },
+        },
       },
       compiler: {
         removeConsole: process.env.NODE_ENV === "production",
-        reactRemoveProperties: process.env.NODE_ENV === "production" 
-          ? { properties: ["^data-testid$"] } 
-          : false
+        reactRemoveProperties:
+          process.env.NODE_ENV === "production"
+            ? { properties: ["^data-testid$"] }
+            : false,
       },
       images: {
         formats: ["image/webp", "image/avif"],
         deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
         minimumCacheTTL: 31_536_000, // 1 year
-        dangerouslyAllowSVG: false
+        dangerouslyAllowSVG: false,
       },
       compress: true,
       poweredByHeader: false,
@@ -429,8 +449,8 @@ export class BundleAnalyzer {
       // Performance budgets for Brazilian connectivity
       onDemandEntries: {
         maxInactiveAge: 25 * 1000, // 25 seconds
-        pagesBufferLength: 2
-      }
+        pagesBufferLength: 2,
+      },
     };
   }
 
@@ -443,36 +463,36 @@ export class BundleAnalyzer {
         {
           type: "initial",
           maximumWarning: this.config.targetBundleSize,
-          maximumError: this.config.targetBundleSize * 1.2
+          maximumError: this.config.targetBundleSize * 1.2,
         },
         {
           type: "anyComponentStyle",
-          maximumWarning: "6kb"
+          maximumWarning: "6kb",
         },
         {
           type: "any",
-          maximumWarning: "2mb"
+          maximumWarning: "2mb",
         },
         // Brazilian healthcare specific budgets
         {
           type: "bundle",
           name: "emergency-critical",
           maximumWarning: "50kb",
-          maximumError: "75kb"
-        },
-        {
-          type: "bundle", 
-          name: "patient-core",
-          maximumWarning: "100kb",
-          maximumError: "150kb"
+          maximumError: "75kb",
         },
         {
           type: "bundle",
-          name: "ai-features", 
+          name: "patient-core",
+          maximumWarning: "100kb",
+          maximumError: "150kb",
+        },
+        {
+          type: "bundle",
+          name: "ai-features",
           maximumWarning: "300kb",
-          maximumError: "500kb"
-        }
-      ]
+          maximumError: "500kb",
+        },
+      ],
     };
   }
 
@@ -481,7 +501,7 @@ export class BundleAnalyzer {
    */
   async generateBrazilianHealthcareReport(): Promise<string> {
     const analysis = await this.analyzeBundles();
-    
+
     const report = `
 # 🇧🇷 NeonPro Bundle Analysis Report
 
@@ -494,28 +514,35 @@ export class BundleAnalyzer {
 - **Target**: ${Math.round(this.config.targetBundleSize / 1024)}KB
 
 ### 🏥 Healthcare Module Analysis
-${analysis.chunks.map(chunk => {
-  const priority = chunk.loadPriority;
-  const icon = priority === "high" ? "🚨" : priority === "medium" ? "⚡" : "📊";
-  return `${icon} **${chunk.name}**: ${Math.round(chunk.size / 1024)}KB (${chunk.isAsync ? 'Async' : 'Sync'})`;
-}).join('\n')}
+${analysis.chunks
+  .map((chunk) => {
+    const priority = chunk.loadPriority;
+    const icon =
+      priority === "high" ? "🚨" : priority === "medium" ? "⚡" : "📊";
+    return `${icon} **${chunk.name}**: ${Math.round(chunk.size / 1024)}KB (${chunk.isAsync ? "Async" : "Sync"})`;
+  })
+  .join("\n")}
 
 ### 🔍 Top Recommendations
-${analysis.recommendations.slice(0, 5).map((rec, i) => {
-  const severity = rec.severity === "high" ? "🔴" : rec.severity === "medium" ? "🟡" : "🟢";
-  const savings = Math.round(rec.impact / 1024);
-  return `${i + 1}. ${severity} ${rec.description}\n   💾 **Savings**: ${savings}KB\n   🔧 **Action**: ${rec.action}`;
-}).join('\n\n')}
+${analysis.recommendations
+  .slice(0, 5)
+  .map((rec, i) => {
+    const severity =
+      rec.severity === "high" ? "🔴" : rec.severity === "medium" ? "🟡" : "🟢";
+    const savings = Math.round(rec.impact / 1024);
+    return `${i + 1}. ${severity} ${rec.description}\n   💾 **Savings**: ${savings}KB\n   🔧 **Action**: ${rec.action}`;
+  })
+  .join("\n\n")}
 
 ### 🌐 Brazilian Connectivity Optimization
-- Emergency protocols: ${analysis.chunks.some(c => c.name.includes("emergency")) ? "✅" : "❌"} Properly chunked
-- Patient management: ${analysis.chunks.some(c => c.name.includes("patient")) ? "✅" : "❌"} Optimized
-- AI features: ${analysis.chunks.some(c => c.name.includes("ai") && c.isAsync) ? "✅" : "❌"} Lazy loaded
+- Emergency protocols: ${analysis.chunks.some((c) => c.name.includes("emergency")) ? "✅" : "❌"} Properly chunked
+- Patient management: ${analysis.chunks.some((c) => c.name.includes("patient")) ? "✅" : "❌"} Optimized
+- AI features: ${analysis.chunks.some((c) => c.name.includes("ai") && c.isAsync) ? "✅" : "❌"} Lazy loaded
 
 ### 📈 Performance Targets
 - Tier 1 (São Paulo/Rio): Target ${Math.round(this.config.targetBundleSize / 1024)}KB ✅
-- Tier 2 (Regional): Target ${Math.round(this.config.targetBundleSize * 0.75 / 1024)}KB ${analysis.brotliSize <= this.config.targetBundleSize * 0.75 ? "✅" : "⚠️"}
-- Tier 3 (Interior): Target ${Math.round(this.config.targetBundleSize * 0.5 / 1024)}KB ${analysis.brotliSize <= this.config.targetBundleSize * 0.5 ? "✅" : "❌"}
+- Tier 2 (Regional): Target ${Math.round((this.config.targetBundleSize * 0.75) / 1024)}KB ${analysis.brotliSize <= this.config.targetBundleSize * 0.75 ? "✅" : "⚠️"}
+- Tier 3 (Interior): Target ${Math.round((this.config.targetBundleSize * 0.5) / 1024)}KB ${analysis.brotliSize <= this.config.targetBundleSize * 0.5 ? "✅" : "❌"}
 `;
 
     return report.trim();
@@ -528,10 +555,10 @@ export const brazilianBundleAnalyzer = new BundleAnalyzer({
   compressionPreference: "brotli",
   healthcareModules: {
     emergency: "critical",
-    patient: "critical", 
+    patient: "critical",
     ai: "medium",
-    analytics: "low"
-  }
+    analytics: "low",
+  },
 });
 
 export { BundleAnalyzer };

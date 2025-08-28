@@ -75,7 +75,7 @@ const DashboardQuerySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string; }>; },
+  { params }: { params: Promise<{ clinicId: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -177,11 +177,12 @@ export async function GET(
     const retentionService = new RetentionAnalyticsService();
 
     // Generate comprehensive dashboard data
-    const dashboardData = await retentionService.generateRetentionAnalyticsDashboard(
-      clinicId,
-      periodStart,
-      periodEnd,
-    );
+    const dashboardData =
+      await retentionService.generateRetentionAnalyticsDashboard(
+        clinicId,
+        periodStart,
+        periodEnd,
+      );
 
     // Collect additional detailed data based on parameters
     const additionalData: Record<string, unknown> = {};
@@ -194,25 +195,26 @@ export async function GET(
       );
 
       // Filter metrics by date range
-      const filteredMetrics = (metrics as RetentionMetricsResponse).metrics.filter(
-        (metric: RetentionMetric) => {
-          const metricDate = new Date(metric.last_appointment_date);
-          return (
-            metricDate >= new Date(periodStart)
-            && metricDate <= new Date(periodEnd)
-          );
-        },
-      );
+      const filteredMetrics = (
+        metrics as RetentionMetricsResponse
+      ).metrics.filter((metric: RetentionMetric) => {
+        const metricDate = new Date(metric.last_appointment_date);
+        return (
+          metricDate >= new Date(periodStart) &&
+          metricDate <= new Date(periodEnd)
+        );
+      });
 
       additionalData.detailedMetrics = {
         metrics: filteredMetrics,
         summary: {
           total_patients: filteredMetrics.length,
           high_risk_patients: filteredMetrics.filter((m) =>
-            ["high", "critical"].includes(m.churn_risk_level)
+            ["high", "critical"].includes(m.churn_risk_level),
           ).length,
-          average_retention_rate: filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0)
-              / filteredMetrics.length || 0,
+          average_retention_rate:
+            filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) /
+              filteredMetrics.length || 0,
           total_lifetime_value: filteredMetrics.reduce(
             (sum, m) => sum + m.lifetime_value,
             0,
@@ -230,22 +232,23 @@ export async function GET(
       );
 
       // Filter predictions by date range
-      const filteredPredictions = (predictions as RetentionPredictionsResponse).predictions.filter(
-        (prediction: RetentionPrediction) => {
-          const predictionDate = new Date(prediction.prediction_date);
-          return (
-            predictionDate >= new Date(periodStart)
-            && predictionDate <= new Date(periodEnd)
-          );
-        },
-      );
+      const filteredPredictions = (
+        predictions as RetentionPredictionsResponse
+      ).predictions.filter((prediction: RetentionPrediction) => {
+        const predictionDate = new Date(prediction.prediction_date);
+        return (
+          predictionDate >= new Date(periodStart) &&
+          predictionDate <= new Date(periodEnd)
+        );
+      });
 
       additionalData.detailedPredictions = {
         predictions: filteredPredictions,
         summary: {
           total_predictions: filteredPredictions.length,
           critical_risk: filteredPredictions.filter(
-            (p: RetentionPrediction) => p.risk_level === ChurnRiskLevel.CRITICAL,
+            (p: RetentionPrediction) =>
+              p.risk_level === ChurnRiskLevel.CRITICAL,
           ).length,
           high_risk: filteredPredictions.filter(
             (p: RetentionPrediction) => p.risk_level === ChurnRiskLevel.HIGH,
@@ -256,10 +259,12 @@ export async function GET(
           low_risk: filteredPredictions.filter(
             (p: RetentionPrediction) => p.risk_level === ChurnRiskLevel.LOW,
           ).length,
-          average_churn_probability: filteredPredictions.reduce(
-                (sum: number, p: RetentionPrediction) => sum + p.churn_probability,
-                0,
-              ) / filteredPredictions.length || 0,
+          average_churn_probability:
+            filteredPredictions.reduce(
+              (sum: number, p: RetentionPrediction) =>
+                sum + p.churn_probability,
+              0,
+            ) / filteredPredictions.length || 0,
         },
       };
     }
@@ -272,24 +277,28 @@ export async function GET(
 
       additionalData.strategies = {
         all_strategies: strategies,
-        active_strategies: (strategies as RetentionStrategiesResponse).strategies.filter(
-          (s: RetentionStrategy) => s.is_active,
-        ),
+        active_strategies: (
+          strategies as RetentionStrategiesResponse
+        ).strategies.filter((s: RetentionStrategy) => s.is_active),
         summary: {
-          total_strategies: (strategies as RetentionStrategiesResponse).strategies.length,
-          active_count:
-            (strategies as RetentionStrategiesResponse).strategies.filter((s: RetentionStrategy) =>
-              s.is_active
-            )
-              .length,
-          total_executions: (strategies as RetentionStrategiesResponse).strategies.reduce(
+          total_strategies: (strategies as RetentionStrategiesResponse)
+            .strategies.length,
+          active_count: (
+            strategies as RetentionStrategiesResponse
+          ).strategies.filter((s: RetentionStrategy) => s.is_active).length,
+          total_executions: (
+            strategies as RetentionStrategiesResponse
+          ).strategies.reduce(
             (sum: number, s: RetentionStrategy) => sum + s.execution_count,
             0,
           ),
-          average_success_rate: (strategies as RetentionStrategiesResponse).strategies.reduce(
-                (sum: number, s: RetentionStrategy) => sum + (s.success_rate || 0),
-                0,
-              ) / (strategies as RetentionStrategiesResponse).strategies.length || 0,
+          average_success_rate:
+            (strategies as RetentionStrategiesResponse).strategies.reduce(
+              (sum: number, s: RetentionStrategy) =>
+                sum + (s.success_rate || 0),
+              0,
+            ) / (strategies as RetentionStrategiesResponse).strategies.length ||
+            0,
         },
       };
     }
@@ -347,14 +356,20 @@ export async function GET(
 
     // Calculate real-time alerts
     const alerts = {
-      critical_risk_patients: dashboardData.churn_risk_distribution.critical || 0,
+      critical_risk_patients:
+        dashboardData.churn_risk_distribution.critical || 0,
       high_risk_patients: dashboardData.churn_risk_distribution.high || 0,
-      low_engagement_patients: dashboardData.engagement_metrics.low_engagement_count || 0,
+      low_engagement_patients:
+        dashboardData.engagement_metrics.low_engagement_count || 0,
       recent_strategy_failures:
-        (additionalData.strategies as { all_strategies?: RetentionStrategiesResponse; })
-          ?.all_strategies?.strategies?.filter(
-            (s: RetentionStrategy) => s.execution_count > 0 && (s.success_rate || 0) < 0.5,
-          ).length || 0,
+        (
+          additionalData.strategies as {
+            all_strategies?: RetentionStrategiesResponse;
+          }
+        )?.all_strategies?.strategies?.filter(
+          (s: RetentionStrategy) =>
+            s.execution_count > 0 && (s.success_rate || 0) < 0.5,
+        ).length || 0,
     };
 
     // Compile final response
@@ -370,8 +385,8 @@ export async function GET(
           start: periodStart,
           end: periodEnd,
           duration_days: Math.ceil(
-            (new Date(periodEnd).getTime() - new Date(periodStart).getTime())
-              / (1000 * 60 * 60 * 24),
+            (new Date(periodEnd).getTime() - new Date(periodStart).getTime()) /
+              (1000 * 60 * 60 * 24),
           ),
         },
         alerts,

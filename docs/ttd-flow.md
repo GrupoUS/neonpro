@@ -25,20 +25,24 @@ Defines Test-Driven Development workflow for TypeScript/Jest projects. Follow th
 ├── Data validation (schemas)
 └── External integrations
 ```
+
 ## 🤖 APEX Healthcare Agent Strategy
 
 ### **🔄 Intelligent Loading Pattern**
 
 **Always Active** (Base Coordinator):
+
 - **💻 apex-dev** - Full-stack healthcare development and coordination
 
 **On-Demand Activation**:
+
 - **🔬 apex-researcher** - Multi-source research when planning/analyzing
 - **🎨 apex-ui-ux-designer** - UI/UX expertise when creating interfaces
 
 ### **🎯 Agent Specialization Matrix**
 
 #### **💻 apex-dev.md** - Base Coordinator (Always Active)
+
 ```yaml
 role: "Full-Stack Healthcare Development + Agent Coordination"
 always_active: true
@@ -51,9 +55,11 @@ capabilities:
 ```
 
 #### **🔬 apex-researcher.md** - Research Intelligence (On-Demand)
+
 ```yaml
 role: "Multi-Source Research and Healthcare Compliance"
-activation_triggers: ["research", "analyze", "investigate", "pesquisar", "analisar", "planejar"]
+activation_triggers:
+  ["research", "analyze", "investigate", "pesquisar", "analisar", "planejar"]
 capabilities:
   - Context7 → Tavily → Exa intelligence chain
   - Healthcare documentation and regulatory research
@@ -63,9 +69,11 @@ capabilities:
 ```
 
 #### **🎨 apex-ui-ux-designer.md** - Design Excellence (On-Demand)
+
 ```yaml
 role: "Healthcare UI/UX with Constitutional Accessibility"
-activation_triggers: ["design", "ui", "ux", "interface", "página", "componente", "acessibilidade"]
+activation_triggers:
+  ["design", "ui", "ux", "interface", "página", "componente", "acessibilidade"]
 capabilities:
   - WCAG 2.1 AA+ accessibility compliance
   - shadcn/ui v4 healthcare optimization
@@ -77,6 +85,7 @@ capabilities:
 ## 🛠️ Ruler Integration - Optimized Configuration
 
 ### **ruler.toml Configuration**
+
 ```toml
 # OPTIMIZED: Only APEX Healthcare Agents
 # GitHub Copilot handles claude/copilot/trae automatically
@@ -102,6 +111,7 @@ description = "On-Demand - Healthcare Interface Design Excellence"
 ```
 
 ### **Usage Commands**
+
 ```bash
 # Generate base coordinator (apex-dev always active)
 ruler
@@ -119,44 +129,53 @@ ruler --agents apex-dev,apex-researcher,apex-ui-ux-designer
 ## 🏥 Workflow Orchestration
 
 #### **Research & Planning Phase**
+
 ```bash
 # Triggers: research, analyze, investigate, pesquisar, analisar, planejar
 ruler --agents apex-dev,apex-researcher
 ```
+
 - **apex-dev**: Coordinates research with development context
 - **apex-researcher**: Multi-source intelligence (Context7 → Tavily → Exa)
 - **Focus**: Compliance validation, best practices, evidence-based decisions
 
 #### **UI/UX Development Phase**
+
 ```bash
 # Triggers: design, ui, ux, interface, página, componente, acessibilidade
 ruler --agents apex-dev,apex-ui-ux-designer
 ```
+
 - **apex-dev**: Provides technical implementation context
 - **apex-ui-ux-designer**: Healthcare accessibility and design expertise
 - **Focus**: WCAG 2.1 AA+, patient-centered design, emergency scenarios
 
 #### **Core Development Phase**
+
 ```bash
 # Default: apex-dev always active
 ruler --agents apex-dev
 ```
+
 - **apex-dev**: Full-stack healthcare development
 - **Focus**: Constitutional principles, compliance, quality gates
 
 ## 📚 Benefits of Optimized Strategy
 
 ### **🚀 Performance Improvements**
+
 - **Reduced Overhead**: Eliminates redundant configurations
 - **Contextual Loading**: Specialists activate only when needed
 - **Intelligent Coordination**: apex-dev orchestrates team efficiently
 
 ### **🎯 Focus Enhancement**
+
 - **Healthcare Specialization**: All agents optimize for medical workflows
 - **Constitutional Principles**: Consistent quality and compliance
 - **On-Demand Expertise**: Right specialist for the right task
 
 ### **🔧 Maintenance Simplification**
+
 - **Single Source**: Only APEX agents in Ruler configuration
 - **Auto-Loading**: Copilot and Claude code handles its own configurations
 - **Clear Separation**: Healthcare vs general development concerns
@@ -336,13 +355,13 @@ class PatientPage {
 // Usage in test
 test("should create new patient", async ({ page }) => {
   const patientPage = new PatientPage(page);
-  
+
   await patientPage.navigateToPatients();
   await patientPage.createPatient({
     name: "João Silva",
-    cpf: "123.456.789-00"
+    cpf: "123.456.789-00",
   });
-  
+
   await patientPage.expectPatientVisible("João Silva");
 });
 ```
@@ -369,8 +388,8 @@ test("should create new patient", async ({ page }) => {
 export default defineConfig({
   test: {
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
       thresholds: {
         global: {
           branches: 80,
@@ -378,7 +397,7 @@ export default defineConfig({
           lines: 90,
           statements: 90,
         },
-        'packages/patient-management/**': {
+        "packages/patient-management/**": {
           branches: 95,
           functions: 95,
           lines: 95,
@@ -401,8 +420,8 @@ export default defineConfig({
     "test:unit:watch": "vitest",
     "test:unit:ui": "vitest --ui",
     "test:unit:coverage": "vitest run --coverage",
-    "test:integration": "vitest run --config vitest.integration.config.ts",
-    "test:integration:watch": "vitest --config vitest.integration.config.ts"
+    "test:integration": "vitest run --config vitest.config.integration.ts",
+    "test:integration:watch": "vitest --config vitest.config.integration.ts"
   }
 }
 ```
@@ -451,6 +470,7 @@ export default defineConfig({
 ## Quality Checklist
 
 ### Pre-commit Checks
+
 - [ ] **Type Safety**: `pnpm type-check` passes
 - [ ] **Code Quality**: `pnpm lint` passes (OXC Oxlint)
 - [ ] **Code Formatting**: `pnpm format:check` passes (Dprint)
@@ -458,6 +478,7 @@ export default defineConfig({
 - [ ] **Coverage**: Meets thresholds (90%+ unit, 80%+ integration)
 
 ### Pre-push Checks
+
 - [ ] **Integration Tests**: `pnpm test:integration` passes
 - [ ] **E2E Tests**: `pnpm test:e2e` passes (Playwright)
 - [ ] **Performance**: No regressions in critical paths
@@ -465,6 +486,7 @@ export default defineConfig({
 - [ ] **Mobile**: Responsive design validated
 
 ### CI/CD Pipeline
+
 - [ ] **Full Suite**: `pnpm ci:check` passes
 - [ ] **Build**: Production build succeeds
 - [ ] **Security**: No vulnerabilities detected
@@ -499,7 +521,7 @@ export default defineConfig({
   fullyParallel: !process.env.CI,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  
+
   // Performance budgets
   use: {
     // Simulate slow network in CI
@@ -516,24 +538,24 @@ export default defineConfig({
 
 ```typescript
 // vitest.config.ts
-import { defineConfig } from 'vitest/config';
-import path from 'path';
+import { defineConfig } from "vitest/config";
+import path from "path";
 
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'happy-dom',
-    setupFiles: ['./tools/tests/setup.ts'],
+    environment: "happy-dom",
+    setupFiles: ["./tools/tests/setup.ts"],
     include: [
-      'tools/tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
-      'packages/patient-management/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      "tools/tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}",
+      "packages/patient-management/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}",
     ],
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './'),
-      '@/lib': path.resolve(__dirname, './lib'),
-      '@/components': path.resolve(__dirname, './components'),
+      "@": path.resolve(__dirname, "./"),
+      "@/lib": path.resolve(__dirname, "./lib"),
+      "@/components": path.resolve(__dirname, "./components"),
     },
   },
 });
@@ -570,19 +592,19 @@ vi.mock("react", async () => {
 
 ```typescript
 // ❌ Wrong - Flaky selectors
-await page.click('button');
+await page.click("button");
 
 // ✅ Correct - Specific test IDs
 await page.click('[data-testid="submit-button"]');
 
 // ❌ Wrong - No wait for navigation
 await page.click('[data-testid="login"]');
-await page.fill('[data-testid="username"]', 'user');
+await page.fill('[data-testid="username"]', "user");
 
 // ✅ Correct - Wait for navigation
 await page.click('[data-testid="login"]');
-await page.waitForURL('/dashboard');
-await page.fill('[data-testid="username"]', 'user');
+await page.waitForURL("/dashboard");
+await page.fill('[data-testid="username"]', "user");
 ```
 
 ### OXC Oxlint Configuration Issues
@@ -621,11 +643,7 @@ await page.fill('[data-testid="username"]', 'user');
     "tools/tests/**/*.ts",
     "tools/e2e/**/*.ts"
   ],
-  "excludes": [
-    "test-results/**",
-    "playwright-report/**",
-    "coverage/**"
-  ]
+  "excludes": ["test-results/**", "playwright-report/**", "coverage/**"]
 }
 ```
 
@@ -638,7 +656,7 @@ await page.fill('[data-testid="username"]', 'user');
 export default defineConfig({
   test: {
     // Enable parallel execution
-    pool: 'threads',
+    pool: "threads",
     poolOptions: {
       threads: {
         singleThread: false,
@@ -649,8 +667,8 @@ export default defineConfig({
     passWithNoTests: true,
     // Optimize coverage
     coverage: {
-      provider: 'v8', // Faster than c8
-      reporter: ['text-summary', 'html'],
+      provider: "v8", // Faster than c8
+      reporter: ["text-summary", "html"],
       skipFull: true,
     },
   },
@@ -665,28 +683,35 @@ export default defineConfig({
   // Parallel execution
   fullyParallel: true,
   workers: process.env.CI ? 2 : undefined,
-  
+
   // Faster test execution
   use: {
     // Reduce action timeout
     actionTimeout: 10000,
     // Disable animations
     launchOptions: {
-      args: ['--disable-web-security', '--disable-features=VizDisplayCompositor'],
+      args: [
+        "--disable-web-security",
+        "--disable-features=VizDisplayCompositor",
+      ],
     },
   },
-  
+
   // Optimize projects
   projects: [
     {
-      name: 'chromium-desktop',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium-desktop",
+      use: { ...devices["Desktop Chrome"] },
     },
     // Only run mobile tests when needed
-    ...(process.env.MOBILE_TESTS ? [{
-      name: 'mobile-android',
-      use: { ...devices['Pixel 5'] },
-    }] : []),
+    ...(process.env.MOBILE_TESTS
+      ? [
+          {
+            name: "mobile-android",
+            use: { ...devices["Pixel 5"] },
+          },
+        ]
+      : []),
   ],
 });
 ```
@@ -702,19 +727,19 @@ export default defineConfig({
 
 ```typescript
 // Fast test example
-test('should calculate total quickly', () => {
+test("should calculate total quickly", () => {
   // Arrange - minimal setup
   const items = [{ price: 10 }, { price: 20 }];
-  
+
   // Act - direct function call
   const total = calculateTotal(items);
-  
+
   // Assert - simple assertion
   expect(total).toBe(30);
 });
 
 // Slow test - avoid in unit tests
-test.skip('should handle large dataset', async () => {
+test.skip("should handle large dataset", async () => {
   const largeDataset = Array.from({ length: 10000 }, (_, i) => ({ id: i }));
   const result = await processLargeDataset(largeDataset);
   expect(result).toBeDefined();

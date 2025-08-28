@@ -6,7 +6,10 @@
  * with consent validation and audit logging
  */
 
-import type { RealtimePostgresChangesPayload, SupabaseClient } from "@supabase/supabase-js";
+import type {
+  RealtimePostgresChangesPayload,
+  SupabaseClient,
+} from "@supabase/supabase-js";
 import { useCallback, useEffect, useState } from "react";
 import {
   LGPDConsentStatus,
@@ -20,7 +23,8 @@ import { useRealtime } from "./use-realtime";
 import type { UseRealtimeConfig } from "./use-realtime";
 
 // LGPD-compliant realtime hook configuration
-export interface UseLGPDRealtimeConfig extends Omit<UseRealtimeConfig, "enabled"> {
+export interface UseLGPDRealtimeConfig
+  extends Omit<UseRealtimeConfig, "enabled"> {
   userId: string;
   enabled?: boolean;
   dataCategory: LGPDDataCategory;
@@ -37,7 +41,8 @@ export function useLGPDConsentStatus(
   processingPurpose?: LGPDProcessingPurpose,
   dataCategory?: LGPDDataCategory,
 ) {
-  const [consentStatus, setConsentStatus] = useState<LGPDConsentStatus | null>();
+  const [consentStatus, setConsentStatus] =
+    useState<LGPDConsentStatus | null>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>();
 
@@ -63,7 +68,8 @@ export function useLGPDConsentStatus(
         setError(new Error(`Consent denied: ${result.reason}`));
       }
     } catch (error) {
-      const errorInstance = error instanceof Error ? error : new Error("Consent validation failed");
+      const errorInstance =
+        error instanceof Error ? error : new Error("Consent validation failed");
       setError(errorInstance);
       setConsentStatus(LGPDConsentStatus.REVOKED);
     } finally {
@@ -99,7 +105,8 @@ export function useLGPDRealtime<
   T extends Record<string, unknown> = Record<string, unknown>,
 >(supabaseClient: SupabaseClient, config: UseLGPDRealtimeConfig) {
   const [processedData, setProcessedData] = useState<T | null>();
-  const [dataProcessingError, setDataProcessingError] = useState<Error | null>();
+  const [dataProcessingError, setDataProcessingError] =
+    useState<Error | null>();
 
   // Get consent status
   const {
@@ -152,7 +159,8 @@ export function useLGPDRealtime<
 
         return processedPayload;
       } catch (error) {
-        const errorInstance = error instanceof Error ? error : new Error("Data processing failed");
+        const errorInstance =
+          error instanceof Error ? error : new Error("Data processing failed");
         setDataProcessingError(errorInstance);
         config.onError?.(errorInstance);
         return;
@@ -169,8 +177,7 @@ export function useLGPDRealtime<
       return (payload: RealtimePostgresChangesPayload<T>) => {
         // Check consent before processing
         if (config.validateConsent !== false && !hasConsent) {
-          const reason =
-            `Consent denied for ${config.processingPurpose} on ${config.dataCategory} data`;
+          const reason = `Consent denied for ${config.processingPurpose} on ${config.dataCategory} data`;
           config.onConsentDenied?.(reason);
           return;
         }
@@ -189,8 +196,9 @@ export function useLGPDRealtime<
   // Enhanced realtime config with LGPD handlers
   const lgpdRealtimeConfig: UseRealtimeConfig<T> = {
     ...config,
-    enabled: (config.enabled ?? true)
-      && (config.validateConsent === false || hasConsent),
+    enabled:
+      (config.enabled ?? true) &&
+      (config.validateConsent === false || hasConsent),
     lgpdCompliance: true,
     auditLogging: config.lgpdConfig.auditLogging,
     onInsert: createLGPDEventHandler(config.onInsert),
@@ -260,8 +268,8 @@ export function useLGPDPatientRealtime(
     ...(options.patientId
       ? { filter: `id=eq.${options.patientId}` }
       : options.clinicId
-      ? { filter: `clinic_id=eq.${options.clinicId}` }
-      : {}),
+        ? { filter: `clinic_id=eq.${options.clinicId}` }
+        : {}),
     enabled: options.enabled ?? true,
     userId: options.userId ?? "",
     dataCategory: LGPDDataCategory.SENSITIVE,

@@ -17,7 +17,9 @@ test.describe("AI Prediction Features", () => {
     await expect(page).toHaveURL(/.*\/professional\/dashboard/);
   });
 
-  test("should predict patient no-show probability with accuracy metrics", async ({ page }) => {
+  test("should predict patient no-show probability with accuracy metrics", async ({
+    page,
+  }) => {
     // Navigate to appointment scheduling
     await page.click('[data-testid="appointment-scheduling"]');
 
@@ -77,7 +79,9 @@ test.describe("AI Prediction Features", () => {
     await expect(page.locator('[data-testid="reminder-sent"]')).toBeVisible();
   });
 
-  test("should integrate AR Results Simulator for treatment visualization", async ({ page }) => {
+  test("should integrate AR Results Simulator for treatment visualization", async ({
+    page,
+  }) => {
     // Navigate to patient consultation
     await page.click('[data-testid="patient-consultations"]');
     await page.click('[data-testid="new-consultation"]');
@@ -118,7 +122,9 @@ test.describe("AI Prediction Features", () => {
     ).toBeVisible();
   });
 
-  test("should provide AI-powered treatment outcome predictions", async ({ page }) => {
+  test("should provide AI-powered treatment outcome predictions", async ({
+    page,
+  }) => {
     // Navigate to treatment planning
     await page.click('[data-testid="treatment-planning"]');
 
@@ -154,7 +160,9 @@ test.describe("AI Prediction Features", () => {
     ).toBeVisible();
   });
 
-  test("should handle real-time dashboard updates with AI insights", async ({ page }) => {
+  test("should handle real-time dashboard updates with AI insights", async ({
+    page,
+  }) => {
     // Navigate to AI insights dashboard
     await page.click('[data-testid="ai-insights-dashboard"]');
 

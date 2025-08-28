@@ -21,7 +21,7 @@ export interface RollbackResult {
 export class RollbackManager {
   private readonly rollbackHistory: RollbackConfig[] = [];
 
-  constructor(private readonly config: { maxRollbackHistory: number; }) {}
+  constructor(private readonly config: { maxRollbackHistory: number }) {}
 
   /**
    * Execute rollback to previous version

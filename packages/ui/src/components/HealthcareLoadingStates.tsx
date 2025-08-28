@@ -111,7 +111,8 @@ const contextMessages: Record<
   patient_search: {
     title: "Buscando Paciente",
     description: "Localizando informações do paciente com segurança",
-    comfortMessage: "Estamos organizando as informações de forma segura e privada.",
+    comfortMessage:
+      "Estamos organizando as informações de forma segura e privada.",
     icon: User,
   },
   patient_loading: {
@@ -124,25 +125,29 @@ const contextMessages: Record<
   appointment_scheduling: {
     title: "Agendando Consulta",
     description: "Processando agendamento e enviando confirmações",
-    comfortMessage: "Estamos confirmando sua consulta e notificaremos você em breve.",
+    comfortMessage:
+      "Estamos confirmando sua consulta e notificaremos você em breve.",
     icon: Calendar,
   },
   appointment_loading: {
     title: "Carregando Agendamentos",
     description: "Sincronizando agenda médica",
-    comfortMessage: "Verificando disponibilidade para oferecer os melhores horários.",
+    comfortMessage:
+      "Verificando disponibilidade para oferecer os melhores horários.",
     icon: Calendar,
   },
   treatment_processing: {
     title: "Processando Tratamento",
     description: "Registrando informações do procedimento",
-    comfortMessage: "Documentando cuidadosamente todos os detalhes do seu tratamento.",
+    comfortMessage:
+      "Documentando cuidadosamente todos os detalhes do seu tratamento.",
     icon: Stethoscope,
   },
   document_upload: {
     title: "Enviando Documentos",
     description: "Upload seguro de arquivos médicos",
-    comfortMessage: "Seus documentos estão sendo carregados com criptografia de segurança.",
+    comfortMessage:
+      "Seus documentos estão sendo carregados com criptografia de segurança.",
     icon: FileText,
   },
   document_processing: {
@@ -154,19 +159,22 @@ const contextMessages: Record<
   consent_verification: {
     title: "Verificando Consentimento",
     description: "Validando autorizações LGPD",
-    comfortMessage: "Confirmando suas autorizações para garantir total transparência.",
+    comfortMessage:
+      "Confirmando suas autorizações para garantir total transparência.",
     icon: Shield,
   },
   compliance_check: {
     title: "Verificação de Conformidade",
     description: "Auditando conformidade regulatória",
-    comfortMessage: "Garantindo que todos os protocolos de segurança estão sendo seguidos.",
+    comfortMessage:
+      "Garantindo que todos os protocolos de segurança estão sendo seguidos.",
     icon: Shield,
   },
   emergency_access: {
     title: "Acesso de Emergência",
     description: "Processando acesso médico emergencial",
-    comfortMessage: "Priorizando acesso rápido aos dados críticos para seu atendimento.",
+    comfortMessage:
+      "Priorizando acesso rápido aos dados críticos para seu atendimento.",
     icon: Heart,
   },
   data_sync: {
@@ -184,7 +192,8 @@ const contextMessages: Record<
   system_health: {
     title: "Verificando Sistema",
     description: "Monitorando saúde do sistema",
-    comfortMessage: "Garantindo que todos os sistemas estão funcionando perfeitamente.",
+    comfortMessage:
+      "Garantindo que todos os sistemas estão funcionando perfeitamente.",
     icon: Heart,
   },
   general: {
@@ -260,15 +269,17 @@ const StepIndicator: React.FC<{
               isCompleted && "bg-green-100 text-green-700",
               isError && "bg-red-100 text-red-700",
               isActive && "bg-primary/20 text-primary",
-              !(isActive || isCompleted || isError)
-                && "bg-muted text-muted-foreground",
+              !(isActive || isCompleted || isError) &&
+                "bg-muted text-muted-foreground",
             )}
           >
-            {isCompleted
-              ? <CheckCircle className="h-4 w-4" />
-              : isActive
-              ? <LoadingSpinner size="sm" />
-              : <Icon className="h-4 w-4" />}
+            {isCompleted ? (
+              <CheckCircle className="h-4 w-4" />
+            ) : isActive ? (
+              <LoadingSpinner size="sm" />
+            ) : (
+              <Icon className="h-4 w-4" />
+            )}
           </div>
 
           <div className="min-w-0 flex-1">
@@ -365,8 +376,8 @@ export const HealthcareLoadingStates = React.forwardRef<
               </h3>
               <p className="mt-1 text-red-700 text-sm">{error}</p>
               <p className="mt-2 text-red-600 text-xs">
-                Por favor, tente novamente ou entre em contato com o suporte se o problema
-                persistir.
+                Por favor, tente novamente ou entre em contato com o suporte se
+                o problema persistir.
               </p>
             </div>
           </div>
@@ -422,9 +433,11 @@ export const HealthcareLoadingStates = React.forwardRef<
           {/* Header */}
           <div className="flex items-start gap-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-              {stage === "processing"
-                ? <LoadingSpinner size="sm" />
-                : <Icon className="h-5 w-5 text-primary" />}
+              {stage === "processing" ? (
+                <LoadingSpinner size="sm" />
+              ) : (
+                <Icon className="h-5 w-5 text-primary" />
+              )}
             </div>
 
             <div className="flex-1">
@@ -485,23 +498,23 @@ export const HealthcareLoadingStates = React.forwardRef<
 
                   {context === "patient_loading" && (
                     <p className="mt-2 text-blue-600 text-xs">
-                      💡 Seus dados estão criptografados e protegidos segundo a LGPD. Apenas
-                      profissionais autorizados têm acesso.
+                      💡 Seus dados estão criptografados e protegidos segundo a
+                      LGPD. Apenas profissionais autorizados têm acesso.
                     </p>
                   )}
 
-                  {(context === "appointment_scheduling"
-                    || context === "appointment_loading") && (
+                  {(context === "appointment_scheduling" ||
+                    context === "appointment_loading") && (
                     <p className="mt-2 text-blue-600 text-xs">
-                      💡 Você receberá uma confirmação por e-mail e SMS assim que o agendamento for
-                      concluído.
+                      💡 Você receberá uma confirmação por e-mail e SMS assim
+                      que o agendamento for concluído.
                     </p>
                   )}
 
                   {context === "treatment_processing" && (
                     <p className="mt-2 text-blue-600 text-xs">
-                      💡 Estamos registrando todos os detalhes para garantir a continuidade do seu
-                      cuidado.
+                      💡 Estamos registrando todos os detalhes para garantir a
+                      continuidade do seu cuidado.
                     </p>
                   )}
                 </div>

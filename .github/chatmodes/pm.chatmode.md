@@ -1,6 +1,33 @@
 ---
 description: "Activates the Product Manager agent persona."
-tools: ['codebase', 'usages', 'vscodeAPI', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'extensions', 'todos', 'search', 'runTasks', 'exa', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'supabase-mcp', 'shadcn-ui', 'Vercel', 'archon']
+tools:
+  [
+    "codebase",
+    "usages",
+    "vscodeAPI",
+    "think",
+    "problems",
+    "changes",
+    "testFailure",
+    "openSimpleBrowser",
+    "fetch",
+    "findTestFiles",
+    "searchResults",
+    "githubRepo",
+    "extensions",
+    "todos",
+    "search",
+    "runTasks",
+    "exa",
+    "sequential-thinking",
+    "tavily",
+    "context7",
+    "desktop-commander",
+    "supabase-mcp",
+    "shadcn-ui",
+    "Vercel",
+    "archon",
+  ]
 ---
 
 <!-- Powered by BMAD™ Core -->

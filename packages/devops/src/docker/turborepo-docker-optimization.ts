@@ -74,8 +74,10 @@ export class TurborepoDockerOptimizer {
           PNPM_VERSION: "8",
         },
         labels: {
-          "org.opencontainers.image.source": "https://github.com/neonpro/healthcare",
-          "org.opencontainers.image.description": "NeonPro Healthcare Management System",
+          "org.opencontainers.image.source":
+            "https://github.com/neonpro/healthcare",
+          "org.opencontainers.image.description":
+            "NeonPro Healthcare Management System",
           "healthcare.compliance.lgpd": "true",
           "healthcare.compliance.anvisa": "true",
           "healthcare.compliance.cfm": "true",
@@ -109,7 +111,8 @@ export class TurborepoDockerOptimizer {
     );
 
     // Step 6: Generate recommendations
-    const recommendations = this.generateOptimizationRecommendations(healthcareValidation);
+    const recommendations =
+      this.generateOptimizationRecommendations(healthcareValidation);
 
     const result: DockerOptimizationResult = {
       success: true,
@@ -256,11 +259,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV HEALTHCARE_RUNTIME_MODE=true
 
 # Healthcare security labels
-${
-      Object.entries(this.config.dockerOptions.labels)
-        .map(([key, value]) => `LABEL ${key}="${value}"`)
-        .join("\n")
-    }
+${Object.entries(this.config.dockerOptions.labels)
+  .map(([key, value]) => `LABEL ${key}="${value}"`)
+  .join("\n")}
 
 # Healthcare compliance environment variables
 ENV LGPD_AUDIT_ENABLED=true
@@ -492,21 +493,22 @@ networks:
       validation.auditLogging,
       validation.encryptionEnabled,
     ];
-    validation.complianceScore = (checks.filter(Boolean).length / checks.length) * 10;
+    validation.complianceScore =
+      (checks.filter(Boolean).length / checks.length) * 10;
     return validation;
   }
 
   private validateLGPDCompliance(): boolean {
     return (
-      this.config.healthcareSpecific
-      && this.config.dockerOptions.healthcareCompliance
+      this.config.healthcareSpecific &&
+      this.config.dockerOptions.healthcareCompliance
     );
   }
 
   private validateSecurityHardening(): boolean {
     return (
-      this.config.dockerOptions.buildArgs.NODE_VERSION.includes("alpine")
-      && this.config.dockerOptions.securityScanning
+      this.config.dockerOptions.buildArgs.NODE_VERSION.includes("alpine") &&
+      this.config.dockerOptions.securityScanning
     );
   }
 
@@ -543,7 +545,8 @@ networks:
       this.config.dockerOptions.healthcareCompliance,
       this.config.healthcareSpecific,
     ];
-    const featureScore = (features.filter(Boolean).length / features.length) * 2;
+    const featureScore =
+      (features.filter(Boolean).length / features.length) * 2;
     score += featureScore;
 
     return Math.round(score * 10) / 10;

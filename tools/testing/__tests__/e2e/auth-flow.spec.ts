@@ -44,7 +44,9 @@ test.describe("Authentication Flow", () => {
     await expect(page.url()).toContain("/login");
   });
 
-  test("should redirect to dashboard after successful login", async ({ page }) => {
+  test("should redirect to dashboard after successful login", async ({
+    page,
+  }) => {
     // Mock successful login (in real test, you'd use test credentials)
     // For demo purposes, we'll simulate the successful flow
 
@@ -128,7 +130,9 @@ test.describe("Sign Up Flow", () => {
 });
 
 test.describe("Authentication State Persistence", () => {
-  test("should maintain login state across page refreshes", async ({ page }) => {
+  test("should maintain login state across page refreshes", async ({
+    page,
+  }) => {
     // Login first
     await page.goto("/login");
     await page.fill('input[type="email"]', "demo@neonpro.com");
@@ -145,7 +149,9 @@ test.describe("Authentication State Persistence", () => {
     await expect(page.locator("text=Dashboard")).toBeVisible();
   });
 
-  test("should redirect to login when accessing protected route", async ({ page }) => {
+  test("should redirect to login when accessing protected route", async ({
+    page,
+  }) => {
     // Try to access dashboard without being logged in
     await page.goto("/dashboard");
 
@@ -180,7 +186,9 @@ test.describe("Logout Flow", () => {
 });
 
 test.describe("Error Boundaries", () => {
-  test("should display error boundary when authentication fails critically", async ({ page }) => {
+  test("should display error boundary when authentication fails critically", async ({
+    page,
+  }) => {
     // Simulate a critical auth error (you might need to mock this)
     await page.goto("/login");
 

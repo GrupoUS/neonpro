@@ -135,9 +135,11 @@ const EmergencySearchBar: React.FC<{
 
           {/* Voice Command Button */}
           <Button
-            aria-label={isVoiceActive
-              ? "Desativar comando de voz"
-              : "Ativar comando de voz"}
+            aria-label={
+              isVoiceActive
+                ? "Desativar comando de voz"
+                : "Ativar comando de voz"
+            }
             aria-pressed={isVoiceActive}
             className="h-14 border-2 px-6"
             onClick={onVoiceToggle}
@@ -150,7 +152,9 @@ const EmergencySearchBar: React.FC<{
 
           {/* Barcode Scanner Button */}
           <Button
-            aria-label={isScannerActive ? "Fechar scanner" : "Abrir scanner de código"}
+            aria-label={
+              isScannerActive ? "Fechar scanner" : "Abrir scanner de código"
+            }
             aria-pressed={isScannerActive}
             className="h-14 border-2 px-6"
             onClick={onScannerToggle}
@@ -163,7 +167,8 @@ const EmergencySearchBar: React.FC<{
         </div>
 
         <div className="text-muted-foreground text-sm" id="search-help">
-          Digite o nome, CPF ou RG do paciente. Use voz ou scanner para entrada alternativa.
+          Digite o nome, CPF ou RG do paciente. Use voz ou scanner para entrada
+          alternativa.
         </div>
       </CardContent>
     </Card>
@@ -206,27 +211,27 @@ const PatientCriticalInfo: React.FC<{
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {patient.allergies.length > 0
-            ? (
-              <div className="space-y-2">
-                {patient.allergies.map((allergy, index) => (
-                  <Alert className="border-red-400 bg-red-100" key={index}>
-                    <AlertTriangle className="h-4 w-4 text-red-600" />
-                    <AlertDescription className="font-medium text-red-800">
-                      <span className="font-bold">{allergy.type}</span>
-                      {allergy.severity === "critical" && (
-                        <Badge className="ml-2" variant="destructive">
-                          CRÍTICA
-                        </Badge>
-                      )}
-                      <br />
-                      {allergy.description}
-                    </AlertDescription>
-                  </Alert>
-                ))}
-              </div>
-            )
-            : <p className="text-red-600">Nenhuma alergia registrada</p>}
+          {patient.allergies.length > 0 ? (
+            <div className="space-y-2">
+              {patient.allergies.map((allergy, index) => (
+                <Alert className="border-red-400 bg-red-100" key={index}>
+                  <AlertTriangle className="h-4 w-4 text-red-600" />
+                  <AlertDescription className="font-medium text-red-800">
+                    <span className="font-bold">{allergy.type}</span>
+                    {allergy.severity === "critical" && (
+                      <Badge className="ml-2" variant="destructive">
+                        CRÍTICA
+                      </Badge>
+                    )}
+                    <br />
+                    {allergy.description}
+                  </AlertDescription>
+                </Alert>
+              ))}
+            </div>
+          ) : (
+            <p className="text-red-600">Nenhuma alergia registrada</p>
+          )}
         </CardContent>
       </Card>
 
@@ -239,33 +244,33 @@ const PatientCriticalInfo: React.FC<{
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {patient.medications.length > 0
-            ? (
-              <div className="grid gap-3 md:grid-cols-2">
-                {patient.medications.map((medication, index) => (
-                  <div
-                    className="rounded-lg border border-orange-300 bg-orange-100 p-3"
-                    key={index}
-                  >
-                    <div className="font-bold text-orange-800">
-                      {medication.name}
-                    </div>
-                    <div className="text-orange-700 text-sm">
-                      Dosagem: {medication.dosage}
-                    </div>
-                    <div className="text-orange-700 text-sm">
-                      Frequência: {medication.frequency}
-                    </div>
-                    {medication.lastTaken && (
-                      <div className="mt-1 text-orange-600 text-xs">
-                        Última dose: {medication.lastTaken}
-                      </div>
-                    )}
+          {patient.medications.length > 0 ? (
+            <div className="grid gap-3 md:grid-cols-2">
+              {patient.medications.map((medication, index) => (
+                <div
+                  className="rounded-lg border border-orange-300 bg-orange-100 p-3"
+                  key={index}
+                >
+                  <div className="font-bold text-orange-800">
+                    {medication.name}
                   </div>
-                ))}
-              </div>
-            )
-            : <p className="text-orange-600">Nenhuma medicação registrada</p>}
+                  <div className="text-orange-700 text-sm">
+                    Dosagem: {medication.dosage}
+                  </div>
+                  <div className="text-orange-700 text-sm">
+                    Frequência: {medication.frequency}
+                  </div>
+                  {medication.lastTaken && (
+                    <div className="mt-1 text-orange-600 text-xs">
+                      Última dose: {medication.lastTaken}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-orange-600">Nenhuma medicação registrada</p>
+          )}
         </CardContent>
       </Card>
 
@@ -278,37 +283,39 @@ const PatientCriticalInfo: React.FC<{
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {patient.contraindications.length > 0
-            ? (
-              <div className="space-y-2">
-                {patient.contraindications.map((contraindication, index) => (
-                  <div
-                    className="rounded-lg border border-accent/30 bg-accent/20 p-3"
-                    key={index}
-                  >
-                    <div className="font-bold text-accent">
-                      {contraindication.type}
-                    </div>
-                    <div className="text-accent text-sm">
-                      {contraindication.description}
-                    </div>
-                    <Badge
-                      className="mt-1"
-                      variant={contraindication.severity === "high"
+          {patient.contraindications.length > 0 ? (
+            <div className="space-y-2">
+              {patient.contraindications.map((contraindication, index) => (
+                <div
+                  className="rounded-lg border border-accent/30 bg-accent/20 p-3"
+                  key={index}
+                >
+                  <div className="font-bold text-accent">
+                    {contraindication.type}
+                  </div>
+                  <div className="text-accent text-sm">
+                    {contraindication.description}
+                  </div>
+                  <Badge
+                    className="mt-1"
+                    variant={
+                      contraindication.severity === "high"
                         ? "destructive"
-                        : "secondary"}
-                    >
-                      {contraindication.severity === "high"
-                        ? "Alta"
-                        : contraindication.severity === "moderate"
+                        : "secondary"
+                    }
+                  >
+                    {contraindication.severity === "high"
+                      ? "Alta"
+                      : contraindication.severity === "moderate"
                         ? "Moderada"
                         : "Baixa"}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            )
-            : <p className="text-accent">Nenhuma contraindicação registrada</p>}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-accent">Nenhuma contraindicação registrada</p>
+          )}
         </CardContent>
       </Card>
 
@@ -321,39 +328,41 @@ const PatientCriticalInfo: React.FC<{
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {patient.medicalConditions.length > 0
-            ? (
-              <div className="grid gap-2 md:grid-cols-2">
-                {patient.medicalConditions.map((condition, index) => (
-                  <div
-                    className="rounded-lg border border-green-300 bg-green-100 p-3"
-                    key={index}
-                  >
-                    <div className="font-bold text-green-800">
-                      {condition.condition}
-                    </div>
-                    <Badge
-                      className="mt-1"
-                      variant={condition.status === "active"
+          {patient.medicalConditions.length > 0 ? (
+            <div className="grid gap-2 md:grid-cols-2">
+              {patient.medicalConditions.map((condition, index) => (
+                <div
+                  className="rounded-lg border border-green-300 bg-green-100 p-3"
+                  key={index}
+                >
+                  <div className="font-bold text-green-800">
+                    {condition.condition}
+                  </div>
+                  <Badge
+                    className="mt-1"
+                    variant={
+                      condition.status === "active"
                         ? "destructive"
                         : condition.status === "controlled"
-                        ? "secondary"
-                        : "outline"}
-                    >
-                      {condition.status === "active"
-                        ? "Ativa"
-                        : condition.status === "controlled"
+                          ? "secondary"
+                          : "outline"
+                    }
+                  >
+                    {condition.status === "active"
+                      ? "Ativa"
+                      : condition.status === "controlled"
                         ? "Controlada"
                         : "Resolvida"}
-                    </Badge>
-                    <div className="mt-1 text-green-600 text-xs">
-                      Atualização: {condition.lastUpdate}
-                    </div>
+                  </Badge>
+                  <div className="mt-1 text-green-600 text-xs">
+                    Atualização: {condition.lastUpdate}
                   </div>
-                ))}
-              </div>
-            )
-            : <p className="text-green-600">Nenhuma condição médica registrada</p>}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-green-600">Nenhuma condição médica registrada</p>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -383,48 +392,46 @@ const EmergencyContacts: React.FC<{
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {contacts.length > 0
-          ? (
-            <div className="space-y-3">
-              {contacts.map((contact, index) => (
-                <div
-                  className="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3"
-                  key={index}
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 font-bold text-blue-800">
-                      {contact.name}
-                      {contact.isPrimary && (
-                        <Badge className="bg-blue-600" variant="default">
-                          PRINCIPAL
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="text-blue-700 text-sm">
-                      {contact.relationship}
-                    </div>
-                    <div className="font-mono text-blue-600 text-sm">
-                      {contact.phone}
-                    </div>
+        {contacts.length > 0 ? (
+          <div className="space-y-3">
+            {contacts.map((contact, index) => (
+              <div
+                className="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3"
+                key={index}
+              >
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 font-bold text-blue-800">
+                    {contact.name}
+                    {contact.isPrimary && (
+                      <Badge className="bg-blue-600" variant="default">
+                        PRINCIPAL
+                      </Badge>
+                    )}
                   </div>
-                  <Button
-                    aria-label={`Ligar para ${contact.name}`}
-                    className="h-12 bg-green-600 px-6 text-white hover:bg-green-700"
-                    onClick={() => handleCall(contact.phone, contact.name)}
-                    size="lg"
-                  >
-                    <Phone className="mr-2 h-5 w-5" />
-                    Ligar
-                  </Button>
+                  <div className="text-blue-700 text-sm">
+                    {contact.relationship}
+                  </div>
+                  <div className="font-mono text-blue-600 text-sm">
+                    {contact.phone}
+                  </div>
                 </div>
-              ))}
-            </div>
-          )
-          : (
-            <p className="text-blue-600">
-              Nenhum contato de emergência registrado
-            </p>
-          )}
+                <Button
+                  aria-label={`Ligar para ${contact.name}`}
+                  className="h-12 bg-green-600 px-6 text-white hover:bg-green-700"
+                  onClick={() => handleCall(contact.phone, contact.name)}
+                  size="lg"
+                >
+                  <Phone className="mr-2 h-5 w-5" />
+                  Ligar
+                </Button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-blue-600">
+            Nenhum contato de emergência registrado
+          </p>
+        )}
       </CardContent>
     </Card>
   );
@@ -547,9 +554,11 @@ const OfflineIndicator: React.FC<{
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {isOnline
-              ? <Wifi className="h-5 w-5 text-green-600" />
-              : <WifiOff className="h-5 w-5 text-red-600" />}
+            {isOnline ? (
+              <Wifi className="h-5 w-5 text-green-600" />
+            ) : (
+              <WifiOff className="h-5 w-5 text-red-600" />
+            )}
             <span className="font-medium">{getStatusText()}</span>
           </div>
           <div className="text-sm">Última sincronização: {lastSync}</div>
@@ -675,8 +684,8 @@ export default function EmergencyAccessPage() {
 
       // Mock search - in real implementation, this would search the database
       if (
-        query.toLowerCase().includes("joão")
-        || query.includes("123.456.789-00")
+        query.toLowerCase().includes("joão") ||
+        query.includes("123.456.789-00")
       ) {
         setState((prev) => ({
           ...prev,
@@ -796,7 +805,9 @@ export default function EmergencyAccessPage() {
           isScannerActive={state.scannerActive}
           isSearching={state.isSearching}
           isVoiceActive={state.voiceActive}
-          onChange={(value) => setState((prev) => ({ ...prev, searchQuery: value }))}
+          onChange={(value) =>
+            setState((prev) => ({ ...prev, searchQuery: value }))
+          }
           onScannerToggle={handleScannerToggle}
           onVoiceToggle={handleVoiceToggle}
           value={state.searchQuery}
@@ -807,7 +818,8 @@ export default function EmergencyAccessPage() {
           <Alert className="border-blue-400 bg-blue-50">
             <Mic className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-blue-800">
-              <strong>Comando de voz ativo.</strong> Diga o nome do paciente, CPF ou RG.
+              <strong>Comando de voz ativo.</strong> Diga o nome do paciente,
+              CPF ou RG.
             </AlertDescription>
           </Alert>
         )}
@@ -816,7 +828,8 @@ export default function EmergencyAccessPage() {
           <Alert className="border-purple-400 bg-purple-50">
             <Scan className="h-4 w-4 text-purple-600" />
             <AlertDescription className="text-purple-800">
-              <strong>Scanner ativo.</strong> Posicione o código de barras ou QR code do paciente.
+              <strong>Scanner ativo.</strong> Posicione o código de barras ou QR
+              code do paciente.
             </AlertDescription>
           </Alert>
         )}
@@ -830,19 +843,17 @@ export default function EmergencyAccessPage() {
               onClick={() => handleSearch(state.searchQuery)}
               size="lg"
             >
-              {state.isSearching
-                ? (
-                  <>
-                    <div className="mr-2 h-5 w-5 animate-spin rounded-full border-white border-b-2" />
-                    Buscando...
-                  </>
-                )
-                : (
-                  <>
-                    <Search className="mr-2 h-5 w-5" />
-                    Buscar Paciente
-                  </>
-                )}
+              {state.isSearching ? (
+                <>
+                  <div className="mr-2 h-5 w-5 animate-spin rounded-full border-white border-b-2" />
+                  Buscando...
+                </>
+              ) : (
+                <>
+                  <Search className="mr-2 h-5 w-5" />
+                  Buscar Paciente
+                </>
+              )}
             </Button>
           </div>
         )}
@@ -906,8 +917,8 @@ export default function EmergencyAccessPage() {
               <Alert className="border-orange-400 bg-orange-50">
                 <Shield className="h-4 w-4 text-orange-600" />
                 <AlertDescription className="text-orange-800">
-                  <strong>Protocolo de Emergência:</strong>{" "}
-                  Todos os acessos são registrados para auditoria. Em caso de falha do sistema,
+                  <strong>Protocolo de Emergência:</strong> Todos os acessos são
+                  registrados para auditoria. Em caso de falha do sistema,
                   consulte os protocolos em papel disponíveis na recepção.
                 </AlertDescription>
               </Alert>
@@ -924,7 +935,8 @@ export default function EmergencyAccessPage() {
             </span>
           </p>
           <p className="mt-1">
-            🔒 Acesso monitorado e auditado conforme LGPD • ☎️ Suporte 24h: 0800-NEONPRO
+            🔒 Acesso monitorado e auditado conforme LGPD • ☎️ Suporte 24h:
+            0800-NEONPRO
           </p>
         </div>
       </div>

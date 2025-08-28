@@ -75,8 +75,8 @@ export class HealthcareComplianceValidator {
     }
 
     if (
-      !check.anonymizationSupported
-      && check.dataTypes.includes("sensitive_data")
+      !check.anonymizationSupported &&
+      check.dataTypes.includes("sensitive_data")
     ) {
       violations.push(
         `${check.component}: Anonimização não suportada para dados sensíveis`,
@@ -257,9 +257,10 @@ export class HealthcareComplianceValidator {
       const cfmResults = this.validateCFMCompliance(mockCFMCheck);
 
       // ✅ Calculate overall compliance score
-      const totalViolations = lgpdResults.violations.length
-        + anvisaResults.violations.length
-        + cfmResults.violations.length;
+      const totalViolations =
+        lgpdResults.violations.length +
+        anvisaResults.violations.length +
+        cfmResults.violations.length;
 
       const maxPossibleViolations = 13; // Total possible compliance checks
       const complianceScore = Math.max(
@@ -341,7 +342,9 @@ export class HealthcareComplianceValidator {
         ];
         allViolations.forEach((violation) => {
           if (
-            criticalKeywords.some((keyword) => violation.toLowerCase().includes(keyword))
+            criticalKeywords.some((keyword) =>
+              violation.toLowerCase().includes(keyword),
+            )
           ) {
             criticalViolations.push(violation);
           }
@@ -357,9 +360,10 @@ export class HealthcareComplianceValidator {
     }
 
     return {
-      overallScore: componentPaths.length > 0
-        ? Math.round(totalScore / componentPaths.length)
-        : 0,
+      overallScore:
+        componentPaths.length > 0
+          ? Math.round(totalScore / componentPaths.length)
+          : 0,
       componentResults,
       summary: {
         totalComponents: componentPaths.length,
@@ -371,7 +375,8 @@ export class HealthcareComplianceValidator {
 }
 
 // ✅ Export singleton instance
-export const healthcareComplianceValidator = new HealthcareComplianceValidator();
+export const healthcareComplianceValidator =
+  new HealthcareComplianceValidator();
 
 /**
  * Compliance validation utilities for specific scenarios
@@ -386,7 +391,7 @@ export class ComplianceUtils {
     consentGiven: boolean;
     consentDate: Date;
     purpose: string;
-  }): { isValid: boolean; violations: string[]; } {
+  }): { isValid: boolean; violations: string[] } {
     const violations: string[] = [];
 
     if (!consentData.consentGiven) {
@@ -420,7 +425,7 @@ export class ComplianceUtils {
     coren?: string;
     specializations: string[];
     licenseExpiry: Date;
-  }): { isValid: boolean; violations: string[]; } {
+  }): { isValid: boolean; violations: string[] } {
     const violations: string[] = [];
 
     if (!(credentials.crm || credentials.coren)) {

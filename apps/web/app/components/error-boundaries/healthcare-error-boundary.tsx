@@ -1,13 +1,26 @@
 "use client";
 
-import type { ErrorInfo, ReactNode } from 'react';
-import React, { Component } from 'react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, RefreshCw, Phone } from 'lucide-react';
-import { createHealthcareError, ErrorCategory, ErrorSeverity } from '@neonpro/shared/errors/error-utils';
-import type { HealthcareError, ErrorContext } from '@neonpro/shared/errors/healthcare-error-types';
+import type { ErrorInfo, ReactNode } from "react";
+import React, { Component } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { AlertTriangle, RefreshCw, Phone } from "lucide-react";
+import {
+  createHealthcareError,
+  ErrorCategory,
+  ErrorSeverity,
+} from "@neonpro/shared/errors/error-utils";
+import type {
+  HealthcareError,
+  ErrorContext,
+} from "@neonpro/shared/errors/healthcare-error-types";
 
 interface Props {
   children: ReactNode;
@@ -44,20 +57,21 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
 
     // Log to compliance system for healthcare apps
     this.logToComplianceSystem(healthcareError, errorInfo);
-    
+
     // Alert if patient data is involved
     if (healthcareError.patientImpact) {
       this.triggerDataSecurityAlert(healthcareError);
     }
-    
+
     // Performance monitoring
     this.logToPerformanceMonitoring(healthcareError, errorInfo);
 
     // Call custom error handler if provided
     this.props.onError?.(healthcareError);
-  }  private logToComplianceSystem(error: HealthcareError, errorInfo: ErrorInfo) {
+  }
+  private logToComplianceSystem(error: HealthcareError, errorInfo: ErrorInfo) {
     // TODO: Implement actual compliance logging
-    console.error('[COMPLIANCE LOG]', {
+    console.error("[COMPLIANCE LOG]", {
       errorId: error.id,
       category: error.category,
       severity: error.severity,
@@ -65,28 +79,31 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
       complianceRisk: error.complianceRisk,
       context: error.context,
       timestamp: error.timestamp,
-      componentStack: errorInfo.componentStack
+      componentStack: errorInfo.componentStack,
     });
   }
 
   private triggerDataSecurityAlert(error: HealthcareError) {
     // TODO: Implement actual security alert system
-    console.error('[SECURITY ALERT] Patient data involved in error', {
+    console.error("[SECURITY ALERT] Patient data involved in error", {
       errorId: error.id,
       patientId: error.context.patientId,
       severity: error.severity,
-      timestamp: error.timestamp
+      timestamp: error.timestamp,
     });
   }
 
-  private logToPerformanceMonitoring(error: HealthcareError, errorInfo: ErrorInfo) {
+  private logToPerformanceMonitoring(
+    error: HealthcareError,
+    errorInfo: ErrorInfo,
+  ) {
     // TODO: Implement performance monitoring integration
-    console.error('[PERFORMANCE MONITOR]', {
+    console.error("[PERFORMANCE MONITOR]", {
       errorId: error.id,
       category: error.category,
       severity: error.severity,
       endpoint: error.context.endpoint,
-      timestamp: error.timestamp
+      timestamp: error.timestamp,
     });
   }
 
@@ -97,8 +114,13 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
 
   private handleEscalation = () => {
     // TODO: Implement escalation mechanism
-    console.log('[ESCALATION] Error escalated:', this.state.healthcareError?.id);
-    alert('Erro reportado para a equipe técnica. Aguarde resolução ou entre em contato com o suporte.');
+    console.log(
+      "[ESCALATION] Error escalated:",
+      this.state.healthcareError?.id,
+    );
+    alert(
+      "Erro reportado para a equipe técnica. Aguarde resolução ou entre em contato com o suporte.",
+    );
   };
 
   render() {
@@ -118,7 +140,7 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
 
     return this.props.children;
   }
-}/**
+} /**
  * Healthcare Error Fallback Component
  * Displays user-friendly error messages with appropriate actions
  */
@@ -128,40 +150,49 @@ interface HealthcareErrorFallbackProps {
   onEscalate: () => void;
 }
 
-function HealthcareErrorFallback({ error, onRetry, onEscalate }: HealthcareErrorFallbackProps) {
+function HealthcareErrorFallback({
+  error,
+  onRetry,
+  onEscalate,
+}: HealthcareErrorFallbackProps) {
   const getSeverityColor = (severity?: ErrorSeverity) => {
     switch (severity) {
       case ErrorSeverity.CRITICAL:
-        return 'border-red-500 bg-red-50';
+        return "border-red-500 bg-red-50";
       case ErrorSeverity.HIGH:
-        return 'border-orange-500 bg-orange-50';
+        return "border-orange-500 bg-orange-50";
       case ErrorSeverity.MEDIUM:
-        return 'border-yellow-500 bg-yellow-50';
+        return "border-yellow-500 bg-yellow-50";
       default:
-        return 'border-blue-500 bg-blue-50';
+        return "border-blue-500 bg-blue-50";
     }
   };
 
   const getErrorMessage = (error?: HealthcareError) => {
-    if (!error) {return 'Ocorreu um erro inesperado no sistema.';}
+    if (!error) {
+      return "Ocorreu um erro inesperado no sistema.";
+    }
 
     if (error.patientImpact) {
-      return 'Erro relacionado aos dados do paciente. A equipe de segurança foi notificada automaticamente.';
+      return "Erro relacionado aos dados do paciente. A equipe de segurança foi notificada automaticamente.";
     }
 
     if (error.category === ErrorCategory.COMPLIANCE) {
-      return 'Erro de conformidade LGPD detectado. O responsável pela proteção de dados foi notificado.';
+      return "Erro de conformidade LGPD detectado. O responsável pela proteção de dados foi notificado.";
     }
 
-    if (error.category === ErrorCategory.AUTHENTICATION || error.category === ErrorCategory.AUTHORIZATION) {
-      return 'Problema de autenticação detectado. Por favor, faça login novamente.';
+    if (
+      error.category === ErrorCategory.AUTHENTICATION ||
+      error.category === ErrorCategory.AUTHORIZATION
+    ) {
+      return "Problema de autenticação detectado. Por favor, faça login novamente.";
     }
 
     if (error.category === ErrorCategory.DATABASE) {
-      return 'Problema de conectividade com o banco de dados. Tentando reconectar automaticamente.';
+      return "Problema de conectividade com o banco de dados. Tentando reconectar automaticamente.";
     }
 
-    return 'Ocorreu um erro no sistema. Nossa equipe foi notificada e está trabalhando na resolução.';
+    return "Ocorreu um erro no sistema. Nossa equipe foi notificada e está trabalhando na resolução.";
   };
 
   return (
@@ -172,11 +203,9 @@ function HealthcareErrorFallback({ error, onRetry, onEscalate }: HealthcareError
             <AlertTriangle className="h-5 w-5 text-red-500" />
             <CardTitle className="text-lg">Sistema Indisponível</CardTitle>
           </div>
-          <CardDescription>
-            {getErrorMessage(error)}
-          </CardDescription>
+          <CardDescription>{getErrorMessage(error)}</CardDescription>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
           {error && (
             <Alert>
@@ -184,9 +213,16 @@ function HealthcareErrorFallback({ error, onRetry, onEscalate }: HealthcareError
               <AlertTitle>Detalhes Técnicos</AlertTitle>
               <AlertDescription>
                 <div className="text-sm space-y-1 mt-2">
-                  <p><strong>ID do Erro:</strong> {error.id}</p>
-                  <p><strong>Categoria:</strong> {error.category}</p>
-                  <p><strong>Horário:</strong> {error.timestamp.toLocaleString('pt-BR')}</p>
+                  <p>
+                    <strong>ID do Erro:</strong> {error.id}
+                  </p>
+                  <p>
+                    <strong>Categoria:</strong> {error.category}
+                  </p>
+                  <p>
+                    <strong>Horário:</strong>{" "}
+                    {error.timestamp.toLocaleString("pt-BR")}
+                  </p>
                 </div>
               </AlertDescription>
             </Alert>
@@ -197,9 +233,13 @@ function HealthcareErrorFallback({ error, onRetry, onEscalate }: HealthcareError
               <RefreshCw className="h-4 w-4 mr-2" />
               Tentar Novamente
             </Button>
-            
+
             {error?.severity === ErrorSeverity.CRITICAL && (
-              <Button onClick={onEscalate} variant="destructive" className="flex-1">
+              <Button
+                onClick={onEscalate}
+                variant="destructive"
+                className="flex-1"
+              >
                 <Phone className="h-4 w-4 mr-2" />
                 Reportar Erro Crítico
               </Button>
@@ -209,11 +249,14 @@ function HealthcareErrorFallback({ error, onRetry, onEscalate }: HealthcareError
           {error?.patientImpact && (
             <Alert className="border-red-200 bg-red-50">
               <AlertTriangle className="h-4 w-4 text-red-500" />
-              <AlertTitle className="text-red-800">Aviso de Segurança</AlertTitle>
+              <AlertTitle className="text-red-800">
+                Aviso de Segurança
+              </AlertTitle>
               <AlertDescription className="text-red-700">
-                Este erro pode ter afetado dados de pacientes. A equipe de segurança foi notificada 
-                automaticamente e está investigando. Se você estava acessando informações sensíveis, 
-                por favor documente as ações realizadas.
+                Este erro pode ter afetado dados de pacientes. A equipe de
+                segurança foi notificada automaticamente e está investigando. Se
+                você estava acessando informações sensíveis, por favor documente
+                as ações realizadas.
               </AlertDescription>
             </Alert>
           )}

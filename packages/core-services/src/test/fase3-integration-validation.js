@@ -333,7 +333,8 @@ function validateAuthIntegration() {
     },
     {
       desc: "Healthcare-specific types",
-      check: () => checkFileContent(authPath, "src/types.ts", "HealthcareProvider"),
+      check: () =>
+        checkFileContent(authPath, "src/types.ts", "HealthcareProvider"),
     },
     {
       desc: "React hooks provided",
@@ -341,7 +342,8 @@ function validateAuthIntegration() {
     },
     {
       desc: "Components provided",
-      check: () => checkFileContent(authPath, "src/components/index.ts", "LoginForm"),
+      check: () =>
+        checkFileContent(authPath, "src/components/index.ts", "LoginForm"),
     },
   ];
 
@@ -371,11 +373,13 @@ function validateCacheIntegration() {
     },
     {
       desc: "Multi-layer caching support",
-      check: () => checkFileContent(cachePath, "src/enterprise.ts", "setMultiLayer"),
+      check: () =>
+        checkFileContent(cachePath, "src/enterprise.ts", "setMultiLayer"),
     },
     {
       desc: "LGPD compliance features",
-      check: () => checkFileContent(cachePath, "src/enterprise.ts", "lgpdCompliant"),
+      check: () =>
+        checkFileContent(cachePath, "src/enterprise.ts", "lgpdCompliant"),
     },
     {
       desc: "Sensitive data handling",
@@ -397,7 +401,8 @@ function validateCacheIntegration() {
     },
     {
       desc: "Backward compatibility maintained",
-      check: () => checkFileContent(cachePath, "src/enterprise.ts", "healthcareCache"),
+      check: () =>
+        checkFileContent(cachePath, "src/enterprise.ts", "healthcareCache"),
     },
   ];
 
@@ -507,19 +512,23 @@ function validateTypesIntegration() {
     },
     {
       desc: "Compliance framework types",
-      check: () => checkFileContent(typesPath, "src/enterprise.ts", "ComplianceFramework"),
+      check: () =>
+        checkFileContent(typesPath, "src/enterprise.ts", "ComplianceFramework"),
     },
     {
       desc: "Patient data access types",
-      check: () => checkFileContent(typesPath, "src/enterprise.ts", "PatientDataAccess"),
+      check: () =>
+        checkFileContent(typesPath, "src/enterprise.ts", "PatientDataAccess"),
     },
     {
       desc: "Security event types",
-      check: () => checkFileContent(typesPath, "src/enterprise.ts", "SecurityEvent"),
+      check: () =>
+        checkFileContent(typesPath, "src/enterprise.ts", "SecurityEvent"),
     },
     {
       desc: "Analytics insight types",
-      check: () => checkFileContent(typesPath, "src/enterprise.ts", "AnalyticsInsight"),
+      check: () =>
+        checkFileContent(typesPath, "src/enterprise.ts", "AnalyticsInsight"),
     },
   ];
 

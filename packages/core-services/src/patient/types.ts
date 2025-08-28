@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { DateSchema, EmailSchema, PatientStatus, PhoneSchema, UUIDSchema } from "../types";
+import {
+  DateSchema,
+  EmailSchema,
+  PatientStatus,
+  PhoneSchema,
+  UUIDSchema,
+} from "../types";
 import type { BaseEntity } from "../types";
 
 // Patient interfaces for aesthetic clinic

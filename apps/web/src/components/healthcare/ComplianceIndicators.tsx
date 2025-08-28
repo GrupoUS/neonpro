@@ -19,7 +19,12 @@ import {
 } from "lucide-react";
 
 // CFM License Status Types
-export type CFMLicenseStatus = "active" | "expired" | "suspended" | "pending" | "invalid";
+export type CFMLicenseStatus =
+  | "active"
+  | "expired"
+  | "suspended"
+  | "pending"
+  | "invalid";
 
 export interface CFMLicenseIndicatorProps {
   licenseNumber: string;
@@ -33,7 +38,12 @@ export interface CFMLicenseIndicatorProps {
 }
 
 // LGPD Consent Status Types
-export type LGPDConsentStatus = "granted" | "denied" | "pending" | "expired" | "revoked";
+export type LGPDConsentStatus =
+  | "granted"
+  | "denied"
+  | "pending"
+  | "expired"
+  | "revoked";
 
 export interface LGPDConsentIndicatorProps {
   patientId: string;
@@ -45,7 +55,9 @@ export interface LGPDConsentIndicatorProps {
   };
   lastUpdated: string;
   className?: string;
-  onUpdateConsent?: (type: keyof LGPDConsentIndicatorProps['consentTypes']) => void;
+  onUpdateConsent?: (
+    type: keyof LGPDConsentIndicatorProps["consentTypes"],
+  ) => void;
   showDetails?: boolean;
 }
 
@@ -139,7 +151,9 @@ export function CFMLicenseIndicator({
   const StatusIcon = config.icon;
 
   return (
-    <Card className={cn("transition-all duration-200", config.color, className)}>
+    <Card
+      className={cn("transition-all duration-200", config.color, className)}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium flex items-center">
           <StatusIcon className="h-4 w-4 mr-2" />
@@ -191,7 +205,9 @@ export function LGPDConsentIndicator({
   showDetails = true,
 }: LGPDConsentIndicatorProps) {
   const consentEntries = Object.entries(consentTypes);
-  const grantedCount = consentEntries.filter(([, status]) => status === "granted").length;
+  const grantedCount = consentEntries.filter(
+    ([, status]) => status === "granted",
+  ).length;
   const totalCount = consentEntries.length;
   const compliancePercentage = (grantedCount / totalCount) * 100;
 
@@ -211,7 +227,9 @@ export function LGPDConsentIndicator({
         </CardTitle>
         <Badge
           variant={compliancePercentage === 100 ? "default" : "secondary"}
-          className={compliancePercentage === 100 ? "bg-green-100 text-green-800" : ""}
+          className={
+            compliancePercentage === 100 ? "bg-green-100 text-green-800" : ""
+          }
         >
           {compliancePercentage.toFixed(0)}%
         </Badge>
@@ -233,8 +251,12 @@ export function LGPDConsentIndicator({
                     className="flex items-center justify-between text-xs"
                   >
                     <div className="flex items-center">
-                      <StatusIcon className={cn("h-3 w-3 mr-2", config.color)} />
-                      <span>{consentLabels[type as keyof typeof consentLabels]}</span>
+                      <StatusIcon
+                        className={cn("h-3 w-3 mr-2", config.color)}
+                      />
+                      <span>
+                        {consentLabels[type as keyof typeof consentLabels]}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className={config.color}>{config.label}</span>
@@ -243,7 +265,11 @@ export function LGPDConsentIndicator({
                           variant="ghost"
                           size="sm"
                           className="h-6 px-2 text-xs"
-                          onClick={() => onUpdateConsent(type as keyof LGPDConsentIndicatorProps['consentTypes'])}
+                          onClick={() =>
+                            onUpdateConsent(
+                              type as keyof LGPDConsentIndicatorProps["consentTypes"],
+                            )
+                          }
                         >
                           Atualizar
                         </Button>
@@ -276,26 +302,42 @@ export function ComplianceDashboard({
   onViewDetails,
 }: ComplianceDashboardProps) {
   const getScoreColor = (score: number) => {
-    if (score >= 90) {return "text-green-600";}
-    if (score >= 70) {return "text-amber-600";}
+    if (score >= 90) {
+      return "text-green-600";
+    }
+    if (score >= 70) {
+      return "text-amber-600";
+    }
     return "text-red-600";
   };
 
   const getScoreBg = (score: number) => {
-    if (score >= 90) {return "bg-green-50 border-green-200";}
-    if (score >= 70) {return "bg-amber-50 border-amber-200";}
+    if (score >= 90) {
+      return "bg-green-50 border-green-200";
+    }
+    if (score >= 70) {
+      return "bg-amber-50 border-amber-200";
+    }
     return "bg-red-50 border-red-200";
   };
 
   return (
-    <Card className={cn("transition-all duration-200", getScoreBg(overallScore), className)}>
+    <Card
+      className={cn(
+        "transition-all duration-200",
+        getScoreBg(overallScore),
+        className,
+      )}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle className="text-lg font-semibold flex items-center">
           <ShieldCheck className="h-5 w-5 mr-2" />
           Dashboard de Conformidade
         </CardTitle>
         <div className="text-right">
-          <div className={cn("text-2xl font-bold", getScoreColor(overallScore))}>
+          <div
+            className={cn("text-2xl font-bold", getScoreColor(overallScore))}
+          >
             {overallScore}%
           </div>
           <div className="text-xs text-muted-foreground">Score Geral</div>
@@ -306,21 +348,36 @@ export function ComplianceDashboard({
           {/* Individual Compliance Scores */}
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
-              <div className={cn("text-lg font-semibold", getScoreColor(cfmCompliance))}>
+              <div
+                className={cn(
+                  "text-lg font-semibold",
+                  getScoreColor(cfmCompliance),
+                )}
+              >
                 {cfmCompliance}%
               </div>
               <div className="text-xs text-muted-foreground">CFM</div>
               <Progress value={cfmCompliance} className="h-1 mt-1" />
             </div>
             <div className="text-center">
-              <div className={cn("text-lg font-semibold", getScoreColor(lgpdCompliance))}>
+              <div
+                className={cn(
+                  "text-lg font-semibold",
+                  getScoreColor(lgpdCompliance),
+                )}
+              >
                 {lgpdCompliance}%
               </div>
               <div className="text-xs text-muted-foreground">LGPD</div>
               <Progress value={lgpdCompliance} className="h-1 mt-1" />
             </div>
             <div className="text-center">
-              <div className={cn("text-lg font-semibold", getScoreColor(anvisaCompliance))}>
+              <div
+                className={cn(
+                  "text-lg font-semibold",
+                  getScoreColor(anvisaCompliance),
+                )}
+              >
                 {anvisaCompliance}%
               </div>
               <div className="text-xs text-muted-foreground">ANVISA</div>
@@ -333,7 +390,9 @@ export function ComplianceDashboard({
             <div className="flex items-center p-3 bg-red-50 border border-red-200 rounded-md">
               <AlertTriangle className="h-4 w-4 text-red-600 mr-2" />
               <span className="text-sm text-red-800">
-                {criticalIssues} {criticalIssues === 1 ? 'questão crítica' : 'questões críticas'} {criticalIssues === 1 ? 'requer' : 'requerem'} atenção imediata
+                {criticalIssues}{" "}
+                {criticalIssues === 1 ? "questão crítica" : "questões críticas"}{" "}
+                {criticalIssues === 1 ? "requer" : "requerem"} atenção imediata
               </span>
             </div>
           )}
@@ -341,11 +400,15 @@ export function ComplianceDashboard({
           {/* Audit Information */}
           <div className="grid grid-cols-2 gap-4 pt-2 border-t">
             <div>
-              <div className="text-xs text-muted-foreground">Última Auditoria</div>
+              <div className="text-xs text-muted-foreground">
+                Última Auditoria
+              </div>
               <div className="text-sm font-medium">{lastAudit}</div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">Próxima Auditoria</div>
+              <div className="text-xs text-muted-foreground">
+                Próxima Auditoria
+              </div>
               <div className="text-sm font-medium">{nextAudit}</div>
             </div>
           </div>

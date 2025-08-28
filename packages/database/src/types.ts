@@ -9,7 +9,7 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json | undefined; }
+  | { [key: string]: Json | undefined }
   | Json[];
 
 export interface Database {
@@ -140,8 +140,17 @@ export interface Database {
           clinic_id: string;
           appointment_date: string;
           duration_minutes: number;
-          status: "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show";
-          appointment_type: "consultation" | "follow_up" | "procedure" | "emergency";
+          status:
+            | "scheduled"
+            | "confirmed"
+            | "completed"
+            | "cancelled"
+            | "no_show";
+          appointment_type:
+            | "consultation"
+            | "follow_up"
+            | "procedure"
+            | "emergency";
           notes: string | null;
           symptoms: string | null;
           diagnosis: string | null; // Encrypted field
@@ -158,8 +167,17 @@ export interface Database {
           clinic_id: string;
           appointment_date: string;
           duration_minutes?: number;
-          status?: "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show";
-          appointment_type: "consultation" | "follow_up" | "procedure" | "emergency";
+          status?:
+            | "scheduled"
+            | "confirmed"
+            | "completed"
+            | "cancelled"
+            | "no_show";
+          appointment_type:
+            | "consultation"
+            | "follow_up"
+            | "procedure"
+            | "emergency";
           notes?: string | null;
           symptoms?: string | null;
           diagnosis?: string | null;
@@ -176,8 +194,17 @@ export interface Database {
           clinic_id?: string;
           appointment_date?: string;
           duration_minutes?: number;
-          status?: "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show";
-          appointment_type?: "consultation" | "follow_up" | "procedure" | "emergency";
+          status?:
+            | "scheduled"
+            | "confirmed"
+            | "completed"
+            | "cancelled"
+            | "no_show";
+          appointment_type?:
+            | "consultation"
+            | "follow_up"
+            | "procedure"
+            | "emergency";
           notes?: string | null;
           symptoms?: string | null;
           diagnosis?: string | null;
@@ -288,7 +315,13 @@ export interface Database {
           user_id: string;
           title: string;
           message: string;
-          type: "info" | "warning" | "success" | "error" | "appointment" | "compliance";
+          type:
+            | "info"
+            | "warning"
+            | "success"
+            | "error"
+            | "appointment"
+            | "compliance";
           read: boolean;
           metadata: Json | null;
           clinic_id: string;
@@ -300,7 +333,13 @@ export interface Database {
           user_id: string;
           title: string;
           message: string;
-          type: "info" | "warning" | "success" | "error" | "appointment" | "compliance";
+          type:
+            | "info"
+            | "warning"
+            | "success"
+            | "error"
+            | "appointment"
+            | "compliance";
           read?: boolean;
           metadata?: Json | null;
           clinic_id: string;
@@ -312,7 +351,13 @@ export interface Database {
           user_id?: string;
           title?: string;
           message?: string;
-          type?: "info" | "warning" | "success" | "error" | "appointment" | "compliance";
+          type?:
+            | "info"
+            | "warning"
+            | "success"
+            | "error"
+            | "appointment"
+            | "compliance";
           read?: boolean;
           metadata?: Json | null;
           clinic_id?: string;
@@ -338,9 +383,24 @@ export interface Database {
         | "billing"
         | "auditor"
         | "patient";
-      appointment_status: "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show";
-      appointment_type: "consultation" | "follow_up" | "procedure" | "emergency";
-      notification_type: "info" | "warning" | "success" | "error" | "appointment" | "compliance";
+      appointment_status:
+        | "scheduled"
+        | "confirmed"
+        | "completed"
+        | "cancelled"
+        | "no_show";
+      appointment_type:
+        | "consultation"
+        | "follow_up"
+        | "procedure"
+        | "emergency";
+      notification_type:
+        | "info"
+        | "warning"
+        | "success"
+        | "error"
+        | "appointment"
+        | "compliance";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -361,19 +421,24 @@ export type PatientInsert = Database["public"]["Tables"]["patients"]["Insert"];
 export type PatientUpdate = Database["public"]["Tables"]["patients"]["Update"];
 
 export type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
-export type AppointmentInsert = Database["public"]["Tables"]["appointments"]["Insert"];
-export type AppointmentUpdate = Database["public"]["Tables"]["appointments"]["Update"];
+export type AppointmentInsert =
+  Database["public"]["Tables"]["appointments"]["Insert"];
+export type AppointmentUpdate =
+  Database["public"]["Tables"]["appointments"]["Update"];
 
 export type Clinic = Database["public"]["Tables"]["clinics"]["Row"];
 export type ClinicInsert = Database["public"]["Tables"]["clinics"]["Insert"];
 export type ClinicUpdate = Database["public"]["Tables"]["clinics"]["Update"];
 
-export type HealthcareAuditLog = Database["public"]["Tables"]["healthcare_audit_logs"]["Row"];
+export type HealthcareAuditLog =
+  Database["public"]["Tables"]["healthcare_audit_logs"]["Row"];
 export type HealthcareAuditLogInsert =
   Database["public"]["Tables"]["healthcare_audit_logs"]["Insert"];
 export type HealthcareAuditLogUpdate =
   Database["public"]["Tables"]["healthcare_audit_logs"]["Update"];
 
 export type Notification = Database["public"]["Tables"]["notifications"]["Row"];
-export type NotificationInsert = Database["public"]["Tables"]["notifications"]["Insert"];
-export type NotificationUpdate = Database["public"]["Tables"]["notifications"]["Update"];
+export type NotificationInsert =
+  Database["public"]["Tables"]["notifications"]["Insert"];
+export type NotificationUpdate =
+  Database["public"]["Tables"]["notifications"]["Update"];

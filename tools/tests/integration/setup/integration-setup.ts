@@ -12,8 +12,12 @@ declare global {
   let __INTEGRATION_TEST_UTILS__: {
     supabase: ReturnType<typeof createClient>;
     resetDatabase: () => Promise<void>;
-    createTestUser: (userData?: Partial<Record<string, unknown>>) => Promise<unknown>;
-    createTestPatient: (patientData?: Partial<Record<string, unknown>>) => Promise<unknown>;
+    createTestUser: (
+      userData?: Partial<Record<string, unknown>>,
+    ) => Promise<unknown>;
+    createTestPatient: (
+      patientData?: Partial<Record<string, unknown>>,
+    ) => Promise<unknown>;
     waitForAsync: (ms?: number) => Promise<void>;
   };
 }
@@ -22,7 +26,7 @@ declare global {
 const setupSupabaseClient = () => {
   const supabaseUrl = process.env.TEST_SUPABASE_URL || "http://localhost:54321";
   const supabaseKey = process.env.TEST_SUPABASE_ANON_KEY || "test-key";
-  
+
   return createClient(supabaseUrl, supabaseKey, {
     auth: {
       autoRefreshToken: false,
@@ -34,14 +38,26 @@ const setupSupabaseClient = () => {
 // Database reset utility
 const resetDatabase = async () => {
   const supabase = global.__INTEGRATION_TEST_UTILS__.supabase;
-  
+
   try {
     // Clean up test data in reverse dependency order
-    await supabase.from("appointments").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    await supabase.from("medical_records").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    await supabase.from("patients").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    await supabase.from("users").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    
+    await supabase
+      .from("appointments")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+    await supabase
+      .from("medical_records")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+    await supabase
+      .from("patients")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+    await supabase
+      .from("users")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+
     console.log("🧹 Database reset completed");
   } catch (error) {
     console.error("❌ Database reset failed:", error);
@@ -50,9 +66,11 @@ const resetDatabase = async () => {
 };
 
 // Create test user utility
-const createTestUser = async (userData: Partial<Record<string, unknown>> = {}) => {
+const createTestUser = async (
+  userData: Partial<Record<string, unknown>> = {},
+) => {
   const supabase = global.__INTEGRATION_TEST_UTILS__.supabase;
-  
+
   const defaultUserData = {
     email: `test-${Date.now()}@example.com`,
     password: "test123456",
@@ -60,7 +78,7 @@ const createTestUser = async (userData: Partial<Record<string, unknown>> = {}) =
     role: "doctor",
     ...userData,
   };
-  
+
   const { data, error } = await supabase.auth.signUp({
     email: defaultUserData.email,
     password: defaultUserData.password,
@@ -71,18 +89,20 @@ const createTestUser = async (userData: Partial<Record<string, unknown>> = {}) =
       },
     },
   });
-  
+
   if (error) {
     throw error;
   }
-  
+
   return data.user;
 };
 
 // Create test patient utility
-const createTestPatient = async (patientData: Partial<Record<string, unknown>> = {}) => {
+const createTestPatient = async (
+  patientData: Partial<Record<string, unknown>> = {},
+) => {
   const supabase = global.__INTEGRATION_TEST_UTILS__.supabase;
-  
+
   const defaultPatientData = {
     name: `Test Patient ${Date.now()}`,
     email: `patient-${Date.now()}@example.com`,
@@ -94,17 +114,17 @@ const createTestPatient = async (patientData: Partial<Record<string, unknown>> =
     emergency_phone: "+0987654321",
     ...patientData,
   };
-  
+
   const { data, error } = await supabase
     .from("patients")
     .insert(defaultPatientData)
     .select()
     .single();
-  
+
   if (error) {
     throw error;
   }
-  
+
   return data;
 };
 
@@ -117,7 +137,7 @@ const waitForAsync = async (ms: number = 100) => {
 beforeAll(() => {
   // Initialize Supabase client
   const supabase = setupSupabaseClient();
-  
+
   // Setup global test utilities
   global.__INTEGRATION_TEST_UTILS__ = {
     supabase,
@@ -126,7 +146,7 @@ beforeAll(() => {
     createTestPatient,
     waitForAsync,
   };
-  
+
   console.log("🔧 Integration test utilities initialized");
 });
 
@@ -134,13 +154,13 @@ beforeAll(() => {
 beforeEach(async () => {
   // Clear all mocks
   vi.clearAllMocks();
-  
+
   // Cleanup React Testing Library
   cleanup();
-  
+
   // Reset database state
   await resetDatabase();
-  
+
   console.log("🧪 Test environment reset");
 });
 
@@ -148,10 +168,10 @@ beforeEach(async () => {
 afterEach(async () => {
   // Additional cleanup if needed
   cleanup();
-  
+
   // Clear any pending timers
   vi.clearAllTimers();
-  
+
   // Reset all mocks
   vi.resetAllMocks();
 });
@@ -160,7 +180,7 @@ afterEach(async () => {
 afterAll(async () => {
   // Final cleanup
   await resetDatabase();
-  
+
   console.log("🏁 Integration tests completed");
 });
 
@@ -201,16 +221,13 @@ vi.mock("next/navigation", () => ({
 
 // Mock environment variables
 process.env.NODE_ENV = "test";
-process.env.NEXT_PUBLIC_SUPABASE_URL = process.env.TEST_SUPABASE_URL || "http://localhost:54321";
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = process.env.TEST_SUPABASE_ANON_KEY || "test-key";
+process.env.NEXT_PUBLIC_SUPABASE_URL =
+  process.env.TEST_SUPABASE_URL || "http://localhost:54321";
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY =
+  process.env.TEST_SUPABASE_ANON_KEY || "test-key";
 
 // Export utilities for use in tests
-export {
-  resetDatabase,
-  createTestUser,
-  createTestPatient,
-  waitForAsync,
-};
+export { resetDatabase, createTestUser, createTestPatient, waitForAsync };
 
 // Export test data factories
 export const testDataFactories = {
@@ -223,7 +240,7 @@ export const testDataFactories = {
     updated_at: new Date().toISOString(),
     ...overrides,
   }),
-  
+
   patient: (overrides: Partial<Record<string, unknown>> = {}) => ({
     id: `patient-${Date.now()}`,
     name: `Test Patient ${Date.now()}`,
@@ -238,7 +255,7 @@ export const testDataFactories = {
     updated_at: new Date().toISOString(),
     ...overrides,
   }),
-  
+
   appointment: (overrides: Partial<Record<string, unknown>> = {}) => ({
     id: `appointment-${Date.now()}`,
     patient_id: `patient-${Date.now()}`,

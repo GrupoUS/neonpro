@@ -28,7 +28,8 @@ export * from "./testing";
 export const NEONPRO_DEVOPS_CONFIG = {
   name: "@neonpro/devops",
   version: "1.0.0",
-  description: "NeonPro Healthcare DevOps Excellence - Constitutional Healthcare Infrastructure",
+  description:
+    "NeonPro Healthcare DevOps Excellence - Constitutional Healthcare Infrastructure",
 
   // Healthcare Quality Standards (PROJECT OVERRIDE)
   qualityStandards: {

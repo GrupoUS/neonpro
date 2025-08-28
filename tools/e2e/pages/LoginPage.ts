@@ -22,19 +22,41 @@ export class LoginPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    
+
     // Initialize locators
-    this.emailInput = page.locator('[data-testid="email-input"], input[type="email"], input[name="email"]');
-    this.passwordInput = page.locator('[data-testid="password-input"], input[type="password"], input[name="password"]');
-    this.loginButton = page.locator('[data-testid="login-button"], button[type="submit"], .login-button');
-    this.forgotPasswordLink = page.locator('[data-testid="forgot-password-link"], a[href*="forgot"]');
-    this.signUpLink = page.locator('[data-testid="signup-link"], a[href*="signup"], a[href*="register"]');
-    this.errorMessage = page.locator('[data-testid="error-message"], .error-message, .alert-error');
-    this.successMessage = page.locator('[data-testid="success-message"], .success-message, .alert-success');
-    this.loadingSpinner = page.locator('[data-testid="loading"], .loading, .spinner');
-    this.showPasswordButton = page.locator('[data-testid="show-password"], .show-password');
-    this.rememberMeCheckbox = page.locator('[data-testid="remember-me"], input[name="remember"]');
-    this.loginForm = page.locator('[data-testid="login-form"], form, .login-form');
+    this.emailInput = page.locator(
+      '[data-testid="email-input"], input[type="email"], input[name="email"]',
+    );
+    this.passwordInput = page.locator(
+      '[data-testid="password-input"], input[type="password"], input[name="password"]',
+    );
+    this.loginButton = page.locator(
+      '[data-testid="login-button"], button[type="submit"], .login-button',
+    );
+    this.forgotPasswordLink = page.locator(
+      '[data-testid="forgot-password-link"], a[href*="forgot"]',
+    );
+    this.signUpLink = page.locator(
+      '[data-testid="signup-link"], a[href*="signup"], a[href*="register"]',
+    );
+    this.errorMessage = page.locator(
+      '[data-testid="error-message"], .error-message, .alert-error',
+    );
+    this.successMessage = page.locator(
+      '[data-testid="success-message"], .success-message, .alert-success',
+    );
+    this.loadingSpinner = page.locator(
+      '[data-testid="loading"], .loading, .spinner',
+    );
+    this.showPasswordButton = page.locator(
+      '[data-testid="show-password"], .show-password',
+    );
+    this.rememberMeCheckbox = page.locator(
+      '[data-testid="remember-me"], input[name="remember"]',
+    );
+    this.loginForm = page.locator(
+      '[data-testid="login-form"], form, .login-form',
+    );
   }
 
   // Navigation methods
@@ -81,20 +103,26 @@ export class LoginPage extends BasePage {
   async login(email: string, password: string, rememberMe: boolean = false) {
     await this.enterEmail(email);
     await this.enterPassword(password);
-    
+
     if (rememberMe) {
       await this.toggleRememberMe();
     }
-    
+
     await this.clickLoginButton();
   }
 
-  async loginWithValidCredentials(email: string = "test@example.com", password: string = "password123") {
+  async loginWithValidCredentials(
+    email: string = "test@example.com",
+    password: string = "password123",
+  ) {
     await this.login(email, password);
     await this.waitForSuccessfulLogin();
   }
 
-  async loginWithInvalidCredentials(email: string = "invalid@example.com", password: string = "wrongpassword") {
+  async loginWithInvalidCredentials(
+    email: string = "invalid@example.com",
+    password: string = "wrongpassword",
+  ) {
     await this.login(email, password);
     await this.waitForErrorMessage();
   }
@@ -149,14 +177,18 @@ export class LoginPage extends BasePage {
   async expectLoginButtonToBeDisabled() {
     const isEnabled = await this.isElementEnabled(this.loginButton);
     if (isEnabled) {
-      throw new Error("Expected login button to be disabled, but it was enabled");
+      throw new Error(
+        "Expected login button to be disabled, but it was enabled",
+      );
     }
   }
 
   async expectLoginButtonToBeEnabled() {
     const isEnabled = await this.isElementEnabled(this.loginButton);
     if (!isEnabled) {
-      throw new Error("Expected login button to be enabled, but it was disabled");
+      throw new Error(
+        "Expected login button to be enabled, but it was disabled",
+      );
     }
   }
 
@@ -166,12 +198,16 @@ export class LoginPage extends BasePage {
 
   // Form validation methods
   async expectEmailValidationError() {
-    const emailError = this.page.locator('[data-testid="email-error"], .email-error');
+    const emailError = this.page.locator(
+      '[data-testid="email-error"], .email-error',
+    );
     await this.expectElementToBeVisible(emailError);
   }
 
   async expectPasswordValidationError() {
-    const passwordError = this.page.locator('[data-testid="password-error"], .password-error');
+    const passwordError = this.page.locator(
+      '[data-testid="password-error"], .password-error',
+    );
     await this.expectElementToBeVisible(passwordError);
   }
 
@@ -184,7 +220,7 @@ export class LoginPage extends BasePage {
   async isLoginFormValid(): Promise<boolean> {
     const emailValue = await this.getElementValue(this.emailInput);
     const passwordValue = await this.getElementValue(this.passwordInput);
-    
+
     return emailValue.length > 0 && passwordValue.length > 0;
   }
 

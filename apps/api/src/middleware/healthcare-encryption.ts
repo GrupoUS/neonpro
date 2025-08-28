@@ -10,30 +10,30 @@
  * - Emergency access controls
  */
 
-import * as crypto from 'node:crypto';
-import type { Context, MiddlewareHandler } from 'hono';
-import { HealthcareSecurityLogger } from './healthcare-security';
+import * as crypto from "node:crypto";
+import type { Context, MiddlewareHandler } from "hono";
+import { HealthcareSecurityLogger } from "./healthcare-security";
 
 // Encryption configuration
 const ENCRYPTION_CONFIG = {
-  ALGORITHM: 'aes-256-gcm',
+  ALGORITHM: "aes-256-gcm",
   KEY_LENGTH: 32, // 256 bits
   IV_LENGTH: 16, // 128 bits
   TAG_LENGTH: 16, // 128 bits
   SALT_LENGTH: 32, // 256 bits
-  KEY_DERIVATION: 'pbkdf2',
+  KEY_DERIVATION: "pbkdf2",
   PBKDF2_ITERATIONS: 100_000,
   KEY_ROTATION_INTERVAL: 90 * 24 * 60 * 60 * 1000, // 90 days in milliseconds
 } as const;
 
 // Data categories requiring encryption
 export enum EncryptionCategory {
-  PATIENT_PII = 'patient_pii', // Personal identifiable information
-  MEDICAL_DATA = 'medical_data', // Medical records, procedures
-  BIOMETRIC = 'biometric', // Biometric data
-  FINANCIAL = 'financial', // Payment information
-  CONSENT = 'consent', // Consent records
-  AUDIT = 'audit', // Audit trails
+  PATIENT_PII = "patient_pii", // Personal identifiable information
+  MEDICAL_DATA = "medical_data", // Medical records, procedures
+  BIOMETRIC = "biometric", // Biometric data
+  FINANCIAL = "financial", // Payment information
+  CONSENT = "consent", // Consent records
+  AUDIT = "audit", // Audit trails
 }
 
 // Encrypted data structure
@@ -73,32 +73,37 @@ class HealthcareKeyManager {
   private masterKey: string;
 
   constructor(masterKey?: string) {
-    this.masterKey = masterKey || process.env.HEALTHCARE_MASTER_KEY || 'default-dev-key-not-secure';
+    this.masterKey =
+      masterKey ||
+      process.env.HEALTHCARE_MASTER_KEY ||
+      "default-dev-key-not-secure";
     this.initializeDefaultKeys();
   }
 
   private initializeDefaultKeys(): void {
     // Create default keys for each category
-    Object.values(EncryptionCategory).forEach(category => {
+    Object.values(EncryptionCategory).forEach((category) => {
       const key = this.generateKey(category);
       this.keys.set(key.id, key);
     });
   }
 
   private generateKey(category: EncryptionCategory): EncryptionKey {
-    const keyId = `${category}_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+    const keyId = `${category}_${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
     const salt = crypto.randomBytes(ENCRYPTION_CONFIG.SALT_LENGTH);
-    
+
     const key = crypto.pbkdf2Sync(
       this.masterKey,
       salt,
       ENCRYPTION_CONFIG.PBKDF2_ITERATIONS,
       ENCRYPTION_CONFIG.KEY_LENGTH,
-      'sha256'
+      "sha256",
     );
 
     const now = new Date();
-    const expiresAt = new Date(now.getTime() + ENCRYPTION_CONFIG.KEY_ROTATION_INTERVAL);
+    const expiresAt = new Date(
+      now.getTime() + ENCRYPTION_CONFIG.KEY_ROTATION_INTERVAL,
+    );
 
     return {
       id: keyId,
@@ -113,7 +118,10 @@ class HealthcareKeyManager {
   getCurrentKey(category: EncryptionCategory): EncryptionKey {
     // Find the most recent active key for the category
     const categoryKeys = Array.from(this.keys.values())
-      .filter(k => k.category === category && k.isActive && k.expiresAt > new Date())
+      .filter(
+        (k) =>
+          k.category === category && k.isActive && k.expiresAt > new Date(),
+      )
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     if (categoryKeys.length === 0) {
@@ -131,18 +139,20 @@ class HealthcareKeyManager {
   }
 
   rotateKeys(): void {
-    console.log('[KEY_ROTATION]', { timestamp: new Date() });
-    
+    console.log("[KEY_ROTATION]", { timestamp: new Date() });
+
     // Generate new keys for each category
-    Object.values(EncryptionCategory).forEach(category => {
+    Object.values(EncryptionCategory).forEach((category) => {
       const newKey = this.generateKey(category);
       this.keys.set(newKey.id, newKey);
-      console.log('[KEY_GENERATED]', { keyId: newKey.id, category });
+      console.log("[KEY_GENERATED]", { keyId: newKey.id, category });
     });
 
     // Mark old keys as inactive (but keep for decryption)
-    const cutoffDate = new Date(Date.now() - ENCRYPTION_CONFIG.KEY_ROTATION_INTERVAL);
-    this.keys.forEach(key => {
+    const cutoffDate = new Date(
+      Date.now() - ENCRYPTION_CONFIG.KEY_ROTATION_INTERVAL,
+    );
+    this.keys.forEach((key) => {
       if (key.createdAt < cutoffDate) {
         key.isActive = false;
       }
@@ -151,7 +161,9 @@ class HealthcareKeyManager {
 
   // Clean up old keys (keep for historical decryption)
   cleanupExpiredKeys(): void {
-    const cutoffDate = new Date(Date.now() - (2 * ENCRYPTION_CONFIG.KEY_ROTATION_INTERVAL));
+    const cutoffDate = new Date(
+      Date.now() - 2 * ENCRYPTION_CONFIG.KEY_ROTATION_INTERVAL,
+    );
     const keysToRemove: string[] = [];
 
     this.keys.forEach((key, keyId) => {
@@ -160,9 +172,9 @@ class HealthcareKeyManager {
       }
     });
 
-    keysToRemove.forEach(keyId => {
+    keysToRemove.forEach((keyId) => {
       this.keys.delete(keyId);
-      console.log('[KEY_CLEANUP]', { keyId, timestamp: new Date() });
+      console.log("[KEY_CLEANUP]", { keyId, timestamp: new Date() });
     });
   }
 }
@@ -176,54 +188,62 @@ setInterval(() => {
 }, ENCRYPTION_CONFIG.KEY_ROTATION_INTERVAL);
 
 // Cleanup expired keys daily
-setInterval(() => {
-  keyManager.cleanupExpiredKeys();
-}, 24 * 60 * 60 * 1000); // 24 hours
+setInterval(
+  () => {
+    keyManager.cleanupExpiredKeys();
+  },
+  24 * 60 * 60 * 1000,
+); // 24 hours
 
 /**
  * Healthcare data encryption service
  */
 export class HealthcareEncryption {
-  
   /**
    * Encrypt patient sensitive data
    */
   static async encryptPatientData(
     data: string,
     category: EncryptionCategory,
-    patientId?: string
+    patientId?: string,
   ): Promise<EncryptedData> {
     const key = keyManager.getCurrentKey(category);
     const iv = crypto.randomBytes(ENCRYPTION_CONFIG.IV_LENGTH);
-    
+
     // Create cipher
-    const cipher = crypto.createCipher(ENCRYPTION_CONFIG.ALGORITHM, key.key, iv);
-    
+    const cipher = crypto.createCipher(
+      ENCRYPTION_CONFIG.ALGORITHM,
+      key.key,
+      iv,
+    );
+
     // Add associated data for authentication (prevents tampering)
-    const associatedData = patientId ? Buffer.from(patientId, 'utf8') : Buffer.alloc(0);
+    const associatedData = patientId
+      ? Buffer.from(patientId, "utf8")
+      : Buffer.alloc(0);
     if (associatedData.length > 0) {
       cipher.setAAD(associatedData);
     }
-    
+
     // Encrypt data
-    let encrypted = cipher.update(data, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    
+    let encrypted = cipher.update(data, "utf8", "hex");
+    encrypted += cipher.final("hex");
+
     // Get authentication tag
     const authTag = cipher.getAuthTag();
-    
+
     const encryptedData: EncryptedData = {
       data: encrypted,
-      iv: iv.toString('hex'),
-      authTag: authTag.toString('hex'),
+      iv: iv.toString("hex"),
+      authTag: authTag.toString("hex"),
       keyId: key.id,
       category,
       timestamp: new Date(),
-      version: '1.0',
+      version: "1.0",
     };
 
     // Log encryption for audit
-    console.log('[DATA_ENCRYPTED]', {
+    console.log("[DATA_ENCRYPTED]", {
       category,
       keyId: key.id,
       patientId,
@@ -240,7 +260,7 @@ export class HealthcareEncryption {
   static async decryptPatientData(
     encryptedData: EncryptedData,
     accessContext: DataAccessContext,
-    patientId?: string
+    patientId?: string,
   ): Promise<string> {
     // Get decryption key
     const key = keyManager.getKey(encryptedData.keyId);
@@ -256,7 +276,7 @@ export class HealthcareEncryption {
       validationSuccess: true,
     });
 
-    console.log('[DATA_DECRYPTED]', {
+    console.log("[DATA_DECRYPTED]", {
       category: encryptedData.category,
       keyId: encryptedData.keyId,
       userId: accessContext.userId,
@@ -271,50 +291,61 @@ export class HealthcareEncryption {
       const decipher = crypto.createDecipher(
         ENCRYPTION_CONFIG.ALGORITHM,
         key.key,
-        Buffer.from(encryptedData.iv, 'hex')
+        Buffer.from(encryptedData.iv, "hex"),
       );
 
       // Set associated data if patient ID was used during encryption
-      const associatedData = patientId ? Buffer.from(patientId, 'utf8') : Buffer.alloc(0);
+      const associatedData = patientId
+        ? Buffer.from(patientId, "utf8")
+        : Buffer.alloc(0);
       if (associatedData.length > 0) {
         decipher.setAAD(associatedData);
       }
 
       // Set authentication tag
-      decipher.setAuthTag(Buffer.from(encryptedData.authTag, 'hex'));
+      decipher.setAuthTag(Buffer.from(encryptedData.authTag, "hex"));
 
       // Decrypt data
-      let decrypted = decipher.update(encryptedData.data, 'hex', 'utf8');
-      decrypted += decipher.final('utf8');
+      let decrypted = decipher.update(encryptedData.data, "hex", "utf8");
+      decrypted += decipher.final("utf8");
 
       return decrypted;
     } catch (error) {
-      console.error('[DECRYPTION_FAILED]', {
+      console.error("[DECRYPTION_FAILED]", {
         keyId: encryptedData.keyId,
         category: encryptedData.category,
         userId: accessContext.userId,
         error: error.message,
         timestamp: new Date(),
       });
-      
-      throw new Error('Failed to decrypt data - data may be corrupted or key invalid');
+
+      throw new Error(
+        "Failed to decrypt data - data may be corrupted or key invalid",
+      );
     }
   }
 
   /**
    * Encrypt specific fields in an object
    */
-  static async encryptFields<T extends Record<string, any>>(
+  static async encryptFields<T extends Record<string, unknown>>(
     data: T,
     fieldsToEncrypt: { [K in keyof T]?: EncryptionCategory },
-    patientId?: string
+    patientId?: string,
   ): Promise<T> {
     const result = { ...data };
 
     for (const [field, category] of Object.entries(fieldsToEncrypt)) {
       if (field in data && data[field] != null) {
-        const stringValue = typeof data[field] === 'string' ? data[field] : JSON.stringify(data[field]);
-        const encrypted = await this.encryptPatientData(stringValue, category, patientId);
+        const stringValue =
+          typeof data[field] === "string"
+            ? data[field]
+            : JSON.stringify(data[field]);
+        const encrypted = await this.encryptPatientData(
+          stringValue,
+          category,
+          patientId,
+        );
         result[field] = encrypted;
       }
     }
@@ -325,19 +356,23 @@ export class HealthcareEncryption {
   /**
    * Decrypt specific fields in an object
    */
-  static async decryptFields<T extends Record<string, any>>(
+  static async decryptFields<T extends Record<string, unknown>>(
     data: T,
     fieldsToDecrypt: (keyof T)[],
     accessContext: DataAccessContext,
-    patientId?: string
+    patientId?: string,
   ): Promise<T> {
     const result = { ...data };
 
     for (const field of fieldsToDecrypt) {
-      if (field in data && data[field] && typeof data[field] === 'object') {
+      if (field in data && data[field] && typeof data[field] === "object") {
         try {
           const encryptedData = data[field] as EncryptedData;
-          const decrypted = await this.decryptPatientData(encryptedData, accessContext, patientId);
+          const decrypted = await this.decryptPatientData(
+            encryptedData,
+            accessContext,
+            patientId,
+          );
           result[field] = decrypted;
         } catch (error) {
           console.error(`Failed to decrypt field ${String(field)}:`, error);
@@ -353,20 +388,22 @@ export class HealthcareEncryption {
    * Hash sensitive data (one-way, for searching/indexing)
    */
   static hashSensitiveData(data: string, salt?: string): string {
-    const actualSalt = salt || crypto.randomBytes(16).toString('hex');
-    const hash = crypto.pbkdf2Sync(data, actualSalt, 10_000, 64, 'sha256');
-    return actualSalt + ':' + hash.toString('hex');
+    const actualSalt = salt || crypto.randomBytes(16).toString("hex");
+    const hash = crypto.pbkdf2Sync(data, actualSalt, 10_000, 64, "sha256");
+    return actualSalt + ":" + hash.toString("hex");
   }
 
   /**
    * Verify hashed data
    */
   static verifyHashedData(data: string, hash: string): boolean {
-    const [salt, originalHash] = hash.split(':');
-    if (!salt || !originalHash) {return false;}
-    
-    const newHash = crypto.pbkdf2Sync(data, salt, 10_000, 64, 'sha256');
-    return originalHash === newHash.toString('hex');
+    const [salt, originalHash] = hash.split(":");
+    if (!salt || !originalHash) {
+      return false;
+    }
+
+    const newHash = crypto.pbkdf2Sync(data, salt, 10_000, 64, "sha256");
+    return originalHash === newHash.toString("hex");
   }
 }
 
@@ -377,18 +414,21 @@ export const databaseEncryptionMiddleware = (): MiddlewareHandler => {
   return async (c, next) => {
     const method = c.req.method;
     const path = c.req.path;
-    const user = c.get('user');
+    const user = c.get("user");
 
     // Apply encryption for write operations on patient data
-    if (['POST', 'PUT', 'PATCH'].includes(method) && path.includes('/patients')) {
+    if (
+      ["POST", "PUT", "PATCH"].includes(method) &&
+      path.includes("/patients")
+    ) {
       const originalJson = c.req.json;
-      c.req.json = async function() {
+      c.req.json = async function () {
         const body = await originalJson.call(this);
-        
+
         // Encrypt sensitive fields before processing
         if (body) {
           const patientId = body.id || body.patientId;
-          
+
           // Define fields that need encryption
           const fieldsToEncrypt: Record<string, EncryptionCategory> = {
             cpf: EncryptionCategory.PATIENT_PII,
@@ -405,12 +445,12 @@ export const databaseEncryptionMiddleware = (): MiddlewareHandler => {
           const encrypted = await HealthcareEncryption.encryptFields(
             body,
             fieldsToEncrypt,
-            patientId
+            patientId,
           );
 
           return encrypted;
         }
-        
+
         return body;
       };
     }
@@ -428,45 +468,61 @@ export const responseDecryptionMiddleware = (): MiddlewareHandler => {
 
     const method = c.req.method;
     const path = c.req.path;
-    const user = c.get('user');
+    const user = c.get("user");
 
     // Decrypt response data for patient endpoints
-    if (method === 'GET' && path.includes('/patients') && user) {
+    if (method === "GET" && path.includes("/patients") && user) {
       const originalJson = c.res.json;
-      
-      c.res.json = function(data: any, status?: number) {
+
+      c.res.json = function (data: unknown, status?: number) {
         // Decrypt patient data fields
         if (data && (Array.isArray(data) || data.id)) {
           const accessContext: DataAccessContext = {
             userId: user.id,
-            purpose: 'patient_data_access',
+            purpose: "patient_data_access",
             patientId: Array.isArray(data) ? undefined : data.id,
             clinicId: user.clinicId,
           };
 
           const fieldsToDecrypt = [
-            'cpf', 'rg', 'phone', 'email', 'address',
-            'medicalHistory', 'allergies', 'medications', 'emergencyContact'
+            "cpf",
+            "rg",
+            "phone",
+            "email",
+            "address",
+            "medicalHistory",
+            "allergies",
+            "medications",
+            "emergencyContact",
           ];
 
           if (Array.isArray(data)) {
             // Decrypt array of patients
             Promise.all(
-              data.map(patient => 
-                HealthcareEncryption.decryptFields(patient, fieldsToDecrypt, accessContext, patient.id)
-              )
-            ).then(decryptedData => {
+              data.map((patient) =>
+                HealthcareEncryption.decryptFields(
+                  patient,
+                  fieldsToDecrypt,
+                  accessContext,
+                  patient.id,
+                ),
+              ),
+            ).then((decryptedData) => {
               return originalJson.call(this, decryptedData, status);
             });
           } else {
             // Decrypt single patient
-            HealthcareEncryption.decryptFields(data, fieldsToDecrypt, accessContext, data.id)
-              .then(decryptedData => {
-                return originalJson.call(this, decryptedData, status);
-              });
+            HealthcareEncryption.decryptFields(
+              data,
+              fieldsToDecrypt,
+              accessContext,
+              data.id,
+            ).then((decryptedData) => {
+              return originalJson.call(this, decryptedData, status);
+            });
           }
         }
-        
+
         return originalJson.call(this, data, status);
       };
     }
@@ -479,30 +535,37 @@ export const responseDecryptionMiddleware = (): MiddlewareHandler => {
 export const healthcareTLSMiddleware = (): MiddlewareHandler => {
   return async (c, next) => {
     // Verify HTTPS is being used
-    const protocol = c.req.header('x-forwarded-proto') || c.req.header('x-forwarded-protocol');
-    
-    if (!protocol?.includes('https')) {
+    const protocol =
+      c.req.header("x-forwarded-proto") || c.req.header("x-forwarded-protocol");
+
+    if (!protocol?.includes("https")) {
       HealthcareSecurityLogger.logWeakTLS({
-        ip: c.req.header('CF-Connecting-IP') || 'unknown',
+        ip: c.req.header("CF-Connecting-IP") || "unknown",
         timestamp: new Date(),
       });
-      
-      return c.json({
-        error: 'HTTPS required for healthcare data',
-        code: 'HTTPS_REQUIRED',
-        message: 'All healthcare data must be transmitted over secure connections',
-      }, 400);
+
+      return c.json(
+        {
+          error: "HTTPS required for healthcare data",
+          code: "HTTPS_REQUIRED",
+          message:
+            "All healthcare data must be transmitted over secure connections",
+        },
+        400,
+      );
     }
 
     // Set security headers for healthcare compliance
     const securityHeaders = {
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-      'X-Content-Type-Options': 'nosniff',
-      'X-Frame-Options': 'DENY',
-      'X-XSS-Protection': '1; mode=block',
-      'Referrer-Policy': 'strict-origin-when-cross-origin',
-      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
-      'X-Healthcare-Secure': 'true',
+      "Strict-Transport-Security":
+        "max-age=31536000; includeSubDomains; preload",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "X-XSS-Protection": "1; mode=block",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "Content-Security-Policy":
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
+      "X-Healthcare-Secure": "true",
     };
 
     Object.entries(securityHeaders).forEach(([header, value]) => {
@@ -517,14 +580,14 @@ export const healthcareTLSMiddleware = (): MiddlewareHandler => {
  * Data backup encryption utility
  */
 export const encryptBackupData = async (
-  data: any,
-  backupType: 'full' | 'incremental' | 'differential'
+  data: unknown,
+  backupType: "full" | "incremental" | "differential",
 ): Promise<EncryptedData> => {
   const serialized = JSON.stringify(data);
   return await HealthcareEncryption.encryptPatientData(
     serialized,
     EncryptionCategory.AUDIT,
-    `backup_${backupType}_${Date.now()}`
+    `backup_${backupType}_${Date.now()}`,
   );
 };
 
@@ -533,11 +596,11 @@ export const encryptBackupData = async (
  */
 export const decryptBackupData = async (
   encryptedData: EncryptedData,
-  accessContext: DataAccessContext
-): Promise<any> => {
+  accessContext: DataAccessContext,
+): Promise<unknown> => {
   const decrypted = await HealthcareEncryption.decryptPatientData(
     encryptedData,
-    accessContext
+    accessContext,
   );
   return JSON.parse(decrypted);
 };

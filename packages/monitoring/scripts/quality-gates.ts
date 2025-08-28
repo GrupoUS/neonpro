@@ -233,7 +233,7 @@ export class HealthcareQualityValidator {
     return Object.values(report).every((result) =>
       typeof result === "object" && "status" in result
         ? result.status !== QualityStatus.FAIL
-        : true
+        : true,
     );
   }
 

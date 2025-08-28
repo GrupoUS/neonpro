@@ -31,27 +31,30 @@ export function createRiskAssessmentService(
   _config: RiskAssessmentConfig,
 ): RiskAssessmentService {
   const service = {
-    assessPatientRisk: vi.fn().mockImplementation(async (patientData: unknown) => {
-      // Mock implementation for testing
-      const riskLevel = patientData.age > 65 ? "high" : "low";
-      return {
-        patientId: patientData.id,
-        riskLevel,
-        score: riskLevel === "high" ? 0.8 : 0.3,
-        factors: ["age", "medical_history"],
-        recommendations: ["monitor closely", "regular checkups"],
-        timestamp: new Date().toISOString(),
-      };
-    }),
+    assessPatientRisk: vi
+      .fn()
+      .mockImplementation(async (patientData: unknown) => {
+        // Mock implementation for testing
+        const riskLevel = patientData.age > 65 ? "high" : "low";
+        return {
+          patientId: patientData.id,
+          riskLevel,
+          score: riskLevel === "high" ? 0.8 : 0.3,
+          factors: ["age", "medical_history"],
+          recommendations: ["monitor closely", "regular checkups"],
+          timestamp: new Date().toISOString(),
+        };
+      }),
 
     createTreatmentPrediction: vi
       .fn()
       .mockImplementation(async (riskData: unknown) => {
         return {
           treatmentId: `treatment-${Math.random().toString(36).slice(2, 9)}`,
-          predictedOutcome: riskData.riskLevel === "high"
-            ? "requires monitoring"
-            : "standard care",
+          predictedOutcome:
+            riskData.riskLevel === "high"
+              ? "requires monitoring"
+              : "standard care",
           confidence: 0.85,
           timeline: "2-4 weeks",
         };
@@ -68,14 +71,17 @@ export function createRiskAssessmentService(
         };
       }),
 
-    processVitalSigns: vi.fn().mockImplementation(async (vitalSigns: unknown) => {
-      const isStable = vitalSigns.heartRate >= 60 && vitalSigns.heartRate <= 100;
-      return {
-        processedAt: new Date().toISOString(),
-        status: isStable ? "stable" : "requires_attention",
-        alerts: isStable ? [] : ["irregular_heart_rate"],
-      };
-    }),
+    processVitalSigns: vi
+      .fn()
+      .mockImplementation(async (vitalSigns: unknown) => {
+        const isStable =
+          vitalSigns.heartRate >= 60 && vitalSigns.heartRate <= 100;
+        return {
+          processedAt: new Date().toISOString(),
+          status: isStable ? "stable" : "requires_attention",
+          alerts: isStable ? [] : ["irregular_heart_rate"],
+        };
+      }),
 
     checkPerformanceCompliance: vi.fn().mockImplementation(async () => {
       return {
@@ -116,14 +122,16 @@ export function createRiskAssessmentService(
       };
     }),
 
-    validateInputIntegrity: vi.fn().mockImplementation(async (input: unknown) => {
-      const isValid = input && typeof input === "object" && input.id;
-      return {
-        valid: isValid,
-        errors: isValid ? [] : ["missing_required_fields"],
-        sanitized: input,
-      };
-    }),
+    validateInputIntegrity: vi
+      .fn()
+      .mockImplementation(async (input: unknown) => {
+        const isValid = input && typeof input === "object" && input.id;
+        return {
+          valid: isValid,
+          errors: isValid ? [] : ["missing_required_fields"],
+          sanitized: input,
+        };
+      }),
 
     executeRiskAssessment: vi
       .fn()
@@ -136,7 +144,8 @@ export function createRiskAssessmentService(
 
           // Comprehensive risk assessment execution
           const riskAssessment = await service.assessPatientRisk(patientData);
-          const treatmentPrediction = await service.createTreatmentPrediction(riskAssessment);
+          const treatmentPrediction =
+            await service.createTreatmentPrediction(riskAssessment);
 
           // Performance and compliance checks
           const performanceResult = await service.checkPerformanceCompliance();

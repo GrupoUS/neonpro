@@ -227,18 +227,15 @@ export class AdverseEventService {
       const validatedReport = AdverseEventReportSchema.parse(report);
 
       // Step 2: Constitutional healthcare validation
-      const constitutionalValidation = await this.validateConstitutionalRequirements(
-        validatedReport,
-      );
+      const constitutionalValidation =
+        await this.validateConstitutionalRequirements(validatedReport);
 
       if (!constitutionalValidation.valid) {
         return {
           success: false,
-          error: `Constitutional event validation failed: ${
-            constitutionalValidation.violations.join(
-              ", ",
-            )
-          }`,
+          error: `Constitutional event validation failed: ${constitutionalValidation.violations.join(
+            ", ",
+          )}`,
           complianceScore: constitutionalValidation.score,
           regulatoryValidation: { lgpd: true, anvisa: false, cfm: false },
           auditTrail: await this.createAuditEvent(
@@ -250,7 +247,8 @@ export class AdverseEventService {
       }
 
       // Step 3: Classify event severity and urgency
-      const eventClassification = await this.classifyAdverseEvent(validatedReport);
+      const eventClassification =
+        await this.classifyAdverseEvent(validatedReport);
 
       // Step 4: Immediate response for critical events
       if (eventClassification.urgency === "IMMEDIATE") {
@@ -303,9 +301,10 @@ export class AdverseEventService {
 
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : "Unknown adverse event reporting error",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unknown adverse event reporting error",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -329,8 +328,8 @@ export class AdverseEventService {
 
     // Patient safety validation
     if (
-      report.eventSeverity === "DEATH"
-      || report.eventSeverity === "LIFE_THREATENING"
+      report.eventSeverity === "DEATH" ||
+      report.eventSeverity === "LIFE_THREATENING"
     ) {
       if (report.immediateActions.length === 0) {
         violations.push(
@@ -349,10 +348,10 @@ export class AdverseEventService {
 
     // Medical ethics validation
     if (
-      (report.eventSeverity === "SEVERE"
-        || report.eventSeverity === "LIFE_THREATENING"
-        || report.eventSeverity === "DEATH")
-      && !report.followUpRequired
+      (report.eventSeverity === "SEVERE" ||
+        report.eventSeverity === "LIFE_THREATENING" ||
+        report.eventSeverity === "DEATH") &&
+      !report.followUpRequired
     ) {
       violations.push(
         "Follow-up required for serious adverse events (medical ethics)",
@@ -362,8 +361,8 @@ export class AdverseEventService {
 
     // Transparency validation
     if (
-      report.constitutionalAssessment.patientSafetyImpact === "CRITICAL"
-      && !report.constitutionalAssessment.publicHealthImpact
+      report.constitutionalAssessment.patientSafetyImpact === "CRITICAL" &&
+      !report.constitutionalAssessment.publicHealthImpact
     ) {
       violations.push(
         "Public health impact assessment required for critical safety events",
@@ -381,8 +380,8 @@ export class AdverseEventService {
 
     // Professional responsibility validation
     if (
-      !report.reporterInformation.professionalRegistration
-      && report.reportingSource === "HEALTHCARE_PROFESSIONAL"
+      !report.reporterInformation.professionalRegistration &&
+      report.reportingSource === "HEALTHCARE_PROFESSIONAL"
     ) {
       violations.push(
         "Professional registration required for healthcare professional reports",
@@ -391,11 +390,12 @@ export class AdverseEventService {
     }
 
     // Timeline validation
-    const hoursFromEvent = (Date.now() - report.eventDate.getTime()) / (1000 * 60 * 60);
+    const hoursFromEvent =
+      (Date.now() - report.eventDate.getTime()) / (1000 * 60 * 60);
     if (
-      (report.eventSeverity === "DEATH"
-        || report.eventSeverity === "LIFE_THREATENING")
-      && hoursFromEvent > 24
+      (report.eventSeverity === "DEATH" ||
+        report.eventSeverity === "LIFE_THREATENING") &&
+      hoursFromEvent > 24
     ) {
       violations.push(
         "Critical events must be reported within 24 hours (constitutional requirement)",
@@ -426,8 +426,8 @@ export class AdverseEventService {
     } else if (report.eventSeverity === "LIFE_THREATENING") {
       urgency = "IMMEDIATE";
     } else if (
-      report.eventSeverity === "SEVERE"
-      || report.constitutionalAssessment.constitutionalViolation
+      report.eventSeverity === "SEVERE" ||
+      report.constitutionalAssessment.constitutionalViolation
     ) {
       urgency = "URGENT";
     } else if (report.eventSeverity === "MODERATE") {
@@ -444,26 +444,30 @@ export class AdverseEventService {
         now.getTime() + this.getInternalDeadlineMinutes(urgency) * 60 * 1000,
       ),
       patientNotificationDeadline: new Date(
-        now.getTime()
-          + this.getPatientNotificationHours(urgency) * 60 * 60 * 1000,
+        now.getTime() +
+          this.getPatientNotificationHours(urgency) * 60 * 60 * 1000,
       ),
-      familyNotificationDeadline: urgency === "IMMEDIATE"
-        ? new Date(now.getTime() + 2 * 60 * 60 * 1000)
-        : undefined, // 2 hours for critical events
+      familyNotificationDeadline:
+        urgency === "IMMEDIATE"
+          ? new Date(now.getTime() + 2 * 60 * 60 * 1000)
+          : undefined, // 2 hours for critical events
     };
 
     // Determine required actions
     const requiredActions = {
       immediateActions: report.immediateActions,
       investigationRequired: urgency === "IMMEDIATE" || urgency === "URGENT",
-      deviceQuarantine: Boolean(report.deviceId)
-        && (urgency === "IMMEDIATE" || urgency === "URGENT"),
-      procedureSuspension: report.eventSeverity === "DEATH"
-        || report.eventSeverity === "LIFE_THREATENING",
+      deviceQuarantine:
+        Boolean(report.deviceId) &&
+        (urgency === "IMMEDIATE" || urgency === "URGENT"),
+      procedureSuspension:
+        report.eventSeverity === "DEATH" ||
+        report.eventSeverity === "LIFE_THREATENING",
       staffRetraining: urgency === "IMMEDIATE" || urgency === "URGENT",
-      anvisaNotification: urgency === "IMMEDIATE"
-        || urgency === "URGENT"
-        || report.constitutionalAssessment.regulatoryNotificationRequired,
+      anvisaNotification:
+        urgency === "IMMEDIATE" ||
+        urgency === "URGENT" ||
+        report.constitutionalAssessment.regulatoryNotificationRequired,
       patientFollowUp: report.followUpRequired || urgency !== "ROUTINE",
     };
 
@@ -471,9 +475,10 @@ export class AdverseEventService {
     const constitutionalCompliance = {
       patientRightsProtected: true,
       medicalEthicsCompliant: report.followUpRequired || urgency === "ROUTINE",
-      transparencyRequired: urgency === "IMMEDIATE"
-        || urgency === "URGENT"
-        || report.constitutionalAssessment.publicHealthImpact,
+      transparencyRequired:
+        urgency === "IMMEDIATE" ||
+        urgency === "URGENT" ||
+        report.constitutionalAssessment.publicHealthImpact,
       complianceScore: this.calculateConstitutionalComplianceScore(
         report,
         urgency,
@@ -485,11 +490,13 @@ export class AdverseEventService {
     const reportingRequirements = {
       anvisaReport: requiredActions.anvisaNotification,
       internalReport: true,
-      ethicsCommitteeReport: urgency === "IMMEDIATE"
-        || report.constitutionalAssessment.constitutionalViolation,
+      ethicsCommitteeReport:
+        urgency === "IMMEDIATE" ||
+        report.constitutionalAssessment.constitutionalViolation,
       institutionalReport: urgency === "IMMEDIATE" || urgency === "URGENT",
-      manufacturerNotification: Boolean(report.deviceId)
-        && (urgency === "IMMEDIATE" || urgency === "URGENT"),
+      manufacturerNotification:
+        Boolean(report.deviceId) &&
+        (urgency === "IMMEDIATE" || urgency === "URGENT"),
     };
 
     return {
@@ -513,7 +520,8 @@ export class AdverseEventService {
     let score = 10;
 
     // Timeline compliance
-    const hoursFromEvent = (Date.now() - report.eventDate.getTime()) / (1000 * 60 * 60);
+    const hoursFromEvent =
+      (Date.now() - report.eventDate.getTime()) / (1000 * 60 * 60);
     if (urgency === "IMMEDIATE" && hoursFromEvent > 1) {
       score -= 2;
     }
@@ -523,8 +531,8 @@ export class AdverseEventService {
 
     // Action completeness
     if (
-      requiredActions.immediateActions.length === 0
-      && urgency === "IMMEDIATE"
+      requiredActions.immediateActions.length === 0 &&
+      urgency === "IMMEDIATE"
     ) {
       score -= 2;
     }
@@ -731,7 +739,7 @@ export class AdverseEventService {
 
   private async submitToANVISAPortal(
     _report: unknown,
-  ): Promise<{ protocol: string; }> {
+  ): Promise<{ protocol: string }> {
     return { protocol: `ANVISA-AE-${Date.now()}` };
   }
 
@@ -750,7 +758,10 @@ export class AdverseEventService {
     _classification: EventClassificationResult,
   ): Promise<void> {}
 
-  private async createAuditEvent(action: string, data: unknown): Promise<unknown> {
+  private async createAuditEvent(
+    action: string,
+    data: unknown,
+  ): Promise<unknown> {
     return {
       id: crypto.randomUUID(),
       eventType: "ADVERSE_EVENT_REPORTING",
@@ -789,9 +800,10 @@ export class AdverseEventService {
 
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : "Failed to retrieve adverse event status",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to retrieve adverse event status",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,

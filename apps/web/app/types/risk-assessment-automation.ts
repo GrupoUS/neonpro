@@ -388,10 +388,10 @@ export interface RiskAssessmentConfig {
   accuracyThreshold: number; // minimum required accuracy
 
   riskThresholds: {
-    low: { min: number; max: number; };
-    medium: { min: number; max: number; };
-    high: { min: number; max: number; };
-    critical: { min: number; max: number; };
+    low: { min: number; max: number };
+    medium: { min: number; max: number };
+    high: { min: number; max: number };
+    critical: { min: number; max: number };
   };
 
   escalationRules: {

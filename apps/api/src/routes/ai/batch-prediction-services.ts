@@ -3,7 +3,11 @@
 
 import { v4 as uuidv4 } from "uuid";
 import type { z } from "zod";
-import { ERROR_MESSAGES, JOB_STATUS, STATUS_CODES } from "./batch-prediction-constants";
+import {
+  ERROR_MESSAGES,
+  JOB_STATUS,
+  STATUS_CODES,
+} from "./batch-prediction-constants";
 import type {
   BatchJobFiltersSchema,
   BulkJobCreationSchema,
@@ -166,8 +170,8 @@ export class BatchPredictionService {
     const maxRange = 365; // days
 
     if (
-      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-        > maxRange
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) >
+      maxRange
     ) {
       throw new Error("Date range cannot exceed 365 days");
     }
@@ -199,7 +203,8 @@ export class BatchPredictionService {
   }
 
   private static isValidUuid(uuid: string): boolean {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(uuid);
   }
 }

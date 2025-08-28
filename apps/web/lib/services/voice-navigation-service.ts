@@ -132,7 +132,8 @@ class VoiceNavigationService {
     // Emergency Commands
     {
       id: "emergency_protocol",
-      pattern: /^(emergência|protocolo de emergência|socorro) (sala|paciente) (.+)$/i,
+      pattern:
+        /^(emergência|protocolo de emergência|socorro) (sala|paciente) (.+)$/i,
       action: "emergency_protocol",
       category: "emergency",
       description: "Ativar protocolo de emergência",
@@ -175,15 +176,17 @@ class VoiceNavigationService {
 
   private initializeRecognition() {
     if (
-      !("webkitSpeechRecognition" in window)
-      && !("SpeechRecognition" in window)
+      !("webkitSpeechRecognition" in window) &&
+      !("SpeechRecognition" in window)
     ) {
-      this.currentState.error = "Reconhecimento de voz não suportado neste navegador";
+      this.currentState.error =
+        "Reconhecimento de voz não suportado neste navegador";
       return;
     }
 
     // @ts-expect-error - SpeechRecognition types
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
     this.recognition = new SpeechRecognition();
 
     this.recognition.continuous = false;
@@ -302,7 +305,7 @@ class VoiceNavigationService {
   private async executeCommand(
     voiceCommand: VoiceCommand,
     spokenCommand: string,
-  ): Promise<{ success: boolean; message?: string; error?: string; }> {
+  ): Promise<{ success: boolean; message?: string; error?: string }> {
     // Log command execution
     await supabase.from("assistant_logs").insert({
       action: "voice_command_executed",
@@ -438,8 +441,8 @@ class VoiceNavigationService {
 
   isSupported(): boolean {
     return (
-      "speechSynthesis" in window
-      && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
+      "speechSynthesis" in window &&
+      ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
     );
   }
 }

@@ -22,7 +22,13 @@ import type { SecurityMetrics } from "../../../lib/utils";
 import { Alert, AlertDescription } from "../../ui/alert";
 import { Badge } from "../../ui/badge";
 import { Button } from "../../ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import { ActiveSessionsTable } from "./ActiveSessionsTable";
 import { AuditLogsTable } from "./AuditLogsTable";
@@ -151,7 +157,9 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
               size="sm"
               variant="outline"
             >
-              {refreshing ? <RefreshCw className="h-3 w-3 animate-spin" /> : (
+              {refreshing ? (
+                <RefreshCw className="h-3 w-3 animate-spin" />
+              ) : (
                 "Retry"
               )}
             </Button>
@@ -193,9 +201,11 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
             size="sm"
             variant="outline"
           >
-            {refreshing
-              ? <RefreshCw className="h-4 w-4 animate-spin" />
-              : <RefreshCw className="h-4 w-4" />}
+            {refreshing ? (
+              <RefreshCw className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
             <span className="ml-1">Refresh</span>
           </Button>
         </div>
@@ -337,9 +347,11 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
                       Failed Login Attempts (24h)
                     </span>
                     <Badge
-                      variant={metrics.failed_attempts_24h > 10
-                        ? "destructive"
-                        : "secondary"}
+                      variant={
+                        metrics.failed_attempts_24h > 10
+                          ? "destructive"
+                          : "secondary"
+                      }
                     >
                       {metrics.failed_attempts_24h}
                     </Badge>
@@ -349,9 +361,11 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
                       High-Risk Sessions
                     </span>
                     <Badge
-                      variant={metrics.high_risk_sessions > 5
-                        ? "destructive"
-                        : "secondary"}
+                      variant={
+                        metrics.high_risk_sessions > 5
+                          ? "destructive"
+                          : "secondary"
+                      }
                     >
                       {metrics.high_risk_sessions}
                     </Badge>
@@ -361,9 +375,11 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
                       Avg Response Time
                     </span>
                     <Badge
-                      variant={metrics.avg_response_time_minutes > 60
-                        ? "destructive"
-                        : "secondary"}
+                      variant={
+                        metrics.avg_response_time_minutes > 60
+                          ? "destructive"
+                          : "secondary"
+                      }
                     >
                       {metrics.avg_response_time_minutes}m
                     </Badge>
@@ -385,8 +401,8 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
                     <Alert>
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription>
-                        Multiple unresolved alerts detected. Review and address high-priority
-                        alerts.
+                        Multiple unresolved alerts detected. Review and address
+                        high-priority alerts.
                       </AlertDescription>
                     </Alert>
                   )}
@@ -394,8 +410,8 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
                     <Alert>
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription>
-                        High number of failed login attempts. Consider implementing additional
-                        protections.
+                        High number of failed login attempts. Consider
+                        implementing additional protections.
                       </AlertDescription>
                     </Alert>
                   )}
@@ -403,20 +419,22 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
                     <Alert>
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription>
-                        Compliance score below threshold. Review compliance audit results.
+                        Compliance score below threshold. Review compliance
+                        audit results.
                       </AlertDescription>
                     </Alert>
                   )}
-                  {metrics.unresolved_alerts === 0
-                    && metrics.failed_attempts_24h < 5
-                    && metrics.compliance_score >= 95 && (
-                    <Alert>
-                      <CheckCircle className="h-4 w-4" />
-                      <AlertDescription>
-                        Security posture is strong. All systems operating normally.
-                      </AlertDescription>
-                    </Alert>
-                  )}
+                  {metrics.unresolved_alerts === 0 &&
+                    metrics.failed_attempts_24h < 5 &&
+                    metrics.compliance_score >= 95 && (
+                      <Alert>
+                        <CheckCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          Security posture is strong. All systems operating
+                          normally.
+                        </AlertDescription>
+                      </Alert>
+                    )}
                 </div>
               </CardContent>
             </Card>

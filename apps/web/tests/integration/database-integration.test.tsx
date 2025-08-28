@@ -108,7 +108,7 @@ const mockMedicalRecordData = {
 };
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
+const TestWrapper = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -120,7 +120,9 @@ const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
     },
   });
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
 };
 
 describe("database Integration Tests", () => {
@@ -370,12 +372,10 @@ describe("database Integration Tests", () => {
     });
 
     it("should handle connection pooling efficiently", async () => {
-      const concurrentQueries = Array.from(
-        { length: 20 },
-        (_, i) =>
-          mockPrismaClient.patient.findUnique({
-            where: { id: `patient-${i}` },
-          }),
+      const concurrentQueries = Array.from({ length: 20 }, (_, i) =>
+        mockPrismaClient.patient.findUnique({
+          where: { id: `patient-${i}` },
+        }),
       );
 
       mockPrismaClient.patient.findUnique.mockImplementation(

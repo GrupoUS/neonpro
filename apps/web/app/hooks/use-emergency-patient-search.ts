@@ -294,8 +294,8 @@ export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
     return mockEmergencyPatients
       .sort(
         (a, b) =>
-          new Date(b.lastAccessed).getTime()
-          - new Date(a.lastAccessed).getTime(),
+          new Date(b.lastAccessed).getTime() -
+          new Date(a.lastAccessed).getTime(),
       )
       .slice(0, 5);
   }, []);
@@ -345,8 +345,8 @@ export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
             (patient) =>
               patient.allergies.some(
                 (allergy) => allergy.severity === "critical",
-              )
-              || patient.medicalConditions.some(
+              ) ||
+              patient.medicalConditions.some(
                 (condition) => condition.severity === "critical",
               ),
           );
@@ -367,7 +367,8 @@ export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
 
         return results;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erro na busca de pacientes";
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro na busca de pacientes";
         setError(errorMessage);
 
         // Fall back to cached data in case of error
@@ -401,7 +402,8 @@ export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
 
         return patient || undefined;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erro ao carregar paciente";
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro ao carregar paciente";
         setError(errorMessage);
         setCacheStatus("offline");
         return;

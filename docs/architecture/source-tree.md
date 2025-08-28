@@ -286,8 +286,8 @@ const fullyImplemented = {
   "notification-service": "Sistema de notificações básico",
 
   // Infrastructure
-  "config": "Configurações centralizadas",
-  "utils": "Utilitários gerais implementados",
+  config: "Configurações centralizadas",
+  utils: "Utilitários gerais implementados",
 
   // Development Tools
   "eslint-config": "Configuração ESLint ativa",

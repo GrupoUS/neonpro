@@ -1,7 +1,14 @@
 "use client";
 
 import { createClient } from "@supabase/supabase-js";
-import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
+import {
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
 import { pt } from "date-fns/locale";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -133,7 +140,8 @@ export function useAppointmentsManager() {
       setAppointments(mockAppointments);
       setIsConnected(true);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to fetch appointments";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch appointments";
       setError(errorMessage);
       toast({
         title: "Erro",
@@ -159,9 +167,10 @@ export function useAppointmentsManager() {
         await fetchAppointments();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : "Failed to create appointment";
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to create appointment";
         setError(errorMessage);
         toast({
           title: "Erro",
@@ -193,9 +202,10 @@ export function useAppointmentsManager() {
         await fetchAppointments();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : "Failed to update appointment";
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to update appointment";
         setError(errorMessage);
         toast({
           title: "Erro",
@@ -224,9 +234,10 @@ export function useAppointmentsManager() {
         await fetchAppointments();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : "Failed to delete appointment";
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to delete appointment";
         setError(errorMessage);
         toast({
           title: "Erro",

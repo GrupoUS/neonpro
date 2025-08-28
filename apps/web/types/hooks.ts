@@ -3,15 +3,16 @@ import type { Database } from "./supabase";
 // Base types from Supabase
 export type Patient = Database["public"]["Tables"]["patients"]["Row"];
 export type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
-export type FinancialTransaction = Database["public"]["Tables"]["financial_transactions"]["Row"];
+export type FinancialTransaction =
+  Database["public"]["Tables"]["financial_transactions"]["Row"];
 export type StaffMember = Database["public"]["Tables"]["staff_members"]["Row"];
 export type Service = Database["public"]["Tables"]["services"]["Row"];
 
 // Enhanced types with relationships
 export type AppointmentWithRelations = Appointment & {
-  patients: { name: string; email: string; } | null;
-  staff_members: { name: string; specialty: string; } | null;
-  services: { name: string; duration: number; } | null;
+  patients: { name: string; email: string } | null;
+  staff_members: { name: string; specialty: string } | null;
+  services: { name: string; duration: number } | null;
 };
 
 // Dashboard Metrics Interface

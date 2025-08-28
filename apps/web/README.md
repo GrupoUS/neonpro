@@ -164,9 +164,15 @@ export function middleware(request: NextRequest) {
 // contexts/auth-context.tsx
 const AuthContext = createContext({
   user: null,
-  login: async (credentials) => {/* ... */},
-  logout: async () => {/* ... */},
-  register: async (userData) => {/* ... */},
+  login: async (credentials) => {
+    /* ... */
+  },
+  logout: async () => {
+    /* ... */
+  },
+  register: async (userData) => {
+    /* ... */
+  },
 });
 ```
 

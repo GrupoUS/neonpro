@@ -494,12 +494,16 @@ export class AestheticPredictionEngine {
    * Get feature names for interpretability
    */
   private getTreatmentFeatureNames(): string[] {
-    const extractor = this.featureExtractors.get("treatment-outcome") as unknown;
+    const extractor = this.featureExtractors.get(
+      "treatment-outcome",
+    ) as unknown;
     return extractor?.getTreatmentFeatureNames() || [];
   }
 
   private getBotoxFeatureNames(): string[] {
-    const extractor = this.featureExtractors.get("botox-optimization") as unknown;
+    const extractor = this.featureExtractors.get(
+      "botox-optimization",
+    ) as unknown;
     return extractor?.getBotoxFeatureNames() || [];
   }
 

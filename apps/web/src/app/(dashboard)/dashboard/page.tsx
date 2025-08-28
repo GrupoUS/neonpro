@@ -1,8 +1,21 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, AlertTriangle, Calendar, Plus, TrendingUp, Users } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Activity,
+  AlertTriangle,
+  Calendar,
+  Plus,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 
 const stats = [
@@ -114,9 +127,7 @@ export default function DashboardPage() {
               <Calendar className="h-5 w-5 mr-2" />
               Agendamentos de Hoje
             </CardTitle>
-            <CardDescription>
-              Últimos agendamentos para hoje
-            </CardDescription>
+            <CardDescription>Últimos agendamentos para hoje</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -149,9 +160,7 @@ export default function DashboardPage() {
             </div>
             <div className="mt-6">
               <Button variant="outline" asChild className="w-full">
-                <Link href="/appointments">
-                  Ver todos os agendamentos
-                </Link>
+                <Link href="/appointments">Ver todos os agendamentos</Link>
               </Button>
             </div>
           </CardContent>
@@ -164,25 +173,35 @@ export default function DashboardPage() {
               <Activity className="h-5 w-5 mr-2" />
               Ações Rápidas
             </CardTitle>
-            <CardDescription>
-              Ações mais utilizadas na clínica
-            </CardDescription>
+            <CardDescription>Ações mais utilizadas na clínica</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <Button asChild className="w-full justify-start" variant="outline">
+              <Button
+                asChild
+                className="w-full justify-start"
+                variant="outline"
+              >
                 <Link href="/patients/new">
                   <Users className="h-4 w-4 mr-2" />
                   Cadastrar Novo Paciente
                 </Link>
               </Button>
-              <Button asChild className="w-full justify-start" variant="outline">
+              <Button
+                asChild
+                className="w-full justify-start"
+                variant="outline"
+              >
                 <Link href="/appointments/new">
                   <Calendar className="h-4 w-4 mr-2" />
                   Agendar Consulta
                 </Link>
               </Button>
-              <Button asChild className="w-full justify-start" variant="outline">
+              <Button
+                asChild
+                className="w-full justify-start"
+                variant="outline"
+              >
                 <Link href="/compliance">
                   <AlertTriangle className="h-4 w-4 mr-2" />
                   Verificar Compliance

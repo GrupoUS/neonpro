@@ -259,7 +259,8 @@ export class MfaDatabaseService {
     const [codeRecord] = codes;
 
     // Check if code matches
-    const valid = codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
+    const valid =
+      codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
 
     // Increment attempts and potentially mark as used
     const updates: Record<string, unknown> = {

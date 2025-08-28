@@ -29,7 +29,7 @@ import React from "react";
 interface NavigationItem {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string; }>;
+  icon: React.ComponentType<{ className?: string }>;
   description?: string;
   badge?: string;
   permission?: () => boolean;
@@ -44,8 +44,8 @@ export function MainNavigation() {
   // Simple permission checks based on user role
   const canAccessPatients = () => {
     return (
-      user
-      && ["clinic_owner", "clinic_manager", "professional"].includes(user.role)
+      user &&
+      ["clinic_owner", "clinic_manager", "professional"].includes(user.role)
     );
   };
 
@@ -164,7 +164,9 @@ export function MainNavigation() {
               {item.badge && (
                 <Badge
                   className="ml-2"
-                  variant={item.badge === "Crítico" ? "destructive" : "secondary"}
+                  variant={
+                    item.badge === "Crítico" ? "destructive" : "secondary"
+                  }
                 >
                   {item.badge}
                 </Badge>
@@ -212,12 +214,12 @@ export function MainNavigation() {
                   {user?.role === "clinic_owner"
                     ? "Proprietário"
                     : user?.role === "clinic_manager"
-                    ? "Gerente"
-                    : user?.role === "professional"
-                    ? "Profissional"
-                    : user?.role === "admin"
-                    ? "Administrador"
-                    : "Usuário"}
+                      ? "Gerente"
+                      : user?.role === "professional"
+                        ? "Profissional"
+                        : user?.role === "admin"
+                          ? "Administrador"
+                          : "Usuário"}
                 </p>
               </div>
             </div>
@@ -304,10 +306,10 @@ export function MainNavigation() {
                         {user?.role === "clinic_owner"
                           ? "Proprietário"
                           : user?.role === "clinic_manager"
-                          ? "Gerente"
-                          : user?.role === "professional"
-                          ? "Profissional"
-                          : "Usuário"}
+                            ? "Gerente"
+                            : user?.role === "professional"
+                              ? "Profissional"
+                              : "Usuário"}
                       </p>
                     </div>
                   </div>

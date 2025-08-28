@@ -44,7 +44,8 @@ export type ScheduleFrequency = z.infer<typeof ScheduleFrequency>;
 // CUSTOM UUID VALIDATION (accepts the test UUID format)
 // =====================================================
 
-const uuidPattern = /^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$/i;
+const uuidPattern =
+  /^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$/i;
 
 const customUuid = z
   .string()
@@ -80,13 +81,14 @@ export const stockAlertConfigSchema = baseStockAlertConfigSchema.refine(
   (data) => {
     // Either productId or categoryId must be present, but not both
     return (
-      (data.productId && !data.categoryId)
-      || (!data.productId && data.categoryId)
-      || !(data.productId || data.categoryId)
+      (data.productId && !data.categoryId) ||
+      (!data.productId && data.categoryId) ||
+      !(data.productId || data.categoryId)
     );
   },
   {
-    message: "Specify either productId, categoryId, or neither for global alerts",
+    message:
+      "Specify either productId, categoryId, or neither for global alerts",
   },
 );
 
@@ -104,13 +106,14 @@ export const createStockAlertConfigSchema = baseStockAlertConfigSchema
     (data) => {
       // Either productId or categoryId must be present, but not both
       return (
-        (data.productId && !data.categoryId)
-        || (!data.productId && data.categoryId)
-        || !(data.productId || data.categoryId)
+        (data.productId && !data.categoryId) ||
+        (!data.productId && data.categoryId) ||
+        !(data.productId || data.categoryId)
       );
     },
     {
-      message: "Specify either productId, categoryId, or neither for global alerts",
+      message:
+        "Specify either productId, categoryId, or neither for global alerts",
     },
   );
 
@@ -241,9 +244,9 @@ export const customStockReportSchema = z
     (data) => {
       if (data.schedule?.enabled) {
         return (
-          data.schedule.frequency
-          && data.schedule.time
-          && data.schedule.recipients?.length > 0
+          data.schedule.frequency &&
+          data.schedule.time &&
+          data.schedule.recipients?.length > 0
         );
       }
       return true;

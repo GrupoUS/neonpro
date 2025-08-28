@@ -36,7 +36,8 @@ function validateHooks() {
       const content = fs.readFileSync(path.join(hooksDir, hook), "utf8");
 
       // Verificar loading state
-      const hasLoading = content.includes("loading") && content.includes("boolean");
+      const hasLoading =
+        content.includes("loading") && content.includes("boolean");
       if (hasLoading) {
         log.success(`${hook} - Loading state implementado`);
       } else {
@@ -44,7 +45,8 @@ function validateHooks() {
       }
 
       // Verificar error state
-      const hasError = content.includes("error") && content.includes("Error | null");
+      const hasError =
+        content.includes("error") && content.includes("Error | null");
       if (hasError) {
         log.success(`${hook} - Error state implementado`);
       } else {
@@ -52,7 +54,8 @@ function validateHooks() {
       }
 
       // Verificar try-catch
-      const hasTryCatch = content.includes("try {") && content.includes("catch");
+      const hasTryCatch =
+        content.includes("try {") && content.includes("catch");
       if (hasTryCatch) {
         log.success(`${hook} - Try-catch implementado`);
       } else {

@@ -77,7 +77,7 @@ export class AuthService extends EnhancedServiceBase {
       const isRateLimited = await this.security.checkRateLimit(
         rateLimitKey,
         this.config.maxLoginAttempts,
-        15 * 60 * 1000 // 15 minutes window
+        15 * 60 * 1000, // 15 minutes window
       );
 
       if (isRateLimited) {
@@ -191,7 +191,10 @@ export class AuthService extends EnhancedServiceBase {
       });
 
       // Record successful login metrics
-      await this.analytics.recordPerformance("auth_login_success", Date.now() - startTime);
+      await this.analytics.recordPerformance(
+        "auth_login_success",
+        Date.now() - startTime,
+      );
 
       return {
         success: true,
@@ -202,7 +205,10 @@ export class AuthService extends EnhancedServiceBase {
       };
     } catch (error) {
       // Record failed login metrics
-      await this.analytics.recordPerformance("auth_login_error", Date.now() - startTime);
+      await this.analytics.recordPerformance(
+        "auth_login_error",
+        Date.now() - startTime,
+      );
 
       await this.audit.logOperation("login_error", {
         email: credentials.email,
@@ -306,9 +312,8 @@ export class AuthService extends EnhancedServiceBase {
         : "";
 
       // Generate backup codes
-      const backupCodes = Array.from(
-        { length: 10 },
-        () => Math.random().toString(36).slice(2, 10).toUpperCase(),
+      const backupCodes = Array.from({ length: 10 }, () =>
+        Math.random().toString(36).slice(2, 10).toUpperCase(),
       );
 
       // Store MFA secret temporarily (user must verify to activate)
@@ -337,7 +342,7 @@ export class AuthService extends EnhancedServiceBase {
    */
   async verifyMfaSetup(userId: string, code: string): Promise<boolean> {
     try {
-      const setup = await this.cache.get(`mfa_setup_${userId}`) as {
+      const setup = (await this.cache.get(`mfa_setup_${userId}`)) as {
         secret: string;
         backupCodes: string[];
       } | null;
@@ -422,7 +427,8 @@ export class AuthService extends EnhancedServiceBase {
       }
 
       return (userPermissions as Permission[]).some(
-        (perm: Permission) => perm.resource === resource && perm.action === action,
+        (perm: Permission) =>
+          perm.resource === resource && perm.action === action,
       );
     } catch {
       return false;
@@ -472,8 +478,9 @@ export class AuthService extends EnhancedServiceBase {
       permissions: this.rolePermissions[user.role] || [],
       sessionId,
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000)
-        + this.parseTimeToSeconds(this.config.jwtExpiresIn),
+      exp:
+        Math.floor(Date.now() / 1000) +
+        this.parseTimeToSeconds(this.config.jwtExpiresIn),
     };
 
     return jwt.sign(payload, this.config.jwtSecret);
@@ -485,8 +492,9 @@ export class AuthService extends EnhancedServiceBase {
       sessionId,
       type: "refresh",
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000)
-        + this.parseTimeToSeconds(this.config.refreshTokenExpiresIn),
+      exp:
+        Math.floor(Date.now() / 1000) +
+        this.parseTimeToSeconds(this.config.refreshTokenExpiresIn),
     };
 
     return jwt.sign(payload, this.config.jwtSecret);
@@ -503,9 +511,11 @@ export class AuthService extends EnhancedServiceBase {
         userAgent: "",
         ip: "",
         fingerprint: "",
-        trusted: false
+        trusted: false,
       },
-      expires_at: new Date(Date.now() + this.config.sessionTimeout).toISOString(),
+      expires_at: new Date(
+        Date.now() + this.config.sessionTimeout,
+      ).toISOString(),
       last_activity: new Date().toISOString(),
       is_active: true,
     };
@@ -526,7 +536,7 @@ export class AuthService extends EnhancedServiceBase {
         userAgent: "",
         ip: "",
         fingerprint: "",
-        trusted: false
+        trusted: false,
       },
       expiresAt: new Date(session.expires_at),
       lastActivity: new Date(session.last_activity),
@@ -592,12 +602,12 @@ export class AuthService extends EnhancedServiceBase {
       timestamp: new Date().toISOString(),
       details: {
         resource: "authentication",
-        outcome: "failure"
+        outcome: "failure",
       },
       version: "1.0",
       userId: email,
       severity: "MEDIUM",
-      dataClassification: "INTERNAL"
+      dataClassification: "INTERNAL",
     });
   }
 
@@ -608,20 +618,20 @@ export class AuthService extends EnhancedServiceBase {
       name: dbUser.name as string,
       role: dbUser.role as UserRole,
       permissions: (dbUser.permissions as Permission[]) || [],
-      isActive: dbUser.is_active as boolean ?? true,
+      isActive: (dbUser.is_active as boolean) ?? true,
       mfaEnabled: dbUser.mfa_enabled as boolean,
       createdAt: new Date(dbUser.created_at as string | number | Date),
       updatedAt: new Date(dbUser.updated_at as string | number | Date),
     };
-    
+
     if (dbUser.last_login) {
       user.lastLogin = new Date(dbUser.last_login as string | number | Date);
     }
-    
+
     if (dbUser.mfa_secret) {
       user.mfaSecret = dbUser.mfa_secret as string;
     }
-    
+
     return user;
   }
 
@@ -640,7 +650,7 @@ export class AuthService extends EnhancedServiceBase {
 
     const [, value, unit] = match;
     const numValue = value ? Number.parseInt(value, 10) : 0;
-    const unitMultiplier = unit ? (units[unit] || 3600) : 3600;
+    const unitMultiplier = unit ? units[unit] || 3600 : 3600;
     return numValue * unitMultiplier;
   }
 

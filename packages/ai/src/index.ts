@@ -142,7 +142,8 @@ export async function initializeAIServices(_config: AIServiceConfiguration) {
 export const packageInfo = {
   name: "@neonpro/ai",
   version: AI_SERVICE_VERSION,
-  description: "AI-First Healthcare Platform - Enhanced Service Layer for NeonPro",
+  description:
+    "AI-First Healthcare Platform - Enhanced Service Layer for NeonPro",
   author: "NeonPro Development Team",
   license: "Proprietary",
   features: [

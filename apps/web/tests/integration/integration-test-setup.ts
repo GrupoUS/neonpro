@@ -7,15 +7,18 @@ import { afterAll, afterEach, beforeAll, beforeEach } from "vitest";
 // Global test configuration
 export const TEST_CONFIG = {
   database: {
-    test_database_url: process.env.TEST_DATABASE_URL
-      || "postgresql://test:test@localhost:5432/neonpro_test",
+    test_database_url:
+      process.env.TEST_DATABASE_URL ||
+      "postgresql://test:test@localhost:5432/neonpro_test",
     connection_timeout: 10_000,
     query_timeout: 5000,
   },
   supabase: {
-    test_project_url: process.env.TEST_SUPABASE_URL || "https://test.supabase.co",
+    test_project_url:
+      process.env.TEST_SUPABASE_URL || "https://test.supabase.co",
     test_anon_key: process.env.TEST_SUPABASE_ANON_KEY || "test-anon-key",
-    test_service_role_key: process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
+    test_service_role_key:
+      process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
   },
   api: {
     test_api_base_url: process.env.TEST_API_BASE_URL || "http://localhost:3001",
@@ -212,7 +215,7 @@ export class TestLGPDCompliance {
     return requiredFields.every((field) => auditEntry[field] !== undefined);
   }
 
-  static mockCPFValidation(cpf: string): { valid: boolean; formatted: string; } {
+  static mockCPFValidation(cpf: string): { valid: boolean; formatted: string } {
     // Mock CPF validation for testing
     const cleanCpf = cpf.replaceAll(/[^\d]/g, "");
     const isValid = cleanCpf.length === 11 && cleanCpf !== "00000000000";

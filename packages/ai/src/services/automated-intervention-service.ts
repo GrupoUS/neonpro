@@ -197,9 +197,12 @@ export class AutomatedInterventionService extends EnhancedAIService<
   InterventionInput,
   InterventionOutput
 > {
-  private readonly activeCampaigns: Map<string, InterventionCampaign> = new Map();
-  private readonly interventionChannels: Map<string, InterventionChannel> = new Map();
-  private readonly interventionTemplates: Map<string, InterventionTemplate> = new Map();
+  private readonly activeCampaigns: Map<string, InterventionCampaign> =
+    new Map();
+  private readonly interventionChannels: Map<string, InterventionChannel> =
+    new Map();
+  private readonly interventionTemplates: Map<string, InterventionTemplate> =
+    new Map();
 
   constructor(
     cache: CacheService,
@@ -286,9 +289,9 @@ export class AutomatedInterventionService extends EnhancedAIService<
   ): Promise<InterventionOutput> {
     if (
       !(
-        input.appointment_context
-        && input.patient_profile
-        && input.prediction_data
+        input.appointment_context &&
+        input.patient_profile &&
+        input.prediction_data
       )
     ) {
       throw new Error(
@@ -316,7 +319,8 @@ export class AutomatedInterventionService extends EnhancedAIService<
     );
 
     // Schedule individual interventions
-    const scheduledInterventions = await this.scheduleIndividualInterventions(campaign);
+    const scheduledInterventions =
+      await this.scheduleIndividualInterventions(campaign);
 
     // Store campaign
     this.activeCampaigns.set(campaignId, campaign);
@@ -466,8 +470,9 @@ export class AutomatedInterventionService extends EnhancedAIService<
     // Schedule interventions based on strategy
     for (let i = 0; i < campaign.selected_strategy.channels.length; i++) {
       const channel = campaign.selected_strategy.channels[i];
-      const timingHours = campaign.selected_strategy.timing_hours_before[i]
-        || campaign.selected_strategy.timing_hours_before[0];
+      const timingHours =
+        campaign.selected_strategy.timing_hours_before[i] ||
+        campaign.selected_strategy.timing_hours_before[0];
 
       const scheduledTime = new Date(
         appointmentTime.getTime() - timingHours * 60 * 60 * 1000,
@@ -498,8 +503,9 @@ export class AutomatedInterventionService extends EnhancedAIService<
           delivery_tracking: {},
           outcome_metrics: {
             patient_responded: false,
-            cost_incurred: campaign.selected_strategy.cost_per_intervention
-              / campaign.selected_strategy.channels.length,
+            cost_incurred:
+              campaign.selected_strategy.cost_per_intervention /
+              campaign.selected_strategy.channels.length,
             roi_contribution: 0,
           },
         };
@@ -510,7 +516,8 @@ export class AutomatedInterventionService extends EnhancedAIService<
 
     // Update campaign with scheduled interventions
     campaign.interventions = scheduledInterventions;
-    campaign.performance_metrics.total_interventions = scheduledInterventions.length;
+    campaign.performance_metrics.total_interventions =
+      scheduledInterventions.length;
 
     return scheduledInterventions;
   }
@@ -527,11 +534,11 @@ export class AutomatedInterventionService extends EnhancedAIService<
     const candidateTemplates = [...this.interventionTemplates.values()]
       .filter(
         (template) =>
-          template.channel_type === channel
-          && template.language === language
-          && template.risk_category === riskCategory
-          && template.personalization_level === personalizationLevel
-          && template.compliance_approved,
+          template.channel_type === channel &&
+          template.language === language &&
+          template.risk_category === riskCategory &&
+          template.personalization_level === personalizationLevel &&
+          template.compliance_approved,
       )
       .sort((a, b) => b.effectiveness_score - a.effectiveness_score);
 
@@ -566,31 +573,29 @@ export class AutomatedInterventionService extends EnhancedAIService<
     const templates = {
       sms: {
         "pt-BR": {
-          low:
-            "Olá {{patient_name}}! Lembramos da sua consulta {{appointment_type}} em {{appointment_date}} às {{appointment_time}}. Confirme: {{confirmation_link}}",
+          low: "Olá {{patient_name}}! Lembramos da sua consulta {{appointment_type}} em {{appointment_date}} às {{appointment_time}}. Confirme: {{confirmation_link}}",
           medium:
             "Oi {{patient_name}}! Sua consulta é em {{appointment_date}} às {{appointment_time}}. É importante comparecer. Dúvidas? {{clinic_phone}}",
-          high:
-            "IMPORTANTE: {{patient_name}}, sua consulta {{appointment_type}} é amanhã ({{appointment_date}}) às {{appointment_time}}. Confirme presença: {{confirmation_link}} ou {{clinic_phone}}",
+          high: "IMPORTANTE: {{patient_name}}, sua consulta {{appointment_type}} é amanhã ({{appointment_date}}) às {{appointment_time}}. Confirme presença: {{confirmation_link}} ou {{clinic_phone}}",
           very_high:
             "URGENTE: {{patient_name}}, sua consulta {{appointment_type}} é HOJE às {{appointment_time}}. Precisa remarcar? Ligue: {{clinic_phone}}",
         },
       },
       email: {
         "pt-BR": {
-          low:
-            "Prezado(a) {{patient_name}}, confirmamos sua consulta de {{appointment_type}} em {{appointment_date}} às {{appointment_time}}...",
+          low: "Prezado(a) {{patient_name}}, confirmamos sua consulta de {{appointment_type}} em {{appointment_date}} às {{appointment_time}}...",
           medium:
             "Olá {{patient_name}}, sua consulta está próxima. {{appointment_date}} às {{appointment_time}}...",
-          high:
-            "Importante: Consulta agendada para {{appointment_date}} às {{appointment_time}}...",
-          very_high: "Consulta hoje - Não perca! {{patient_name}}, sua consulta é hoje...",
+          high: "Importante: Consulta agendada para {{appointment_date}} às {{appointment_time}}...",
+          very_high:
+            "Consulta hoje - Não perca! {{patient_name}}, sua consulta é hoje...",
         },
       },
     };
 
-    const content = templates[channel]?.[language]?.[riskCategory]
-      || "Lembrete: Consulta agendada para {{appointment_date}} às {{appointment_time}}.";
+    const content =
+      templates[channel]?.[language]?.[riskCategory] ||
+      "Lembrete: Consulta agendada para {{appointment_date}} às {{appointment_time}}.";
 
     return {
       template_id: `default_${channel}_${riskCategory}_${language}`,
@@ -632,7 +637,8 @@ export class AutomatedInterventionService extends EnhancedAIService<
     });
 
     const variables = {
-      patient_name: campaign.patient_profile.patient_id.split("_")[0] || "Paciente", // Simplified
+      patient_name:
+        campaign.patient_profile.patient_id.split("_")[0] || "Paciente", // Simplified
       appointment_date: formattedDate,
       appointment_time: formattedTime,
       appointment_type: this.translateAppointmentType(
@@ -803,7 +809,7 @@ export class AutomatedInterventionService extends EnhancedAIService<
     patientProfile: PatientProfile,
     appointmentContext: AppointmentContext,
     predictionData: EnsemblePredictionResult,
-  ): Promise<{ campaign_id: string; interventions_scheduled: number; }> {
+  ): Promise<{ campaign_id: string; interventions_scheduled: number }> {
     const result = await this.execute({
       action: "schedule_intervention",
       patient_profile: patientProfile,

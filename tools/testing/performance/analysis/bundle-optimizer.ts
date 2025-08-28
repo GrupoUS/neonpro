@@ -123,7 +123,8 @@ export class BundleOptimizer {
       }
 
       const recommendations = this.generateRecommendations(chunks, totalSize);
-      const treeShakingOpportunities = this.findTreeShakingOpportunities(chunks);
+      const treeShakingOpportunities =
+        this.findTreeShakingOpportunities(chunks);
 
       return {
         totalSize,
@@ -194,7 +195,8 @@ export class BundleOptimizer {
       recommendations.push({
         type: "code-splitting",
         severity: "high",
-        description: "Bundle size exceeds 500KB. Consider implementing route-based code splitting.",
+        description:
+          "Bundle size exceeds 500KB. Consider implementing route-based code splitting.",
         estimatedSavings: totalSize * 0.3,
       });
     }
@@ -206,11 +208,9 @@ export class BundleOptimizer {
         recommendations.push({
           type: "code-splitting",
           severity: "medium",
-          description: `Chunk ${chunk.name} is large (${
-            Math.round(
-              chunk.size / 1024,
-            )
-          }KB). Consider splitting.`,
+          description: `Chunk ${chunk.name} is large (${Math.round(
+            chunk.size / 1024,
+          )}KB). Consider splitting.`,
           estimatedSavings: chunk.size * 0.4,
         });
       }
@@ -293,11 +293,9 @@ export class BundleOptimizer {
     if (treeShakingOpportunities.length > 0) {
       report += "## Tree Shaking Opportunities\n";
       for (const opp of treeShakingOpportunities.slice(0, 10)) {
-        report += `- **${opp.module}**: ${
-          Math.round(
-            opp.estimatedSavings / 1024,
-          )
-        }KB potential savings\n`;
+        report += `- **${opp.module}**: ${Math.round(
+          opp.estimatedSavings / 1024,
+        )}KB potential savings\n`;
       }
     }
 

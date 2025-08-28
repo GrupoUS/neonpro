@@ -2,19 +2,19 @@
 
 ## Schema
 
-| Column | Type | Constraints | Default | Description | LGPD Classification |
-|--------|------|-------------|---------|-------------|-------------------|
-| id | uuid | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique session identifier | Public |
-| user_id | uuid | FK | - | Healthcare professional user reference | Personal Data |
-| clinic_id | uuid | FK | - | Clinic context reference | Organizational Data |
-| session_type | varchar(50) | NOT NULL | 'general' | Type of AI chat session | Metadata |
-| title | varchar(255) | - | - | Session title/description | Personal Data |
-| status | varchar(20) | - | 'active' | Session status | Metadata |
-| context | jsonb | - | '{}' | Session context and configuration | Metadata |
-| metadata | jsonb | - | '{}' | Additional session metadata | Metadata |
-| last_message_at | timestamptz | - | now() | Timestamp of last message | Metadata |
-| created_at | timestamptz | - | now() | Session creation timestamp | Metadata |
-| updated_at | timestamptz | - | now() | Last update timestamp | Metadata |
+| Column          | Type         | Constraints           | Default           | Description                            | LGPD Classification |
+| --------------- | ------------ | --------------------- | ----------------- | -------------------------------------- | ------------------- |
+| id              | uuid         | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique session identifier              | Public              |
+| user_id         | uuid         | FK                    | -                 | Healthcare professional user reference | Personal Data       |
+| clinic_id       | uuid         | FK                    | -                 | Clinic context reference               | Organizational Data |
+| session_type    | varchar(50)  | NOT NULL              | 'general'         | Type of AI chat session                | Metadata            |
+| title           | varchar(255) | -                     | -                 | Session title/description              | Personal Data       |
+| status          | varchar(20)  | -                     | 'active'          | Session status                         | Metadata            |
+| context         | jsonb        | -                     | '{}'              | Session context and configuration      | Metadata            |
+| metadata        | jsonb        | -                     | '{}'              | Additional session metadata            | Metadata            |
+| last_message_at | timestamptz  | -                     | now()             | Timestamp of last message              | Metadata            |
+| created_at      | timestamptz  | -                     | now()             | Session creation timestamp             | Metadata            |
+| updated_at      | timestamptz  | -                     | now()             | Last update timestamp                  | Metadata            |
 
 ## Healthcare Compliance
 
@@ -69,6 +69,7 @@ CREATE POLICY "ai_compliance_audit_access" ON ai_chat_sessions
 ## AI Session Types
 
 ### Healthcare AI Sessions
+
 - **general** - General healthcare assistance and information
 - **diagnosis_support** - AI-assisted diagnostic support (not replacement)
 - **treatment_planning** - Treatment recommendation assistance
@@ -79,6 +80,7 @@ CREATE POLICY "ai_compliance_audit_access" ON ai_chat_sessions
 - **compliance_check** - Regulatory compliance verification
 
 ### Administrative AI Sessions
+
 - **scheduling_optimization** - Appointment scheduling assistance
 - **staff_coordination** - Team coordination and communication
 - **inventory_management** - Inventory and supply management
@@ -89,12 +91,13 @@ CREATE POLICY "ai_compliance_audit_access" ON ai_chat_sessions
 ## AI Context Management
 
 ### Context Structure
+
 ```json
 // context field structure
 {
   "patient_context": {
     "patient_id": "uuid", // Only if patient-specific session
-    "anonymized": true,   // Always true for AI processing
+    "anonymized": true, // Always true for AI processing
     "consent_verified": true
   },
   "clinical_context": {
@@ -106,7 +109,11 @@ CREATE POLICY "ai_compliance_audit_access" ON ai_chat_sessions
     "model": "claude-3-5-sonnet-20241022",
     "max_tokens": 4000,
     "temperature": 0.3,
-    "safety_filters": ["phi_detection", "medication_safety", "emergency_protocols"]
+    "safety_filters": [
+      "phi_detection",
+      "medication_safety",
+      "emergency_protocols"
+    ]
   },
   "compliance_settings": {
     "lgpd_mode": true,
@@ -117,6 +124,7 @@ CREATE POLICY "ai_compliance_audit_access" ON ai_chat_sessions
 ```
 
 ### Metadata Structure
+
 ```json
 // metadata field structure
 {
@@ -147,18 +155,21 @@ CREATE POLICY "ai_compliance_audit_access" ON ai_chat_sessions
 ## AI Safety & Compliance Features
 
 ### PHI Protection
+
 - **Automatic Sanitization**: All input sanitized before AI processing
 - **No PHI Storage**: Patient health information never stored in AI tables
 - **Anonymization**: Patient references anonymized for AI interactions
 - **Consent Validation**: Patient consent verified for AI-assisted care
 
 ### Professional Oversight
+
 - **Licensed Professional Required**: All AI sessions linked to licensed healthcare professionals
 - **Clinical Decision Support Only**: AI provides support, not replacement for professional judgment
 - **Professional Validation**: Critical AI recommendations require professional review
 - **Emergency Protocols**: Automatic escalation for emergency situations
 
 ### Regulatory Compliance
+
 - **LGPD Compliance**: Complete data protection compliance for AI interactions
 - **CFM Guidelines**: Federal Council of Medicine AI usage guidelines
 - **ANVISA Requirements**: Medical device software compliance for AI features
@@ -167,6 +178,7 @@ CREATE POLICY "ai_compliance_audit_access" ON ai_chat_sessions
 ## Performance Optimizations
 
 ### Indexes
+
 ```sql
 -- Core AI session queries
 CREATE INDEX idx_ai_chat_sessions_user_id ON ai_chat_sessions (user_id);
@@ -184,6 +196,7 @@ CREATE INDEX idx_ai_chat_sessions_metadata ON ai_chat_sessions USING GIN (metada
 ```
 
 ### Session Management
+
 - **Session Timeout**: Automatic session expiry after inactivity
 - **Resource Limits**: Token usage limits per session and per professional
 - **Concurrent Sessions**: Limit concurrent AI sessions per professional
@@ -192,12 +205,14 @@ CREATE INDEX idx_ai_chat_sessions_metadata ON ai_chat_sessions USING GIN (metada
 ## Integration with Vercel AI SDK
 
 ### AI Model Configuration
+
 - **Multiple Providers**: Support for OpenAI, Anthropic, and other providers
 - **Model Selection**: Professional-configurable AI model selection
 - **Streaming Support**: Real-time AI response streaming
 - **Function Calling**: Integration with healthcare-specific functions
 
 ### Healthcare AI Tools
+
 ```json
 // Available AI tools for healthcare professionals
 {
@@ -214,6 +229,7 @@ CREATE INDEX idx_ai_chat_sessions_metadata ON ai_chat_sessions USING GIN (metada
 ## Audit & Monitoring
 
 ### AI Session Audit
+
 ```sql
 -- AI session lifecycle tracking
 CREATE TRIGGER ai_chat_sessions_audit_trigger
@@ -235,6 +251,7 @@ CREATE TRIGGER ai_session_compliance_monitor_trigger
 ```
 
 ### Healthcare AI Metrics
+
 - **Usage Analytics**: Professional AI usage patterns and trends
 - **Accuracy Tracking**: AI recommendation accuracy and professional feedback
 - **Safety Monitoring**: Safety trigger tracking and incident reporting

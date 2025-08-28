@@ -528,11 +528,11 @@ export const rlsUtils = {
    */
   validatePolicy: (policy: RLSPolicyConfig): boolean => {
     return Boolean(
-      policy.tableName
-        && policy.policyName
-        && policy.operation
-        && policy.description
-        && (policy.using || policy.withCheck),
+      policy.tableName &&
+        policy.policyName &&
+        policy.operation &&
+        policy.description &&
+        (policy.using || policy.withCheck),
     );
   },
 

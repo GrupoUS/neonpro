@@ -52,8 +52,8 @@ export class CircuitBreaker {
         this.logStateChange("OPEN", "HALF_OPEN", "Reset timeout reached");
       } else {
         throw new CircuitBreakerOpenError(
-          `Circuit breaker is OPEN for ${this.config.healthcareContext}. `
-            + `Next attempt at: ${this.nextAttemptTime?.toISOString()}`,
+          `Circuit breaker is OPEN for ${this.config.healthcareContext}. ` +
+            `Next attempt at: ${this.nextAttemptTime?.toISOString()}`,
         );
       }
     }
@@ -158,8 +158,8 @@ export class CircuitBreaker {
    */
   private isEmergencyContext(): boolean {
     return (
-      this.config.healthcareContext === "emergency"
-      || this.config.healthcareContext === "patient_data"
+      this.config.healthcareContext === "emergency" ||
+      this.config.healthcareContext === "patient_data"
     );
   }
 

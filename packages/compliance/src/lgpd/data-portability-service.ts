@@ -156,18 +156,15 @@ export class DataPortabilityService {
       const validatedRequest = DataPortabilityRequestSchema.parse(request);
 
       // Step 2: Constitutional healthcare validation
-      const constitutionalValidation = await this.validateConstitutionalPortability(
-        validatedRequest,
-      );
+      const constitutionalValidation =
+        await this.validateConstitutionalPortability(validatedRequest);
 
       if (!constitutionalValidation.valid) {
         return {
           success: false,
-          error: `Constitutional portability validation failed: ${
-            constitutionalValidation.violations.join(
-              ", ",
-            )
-          }`,
+          error: `Constitutional portability validation failed: ${constitutionalValidation.violations.join(
+            ", ",
+          )}`,
           complianceScore: constitutionalValidation.score,
           regulatoryValidation: { lgpd: false, anvisa: true, cfm: true },
           auditTrail: await this.createAuditEvent(
@@ -180,7 +177,8 @@ export class DataPortabilityService {
 
       // Step 3: Patient confirmation (if not already confirmed)
       if (!validatedRequest.patientConfirmation) {
-        const confirmationResult = await this.requestPatientConfirmation(validatedRequest);
+        const confirmationResult =
+          await this.requestPatientConfirmation(validatedRequest);
         if (!confirmationResult.confirmed) {
           return {
             success: false,
@@ -245,7 +243,8 @@ export class DataPortabilityService {
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown portability error",
+        error:
+          error instanceof Error ? error.message : "Unknown portability error",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -269,9 +268,9 @@ export class DataPortabilityService {
 
     // Healthcare-specific validations
     if (
-      (request.dataCategories.includes(PatientDataClassification.HEALTH)
-        || request.dataCategories.includes(PatientDataClassification.GENETIC))
-      && (request.exportFormat === "JSON" || request.exportFormat === "XML")
+      (request.dataCategories.includes(PatientDataClassification.HEALTH) ||
+        request.dataCategories.includes(PatientDataClassification.GENETIC)) &&
+      (request.exportFormat === "JSON" || request.exportFormat === "XML")
     ) {
       // Recommend FHIR compliance for medical data
       violations.push(
@@ -282,8 +281,8 @@ export class DataPortabilityService {
 
     // Child data protection (Art. 14 LGPD)
     if (
-      request.dataCategories.includes(PatientDataClassification.CHILD)
-      && !request.guardianConsent
+      request.dataCategories.includes(PatientDataClassification.CHILD) &&
+      !request.guardianConsent
     ) {
       violations.push("Guardian consent required for child data portability");
       score -= 2;
@@ -291,8 +290,8 @@ export class DataPortabilityService {
 
     // Destination controller validation for direct transfer
     if (
-      request.portabilityType === "DIRECT_TRANSFER"
-      && !request.destinationController
+      request.portabilityType === "DIRECT_TRANSFER" &&
+      !request.destinationController
     ) {
       violations.push(
         "Destination controller information required for direct transfer",
@@ -302,8 +301,8 @@ export class DataPortabilityService {
 
     // Security requirements validation
     if (
-      request.dataCategories.includes(PatientDataClassification.SENSITIVE)
-      || request.dataCategories.includes(PatientDataClassification.HEALTH)
+      request.dataCategories.includes(PatientDataClassification.SENSITIVE) ||
+      request.dataCategories.includes(PatientDataClassification.HEALTH)
     ) {
       if (!request.encryptionRequired) {
         violations.push("Encryption required for sensitive healthcare data");
@@ -546,7 +545,8 @@ export class DataPortabilityService {
           expiresAt: new Date(
             Date.now() + this.exportExpiryDays * 24 * 60 * 60 * 1000,
           ),
-          accessInstructions: "Constitutional healthcare data export - Handle with care",
+          accessInstructions:
+            "Constitutional healthcare data export - Handle with care",
         },
         executionTime: {
           startedAt: startTime,
@@ -680,8 +680,8 @@ export class DataPortabilityService {
 
     // Healthcare standards compliance
     if (
-      request.exportFormat === "FHIR"
-      && request.dataCategories.includes(PatientDataClassification.HEALTH)
+      request.exportFormat === "FHIR" &&
+      request.dataCategories.includes(PatientDataClassification.HEALTH)
     ) {
       score += 0.3; // Bonus for healthcare interoperability standard
     }
@@ -702,7 +702,7 @@ export class DataPortabilityService {
     _table: string,
     _patientId: string,
     _format: string,
-  ): Promise<{ records: unknown[]; }> {
+  ): Promise<{ records: unknown[] }> {
     return { records: [] }; // Would query Supabase database
   }
 
@@ -720,14 +720,17 @@ export class DataPortabilityService {
     return data; // Would implement PDF generation
   }
 
-  private async generateExportFile(data: unknown, _format: string): Promise<unknown> {
+  private async generateExportFile(
+    data: unknown,
+    _format: string,
+  ): Promise<unknown> {
     return data;
   }
 
   private async encryptExportData(
     result: PortabilityResult,
     request: DataPortabilityRequest,
-  ): Promise<{ key: string; }> {
+  ): Promise<{ key: string }> {
     // Generate AES-256 encryption key
     const crypto = require("node:crypto");
     const keyMaterial = `${request.patientId}-${request.tenantId}-${Date.now()}`;
@@ -752,7 +755,8 @@ export class DataPortabilityService {
     // Generate cryptographically secure password for export access
     const crypto = require("node:crypto");
     const length = 16;
-    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+    const charset =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
     let password = "";
 
     for (let i = 0; i < length; i++) {
@@ -847,7 +851,7 @@ export class DataPortabilityService {
 
   private async requestPatientConfirmation(
     _request: DataPortabilityRequest,
-  ): Promise<{ confirmed: boolean; }> {
+  ): Promise<{ confirmed: boolean }> {
     return { confirmed: true }; // Would implement confirmation workflow
   }
 
@@ -856,7 +860,10 @@ export class DataPortabilityService {
     _result: PortabilityResult,
   ): Promise<void> {}
 
-  private async createAuditEvent(action: string, data: unknown): Promise<unknown> {
+  private async createAuditEvent(
+    action: string,
+    data: unknown,
+  ): Promise<unknown> {
     return {
       id: crypto.randomUUID(),
       eventType: "DATA_PORTABILITY",
@@ -896,9 +903,10 @@ export class DataPortabilityService {
 
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : "Failed to retrieve portability status",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to retrieve portability status",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,

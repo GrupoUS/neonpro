@@ -118,11 +118,13 @@ export function useServices(): ServicesHook {
               prev.map((service) =>
                 service.id === payload.new.id
                   ? (payload.new as Service)
-                  : service
-              )
+                  : service,
+              ),
             );
           } else if (payload.eventType === "DELETE") {
-            setServices((prev) => prev.filter((service) => service.id !== payload.old.id));
+            setServices((prev) =>
+              prev.filter((service) => service.id !== payload.old.id),
+            );
           }
         },
       )

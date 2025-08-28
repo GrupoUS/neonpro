@@ -96,11 +96,11 @@ export class ANVISAAdverseEventManager {
     // For now, we'll create a task for manual reporting
     try {
       const dueDate = new Date(
-        Date.now()
-          + ANVISA_REPORT_DEADLINE_HOURS
-            * MINUTES_TO_MILLISECONDS
-            * MINUTES_TO_MILLISECONDS
-            * HOURS_TO_MILLISECONDS,
+        Date.now() +
+          ANVISA_REPORT_DEADLINE_HOURS *
+            MINUTES_TO_MILLISECONDS *
+            MINUTES_TO_MILLISECONDS *
+            HOURS_TO_MILLISECONDS,
       );
 
       await this.supabase.from("compliance_tasks").insert({

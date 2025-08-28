@@ -17,7 +17,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock theme provider
-const ThemeWrapper = ({ children }: { children: React.ReactNode; }) => (
+const ThemeWrapper = ({ children }: { children: React.ReactNode }) => (
   <div className="neonprov1-theme">{children}</div>
 );
 
@@ -185,7 +185,8 @@ describe("card Component - NeonPro Healthcare UI", () => {
           <Card data-testid="retention-card">
             <CardContent>
               <div className="retention-warning">
-                ⚠️ Dados serão excluídos em {retentionDate.toLocaleDateString("pt-BR")}
+                ⚠️ Dados serão excluídos em{" "}
+                {retentionDate.toLocaleDateString("pt-BR")}
               </div>
             </CardContent>
           </Card>

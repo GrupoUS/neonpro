@@ -46,9 +46,11 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
           className,
         )}
         ref={ref}
-        style={backgroundImage
-          ? { backgroundImage: `url(${backgroundImage})` }
-          : undefined}
+        style={
+          backgroundImage
+            ? { backgroundImage: `url(${backgroundImage})` }
+            : undefined
+        }
         {...props}
       >
         {/* Background Overlay */}
@@ -64,19 +66,17 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
           {/* Logo */}
           {showLogo && (
             <div className="text-center">
-              {logoUrl
-                ? (
-                  <img
-                    alt="Logo"
-                    className="mx-auto mb-4 h-12 w-auto"
-                    src={logoUrl}
-                  />
-                )
-                : (
-                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
-                    <Heart className="h-6 w-6 text-primary-foreground" />
-                  </div>
-                )}
+              {logoUrl ? (
+                <img
+                  alt="Logo"
+                  className="mx-auto mb-4 h-12 w-auto"
+                  src={logoUrl}
+                />
+              ) : (
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
+                  <Heart className="h-6 w-6 text-primary-foreground" />
+                </div>
+              )}
 
               {title && (
                 <h1 className="font-semibold text-2xl tracking-tight">
@@ -84,7 +84,9 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
                 </h1>
               )}
 
-              {subtitle && <p className="mt-2 text-muted-foreground">{subtitle}</p>}
+              {subtitle && (
+                <p className="mt-2 text-muted-foreground">{subtitle}</p>
+              )}
             </div>
           )}
 

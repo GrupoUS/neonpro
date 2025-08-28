@@ -58,9 +58,9 @@ export async function GET(request: NextRequest) {
 
     // Check permissions - only admins can view other users' data
     if (
-      validatedParams.userId
-      && validatedParams.userId !== userId
-      && userRole !== "admin"
+      validatedParams.userId &&
+      validatedParams.userId !== userId &&
+      userRole !== "admin"
     ) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
@@ -69,9 +69,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Set default date range if not provided (last 30 days)
-    const endDate = validatedParams.endDate || new Date().toISOString().split("T")[0];
-    const startDate = validatedParams.startDate
-      || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    const endDate =
+      validatedParams.endDate || new Date().toISOString().split("T")[0];
+    const startDate =
+      validatedParams.startDate ||
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
         .toISOString()
         .split("T")[0];
 
@@ -357,10 +359,12 @@ async function getDashboardAnalytics(
     trials,
     conversions,
     summary: {
-      totalRevenue: revenue?.reduce(
-        (sum: number, item: unknown) => sum + ((item as { revenue?: number; })?.revenue || 0),
-        0,
-      ) || 0,
+      totalRevenue:
+        revenue?.reduce(
+          (sum: number, item: unknown) =>
+            sum + ((item as { revenue?: number })?.revenue || 0),
+          0,
+        ) || 0,
       totalSubscriptions: subscriptions?.length || 0,
       totalTrials: trials?.length || 0,
       conversionRate: conversions?.conversion_rate || 0,

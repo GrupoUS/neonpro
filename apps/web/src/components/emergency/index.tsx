@@ -25,7 +25,10 @@ export {
 
 // Emergency Services & Performance
 export { emergencyCache } from "../lib/emergency/emergency-cache";
-export { emergencyPerformance, measureEmergencyOperation } from "../lib/emergency/emergency-performance";
+export {
+  emergencyPerformance,
+  measureEmergencyOperation,
+} from "../lib/emergency/emergency-performance";
 
 // Sample Emergency Data for Testing and Demos
 export const sampleEmergencyPatient: EmergencyPatientData = {
@@ -90,13 +93,18 @@ export const sampleEmergencyPatient: EmergencyPatientData = {
   },
   cfmNumber: "SP-123456",
   lgpdConsent: true,
-};export const sampleCriticalAllergies: CriticalAllergy[] = [
+};
+export const sampleCriticalAllergies: CriticalAllergy[] = [
   {
     id: "allergy-001",
     name: "Penicilina",
     severity: "life-threatening",
     reactions: ["Choque anafilático", "Edema de glote", "Broncoespasmo severo"],
-    treatments: ["Epinefrina IM", "Corticosteroide IV", "Anti-histamínico H1/H2"],
+    treatments: [
+      "Epinefrina IM",
+      "Corticosteroide IV",
+      "Anti-histamínico H1/H2",
+    ],
     lastReaction: {
       date: "15/03/2023",
       description: "Reação anafilática após administração de amoxicilina",
@@ -106,11 +114,19 @@ export const sampleEmergencyPatient: EmergencyPatientData = {
     crossReactivities: ["Cefalosporinas (risco cruzado 10%)", "Carbapenêmicos"],
   },
   {
-    id: "allergy-002", 
+    id: "allergy-002",
     name: "Látex",
     severity: "severe",
-    reactions: ["Urticária generalizada", "Dificuldade respiratória", "Hipotensão"],
-    treatments: ["Remoção do agente", "Anti-histamínico", "Corticosteroide se necessário"],
+    reactions: [
+      "Urticária generalizada",
+      "Dificuldade respiratória",
+      "Hipotensão",
+    ],
+    treatments: [
+      "Remoção do agente",
+      "Anti-histamínico",
+      "Corticosteroide se necessário",
+    ],
     medications: ["Produtos com látex"],
     crossReactivities: ["Banana", "Abacate", "Kiwi", "Castanha"],
   },
@@ -161,7 +177,7 @@ export const sampleSAMUCallData: Partial<SAMUCallData> = {
 // Emergency Performance Testing Utilities
 export const performEmergencyPerformanceTest = () => {
   console.log("🚨 Starting Emergency Performance Test...");
-  
+
   const testOperations = [
     "load-patient-data",
     "display-critical-allergies",
@@ -173,12 +189,13 @@ export const performEmergencyPerformanceTest = () => {
     setTimeout(() => {
       measureEmergencyOperation(
         operation,
-        () => new Promise(resolve => setTimeout(resolve, Math.random() * 150)),
+        () =>
+          new Promise((resolve) => setTimeout(resolve, Math.random() * 150)),
         {
           componentName: "EmergencyInterface",
           emergencyLevel: index === 0 ? "life-threatening" : "urgent",
           patientId: "test-patient-001",
-        }
+        },
       ).then(() => {
         console.log(`✅ Completed: ${operation}`);
       });

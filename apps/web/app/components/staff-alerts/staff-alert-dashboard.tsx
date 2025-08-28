@@ -1,24 +1,30 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Alert as AlertUI, 
-  AlertDescription, 
-  AlertTitle 
-} from '@/components/ui/alert';
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Alert as AlertUI,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -26,7 +32,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Bell,
   Search,
@@ -42,21 +48,20 @@ import {
   ArrowUp,
   MoreVertical,
   Smartphone,
-  Desktop
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useStaffAlerts } from '@/hooks/use-staff-alerts';
-import type { 
-  StaffAlert} from '@/types/staff-alerts';
+  Desktop,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useStaffAlerts } from "@/hooks/use-staff-alerts";
+import type { StaffAlert } from "@/types/staff-alerts";
 import {
   ALERT_STATUS_LABELS_PT,
   ALERT_PRIORITY_LABELS_PT,
   ALERT_PRIORITY_COLORS,
   DEPARTMENT_LABELS_PT,
-  INTERVENTION_TYPE_LABELS_PT
-} from '@/types/staff-alerts';
-import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  INTERVENTION_TYPE_LABELS_PT,
+} from "@/types/staff-alerts";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface StaffAlertDashboardProps {
   staffMemberId?: string;
@@ -73,9 +78,8 @@ export function StaffAlertDashboard({
   staffMemberId,
   department,
   isMobile = false,
-  compactMode = false
+  compactMode = false,
 }: StaffAlertDashboardProps) {
-  
   const {
     alerts,
     stats,
@@ -89,67 +93,78 @@ export function StaffAlertDashboard({
     escalateAlert,
     setFilters,
     clearFilters,
-    getUnreadCount
+    getUnreadCount,
   } = useStaffAlerts({
     staffMemberId,
     department,
     realTimeUpdates: true,
     autoRefresh: true,
-    refreshInterval: 15_000 // 15 seconds for high responsiveness
+    refreshInterval: 15_000, // 15 seconds for high responsiveness
   });
 
   const [selectedAlert, setSelectedAlert] = useState<StaffAlert | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
 
   // Filter alerts based on search term and tab
-  const filteredAlerts = alerts.filter(alert => {
-    const matchesSearch = searchTerm === '' || 
+  const filteredAlerts = alerts.filter((alert) => {
+    const matchesSearch =
+      searchTerm === "" ||
       alert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alert.message.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesTab = activeTab === 'all' || alert.status === activeTab;
-    
+
+    const matchesTab = activeTab === "all" || alert.status === activeTab;
+
     return matchesSearch && matchesTab;
   });
 
   const getAlertIcon = (alert: StaffAlert) => {
     switch (alert.status) {
-      case 'pending': return <Bell className="h-4 w-4" />;
-      case 'acknowledged': return <Clock className="h-4 w-4" />;
-      case 'assigned': return <User className="h-4 w-4" />;
-      case 'in_progress': return <ArrowUp className="h-4 w-4" />;
-      case 'resolved': return <CheckCircle className="h-4 w-4" />;
-      case 'dismissed': return <XCircle className="h-4 w-4" />;
-      default: return <Bell className="h-4 w-4" />;
+      case "pending":
+        return <Bell className="h-4 w-4" />;
+      case "acknowledged":
+        return <Clock className="h-4 w-4" />;
+      case "assigned":
+        return <User className="h-4 w-4" />;
+      case "in_progress":
+        return <ArrowUp className="h-4 w-4" />;
+      case "resolved":
+        return <CheckCircle className="h-4 w-4" />;
+      case "dismissed":
+        return <XCircle className="h-4 w-4" />;
+      default:
+        return <Bell className="h-4 w-4" />;
     }
   };
 
   const getAlertAge = (createdAt: Date) => {
-    return formatDistanceToNow(createdAt, { 
-      addSuffix: true, 
-      locale: ptBR 
+    return formatDistanceToNow(createdAt, {
+      addSuffix: true,
+      locale: ptBR,
     });
   };
 
-  const handleQuickAction = async (alert: StaffAlert, action: 'acknowledge' | 'assign' | 'resolve' | 'dismiss' | 'escalate') => {
+  const handleQuickAction = async (
+    alert: StaffAlert,
+    action: "acknowledge" | "assign" | "resolve" | "dismiss" | "escalate",
+  ) => {
     try {
       switch (action) {
-        case 'acknowledge':
+        case "acknowledge":
           await acknowledgeAlert(alert.id);
           break;
-        case 'assign':
+        case "assign":
           if (staffMemberId) {
             await assignAlert(alert.id, staffMemberId);
           }
           break;
-        case 'resolve':
-          await resolveAlert(alert.id, 'Resolved via dashboard');
+        case "resolve":
+          await resolveAlert(alert.id, "Resolved via dashboard");
           break;
-        case 'dismiss':
-          await dismissAlert(alert.id, 'Dismissed via dashboard');
+        case "dismiss":
+          await dismissAlert(alert.id, "Dismissed via dashboard");
           break;
-        case 'escalate':
+        case "escalate":
           await escalateAlert(alert.id);
           break;
       }
@@ -199,53 +214,64 @@ export function StaffAlertDashboard({
           {filteredAlerts.slice(0, 10).map((alert) => (
             <Card key={alert.id} className="p-3">
               <div className="flex items-start gap-3">
-                <div className={cn(
-                  'p-1 rounded-full',
-                  alert.priority === 'critical' ? 'bg-red-100' :
-                  alert.priority === 'urgent' ? 'bg-orange-100' :
-                  alert.priority === 'high' ? 'bg-yellow-100' : 'bg-blue-100'
-                )}>
+                <div
+                  className={cn(
+                    "p-1 rounded-full",
+                    alert.priority === "critical"
+                      ? "bg-red-100"
+                      : alert.priority === "urgent"
+                        ? "bg-orange-100"
+                        : alert.priority === "high"
+                          ? "bg-yellow-100"
+                          : "bg-blue-100",
+                  )}
+                >
                   {getAlertIcon(alert)}
                 </div>
-                
+
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-sm truncate">
                       {alert.title}
                     </p>
-                    <Badge 
-                      variant="outline" 
-                      className={cn('text-xs', ALERT_PRIORITY_COLORS[alert.priority])}
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "text-xs",
+                        ALERT_PRIORITY_COLORS[alert.priority],
+                      )}
                     >
                       {ALERT_PRIORITY_LABELS_PT[alert.priority]}
                     </Badge>
                   </div>
-                  
+
                   <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                     {alert.message}
                   </p>
-                  
+
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-xs text-muted-foreground">
                       {getAlertAge(alert.createdAt)}
                     </span>
-                    
+
                     <div className="flex gap-1">
-                      {alert.status === 'pending' && (
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          onClick={() => handleQuickAction(alert, 'acknowledge')}
+                      {alert.status === "pending" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            handleQuickAction(alert, "acknowledge")
+                          }
                           className="h-6 px-2 text-xs"
                         >
                           Confirmar
                         </Button>
                       )}
-                      {alert.status === 'acknowledged' && staffMemberId && (
-                        <Button 
-                          size="sm" 
+                      {alert.status === "acknowledged" && staffMemberId && (
+                        <Button
+                          size="sm"
                           variant="outline"
-                          onClick={() => handleQuickAction(alert, 'assign')}
+                          onClick={() => handleQuickAction(alert, "assign")}
                           className="h-6 px-2 text-xs"
                         >
                           Assumir
@@ -280,7 +306,7 @@ export function StaffAlertDashboard({
             Gerenciamento em tempo real de alertas e intervenções
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           {error && (
             <AlertUI variant="destructive" className="w-auto">
@@ -289,7 +315,7 @@ export function StaffAlertDashboard({
               <AlertDescription>{error}</AlertDescription>
             </AlertUI>
           )}
-          
+
           <Badge variant="outline" className="px-3 py-1">
             <Bell className="h-3 w-3 mr-1" />
             {getUnreadCount()} novos
@@ -308,7 +334,7 @@ export function StaffAlertDashboard({
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-4">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-green-500" />
@@ -318,7 +344,7 @@ export function StaffAlertDashboard({
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-4">
           <div className="flex items-center gap-2">
             <ArrowUp className="h-4 w-4 text-orange-500" />
@@ -328,7 +354,7 @@ export function StaffAlertDashboard({
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-4">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-red-500" />
@@ -338,22 +364,26 @@ export function StaffAlertDashboard({
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-4">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-purple-500" />
             <div>
-              <p className="text-2xl font-bold">{Math.round(stats.avgResponseTime)}</p>
+              <p className="text-2xl font-bold">
+                {Math.round(stats.avgResponseTime)}
+              </p>
               <p className="text-xs text-muted-foreground">Min Resp.</p>
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-4">
           <div className="flex items-center gap-2">
             <CheckCircle className="h-4 w-4 text-green-600" />
             <div>
-              <p className="text-2xl font-bold">{Math.round(stats.interventionSuccessRate)}%</p>
+              <p className="text-2xl font-bold">
+                {Math.round(stats.interventionSuccessRate)}%
+              </p>
               <p className="text-xs text-muted-foreground">Sucesso</p>
             </div>
           </div>
@@ -379,33 +409,54 @@ export function StaffAlertDashboard({
             </div>
           </div>
         </CardHeader>
-        
+
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="all">Todos ({stats.total})</TabsTrigger>
-              <TabsTrigger value="pending">Pendentes ({stats.pending})</TabsTrigger>
-              <TabsTrigger value="assigned">Atribuídos ({stats.assigned})</TabsTrigger>
-              <TabsTrigger value="in_progress">Andamento ({stats.inProgress})</TabsTrigger>
-              <TabsTrigger value="resolved">Resolvidos ({stats.resolved})</TabsTrigger>
-              <TabsTrigger value="overdue">Atrasados ({stats.overdue})</TabsTrigger>
+              <TabsTrigger value="pending">
+                Pendentes ({stats.pending})
+              </TabsTrigger>
+              <TabsTrigger value="assigned">
+                Atribuídos ({stats.assigned})
+              </TabsTrigger>
+              <TabsTrigger value="in_progress">
+                Andamento ({stats.inProgress})
+              </TabsTrigger>
+              <TabsTrigger value="resolved">
+                Resolvidos ({stats.resolved})
+              </TabsTrigger>
+              <TabsTrigger value="overdue">
+                Atrasados ({stats.overdue})
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value={activeTab} className="mt-4">
               <div className="space-y-2">
                 {filteredAlerts.map((alert) => (
-                  <Card key={alert.id} className={cn(
-                    'p-4 cursor-pointer transition-colors hover:bg-muted/50',
-                    alert.priority === 'critical' && 'border-red-200 bg-red-50/30',
-                    alert.priority === 'urgent' && 'border-orange-200 bg-orange-50/30'
-                  )}>
+                  <Card
+                    key={alert.id}
+                    className={cn(
+                      "p-4 cursor-pointer transition-colors hover:bg-muted/50",
+                      alert.priority === "critical" &&
+                        "border-red-200 bg-red-50/30",
+                      alert.priority === "urgent" &&
+                        "border-orange-200 bg-orange-50/30",
+                    )}
+                  >
                     <div className="flex items-start gap-4">
-                      <div className={cn(
-                        'p-2 rounded-full',
-                        alert.priority === 'critical' ? 'bg-red-100' :
-                        alert.priority === 'urgent' ? 'bg-orange-100' :
-                        alert.priority === 'high' ? 'bg-yellow-100' : 'bg-blue-100'
-                      )}>
+                      <div
+                        className={cn(
+                          "p-2 rounded-full",
+                          alert.priority === "critical"
+                            ? "bg-red-100"
+                            : alert.priority === "urgent"
+                              ? "bg-orange-100"
+                              : alert.priority === "high"
+                                ? "bg-yellow-100"
+                                : "bg-blue-100",
+                        )}
+                      >
                         {getAlertIcon(alert)}
                       </div>
 
@@ -413,8 +464,8 @@ export function StaffAlertDashboard({
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <h3 className="font-semibold">{alert.title}</h3>
-                            <Badge 
-                              variant="outline" 
+                            <Badge
+                              variant="outline"
                               className={ALERT_PRIORITY_COLORS[alert.priority]}
                             >
                               {ALERT_PRIORITY_LABELS_PT[alert.priority]}
@@ -423,7 +474,7 @@ export function StaffAlertDashboard({
                               {ALERT_STATUS_LABELS_PT[alert.status]}
                             </Badge>
                           </div>
-                          
+
                           <div className="text-sm text-muted-foreground">
                             {getAlertAge(alert.createdAt)}
                           </div>
@@ -436,51 +487,63 @@ export function StaffAlertDashboard({
                         <div className="flex items-center justify-between mt-3">
                           <div className="flex items-center gap-4 text-sm">
                             <span>Risco: {alert.riskScore}%</span>
-                            <span>Depto: {DEPARTMENT_LABELS_PT[alert.department]}</span>
+                            <span>
+                              Depto: {DEPARTMENT_LABELS_PT[alert.department]}
+                            </span>
                             {alert.assignedTo && (
                               <span>Atribuído: {alert.assignedTo}</span>
                             )}
                           </div>
 
                           <div className="flex gap-2">
-                            {alert.status === 'pending' && (
-                              <Button 
-                                size="sm" 
+                            {alert.status === "pending" && (
+                              <Button
+                                size="sm"
                                 variant="outline"
-                                onClick={() => handleQuickAction(alert, 'acknowledge')}
+                                onClick={() =>
+                                  handleQuickAction(alert, "acknowledge")
+                                }
                               >
                                 Confirmar
                               </Button>
                             )}
-                            {alert.status === 'acknowledged' && (
-                              <Button 
-                                size="sm" 
+                            {alert.status === "acknowledged" && (
+                              <Button
+                                size="sm"
                                 variant="outline"
-                                onClick={() => handleQuickAction(alert, 'assign')}
+                                onClick={() =>
+                                  handleQuickAction(alert, "assign")
+                                }
                               >
                                 Atribuir a Mim
                               </Button>
                             )}
-                            {['assigned', 'in_progress'].includes(alert.status) && (
+                            {["assigned", "in_progress"].includes(
+                              alert.status,
+                            ) && (
                               <>
-                                <Button 
-                                  size="sm" 
+                                <Button
+                                  size="sm"
                                   variant="outline"
-                                  onClick={() => handleQuickAction(alert, 'resolve')}
+                                  onClick={() =>
+                                    handleQuickAction(alert, "resolve")
+                                  }
                                 >
                                   Resolver
                                 </Button>
-                                <Button 
-                                  size="sm" 
+                                <Button
+                                  size="sm"
                                   variant="outline"
-                                  onClick={() => handleQuickAction(alert, 'escalate')}
+                                  onClick={() =>
+                                    handleQuickAction(alert, "escalate")
+                                  }
                                 >
                                   Escalar
                                 </Button>
                               </>
                             )}
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="ghost"
                               onClick={() => setSelectedAlert(alert)}
                             >

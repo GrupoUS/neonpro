@@ -9,7 +9,7 @@ const patientInsights = new PatientInsightsIntegration();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ patientId: string; }>; },
+  { params }: { params: Promise<{ patientId: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -39,7 +39,8 @@ export async function GET(
     // const url = new URL(request.url);
 
     // Generate treatment guidance
-    const treatmentRecommendations = await patientInsights.getTreatmentRecommendations(patientId);
+    const treatmentRecommendations =
+      await patientInsights.getTreatmentRecommendations(patientId);
 
     return NextResponse.json({
       success: true,
@@ -57,7 +58,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ patientId: string; }>; },
+  { params }: { params: Promise<{ patientId: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -72,15 +73,17 @@ export async function POST(
 
     const { patientId } = await params;
     const body = await request.json();
-    const {
-      includeRiskAssessment = true,
-      outcomeData,
-    } = body;
+    const { includeRiskAssessment = true, outcomeData } = body;
 
     // Generate comprehensive treatment recommendations
-    const treatmentRecommendations = await patientInsights.getTreatmentRecommendations(patientId);
+    const treatmentRecommendations =
+      await patientInsights.getTreatmentRecommendations(patientId);
 
-    const response: { treatmentRecommendations: unknown; riskAssessment?: unknown; learningInsights?: unknown; } = { treatmentRecommendations };
+    const response: {
+      treatmentRecommendations: unknown;
+      riskAssessment?: unknown;
+      learningInsights?: unknown;
+    } = { treatmentRecommendations };
 
     if (includeRiskAssessment) {
       const riskAssessment = await patientInsights.getRiskAssessment(patientId);

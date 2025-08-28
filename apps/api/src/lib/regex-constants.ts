@@ -21,7 +21,8 @@ export const LOCALHOST_PATTERN = /^https?:\/\/localhost:\d+$/;
 export const LOCALHOST_IP_PATTERN = /^https?:\/\/127\.0\.0\.1:\d+$/;
 
 // Security patterns
-export const SENSITIVE_HEADERS_PATTERN = /^(authorization|cookie|x-api-key|x-auth-token)$/i;
+export const SENSITIVE_HEADERS_PATTERN =
+  /^(authorization|cookie|x-api-key|x-auth-token)$/i;
 export const SQL_INJECTION_PATTERN =
   /('|(\\%27)|(\\x27)|(\\')|(\\')|(;)|(%3B)|(\\%3B)|(\\x3B)|(\\\u003B)|(\\;))/iu;
 

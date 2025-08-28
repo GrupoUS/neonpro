@@ -4,7 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
   AlertCircle,
@@ -124,7 +129,12 @@ export function RiskScoreIndicator({
     if (onInterventionTrigger && interactive) {
       onInterventionTrigger(riskData.appointmentId, riskData.riskCategory);
     }
-  }, [onInterventionTrigger, interactive, riskData.appointmentId, riskData.riskCategory]);
+  }, [
+    onInterventionTrigger,
+    interactive,
+    riskData.appointmentId,
+    riskData.riskCategory,
+  ]);
 
   // Size configurations
   const sizeConfig = {
@@ -180,9 +190,7 @@ export function RiskScoreIndicator({
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger asChild>
-            {indicator}
-          </TooltipTrigger>
+          <TooltipTrigger asChild>{indicator}</TooltipTrigger>
           <TooltipContent side="top" className="max-w-sm">
             <div className="space-y-2">
               <div className="font-medium">
@@ -211,15 +219,16 @@ export function RiskScoreIndicator({
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <IconComponent
-              className={cn(sizeConfig[size].indicator, riskConfig.color.split(" ")[0])}
+              className={cn(
+                sizeConfig[size].indicator,
+                riskConfig.color.split(" ")[0],
+              )}
             />
             <span className={cn(sizeConfig[size].text)}>
               Análise de Risco - {riskPercentage}%
             </span>
           </div>
-          <Badge className={riskConfig.badgeColor}>
-            {riskConfig.label}
-          </Badge>
+          <Badge className={riskConfig.badgeColor}>{riskConfig.label}</Badge>
         </CardTitle>
       </CardHeader>
 
@@ -256,8 +265,8 @@ export function RiskScoreIndicator({
             className="p-0 h-auto font-normal text-sm text-muted-foreground hover:text-foreground"
           >
             <Info className="h-4 w-4 mr-1" />
-            {showFactors ? "Ocultar" : "Ver"}{" "}
-            Fatores Contribuintes ({riskData.contributingFactors.length})
+            {showFactors ? "Ocultar" : "Ver"} Fatores Contribuintes (
+            {riskData.contributingFactors.length})
           </Button>
 
           {showFactors && (
@@ -301,8 +310,9 @@ export function RiskScoreIndicator({
         </div>
 
         {/* Action Buttons */}
-        {interactive && (riskData.riskCategory === "high" || riskData.riskCategory === "critical")
-          && (
+        {interactive &&
+          (riskData.riskCategory === "high" ||
+            riskData.riskCategory === "critical") && (
             <div className="flex gap-2 pt-2 border-t">
               <Button
                 size="sm"
@@ -321,9 +331,7 @@ export function RiskScoreIndicator({
             <Clock className="h-3 w-3" />
             {formattedDate}
           </span>
-          <span>
-            Modelo v{riskData.modelVersion}
-          </span>
+          <span>Modelo v{riskData.modelVersion}</span>
         </div>
       </CardContent>
     </Card>

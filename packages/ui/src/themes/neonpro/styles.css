@@ -6,58 +6,61 @@
 /* NEONPRO Theme CSS Custom Properties */
 :root {
   /* Core Healthcare Colors */
-  --neonpro-primary: 221 83% 53%;        /* Professional blue */
-  --neonpro-success: 142 76% 36%;        /* Growth green (+20.1%) */
-  --neonpro-revenue: #15231;             /* Revenue highlight */
-  --neonpro-growth: #16a34a;             /* Growth indicator */
-  --neonpro-warning: 32 95% 44%;         /* Processing orange */
-  --neonpro-danger: 0 84% 60%;           /* Critical red */
-  
+  --neonpro-primary: 221 83% 53%; /* Professional blue */
+  --neonpro-success: 142 76% 36%; /* Growth green (+20.1%) */
+  --neonpro-revenue: #15231; /* Revenue highlight */
+  --neonpro-growth: #16a34a; /* Growth indicator */
+  --neonpro-warning: 32 95% 44%; /* Processing orange */
+  --neonpro-danger: 0 84% 60%; /* Critical red */
+
   /* Brazilian Healthcare Colors */
-  --brasil-green: #009639;               /* Brazil flag green */
-  --brasil-yellow: #ffdf00;              /* Brazil flag yellow */
-  --lgpd-compliant: #059669;             /* LGPD compliance green */
-  --cfm-validated: #2563eb;              /* CFM validation blue */
-  
+  --brasil-green: #009639; /* Brazil flag green */
+  --brasil-yellow: #ffdf00; /* Brazil flag yellow */
+  --lgpd-compliant: #059669; /* LGPD compliance green */
+  --cfm-validated: #2563eb; /* CFM validation blue */
+
   /* Healthcare Workflow Colors */
-  --healthcare-emergency: #dc2626;       /* Emergency red */
-  --healthcare-appointment: #16a34a;     /* Appointment green */
-  --healthcare-patient: #2563eb;         /* Patient info blue */
-  --healthcare-treatment: #7c3aed;       /* Treatment purple */
-  --healthcare-billing: #f59e0b;         /* Billing orange */
-  
+  --healthcare-emergency: #dc2626; /* Emergency red */
+  --healthcare-appointment: #16a34a; /* Appointment green */
+  --healthcare-patient: #2563eb; /* Patient info blue */
+  --healthcare-treatment: #7c3aed; /* Treatment purple */
+  --healthcare-billing: #f59e0b; /* Billing orange */
+
   /* Status Indicators */
-  --status-active: #10b981;              /* Active/confirmed */
-  --status-pending: #f59e0b;             /* Pending/processing */
-  --status-failed: #ef4444;              /* Failed/cancelled */
-  --status-completed: #059669;           /* Completed/successful */
-  
+  --status-active: #10b981; /* Active/confirmed */
+  --status-pending: #f59e0b; /* Pending/processing */
+  --status-failed: #ef4444; /* Failed/cancelled */
+  --status-completed: #059669; /* Completed/successful */
+
   /* Typography System */
   --neonpro-font-sans: "Inter", "Segoe UI", sans-serif;
   --neonpro-font-mono: "JetBrains Mono", "Consolas", monospace;
-  
+
   /* Medical Documentation Spacing */
-  --medical-spacing-compact: 0.75rem;    /* Dense patient lists */
+  --medical-spacing-compact: 0.75rem; /* Dense patient lists */
   --medical-spacing-comfortable: 1.25rem; /* Standard forms */
-  --medical-spacing-spacious: 2rem;      /* Emergency interfaces */
-  --medical-spacing-critical: 3rem;      /* Life-critical alerts */
-  
+  --medical-spacing-spacious: 2rem; /* Emergency interfaces */
+  --medical-spacing-critical: 3rem; /* Life-critical alerts */
+
   /* Healthcare Shadows */
-  --healthcare-card-shadow: 0 2px 8px rgb(0 0 0 / 0.06), 0 1px 3px rgb(0 0 0 / 0.08);
-  --healthcare-emergency-shadow: 0 8px 25px rgb(220 38 38 / 0.15), 0 4px 12px rgb(220 38 38 / 0.1);
-  --healthcare-success-shadow: 0 4px 14px rgb(16 185 129 / 0.12), 0 2px 6px rgb(16 185 129 / 0.08);
-  
+  --healthcare-card-shadow:
+    0 2px 8px rgb(0 0 0 / 0.06), 0 1px 3px rgb(0 0 0 / 0.08);
+  --healthcare-emergency-shadow:
+    0 8px 25px rgb(220 38 38 / 0.15), 0 4px 12px rgb(220 38 38 / 0.1);
+  --healthcare-success-shadow:
+    0 4px 14px rgb(16 185 129 / 0.12), 0 2px 6px rgb(16 185 129 / 0.08);
+
   /* Healthcare Border Radius */
-  --healthcare-card-radius: 0.5rem;      /* Standard cards */
-  --healthcare-button-radius: 0.375rem;  /* Action buttons */
-  --healthcare-input-radius: 0.25rem;    /* Form inputs */
+  --healthcare-card-radius: 0.5rem; /* Standard cards */
+  --healthcare-button-radius: 0.375rem; /* Action buttons */
+  --healthcare-input-radius: 0.25rem; /* Form inputs */
   --healthcare-emergency-radius: 0.75rem; /* Emergency components */
-  
+
   /* Animation Timings */
-  --healthcare-transition-fast: 150ms ease-out;     /* Button interactions */
-  --healthcare-transition-normal: 250ms ease-out;   /* Standard transitions */
-  --healthcare-transition-slow: 350ms ease-out;     /* Panel animations */
-  --healthcare-transition-emergency: 100ms linear;  /* Critical alerts */
+  --healthcare-transition-fast: 150ms ease-out; /* Button interactions */
+  --healthcare-transition-normal: 250ms ease-out; /* Standard transitions */
+  --healthcare-transition-slow: 350ms ease-out; /* Panel animations */
+  --healthcare-transition-emergency: 100ms linear; /* Critical alerts */
 }
 
 /* NEONPRO Base Component Styles */
@@ -78,7 +81,11 @@
 
 /* Revenue Card Styling (NEONPRO $15,231.89 style) */
 .neonpro-revenue-card {
-  background: linear-gradient(135deg, hsl(var(--neonpro-primary)) 0%, hsl(221 83% 45%) 100%);
+  background: linear-gradient(
+    135deg,
+    hsl(var(--neonpro-primary)) 0%,
+    hsl(221 83% 45%) 100%
+  );
   @apply text-white;
 }
 
@@ -218,7 +225,11 @@
 /* ANS Insurance Badge */
 .neonpro-ans-badge {
   @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium;
-  background: linear-gradient(135deg, var(--brasil-green) 0%, var(--brasil-yellow) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--brasil-green) 0%,
+    var(--brasil-yellow) 100%
+  );
   @apply text-black;
 }
 
@@ -287,11 +298,11 @@
   .neonpro-mobile-stack {
     @apply flex-col space-y-2;
   }
-  
+
   .neonpro-mobile-full {
     @apply w-full;
   }
-  
+
   .neonpro-mobile-compact {
     @apply px-2 py-1 text-xs;
   }
@@ -302,16 +313,16 @@
   .neonpro-print-hide {
     @apply hidden;
   }
-  
+
   .neonpro-print-force {
     @apply block !important;
   }
-  
+
   .neonpro-metric-card {
     @apply border border-gray-300 break-inside-avoid;
     box-shadow: none;
   }
-  
+
   .neonpro-calendar {
     @apply border border-gray-300;
   }

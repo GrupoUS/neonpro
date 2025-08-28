@@ -16,7 +16,8 @@ import type {
 } from "./types";
 
 export class ConflictDetector {
-  private readonly resolutionSuccessRate: Map<ResolutionType, number> = new Map();
+  private readonly resolutionSuccessRate: Map<ResolutionType, number> =
+    new Map();
 
   constructor() {
     this.initializeResolutionSuccessRates();
@@ -131,10 +132,10 @@ export class ConflictDetector {
 
         // Check for time overlap
         return (
-          start < apptEnd
-          && end > apptStart
-          && (appointment.staffId === slot.staffId
-            || appointment.roomId === slot.roomId)
+          start < apptEnd &&
+          end > apptStart &&
+          (appointment.staffId === slot.staffId ||
+            appointment.roomId === slot.roomId)
         );
       },
     );
@@ -144,8 +145,7 @@ export class ConflictDetector {
         id: this.generateConflictId(),
         type: "double_booking",
         severity: "critical",
-        description:
-          `Double booking detected: ${overlappingAppointments.length} overlapping appointment(s)`,
+        description: `Double booking detected: ${overlappingAppointments.length} overlapping appointment(s)`,
         affectedAppointments: overlappingAppointments.map((a) => a.id),
         affectedResources: [slot.staffId, slot.roomId],
         detectedAt: new Date(),
@@ -268,8 +268,7 @@ export class ConflictDetector {
         id: this.generateConflictId(),
         type: "room_conflict",
         severity: "medium",
-        description:
-          `Room ${slot.roomId} not suitable for treatment type ${treatmentDuration.treatmentType}`,
+        description: `Room ${slot.roomId} not suitable for treatment type ${treatmentDuration.treatmentType}`,
         affectedAppointments: [],
         affectedResources: [slot.roomId],
         detectedAt: new Date(),
@@ -403,8 +402,8 @@ export class ConflictDetector {
     // Check for existing patient appointments on the same day
     const sameDay = existingAppointments.filter(
       (appointment) =>
-        appointment.patientId === patientId
-        && this.isSameDay(new Date(appointment.scheduledStart), slot.slot.start),
+        appointment.patientId === patientId &&
+        this.isSameDay(new Date(appointment.scheduledStart), slot.slot.start),
     );
 
     if (sameDay.length > 0) {
@@ -454,8 +453,8 @@ export class ConflictDetector {
     // Check for required waiting periods between treatments
     const recentAppointments = existingAppointments.filter(
       (appointment) =>
-        appointment.patientId === patientId
-        && this.isWithinDays(
+        appointment.patientId === patientId &&
+        this.isWithinDays(
           new Date(appointment.scheduledStart),
           slot.slot.start,
           30,
@@ -465,8 +464,8 @@ export class ConflictDetector {
     for (const rule of sequenceRules) {
       const violatingAppointments = recentAppointments.filter(
         (appointment) =>
-          rule.conflictingTreatments.includes(appointment.treatmentType)
-          && this.isWithinDays(
+          rule.conflictingTreatments.includes(appointment.treatmentType) &&
+          this.isWithinDays(
             new Date(appointment.scheduledStart),
             slot.slot.start,
             rule.minimumDaysBetween,
@@ -478,8 +477,7 @@ export class ConflictDetector {
           id: this.generateConflictId(),
           type: "treatment_sequence",
           severity: rule.severity as "low" | "medium" | "high" | "critical",
-          description:
-            `Treatment sequence violation: minimum ${rule.minimumDaysBetween} days required between treatments`,
+          description: `Treatment sequence violation: minimum ${rule.minimumDaysBetween} days required between treatments`,
           affectedAppointments: violatingAppointments.map((a) => a.id),
           affectedResources: [],
           detectedAt: new Date(),
@@ -578,7 +576,8 @@ export class ConflictDetector {
 
       case "business_hours": {
         resolutionType = "reschedule";
-        const businessHoursSlot = await this.findBusinessHoursSlot(originalSlot);
+        const businessHoursSlot =
+          await this.findBusinessHoursSlot(originalSlot);
         if (businessHoursSlot) {
           newScheduling = {
             scheduledStart: businessHoursSlot.slot.start,
@@ -658,7 +657,7 @@ export class ConflictDetector {
     _staffId: string,
     _date: Date,
     _appointments: AIAppointment[],
-  ): { concurrent: number; } {
+  ): { concurrent: number } {
     return { concurrent: 0 };
   }
 
@@ -708,8 +707,8 @@ export class ConflictDetector {
     const now = new Date();
     const minAdvanceHours = 2;
     return (
-      appointmentTime.getTime() - now.getTime()
-        >= minAdvanceHours * 60 * 60 * 1000
+      appointmentTime.getTime() - now.getTime() >=
+      minAdvanceHours * 60 * 60 * 1000
     );
   }
 

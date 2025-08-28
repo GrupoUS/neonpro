@@ -3,7 +3,13 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -102,7 +108,8 @@ const mockScheduleData: Schedule[] = [
     actualEndTime: undefined,
     noShowReason: undefined,
     notes: "Cuidados intensivos - pacientes críticos",
-    handoffNotes: "Paciente leito 05: ventilação mecânica, monitorar gasometria",
+    handoffNotes:
+      "Paciente leito 05: ventilação mecânica, monitorar gasometria",
     emergencyProtocols: ["icu-emergency", "ventilator-emergency"],
     createdAt: new Date("2024-08-20"),
     updatedAt: new Date("2024-08-21"),
@@ -148,9 +155,11 @@ const mockConflicts: ScheduleConflict[] = [
     id: "conflict-001",
     type: "clt_violation",
     severity: "high",
-    description: "Dr. Roberto Oliveira excedendo limite semanal de 44h (46h programadas)",
+    description:
+      "Dr. Roberto Oliveira excedendo limite semanal de 44h (46h programadas)",
     affectedSchedules: ["sched-002"],
-    suggestedResolution: "Redistribuir 2h para outro profissional ou aprovar horas extras",
+    suggestedResolution:
+      "Redistribuir 2h para outro profissional ou aprovar horas extras",
     resolutionRequired: true,
     resolvedAt: undefined,
     resolvedBy: undefined,
@@ -160,7 +169,8 @@ const mockConflicts: ScheduleConflict[] = [
     id: "conflict-002",
     type: "equipment_conflict",
     severity: "medium",
-    description: "Monitor ECG-001 atribuído para 2 profissionais no mesmo horário",
+    description:
+      "Monitor ECG-001 atribuído para 2 profissionais no mesmo horário",
     affectedSchedules: ["sched-001", "sched-004"],
     suggestedResolution: "Realocar equipamento ou usar monitor alternativo",
     resolutionRequired: true,
@@ -326,7 +336,9 @@ export function SchedulingSystem({
                 {weekDates[0].toLocaleDateString("pt-BR", {
                   day: "2-digit",
                   month: "2-digit",
-                })} - {weekDates[6].toLocaleDateString("pt-BR", {
+                })}{" "}
+                -{" "}
+                {weekDates[6].toLocaleDateString("pt-BR", {
                   day: "2-digit",
                   month: "2-digit",
                 })}
@@ -414,9 +426,11 @@ export function SchedulingSystem({
                   }`}
                 />
                 <AlertDescription
-                  className={conflict.severity === "high"
-                    ? "text-red-700 dark:text-red-300"
-                    : "text-yellow-700 dark:text-yellow-300"}
+                  className={
+                    conflict.severity === "high"
+                      ? "text-red-700 dark:text-red-300"
+                      : "text-yellow-700 dark:text-yellow-300"
+                  }
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -424,9 +438,11 @@ export function SchedulingSystem({
                         {conflict.description}
                       </span>
                       <Badge
-                        variant={conflict.severity === "high"
-                          ? "destructive"
-                          : "secondary"}
+                        variant={
+                          conflict.severity === "high"
+                            ? "destructive"
+                            : "secondary"
+                        }
                       >
                         {conflict.type}
                       </Badge>
@@ -452,12 +468,14 @@ export function SchedulingSystem({
             ))}
           </div>
         </div>
-      )} {/* Schedule Grid */}
+      )}{" "}
+      {/* Schedule Grid */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Escala Semanal</CardTitle>
           <CardDescription>
-            Arraste e solte para reorganizar turnos. Sistema valida automaticamente compliance CLT.
+            Arraste e solte para reorganizar turnos. Sistema valida
+            automaticamente compliance CLT.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -496,16 +514,17 @@ export function SchedulingSystem({
                     const daySchedules = filteredSchedules.filter(
                       (schedule) => {
                         const scheduleDate = new Date(schedule.startTime);
-                        const isSameDay = scheduleDate.toDateString() === date.toDateString();
+                        const isSameDay =
+                          scheduleDate.toDateString() === date.toDateString();
                         const scheduleHour = scheduleDate.getHours();
                         const scheduleEndHour = new Date(
                           schedule.endTime,
                         ).getHours();
 
                         return (
-                          isSameDay
-                          && hourIndex >= scheduleHour
-                          && hourIndex < scheduleEndHour
+                          isSameDay &&
+                          hourIndex >= scheduleHour &&
+                          hourIndex < scheduleEndHour
                         );
                       },
                     );
@@ -523,16 +542,18 @@ export function SchedulingSystem({
                             (s) => s.id === schedule.professionalId,
                           );
                           const shiftInfo = shiftTypeInfo[schedule.shiftType];
-                          const isFirstHourOfShift = new Date(schedule.startTime).getHours()
-                            === hourIndex;
+                          const isFirstHourOfShift =
+                            new Date(schedule.startTime).getHours() ===
+                            hourIndex;
 
                           if (!isFirstHourOfShift) {
                             return; // Only render on first hour
                           }
 
-                          const durationHours = (new Date(schedule.endTime).getTime()
-                            - new Date(schedule.startTime).getTime())
-                            / (1000 * 60 * 60);
+                          const durationHours =
+                            (new Date(schedule.endTime).getTime() -
+                              new Date(schedule.startTime).getTime()) /
+                            (1000 * 60 * 60);
 
                           return (
                             <button

@@ -124,17 +124,21 @@ export const DashboardSidebar = React.forwardRef<
                     {item.badge}
                   </Badge>
                 )}
-                {hasChildren
-                  && (isExpanded
-                    ? <ChevronDown className="ml-1 h-4 w-4" />
-                    : <ChevronRight className="ml-1 h-4 w-4" />)}
+                {hasChildren &&
+                  (isExpanded ? (
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  ))}
               </>
             )}
           </Button>
 
           {hasChildren && !collapsed && isExpanded && (
             <div className="mt-1 space-y-1">
-              {item.children?.map((child) => renderSidebarItem(child, level + 1))}
+              {item.children?.map((child) =>
+                renderSidebarItem(child, level + 1),
+              )}
             </div>
           )}
         </div>
@@ -165,7 +169,11 @@ export const DashboardSidebar = React.forwardRef<
             size="sm"
             variant="ghost"
           >
-            {collapsed ? <Menu className="h-4 w-4" /> : <X className="h-4 w-4" />}
+            {collapsed ? (
+              <Menu className="h-4 w-4" />
+            ) : (
+              <X className="h-4 w-4" />
+            )}
           </Button>
         </div>
 
@@ -187,7 +195,8 @@ export const DashboardSidebar = React.forwardRef<
                   id: "notifications",
                   label: "Notificações",
                   icon: Bell,
-                })}
+                })
+              }
               type="button"
             >
               <Bell className="h-4 w-4" />

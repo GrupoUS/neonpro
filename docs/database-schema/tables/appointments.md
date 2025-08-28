@@ -2,31 +2,31 @@
 
 ## Schema
 
-| Column | Type | Constraints | Default | Description | LGPD Classification |
-|--------|------|-------------|---------|-------------|-------------------|
-| id | uuid | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique appointment identifier | Public |
-| clinic_id | uuid | FK, NOT NULL | - | Clinic reference | Organizational Data |
-| patient_id | uuid | FK, NOT NULL | - | Patient reference | Personal Data |
-| professional_id | uuid | FK, NOT NULL | - | Healthcare professional reference | Organizational Data |
-| service_type_id | uuid | FK, NOT NULL | - | Service/procedure type reference | Health Data |
-| status | varchar(50) | - | 'scheduled' | Appointment status | Metadata |
-| start_time | timestamptz | NOT NULL | - | Appointment start time | Personal Data |
-| end_time | timestamptz | NOT NULL | - | Appointment end time | Personal Data |
-| notes | text | - | - | Appointment notes | Health Data |
-| internal_notes | text | - | - | Internal staff notes | Health Data |
-| reminder_sent_at | timestamptz | - | - | Email reminder timestamp | Metadata |
-| confirmation_sent_at | timestamptz | - | - | Confirmation sent timestamp | Metadata |
-| whatsapp_reminder_sent | boolean | - | false | WhatsApp reminder status | Metadata |
-| sms_reminder_sent | boolean | - | false | SMS reminder status | Metadata |
-| room_id | uuid | FK | - | Assigned room reference | Organizational Data |
-| priority | integer | - | 1 | Appointment priority (1-5) | Metadata |
-| created_at | timestamptz | - | now() | Record creation timestamp | Metadata |
-| updated_at | timestamptz | - | now() | Last update timestamp | Metadata |
-| created_by | uuid | FK, NOT NULL | - | User who created appointment | Audit Data |
-| updated_by | uuid | FK | - | User who last updated appointment | Audit Data |
-| cancelled_at | timestamptz | - | - | Cancellation timestamp | Metadata |
-| cancelled_by | uuid | FK | - | User who cancelled appointment | Audit Data |
-| cancellation_reason | text | - | - | Reason for cancellation | Health Data |
+| Column                 | Type        | Constraints           | Default           | Description                       | LGPD Classification |
+| ---------------------- | ----------- | --------------------- | ----------------- | --------------------------------- | ------------------- |
+| id                     | uuid        | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique appointment identifier     | Public              |
+| clinic_id              | uuid        | FK, NOT NULL          | -                 | Clinic reference                  | Organizational Data |
+| patient_id             | uuid        | FK, NOT NULL          | -                 | Patient reference                 | Personal Data       |
+| professional_id        | uuid        | FK, NOT NULL          | -                 | Healthcare professional reference | Organizational Data |
+| service_type_id        | uuid        | FK, NOT NULL          | -                 | Service/procedure type reference  | Health Data         |
+| status                 | varchar(50) | -                     | 'scheduled'       | Appointment status                | Metadata            |
+| start_time             | timestamptz | NOT NULL              | -                 | Appointment start time            | Personal Data       |
+| end_time               | timestamptz | NOT NULL              | -                 | Appointment end time              | Personal Data       |
+| notes                  | text        | -                     | -                 | Appointment notes                 | Health Data         |
+| internal_notes         | text        | -                     | -                 | Internal staff notes              | Health Data         |
+| reminder_sent_at       | timestamptz | -                     | -                 | Email reminder timestamp          | Metadata            |
+| confirmation_sent_at   | timestamptz | -                     | -                 | Confirmation sent timestamp       | Metadata            |
+| whatsapp_reminder_sent | boolean     | -                     | false             | WhatsApp reminder status          | Metadata            |
+| sms_reminder_sent      | boolean     | -                     | false             | SMS reminder status               | Metadata            |
+| room_id                | uuid        | FK                    | -                 | Assigned room reference           | Organizational Data |
+| priority               | integer     | -                     | 1                 | Appointment priority (1-5)        | Metadata            |
+| created_at             | timestamptz | -                     | now()             | Record creation timestamp         | Metadata            |
+| updated_at             | timestamptz | -                     | now()             | Last update timestamp             | Metadata            |
+| created_by             | uuid        | FK, NOT NULL          | -                 | User who created appointment      | Audit Data          |
+| updated_by             | uuid        | FK                    | -                 | User who last updated appointment | Audit Data          |
+| cancelled_at           | timestamptz | -                     | -                 | Cancellation timestamp            | Metadata            |
+| cancelled_by           | uuid        | FK                    | -                 | User who cancelled appointment    | Audit Data          |
+| cancellation_reason    | text        | -                     | -                 | Reason for cancellation           | Health Data         |
 
 ## Healthcare Compliance
 
@@ -57,8 +57,8 @@
 CREATE POLICY "professionals_clinic_appointments" ON appointments
   FOR ALL USING (
     EXISTS (
-      SELECT 1 FROM professionals p 
-      WHERE p.user_id = auth.uid() 
+      SELECT 1 FROM professionals p
+      WHERE p.user_id = auth.uid()
       AND p.clinic_id = appointments.clinic_id
       AND p.is_active = true
     )
@@ -68,7 +68,7 @@ CREATE POLICY "professionals_clinic_appointments" ON appointments
 CREATE POLICY "professionals_own_appointments" ON appointments
   FOR ALL USING (
     professional_id IN (
-      SELECT id FROM professionals 
+      SELECT id FROM professionals
       WHERE user_id = auth.uid()
     )
   );
@@ -77,7 +77,7 @@ CREATE POLICY "professionals_own_appointments" ON appointments
 CREATE POLICY "patients_own_appointments" ON appointments
   FOR SELECT USING (
     patient_id IN (
-      SELECT id FROM patients 
+      SELECT id FROM patients
       WHERE auth.uid()::text = id::text
     ) AND
     validate_lgpd_consent(patient_id, 'appointment_access') = true
@@ -98,7 +98,9 @@ CREATE POLICY "reception_clinic_appointments" ON appointments
 ## Business Rules & Constraints
 
 ### Appointment Status Flow
+
 Valid status transitions:
+
 - `scheduled` → `confirmed`, `cancelled`, `rescheduled`
 - `confirmed` → `checked_in`, `cancelled`, `no_show`
 - `checked_in` → `in_progress`, `cancelled`
@@ -108,12 +110,14 @@ Valid status transitions:
 - `cancelled` → `rescheduled` (if rebooking)
 
 ### Time Validation
+
 - `end_time` must be after `start_time`
 - Appointments cannot overlap for same professional
 - Minimum appointment duration: 15 minutes
 - Maximum appointment duration: 8 hours
 
 ### Scheduling Rules
+
 - Cannot schedule appointments in the past
 - Professional availability must be checked
 - Room availability must be validated (if room assigned)
@@ -152,16 +156,19 @@ CREATE TRIGGER appointment_conflict_prevention_trigger
 ## AI Integration Features
 
 ### No-Show Prediction
+
 - Automatic risk score calculation on appointment creation/update
 - Integration with patient history and behavioral patterns
 - Real-time updates based on appointment modifications
 
 ### Intelligent Scheduling
+
 - AI-powered optimal time slot recommendations
 - Professional workload balancing
 - Patient preference learning and optimization
 
 ### Communication Automation
+
 - Smart reminder scheduling based on patient preferences
 - Multi-channel communication (WhatsApp, SMS, email)
 - Confirmation tracking and follow-up automation
@@ -169,6 +176,7 @@ CREATE TRIGGER appointment_conflict_prevention_trigger
 ## Performance Optimizations
 
 ### Indexes
+
 ```sql
 -- Core scheduling queries
 CREATE INDEX idx_appointments_professional_time ON appointments (professional_id, start_time);
@@ -187,16 +195,19 @@ CREATE INDEX idx_appointments_no_show ON appointments (status) WHERE status = 'n
 ## Integration Points
 
 ### Calendar Sync
+
 - External calendar provider integration
 - Bi-directional sync with Google Calendar, Outlook
 - Conflict resolution for double-bookings
 
 ### Payment Integration
+
 - Automatic payment transaction creation
 - Integration with Brazilian payment gateways (PIX, cards)
 - Insurance claim processing
 
 ### Communication Systems
+
 - WhatsApp Business API integration
 - SMS gateway for reminders
 - Email notification system
@@ -204,16 +215,19 @@ CREATE INDEX idx_appointments_no_show ON appointments (status) WHERE status = 'n
 ## Compliance & Monitoring
 
 ### LGPD Compliance
+
 - Patient consent validation for appointment access
 - Automatic data retention policy enforcement
 - Secure data sharing with patient consent
 
 ### Healthcare Regulations
+
 - CFM compliance for medical appointment records
 - ANVISA requirements for medical device software
 - Professional license validation before scheduling
 
 ### Audit & Reporting
+
 - Complete appointment lifecycle tracking
 - Professional performance metrics
 - Patient satisfaction and no-show analytics

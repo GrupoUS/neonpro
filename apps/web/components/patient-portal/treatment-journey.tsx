@@ -268,7 +268,7 @@ const mockTreatmentData = {
   ],
 };
 
-function TreatmentProgressCard({ treatment }: { treatment: unknown; }) {
+function TreatmentProgressCard({ treatment }: { treatment: unknown }) {
   const completedGoals = treatment.goals.filter(
     (goal: unknown) => goal.achieved,
   ).length;
@@ -297,10 +297,12 @@ function TreatmentProgressCard({ treatment }: { treatment: unknown; }) {
           <Progress className="h-3" value={treatment.progress} />
           <div className="flex justify-between text-muted-foreground text-xs">
             <span>
-              {treatment.sessions.completed} de {treatment.sessions.total} sessões
+              {treatment.sessions.completed} de {treatment.sessions.total}{" "}
+              sessões
             </span>
             <span>
-              Próxima: {new Date(treatment.sessions.next).toLocaleDateString("pt-BR")}
+              Próxima:{" "}
+              {new Date(treatment.sessions.next).toLocaleDateString("pt-BR")}
             </span>
           </div>
         </div>
@@ -319,9 +321,11 @@ function TreatmentProgressCard({ treatment }: { treatment: unknown; }) {
                 className="flex items-center space-x-2 text-xs"
                 key={goal.id}
               >
-                {goal.achieved
-                  ? <CheckCircle className="h-3 w-3 text-green-600" />
-                  : <div className="h-3 w-3 rounded-full border border-gray-300" />}
+                {goal.achieved ? (
+                  <CheckCircle className="h-3 w-3 text-green-600" />
+                ) : (
+                  <div className="h-3 w-3 rounded-full border border-gray-300" />
+                )}
                 <span
                   className={cn(
                     goal.achieved ? "text-muted-foreground line-through" : "",
@@ -363,7 +367,7 @@ function TreatmentProgressCard({ treatment }: { treatment: unknown; }) {
   );
 }
 
-function BeforeAfterGallery({ photos }: { photos: unknown[]; }) {
+function BeforeAfterGallery({ photos }: { photos: unknown[] }) {
   const [_selectedPhoto, _setSelectedPhoto] = useState(0);
   const [_showComparison, _setShowComparison] = useState(false);
 
@@ -479,7 +483,7 @@ function BeforeAfterGallery({ photos }: { photos: unknown[]; }) {
   );
 }
 
-function PhotoTimeline({ photos }: { photos: unknown[]; }) {
+function PhotoTimeline({ photos }: { photos: unknown[] }) {
   return (
     <div className="space-y-4">
       {photos.map((photo, _index) => (
@@ -496,17 +500,19 @@ function PhotoTimeline({ photos }: { photos: unknown[]; }) {
           <div className="flex-1">
             <div className="flex items-center space-x-2">
               <Badge
-                variant={photo.type === "before"
-                  ? "secondary"
-                  : photo.type === "progress"
-                  ? "default"
-                  : "secondary"}
+                variant={
+                  photo.type === "before"
+                    ? "secondary"
+                    : photo.type === "progress"
+                      ? "default"
+                      : "secondary"
+                }
               >
                 {photo.type === "before"
                   ? "Antes"
                   : photo.type === "progress"
-                  ? "Progresso"
-                  : "Depois"}
+                    ? "Progresso"
+                    : "Depois"}
               </Badge>
               <span className="text-muted-foreground text-sm">
                 {new Date(photo.date).toLocaleDateString("pt-BR")}
@@ -535,7 +541,7 @@ function PhotoTimeline({ photos }: { photos: unknown[]; }) {
   );
 }
 
-function PhotoGrid({ photos }: { photos: unknown[]; }) {
+function PhotoGrid({ photos }: { photos: unknown[] }) {
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
       {photos.map((photo) => (
@@ -555,7 +561,7 @@ function PhotoGrid({ photos }: { photos: unknown[]; }) {
   );
 }
 
-function TreatmentMilestones({ milestones }: { milestones: unknown[]; }) {
+function TreatmentMilestones({ milestones }: { milestones: unknown[] }) {
   return (
     <Card>
       <CardHeader>
@@ -578,17 +584,21 @@ function TreatmentMilestones({ milestones }: { milestones: unknown[]; }) {
                     milestone.status === "completed"
                       ? "bg-green-100 text-green-600"
                       : milestone.status === "scheduled"
-                      ? "bg-blue-100 text-blue-600"
-                      : "bg-gray-100 text-gray-600",
+                        ? "bg-blue-100 text-blue-600"
+                        : "bg-gray-100 text-gray-600",
                   )}
                 >
-                  {milestone.status === "completed"
-                    ? <CheckCircle className="h-4 w-4" />
-                    : milestone.status === "scheduled"
-                    ? <Clock className="h-4 w-4" />
-                    : <div className="h-2 w-2 rounded-full bg-current" />}
+                  {milestone.status === "completed" ? (
+                    <CheckCircle className="h-4 w-4" />
+                  ) : milestone.status === "scheduled" ? (
+                    <Clock className="h-4 w-4" />
+                  ) : (
+                    <div className="h-2 w-2 rounded-full bg-current" />
+                  )}
                 </div>
-                {index < milestones.length - 1 && <div className="mt-2 h-12 w-px bg-gray-200" />}
+                {index < milestones.length - 1 && (
+                  <div className="mt-2 h-12 w-px bg-gray-200" />
+                )}
               </div>
 
               <div className="flex-1 pb-6">
@@ -607,17 +617,19 @@ function TreatmentMilestones({ milestones }: { milestones: unknown[]; }) {
                     </p>
                   </div>
                   <Badge
-                    variant={milestone.status === "completed"
-                      ? "secondary"
-                      : milestone.status === "scheduled"
-                      ? "default"
-                      : "outline"}
+                    variant={
+                      milestone.status === "completed"
+                        ? "secondary"
+                        : milestone.status === "scheduled"
+                          ? "default"
+                          : "outline"
+                    }
                   >
                     {milestone.status === "completed"
                       ? "Concluído"
                       : milestone.status === "scheduled"
-                      ? "Agendado"
-                      : "Pendente"}
+                        ? "Agendado"
+                        : "Pendente"}
                   </Badge>
                 </div>
 
@@ -725,11 +737,11 @@ export function TreatmentJourney() {
                           className="flex items-start space-x-3"
                           key={goal.id}
                         >
-                          {goal.achieved
-                            ? <CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
-                            : (
-                              <div className="mt-0.5 h-5 w-5 rounded-full border-2 border-gray-300" />
-                            )}
+                          {goal.achieved ? (
+                            <CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
+                          ) : (
+                            <div className="mt-0.5 h-5 w-5 rounded-full border-2 border-gray-300" />
+                          )}
                           <div className="flex-1">
                             <p
                               className={cn(
@@ -799,70 +811,71 @@ export function TreatmentJourney() {
         </TabsContent>
 
         <TabsContent className="space-y-6" value="completed">
-          {mockTreatmentData.completedTreatments.length === 0
-            ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Award className="mb-4 h-12 w-12 text-muted-foreground" />
-                  <h3 className="mb-2 font-medium text-lg">
-                    Nenhum tratamento concluído ainda
-                  </h3>
-                  <p className="text-center text-muted-foreground">
-                    Seus tratamentos finalizados aparecerão aqui com todos os resultados
-                  </p>
-                </CardContent>
-              </Card>
-            )
-            : (
-              <div className="grid gap-6">
-                {mockTreatmentData.completedTreatments.map((treatment) => (
-                  <Card key={treatment.id}>
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-2">
-                          <h3 className="font-semibold text-lg">
-                            {treatment.name}
-                          </h3>
-                          <p className="text-muted-foreground text-sm">
-                            {treatment.type}
-                          </p>
-                          <p className="text-sm">
-                            {new Date(treatment.startDate).toLocaleDateString(
-                              "pt-BR",
-                            )} - {new Date(treatment.endDate).toLocaleDateString(
-                              "pt-BR",
-                            )}
-                          </p>
-                          <p className="text-sm">{treatment.results}</p>
-                        </div>
-
-                        <div className="space-y-2 text-right">
-                          <div className="flex items-center space-x-1">
-                            {new Array(5).fill().map((_, i) => (
-                              <Star
-                                className={cn(
-                                  "h-4 w-4",
-                                  i < treatment.finalRating
-                                    ? "fill-yellow-400 text-yellow-400"
-                                    : "text-gray-300",
-                                )}
-                                key={i}
-                              />
-                            ))}
-                          </div>
-                          <Badge
-                            className="bg-green-100 text-green-800"
-                            variant="secondary"
-                          >
-                            Concluído
-                          </Badge>
-                        </div>
+          {mockTreatmentData.completedTreatments.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <Award className="mb-4 h-12 w-12 text-muted-foreground" />
+                <h3 className="mb-2 font-medium text-lg">
+                  Nenhum tratamento concluído ainda
+                </h3>
+                <p className="text-center text-muted-foreground">
+                  Seus tratamentos finalizados aparecerão aqui com todos os
+                  resultados
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-6">
+              {mockTreatmentData.completedTreatments.map((treatment) => (
+                <Card key={treatment.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-lg">
+                          {treatment.name}
+                        </h3>
+                        <p className="text-muted-foreground text-sm">
+                          {treatment.type}
+                        </p>
+                        <p className="text-sm">
+                          {new Date(treatment.startDate).toLocaleDateString(
+                            "pt-BR",
+                          )}{" "}
+                          -{" "}
+                          {new Date(treatment.endDate).toLocaleDateString(
+                            "pt-BR",
+                          )}
+                        </p>
+                        <p className="text-sm">{treatment.results}</p>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
+
+                      <div className="space-y-2 text-right">
+                        <div className="flex items-center space-x-1">
+                          {new Array(5).fill().map((_, i) => (
+                            <Star
+                              className={cn(
+                                "h-4 w-4",
+                                i < treatment.finalRating
+                                  ? "fill-yellow-400 text-yellow-400"
+                                  : "text-gray-300",
+                              )}
+                              key={i}
+                            />
+                          ))}
+                        </div>
+                        <Badge
+                          className="bg-green-100 text-green-800"
+                          variant="secondary"
+                        >
+                          Concluído
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

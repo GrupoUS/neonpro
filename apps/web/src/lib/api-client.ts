@@ -149,12 +149,15 @@ export class PatientsApiClient {
     return response.json();
   }
 
-  static async updatePatient(id: string, data: {
-    name?: string;
-    email?: string;
-    phone?: string;
-    token?: string;
-  }) {
+  static async updatePatient(
+    id: string,
+    data: {
+      name?: string;
+      email?: string;
+      phone?: string;
+      token?: string;
+    },
+  ) {
     const { token, ...updateData } = data;
 
     const response = await apiClient.api.patients[":id"].$patch(

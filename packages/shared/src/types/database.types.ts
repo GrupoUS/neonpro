@@ -234,18 +234,25 @@ export interface Database {
 }
 
 // Essential type exports
-export type Patient = Database['public']['Tables']['patients']['Row'];
-export type PatientInsert = Database['public']['Tables']['patients']['Insert'];
-export type PatientUpdate = Database['public']['Tables']['patients']['Update'];
+export type Patient = Database["public"]["Tables"]["patients"]["Row"];
+export type PatientInsert = Database["public"]["Tables"]["patients"]["Insert"];
+export type PatientUpdate = Database["public"]["Tables"]["patients"]["Update"];
 
-export type Appointment = Database['public']['Tables']['appointments']['Row'];
-export type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];  
-export type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
+export type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
+export type AppointmentInsert =
+  Database["public"]["Tables"]["appointments"]["Insert"];
+export type AppointmentUpdate =
+  Database["public"]["Tables"]["appointments"]["Update"];
 
-export type Notification = Database['public']['Tables']['notifications']['Row'];
-export type NotificationInsert = Database['public']['Tables']['notifications']['Insert'];
-export type NotificationUpdate = Database['public']['Tables']['notifications']['Update'];
+export type Notification = Database["public"]["Tables"]["notifications"]["Row"];
+export type NotificationInsert =
+  Database["public"]["Tables"]["notifications"]["Insert"];
+export type NotificationUpdate =
+  Database["public"]["Tables"]["notifications"]["Update"];
 
-export type HealthcareProfessional = Database['public']['Tables']['healthcare_professionals']['Row'];
-export type HealthcareProfessionalInsert = Database['public']['Tables']['healthcare_professionals']['Insert'];
-export type HealthcareProfessionalUpdate = Database['public']['Tables']['healthcare_professionals']['Update'];
+export type HealthcareProfessional =
+  Database["public"]["Tables"]["healthcare_professionals"]["Row"];
+export type HealthcareProfessionalInsert =
+  Database["public"]["Tables"]["healthcare_professionals"]["Insert"];
+export type HealthcareProfessionalUpdate =
+  Database["public"]["Tables"]["healthcare_professionals"]["Update"];

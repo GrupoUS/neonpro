@@ -96,8 +96,8 @@ export const professionalsRoutes = new Hono()
         },
       ].filter((prof) => {
         if (
-          search
-          && !prof.fullName.toLowerCase().includes(search.toLowerCase())
+          search &&
+          !prof.fullName.toLowerCase().includes(search.toLowerCase())
         ) {
           return false;
         }
@@ -274,7 +274,7 @@ export const professionalsRoutes = new Hono()
 
     try {
       // TODO: Implement actual soft delete
-      const response: ApiResponse<{ id: string; }> = {
+      const response: ApiResponse<{ id: string }> = {
         success: true,
         data: { id },
         message: "Profissional removido com sucesso",

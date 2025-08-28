@@ -2,7 +2,15 @@
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Database, Download, Eye, RefreshCw, Search, Shield, User } from "lucide-react";
+import {
+  Database,
+  Download,
+  Eye,
+  RefreshCw,
+  Search,
+  Shield,
+  User,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "../../ui/badge";
@@ -17,8 +25,21 @@ import {
 } from "../../ui/dialog";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../ui/table";
 
 interface AuditLog {
   id: string;
@@ -150,14 +171,17 @@ export function AuditLogsTable() {
   };
 
   const filteredLogs = logs.filter((log) => {
-    const matchesSearch = log.action.toLowerCase().includes(searchTerm.toLowerCase())
-      || log.resource_type.toLowerCase().includes(searchTerm.toLowerCase())
-      || log.user_id?.toLowerCase().includes(searchTerm.toLowerCase())
-      || log.ip_address?.toLowerCase().includes(searchTerm.toLowerCase())
-      || log.table_name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.resource_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.user_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.ip_address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.table_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesAction = actionFilter === "all" || log.action.toLowerCase().includes(actionFilter);
-    const matchesResource = resourceFilter === "all" || log.resource_type === resourceFilter;
+    const matchesAction =
+      actionFilter === "all" || log.action.toLowerCase().includes(actionFilter);
+    const matchesResource =
+      resourceFilter === "all" || log.resource_type === resourceFilter;
     const matchesRisk = riskFilter === "all" || log.risk_level === riskFilter;
 
     return matchesSearch && matchesAction && matchesResource && matchesRisk;
@@ -203,9 +227,12 @@ export function AuditLogsTable() {
             <Shield className="h-5 w-5 text-yellow-600" />
             <div>
               <div className="font-bold text-2xl text-yellow-600">
-                {logs.filter(
-                  (l) => l.risk_level === "high" || l.risk_level === "critical",
-                ).length}
+                {
+                  logs.filter(
+                    (l) =>
+                      l.risk_level === "high" || l.risk_level === "critical",
+                  ).length
+                }
               </div>
               <div className="text-sm text-yellow-600">Alto Risco</div>
             </div>
@@ -314,208 +341,206 @@ export function AuditLogsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredLogs.length === 0
-              ? (
-                <TableRow>
-                  <TableCell
-                    className="py-8 text-center text-muted-foreground"
-                    colSpan={8}
-                  >
-                    Nenhum log de auditoria encontrado
-                  </TableCell>
-                </TableRow>
-              )
-              : (
-                filteredLogs.map((log) => (
-                  <TableRow key={log.id}>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        {getActionIcon(log.action)}
-                        <div>
-                          <div className="font-medium text-sm">{log.action}</div>
-                          {log.http_method && (
-                            <Badge className="text-xs" variant="outline">
-                              {log.http_method}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
+            {filteredLogs.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  className="py-8 text-center text-muted-foreground"
+                  colSpan={8}
+                >
+                  Nenhum log de auditoria encontrado
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredLogs.map((log) => (
+                <TableRow key={log.id}>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      {getActionIcon(log.action)}
                       <div>
-                        <div className="font-medium">{log.resource_type}</div>
-                        {log.table_name && (
-                          <div className="text-muted-foreground text-sm">
-                            {log.table_name}
-                          </div>
-                        )}
-                        {log.resource_id && (
-                          <code className="rounded bg-muted px-1 py-0.5 text-xs">
-                            {log.resource_id}
-                          </code>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        {log.user_id
-                          ? (
-                            <code className="rounded bg-muted px-1 py-0.5">
-                              {log.user_id}
-                            </code>
-                          )
-                          : <span className="text-muted-foreground">Sistema</span>}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <code className="rounded bg-muted px-1 py-0.5 text-sm">
-                        {log.ip_address || "N/A"}
-                      </code>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getRiskColor(log.risk_level)}>
-                        {log.risk_level === "critical" && "CRÍTICO"}
-                        {log.risk_level === "high" && "ALTO"}
-                        {log.risk_level === "medium" && "MÉDIO"}
-                        {log.risk_level === "low" && "BAIXO"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {log.compliance_flags.slice(0, 2).map((flag, index) => (
-                          <Badge
-                            className="text-xs"
-                            key={index}
-                            variant="outline"
-                          >
-                            {flag}
-                          </Badge>
-                        ))}
-                        {log.compliance_flags.length > 2 && (
+                        <div className="font-medium text-sm">{log.action}</div>
+                        {log.http_method && (
                           <Badge className="text-xs" variant="outline">
-                            +{log.compliance_flags.length - 2}
+                            {log.http_method}
                           </Badge>
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        {format(new Date(log.created_at), "dd/MM HH:mm:ss", {
-                          locale: ptBR,
-                        })}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            onClick={() => setSelectedLog(log)}
-                            size="sm"
-                            variant="ghost"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl">
-                          <DialogHeader>
-                            <DialogTitle className="flex items-center space-x-2">
-                              {getActionIcon(log.action)}
-                              <span>Log de Auditoria</span>
-                              <Badge variant={getRiskColor(log.risk_level)}>
-                                {log.risk_level.toUpperCase()}
-                              </Badge>
-                            </DialogTitle>
-                            <DialogDescription>
-                              Detalhes completos do log #{log.id}
-                            </DialogDescription>
-                          </DialogHeader>
-                          {selectedLog && (
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                  <Label>Ação</Label>
-                                  <div className="mt-1 text-sm">
-                                    {selectedLog.action}
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Tipo de Recurso</Label>
-                                  <div className="mt-1 text-sm">
-                                    {selectedLog.resource_type}
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>ID do Recurso</Label>
-                                  <div className="mt-1">
-                                    <code className="rounded bg-muted px-2 py-1 text-sm">
-                                      {selectedLog.resource_id || "N/A"}
-                                    </code>
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Tabela</Label>
-                                  <div className="mt-1 text-sm">
-                                    {selectedLog.table_name || "N/A"}
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Usuário</Label>
-                                  <div className="mt-1">
-                                    <code className="rounded bg-muted px-2 py-1 text-sm">
-                                      {selectedLog.user_id || "Sistema"}
-                                    </code>
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>IP Address</Label>
-                                  <div className="mt-1">
-                                    <code className="rounded bg-muted px-2 py-1 text-sm">
-                                      {selectedLog.ip_address || "N/A"}
-                                    </code>
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Endpoint</Label>
-                                  <div className="mt-1 text-sm">
-                                    {selectedLog.endpoint || "N/A"}
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Método HTTP</Label>
-                                  <div className="mt-1">
-                                    <Badge variant="outline">
-                                      {selectedLog.http_method || "N/A"}
-                                    </Badge>
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Nível de Risco</Label>
-                                  <div className="mt-1">
-                                    <Badge
-                                      variant={getRiskColor(
-                                        selectedLog.risk_level,
-                                      )}
-                                    >
-                                      {selectedLog.risk_level.toUpperCase()}
-                                    </Badge>
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Data/Hora</Label>
-                                  <div className="mt-1 text-sm">
-                                    {format(
-                                      new Date(selectedLog.created_at),
-                                      "dd/MM/yyyy HH:mm:ss",
-                                      {
-                                        locale: ptBR,
-                                      },
-                                    )}
-                                  </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{log.resource_type}</div>
+                      {log.table_name && (
+                        <div className="text-muted-foreground text-sm">
+                          {log.table_name}
+                        </div>
+                      )}
+                      {log.resource_id && (
+                        <code className="rounded bg-muted px-1 py-0.5 text-xs">
+                          {log.resource_id}
+                        </code>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-sm">
+                      {log.user_id ? (
+                        <code className="rounded bg-muted px-1 py-0.5">
+                          {log.user_id}
+                        </code>
+                      ) : (
+                        <span className="text-muted-foreground">Sistema</span>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <code className="rounded bg-muted px-1 py-0.5 text-sm">
+                      {log.ip_address || "N/A"}
+                    </code>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={getRiskColor(log.risk_level)}>
+                      {log.risk_level === "critical" && "CRÍTICO"}
+                      {log.risk_level === "high" && "ALTO"}
+                      {log.risk_level === "medium" && "MÉDIO"}
+                      {log.risk_level === "low" && "BAIXO"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {log.compliance_flags.slice(0, 2).map((flag, index) => (
+                        <Badge
+                          className="text-xs"
+                          key={index}
+                          variant="outline"
+                        >
+                          {flag}
+                        </Badge>
+                      ))}
+                      {log.compliance_flags.length > 2 && (
+                        <Badge className="text-xs" variant="outline">
+                          +{log.compliance_flags.length - 2}
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-sm">
+                      {format(new Date(log.created_at), "dd/MM HH:mm:ss", {
+                        locale: ptBR,
+                      })}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          onClick={() => setSelectedLog(log)}
+                          size="sm"
+                          variant="ghost"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-4xl">
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center space-x-2">
+                            {getActionIcon(log.action)}
+                            <span>Log de Auditoria</span>
+                            <Badge variant={getRiskColor(log.risk_level)}>
+                              {log.risk_level.toUpperCase()}
+                            </Badge>
+                          </DialogTitle>
+                          <DialogDescription>
+                            Detalhes completos do log #{log.id}
+                          </DialogDescription>
+                        </DialogHeader>
+                        {selectedLog && (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <Label>Ação</Label>
+                                <div className="mt-1 text-sm">
+                                  {selectedLog.action}
                                 </div>
                               </div>
+                              <div>
+                                <Label>Tipo de Recurso</Label>
+                                <div className="mt-1 text-sm">
+                                  {selectedLog.resource_type}
+                                </div>
+                              </div>
+                              <div>
+                                <Label>ID do Recurso</Label>
+                                <div className="mt-1">
+                                  <code className="rounded bg-muted px-2 py-1 text-sm">
+                                    {selectedLog.resource_id || "N/A"}
+                                  </code>
+                                </div>
+                              </div>
+                              <div>
+                                <Label>Tabela</Label>
+                                <div className="mt-1 text-sm">
+                                  {selectedLog.table_name || "N/A"}
+                                </div>
+                              </div>
+                              <div>
+                                <Label>Usuário</Label>
+                                <div className="mt-1">
+                                  <code className="rounded bg-muted px-2 py-1 text-sm">
+                                    {selectedLog.user_id || "Sistema"}
+                                  </code>
+                                </div>
+                              </div>
+                              <div>
+                                <Label>IP Address</Label>
+                                <div className="mt-1">
+                                  <code className="rounded bg-muted px-2 py-1 text-sm">
+                                    {selectedLog.ip_address || "N/A"}
+                                  </code>
+                                </div>
+                              </div>
+                              <div>
+                                <Label>Endpoint</Label>
+                                <div className="mt-1 text-sm">
+                                  {selectedLog.endpoint || "N/A"}
+                                </div>
+                              </div>
+                              <div>
+                                <Label>Método HTTP</Label>
+                                <div className="mt-1">
+                                  <Badge variant="outline">
+                                    {selectedLog.http_method || "N/A"}
+                                  </Badge>
+                                </div>
+                              </div>
+                              <div>
+                                <Label>Nível de Risco</Label>
+                                <div className="mt-1">
+                                  <Badge
+                                    variant={getRiskColor(
+                                      selectedLog.risk_level,
+                                    )}
+                                  >
+                                    {selectedLog.risk_level.toUpperCase()}
+                                  </Badge>
+                                </div>
+                              </div>
+                              <div>
+                                <Label>Data/Hora</Label>
+                                <div className="mt-1 text-sm">
+                                  {format(
+                                    new Date(selectedLog.created_at),
+                                    "dd/MM/yyyy HH:mm:ss",
+                                    {
+                                      locale: ptBR,
+                                    },
+                                  )}
+                                </div>
+                              </div>
+                            </div>
 
-                              {selectedLog.compliance_flags
-                                && selectedLog.compliance_flags.length > 0 && (
+                            {selectedLog.compliance_flags &&
+                              selectedLog.compliance_flags.length > 0 && (
                                 <div>
                                   <Label>Flags de Compliance</Label>
                                   <div className="mt-1 flex flex-wrap gap-2">
@@ -530,8 +555,8 @@ export function AuditLogsTable() {
                                 </div>
                               )}
 
-                              {selectedLog.security_flags
-                                && selectedLog.security_flags.length > 0 && (
+                            {selectedLog.security_flags &&
+                              selectedLog.security_flags.length > 0 && (
                                 <div>
                                   <Label>Flags de Segurança</Label>
                                   <div className="mt-1 flex flex-wrap gap-2">
@@ -546,8 +571,8 @@ export function AuditLogsTable() {
                                 </div>
                               )}
 
-                              {selectedLog.changed_fields
-                                && selectedLog.changed_fields.length > 0 && (
+                            {selectedLog.changed_fields &&
+                              selectedLog.changed_fields.length > 0 && (
                                 <div>
                                   <Label>Campos Alterados</Label>
                                   <div className="mt-1 flex flex-wrap gap-2">
@@ -562,64 +587,61 @@ export function AuditLogsTable() {
                                 </div>
                               )}
 
-                              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                {selectedLog.old_values
-                                  && Object.keys(selectedLog.old_values).length
-                                    > 0
-                                  && (
-                                    <div>
-                                      <Label>Valores Anteriores</Label>
-                                      <div className="mt-1">
-                                        <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                              {selectedLog.old_values &&
+                                Object.keys(selectedLog.old_values).length >
+                                  0 && (
+                                  <div>
+                                    <Label>Valores Anteriores</Label>
+                                    <div className="mt-1">
+                                      <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
                                         {JSON.stringify(
                                           selectedLog.old_values,
                                           undefined,
                                           2,
                                         )}
-                                        </pre>
-                                      </div>
-                                    </div>
-                                  )}
-
-                                {selectedLog.new_values
-                                  && Object.keys(selectedLog.new_values).length
-                                    > 0
-                                  && (
-                                    <div>
-                                      <Label>Valores Novos</Label>
-                                      <div className="mt-1">
-                                        <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
-                                        {JSON.stringify(
-                                          selectedLog.new_values,
-                                          undefined,
-                                          2,
-                                        )}
-                                        </pre>
-                                      </div>
-                                    </div>
-                                  )}
-                              </div>
-
-                              {selectedLog.compliance_context
-                                && Object.keys(selectedLog.compliance_context)
-                                    .length > 0
-                                && (
-                                  <div>
-                                    <Label>Contexto de Compliance</Label>
-                                    <div className="mt-1">
-                                      <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
-                                      {JSON.stringify(
-                                        selectedLog.compliance_context,
-                                        undefined,
-                                        2,
-                                      )}
                                       </pre>
                                     </div>
                                   </div>
                                 )}
 
-                              {selectedLog.metadata
-                                && Object.keys(selectedLog.metadata).length > 0 && (
+                              {selectedLog.new_values &&
+                                Object.keys(selectedLog.new_values).length >
+                                  0 && (
+                                  <div>
+                                    <Label>Valores Novos</Label>
+                                    <div className="mt-1">
+                                      <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
+                                        {JSON.stringify(
+                                          selectedLog.new_values,
+                                          undefined,
+                                          2,
+                                        )}
+                                      </pre>
+                                    </div>
+                                  </div>
+                                )}
+                            </div>
+
+                            {selectedLog.compliance_context &&
+                              Object.keys(selectedLog.compliance_context)
+                                .length > 0 && (
+                                <div>
+                                  <Label>Contexto de Compliance</Label>
+                                  <div className="mt-1">
+                                    <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
+                                      {JSON.stringify(
+                                        selectedLog.compliance_context,
+                                        undefined,
+                                        2,
+                                      )}
+                                    </pre>
+                                  </div>
+                                </div>
+                              )}
+
+                            {selectedLog.metadata &&
+                              Object.keys(selectedLog.metadata).length > 0 && (
                                 <div>
                                   <Label>Metadados</Label>
                                   <div className="mt-1">
@@ -634,48 +656,48 @@ export function AuditLogsTable() {
                                 </div>
                               )}
 
-                              {selectedLog.user_agent && (
-                                <div>
-                                  <Label>User Agent</Label>
-                                  <div className="mt-1 rounded bg-muted p-2 text-xs">
-                                    {selectedLog.user_agent}
-                                  </div>
+                            {selectedLog.user_agent && (
+                              <div>
+                                <Label>User Agent</Label>
+                                <div className="mt-1 rounded bg-muted p-2 text-xs">
+                                  {selectedLog.user_agent}
                                 </div>
-                              )}
+                              </div>
+                            )}
 
-                              {(selectedLog.checksum
-                                || selectedLog.signature) && (
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                  {selectedLog.checksum && (
-                                    <div>
-                                      <Label>Checksum</Label>
-                                      <div className="mt-1">
-                                        <code className="break-all rounded bg-muted px-2 py-1 text-xs">
-                                          {selectedLog.checksum}
-                                        </code>
-                                      </div>
+                            {(selectedLog.checksum ||
+                              selectedLog.signature) && (
+                              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                {selectedLog.checksum && (
+                                  <div>
+                                    <Label>Checksum</Label>
+                                    <div className="mt-1">
+                                      <code className="break-all rounded bg-muted px-2 py-1 text-xs">
+                                        {selectedLog.checksum}
+                                      </code>
                                     </div>
-                                  )}
-                                  {selectedLog.signature && (
-                                    <div>
-                                      <Label>Assinatura Digital</Label>
-                                      <div className="mt-1">
-                                        <code className="break-all rounded bg-muted px-2 py-1 text-xs">
-                                          {selectedLog.signature}
-                                        </code>
-                                      </div>
+                                  </div>
+                                )}
+                                {selectedLog.signature && (
+                                  <div>
+                                    <Label>Assinatura Digital</Label>
+                                    <div className="mt-1">
+                                      <code className="break-all rounded bg-muted px-2 py-1 text-xs">
+                                        {selectedLog.signature}
+                                      </code>
                                     </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </DialogContent>
+                    </Dialog>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

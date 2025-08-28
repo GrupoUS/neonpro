@@ -117,13 +117,13 @@ export class InfrastructureMonitoringService {
     metricsRetention: 24, // 24 hours
     alertThresholds: {
       emergencyResponseTime: 100, // 100ms
-      patientLookupTime: 200,     // 200ms
+      patientLookupTime: 200, // 200ms
       appointmentBookingTime: 500, // 500ms
-      aiChatResponseTime: 1500,   // 1.5s
-      errorRate: 1,               // 1%
-      cpuUsage: 80,              // 80%
-      memoryUsage: 85,           // 85%
-      diskUsage: 90              // 90%
+      aiChatResponseTime: 1500, // 1.5s
+      errorRate: 1, // 1%
+      cpuUsage: 80, // 80%
+      memoryUsage: 85, // 85%
+      diskUsage: 90, // 90%
     },
     brazilianRegions: [
       {
@@ -133,16 +133,16 @@ export class InfrastructureMonitoringService {
         expectedLatency: 20,
         connectivityTier: "tier1",
         isActive: true,
-        lastHealthCheck: new Date().toISOString()
+        lastHealthCheck: new Date().toISOString(),
       },
       {
-        id: "rio-janeiro-1", 
+        id: "rio-janeiro-1",
         name: "Rio de Janeiro",
         cdnNodes: ["rio-edge-1"],
         expectedLatency: 25,
         connectivityTier: "tier1",
         isActive: true,
-        lastHealthCheck: new Date().toISOString()
+        lastHealthCheck: new Date().toISOString(),
       },
       {
         id: "brasilia-1",
@@ -151,7 +151,7 @@ export class InfrastructureMonitoringService {
         expectedLatency: 30,
         connectivityTier: "tier1",
         isActive: true,
-        lastHealthCheck: new Date().toISOString()
+        lastHealthCheck: new Date().toISOString(),
       },
       {
         id: "regional-capitals",
@@ -160,7 +160,7 @@ export class InfrastructureMonitoringService {
         expectedLatency: 50,
         connectivityTier: "tier2",
         isActive: true,
-        lastHealthCheck: new Date().toISOString()
+        lastHealthCheck: new Date().toISOString(),
       },
       {
         id: "interior-brazil",
@@ -169,53 +169,145 @@ export class InfrastructureMonitoringService {
         expectedLatency: 100,
         connectivityTier: "tier3",
         isActive: true,
-        lastHealthCheck: new Date().toISOString()
-      }
+        lastHealthCheck: new Date().toISOString(),
+      },
     ],
     healthcareWorkflows: {
       criticalPaths: [
         {
           name: "Emergency Patient Access",
-          workflow: ["auth", "patient-lookup", "emergency-protocols", "samu-integration"],
+          workflow: [
+            "auth",
+            "patient-lookup",
+            "emergency-protocols",
+            "samu-integration",
+          ],
           maxDuration: 100,
           priority: "critical",
-          healthcareContext: "emergency"
+          healthcareContext: "emergency",
         },
         {
           name: "Patient Data Retrieval",
-          workflow: ["auth", "patient-search", "lgpd-compliance", "data-access"],
+          workflow: [
+            "auth",
+            "patient-search",
+            "lgpd-compliance",
+            "data-access",
+          ],
           maxDuration: 200,
           priority: "critical",
-          healthcareContext: "routine"
+          healthcareContext: "routine",
         },
         {
           name: "AI-Assisted Diagnosis",
-          workflow: ["patient-context", "ai-processing", "cfm-validation", "result-display"],
+          workflow: [
+            "patient-context",
+            "ai-processing",
+            "cfm-validation",
+            "result-display",
+          ],
           maxDuration: 1500,
           priority: "high",
-          healthcareContext: "ai_assisted"
+          healthcareContext: "ai_assisted",
         },
         {
           name: "Appointment Booking",
-          workflow: ["patient-lookup", "schedule-check", "availability", "confirmation"],
+          workflow: [
+            "patient-lookup",
+            "schedule-check",
+            "availability",
+            "confirmation",
+          ],
           maxDuration: 500,
           priority: "high",
-          healthcareContext: "routine"
-        }
+          healthcareContext: "routine",
+        },
       ],
       slaTargets: [
-        { metric: "emergency_response", target: 100, unit: "ms", tier: "tier1", description: "Emergency protocol access" },
-        { metric: "emergency_response", target: 150, unit: "ms", tier: "tier2", description: "Emergency protocol access" },
-        { metric: "emergency_response", target: 200, unit: "ms", tier: "tier3", description: "Emergency protocol access" },
-        { metric: "patient_lookup", target: 200, unit: "ms", tier: "tier1", description: "Patient data retrieval" },
-        { metric: "patient_lookup", target: 350, unit: "ms", tier: "tier2", description: "Patient data retrieval" },
-        { metric: "patient_lookup", target: 500, unit: "ms", tier: "tier3", description: "Patient data retrieval" },
-        { metric: "ai_chat_response", target: 1500, unit: "ms", tier: "tier1", description: "AI chat response time" },
-        { metric: "ai_chat_response", target: 2000, unit: "ms", tier: "tier2", description: "AI chat response time" },
-        { metric: "ai_chat_response", target: 3000, unit: "ms", tier: "tier3", description: "AI chat response time" },
-        { metric: "availability", target: 99.9, unit: "%", tier: "tier1", description: "System availability" },
-        { metric: "availability", target: 99.5, unit: "%", tier: "tier2", description: "System availability" },
-        { metric: "availability", target: 99, unit: "%", tier: "tier3", description: "System availability" }
+        {
+          metric: "emergency_response",
+          target: 100,
+          unit: "ms",
+          tier: "tier1",
+          description: "Emergency protocol access",
+        },
+        {
+          metric: "emergency_response",
+          target: 150,
+          unit: "ms",
+          tier: "tier2",
+          description: "Emergency protocol access",
+        },
+        {
+          metric: "emergency_response",
+          target: 200,
+          unit: "ms",
+          tier: "tier3",
+          description: "Emergency protocol access",
+        },
+        {
+          metric: "patient_lookup",
+          target: 200,
+          unit: "ms",
+          tier: "tier1",
+          description: "Patient data retrieval",
+        },
+        {
+          metric: "patient_lookup",
+          target: 350,
+          unit: "ms",
+          tier: "tier2",
+          description: "Patient data retrieval",
+        },
+        {
+          metric: "patient_lookup",
+          target: 500,
+          unit: "ms",
+          tier: "tier3",
+          description: "Patient data retrieval",
+        },
+        {
+          metric: "ai_chat_response",
+          target: 1500,
+          unit: "ms",
+          tier: "tier1",
+          description: "AI chat response time",
+        },
+        {
+          metric: "ai_chat_response",
+          target: 2000,
+          unit: "ms",
+          tier: "tier2",
+          description: "AI chat response time",
+        },
+        {
+          metric: "ai_chat_response",
+          target: 3000,
+          unit: "ms",
+          tier: "tier3",
+          description: "AI chat response time",
+        },
+        {
+          metric: "availability",
+          target: 99.9,
+          unit: "%",
+          tier: "tier1",
+          description: "System availability",
+        },
+        {
+          metric: "availability",
+          target: 99.5,
+          unit: "%",
+          tier: "tier2",
+          description: "System availability",
+        },
+        {
+          metric: "availability",
+          target: 99,
+          unit: "%",
+          tier: "tier3",
+          description: "System availability",
+        },
       ],
       complianceChecks: [
         {
@@ -224,15 +316,15 @@ export class InfrastructureMonitoringService {
           regulation: "LGPD",
           checkInterval: 60, // 1 hour
           lastCheck: new Date().toISOString(),
-          status: "compliant"
+          status: "compliant",
         },
         {
           id: "cfm-validation",
           name: "CFM Professional Validation",
-          regulation: "CFM", 
+          regulation: "CFM",
           checkInterval: 240, // 4 hours
           lastCheck: new Date().toISOString(),
-          status: "compliant"
+          status: "compliant",
         },
         {
           id: "anvisa-controlled-substances",
@@ -240,10 +332,10 @@ export class InfrastructureMonitoringService {
           regulation: "ANVISA",
           checkInterval: 120, // 2 hours
           lastCheck: new Date().toISOString(),
-          status: "compliant"
-        }
-      ]
-    }
+          status: "compliant",
+        },
+      ],
+    },
   };
 
   private constructor(config?: Partial<PerformanceDashboardConfig>) {
@@ -251,9 +343,12 @@ export class InfrastructureMonitoringService {
     this.initializeMonitoring();
   }
 
-  static getInstance(config?: Partial<PerformanceDashboardConfig>): InfrastructureMonitoringService {
+  static getInstance(
+    config?: Partial<PerformanceDashboardConfig>,
+  ): InfrastructureMonitoringService {
     if (!InfrastructureMonitoringService.instance) {
-      InfrastructureMonitoringService.instance = new InfrastructureMonitoringService(config);
+      InfrastructureMonitoringService.instance =
+        new InfrastructureMonitoringService(config);
     }
     return InfrastructureMonitoringService.instance;
   }
@@ -268,14 +363,20 @@ export class InfrastructureMonitoringService {
     }, this.config.refreshInterval);
 
     // Start compliance monitoring
-    setInterval(() => {
-      this.performComplianceChecks();
-    }, 5 * 60 * 1000); // Every 5 minutes
+    setInterval(
+      () => {
+        this.performComplianceChecks();
+      },
+      5 * 60 * 1000,
+    ); // Every 5 minutes
 
     // Cleanup old metrics
-    setInterval(() => {
-      this.cleanupOldMetrics();
-    }, 60 * 60 * 1000); // Every hour
+    setInterval(
+      () => {
+        this.cleanupOldMetrics();
+      },
+      60 * 60 * 1000,
+    ); // Every hour
   }
 
   /**
@@ -299,7 +400,7 @@ export class InfrastructureMonitoringService {
       performance,
       resources,
       healthcare,
-      alerts
+      alerts,
     };
 
     // Store metrics
@@ -311,43 +412,51 @@ export class InfrastructureMonitoringService {
     return metrics;
   }
 
-  private async measureConnectivity(region: string): Promise<MonitoringMetrics['connectivity']> {
+  private async measureConnectivity(
+    region: string,
+  ): Promise<MonitoringMetrics["connectivity"]> {
     // Simulate network measurements
-    const regionConfig = this.config.brazilianRegions.find(r => r.id === region);
+    const regionConfig = this.config.brazilianRegions.find(
+      (r) => r.id === region,
+    );
     const baseLatency = regionConfig?.expectedLatency || 50;
-    
+
     return {
       latency: baseLatency + Math.random() * 10, // Add jitter
       throughput: Math.random() * 100 + 50, // 50-150 Mbps
       packetLoss: Math.random() * 0.1, // 0-0.1%
-      jitter: Math.random() * 5 // 0-5ms
+      jitter: Math.random() * 5, // 0-5ms
     };
   }
 
-  private async measurePerformance(): Promise<MonitoringMetrics['performance']> {
+  private async measurePerformance(): Promise<
+    MonitoringMetrics["performance"]
+  > {
     return {
       responseTime: Math.random() * 200 + 100, // 100-300ms
       errorRate: Math.random() * 0.5, // 0-0.5%
       throughput: Math.random() * 1000 + 500, // 500-1500 req/min
-      availability: 99.5 + Math.random() * 0.5 // 99.5-100%
+      availability: 99.5 + Math.random() * 0.5, // 99.5-100%
     };
   }
 
-  private async measureResources(): Promise<MonitoringMetrics['resources']> {
+  private async measureResources(): Promise<MonitoringMetrics["resources"]> {
     return {
       cpu: Math.random() * 80 + 20, // 20-100%
       memory: Math.random() * 70 + 30, // 30-100%
       disk: Math.random() * 60 + 40, // 40-100%
-      network: Math.random() * 90 + 10 // 10-100%
+      network: Math.random() * 90 + 10, // 10-100%
     };
   }
 
-  private async measureHealthcareMetrics(): Promise<MonitoringMetrics['healthcare']> {
+  private async measureHealthcareMetrics(): Promise<
+    MonitoringMetrics["healthcare"]
+  > {
     return {
       emergencyResponseTime: Math.random() * 50 + 50, // 50-100ms
       patientLookupTime: Math.random() * 100 + 100, // 100-200ms
       aiChatResponseTime: Math.random() * 500 + 1000, // 1000-1500ms
-      complianceScore: Math.random() * 10 + 90 // 90-100%
+      complianceScore: Math.random() * 10 + 90, // 90-100%
     };
   }
 
@@ -359,13 +468,13 @@ export class InfrastructureMonitoringService {
       try {
         const isHealthy = await this.checkRegionHealth(region.id);
         this.healthChecks.set(region.id, isHealthy);
-        
+
         if (!isHealthy) {
           this.createAlert({
             severity: "high",
             type: "infrastructure",
             message: `Region ${region.name} health check failed`,
-            source: region.id
+            source: region.id,
           });
         }
 
@@ -375,9 +484,9 @@ export class InfrastructureMonitoringService {
         this.healthChecks.set(region.id, false);
         this.createAlert({
           severity: "critical",
-          type: "infrastructure", 
+          type: "infrastructure",
           message: `Region ${region.name} unreachable: ${error}`,
-          source: region.id
+          source: region.id,
         });
       }
     });
@@ -398,12 +507,15 @@ export class InfrastructureMonitoringService {
     const thresholds = this.config.alertThresholds;
 
     // Performance alerts
-    if (metrics.healthcare.emergencyResponseTime > thresholds.emergencyResponseTime) {
+    if (
+      metrics.healthcare.emergencyResponseTime >
+      thresholds.emergencyResponseTime
+    ) {
       this.createAlert({
         severity: "critical",
         type: "performance",
         message: `Emergency response time exceeded: ${metrics.healthcare.emergencyResponseTime}ms > ${thresholds.emergencyResponseTime}ms`,
-        source: metrics.region
+        source: metrics.region,
       });
     }
 
@@ -412,7 +524,7 @@ export class InfrastructureMonitoringService {
         severity: "high",
         type: "performance",
         message: `Patient lookup time exceeded: ${metrics.healthcare.patientLookupTime}ms > ${thresholds.patientLookupTime}ms`,
-        source: metrics.region
+        source: metrics.region,
       });
     }
 
@@ -421,7 +533,7 @@ export class InfrastructureMonitoringService {
         severity: "medium",
         type: "performance",
         message: `AI chat response time exceeded: ${metrics.healthcare.aiChatResponseTime}ms > ${thresholds.aiChatResponseTime}ms`,
-        source: metrics.region
+        source: metrics.region,
       });
     }
 
@@ -431,7 +543,7 @@ export class InfrastructureMonitoringService {
         severity: "high",
         type: "infrastructure",
         message: `High CPU usage: ${metrics.resources.cpu.toFixed(1)}% > ${thresholds.cpuUsage}%`,
-        source: metrics.region
+        source: metrics.region,
       });
     }
 
@@ -440,7 +552,7 @@ export class InfrastructureMonitoringService {
         severity: "high",
         type: "infrastructure",
         message: `High memory usage: ${metrics.resources.memory.toFixed(1)}% > ${thresholds.memoryUsage}%`,
-        source: metrics.region
+        source: metrics.region,
       });
     }
 
@@ -449,7 +561,7 @@ export class InfrastructureMonitoringService {
         severity: "critical",
         type: "infrastructure",
         message: `High disk usage: ${metrics.resources.disk.toFixed(1)}% > ${thresholds.diskUsage}%`,
-        source: metrics.region
+        source: metrics.region,
       });
     }
 
@@ -458,7 +570,7 @@ export class InfrastructureMonitoringService {
         severity: "high",
         type: "performance",
         message: `Error rate exceeded: ${metrics.performance.errorRate.toFixed(2)}% > ${thresholds.errorRate}%`,
-        source: metrics.region
+        source: metrics.region,
       });
     }
   }
@@ -466,21 +578,26 @@ export class InfrastructureMonitoringService {
   /**
    * Create a new alert
    */
-  private createAlert(alertData: Omit<Alert, 'id' | 'timestamp' | 'resolved'>): Alert {
+  private createAlert(
+    alertData: Omit<Alert, "id" | "timestamp" | "resolved">,
+  ): Alert {
     const alert: Alert = {
       id: `alert_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       timestamp: new Date().toISOString(),
       resolved: false,
-      ...alertData
+      ...alertData,
     };
 
     this.alerts.push(alert);
-    
+
     // Auto-resolve similar alerts after 5 minutes for non-critical issues
     if (alert.severity !== "critical") {
-      setTimeout(() => {
-        this.resolveAlert(alert.id, "Auto-resolved after timeout");
-      }, 5 * 60 * 1000);
+      setTimeout(
+        () => {
+          this.resolveAlert(alert.id, "Auto-resolved after timeout");
+        },
+        5 * 60 * 1000,
+      );
     }
 
     return alert;
@@ -495,11 +612,12 @@ export class InfrastructureMonitoringService {
     for (const check of checks) {
       const now = new Date();
       const lastCheck = new Date(check.lastCheck);
-      const minutesSinceCheck = (now.getTime() - lastCheck.getTime()) / (1000 * 60);
+      const minutesSinceCheck =
+        (now.getTime() - lastCheck.getTime()) / (1000 * 60);
 
       if (minutesSinceCheck >= check.checkInterval) {
         const isCompliant = await this.performComplianceCheck(check);
-        
+
         check.lastCheck = now.toISOString();
         check.status = isCompliant ? "compliant" : "violation";
 
@@ -508,14 +626,16 @@ export class InfrastructureMonitoringService {
             severity: "high",
             type: "compliance",
             message: `${check.regulation} compliance violation detected: ${check.name}`,
-            source: check.id
+            source: check.id,
           });
         }
       }
     }
   }
 
-  private async performComplianceCheck(check: ComplianceCheck): Promise<boolean> {
+  private async performComplianceCheck(
+    check: ComplianceCheck,
+  ): Promise<boolean> {
     // Simulate compliance check (in production, integrate with actual compliance systems)
     switch (check.regulation) {
       case "LGPD":
@@ -535,14 +655,14 @@ export class InfrastructureMonitoringService {
    * Get active (unresolved) alerts
    */
   getActiveAlerts(): Alert[] {
-    return this.alerts.filter(alert => !alert.resolved);
+    return this.alerts.filter((alert) => !alert.resolved);
   }
 
   /**
    * Get all alerts within time range
    */
   getAlertsInRange(startDate: Date, endDate: Date): Alert[] {
-    return this.alerts.filter(alert => {
+    return this.alerts.filter((alert) => {
       const alertDate = new Date(alert.timestamp);
       return alertDate >= startDate && alertDate <= endDate;
     });
@@ -552,7 +672,7 @@ export class InfrastructureMonitoringService {
    * Resolve an alert
    */
   resolveAlert(alertId: string, actionTaken: string): boolean {
-    const alert = this.alerts.find(a => a.id === alertId);
+    const alert = this.alerts.find((a) => a.id === alertId);
     if (alert && !alert.resolved) {
       alert.resolved = true;
       alert.resolvedAt = new Date().toISOString();
@@ -565,8 +685,12 @@ export class InfrastructureMonitoringService {
   /**
    * Get metrics for a specific time range
    */
-  getMetricsInRange(startDate: Date, endDate: Date, regionId?: string): MonitoringMetrics[] {
-    return this.metrics.filter(metric => {
+  getMetricsInRange(
+    startDate: Date,
+    endDate: Date,
+    regionId?: string,
+  ): MonitoringMetrics[] {
+    return this.metrics.filter((metric) => {
       const metricDate = new Date(metric.timestamp);
       const inRange = metricDate >= startDate && metricDate <= endDate;
       const matchesRegion = !regionId || metric.region === regionId;
@@ -581,16 +705,16 @@ export class InfrastructureMonitoringService {
     const cutoffTime = new Date();
     cutoffTime.setHours(cutoffTime.getHours() - this.config.metricsRetention);
 
-    this.metrics = this.metrics.filter(metric => 
-      new Date(metric.timestamp) > cutoffTime
+    this.metrics = this.metrics.filter(
+      (metric) => new Date(metric.timestamp) > cutoffTime,
     );
 
     // Also cleanup resolved alerts older than 7 days
     const alertCutoffTime = new Date();
     alertCutoffTime.setDate(alertCutoffTime.getDate() - 7);
 
-    this.alerts = this.alerts.filter(alert => 
-      !alert.resolved || new Date(alert.timestamp) > alertCutoffTime
+    this.alerts = this.alerts.filter(
+      (alert) => !alert.resolved || new Date(alert.timestamp) > alertCutoffTime,
     );
   }
 
@@ -601,39 +725,50 @@ export class InfrastructureMonitoringService {
     const recentMetrics = this.getMetricsInRange(
       new Date(Date.now() - 60 * 60 * 1000), // Last hour
       new Date(),
-      regionId
+      regionId,
     );
 
     const activeAlerts = this.getActiveAlerts();
-    const healthStatus = Array.from(this.healthChecks.entries()).map(([region, isHealthy]) => ({
-      region,
-      isHealthy
-    }));
+    const healthStatus = Array.from(this.healthChecks.entries()).map(
+      ([region, isHealthy]) => ({
+        region,
+        isHealthy,
+      }),
+    );
 
     return {
       summary: {
         totalRegions: this.config.brazilianRegions.length,
-        healthyRegions: healthStatus.filter(h => h.isHealthy).length,
+        healthyRegions: healthStatus.filter((h) => h.isHealthy).length,
         activeAlerts: activeAlerts.length,
-        criticalAlerts: activeAlerts.filter(a => a.severity === "critical").length,
-        averageResponseTime: recentMetrics.length > 0 
-          ? recentMetrics.reduce((sum, m) => sum + m.performance.responseTime, 0) / recentMetrics.length 
-          : 0,
-        overallHealth: this.calculateOverallHealth()
+        criticalAlerts: activeAlerts.filter((a) => a.severity === "critical")
+          .length,
+        averageResponseTime:
+          recentMetrics.length > 0
+            ? recentMetrics.reduce(
+                (sum, m) => sum + m.performance.responseTime,
+                0,
+              ) / recentMetrics.length
+            : 0,
+        overallHealth: this.calculateOverallHealth(),
       },
       metrics: recentMetrics,
       alerts: activeAlerts,
       regions: healthStatus,
       compliance: this.config.healthcareWorkflows.complianceChecks,
-      slaTargets: this.config.healthcareWorkflows.slaTargets
+      slaTargets: this.config.healthcareWorkflows.slaTargets,
     };
   }
 
   private calculateOverallHealth(): number {
     const totalRegions = this.config.brazilianRegions.length;
-    const healthyRegions = Array.from(this.healthChecks.values()).filter(h => h).length;
+    const healthyRegions = Array.from(this.healthChecks.values()).filter(
+      (h) => h,
+    ).length;
     const activeAlerts = this.getActiveAlerts();
-    const criticalAlerts = activeAlerts.filter(a => a.severity === "critical").length;
+    const criticalAlerts = activeAlerts.filter(
+      (a) => a.severity === "critical",
+    ).length;
 
     let healthScore = (healthyRegions / totalRegions) * 100;
     healthScore -= criticalAlerts * 15; // -15 points per critical alert
@@ -658,18 +793,19 @@ export class InfrastructureMonitoringService {
 }
 
 // Export singleton instance optimized for Brazilian healthcare
-export const brazilianInfrastructureMonitoring = InfrastructureMonitoringService.getInstance({
-  refreshInterval: 30_000, // 30 seconds for healthcare systems
-  alertThresholds: {
-    emergencyResponseTime: 100, // Critical for Brazilian emergency care
-    patientLookupTime: 200,     // Fast patient access
-    appointmentBookingTime: 500, // Reasonable booking time
-    aiChatResponseTime: 1500,   // AI response under 1.5s
-    errorRate: 0.5,             // Low error tolerance for healthcare
-    cpuUsage: 75,              // Conservative CPU threshold
-    memoryUsage: 80,           // Conservative memory threshold  
-    diskUsage: 85              // Conservative disk threshold
-  }
-});
+export const brazilianInfrastructureMonitoring =
+  InfrastructureMonitoringService.getInstance({
+    refreshInterval: 30_000, // 30 seconds for healthcare systems
+    alertThresholds: {
+      emergencyResponseTime: 100, // Critical for Brazilian emergency care
+      patientLookupTime: 200, // Fast patient access
+      appointmentBookingTime: 500, // Reasonable booking time
+      aiChatResponseTime: 1500, // AI response under 1.5s
+      errorRate: 0.5, // Low error tolerance for healthcare
+      cpuUsage: 75, // Conservative CPU threshold
+      memoryUsage: 80, // Conservative memory threshold
+      diskUsage: 85, // Conservative disk threshold
+    },
+  });
 
 export { InfrastructureMonitoringService };

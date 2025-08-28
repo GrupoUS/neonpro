@@ -50,148 +50,169 @@ interface UsePatientReturn {
   error: string | null;
   totalCount: number;
   fetchPatients: (filters?: PatientFilters) => Promise<void>;
-  createPatient: (patientData: Omit<Patient, "id" | "created_at" | "updated_at">) => Promise<Patient>;
+  createPatient: (
+    patientData: Omit<Patient, "id" | "created_at" | "updated_at">,
+  ) => Promise<Patient>;
   updatePatient: (id: string, updates: Partial<Patient>) => Promise<Patient>;
   deletePatient: (id: string) => Promise<void>;
   getPatient: (id: string) => Patient | undefined;
 }
 
-export function usePatients(clinicId?: string): UsePatientReturn {  const [patients, setPatients] = useState<Patient[]>([]);
+export function usePatients(clinicId?: string): UsePatientReturn {
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
 
-  const fetchPatients = useCallback(async (filters?: PatientFilters) => {
-    if (!clinicId) {return;}
+  const fetchPatients = useCallback(
+    async (filters?: PatientFilters) => {
+      if (!clinicId) {
+        return;
+      }
 
-    try {
-      setIsLoading(true);
-      setError(null);
+      try {
+        setIsLoading(true);
+        setError(null);
 
-      // TODO: Implement actual API call to fetch patients
-      // const response = await api.patients.list({
-      //   clinic_id: clinicId,
-      //   ...filters,
-      // });
+        // TODO: Implement actual API call to fetch patients
+        // const response = await api.patients.list({
+        //   clinic_id: clinicId,
+        //   ...filters,
+        // });
 
-      // Mock implementation for now
-      const mockPatients: Patient[] = [
-        {
-          id: "patient-1",
-          clinic_id: clinicId,
-          first_name: "Maria",
-          last_name: "Silva",
-          email: "maria.silva@email.com",
-          phone: "+55 (11) 99999-1111",
-          date_of_birth: "1985-03-15",
-          cpf: "123.456.789-01",
-          gender: "female",
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          last_visit: "2024-08-15",
-        },
-        {
-          id: "patient-2",
-          clinic_id: clinicId,
-          first_name: "João",
-          last_name: "Santos",          email: "joao.santos@email.com",
-          phone: "+55 (11) 99999-2222",
-          date_of_birth: "1978-07-22",
-          cpf: "987.654.321-01",
-          gender: "male",
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          last_visit: "2024-08-10",
-        },
-      ];
+        // Mock implementation for now
+        const mockPatients: Patient[] = [
+          {
+            id: "patient-1",
+            clinic_id: clinicId,
+            first_name: "Maria",
+            last_name: "Silva",
+            email: "maria.silva@email.com",
+            phone: "+55 (11) 99999-1111",
+            date_of_birth: "1985-03-15",
+            cpf: "123.456.789-01",
+            gender: "female",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            last_visit: "2024-08-15",
+          },
+          {
+            id: "patient-2",
+            clinic_id: clinicId,
+            first_name: "João",
+            last_name: "Santos",
+            email: "joao.santos@email.com",
+            phone: "+55 (11) 99999-2222",
+            date_of_birth: "1978-07-22",
+            cpf: "987.654.321-01",
+            gender: "male",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            last_visit: "2024-08-10",
+          },
+        ];
 
-      // Apply filters to mock data
-      let filteredPatients = mockPatients;
-      
-      if (filters?.searchTerm) {
-        const searchLower = filters.searchTerm.toLowerCase();
-        filteredPatients = filteredPatients.filter(
-          (patient) =>
-            patient.first_name.toLowerCase().includes(searchLower) ||
-            patient.last_name.toLowerCase().includes(searchLower) ||
-            patient.email?.toLowerCase().includes(searchLower) ||
-            patient.phone?.includes(searchLower)
+        // Apply filters to mock data
+        let filteredPatients = mockPatients;
+
+        if (filters?.searchTerm) {
+          const searchLower = filters.searchTerm.toLowerCase();
+          filteredPatients = filteredPatients.filter(
+            (patient) =>
+              patient.first_name.toLowerCase().includes(searchLower) ||
+              patient.last_name.toLowerCase().includes(searchLower) ||
+              patient.email?.toLowerCase().includes(searchLower) ||
+              patient.phone?.includes(searchLower),
+          );
+        }
+
+        setPatients(filteredPatients);
+        setTotalCount(filteredPatients.length);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch patients",
         );
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [clinicId],
+  );
 
-      setPatients(filteredPatients);
-      setTotalCount(filteredPatients.length);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch patients");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [clinicId]);
+  const createPatient = useCallback(
+    async (
+      patientData: Omit<Patient, "id" | "created_at" | "updated_at">,
+    ): Promise<Patient> => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-  const createPatient = useCallback(async (
-    patientData: Omit<Patient, "id" | "created_at" | "updated_at">
-  ): Promise<Patient> => {
-    try {
-      setIsLoading(true);
-      setError(null);
+        // TODO: Implement actual API call to create patient
+        // const response = await api.patients.create(patientData);
 
-      // TODO: Implement actual API call to create patient
-      // const response = await api.patients.create(patientData);
+        // Mock implementation
+        const newPatient: Patient = {
+          ...patientData,
+          id: `patient-${Date.now()}`,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
 
-      // Mock implementation
-      const newPatient: Patient = {
-        ...patientData,
-        id: `patient-${Date.now()}`,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
+        setPatients((prev) => [newPatient, ...prev]);
+        setTotalCount((prev) => prev + 1);
 
-      setPatients((prev) => [newPatient, ...prev]);
-      setTotalCount((prev) => prev + 1);
-
-      return newPatient;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to create patient";
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const updatePatient = useCallback(async (
-    id: string,
-    updates: Partial<Patient>
-  ): Promise<Patient> => {    try {
-      setIsLoading(true);
-      setError(null);
-
-      // TODO: Implement actual API call to update patient
-      // const response = await api.patients.update(id, updates);
-
-      // Mock implementation
-      setPatients((prev) =>
-        prev.map((patient) =>
-          patient.id === id
-            ? { ...patient, ...updates, updated_at: new Date().toISOString() }
-            : patient
-        )
-      );
-
-      const updatedPatient = patients.find((p) => p.id === id);
-      if (!updatedPatient) {
-        throw new Error("Patient not found");
+        return newPatient;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to create patient";
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [],
+  );
 
-      return { ...updatedPatient, ...updates, updated_at: new Date().toISOString() };
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to update patient";
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [patients]);
+  const updatePatient = useCallback(
+    async (id: string, updates: Partial<Patient>): Promise<Patient> => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // TODO: Implement actual API call to update patient
+        // const response = await api.patients.update(id, updates);
+
+        // Mock implementation
+        setPatients((prev) =>
+          prev.map((patient) =>
+            patient.id === id
+              ? { ...patient, ...updates, updated_at: new Date().toISOString() }
+              : patient,
+          ),
+        );
+
+        const updatedPatient = patients.find((p) => p.id === id);
+        if (!updatedPatient) {
+          throw new Error("Patient not found");
+        }
+
+        return {
+          ...updatedPatient,
+          ...updates,
+          updated_at: new Date().toISOString(),
+        };
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to update patient";
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [patients],
+  );
 
   const deletePatient = useCallback(async (id: string): Promise<void> => {
     try {
@@ -205,7 +226,8 @@ export function usePatients(clinicId?: string): UsePatientReturn {  const [patie
       setPatients((prev) => prev.filter((patient) => patient.id !== id));
       setTotalCount((prev) => prev - 1);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to delete patient";
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to delete patient";
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -217,7 +239,7 @@ export function usePatients(clinicId?: string): UsePatientReturn {  const [patie
     (id: string): Patient | undefined => {
       return patients.find((patient) => patient.id === id);
     },
-    [patients]
+    [patients],
   );
 
   // Load patients on mount if clinicId is provided

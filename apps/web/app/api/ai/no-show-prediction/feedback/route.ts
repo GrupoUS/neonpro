@@ -89,10 +89,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate prediction accuracy for model training
-    const wasCorrect = (feedback.actualOutcome === "no_show"
-      && existingPrediction.no_show_probability > 0.5)
-      || (feedback.actualOutcome === "attended"
-        && existingPrediction.no_show_probability <= 0.5);
+    const wasCorrect =
+      (feedback.actualOutcome === "no_show" &&
+        existingPrediction.no_show_probability > 0.5) ||
+      (feedback.actualOutcome === "attended" &&
+        existingPrediction.no_show_probability <= 0.5);
 
     // Log prediction feedback for model improvement
     await supabase.from("no_show_prediction_logs").insert({

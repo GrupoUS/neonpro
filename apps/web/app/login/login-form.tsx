@@ -2,7 +2,13 @@
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Icons } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -120,7 +126,11 @@ export function LoginForm() {
                 type="button"
                 variant="ghost"
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
                 <span className="sr-only">
                   {showPassword ? "Hide password" : "Show password"}
                 </span>
@@ -133,16 +143,14 @@ export function LoginForm() {
             disabled={loading || isSubmitting || !email || !password}
             type="submit"
           >
-            {isSubmitting || loading
-              ? (
-                <>
-                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                  Entrando na plataforma...
-                </>
-              )
-              : (
-                "Acessar Sistema"
-              )}
+            {isSubmitting || loading ? (
+              <>
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                Entrando na plataforma...
+              </>
+            ) : (
+              "Acessar Sistema"
+            )}
           </Button>
         </form>
         <div className="relative">
@@ -163,9 +171,11 @@ export function LoginForm() {
           type="button"
           variant="outline"
         >
-          {loading
-            ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            : <Icons.google className="mr-2 h-4 w-4" />}
+          {loading ? (
+            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Icons.google className="mr-2 h-4 w-4" />
+          )}
           Continuar com Google
         </Button>
 

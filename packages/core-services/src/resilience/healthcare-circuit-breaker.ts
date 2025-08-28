@@ -4,9 +4,9 @@
  */
 
 export enum CircuitBreakerState {
-  CLOSED = 'CLOSED',
-  OPEN = 'OPEN',
-  HALF_OPEN = 'HALF_OPEN'
+  CLOSED = "CLOSED",
+  OPEN = "OPEN",
+  HALF_OPEN = "HALF_OPEN",
 }
 
 export interface CircuitBreakerConfig {
@@ -35,7 +35,7 @@ export interface CircuitBreakerMetrics {
 export class CircuitBreakerOpenError extends Error {
   constructor(serviceName: string) {
     super(`Circuit breaker is OPEN for service: ${serviceName}`);
-    this.name = 'CircuitBreakerOpenError';
+    this.name = "CircuitBreakerOpenError";
   }
 }
 
@@ -45,7 +45,7 @@ export class HealthcareCircuitBreaker {
   private lastFailureTime: Date | null = null;
   private halfOpenCalls: number = 0;
   private metrics: CircuitBreakerMetrics;
-  
+
   constructor(private config: CircuitBreakerConfig) {
     this.metrics = {
       totalCalls: 0,
@@ -54,9 +54,9 @@ export class HealthcareCircuitBreaker {
       timeouts: 0,
       lastFailureTime: null,
       lastSuccessTime: null,
-      stateChanges: []
+      stateChanges: [],
     };
-  }  /**
+  } /**
    * Execute an operation with circuit breaker protection
    */
   async call<T>(operation: () => Promise<T>): Promise<T> {
@@ -78,11 +78,8 @@ export class HealthcareCircuitBreaker {
     }
 
     try {
-      const result = await Promise.race([
-        operation(),
-        this.timeoutPromise()
-      ]);
-      
+      const result = await Promise.race([operation(), this.timeoutPromise()]);
+
       this.onSuccess();
       return result;
     } catch (error) {
@@ -98,21 +95,23 @@ export class HealthcareCircuitBreaker {
     return new Promise((_, reject) => {
       setTimeout(() => {
         this.metrics.timeouts++;
-        reject(new Error(`Operation timeout after ${this.config.timeoutDuration}ms`));
+        reject(
+          new Error(`Operation timeout after ${this.config.timeoutDuration}ms`),
+        );
       }, this.config.timeoutDuration);
     });
-  }  /**
+  } /**
    * Handle successful operation
    */
   private onSuccess(): void {
     this.metrics.successCalls++;
     this.metrics.lastSuccessTime = new Date();
-    
+
     if (this.state === CircuitBreakerState.HALF_OPEN) {
       // Successful call in half-open state - reset to closed
       this.transitionToClosed();
     }
-    
+
     // Reset failure count on success
     this.failureCount = 0;
     this.lastFailureTime = null;
@@ -127,14 +126,14 @@ export class HealthcareCircuitBreaker {
     this.failureCount++;
     this.lastFailureTime = new Date();
     this.metrics.lastFailureTime = this.lastFailureTime;
-    
+
     if (this.state === CircuitBreakerState.HALF_OPEN) {
       // Failure in half-open state - immediately go back to open
-      this.transitionToOpen('Failure during half-open state');
+      this.transitionToOpen("Failure during half-open state");
     } else if (this.failureCount >= this.config.failureThreshold) {
       this.transitionToOpen(`Failure threshold reached: ${this.failureCount}`);
     }
-    
+
     // Special handling for healthcare-critical services
     if (this.config.healthcareCritical) {
       this.triggerHealthcareCriticalAlert(error);
@@ -145,19 +144,23 @@ export class HealthcareCircuitBreaker {
    * Check if circuit breaker should attempt to reset from OPEN to HALF_OPEN
    */
   private shouldAttemptReset(): boolean {
-    if (!this.lastFailureTime) {return false;}
-    
+    if (!this.lastFailureTime) {
+      return false;
+    }
+
     const timeSinceLastFailure = Date.now() - this.lastFailureTime.getTime();
     return timeSinceLastFailure >= this.config.timeoutDuration;
-  }  /**
+  } /**
    * Transition to CLOSED state
    */
   private transitionToClosed(): void {
     const previousState = this.state;
     this.state = CircuitBreakerState.CLOSED;
-    this.recordStateChange(previousState, this.state, 'Service recovered');
-    
-    console.log(`[Circuit Breaker] ${this.config.serviceName}: CLOSED - Service recovered`);
+    this.recordStateChange(previousState, this.state, "Service recovered");
+
+    console.log(
+      `[Circuit Breaker] ${this.config.serviceName}: CLOSED - Service recovered`,
+    );
   }
 
   /**
@@ -168,8 +171,10 @@ export class HealthcareCircuitBreaker {
     this.state = CircuitBreakerState.OPEN;
     this.halfOpenCalls = 0;
     this.recordStateChange(previousState, this.state, reason);
-    
-    console.error(`[Circuit Breaker] ${this.config.serviceName}: OPEN - ${reason}`);
+
+    console.error(
+      `[Circuit Breaker] ${this.config.serviceName}: OPEN - ${reason}`,
+    );
   }
 
   /**
@@ -179,38 +184,47 @@ export class HealthcareCircuitBreaker {
     const previousState = this.state;
     this.state = CircuitBreakerState.HALF_OPEN;
     this.halfOpenCalls = 0;
-    this.recordStateChange(previousState, this.state, 'Attempting recovery');
-    
-    console.log(`[Circuit Breaker] ${this.config.serviceName}: HALF_OPEN - Attempting recovery`);
+    this.recordStateChange(previousState, this.state, "Attempting recovery");
+
+    console.log(
+      `[Circuit Breaker] ${this.config.serviceName}: HALF_OPEN - Attempting recovery`,
+    );
   }
 
   /**
    * Record state change for metrics
    */
-  private recordStateChange(from: CircuitBreakerState, to: CircuitBreakerState, reason: string): void {
+  private recordStateChange(
+    from: CircuitBreakerState,
+    to: CircuitBreakerState,
+    reason: string,
+  ): void {
     this.metrics.stateChanges.push({
       from,
       to,
       timestamp: new Date(),
-      reason
+      reason,
     });
-    
+
     // Keep only last 50 state changes to prevent memory bloat
     if (this.metrics.stateChanges.length > 50) {
       this.metrics.stateChanges = this.metrics.stateChanges.slice(-50);
     }
-  }  /**
+  } /**
    * Trigger alert for healthcare-critical service failures
    */
   private triggerHealthcareCriticalAlert(error: unknown): void {
     // TODO: Implement actual alerting system integration
-    console.error(`[HEALTHCARE CRITICAL ALERT] Service ${this.config.serviceName} failure:`, {
-      error: error instanceof Error ? error.message : String(error),
-      failureCount: this.failureCount,
-      state: this.state,
-      timestamp: new Date(),
-      serviceName: this.config.serviceName
-    });
+    console.error(
+      `[HEALTHCARE CRITICAL ALERT] Service ${this.config.serviceName} failure:`,
+      {
+        error: error instanceof Error ? error.message : String(error),
+        failureCount: this.failureCount,
+        state: this.state,
+        timestamp: new Date(),
+        serviceName: this.config.serviceName,
+      },
+    );
   }
 
   /**
@@ -238,11 +252,15 @@ export class HealthcareCircuitBreaker {
    * Get health status of the circuit breaker
    */
   get isHealthy(): boolean {
-    if (this.state === CircuitBreakerState.OPEN) {return false;}
-    
+    if (this.state === CircuitBreakerState.OPEN) {
+      return false;
+    }
+
     const totalCalls = this.metrics.totalCalls;
-    if (totalCalls === 0) {return true;}
-    
+    if (totalCalls === 0) {
+      return true;
+    }
+
     const successRate = this.metrics.successCalls / totalCalls;
     return successRate >= 0.8; // 80% success rate threshold
   }
@@ -255,7 +273,9 @@ export class HealthcareCircuitBreaker {
     this.failureCount = 0;
     this.lastFailureTime = null;
     this.halfOpenCalls = 0;
-    
-    console.log(`[Circuit Breaker] ${this.config.serviceName}: RESET - Manually reset to CLOSED state`);
+
+    console.log(
+      `[Circuit Breaker] ${this.config.serviceName}: RESET - Manually reset to CLOSED state`,
+    );
   }
 }

@@ -16,7 +16,7 @@ export interface TimeSlot {
 export interface UseAvailabilityManagerOptions {
   professionalId?: string;
   serviceId?: string;
-  dateRange?: { start: Date; end: Date; };
+  dateRange?: { start: Date; end: Date };
 }
 
 export interface UseAvailabilityManagerReturn {
@@ -58,7 +58,8 @@ export function useAvailabilityManager(
 
       setSlots(mockSlots);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to refresh slots";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to refresh slots";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -73,7 +74,8 @@ export function useAvailabilityManager(
         setSlots((prev) => [...prev, newSlot]);
         return newId;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Failed to create slot";
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to create slot";
         setError(errorMessage);
         return;
       }
@@ -84,10 +86,15 @@ export function useAvailabilityManager(
   const updateSlot = useCallback(
     async (slotId: string, updates: Partial<TimeSlot>): Promise<boolean> => {
       try {
-        setSlots((prev) => prev.map((slot) => slot.id === slotId ? { ...slot, ...updates } : slot));
+        setSlots((prev) =>
+          prev.map((slot) =>
+            slot.id === slotId ? { ...slot, ...updates } : slot,
+          ),
+        );
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Failed to update slot";
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to update slot";
         setError(errorMessage);
         return false;
       }
@@ -100,7 +107,8 @@ export function useAvailabilityManager(
       setSlots((prev) => prev.filter((slot) => slot.id !== slotId));
       return true;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to delete slot";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to delete slot";
       setError(errorMessage);
       return false;
     }
@@ -126,7 +134,8 @@ export function useAvailabilityManager(
         setSlots((prev) => [...prev, ...generatedSlots]);
         return generatedSlots;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Failed to generate slots";
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to generate slots";
         setError(errorMessage);
         return [];
       }

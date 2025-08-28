@@ -105,7 +105,9 @@ async function logRouteAccess(
       "/reports",
     ];
 
-    const isHealthcareRoute = healthcareRoutes.some((route) => pathname.startsWith(route));
+    const isHealthcareRoute = healthcareRoutes.some((route) =>
+      pathname.startsWith(route),
+    );
 
     if (!isHealthcareRoute) {
       return;

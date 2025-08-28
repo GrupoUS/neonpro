@@ -40,7 +40,9 @@ export function MetricWidget({
     <div className={`rounded-lg border-l-4 p-4 ${colorClasses[color]}`}>
       <div className="mb-2 flex items-center justify-between">
         <h3 className="font-medium">{title}</h3>
-        {value.trend && <span className="text-lg">{trendIcon[value.trend]}</span>}
+        {value.trend && (
+          <span className="text-lg">{trendIcon[value.trend]}</span>
+        )}
       </div>
 
       <div className="mb-2">

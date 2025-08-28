@@ -220,7 +220,8 @@ export class RootDirectoryCleanup {
       }
 
       // Calculate summary metrics
-      result.summary.spaceSavedMB = Math.round((result.sizeCleaned / (1024 * 1024)) * 100) / 100;
+      result.summary.spaceSavedMB =
+        Math.round((result.sizeCleaned / (1024 * 1024)) * 100) / 100;
       result.summary.cleanupScore = this.calculateCleanupScore(result);
 
       // Generate cleanup report
@@ -330,8 +331,8 @@ export class RootDirectoryCleanup {
     }
 
     if (
-      this.config.preserveDocumentation
-      && this.isDocumentationFile(filename)
+      this.config.preserveDocumentation &&
+      this.isDocumentationFile(filename)
     ) {
       return true;
     }
@@ -370,9 +371,9 @@ export class RootDirectoryCleanup {
     ];
 
     return (
-      configNames.some((name) => filename.startsWith(name))
-      || (configExtensions.includes(extname(filename))
-        && filename.includes("config"))
+      configNames.some((name) => filename.startsWith(name)) ||
+      (configExtensions.includes(extname(filename)) &&
+        filename.includes("config"))
     );
   }
 
@@ -387,8 +388,8 @@ export class RootDirectoryCleanup {
     ];
 
     return (
-      docExtensions.includes(extname(filename))
-      || docPatterns.some((pattern) => pattern.test(filename))
+      docExtensions.includes(extname(filename)) ||
+      docPatterns.some((pattern) => pattern.test(filename))
     );
   }
 
@@ -404,8 +405,8 @@ export class RootDirectoryCleanup {
     ];
 
     return (
-      reportPatterns.some((pattern) => pattern.test(filename))
-      && extname(filename) === ".md"
+      reportPatterns.some((pattern) => pattern.test(filename)) &&
+      extname(filename) === ".md"
     );
   }
 
@@ -420,8 +421,8 @@ export class RootDirectoryCleanup {
 
       for (const file of files) {
         if (
-          (await this.shouldRemoveFile(file))
-          && !this.shouldPreserveFile(file)
+          (await this.shouldRemoveFile(file)) &&
+          !this.shouldPreserveFile(file)
         ) {
           filesToBackup.push(file);
         }
@@ -446,7 +447,8 @@ export class RootDirectoryCleanup {
     let score = 0;
 
     // Files cleaned ratio (40% weight)
-    const cleanRatio = summary.temporaryFilesRemoved / summary.totalFilesAnalyzed;
+    const cleanRatio =
+      summary.temporaryFilesRemoved / summary.totalFilesAnalyzed;
     score += cleanRatio * 40;
 
     // Space saved factor (30% weight)
@@ -454,7 +456,8 @@ export class RootDirectoryCleanup {
     score += spaceFactor * 30;
 
     // Important files preserved (20% weight)
-    const preserveRatio = summary.configFilesPreserved / this.importantFiles.length;
+    const preserveRatio =
+      summary.configFilesPreserved / this.importantFiles.length;
     score += preserveRatio * 20;
 
     // Error-free execution (10% weight)
@@ -534,8 +537,8 @@ export class RootDirectoryCleanup {
 
       for (const file of files) {
         if (
-          (await this.shouldRemoveFile(file))
-          && !this.shouldPreserveFile(file)
+          (await this.shouldRemoveFile(file)) &&
+          !this.shouldPreserveFile(file)
         ) {
           remainingTempFiles.push(file);
         }

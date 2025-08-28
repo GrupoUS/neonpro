@@ -175,8 +175,10 @@ const mockAppointments: EmergencyAppointment[] = [
  * Optimized for high-priority medical scenarios with real-time availability checking.
  */
 export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
-  const [availableDoctors, setAvailableDoctors] = useState<EmergencyDoctor[]>(mockEmergencyDoctors);
-  const [appointments, setAppointments] = useState<EmergencyAppointment[]>(mockAppointments);
+  const [availableDoctors, setAvailableDoctors] =
+    useState<EmergencyDoctor[]>(mockEmergencyDoctors);
+  const [appointments, setAppointments] =
+    useState<EmergencyAppointment[]>(mockAppointments);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>();
 
@@ -194,7 +196,7 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
 
         if (specialty) {
           doctors = doctors.filter((doctor) =>
-            doctor.specialty.toLowerCase().includes(specialty.toLowerCase())
+            doctor.specialty.toLowerCase().includes(specialty.toLowerCase()),
           );
         }
 
@@ -212,9 +214,10 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
         setAvailableDoctors(doctors);
         return doctors;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : "Erro ao carregar médicos disponíveis";
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Erro ao carregar médicos disponíveis";
         setError(errorMessage);
         return [];
       } finally {
@@ -303,16 +306,17 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
             prev.map((doc) =>
               doc.id === request.doctorId
                 ? { ...doc, currentLoad: Math.min(100, doc.currentLoad + 20) }
-                : doc
-            )
+                : doc,
+            ),
           );
         }
 
         return newAppointment;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : "Erro ao agendar consulta de emergência";
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Erro ao agendar consulta de emergência";
         setError(errorMessage);
         throw new Error(errorMessage);
       } finally {
@@ -334,7 +338,8 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
         const appointment = appointments.find((apt) => apt.id === id);
         return appointment || undefined;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erro ao carregar consulta";
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro ao carregar consulta";
         setError(errorMessage);
         return;
       } finally {
@@ -363,12 +368,12 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
           prev.map((apt) =>
             apt.id === id
               ? {
-                ...apt,
-                status: "cancelled" as const,
-                notes: `${apt.notes || ""}\nCancelado: ${reason}`,
-              }
-              : apt
-          )
+                  ...apt,
+                  status: "cancelled" as const,
+                  notes: `${apt.notes || ""}\nCancelado: ${reason}`,
+                }
+              : apt,
+          ),
         );
 
         // Update doctor availability
@@ -380,14 +385,15 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
             prev.map((doc) =>
               doc.id === appointment.doctorId
                 ? { ...doc, currentLoad: Math.max(0, doc.currentLoad - 15) }
-                : doc
-            )
+                : doc,
+            ),
           );
         }
 
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erro ao cancelar consulta";
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro ao cancelar consulta";
         setError(errorMessage);
         return false;
       } finally {
@@ -414,7 +420,9 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
           throw new Error("Consulta não encontrada");
         }
 
-        setAppointments((prev) => prev.map((apt) => (apt.id === id ? { ...apt, status } : apt)));
+        setAppointments((prev) =>
+          prev.map((apt) => (apt.id === id ? { ...apt, status } : apt)),
+        );
 
         // Update doctor load based on status
         if (status === "completed" || status === "cancelled") {
@@ -422,16 +430,17 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
             prev.map((doc) =>
               doc.id === appointment.doctorId
                 ? { ...doc, currentLoad: Math.max(0, doc.currentLoad - 20) }
-                : doc
-            )
+                : doc,
+            ),
           );
         }
 
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : "Erro ao atualizar status da consulta";
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Erro ao atualizar status da consulta";
         setError(errorMessage);
         return false;
       } finally {

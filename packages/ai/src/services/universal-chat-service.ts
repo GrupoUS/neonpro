@@ -1,6 +1,11 @@
 import { EnhancedServiceBase } from "@neonpro/core-services";
 import { createClient } from "@supabase/supabase-js";
-import type { ChatMessage, ChatSession, ComplianceMetrics, HealthcareChatContext } from "../types";
+import type {
+  ChatMessage,
+  ChatSession,
+  ComplianceMetrics,
+  HealthcareChatContext,
+} from "../types";
 
 interface ChatServiceInput {
   message: string;
@@ -497,8 +502,8 @@ export class UniversalChatService extends EnhancedServiceBase {
 
     return escalationKeywords.some(
       (keyword) =>
-        input.message.toLowerCase().includes(keyword)
-        || response.toLowerCase().includes(keyword),
+        input.message.toLowerCase().includes(keyword) ||
+        response.toLowerCase().includes(keyword),
     );
   }
 

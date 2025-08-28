@@ -108,10 +108,8 @@ const healthcareMasks = {
 };
 
 export interface InputProps
-  extends
-    Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
-    VariantProps<typeof inputVariants>
-{
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
+    VariantProps<typeof inputVariants> {
   // Healthcare-specific props
   medicalType?:
     | "cpf"
@@ -261,7 +259,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           return <X className="h-4 w-4 text-destructive drop-shadow-sm" />;
         }
         case "warning": {
-          return <AlertCircle className="h-4 w-4 text-warning drop-shadow-sm" />;
+          return (
+            <AlertCircle className="h-4 w-4 text-warning drop-shadow-sm" />
+          );
         }
         default: {
           return;
@@ -278,7 +278,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
 
         <input
-          aria-describedby={validationMessage ? `${props.id}-validation` : undefined}
+          aria-describedby={
+            validationMessage ? `${props.id}-validation` : undefined
+          }
           aria-invalid={finalValidation === "invalid"}
           className={cn(
             inputVariants({
@@ -313,7 +315,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               onClick={() => setShowPassword(!showPassword)}
               type="button"
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           )}
 

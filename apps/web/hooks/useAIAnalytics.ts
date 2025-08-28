@@ -93,11 +93,12 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
           session_id: metadata.sessionId,
           action_type: actionType,
           query_count: actionType === "query_submitted" ? 1 : 0,
-          success_rate: metadata.success !== undefined
-            ? metadata.success
-              ? 100
-              : 0
-            : undefined,
+          success_rate:
+            metadata.success !== undefined
+              ? metadata.success
+                ? 100
+                : 0
+              : undefined,
           response_time_ms: metadata.responseTime,
           accuracy_score: metadata.predictionAccuracy,
           user_satisfaction: metadata.userSatisfaction,
@@ -118,8 +119,8 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
         // Flush if needed
         const timeSinceLastFlush = Date.now() - lastFlushTime.current;
         if (
-          analyticsBuffer.current.length >= batchSize
-          || timeSinceLastFlush > flushInterval
+          analyticsBuffer.current.length >= batchSize ||
+          timeSinceLastFlush > flushInterval
         ) {
           await flushAnalyticsBuffer();
         }
@@ -161,7 +162,9 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
         successCount: 0,
       };
 
-      setCurrentSessions((prev) => new Map(prev).set(sessionId, sessionContext));
+      setCurrentSessions((prev) =>
+        new Map(prev).set(sessionId, sessionContext),
+      );
 
       // Record session start
       recordAIUsage(featureType, "feature_opened", { sessionId });
@@ -233,9 +236,10 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
       }
 
       const sessionDuration = Date.now() - session.startTime;
-      const successRate = session.queryCount > 0
-        ? (session.successCount / session.queryCount) * 100
-        : 0;
+      const successRate =
+        session.queryCount > 0
+          ? (session.successCount / session.queryCount) * 100
+          : 0;
 
       // Record session completion
       await recordAIUsage(session.featureType, "session_completed", {
@@ -316,15 +320,17 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
         );
 
         const successfulQueries = recentAnalytics.filter(
-          (a) => a.action_type === "query_submitted" && (a.success_rate || 0) > 0,
+          (a) =>
+            a.action_type === "query_submitted" && (a.success_rate || 0) > 0,
         );
         const totalQueries = recentAnalytics.filter(
           (a) => a.action_type === "query_submitted",
         );
 
-        const avgSuccessRate = totalQueries.length > 0
-          ? (successfulQueries.length / totalQueries.length) * 100
-          : 0;
+        const avgSuccessRate =
+          totalQueries.length > 0
+            ? (successfulQueries.length / totalQueries.length) * 100
+            : 0;
 
         // Calculate total ROI
         const totalROI = recentAnalytics.reduce((sum, a) => {
@@ -348,22 +354,25 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
             (a) => (a.success_rate || 0) > 0,
           );
 
-          const avgQueries = featureSessions.size > 0
-            ? featureQueries.length / featureSessions.size
-            : 0;
+          const avgQueries =
+            featureSessions.size > 0
+              ? featureQueries.length / featureSessions.size
+              : 0;
 
-          const featureSuccessRate = featureQueries.length > 0
-            ? (featureSuccesses.length / featureQueries.length) * 100
-            : 0;
+          const featureSuccessRate =
+            featureQueries.length > 0
+              ? (featureSuccesses.length / featureQueries.length) * 100
+              : 0;
 
           const userSatisfactions = featureAnalytics
             .map((a) => a.user_satisfaction)
             .filter((s): s is number => s !== null && s !== undefined);
 
-          const avgSatisfaction = userSatisfactions.length > 0
-            ? userSatisfactions.reduce((sum, s) => sum + s, 0)
-              / userSatisfactions.length
-            : 0;
+          const avgSatisfaction =
+            userSatisfactions.length > 0
+              ? userSatisfactions.reduce((sum, s) => sum + s, 0) /
+                userSatisfactions.length
+              : 0;
 
           // Calculate clinic breakdown (would need clinic data in analytics)
           const clinicBreakdown: {

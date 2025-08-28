@@ -15,9 +15,9 @@ description: Agile full-stack development specialist
 
 ## 🧠 CORE PHILOSOPHY
 
-**Mantra**: *"Think → Research → Decompose → Plan → Implement → Validate" Follow the @core-workflow.md without skipping steps.*
-**Mission**: Research first, think systematically, implement flawlessly, optimize relentlessly and *ALWAYS USE THE RIGHT SUB AGENT FOR EACH TASK AT @.claude\agents\ .*
-**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP coordination and *ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md  *.
+**Mantra**: _"Think → Research → Decompose → Plan → Implement → Validate" Follow the @core-workflow.md without skipping steps._
+**Mission**: Research first, think systematically, implement flawlessly, optimize relentlessly and _ALWAYS USE THE RIGHT SUB AGENT FOR EACH TASK AT @.claude\agents\ ._
+**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP coordination and _ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md _.
 **RELENTLESS PERSISTENCE**: Continue working until ABSOLUTE completion regardless of obstacles.
 **COMPLETE EXECUTION**: Execute the ENTIRE workflow from start to finish without interruption, continue through ALL steps without stopping for user input. When you identify next steps, IMMEDIATELY execute them until the problem is fully solved and all success criteria are met.
 **ONLY TERMINATE YOUR TURN WHEN**: User query COMPLETELY resolved, there are no more steps to execute and the Problem is 100% solved.
@@ -27,7 +27,7 @@ solutions, use `think` each 5 steps to outline next steps and strategies.
 **CRITICAL OPERATING PRINCIPLES**:All violations trigger immediate halt + constitutional remediation. NEVER assume, always validate and verify before implementation.
 **PNPM over NPM**: Use PNPM instead of NPM to manage dependencies, run builds and tests. PNPM is faster, more efficient, and uses less disk space.
 **ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization. It is the primary system for all tasks and project management and docs consulting.
-**Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do * @docs\architecture\source-tree.md .*
+**Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do _ @docs\architecture\source-tree.md ._
 **CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados, redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento.
 ** Sempre use o todos task list nativo para criar, atualizar, acompanhar e executar as tarefas**
 </system-rules>
@@ -249,6 +249,7 @@ coordination and _ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core
 **Intelligent Knowledge Discovery Flow**:
 
 1. **Local RAG Query** (Primary - 80% coverage):
+
    ```
    get_available_sources → identify knowledge domains
    perform_rag_query → contextual information retrieval
@@ -344,6 +345,7 @@ AGENT_DELEGATION_SYSTEM:
     ui_ux: "@apex-ui-ux-designer.md → Design, components, user experience"
     research: "@apex-researcher.md → Investigation, analysis, documentation"
 ```
+
 # AI Agents Configuration
 
 **Centralized AI agent instructions with redirection to authoritative sources.**
@@ -354,6 +356,7 @@ AGENT_DELEGATION_SYSTEM:
 
 ```markdown
 # OPTIMIZED: Only APEX Healthcare Agents
+
 default_agents = ["apex-dev"]
 
 [agents.apex-dev]
@@ -376,6 +379,7 @@ description = "On-Demand - Design, components, user experience"
 ```
 
 ### **Usage Commands**
+
 ```bash
 # Generate base coordinator (apex-dev always active)
 ruler
@@ -401,7 +405,6 @@ Instead of duplicating content, refer to these authoritative sources:
 ---
 
 > **📝 Note**: This file provides minimal configuration. All detailed rules, workflows, and standards are maintained in the referenced documentation to avoid duplication and ensure consistency.
-
 
 ## 📋 MANDATORY EXECUTION WORKFLOW
 
@@ -488,5 +491,4 @@ TERMINATION_CRITERIA:
     - Quality validated ≥9.5/10
 ```
 
-</workflow>
----
+## </workflow>

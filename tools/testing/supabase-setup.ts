@@ -94,7 +94,8 @@ export const mockSupabaseClient = {
           "medical_record_number",
         );
         const hasClinicId = mockContext.queryConditions.has("clinic_id");
-        const isDuplicateCheck = table === "patients" && hasMedicalRecord && hasClinicId;
+        const isDuplicateCheck =
+          table === "patients" && hasMedicalRecord && hasClinicId;
 
         if (isDuplicateCheck) {
           // For createPatient duplicate checks, return null (no duplicate found)
@@ -111,9 +112,9 @@ export const mockSupabaseClient = {
       maybeSingle: vi.fn(async () => {
         // Same logic as single for maybeSingle
         if (
-          table === "patients"
-          && mockContext.queryConditions.has("medical_record_number")
-          && !mockContext.shouldReturnExistingPatient
+          table === "patients" &&
+          mockContext.queryConditions.has("medical_record_number") &&
+          !mockContext.shouldReturnExistingPatient
         ) {
           return { data: undefined, error: undefined };
         }
@@ -221,8 +222,9 @@ export const mockSupabaseClient = {
     };
 
     return {
-      data: mockRpcResults[functionName as keyof typeof mockRpcResults]
-        || undefined,
+      data:
+        mockRpcResults[functionName as keyof typeof mockRpcResults] ||
+        undefined,
       error: undefined,
     };
   }),
@@ -418,9 +420,9 @@ export const testDatabaseUtils = {
   simulateRLS: {
     patientCanOnlyAccessOwnData: vi.fn((userId: string, patientId: string) => {
       return (
-        userId === `patient-${patientId}`
-        || userId.includes("doctor")
-        || userId.includes("admin")
+        userId === `patient-${patientId}` ||
+        userId.includes("doctor") ||
+        userId.includes("admin")
       );
     }),
 

@@ -14,16 +14,23 @@ import type {
   PatientSearch,
   UpdatePatient,
 } from "@neonpro/shared/types";
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 // Query keys for patients
 export const PATIENT_QUERY_KEYS = {
   all: ["patients"] as const,
   lists: () => [...PATIENT_QUERY_KEYS.all, "list"] as const,
-  list: (filters: PatientSearch) => [...PATIENT_QUERY_KEYS.lists(), filters] as const,
+  list: (filters: PatientSearch) =>
+    [...PATIENT_QUERY_KEYS.lists(), filters] as const,
   details: () => [...PATIENT_QUERY_KEYS.all, "detail"] as const,
   detail: (id: string) => [...PATIENT_QUERY_KEYS.details(), id] as const,
-  search: (query: PatientSearch) => [...PATIENT_QUERY_KEYS.all, "search", query] as const,
+  search: (query: PatientSearch) =>
+    [...PATIENT_QUERY_KEYS.all, "search", query] as const,
   stats: () => [...PATIENT_QUERY_KEYS.all, "stats"] as const,
 } as const;
 
@@ -198,7 +205,7 @@ export function useUpdatePatient() {
           return {
             ...old,
             data: old.data.map((patient) =>
-              patient.id === updatedPatient.id ? updatedPatient : patient
+              patient.id === updatedPatient.id ? updatedPatient : patient,
             ),
           };
         },
@@ -217,7 +224,7 @@ export function useUpdatePatient() {
             pages: old.pages.map((page: PaginatedResponse<Patient>) => ({
               ...page,
               data: page.data?.map((patient) =>
-                patient.id === updatedPatient.id ? updatedPatient : patient
+                patient.id === updatedPatient.id ? updatedPatient : patient,
               ),
             })),
           };
@@ -281,9 +288,10 @@ export function useDeletePatient() {
             ...old,
             pages: old.pages.map((page: PaginatedResponse<Patient>) => ({
               ...page,
-              data: page.data?.filter(
-                (patient) => patient.id !== deletedPatientId,
-              ) ?? [],
+              data:
+                page.data?.filter(
+                  (patient) => patient.id !== deletedPatientId,
+                ) ?? [],
               meta: {
                 ...page.meta,
                 total: (page.meta?.total ?? 0) - 1,

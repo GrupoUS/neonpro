@@ -3,7 +3,10 @@
  * Adaptive loading based on Brazilian internet infrastructure tiers
  */
 
-export type ConnectivityTier = "tier1_premium" | "tier2_standard" | "tier3_limited";
+export type ConnectivityTier =
+  | "tier1_premium"
+  | "tier2_standard"
+  | "tier3_limited";
 
 export interface BrazilianRegion {
   id: string;
@@ -43,9 +46,9 @@ export interface BrazilianCDNConfig {
   };
   healthcareWorkflows: {
     emergencyAccess: number; // < 100ms target
-    patientLookup: number;   // < 200ms target  
+    patientLookup: number; // < 200ms target
     appointmentBooking: number; // < 500ms target
-    aiChatResponse: number;  // < 1.5s target
+    aiChatResponse: number; // < 1.5s target
   };
 }
 
@@ -60,36 +63,41 @@ export class BrazilianConnectivityOptimizer {
       name: "São Paulo",
       cdnNodes: ["sao-paulo-1", "sao-paulo-2"],
       tier: "tier1_premium",
-      expectedLatency: 20
+      expectedLatency: 20,
     },
     {
-      id: "rio-janeiro", 
+      id: "rio-janeiro",
       name: "Rio de Janeiro",
       cdnNodes: ["rio-janeiro-1"],
       tier: "tier1_premium",
-      expectedLatency: 25
+      expectedLatency: 25,
     },
     {
       id: "brasilia",
       name: "Brasília",
       cdnNodes: ["brasilia-1"],
-      tier: "tier1_premium", 
-      expectedLatency: 30
+      tier: "tier1_premium",
+      expectedLatency: 30,
     },
     {
       id: "regional-capitals",
       name: "Regional Capitals",
-      cdnNodes: ["belo-horizonte-1", "porto-alegre-1", "recife-1", "salvador-1"],
+      cdnNodes: [
+        "belo-horizonte-1",
+        "porto-alegre-1",
+        "recife-1",
+        "salvador-1",
+      ],
       tier: "tier2_standard",
-      expectedLatency: 50
+      expectedLatency: 50,
     },
     {
       id: "interior-cities",
       name: "Interior Cities",
       cdnNodes: ["interior-central-1"],
       tier: "tier3_limited",
-      expectedLatency: 100
-    }
+      expectedLatency: 100,
+    },
   ];
 
   private readonly cdnConfig: BrazilianCDNConfig = {
@@ -100,28 +108,28 @@ export class BrazilianConnectivityOptimizer {
         quality: {
           tier1_premium: 85,
           tier2_standard: 75,
-          tier3_limited: 60
+          tier3_limited: 60,
         },
         lazy: true,
-        placeholder: "blur"
+        placeholder: "blur",
       },
       scripts: {
         compression: "brotli",
         minification: "esbuild",
-        splitting: true
+        splitting: true,
       },
       styles: {
         critical: true,
         defer: true,
-        inline: true
-      }
+        inline: true,
+      },
     },
     healthcareWorkflows: {
       emergencyAccess: 100,
       patientLookup: 200,
       appointmentBooking: 500,
-      aiChatResponse: 1500
-    }
+      aiChatResponse: 1500,
+    },
   };
 
   private constructor() {
@@ -130,7 +138,8 @@ export class BrazilianConnectivityOptimizer {
 
   static getInstance(): BrazilianConnectivityOptimizer {
     if (!BrazilianConnectivityOptimizer.instance) {
-      BrazilianConnectivityOptimizer.instance = new BrazilianConnectivityOptimizer();
+      BrazilianConnectivityOptimizer.instance =
+        new BrazilianConnectivityOptimizer();
     }
     return BrazilianConnectivityOptimizer.instance;
   }
@@ -144,8 +153,9 @@ export class BrazilianConnectivityOptimizer {
       return "tier2_standard"; // Default for server-side
     }
 
-    const connection = (navigator as any).connection || (navigator as any).mozConnection;
-    
+    const connection =
+      (navigator as any).connection || (navigator as any).mozConnection;
+
     if (connection) {
       const effectiveType = connection.effectiveType;
       const downlink = connection.downlink;
@@ -154,12 +164,15 @@ export class BrazilianConnectivityOptimizer {
       if (effectiveType === "4g" && downlink > 10) {
         return "tier1_premium";
       }
-      
+
       // Standard connections (3G, slower 4G)
-      if (effectiveType === "3g" || (effectiveType === "4g" && downlink <= 10)) {
+      if (
+        effectiveType === "3g" ||
+        (effectiveType === "4g" && downlink <= 10)
+      ) {
         return "tier2_standard";
       }
-      
+
       // Limited connections (2G, very slow)
       if (effectiveType === "2g" || effectiveType === "slow-2g") {
         return "tier3_limited";
@@ -174,12 +187,12 @@ export class BrazilianConnectivityOptimizer {
     // Basic heuristics for when Network Information API is not available
     if (typeof window !== "undefined") {
       const userAgent = navigator.userAgent.toLowerCase();
-      
+
       // Mobile devices on potentially slower connections
       if (/mobile|android|iphone|ipad/.test(userAgent)) {
         return "tier2_standard";
       }
-      
+
       // Desktop browsers - assume better connection
       return "tier1_premium";
     }
@@ -211,7 +224,7 @@ export class BrazilianConnectivityOptimizer {
       this.preloadCriticalImages("high"),
       this.loadAllModules(),
       this.enableAdvancedFeatures(),
-      this.preloadPatientData()
+      this.preloadPatientData(),
     ];
 
     await Promise.all(promises);
@@ -223,11 +236,11 @@ export class BrazilianConnectivityOptimizer {
     const promises = [
       this.preloadCriticalImages("medium"),
       this.loadCoreModules(),
-      this.enableCoreFeatures()
+      this.enableCoreFeatures(),
     ];
 
     await Promise.all(promises);
-    
+
     // Load additional features in background
     setTimeout(() => {
       this.loadSecondaryModules();
@@ -243,15 +256,17 @@ export class BrazilianConnectivityOptimizer {
     await this.enableEssentialFeatures();
   }
 
-  private async preloadCriticalImages(quality: "high" | "medium" | "low"): Promise<void> {
+  private async preloadCriticalImages(
+    quality: "high" | "medium" | "low",
+  ): Promise<void> {
     const qualitySettings = this.cdnConfig.assetOptimization.images.quality;
     const imageQuality = qualitySettings[this.detectConnectivityTier()];
-    
+
     // Preload critical healthcare UI images
     const criticalImages = [
       "/images/logo.webp",
-      "/images/emergency-icon.webp", 
-      "/images/patient-placeholder.webp"
+      "/images/emergency-icon.webp",
+      "/images/patient-placeholder.webp",
     ];
 
     const preloadPromises = criticalImages.map(async (src) => {
@@ -286,7 +301,7 @@ export class BrazilianConnectivityOptimizer {
       import("../healthcare/emergency-protocols"),
       import("../healthcare/patient-management"),
       import("../compliance/cfm-compliance"),
-      import("../analytics/dashboard")
+      import("../analytics/dashboard"),
     ];
 
     await Promise.allSettled(modules);
@@ -296,7 +311,7 @@ export class BrazilianConnectivityOptimizer {
     // Load core modules for standard experience
     const coreModules = [
       import("../healthcare/patient-management"),
-      import("../healthcare/emergency-protocols")
+      import("../healthcare/emergency-protocols"),
     ];
 
     await Promise.all(coreModules);
@@ -306,7 +321,7 @@ export class BrazilianConnectivityOptimizer {
     // Load secondary modules in background
     const secondaryModules = [
       import("../ai/chat-engine"),
-      import("../analytics/dashboard")
+      import("../analytics/dashboard"),
     ];
 
     await Promise.allSettled(secondaryModules);
@@ -349,7 +364,7 @@ export class BrazilianConnectivityOptimizer {
     if (typeof window !== "undefined") {
       (window as any).__NEONPRO_FEATURES = {
         ...(window as any).__NEONPRO_FEATURES,
-        [featureName]: true
+        [featureName]: true,
       };
     }
   }
@@ -358,9 +373,9 @@ export class BrazilianConnectivityOptimizer {
     // Preload critical patient data for premium connections
     try {
       const response = await fetch("/api/patients/recent", {
-        headers: { "Cache-Control": "max-age=300" }
+        headers: { "Cache-Control": "max-age=300" },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         // Cache in sessionStorage for quick access
@@ -381,7 +396,7 @@ export class BrazilianConnectivityOptimizer {
 
     this.performanceObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries();
-      
+
       entries.forEach((entry) => {
         if (entry.entryType === "navigation") {
           this.handleNavigationMetrics(entry as PerformanceNavigationTiming);
@@ -391,8 +406,8 @@ export class BrazilianConnectivityOptimizer {
       });
     });
 
-    this.performanceObserver.observe({ 
-      entryTypes: ["navigation", "resource", "measure"] 
+    this.performanceObserver.observe({
+      entryTypes: ["navigation", "resource", "measure"],
     });
   }
 
@@ -403,13 +418,13 @@ export class BrazilianConnectivityOptimizer {
       request: entry.responseStart - entry.requestStart,
       response: entry.responseEnd - entry.responseStart,
       dom: entry.domContentLoadedEventEnd - entry.responseEnd,
-      load: entry.loadEventEnd - entry.loadEventStart
+      load: entry.loadEventEnd - entry.loadEventStart,
     };
 
     // Check if performance meets Brazilian healthcare targets
     const totalLoad = entry.loadEventEnd - entry.navigationStart;
     const tier = this.detectConnectivityTier();
-    
+
     this.validatePerformanceTargets(totalLoad, tier, metrics);
   }
 
@@ -419,12 +434,19 @@ export class BrazilianConnectivityOptimizer {
     const loadTime = entry.responseEnd - entry.startTime;
 
     if (resourceType === "critical" && loadTime > 1000) {
-      console.warn(`Critical resource slow loading: ${entry.name} (${loadTime}ms)`);
+      console.warn(
+        `Critical resource slow loading: ${entry.name} (${loadTime}ms)`,
+      );
     }
   }
 
-  private getResourceType(resourceName: string): "critical" | "secondary" | "optional" {
-    if (resourceName.includes("emergency") || resourceName.includes("patient")) {
+  private getResourceType(
+    resourceName: string,
+  ): "critical" | "secondary" | "optional" {
+    if (
+      resourceName.includes("emergency") ||
+      resourceName.includes("patient")
+    ) {
       return "critical";
     }
     if (resourceName.includes("ai") || resourceName.includes("analytics")) {
@@ -436,19 +458,21 @@ export class BrazilianConnectivityOptimizer {
   private validatePerformanceTargets(
     totalLoad: number,
     tier: ConnectivityTier,
-    metrics: Record<string, number>
+    metrics: Record<string, number>,
   ): void {
     const targets = {
       tier1_premium: 1500, // 1.5s
-      tier2_standard: 3500, // 3.5s  
-      tier3_limited: 5000   // 5s
+      tier2_standard: 3500, // 3.5s
+      tier3_limited: 5000, // 5s
     };
 
     const target = targets[tier];
-    
+
     if (totalLoad > target) {
-      console.warn(`Performance target missed: ${totalLoad}ms > ${target}ms for ${tier}`);
-      
+      console.warn(
+        `Performance target missed: ${totalLoad}ms > ${target}ms for ${tier}`,
+      );
+
       // Send performance metrics for monitoring
       this.reportPerformanceIssue(tier, totalLoad, target, metrics);
     }
@@ -458,7 +482,7 @@ export class BrazilianConnectivityOptimizer {
     tier: ConnectivityTier,
     actual: number,
     target: number,
-    metrics: Record<string, number>
+    metrics: Record<string, number>,
   ): void {
     // Report performance issues for infrastructure monitoring
     if (typeof window !== "undefined" && window.navigator.sendBeacon) {
@@ -470,7 +494,7 @@ export class BrazilianConnectivityOptimizer {
         metrics,
         timestamp: Date.now(),
         userAgent: navigator.userAgent,
-        connection: (navigator as any).connection
+        connection: (navigator as any).connection,
       });
 
       window.navigator.sendBeacon("/api/monitoring/performance", data);
@@ -491,9 +515,11 @@ export class BrazilianConnectivityOptimizer {
     // Simple geolocation-based CDN selection
     // In production, this would use more sophisticated edge routing
     const tier = this.detectConnectivityTier();
-    
-    return this.brazilianRegions.find(region => region.tier === tier) || 
-           this.brazilianRegions[0]; // fallback to São Paulo
+
+    return (
+      this.brazilianRegions.find((region) => region.tier === tier) ||
+      this.brazilianRegions[0]
+    ); // fallback to São Paulo
   }
 
   /**
@@ -508,7 +534,8 @@ export class BrazilianConnectivityOptimizer {
 }
 
 // Export singleton instance
-export const brazilianConnectivityOptimizer = BrazilianConnectivityOptimizer.getInstance();
+export const brazilianConnectivityOptimizer =
+  BrazilianConnectivityOptimizer.getInstance();
 
 // Export class for testing
 export { BrazilianConnectivityOptimizer };

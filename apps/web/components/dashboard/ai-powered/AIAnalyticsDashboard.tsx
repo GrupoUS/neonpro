@@ -8,7 +8,13 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -94,7 +100,8 @@ export function AIAnalyticsDashboard() {
           id: "3",
           type: "recommendation",
           title: "Otimização de Agenda",
-          description: "Quinta-feira às 14h tem 73% de disponibilidade - ideal para promoções",
+          description:
+            "Quinta-feira às 14h tem 73% de disponibilidade - ideal para promoções",
           confidence: 85.4,
           impact: "medium",
           action: "Configurar oferta automática",
@@ -103,7 +110,8 @@ export function AIAnalyticsDashboard() {
           id: "4",
           type: "alert",
           title: "Tendência de Sazonalidade",
-          description: "Demanda por tratamentos de verão aumentará 40% nas próximas 4 semanas",
+          description:
+            "Demanda por tratamentos de verão aumentará 40% nas próximas 4 semanas",
           confidence: 93.1,
           impact: "high",
           action: "Aumentar estoque e agenda",
@@ -251,7 +259,8 @@ export function AIAnalyticsDashboard() {
               )}
             </div>
             <div className="text-xs text-muted-foreground">
-              Previsão IA: R$ {metrics?.predictedRevenue.toLocaleString("pt-BR")}
+              Previsão IA: R${" "}
+              {metrics?.predictedRevenue.toLocaleString("pt-BR")}
             </div>
           </CardContent>
         </Card>
@@ -405,8 +414,8 @@ export function AIAnalyticsDashboard() {
                         insight.impact === "high"
                           ? "alto"
                           : insight.impact === "medium"
-                          ? "médio"
-                          : "baixo"
+                            ? "médio"
+                            : "baixo"
                       }`}
                     >
                       {insight.impact === "high" && "Alto Impacto"}
@@ -523,11 +532,9 @@ export function AIAnalyticsDashboard() {
           <CardContent>
             <div
               className="text-2xl font-bold"
-              aria-label={`Ticket médio de R$ ${
-                metrics?.averageTreatmentValue.toLocaleString(
-                  "pt-BR",
-                )
-              }`}
+              aria-label={`Ticket médio de R$ ${metrics?.averageTreatmentValue.toLocaleString(
+                "pt-BR",
+              )}`}
             >
               R$ {metrics?.averageTreatmentValue.toLocaleString("pt-BR")}
             </div>

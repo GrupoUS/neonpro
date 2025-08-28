@@ -109,37 +109,29 @@ export const invoiceEmailDelivery = task({
                     </tr>
                   </thead>
                   <tbody>
-                    ${
-        services
-          .map(
-            (service) => `
+                    ${services
+                      .map(
+                        (service) => `
                       <tr>
                         <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">${service.service_name}</td>
                         <td style="padding: 12px; text-align: center; border-bottom: 1px solid #f0f0f0;">${service.quantity}</td>
-                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #f0f0f0;">R$ ${
-              service.unit_price.toFixed(
-                2,
-              )
-            }</td>
-                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #f0f0f0;">R$ ${
-              service.total_price.toFixed(
-                2,
-              )
-            }</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #f0f0f0;">R$ ${service.unit_price.toFixed(
+                          2,
+                        )}</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #f0f0f0;">R$ ${service.total_price.toFixed(
+                          2,
+                        )}</td>
                       </tr>
                     `,
-          )
-          .join("")
-      }
+                      )
+                      .join("")}
                   </tbody>
                   <tfoot>
                     <tr style="background: #f8fafc; font-weight: bold;">
                       <td colspan="3" style="padding: 15px; text-align: right; border-top: 2px solid #e0e0e0;">Total a Pagar:</td>
-                      <td style="padding: 15px; text-align: right; border-top: 2px solid #e0e0e0; color: #059669; font-size: 18px;">R$ ${
-        payload.amount.toFixed(
-          2,
-        )
-      }</td>
+                      <td style="padding: 15px; text-align: right; border-top: 2px solid #e0e0e0; color: #059669; font-size: 18px;">R$ ${payload.amount.toFixed(
+                        2,
+                      )}</td>
                     </tr>
                   </tfoot>
                 </table>
@@ -152,10 +144,10 @@ export const invoiceEmailDelivery = task({
                 <h4 style="color: #92400e; margin-top: 0;">📅 Vencimento</h4>
                 <p style="color: #92400e; font-size: 18px; font-weight: bold; margin: 5px 0;">${dueDate}</p>
                 ${
-        invoice.status === "overdue"
-          ? '<p style="color: #dc2626; font-size: 14px; margin: 0;"><strong>⚠️ Fatura em atraso</strong></p>'
-          : '<p style="color: #92400e; font-size: 14px; margin: 0;">Pagamento até esta data</p>'
-      }
+                  invoice.status === "overdue"
+                    ? '<p style="color: #dc2626; font-size: 14px; margin: 0;"><strong>⚠️ Fatura em atraso</strong></p>'
+                    : '<p style="color: #92400e; font-size: 14px; margin: 0;">Pagamento até esta data</p>'
+                }
               </div>
               <div style="flex: 1; background: #d1fae5; border: 1px solid #10b981; border-radius: 6px; padding: 15px;">
                 <h4 style="color: #065f46; margin-top: 0;">💳 Formas de Pagamento</h4>
@@ -172,18 +164,18 @@ export const invoiceEmailDelivery = task({
               <h3 style="margin: 0 0 10px 0;">Pagar Agora</h3>
               <p style="margin: 0 0 15px 0; opacity: 0.9;">Clique no botão abaixo para acessar suas opções de pagamento</p>
               ${
-        payload.invoiceUrl
-          ? `
+                payload.invoiceUrl
+                  ? `
                 <a href="${payload.invoiceUrl}" style="display: inline-block; background: #10b981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">
                   💳 Pagar Fatura
                 </a>
               `
-          : `
+                  : `
                 <p style="background: rgba(255,255,255,0.2); border-radius: 6px; padding: 10px; margin: 0;">
                   Entre em contato para pagamento: WhatsApp ou visite a clínica
                 </p>
               `
-      }
+              }
             </div>
             
             <div style="background: #f3f4f6; border-radius: 6px; padding: 15px; margin: 20px 0;">
@@ -209,11 +201,9 @@ export const invoiceEmailDelivery = task({
       const emailResult = await resend.emails.send({
         from: `${payload.clinicName} Financeiro <billing@neonpro.app>`,
         to: [payload.recipientEmail],
-        subject: `💰 Fatura #${invoice.invoice_number} - R$ ${
-          payload.amount.toFixed(
-            2,
-          )
-        } - Venc: ${dueDate}`,
+        subject: `💰 Fatura #${invoice.invoice_number} - R$ ${payload.amount.toFixed(
+          2,
+        )} - Venc: ${dueDate}`,
         html: invoiceHtml,
         headers: {
           "X-Invoice-ID": payload.invoiceId,
@@ -330,25 +320,23 @@ export const paymentReminderEmail = task({
               <h2 style="color: #1e40af; margin-top: 0;">Olá, ${payload.recipientName}! 👋</h2>
               
               ${
-        daysOverdue > 0
-          ? `
+                daysOverdue > 0
+                  ? `
                 <div style="background: #fee2e2; border: 1px solid #f87171; border-radius: 6px; padding: 15px; margin: 20px 0;">
                   <p style="color: #dc2626; margin: 0; font-weight: bold;">
                     ⚠️ Sua fatura está em atraso há ${daysOverdue} dia${daysOverdue > 1 ? "s" : ""}
                   </p>
                 </div>
               `
-          : `
+                  : `
                 <p style="color: #f59e0b; font-weight: bold;">Sua fatura vence hoje!</p>
               `
-      }
+              }
               
               <div style="background: white; padding: 20px; border-radius: 6px; border-left: 4px solid #f59e0b; text-align: left; margin: 20px 0;">
-                <p style="margin: 5px 0;"><strong>💰 Valor:</strong> R$ ${
-        payload.amount.toFixed(
-          2,
-        )
-      }</p>
+                <p style="margin: 5px 0;"><strong>💰 Valor:</strong> R$ ${payload.amount.toFixed(
+                  2,
+                )}</p>
                 <p style="margin: 5px 0;"><strong>📅 Vencimento:</strong> ${payload.dueDate}</p>
                 <p style="margin: 5px 0;"><strong>🧾 Fatura:</strong> Para ${payload.recipientName}</p>
               </div>
@@ -361,16 +349,16 @@ export const paymentReminderEmail = task({
               </div>
               
               ${
-        payload.invoiceUrl
-          ? `
+                payload.invoiceUrl
+                  ? `
                 <div style="margin: 25px 0;">
                   <a href="${payload.invoiceUrl}" style="display: inline-block; background: #059669; color: white; padding: 15px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
                     💳 Pagar Agora
                   </a>
                 </div>
               `
-          : ""
-      }
+                  : ""
+              }
               
               <p style="color: #666; font-size: 14px; margin-top: 20px;">
                 Precisa renegociar? Entre em contato conosco.<br>
@@ -389,11 +377,12 @@ export const paymentReminderEmail = task({
       const emailResult = await resend.emails.send({
         from: `${payload.clinicName} Financeiro <billing@neonpro.app>`,
         to: [payload.recipientEmail],
-        subject: daysOverdue > 0
-          ? `⚠️ Pagamento em Atraso - R$ ${payload.amount.toFixed(2)} (${daysOverdue} dia${
-            daysOverdue > 1 ? "s" : ""
-          })`
-          : `💰 Lembrete: Fatura vence hoje - R$ ${payload.amount.toFixed(2)}`,
+        subject:
+          daysOverdue > 0
+            ? `⚠️ Pagamento em Atraso - R$ ${payload.amount.toFixed(2)} (${daysOverdue} dia${
+                daysOverdue > 1 ? "s" : ""
+              })`
+            : `💰 Lembrete: Fatura vence hoje - R$ ${payload.amount.toFixed(2)}`,
         html: reminderHtml,
         headers: {
           "X-Invoice-ID": payload.invoiceId,

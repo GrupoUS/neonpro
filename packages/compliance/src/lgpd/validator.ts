@@ -102,8 +102,8 @@ export class LGPDValidator {
 
     // Validate purpose limitation
     if (
-      !processingActivity.purpose
-      || processingActivity.purpose.length === 0
+      !processingActivity.purpose ||
+      processingActivity.purpose.length === 0
     ) {
       violations.push({
         category: "Purpose Limitation",
@@ -128,9 +128,8 @@ export class LGPDValidator {
     }
 
     // Constitutional validation
-    const constitutionalValidation = await this.validateConstitutionalCompliance(
-      processingActivity,
-    );
+    const constitutionalValidation =
+      await this.validateConstitutionalCompliance(processingActivity);
 
     // Generate recommendations
     if (violations.length > 0) {
@@ -198,7 +197,8 @@ export class LGPDValidator {
       });
     }
 
-    const constitutionalValidation = await this.validateConstitutionalCompliance(consentData);
+    const constitutionalValidation =
+      await this.validateConstitutionalCompliance(consentData);
     const complianceScore = Math.max(0, 10 - violations.length * 2);
 
     return {
@@ -238,15 +238,17 @@ export class LGPDValidator {
   /**
    * Validate data transfer
    */
-  async validateDataTransfer(transferData: unknown): Promise<LGPDValidationResult> {
+  async validateDataTransfer(
+    transferData: unknown,
+  ): Promise<LGPDValidationResult> {
     const validationId = `lgpd_transfer_validation_${Date.now()}`;
 
     const violations = [];
 
     // Validate international transfer safeguards
     if (
-      transferData.international_transfer
-      && !transferData.adequacy_decision
+      transferData.international_transfer &&
+      !transferData.adequacy_decision
     ) {
       violations.push({
         category: "International Transfer",
@@ -259,7 +261,8 @@ export class LGPDValidator {
       });
     }
 
-    const constitutionalValidation = await this.validateConstitutionalCompliance(transferData);
+    const constitutionalValidation =
+      await this.validateConstitutionalCompliance(transferData);
     const complianceScore = Math.max(0, 10 - violations.length * 2);
 
     return {

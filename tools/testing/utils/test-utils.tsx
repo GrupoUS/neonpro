@@ -135,7 +135,9 @@ export const AllTheProviders: React.FC<AllTheProvidersProps> = ({
   children,
   queryClient = createTestQueryClient(),
 }) => {
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
 };
 
 // ============================================================================
@@ -155,7 +157,7 @@ export const renderWithProviders = (
 ) => {
   const { queryClient, ...renderOptions } = options;
 
-  const Wrapper: React.FC<{ children: React.ReactNode; }> = ({ children }) => (
+  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <AllTheProviders queryClient={queryClient}>{children}</AllTheProviders>
   );
 

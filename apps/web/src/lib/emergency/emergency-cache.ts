@@ -81,7 +81,7 @@ class EmergencyCache {
       EmergencyCache.instance = new EmergencyCache();
     }
     return EmergencyCache.instance;
-  }  /**
+  } /**
    * Initialize IndexedDB for persistent offline storage
    */
   private async initIndexedDB(): Promise<void> {
@@ -101,9 +101,11 @@ class EmergencyCache {
 
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
-        
+
         if (!db.objectStoreNames.contains(this.STORE_NAME)) {
-          const store = db.createObjectStore(this.STORE_NAME, { keyPath: "id" });
+          const store = db.createObjectStore(this.STORE_NAME, {
+            keyPath: "id",
+          });
           store.createIndex("patientId", "patientId", { unique: false });
           store.createIndex("type", "type", { unique: false });
           store.createIndex("priority", "priority", { unique: false });
@@ -117,9 +119,14 @@ class EmergencyCache {
    * Load existing cache data from IndexedDB on initialization
    */
   private async loadFromIndexedDB(): Promise<void> {
-    if (!this.indexedDB) {return;}
+    if (!this.indexedDB) {
+      return;
+    }
 
-    const transaction = this.indexedDB.transaction([this.STORE_NAME], "readonly");
+    const transaction = this.indexedDB.transaction(
+      [this.STORE_NAME],
+      "readonly",
+    );
     const store = transaction.objectStore(this.STORE_NAME);
     const request = store.getAll();
 
@@ -127,7 +134,7 @@ class EmergencyCache {
       const entries = request.result as EmergencyCacheEntry[];
       const now = Date.now();
 
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         // Remove expired entries
         if (entry.expiresAt < now) {
           this.removeFromIndexedDB(entry.id);
@@ -138,7 +145,7 @@ class EmergencyCache {
 
       console.log(`Emergency cache loaded: ${this.cache.size} entries`);
     };
-  }  /**
+  } /**
    * Store critical data with <100ms access guarantee
    */
   async set(
@@ -150,11 +157,11 @@ class EmergencyCache {
       priority?: EmergencyCacheEntry["priority"];
       ttlMinutes?: number;
       lgpdCompliant?: boolean;
-    }
+    },
   ): Promise<void> {
     const now = Date.now();
     const ttl = (options.ttlMinutes || 1440) * 60 * 1000; // Default 24 hours
-    
+
     const entry: EmergencyCacheEntry = {
       id: key,
       patientId: options.patientId,
@@ -175,18 +182,25 @@ class EmergencyCache {
 
     // Log LGPD compliance access
     if (options.lgpdCompliant) {
-      this.logLGPDAccess(options.patientId, "cache_write", "Emergency data cached");
+      this.logLGPDAccess(
+        options.patientId,
+        "cache_write",
+        "Emergency data cached",
+      );
     }
   }
 
   /**
    * Retrieve data with <100ms performance guarantee
    */
-  get(key: string, emergencyAccess: boolean = false): EmergencyCacheEntry | null {
+  get(
+    key: string,
+    emergencyAccess: boolean = false,
+  ): EmergencyCacheEntry | null {
     const startTime = performance.now();
-    
+
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       console.warn(`Emergency cache miss for key: ${key}`);
       return null;
@@ -202,23 +216,29 @@ class EmergencyCache {
     // Update access count and performance tracking
     entry.accessCount++;
     const accessTime = performance.now() - startTime;
-    
+
     if (accessTime > 100) {
-      console.warn(`Emergency cache access exceeded 100ms: ${accessTime}ms for key ${key}`);
+      console.warn(
+        `Emergency cache access exceeded 100ms: ${accessTime}ms for key ${key}`,
+      );
     }
 
     // Log LGPD access for critical data
     if (entry.priority === "critical" || emergencyAccess) {
-      this.logLGPDAccess(entry.patientId, "cache_read", "Emergency data accessed");
+      this.logLGPDAccess(
+        entry.patientId,
+        "cache_read",
+        "Emergency data accessed",
+      );
     }
 
     return entry;
-  }  /**
+  } /**
    * Cache complete patient emergency profile
    */
   async cacheEmergencyPatient(
     patientId: string,
-    patientData: EmergencyPatientCache
+    patientData: EmergencyPatientCache,
   ): Promise<void> {
     // Cache critical data with highest priority
     await this.set(`patient:${patientId}`, patientData.personalInfo, {
@@ -228,19 +248,27 @@ class EmergencyCache {
       ttlMinutes: 4320, // 3 days for emergency data
     });
 
-    await this.set(`allergies:${patientId}`, patientData.criticalData.allergies, {
-      patientId,
-      type: "allergies",
-      priority: "critical",
-      ttlMinutes: 4320,
-    });
+    await this.set(
+      `allergies:${patientId}`,
+      patientData.criticalData.allergies,
+      {
+        patientId,
+        type: "allergies",
+        priority: "critical",
+        ttlMinutes: 4320,
+      },
+    );
 
-    await this.set(`medications:${patientId}`, patientData.criticalData.medications, {
-      patientId,
-      type: "medications", 
-      priority: "critical",
-      ttlMinutes: 1440, // 1 day for medications
-    });
+    await this.set(
+      `medications:${patientId}`,
+      patientData.criticalData.medications,
+      {
+        patientId,
+        type: "medications",
+        priority: "critical",
+        ttlMinutes: 1440, // 1 day for medications
+      },
+    );
 
     await this.set(`contacts:${patientId}`, patientData.emergencyContacts, {
       patientId,
@@ -263,14 +291,19 @@ class EmergencyCache {
   /**
    * Get complete emergency patient profile (optimized for <100ms)
    */
-  getEmergencyPatient(patientId: string, emergencyAccess = true): EmergencyPatientCache | null {
+  getEmergencyPatient(
+    patientId: string,
+    emergencyAccess = true,
+  ): EmergencyPatientCache | null {
     const patient = this.get(`patient:${patientId}`, emergencyAccess);
     const allergies = this.get(`allergies:${patientId}`, emergencyAccess);
     const medications = this.get(`medications:${patientId}`, emergencyAccess);
     const contacts = this.get(`contacts:${patientId}`, emergencyAccess);
     const location = this.get(`location:${patientId}`, emergencyAccess);
 
-    if (!patient) {return null;}
+    if (!patient) {
+      return null;
+    }
 
     return {
       personalInfo: patient.data,
@@ -287,12 +320,12 @@ class EmergencyCache {
         accessLog: [],
       },
     };
-  }  /**
+  } /**
    * Get all critical patients for emergency scenarios
    */
   getCriticalPatients(): EmergencyCacheEntry[] {
     const criticalEntries: EmergencyCacheEntry[] = [];
-    
+
     for (const entry of this.cache.values()) {
       if (entry.priority === "critical" && entry.type === "patient") {
         criticalEntries.push(entry);
@@ -311,8 +344,9 @@ class EmergencyCache {
     averageAccessTime: number;
     slowQueries: number;
   } {
-    const criticalCount = Array.from(this.cache.values())
-      .filter(entry => entry.priority === "critical").length;
+    const criticalCount = Array.from(this.cache.values()).filter(
+      (entry) => entry.priority === "critical",
+    ).length;
 
     return {
       cacheSize: this.cache.size,
@@ -325,7 +359,11 @@ class EmergencyCache {
   /**
    * LGPD Compliance - Log access to patient data
    */
-  private logLGPDAccess(patientId: string, action: string, reason: string): void {
+  private logLGPDAccess(
+    patientId: string,
+    action: string,
+    reason: string,
+  ): void {
     const logEntry = {
       patientId,
       action,
@@ -344,9 +382,14 @@ class EmergencyCache {
    * Save entry to IndexedDB for persistence
    */
   private async saveToIndexedDB(entry: EmergencyCacheEntry): Promise<void> {
-    if (!this.indexedDB) {return;}
+    if (!this.indexedDB) {
+      return;
+    }
 
-    const transaction = this.indexedDB.transaction([this.STORE_NAME], "readwrite");
+    const transaction = this.indexedDB.transaction(
+      [this.STORE_NAME],
+      "readwrite",
+    );
     const store = transaction.objectStore(this.STORE_NAME);
     store.put(entry);
   }
@@ -355,9 +398,14 @@ class EmergencyCache {
    * Remove entry from IndexedDB
    */
   private async removeFromIndexedDB(key: string): Promise<void> {
-    if (!this.indexedDB) {return;}
+    if (!this.indexedDB) {
+      return;
+    }
 
-    const transaction = this.indexedDB.transaction([this.STORE_NAME], "readwrite");
+    const transaction = this.indexedDB.transaction(
+      [this.STORE_NAME],
+      "readwrite",
+    );
     const store = transaction.objectStore(this.STORE_NAME);
     store.delete(key);
   }
@@ -375,12 +423,14 @@ class EmergencyCache {
       }
     }
 
-    expiredKeys.forEach(key => {
+    expiredKeys.forEach((key) => {
       this.cache.delete(key);
       this.removeFromIndexedDB(key);
     });
 
-    console.log(`Emergency cache cleanup: removed ${expiredKeys.length} expired entries`);
+    console.log(
+      `Emergency cache cleanup: removed ${expiredKeys.length} expired entries`,
+    );
   }
 
   /**
@@ -388,9 +438,12 @@ class EmergencyCache {
    */
   clear(): void {
     this.cache.clear();
-    
+
     if (this.indexedDB) {
-      const transaction = this.indexedDB.transaction([this.STORE_NAME], "readwrite");
+      const transaction = this.indexedDB.transaction(
+        [this.STORE_NAME],
+        "readwrite",
+      );
       const store = transaction.objectStore(this.STORE_NAME);
       store.clear();
     }

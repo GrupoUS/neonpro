@@ -267,7 +267,8 @@ export class PerformanceTestRunner {
   ): PerformanceSummary {
     const totalTargets = this.passedTests.length + this.failedTests.length;
     const passedTargets = this.passedTests.length;
-    const overallScore = totalTargets > 0 ? Math.round((passedTargets / totalTargets) * 100) : 0;
+    const overallScore =
+      totalTargets > 0 ? Math.round((passedTargets / totalTargets) * 100) : 0;
 
     let criticalIssues = 0;
     let warnings = 0;

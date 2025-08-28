@@ -253,9 +253,10 @@ export class CFMService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : "Professional validation failed",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Professional validation failed",
       };
     }
   }
@@ -295,7 +296,9 @@ export class CFMService {
         return {
           authorized: false,
           reason: `Specialty ${professional.specialty} not authorized for this procedure`,
-          requirements: authorization.requiredSpecialty.map((s) => s.toString()),
+          requirements: authorization.requiredSpecialty.map((s) =>
+            s.toString(),
+          ),
         };
       }
 
@@ -308,8 +311,7 @@ export class CFMService {
       ) {
         return {
           authorized: false,
-          reason:
-            `Professional level ${professional.maxProcedureLevel} insufficient for ${authorization.minimumLevel}`,
+          reason: `Professional level ${professional.maxProcedureLevel} insufficient for ${authorization.minimumLevel}`,
         };
       }
 
@@ -319,8 +321,8 @@ export class CFMService {
           (reqCert) =>
             !professional.certifications.some(
               (cert) =>
-                cert.name.includes(reqCert)
-                && (!cert.expiryDate || cert.expiryDate > new Date()),
+                cert.name.includes(reqCert) &&
+                (!cert.expiryDate || cert.expiryDate > new Date()),
             ),
         );
 
@@ -354,7 +356,8 @@ export class CFMService {
     } catch (error) {
       return {
         authorized: false,
-        reason: error instanceof Error ? error.message : "Authorization check failed",
+        reason:
+          error instanceof Error ? error.message : "Authorization check failed",
       };
     }
   }
@@ -368,7 +371,8 @@ export class CFMService {
     recommendations?: string[];
   }> {
     try {
-      const validatedCompliance = CFMEthicsComplianceSchema.parse(complianceData);
+      const validatedCompliance =
+        CFMEthicsComplianceSchema.parse(complianceData);
 
       const violations: string[] = [];
       const recommendations: string[] = [];
@@ -381,15 +385,15 @@ export class CFMService {
       // Check medical record completeness
       const { medicalRecord: medicalRecord } = validatedCompliance;
       if (
-        !medicalRecord.preOperativeAssessment
-        || medicalRecord.preOperativeAssessment.length < 50
+        !medicalRecord.preOperativeAssessment ||
+        medicalRecord.preOperativeAssessment.length < 50
       ) {
         violations.push("Incomplete pre-operative assessment");
       }
 
       if (
-        !medicalRecord.medicalHistory
-        || medicalRecord.medicalHistory.length < 20
+        !medicalRecord.medicalHistory ||
+        medicalRecord.medicalHistory.length < 20
       ) {
         violations.push("Insufficient medical history documentation");
       }
@@ -404,16 +408,16 @@ export class CFMService {
         validatedCompliance.professionalId,
       );
       if (
-        !professional
-        || professional.status !== CFMProfessionalStatus.ACTIVE
+        !professional ||
+        professional.status !== CFMProfessionalStatus.ACTIVE
       ) {
         violations.push("Professional not active or not found");
       }
 
       // Check digital signature for documentation
       if (
-        professional?.digitalSignature
-        && professional.digitalSignature.validUntil < new Date()
+        professional?.digitalSignature &&
+        professional.digitalSignature.validUntil < new Date()
       ) {
         recommendations.push("Update digital signature certificate");
       }
@@ -434,7 +438,8 @@ export class CFMService {
       return {
         compliant,
         violations: violations.length > 0 ? violations : undefined,
-        recommendations: recommendations.length > 0 ? recommendations : undefined,
+        recommendations:
+          recommendations.length > 0 ? recommendations : undefined,
       };
     } catch (error) {
       return {
@@ -491,7 +496,8 @@ export class CFMService {
       const compliantChecks = complianceChecks.filter(
         (c) => c.compliant,
       ).length;
-      const complianceRate = totalChecks > 0 ? (compliantChecks / totalChecks) * 100 : 100;
+      const complianceRate =
+        totalChecks > 0 ? (compliantChecks / totalChecks) * 100 : 100;
 
       // Check certification status
       const certificationStatus = this.checkCertificationStatus(professional);
@@ -524,7 +530,8 @@ export class CFMService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Report generation failed",
+        error:
+          error instanceof Error ? error.message : "Report generation failed",
       };
     }
   }
@@ -609,7 +616,7 @@ export class CFMService {
 
   private async getProfessionalProcedures(
     _professionalId: string,
-    _dateRange: { startDate: Date; endDate: Date; },
+    _dateRange: { startDate: Date; endDate: Date },
   ): Promise<any[]> {
     // Mock data - would query actual database
     return [];
@@ -617,7 +624,7 @@ export class CFMService {
 
   private async getComplianceChecks(
     _professionalId: string,
-    _dateRange: { startDate: Date; endDate: Date; },
+    _dateRange: { startDate: Date; endDate: Date },
   ): Promise<any[]> {
     // Mock data - would query actual database
     return [];

@@ -225,7 +225,7 @@ export class NoShowEngine {
           apt.appointmentId,
           apt.patientProfile,
           apt.appointmentFeatures,
-        )
+        ),
       );
 
       const batchResults = await Promise.all(batchPromises);
@@ -251,10 +251,11 @@ export class NoShowEngine {
     const features = {
       // Patient features
       age_normalized: Math.min(patient.age / 80, 1),
-      no_show_rate: patient.appointmentHistory.total > 0
-        ? patient.appointmentHistory.noShows
-          / patient.appointmentHistory.total
-        : 0.1,
+      no_show_rate:
+        patient.appointmentHistory.total > 0
+          ? patient.appointmentHistory.noShows /
+            patient.appointmentHistory.total
+          : 0.1,
       loyalty_score: Math.min(patient.appointmentHistory.total / 50, 1),
 
       // Appointment features
@@ -272,11 +273,11 @@ export class NoShowEngine {
       // Recent behavior
       recency_factor: patient.lastAppointment
         ? Math.exp(
-          -(
-            (Date.now() - patient.lastAppointment.getTime())
-            / (1000 * 60 * 60 * 24)
-          ) / 30,
-        )
+            -(
+              (Date.now() - patient.lastAppointment.getTime()) /
+              (1000 * 60 * 60 * 24)
+            ) / 30,
+          )
         : 0.3,
     };
 
@@ -372,8 +373,9 @@ export class NoShowEngine {
 
     // Recent data = higher confidence
     if (patient.lastAppointment) {
-      const daysSince = (Date.now() - patient.lastAppointment.getTime())
-        / (1000 * 60 * 60 * 24);
+      const daysSince =
+        (Date.now() - patient.lastAppointment.getTime()) /
+        (1000 * 60 * 60 * 24);
       if (daysSince < 30) {
         confidence += 0.05;
       }
@@ -404,12 +406,12 @@ export class NoShowEngine {
     const factors = [];
 
     if (patient.appointmentHistory.noShows > 0) {
-      const noShowRate = patient.appointmentHistory.noShows / patient.appointmentHistory.total;
+      const noShowRate =
+        patient.appointmentHistory.noShows / patient.appointmentHistory.total;
       factors.push({
         factor: "Historical No-Shows",
         impact: noShowRate * 0.8,
-        description:
-          `Patient has ${patient.appointmentHistory.noShows} no-shows out of ${patient.appointmentHistory.total} appointments`,
+        description: `Patient has ${patient.appointmentHistory.noShows} no-shows out of ${patient.appointmentHistory.total} appointments`,
       });
     }
 
@@ -425,7 +427,8 @@ export class NoShowEngine {
       factors.push({
         factor: "High-Risk Time Slot",
         impact: 0.4,
-        description: "Early morning and late afternoon slots have higher no-show rates",
+        description:
+          "Early morning and late afternoon slots have higher no-show rates",
       });
     }
 
@@ -498,7 +501,8 @@ export class NoShowEngine {
     let riskScore = 0.3; // Default medium-low risk
 
     if (patient.appointmentHistory.total > 0) {
-      riskScore = patient.appointmentHistory.noShows / patient.appointmentHistory.total;
+      riskScore =
+        patient.appointmentHistory.noShows / patient.appointmentHistory.total;
     }
 
     if (appointment.advanceBookingDays === 0) {

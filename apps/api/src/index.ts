@@ -125,7 +125,8 @@ const getDocsUrl = (): string => "/docs";
 app.get("/", (context) => {
   const docsUrl = getDocsUrl();
   return context.json({
-    description: "Sistema de gestão para clínicas de estética multiprofissionais brasileiras",
+    description:
+      "Sistema de gestão para clínicas de estética multiprofissionais brasileiras",
     docs: docsUrl,
     environment: ENVIRONMENT,
     features: [
@@ -196,7 +197,8 @@ app.get("/health", async (context) => {
       version: "1.0.0",
     };
 
-    const isHealthy = healthData.services.database && healthData.services.supabase;
+    const isHealthy =
+      healthData.services.database && healthData.services.supabase;
     const responseStatus = getResponseStatus(isHealthy);
 
     return context.json(healthData, responseStatus);
@@ -240,7 +242,7 @@ app.notFound((context) =>
       timestamp: new Date().toISOString(),
     },
     HTTP_STATUS_NOT_FOUND,
-  )
+  ),
 );
 
 // Global error handler

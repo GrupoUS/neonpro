@@ -30,7 +30,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode; }) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>();
   const [token, setToken] = useState<string | null>();
   const [loading, setLoading] = useState(true);
@@ -151,11 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
     isAuthenticated: Boolean(user) && Boolean(token),
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

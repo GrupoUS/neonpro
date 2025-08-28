@@ -194,12 +194,12 @@
 
 ### 10.1 Prioritization Matrix (MVP Focus)
 
-| Feature | Impact | Complexity | ROI | Priority |
-|---------|--------|------------|-----|----------|
-| Engine Anti-No-Show | 🔥 Critical | Medium | $50k/month | P0 |
-| Universal AI Chat | 🔥 Critical | High | $30k/month | P0 |
-| Dashboard Unificado | 🔥 Critical | Low | $25k/month | P0 |
-| Sistema Agendamento | High | Medium | $20k/month | P1 |
+| Feature             | Impact      | Complexity | ROI        | Priority |
+| ------------------- | ----------- | ---------- | ---------- | -------- |
+| Engine Anti-No-Show | 🔥 Critical | Medium     | $50k/month | P0       |
+| Universal AI Chat   | 🔥 Critical | High       | $30k/month | P0       |
+| Dashboard Unificado | 🔥 Critical | Low        | $25k/month | P0       |
+| Sistema Agendamento | High        | Medium     | $20k/month | P1       |
 
 ### 10.2 Project Timeline
 

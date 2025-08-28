@@ -50,7 +50,8 @@ export function useAIScheduling(
         setLastResult(result);
         return result;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Scheduling failed";
+        const errorMessage =
+          error instanceof Error ? error.message : "Scheduling failed";
         setError(errorMessage);
 
         const result: SchedulingResult = {

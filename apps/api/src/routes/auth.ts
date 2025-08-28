@@ -49,7 +49,7 @@ export const authRoutes = new Hono()
           expiresIn: 3600,
         };
 
-        const response: ApiResponse<{ user: AuthUser; tokens: AuthToken; }> = {
+        const response: ApiResponse<{ user: AuthUser; tokens: AuthToken }> = {
           success: true,
           data: { user, tokens },
           message: "Login realizado com sucesso",
@@ -138,7 +138,7 @@ export const authRoutes = new Hono()
         expiresIn: 3600,
       };
 
-      const response: ApiResponse<{ tokens: AuthToken; }> = {
+      const response: ApiResponse<{ tokens: AuthToken }> = {
         success: true,
         data: { tokens },
         message: "Token renovado com sucesso",
@@ -210,7 +210,7 @@ export const authRoutes = new Hono()
       // TODO: Invalidate tokens
       // Clear session
 
-      const response: ApiResponse<{ loggedOut: boolean; }> = {
+      const response: ApiResponse<{ loggedOut: boolean }> = {
         success: true,
         data: { loggedOut: true },
         message: "Logout realizado com sucesso",
@@ -239,7 +239,7 @@ export const authRoutes = new Hono()
         // TODO: Generate reset token
         // Send reset email
 
-        const response: ApiResponse<{ emailSent: boolean; }> = {
+        const response: ApiResponse<{ emailSent: boolean }> = {
           success: true,
           data: { emailSent: true },
           message: "Link de recuperação enviado para seu email",
@@ -270,7 +270,7 @@ export const authRoutes = new Hono()
         // Update password
         // Invalidate token
 
-        const response: ApiResponse<{ passwordChanged: boolean; }> = {
+        const response: ApiResponse<{ passwordChanged: boolean }> = {
           success: true,
           data: { passwordChanged: true },
           message: "Senha alterada com sucesso",
@@ -314,7 +314,7 @@ export const authRoutes = new Hono()
         // Update to new password
         // Invalidate all existing tokens
 
-        const response: ApiResponse<{ passwordReset: boolean; }> = {
+        const response: ApiResponse<{ passwordReset: boolean }> = {
           success: true,
           data: { passwordReset: true },
           message: "Senha alterada com sucesso",

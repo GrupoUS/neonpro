@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { DateSchema, PositiveNumberSchema, TreatmentType, UUIDSchema } from "../types";
+import {
+  DateSchema,
+  PositiveNumberSchema,
+  TreatmentType,
+  UUIDSchema,
+} from "../types";
 import type { BaseEntity } from "../types";
 
 // Treatment plan and session interfaces
@@ -126,11 +131,12 @@ export const CreateTreatmentPlanSchema = z.object({
   beforePhotos: z.array(z.string()).default([]),
 });
 
-export const UpdateTreatmentPlanSchema = CreateTreatmentPlanSchema.partial().extend({
-  id: UUIDSchema,
-  isActive: z.boolean().optional(),
-  endDate: DateSchema.optional(),
-});
+export const UpdateTreatmentPlanSchema =
+  CreateTreatmentPlanSchema.partial().extend({
+    id: UUIDSchema,
+    isActive: z.boolean().optional(),
+    endDate: DateSchema.optional(),
+  });
 
 export const CreateTreatmentSessionSchema = z.object({
   treatmentPlanId: UUIDSchema,

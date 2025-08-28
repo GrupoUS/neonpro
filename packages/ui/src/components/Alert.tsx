@@ -1,7 +1,8 @@
 import type React from "react";
 
 // Placeholder import for @neonpro/utils
-const cn = (...classes: (string | undefined)[]) => classes.filter(Boolean).join(" ");
+const cn = (...classes: (string | undefined)[]) =>
+  classes.filter(Boolean).join(" ");
 
 interface AlertProps {
   variant?: "default" | "destructive";

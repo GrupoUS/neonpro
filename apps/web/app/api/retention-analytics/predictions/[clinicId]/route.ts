@@ -5,7 +5,10 @@
 // =====================================================================================
 
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
-import { ChurnModelType, ChurnRiskLevel } from "@/app/types/retention-analytics";
+import {
+  ChurnModelType,
+  ChurnRiskLevel,
+} from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
 import { safeParseNumber } from "@/src/types/analytics";
 import type { DatabaseRow, RetentionPrediction } from "@/src/types/analytics";
@@ -29,14 +32,16 @@ interface ChurnPredictionData {
 // Type guard for churn prediction data
 function isChurnPredictionData(obj: unknown): obj is ChurnPredictionData {
   return (
-    typeof obj === "object"
-    && obj !== null
-    && typeof (obj as ChurnPredictionData).patient_id === "string"
-    && typeof (obj as ChurnPredictionData).churn_probability === "number"
-    && ["low", "medium", "high", "critical"].includes((obj as ChurnPredictionData).risk_level)
-    && typeof (obj as ChurnPredictionData).days_since_last_visit === "number"
-    && typeof (obj as ChurnPredictionData).predicted_churn_date === "string"
-    && typeof (obj as ChurnPredictionData).prediction_date === "string"
+    typeof obj === "object" &&
+    obj !== null &&
+    typeof (obj as ChurnPredictionData).patient_id === "string" &&
+    typeof (obj as ChurnPredictionData).churn_probability === "number" &&
+    ["low", "medium", "high", "critical"].includes(
+      (obj as ChurnPredictionData).risk_level,
+    ) &&
+    typeof (obj as ChurnPredictionData).days_since_last_visit === "number" &&
+    typeof (obj as ChurnPredictionData).predicted_churn_date === "string" &&
+    typeof (obj as ChurnPredictionData).prediction_date === "string"
   );
 }
 
@@ -76,7 +81,7 @@ const GeneratePredictionSchema = z
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string; }>; },
+  { params }: { params: Promise<{ clinicId: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -168,78 +173,80 @@ export async function GET(
 
     // Date filtering
     if (startDate || endDate) {
-      filteredPredictions = (predictions.predictions as ChurnPredictionData[]).filter(
-        (prediction: ChurnPredictionData) => {
-          const predictionDate = new Date(prediction.prediction_date);
-          if (startDate && predictionDate < new Date(startDate)) {
-            return false;
-          }
-          if (endDate && predictionDate > new Date(endDate)) {
-            return false;
-          }
-          return true;
-        },
-      );
+      filteredPredictions = (
+        predictions.predictions as ChurnPredictionData[]
+      ).filter((prediction: ChurnPredictionData) => {
+        const predictionDate = new Date(prediction.prediction_date);
+        if (startDate && predictionDate < new Date(startDate)) {
+          return false;
+        }
+        if (endDate && predictionDate > new Date(endDate)) {
+          return false;
+        }
+        return true;
+      });
     }
 
     // Sorting
-    filteredPredictions.sort((a: ChurnPredictionData, b: ChurnPredictionData) => {
-      let valueA: Date | number | string;
-      let valueB: Date | number | string;
+    filteredPredictions.sort(
+      (a: ChurnPredictionData, b: ChurnPredictionData) => {
+        let valueA: Date | number | string;
+        let valueB: Date | number | string;
 
-      switch (sortBy) {
-        case "prediction_date": {
-          valueA = new Date(a.prediction_date);
-          valueB = new Date(b.prediction_date);
-          break;
+        switch (sortBy) {
+          case "prediction_date": {
+            valueA = new Date(a.prediction_date);
+            valueB = new Date(b.prediction_date);
+            break;
+          }
+          case "churn_probability": {
+            valueA = safeParseNumber(a.churn_probability);
+            valueB = safeParseNumber(b.churn_probability);
+            break;
+          }
+          case "risk_level": {
+            const riskOrder: Record<string, number> = {
+              low: 1,
+              medium: 2,
+              high: 3,
+              critical: 4,
+            };
+            valueA = riskOrder[a.risk_level] || 0;
+            valueB = riskOrder[b.risk_level] || 0;
+            break;
+          }
+          default: {
+            valueA = new Date(a.prediction_date);
+            valueB = new Date(b.prediction_date);
+          }
         }
-        case "churn_probability": {
-          valueA = safeParseNumber(a.churn_probability);
-          valueB = safeParseNumber(b.churn_probability);
-          break;
-        }
-        case "risk_level": {
-          const riskOrder: Record<string, number> = {
-            low: 1,
-            medium: 2,
-            high: 3,
-            critical: 4,
-          };
-          valueA = riskOrder[a.risk_level] || 0;
-          valueB = riskOrder[b.risk_level] || 0;
-          break;
-        }
-        default: {
-          valueA = new Date(a.prediction_date);
-          valueB = new Date(b.prediction_date);
-        }
-      }
 
-      // Type-safe comparison
-      if (valueA instanceof Date && valueB instanceof Date) {
-        const timeA = valueA.getTime();
-        const timeB = valueB.getTime();
-        if (sortOrder === "desc") {
-          return timeB - timeA;
+        // Type-safe comparison
+        if (valueA instanceof Date && valueB instanceof Date) {
+          const timeA = valueA.getTime();
+          const timeB = valueB.getTime();
+          if (sortOrder === "desc") {
+            return timeB - timeA;
+          }
+          return timeA - timeB;
         }
-        return timeA - timeB;
-      }
-      
-      if (typeof valueA === "number" && typeof valueB === "number") {
-        if (sortOrder === "desc") {
-          return valueB - valueA;
+
+        if (typeof valueA === "number" && typeof valueB === "number") {
+          if (sortOrder === "desc") {
+            return valueB - valueA;
+          }
+          return valueA - valueB;
         }
-        return valueA - valueB;
-      }
-      
-      // Fallback for string comparison
-      const strA = String(valueA);
-      const strB = String(valueB);
-      if (sortOrder === "desc") {
-        return strB.localeCompare(strA);
-      }
-      return strA.localeCompare(strB);
-    });
+
+        // Fallback for string comparison
+        const strA = String(valueA);
+        const strB = String(valueB);
+        if (sortOrder === "desc") {
+          return strB.localeCompare(strA);
+        }
+        return strA.localeCompare(strB);
+      },
+    );
 
     // Pagination
     const paginatedPredictions = filteredPredictions.slice(
@@ -264,20 +271,24 @@ export async function GET(
           (p: ChurnPredictionData) => p.risk_level === ChurnRiskLevel.CRITICAL,
         ).length,
       },
-      average_churn_probability: filteredPredictions.length > 0
-        ? filteredPredictions.reduce(
-          (sum: number, p: ChurnPredictionData) => sum + safeParseNumber(p.churn_probability),
-          0,
-        ) / filteredPredictions.length
-        : 0,
+      average_churn_probability:
+        filteredPredictions.length > 0
+          ? filteredPredictions.reduce(
+              (sum: number, p: ChurnPredictionData) =>
+                sum + safeParseNumber(p.churn_probability),
+              0,
+            ) / filteredPredictions.length
+          : 0,
       high_risk_patients: filteredPredictions.filter((p: ChurnPredictionData) =>
-        ["high", "critical"].includes(p.risk_level)
+        ["high", "critical"].includes(p.risk_level),
       ).length,
-      recent_predictions: filteredPredictions.filter((p: ChurnPredictionData) => {
-        const predictionDate = new Date(p.prediction_date);
-        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        return predictionDate > dayAgo;
-      }).length,
+      recent_predictions: filteredPredictions.filter(
+        (p: ChurnPredictionData) => {
+          const predictionDate = new Date(p.prediction_date);
+          const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+          return predictionDate > dayAgo;
+        },
+      ).length,
     };
 
     return NextResponse.json({
@@ -318,7 +329,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string; }>; },
+  { params }: { params: Promise<{ clinicId: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -483,16 +494,18 @@ export async function POST(
       model_type: modelType,
       high_risk_detected: results.filter((r: DatabaseRow) =>
         ["high", "critical"].includes(
-          (r as unknown as { prediction: { risk_level: string; }; }).prediction.risk_level || 'unknown',
-        )
+          (r as unknown as { prediction: { risk_level: string } }).prediction
+            .risk_level || "unknown",
+        ),
       ).length,
     };
 
     return NextResponse.json({
       success: true,
       data: {
-        predictions: results.map((r: DatabaseRow) =>
-          (r as unknown as { prediction: unknown; }).prediction
+        predictions: results.map(
+          (r: DatabaseRow) =>
+            (r as unknown as { prediction: unknown }).prediction,
         ),
         summary,
         errors: errors.length > 0 ? errors : undefined,

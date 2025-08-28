@@ -2,7 +2,13 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,7 +58,11 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import type { EquipmentStatus, FacilityRoom, MedicalEquipment } from "@/types/team-coordination"; // Mock medical equipment data with ANVISA compliance
+import type {
+  EquipmentStatus,
+  FacilityRoom,
+  MedicalEquipment,
+} from "@/types/team-coordination"; // Mock medical equipment data with ANVISA compliance
 
 const mockEquipmentData: MedicalEquipment[] = [
   {
@@ -367,11 +377,12 @@ export function ResourceAllocation({
       // Search filter
       if (searchQuery) {
         const searchLower = searchQuery.toLowerCase();
-        const matchesSearch = equipment.name.toLowerCase().includes(searchLower)
-          || equipment.model.toLowerCase().includes(searchLower)
-          || equipment.serialNumber.toLowerCase().includes(searchLower)
-          || equipment.currentLocation.toLowerCase().includes(searchLower)
-          || equipment.anvisaRegistration?.toLowerCase().includes(searchLower);
+        const matchesSearch =
+          equipment.name.toLowerCase().includes(searchLower) ||
+          equipment.model.toLowerCase().includes(searchLower) ||
+          equipment.serialNumber.toLowerCase().includes(searchLower) ||
+          equipment.currentLocation.toLowerCase().includes(searchLower) ||
+          equipment.anvisaRegistration?.toLowerCase().includes(searchLower);
 
         if (!matchesSearch) {
           return false;
@@ -385,20 +396,21 @@ export function ResourceAllocation({
 
       // Location filter
       if (
-        locationFilter !== "all"
-        && !equipment.currentLocation.includes(locationFilter)
+        locationFilter !== "all" &&
+        !equipment.currentLocation.includes(locationFilter)
       ) {
         return false;
       }
 
       // Maintenance filter
       if (showMaintenanceOnly) {
-        const hasMaintenanceIssues = equipment.status === "maintenance"
-          || equipment.safetyAlerts.length > 0
-          || (equipment.nextInspectionDate
-            && equipment.nextInspectionDate < new Date())
-          || (equipment.nextMaintenanceDate
-            && equipment.nextMaintenanceDate < new Date());
+        const hasMaintenanceIssues =
+          equipment.status === "maintenance" ||
+          equipment.safetyAlerts.length > 0 ||
+          (equipment.nextInspectionDate &&
+            equipment.nextInspectionDate < new Date()) ||
+          (equipment.nextMaintenanceDate &&
+            equipment.nextMaintenanceDate < new Date());
 
         if (!hasMaintenanceIssues) {
           return false;
@@ -415,10 +427,13 @@ export function ResourceAllocation({
       // Search filter
       if (searchQuery) {
         const searchLower = searchQuery.toLowerCase();
-        const matchesSearch = room.name.toLowerCase().includes(searchLower)
-          || room.type.toLowerCase().includes(searchLower)
-          || room.floor.toLowerCase().includes(searchLower)
-          || room.features.some((feature) => feature.toLowerCase().includes(searchLower));
+        const matchesSearch =
+          room.name.toLowerCase().includes(searchLower) ||
+          room.type.toLowerCase().includes(searchLower) ||
+          room.floor.toLowerCase().includes(searchLower) ||
+          room.features.some((feature) =>
+            feature.toLowerCase().includes(searchLower),
+          );
 
         if (!matchesSearch) {
           return false;
@@ -564,7 +579,8 @@ export function ResourceAllocation({
             <CardHeader>
               <CardTitle className="text-lg">Equipamentos Médicos</CardTitle>
               <CardDescription>
-                {filteredEquipment.length} equipamentos de {mockEquipmentData.length} total
+                {filteredEquipment.length} equipamentos de{" "}
+                {mockEquipmentData.length} total
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -589,10 +605,12 @@ export function ResourceAllocation({
                       const { icon: StatusIcon } = statusInfo;
 
                       // Check for alerts
-                      const hasInspectionAlert = equipment.nextInspectionDate
-                        && equipment.nextInspectionDate < new Date();
-                      const hasMaintenanceAlert = equipment.nextMaintenanceDate
-                        && equipment.nextMaintenanceDate < new Date();
+                      const hasInspectionAlert =
+                        equipment.nextInspectionDate &&
+                        equipment.nextInspectionDate < new Date();
+                      const hasMaintenanceAlert =
+                        equipment.nextMaintenanceDate &&
+                        equipment.nextMaintenanceDate < new Date();
                       const hasSafetyAlerts = equipment.safetyAlerts.length > 0;
 
                       return (
@@ -650,9 +668,11 @@ export function ResourceAllocation({
                                 <span className="font-mono text-xs">
                                   {equipment.anvisaRegistration}
                                 </span>
-                                {hasInspectionAlert
-                                  ? <AlertTriangle className="h-3 w-3 text-red-500" />
-                                  : <CheckCircle className="h-3 w-3 text-green-500" />}
+                                {hasInspectionAlert ? (
+                                  <AlertTriangle className="h-3 w-3 text-red-500" />
+                                ) : (
+                                  <CheckCircle className="h-3 w-3 text-green-500" />
+                                )}
                               </div>
                               <Badge className="text-xs" variant="outline">
                                 {equipment.regulatoryClass}
@@ -699,9 +719,11 @@ export function ResourceAllocation({
                                     },
                                   )}
                                 </span>
-                                {hasMaintenanceAlert
-                                  ? <AlertTriangle className="h-3 w-3 text-red-500" />
-                                  : <CheckCircle className="h-3 w-3 text-green-500" />}
+                                {hasMaintenanceAlert ? (
+                                  <AlertTriangle className="h-3 w-3 text-red-500" />
+                                ) : (
+                                  <CheckCircle className="h-3 w-3 text-green-500" />
+                                )}
                               </div>
                               {equipment.failureCount > 0 && (
                                 <Badge
@@ -781,7 +803,8 @@ export function ResourceAllocation({
                 {filteredRooms.map((room) => {
                   const statusInfo = getRoomStatusInfo(room.status);
                   const { icon: StatusIcon } = statusInfo;
-                  const occupancyPercentage = (room.currentOccupancy / room.capacity) * 100;
+                  const occupancyPercentage =
+                    (room.currentOccupancy / room.capacity) * 100;
 
                   return (
                     <Card
@@ -857,8 +880,8 @@ export function ResourceAllocation({
                                 room.sanitationStatus === "clean"
                                   ? "bg-green-500"
                                   : room.sanitationStatus === "cleaning"
-                                  ? "bg-yellow-500"
-                                  : "bg-red-500"
+                                    ? "bg-yellow-500"
+                                    : "bg-red-500"
                               }`}
                             />
                             <span className="text-xs capitalize">
@@ -903,7 +926,8 @@ export function ResourceAllocation({
                 📦 Sistema de gestão de suprimentos será implementado aqui
                 <br />
                 <span className="text-sm">
-                  Integração com controle de estoque, alertas de reposição e rastreabilidade
+                  Integração com controle de estoque, alertas de reposição e
+                  rastreabilidade
                 </span>
               </div>
             </CardContent>

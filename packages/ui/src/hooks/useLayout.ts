@@ -3,15 +3,15 @@ import * as React from "react";
 interface LayoutState {
   sidebarCollapsed: boolean;
   _activeMenuItem: string | null;
-  breadcrumbs: { title: string; href?: string; }[];
+  breadcrumbs: { title: string; href?: string }[];
 }
 
 interface LayoutActions {
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebar: () => void;
   setActiveMenuItem: (itemId: string | null) => void;
-  setBreadcrumbs: (breadcrumbs: { title: string; href?: string; }[]) => void;
-  addBreadcrumb: (breadcrumb: { title: string; href?: string; }) => void;
+  setBreadcrumbs: (breadcrumbs: { title: string; href?: string }[]) => void;
+  addBreadcrumb: (breadcrumb: { title: string; href?: string }) => void;
   clearBreadcrumbs: () => void;
 }
 
@@ -35,14 +35,14 @@ export function useLayout(): LayoutState & LayoutActions {
   }, []);
 
   const setBreadcrumbs = React.useCallback(
-    (breadcrumbs: { title: string; href?: string; }[]) => {
+    (breadcrumbs: { title: string; href?: string }[]) => {
       setState((prev) => ({ ...prev, breadcrumbs }));
     },
     [],
   );
 
   const addBreadcrumb = React.useCallback(
-    (breadcrumb: { title: string; href?: string; }) => {
+    (breadcrumb: { title: string; href?: string }) => {
       setState((prev) => ({
         ...prev,
         breadcrumbs: [...prev.breadcrumbs, breadcrumb],

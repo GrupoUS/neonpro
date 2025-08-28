@@ -107,7 +107,8 @@ export async function validateEnterpriseAnalyticsCompliance(
   }
 
   // Validate compliance dashboard
-  const dashboardValidation = await validateComplianceDashboard(dashboardConfig);
+  const dashboardValidation =
+    await validateComplianceDashboard(dashboardConfig);
   if (!dashboardValidation.valid) {
     violations.push(
       ...dashboardValidation.violations.map(
@@ -260,7 +261,8 @@ export const ENTERPRISE_ANALYTICS_MODULE = {
   services: [
     {
       name: "Privacy-Preserving Analytics",
-      description: "Patient privacy-preserving analytics with constitutional compliance",
+      description:
+        "Patient privacy-preserving analytics with constitutional compliance",
       compliance_features: [
         "Differential Privacy",
         "K-Anonymity",
@@ -270,7 +272,8 @@ export const ENTERPRISE_ANALYTICS_MODULE = {
     },
     {
       name: "Compliance Dashboard",
-      description: "Real-time compliance monitoring dashboard for regulatory oversight",
+      description:
+        "Real-time compliance monitoring dashboard for regulatory oversight",
       compliance_features: [
         "Real-time Monitoring",
         "Alert Management",
@@ -280,7 +283,8 @@ export const ENTERPRISE_ANALYTICS_MODULE = {
     },
     {
       name: "Healthcare Intelligence",
-      description: "AI-driven healthcare insights with constitutional medical ethics",
+      description:
+        "AI-driven healthcare insights with constitutional medical ethics",
       compliance_features: [
         "Explainable AI",
         "Bias Detection",

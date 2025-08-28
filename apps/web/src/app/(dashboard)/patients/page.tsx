@@ -2,7 +2,13 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +16,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Filter, Mail, MoreHorizontal, Phone, Plus, Search, User } from "lucide-react";
+import {
+  Filter,
+  Mail,
+  MoreHorizontal,
+  Phone,
+  Plus,
+  Search,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 
 const patients = [
@@ -68,10 +82,7 @@ export default function PatientsPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <Input
-                placeholder="Buscar pacientes..."
-                className="pl-10"
-              />
+              <Input placeholder="Buscar pacientes..." className="pl-10" />
             </div>
             <Button variant="outline">
               <Filter className="h-4 w-4 mr-2" />
@@ -101,7 +112,9 @@ export default function PatientsPage() {
                     <User className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">{patient.name}</h3>
+                    <h3 className="font-medium text-gray-900">
+                      {patient.name}
+                    </h3>
                     <div className="flex items-center space-x-4 text-sm text-gray-500">
                       <span className="flex items-center">
                         <Mail className="h-3 w-3 mr-1" />
@@ -131,7 +144,9 @@ export default function PatientsPage() {
                   </div>
 
                   <Badge
-                    variant={patient.status === "ativo" ? "default" : "secondary"}
+                    variant={
+                      patient.status === "ativo" ? "default" : "secondary"
+                    }
                   >
                     {patient.status}
                   </Badge>

@@ -91,7 +91,8 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
 
       setTransactions(mockTransactions);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to refresh data";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to refresh data";
       setError(errorMessage);
     } finally {
       setIsLoading(false);

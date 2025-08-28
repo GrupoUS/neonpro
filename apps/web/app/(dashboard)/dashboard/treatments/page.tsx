@@ -26,7 +26,13 @@ import { CosmeticConsentBrazilian } from "@/components/treatments/CosmeticConsen
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -188,7 +194,8 @@ export default function TreatmentsPage() {
             Gestão de Tratamentos
           </h2>
           <p className="text-muted-foreground">
-            Sistema completo para medicina estética brasileira com conformidade LGPD e CFM
+            Sistema completo para medicina estética brasileira com conformidade
+            LGPD e CFM
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -314,15 +321,17 @@ export default function TreatmentsPage() {
                       <div className="flex items-center gap-2">
                         <Progress
                           className="h-2 w-20"
-                          value={((treatment.completed_sessions || 2)
-                            / (treatment.expected_sessions || 6))
-                            * 100}
+                          value={
+                            ((treatment.completed_sessions || 2) /
+                              (treatment.expected_sessions || 6)) *
+                            100
+                          }
                         />
                         <Badge variant="outline">
                           {Math.round(
-                            ((treatment.completed_sessions || 2)
-                              / (treatment.expected_sessions || 6))
-                              * 100,
+                            ((treatment.completed_sessions || 2) /
+                              (treatment.expected_sessions || 6)) *
+                              100,
                           )}
                           %
                         </Badge>
@@ -390,11 +399,13 @@ export default function TreatmentsPage() {
                         </p>
                       </div>
                       <Badge
-                        variant={session.status === "completed"
-                          ? "default"
-                          : session.status === "cancelled"
-                          ? "destructive"
-                          : "outline"}
+                        variant={
+                          session.status === "completed"
+                            ? "default"
+                            : session.status === "cancelled"
+                              ? "destructive"
+                              : "outline"
+                        }
                       >
                         {session.status === "scheduled" && "Agendada"}
                         {session.status === "completed" && "Concluída"}
@@ -513,49 +524,45 @@ export default function TreatmentsPage() {
 
           {/* Treatments List */}
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {loading
-              ? (
-                // Loading skeleton
-                Array.from({ length: 4 }).map((_, i) => (
-                  <Card key={i}>
-                    <CardHeader>
-                      <div className="space-y-2">
-                        <div className="h-4 animate-pulse rounded bg-muted" />
-                        <div className="h-3 w-2/3 animate-pulse rounded bg-muted" />
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div className="h-2 animate-pulse rounded bg-muted" />
-                        <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )
-              : treatmentPlans.length > 0
-              ? (
-                treatmentPlans.map((treatment) => (
-                  <AestheticTreatmentPlan
-                    key={treatment.id}
-                    onScheduleSession={(_id) => {}}
-                    onViewProgress={(_id) => {}}
-                    treatmentPlan={treatment}
-                    variant="summary"
-                  />
-                ))
-              )
-              : (
-                // Show mock data for demonstration
-                <div className="col-span-full">
-                  <AestheticTreatmentPlan
-                    onScheduleSession={(_id) => {}}
-                    onViewProgress={(_id) => {}}
-                    treatmentPlan={mockTreatmentPlan}
-                    variant="summary"
-                  />
-                </div>
-              )}
+            {loading ? (
+              // Loading skeleton
+              Array.from({ length: 4 }).map((_, i) => (
+                <Card key={i}>
+                  <CardHeader>
+                    <div className="space-y-2">
+                      <div className="h-4 animate-pulse rounded bg-muted" />
+                      <div className="h-3 w-2/3 animate-pulse rounded bg-muted" />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="h-2 animate-pulse rounded bg-muted" />
+                      <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : treatmentPlans.length > 0 ? (
+              treatmentPlans.map((treatment) => (
+                <AestheticTreatmentPlan
+                  key={treatment.id}
+                  onScheduleSession={(_id) => {}}
+                  onViewProgress={(_id) => {}}
+                  treatmentPlan={treatment}
+                  variant="summary"
+                />
+              ))
+            ) : (
+              // Show mock data for demonstration
+              <div className="col-span-full">
+                <AestheticTreatmentPlan
+                  onScheduleSession={(_id) => {}}
+                  onViewProgress={(_id) => {}}
+                  treatmentPlan={mockTreatmentPlan}
+                  variant="summary"
+                />
+              </div>
+            )}
           </div>
         </TabsContent>
 
@@ -578,7 +585,8 @@ export default function TreatmentsPage() {
                   Calendário de Sessões
                 </h3>
                 <p className="mb-4 text-muted-foreground">
-                  Interface de agendamento e gerenciamento de sessões será implementada aqui.
+                  Interface de agendamento e gerenciamento de sessões será
+                  implementada aqui.
                 </p>
                 <Button variant="outline">
                   <Plus className="mr-2 h-4 w-4" />
@@ -632,8 +640,8 @@ export default function TreatmentsPage() {
                 <Alert>
                   <Shield className="h-4 w-4" />
                   <AlertDescription>
-                    Todos os tratamentos estão em conformidade com a LGPD. Próxima auditoria
-                    agendada para dezembro de 2024.
+                    Todos os tratamentos estão em conformidade com a LGPD.
+                    Próxima auditoria agendada para dezembro de 2024.
                   </AlertDescription>
                 </Alert>
               </CardContent>
@@ -680,8 +688,8 @@ export default function TreatmentsPage() {
                 <Alert>
                   <Users className="h-4 w-4" />
                   <AlertDescription>
-                    Todos os procedimentos seguem as diretrizes éticas do CFM. Certificações
-                    profissionais atualizadas.
+                    Todos os procedimentos seguem as diretrizes éticas do CFM.
+                    Certificações profissionais atualizadas.
                   </AlertDescription>
                 </Alert>
               </CardContent>
@@ -745,7 +753,8 @@ export default function TreatmentsPage() {
           <DialogHeader>
             <DialogTitle>Novo Plano de Tratamento</DialogTitle>
             <DialogDescription>
-              Criar um novo plano de tratamento estético com conformidade brasileira
+              Criar um novo plano de tratamento estético com conformidade
+              brasileira
             </DialogDescription>
           </DialogHeader>
 
@@ -753,9 +762,9 @@ export default function TreatmentsPage() {
             <Alert>
               <Plus className="h-4 w-4" />
               <AlertDescription>
-                Esta funcionalidade será implementada com formulário completo de criação de
-                tratamentos, incluindo seleção de protocolos, configuração de sessões e validação de
-                conformidade.
+                Esta funcionalidade será implementada com formulário completo de
+                criação de tratamentos, incluindo seleção de protocolos,
+                configuração de sessões e validação de conformidade.
               </AlertDescription>
             </Alert>
 

@@ -110,7 +110,7 @@ function getReceiptInvoiceManager() {
 // GET - Get document details
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; }>; },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createClient(
@@ -163,7 +163,7 @@ export async function GET(
 // POST - Perform actions on document
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; }>; },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createClient(
@@ -386,7 +386,7 @@ export async function POST(
 // PUT - Update document details
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; }>; },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createClient(
@@ -466,7 +466,7 @@ export async function PUT(
 // DELETE - Delete document
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; }>; },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createClient(

@@ -52,7 +52,7 @@ export class LGPDComplianceTracker {
    */
   async calculateComplianceScore(
     tenantId: string,
-  ): Promise<{ score?: LGPDComplianceScore; error?: string; }> {
+  ): Promise<{ score?: LGPDComplianceScore; error?: string }> {
     try {
       // Collect all LGPD-related data
       const [
@@ -93,7 +93,8 @@ export class LGPDComplianceTracker {
 
       const overall_score = Math.round(
         Object.entries(scores).reduce(
-          (sum, [key, score]) => sum + score * weights[key as keyof typeof weights],
+          (sum, [key, score]) =>
+            sum + score * weights[key as keyof typeof weights],
           0,
         ),
       );
@@ -134,9 +135,10 @@ export class LGPDComplianceTracker {
       return { score: complianceScore };
     } catch (error) {
       return {
-        error: error instanceof Error
-          ? error.message
-          : "Failed to calculate LGPD compliance score",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to calculate LGPD compliance score",
       };
     }
   }
@@ -147,7 +149,7 @@ export class LGPDComplianceTracker {
   async executeAutomaticRemediation(
     tenantId: string,
     actions: RemediationAction[],
-  ): Promise<{ executed?: number; error?: string; }> {
+  ): Promise<{ executed?: number; error?: string }> {
     try {
       let executedCount = 0;
 
@@ -176,9 +178,10 @@ export class LGPDComplianceTracker {
       return { executed: executedCount };
     } catch (error) {
       return {
-        error: error instanceof Error
-          ? error.message
-          : "Failed to execute automatic remediation",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to execute automatic remediation",
       };
     }
   }
@@ -253,7 +256,8 @@ export class LGPDComplianceTracker {
         (c) => c.status === "active",
       ).length;
       const { length: totalConsents } = consents;
-      const consentRate = totalConsents > 0 ? activeConsents / totalConsents : 0;
+      const consentRate =
+        totalConsents > 0 ? activeConsents / totalConsents : 0;
 
       if (consentRate < 0.95) {
         const deduction = Math.round((0.95 - consentRate) * 50);
@@ -341,8 +345,10 @@ export class LGPDComplianceTracker {
     const violations: LGPDViolation[] = [];
     let score = 100;
 
-    const criticalEvents = securityEvents?.filter((e) => e.severity === "critical") || [];
-    const highEvents = securityEvents?.filter((e) => e.severity === "high") || [];
+    const criticalEvents =
+      securityEvents?.filter((e) => e.severity === "critical") || [];
+    const highEvents =
+      securityEvents?.filter((e) => e.severity === "high") || [];
 
     if (criticalEvents.length > 0) {
       score -= criticalEvents.length * 20;
@@ -385,7 +391,8 @@ export class LGPDComplianceTracker {
       const overdueRequests = requests.filter((r) => {
         const requestDate = new Date(r.requested_at);
         const now = new Date();
-        const hoursDiff = (now.getTime() - requestDate.getTime()) / (1000 * 60 * 60);
+        const hoursDiff =
+          (now.getTime() - requestDate.getTime()) / (1000 * 60 * 60);
         return hoursDiff > 72 && r.status !== "completed";
       });
 
@@ -571,9 +578,9 @@ export class LGPDComplianceTracker {
 
     for (const violation of violations) {
       if (
-        violation.auto_fixable
-        && violation.fix_action
-        && !actionMap.has(violation.fix_action)
+        violation.auto_fixable &&
+        violation.fix_action &&
+        !actionMap.has(violation.fix_action)
       ) {
         actions.push({
           id: violation.fix_action,
@@ -592,7 +599,7 @@ export class LGPDComplianceTracker {
   }
 
   private getEstimatedImpact(actionId: string): number {
-    const impactMap: { [key: string]: number; } = {
+    const impactMap: { [key: string]: number } = {
       consent_renewal_campaign: 15,
       data_retention_cleanup: 20,
       security_policy_update: 10,

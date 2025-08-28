@@ -78,7 +78,7 @@ export const useMFA = () => {
   const setupMfaMethod = useCallback(
     async (
       method: MfaMethod,
-      options?: { phoneNumber?: string; email?: string; },
+      options?: { phoneNumber?: string; email?: string },
     ): Promise<MfaSetupResult> => {
       if (!user?.id) {
         throw new Error("User not authenticated");
@@ -102,19 +102,20 @@ export const useMFA = () => {
           setConfig((prev) =>
             prev
               ? {
-                ...prev,
-                method,
-                isEnabled: false, // Still needs verification
-                phoneNumber: options?.phoneNumber,
-                email: options?.email,
-              }
-              : undefined
+                  ...prev,
+                  method,
+                  isEnabled: false, // Still needs verification
+                  phoneNumber: options?.phoneNumber,
+                  email: options?.email,
+                }
+              : undefined,
           );
         }
 
         return result;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Failed to setup MFA";
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to setup MFA";
         setError(errorMessage);
         return { success: false, message: errorMessage };
       } finally {
@@ -150,12 +151,15 @@ export const useMFA = () => {
         if (result.success) {
           // Update enabled state
           setIsEnabled(true);
-          setConfig((prev) => prev ? { ...prev, isEnabled: true } : undefined);
+          setConfig((prev) =>
+            prev ? { ...prev, isEnabled: true } : undefined,
+          );
         }
 
         return result;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Failed to verify MFA";
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to verify MFA";
         setError(errorMessage);
         return {
           success: false,
@@ -190,7 +194,8 @@ export const useMFA = () => {
 
       return { success: true, message: "MFA disabled successfully" };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to disable MFA";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to disable MFA";
       setError(errorMessage);
       return { success: false, message: errorMessage };
     } finally {
@@ -220,18 +225,19 @@ export const useMFA = () => {
         setConfig((prev) =>
           prev
             ? {
-              ...prev,
-              backupCodesCount: result.backupCodes?.length || 0,
-            }
-            : undefined
+                ...prev,
+                backupCodesCount: result.backupCodes?.length || 0,
+              }
+            : undefined,
         );
       }
 
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error
-        ? error.message
-        : "Failed to regenerate backup codes";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to regenerate backup codes";
       setError(errorMessage);
       return { success: false, message: errorMessage };
     } finally {
@@ -254,7 +260,8 @@ export const useMFA = () => {
     clearError: () => setError(undefined),
 
     // Utilities
-    isMethodEnabled: (method: MfaMethod) => config?.method === method && isEnabled,
+    isMethodEnabled: (method: MfaMethod) =>
+      config?.method === method && isEnabled,
     hasBackupCodes: () => (config?.backupCodesCount ?? 0) > 0,
   };
 };

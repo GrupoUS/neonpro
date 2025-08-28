@@ -5,55 +5,55 @@ on:
   pull_request:
     branches: [main, develop]
     paths:
-      - 'apps/**'
-      - 'packages/**'
-      - 'tools/e2e/**'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-  
+      - "apps/**"
+      - "packages/**"
+      - "tools/e2e/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+
   # Executar em push para main (para criar baselines)
   push:
     branches: [main]
-  
+
   # Permitir execução manual
   workflow_dispatch:
     inputs:
       suite:
-        description: 'Test suite to run'
+        description: "Test suite to run"
         required: true
-        default: 'quick'
+        default: "quick"
         type: choice
         options:
           - quick
           - full
           - regression
           - comparison
-      
+
       create_baseline:
-        description: 'Create performance baseline'
+        description: "Create performance baseline"
         required: false
         default: false
         type: boolean
-      
+
       compare_baseline:
-        description: 'Compare with baseline'
+        description: "Compare with baseline"
         required: false
         default: true
         type: boolean
-      
+
       threshold:
-        description: 'Performance degradation threshold (%)'
+        description: "Performance degradation threshold (%)"
         required: false
-        default: '10'
+        default: "10"
         type: string
 
   # Executar testes de performance semanalmente
   schedule:
-    - cron: '0 2 * * 1' # Segunda-feira às 2h UTC
+    - cron: "0 2 * * 1" # Segunda-feira às 2h UTC
 
 env:
-  NODE_VERSION: '20'
-  PNPM_VERSION: '8'
+  NODE_VERSION: "20"
+  PNPM_VERSION: "8"
   PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/ms-playwright
 
 jobs:
@@ -70,7 +70,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Detect changes
         uses: dorny/paths-filter@v2
         id: changes
@@ -99,65 +99,65 @@ jobs:
       github.event_name == 'push' ||
       needs.detect-changes.outputs.performance-tests == 'true' ||
       needs.detect-changes.outputs.frontend == 'true'
-    
+
     strategy:
       fail-fast: false
       matrix:
         browser: [chromium, firefox]
-        suite: 
+        suite:
           - ${{ github.event.inputs.suite || 'quick' }}
-    
+
     timeout-minutes: 30
-    
+
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: ${{ env.PNPM_VERSION }}
-      
+
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-      
+          cache: "pnpm"
+
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: 🎭 Install Playwright browsers
         run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
-      
+
       - name: 🏗️ Build application
         run: |
           pnpm build:web
           pnpm build:api
         env:
           NODE_ENV: production
-      
+
       - name: 🚀 Start application
         run: |
           # Iniciar API em background
           pnpm start:api &
           API_PID=$!
           echo "API_PID=$API_PID" >> $GITHUB_ENV
-          
+
           # Iniciar Web em background
           pnpm start:web &
           WEB_PID=$!
           echo "WEB_PID=$WEB_PID" >> $GITHUB_ENV
-          
+
           # Aguardar serviços ficarem prontos
           timeout 60 bash -c 'until curl -f http://localhost:3001/health; do sleep 2; done'
           timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
         env:
           NODE_ENV: production
           DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
-      
+
       - name: 📊 Run performance tests
         run: |
           # Configurar variáveis de ambiente
@@ -166,7 +166,7 @@ jobs:
           export PERFORMANCE_TESTING=true
           export PLAYWRIGHT_BROWSER=${{ matrix.browser }}
           export BENCHMARK_SUITE=${{ matrix.suite }}
-          
+
           # Executar testes usando o script PowerShell (adaptado para Linux)
           pnpm exec playwright test tools/e2e/tests/performance \
             --config=tools/e2e/playwright.config.ts \
@@ -176,7 +176,7 @@ jobs:
             --output-dir=test-results/performance-${{ matrix.browser }}
         env:
           CI: true
-      
+
       - name: 📊 Generate performance report
         if: always()
         run: |
@@ -184,7 +184,7 @@ jobs:
           cat > process-results.js << 'EOF'
           const fs = require('fs');
           const path = require('path');
-          
+
           function findPerformanceResults() {
             const resultsDir = 'test-results';
             const results = [];
@@ -230,7 +230,7 @@ jobs:
             scanDir(resultsDir);
             return results;
           }
-          
+
           const results = findPerformanceResults();
           const summary = {
             browser: '${{ matrix.browser }}',
@@ -241,22 +241,22 @@ jobs:
             failedTests: results.filter(r => r.status === 'failed').length,
             results: results
           };
-          
+
           // Salvar resumo
           fs.writeFileSync(
             'performance-summary-${{ matrix.browser }}.json',
             JSON.stringify(summary, null, 2)
           );
-          
+
           console.log(`Performance Summary - ${{ matrix.browser }}:`);
           console.log(`Total Tests: ${summary.totalTests}`);
           console.log(`Passed: ${summary.passedTests}`);
           console.log(`Failed: ${summary.failedTests}`);
           console.log(`Success Rate: ${((summary.passedTests / summary.totalTests) * 100).toFixed(1)}%`);
           EOF
-          
+
           node process-results.js
-      
+
       - name: 📤 Upload performance results
         if: always()
         uses: actions/upload-artifact@v4
@@ -267,7 +267,7 @@ jobs:
             performance-summary-*.json
             playwright-report/
           retention-days: 30
-      
+
       - name: 🛑 Stop application
         if: always()
         run: |
@@ -283,30 +283,30 @@ jobs:
     if: |
       always() &&
       (github.event.inputs.compare_baseline == 'true' || github.event_name != 'workflow_dispatch')
-    
+
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
-      
+
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      
+
       - name: 📥 Download performance results
         uses: actions/download-artifact@v4
         with:
           pattern: performance-results-*
           merge-multiple: true
           path: ./performance-results
-      
+
       - name: 📊 Compare with baseline
         run: |
           # Criar script de comparação
           cat > compare-performance.js << 'EOF'
           const fs = require('fs');
           const path = require('path');
-          
+
           function loadResults() {
             const results = [];
             const files = fs.readdirSync('./performance-results');
@@ -324,15 +324,15 @@ jobs:
             
             return results;
           }
-          
+
           const results = loadResults();
           const threshold = parseInt('${{ github.event.inputs.threshold || "10" }}');
-          
+
           console.log('\n📊 RELATÓRIO DE PERFORMANCE');
           console.log('================================');
-          
+
           let hasFailures = false;
-          
+
           results.forEach(result => {
             console.log(`\n🌐 Browser: ${result.browser}`);
             console.log(`📋 Suite: ${result.suite}`);
@@ -347,21 +347,21 @@ jobs:
               hasFailures = true;
             }
           });
-          
+
           // Criar badge de status
           const overallSuccess = results.every(r => (r.passedTests / r.totalTests) >= ((100 - threshold) / 100));
           const badgeColor = overallSuccess ? 'brightgreen' : 'red';
           const badgeText = overallSuccess ? 'passing' : 'failing';
-          
+
           console.log(`\n🏷️ Badge Status: ${badgeText}`);
-          
+
           // Salvar resultado para próximos jobs
           fs.writeFileSync('performance-status.json', JSON.stringify({
             success: overallSuccess,
             results: results,
             threshold: threshold
           }));
-          
+
           if (hasFailures) {
             console.log('\n❌ Performance tests failed!');
             process.exit(1);
@@ -369,9 +369,9 @@ jobs:
             console.log('\n✅ Performance tests passed!');
           }
           EOF
-          
+
           node compare-performance.js
-      
+
       - name: 📤 Upload comparison results
         if: always()
         uses: actions/upload-artifact@v4
@@ -388,32 +388,32 @@ jobs:
     if: |
       always() &&
       github.event_name == 'pull_request'
-    
+
     steps:
       - name: 📥 Download comparison results
         uses: actions/download-artifact@v4
         with:
           name: performance-comparison
           path: ./
-      
+
       - name: 💬 Comment PR
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            
+
             let status = { success: false, results: [] };
             try {
               status = JSON.parse(fs.readFileSync('performance-status.json', 'utf8'));
             } catch (e) {
               console.log('Não foi possível ler o status de performance');
             }
-            
+
             const emoji = status.success ? '✅' : '❌';
             const statusText = status.success ? 'PASSOU' : 'FALHOU';
-            
+
             let comment = `## ${emoji} Testes de Performance - ${statusText}\n\n`;
-            
+
             if (status.results && status.results.length > 0) {
               comment += '### 📊 Resultados por Browser\n\n';
               comment += '| Browser | Suite | Testes | Passou | Falhou | Taxa de Sucesso |\n';
@@ -426,27 +426,27 @@ jobs:
               
               comment += `\n**Threshold de Performance:** ${status.threshold}%\n`;
             }
-            
+
             comment += '\n### 📁 Artefatos\n';
             comment += '- 📊 Relatórios HTML disponíveis nos artefatos do workflow\n';
             comment += '- 📄 Dados JSON de performance para análise detalhada\n';
-            
+
             if (!status.success) {
               comment += '\n### ⚠️ Ação Necessária\n';
               comment += 'Os testes de performance falharam. Verifique os relatórios detalhados nos artefatos.';
             }
-            
+
             // Encontrar comentário existente
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-            
+
             const existingComment = comments.find(comment => 
               comment.body.includes('Testes de Performance')
             );
-            
+
             if (existingComment) {
               // Atualizar comentário existente
               await github.rest.issues.updateComment({
@@ -474,28 +474,28 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' ||
       github.event.inputs.create_baseline == 'true'
-    
+
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
-      
+
       - name: 📥 Download performance results
         uses: actions/download-artifact@v4
         with:
           pattern: performance-results-*
           merge-multiple: true
           path: ./performance-results
-      
+
       - name: 📊 Create baseline
         run: |
           # Criar diretório de baselines
           mkdir -p benchmarks/baselines
-          
+
           # Processar resultados e criar baseline
           cat > create-baseline.js << 'EOF'
           const fs = require('fs');
           const path = require('path');
-          
+
           function loadResults() {
             const results = [];
             const files = fs.readdirSync('./performance-results');
@@ -513,10 +513,10 @@ jobs:
             
             return results;
           }
-          
+
           const results = loadResults();
           const timestamp = new Date().toISOString();
-          
+
           const baseline = {
             timestamp: timestamp,
             commit: process.env.GITHUB_SHA,
@@ -528,24 +528,24 @@ jobs:
               node_version: process.env.NODE_VERSION
             }
           };
-          
+
           // Salvar baseline
           const baselineFile = `benchmarks/baselines/baseline-${timestamp.split('T')[0]}.json`;
           fs.writeFileSync(baselineFile, JSON.stringify(baseline, null, 2));
-          
+
           console.log(`✅ Baseline criado: ${baselineFile}`);
           console.log(`📊 Commit: ${baseline.commit}`);
           console.log(`📅 Timestamp: ${baseline.timestamp}`);
           EOF
-          
+
           node create-baseline.js
-      
+
       - name: 📤 Commit baseline
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add benchmarks/baselines/
-          
+
           if git diff --staged --quiet; then
             echo "Nenhuma mudança no baseline"
           else

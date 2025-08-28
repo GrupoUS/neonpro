@@ -16,7 +16,9 @@ test.describe("Bank Reconciliation System E2E", () => {
     await expect(page.getByTestId("reconciliation-dashboard")).toBeVisible();
   });
 
-  test("should load reconciliation dashboard with all components", async ({ page }) => {
+  test("should load reconciliation dashboard with all components", async ({
+    page,
+  }) => {
     // Verify main dashboard components
     await expect(page.getByTestId("reconciliation-dashboard")).toBeVisible();
     await expect(page.getByTestId("import-statement-button")).toBeVisible();
@@ -337,7 +339,9 @@ test.describe("Bank Reconciliation System E2E", () => {
     await expect(page.getByTestId("transaction-actions")).toBeVisible();
   });
 
-  test("should maintain security throughout reconciliation process", async ({ page }) => {
+  test("should maintain security throughout reconciliation process", async ({
+    page,
+  }) => {
     // Verify secure headers are present
     await page.goto("/dashboard/financial/reconciliation");
 

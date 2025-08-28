@@ -362,19 +362,25 @@ const contraindications = [
 const getTreatmentTypeColor = (type: Treatment["type"]) => {
   const colors = {
     botox: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-    filler: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+    filler:
+      "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
     laser: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-    skincare: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-    "body-contouring": "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
+    skincare:
+      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+    "body-contouring":
+      "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
   };
   return colors[type];
 };
 
 const getStatusColor = (status: Treatment["status"]) => {
   const colors = {
-    scheduled: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-    "in-progress": "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-    completed: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+    scheduled:
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+    "in-progress":
+      "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+    completed:
+      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
     cancelled: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
   };
   return colors[status];
@@ -383,7 +389,8 @@ const getStatusColor = (status: Treatment["status"]) => {
 const getPriorityColor = (priority: Treatment["priority"]) => {
   const colors = {
     low: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
-    medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+    medium:
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
     high: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
   };
   return colors[priority];
@@ -465,8 +472,8 @@ export function TreatmentPlanningInterface() {
 
   const toggleContraindication = (contraindication: string) => {
     const newContraindications = plan.contraindications.includes(
-        contraindication,
-      )
+      contraindication,
+    )
       ? plan.contraindications.filter((c) => c !== contraindication)
       : [...plan.contraindications, contraindication];
 
@@ -489,8 +496,8 @@ export function TreatmentPlanningInterface() {
             Planejamento de Tratamento Estético
           </CardTitle>
           <CardDescription>
-            Configure e planeje tratamentos personalizados com total segurança e documentação
-            completa
+            Configure e planeje tratamentos personalizados com total segurança e
+            documentação completa
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -501,7 +508,9 @@ export function TreatmentPlanningInterface() {
               <Input
                 aria-label="Nome do paciente"
                 id="patient-name"
-                onChange={(e) => setPlan({ ...plan, patientName: e.target.value })}
+                onChange={(e) =>
+                  setPlan({ ...plan, patientName: e.target.value })
+                }
                 placeholder="Digite o nome do paciente"
                 value={plan.patientName}
               />
@@ -510,7 +519,9 @@ export function TreatmentPlanningInterface() {
             <div className="space-y-2">
               <Label htmlFor="treatment-type">Tipo de Tratamento</Label>
               <Select
-                onValueChange={(value) => setPlan({ ...plan, treatmentType: value })}
+                onValueChange={(value) =>
+                  setPlan({ ...plan, treatmentType: value })
+                }
                 value={plan.treatmentType}
               >
                 <SelectTrigger id="treatment-type">
@@ -530,7 +541,8 @@ export function TreatmentPlanningInterface() {
               <Label htmlFor="priority">Prioridade</Label>
               <Select
                 onValueChange={(value) =>
-                  setPlan({ ...plan, priority: value as Treatment["priority"] })}
+                  setPlan({ ...plan, priority: value as Treatment["priority"] })
+                }
                 value={plan.priority}
               >
                 <SelectTrigger id="priority">
@@ -680,7 +692,9 @@ export function TreatmentPlanningInterface() {
                   aria-label="Número de sessões"
                   id="session-count"
                   min="1"
-                  onChange={(e) => setPlan({ ...plan, sessionCount: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setPlan({ ...plan, sessionCount: Number(e.target.value) })
+                  }
                   type="number"
                   value={plan.sessionCount}
                 />
@@ -692,7 +706,9 @@ export function TreatmentPlanningInterface() {
                   aria-label="Intervalo entre sessões em semanas"
                   id="interval-weeks"
                   min="1"
-                  onChange={(e) => setPlan({ ...plan, intervalWeeks: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setPlan({ ...plan, intervalWeeks: Number(e.target.value) })
+                  }
                   type="number"
                   value={plan.intervalWeeks}
                 />
@@ -710,7 +726,8 @@ export function TreatmentPlanningInterface() {
                     setPlan({
                       ...plan,
                       estimatedDuration: Number(e.target.value),
-                    })}
+                    })
+                  }
                   step="15"
                   type="number"
                   value={plan.estimatedDuration}
@@ -759,8 +776,8 @@ export function TreatmentPlanningInterface() {
                     Atenção às Contraindicações
                   </h4>
                   <p className="text-yellow-700 dark:text-yellow-300">
-                    Verifique cuidadosamente as contraindicações selecionadas antes de prosseguir
-                    com o tratamento.
+                    Verifique cuidadosamente as contraindicações selecionadas
+                    antes de prosseguir com o tratamento.
                   </p>
                 </div>
               </Alert>
@@ -802,7 +819,8 @@ export function BeforeAfterGallery() {
                 Galeria Antes/Depois
               </CardTitle>
               <CardDescription>
-                Documente e compare resultados dos tratamentos com galeria profissional
+                Documente e compare resultados dos tratamentos com galeria
+                profissional
               </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -849,134 +867,132 @@ export function BeforeAfterGallery() {
             </Button>
           </div>
 
-          {viewMode === "grid"
-            ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {mockTreatments.map((treatment) => (
-                  <Card
-                    className="overflow-hidden transition-shadow hover:shadow-lg"
-                    key={treatment.id}
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-base">
-                          {treatment.patientName}
-                        </CardTitle>
-                        <Badge className={getTreatmentTypeColor(treatment.type)}>
-                          {treatment.type.toUpperCase()}
-                        </Badge>
-                      </div>
-                      <CardDescription>{treatment.area}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {/* Photo Grid */}
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="flex aspect-square items-center justify-center rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700">
-                            <div className="text-center">
-                              <Camera className="mx-auto mb-1 h-6 w-6 text-gray-400" />
-                              <span className="text-gray-500 text-xs">Antes</span>
-                            </div>
-                          </div>
-                          <div className="flex aspect-square items-center justify-center rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800">
-                            <div className="text-center">
-                              <Camera className="mx-auto mb-1 h-6 w-6 text-blue-400" />
-                              <span className="text-blue-500 text-xs">
-                                Depois
-                              </span>
-                            </div>
+          {viewMode === "grid" ? (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {mockTreatments.map((treatment) => (
+                <Card
+                  className="overflow-hidden transition-shadow hover:shadow-lg"
+                  key={treatment.id}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-base">
+                        {treatment.patientName}
+                      </CardTitle>
+                      <Badge className={getTreatmentTypeColor(treatment.type)}>
+                        {treatment.type.toUpperCase()}
+                      </Badge>
+                    </div>
+                    <CardDescription>{treatment.area}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {/* Photo Grid */}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="flex aspect-square items-center justify-center rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700">
+                          <div className="text-center">
+                            <Camera className="mx-auto mb-1 h-6 w-6 text-gray-400" />
+                            <span className="text-gray-500 text-xs">Antes</span>
                           </div>
                         </div>
-
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            {treatment.photos || 0} fotos
-                          </span>
-                          <span className="text-gray-600 dark:text-gray-400">
-                            {new Date(treatment.date).toLocaleDateString("pt-BR")}
-                          </span>
-                        </div>
-
-                        <div className="flex gap-2">
-                          <Button className="flex-1" size="sm" variant="outline">
-                            <Eye className="mr-1 h-4 w-4" />
-                            Visualizar
-                          </Button>
-                          <Button className="flex-1" size="sm" variant="outline">
-                            <Camera className="mr-1 h-4 w-4" />
-                            Adicionar
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )
-            : (
-              /* Comparison View */
-              <div className="space-y-6">
-                {mockTreatments.slice(0, 2).map((treatment) => (
-                  <Card key={treatment.id}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg">
-                          {treatment.patientName}
-                        </CardTitle>
-                        <div className="flex gap-2">
-                          <Badge
-                            className={getTreatmentTypeColor(treatment.type)}
-                          >
-                            {treatment.type.toUpperCase()}
-                          </Badge>
-                          <Badge variant="outline">{treatment.area}</Badge>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div className="text-center">
-                          <h4 className="mb-3 font-semibold text-red-600">
-                            Antes
-                          </h4>
-                          <div className="mb-3 flex aspect-video items-center justify-center rounded-lg border-2 border-red-200 bg-gradient-to-br from-red-50 to-red-100 dark:border-red-800 dark:from-red-900/20 dark:to-red-800/20">
-                            <Camera className="h-8 w-8 text-red-400" />
+                        <div className="flex aspect-square items-center justify-center rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800">
+                          <div className="text-center">
+                            <Camera className="mx-auto mb-1 h-6 w-6 text-blue-400" />
+                            <span className="text-blue-500 text-xs">
+                              Depois
+                            </span>
                           </div>
-                          <p className="text-gray-600 text-sm dark:text-gray-400">
-                            {new Date(treatment.date).toLocaleDateString("pt-BR")}
-                          </p>
-                        </div>
-
-                        <div className="text-center">
-                          <h4 className="mb-3 font-semibold text-green-600">
-                            Depois
-                          </h4>
-                          <div className="mb-3 flex aspect-video items-center justify-center rounded-lg border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100 dark:border-green-800 dark:from-green-900/20 dark:to-green-800/20">
-                            <Camera className="h-8 w-8 text-green-400" />
-                          </div>
-                          <p className="text-gray-600 text-sm dark:text-gray-400">
-                            {treatment.nextSession
-                              ? new Date(
-                                treatment.nextSession,
-                              ).toLocaleDateString("pt-BR")
-                              : "Aguardando"}
-                          </p>
                         </div>
                       </div>
 
-                      <Separator className="my-4" />
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600 dark:text-gray-400">
+                          {treatment.photos || 0} fotos
+                        </span>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          {new Date(treatment.date).toLocaleDateString("pt-BR")}
+                        </span>
+                      </div>
 
-                      <div className="text-center">
-                        <Button variant="outline">
-                          <Download className="mr-2 h-4 w-4" />
-                          Baixar Comparação
+                      <div className="flex gap-2">
+                        <Button className="flex-1" size="sm" variant="outline">
+                          <Eye className="mr-1 h-4 w-4" />
+                          Visualizar
+                        </Button>
+                        <Button className="flex-1" size="sm" variant="outline">
+                          <Camera className="mr-1 h-4 w-4" />
+                          Adicionar
                         </Button>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            /* Comparison View */
+            <div className="space-y-6">
+              {mockTreatments.slice(0, 2).map((treatment) => (
+                <Card key={treatment.id}>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">
+                        {treatment.patientName}
+                      </CardTitle>
+                      <div className="flex gap-2">
+                        <Badge
+                          className={getTreatmentTypeColor(treatment.type)}
+                        >
+                          {treatment.type.toUpperCase()}
+                        </Badge>
+                        <Badge variant="outline">{treatment.area}</Badge>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                      <div className="text-center">
+                        <h4 className="mb-3 font-semibold text-red-600">
+                          Antes
+                        </h4>
+                        <div className="mb-3 flex aspect-video items-center justify-center rounded-lg border-2 border-red-200 bg-gradient-to-br from-red-50 to-red-100 dark:border-red-800 dark:from-red-900/20 dark:to-red-800/20">
+                          <Camera className="h-8 w-8 text-red-400" />
+                        </div>
+                        <p className="text-gray-600 text-sm dark:text-gray-400">
+                          {new Date(treatment.date).toLocaleDateString("pt-BR")}
+                        </p>
+                      </div>
+
+                      <div className="text-center">
+                        <h4 className="mb-3 font-semibold text-green-600">
+                          Depois
+                        </h4>
+                        <div className="mb-3 flex aspect-video items-center justify-center rounded-lg border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100 dark:border-green-800 dark:from-green-900/20 dark:to-green-800/20">
+                          <Camera className="h-8 w-8 text-green-400" />
+                        </div>
+                        <p className="text-gray-600 text-sm dark:text-gray-400">
+                          {treatment.nextSession
+                            ? new Date(
+                                treatment.nextSession,
+                              ).toLocaleDateString("pt-BR")
+                            : "Aguardando"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <Separator className="my-4" />
+
+                    <div className="text-center">
+                      <Button variant="outline">
+                        <Download className="mr-2 h-4 w-4" />
+                        Baixar Comparação
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -993,7 +1009,8 @@ export function TreatmentSessionTracker() {
             Acompanhamento de Sessões
           </CardTitle>
           <CardDescription>
-            Monitore progresso detalhado e evolução dos tratamentos ao longo do tempo
+            Monitore progresso detalhado e evolução dos tratamentos ao longo do
+            tempo
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -1027,13 +1044,16 @@ export function TreatmentSessionTracker() {
                   <div className="mb-2 flex justify-between text-sm">
                     <span>Progresso do Tratamento</span>
                     <span>
-                      {treatment.sessionsCompleted}/{treatment.totalSessions} sessões
+                      {treatment.sessionsCompleted}/{treatment.totalSessions}{" "}
+                      sessões
                     </span>
                   </div>
                   <Progress
                     className="h-2"
-                    value={(treatment.sessionsCompleted / treatment.totalSessions)
-                      * 100}
+                    value={
+                      (treatment.sessionsCompleted / treatment.totalSessions) *
+                      100
+                    }
                   />
                 </div>
 
@@ -1060,8 +1080,8 @@ export function TreatmentSessionTracker() {
                     <div className="font-bold text-2xl text-purple-600">
                       {treatment.nextSession
                         ? new Date(treatment.nextSession).toLocaleDateString(
-                          "pt-BR",
-                        )
+                            "pt-BR",
+                          )
                         : "--"}
                     </div>
                     <div className="text-gray-600 text-sm dark:text-gray-400">
@@ -1115,9 +1135,11 @@ export function ProductInventoryManagement() {
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const filteredProducts = mockProducts.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
-      || product.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      categoryFilter === "all" || product.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
 
@@ -1278,25 +1300,27 @@ export function ProductInventoryManagement() {
                           {stockStatus.status === "low"
                             ? "Baixo"
                             : stockStatus.status === "medium"
-                            ? "Médio"
-                            : "Bom"}
+                              ? "Médio"
+                              : "Bom"}
                         </Badge>
                       </td>
                       <td className="p-4">
-                        {product.expiryDate
-                          ? (
-                            <span
-                              className={new Date(product.expiryDate)
-                                  < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                        {product.expiryDate ? (
+                          <span
+                            className={
+                              new Date(product.expiryDate) <
+                              new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
                                 ? "font-medium text-red-600"
-                                : "text-gray-600"}
-                            >
-                              {new Date(product.expiryDate).toLocaleDateString(
-                                "pt-BR",
-                              )}
-                            </span>
-                          )
-                          : <span className="text-gray-400">-</span>}
+                                : "text-gray-600"
+                            }
+                          >
+                            {new Date(product.expiryDate).toLocaleDateString(
+                              "pt-BR",
+                            )}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
                       </td>
                       <td className="p-4">
                         <div className="flex gap-2">
@@ -1388,7 +1412,8 @@ export function PatientConsultationForm() {
                           ...formData.personalInfo,
                           name: e.target.value,
                         },
-                      })}
+                      })
+                    }
                     placeholder="Digite seu nome completo"
                     value={formData.personalInfo.name}
                   />
@@ -1405,7 +1430,8 @@ export function PatientConsultationForm() {
                           ...formData.personalInfo,
                           email: e.target.value,
                         },
-                      })}
+                      })
+                    }
                     placeholder="seu@email.com"
                     type="email"
                     value={formData.personalInfo.email}
@@ -1423,7 +1449,8 @@ export function PatientConsultationForm() {
                           ...formData.personalInfo,
                           phone: e.target.value,
                         },
-                      })}
+                      })
+                    }
                     placeholder="(11) 99999-9999"
                     value={formData.personalInfo.phone}
                   />
@@ -1440,7 +1467,8 @@ export function PatientConsultationForm() {
                           ...formData.personalInfo,
                           dateOfBirth: e.target.value,
                         },
-                      })}
+                      })
+                    }
                     type="date"
                     value={formData.personalInfo.dateOfBirth}
                   />
@@ -1456,7 +1484,8 @@ export function PatientConsultationForm() {
                           ...formData.personalInfo,
                           gender: value,
                         },
-                      })}
+                      })
+                    }
                     value={formData.personalInfo.gender}
                   >
                     <SelectTrigger>
@@ -1485,7 +1514,8 @@ export function PatientConsultationForm() {
                           ...formData.medicalHistory,
                           allergies: e.target.value,
                         },
-                      })}
+                      })
+                    }
                     placeholder="Liste todas as alergias conhecidas..."
                     value={formData.medicalHistory.allergies}
                   />
@@ -1502,7 +1532,8 @@ export function PatientConsultationForm() {
                           ...formData.medicalHistory,
                           medications: e.target.value,
                         },
-                      })}
+                      })
+                    }
                     placeholder="Liste todos os medicamentos em uso..."
                     value={formData.medicalHistory.medications}
                   />
@@ -1521,7 +1552,8 @@ export function PatientConsultationForm() {
                           ...formData.medicalHistory,
                           previousTreatments: e.target.value,
                         },
-                      })}
+                      })
+                    }
                     placeholder="Descreva tratamentos estéticos realizados anteriormente..."
                     value={formData.medicalHistory.previousTreatments}
                   />
@@ -1538,7 +1570,8 @@ export function PatientConsultationForm() {
                           ...formData.medicalHistory,
                           medicalConditions: e.target.value,
                         },
-                      })}
+                      })
+                    }
                     placeholder="Informe sobre condições médicas relevantes..."
                     value={formData.medicalHistory.medicalConditions}
                   />
@@ -1560,7 +1593,8 @@ export function PatientConsultationForm() {
                           ...formData.aestheticConcerns,
                           primaryConcern: value,
                         },
-                      })}
+                      })
+                    }
                     value={formData.aestheticConcerns.primaryConcern}
                   >
                     <SelectTrigger>
@@ -1599,7 +1633,8 @@ export function PatientConsultationForm() {
                           ...formData.aestheticConcerns,
                           secondaryConcerns: e.target.value,
                         },
-                      })}
+                      })
+                    }
                     placeholder="Descreva outras áreas de interesse..."
                     value={formData.aestheticConcerns.secondaryConcerns}
                   />
@@ -1616,7 +1651,8 @@ export function PatientConsultationForm() {
                           ...formData.aestheticConcerns,
                           treatmentGoals: e.target.value,
                         },
-                      })}
+                      })
+                    }
                     placeholder="Descreva os resultados que espera alcançar..."
                     value={formData.aestheticConcerns.treatmentGoals}
                   />
@@ -1632,7 +1668,8 @@ export function PatientConsultationForm() {
                           ...formData.aestheticConcerns,
                           budgetRange: value,
                         },
-                      })}
+                      })
+                    }
                     value={formData.aestheticConcerns.budgetRange}
                   >
                     <SelectTrigger>
@@ -1672,7 +1709,8 @@ export function PatientConsultationForm() {
                           ...formData.preferences,
                           communicationMethod: value,
                         },
-                      })}
+                      })
+                    }
                     value={formData.preferences.communicationMethod}
                   >
                     <SelectTrigger>
@@ -1697,7 +1735,8 @@ export function PatientConsultationForm() {
                           ...formData.preferences,
                           appointmentTime: value,
                         },
-                      })}
+                      })
+                    }
                     value={formData.preferences.appointmentTime}
                   >
                     <SelectTrigger>
@@ -1722,7 +1761,8 @@ export function PatientConsultationForm() {
                           ...formData.preferences,
                           reminderFrequency: value,
                         },
-                      })}
+                      })
+                    }
                     value={formData.preferences.reminderFrequency}
                   >
                     <SelectTrigger>
@@ -1882,9 +1922,11 @@ export function AppointmentBookingSystem() {
                             {appointment.patientName}
                           </div>
                           <Badge
-                            className={appointment.status === "confirmed"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"}
+                            className={
+                              appointment.status === "confirmed"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }
                           >
                             {appointment.status}
                           </Badge>
@@ -1894,7 +1936,8 @@ export function AppointmentBookingSystem() {
                           <p>
                             {new Date(appointment.date).toLocaleDateString(
                               "pt-BR",
-                            )} às {appointment.time}
+                            )}{" "}
+                            às {appointment.time}
                           </p>
                           <p>Dr. {appointment.practitioner}</p>
                         </div>
@@ -2052,11 +2095,15 @@ export function ProfessionalDashboard() {
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  {appointment.isFollowUp && <Badge variant="outline">Retorno</Badge>}
+                  {appointment.isFollowUp && (
+                    <Badge variant="outline">Retorno</Badge>
+                  )}
                   <Badge
-                    className={appointment.status === "confirmed"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"}
+                    className={
+                      appointment.status === "confirmed"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }
                   >
                     {appointment.status}
                   </Badge>
@@ -2156,7 +2203,8 @@ export function AestheticClinicManagementSystem() {
               Sistema de Gestão para Clínicas Estéticas
             </h1>
             <p className="mt-2 text-gray-600 dark:text-gray-300">
-              Plataforma completa para gerenciar todos os aspectos da sua clínica estética
+              Plataforma completa para gerenciar todos os aspectos da sua
+              clínica estética
             </p>
           </div>
 

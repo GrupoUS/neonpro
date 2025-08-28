@@ -74,8 +74,8 @@ test.describe("Pricing Page - Plan Display", () => {
       const hasHighlight = await recommendedPlan.evaluate((el) => {
         const style = window.getComputedStyle(el);
         return (
-          style.border !== "none"
-          || style.backgroundColor !== "rgba(0, 0, 0, 0)"
+          style.border !== "none" ||
+          style.backgroundColor !== "rgba(0, 0, 0, 0)"
         );
       });
       expect(hasHighlight).toBeTruthy();
@@ -211,7 +211,9 @@ test.describe("Pricing Page - Subscription Flow", () => {
     }
   });
 
-  test("should initiate subscription for Professional plan", async ({ page }) => {
+  test("should initiate subscription for Professional plan", async ({
+    page,
+  }) => {
     // Click on Professional plan subscribe button
     const proSubscribe = page
       .locator('[data-testid="subscribe-professional"]')

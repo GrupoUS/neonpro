@@ -3,7 +3,13 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -31,8 +37,17 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import type { LGPDPhotoConsentStatus, TreatmentPhoto, TreatmentSession } from "@/types/treatments";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type {
+  LGPDPhotoConsentStatus,
+  TreatmentPhoto,
+  TreatmentSession,
+} from "@/types/treatments";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -141,12 +156,14 @@ export function BeforeAfterSecureGallery({
 
   // Filter photos based on current filters
   const filteredPhotos = photos.filter((photo) => {
-    const matchesFilter = photoFilter === "all" || photo.photo_type === photoFilter;
-    const matchesSearch = searchQuery === ""
-      || photo.anatomical_region
+    const matchesFilter =
+      photoFilter === "all" || photo.photo_type === photoFilter;
+    const matchesSearch =
+      searchQuery === "" ||
+      photo.anatomical_region
         .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-      || photo.photo_angle.toLowerCase().includes(searchQuery.toLowerCase());
+        .includes(searchQuery.toLowerCase()) ||
+      photo.photo_angle.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -282,9 +299,9 @@ export function BeforeAfterSecureGallery({
               {consentStatus === "granted" && (
                 <>
                   <br />
-                  <strong>Proteções LGPD:</strong>{" "}
-                  Anonimização automática, criptografia de armazenamento, acesso auditado e controle
-                  de retenção.
+                  <strong>Proteções LGPD:</strong> Anonimização automática,
+                  criptografia de armazenamento, acesso auditado e controle de
+                  retenção.
                 </>
               )}
             </AlertDescription>
@@ -302,8 +319,8 @@ export function BeforeAfterSecureGallery({
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              Para utilizar a documentação fotográfica, é necessário o consentimento LGPD do
-              paciente conforme a Lei 13.709/2018.
+              Para utilizar a documentação fotográfica, é necessário o
+              consentimento LGPD do paciente conforme a Lei 13.709/2018.
             </p>
 
             {onConsentUpdate && (
@@ -344,7 +361,9 @@ export function BeforeAfterSecureGallery({
                   />
                 </div>
                 <Select
-                  onValueChange={(value) => setPhotoFilter(value as PhotoFilter)}
+                  onValueChange={(value) =>
+                    setPhotoFilter(value as PhotoFilter)
+                  }
                   value={photoFilter}
                 >
                   <SelectTrigger className="w-40">
@@ -373,9 +392,11 @@ export function BeforeAfterSecureGallery({
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
-                        {privacyBlurred
-                          ? <EyeOff className="h-4 w-4" />
-                          : <Eye className="h-4 w-4" />}
+                        {privacyBlurred ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>
@@ -402,7 +423,9 @@ export function BeforeAfterSecureGallery({
                     <Button
                       onClick={() => setViewMode("comparison")}
                       size="sm"
-                      variant={viewMode === "comparison" ? "default" : "outline"}
+                      variant={
+                        viewMode === "comparison" ? "default" : "outline"
+                      }
                     >
                       <ZoomIn className="h-4 w-4" />
                     </Button>
@@ -765,7 +788,8 @@ export function BeforeAfterSecureGallery({
             </Card>
           )}
         </div>
-      )} {/* Photo Upload Dialog */}
+      )}{" "}
+      {/* Photo Upload Dialog */}
       <Dialog onOpenChange={setShowUploadDialog} open={showUploadDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -779,9 +803,9 @@ export function BeforeAfterSecureGallery({
             <Alert className="border-blue-500/50 bg-blue-500/10">
               <Shield className="h-4 w-4" />
               <AlertDescription>
-                <strong>Proteções Automáticas:</strong>{" "}
-                Desfoque facial, watermark da clínica, criptografia de armazenamento e audit trail
-                de acesso.
+                <strong>Proteções Automáticas:</strong> Desfoque facial,
+                watermark da clínica, criptografia de armazenamento e audit
+                trail de acesso.
               </AlertDescription>
             </Alert>
 
@@ -801,7 +825,11 @@ export function BeforeAfterSecureGallery({
                 <Label htmlFor="photo-type">Tipo da Foto *</Label>
                 <Select
                   onValueChange={(value) =>
-                    setUploadData((prev) => ({ ...prev, type: value as unknown }))}
+                    setUploadData((prev) => ({
+                      ...prev,
+                      type: value as unknown,
+                    }))
+                  }
                   value={uploadData.type}
                 >
                   <SelectTrigger>
@@ -826,7 +854,8 @@ export function BeforeAfterSecureGallery({
                     setUploadData((prev) => ({
                       ...prev,
                       anatomicalRegion: e.target.value,
-                    }))}
+                    }))
+                  }
                   placeholder="Ex: Face, Abdômen, Braços"
                   required
                   value={uploadData.anatomicalRegion}
@@ -841,7 +870,8 @@ export function BeforeAfterSecureGallery({
                     setUploadData((prev) => ({
                       ...prev,
                       photoAngle: e.target.value,
-                    }))}
+                    }))
+                  }
                   placeholder="Ex: Frontal, Lateral Direita, Perfil"
                   required
                   value={uploadData.photoAngle}
@@ -859,7 +889,8 @@ export function BeforeAfterSecureGallery({
                   setUploadData((prev) => ({
                     ...prev,
                     lightingConditions: e.target.value,
-                  }))}
+                  }))
+                }
                 placeholder="Ex: Luz natural, Flash, Iluminação controlada"
                 value={uploadData.lightingConditions}
               />
@@ -868,9 +899,9 @@ export function BeforeAfterSecureGallery({
             <Alert>
               <ImageIcon className="h-4 w-4" />
               <AlertDescription>
-                <strong>Padronização Fotográfica:</strong>{" "}
-                Para melhores resultados de comparação, mantenha distância, ângulo e iluminação
-                consistentes entre as sessões.
+                <strong>Padronização Fotográfica:</strong> Para melhores
+                resultados de comparação, mantenha distância, ângulo e
+                iluminação consistentes entre as sessões.
               </AlertDescription>
             </Alert>
 
@@ -884,11 +915,13 @@ export function BeforeAfterSecureGallery({
               </Button>
               <Button
                 className="flex-1"
-                disabled={!(
-                  uploadData.file
-                  && uploadData.anatomicalRegion
-                  && uploadData.photoAngle
-                )}
+                disabled={
+                  !(
+                    uploadData.file &&
+                    uploadData.anatomicalRegion &&
+                    uploadData.photoAngle
+                  )
+                }
                 onClick={handlePhotoUpload}
               >
                 <Upload className="mr-2 h-4 w-4" />
@@ -912,15 +945,17 @@ export function BeforeAfterSecureGallery({
             <Alert className="border-yellow-500/50 bg-yellow-500/10">
               <Shield className="h-4 w-4" />
               <AlertDescription>
-                <strong>Compartilhamento Seguro:</strong>{" "}
-                Link temporário com expiração automática e auditoria de acesso conforme LGPD.
+                <strong>Compartilhamento Seguro:</strong> Link temporário com
+                expiração automática e auditoria de acesso conforme LGPD.
               </AlertDescription>
             </Alert>
 
             <div className="space-y-2">
               <Label htmlFor="expiry-hours">Tempo de Expiração</Label>
               <Select
-                onValueChange={(value) => setShareExpiryHours(Number.parseInt(value, 10))}
+                onValueChange={(value) =>
+                  setShareExpiryHours(Number.parseInt(value, 10))
+                }
                 value={shareExpiryHours.toString()}
               >
                 <SelectTrigger>
@@ -989,14 +1024,14 @@ export function BeforeAfterSecureGallery({
                       <div className="text-center">
                         <ImageIcon className="mx-auto mb-4 h-16 w-16 text-slate-500" />
                         <p className="font-medium text-lg text-slate-600">
-                          {selectedPhoto.photo_type === "before"
-                            && "Foto Antes"}
-                          {selectedPhoto.photo_type === "after"
-                            && "Foto Depois"}
-                          {selectedPhoto.photo_type === "during"
-                            && "Foto Durante"}
-                          {selectedPhoto.photo_type === "follow_up"
-                            && "Foto Acompanhamento"}
+                          {selectedPhoto.photo_type === "before" &&
+                            "Foto Antes"}
+                          {selectedPhoto.photo_type === "after" &&
+                            "Foto Depois"}
+                          {selectedPhoto.photo_type === "during" &&
+                            "Foto Durante"}
+                          {selectedPhoto.photo_type === "follow_up" &&
+                            "Foto Acompanhamento"}
                         </p>
                         <p className="text-slate-500 text-sm">
                           {selectedPhoto.anatomical_region}
@@ -1054,14 +1089,14 @@ export function BeforeAfterSecureGallery({
                         <div>
                           <span className="text-muted-foreground">Tipo:</span>
                           <p className="font-medium">
-                            {selectedPhoto.photo_type === "before"
-                              && "Antes do Tratamento"}
-                            {selectedPhoto.photo_type === "after"
-                              && "Após Tratamento"}
-                            {selectedPhoto.photo_type === "during"
-                              && "Durante Tratamento"}
-                            {selectedPhoto.photo_type === "follow_up"
-                              && "Acompanhamento"}
+                            {selectedPhoto.photo_type === "before" &&
+                              "Antes do Tratamento"}
+                            {selectedPhoto.photo_type === "after" &&
+                              "Após Tratamento"}
+                            {selectedPhoto.photo_type === "during" &&
+                              "Durante Tratamento"}
+                            {selectedPhoto.photo_type === "follow_up" &&
+                              "Acompanhamento"}
                           </p>
                         </div>
                         <div>
@@ -1123,10 +1158,11 @@ export function BeforeAfterSecureGallery({
                           </span>
                           <p className="font-medium">
                             {(
-                              selectedPhoto.file_size_bytes
-                              / 1024
-                              / 1024
-                            ).toFixed(2)} MB
+                              selectedPhoto.file_size_bytes /
+                              1024 /
+                              1024
+                            ).toFixed(2)}{" "}
+                            MB
                           </p>
                         </div>
                         <div>
@@ -1163,12 +1199,12 @@ export function BeforeAfterSecureGallery({
                               Escopo:
                             </span>
                             <p className="font-medium">
-                              {selectedPhoto.consent_scope
-                                  === "clinical_only" && "Apenas Clínico"}
-                              {selectedPhoto.consent_scope
-                                  === "marketing_allowed" && "Marketing Permitido"}
-                              {selectedPhoto.consent_scope
-                                  === "research_allowed" && "Pesquisa Permitida"}
+                              {selectedPhoto.consent_scope ===
+                                "clinical_only" && "Apenas Clínico"}
+                              {selectedPhoto.consent_scope ===
+                                "marketing_allowed" && "Marketing Permitido"}
+                              {selectedPhoto.consent_scope ===
+                                "research_allowed" && "Pesquisa Permitida"}
                             </p>
                           </div>
                           <div>
@@ -1204,8 +1240,8 @@ export function BeforeAfterSecureGallery({
                             <p className="font-medium">
                               {selectedPhoto.last_accessed
                                 ? new Date(
-                                  selectedPhoto.last_accessed,
-                                ).toLocaleDateString("pt-BR")
+                                    selectedPhoto.last_accessed,
+                                  ).toLocaleDateString("pt-BR")
                                 : "Nunca"}
                             </p>
                           </div>
@@ -1234,26 +1270,28 @@ export function BeforeAfterSecureGallery({
                           )}
                           <Progress
                             className="h-2"
-                            value={100
-                              - ((new Date(
-                                  selectedPhoto.deletion_scheduled_date
-                                    || Date.now(),
-                                ).getTime()
-                                  - Date.now())
-                                  / (selectedPhoto.retention_period_days
-                                    * 24
-                                    * 60
-                                    * 60
-                                    * 1000))
-                                * 100}
+                            value={
+                              100 -
+                              ((new Date(
+                                selectedPhoto.deletion_scheduled_date ||
+                                  Date.now(),
+                              ).getTime() -
+                                Date.now()) /
+                                (selectedPhoto.retention_period_days *
+                                  24 *
+                                  60 *
+                                  60 *
+                                  1000)) *
+                                100
+                            }
                           />
                         </div>
 
                         <Alert className="border-green-500/50 bg-green-500/10">
                           <Shield className="h-4 w-4" />
                           <AlertDescription>
-                            Esta foto está em conformidade com a LGPD e protegida por criptografia
-                            de ponta a ponta.
+                            Esta foto está em conformidade com a LGPD e
+                            protegida por criptografia de ponta a ponta.
                           </AlertDescription>
                         </Alert>
                       </div>

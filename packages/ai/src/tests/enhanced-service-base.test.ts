@@ -36,7 +36,7 @@ class MockCacheService implements CacheService {
 }
 
 class MockLoggerService implements LoggerService {
-  logs: { level: string; message: string; meta?: unknown; }[] = [];
+  logs: { level: string; message: string; meta?: unknown }[] = [];
 
   async info(message: string, meta?: Record<string, unknown>): Promise<void> {
     this.logs.push({ level: "info", message, meta });
@@ -103,25 +103,25 @@ class MockMetricsService implements MetricsService {
 }
 
 class MockDatabaseService implements Partial<DatabaseService> {
-  auditLogs: { create: Mock; } = {
+  auditLogs: { create: Mock } = {
     create: vi.fn().mockResolvedValue({}),
   };
 
-  complianceEvents: { create: Mock; } = {
+  complianceEvents: { create: Mock } = {
     create: vi.fn().mockResolvedValue({}),
   };
 }
 
 // Test implementation of EnhancedAIService
 class TestAIService extends EnhancedAIService<
-  { input: string; },
-  { output: string; }
+  { input: string },
+  { output: string }
 > {
   protected serviceId = "test-service";
   protected version = "1.0.0";
   protected description = "Test AI service";
 
-  async execute(input: { input: string; }): Promise<{ output: string; }> {
+  async execute(input: { input: string }): Promise<{ output: string }> {
     if (input.input === "error") {
       throw new Error("Test error");
     }
@@ -218,7 +218,9 @@ describe("enhancedAIService", () => {
       expect(result2).toStrictEqual({ output: "CACHED" });
 
       // Verify cache was used by checking if value exists
-      const cacheKey = (service as unknown).generateCacheKey({ input: "cached" });
+      const cacheKey = (service as unknown).generateCacheKey({
+        input: "cached",
+      });
       const cached = await mockCache.get(cacheKey);
       expect(cached).toBeDefined();
     });
@@ -230,7 +232,9 @@ describe("enhancedAIService", () => {
         // Expected to throw
       }
 
-      const cacheKey = (service as unknown).generateCacheKey({ input: "error" });
+      const cacheKey = (service as unknown).generateCacheKey({
+        input: "error",
+      });
       const cached = await mockCache.get(cacheKey);
       expect(cached).toBeNull();
     });
@@ -268,8 +272,8 @@ describe("enhancedAIService", () => {
 
       const hasExecutionLog = infoLogs.some(
         (log) =>
-          log.message.includes("Service execution")
-          || log.message.includes("completed"),
+          log.message.includes("Service execution") ||
+          log.message.includes("completed"),
       );
       expect(hasExecutionLog).toBeTruthy();
     });
@@ -421,7 +425,9 @@ describe("enhancedAIService", () => {
       expect(mockDatabase.auditLogs.create).toHaveBeenCalled();
 
       // Verify caching
-      const cacheKey = (service as unknown).generateCacheKey({ input: "complex" });
+      const cacheKey = (service as unknown).generateCacheKey({
+        input: "complex",
+      });
       const cached = await mockCache.get(cacheKey);
       expect(cached).toBeDefined();
     });
@@ -518,10 +524,14 @@ describe("enhancedAIService utilities", () => {
       const service = new TestAIService();
 
       // Valid input
-      expect(() => (service as unknown).validateInput({ input: "valid" })).not.toThrow();
+      expect(() =>
+        (service as unknown).validateInput({ input: "valid" }),
+      ).not.toThrow();
 
       // Invalid input
-      expect(() => (service as unknown).validateInput()).toThrow(/invalid input/i);
+      expect(() => (service as unknown).validateInput()).toThrow(
+        /invalid input/i,
+      );
       expect(() => (service as unknown).validateInput({})).toThrow(
         /missing required/i,
       );

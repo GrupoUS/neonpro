@@ -3,8 +3,11 @@
  * Comprehensive WCAG 2.1 AAA+ testing for emergency healthcare components
  */
 
-import type { AccessibilityTestResult } from './emergency-accessibility';
-import { emergencyAccessibility, testEmergencyComponentAccessibility } from './emergency-accessibility';
+import type { AccessibilityTestResult } from "./emergency-accessibility";
+import {
+  emergencyAccessibility,
+  testEmergencyComponentAccessibility,
+} from "./emergency-accessibility";
 
 export interface EmergencyAccessibilityTestSuite {
   suiteName: string;
@@ -26,8 +29,8 @@ export class EmergencyAccessibilityTestRunner {
       document.body.removeChild(this.testContainer);
     }
 
-    this.testContainer = document.createElement('div');
-    this.testContainer.id = 'a11y-test-container';
+    this.testContainer = document.createElement("div");
+    this.testContainer.id = "a11y-test-container";
     this.testContainer.style.cssText = `
       position: absolute;
       top: -10000px;
@@ -55,44 +58,48 @@ export class EmergencyAccessibilityTestRunner {
   private createMockEmergencyData() {
     return {
       patient: {
-        id: 'test-patient-001',
-        name: 'João Silva',
+        id: "test-patient-001",
+        name: "João Silva",
         age: 45,
-        bloodType: 'O+',
-        allergies: ['Penicillin', 'Sulfonamides', 'Latex'],
-        criticalConditions: ['Diabetes Type 2', 'Hypertension'],
+        bloodType: "O+",
+        allergies: ["Penicillin", "Sulfonamides", "Latex"],
+        criticalConditions: ["Diabetes Type 2", "Hypertension"],
         emergencyContacts: [
-          { name: 'Maria Silva', phone: '+5511999999999', relation: 'Spouse' },
-          { name: 'Dr. Carlos Santos', phone: '+5511888888888', relation: 'Cardiologist' }
+          { name: "Maria Silva", phone: "+5511999999999", relation: "Spouse" },
+          {
+            name: "Dr. Carlos Santos",
+            phone: "+5511888888888",
+            relation: "Cardiologist",
+          },
         ],
-        currentStatus: 'life-threatening' as const,
+        currentStatus: "life-threatening" as const,
         medications: [
-          { name: 'Metformin', dosage: '850mg', frequency: 'Twice daily' },
-          { name: 'Losartan', dosage: '50mg', frequency: 'Once daily' }
+          { name: "Metformin", dosage: "850mg", frequency: "Twice daily" },
+          { name: "Losartan", dosage: "50mg", frequency: "Once daily" },
         ],
-        cfmNumber: 'CFM-123456',
+        cfmNumber: "CFM-123456",
         lgpdConsent: true,
       },
       allergies: [
         {
-          allergen: 'Penicillin',
-          severity: 'life-threatening' as const,
-          reaction: 'Anaphylaxis',
-          lastOccurrence: '2023-03-15',
-          crossReactivities: ['Amoxicillin', 'Ampicillin'],
-          treatment: 'EpiPen, immediate hospitalization',
-          notes: 'Patient carries EpiPen at all times'
+          allergen: "Penicillin",
+          severity: "life-threatening" as const,
+          reaction: "Anaphylaxis",
+          lastOccurrence: "2023-03-15",
+          crossReactivities: ["Amoxicillin", "Ampicillin"],
+          treatment: "EpiPen, immediate hospitalization",
+          notes: "Patient carries EpiPen at all times",
         },
         {
-          allergen: 'Latex',
-          severity: 'severe' as const,
-          reaction: 'Contact dermatitis, respiratory symptoms',
-          lastOccurrence: '2023-08-22',
-          crossReactivities: ['Banana', 'Avocado', 'Kiwi'],
-          treatment: 'Antihistamines, corticosteroids',
-          notes: 'Avoid latex gloves during procedures'
-        }
-      ]
+          allergen: "Latex",
+          severity: "severe" as const,
+          reaction: "Contact dermatitis, respiratory symptoms",
+          lastOccurrence: "2023-08-22",
+          crossReactivities: ["Banana", "Avocado", "Kiwi"],
+          treatment: "Antihistamines, corticosteroids",
+          notes: "Avoid latex gloves during procedures",
+        },
+      ],
     };
   }
 
@@ -101,9 +108,9 @@ export class EmergencyAccessibilityTestRunner {
    */
   private createEmergencyPatientCardElement(): HTMLElement {
     const mockData = this.createMockEmergencyData();
-    const container = document.createElement('div');
-    container.className = 'emergency-patient-card-test';
-    
+    const container = document.createElement("div");
+    container.className = "emergency-patient-card-test";
+
     // Simulate the EmergencyPatientCard component structure
     container.innerHTML = `
       <div 
@@ -159,7 +166,9 @@ export class EmergencyAccessibilityTestRunner {
             ⚠️ CRITICAL ALLERGIES
           </h3>
           <div class="allergies-list">
-            ${mockData.patient.allergies.map((allergy, index) => `
+            ${mockData.patient.allergies
+              .map(
+                (allergy, index) => `
               <div 
                 class="allergy-item bg-red-100 dark:bg-red-900 border border-red-300 rounded p-2 mb-2"
                 role="listitem"
@@ -169,7 +178,9 @@ export class EmergencyAccessibilityTestRunner {
                 <span class="font-bold text-red-800 dark:text-red-200">${allergy}</span>
                 <span class="text-sm text-red-600 dark:text-red-300 ml-2">LIFE-THREATENING</span>
               </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
         </div>
 
@@ -203,9 +214,9 @@ export class EmergencyAccessibilityTestRunner {
    */
   private createCriticalAllergiesPanelElement(): HTMLElement {
     const mockData = this.createMockEmergencyData();
-    const container = document.createElement('div');
-    container.className = 'critical-allergies-panel-test';
-    
+    const container = document.createElement("div");
+    container.className = "critical-allergies-panel-test";
+
     container.innerHTML = `
       <div 
         class="critical-allergies-panel bg-red-50 dark:bg-red-950 border-2 border-red-500 rounded-lg p-4"
@@ -231,7 +242,9 @@ export class EmergencyAccessibilityTestRunner {
         </header>
 
         <div class="allergies-list space-y-3" role="list">
-          ${mockData.allergies.map((allergy, index) => `
+          ${mockData.allergies
+            .map(
+              (allergy, index) => `
             <div 
               class="allergy-card border-l-4 border-red-500 bg-white dark:bg-gray-900 p-4 rounded shadow"
               role="listitem"
@@ -248,7 +261,7 @@ export class EmergencyAccessibilityTestRunner {
                   ${allergy.allergen}
                 </h3>
                 <span 
-                  class="severity-badge bg-red-600 text-white px-2 py-1 rounded text-sm font-bold ${allergy.severity === 'life-threatening' ? 'animate-pulse' : ''}"
+                  class="severity-badge bg-red-600 text-white px-2 py-1 rounded text-sm font-bold ${allergy.severity === "life-threatening" ? "animate-pulse" : ""}"
                   aria-label="Severity: ${allergy.severity}"
                 >
                   ${allergy.severity.toUpperCase()}
@@ -264,12 +277,16 @@ export class EmergencyAccessibilityTestRunner {
                   <strong>Treatment:</strong> 
                   <span aria-label="Emergency treatment: ${allergy.treatment}">${allergy.treatment}</span>
                 </p>
-                ${allergy.notes ? `
+                ${
+                  allergy.notes
+                    ? `
                   <p class="notes">
                     <strong>Notes:</strong> 
                     <span aria-label="Additional notes: ${allergy.notes}">${allergy.notes}</span>
                   </p>
-                ` : ''}
+                `
+                    : ""
+                }
               </div>
 
               <button
@@ -288,14 +305,16 @@ export class EmergencyAccessibilityTestRunner {
                 aria-hidden="true"
               >
                 <p class="cross-reactivities mb-2">
-                  <strong>Cross-reactivities:</strong> ${allergy.crossReactivities.join(', ')}
+                  <strong>Cross-reactivities:</strong> ${allergy.crossReactivities.join(", ")}
                 </p>
                 <p class="last-occurrence">
                   <strong>Last occurrence:</strong> ${allergy.lastOccurrence}
                 </p>
               </div>
             </div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
       </div>
     `;
@@ -307,9 +326,9 @@ export class EmergencyAccessibilityTestRunner {
    * Create SAMUDialButton test element
    */
   private createSAMUDialButtonElement(): HTMLElement {
-    const container = document.createElement('div');
-    container.className = 'samu-dial-button-test';
-    
+    const container = document.createElement("div");
+    container.className = "samu-dial-button-test";
+
     container.innerHTML = `
       <div 
         class="samu-dial-button-container"
@@ -442,27 +461,29 @@ export class EmergencyAccessibilityTestRunner {
     testResults: AccessibilityTestResult[];
     summary: string;
   }> {
-    console.log('🧪 Starting Emergency Interface Accessibility Tests (WCAG 2.1 AAA+)');
-    
+    console.log(
+      "🧪 Starting Emergency Interface Accessibility Tests (WCAG 2.1 AAA+)",
+    );
+
     this.initializeTestEnvironment();
-    
+
     const testSuite: EmergencyAccessibilityTestSuite = {
-      suiteName: 'Emergency Interface WCAG 2.1 AAA+ Test Suite',
+      suiteName: "Emergency Interface WCAG 2.1 AAA+ Test Suite",
       components: [
         {
-          name: 'EmergencyPatientCard',
+          name: "EmergencyPatientCard",
           createElement: () => this.createEmergencyPatientCardElement(),
-          expectedLevel: 'AAA',
+          expectedLevel: "AAA",
         },
         {
-          name: 'CriticalAllergiesPanel', 
+          name: "CriticalAllergiesPanel",
           createElement: () => this.createCriticalAllergiesPanelElement(),
-          expectedLevel: 'AAA',
+          expectedLevel: "AAA",
         },
         {
-          name: 'SAMUDialButton',
+          name: "SAMUDialButton",
           createElement: () => this.createSAMUDialButtonElement(),
-          expectedLevel: 'AAA',
+          expectedLevel: "AAA",
         },
       ],
     };
@@ -472,25 +493,40 @@ export class EmergencyAccessibilityTestRunner {
 
     for (const component of testSuite.components) {
       console.log(`\n🔍 Testing ${component.name}...`);
-      
-      if (!this.testContainer) {continue;}
-      
+
+      if (!this.testContainer) {
+        continue;
+      }
+
       const element = component.createElement();
       this.testContainer.append(element);
-      
+
       try {
-        const result = await testEmergencyComponentAccessibility(component.name, element);
+        const result = await testEmergencyComponentAccessibility(
+          component.name,
+          element,
+        );
         testResults.push(result);
-        
-        const passed = result.passed && result.level === component.expectedLevel;
-        if (!passed) {overallResult = false;}
-        
-        console.log(`${passed ? '✅' : '❌'} ${component.name}: ${result.score}% (${result.issues.length} issues)`);
-        
+
+        const passed =
+          result.passed && result.level === component.expectedLevel;
+        if (!passed) {
+          overallResult = false;
+        }
+
+        console.log(
+          `${passed ? "✅" : "❌"} ${component.name}: ${result.score}% (${result.issues.length} issues)`,
+        );
+
         if (result.issues.length > 0) {
           console.log(`   Issues found:`);
-          result.issues.forEach(issue => {
-            const icon = issue.severity === 'error' ? '🚨' : issue.severity === 'warning' ? '⚠️' : 'ℹ️';
+          result.issues.forEach((issue) => {
+            const icon =
+              issue.severity === "error"
+                ? "🚨"
+                : issue.severity === "warning"
+                  ? "⚠️"
+                  : "ℹ️";
             console.log(`   ${icon} ${issue.rule}: ${issue.description}`);
           });
         }
@@ -498,19 +534,20 @@ export class EmergencyAccessibilityTestRunner {
         console.error(`❌ Error testing ${component.name}:`, error);
         overallResult = false;
       }
-      
+
       this.testContainer.removeChild(element);
     }
 
     this.cleanupTestEnvironment();
 
-    const passedTests = testResults.filter(r => r.passed).length;
+    const passedTests = testResults.filter((r) => r.passed).length;
     const totalTests = testResults.length;
-    const averageScore = testResults.length > 0 
-      ? testResults.reduce((sum, r) => sum + r.score, 0) / testResults.length 
-      : 0;
+    const averageScore =
+      testResults.length > 0
+        ? testResults.reduce((sum, r) => sum + r.score, 0) / testResults.length
+        : 0;
 
-    const summary = `Emergency Interface Accessibility Test Results: ${passedTests}/${totalTests} components passed | Average score: ${averageScore.toFixed(1)}% | Overall: ${overallResult ? 'PASSED' : 'FAILED'}`;
+    const summary = `Emergency Interface Accessibility Test Results: ${passedTests}/${totalTests} components passed | Average score: ${averageScore.toFixed(1)}% | Overall: ${overallResult ? "PASSED" : "FAILED"}`;
 
     console.log(`\n📊 ${summary}`);
 
@@ -523,4 +560,5 @@ export class EmergencyAccessibilityTestRunner {
 }
 
 // Export test runner instance
-export const emergencyAccessibilityTestRunner = new EmergencyAccessibilityTestRunner();
+export const emergencyAccessibilityTestRunner =
+  new EmergencyAccessibilityTestRunner();

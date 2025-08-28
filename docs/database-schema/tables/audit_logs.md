@@ -2,52 +2,52 @@
 
 ## Schema
 
-| Column | Type | Constraints | Default | Description | LGPD Classification |
-|--------|------|-------------|---------|-------------|-------------------|
-| id | uuid | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique audit log identifier | Public |
-| clinic_id | uuid | FK, NOT NULL | - | Clinic where action occurred | Organizational Data |
-| user_id | uuid | FK | - | User who performed the action | Audit Data |
-| session_id | uuid | - | - | Session identifier for action grouping | Audit Data |
-| table_name | varchar(100) | NOT NULL | - | Database table affected | Audit Data |
-| record_id | uuid | - | - | ID of the affected record | Audit Data |
-| action_type | varchar(20) | NOT NULL | - | Type of action (INSERT, UPDATE, DELETE, SELECT) | Audit Data |
-| operation_category | varchar(30) | NOT NULL | - | Category (patient_data, medical_record, appointment, etc.) | Audit Data |
-| action_description | text | NOT NULL | - | Human-readable description of action | Audit Data |
-| old_values | jsonb | - | - | Previous values (for UPDATE operations) | Audit Data |
-| new_values | jsonb | - | - | New values (for INSERT/UPDATE operations) | Audit Data |
-| changed_fields | text[] | - | '{}' | List of fields that were modified | Audit Data |
-| ip_address | inet | - | - | IP address of client | Audit Data |
-| user_agent | text | - | - | Browser/client user agent | Audit Data |
-| request_method | varchar(10) | - | - | HTTP method (GET, POST, PUT, DELETE) | Audit Data |
-| endpoint | text | - | - | API endpoint accessed | Audit Data |
-| request_payload | jsonb | - | - | Sanitized request payload | Audit Data |
-| response_status | integer | - | - | HTTP response status code | Audit Data |
-| execution_time_ms | integer | - | - | Query/operation execution time | Performance Data |
-| success | boolean | NOT NULL | true | Whether operation was successful | Audit Data |
-| error_message | text | - | - | Error details if operation failed | Audit Data |
-| error_code | varchar(50) | - | - | System error code | Audit Data |
-| data_classification | varchar(30) | NOT NULL | 'public' | LGPD data classification affected | Compliance Data |
-| phi_accessed | boolean | NOT NULL | false | Whether PHI (Protected Health Info) was accessed | Compliance Data |
-| consent_verified | boolean | - | - | Whether patient consent was verified | Compliance Data |
-| business_justification | text | - | - | Business reason for data access | Compliance Data |
-| emergency_access | boolean | NOT NULL | false | Whether emergency access was used | Compliance Data |
-| audit_level | varchar(20) | NOT NULL | 'standard' | Audit detail level (minimal, standard, detailed) | Metadata |
-| compliance_tags | text[] | - | '{}' | Compliance-related tags (LGPD, ANVISA, CFM) | Compliance Data |
-| risk_score | integer | CHECK (risk_score >= 0 AND risk_score <= 100) | 0 | Risk assessment for this action (0-100) | Analytics Data |
-| automated_action | boolean | NOT NULL | false | Whether action was automated/system-generated | Metadata |
-| batch_id | uuid | - | - | Batch identifier for grouped operations | Audit Data |
-| parent_audit_id | uuid | FK | - | Parent audit log for related operations | Audit Data |
-| application_context | jsonb | - | '{}' | Application-specific context data | Metadata |
-| geographic_location | point | - | - | Geographic location of action (if available) | Audit Data |
-| device_fingerprint | text | - | - | Device identification fingerprint | Audit Data |
-| retention_category | varchar(30) | NOT NULL | 'standard' | Data retention category | Compliance Data |
-| retention_until | timestamptz | - | - | When this audit log can be deleted | Compliance Data |
-| anonymized | boolean | NOT NULL | false | Whether log has been anonymized | Compliance Data |
-| anonymized_at | timestamptz | - | - | When log was anonymized | Compliance Data |
-| export_restricted | boolean | NOT NULL | false | Whether log export is restricted | Compliance Data |
-| created_at | timestamptz | NOT NULL | now() | Audit log creation timestamp | Metadata |
-| indexed_at | timestamptz | - | - | When log was indexed for search | Metadata |
-| archived_at | timestamptz | - | - | When log was archived | Metadata |
+| Column                 | Type         | Constraints                                   | Default           | Description                                                | LGPD Classification |
+| ---------------------- | ------------ | --------------------------------------------- | ----------------- | ---------------------------------------------------------- | ------------------- |
+| id                     | uuid         | PRIMARY KEY, NOT NULL                         | gen_random_uuid() | Unique audit log identifier                                | Public              |
+| clinic_id              | uuid         | FK, NOT NULL                                  | -                 | Clinic where action occurred                               | Organizational Data |
+| user_id                | uuid         | FK                                            | -                 | User who performed the action                              | Audit Data          |
+| session_id             | uuid         | -                                             | -                 | Session identifier for action grouping                     | Audit Data          |
+| table_name             | varchar(100) | NOT NULL                                      | -                 | Database table affected                                    | Audit Data          |
+| record_id              | uuid         | -                                             | -                 | ID of the affected record                                  | Audit Data          |
+| action_type            | varchar(20)  | NOT NULL                                      | -                 | Type of action (INSERT, UPDATE, DELETE, SELECT)            | Audit Data          |
+| operation_category     | varchar(30)  | NOT NULL                                      | -                 | Category (patient_data, medical_record, appointment, etc.) | Audit Data          |
+| action_description     | text         | NOT NULL                                      | -                 | Human-readable description of action                       | Audit Data          |
+| old_values             | jsonb        | -                                             | -                 | Previous values (for UPDATE operations)                    | Audit Data          |
+| new_values             | jsonb        | -                                             | -                 | New values (for INSERT/UPDATE operations)                  | Audit Data          |
+| changed_fields         | text[]       | -                                             | '{}'              | List of fields that were modified                          | Audit Data          |
+| ip_address             | inet         | -                                             | -                 | IP address of client                                       | Audit Data          |
+| user_agent             | text         | -                                             | -                 | Browser/client user agent                                  | Audit Data          |
+| request_method         | varchar(10)  | -                                             | -                 | HTTP method (GET, POST, PUT, DELETE)                       | Audit Data          |
+| endpoint               | text         | -                                             | -                 | API endpoint accessed                                      | Audit Data          |
+| request_payload        | jsonb        | -                                             | -                 | Sanitized request payload                                  | Audit Data          |
+| response_status        | integer      | -                                             | -                 | HTTP response status code                                  | Audit Data          |
+| execution_time_ms      | integer      | -                                             | -                 | Query/operation execution time                             | Performance Data    |
+| success                | boolean      | NOT NULL                                      | true              | Whether operation was successful                           | Audit Data          |
+| error_message          | text         | -                                             | -                 | Error details if operation failed                          | Audit Data          |
+| error_code             | varchar(50)  | -                                             | -                 | System error code                                          | Audit Data          |
+| data_classification    | varchar(30)  | NOT NULL                                      | 'public'          | LGPD data classification affected                          | Compliance Data     |
+| phi_accessed           | boolean      | NOT NULL                                      | false             | Whether PHI (Protected Health Info) was accessed           | Compliance Data     |
+| consent_verified       | boolean      | -                                             | -                 | Whether patient consent was verified                       | Compliance Data     |
+| business_justification | text         | -                                             | -                 | Business reason for data access                            | Compliance Data     |
+| emergency_access       | boolean      | NOT NULL                                      | false             | Whether emergency access was used                          | Compliance Data     |
+| audit_level            | varchar(20)  | NOT NULL                                      | 'standard'        | Audit detail level (minimal, standard, detailed)           | Metadata            |
+| compliance_tags        | text[]       | -                                             | '{}'              | Compliance-related tags (LGPD, ANVISA, CFM)                | Compliance Data     |
+| risk_score             | integer      | CHECK (risk_score >= 0 AND risk_score <= 100) | 0                 | Risk assessment for this action (0-100)                    | Analytics Data      |
+| automated_action       | boolean      | NOT NULL                                      | false             | Whether action was automated/system-generated              | Metadata            |
+| batch_id               | uuid         | -                                             | -                 | Batch identifier for grouped operations                    | Audit Data          |
+| parent_audit_id        | uuid         | FK                                            | -                 | Parent audit log for related operations                    | Audit Data          |
+| application_context    | jsonb        | -                                             | '{}'              | Application-specific context data                          | Metadata            |
+| geographic_location    | point        | -                                             | -                 | Geographic location of action (if available)               | Audit Data          |
+| device_fingerprint     | text         | -                                             | -                 | Device identification fingerprint                          | Audit Data          |
+| retention_category     | varchar(30)  | NOT NULL                                      | 'standard'        | Data retention category                                    | Compliance Data     |
+| retention_until        | timestamptz  | -                                             | -                 | When this audit log can be deleted                         | Compliance Data     |
+| anonymized             | boolean      | NOT NULL                                      | false             | Whether log has been anonymized                            | Compliance Data     |
+| anonymized_at          | timestamptz  | -                                             | -                 | When log was anonymized                                    | Compliance Data     |
+| export_restricted      | boolean      | NOT NULL                                      | false             | Whether log export is restricted                           | Compliance Data     |
+| created_at             | timestamptz  | NOT NULL                                      | now()             | Audit log creation timestamp                               | Metadata            |
+| indexed_at             | timestamptz  | -                                             | -                 | When log was indexed for search                            | Metadata            |
+| archived_at            | timestamptz  | -                                             | -                 | When log was archived                                      | Metadata            |
 
 ## Healthcare Compliance
 
@@ -151,18 +151,21 @@ CREATE TRIGGER audit_logs_archival_scheduling
 ## LGPD Compliance Features
 
 ### Data Processing Audit Trail
+
 - **data_classification**: Tracks which LGPD data categories were accessed
 - **consent_verified**: Records consent verification for data processing
 - **business_justification**: Documents lawful basis for processing
 - **phi_accessed**: Special tracking for health data access
 
 ### Data Subject Rights Support
+
 - **Right to Access**: Complete audit trail of personal data access
 - **Right to Rectification**: Logs all data modifications with before/after values
 - **Right to Erasure**: Tracks data deletion and anonymization activities
 - **Right to Portability**: Logs data export and transfer activities
 
 ### Retention and Anonymization
+
 - **retention_category**: Categorizes logs by retention requirements
 - **retention_until**: Automated retention period calculation
 - **anonymized**: Tracks anonymization status for compliance
@@ -171,12 +174,14 @@ CREATE TRIGGER audit_logs_archival_scheduling
 ## ANVISA Medical Device Compliance
 
 ### Quality Management System (QMS)
+
 - Comprehensive audit trail for software modifications
 - User access and privilege monitoring
 - Medical device risk management logging
 - Clinical evaluation activity tracking
 
 ### Post-Market Surveillance
+
 - **risk_score**: Medical device risk assessment logging
 - **error_message**: Software malfunction documentation
 - **compliance_tags**: ANVISA-specific compliance tracking
@@ -185,12 +190,14 @@ CREATE TRIGGER audit_logs_archival_scheduling
 ## CFM Professional Practice Compliance
 
 ### Medical Record Access Audit
+
 - Complete healthcare professional access logging
 - Medical record modification tracking with before/after values
 - Patient data access justification requirements
 - Emergency access special handling
 
 ### Telemedicine Compliance (CFM Resolution 2314/2022)
+
 - **geographic_location**: Tracks location for telemedicine sessions
 - **device_fingerprint**: Device identification for security
 - **session_id**: Groups related telemedicine activities
@@ -199,18 +206,21 @@ CREATE TRIGGER audit_logs_archival_scheduling
 ## Security Features
 
 ### Access Monitoring
+
 - **ip_address**: Client IP tracking for security analysis
 - **user_agent**: Browser/client fingerprinting
 - **device_fingerprint**: Device identification
 - **geographic_location**: Location-based access control
 
 ### Threat Detection
+
 - **risk_score**: Automated threat assessment
 - **emergency_access**: Special monitoring for emergency situations
 - **execution_time_ms**: Performance anomaly detection
 - **batch_id**: Bulk operation monitoring
 
 ### Incident Response
+
 - **error_code**: Standardized error classification
 - **parent_audit_id**: Event correlation and investigation
 - **application_context**: Detailed technical context for debugging

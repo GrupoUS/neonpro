@@ -85,8 +85,9 @@ export function ProtectedRoute({
   if (requiredPermissions.length > 0) {
     // TODO: Implementar sistema de permissões mais robusto
     // Por enquanto, apenas verifica se é admin para qualquer permissão especial
-    const hasPermissions = user.role === "admin"
-      || requiredPermissions.every((_permission) => {
+    const hasPermissions =
+      user.role === "admin" ||
+      requiredPermissions.every((_permission) => {
         // Lógica de permissões específica pode ser implementada aqui
         return true; // Placeholder
       });

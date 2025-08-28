@@ -3,7 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 interface ReportConfig {
@@ -71,8 +72,8 @@ serve(async (req) => {
 
         case "weekly": {
           if (
-            schedule.dayOfWeek !== undefined
-            && currentDay === schedule.dayOfWeek
+            schedule.dayOfWeek !== undefined &&
+            currentDay === schedule.dayOfWeek
           ) {
             shouldGenerate = true;
           }
@@ -81,8 +82,8 @@ serve(async (req) => {
 
         case "monthly": {
           if (
-            schedule.dayOfMonth !== undefined
-            && currentDate === schedule.dayOfMonth
+            schedule.dayOfMonth !== undefined &&
+            currentDate === schedule.dayOfMonth
           ) {
             shouldGenerate = true;
           }
@@ -284,7 +285,8 @@ async function generateConsumptionReport(
       consumptionByProduct.set(productId, {
         productId,
         productName: movement.products?.name || "Produto sem nome",
-        category: movement.products?.product_categories?.name || "Sem categoria",
+        category:
+          movement.products?.product_categories?.name || "Sem categoria",
         quantity,
         value,
         transactions: 1,
@@ -343,10 +345,12 @@ async function generateValuationReport(
     throw error;
   }
 
-  const totalValue = inventory?.reduce(
-    (sum: number, item: unknown) => sum + item.quantity_available * item.unit_cost,
-    0,
-  ) || 0;
+  const totalValue =
+    inventory?.reduce(
+      (sum: number, item: unknown) =>
+        sum + item.quantity_available * item.unit_cost,
+      0,
+    ) || 0;
 
   const byCategory = new Map();
 
@@ -381,15 +385,16 @@ async function generateValuationReport(
       categories: byCategory.size,
     },
     byCategory: [...byCategory.values()],
-    topValueProducts: inventory
-      ?.map((item: unknown) => ({
-        productName: item.products?.name || "Produto sem nome",
-        quantity: item.quantity_available,
-        unitCost: item.unit_cost,
-        totalValue: item.quantity_available * item.unit_cost,
-      }))
-      .sort((a: unknown, b: unknown) => b.totalValue - a.totalValue)
-      .slice(0, 20) || [],
+    topValueProducts:
+      inventory
+        ?.map((item: unknown) => ({
+          productName: item.products?.name || "Produto sem nome",
+          quantity: item.quantity_available,
+          unitCost: item.unit_cost,
+          totalValue: item.quantity_available * item.unit_cost,
+        }))
+        .sort((a: unknown, b: unknown) => b.totalValue - a.totalValue)
+        .slice(0, 20) || [],
     generatedAt: new Date().toISOString(),
   };
 }

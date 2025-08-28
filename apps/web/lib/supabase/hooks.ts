@@ -78,10 +78,14 @@ export function useRealtimeAppointments(clinicId?: string) {
             setAppointments((prev) => [...prev, payload.new as Appointment]);
           } else if (payload.eventType === "UPDATE") {
             setAppointments((prev) =>
-              prev.map((apt) => apt.id === payload.new.id ? { ...apt, ...payload.new } : apt)
+              prev.map((apt) =>
+                apt.id === payload.new.id ? { ...apt, ...payload.new } : apt,
+              ),
             );
           } else if (payload.eventType === "DELETE") {
-            setAppointments((prev) => prev.filter((apt) => apt.id !== payload.old.id));
+            setAppointments((prev) =>
+              prev.filter((apt) => apt.id !== payload.old.id),
+            );
           }
         },
       )
@@ -170,8 +174,8 @@ export function useRealtimeNotifications(userId?: string) {
             prev.map((notif) =>
               notif.id === payload.new.id
                 ? { ...notif, ...payload.new }
-                : notif
-            )
+                : notif,
+            ),
           );
 
           // Update unread count if notification was marked as read
@@ -266,11 +270,13 @@ export function useRealtimeProfessionalAvailability(professionalId?: string) {
               prev.map((avail) =>
                 avail.id === payload.new.id
                   ? { ...avail, ...payload.new }
-                  : avail
-              )
+                  : avail,
+              ),
             );
           } else if (payload.eventType === "DELETE") {
-            setAvailability((prev) => prev.filter((avail) => avail.id !== payload.old.id));
+            setAvailability((prev) =>
+              prev.filter((avail) => avail.id !== payload.old.id),
+            );
           }
         },
       )

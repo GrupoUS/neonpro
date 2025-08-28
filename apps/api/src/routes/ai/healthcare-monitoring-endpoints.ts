@@ -417,8 +417,9 @@ healthcareMonitoring.get("/monitoring/patient/:patientId", async (context) => {
           recorded_at: new Date(
             Date.now() - index * MAGIC_NUMBERS.ONE_HOUR_IN_MS,
           ).toISOString(),
-          temperature: MAGIC_NUMBERS.THIRTY_SIX_POINT_FIVE
-            + (index % MAGIC_NUMBERS.TEN) * 0.1,
+          temperature:
+            MAGIC_NUMBERS.THIRTY_SIX_POINT_FIVE +
+            (index % MAGIC_NUMBERS.TEN) * 0.1,
         }),
       ),
     };
@@ -582,9 +583,10 @@ healthcareMonitoring.get("/monitoring/system/health", async (context) => {
 healthcareMonitoring.onError((error, context) => {
   const errorResponse: ApiResponse<null> = {
     data: undefined,
-    message: process.env.NODE_ENV === "development"
-      ? error.message
-      : "Healthcare monitoring service error",
+    message:
+      process.env.NODE_ENV === "development"
+        ? error.message
+        : "Healthcare monitoring service error",
     success: false,
   };
 

@@ -77,7 +77,8 @@ describe("tASK-002 Final Integration Tests - Advanced Authentication Features", 
 
   describe("advanced Session Management", () => {
     it("should extend session when within threshold", async () => {
-      const result = await sessionManager.extendSessionIfNeeded("test-session-id");
+      const result =
+        await sessionManager.extendSessionIfNeeded("test-session-id");
       expect(typeof result).toBe("boolean");
     });
 
@@ -147,7 +148,8 @@ describe("tASK-002 Final Integration Tests - Advanced Authentication Features", 
         end: new Date(),
       };
 
-      const report = await securityAuditFramework.generateComplianceReport(period);
+      const report =
+        await securityAuditFramework.generateComplianceReport(period);
 
       expect(report).toHaveProperty("period");
       expect(report).toHaveProperty("lgpdCompliance");
@@ -233,7 +235,8 @@ describe("tASK-002 Final Integration Tests - Advanced Authentication Features", 
 
     it("should integrate session extension with audit logging", async () => {
       // Test session extension
-      const extended = await sessionManager.extendSessionIfNeeded("test-session-id");
+      const extended =
+        await sessionManager.extendSessionIfNeeded("test-session-id");
 
       // Test corresponding audit log
       await expect(
@@ -353,7 +356,8 @@ describe("tASK-002 Final Integration Tests - Advanced Authentication Features", 
         end: new Date(),
       };
 
-      const report = await securityAuditFramework.generateComplianceReport(period);
+      const report =
+        await securityAuditFramework.generateComplianceReport(period);
 
       expect(report.lgpdCompliance).toBeDefined();
       expect(typeof report.lgpdCompliance.dataAccessRequests).toBe("number");
@@ -404,7 +408,8 @@ describe("tASK-002 Completion Validation", () => {
       end: new Date("2025-01-24"),
     };
 
-    const report = await securityAuditFramework.generateComplianceReport(period);
+    const report =
+      await securityAuditFramework.generateComplianceReport(period);
     expect(report.period.start).toStrictEqual(period.start);
     expect(report.period.end).toStrictEqual(period.end);
   });

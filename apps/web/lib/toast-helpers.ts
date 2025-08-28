@@ -66,7 +66,8 @@ export const toastHelpers = {
     validation: (message?: string) =>
       toast({
         title: "Dados inválidos",
-        description: message || "Verifique os dados informados e tente novamente.",
+        description:
+          message || "Verifique os dados informados e tente novamente.",
         variant: "destructive",
       }),
     notFound: (item?: string) =>
@@ -114,7 +115,8 @@ export const toastHelpers = {
     offline: () =>
       toast({
         title: "Modo offline",
-        description: "Você está offline. Algumas funcionalidades podem não funcionar.",
+        description:
+          "Você está offline. Algumas funcionalidades podem não funcionar.",
         variant: "destructive",
       }),
   },

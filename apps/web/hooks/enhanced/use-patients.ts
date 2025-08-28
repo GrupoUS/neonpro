@@ -90,8 +90,8 @@ export function usePatient(id: string) {
     retry: (failureCount, error) => {
       // Don't retry on permission or not found errors
       if (
-        ApiHelpers.isAuthError(error)
-        || (error as unknown)?.message?.includes("not found")
+        ApiHelpers.isAuthError(error) ||
+        (error as unknown)?.message?.includes("not found")
       ) {
         return false;
       }
@@ -242,7 +242,8 @@ export function useUpdatePatient(id: string) {
     // Optimistic update for better UX
     ...queryUtils.createOptimisticUpdate<PatientBase>(
       QueryKeys.patients.detail(id),
-      (oldData) => oldData ? { ...oldData, ...patientData } : (oldData as PatientBase),
+      (oldData) =>
+        oldData ? { ...oldData, ...patientData } : (oldData as PatientBase),
     ),
 
     onSuccess: (_response, _variables) => {
@@ -519,8 +520,8 @@ export function usePatientUtils() {
         const monthDiff = today.getMonth() - birth.getMonth();
 
         if (
-          monthDiff < 0
-          || (monthDiff === 0 && today.getDate() < birth.getDate())
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < birth.getDate())
         ) {
           age--;
         }
@@ -536,9 +537,9 @@ export function usePatientUtils() {
       // Get primary address
       getPrimaryAddress: (patient: PatientBase): Address | null => {
         return (
-          patient.addresses.find((addr) => addr.is_primary)
-          || patient.addresses[0]
-          || undefined
+          patient.addresses.find((addr) => addr.is_primary) ||
+          patient.addresses[0] ||
+          undefined
         );
       },
 
@@ -547,9 +548,9 @@ export function usePatientUtils() {
         patient: PatientBase,
       ): EmergencyContact | null => {
         return (
-          patient.emergency_contacts.find((contact) => contact.is_primary)
-          || patient.emergency_contacts[0]
-          || undefined
+          patient.emergency_contacts.find((contact) => contact.is_primary) ||
+          patient.emergency_contacts[0] ||
+          undefined
         );
       },
 

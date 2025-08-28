@@ -257,7 +257,10 @@ export class SupabaseRealtimeManager {
 
     // Add callback (cast to match Map signature)
     const callbackId = this.generateCallbackId();
-    subscription.callbacks.set(callbackId, callback as (payload: unknown) => void);
+    subscription.callbacks.set(
+      callbackId,
+      callback as (payload: unknown) => void,
+    );
 
     // Setup channel if not active
     if (!subscription.isActive) {
@@ -414,8 +417,8 @@ export class SupabaseRealtimeManager {
 
     const maxScore = 100;
     const retryPenalty = this.connectionStatus.totalRetries * 10;
-    const inactiveChannelPenalty = (this.subscriptions.size - this.connectionStatus.activeChannels)
-      * 5;
+    const inactiveChannelPenalty =
+      (this.subscriptions.size - this.connectionStatus.activeChannels) * 5;
 
     return Math.max(0, maxScore - retryPenalty - inactiveChannelPenalty);
   }

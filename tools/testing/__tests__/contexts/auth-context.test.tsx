@@ -1,4 +1,11 @@
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { vi } from "vitest";
 import "@testing-library/jest-dom";
 
@@ -25,11 +32,15 @@ vi.mock<typeof import("@/app/utils/supabase/client")>(
 );
 
 // Now import the component AFTER the mock
-import { AuthProvider, useAuth } from "../../../../apps/web/contexts/auth-context";
+import {
+  AuthProvider,
+  useAuth,
+} from "../../../../apps/web/contexts/auth-context";
 
 // Test component to access auth context
 const TestComponent = () => {
-  const { user, session, loading, signIn, signUp, signOut, signInWithGoogle } = useAuth();
+  const { user, session, loading, signIn, signUp, signOut, signInWithGoogle } =
+    useAuth();
 
   return (
     <div>

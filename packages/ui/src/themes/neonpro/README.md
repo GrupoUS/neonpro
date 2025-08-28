@@ -25,16 +25,16 @@ npm install @neonpro/ui
 ### Basic Usage
 
 ```typescript
-import { 
-  neonproTheme, 
-  HealthcareMetricCard, 
+import {
+  neonproTheme,
+  HealthcareMetricCard,
   AppointmentCalendar,
   PaymentStatusTable,
-  TeamMembersList 
-} from '@neonpro/ui/themes/neonpro';
+  TeamMembersList,
+} from "@neonpro/ui/themes/neonpro";
 
 // Import the CSS styles
-import '@neonpro/ui/themes/neonpro/styles';
+import "@neonpro/ui/themes/neonpro/styles";
 ```
 
 ## 📊 Components
@@ -53,16 +53,17 @@ Display key healthcare metrics with growth indicators (NEONPRO style):
   growth={{
     value: 20.1,
     period: "vs. mês anterior",
-    isPositive: true
+    isPositive: true,
   }}
   complianceIndicator={{
     type: "LGPD",
-    status: "compliant"
+    status: "compliant",
   }}
 />
 ```
 
 **Props:**
+
 - `title`: Card title
 - `value`: Numeric value or formatted string
 - `type`: Metric type (`revenue`, `patients`, `appointments`, etc.)
@@ -81,12 +82,13 @@ Brazilian healthcare appointment scheduling with density indicators:
   showDensityIndicators={true}
   maxAppointmentsPerDay={12}
   firstDayOfWeek={1} // Monday first (Brazilian standard)
-  onDateSelect={(date) => console.log('Selected:', date)}
-  onAppointmentClick={(appointment) => console.log('Clicked:', appointment)}
+  onDateSelect={(date) => console.log("Selected:", date)}
+  onAppointmentClick={(appointment) => console.log("Clicked:", appointment)}
 />
 ```
 
 **Features:**
+
 - Brazilian Portuguese month/day names
 - Brazilian holiday integration
 - Appointment density visualization
@@ -103,12 +105,13 @@ Professional payment tracking with Brazilian payment methods:
   variant="detailed"
   showFilters={true}
   showExport={true}
-  onPaymentView={(payment) => console.log('View:', payment)}
+  onPaymentView={(payment) => console.log("View:", payment)}
   onExportData={() => exportPayments()}
 />
 ```
 
 **Features:**
+
 - Brazilian payment methods (PIX, Boleto, Cartão, etc.)
 - Status badges (Pago, Processando, Falhou, Pendente)
 - Email masking for privacy
@@ -124,12 +127,13 @@ Healthcare team management with Brazilian professional validation:
   members={teamData}
   variant="card"
   showActions={true}
-  onMemberClick={(member) => console.log('Selected:', member)}
+  onMemberClick={(member) => console.log("Selected:", member)}
   onAddMember={() => openAddMemberModal()}
 />
 ```
 
 **Features:**
+
 - Brazilian healthcare roles (Médico, Enfermeiro, etc.)
 - CRM/COREN professional validation
 - Status indicators (Ativo, Inativo, Suspenso)
@@ -145,27 +149,27 @@ The theme provides a comprehensive color system:
 ```typescript
 const colors = {
   // Core healthcare colors
-  primary: "hsl(221, 83%, 53%)",      // Professional blue
-  success: "hsl(142, 76%, 36%)",      // Growth green (+20.1%)
-  revenue: "#15231",                  // Revenue highlight
-  growth: "#16a34a",                  // Growth indicator
-  
+  primary: "hsl(221, 83%, 53%)", // Professional blue
+  success: "hsl(142, 76%, 36%)", // Growth green (+20.1%)
+  revenue: "#15231", // Revenue highlight
+  growth: "#16a34a", // Growth indicator
+
   // Brazilian-specific colors
   brasil: {
-    green: "#009639",                 // Brazil flag green
-    yellow: "#ffdf00",                // Brazil flag yellow
-    lgpdCompliant: "#059669",         // LGPD compliance
-    cfmValidated: "#2563eb",          // CFM validation
+    green: "#009639", // Brazil flag green
+    yellow: "#ffdf00", // Brazil flag yellow
+    lgpdCompliant: "#059669", // LGPD compliance
+    cfmValidated: "#2563eb", // CFM validation
   },
-  
+
   // Healthcare workflow colors
   healthcare: {
-    emergency: "#dc2626",             // Emergency red
-    appointment: "#16a34a",           // Appointment green
-    patient: "#2563eb",               // Patient info blue
-    treatment: "#7c3aed",             // Treatment purple
-    billing: "#f59e0b",               // Billing orange
-  }
+    emergency: "#dc2626", // Emergency red
+    appointment: "#16a34a", // Appointment green
+    patient: "#2563eb", // Patient info blue
+    treatment: "#7c3aed", // Treatment purple
+    billing: "#f59e0b", // Billing orange
+  },
 };
 ```
 
@@ -177,16 +181,16 @@ Healthcare-optimized typography system:
 const typography = {
   sans: ["Inter", "Segoe UI", "sans-serif"],
   mono: ["JetBrains Mono", "Consolas", "monospace"],
-  
+
   sizes: {
-    xs: "0.75rem",    // Medical notes
-    sm: "0.875rem",   // Patient details
-    base: "1rem",     // Standard text
-    lg: "1.125rem",   // Section headers
-    xl: "1.25rem",    // Card titles
-    "2xl": "1.5rem",  // Dashboard titles
+    xs: "0.75rem", // Medical notes
+    sm: "0.875rem", // Patient details
+    base: "1rem", // Standard text
+    lg: "1.125rem", // Section headers
+    xl: "1.25rem", // Card titles
+    "2xl": "1.5rem", // Dashboard titles
     "3xl": "1.875rem", // Emergency alerts
-  }
+  },
 };
 ```
 
@@ -197,11 +201,11 @@ Medical workflow optimized spacing:
 ```typescript
 const spacing = {
   medical: {
-    compact: "0.75rem",       // Dense patient lists
-    comfortable: "1.25rem",   // Standard forms
-    spacious: "2rem",         // Emergency interfaces
-    critical: "3rem",         // Life-critical alerts
-  }
+    compact: "0.75rem", // Dense patient lists
+    comfortable: "1.25rem", // Standard forms
+    spacious: "2rem", // Emergency interfaces
+    critical: "3rem", // Life-critical alerts
+  },
 };
 ```
 
@@ -213,7 +217,7 @@ const spacing = {
 <HealthcareMetricCard
   complianceIndicator={{
     type: "LGPD",
-    status: "compliant"
+    status: "compliant",
   }}
 />
 ```
@@ -222,14 +226,16 @@ const spacing = {
 
 ```tsx
 <TeamMembersList
-  members={[{
-    id: "1",
-    name: "Dr. João Silva",
-    role: "doctor",
-    crmNumber: "CRM-SP 123456",
-    specialties: ["Cirurgia Plástica"],
-    status: "active"
-  }]}
+  members={[
+    {
+      id: "1",
+      name: "Dr. João Silva",
+      role: "doctor",
+      crmNumber: "CRM-SP 123456",
+      specialties: ["Cirurgia Plástica"],
+      status: "active",
+    },
+  ]}
 />
 ```
 
@@ -241,8 +247,8 @@ const spacing = {
     {
       date: new Date("2025-12-25"),
       name: "Natal",
-      type: "national"
-    }
+      type: "national",
+    },
   ]}
 />
 ```
@@ -273,7 +279,11 @@ The theme provides healthcare-specific CSS utilities:
 ```css
 /* Revenue cards (NEONPRO style) */
 .neonpro-revenue-card {
-  background: linear-gradient(135deg, hsl(221, 83%, 53%) 0%, hsl(221, 83%, 45%) 100%);
+  background: linear-gradient(
+    135deg,
+    hsl(221, 83%, 53%) 0%,
+    hsl(221, 83%, 45%) 100%
+  );
 }
 
 /* Brazilian compliance badges */
@@ -297,7 +307,7 @@ The theme provides healthcare-specific CSS utilities:
 ### Theme Extension
 
 ```typescript
-import { neonproTheme } from '@neonpro/ui/themes/neonpro';
+import { neonproTheme } from "@neonpro/ui/themes/neonpro";
 
 const customTheme = {
   ...neonproTheme,
@@ -305,7 +315,7 @@ const customTheme = {
     ...neonproTheme.colors,
     // Add your custom colors
     customPrimary: "#your-color",
-  }
+  },
 };
 ```
 

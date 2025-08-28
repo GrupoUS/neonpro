@@ -373,11 +373,9 @@ export const utils = {
   formatCPF: (cpf: string): string => {
     const cleaned = cpf.replaceAll(/\D/g, "");
     if (cleaned.length === 11) {
-      return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${
-        cleaned.slice(
-          9,
-        )
-      }`;
+      return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(
+        9,
+      )}`;
     }
     return cpf;
   },
@@ -385,12 +383,10 @@ export const utils = {
   formatCNPJ: (cnpj: string): string => {
     const cleaned = cnpj.replaceAll(/\D/g, "");
     if (cleaned.length === 14) {
-      return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${
-        cleaned.slice(
-          8,
-          12,
-        )
-      }-${cleaned.slice(12)}`;
+      return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${cleaned.slice(
+        8,
+        12,
+      )}-${cleaned.slice(12)}`;
     }
     return cnpj;
   },

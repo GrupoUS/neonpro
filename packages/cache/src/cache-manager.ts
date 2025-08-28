@@ -36,10 +36,34 @@ export class MultiLayerCacheManager {
   }[] = [];
 
   private readonly stats = {
-    browser: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
-    edge: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
-    supabase: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
-    aiContext: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
+    browser: {
+      hits: 0,
+      misses: 0,
+      hitRate: 0,
+      totalRequests: 0,
+      averageResponseTime: 0,
+    },
+    edge: {
+      hits: 0,
+      misses: 0,
+      hitRate: 0,
+      totalRequests: 0,
+      averageResponseTime: 0,
+    },
+    supabase: {
+      hits: 0,
+      misses: 0,
+      hitRate: 0,
+      totalRequests: 0,
+      averageResponseTime: 0,
+    },
+    aiContext: {
+      hits: 0,
+      misses: 0,
+      hitRate: 0,
+      totalRequests: 0,
+      averageResponseTime: 0,
+    },
   };
 
   // Hit rate targets for each layer
@@ -80,10 +104,14 @@ export class MultiLayerCacheManager {
     };
 
     this.browser = new BrowserCacheLayer(
-      config.browser ? { ...defaultBrowserConfig, ...config.browser } : defaultBrowserConfig,
+      config.browser
+        ? { ...defaultBrowserConfig, ...config.browser }
+        : defaultBrowserConfig,
     );
     this.edge = new EdgeCacheLayer(
-      config.edge ? { ...defaultEdgeConfig, ...config.edge } : defaultEdgeConfig,
+      config.edge
+        ? { ...defaultEdgeConfig, ...config.edge }
+        : defaultEdgeConfig,
     );
     this.supabase = new SupabaseCacheLayer(config.supabase);
     this.aiContext = new AIContextCacheLayer(
@@ -109,9 +137,9 @@ export class MultiLayerCacheManager {
   ): Promise<T | null> {
     // Log healthcare data access if needed
     if (options?.healthcareData) {
-      console.debug('Healthcare data cache access for key:', key);
+      console.debug("Healthcare data cache access for key:", key);
     }
-    
+
     // Try each layer in order
     for (const layer of layers) {
       try {
@@ -189,7 +217,10 @@ export class MultiLayerCacheManager {
           } else {
             await cache.set(key, value, ttl);
           }
-        } else if (layer === CacheLayer.AI_CONTEXT && options?.aiContextMetadata) {
+        } else if (
+          layer === CacheLayer.AI_CONTEXT &&
+          options?.aiContextMetadata
+        ) {
           // AI Context cache with metadata
           await (cache as AIContextCacheLayer).set(
             key,
@@ -202,7 +233,10 @@ export class MultiLayerCacheManager {
           await cache.set(key, value, ttl);
         }
       } catch (error) {
-        console.warn(`Failed to set cache in layer ${layer} for key ${key}:`, error);
+        console.warn(
+          `Failed to set cache in layer ${layer} for key ${key}:`,
+          error,
+        );
       }
     });
 
@@ -229,10 +263,7 @@ export class MultiLayerCacheManager {
     await Promise.allSettled(promises);
   }
 
-  async invalidateByTags(
-    tags: string[],
-    layers?: CacheLayer[],
-  ): Promise<void> {
+  async invalidateByTags(tags: string[], layers?: CacheLayer[]): Promise<void> {
     const targetLayers = layers || [
       CacheLayer.BROWSER,
       CacheLayer.EDGE,
@@ -254,13 +285,15 @@ export class MultiLayerCacheManager {
 
   async getAllStats(): Promise<Record<CacheLayer, CacheStats>> {
     const promises = Object.values(CacheLayer).map(async (layer) =>
-      this.getCacheLayer(layer).getStats().catch(() => ({
-        hits: 0,
-        misses: 0,
-        hitRate: 0,
-        totalRequests: 0,
-        averageResponseTime: 0,
-      }))
+      this.getCacheLayer(layer)
+        .getStats()
+        .catch(() => ({
+          hits: 0,
+          misses: 0,
+          hitRate: 0,
+          totalRequests: 0,
+          averageResponseTime: 0,
+        })),
     );
 
     const results = await Promise.allSettled(promises);
@@ -322,14 +355,18 @@ export class MultiLayerCacheManager {
     policy: HealthcareDataPolicy,
   ): Promise<void> {
     const key = `patient:${patientId}:${dataKey}`;
-    const layers = policy.dataClassification === "RESTRICTED"
-      ? [CacheLayer.SUPABASE]
-      : [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.SUPABASE];
+    const layers =
+      policy.dataClassification === "RESTRICTED"
+        ? [CacheLayer.SUPABASE]
+        : [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.SUPABASE];
 
     await this.set(key, value, layers, {
       healthcareData: true,
       policy,
-      tags: [`patient:${patientId}`, `classification:${policy.dataClassification}`],
+      tags: [
+        `patient:${patientId}`,
+        `classification:${policy.dataClassification}`,
+      ],
     });
   }
 
@@ -339,9 +376,10 @@ export class MultiLayerCacheManager {
     policy: HealthcareDataPolicy,
   ): Promise<T | null> {
     const key = `patient:${patientId}:${dataKey}`;
-    const layers = policy.dataClassification === "RESTRICTED"
-      ? [CacheLayer.SUPABASE]
-      : [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.SUPABASE];
+    const layers =
+      policy.dataClassification === "RESTRICTED"
+        ? [CacheLayer.SUPABASE]
+        : [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.SUPABASE];
 
     return await this.get<T>(key, layers, {
       healthcareData: true,
@@ -355,15 +393,18 @@ export class MultiLayerCacheManager {
     restrictedDataEntries: number;
     averageResponseTime: number;
   }> {
-    const supabaseHealth = await (this.supabase as any).getHealthMetrics?.() || {
+    const supabaseHealth = (await (
+      this.supabase as any
+    ).getHealthMetrics?.()) || {
       healthcareEntries: 0,
     };
 
     const stats = await this.getAllStats();
-    const avgResponseTime = Object.values(stats).reduce(
-      (sum, stat) => sum + stat.averageResponseTime,
-      0,
-    ) / Object.keys(stats).length;
+    const avgResponseTime =
+      Object.values(stats).reduce(
+        (sum, stat) => sum + stat.averageResponseTime,
+        0,
+      ) / Object.keys(stats).length;
 
     return {
       totalHealthcareEntries: supabaseHealth.healthcareEntries || 0,
@@ -393,11 +434,11 @@ export class MultiLayerCacheManager {
       lastUsed: metadata?.lastUsed || new Date(),
       accessFrequency: 1,
     };
-    
+
     if (metadata?.topic) {
       aiMetadata.topic = metadata.topic;
     }
-    
+
     await this.set(key, conversation, [CacheLayer.AI_CONTEXT], {
       aiContextMetadata: aiMetadata,
     });
@@ -413,7 +454,7 @@ export class MultiLayerCacheManager {
 
   // Batch operations
   async setBatch<T>(
-    entries: { key: string; value: T; ttl?: number; }[],
+    entries: { key: string; value: T; ttl?: number }[],
     layers?: CacheLayer[],
   ): Promise<void> {
     const promises = entries.map(({ key, value, ttl }) => {
@@ -451,7 +492,9 @@ export class MultiLayerCacheManager {
     layers: CacheLayer[],
   ): Promise<void> {
     const sourceIndex = layers.indexOf(sourceLayer);
-    if (sourceIndex <= 0) {return;} // Already at the top layer or not found
+    if (sourceIndex <= 0) {
+      return;
+    } // Already at the top layer or not found
 
     const upstreamLayers = layers.slice(0, sourceIndex);
     const promises = upstreamLayers.map(async (layer) => {
@@ -491,9 +534,13 @@ export class MultiLayerCacheManager {
     ];
 
     await Promise.allSettled(
-      patientKeys.flatMap(key =>
-        [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.SUPABASE, CacheLayer.AI_CONTEXT]
-          .map(layer => this.delete(key, [layer]))
+      patientKeys.flatMap((key) =>
+        [
+          CacheLayer.BROWSER,
+          CacheLayer.EDGE,
+          CacheLayer.SUPABASE,
+          CacheLayer.AI_CONTEXT,
+        ].map((layer) => this.delete(key, [layer])),
       ),
     );
   }
@@ -509,7 +556,7 @@ export class MultiLayerCacheManager {
   /**
    * Get comprehensive cache statistics
    */
-  getStats(): { [key: string]: any; } {
+  getStats(): { [key: string]: any } {
     return {
       layers: {
         browser: this.stats.browser,
@@ -518,9 +565,19 @@ export class MultiLayerCacheManager {
         aiContext: this.stats.aiContext,
       },
       overall: {
-        totalHits: Object.values(this.stats).reduce((sum, stat) => sum + stat.hits, 0),
-        totalMisses: Object.values(this.stats).reduce((sum, stat) => sum + stat.misses, 0),
-        averageHitRate: Object.values(this.stats).reduce((sum, stat) => sum + stat.hitRate, 0) / 4,
+        totalHits: Object.values(this.stats).reduce(
+          (sum, stat) => sum + stat.hits,
+          0,
+        ),
+        totalMisses: Object.values(this.stats).reduce(
+          (sum, stat) => sum + stat.misses,
+          0,
+        ),
+        averageHitRate:
+          Object.values(this.stats).reduce(
+            (sum, stat) => sum + stat.hitRate,
+            0,
+          ) / 4,
         totalOperations: this.auditTrail.length,
       },
       audit: {

@@ -8,7 +8,7 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json | undefined; }
+  | { [key: string]: Json | undefined }
   | Json[];
 
 // Treatment Plan Types for Brazilian Aesthetic Medicine

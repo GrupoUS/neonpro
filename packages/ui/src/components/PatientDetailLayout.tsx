@@ -108,7 +108,9 @@ const PatientDetailLayout = React.forwardRef<
                       <span>{formatters.age(patient.birthDate)} anos</span>
                       <span>•</span>
                       <Badge
-                        variant={patient.status === "active" ? "confirmed" : "pending"}
+                        variant={
+                          patient.status === "active" ? "confirmed" : "pending"
+                        }
                       >
                         {patient.status === "active" ? "Ativo" : "Inativo"}
                       </Badge>
@@ -178,7 +180,9 @@ const PatientDetailLayout = React.forwardRef<
                       {formatters.phone(patient.phone)}
                     </div>
                   )}
-                  {patient.email && <div className="text-sm">{patient.email}</div>}
+                  {patient.email && (
+                    <div className="text-sm">{patient.email}</div>
+                  )}
                 </div>
               </div>
 
@@ -198,15 +202,13 @@ const PatientDetailLayout = React.forwardRef<
                   Próxima Consulta
                 </div>
                 <div className="mt-1 text-sm">
-                  {patient.nextAppointment
-                    ? (
-                      <span className="font-medium text-primary">
-                        {formatters.shortDate(patient.nextAppointment)}
-                      </span>
-                    )
-                    : (
-                      "Nenhuma agendada"
-                    )}
+                  {patient.nextAppointment ? (
+                    <span className="font-medium text-primary">
+                      {formatters.shortDate(patient.nextAppointment)}
+                    </span>
+                  ) : (
+                    "Nenhuma agendada"
+                  )}
                 </div>
               </div>
 

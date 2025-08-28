@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Activity, BarChart3, Calendar, TrendingUp, Users } from "lucide-react";
 import { DASHBOARD_CONSTANTS } from "./constants";
@@ -25,7 +31,8 @@ export const MetricsCards = ({
       return <Skeleton className="h-4 w-20 bg-muted" />;
     }
 
-    const sign = revenueGrowth >= DASHBOARD_CONSTANTS.GROWTH_THRESHOLD ? "+" : "";
+    const sign =
+      revenueGrowth >= DASHBOARD_CONSTANTS.GROWTH_THRESHOLD ? "+" : "";
     const formattedGrowth = revenueGrowth.toFixed(
       DASHBOARD_CONSTANTS.PERCENTAGE_DECIMAL_PLACES,
     );

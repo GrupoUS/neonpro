@@ -11,20 +11,19 @@ interface MfaSetupProps {
 }
 
 export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
-  const { setupMfaMethod, verifyMfaCode, isLoading, error, clearError } = useMFA();
+  const { setupMfaMethod, verifyMfaCode, isLoading, error, clearError } =
+    useMFA();
 
   const [step, setStep] = useState<"method" | "setup" | "verify">("method");
   const [selectedMethod, setSelectedMethod] = useState<MfaMethod | null>();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-  const [setupResult, setSetupResult] = useState<
-    {
-      qrCodeUrl?: string;
-      secret?: string;
-      backupCodes?: string[];
-    } | null
-  >(null);
+  const [setupResult, setSetupResult] = useState<{
+    qrCodeUrl?: string;
+    secret?: string;
+    backupCodes?: string[];
+  } | null>(null);
   const [sessionId] = useState(() => crypto.randomUUID());
 
   const handleMethodSelect = (method: MfaMethod) => {
@@ -215,7 +214,9 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
       <input
         className="block w-full rounded-md border px-3 py-2 text-center text-2xl tracking-widest"
         maxLength={6}
-        onChange={(e) => setVerificationCode(e.target.value.replaceAll(/\D/g, "").slice(0, 6))}
+        onChange={(e) =>
+          setVerificationCode(e.target.value.replaceAll(/\D/g, "").slice(0, 6))
+        }
         placeholder="123456"
         type="text"
         value={verificationCode}

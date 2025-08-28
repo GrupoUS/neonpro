@@ -152,9 +152,10 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : "Product registration failed",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Product registration failed",
       };
     }
   }
@@ -205,7 +206,8 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Procedure recording failed",
+        error:
+          error instanceof Error ? error.message : "Procedure recording failed",
       };
     }
   }
@@ -262,9 +264,10 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : "Adverse event reporting failed",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Adverse event reporting failed",
       };
     }
   }
@@ -326,7 +329,8 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Report generation failed",
+        error:
+          error instanceof Error ? error.message : "Report generation failed",
       };
     }
   }
@@ -365,7 +369,7 @@ export class AnvisaService {
   }
 
   private async submitToAnvisa(
-    _event: AnvisaAdverseEvent & { anvisaReportNumber: string; },
+    _event: AnvisaAdverseEvent & { anvisaReportNumber: string },
   ): Promise<{
     success: boolean;
     error?: string;

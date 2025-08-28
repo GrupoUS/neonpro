@@ -188,8 +188,8 @@ export function formatSkinType(skinType: string | number): SkinType {
   // Handle common variations
   const normalizedType = skinType.toLowerCase();
   if (
-    normalizedType.includes("very fair")
-    || normalizedType.includes("type 1")
+    normalizedType.includes("very fair") ||
+    normalizedType.includes("type 1")
   ) {
     return "fitzpatrick-1";
   }
@@ -237,16 +237,16 @@ export function formatRecommendations(recommendations: string[]): {
 } {
   const critical = recommendations.filter(
     (rec) =>
-      rec.toLowerCase().includes("urgent")
-      || rec.toLowerCase().includes("contraindication")
-      || rec.toLowerCase().includes("immediate"),
+      rec.toLowerCase().includes("urgent") ||
+      rec.toLowerCase().includes("contraindication") ||
+      rec.toLowerCase().includes("immediate"),
   );
 
   const important = recommendations.filter(
     (rec) =>
-      rec.toLowerCase().includes("consider")
-      || rec.toLowerCase().includes("recommend")
-      || rec.toLowerCase().includes("significant"),
+      rec.toLowerCase().includes("consider") ||
+      rec.toLowerCase().includes("recommend") ||
+      rec.toLowerCase().includes("significant"),
   );
 
   const general = recommendations.filter(
@@ -281,8 +281,9 @@ export async function checkAccuracyTargets(): Promise<{
       }
     }
 
-    const overallAccuracy = Object.values(health.accuracy).reduce((sum, acc) => sum + acc, 0)
-      / Object.values(health.accuracy).length;
+    const overallAccuracy =
+      Object.values(health.accuracy).reduce((sum, acc) => sum + acc, 0) /
+      Object.values(health.accuracy).length;
     const overallTarget = overallAccuracy >= targetAccuracy;
 
     if (!overallTarget) {

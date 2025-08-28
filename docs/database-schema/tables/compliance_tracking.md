@@ -2,44 +2,44 @@
 
 ## Schema
 
-| Column | Type | Constraints | Default | Description | LGPD Classification |
-|--------|------|-------------|---------|-------------|-------------------|
-| id | uuid | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique compliance record identifier | Public |
-| clinic_id | uuid | FK, NOT NULL | - | Clinic reference | Organizational Data |
-| patient_id | uuid | FK | - | Patient reference (nullable for clinic-wide tracking) | Personal Data |
-| professional_id | uuid | FK | - | Professional who triggered compliance check | Organizational Data |
-| compliance_type | varchar(50) | NOT NULL | - | Type of compliance check (LGPD, ANVISA, CFM) | Compliance Data |
-| regulation_reference | varchar(100) | NOT NULL | - | Specific regulation article/section | Compliance Data |
-| check_category | varchar(30) | NOT NULL | - | Category (data_protection, medical_device, audit_trail) | Compliance Data |
-| check_description | text | NOT NULL | - | Description of compliance requirement | Compliance Data |
-| current_status | varchar(20) | NOT NULL | 'compliant' | Current compliance status | Compliance Data |
-| previous_status | varchar(20) | - | - | Previous status for change tracking | Compliance Data |
-| status_changed_at | timestamptz | - | - | When status last changed | Compliance Data |
-| risk_level | varchar(10) | NOT NULL | 'low' | Risk assessment (low, medium, high, critical) | Compliance Data |
-| automated_check | boolean | NOT NULL | true | Whether check was automated or manual | Metadata |
-| check_frequency | varchar(20) | NOT NULL | 'daily' | How often check should run | Compliance Data |
-| next_check_due | timestamptz | - | - | Next scheduled compliance check | Compliance Data |
-| last_check_at | timestamptz | - | now() | When check was last performed | Compliance Data |
-| remediation_required | boolean | NOT NULL | false | Whether remediation is needed | Compliance Data |
-| remediation_deadline | timestamptz | - | - | Deadline for fixing non-compliance | Compliance Data |
-| remediation_notes | text | - | - | Notes on remediation steps | Compliance Data |
-| remediation_completed_at | timestamptz | - | - | When remediation was completed | Compliance Data |
-| evidence_urls | text[] | - | '{}' | URLs to compliance evidence/documentation | Compliance Data |
-| audit_trail | jsonb | NOT NULL | '{}' | Complete audit trail of all changes | Audit Data |
-| system_context | jsonb | - | '{}' | Technical context (versions, configurations) | Metadata |
-| business_impact | varchar(20) | - | 'none' | Business impact if non-compliant | Compliance Data |
-| regulatory_authority | varchar(50) | - | - | Which authority governs this compliance | Compliance Data |
-| notification_sent | boolean | NOT NULL | false | Whether compliance team was notified | Compliance Data |
-| notification_sent_at | timestamptz | - | - | When notification was sent | Compliance Data |
-| external_audit_ref | varchar(100) | - | - | External audit reference number | Compliance Data |
-| compliance_score | integer | CHECK (compliance_score >= 0 AND compliance_score <= 100) | 100 | Overall compliance score (0-100) | Analytics Data |
-| data_retention_compliant | boolean | NOT NULL | true | Whether data retention rules are followed | Compliance Data |
-| consent_compliant | boolean | NOT NULL | true | Whether consent requirements are met | Compliance Data |
-| security_compliant | boolean | NOT NULL | true | Whether security standards are met | Compliance Data |
-| created_at | timestamptz | NOT NULL | now() | Record creation timestamp | Metadata |
-| updated_at | timestamptz | NOT NULL | now() | Last update timestamp | Metadata |
-| created_by | uuid | FK | - | User who created record | Audit Data |
-| updated_by | uuid | FK | - | User who last updated record | Audit Data |
+| Column                   | Type         | Constraints                                               | Default           | Description                                             | LGPD Classification |
+| ------------------------ | ------------ | --------------------------------------------------------- | ----------------- | ------------------------------------------------------- | ------------------- |
+| id                       | uuid         | PRIMARY KEY, NOT NULL                                     | gen_random_uuid() | Unique compliance record identifier                     | Public              |
+| clinic_id                | uuid         | FK, NOT NULL                                              | -                 | Clinic reference                                        | Organizational Data |
+| patient_id               | uuid         | FK                                                        | -                 | Patient reference (nullable for clinic-wide tracking)   | Personal Data       |
+| professional_id          | uuid         | FK                                                        | -                 | Professional who triggered compliance check             | Organizational Data |
+| compliance_type          | varchar(50)  | NOT NULL                                                  | -                 | Type of compliance check (LGPD, ANVISA, CFM)            | Compliance Data     |
+| regulation_reference     | varchar(100) | NOT NULL                                                  | -                 | Specific regulation article/section                     | Compliance Data     |
+| check_category           | varchar(30)  | NOT NULL                                                  | -                 | Category (data_protection, medical_device, audit_trail) | Compliance Data     |
+| check_description        | text         | NOT NULL                                                  | -                 | Description of compliance requirement                   | Compliance Data     |
+| current_status           | varchar(20)  | NOT NULL                                                  | 'compliant'       | Current compliance status                               | Compliance Data     |
+| previous_status          | varchar(20)  | -                                                         | -                 | Previous status for change tracking                     | Compliance Data     |
+| status_changed_at        | timestamptz  | -                                                         | -                 | When status last changed                                | Compliance Data     |
+| risk_level               | varchar(10)  | NOT NULL                                                  | 'low'             | Risk assessment (low, medium, high, critical)           | Compliance Data     |
+| automated_check          | boolean      | NOT NULL                                                  | true              | Whether check was automated or manual                   | Metadata            |
+| check_frequency          | varchar(20)  | NOT NULL                                                  | 'daily'           | How often check should run                              | Compliance Data     |
+| next_check_due           | timestamptz  | -                                                         | -                 | Next scheduled compliance check                         | Compliance Data     |
+| last_check_at            | timestamptz  | -                                                         | now()             | When check was last performed                           | Compliance Data     |
+| remediation_required     | boolean      | NOT NULL                                                  | false             | Whether remediation is needed                           | Compliance Data     |
+| remediation_deadline     | timestamptz  | -                                                         | -                 | Deadline for fixing non-compliance                      | Compliance Data     |
+| remediation_notes        | text         | -                                                         | -                 | Notes on remediation steps                              | Compliance Data     |
+| remediation_completed_at | timestamptz  | -                                                         | -                 | When remediation was completed                          | Compliance Data     |
+| evidence_urls            | text[]       | -                                                         | '{}'              | URLs to compliance evidence/documentation               | Compliance Data     |
+| audit_trail              | jsonb        | NOT NULL                                                  | '{}'              | Complete audit trail of all changes                     | Audit Data          |
+| system_context           | jsonb        | -                                                         | '{}'              | Technical context (versions, configurations)            | Metadata            |
+| business_impact          | varchar(20)  | -                                                         | 'none'            | Business impact if non-compliant                        | Compliance Data     |
+| regulatory_authority     | varchar(50)  | -                                                         | -                 | Which authority governs this compliance                 | Compliance Data     |
+| notification_sent        | boolean      | NOT NULL                                                  | false             | Whether compliance team was notified                    | Compliance Data     |
+| notification_sent_at     | timestamptz  | -                                                         | -                 | When notification was sent                              | Compliance Data     |
+| external_audit_ref       | varchar(100) | -                                                         | -                 | External audit reference number                         | Compliance Data     |
+| compliance_score         | integer      | CHECK (compliance_score >= 0 AND compliance_score <= 100) | 100               | Overall compliance score (0-100)                        | Analytics Data      |
+| data_retention_compliant | boolean      | NOT NULL                                                  | true              | Whether data retention rules are followed               | Compliance Data     |
+| consent_compliant        | boolean      | NOT NULL                                                  | true              | Whether consent requirements are met                    | Compliance Data     |
+| security_compliant       | boolean      | NOT NULL                                                  | true              | Whether security standards are met                      | Compliance Data     |
+| created_at               | timestamptz  | NOT NULL                                                  | now()             | Record creation timestamp                               | Metadata            |
+| updated_at               | timestamptz  | NOT NULL                                                  | now()             | Last update timestamp                                   | Metadata            |
+| created_by               | uuid         | FK                                                        | -                 | User who created record                                 | Audit Data          |
+| updated_by               | uuid         | FK                                                        | -                 | User who last updated record                            | Audit Data          |
 
 ## Advanced Aesthetic Compliance
 
@@ -75,7 +75,7 @@ CREATE POLICY "clinic_admin_compliance_access" ON compliance_tracking
   FOR SELECT USING (
     auth.jwt() ->> 'role' = 'clinic_admin' AND
     clinic_id IN (
-      SELECT clinic_id FROM professional_clinic_access 
+      SELECT clinic_id FROM professional_clinic_access
       WHERE professional_id = auth.uid()
     )
   );
@@ -153,18 +153,21 @@ CREATE TRIGGER compliance_schedule_next_check
 ## LGPD Compliance Features
 
 ### Data Processing Monitoring
+
 - **compliance_type**: Specific LGPD article compliance (Art. 7, 11, 46, etc.)
 - **consent_compliant**: Tracks consent-based processing compliance
 - **data_retention_compliant**: Monitors data retention policy adherence
 - **security_compliant**: Ensures security measures are in place
 
 ### Compliance Automation
+
 - **automated_check**: Distinguishes automated vs manual compliance checks
 - **check_frequency**: Configurable compliance monitoring intervals
 - **next_check_due**: Automated scheduling of compliance reviews
 - **remediation_deadline**: Ensures timely resolution of issues
 
 ### Regulatory Reporting
+
 - **regulatory_authority**: Maps to ANPD, ANVISA, or CFM requirements
 - **external_audit_ref**: Links to external compliance audits
 - **evidence_urls**: Documentation for regulatory inspections
@@ -173,12 +176,14 @@ CREATE TRIGGER compliance_schedule_next_check
 ## ANVISA Medical Device Compliance
 
 ### Software Classification (Class IIa)
+
 - Monitors software quality management system compliance
 - Tracks medical device registration requirements
 - Ensures clinical evaluation documentation
 - Monitors post-market surveillance requirements
 
 ### Risk Management (ISO 14971)
+
 - **risk_level**: Medical device risk assessment
 - **business_impact**: Impact analysis for non-compliance
 - **remediation_required**: Risk mitigation tracking
@@ -187,6 +192,7 @@ CREATE TRIGGER compliance_schedule_next_check
 ## CFM Professional Practice Compliance
 
 ### Medical Record Compliance (CFM Resolution 1821/2007)
+
 - Monitors medical record completeness and quality
 - Tracks professional signature requirements
 - Ensures proper medical data handling

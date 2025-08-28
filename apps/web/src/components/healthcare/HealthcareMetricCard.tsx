@@ -112,7 +112,7 @@ export function HealthcareMetricCard({
         "transition-all duration-200 hover:shadow-md cursor-pointer",
         emergencyMode && "ring-2 ring-red-500 ring-opacity-50",
         statusColors[status],
-        className
+        className,
       )}
       onClick={onClick}
     >
@@ -128,20 +128,29 @@ export function HealthcareMetricCard({
         <div className="flex items-center space-x-1">
           {icon || <StatusIcon className="h-4 w-4" />}
           {!lgpdCompliant && (
-            <Shield className="h-3 w-3 text-amber-500" title="LGPD Compliance Required" />
+            <Shield
+              className="h-3 w-3 text-amber-500"
+              title="LGPD Compliance Required"
+            />
           )}
         </div>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">
           {value}
-          {unit && <span className="text-sm font-normal text-muted-foreground ml-1">{unit}</span>}
+          {unit && (
+            <span className="text-sm font-normal text-muted-foreground ml-1">
+              {unit}
+            </span>
+          )}
         </div>
         {description && (
           <p className="text-xs text-muted-foreground mt-1">{description}</p>
         )}
         {trend && trendValue && TrendIcon && (
-          <div className={cn("flex items-center mt-2 text-xs", trendColors[trend])}>
+          <div
+            className={cn("flex items-center mt-2 text-xs", trendColors[trend])}
+          >
             <TrendIcon className="h-3 w-3 mr-1" />
             <span>{trendValue}</span>
           </div>

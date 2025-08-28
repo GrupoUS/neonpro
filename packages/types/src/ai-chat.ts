@@ -130,7 +130,7 @@ export interface ChatAIInsights {
 export interface IntentAnalysis {
   primary_intent: string;
   confidence: number;
-  secondary_intents: { intent: string; confidence: number; }[];
+  secondary_intents: { intent: string; confidence: number }[];
   intent_category:
     | "appointment"
     | "medical_query"
@@ -166,7 +166,7 @@ export interface RecommendationEngine {
     confidence: number;
     priority: number;
   }[];
-  next_actions: { action: string; priority: "low" | "medium" | "high"; }[];
+  next_actions: { action: string; priority: "low" | "medium" | "high" }[];
   appointment_recommendations?: AppointmentRecommendation[];
   escalation_suggestions?: EscalationSuggestion[];
   follow_up_actions?: FollowUpAction[];
@@ -251,49 +251,49 @@ export interface ChatState {
 }
 
 export type ChatAction =
-  | { type: "START_SESSION"; payload: { session: ChatSession; }; }
-  | { type: "END_SESSION"; payload: { session_id: string; }; }
+  | { type: "START_SESSION"; payload: { session: ChatSession } }
+  | { type: "END_SESSION"; payload: { session_id: string } }
   | {
-    type: "SEND_MESSAGE";
-    payload: { session_id: string; message: ChatMessage; };
-  }
+      type: "SEND_MESSAGE";
+      payload: { session_id: string; message: ChatMessage };
+    }
   | {
-    type: "RECEIVE_MESSAGE";
-    payload: { session_id: string; message: ChatMessage; };
-  }
+      type: "RECEIVE_MESSAGE";
+      payload: { session_id: string; message: ChatMessage };
+    }
   | {
-    type: "UPDATE_MESSAGE";
-    payload: {
-      session_id: string;
-      message_id: string;
-      updates: Partial<ChatMessage>;
+      type: "UPDATE_MESSAGE";
+      payload: {
+        session_id: string;
+        message_id: string;
+        updates: Partial<ChatMessage>;
+      };
+    }
+  | {
+      type: "START_STREAMING";
+      payload: { session_id: string; message_id: string };
+    }
+  | {
+      type: "STREAM_CHUNK";
+      payload: { session_id: string; message_id: string; chunk: string };
+    }
+  | {
+      type: "END_STREAMING";
+      payload: { session_id: string; message_id: string };
+    }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null }
+  | {
+      type: "UPDATE_CONNECTION_STATUS";
+      payload: "connected" | "connecting" | "disconnected" | "error";
+    }
+  | { type: "UPDATE_CONFIG"; payload: Partial<ChatConfig> }
+  | { type: "UPDATE_INSIGHTS"; payload: ChatAIInsights }
+  | { type: "UPDATE_METRICS"; payload: PerformanceMetrics }
+  | {
+      type: "ESCALATE_SESSION";
+      payload: { session_id: string; escalation: EscalationSuggestion };
     };
-  }
-  | {
-    type: "START_STREAMING";
-    payload: { session_id: string; message_id: string; };
-  }
-  | {
-    type: "STREAM_CHUNK";
-    payload: { session_id: string; message_id: string; chunk: string; };
-  }
-  | {
-    type: "END_STREAMING";
-    payload: { session_id: string; message_id: string; };
-  }
-  | { type: "SET_LOADING"; payload: boolean; }
-  | { type: "SET_ERROR"; payload: string | null; }
-  | {
-    type: "UPDATE_CONNECTION_STATUS";
-    payload: "connected" | "connecting" | "disconnected" | "error";
-  }
-  | { type: "UPDATE_CONFIG"; payload: Partial<ChatConfig>; }
-  | { type: "UPDATE_INSIGHTS"; payload: ChatAIInsights; }
-  | { type: "UPDATE_METRICS"; payload: PerformanceMetrics; }
-  | {
-    type: "ESCALATE_SESSION";
-    payload: { session_id: string; escalation: EscalationSuggestion; };
-  };
 
 // API Types
 export interface ChatAPI {

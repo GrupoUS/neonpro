@@ -1,7 +1,8 @@
 import React from "react";
 
 // Placeholder import for @neonpro/utils
-const cn = (...classes: (string | undefined)[]) => classes.filter(Boolean).join(" ");
+const cn = (...classes: (string | undefined)[]) =>
+  classes.filter(Boolean).join(" ");
 
 // Toast context and provider
 interface ToastContextType {
@@ -79,10 +80,12 @@ export function Toast({
   );
 }
 
-export function ToastProvider({ children }: { children: React.ReactNode; }) {
+export function ToastProvider({ children }: { children: React.ReactNode }) {
   const toast = React.useCallback((_props: ToastProps) => {}, []);
 
-  return <ToastContext.Provider value={{ toast }}>{children}</ToastContext.Provider>;
+  return (
+    <ToastContext.Provider value={{ toast }}>{children}</ToastContext.Provider>
+  );
 }
 
 // Additional exports to avoid conflicts

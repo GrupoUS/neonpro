@@ -52,7 +52,11 @@ conformidade com regulamentações como LGPD e GDPR.
 ### Instalação Básica
 
 ```typescript
-import { AdvancedAuthSystem, initializeAuthSystem, setupSecureAuth } from "@/lib/auth";
+import {
+  AdvancedAuthSystem,
+  initializeAuthSystem,
+  setupSecureAuth,
+} from "@/lib/auth";
 
 // Configuração rápida com segurança alta
 const authSystem = await setupSecureAuth();

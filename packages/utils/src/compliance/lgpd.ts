@@ -114,8 +114,8 @@ export class LGPDComplianceService {
 
     // Validate legal basis for health data (Art. 11º)
     if (
-      request.consentType === HealthcareConsentType.TREATMENT
-      && ![LGPDLegalBasis.HEALTH_PROTECTION, LGPDLegalBasis.CONSENT].includes(
+      request.consentType === HealthcareConsentType.TREATMENT &&
+      ![LGPDLegalBasis.HEALTH_PROTECTION, LGPDLegalBasis.CONSENT].includes(
         request.legalBasis,
       )
     ) {
@@ -124,7 +124,8 @@ export class LGPDComplianceService {
     }
 
     return {
-      valid: violations.length === 0 && score >= this.constitutionalQualityStandard,
+      valid:
+        violations.length === 0 && score >= this.constitutionalQualityStandard,
       score: Math.max(0, score) as ComplianceScore,
       violations,
     };
@@ -179,7 +180,8 @@ export class LGPDComplianceService {
     };
 
     // Check if ANPD notification is required
-    const requiresANPDNotification = this.requiresANPDNotification(notification);
+    const requiresANPDNotification =
+      this.requiresANPDNotification(notification);
 
     if (requiresANPDNotification) {
       // Schedule ANPD notification within 72 hours
@@ -202,8 +204,8 @@ export class LGPDComplianceService {
 
     const now = new Date();
     const expired = now > expiresAt;
-    const renewalRequired = expired
-      || expiresAt.getTime() - now.getTime() < 30 * 24 * 60 * 60 * 1000; // 30 days
+    const renewalRequired =
+      expired || expiresAt.getTime() - now.getTime() < 30 * 24 * 60 * 60 * 1000; // 30 days
 
     return {
       expired,
@@ -281,13 +283,13 @@ export class LGPDComplianceService {
   private requiresANPDNotification(breach: LGPDBreachNotification): boolean {
     // High risk criteria (Art. 48 § 1º)
     return (
-      breach.severity === "HIGH"
-      || breach.severity === "CRITICAL"
-      || breach.affectedDataSubjects > 100
-      || breach.dataCategories.includes(
+      breach.severity === "HIGH" ||
+      breach.severity === "CRITICAL" ||
+      breach.affectedDataSubjects > 100 ||
+      breach.dataCategories.includes(
         PatientDataClassification.SENSITIVE_PERSONAL,
-      )
-      || breach.dataCategories.includes(PatientDataClassification.HEALTH_DATA)
+      ) ||
+      breach.dataCategories.includes(PatientDataClassification.HEALTH_DATA)
     );
   }
 }

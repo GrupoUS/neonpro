@@ -67,11 +67,12 @@ export async function GET() {
       },
     };
 
-    const statusCode = overallStatus === "healthy"
-      ? 200
-      : overallStatus === "degraded"
-      ? 200
-      : 503;
+    const statusCode =
+      overallStatus === "healthy"
+        ? 200
+        : overallStatus === "degraded"
+          ? 200
+          : 503;
 
     return NextResponse.json(response, {
       status: statusCode,
@@ -136,7 +137,9 @@ async function checkDatabase(): Promise<HealthStatus> {
   try {
     // Simulate database connectivity check
     // In production, this would use Supabase MCP to validate connection
-    const hasSupabaseConfig = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
+    const hasSupabaseConfig = Boolean(
+      process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY,
+    );
 
     if (!hasSupabaseConfig) {
       return {
@@ -167,7 +170,9 @@ async function checkAIServices(): Promise<HealthStatus> {
   const startTime = performance.now();
   try {
     // Validate AI service configuration
-    const hasAIConfig = Boolean(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY);
+    const hasAIConfig = Boolean(
+      process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY,
+    );
 
     return {
       status: hasAIConfig ? "healthy" : "degraded",

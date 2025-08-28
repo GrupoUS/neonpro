@@ -1,6 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Calendar, Lock, Shield, Stethoscope, Users } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  BarChart3,
+  Calendar,
+  Lock,
+  Shield,
+  Stethoscope,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -12,8 +25,8 @@ export default function HomePage() {
           NeonPro Healthcare AI
         </h1>
         <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Plataforma completa de gestão para clínicas de estética com inteligência artificial
-          integrada e compliance LGPD nativo.
+          Plataforma completa de gestão para clínicas de estética com
+          inteligência artificial integrada e compliance LGPD nativo.
         </p>
         <div className="flex gap-4 justify-center">
           <Button asChild size="lg">
@@ -32,7 +45,8 @@ export default function HomePage() {
             <Users className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Gestão de Pacientes</CardTitle>
             <CardDescription>
-              Sistema completo com histórico, agendamentos e controle de consentimentos LGPD
+              Sistema completo com histórico, agendamentos e controle de
+              consentimentos LGPD
             </CardDescription>
           </CardHeader>
         </Card>
@@ -42,7 +56,8 @@ export default function HomePage() {
             <Calendar className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Agendamento Inteligente</CardTitle>
             <CardDescription>
-              IA anti-no-show com predição de faltosos e otimização automática de agenda
+              IA anti-no-show com predição de faltosos e otimização automática
+              de agenda
             </CardDescription>
           </CardHeader>
         </Card>
@@ -52,7 +67,8 @@ export default function HomePage() {
             <Shield className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Compliance LGPD</CardTitle>
             <CardDescription>
-              Proteção automática de dados pessoais com auditoria e relatórios de conformidade
+              Proteção automática de dados pessoais com auditoria e relatórios
+              de conformidade
             </CardDescription>
           </CardHeader>
         </Card>
@@ -62,7 +78,8 @@ export default function HomePage() {
             <BarChart3 className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Analytics Avançado</CardTitle>
             <CardDescription>
-              Dashboards inteligentes com insights de performance e crescimento da clínica
+              Dashboards inteligentes com insights de performance e crescimento
+              da clínica
             </CardDescription>
           </CardHeader>
         </Card>
@@ -82,7 +99,8 @@ export default function HomePage() {
             <Lock className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Segurança Máxima</CardTitle>
             <CardDescription>
-              Criptografia ponta-a-ponta e logs de auditoria para máxima segurança
+              Criptografia ponta-a-ponta e logs de auditoria para máxima
+              segurança
             </CardDescription>
           </CardHeader>
         </Card>
@@ -94,7 +112,8 @@ export default function HomePage() {
           Pronto para revolucionar sua clínica?
         </h2>
         <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-          Junte-se a centenas de profissionais que já transformaram sua gestão com a NeonPro.
+          Junte-se a centenas de profissionais que já transformaram sua gestão
+          com a NeonPro.
         </p>
         <Button size="lg" asChild>
           <Link href="/register">Começar Agora - Grátis</Link>

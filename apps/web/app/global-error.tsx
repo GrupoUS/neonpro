@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 import { useEffect } from "react";
 
@@ -9,7 +15,7 @@ export default function GlobalError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string; };
+  error: Error & { digest?: string };
   reset: () => void;
 }) {
   useEffect(() => {}, []);
@@ -25,7 +31,8 @@ export default function GlobalError({
               </div>
               <CardTitle className="text-xl">Algo deu errado</CardTitle>
               <CardDescription>
-                Ocorreu um erro inesperado na aplicação. Nossa equipe foi notificada.
+                Ocorreu um erro inesperado na aplicação. Nossa equipe foi
+                notificada.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

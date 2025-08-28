@@ -48,7 +48,8 @@ export class AIServiceHealthChecker {
 
     for (const [name, service] of Object.entries(services)) {
       try {
-        const isHealthy = await AIServiceHealthChecker.checkServiceHealth(service);
+        const isHealthy =
+          await AIServiceHealthChecker.checkServiceHealth(service);
         results.push({
           service: name,
           status: isHealthy ? "healthy" : "unhealthy",
@@ -70,8 +71,8 @@ export class AIServiceHealthChecker {
   private static async checkServiceHealth(service: unknown): Promise<boolean> {
     // Basic health check - verify service can be instantiated and has required methods
     return (
-      typeof service.execute === "function"
-      && typeof service.executeWithMetrics === "function"
+      typeof service.execute === "function" &&
+      typeof service.executeWithMetrics === "function"
     );
   }
 }

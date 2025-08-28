@@ -26,7 +26,9 @@ test.describe("🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225"
     });
   });
 
-  test("should validate WCAG 2.1 AA+ compliance for patient dashboard", async ({ page }) => {
+  test("should validate WCAG 2.1 AA+ compliance for patient dashboard", async ({
+    page,
+  }) => {
     await page.goto("/dashboard/patient");
 
     // Comprehensive WCAG 2.1 AA+ validation
@@ -113,7 +115,9 @@ test.describe("🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225"
     }
   });
 
-  test("should validate NBR 17225 Brazilian accessibility standards", async ({ page }) => {
+  test("should validate NBR 17225 Brazilian accessibility standards", async ({
+    page,
+  }) => {
     await page.goto("/dashboard/patient");
 
     // NBR 17225 specific validation
@@ -136,7 +140,9 @@ test.describe("🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225"
       "Contato",
     ];
 
-    const hasPortugueseContent = portugueseWords.some((word) => pageContent?.includes(word));
+    const hasPortugueseContent = portugueseWords.some((word) =>
+      pageContent?.includes(word),
+    );
     expect(hasPortugueseContent).toBe(true);
 
     // Test 2: High Contrast Mode Support (NBR 17225)

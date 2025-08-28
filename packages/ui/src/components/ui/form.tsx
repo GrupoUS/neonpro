@@ -1,8 +1,23 @@
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
-import { AlertCircle, Calendar, CheckCircle, FileText, Heart, Shield, User } from "lucide-react";
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  FileText,
+  Heart,
+  Shield,
+  User,
+} from "lucide-react";
 import type * as React from "react";
-import { createContext, forwardRef, useCallback, useContext, useId, useState } from "react";
+import {
+  createContext,
+  forwardRef,
+  useCallback,
+  useContext,
+  useId,
+  useState,
+} from "react";
 import { cn } from "../../lib/utils";
 import { FormInstruction, LGPDNotice, VisuallyHidden } from "./visually-hidden";
 
@@ -79,7 +94,9 @@ export const useFormContext = () => {
   return context;
 };
 
-interface FormProps extends React.ComponentProps<"form">, VariantProps<typeof formVariants> {
+interface FormProps
+  extends React.ComponentProps<"form">,
+    VariantProps<typeof formVariants> {
   formType?: HealthcareFormType;
   lgpdCompliant?: boolean;
   sensitiveData?: boolean;
@@ -144,17 +161,18 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
     );
 
     // Auto-determine variant based on form type
-    const autoVariant = variant === "default"
-      ? formType === "patient-registration"
-        ? "patient"
-        : formType === "medical-history"
-        ? "medical"
-        : formType === "consent-form"
-        ? "sensitive"
-        : formType === "appointment-booking"
-        ? "medical"
-        : "default"
-      : variant;
+    const autoVariant =
+      variant === "default"
+        ? formType === "patient-registration"
+          ? "patient"
+          : formType === "medical-history"
+            ? "medical"
+            : formType === "consent-form"
+              ? "sensitive"
+              : formType === "appointment-booking"
+                ? "medical"
+                : "default"
+        : variant;
 
     // Auto-set LGPD level based on sensitivity
     const autoLgpdLevel = sensitiveData ? "strict" : lgpdLevel;
@@ -267,7 +285,8 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
               role="progressbar"
             >
               <VisuallyHidden>
-                Etapa {currentStep} de {totalSteps}: {stepTitle || getFormTitle()}
+                Etapa {currentStep} de {totalSteps}:{" "}
+                {stepTitle || getFormTitle()}
               </VisuallyHidden>
               <div className="mb-2 flex items-center justify-between text-muted-foreground text-sm">
                 <span>
@@ -398,9 +417,11 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
                   {/* Hidden LGPD notice for screen readers */}
                   <LGPDNotice
                     context={sensitiveData ? "processing" : "collection"}
-                    notice={sensitiveData
-                      ? "Este formulário processa dados sensíveis com proteções LGPD máximas. Seus dados são criptografados e processados com consentimento explícito."
-                      : "Este formulário coleta dados pessoais em conformidade total com a LGPD. Você pode exercer seus direitos a qualquer momento."}
+                    notice={
+                      sensitiveData
+                        ? "Este formulário processa dados sensíveis com proteções LGPD máximas. Seus dados são criptografados e processados com consentimento explícito."
+                        : "Este formulário coleta dados pessoais em conformidade total com a LGPD. Você pode exercer seus direitos a qualquer momento."
+                    }
                   />
                 </>
               )}
@@ -456,7 +477,9 @@ const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
                 </h4>
               )}
             </div>
-            {description && <p className="text-muted-foreground text-sm">{description}</p>}
+            {description && (
+              <p className="text-muted-foreground text-sm">{description}</p>
+            )}
           </div>
         )}
         <div className="form-section-content space-y-4">{children}</div>
@@ -470,7 +493,7 @@ FormSection.displayName = "FormSection";
 // Additional Form Field Components for React Hook Form integration
 const FormField = forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { name: string; }
+  React.HTMLAttributes<HTMLDivElement> & { name: string }
 >(({ className, name: _name, children, ...props }, ref) => {
   return (
     <div className={cn("space-y-2", className)} ref={ref} {...props}>

@@ -81,47 +81,44 @@ export const appointmentConfirmationEmail = task({
               <p>Sua consulta foi confirmada com sucesso. Aqui estão os detalhes:</p>
               
               <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #10b981;">
-                <p><strong>📅 Data:</strong> ${
-        new Date(
-          appointment.appointment_date,
-        ).toLocaleDateString("pt-BR", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      }</p>
+                <p><strong>📅 Data:</strong> ${new Date(
+                  appointment.appointment_date,
+                ).toLocaleDateString("pt-BR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}</p>
                 <p><strong>🕐 Horário:</strong> ${appointment.appointment_time}</p>
                 <p><strong>👨‍⚕️ Profissional:</strong> ${
-        Array.isArray(appointment.professionals)
-          ? appointment.professionals[0]?.name
-          : appointment.professionals?.name
-      }</p>
+                  Array.isArray(appointment.professionals)
+                    ? appointment.professionals[0]?.name
+                    : appointment.professionals?.name
+                }</p>
                 <p><strong>💅 Serviço:</strong> ${
-        Array.isArray(appointment.service_types)
-          ? appointment.service_types[0]?.name
-          : appointment.service_types?.name
-      }</p>
+                  Array.isArray(appointment.service_types)
+                    ? appointment.service_types[0]?.name
+                    : appointment.service_types?.name
+                }</p>
                 <p><strong>⏱️ Duração:</strong> ${
-        Array.isArray(appointment.service_types)
-          ? appointment.service_types[0]?.duration_minutes
-          : appointment.service_types?.duration_minutes
-      } minutos</p>
+                  Array.isArray(appointment.service_types)
+                    ? appointment.service_types[0]?.duration_minutes
+                    : appointment.service_types?.duration_minutes
+                } minutos</p>
                 ${
-        (
-            Array.isArray(appointment.service_types)
-              ? appointment.service_types[0]?.price
-              : appointment.service_types?.price
-          )
-          ? `<p><strong>💰 Valor:</strong> R$ ${
-            (Array.isArray(
-                appointment.service_types,
-              )
-              ? appointment.service_types[0]?.price
-              : appointment.service_types?.price)?.toFixed(2)
-          }</p>`
-          : ""
-      }
+                  (
+                    Array.isArray(appointment.service_types)
+                      ? appointment.service_types[0]?.price
+                      : appointment.service_types?.price
+                  )
+                    ? `<p><strong>💰 Valor:</strong> R$ ${(Array.isArray(
+                        appointment.service_types,
+                      )
+                        ? appointment.service_types[0]?.price
+                        : appointment.service_types?.price
+                      )?.toFixed(2)}</p>`
+                    : ""
+                }
               </div>
             </div>
             
@@ -157,8 +154,7 @@ export const appointmentConfirmationEmail = task({
       const emailResult = await resend.emails.send({
         from: `${payload.clinicName} <noreply@neonpro.app>`,
         to: [payload.recipientEmail],
-        subject:
-          `✨ Consulta Confirmada - ${payload.appointmentDate} às ${payload.appointmentTime}`,
+        subject: `✨ Consulta Confirmada - ${payload.appointmentDate} às ${payload.appointmentTime}`,
         html: emailHtml,
         headers: {
           "X-Appointment-ID": payload.appointmentId,
@@ -177,7 +173,8 @@ export const appointmentConfirmationEmail = task({
         .from("appointments")
         .update({
           confirmation_sent_at: new Date().toISOString(),
-          status: appointment.status === "pending" ? "confirmed" : appointment.status,
+          status:
+            appointment.status === "pending" ? "confirmed" : appointment.status,
         })
         .eq("id", payload.appointmentId);
 

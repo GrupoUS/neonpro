@@ -151,7 +151,7 @@ interface Widget {
   description: string;
   dataSource: string;
   configuration: Record<string, unknown>;
-  position: { x: number; y: number; width: number; height: number; };
+  position: { x: number; y: number; width: number; height: number };
   refreshRate: number;
   isVisible: boolean;
 }
@@ -454,8 +454,7 @@ export class AnalyticsService extends EnhancedServiceBase {
     return this.executeOperation(
       "getHealthcareMetrics",
       async () => {
-        const cacheKey =
-          `healthcare_metrics_${request.tenantId}_${request.startDate.getTime()}_${request.endDate.getTime()}`;
+        const cacheKey = `healthcare_metrics_${request.tenantId}_${request.startDate.getTime()}_${request.endDate.getTime()}`;
 
         // Try cache first
         const cached = await this.cache.get<HealthcareMetrics>(cacheKey);
@@ -1063,7 +1062,8 @@ export class AnalyticsService extends EnhancedServiceBase {
         id: `insight_${Date.now()}_2`,
         type: InsightType.ANOMALY,
         title: "Taxa de cancelamento acima do normal",
-        description: "A taxa de cancelamento desta semana está 25% acima da média histórica.",
+        description:
+          "A taxa de cancelamento desta semana está 25% acima da média histórica.",
         data: { currentRate: 12.5, normalRate: 10, increase: 25 },
         confidence: 0.92,
         importance: InsightImportance.HIGH,
@@ -1089,7 +1089,8 @@ export class AnalyticsService extends EnhancedServiceBase {
   private detectStatisticalAnomalies(data: number[]): unknown[] {
     // Simple anomaly detection using z-score
     const mean = data.reduce((sum, value) => sum + value, 0) / data.length;
-    const variance = data.reduce((sum, value) => sum + (value - mean) ** 2, 0) / data.length;
+    const variance =
+      data.reduce((sum, value) => sum + (value - mean) ** 2, 0) / data.length;
     const stdDev = Math.sqrt(variance);
 
     const anomalies: unknown[] = [];
@@ -1201,7 +1202,10 @@ export class AnalyticsService extends EnhancedServiceBase {
     }
   }
 
-  private async createReportFile(report: Report, _data: unknown): Promise<string> {
+  private async createReportFile(
+    report: Report,
+    _data: unknown,
+  ): Promise<string> {
     // Create report file in specified format
     const fileId = `report_${report.id}_${Date.now()}`;
     return fileId;

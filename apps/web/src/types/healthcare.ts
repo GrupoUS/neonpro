@@ -40,7 +40,13 @@ export interface Appointment {
   service?: Service;
   scheduledAt: string;
   duration: number;
-  status: "scheduled" | "confirmed" | "in_progress" | "completed" | "cancelled" | "no_show";
+  status:
+    | "scheduled"
+    | "confirmed"
+    | "in_progress"
+    | "completed"
+    | "cancelled"
+    | "no_show";
   notes?: string;
   clinicId: string;
   createdAt: string;

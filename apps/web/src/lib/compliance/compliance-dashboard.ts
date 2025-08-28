@@ -1,28 +1,14 @@
-import type {
-  CFMValidationResult
-} from './cfm-professional-validation';
-import {
-  CFMValidationService
-} from './cfm-professional-validation';
-import type {
-  ControlledPrescription
-} from './anvisa-controlled-substances';
-import {
-  ANVISAControlledSubstancesService
-} from './anvisa-controlled-substances';
-import type {
-  LGPDConsentRecord
-} from './lgpd-consent-management';
-import {
-  LGPDConsentManagementService
-} from './lgpd-consent-management';
+import type { CFMValidationResult } from "./cfm-professional-validation";
+import { CFMValidationService } from "./cfm-professional-validation";
+import type { ControlledPrescription } from "./anvisa-controlled-substances";
+import { ANVISAControlledSubstancesService } from "./anvisa-controlled-substances";
+import type { LGPDConsentRecord } from "./lgpd-consent-management";
+import { LGPDConsentManagementService } from "./lgpd-consent-management";
 import type {
   EmergencyResponse,
-  EmergencyProtocol
-} from './emergency-medical-protocols';
-import {
-  EmergencyMedicalProtocolsService
-} from './emergency-medical-protocols';
+  EmergencyProtocol,
+} from "./emergency-medical-protocols";
+import { EmergencyMedicalProtocolsService } from "./emergency-medical-protocols";
 import type {
   ComplianceDashboardData,
   ComplianceScore,
@@ -32,16 +18,16 @@ import type {
   ComplianceAuditItem,
   ComplianceRiskLevel,
   ComplianceCategory,
-  ValidationResponse
-} from '@/types/compliance';
+  ValidationResponse,
+} from "@/types/compliance";
 
 /**
  * Compliance Dashboard Service
- * 
+ *
  * Central service for Brazilian healthcare compliance monitoring, reporting,
  * and dashboard aggregation. Integrates all compliance systems (CFM, ANVISA, LGPD, Emergency)
  * to provide unified compliance oversight and regulatory reporting.
- * 
+ *
  * Features:
  * - Unified compliance scoring and risk assessment
  * - Real-time compliance monitoring and alerts
@@ -51,7 +37,7 @@ import type {
  * - Automated compliance report generation
  * - Risk-based alert system
  * - Integration with all regulatory systems
- * 
+ *
  * Compliance Framework:
  * - Lei nº 13.709/2018 (LGPD)
  * - Resolution CFM nº 2.314/2022 (Telemedicine)
@@ -66,7 +52,7 @@ export class ComplianceDashboardService {
   private anvisaService: ANVISAControlledSubstancesService;
   private lgpdService: LGPDConsentManagementService;
   private emergencyService: EmergencyMedicalProtocolsService;
-  
+
   private complianceAlerts: ComplianceAlert[] = [];
   private auditItems: ComplianceAuditItem[] = [];
   private lastUpdateTime: Date = new Date();
@@ -76,7 +62,7 @@ export class ComplianceDashboardService {
     this.anvisaService = ANVISAControlledSubstancesService.getInstance();
     this.lgpdService = LGPDConsentManagementService.getInstance();
     this.emergencyService = EmergencyMedicalProtocolsService.getInstance();
-    
+
     this.initializeComplianceMonitoring();
   }
 
@@ -94,45 +80,45 @@ export class ComplianceDashboardService {
     // Initialize baseline audit items
     this.auditItems = [
       {
-        id: 'cfm-validation-init',
-        category: 'cfm-professional',
-        description: 'Sistema de validação CFM inicializado',
+        id: "cfm-validation-init",
+        category: "cfm-professional",
+        description: "Sistema de validação CFM inicializado",
         timestamp: new Date(),
-        severity: 'info',
-        details: { status: 'system-initialized' },
-        userId: 'system',
-        resolved: false
+        severity: "info",
+        details: { status: "system-initialized" },
+        userId: "system",
+        resolved: false,
       },
       {
-        id: 'anvisa-substances-init',
-        category: 'anvisa-substances',
-        description: 'Sistema ANVISA de substâncias controladas inicializado',
+        id: "anvisa-substances-init",
+        category: "anvisa-substances",
+        description: "Sistema ANVISA de substâncias controladas inicializado",
         timestamp: new Date(),
-        severity: 'info',
-        details: { status: 'system-initialized' },
-        userId: 'system',
-        resolved: false
+        severity: "info",
+        details: { status: "system-initialized" },
+        userId: "system",
+        resolved: false,
       },
       {
-        id: 'lgpd-consent-init',
-        category: 'lgpd-consent',
-        description: 'Sistema de gestão de consentimento LGPD inicializado',
+        id: "lgpd-consent-init",
+        category: "lgpd-consent",
+        description: "Sistema de gestão de consentimento LGPD inicializado",
         timestamp: new Date(),
-        severity: 'info',
-        details: { status: 'system-initialized' },
-        userId: 'system',
-        resolved: false
+        severity: "info",
+        details: { status: "system-initialized" },
+        userId: "system",
+        resolved: false,
       },
       {
-        id: 'emergency-protocols-init',
-        category: 'emergency-protocols',
-        description: 'Protocolos de emergência médica inicializados',
+        id: "emergency-protocols-init",
+        category: "emergency-protocols",
+        description: "Protocolos de emergência médica inicializados",
         timestamp: new Date(),
-        severity: 'info',
-        details: { status: 'system-initialized' },
-        userId: 'system',
-        resolved: false
-      }
+        severity: "info",
+        details: { status: "system-initialized" },
+        userId: "system",
+        resolved: false,
+      },
     ];
 
     // Initialize sample alerts for demonstration
@@ -142,27 +128,35 @@ export class ComplianceDashboardService {
   /**
    * Get comprehensive dashboard data
    */
-  public async getDashboardData(): Promise<ValidationResponse<ComplianceDashboardData>> {
+  public async getDashboardData(): Promise<
+    ValidationResponse<ComplianceDashboardData>
+  > {
     try {
       // Get data from all compliance services
       const cfmValidations = this.cfmService.getValidationHistory();
-      const controlledPrescriptions = this.anvisaService.getControlledPrescriptions();
+      const controlledPrescriptions =
+        this.anvisaService.getControlledPrescriptions();
       const consentRecords = this.lgpdService.getConsentRecords();
       const emergencyResponses = this.emergencyService.getActiveEmergencies();
       const emergencyProtocols = this.emergencyService.getEmergencyProtocols();
 
       // Calculate compliance scores
       const cfmScore = this.calculateCFMComplianceScore(cfmValidations);
-      const anvisaScore = this.calculateANVISAComplianceScore(controlledPrescriptions);
+      const anvisaScore = this.calculateANVISAComplianceScore(
+        controlledPrescriptions,
+      );
       const lgpdScore = this.calculateLGPDComplianceScore(consentRecords);
-      const emergencyScore = this.calculateEmergencyComplianceScore(emergencyResponses, emergencyProtocols);
+      const emergencyScore = this.calculateEmergencyComplianceScore(
+        emergencyResponses,
+        emergencyProtocols,
+      );
 
       // Calculate overall compliance score
       const overallScore = this.calculateOverallComplianceScore([
         cfmScore,
         anvisaScore,
         lgpdScore,
-        emergencyScore
+        emergencyScore,
       ]);
 
       // Generate compliance metrics
@@ -170,7 +164,7 @@ export class ComplianceDashboardService {
         cfmValidations,
         controlledPrescriptions,
         consentRecords,
-        emergencyResponses
+        emergencyResponses,
       });
 
       // Check for new alerts
@@ -178,7 +172,7 @@ export class ComplianceDashboardService {
         cfmValidations,
         controlledPrescriptions,
         consentRecords,
-        emergencyResponses
+        emergencyResponses,
       });
 
       const dashboardData: ComplianceDashboardData = {
@@ -187,35 +181,39 @@ export class ComplianceDashboardService {
           cfm: cfmScore,
           anvisa: anvisaScore,
           lgpd: lgpdScore,
-          emergency: emergencyScore
+          emergency: emergencyScore,
         },
         metrics,
-        alerts: this.complianceAlerts.filter(alert => !alert.resolved).slice(0, 10),
+        alerts: this.complianceAlerts
+          .filter((alert) => !alert.resolved)
+          .slice(0, 10),
         recentAudits: this.auditItems.slice(-20),
         lastUpdated: new Date(),
         systemStatus: {
-          cfm: cfmValidations.length > 0 ? 'active' : 'idle',
-          anvisa: controlledPrescriptions.length > 0 ? 'active' : 'idle',
-          lgpd: consentRecords.length > 0 ? 'active' : 'idle',
-          emergency: emergencyResponses.length > 0 ? 'active' : 'idle'
+          cfm: cfmValidations.length > 0 ? "active" : "idle",
+          anvisa: controlledPrescriptions.length > 0 ? "active" : "idle",
+          lgpd: consentRecords.length > 0 ? "active" : "idle",
+          emergency: emergencyResponses.length > 0 ? "active" : "idle",
         },
         complianceBreaches: this.getComplianceBreaches(),
         upcomingDeadlines: this.getUpcomingDeadlines(),
-        riskAssessment: this.calculateRiskAssessment(overallScore, this.complianceAlerts)
+        riskAssessment: this.calculateRiskAssessment(
+          overallScore,
+          this.complianceAlerts,
+        ),
       };
 
       this.lastUpdateTime = new Date();
-      
+
       return {
         isValid: true,
-        data: dashboardData
+        data: dashboardData,
       };
-
     } catch (error) {
-      console.error('Error getting dashboard data:', error);
+      console.error("Error getting dashboard data:", error);
       return {
         isValid: false,
-        errors: ['Erro ao carregar dados do painel de conformidade']
+        errors: ["Erro ao carregar dados do painel de conformidade"],
       };
     }
   }
@@ -223,27 +221,32 @@ export class ComplianceDashboardService {
   /**
    * Calculate CFM compliance score
    */
-  private calculateCFMComplianceScore(validations: CFMValidationResult[]): ComplianceScore {
+  private calculateCFMComplianceScore(
+    validations: CFMValidationResult[],
+  ): ComplianceScore {
     if (validations.length === 0) {
       return {
         score: 85,
-        category: 'cfm-professional',
-        description: 'Sistema CFM operacional - aguardando validações',
+        category: "cfm-professional",
+        description: "Sistema CFM operacional - aguardando validações",
         lastUpdated: new Date(),
-        trends: { direction: 'stable', change: 0 },
+        trends: { direction: "stable", change: 0 },
         details: {
           totalValidations: 0,
           validProfessionals: 0,
           expiringSoon: 0,
-          issues: 0
-        }
+          issues: 0,
+        },
       };
     }
 
-    const validProfessionals = validations.filter(v => v.isValid).length;
-    const expiringSoon = validations.filter(v => {
-      if (!v.validUntil) {return false;}
-      const daysUntilExpiry = (v.validUntil.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
+    const validProfessionals = validations.filter((v) => v.isValid).length;
+    const expiringSoon = validations.filter((v) => {
+      if (!v.validUntil) {
+        return false;
+      }
+      const daysUntilExpiry =
+        (v.validUntil.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
       return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
     }).length;
 
@@ -257,49 +260,60 @@ export class ComplianceDashboardService {
 
     return {
       score: Math.max(0, Math.min(100, score)),
-      category: 'cfm-professional',
+      category: "cfm-professional",
       description: `${validProfessionals}/${validations.length} profissionais com CRM válido`,
       lastUpdated: new Date(),
-      trends: { direction: 'stable', change: 0 },
+      trends: { direction: "stable", change: 0 },
       details: {
         totalValidations: validations.length,
         validProfessionals,
         expiringSoon,
-        issues: validations.length - validProfessionals
-      }
+        issues: validations.length - validProfessionals,
+      },
     };
   }
 
   /**
    * Calculate ANVISA compliance score
    */
-  private calculateANVISAComplianceScore(prescriptions: ControlledPrescription[]): ComplianceScore {
+  private calculateANVISAComplianceScore(
+    prescriptions: ControlledPrescription[],
+  ): ComplianceScore {
     if (prescriptions.length === 0) {
       return {
         score: 90,
-        category: 'anvisa-substances',
-        description: 'Sistema ANVISA operacional - sem prescrições controladas',
+        category: "anvisa-substances",
+        description: "Sistema ANVISA operacional - sem prescrições controladas",
         lastUpdated: new Date(),
-        trends: { direction: 'stable', change: 0 },
+        trends: { direction: "stable", change: 0 },
         details: {
           totalPrescriptions: 0,
           activePrescriptions: 0,
           expiredPrescriptions: 0,
-          missingDocumentation: 0
-        }
+          missingDocumentation: 0,
+        },
       };
     }
 
-    const activePrescriptions = prescriptions.filter(p => p.status === 'active').length;
-    const expiredPrescriptions = prescriptions.filter(p => p.status === 'expired').length;
-    const usedPrescriptions = prescriptions.filter(p => p.status === 'used').length;
-    const missingDocumentation = prescriptions.filter(p => 
-      !p.specialAuthorization && 
-      ['A1', 'A2', 'A3'].some(classType => p.substanceId.includes(classType))
+    const activePrescriptions = prescriptions.filter(
+      (p) => p.status === "active",
+    ).length;
+    const expiredPrescriptions = prescriptions.filter(
+      (p) => p.status === "expired",
+    ).length;
+    const usedPrescriptions = prescriptions.filter(
+      (p) => p.status === "used",
+    ).length;
+    const missingDocumentation = prescriptions.filter(
+      (p) =>
+        !p.specialAuthorization &&
+        ["A1", "A2", "A3"].some((classType) =>
+          p.substanceId.includes(classType),
+        ),
     ).length;
 
     let score = 100;
-    
+
     // Penalties for expired prescriptions
     if (expiredPrescriptions > 0) {
       score -= (expiredPrescriptions / prescriptions.length) * 15;
@@ -312,43 +326,51 @@ export class ComplianceDashboardService {
 
     return {
       score: Math.max(0, score),
-      category: 'anvisa-substances',
+      category: "anvisa-substances",
       description: `${prescriptions.length} prescrições controladas gerenciadas`,
       lastUpdated: new Date(),
-      trends: { direction: 'stable', change: 0 },
+      trends: { direction: "stable", change: 0 },
       details: {
         totalPrescriptions: prescriptions.length,
         activePrescriptions,
         expiredPrescriptions,
-        missingDocumentation
-      }
+        missingDocumentation,
+      },
     };
   }
 
   /**
    * Calculate LGPD compliance score
    */
-  private calculateLGPDComplianceScore(consentRecords: LGPDConsentRecord[]): ComplianceScore {
+  private calculateLGPDComplianceScore(
+    consentRecords: LGPDConsentRecord[],
+  ): ComplianceScore {
     if (consentRecords.length === 0) {
       return {
         score: 80,
-        category: 'lgpd-consent',
-        description: 'Sistema LGPD configurado - aguardando consentimentos',
+        category: "lgpd-consent",
+        description: "Sistema LGPD configurado - aguardando consentimentos",
         lastUpdated: new Date(),
-        trends: { direction: 'stable', change: 0 },
+        trends: { direction: "stable", change: 0 },
         details: {
           totalConsents: 0,
           activeConsents: 0,
           expiredConsents: 0,
-          withdrawnConsents: 0
-        }
+          withdrawnConsents: 0,
+        },
       };
     }
 
-    const activeConsents = consentRecords.filter(c => c.status === 'given').length;
-    const expiredConsents = consentRecords.filter(c => c.status === 'expired').length;
-    const withdrawnConsents = consentRecords.filter(c => c.status === 'withdrawn').length;
-    
+    const activeConsents = consentRecords.filter(
+      (c) => c.status === "given",
+    ).length;
+    const expiredConsents = consentRecords.filter(
+      (c) => c.status === "expired",
+    ).length;
+    const withdrawnConsents = consentRecords.filter(
+      (c) => c.status === "withdrawn",
+    ).length;
+
     const consentValidityRate = (activeConsents / consentRecords.length) * 100;
     let score = consentValidityRate;
 
@@ -364,16 +386,16 @@ export class ComplianceDashboardService {
 
     return {
       score: Math.max(0, score),
-      category: 'lgpd-consent',
+      category: "lgpd-consent",
       description: `${activeConsents}/${consentRecords.length} consentimentos ativos`,
       lastUpdated: new Date(),
-      trends: { direction: 'stable', change: 0 },
+      trends: { direction: "stable", change: 0 },
       details: {
         totalConsents: consentRecords.length,
         activeConsents,
         expiredConsents,
-        withdrawnConsents
-      }
+        withdrawnConsents,
+      },
     };
   }
 
@@ -382,28 +404,34 @@ export class ComplianceDashboardService {
    */
   private calculateEmergencyComplianceScore(
     responses: EmergencyResponse[],
-    protocols: EmergencyProtocol[]
+    protocols: EmergencyProtocol[],
   ): ComplianceScore {
     if (protocols.length === 0) {
       return {
         score: 70,
-        category: 'emergency-protocols',
-        description: 'Sistema de emergência não configurado',
+        category: "emergency-protocols",
+        description: "Sistema de emergência não configurado",
         lastUpdated: new Date(),
-        trends: { direction: 'down', change: -10 },
+        trends: { direction: "down", change: -10 },
         details: {
           activeProtocols: 0,
           activeEmergencies: 0,
           resolvedEmergencies: 0,
-          escalatedEmergencies: 0
-        }
+          escalatedEmergencies: 0,
+        },
       };
     }
 
-    const activeProtocols = protocols.filter(p => p.isActive).length;
-    const activeEmergencies = responses.filter(r => r.status === 'active').length;
-    const resolvedEmergencies = responses.filter(r => r.status === 'resolved').length;
-    const escalatedEmergencies = responses.filter(r => r.escalationLevel !== 'initial').length;
+    const activeProtocols = protocols.filter((p) => p.isActive).length;
+    const activeEmergencies = responses.filter(
+      (r) => r.status === "active",
+    ).length;
+    const resolvedEmergencies = responses.filter(
+      (r) => r.status === "resolved",
+    ).length;
+    const escalatedEmergencies = responses.filter(
+      (r) => r.escalationLevel !== "initial",
+    ).length;
 
     let score = 95; // Base score for having protocols
 
@@ -424,48 +452,59 @@ export class ComplianceDashboardService {
 
     return {
       score: Math.max(0, Math.min(100, score)),
-      category: 'emergency-protocols',
+      category: "emergency-protocols",
       description: `${activeProtocols} protocolos ativos, ${activeEmergencies} emergências em andamento`,
       lastUpdated: new Date(),
-      trends: { direction: activeEmergencies > 0 ? 'down' : 'stable', change: 0 },
+      trends: {
+        direction: activeEmergencies > 0 ? "down" : "stable",
+        change: 0,
+      },
       details: {
         activeProtocols,
         activeEmergencies,
         resolvedEmergencies,
-        escalatedEmergencies
-      }
+        escalatedEmergencies,
+      },
     };
   }
 
   /**
    * Calculate overall compliance score
    */
-  private calculateOverallComplianceScore(scores: ComplianceScore[]): ComplianceScore {
+  private calculateOverallComplianceScore(
+    scores: ComplianceScore[],
+  ): ComplianceScore {
     const weights = {
-      'cfm-professional': 0.25,
-      'anvisa-substances': 0.25,
-      'lgpd-consent': 0.25,
-      'emergency-protocols': 0.25
+      "cfm-professional": 0.25,
+      "anvisa-substances": 0.25,
+      "lgpd-consent": 0.25,
+      "emergency-protocols": 0.25,
     };
 
     const weightedSum = scores.reduce((sum, score) => {
-      return sum + (score.score * weights[score.category]);
+      return sum + score.score * weights[score.category];
     }, 0);
 
     const riskLevel = this.determineRiskLevel(weightedSum);
-    
+
     return {
       score: Math.round(weightedSum),
-      category: 'overall',
-      description: this.getComplianceDescription(Math.round(weightedSum), riskLevel),
+      category: "overall",
+      description: this.getComplianceDescription(
+        Math.round(weightedSum),
+        riskLevel,
+      ),
       lastUpdated: new Date(),
-      trends: { direction: 'stable', change: 0 },
+      trends: { direction: "stable", change: 0 },
       details: {
         riskLevel,
-        componentScores: scores.map(s => ({ category: s.category, score: s.score })),
-        criticalIssues: scores.filter(s => s.score < 70).length,
-        allSystemsOperational: scores.every(s => s.score >= 80)
-      }
+        componentScores: scores.map((s) => ({
+          category: s.category,
+          score: s.score,
+        })),
+        criticalIssues: scores.filter((s) => s.score < 70).length,
+        allSystemsOperational: scores.every((s) => s.score >= 80),
+      },
     };
   }
 
@@ -479,25 +518,33 @@ export class ComplianceDashboardService {
     emergencyResponses: EmergencyResponse[];
   }): ComplianceMetrics {
     const now = new Date();
-    const last30Days = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+    const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     return {
       totalProfessionals: data.cfmValidations.length,
-      validatedProfessionals: data.cfmValidations.filter(v => v.isValid).length,
+      validatedProfessionals: data.cfmValidations.filter((v) => v.isValid)
+        .length,
       totalPrescriptions: data.controlledPrescriptions.length,
-      activePrescriptions: data.controlledPrescriptions.filter(p => p.status === 'active').length,
+      activePrescriptions: data.controlledPrescriptions.filter(
+        (p) => p.status === "active",
+      ).length,
       totalConsents: data.consentRecords.length,
-      activeConsents: data.consentRecords.filter(c => c.status === 'given').length,
+      activeConsents: data.consentRecords.filter((c) => c.status === "given")
+        .length,
       totalEmergencies: data.emergencyResponses.length,
-      activeEmergencies: data.emergencyResponses.filter(e => e.status === 'active').length,
+      activeEmergencies: data.emergencyResponses.filter(
+        (e) => e.status === "active",
+      ).length,
       complianceViolations: this.calculateComplianceViolations(data),
-      auditActivities: this.auditItems.filter(item => item.timestamp >= last30Days).length,
+      auditActivities: this.auditItems.filter(
+        (item) => item.timestamp >= last30Days,
+      ).length,
       riskIndicators: this.calculateRiskIndicators(data),
       systemUptime: this.calculateSystemUptime(),
       lastAuditDate: this.getLastAuditDate(),
       nextAuditDue: this.getNextAuditDue(),
       certificationsExpiringSoon: this.getCertificationsExpiringSoon(data),
-      trainingRequirements: this.getTrainingRequirements()
+      trainingRequirements: this.getTrainingRequirements(),
     };
   }
 
@@ -513,95 +560,102 @@ export class ComplianceDashboardService {
     const newAlerts: ComplianceAlert[] = [];
 
     // CFM Alerts
-    const expiringSoonCFM = data.cfmValidations.filter(v => {
-      if (!v.validUntil) {return false;}
-      const daysUntilExpiry = (v.validUntil.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
+    const expiringSoonCFM = data.cfmValidations.filter((v) => {
+      if (!v.validUntil) {
+        return false;
+      }
+      const daysUntilExpiry =
+        (v.validUntil.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
       return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
     });
 
     if (expiringSoonCFM.length > 0) {
       newAlerts.push({
         id: `cfm-expiring-${Date.now()}`,
-        category: 'cfm-professional',
-        title: 'CRM Expirando em Breve',
+        category: "cfm-professional",
+        title: "CRM Expirando em Breve",
         description: `${expiringSoonCFM.length} profissionais com CRM expirando nos próximos 30 dias`,
-        severity: 'warning',
+        severity: "warning",
         createdAt: new Date(),
         resolved: false,
-        riskLevel: 'medium',
+        riskLevel: "medium",
         actions: [
-          'Notificar profissionais sobre renovação',
-          'Verificar documentação pendente',
-          'Agendar renovações'
-        ]
+          "Notificar profissionais sobre renovação",
+          "Verificar documentação pendente",
+          "Agendar renovações",
+        ],
       });
     }
 
     // ANVISA Alerts
-    const expiredPrescriptions = data.controlledPrescriptions.filter(p => p.status === 'expired');
+    const expiredPrescriptions = data.controlledPrescriptions.filter(
+      (p) => p.status === "expired",
+    );
     if (expiredPrescriptions.length > 0) {
       newAlerts.push({
         id: `anvisa-expired-${Date.now()}`,
-        category: 'anvisa-substances',
-        title: 'Receitas Controladas Expiradas',
+        category: "anvisa-substances",
+        title: "Receitas Controladas Expiradas",
         description: `${expiredPrescriptions.length} receitas controladas expiradas necessitam atenção`,
-        severity: 'warning',
+        severity: "warning",
         createdAt: new Date(),
         resolved: false,
-        riskLevel: 'medium',
+        riskLevel: "medium",
         actions: [
-          'Revisar receitas expiradas',
-          'Atualizar sistema de controle',
-          'Notificar profissionais responsáveis'
-        ]
+          "Revisar receitas expiradas",
+          "Atualizar sistema de controle",
+          "Notificar profissionais responsáveis",
+        ],
       });
     }
 
     // LGPD Alerts
-    const expiredConsents = data.consentRecords.filter(c => c.status === 'expired');
+    const expiredConsents = data.consentRecords.filter(
+      (c) => c.status === "expired",
+    );
     if (expiredConsents.length > 0) {
       newAlerts.push({
         id: `lgpd-expired-${Date.now()}`,
-        category: 'lgpd-consent',
-        title: 'Consentimentos LGPD Expirados',
+        category: "lgpd-consent",
+        title: "Consentimentos LGPD Expirados",
         description: `${expiredConsents.length} consentimentos expirados requerem renovação`,
-        severity: 'high',
+        severity: "high",
         createdAt: new Date(),
         resolved: false,
-        riskLevel: 'high',
+        riskLevel: "high",
         actions: [
-          'Contatar titulares para renovação',
-          'Suspender processamento se necessário',
-          'Documentar ações tomadas'
-        ]
+          "Contatar titulares para renovação",
+          "Suspender processamento se necessário",
+          "Documentar ações tomadas",
+        ],
       });
     }
 
     // Emergency Alerts
-    const criticalEmergencies = data.emergencyResponses.filter(e => 
-      e.priority === 'critical' && e.status === 'active'
+    const criticalEmergencies = data.emergencyResponses.filter(
+      (e) => e.priority === "critical" && e.status === "active",
     );
     if (criticalEmergencies.length > 0) {
       newAlerts.push({
         id: `emergency-critical-${Date.now()}`,
-        category: 'emergency-protocols',
-        title: 'Emergências Críticas Ativas',
+        category: "emergency-protocols",
+        title: "Emergências Críticas Ativas",
         description: `${criticalEmergencies.length} emergências críticas em andamento`,
-        severity: 'critical',
+        severity: "critical",
         createdAt: new Date(),
         resolved: false,
-        riskLevel: 'critical',
+        riskLevel: "critical",
         actions: [
-          'Monitorar emergências ativas',
-          'Garantir equipes disponíveis',
-          'Verificar protocolos sendo seguidos'
-        ]
+          "Monitorar emergências ativas",
+          "Garantir equipes disponíveis",
+          "Verificar protocolos sendo seguidos",
+        ],
       });
     }
 
     // Add new alerts to the list
     this.complianceAlerts.push(...newAlerts);
-    
+
     // Keep only last 100 alerts
     if (this.complianceAlerts.length > 100) {
       this.complianceAlerts = this.complianceAlerts.slice(-100);
@@ -614,238 +668,322 @@ export class ComplianceDashboardService {
   public async generateComplianceReport(
     startDate: Date,
     endDate: Date,
-    categories?: ComplianceCategory[]
+    categories?: ComplianceCategory[],
   ): Promise<ValidationResponse<ComplianceReport>> {
     try {
       const dashboardResult = await this.getDashboardData();
       if (!dashboardResult.isValid || !dashboardResult.data) {
         return {
           isValid: false,
-          errors: ['Erro ao carregar dados para relatório']
+          errors: ["Erro ao carregar dados para relatório"],
         };
       }
 
       const dashboard = dashboardResult.data;
-      
+
       const report: ComplianceReport = {
         id: `report-${Date.now()}`,
-        title: 'Relatório de Conformidade Regulatória',
+        title: "Relatório de Conformidade Regulatória",
         period: { startDate, endDate },
         generatedAt: new Date(),
         overallScore: dashboard.overallScore,
-        categories: categories || ['cfm-professional', 'anvisa-substances', 'lgpd-consent', 'emergency-protocols'],
-        
+        categories: categories || [
+          "cfm-professional",
+          "anvisa-substances",
+          "lgpd-consent",
+          "emergency-protocols",
+        ],
+
         executiveSummary: {
-          overallHealth: this.determineOverallHealth(dashboard.overallScore.score),
+          overallHealth: this.determineOverallHealth(
+            dashboard.overallScore.score,
+          ),
           keyFindings: this.generateKeyFindings(dashboard),
           majorRisks: this.identifyMajorRisks(dashboard.alerts),
-          recommendations: this.generateRecommendations(dashboard)
+          recommendations: this.generateRecommendations(dashboard),
         },
 
         detailedAnalysis: {
           cfmCompliance: {
             score: dashboard.scores.cfm.score,
-            status: dashboard.scores.cfm.score >= 80 ? 'compliant' : 'non-compliant',
+            status:
+              dashboard.scores.cfm.score >= 80 ? "compliant" : "non-compliant",
             findings: this.generateCFMFindings(dashboard.scores.cfm),
-            actions: this.generateCFMActions(dashboard.scores.cfm)
+            actions: this.generateCFMActions(dashboard.scores.cfm),
           },
           anvisaCompliance: {
             score: dashboard.scores.anvisa.score,
-            status: dashboard.scores.anvisa.score >= 80 ? 'compliant' : 'non-compliant',
+            status:
+              dashboard.scores.anvisa.score >= 80
+                ? "compliant"
+                : "non-compliant",
             findings: this.generateANVISAFindings(dashboard.scores.anvisa),
-            actions: this.generateANVISAActions(dashboard.scores.anvisa)
+            actions: this.generateANVISAActions(dashboard.scores.anvisa),
           },
           lgpdCompliance: {
             score: dashboard.scores.lgpd.score,
-            status: dashboard.scores.lgpd.score >= 80 ? 'compliant' : 'non-compliant',
+            status:
+              dashboard.scores.lgpd.score >= 80 ? "compliant" : "non-compliant",
             findings: this.generateLGPDFindings(dashboard.scores.lgpd),
-            actions: this.generateLGPDActions(dashboard.scores.lgpd)
+            actions: this.generateLGPDActions(dashboard.scores.lgpd),
           },
           emergencyCompliance: {
             score: dashboard.scores.emergency.score,
-            status: dashboard.scores.emergency.score >= 80 ? 'compliant' : 'non-compliant',
-            findings: this.generateEmergencyFindings(dashboard.scores.emergency),
-            actions: this.generateEmergencyActions(dashboard.scores.emergency)
-          }
+            status:
+              dashboard.scores.emergency.score >= 80
+                ? "compliant"
+                : "non-compliant",
+            findings: this.generateEmergencyFindings(
+              dashboard.scores.emergency,
+            ),
+            actions: this.generateEmergencyActions(dashboard.scores.emergency),
+          },
         },
 
         metrics: dashboard.metrics,
         alerts: dashboard.alerts,
         auditTrail: dashboard.recentAudits.slice(0, 20),
-        
+
         complianceMatrix: this.generateComplianceMatrix(dashboard.scores),
         riskAssessment: dashboard.riskAssessment,
-        
+
         appendices: {
           regulatoryFramework: this.getRegulatoryFramework(),
           documentationStandards: this.getDocumentationStandards(),
           contactInformation: this.getComplianceContacts(),
-          nextSteps: this.getNextSteps(dashboard)
-        }
+          nextSteps: this.getNextSteps(dashboard),
+        },
       };
 
       return {
         isValid: true,
-        data: report
+        data: report,
       };
-
     } catch (error) {
-      console.error('Error generating compliance report:', error);
+      console.error("Error generating compliance report:", error);
       return {
         isValid: false,
-        errors: ['Erro interno ao gerar relatório de conformidade']
+        errors: ["Erro interno ao gerar relatório de conformidade"],
       };
     }
   }
 
   // Helper methods for report generation
   private determineRiskLevel(score: number): ComplianceRiskLevel {
-    if (score >= 90) {return 'low';}
-    if (score >= 80) {return 'medium';}
-    if (score >= 60) {return 'high';}
-    return 'critical';
+    if (score >= 90) {
+      return "low";
+    }
+    if (score >= 80) {
+      return "medium";
+    }
+    if (score >= 60) {
+      return "high";
+    }
+    return "critical";
   }
 
-  private getComplianceDescription(score: number, riskLevel: ComplianceRiskLevel): string {
-    if (score >= 95) {return 'Excelente conformidade regulatória - todos os sistemas operando dentro dos padrões';}
-    if (score >= 90) {return 'Boa conformidade - pequenos ajustes podem ser necessários';}
-    if (score >= 80) {return 'Conformidade adequada - algumas áreas requerem atenção';}
-    if (score >= 70) {return 'Conformidade limitada - ação corretiva necessária';}
-    if (score >= 60) {return 'Conformidade deficiente - ação imediata requerida';}
-    return 'Não conformidade crítica - intervenção urgente necessária';
+  private getComplianceDescription(
+    score: number,
+    riskLevel: ComplianceRiskLevel,
+  ): string {
+    if (score >= 95) {
+      return "Excelente conformidade regulatória - todos os sistemas operando dentro dos padrões";
+    }
+    if (score >= 90) {
+      return "Boa conformidade - pequenos ajustes podem ser necessários";
+    }
+    if (score >= 80) {
+      return "Conformidade adequada - algumas áreas requerem atenção";
+    }
+    if (score >= 70) {
+      return "Conformidade limitada - ação corretiva necessária";
+    }
+    if (score >= 60) {
+      return "Conformidade deficiente - ação imediata requerida";
+    }
+    return "Não conformidade crítica - intervenção urgente necessária";
   }
 
-  private determineOverallHealth(score: number): 'excellent' | 'good' | 'fair' | 'poor' | 'critical' {
-    if (score >= 90) {return 'excellent';}
-    if (score >= 80) {return 'good';}
-    if (score >= 70) {return 'fair';}
-    if (score >= 60) {return 'poor';}
-    return 'critical';
+  private determineOverallHealth(
+    score: number,
+  ): "excellent" | "good" | "fair" | "poor" | "critical" {
+    if (score >= 90) {
+      return "excellent";
+    }
+    if (score >= 80) {
+      return "good";
+    }
+    if (score >= 70) {
+      return "fair";
+    }
+    if (score >= 60) {
+      return "poor";
+    }
+    return "critical";
   }
 
   private generateKeyFindings(dashboard: ComplianceDashboardData): string[] {
     const findings: string[] = [];
-    
+
     if (dashboard.overallScore.score >= 90) {
-      findings.push('Sistema de conformidade operando em excelente nível');
+      findings.push("Sistema de conformidade operando em excelente nível");
     }
-    
+
     if (dashboard.metrics.activeEmergencies > 0) {
-      findings.push(`${dashboard.metrics.activeEmergencies} emergências médicas ativas requerem monitoramento`);
+      findings.push(
+        `${dashboard.metrics.activeEmergencies} emergências médicas ativas requerem monitoramento`,
+      );
     }
-    
+
     if (dashboard.alerts.length > 5) {
-      findings.push(`${dashboard.alerts.length} alertas de conformidade pendentes`);
+      findings.push(
+        `${dashboard.alerts.length} alertas de conformidade pendentes`,
+      );
     }
-    
+
     return findings;
   }
 
   private identifyMajorRisks(alerts: ComplianceAlert[]): string[] {
     return alerts
-      .filter(alert => alert.riskLevel === 'high' || alert.riskLevel === 'critical')
-      .map(alert => alert.description)
+      .filter(
+        (alert) => alert.riskLevel === "high" || alert.riskLevel === "critical",
+      )
+      .map((alert) => alert.description)
       .slice(0, 5);
   }
 
-  private generateRecommendations(dashboard: ComplianceDashboardData): string[] {
+  private generateRecommendations(
+    dashboard: ComplianceDashboardData,
+  ): string[] {
     const recommendations: string[] = [];
-    
+
     if (dashboard.scores.cfm.score < 90) {
-      recommendations.push('Implementar processo automatizado de renovação de CRM');
+      recommendations.push(
+        "Implementar processo automatizado de renovação de CRM",
+      );
     }
-    
+
     if (dashboard.scores.lgpd.score < 85) {
-      recommendations.push('Revisar políticas de consentimento LGPD e implementar renovação automática');
+      recommendations.push(
+        "Revisar políticas de consentimento LGPD e implementar renovação automática",
+      );
     }
-    
+
     if (dashboard.metrics.activeEmergencies > 0) {
-      recommendations.push('Revisar protocolos de emergência e garantir adequação das equipes');
+      recommendations.push(
+        "Revisar protocolos de emergência e garantir adequação das equipes",
+      );
     }
-    
+
     return recommendations;
   }
 
   private generateCFMFindings(score: ComplianceScore): string[] {
     const findings: string[] = [];
-    
+
     if (score.details?.expiringSoon > 0) {
-      findings.push(`${score.details.expiringSoon} profissionais com CRM expirando em breve`);
+      findings.push(
+        `${score.details.expiringSoon} profissionais com CRM expirando em breve`,
+      );
     }
-    
+
     if (score.details?.issues > 0) {
-      findings.push(`${score.details.issues} profissionais com questões de validação`);
+      findings.push(
+        `${score.details.issues} profissionais com questões de validação`,
+      );
     }
-    
+
     return findings;
   }
 
   private generateCFMActions(score: ComplianceScore): string[] {
     return [
-      'Implementar notificações automáticas de renovação',
-      'Verificar regularmente status de validação',
-      'Manter documentação atualizada'
+      "Implementar notificações automáticas de renovação",
+      "Verificar regularmente status de validação",
+      "Manter documentação atualizada",
     ];
   }
 
   private generateANVISAFindings(score: ComplianceScore): string[] {
     return [
       `${score.details?.totalPrescriptions || 0} prescrições controladas no sistema`,
-      `${score.details?.expiredPrescriptions || 0} prescrições expiradas`
+      `${score.details?.expiredPrescriptions || 0} prescrições expiradas`,
     ];
   }
 
   private generateANVISAActions(score: ComplianceScore): string[] {
     return [
-      'Manter controle rigoroso de substâncias controladas',
-      'Implementar alertas de expiração',
-      'Gerar relatórios mensais para ANVISA'
+      "Manter controle rigoroso de substâncias controladas",
+      "Implementar alertas de expiração",
+      "Gerar relatórios mensais para ANVISA",
     ];
   }
 
   private generateLGPDFindings(score: ComplianceScore): string[] {
     return [
       `${score.details?.activeConsents || 0} consentimentos ativos`,
-      `${score.details?.expiredConsents || 0} consentimentos expirados`
+      `${score.details?.expiredConsents || 0} consentimentos expirados`,
     ];
   }
 
   private generateLGPDActions(score: ComplianceScore): string[] {
     return [
-      'Implementar processo de renovação de consentimentos',
-      'Manter registro de audit trail',
-      'Treinar equipe em direitos dos titulares'
+      "Implementar processo de renovação de consentimentos",
+      "Manter registro de audit trail",
+      "Treinar equipe em direitos dos titulares",
     ];
   }
 
   private generateEmergencyFindings(score: ComplianceScore): string[] {
     return [
       `${score.details?.activeProtocols || 0} protocolos de emergência ativos`,
-      `${score.details?.activeEmergencies || 0} emergências em andamento`
+      `${score.details?.activeEmergencies || 0} emergências em andamento`,
     ];
   }
 
   private generateEmergencyActions(score: ComplianceScore): string[] {
     return [
-      'Manter protocolos atualizados conforme CFM',
-      'Treinar equipe em procedimentos de emergência',
-      'Testar sistemas de comunicação regularmente'
+      "Manter protocolos atualizados conforme CFM",
+      "Treinar equipe em procedimentos de emergência",
+      "Testar sistemas de comunicação regularmente",
     ];
   }
 
-  private generateComplianceMatrix(scores: Record<string, ComplianceScore>): Record<string, any> {
+  private generateComplianceMatrix(
+    scores: Record<string, ComplianceScore>,
+  ): Record<string, any> {
     return {
-      cfm: { score: scores.cfm?.score || 0, status: (scores.cfm?.score || 0) >= 80 ? 'compliant' : 'non-compliant' },
-      anvisa: { score: scores.anvisa?.score || 0, status: (scores.anvisa?.score || 0) >= 80 ? 'compliant' : 'non-compliant' },
-      lgpd: { score: scores.lgpd?.score || 0, status: (scores.lgpd?.score || 0) >= 80 ? 'compliant' : 'non-compliant' },
-      emergency: { score: scores.emergency?.score || 0, status: (scores.emergency?.score || 0) >= 80 ? 'compliant' : 'non-compliant' }
+      cfm: {
+        score: scores.cfm?.score || 0,
+        status: (scores.cfm?.score || 0) >= 80 ? "compliant" : "non-compliant",
+      },
+      anvisa: {
+        score: scores.anvisa?.score || 0,
+        status:
+          (scores.anvisa?.score || 0) >= 80 ? "compliant" : "non-compliant",
+      },
+      lgpd: {
+        score: scores.lgpd?.score || 0,
+        status: (scores.lgpd?.score || 0) >= 80 ? "compliant" : "non-compliant",
+      },
+      emergency: {
+        score: scores.emergency?.score || 0,
+        status:
+          (scores.emergency?.score || 0) >= 80 ? "compliant" : "non-compliant",
+      },
     };
   }
 
-  private calculateRiskAssessment(overallScore: ComplianceScore, alerts: ComplianceAlert[]): any {
-    const criticalAlerts = alerts.filter(a => a.riskLevel === 'critical').length;
-    const highAlerts = alerts.filter(a => a.riskLevel === 'high').length;
-    
+  private calculateRiskAssessment(
+    overallScore: ComplianceScore,
+    alerts: ComplianceAlert[],
+  ): any {
+    const criticalAlerts = alerts.filter(
+      (a) => a.riskLevel === "critical",
+    ).length;
+    const highAlerts = alerts.filter((a) => a.riskLevel === "high").length;
+
     return {
       overallRisk: this.determineRiskLevel(overallScore.score),
       criticalIssues: criticalAlerts,
@@ -853,21 +991,23 @@ export class ComplianceDashboardService {
       riskFactors: [
         ...(criticalAlerts > 0 ? [`${criticalAlerts} alertas críticos`] : []),
         ...(highAlerts > 0 ? [`${highAlerts} alertas de alta prioridade`] : []),
-        ...(overallScore.score < 80 ? ['Score geral abaixo do limite'] : [])
-      ]
+        ...(overallScore.score < 80 ? ["Score geral abaixo do limite"] : []),
+      ],
     };
   }
 
   // Additional helper methods
   private calculateComplianceViolations(data: any): number {
-    return this.complianceAlerts.filter(alert => 
-      alert.severity === 'critical' && !alert.resolved
+    return this.complianceAlerts.filter(
+      (alert) => alert.severity === "critical" && !alert.resolved,
     ).length;
   }
 
   private calculateRiskIndicators(data: any): number {
-    return this.complianceAlerts.filter(alert => 
-      (alert.riskLevel === 'high' || alert.riskLevel === 'critical') && !alert.resolved
+    return this.complianceAlerts.filter(
+      (alert) =>
+        (alert.riskLevel === "high" || alert.riskLevel === "critical") &&
+        !alert.resolved,
     ).length;
   }
 
@@ -877,19 +1017,25 @@ export class ComplianceDashboardService {
   }
 
   private getLastAuditDate(): Date {
-    return new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)); // 7 days ago
+    return new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
   }
 
   private getNextAuditDue(): Date {
-    return new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)); // 30 days from now
+    return new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
   }
 
   private getCertificationsExpiringSoon(data: any): number {
-    return data.cfmValidations?.filter((v: any) => {
-      if (!v.validUntil) {return false;}
-      const daysUntilExpiry = (v.validUntil.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
-      return daysUntilExpiry <= 60 && daysUntilExpiry > 0;
-    }).length || 0;
+    return (
+      data.cfmValidations?.filter((v: any) => {
+        if (!v.validUntil) {
+          return false;
+        }
+        const daysUntilExpiry =
+          (v.validUntil.getTime() - new Date().getTime()) /
+          (1000 * 60 * 60 * 24);
+        return daysUntilExpiry <= 60 && daysUntilExpiry > 0;
+      }).length || 0
+    );
   }
 
   private getTrainingRequirements(): number {
@@ -899,11 +1045,11 @@ export class ComplianceDashboardService {
 
   private getComplianceBreaches(): any[] {
     return this.complianceAlerts
-      .filter(alert => alert.severity === 'critical')
-      .map(alert => ({
+      .filter((alert) => alert.severity === "critical")
+      .map((alert) => ({
         category: alert.category,
         description: alert.description,
-        date: alert.createdAt
+        date: alert.createdAt,
       }))
       .slice(0, 5);
   }
@@ -911,58 +1057,62 @@ export class ComplianceDashboardService {
   private getUpcomingDeadlines(): any[] {
     return [
       {
-        type: 'Relatório ANVISA',
-        dueDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
-        description: 'Relatório mensal de substâncias controladas'
+        type: "Relatório ANVISA",
+        dueDate: new Date(
+          new Date().getFullYear(),
+          new Date().getMonth() + 1,
+          1,
+        ),
+        description: "Relatório mensal de substâncias controladas",
       },
       {
-        type: 'Auditoria LGPD',
-        dueDate: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)),
-        description: 'Auditoria trimestral de conformidade LGPD'
-      }
+        type: "Auditoria LGPD",
+        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        description: "Auditoria trimestral de conformidade LGPD",
+      },
     ];
   }
 
   private getRegulatoryFramework(): string[] {
     return [
-      'Lei nº 13.709/2018 (LGPD)',
-      'Resolution CFM nº 2.314/2022 (Telemedicine)',
-      'Portaria ANVISA nº 344/1998 (Controlled Substances)',
-      'Portaria MS nº 2.048/2002 (Emergency Care Policy)'
+      "Lei nº 13.709/2018 (LGPD)",
+      "Resolution CFM nº 2.314/2022 (Telemedicine)",
+      "Portaria ANVISA nº 344/1998 (Controlled Substances)",
+      "Portaria MS nº 2.048/2002 (Emergency Care Policy)",
     ];
   }
 
   private getDocumentationStandards(): string[] {
     return [
-      'ISO 27001 - Information Security Management',
-      'ISO 13485 - Medical Devices Quality Management',
-      'Brazilian CFM Guidelines for Electronic Medical Records'
+      "ISO 27001 - Information Security Management",
+      "ISO 13485 - Medical Devices Quality Management",
+      "Brazilian CFM Guidelines for Electronic Medical Records",
     ];
   }
 
   private getComplianceContacts(): any[] {
     return [
       {
-        role: 'Data Protection Officer (DPO)',
-        name: 'Encarregado de Dados',
-        email: 'dpo@neonpro.com.br',
-        phone: '+55 11 3000-0000'
+        role: "Data Protection Officer (DPO)",
+        name: "Encarregado de Dados",
+        email: "dpo@neonpro.com.br",
+        phone: "+55 11 3000-0000",
       },
       {
-        role: 'Medical Director',
-        name: 'Diretor Médico',
-        email: 'diretor.medico@neonpro.com.br',
-        phone: '+55 11 3000-0001'
-      }
+        role: "Medical Director",
+        name: "Diretor Médico",
+        email: "diretor.medico@neonpro.com.br",
+        phone: "+55 11 3000-0001",
+      },
     ];
   }
 
   private getNextSteps(dashboard: ComplianceDashboardData): string[] {
     return [
-      'Implementar melhorias identificadas no relatório',
-      'Agendar próxima auditoria interna',
-      'Revisar e atualizar políticas conforme necessário',
-      'Treinar equipe em novas regulamentações'
+      "Implementar melhorias identificadas no relatório",
+      "Agendar próxima auditoria interna",
+      "Revisar e atualizar políticas conforme necessário",
+      "Treinar equipe em novas regulamentações",
     ];
   }
 
@@ -970,35 +1120,36 @@ export class ComplianceDashboardService {
     // Generate some sample alerts for demonstration
     this.complianceAlerts = [
       {
-        id: 'sample-alert-1',
-        category: 'lgpd-consent',
-        title: 'Consentimentos Próximos ao Vencimento',
-        description: '5 consentimentos LGPD vencerão nos próximos 15 dias',
-        severity: 'warning',
-        createdAt: new Date(Date.now() - (2 * 24 * 60 * 60 * 1000)),
+        id: "sample-alert-1",
+        category: "lgpd-consent",
+        title: "Consentimentos Próximos ao Vencimento",
+        description: "5 consentimentos LGPD vencerão nos próximos 15 dias",
+        severity: "warning",
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
         resolved: false,
-        riskLevel: 'medium',
+        riskLevel: "medium",
         actions: [
-          'Contactar titulares para renovação',
-          'Preparar formulários de consentimento',
-          'Agendar contatos'
-        ]
+          "Contactar titulares para renovação",
+          "Preparar formulários de consentimento",
+          "Agendar contatos",
+        ],
       },
       {
-        id: 'sample-alert-2',
-        category: 'anvisa-substances',
-        title: 'Relatório ANVISA Pendente',
-        description: 'Relatório mensal de substâncias controladas vence em 3 dias',
-        severity: 'high',
-        createdAt: new Date(Date.now() - (1 * 24 * 60 * 60 * 1000)),
+        id: "sample-alert-2",
+        category: "anvisa-substances",
+        title: "Relatório ANVISA Pendente",
+        description:
+          "Relatório mensal de substâncias controladas vence em 3 dias",
+        severity: "high",
+        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
         resolved: false,
-        riskLevel: 'high',
+        riskLevel: "high",
         actions: [
-          'Gerar relatório de prescrições',
-          'Revisar dados antes do envio',
-          'Submeter à ANVISA'
-        ]
-      }
+          "Gerar relatório de prescrições",
+          "Revisar dados antes do envio",
+          "Submeter à ANVISA",
+        ],
+      },
     ];
   }
 

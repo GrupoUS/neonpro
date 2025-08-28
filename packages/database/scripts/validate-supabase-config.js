@@ -122,9 +122,9 @@ class SupabaseConfigValidator {
           } else if (Array.isArray(value)) {
             value.forEach((item) => {
               if (
-                typeof item === "string"
-                && item.includes("supabase.co")
-                && !item.includes(TARGET_CONFIG.project_id)
+                typeof item === "string" &&
+                item.includes("supabase.co") &&
+                !item.includes(TARGET_CONFIG.project_id)
               ) {
                 this.warnings.push(
                   `URL in ${filePath} array may be incorrect: ${item}`,

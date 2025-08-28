@@ -193,7 +193,9 @@ export class AuthTokenManager {
    */
 
   hasValidTokens(): boolean {
-    return Boolean(this.accessToken && this.refreshToken && !this.isTokenExpired());
+    return Boolean(
+      this.accessToken && this.refreshToken && !this.isTokenExpired(),
+    );
   }
 
   /**

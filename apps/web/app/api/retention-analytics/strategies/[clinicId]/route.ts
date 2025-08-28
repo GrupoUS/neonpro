@@ -5,7 +5,10 @@
 // =====================================================================================
 
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
-import { RetentionStrategyStatus, RetentionStrategyType } from "@/app/types/retention-analytics";
+import {
+  RetentionStrategyStatus,
+  RetentionStrategyType,
+} from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
 import { safeParseNumber } from "@/src/types/analytics";
 import { NextResponse } from "next/server";
@@ -66,7 +69,7 @@ const CreateStrategySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string; }>; },
+  { params }: { params: Promise<{ clinicId: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -169,7 +172,8 @@ export async function GET(
 
     if (status) {
       filteredStrategies = filteredStrategies.filter(
-        (s: StrategyData) => (s as unknown as { status: string; }).status === status,
+        (s: StrategyData) =>
+          (s as unknown as { status: string }).status === status,
       );
     }
 
@@ -219,28 +223,38 @@ export async function GET(
     // Calculate summary statistics
     const summary = {
       total_strategies: filteredStrategies.length,
-      active_strategies: filteredStrategies.filter((s: StrategyData) => s.is_active).length,
+      active_strategies: filteredStrategies.filter(
+        (s: StrategyData) => s.is_active,
+      ).length,
       strategy_types: Object.values(RetentionStrategyType).map((type) => ({
         type,
-        count: filteredStrategies.filter((s: StrategyData) => s.strategy_type === type)
-          .length,
+        count: filteredStrategies.filter(
+          (s: StrategyData) => s.strategy_type === type,
+        ).length,
       })),
-      average_success_rate: filteredStrategies.length > 0
-        ? filteredStrategies.reduce(
-          (sum: number, s: StrategyData) => sum + safeParseNumber(s.success_rate, 0),
-          0,
-        ) / filteredStrategies.length
-        : 0,
+      average_success_rate:
+        filteredStrategies.length > 0
+          ? filteredStrategies.reduce(
+              (sum: number, s: StrategyData) =>
+                sum + safeParseNumber(s.success_rate, 0),
+              0,
+            ) / filteredStrategies.length
+          : 0,
       total_executions: filteredStrategies.reduce(
         (sum: number, s: StrategyData) =>
-          sum + safeParseNumber((s as unknown as { execution_count: number; }).execution_count, 0),
+          sum +
+          safeParseNumber(
+            (s as unknown as { execution_count: number }).execution_count,
+            0,
+          ),
         0,
       ),
       successful_executions: filteredStrategies.reduce(
         (sum: number, s: StrategyData) =>
-          sum
-          + safeParseNumber(
-            (s as unknown as { successful_executions: number; }).successful_executions,
+          sum +
+          safeParseNumber(
+            (s as unknown as { successful_executions: number })
+              .successful_executions,
             0,
           ),
         0,
@@ -285,7 +299,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string; }>; },
+  { params }: { params: Promise<{ clinicId: string }> },
 ) {
   try {
     const resolvedParams = await params;

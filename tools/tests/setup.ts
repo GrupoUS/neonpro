@@ -133,11 +133,11 @@ vi.mock("@/lib/supabase", () => ({
 beforeEach(() => {
   // Clear all mocks before each test
   vi.clearAllMocks();
-  
+
   // Reset localStorage
   window.localStorage.clear();
   window.sessionStorage.clear();
-  
+
   // Reset fetch mock
   global.fetch = vi.fn();
 });
@@ -145,10 +145,10 @@ beforeEach(() => {
 afterEach(() => {
   // Cleanup React Testing Library
   cleanup();
-  
+
   // Clear all timers
   vi.clearAllTimers();
-  
+
   // Restore all mocks
   vi.restoreAllMocks();
 });
@@ -158,16 +158,21 @@ export const createMockResponse = (data: unknown, status = 200) => {
   return Promise.resolve({
     ok: status >= 200 && status < 300,
     status,
-    json: () => Promise.resolve(data).catch(error => {
-      throw new Error(`Failed to parse JSON: ${error}`);
-    }),
-    text: () => Promise.resolve(JSON.stringify(data)).catch(error => {
-      throw new Error(`Failed to stringify data: ${error}`);
-    }),
+    json: () =>
+      Promise.resolve(data).catch((error) => {
+        throw new Error(`Failed to parse JSON: ${error}`);
+      }),
+    text: () =>
+      Promise.resolve(JSON.stringify(data)).catch((error) => {
+        throw new Error(`Failed to stringify data: ${error}`);
+      }),
   });
 };
 
-export const createMockSupabaseResponse = (data: unknown, error: unknown = null) => {
+export const createMockSupabaseResponse = (
+  data: unknown,
+  error: unknown = null,
+) => {
   return Promise.resolve({ data, error });
 };
 

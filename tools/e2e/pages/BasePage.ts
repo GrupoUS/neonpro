@@ -107,7 +107,7 @@ export abstract class BasePage {
   // Utility methods
   async getElementText(locator: Locator): Promise<string> {
     await this.waitForElementToBeVisible(locator);
-    return await locator.textContent() || "";
+    return (await locator.textContent()) || "";
   }
 
   async getElementValue(locator: Locator): Promise<string> {
@@ -130,7 +130,9 @@ export abstract class BasePage {
 
   async takeScreenshot(name?: string) {
     const screenshotName = name || `screenshot-${Date.now()}.png`;
-    await this.page.screenshot({ path: `test-results/screenshots/${screenshotName}` });
+    await this.page.screenshot({
+      path: `test-results/screenshots/${screenshotName}`,
+    });
   }
 
   async scrollToElement(locator: Locator) {
@@ -147,7 +149,9 @@ export abstract class BasePage {
 
   // Common UI patterns
   async closeModal() {
-    const modalCloseButton = this.page.locator('[data-testid="modal-close"], .modal-close, [aria-label="Close"]');
+    const modalCloseButton = this.page.locator(
+      '[data-testid="modal-close"], .modal-close, [aria-label="Close"]',
+    );
     if (await this.isElementVisible(modalCloseButton)) {
       await this.clickElement(modalCloseButton);
     }
@@ -167,7 +171,9 @@ export abstract class BasePage {
 
   // Loading states
   async waitForLoadingToFinish() {
-    const loadingIndicator = this.page.locator('[data-testid="loading"], .loading, .spinner');
+    const loadingIndicator = this.page.locator(
+      '[data-testid="loading"], .loading, .spinner',
+    );
     try {
       await loadingIndicator.waitFor({ state: "visible", timeout: 1000 });
       await loadingIndicator.waitFor({ state: "hidden", timeout: 30_000 });

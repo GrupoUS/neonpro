@@ -142,7 +142,8 @@ export function useAgentChat() {
   useEffect(() => {
     // Verificar suporte para Speech Recognition
     if (typeof window !== "undefined") {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
 
       if (SpeechRecognition) {
         isRecognitionSupported.current = true;

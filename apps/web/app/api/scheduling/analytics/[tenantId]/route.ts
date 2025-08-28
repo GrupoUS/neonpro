@@ -1,4 +1,7 @@
-import type { SchedulingAnalytics, TimeSlotEfficiency } from "@neonpro/core-services/scheduling";
+import type {
+  SchedulingAnalytics,
+  TimeSlotEfficiency,
+} from "@neonpro/core-services/scheduling";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
@@ -20,7 +23,7 @@ const analyticsQuerySchema = z.object({
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { tenantId: string; }; },
+  { params }: { params: { tenantId: string } },
 ) {
   const startTime = performance.now();
 
@@ -94,7 +97,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { tenantId: string; }; },
+  { params }: { params: { tenantId: string } },
 ) {
   try {
     const { tenantId } = params;

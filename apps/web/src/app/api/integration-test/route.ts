@@ -17,7 +17,9 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
-      throw new Error(`API returned ${response.status}: ${response.statusText}`);
+      throw new Error(
+        `API returned ${response.status}: ${response.statusText}`,
+      );
     }
 
     const data = await response.json();

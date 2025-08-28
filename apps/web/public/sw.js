@@ -100,8 +100,8 @@ self.addEventListener("fetch", (event) => {
   // Handle POST/PUT/DELETE requests for background sync
   if (request.method !== "GET") {
     if (
-      url.pathname.startsWith("/api/patient/appointments")
-      || url.pathname.startsWith("/api/patient/profile")
+      url.pathname.startsWith("/api/patient/appointments") ||
+      url.pathname.startsWith("/api/patient/profile")
     ) {
       event.respondWith(handleOfflineCapableRequest(request));
     }
@@ -410,8 +410,8 @@ async function handleOfflineRequest(request) {
 // Utility functions
 function isStaticAsset(pathname) {
   return (
-    /\.(js|css|png|jpg|jpeg|svg|ico|woff|woff2)$/.test(pathname)
-    || STATIC_CACHE_URLS.includes(pathname)
+    /\.(js|css|png|jpg|jpeg|svg|ico|woff|woff2)$/.test(pathname) ||
+    STATIC_CACHE_URLS.includes(pathname)
   );
 }
 

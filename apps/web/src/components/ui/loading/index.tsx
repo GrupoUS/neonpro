@@ -6,7 +6,10 @@ interface LoadingSpinnerProps {
   className?: string;
 }
 
-export function LoadingSpinner({ size = "md", className }: LoadingSpinnerProps) {
+export function LoadingSpinner({
+  size = "md",
+  className,
+}: LoadingSpinnerProps) {
   return (
     <div
       className={cn(
@@ -47,7 +50,11 @@ interface LoadingButtonProps {
   className?: string;
 }
 
-export function LoadingButton({ isLoading, children, className }: LoadingButtonProps) {
+export function LoadingButton({
+  isLoading,
+  children,
+  className,
+}: LoadingButtonProps) {
   return (
     <button
       disabled={isLoading}

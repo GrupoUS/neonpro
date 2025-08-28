@@ -1,4 +1,12 @@
-import { AlertCircle, Calendar, CheckCircle, Clock, MapPin, User, X } from "lucide-react";
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  MapPin,
+  User,
+  X,
+} from "lucide-react";
 import * as React from "react";
 import { cn } from "../utils/cn";
 import { formatDate } from "../utils/formatters";
@@ -327,7 +335,8 @@ const AppointmentCard = React.forwardRef<
               </p>
             )}
           </div>
-        )} {/* Actions */}
+        )}{" "}
+        {/* Actions */}
         <div className="mt-4 flex flex-wrap gap-2 border-t pt-3">
           {status === "scheduled" && onCheckIn && (
             <Button

@@ -76,7 +76,7 @@ export class SupabaseCacheLayer implements CacheOperation {
   ): Promise<void> {
     const effectiveTTL = Math.min(
       ttl || this.config.defaultTTL,
-      this.config.maxSize || (24 * 60 * 60 * 1000), // 24 hours max
+      this.config.maxSize || 24 * 60 * 60 * 1000, // 24 hours max
     );
 
     const expiresAt = new Date(Date.now() + effectiveTTL).toISOString();
@@ -166,9 +166,10 @@ export class SupabaseCacheLayer implements CacheOperation {
   }
 
   async getStats(): Promise<CacheStats> {
-    this.stats.hitRate = this.stats.totalRequests > 0
-      ? (this.stats.hits / this.stats.totalRequests) * 100
-      : 0;
+    this.stats.hitRate =
+      this.stats.totalRequests > 0
+        ? (this.stats.hits / this.stats.totalRequests) * 100
+        : 0;
     return { ...this.stats };
   }
 
@@ -202,7 +203,10 @@ export class SupabaseCacheLayer implements CacheOperation {
         throw error;
       }
 
-      await this.logHealthcareAccess(`patient:${patientId}:*`, "PATIENT_DATA_CLEARED");
+      await this.logHealthcareAccess(
+        `patient:${patientId}:*`,
+        "PATIENT_DATA_CLEARED",
+      );
     } catch (error) {
       console.error("Supabase cache clearPatientData error:", error);
       throw error;
@@ -274,7 +278,7 @@ export class SupabaseCacheLayer implements CacheOperation {
       let expiredEntries = 0;
       let healthcareEntries = 0;
 
-      allEntries?.forEach(entry => {
+      allEntries?.forEach((entry) => {
         if (entry.metadata?.size_bytes) {
           totalSizeBytes += entry.metadata.size_bytes;
         }
@@ -311,8 +315,9 @@ export class SupabaseCacheLayer implements CacheOperation {
       this.responseTimeBuffer.shift();
     }
 
-    this.stats.averageResponseTime = this.responseTimeBuffer.reduce((a, b) => a + b, 0)
-      / this.responseTimeBuffer.length;
+    this.stats.averageResponseTime =
+      this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
+      this.responseTimeBuffer.length;
   }
 
   private resetStats(): void {
@@ -333,15 +338,13 @@ export class SupabaseCacheLayer implements CacheOperation {
   ): Promise<void> {
     try {
       // Log to audit table
-      await this.supabase
-        .from("cache_audit_log")
-        .insert({
-          key,
-          operation,
-          context,
-          timestamp: new Date().toISOString(),
-          project_id: this.config.projectId,
-        });
+      await this.supabase.from("cache_audit_log").insert({
+        key,
+        operation,
+        context,
+        timestamp: new Date().toISOString(),
+        project_id: this.config.projectId,
+      });
     } catch (error) {
       // Silent fail - audit logging shouldn't break cache operations
       console.debug("Healthcare audit logging failed:", error);

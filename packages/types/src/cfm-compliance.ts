@@ -91,33 +91,57 @@ export interface CFMComplianceReport {
 // Enums and Union Types
 export type CFMLicenseStatus = "active" | "suspended" | "revoked" | "expired";
 
-export type CFMDocumentType = 
+export type CFMDocumentType =
   | "prescription"
-  | "medical_certificate" 
+  | "medical_certificate"
   | "treatment_plan"
   | "consultation_report";
 
-export type TelemedicineSessionType = 
-  | "consultation" 
-  | "follow_up" 
-  | "second_opinion" 
+export type TelemedicineSessionType =
+  | "consultation"
+  | "follow_up"
+  | "second_opinion"
   | "emergency";
 
-export type CFMEducationCategory = 
-  | "ethics" 
-  | "clinical" 
-  | "research" 
-  | "technology" 
+export type CFMEducationCategory =
+  | "ethics"
+  | "clinical"
+  | "research"
+  | "technology"
   | "management";
 
-export type BrazilianState = 
-  | "AC" | "AL" | "AP" | "AM" | "BA" | "CE" | "DF" | "ES" | "GO" 
-  | "MA" | "MT" | "MS" | "MG" | "PA" | "PB" | "PR" | "PE" | "PI" 
-  | "RJ" | "RN" | "RS" | "RO" | "RR" | "SC" | "SP" | "SE" | "TO";
+export type BrazilianState =
+  | "AC"
+  | "AL"
+  | "AP"
+  | "AM"
+  | "BA"
+  | "CE"
+  | "DF"
+  | "ES"
+  | "GO"
+  | "MA"
+  | "MT"
+  | "MS"
+  | "MG"
+  | "PA"
+  | "PB"
+  | "PR"
+  | "PE"
+  | "PI"
+  | "RJ"
+  | "RN"
+  | "RS"
+  | "RO"
+  | "RR"
+  | "SC"
+  | "SP"
+  | "SE"
+  | "TO";
 
-export type MedicalSpecialty = 
-  | "dermatology" 
-  | "plastic_surgery" 
+export type MedicalSpecialty =
+  | "dermatology"
+  | "plastic_surgery"
   | "aesthetic_medicine"
   | "general_practice"
   | "internal_medicine"

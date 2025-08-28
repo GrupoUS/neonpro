@@ -1,13 +1,13 @@
 /**
  * Analytics Types for NeonPro AI-Powered Healthcare Analytics System
  * Complete TypeScript definitions for advanced healthcare analytics and predictive intelligence
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Healthcare AI Team
  * @description Core analytics types supporting Brazilian healthcare compliance
  */
 
-import type { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from "lucide-react";
 
 // ====== CORE ANALYTICS INTERFACES ======
 
@@ -113,7 +113,7 @@ export interface PredictiveIntelligence {
 export interface ComplicationPrediction {
   type: string;
   probability: number; // 0-1
-  severity: 'minor' | 'moderate' | 'severe' | 'critical';
+  severity: "minor" | "moderate" | "severe" | "critical";
   timeframe: number; // Days from treatment start
   preventionStrategies: string[];
   warningSignals: string[];
@@ -237,7 +237,7 @@ export interface PatientOutcomePredictionProps {
 
 export interface RiskAssessmentPanelProps {
   patientId: string;
-  assessmentType: 'comprehensive' | 'focused' | 'emergency';
+  assessmentType: "comprehensive" | "focused" | "emergency";
   riskFactors: RiskFactor[];
   autoRefresh?: boolean;
   alertsEnabled?: boolean;
@@ -247,7 +247,7 @@ export interface RiskAssessmentPanelProps {
 export interface TreatmentEffectivenessChartsProps {
   treatmentTypes: string[];
   dateRange: DateRange;
-  comparisonMode: 'time' | 'treatment' | 'provider' | 'clinic';
+  comparisonMode: "time" | "treatment" | "provider" | "clinic";
   metrics: EffectivenessMetric[];
   benchmarkData?: BenchmarkData;
   drillDownEnabled?: boolean;
@@ -255,15 +255,24 @@ export interface TreatmentEffectivenessChartsProps {
 
 // ====== SUPPORTING TYPES ======
 
-export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
-export type TreatmentStatus = 'planned' | 'active' | 'completed' | 'cancelled' | 'paused';
-export type AlertSeverity = 'info' | 'warning' | 'error' | 'critical';
-export type ComplianceStatus = 'compliant' | 'warning' | 'violation' | 'unknown';
+export type RiskLevel = "low" | "medium" | "high" | "critical";
+export type TreatmentStatus =
+  | "planned"
+  | "active"
+  | "completed"
+  | "cancelled"
+  | "paused";
+export type AlertSeverity = "info" | "warning" | "error" | "critical";
+export type ComplianceStatus =
+  | "compliant"
+  | "warning"
+  | "violation"
+  | "unknown";
 
 export interface DateRange {
   start: Date;
   end: Date;
-  preset?: 'today' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
+  preset?: "today" | "week" | "month" | "quarter" | "year" | "custom";
 }
 
 export interface TimeSeries<T> {
@@ -275,8 +284,8 @@ export interface TimeSeries<T> {
 
 export interface AIInsight {
   id: string;
-  type: 'trend' | 'anomaly' | 'prediction' | 'recommendation';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  type: "trend" | "anomaly" | "prediction" | "recommendation";
+  priority: "low" | "medium" | "high" | "critical";
   title: string;
   description: string;
   confidence: number; // 0-1
@@ -288,14 +297,14 @@ export interface AIInsight {
 
 export interface AIRecommendation {
   id: string;
-  category: 'treatment' | 'prevention' | 'optimization' | 'compliance';
+  category: "treatment" | "prevention" | "optimization" | "compliance";
   title: string;
   description: string;
   expectedOutcome: string;
   confidenceLevel: number; // 0-1
-  evidenceLevel: 'A' | 'B' | 'C' | 'D'; // Evidence-based medicine levels
+  evidenceLevel: "A" | "B" | "C" | "D"; // Evidence-based medicine levels
   implementation: {
-    difficulty: 'easy' | 'moderate' | 'difficult';
+    difficulty: "easy" | "moderate" | "difficult";
     timeRequired: number; // Hours
     resources: string[];
     dependencies: string[];
@@ -309,7 +318,7 @@ export interface AIRecommendation {
 
 export interface HealthTrend {
   metric: string;
-  direction: 'improving' | 'stable' | 'declining';
+  direction: "improving" | "stable" | "declining";
   magnitude: number; // Percentage change
   timeframe: number; // Days
   significance: number; // Statistical significance (p-value)
@@ -321,7 +330,7 @@ export interface PredictiveFactor {
   name: string;
   impact: number; // -1 to 1 (negative to positive impact)
   confidence: number; // 0-1
-  category: 'demographic' | 'medical' | 'behavioral' | 'environmental';
+  category: "demographic" | "medical" | "behavioral" | "environmental";
   description: string;
   evidence: string[];
 }
@@ -345,13 +354,42 @@ export interface AlternativeTreatment {
 
 // ====== BRAZILIAN SPECIFIC TYPES ======
 
-export type BrazilianRegion = 
-  | 'norte' | 'nordeste' | 'centro-oeste' | 'sudeste' | 'sul' | 'distrito-federal';
+export type BrazilianRegion =
+  | "norte"
+  | "nordeste"
+  | "centro-oeste"
+  | "sudeste"
+  | "sul"
+  | "distrito-federal";
 
-export type BrazilianState = 
-  | 'AC' | 'AL' | 'AP' | 'AM' | 'BA' | 'CE' | 'DF' | 'ES' | 'GO' | 'MA' 
-  | 'MT' | 'MS' | 'MG' | 'PA' | 'PB' | 'PR' | 'PE' | 'PI' | 'RJ' | 'RN'
-  | 'RS' | 'RO' | 'RR' | 'SC' | 'SP' | 'SE' | 'TO';
+export type BrazilianState =
+  | "AC"
+  | "AL"
+  | "AP"
+  | "AM"
+  | "BA"
+  | "CE"
+  | "DF"
+  | "ES"
+  | "GO"
+  | "MA"
+  | "MT"
+  | "MS"
+  | "MG"
+  | "PA"
+  | "PB"
+  | "PR"
+  | "PE"
+  | "PI"
+  | "RJ"
+  | "RN"
+  | "RS"
+  | "RO"
+  | "RR"
+  | "SC"
+  | "SP"
+  | "SE"
+  | "TO";
 
 export interface CFMComplianceScore {
   overallScore: number; // 0-100
@@ -401,7 +439,7 @@ export interface SUSIntegrationStatus {
 
 export interface CriticalAlert {
   id: string;
-  type: 'medical' | 'system' | 'compliance' | 'security';
+  type: "medical" | "system" | "compliance" | "security";
   severity: AlertSeverity;
   title: string;
   message: string;
@@ -417,16 +455,17 @@ export interface CriticalAlert {
   requiredActions: RequiredAction[];
 }
 
-export interface WarningAlert extends Omit<CriticalAlert, 'severity'> {
-  severity: 'warning';
+export interface WarningAlert extends Omit<CriticalAlert, "severity"> {
+  severity: "warning";
   dismissible: boolean;
   expiresAt?: Date;
 }
 
-export interface ComplianceAlert extends Omit<CriticalAlert, 'type' | 'severity'> {
-  type: 'compliance';
-  severity: 'warning' | 'error';
-  regulatoryBody: 'CFM' | 'ANVISA' | 'ANS' | 'LGPD';
+export interface ComplianceAlert
+  extends Omit<CriticalAlert, "type" | "severity"> {
+  type: "compliance";
+  severity: "warning" | "error";
+  regulatoryBody: "CFM" | "ANVISA" | "ANS" | "LGPD";
   violationType: string;
   correctionDeadline: Date;
   penaltyRisk: number; // 0-100
@@ -435,8 +474,8 @@ export interface ComplianceAlert extends Omit<CriticalAlert, 'type' | 'severity'
 export interface EmergencyTrigger {
   id: string;
   patientId: string;
-  triggerType: 'vital_signs' | 'medication' | 'behavior' | 'external';
-  severity: 'urgent' | 'emergency' | 'life_threatening';
+  triggerType: "vital_signs" | "medication" | "behavior" | "external";
+  severity: "urgent" | "emergency" | "life_threatening";
   detectedAt: Date;
   conditions: TriggerCondition[];
   automaticResponse: EmergencyResponse;
@@ -446,10 +485,14 @@ export interface EmergencyTrigger {
 
 export interface AutomatedAction {
   id: string;
-  type: 'notification' | 'data_update' | 'workflow_trigger' | 'alert_escalation';
+  type:
+    | "notification"
+    | "data_update"
+    | "workflow_trigger"
+    | "alert_escalation";
   triggeredBy: string;
   executedAt: Date;
-  status: 'pending' | 'executing' | 'completed' | 'failed';
+  status: "pending" | "executing" | "completed" | "failed";
   parameters: Record<string, any>;
   result?: ActionResult;
   retryCount: number;
@@ -503,11 +546,11 @@ export interface MetricCard {
   value: number | string;
   previousValue?: number | string;
   change?: number; // Percentage change
-  changeDirection?: 'up' | 'down' | 'stable';
+  changeDirection?: "up" | "down" | "stable";
   trend?: number[]; // Sparkline data
   unit?: string;
-  format?: 'number' | 'currency' | 'percentage' | 'duration';
-  status?: 'good' | 'warning' | 'critical';
+  format?: "number" | "currency" | "percentage" | "duration";
+  status?: "good" | "warning" | "critical";
   icon?: LucideIcon;
   color?: string;
   target?: number;
@@ -531,7 +574,7 @@ export interface Dashboard {
 
 export interface DashboardWidget {
   id: string;
-  type: 'chart' | 'metric' | 'table' | 'map' | 'text' | 'iframe';
+  type: "chart" | "metric" | "table" | "map" | "text" | "iframe";
   title: string;
   position: WidgetPosition;
   size: WidgetSize;
@@ -556,12 +599,12 @@ export interface PerformanceMetrics {
 
 export interface OptimizationSuggestion {
   id: string;
-  category: 'performance' | 'cost' | 'user_experience' | 'compliance';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  category: "performance" | "cost" | "user_experience" | "compliance";
+  priority: "low" | "medium" | "high" | "critical";
   title: string;
   description: string;
   expectedBenefit: string;
-  implementationEffort: 'low' | 'medium' | 'high';
+  implementationEffort: "low" | "medium" | "high";
   estimatedImpact: number; // Percentage improvement
   prerequisites: string[];
   documentation: string[];
@@ -573,7 +616,7 @@ export interface ReportConfiguration {
   id: string;
   name: string;
   description?: string;
-  format: 'pdf' | 'excel' | 'csv' | 'json';
+  format: "pdf" | "excel" | "csv" | "json";
   schedule?: ReportSchedule;
   recipients: string[];
   sections: ReportSection[];
@@ -583,7 +626,7 @@ export interface ReportConfiguration {
 }
 
 export interface ReportSchedule {
-  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual';
+  frequency: "daily" | "weekly" | "monthly" | "quarterly" | "annual";
   time: string; // HH:MM format
   timezone: string;
   weekday?: number; // 0-6 for weekly reports
@@ -592,9 +635,9 @@ export interface ReportSchedule {
 
 export interface AnalyticsExport {
   id: string;
-  type: 'dashboard' | 'widget' | 'dataset' | 'report';
-  format: 'pdf' | 'excel' | 'csv' | 'json' | 'image';
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  type: "dashboard" | "widget" | "dataset" | "report";
+  format: "pdf" | "excel" | "csv" | "json" | "image";
+  status: "pending" | "processing" | "completed" | "failed";
   progress: number; // 0-100
   fileSize?: number; // Bytes
   downloadUrl?: string;
@@ -607,25 +650,29 @@ export interface AnalyticsExport {
 
 export interface AuditTrail {
   id: string;
-  entityType: 'patient' | 'provider' | 'clinic' | 'analytics';
+  entityType: "patient" | "provider" | "clinic" | "analytics";
   entityId: string;
-  action: 'view' | 'create' | 'update' | 'delete' | 'export';
+  action: "view" | "create" | "update" | "delete" | "export";
   userId: string;
-  userType: 'patient' | 'provider' | 'admin' | 'system';
+  userType: "patient" | "provider" | "admin" | "system";
   timestamp: Date;
   ipAddress: string;
   userAgent?: string;
   details: AuditDetails;
-  classification: 'normal' | 'sensitive' | 'critical';
+  classification: "normal" | "sensitive" | "critical";
   retention: AuditRetention;
 }
 
 export interface ComplianceViolation {
   id: string;
-  type: 'data_protection' | 'professional_ethics' | 'patient_safety' | 'regulatory';
-  severity: 'minor' | 'major' | 'critical';
+  type:
+    | "data_protection"
+    | "professional_ethics"
+    | "patient_safety"
+    | "regulatory";
+  severity: "minor" | "major" | "critical";
   description: string;
-  regulatoryFramework: 'LGPD' | 'CFM' | 'ANVISA' | 'ANS';
+  regulatoryFramework: "LGPD" | "CFM" | "ANVISA" | "ANS";
   detectedAt: Date;
   reportedAt?: Date;
   resolvedAt?: Date;
@@ -640,13 +687,13 @@ export interface ComplianceViolation {
 export interface ExternalIntegration {
   id: string;
   name: string;
-  type: 'api' | 'database' | 'file' | 'webhook';
+  type: "api" | "database" | "file" | "webhook";
   endpoint: string;
   authentication: AuthenticationMethod;
   dataMapping: DataMapping[];
   scheduleSync?: SyncSchedule;
   lastSync?: Date;
-  syncStatus: 'active' | 'paused' | 'error' | 'disabled';
+  syncStatus: "active" | "paused" | "error" | "disabled";
   errorCount: number;
   performanceMetrics: IntegrationMetrics;
 }
@@ -664,7 +711,7 @@ export interface DataMapping {
 export interface MLModel {
   id: string;
   name: string;
-  type: 'classification' | 'regression' | 'clustering' | 'anomaly_detection';
+  type: "classification" | "regression" | "clustering" | "anomaly_detection";
   version: string;
   accuracy: number; // 0-1
   precision: number; // 0-1
@@ -751,7 +798,7 @@ export interface NotificationPreferences {
     start: string; // HH:MM
     end: string; // HH:MM
   };
-  frequency: 'immediate' | 'hourly' | 'daily' | 'weekly';
+  frequency: "immediate" | "hourly" | "daily" | "weekly";
 }
 
 // ====== UTILITY TYPES ======
@@ -783,23 +830,23 @@ export const DEFAULT_ANALYTICS_CONFIG: Partial<AnalyticsDashboardProps> = {
   dateRange: {
     start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
     end: new Date(),
-    preset: 'month'
-  }
+    preset: "month",
+  },
 };
 
 export const BRAZILIAN_HEALTHCARE_COLORS = {
-  cfmActive: '#059669',
-  cfmPending: '#d97706',
-  cfmExpired: '#dc2626',
-  cfmSuspended: '#6b7280',
-  ansActive: '#16a34a',
-  ansPartial: '#f59e0b',
-  ansDenied: '#ef4444',
-  lgpdCompliant: '#10b981',
-  lgpdWarning: '#f59e0b',
-  lgpdViolation: '#ef4444',
-  susConnected: '#059669',
-  susDisconnected: '#dc2626'
+  cfmActive: "#059669",
+  cfmPending: "#d97706",
+  cfmExpired: "#dc2626",
+  cfmSuspended: "#6b7280",
+  ansActive: "#16a34a",
+  ansPartial: "#f59e0b",
+  ansDenied: "#ef4444",
+  lgpdCompliant: "#10b981",
+  lgpdWarning: "#f59e0b",
+  lgpdViolation: "#ef4444",
+  susConnected: "#059669",
+  susDisconnected: "#dc2626",
 } as const;
 
 export const PERFORMANCE_THRESHOLDS = {
@@ -808,5 +855,5 @@ export const PERFORMANCE_THRESHOLDS = {
   renderTime: 1000, // 1 second
   cacheHitRate: 0.8, // 80%
   errorRate: 0.01, // 1%
-  availability: 0.999 // 99.9%
+  availability: 0.999, // 99.9%
 } as const;

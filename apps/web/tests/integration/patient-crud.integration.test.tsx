@@ -74,7 +74,7 @@ vi.mock<typeof import("../../lib/utils/cpf-validator")>(
 );
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
+const TestWrapper = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
@@ -82,7 +82,9 @@ const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
     },
   });
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
 };
 
 // Mock patient data for Brazilian healthcare system
@@ -639,7 +641,8 @@ describe("patient CRUD Integration Tests", () => {
 
     it("should handle database constraint violations", async () => {
       const duplicateCpfError = {
-        message: 'duplicate key value violates unique constraint "patients_cpf_clinic_id_key"',
+        message:
+          'duplicate key value violates unique constraint "patients_cpf_clinic_id_key"',
         code: "23505",
       };
 

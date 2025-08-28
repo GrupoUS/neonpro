@@ -11,10 +11,10 @@ async function validateEnterpriseStructure() {
     if (fs.existsSync(cacheServicePath)) {
       const content = fs.readFileSync(cacheServicePath, "utf8");
       if (
-        content.includes("class EnterpriseCacheService")
-        && (content.includes("Multi-layer") || content.includes("multi-layer"))
-        && content.includes("get<T>")
-        && content.includes("set<T>")
+        content.includes("class EnterpriseCacheService") &&
+        (content.includes("Multi-layer") || content.includes("multi-layer")) &&
+        content.includes("get<T>") &&
+        content.includes("set<T>")
       ) {
         results.push({ service: "cache", status: "valid" });
       } else {
@@ -37,10 +37,10 @@ async function validateEnterpriseStructure() {
     if (fs.existsSync(analyticsPath)) {
       const content = fs.readFileSync(analyticsPath, "utf8");
       if (
-        content.includes("class EnterpriseAnalyticsService")
-        && (content.includes("healthcare") || content.includes("Healthcare"))
-        && content.includes("trackEvent")
-        && content.includes("performance")
+        content.includes("class EnterpriseAnalyticsService") &&
+        (content.includes("healthcare") || content.includes("Healthcare")) &&
+        content.includes("trackEvent") &&
+        content.includes("performance")
       ) {
         results.push({ service: "analytics", status: "valid" });
       } else {
@@ -63,10 +63,10 @@ async function validateEnterpriseStructure() {
     if (fs.existsSync(securityPath)) {
       const content = fs.readFileSync(securityPath, "utf8");
       if (
-        content.includes("class EnterpriseSecurityService")
-        && content.includes("RBAC")
-        && content.includes("validateAccess")
-        && content.includes("encryption")
+        content.includes("class EnterpriseSecurityService") &&
+        content.includes("RBAC") &&
+        content.includes("validateAccess") &&
+        content.includes("encryption")
       ) {
         results.push({ service: "security", status: "valid" });
       } else {
@@ -89,10 +89,10 @@ async function validateEnterpriseStructure() {
     if (fs.existsSync(auditPath)) {
       const content = fs.readFileSync(auditPath, "utf8");
       if (
-        content.includes("class EnterpriseAuditService")
-        && content.includes("immutable")
-        && content.includes("logEvent")
-        && content.includes("compliance")
+        content.includes("class EnterpriseAuditService") &&
+        content.includes("immutable") &&
+        content.includes("logEvent") &&
+        content.includes("compliance")
       ) {
         results.push({ service: "audit", status: "valid" });
       } else {
@@ -115,9 +115,9 @@ async function validateEnterpriseStructure() {
     if (fs.existsSync(healthPath)) {
       const content = fs.readFileSync(healthPath, "utf8");
       if (
-        content.includes("class EnterpriseHealthCheckService")
-        && content.includes("checkHealth")
-        && (content.includes("connectivity") || content.includes("performance"))
+        content.includes("class EnterpriseHealthCheckService") &&
+        content.includes("checkHealth") &&
+        (content.includes("connectivity") || content.includes("performance"))
       ) {
         results.push({ service: "health", status: "valid" });
       } else {
@@ -137,16 +137,16 @@ async function validateEnterpriseStructure() {
     if (fs.existsSync(basePath)) {
       const content = fs.readFileSync(basePath, "utf8");
       if (
-        (content.includes("enterpriseCache")
-          || content.includes("EnterpriseCacheService"))
-        && (content.includes("enterpriseAnalytics")
-          || content.includes("EnterpriseAnalyticsService"))
-        && (content.includes("enterpriseSecurity")
-          || content.includes("EnterpriseSecurityService"))
-        && (content.includes("enterpriseAudit")
-          || content.includes("EnterpriseAuditService"))
-        && (content.includes("enterpriseHealth")
-          || content.includes("EnterpriseHealthCheckService"))
+        (content.includes("enterpriseCache") ||
+          content.includes("EnterpriseCacheService")) &&
+        (content.includes("enterpriseAnalytics") ||
+          content.includes("EnterpriseAnalyticsService")) &&
+        (content.includes("enterpriseSecurity") ||
+          content.includes("EnterpriseSecurityService")) &&
+        (content.includes("enterpriseAudit") ||
+          content.includes("EnterpriseAuditService")) &&
+        (content.includes("enterpriseHealth") ||
+          content.includes("EnterpriseHealthCheckService"))
       ) {
         results.push({ service: "base_integration", status: "valid" });
       } else {

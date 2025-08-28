@@ -24,7 +24,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 export const APPOINTMENT_QUERY_KEYS = {
   all: ["appointments"] as const,
   lists: () => [...APPOINTMENT_QUERY_KEYS.all, "list"] as const,
-  list: (filters: AppointmentSearch) => [...APPOINTMENT_QUERY_KEYS.lists(), filters] as const,
+  list: (filters: AppointmentSearch) =>
+    [...APPOINTMENT_QUERY_KEYS.lists(), filters] as const,
   details: () => [...APPOINTMENT_QUERY_KEYS.all, "detail"] as const,
   detail: (id: string) => [...APPOINTMENT_QUERY_KEYS.details(), id] as const,
   availability: (params: AvailabilitySearch) =>
@@ -211,7 +212,7 @@ export function useUpdateAppointment() {
             data: old.data.map((appointment) =>
               appointment.id === updatedAppointment.id
                 ? updatedAppointment
-                : appointment
+                : appointment,
             ),
           };
         },
@@ -322,7 +323,7 @@ export function useCancelAppointment() {
             data: old.data.map((appointment) =>
               appointment.id === cancelledAppointment.id
                 ? cancelledAppointment
-                : appointment
+                : appointment,
             ),
           };
         },
@@ -368,10 +369,10 @@ export function useAvailability(params: AvailabilitySearch | undefined) {
       return result.data as TimeSlot[];
     },
     enabled: Boolean(
-      params?.professionalId
-        && params?.startDate
-        && params?.endDate
-        && params?.duration,
+      params?.professionalId &&
+        params?.startDate &&
+        params?.endDate &&
+        params?.duration,
     ),
     staleTime: 1000 * 30, // 30 seconds
     gcTime: 1000 * 60, // 1 minute
@@ -512,7 +513,8 @@ export function useAppointmentUtils() {
         const count = appointments.filter((apt) => {
           const aptDate = apt.scheduledAt.split("T")[0];
           const matchesDate = aptDate === date;
-          const matchesProfessional = !professionalId || apt.professionalId === professionalId;
+          const matchesProfessional =
+            !professionalId || apt.professionalId === professionalId;
           const isActive = !["cancelled", "no_show"].includes(apt.status);
 
           return matchesDate && matchesProfessional && isActive;

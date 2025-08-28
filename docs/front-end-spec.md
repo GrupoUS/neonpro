@@ -241,9 +241,9 @@ graph TD
 
 **Client Context Bar** (When Client Selected):
 
-
 👤 `Client Name` | 📅 `Next Apt` | 🏥 `Treatment Status` | ✅ `Compliance` | 💰 `Financial`
-```
+
+````
 
 **Responsive Navigation Strategy**:
 
@@ -285,7 +285,7 @@ graph TD
     BACKGROUND[🔄 Background Process] --> M[Log Critical Access]
     BACKGROUND --> N[Notify Supervisors]
     BACKGROUND --> O[Compliance Audit Trail]
-```
+````
 
 **Edge Cases & Error Handling**:
 
@@ -719,7 +719,7 @@ enhancements.
 
   /* Brazilian Advanced Aesthetic Compliance */
   --regulatory-validated: #16a34a; /* Regulatory license valid */
---regulatory-pending: #d97706; /* Regulatory validation pending */
+  --regulatory-pending: #d97706; /* Regulatory validation pending */
   --ans-covered: #2563eb; /* ANS insurance covered */
   --lgpd-compliant: #059669; /* LGPD fully compliant */
 
@@ -733,7 +733,7 @@ enhancements.
   --font-portuguese-primary: "Inter", "Roboto", sans-serif;
   --font-aesthetic-professional-data: "JetBrains Mono", monospace;
   --text-client-name-pt: 20px; /* Portuguese client names */
---text-aesthetic-professional-pt: 18px; /* Portuguese aesthetic professional content */
+  --text-aesthetic-professional-pt: 18px; /* Portuguese aesthetic professional content */
   --line-height-portuguese: 1.6; /* Optimal Portuguese readability */
 }
 ```
@@ -769,21 +769,23 @@ excellence.
 
 ### Color Palette (Brazilian Beauty-Focused)
 
-| Color Type    | Hex Code | Brazilian Name    | Cultural Meaning                   | Usage Guidelines                             |
-| ------------- | -------- | ----------------- | ---------------------------------- | -------------------------------------------- |
-| **Primary**   | #16a085  | Verde Brasilidade | Nature, growth, Brazilian heritage | Primary CTAs, brand elements, success states |
-| **Secondary** | #8e44ad  | Roxo Sofisticação | Luxury, transformation, premium    | Premium services, sophisticated features     |
-| **Accent**    | #f39c12  | Dourado Tropical  | Warmth, success, celebration       | Achievements, highlights, positive outcomes  |
-| **Trust**     | #2980b9  | Azul Confiança    | Security, professionalism, aesthetic professional | Professional information, trust indicators       |
-| **Wellness**  | #27ae60  | Verde Bem-Estar   | Health, balance, natural beauty    | Wellness features, holistic advanced aesthetic           |
+| Color Type    | Hex Code | Brazilian Name    | Cultural Meaning                                  | Usage Guidelines                               |
+| ------------- | -------- | ----------------- | ------------------------------------------------- | ---------------------------------------------- |
+| **Primary**   | #16a085  | Verde Brasilidade | Nature, growth, Brazilian heritage                | Primary CTAs, brand elements, success states   |
+| **Secondary** | #8e44ad  | Roxo Sofisticação | Luxury, transformation, premium                   | Premium services, sophisticated features       |
+| **Accent**    | #f39c12  | Dourado Tropical  | Warmth, success, celebration                      | Achievements, highlights, positive outcomes    |
+| **Trust**     | #2980b9  | Azul Confiança    | Security, professionalism, aesthetic professional | Professional information, trust indicators     |
+| **Wellness**  | #27ae60  | Verde Bem-Estar   | Health, balance, natural beauty                   | Wellness features, holistic advanced aesthetic |
 
 ### Typography (Portuguese-Optimized)
 
 ```css
 /* Brand Typography System */
 --font-brand-primary: "Montserrat", sans-serif; /* Brazilian-designed warmth */
---font-brand-secondary: "Source Sans Pro", sans-serif; /* International readability */
---font-aesthetic-professional-data: "IBM Plex Mono", monospace; /* Technical precision with personality */
+--font-brand-secondary:
+  "Source Sans Pro", sans-serif; /* International readability */
+--font-aesthetic-professional-data:
+  "IBM Plex Mono", monospace; /* Technical precision with personality */
 
 /* Portuguese Language Optimization */
 --portuguese-text-scaling: 1.1; /* Account for longer Portuguese words */
@@ -867,13 +869,13 @@ client accommodations
 
 ### Enhanced Breakpoint Strategy (Advanced Aesthetic Professional Environment Context)
 
-| Breakpoint              | Min Width | Max Width | Target Devices              | Brazilian Advanced Aesthetic Context             |
-| ----------------------- | --------- | --------- | --------------------------- | ---------------------------------------- |
-| **Basic Mobile**        | 320px     | 480px     | Older Android, limited data | Rural/economic clients, offline-first   |
-| **Standard Mobile**     | 481px     | 767px     | Mid-range smartphones       | Urban clients, 4G coverage              |
+| Breakpoint              | Min Width | Max Width | Target Devices                                   | Brazilian Advanced Aesthetic Context             |
+| ----------------------- | --------- | --------- | ------------------------------------------------ | ------------------------------------------------ |
+| **Basic Mobile**        | 320px     | 480px     | Older Android, limited data                      | Rural/economic clients, offline-first            |
+| **Standard Mobile**     | 481px     | 767px     | Mid-range smartphones                            | Urban clients, 4G coverage                       |
 | **Professional Tablet** | 768px     | 1023px    | Advanced aesthetic professional tablets, bedside | Advanced aesthetic professionals, voice-priority |
-| **Desktop Workstation** | 1024px    | 1439px    | Clinic computers            | Administrative tasks, multi-client      |
-| **Specialist Display**  | 1440px    | -         | Large monitors, imaging     | Premium clinics, advanced analytics      |
+| **Desktop Workstation** | 1024px    | 1439px    | Clinic computers                                 | Administrative tasks, multi-client               |
+| **Specialist Display**  | 1440px    | -         | Large monitors, imaging                          | Premium clinics, advanced analytics              |
 
 ### Enhanced Adaptation Patterns (Advanced Aesthetic Workflow Optimized)
 

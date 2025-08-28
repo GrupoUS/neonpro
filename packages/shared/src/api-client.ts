@@ -299,9 +299,9 @@ class AuthTokenManager {
         });
 
         const response = await fetch(`${config.baseUrl}/api/v1/auth/refresh`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(request),
         });
@@ -456,12 +456,12 @@ export const ApiUtils = {
   isNetworkError: (error: Error): boolean => {
     // Network errors that should be retried
     return (
-      error.name === "TypeError"
-      || error.name === "NetworkError"
-      || error.message.includes("fetch")
-      || error.message.includes("network")
-      || error.message.includes("timeout")
-      || error.message.includes("connection")
+      error.name === "TypeError" ||
+      error.name === "NetworkError" ||
+      error.message.includes("fetch") ||
+      error.message.includes("network") ||
+      error.message.includes("timeout") ||
+      error.message.includes("connection")
     );
   },
 };
@@ -544,7 +544,8 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
           // Handle 401 (token expired) - try to refresh
           if (response.status === 401 && attempt === 0) {
             try {
-              const newToken = await tokenManager.refreshAccessToken(finalConfig);
+              const newToken =
+                await tokenManager.refreshAccessToken(finalConfig);
 
               // Retry with new token
               const newInit = {
@@ -630,8 +631,9 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
             },
             error: lastError,
             attempt,
-            isRetryable: attempt < finalConfig.retries
-              && !lastError.message.includes("AbortError"),
+            isRetryable:
+              attempt < finalConfig.retries &&
+              !lastError.message.includes("AbortError"),
           };
 
           if (config.onError) {
@@ -837,12 +839,17 @@ export const ApiHelpers = {
 
     if (typeof error === "object" && error && "error" in error) {
       const apiError = error as ApiErrorObject;
-      if (apiError.error?.error?.validation_errors?.length && apiError.error.error.validation_errors.length > 0) {
+      if (
+        apiError.error?.error?.validation_errors?.length &&
+        apiError.error.error.validation_errors.length > 0
+      ) {
         return apiError.error.error.validation_errors
           .map((ve) => `${ve.field}: ${ve.message}`)
           .join(", ");
       }
-      return apiError.message || apiError.error?.message || "API error occurred";
+      return (
+        apiError.message || apiError.error?.message || "API error occurred"
+      );
     }
 
     return "An unexpected error occurred";
@@ -852,11 +859,11 @@ export const ApiHelpers = {
   isNetworkError: (error: unknown): boolean => {
     if (error instanceof Error) {
       return (
-        error.message.includes("fetch")
-        || error.message.includes("network")
-        || error.message.includes("timeout")
-        || error.name === "AbortError"
-        || error.name === "NetworkError"
+        error.message.includes("fetch") ||
+        error.message.includes("network") ||
+        error.message.includes("timeout") ||
+        error.name === "AbortError" ||
+        error.name === "NetworkError"
       );
     }
     return false;
@@ -867,13 +874,15 @@ export const ApiHelpers = {
     if (typeof error === "object" && error && "error" in error) {
       const apiError = error as ApiErrorObject;
       const errorCode = apiError.error?.error?.code;
-      return errorCode ? [
-        "UNAUTHORIZED",
-        "FORBIDDEN",
-        "TOKEN_EXPIRED",
-        "INVALID_CREDENTIALS",
-        "SESSION_EXPIRED",
-      ].includes(errorCode) : false;
+      return errorCode
+        ? [
+            "UNAUTHORIZED",
+            "FORBIDDEN",
+            "TOKEN_EXPIRED",
+            "INVALID_CREDENTIALS",
+            "SESSION_EXPIRED",
+          ].includes(errorCode)
+        : false;
     }
     return false;
   },
@@ -883,8 +892,10 @@ export const ApiHelpers = {
     if (typeof error === "object" && error && "error" in error) {
       const apiError = error as ApiErrorObject;
       return (
-        apiError.error?.error?.code === "VALIDATION_ERROR"
-        || (apiError.error?.error?.validation_errors?.length && apiError.error.error.validation_errors.length > 0) || false
+        apiError.error?.error?.code === "VALIDATION_ERROR" ||
+        (apiError.error?.error?.validation_errors?.length &&
+          apiError.error.error.validation_errors.length > 0) ||
+        false
       );
     }
     return false;

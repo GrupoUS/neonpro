@@ -116,7 +116,7 @@ export function calculateDemographicRisk(
   demographic: RiskAssessmentInput["demographicFactors"],
 ): {
   score: number;
-  factors: { factor: string; impact: number; explanation: string; }[];
+  factors: { factor: string; impact: number; explanation: string }[];
 } {
   const factors: {
     factor: string;
@@ -139,8 +139,7 @@ export function calculateDemographicRisk(
     factors.push({
       factor: "Idade avançada",
       impact: ageScore,
-      explanation:
-        `Pacientes idosos (${demographic.age} anos) apresentam maior risco de complicações`,
+      explanation: `Pacientes idosos (${demographic.age} anos) apresentam maior risco de complicações`,
     });
   } else if (demographic.age >= 50) {
     ageScore = 10; // Middle-age considerations
@@ -238,7 +237,8 @@ export function calculateDemographicRisk(
     factors.push({
       factor: "Gravidez",
       impact: 20,
-      explanation: "Gravidez requer cuidados especializados e protocolos específicos",
+      explanation:
+        "Gravidez requer cuidados especializados e protocolos específicos",
     });
   } else if (demographic.pregnancyStatus === "BREASTFEEDING") {
     pregnancyScore = 10;
@@ -262,11 +262,12 @@ export function calculateDemographicRisk(
 
   // Calculate weighted total score
   const { demographic: weights } = DEFAULT_RISK_WEIGHTS;
-  totalScore = ageScore * weights.age
-    + bmiScore * weights.bmi
-    + smokingScore * weights.smoking
-    + alcoholScore * weights.alcohol
-    + (activityScore + pregnancyScore + geneticScore) * weights.genetics;
+  totalScore =
+    ageScore * weights.age +
+    bmiScore * weights.bmi +
+    smokingScore * weights.smoking +
+    alcoholScore * weights.alcohol +
+    (activityScore + pregnancyScore + geneticScore) * weights.genetics;
 
   return {
     score: Math.max(0, Math.min(100, totalScore)), // Ensure 0-100 range
@@ -281,7 +282,7 @@ export function calculateMedicalHistoryRisk(
   medicalHistory: RiskAssessmentInput["medicalHistory"],
 ): {
   score: number;
-  factors: { factor: string; impact: number; explanation: string; }[];
+  factors: { factor: string; impact: number; explanation: string }[];
 } {
   const factors: {
     factor: string;
@@ -307,14 +308,17 @@ export function calculateMedicalHistoryRisk(
   const { length: conditionCount } = chronicConditions;
 
   chronicConditions.forEach((condition) => {
-    const isHighRisk = highRiskConditions.some((risk) => condition.toLowerCase().includes(risk));
+    const isHighRisk = highRiskConditions.some((risk) =>
+      condition.toLowerCase().includes(risk),
+    );
 
     if (isHighRisk) {
       chronicScore += 15;
       factors.push({
         factor: `Condição crônica de alto risco: ${condition}`,
         impact: 15,
-        explanation: "Condição crônica que aumenta significativamente o risco de complicações",
+        explanation:
+          "Condição crônica que aumenta significativamente o risco de complicações",
       });
     } else {
       chronicScore += 5;
@@ -333,8 +337,7 @@ export function calculateMedicalHistoryRisk(
     factors.push({
       factor: "Múltiplas condições crônicas",
       impact: multiplier,
-      explanation:
-        `${conditionCount} condições crônicas simultaneas aumentam complexidade exponencialmente`,
+      explanation: `${conditionCount} condições crônicas simultaneas aumentam complexidade exponencialmente`,
     });
   } else if (conditionCount > 1) {
     const multiplier = conditionCount * 3;
@@ -350,7 +353,8 @@ export function calculateMedicalHistoryRisk(
   let surgicalScore = 0;
   const previousSurgeries = medicalHistory.previousSurgeries || [];
   const complicatedSurgeries = previousSurgeries.filter(
-    (surgery) => surgery.outcome === "COMPLICATED" || surgery.outcome === "FAILED",
+    (surgery) =>
+      surgery.outcome === "COMPLICATED" || surgery.outcome === "FAILED",
   );
 
   if (complicatedSurgeries.length > 0) {
@@ -377,7 +381,8 @@ export function calculateMedicalHistoryRisk(
   let allergyScore = 0;
   const allergies = medicalHistory.allergies || [];
   const severeAllergies = allergies.filter(
-    (allergy) => allergy.severity === "SEVERE" || allergy.severity === "ANAPHYLACTIC",
+    (allergy) =>
+      allergy.severity === "SEVERE" || allergy.severity === "ANAPHYLACTIC",
   );
 
   if (severeAllergies.length > 0) {
@@ -392,9 +397,9 @@ export function calculateMedicalHistoryRisk(
   // Drug allergies special consideration
   const drugAllergies = allergies.filter(
     (allergy) =>
-      allergy.allergen.toLowerCase().includes("medicamento")
-      || allergy.allergen.toLowerCase().includes("anestesia")
-      || allergy.allergen.toLowerCase().includes("antibiótico"),
+      allergy.allergen.toLowerCase().includes("medicamento") ||
+      allergy.allergen.toLowerCase().includes("anestesia") ||
+      allergy.allergen.toLowerCase().includes("antibiótico"),
   );
 
   if (drugAllergies.length > 0) {
@@ -435,7 +440,9 @@ export function calculateMedicalHistoryRisk(
   ];
 
   currentMedications.forEach((medication) => {
-    const isHighRisk = highRiskMeds.some((risk) => medication.name.toLowerCase().includes(risk));
+    const isHighRisk = highRiskMeds.some((risk) =>
+      medication.name.toLowerCase().includes(risk),
+    );
 
     if (isHighRisk) {
       medicationScore += 10;
@@ -461,7 +468,7 @@ export function calculateMedicalHistoryRisk(
   const familyHistory = medicalHistory.familyHistory || [];
   familyHistory.forEach((history) => {
     const isHighRisk = highRiskFamilyConditions.some((risk) =>
-      history.condition.toLowerCase().includes(risk)
+      history.condition.toLowerCase().includes(risk),
     );
 
     if (isHighRisk) {
@@ -483,11 +490,12 @@ export function calculateMedicalHistoryRisk(
 
   // Calculate weighted total score
   const { medicalHistory: weights } = DEFAULT_RISK_WEIGHTS;
-  totalScore = chronicScore * weights.chronicConditions
-    + surgicalScore * weights.surgicalHistory
-    + allergyScore * weights.allergies
-    + medicationScore * weights.medications
-    + familyScore * weights.familyHistory;
+  totalScore =
+    chronicScore * weights.chronicConditions +
+    surgicalScore * weights.surgicalHistory +
+    allergyScore * weights.allergies +
+    medicationScore * weights.medications +
+    familyScore * weights.familyHistory;
 
   return {
     score: Math.max(0, Math.min(100, totalScore)),
@@ -502,7 +510,7 @@ export function calculateCurrentConditionRisk(
   currentCondition: RiskAssessmentInput["currentCondition"],
 ): {
   score: number;
-  factors: { factor: string; impact: number; explanation: string; }[];
+  factors: { factor: string; impact: number; explanation: string }[];
 } {
   const factors: {
     factor: string;
@@ -735,10 +743,11 @@ export function calculateCurrentConditionRisk(
 
   // Calculate weighted total score
   const { currentCondition: weights } = DEFAULT_RISK_WEIGHTS;
-  totalScore = vitalSignsScore * weights.vitalSigns
-    + symptomsScore * weights.symptoms
-    + (painScore + mentalScore) * weights.mentalStatus
-    + mobilityScore * weights.mobility;
+  totalScore =
+    vitalSignsScore * weights.vitalSigns +
+    symptomsScore * weights.symptoms +
+    (painScore + mentalScore) * weights.mentalStatus +
+    mobilityScore * weights.mobility;
 
   return {
     score: Math.max(0, Math.min(100, totalScore)),
@@ -753,7 +762,7 @@ export function calculateProcedureSpecificRisk(
   procedureSpecific?: RiskAssessmentInput["procedureSpecific"],
 ): {
   score: number;
-  factors: { factor: string; impact: number; explanation: string; }[];
+  factors: { factor: string; impact: number; explanation: string }[];
 } {
   const factors: {
     factor: string;
@@ -937,12 +946,12 @@ export function calculateProcedureSpecificRisk(
   // Contraindications Assessment
   let contraindicationScore = 0;
   if (procedureSpecific.contraindicationsPresent.length > 0) {
-    contraindicationScore = procedureSpecific.contraindicationsPresent.length * 12;
+    contraindicationScore =
+      procedureSpecific.contraindicationsPresent.length * 12;
     factors.push({
       factor: "Contraindicações presentes",
       impact: contraindicationScore,
-      explanation:
-        `${procedureSpecific.contraindicationsPresent.length} contraindicação(ões) identificada(s)`,
+      explanation: `${procedureSpecific.contraindicationsPresent.length} contraindicação(ões) identificada(s)`,
     });
   }
 
@@ -950,8 +959,8 @@ export function calculateProcedureSpecificRisk(
   let interactionScore = 0;
   const severeInteractions = procedureSpecific.drugInteractions.filter(
     (interaction) =>
-      interaction.severity === "MAJOR"
-      || interaction.severity === "CONTRAINDICATED",
+      interaction.severity === "MAJOR" ||
+      interaction.severity === "CONTRAINDICATED",
   );
 
   if (severeInteractions.length > 0) {
@@ -979,10 +988,11 @@ export function calculateProcedureSpecificRisk(
 
   // Calculate weighted total score
   const { procedureSpecific: weights } = DEFAULT_RISK_WEIGHTS;
-  totalScore = (complexityScore + typeScore + durationScore) * weights.complexity
-    + anesthesiaScore * weights.anesthesia
-    + (contraindicationScore + equipmentScore) * weights.contraindications
-    + interactionScore * weights.drugInteractions;
+  totalScore =
+    (complexityScore + typeScore + durationScore) * weights.complexity +
+    anesthesiaScore * weights.anesthesia +
+    (contraindicationScore + equipmentScore) * weights.contraindications +
+    interactionScore * weights.drugInteractions;
 
   return {
     score: Math.max(0, Math.min(100, totalScore)),
@@ -997,7 +1007,7 @@ export function calculateEnvironmentalRisk(
   environmental: RiskAssessmentInput["environmental"],
 ): {
   score: number;
-  factors: { factor: string; impact: number; explanation: string; }[];
+  factors: { factor: string; impact: number; explanation: string }[];
 } {
   const factors: {
     factor: string;
@@ -1094,7 +1104,8 @@ export function calculateEnvironmentalRisk(
     factors.push({
       factor: "Limitações financeiras",
       impact: 10,
-      explanation: "Restrições financeiras podem afetar aderência ao tratamento",
+      explanation:
+        "Restrições financeiras podem afetar aderência ao tratamento",
     });
   }
 
@@ -1121,7 +1132,8 @@ export function calculateEnvironmentalRisk(
 
   // Compliance History Assessment
   let complianceScore = 0;
-  const appointmentAttendance = environmental.complianceHistory.previousAppointmentAttendance;
+  const appointmentAttendance =
+    environmental.complianceHistory.previousAppointmentAttendance;
 
   if (appointmentAttendance < 60) {
     complianceScore += 20;
@@ -1173,9 +1185,10 @@ export function calculateEnvironmentalRisk(
 
   // Calculate weighted total score
   const { environmental: weights } = DEFAULT_RISK_WEIGHTS;
-  totalScore = supportScore * weights.support
-    + accessibilityScore * weights.accessibility
-    + complianceScore * weights.compliance;
+  totalScore =
+    supportScore * weights.support +
+    accessibilityScore * weights.accessibility +
+    complianceScore * weights.compliance;
 
   return {
     score: Math.max(0, Math.min(100, totalScore)),
@@ -1231,12 +1244,12 @@ export function calculateComprehensiveRiskAssessment(
     100,
     Math.max(
       0,
-      categoryScores.demographic * mainWeights.demographic
-        + categoryScores.medicalHistory * mainWeights.medicalHistory
-        + categoryScores.currentCondition * mainWeights.currentCondition
-        + categoryScores.procedureSpecific * mainWeights.procedureSpecific
-        + categoryScores.environmental * mainWeights.environmental
-        + categoryScores.psychosocial * mainWeights.psychosocial,
+      categoryScores.demographic * mainWeights.demographic +
+        categoryScores.medicalHistory * mainWeights.medicalHistory +
+        categoryScores.currentCondition * mainWeights.currentCondition +
+        categoryScores.procedureSpecific * mainWeights.procedureSpecific +
+        categoryScores.environmental * mainWeights.environmental +
+        categoryScores.psychosocial * mainWeights.psychosocial,
     ),
   );
 
@@ -1319,36 +1332,37 @@ function calculateDataQuality(input: RiskAssessmentInput): number {
     qualityScore -= 5;
   }
   if (
-    !input.demographicFactors.geneticPredispositions
-    || input.demographicFactors.geneticPredispositions.length === 0
+    !input.demographicFactors.geneticPredispositions ||
+    input.demographicFactors.geneticPredispositions.length === 0
   ) {
     qualityScore -= 3;
   }
 
   // Medical history completeness
   if (
-    !input.medicalHistory.chronicConditions
-    || input.medicalHistory.chronicConditions.length === 0
+    !input.medicalHistory.chronicConditions ||
+    input.medicalHistory.chronicConditions.length === 0
   ) {
     qualityScore -= 3;
   }
   if (
-    !input.medicalHistory.currentMedications
-    || input.medicalHistory.currentMedications.length === 0
+    !input.medicalHistory.currentMedications ||
+    input.medicalHistory.currentMedications.length === 0
   ) {
     qualityScore -= 2;
   }
   if (
-    !input.medicalHistory.allergies
-    || input.medicalHistory.allergies.length === 0
+    !input.medicalHistory.allergies ||
+    input.medicalHistory.allergies.length === 0
   ) {
     qualityScore -= 2;
   }
 
   // Current condition data freshness (vital signs should be recent)
   const now = new Date();
-  const vitalSignsAge = now.getTime()
-    - input.currentCondition.vitalSigns.bloodPressure.timestamp.getTime();
+  const vitalSignsAge =
+    now.getTime() -
+    input.currentCondition.vitalSigns.bloodPressure.timestamp.getTime();
   const hoursOld = vitalSignsAge / (1000 * 60 * 60);
 
   if (hoursOld > 24) {
@@ -1425,8 +1439,8 @@ function getHigherPriority(
   priority1: EscalationPriority,
   priority2: EscalationPriority,
 ): EscalationPriority {
-  return getEscalationPriorityLevel(priority1)
-      > getEscalationPriorityLevel(priority2)
+  return getEscalationPriorityLevel(priority1) >
+    getEscalationPriorityLevel(priority2)
     ? priority1
     : priority2;
 }
@@ -1457,8 +1471,8 @@ export function determineEmergencyEscalation(
   // Critical vital signs
   const vitals = input.currentCondition.vitalSigns;
   if (
-    vitals.bloodPressure.systolic > 180
-    || vitals.bloodPressure.diastolic > 110
+    vitals.bloodPressure.systolic > 180 ||
+    vitals.bloodPressure.diastolic > 110
   ) {
     requiresEscalation = true;
     escalationPriority = EscalationPriority.IMMEDIATE;
@@ -1479,8 +1493,8 @@ export function determineEmergencyEscalation(
 
   // High-risk combinations
   if (
-    scoreBreakdown.categoryScores.currentCondition > 50
-    && scoreBreakdown.categoryScores.medicalHistory > 60
+    scoreBreakdown.categoryScores.currentCondition > 50 &&
+    scoreBreakdown.categoryScores.medicalHistory > 60
   ) {
     requiresEscalation = true;
     escalationPriority = getHigherPriority(

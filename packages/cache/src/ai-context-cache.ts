@@ -48,7 +48,7 @@ export class AIContextCacheLayer implements CacheOperation {
       }
 
       // Check TTL expiration
-      if (Date.now() > entry.timestamp + (entry.ttl * 1000)) {
+      if (Date.now() > entry.timestamp + entry.ttl * 1000) {
         this.cache.delete(this.buildKey(key));
         this.contextMap.delete(key);
         this.stats.misses++;
@@ -94,12 +94,19 @@ export class AIContextCacheLayer implements CacheOperation {
     const serialized = JSON.stringify(value);
 
     // Validate token count
-    if (metadata?.tokenCount && metadata.tokenCount > this.config.maxTokensPerContext) {
-      console.warn(`Context ${key} exceeds max token count: ${metadata.tokenCount}`);
+    if (
+      metadata?.tokenCount &&
+      metadata.tokenCount > this.config.maxTokensPerContext
+    ) {
+      console.warn(
+        `Context ${key} exceeds max token count: ${metadata.tokenCount}`,
+      );
     }
 
     const entry = {
-      value: this.config.compressionEnabled ? this.compress(serialized) : serialized,
+      value: this.config.compressionEnabled
+        ? this.compress(serialized)
+        : serialized,
       timestamp: Date.now(),
       ttl: effectiveTTL,
       compressed: this.config.compressionEnabled,
@@ -136,9 +143,10 @@ export class AIContextCacheLayer implements CacheOperation {
   }
 
   async getStats(): Promise<CacheStats> {
-    this.stats.hitRate = this.stats.totalRequests > 0
-      ? (this.stats.hits / this.stats.totalRequests) * 100
-      : 0;
+    this.stats.hitRate =
+      this.stats.totalRequests > 0
+        ? (this.stats.hits / this.stats.totalRequests) * 100
+        : 0;
     return { ...this.stats };
   }
 
@@ -173,7 +181,8 @@ export class AIContextCacheLayer implements CacheOperation {
     metadata: AIContextMetadata,
   ): Promise<void> {
     const key = `knowledge:${knowledgeId}`;
-    await this.set(key, knowledge, this.config.maxTTL, { // Longer TTL for knowledge
+    await this.set(key, knowledge, this.config.maxTTL, {
+      // Longer TTL for knowledge
       ...metadata,
       contextType: "knowledge",
     });
@@ -272,7 +281,7 @@ export class AIContextCacheLayer implements CacheOperation {
     byImportance: Record<string, number>;
     averageTokenCount: number;
     hitRate: number;
-    topUsers: { userId: string; contextCount: number; }[];
+    topUsers: { userId: string; contextCount: number }[];
   }> {
     const byType: Record<string, number> = {};
     const byImportance: Record<string, number> = {};
@@ -285,7 +294,8 @@ export class AIContextCacheLayer implements CacheOperation {
       byType[metadata.contextType] = (byType[metadata.contextType] || 0) + 1;
 
       // Count by importance
-      byImportance[metadata.importance] = (byImportance[metadata.importance] || 0) + 1;
+      byImportance[metadata.importance] =
+        (byImportance[metadata.importance] || 0) + 1;
 
       // Count by user
       if (metadata.userId) {
@@ -360,18 +370,23 @@ export class AIContextCacheLayer implements CacheOperation {
 
     // Importance weights
     const importanceWeights = {
-      "low": 1,
-      "medium": 2,
-      "high": 4,
-      "critical": 8,
+      low: 1,
+      medium: 2,
+      high: 4,
+      critical: 8,
     };
 
-    const importanceWeight = importanceWeights[entry.importance as keyof typeof importanceWeights]
-      || 2;
+    const importanceWeight =
+      importanceWeights[entry.importance as keyof typeof importanceWeights] ||
+      2;
 
     // Lower score = more likely to be evicted
-    return (age / 1000) + (accessRecency / 1000) - (accessFrequency * 1000)
-      - (importanceWeight * 10_000);
+    return (
+      age / 1000 +
+      accessRecency / 1000 -
+      accessFrequency * 1000 -
+      importanceWeight * 10_000
+    );
   }
 
   private updateStats(startTime: number): void {
@@ -382,8 +397,9 @@ export class AIContextCacheLayer implements CacheOperation {
       this.responseTimeBuffer.shift();
     }
 
-    this.stats.averageResponseTime = this.responseTimeBuffer.reduce((a, b) => a + b, 0)
-      / this.responseTimeBuffer.length;
+    this.stats.averageResponseTime =
+      this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
+      this.responseTimeBuffer.length;
   }
 
   private resetStats(): void {

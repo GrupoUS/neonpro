@@ -95,7 +95,7 @@ export class HealthcarePDFGenerator {
   // Add section with data table
   private addDataTable(
     title: string,
-    data: { label: string; value: string; }[],
+    data: { label: string; value: string }[],
   ) {
     const { doc } = this;
 
@@ -273,35 +273,27 @@ export class HealthcarePDFGenerator {
     this.addDataTable("Métodos de Pagamento", [
       {
         label: "PIX",
-        value: `${
-          formatCurrency(
-            data.paymentMethods.pix.amount,
-          )
-        } (${data.paymentMethods.pix.percentage}%)`,
+        value: `${formatCurrency(
+          data.paymentMethods.pix.amount,
+        )} (${data.paymentMethods.pix.percentage}%)`,
       },
       {
         label: "Cartão de Crédito",
-        value: `${
-          formatCurrency(
-            data.paymentMethods.creditCard.amount,
-          )
-        } (${data.paymentMethods.creditCard.percentage}%)`,
+        value: `${formatCurrency(
+          data.paymentMethods.creditCard.amount,
+        )} (${data.paymentMethods.creditCard.percentage}%)`,
       },
       {
         label: "Cartão de Débito",
-        value: `${
-          formatCurrency(
-            data.paymentMethods.debitCard.amount,
-          )
-        } (${data.paymentMethods.debitCard.percentage}%)`,
+        value: `${formatCurrency(
+          data.paymentMethods.debitCard.amount,
+        )} (${data.paymentMethods.debitCard.percentage}%)`,
       },
       {
         label: "Dinheiro",
-        value: `${
-          formatCurrency(
-            data.paymentMethods.cash.amount,
-          )
-        } (${data.paymentMethods.cash.percentage}%)`,
+        value: `${formatCurrency(
+          data.paymentMethods.cash.amount,
+        )} (${data.paymentMethods.cash.percentage}%)`,
       },
     ]);
 
@@ -551,7 +543,8 @@ export const downloadReport = (
     csv: "text/csv",
   };
 
-  const blobData: BlobPart[] = typeof data === "string" ? [data] : [data as unknown as ArrayBuffer];
+  const blobData: BlobPart[] =
+    typeof data === "string" ? [data] : [data as unknown as ArrayBuffer];
   const blob = new Blob(blobData, { type: mimeTypes[type] });
   const url = URL.createObjectURL(blob);
 

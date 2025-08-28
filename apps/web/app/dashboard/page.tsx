@@ -12,7 +12,9 @@ interface DashboardPageProps {
   searchParams?: Record<string, string | string[] | undefined>;
 }
 
-export default function DashboardPage({ searchParams: _searchParams }: DashboardPageProps) {
+export default function DashboardPage({
+  searchParams: _searchParams,
+}: DashboardPageProps) {
   return (
     <main
       className="min-h-screen bg-background p-4 md:p-6 lg:p-8"
@@ -28,7 +30,8 @@ export default function DashboardPage({ searchParams: _searchParams }: Dashboard
               Dashboard Principal
             </h1>
             <p className="text-muted-foreground">
-              Dashboard inteligente com análise em tempo real e compliance LGPD/ANVISA/CFM
+              Dashboard inteligente com análise em tempo real e compliance
+              LGPD/ANVISA/CFM
             </p>
           </div>
 

@@ -14,7 +14,13 @@ import { cn } from "../utils/cn";
 import { Badge } from "./Badge";
 import { Button } from "./Button";
 import { Input } from "./Input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./Select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./Select";
 import { Textarea } from "./Textarea";
 
 export type EmergencyAccessLevel =
@@ -232,10 +238,10 @@ export const EmergencyAccessPanel = React.forwardRef<
       justification: "",
       requestingPhysician: currentUser?.crm
         ? {
-          id: currentUser.id,
-          name: currentUser.name,
-          crm: currentUser.crm,
-        }
+            id: currentUser.id,
+            name: currentUser.name,
+            crm: currentUser.crm,
+          }
         : undefined,
     });
 
@@ -253,9 +259,9 @@ export const EmergencyAccessPanel = React.forwardRef<
       e.preventDefault();
       if (
         !(
-          onRequestEmergencyAccess
-          && formData.patientId
-          && formData.justification
+          onRequestEmergencyAccess &&
+          formData.patientId &&
+          formData.justification
         )
       ) {
         return;
@@ -340,7 +346,8 @@ export const EmergencyAccessPanel = React.forwardRef<
                       Médico Solicitante:
                     </span>
                     <p className="text-sm">
-                      {request.requestingPhysician.name} (CRM: {request.requestingPhysician.crm})
+                      {request.requestingPhysician.name} (CRM:{" "}
+                      {request.requestingPhysician.crm})
                     </p>
                   </div>
                 </div>
@@ -383,12 +390,12 @@ export const EmergencyAccessPanel = React.forwardRef<
                     <p className="text-sm">
                       {request.timestamp
                         ? new Intl.DateTimeFormat("pt-BR", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        }).format(request.timestamp)
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }).format(request.timestamp)
                         : "N/A"}
                     </p>
                   </div>
@@ -486,7 +493,8 @@ export const EmergencyAccessPanel = React.forwardRef<
               className="text-orange-700 text-sm"
               id="emergency-access-description"
             >
-              Protocolo constitucional para acesso emergencial a dados do paciente
+              Protocolo constitucional para acesso emergencial a dados do
+              paciente
             </p>
           </div>
         </div>
@@ -538,55 +546,55 @@ export const EmergencyAccessPanel = React.forwardRef<
                 </div>
               )}
 
-              {patientInfo.criticalAllergies
-                && patientInfo.criticalAllergies.length > 0 && (
-                <div>
-                  <span className="font-medium text-red-700 text-sm">
-                    Alergias Críticas:
-                  </span>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {patientInfo.criticalAllergies.map((allergy, index) => (
-                      <Badge key={index} size="sm" variant="urgent">
-                        {allergy}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {patientInfo.criticalMedications
-                && patientInfo.criticalMedications.length > 0 && (
-                <div>
-                  <span className="font-medium text-blue-700 text-sm">
-                    Medicações Críticas:
-                  </span>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {patientInfo.criticalMedications.map(
-                      (medication, index) => (
-                        <Badge key={index} size="sm" variant="medium">
-                          {medication}
+              {patientInfo.criticalAllergies &&
+                patientInfo.criticalAllergies.length > 0 && (
+                  <div>
+                    <span className="font-medium text-red-700 text-sm">
+                      Alergias Críticas:
+                    </span>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {patientInfo.criticalAllergies.map((allergy, index) => (
+                        <Badge key={index} size="sm" variant="urgent">
+                          {allergy}
                         </Badge>
-                      ),
-                    )}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {patientInfo.medicalAlerts
-                && patientInfo.medicalAlerts.length > 0 && (
-                <div>
-                  <span className="font-medium text-orange-700 text-sm">
-                    Alertas Médicos:
-                  </span>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {patientInfo.medicalAlerts.map((alert, index) => (
-                      <Badge key={index} size="sm" variant="high">
-                        {alert}
-                      </Badge>
-                    ))}
+              {patientInfo.criticalMedications &&
+                patientInfo.criticalMedications.length > 0 && (
+                  <div>
+                    <span className="font-medium text-blue-700 text-sm">
+                      Medicações Críticas:
+                    </span>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {patientInfo.criticalMedications.map(
+                        (medication, index) => (
+                          <Badge key={index} size="sm" variant="medium">
+                            {medication}
+                          </Badge>
+                        ),
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+
+              {patientInfo.medicalAlerts &&
+                patientInfo.medicalAlerts.length > 0 && (
+                  <div>
+                    <span className="font-medium text-orange-700 text-sm">
+                      Alertas Médicos:
+                    </span>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {patientInfo.medicalAlerts.map((alert, index) => (
+                        <Badge key={index} size="sm" variant="high">
+                          {alert}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
             </div>
           </div>
         )}
@@ -600,7 +608,8 @@ export const EmergencyAccessPanel = React.forwardRef<
               </label>
               <Select
                 onValueChange={(value: EmergencyAccessLevel) =>
-                  updateFormData("accessLevel", value)}
+                  updateFormData("accessLevel", value)
+                }
                 value={formData.accessLevel}
               >
                 <SelectTrigger>
@@ -621,7 +630,9 @@ export const EmergencyAccessPanel = React.forwardRef<
                 Motivo da Emergência
               </label>
               <Select
-                onValueChange={(value: EmergencyAccessReason) => updateFormData("reason", value)}
+                onValueChange={(value: EmergencyAccessReason) =>
+                  updateFormData("reason", value)
+                }
                 value={formData.reason}
               >
                 <SelectTrigger>
@@ -658,7 +669,8 @@ export const EmergencyAccessPanel = React.forwardRef<
             </label>
             <Select
               onValueChange={(value) =>
-                updateFormData("timeoutMinutes", Number.parseInt(value, 10))}
+                updateFormData("timeoutMinutes", Number.parseInt(value, 10))
+              }
               value={formData.timeoutMinutes?.toString()}
             >
               <SelectTrigger>
@@ -716,8 +728,8 @@ export const EmergencyAccessPanel = React.forwardRef<
                     .map((physician) => (
                       <SelectItem key={physician.id} value={physician.id}>
                         {physician.name} - CRM: {physician.crm}
-                        {physician.specialization
-                          && ` (${physician.specialization})`}
+                        {physician.specialization &&
+                          ` (${physician.specialization})`}
                       </SelectItem>
                     ))}
                 </SelectContent>
@@ -730,7 +742,9 @@ export const EmergencyAccessPanel = React.forwardRef<
               Protocolo Institucional (Opcional)
             </label>
             <Input
-              onChange={(e) => updateFormData("institutionProtocol", e.target.value)}
+              onChange={(e) =>
+                updateFormData("institutionProtocol", e.target.value)
+              }
               placeholder="Número do protocolo institucional de emergência..."
               value={formData.institutionProtocol || ""}
             />
@@ -744,14 +758,18 @@ export const EmergencyAccessPanel = React.forwardRef<
 
             <Button
               className="bg-orange-600 hover:bg-orange-700"
-              disabled={loading
-                || !formData.justification
-                || !formData.requestingPhysician}
+              disabled={
+                loading ||
+                !formData.justification ||
+                !formData.requestingPhysician
+              }
               type="submit"
             >
-              {loading
-                ? <Timer className="mr-2 h-4 w-4 animate-spin" />
-                : <Stethoscope className="mr-2 h-4 w-4" />}
+              {loading ? (
+                <Timer className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Stethoscope className="mr-2 h-4 w-4" />
+              )}
               Solicitar Acesso de Emergência
             </Button>
           </div>

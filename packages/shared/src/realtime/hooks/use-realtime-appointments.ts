@@ -91,11 +91,12 @@ export function useRealtimeAppointments(
         // Date/time changes within 24 hours
         const scheduledDate = new Date(newData.appointment_date);
         const now = new Date();
-        const hoursDifference = (scheduledDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+        const hoursDifference =
+          (scheduledDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
         if (
-          hoursDifference <= 24
-          && newData.appointment_date !== oldData.appointment_date
+          hoursDifference <= 24 &&
+          newData.appointment_date !== oldData.appointment_date
         ) {
           return true;
         }
@@ -147,8 +148,8 @@ export function useRealtimeAppointments(
                 const newCache = [...oldCache, newData];
                 return newCache.sort(
                   (a, b) =>
-                    new Date(a.appointment_date).getTime()
-                    - new Date(b.appointment_date).getTime(),
+                    new Date(a.appointment_date).getTime() -
+                    new Date(b.appointment_date).getTime(),
                 );
               }
               return oldCache;
@@ -157,13 +158,13 @@ export function useRealtimeAppointments(
             case "UPDATE": {
               if (newData) {
                 const updatedCache = oldCache.map((appointment) =>
-                  appointment.id === newData.id ? newData : appointment
+                  appointment.id === newData.id ? newData : appointment,
                 );
                 // Re-sort after update
                 return updatedCache.sort(
                   (a, b) =>
-                    new Date(a.appointment_date).getTime()
-                    - new Date(b.appointment_date).getTime(),
+                    new Date(a.appointment_date).getTime() -
+                    new Date(b.appointment_date).getTime(),
                 );
               }
               return oldCache;
@@ -362,14 +363,14 @@ export function useOptimisticAppointments(tenantId: string) {
           const updatedCache = oldCache.map((appointment) =>
             appointment.id === appointmentId
               ? { ...appointment, ...updates }
-              : appointment
+              : appointment,
           );
           // Re-sort if date changed
           if (updates.appointment_date) {
             return updatedCache.sort(
               (a, b) =>
-                new Date(a.appointment_date).getTime()
-                - new Date(b.appointment_date).getTime(),
+                new Date(a.appointment_date).getTime() -
+                new Date(b.appointment_date).getTime(),
             );
           }
           return updatedCache;

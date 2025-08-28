@@ -190,10 +190,10 @@ const getHealthcareEssentialFeatures = (
 ): FeatureCapability[] => {
   return features.filter(
     (f) =>
-      f.isEssential
-      || f.healthcareRelevant
-      || f.level === "core"
-      || f.lgpdImportant,
+      f.isEssential ||
+      f.healthcareRelevant ||
+      f.level === "core" ||
+      f.lgpdImportant,
   );
 };
 
@@ -359,9 +359,11 @@ const DeviceOptimizationSummary: React.FC<{
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {deviceCapabilities.hasGoodConnection
-                    ? <Wifi className="h-3 w-3 text-green-600" />
-                    : <WifiOff className="h-3 w-3 text-red-600" />}
+                  {deviceCapabilities.hasGoodConnection ? (
+                    <Wifi className="h-3 w-3 text-green-600" />
+                  ) : (
+                    <WifiOff className="h-3 w-3 text-red-600" />
+                  )}
                   <span>
                     {networkStatus?.effectiveType || "unknown"} network
                   </span>
@@ -382,10 +384,9 @@ const DeviceOptimizationSummary: React.FC<{
             </div>
           )}
 
-          {onOptimizePerformance
-            && (optimizationLevel === "limited"
-              || optimizationLevel === "minimal")
-            && (
+          {onOptimizePerformance &&
+            (optimizationLevel === "limited" ||
+              optimizationLevel === "minimal") && (
               <button
                 className="mt-3 text-blue-600 text-sm underline hover:text-blue-800"
                 onClick={onOptimizePerformance}
@@ -430,13 +431,14 @@ export const ProgressiveEnhancement = React.forwardRef<
     );
 
     const healthcareCompatibilityScore = Math.round(
-      (essentialFeatures.filter((f) => f.status === "available").length
-        / Math.max(essentialFeatures.length, 1))
-        * 100,
+      (essentialFeatures.filter((f) => f.status === "available").length /
+        Math.max(essentialFeatures.length, 1)) *
+        100,
     );
 
-    const shouldShowOptimization = showHealthcareOptimization
-      && (unavailableFeatures.length > 0 || degradedFeatures.length > 2);
+    const shouldShowOptimization =
+      showHealthcareOptimization &&
+      (unavailableFeatures.length > 0 || degradedFeatures.length > 2);
 
     return (
       <div
@@ -459,18 +461,21 @@ export const ProgressiveEnhancement = React.forwardRef<
               </h3>
               <Badge
                 size="sm"
-                variant={healthcareCompatibilityScore >= 90
-                  ? "confirmed"
-                  : healthcareCompatibilityScore >= 70
-                  ? "medium"
-                  : "urgent"}
+                variant={
+                  healthcareCompatibilityScore >= 90
+                    ? "confirmed"
+                    : healthcareCompatibilityScore >= 70
+                      ? "medium"
+                      : "urgent"
+                }
               >
                 {healthcareCompatibilityScore}% compatível
               </Badge>
             </div>
 
             <p className="mb-4 text-muted-foreground text-sm">
-              Funcionalidades essenciais para cuidados médicos seguros e conformidade LGPD.
+              Funcionalidades essenciais para cuidados médicos seguros e
+              conformidade LGPD.
             </p>
 
             {emergencyMode && (
@@ -482,8 +487,9 @@ export const ProgressiveEnhancement = React.forwardRef<
                       Modo de Emergência Ativo
                     </h4>
                     <p className="mt-1 text-orange-700 text-sm">
-                      Apenas funcionalidades críticas para atendimento médico estão disponíveis.
-                      Dados de pacientes e protocolos de emergência permanecem acessíveis.
+                      Apenas funcionalidades críticas para atendimento médico
+                      estão disponíveis. Dados de pacientes e protocolos de
+                      emergência permanecem acessíveis.
                     </p>
                   </div>
                 </div>
@@ -523,33 +529,33 @@ export const ProgressiveEnhancement = React.forwardRef<
         )}
 
         {/* Emergency Mode Option */}
-        {!emergencyMode
-          && onEnableEmergencyMode
-          && unavailableFeatures.length > 3 && (
-          <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-3">
-                <Zap className="mt-0.5 h-5 w-5 text-orange-600" />
-                <div>
-                  <h4 className="font-medium text-orange-900 text-sm">
-                    Modo de Emergência Disponível
-                  </h4>
-                  <p className="mt-1 text-orange-700 text-sm">
-                    Ative o modo de emergência para garantir que funcionalidades críticas de
-                    healthcare estejam sempre disponíveis, mesmo com limitações de dispositivo ou
-                    rede.
-                  </p>
+        {!emergencyMode &&
+          onEnableEmergencyMode &&
+          unavailableFeatures.length > 3 && (
+            <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <Zap className="mt-0.5 h-5 w-5 text-orange-600" />
+                  <div>
+                    <h4 className="font-medium text-orange-900 text-sm">
+                      Modo de Emergência Disponível
+                    </h4>
+                    <p className="mt-1 text-orange-700 text-sm">
+                      Ative o modo de emergência para garantir que
+                      funcionalidades críticas de healthcare estejam sempre
+                      disponíveis, mesmo com limitações de dispositivo ou rede.
+                    </p>
+                  </div>
                 </div>
+                <button
+                  className="whitespace-nowrap rounded bg-orange-600 px-3 py-1 text-sm text-white hover:bg-orange-700"
+                  onClick={onEnableEmergencyMode}
+                >
+                  Ativar Modo Emergência
+                </button>
               </div>
-              <button
-                className="whitespace-nowrap rounded bg-orange-600 px-3 py-1 text-sm text-white hover:bg-orange-700"
-                onClick={onEnableEmergencyMode}
-              >
-                Ativar Modo Emergência
-              </button>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Feature Status List */}
         {showDetails && (
@@ -566,8 +572,8 @@ export const ProgressiveEnhancement = React.forwardRef<
                     return a.healthcareRelevant ? -1 : 1;
                   }
                   return (
-                    featureLevelInfo[a.level].priority
-                    - featureLevelInfo[b.level].priority
+                    featureLevelInfo[a.level].priority -
+                    featureLevelInfo[b.level].priority
                   );
                 })
                 .map((feature) => (
@@ -593,8 +599,9 @@ export const ProgressiveEnhancement = React.forwardRef<
                   Funcionalidade Limitada
                 </h4>
                 <p className="text-red-700 text-sm">
-                  Limitações detectadas podem afetar funcionalidades críticas de healthcare.
-                  Considere usar um dispositivo com melhor conectividade.
+                  Limitações detectadas podem afetar funcionalidades críticas de
+                  healthcare. Considere usar um dispositivo com melhor
+                  conectividade.
                 </p>
                 {onOptimizePerformance && (
                   <button
@@ -629,9 +636,10 @@ export const ProgressiveEnhancement = React.forwardRef<
                   Garantias Constitucionais Healthcare
                 </h4>
                 <p className="mt-1 text-blue-700 text-sm">
-                  Funcionalidades essenciais de atendimento médico e proteção de dados LGPD são
-                  mantidas independentemente das limitações técnicas. A segurança do paciente e a
-                  privacidade dos dados são sempre priorizadas.
+                  Funcionalidades essenciais de atendimento médico e proteção de
+                  dados LGPD são mantidas independentemente das limitações
+                  técnicas. A segurança do paciente e a privacidade dos dados
+                  são sempre priorizadas.
                 </p>
               </div>
             </div>
@@ -646,15 +654,15 @@ ProgressiveEnhancement.displayName = "ProgressiveEnhancement";
 
 // Utility hooks and functions for feature detection
 export const useFeatureDetection = () => {
-  const [capabilities, setCapabilities] = React.useState<
-    ProgressiveEnhancementProps["deviceCapabilities"]
-  >();
+  const [capabilities, setCapabilities] =
+    React.useState<ProgressiveEnhancementProps["deviceCapabilities"]>();
 
   React.useEffect(() => {
     const detectCapabilities = () => {
-      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent,
-      );
+      const isMobile =
+        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent,
+        );
       const isLowEnd = navigator.hardwareConcurrency
         ? navigator.hardwareConcurrency <= 2
         : false;
@@ -679,9 +687,8 @@ export const useFeatureDetection = () => {
 };
 
 export const useNetworkStatus = () => {
-  const [networkStatus, setNetworkStatus] = React.useState<
-    ProgressiveEnhancementProps["networkStatus"]
-  >();
+  const [networkStatus, setNetworkStatus] =
+    React.useState<ProgressiveEnhancementProps["networkStatus"]>();
 
   React.useEffect(() => {
     const updateNetworkStatus = () => {

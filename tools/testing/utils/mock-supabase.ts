@@ -150,7 +150,9 @@ export function createSuccessfulMockSupabaseClient(
 /**
  * Creates a mock Supabase client with preset error responses
  */
-export function createErrorMockSupabaseClient(error: unknown): MockSupabaseClient {
+export function createErrorMockSupabaseClient(
+  error: unknown,
+): MockSupabaseClient {
   const client = createMockSupabaseClient();
 
   // Override with error responses

@@ -50,10 +50,10 @@ interface RateLimitConfig {
 class MemoryStore {
   private readonly store = new Map<
     string,
-    { count: number; resetTime: number; }
+    { count: number; resetTime: number }
   >();
 
-  get(key: string): { count: number; resetTime: number; } | undefined {
+  get(key: string): { count: number; resetTime: number } | undefined {
     const record = this.store.get(key);
     if (!record || record.resetTime < Date.now()) {
       this.store.delete(key);
@@ -65,7 +65,7 @@ class MemoryStore {
   increment(
     key: string,
     windowMs: number,
-  ): { count: number; resetTime: number; } {
+  ): { count: number; resetTime: number } {
     const now = Date.now();
     const resetTime = now + windowMs;
     const existing = this.get(key);
@@ -179,12 +179,14 @@ export const rateLimitMiddleware = (
     }
 
     // Generate rate limit key
-    const keyGenerator = effectiveConfig.keyGenerator
-      || ((c) => {
-        const clientIP = c.req.header("CF-Connecting-IP")
-          || c.req.header("X-Forwarded-For")
-          || c.req.header("X-Real-IP")
-          || "unknown";
+    const keyGenerator =
+      effectiveConfig.keyGenerator ||
+      ((c) => {
+        const clientIP =
+          c.req.header("CF-Connecting-IP") ||
+          c.req.header("X-Forwarded-For") ||
+          c.req.header("X-Real-IP") ||
+          "unknown";
         return `ratelimit:${clientIP}:${path}`;
       });
 
@@ -230,8 +232,8 @@ export const rateLimitMiddleware = (
 
       // Optional: skip counting successful requests if configured
       if (
-        effectiveConfig.skipSuccessfulRequests
-        && c.res.status < HTTP_STATUS.BAD_REQUEST
+        effectiveConfig.skipSuccessfulRequests &&
+        c.res.status < HTTP_STATUS.BAD_REQUEST
       ) {
         // Don't count this request (decrement)
         const currentRecord = store.get(key);
@@ -243,10 +245,11 @@ export const rateLimitMiddleware = (
       logger.error("Rate limiting error", error, {
         endpoint: c.req.path,
         method: c.req.method,
-        ip: c.req.header("CF-Connecting-IP")
-          || c.req.header("X-Forwarded-For")
-          || c.req.header("X-Real-IP")
-          || "unknown",
+        ip:
+          c.req.header("CF-Connecting-IP") ||
+          c.req.header("X-Forwarded-For") ||
+          c.req.header("X-Real-IP") ||
+          "unknown",
         userAgent: c.req.header("User-Agent"),
       });
       // On error, allow the request to continue

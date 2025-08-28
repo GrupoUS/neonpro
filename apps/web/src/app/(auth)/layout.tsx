@@ -15,7 +15,9 @@ export default function AuthLayout({
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">NeonPro</h1>
-          <p className="text-gray-600">Plataforma de Gestão para Clínicas de Estética</p>
+          <p className="text-gray-600">
+            Plataforma de Gestão para Clínicas de Estética
+          </p>
         </div>
         {children}
       </div>

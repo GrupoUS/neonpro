@@ -3,11 +3,22 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type {
   AestheticTreatmentCategory,
   CFMComplianceStatus,
@@ -205,8 +216,8 @@ export function AestheticTreatmentPlan({
   );
   const upcomingSessions = sessions.filter(
     (session) =>
-      session.status === "scheduled"
-      && new Date(session.scheduled_date) > new Date(),
+      session.status === "scheduled" &&
+      new Date(session.scheduled_date) > new Date(),
   );
   const completedSessions = sessions.filter(
     (session) => session.status === "completed",
@@ -261,7 +272,8 @@ export function AestheticTreatmentPlan({
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4 text-blue-500" />
                   <span className="text-muted-foreground">
-                    Próxima: {new Date(
+                    Próxima:{" "}
+                    {new Date(
                       treatmentPlan.next_session_date,
                     ).toLocaleDateString("pt-BR")}
                   </span>
@@ -378,7 +390,8 @@ export function AestheticTreatmentPlan({
             <Alert className="border-blue-500/50 bg-blue-500/10">
               <Calendar className="h-4 w-4" />
               <AlertDescription className="text-blue-100">
-                Próxima sessão: {new Date(treatmentPlan.next_session_date).toLocaleDateString(
+                Próxima sessão:{" "}
+                {new Date(treatmentPlan.next_session_date).toLocaleDateString(
                   "pt-BR",
                   {
                     weekday: "long",
@@ -514,14 +527,14 @@ export function AestheticTreatmentPlan({
                   <div>
                     <p className="text-muted-foreground">Tipo de Tratamento</p>
                     <p className="font-medium">
-                      {treatmentPlan.treatment_type === "single_session"
-                        && "Sessão Única"}
-                      {treatmentPlan.treatment_type === "multi_session"
-                        && "Multi-sessão"}
-                      {treatmentPlan.treatment_type === "combination_therapy"
-                        && "Terapia Combinada"}
-                      {treatmentPlan.treatment_type
-                          === "maintenance_protocol" && "Protocolo de Manutenção"}
+                      {treatmentPlan.treatment_type === "single_session" &&
+                        "Sessão Única"}
+                      {treatmentPlan.treatment_type === "multi_session" &&
+                        "Multi-sessão"}
+                      {treatmentPlan.treatment_type === "combination_therapy" &&
+                        "Terapia Combinada"}
+                      {treatmentPlan.treatment_type ===
+                        "maintenance_protocol" && "Protocolo de Manutenção"}
                     </p>
                   </div>
                   <div>
@@ -610,54 +623,52 @@ export function AestheticTreatmentPlan({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {upcomingSessions.length > 0
-                  ? (
-                    <div className="space-y-3">
-                      {upcomingSessions.slice(0, 3).map((session) => (
-                        <div
-                          className="flex items-center justify-between rounded-lg border p-3"
-                          key={session.id}
-                        >
-                          <div>
-                            <p className="font-medium">
-                              Sessão {session.session_number}
-                            </p>
-                            <p className="text-muted-foreground text-sm">
-                              {new Date(
-                                session.scheduled_date,
-                              ).toLocaleDateString("pt-BR")}
-                            </p>
-                          </div>
-                          <Badge variant="outline">
-                            {session.duration_minutes} min
-                          </Badge>
+                {upcomingSessions.length > 0 ? (
+                  <div className="space-y-3">
+                    {upcomingSessions.slice(0, 3).map((session) => (
+                      <div
+                        className="flex items-center justify-between rounded-lg border p-3"
+                        key={session.id}
+                      >
+                        <div>
+                          <p className="font-medium">
+                            Sessão {session.session_number}
+                          </p>
+                          <p className="text-muted-foreground text-sm">
+                            {new Date(
+                              session.scheduled_date,
+                            ).toLocaleDateString("pt-BR")}
+                          </p>
                         </div>
-                      ))}
-                      {upcomingSessions.length > 3 && (
-                        <p className="text-center text-muted-foreground text-sm">
-                          +{upcomingSessions.length - 3} sessões adicionais
-                        </p>
-                      )}
-                    </div>
-                  )
-                  : (
-                    <div className="py-6 text-center">
-                      <Calendar className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
-                      <p className="text-muted-foreground">
-                        Nenhuma sessão agendada
+                        <Badge variant="outline">
+                          {session.duration_minutes} min
+                        </Badge>
+                      </div>
+                    ))}
+                    {upcomingSessions.length > 3 && (
+                      <p className="text-center text-muted-foreground text-sm">
+                        +{upcomingSessions.length - 3} sessões adicionais
                       </p>
-                      {onScheduleSession && (
-                        <Button
-                          className="mt-2"
-                          onClick={() => onScheduleSession(treatmentPlan.id)}
-                          size="sm"
-                          variant="outline"
-                        >
-                          Agendar Sessão
-                        </Button>
-                      )}
-                    </div>
-                  )}
+                    )}
+                  </div>
+                ) : (
+                  <div className="py-6 text-center">
+                    <Calendar className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
+                    <p className="text-muted-foreground">
+                      Nenhuma sessão agendada
+                    </p>
+                    {onScheduleSession && (
+                      <Button
+                        className="mt-2"
+                        onClick={() => onScheduleSession(treatmentPlan.id)}
+                        size="sm"
+                        variant="outline"
+                      >
+                        Agendar Sessão
+                      </Button>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -670,52 +681,50 @@ export function AestheticTreatmentPlan({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {completedSessions.length > 0
-                  ? (
-                    <div className="space-y-3">
-                      {completedSessions.slice(-3).map((session) => (
-                        <div
-                          className="flex items-center justify-between rounded-lg border p-3"
-                          key={session.id}
-                        >
-                          <div>
-                            <p className="font-medium">
-                              Sessão {session.session_number}
-                            </p>
-                            <p className="text-muted-foreground text-sm">
-                              {new Date(
-                                session.actual_date || session.scheduled_date,
-                              ).toLocaleDateString("pt-BR")}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {session.patient_satisfaction_score && (
-                              <div className="flex items-center gap-1">
-                                <Star className="h-4 w-4 text-yellow-500" />
-                                <span className="text-sm">
-                                  {session.patient_satisfaction_score}/10
-                                </span>
-                              </div>
-                            )}
-                            <Badge variant="default">Concluída</Badge>
-                          </div>
+                {completedSessions.length > 0 ? (
+                  <div className="space-y-3">
+                    {completedSessions.slice(-3).map((session) => (
+                      <div
+                        className="flex items-center justify-between rounded-lg border p-3"
+                        key={session.id}
+                      >
+                        <div>
+                          <p className="font-medium">
+                            Sessão {session.session_number}
+                          </p>
+                          <p className="text-muted-foreground text-sm">
+                            {new Date(
+                              session.actual_date || session.scheduled_date,
+                            ).toLocaleDateString("pt-BR")}
+                          </p>
                         </div>
-                      ))}
-                      {completedSessions.length > 3 && (
-                        <p className="text-center text-muted-foreground text-sm">
-                          +{completedSessions.length - 3} sessões anteriores
-                        </p>
-                      )}
-                    </div>
-                  )
-                  : (
-                    <div className="py-6 text-center">
-                      <CheckCircle className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
-                      <p className="text-muted-foreground">
-                        Nenhuma sessão realizada
+                        <div className="flex items-center gap-2">
+                          {session.patient_satisfaction_score && (
+                            <div className="flex items-center gap-1">
+                              <Star className="h-4 w-4 text-yellow-500" />
+                              <span className="text-sm">
+                                {session.patient_satisfaction_score}/10
+                              </span>
+                            </div>
+                          )}
+                          <Badge variant="default">Concluída</Badge>
+                        </div>
+                      </div>
+                    ))}
+                    {completedSessions.length > 3 && (
+                      <p className="text-center text-muted-foreground text-sm">
+                        +{completedSessions.length - 3} sessões anteriores
                       </p>
-                    </div>
-                  )}
+                    )}
+                  </div>
+                ) : (
+                  <div className="py-6 text-center">
+                    <CheckCircle className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
+                    <p className="text-muted-foreground">
+                      Nenhuma sessão realizada
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -739,9 +748,11 @@ export function AestheticTreatmentPlan({
                       Status
                     </span>
                     <Badge
-                      variant={treatmentPlan.cfm_compliance_status === "compliant"
-                        ? "default"
-                        : "secondary"}
+                      variant={
+                        treatmentPlan.cfm_compliance_status === "compliant"
+                          ? "default"
+                          : "secondary"
+                      }
                     >
                       {getCFMComplianceLabel(
                         treatmentPlan.cfm_compliance_status,
@@ -753,18 +764,22 @@ export function AestheticTreatmentPlan({
                     <span className="text-muted-foreground text-sm">
                       Licença Profissional Verificada
                     </span>
-                    {treatmentPlan.professional_license_verified
-                      ? <CheckCircle className="h-4 w-4 text-green-500" />
-                      : <AlertTriangle className="h-4 w-4 text-red-500" />}
+                    {treatmentPlan.professional_license_verified ? (
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <AlertTriangle className="h-4 w-4 text-red-500" />
+                    )}
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground text-sm">
                       Revisão Ética Necessária
                     </span>
-                    {treatmentPlan.ethics_review_required
-                      ? <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                      : <CheckCircle className="h-4 w-4 text-green-500" />}
+                    {treatmentPlan.ethics_review_required ? (
+                      <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                    ) : (
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    )}
                   </div>
                 </div>
 
@@ -772,7 +787,8 @@ export function AestheticTreatmentPlan({
                   <Alert className="border-yellow-500/50 bg-yellow-500/10">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>
-                      Este tratamento requer atenção para conformidade com as diretrizes do CFM.
+                      Este tratamento requer atenção para conformidade com as
+                      diretrizes do CFM.
                     </AlertDescription>
                   </Alert>
                 )}
@@ -793,9 +809,11 @@ export function AestheticTreatmentPlan({
                     <span className="text-muted-foreground text-sm">
                       Consentimento LGPD
                     </span>
-                    {treatmentPlan.lgpd_consent_granted
-                      ? <CheckCircle className="h-4 w-4 text-green-500" />
-                      : <AlertTriangle className="h-4 w-4 text-red-500" />}
+                    {treatmentPlan.lgpd_consent_granted ? (
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <AlertTriangle className="h-4 w-4 text-red-500" />
+                    )}
                   </div>
 
                   <div className="flex items-center justify-between">
@@ -803,9 +821,11 @@ export function AestheticTreatmentPlan({
                       Consentimento para Fotos
                     </span>
                     <Badge
-                      variant={treatmentPlan.lgpd_photo_consent_status === "granted"
-                        ? "default"
-                        : "secondary"}
+                      variant={
+                        treatmentPlan.lgpd_photo_consent_status === "granted"
+                          ? "default"
+                          : "secondary"
+                      }
                     >
                       {getLGPDConsentLabel(
                         treatmentPlan.lgpd_photo_consent_status,
@@ -840,7 +860,8 @@ export function AestheticTreatmentPlan({
                   <Alert className="border-red-500/50 bg-red-500/10">
                     <Shield className="h-4 w-4" />
                     <AlertDescription>
-                      É necessário obter o consentimento LGPD antes de prosseguir com o tratamento.
+                      É necessário obter o consentimento LGPD antes de
+                      prosseguir com o tratamento.
                     </AlertDescription>
                   </Alert>
                 )}
@@ -861,25 +882,24 @@ export function AestheticTreatmentPlan({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {treatmentPlan.expected_outcomes
-                  ? (
-                    <div className="space-y-4">
-                      <div className="prose prose-sm max-w-none">
-                        <p>
-                          Os resultados esperados para este tratamento incluem:
-                        </p>
-                        {/* This would be populated from the JSON structure */}
-                        <p className="text-muted-foreground">
-                          Dados específicos dos resultados esperados serão exibidos aqui.
-                        </p>
-                      </div>
+                {treatmentPlan.expected_outcomes ? (
+                  <div className="space-y-4">
+                    <div className="prose prose-sm max-w-none">
+                      <p>
+                        Os resultados esperados para este tratamento incluem:
+                      </p>
+                      {/* This would be populated from the JSON structure */}
+                      <p className="text-muted-foreground">
+                        Dados específicos dos resultados esperados serão
+                        exibidos aqui.
+                      </p>
                     </div>
-                  )
-                  : (
-                    <p className="text-muted-foreground">
-                      Nenhum resultado esperado definido para este tratamento.
-                    </p>
-                  )}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">
+                    Nenhum resultado esperado definido para este tratamento.
+                  </p>
+                )}
               </CardContent>
             </Card>
 
@@ -892,29 +912,28 @@ export function AestheticTreatmentPlan({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {treatmentPlan.risk_assessment
-                  ? (
-                    <div className="space-y-4">
-                      <Alert>
-                        <AlertTriangle className="h-4 w-4" />
-                        <AlertDescription>
-                          Importante: Todos os riscos foram explicados e compreendidos pelo
-                          paciente.
-                        </AlertDescription>
-                      </Alert>
-                      <div className="prose prose-sm max-w-none">
-                        {/* This would be populated from the JSON structure */}
-                        <p className="text-muted-foreground">
-                          Avaliação detalhada de riscos e contraindicações será exibida aqui.
-                        </p>
-                      </div>
+                {treatmentPlan.risk_assessment ? (
+                  <div className="space-y-4">
+                    <Alert>
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>
+                        Importante: Todos os riscos foram explicados e
+                        compreendidos pelo paciente.
+                      </AlertDescription>
+                    </Alert>
+                    <div className="prose prose-sm max-w-none">
+                      {/* This would be populated from the JSON structure */}
+                      <p className="text-muted-foreground">
+                        Avaliação detalhada de riscos e contraindicações será
+                        exibida aqui.
+                      </p>
                     </div>
-                  )
-                  : (
-                    <p className="text-muted-foreground">
-                      Nenhuma avaliação de risco disponível para este tratamento.
-                    </p>
-                  )}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">
+                    Nenhuma avaliação de risco disponível para este tratamento.
+                  </p>
+                )}
               </CardContent>
             </Card>
 
@@ -946,8 +965,8 @@ export function AestheticTreatmentPlan({
                         style: "currency",
                         currency: "BRL",
                       }).format(
-                        treatmentPlan.total_cost
-                          / treatmentPlan.expected_sessions,
+                        treatmentPlan.total_cost /
+                          treatmentPlan.expected_sessions,
                       )}
                     </p>
                   </div>

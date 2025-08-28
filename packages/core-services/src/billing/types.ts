@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { DateSchema, NonNegativeNumberSchema, PositiveNumberSchema, UUIDSchema } from "../types";
+import {
+  DateSchema,
+  NonNegativeNumberSchema,
+  PositiveNumberSchema,
+  UUIDSchema,
+} from "../types";
 import type { BaseEntity, BillingStatus } from "../types";
 
 // Invoice and billing interfaces for aesthetic clinic

@@ -127,7 +127,7 @@ export class RegulatoryDocumentationService {
     params: DocumentGenerationParams,
     tenantId: string,
     userId: string,
-  ): Promise<{ success: boolean; data?: RegulatoryDocument; error?: string; }> {
+  ): Promise<{ success: boolean; data?: RegulatoryDocument; error?: string }> {
     try {
       // Constitutional validation of generation parameters
       const validationResult = await this.validateGenerationParams(params);
@@ -210,7 +210,7 @@ export class RegulatoryDocumentationService {
 
   private async generateDocumentContent(
     params: DocumentGenerationParams,
-  ): Promise<{ success: boolean; content?: string; error?: string; }> {
+  ): Promise<{ success: boolean; content?: string; error?: string }> {
     try {
       let content = "";
 
@@ -246,7 +246,8 @@ export class RegulatoryDocumentationService {
       if (!content || content.length < 100) {
         return {
           success: false,
-          error: "Generated content does not meet constitutional minimum requirements",
+          error:
+            "Generated content does not meet constitutional minimum requirements",
         };
       }
 
@@ -329,7 +330,7 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
    */
   private async validateGenerationParams(
     params: DocumentGenerationParams,
-  ): Promise<{ valid: boolean; error?: string; }> {
+  ): Promise<{ valid: boolean; error?: string }> {
     try {
       // Constitutional validation rules
       if (!params.document_type) {
@@ -341,12 +342,13 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
 
       // Validate template parameters
       if (
-        !params.template_params
-        || Object.keys(params.template_params).length === 0
+        !params.template_params ||
+        Object.keys(params.template_params).length === 0
       ) {
         return {
           valid: false,
-          error: "Template parameters required for constitutional documentation",
+          error:
+            "Template parameters required for constitutional documentation",
         };
       }
 
@@ -354,8 +356,8 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
       switch (params.document_type) {
         case "compliance_report": {
           if (
-            !params.source_data.products
-            || params.source_data.products.length === 0
+            !params.source_data.products ||
+            params.source_data.products.length === 0
           ) {
             return {
               valid: false,
@@ -366,8 +368,8 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
         }
         case "adverse_event_report": {
           if (
-            !params.source_data.adverse_events
-            || params.source_data.adverse_events.length === 0
+            !params.source_data.adverse_events ||
+            params.source_data.adverse_events.length === 0
           ) {
             return {
               valid: false,
@@ -389,8 +391,8 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
 
       // Constitutional compliance requirements validation
       if (
-        !params.compliance_requirements
-        || params.compliance_requirements.length === 0
+        !params.compliance_requirements ||
+        params.compliance_requirements.length === 0
       ) {
         return {
           valid: false,
@@ -463,35 +465,36 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
   private async extractRegulatoryReferences(
     documentType: RegulatoryDocument["document_type"],
   ): Promise<string[]> {
-    const referenceMap: Record<RegulatoryDocument["document_type"], string[]> = {
-      compliance_report: [
-        "RDC nº 302/2005 - Regulamento Técnico para funcionamento de Laboratórios Clínicos",
-        "RDC nº 63/2011 - Requisitos de Boas Práticas de Funcionamento",
-        "Lei nº 6.360/1976 - Vigilância Sanitária",
-        "Constituição Federal Art. 196 - Direito à Saúde",
-      ],
-      adverse_event_report: [
-        "RDC nº 4/2009 - Notificação de Eventos Adversos",
-        "Lei nº 6.360/1976 - Vigilância Sanitária",
-        "Portaria nº 1.660/2009 - Sistema de Notificação e Investigação",
-        "Constituição Federal Art. 196 - Proteção à Saúde Pública",
-      ],
-      inspection_response: [
-        "Lei nº 9.782/1999 - Sistema Nacional de Vigilância Sanitária",
-        "RDC nº 302/2005 - Funcionamento de Laboratórios",
-        "Constituição Federal Art. 200 - Competências do SUS",
-      ],
-      renewal_application: [
-        "Lei nº 6.360/1976 - Registro de Produtos",
-        "RDC nº 7/2015 - Produtos de Higiene Pessoal",
-        "Constituição Federal Art. 196 - Direito à Saúde",
-      ],
-      safety_assessment: [
-        "RDC nº 7/2015 - Segurança de Produtos Cosméticos",
-        "RDC nº 4/2009 - Eventos Adversos",
-        "Constituição Federal Art. 196 - Proteção à Saúde",
-      ],
-    };
+    const referenceMap: Record<RegulatoryDocument["document_type"], string[]> =
+      {
+        compliance_report: [
+          "RDC nº 302/2005 - Regulamento Técnico para funcionamento de Laboratórios Clínicos",
+          "RDC nº 63/2011 - Requisitos de Boas Práticas de Funcionamento",
+          "Lei nº 6.360/1976 - Vigilância Sanitária",
+          "Constituição Federal Art. 196 - Direito à Saúde",
+        ],
+        adverse_event_report: [
+          "RDC nº 4/2009 - Notificação de Eventos Adversos",
+          "Lei nº 6.360/1976 - Vigilância Sanitária",
+          "Portaria nº 1.660/2009 - Sistema de Notificação e Investigação",
+          "Constituição Federal Art. 196 - Proteção à Saúde Pública",
+        ],
+        inspection_response: [
+          "Lei nº 9.782/1999 - Sistema Nacional de Vigilância Sanitária",
+          "RDC nº 302/2005 - Funcionamento de Laboratórios",
+          "Constituição Federal Art. 200 - Competências do SUS",
+        ],
+        renewal_application: [
+          "Lei nº 6.360/1976 - Registro de Produtos",
+          "RDC nº 7/2015 - Produtos de Higiene Pessoal",
+          "Constituição Federal Art. 196 - Direito à Saúde",
+        ],
+        safety_assessment: [
+          "RDC nº 7/2015 - Segurança de Produtos Cosméticos",
+          "RDC nº 4/2009 - Eventos Adversos",
+          "Constituição Federal Art. 196 - Proteção à Saúde",
+        ],
+      };
 
     return referenceMap[documentType] || [];
   } /**
@@ -551,17 +554,15 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
     return products
       .map(
         (product, index) => `
-${
-          index + 1
-        }. ${product.name || "Produto"}
+${index + 1}. ${product.name || "Produto"}
    - Registro ANVISA: ${product.anvisa_registration_number || "N/A"}
    - Categoria: ${product.product_category || "N/A"}
    - Status: ${product.registration_status || "N/A"}
    - Validade: ${
-          product.registration_expiry
-            ? new Date(product.registration_expiry).toLocaleDateString("pt-BR")
-            : "N/A"
-        }
+     product.registration_expiry
+       ? new Date(product.registration_expiry).toLocaleDateString("pt-BR")
+       : "N/A"
+   }
 `,
       )
       .join("\n");
@@ -714,7 +715,7 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
     updates: Partial<RegulatoryDocument>,
     userId: string,
     reason: string,
-  ): Promise<{ success: boolean; data?: RegulatoryDocument; error?: string; }> {
+  ): Promise<{ success: boolean; data?: RegulatoryDocument; error?: string }> {
     try {
       // Get current document for audit trail
       const { data: currentDoc, error: fetchError } = await this.supabase
@@ -831,7 +832,7 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
   async submitToAnvisa(
     documentId: string,
     userId: string,
-  ): Promise<{ success: boolean; data?: unknown; error?: string; }> {
+  ): Promise<{ success: boolean; data?: unknown; error?: string }> {
     try {
       // Get document for submission validation
       const { data: document, error: fetchError } = await this.supabase
@@ -855,7 +856,8 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
       if (document.compliance_score < 9.9) {
         return {
           success: false,
-          error: "Document does not meet constitutional compliance standards for submission",
+          error:
+            "Document does not meet constitutional compliance standards for submission",
         };
       }
 
@@ -914,9 +916,7 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
     return inspectionData.items
       .map(
         (item: unknown, index: number) => `
-${
-          index + 1
-        }. ${item.description || "Item de inspeção"}
+${index + 1}. ${item.description || "Item de inspeção"}
    Status: ${item.status || "Em análise"}
    Observações: ${item.observations || "Nenhuma observação"}
 `,
@@ -950,16 +950,14 @@ Fase 3 (90 dias): Auditoria interna e confirmação de conformidade constitucion
     return products
       .map(
         (product, index) => `
-${
-          index + 1
-        }. ${product.name || "Produto"}
+${index + 1}. ${product.name || "Produto"}
    Registro Atual: ${product.anvisa_registration_number || "N/A"}
    Categoria: ${product.product_category || "N/A"}
    Validade Atual: ${
-          product.registration_expiry
-            ? new Date(product.registration_expiry).toLocaleDateString("pt-BR")
-            : "N/A"
-        }
+     product.registration_expiry
+       ? new Date(product.registration_expiry).toLocaleDateString("pt-BR")
+       : "N/A"
+   }
 `,
       )
       .join("\n");
@@ -973,9 +971,7 @@ ${
     return assessments
       .map(
         (assessment, index) => `
-${
-          index + 1
-        }. ${assessment.product_name || "Produto"}
+${index + 1}. ${assessment.product_name || "Produto"}
    Categoria de Risco: ${assessment.risk_category || "Baixo"}
    Resultado: ${assessment.safety_result || "Aprovado"}
    Observações: ${assessment.observations || "Conforme padrões de segurança"}

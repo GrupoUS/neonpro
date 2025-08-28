@@ -15,24 +15,28 @@ This flow documents the complete authentication and authorization processes for 
 ## Implementation Guidelines
 
 ### Phase 1: Initial Authentication
+
 1. **Credential Validation**: Verify username/password against secure database
 2. **Professional License Check**: Validate active CFM registration
 3. **Multi-Factor Authentication**: SMS/Email/App-based 2FA verification
 4. **Device Registration**: Register trusted devices for future access
 
 ### Phase 2: Authorization & Role Assignment
+
 1. **Role Determination**: Assign roles based on professional credentials
 2. **Clinic Association**: Link professional to authorized clinics
 3. **Permission Matrix**: Apply role-based access control permissions
 4. **Scope Definition**: Define data access boundaries per clinic
 
 ### Phase 3: Session Management
+
 1. **JWT Token Generation**: Create secure JWT with professional context
 2. **Refresh Token Setup**: Establish long-term refresh capability
 3. **Session Storage**: Store session data with expiration tracking
 4. **Audit Logging**: Record all authentication events
 
 ### Phase 4: Ongoing Validation
+
 1. **Token Refresh**: Automatic token renewal before expiration
 2. **Activity Monitoring**: Track professional activity patterns
 3. **Security Validation**: Continuous security posture assessment
@@ -50,17 +54,17 @@ sequenceDiagram
     participant DB as Database
     participant TS as Token Service
     participant AL as Audit Logger
-    
+
     %% Phase 1: Initial Authentication
     U->>AF: Enter credentials
     AF->>AS: Submit login request
     AS->>DB: Validate credentials
     DB-->>AS: User data + status
-    
+
     alt Credentials Valid
         AS->>CFM: Validate professional license
         CFM-->>AS: License validation result
-        
+
         alt License Valid
             AS->>MFA: Initiate 2FA
             MFA->>U: Send 2FA code
@@ -68,34 +72,34 @@ sequenceDiagram
             AF->>AS: Submit 2FA code
             AS->>MFA: Validate 2FA code
             MFA-->>AS: 2FA validation result
-            
+
             alt 2FA Valid
                 %% Phase 2: Authorization
                 AS->>DB: Load professional roles
                 AS->>DB: Load clinic associations
                 DB-->>AS: Role and clinic data
-                
+
                 %% Phase 3: Token Generation
                 AS->>TS: Generate JWT token
                 TS->>TS: Create token with professional context
                 TS-->>AS: JWT + Refresh token
-                
+
                 AS->>AL: Log successful authentication
                 AS-->>AF: Authentication successful + tokens
                 AF-->>U: Redirect to dashboard
-                
+
             else 2FA Invalid
                 AS->>AL: Log failed 2FA attempt
                 AS-->>AF: 2FA failed
                 AF-->>U: Show 2FA error
             end
-            
+
         else License Invalid
             AS->>AL: Log invalid license attempt
             AS-->>AF: License validation failed
             AF-->>U: Show license error + renewal link
         end
-        
+
     else Credentials Invalid
         AS->>AL: Log failed login attempt
         AS-->>AF: Invalid credentials
@@ -129,7 +133,7 @@ sequenceDiagram
     participant AS as Auth Service
     participant CM as Clinic Manager
     participant DB as Database
-    
+
     P->>AS: Request clinic switch
     AS->>DB: Validate clinic associations
     DB-->>AS: Available clinics list
@@ -146,7 +150,8 @@ sequenceDiagram
 ## Error Handling
 
 ### Authentication Errors
-- **Invalid Credentials**: 
+
+- **Invalid Credentials**:
   - Action: Show generic error message
   - Security: Log attempt with IP/timestamp
   - Recovery: Allow retry with rate limiting
@@ -162,11 +167,13 @@ sequenceDiagram
   - Device Issues: Provide backup authentication options
 
 ### Authorization Errors
+
 - **Insufficient Permissions**: Show access denied with appeal process
 - **Clinic Access Denied**: Display available clinics or contact admin
 - **Role Assignment Issues**: Temporary access with manual review flag
 
 ### Session Errors
+
 - **Token Expiration**: Automatic silent renewal if refresh token valid
 - **Token Tampering**: Immediate session termination + security alert
 - **Concurrent Sessions**: Allow with notification or enforce single session
@@ -174,22 +181,25 @@ sequenceDiagram
 ## Security & Audit
 
 ### Authentication Security
+
 - **Password Requirements**: Minimum 12 chars, complexity requirements
 - **Account Lockout**: 5 failed attempts = 15-minute lockout
 - **Device Fingerprinting**: Track device characteristics for anomaly detection
 - **IP Restriction**: Optional IP whitelisting for high-security roles
 
 ### Session Security
-- **JWT Security**: 
+
+- **JWT Security**:
   - Signing: RS256 with rotating keys
   - Expiration: 15-minute access tokens
   - Refresh: 30-day refresh tokens with rotation
-- **Session Hijacking Prevention**: 
+- **Session Hijacking Prevention**:
   - IP binding optional
   - User agent validation
   - Activity pattern analysis
 
 ### Audit Requirements
+
 - **Authentication Events**: All login attempts (success/failure)
 - **Authorization Events**: Role assignments, permission changes
 - **Session Events**: Token generation, refresh, expiration
@@ -198,6 +208,7 @@ sequenceDiagram
 ## Token Management
 
 ### JWT Token Structure
+
 ```json
 {
   "header": {
@@ -221,6 +232,7 @@ sequenceDiagram
 ```
 
 ### Token Refresh Strategy
+
 - **Sliding Expiration**: Extend session for active users
 - **Absolute Timeout**: Maximum session duration (8 hours for regular, 4 hours for admin)
 - **Refresh Rotation**: New refresh token issued with each refresh
@@ -229,12 +241,14 @@ sequenceDiagram
 ## Performance Considerations
 
 ### Target Metrics
+
 - **Login Time**: < 3 seconds (excluding 2FA input time)
 - **Token Validation**: < 100ms
 - **License Verification**: < 2 seconds
 - **Session Refresh**: < 500ms
 
 ### Optimization Strategies
+
 - **Credential Caching**: Hash-based caching for frequently accessed credentials
 - **License Cache**: 1-hour TTL for CFM license validation
 - **Token Caching**: Redis-based token validation cache
@@ -243,12 +257,14 @@ sequenceDiagram
 ## Integration Points
 
 ### External Services
+
 - **CFM Integration**: Real-time professional license validation
 - **SMS Provider**: 2FA code delivery
 - **Email Service**: Authentication notifications and alerts
 - **Device Intelligence**: Fraud detection and device fingerprinting
 
 ### Internal Services
+
 - **Audit Service**: Centralized authentication event logging
 - **Permission Service**: Role-based access control management
 - **Session Service**: Distributed session state management
@@ -257,12 +273,14 @@ sequenceDiagram
 ## Emergency Procedures
 
 ### Account Recovery
+
 1. **Identity Verification**: Multi-channel identity confirmation
 2. **Temporary Access**: Limited-scope access for critical operations
 3. **Security Review**: Mandatory security assessment before full restoration
 4. **Enhanced Monitoring**: 30-day enhanced audit period
 
 ### Security Breach Response
+
 1. **Immediate Lockdown**: All affected accounts locked immediately
 2. **Token Revocation**: Mass token revocation and re-authentication required
 3. **Audit Investigation**: Full security audit of affected accounts

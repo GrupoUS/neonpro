@@ -63,9 +63,10 @@ function useARCapabilities(): ARCapabilities {
       }
 
       // Detect mobile device
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent,
-      );
+      const isMobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent,
+        );
 
       // Check WebXR support
       const webXRSupported = "xr" in navigator;
@@ -182,27 +183,25 @@ function ARFallback({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="aspect-video bg-gradient-to-br from-orange-50 to-red-50 rounded-lg flex items-center justify-center">
-          {isViewing
-            ? (
-              <div className="text-center">
-                <div className="w-24 h-24 bg-orange-200 rounded-full animate-pulse mb-4 mx-auto" />
-                <div className="text-lg font-semibold">
-                  Interactive 360° Model
-                </div>
-                <div className="text-sm text-gray-600 mt-2">
-                  Pinch to zoom, drag to rotate
-                </div>
+          {isViewing ? (
+            <div className="text-center">
+              <div className="w-24 h-24 bg-orange-200 rounded-full animate-pulse mb-4 mx-auto" />
+              <div className="text-lg font-semibold">
+                Interactive 360° Model
               </div>
-            )
-            : (
-              <Button
-                onClick={() => setIsViewing(true)}
-                className="bg-orange-600 hover:bg-orange-700"
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Start 360° Preview
-              </Button>
-            )}
+              <div className="text-sm text-gray-600 mt-2">
+                Pinch to zoom, drag to rotate
+              </div>
+            </div>
+          ) : (
+            <Button
+              onClick={() => setIsViewing(true)}
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              Start 360° Preview
+            </Button>
+          )}
         </div>
 
         {isViewing && (
@@ -271,7 +270,8 @@ export default function WebARViewer({
           <Alert>
             <Smartphone className="h-4 w-4" />
             <AlertDescription>
-              For the best AR experience, please open this on a mobile device with camera access.
+              For the best AR experience, please open this on a mobile device
+              with camera access.
             </AlertDescription>
           </Alert>
 
@@ -320,11 +320,11 @@ export default function WebARViewer({
                 disabled={arSession.isLoading}
                 className="bg-green-600 hover:bg-green-700"
               >
-                {arSession.isLoading
-                  ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  )
-                  : <Zap className="w-4 h-4 mr-2" />}
+                {arSession.isLoading ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Zap className="w-4 h-4 mr-2" />
+                )}
                 Start AR
               </Button>
             </div>

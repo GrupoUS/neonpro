@@ -102,7 +102,7 @@ export class AuthService {
     }
   }
 
-  async logout(): Promise<{ error?: string; }> {
+  async logout(): Promise<{ error?: string }> {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
@@ -116,7 +116,7 @@ export class AuthService {
     }
   }
 
-  async getCurrentUser(): Promise<{ user?: AuthUser; error?: string; }> {
+  async getCurrentUser(): Promise<{ user?: AuthUser; error?: string }> {
     try {
       const {
         data: { user },
@@ -148,7 +148,7 @@ export class AuthService {
     }
   }
 
-  async resetPassword(email: string): Promise<{ error?: string; }> {
+  async resetPassword(email: string): Promise<{ error?: string }> {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,

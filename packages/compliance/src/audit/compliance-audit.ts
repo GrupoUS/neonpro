@@ -8,7 +8,11 @@
 import { HealthcareRegulation } from "../types";
 import type { ComplianceScore } from "../types";
 import { AuditSeverity } from "./types";
-import type { ComplianceActionItem, ComplianceAuditFinding, ComplianceAuditReport } from "./types";
+import type {
+  ComplianceActionItem,
+  ComplianceAuditFinding,
+  ComplianceAuditReport,
+} from "./types";
 
 /**
  * Constitutional Compliance Audit Service
@@ -60,10 +64,8 @@ export class ComplianceAuditService {
       let totalScore = 0;
 
       for (const reg of regulations) {
-        const { findings, actionItems, score, regRecommendations } = await this.auditRegulation(
-          tenantId,
-          reg,
-        );
+        const { findings, actionItems, score, regRecommendations } =
+          await this.auditRegulation(tenantId, reg);
         allFindings.push(...findings);
         allActionItems.push(...actionItems);
         recommendations.push(...regRecommendations);
@@ -429,7 +431,7 @@ export class ComplianceAuditService {
   async updateReportStatus(
     reportId: string,
     status: "DRAFT" | "FINAL" | "APPROVED",
-  ): Promise<{ success: boolean; error?: string; }> {
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const { error } = await this.supabaseClient
         .from("compliance_audit_reports")

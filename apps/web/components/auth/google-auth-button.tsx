@@ -71,8 +71,8 @@ export function GoogleAuthButton({
       {isLoading
         ? "Carregando..."
         : mode === "signin"
-        ? "Entrar com Google"
-        : "Cadastrar com Google"}
+          ? "Entrar com Google"
+          : "Cadastrar com Google"}
     </Button>
   );
 }

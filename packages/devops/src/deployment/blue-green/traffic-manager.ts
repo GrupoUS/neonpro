@@ -24,7 +24,7 @@ export class TrafficManager {
   private currentConfig: TrafficConfig | null = undefined;
   private readonly trafficHistory: TrafficStatus[] = [];
 
-  constructor(private readonly config: { maxHistorySize: number; }) {}
+  constructor(private readonly config: { maxHistorySize: number }) {}
 
   /**
    * Route traffic between blue and green environments

@@ -74,7 +74,8 @@ async function verifyCompliance() {
     }
 
     // Overall compliance status
-    results.overall = results.lgpd.status && results.anvisa.status && results.cfm.status;
+    results.overall =
+      results.lgpd.status && results.anvisa.status && results.cfm.status;
 
     // Generate compliance report
     generateComplianceReport(results);

@@ -52,13 +52,14 @@ export async function POST(request: NextRequest) {
     );
     const riskScore = (patientIdNum % 100) / 100;
 
-    const riskCategory: "low" | "medium" | "high" | "very_high" = riskScore < 0.3
-      ? "low"
-      : riskScore < 0.6
-      ? "medium"
-      : riskScore < 0.8
-      ? "high"
-      : "very_high";
+    const riskCategory: "low" | "medium" | "high" | "very_high" =
+      riskScore < 0.3
+        ? "low"
+        : riskScore < 0.6
+          ? "medium"
+          : riskScore < 0.8
+            ? "high"
+            : "very_high";
 
     const prediction = {
       patientId: predictionRequest.patientId,
@@ -79,9 +80,10 @@ export async function POST(request: NextRequest) {
       recommendations: [
         {
           actionType: "reminder" as const,
-          priority: riskCategory === "very_high"
-            ? ("urgent" as const)
-            : ("medium" as const),
+          priority:
+            riskCategory === "very_high"
+              ? ("urgent" as const)
+              : ("medium" as const),
           description: "Ligação de confirmação recomendada",
           estimatedImpact: 0.35,
           implementationCost: "low" as const,

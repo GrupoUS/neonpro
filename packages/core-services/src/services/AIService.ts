@@ -747,7 +747,8 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
           },
           confidence: 0.84,
           modelVersion: "risk_v2.1.0",
-          explanation: "Risco moderado devido a fatores de idade e histórico médico",
+          explanation:
+            "Risco moderado devido a fatores de idade e histórico médico",
           recommendations: ["Monitoramento regular", "Exames preventivos"],
           featuresUsed: ["age", "chronicConditions", "vitalSigns"],
           modelAccuracy: 0.88,
@@ -832,8 +833,8 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
   protected async initialize(): Promise<void> {
     // Validate environment variables
     if (
-      !process.env.OPENAI_API_KEY
-      && this.modelConfigs.get("default")?.provider === "openai"
+      !process.env.OPENAI_API_KEY &&
+      this.modelConfigs.get("default")?.provider === "openai"
     ) {
     }
 

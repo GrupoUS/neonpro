@@ -137,7 +137,8 @@ export class ServiceConstitution {
     string,
     ComplianceRequirement[]
   > = new Map();
-  private readonly governanceMetrics: Map<string, GovernanceMetrics> = new Map();
+  private readonly governanceMetrics: Map<string, GovernanceMetrics> =
+    new Map();
 
   // Real-time monitoring
   private readonly monitoringIntervals: Map<string, NodeJS.Timeout> = new Map();
@@ -217,7 +218,7 @@ export class ServiceConstitution {
       }
 
       const validatedRequirements = (requirements || []).map((req) =>
-        ComplianceRequirementSchema.parse(req)
+        ComplianceRequirementSchema.parse(req),
       );
 
       this.complianceRequirements.set(framework, validatedRequirements);
@@ -508,10 +509,10 @@ export class ServiceConstitution {
     context: GovernanceContext,
   ): Promise<boolean> {
     return (
-      context.operation.includes("procedure")
-      && (context.operation.includes("create")
-        || context.operation.includes("update")
-        || context.operation.includes("delete"))
+      context.operation.includes("procedure") &&
+      (context.operation.includes("create") ||
+        context.operation.includes("update") ||
+        context.operation.includes("delete"))
     );
   }
 
@@ -547,8 +548,9 @@ export class ServiceConstitution {
       return true; // Violation: medical action by non-professional
     }
 
-    const licenseExpired = professional.cfm_license_expiry
-      && new Date(professional.cfm_license_expiry) < new Date();
+    const licenseExpired =
+      professional.cfm_license_expiry &&
+      new Date(professional.cfm_license_expiry) < new Date();
 
     return !professional.cfm_license_valid || licenseExpired;
   }
@@ -721,7 +723,8 @@ export class ServiceConstitution {
       0,
     );
     const criticalViolations = results.reduce(
-      (sum, r) => sum + r.violations.filter((v) => v.severity === "CRITICAL").length,
+      (sum, r) =>
+        sum + r.violations.filter((v) => v.severity === "CRITICAL").length,
       0,
     );
     const autoRemediations = results.reduce(
@@ -812,10 +815,9 @@ export class ServiceConstitution {
         await this.sendGovernanceAlert({
           serviceId,
           severity: "HIGH",
-          message:
-            `Service ${serviceId} has governance issues: ${metrics.criticalViolations} critical violations, ${
-              metrics.policyCompliance.toFixed(1)
-            }% compliance`,
+          message: `Service ${serviceId} has governance issues: ${metrics.criticalViolations} critical violations, ${metrics.policyCompliance.toFixed(
+            1,
+          )}% compliance`,
           metrics,
         });
       }
@@ -866,8 +868,8 @@ export class ServiceConstitution {
       status: "HEALTHY" | "WARNING" | "CRITICAL";
     }[];
     trends: {
-      compliance: { date: string; value: number; }[];
-      violations: { date: string; value: number; }[];
+      compliance: { date: string; value: number }[];
+      violations: { date: string; value: number }[];
     };
     alerts: {
       id: string;
@@ -916,8 +918,8 @@ export class ServiceConstitution {
     }));
 
     const { length: totalServices } = services;
-    const averageCompliance = services.reduce((sum, s) => sum + s.compliance, 0) / totalServices
-      || 0;
+    const averageCompliance =
+      services.reduce((sum, s) => sum + s.compliance, 0) / totalServices || 0;
     const totalViolations = services.reduce((sum, s) => sum + s.violations, 0);
     const criticalIssues = services.filter(
       (s) => s.status === "CRITICAL",
@@ -976,7 +978,7 @@ export class ServiceConstitution {
   private generateTrendData(
     metrics: unknown[],
     field: keyof GovernanceMetrics,
-  ): { date: string; value: number; }[] {
+  ): { date: string; value: number }[] {
     // Group by date and calculate averages
     const daily = new Map<string, number[]>();
 

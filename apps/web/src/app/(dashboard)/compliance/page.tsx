@@ -2,7 +2,13 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
   AlertTriangle,
@@ -29,7 +35,8 @@ const complianceItems = [
   {
     id: "anvisa",
     title: "ANVISA - Regulamentação Sanitária",
-    description: "Conformidade com normas da Agência Nacional de Vigilância Sanitária",
+    description:
+      "Conformidade com normas da Agência Nacional de Vigilância Sanitária",
     status: "warning",
     progress: 78,
     lastCheck: "2024-01-10",
@@ -101,7 +108,8 @@ const getCategoryIcon = (category: string) => {
 
 export default function CompliancePage() {
   const overallScore = Math.round(
-    complianceItems.reduce((acc, item) => acc + item.progress, 0) / complianceItems.length,
+    complianceItems.reduce((acc, item) => acc + item.progress, 0) /
+      complianceItems.length,
   );
 
   return (
@@ -141,7 +149,9 @@ export default function CompliancePage() {
               <Progress value={overallScore} className="h-2" />
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-gray-900">{overallScore}%</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {overallScore}%
+              </p>
               <p className="text-sm text-gray-500">de 100%</p>
             </div>
           </div>
@@ -159,7 +169,11 @@ export default function CompliancePage() {
               <div className="ml-5">
                 <p className="text-sm font-medium text-gray-500">Conforme</p>
                 <p className="text-lg font-medium text-gray-900">
-                  {complianceItems.filter(item => item.status === "compliant").length}
+                  {
+                    complianceItems.filter(
+                      (item) => item.status === "compliant",
+                    ).length
+                  }
                 </p>
               </div>
             </div>
@@ -175,7 +189,10 @@ export default function CompliancePage() {
               <div className="ml-5">
                 <p className="text-sm font-medium text-gray-500">Atenção</p>
                 <p className="text-lg font-medium text-gray-900">
-                  {complianceItems.filter(item => item.status === "warning").length}
+                  {
+                    complianceItems.filter((item) => item.status === "warning")
+                      .length
+                  }
                 </p>
               </div>
             </div>
@@ -191,7 +208,10 @@ export default function CompliancePage() {
               <div className="ml-5">
                 <p className="text-sm font-medium text-gray-500">Crítico</p>
                 <p className="text-lg font-medium text-gray-900">
-                  {complianceItems.filter(item => item.status === "critical").length}
+                  {
+                    complianceItems.filter((item) => item.status === "critical")
+                      .length
+                  }
                 </p>
               </div>
             </div>
@@ -205,7 +225,9 @@ export default function CompliancePage() {
                 <FileText className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-5">
-                <p className="text-sm font-medium text-gray-500">Total Issues</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Total Issues
+                </p>
                 <p className="text-lg font-medium text-gray-900">
                   {complianceItems.reduce((acc, item) => acc + item.issues, 0)}
                 </p>
@@ -237,7 +259,9 @@ export default function CompliancePage() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center space-x-2">
-                        <h3 className="font-medium text-gray-900">{item.title}</h3>
+                        <h3 className="font-medium text-gray-900">
+                          {item.title}
+                        </h3>
                         {getStatusIcon(item.status)}
                       </div>
                       <p className="text-sm text-gray-500 mt-1">

@@ -27,8 +27,8 @@ async function testPrismaSupabaseConnection() {
     try {
     } catch {}
     try {
-      const result = await prisma
-        .$queryRaw`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name LIMIT 10`;
+      const result =
+        await prisma.$queryRaw`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name LIMIT 10`;
       result.forEach((_row, _i) => {});
     } catch {}
   } catch (error) {

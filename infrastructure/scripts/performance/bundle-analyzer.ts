@@ -65,11 +65,12 @@ export async function analyzeBundleSize(): Promise<BundleStats> {
  */
 function parseBuildOutput(output: string): unknown {
   const lines = output.split("\n");
-  const sizeRegex = /│\s*(\S+)\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│/u;
+  const sizeRegex =
+    /│\s*(\S+)\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│/u;
 
   let totalSize = 0;
   let gzippedSize = 0;
-  const chunks: Array<{ name: string; size: number; modules: string[]; }> = [];
+  const chunks: Array<{ name: string; size: number; modules: string[] }> = [];
 
   for (const line of lines) {
     const match = line.match(sizeRegex);
@@ -114,11 +115,9 @@ function generateRecommendations(stats: unknown): string[] {
   const largeChunks = stats.chunks.filter((chunk: unknown) => chunk.size > 200);
   if (largeChunks.length > 0) {
     recommendations.push(
-      `📦 Large chunks detected: ${
-        largeChunks
-          .map((c: unknown) => `${c.name} (${c.size}kB)`)
-          .join(", ")
-      }. Consider splitting these chunks.`,
+      `📦 Large chunks detected: ${largeChunks
+        .map((c: unknown) => `${c.name} (${c.size}kB)`)
+        .join(", ")}. Consider splitting these chunks.`,
     );
   }
 
@@ -126,11 +125,9 @@ function generateRecommendations(stats: unknown): string[] {
   const compressionRatio = stats.gzippedSize / stats.totalSize;
   if (compressionRatio > 0.7) {
     recommendations.push(
-      `🗜️ Poor compression ratio (${
-        Math.round(
-          compressionRatio * 100,
-        )
-      }%). Check for repetitive code or large JSON files.`,
+      `🗜️ Poor compression ratio (${Math.round(
+        compressionRatio * 100,
+      )}%). Check for repetitive code or large JSON files.`,
     );
   }
 

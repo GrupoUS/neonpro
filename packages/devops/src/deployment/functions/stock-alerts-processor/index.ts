@@ -3,7 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 interface AlertConfig {
@@ -72,7 +73,8 @@ serve(async (req) => {
     ];
 
     for (const clinicId of clinicIds) {
-      const clinicConfigs = alertConfigs?.filter((config) => config.clinic_id === clinicId) || [];
+      const clinicConfigs =
+        alertConfigs?.filter((config) => config.clinic_id === clinicId) || [];
 
       // Get current stock inventory for the clinic
       const { data: inventory, error: inventoryError } = await supabase
@@ -101,16 +103,17 @@ serve(async (req) => {
 
       // Process each alert configuration
       for (const config of clinicConfigs) {
-        const relevantProducts = inventory?.filter((item) => {
-          if (config.product_id) {
-            return item.product_id === config.product_id;
-          }
-          if (config.category_id) {
-            // Would need to join with categories - for now include all
+        const relevantProducts =
+          inventory?.filter((item) => {
+            if (config.product_id) {
+              return item.product_id === config.product_id;
+            }
+            if (config.category_id) {
+              // Would need to join with categories - for now include all
+              return true;
+            }
             return true;
-          }
-          return true;
-        }) || [];
+          }) || [];
 
         // Generate alerts based on type
         for (const product of relevantProducts) {
@@ -131,7 +134,8 @@ serve(async (req) => {
 
       const existingKeys = new Set(
         existingAlerts?.map(
-          (alert) => `${alert.clinic_id}-${alert.product_id}-${alert.alert_type}`,
+          (alert) =>
+            `${alert.clinic_id}-${alert.product_id}-${alert.alert_type}`,
         ) || [],
       );
 
@@ -158,8 +162,8 @@ serve(async (req) => {
             (c) => c.id === alert.alert_config_id,
           );
           if (
-            config?.notification_channels
-            && config.notification_channels.length > 0
+            config?.notification_channels &&
+            config.notification_channels.length > 0
           ) {
             notificationQueue.push({
               alert,
@@ -214,8 +218,8 @@ async function generateAlertsForProduct(
   switch (config.alert_type) {
     case "low_stock": {
       if (
-        config.threshold_unit === "quantity"
-        && product.quantity_available <= config.threshold_value
+        config.threshold_unit === "quantity" &&
+        product.quantity_available <= config.threshold_value
       ) {
         alerts.push({
           clinic_id: config.clinic_id,
@@ -291,8 +295,8 @@ async function generateAlertsForProduct(
 
     case "overstock": {
       if (
-        config.threshold_unit === "quantity"
-        && product.quantity_available >= config.threshold_value
+        config.threshold_unit === "quantity" &&
+        product.quantity_available >= config.threshold_value
       ) {
         alerts.push({
           clinic_id: config.clinic_id,
@@ -315,7 +319,10 @@ async function generateAlertsForProduct(
   return alerts;
 }
 
-async function updatePerformanceMetrics(supabase: unknown, clinicIds: string[]) {
+async function updatePerformanceMetrics(
+  supabase: unknown,
+  clinicIds: string[],
+) {
   for (const clinicId of clinicIds) {
     try {
       // Calculate daily metrics
@@ -333,7 +340,8 @@ async function updatePerformanceMetrics(supabase: unknown, clinicIds: string[]) 
       }
 
       const totalValue = inventory.reduce(
-        (sum: number, item: unknown) => sum + item.quantity_available * item.unit_cost,
+        (sum: number, item: unknown) =>
+          sum + item.quantity_available * item.unit_cost,
         0,
       );
 

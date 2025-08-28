@@ -201,10 +201,7 @@ export class CacheManagementService extends EnhancedAIService<
       const expiresAt = new Date(data.expires_at);
       if (expiresAt <= now) {
         // Delete expired entry
-        await this.supabase
-          .from(this.CACHE_TABLE)
-          .delete()
-          .eq("key", fullKey);
+        await this.supabase.from(this.CACHE_TABLE).delete().eq("key", fullKey);
 
         this.incrementStat("cache_misses");
         return {
@@ -445,7 +442,8 @@ export class CacheManagementService extends EnhancedAIService<
       });
 
       // Get runtime statistics
-      const hitCount = this.getStat("cache_hits") + this.getStat("db_cache_hits");
+      const hitCount =
+        this.getStat("cache_hits") + this.getStat("db_cache_hits");
       const missCount = this.getStat("cache_misses");
       const totalRequests = hitCount + missCount;
       const hitRate = totalRequests > 0 ? (hitCount / totalRequests) * 100 : 0;
@@ -458,7 +456,8 @@ export class CacheManagementService extends EnhancedAIService<
         miss_rate_percentage: missRate,
         average_ttl_seconds: this.DEFAULT_TTL, // Could be calculated from actual data
         performance: {
-          hits_last_hour: this.getStat("cache_hits") + this.getStat("db_cache_hits"),
+          hits_last_hour:
+            this.getStat("cache_hits") + this.getStat("db_cache_hits"),
           misses_last_hour: this.getStat("cache_misses"),
           sets_last_hour: this.getStat("cache_sets"),
           deletes_last_hour: this.getStat("cache_deletes"),
@@ -533,7 +532,9 @@ export class CacheManagementService extends EnhancedAIService<
 
         if (expiresAt > now) {
           // Find original key
-          const originalKey = input.keys?.find(key => `${namespace}:${key}` === item.key);
+          const originalKey = input.keys?.find(
+            (key) => `${namespace}:${key}` === item.key,
+          );
           if (originalKey) {
             values[originalKey] = JSON.parse(item.value);
           }
@@ -560,7 +561,7 @@ export class CacheManagementService extends EnhancedAIService<
     }
 
     const namespace = input.namespace || "default";
-    const results: { key: string; success: boolean; error?: string; }[] = [];
+    const results: { key: string; success: boolean; error?: string }[] = [];
 
     const cacheEntries: Partial<CacheEntry>[] = [];
 
@@ -579,7 +580,9 @@ export class CacheManagementService extends EnhancedAIService<
           continue;
         }
 
-        const expiresAt = new Date(Date.now() + ttlSeconds * 1000).toISOString();
+        const expiresAt = new Date(
+          Date.now() + ttlSeconds * 1000,
+        ).toISOString();
 
         cacheEntries.push({
           key: fullKey,
@@ -620,7 +623,7 @@ export class CacheManagementService extends EnhancedAIService<
       }
     } catch (error) {
       // Mark all as failed if bulk operation fails
-      results.forEach(result => {
+      results.forEach((result) => {
         result.success = false;
         result.error = `Bulk operation failed: ${error.message}`;
       });

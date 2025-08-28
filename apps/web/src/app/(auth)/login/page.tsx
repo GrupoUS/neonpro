@@ -47,7 +47,10 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Email
           </label>
           <input
@@ -57,11 +60,16 @@ export default function LoginPage() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="seu@email.com"
           />
-          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+          )}
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Senha
           </label>
           <div className="relative">
@@ -77,13 +85,18 @@ export default function LoginPage() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute inset-y-0 right-0 flex items-center pr-3"
             >
-              {showPassword
-                ? <EyeOff className="h-4 w-4 text-gray-400" />
-                : <Eye className="h-4 w-4 text-gray-400" />}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4 text-gray-400" />
+              ) : (
+                <Eye className="h-4 w-4 text-gray-400" />
+              )}
             </button>
           </div>
-          {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}
-          </p>}
+          {errors.password && (
+            <p className="mt-1 text-sm text-red-600">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         {errors.root && (
@@ -100,7 +113,10 @@ export default function LoginPage() {
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-600">
           Não tem uma conta?{" "}
-          <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link
+            href="/register"
+            className="font-medium text-blue-600 hover:text-blue-500"
+          >
             Cadastre-se aqui
           </Link>
         </p>

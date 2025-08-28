@@ -2,28 +2,28 @@
 
 ## Schema
 
-| Column | Type | Constraints | Default | Description | LGPD Classification |
-|--------|------|-------------|---------|-------------|-------------------|
-| id | uuid | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique professional identifier | Public |
-| clinic_id | uuid | FK, NOT NULL | - | Clinic reference | Organizational Data |
-| user_id | uuid | FK | - | Auth user reference (Supabase Auth) | System Data |
-| full_name | varchar(255) | NOT NULL | - | Professional full name | Personal Data |
-| specialization | varchar(255) | - | - | Medical specialization | Professional Data |
-| license_number | varchar(100) | - | - | Professional license number (CRM, CRO, etc.) | Sensitive Personal Data |
-| phone | varchar(20) | - | - | Contact phone number | Personal Data |
-| email | varchar(255) | - | - | Professional email address | Personal Data |
-| color | varchar(7) | - | '#10B981' | Calendar display color (hex) | Personal Preference |
-| is_active | boolean | - | true | Active professional status | Metadata |
-| can_work_weekends | boolean | - | false | Weekend availability flag | Work Preferences |
-| default_start_time | time | - | '08:00:00' | Default work start time | Work Preferences |
-| default_end_time | time | - | '18:00:00' | Default work end time | Work Preferences |
-| default_break_start | time | - | '12:00:00' | Default lunch break start | Work Preferences |
-| default_break_end | time | - | '13:00:00' | Default lunch break end | Work Preferences |
-| service_type_ids | uuid[] | - | - | Array of service types this professional can perform | Professional Data |
-| created_at | timestamptz | - | now() | Record creation timestamp | Metadata |
-| updated_at | timestamptz | - | now() | Last update timestamp | Metadata |
-| created_by | uuid | FK | - | User who created record | Audit Data |
-| updated_by | uuid | FK | - | User who last updated record | Audit Data |
+| Column              | Type         | Constraints           | Default           | Description                                          | LGPD Classification     |
+| ------------------- | ------------ | --------------------- | ----------------- | ---------------------------------------------------- | ----------------------- |
+| id                  | uuid         | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique professional identifier                       | Public                  |
+| clinic_id           | uuid         | FK, NOT NULL          | -                 | Clinic reference                                     | Organizational Data     |
+| user_id             | uuid         | FK                    | -                 | Auth user reference (Supabase Auth)                  | System Data             |
+| full_name           | varchar(255) | NOT NULL              | -                 | Professional full name                               | Personal Data           |
+| specialization      | varchar(255) | -                     | -                 | Medical specialization                               | Professional Data       |
+| license_number      | varchar(100) | -                     | -                 | Professional license number (CRM, CRO, etc.)         | Sensitive Personal Data |
+| phone               | varchar(20)  | -                     | -                 | Contact phone number                                 | Personal Data           |
+| email               | varchar(255) | -                     | -                 | Professional email address                           | Personal Data           |
+| color               | varchar(7)   | -                     | '#10B981'         | Calendar display color (hex)                         | Personal Preference     |
+| is_active           | boolean      | -                     | true              | Active professional status                           | Metadata                |
+| can_work_weekends   | boolean      | -                     | false             | Weekend availability flag                            | Work Preferences        |
+| default_start_time  | time         | -                     | '08:00:00'        | Default work start time                              | Work Preferences        |
+| default_end_time    | time         | -                     | '18:00:00'        | Default work end time                                | Work Preferences        |
+| default_break_start | time         | -                     | '12:00:00'        | Default lunch break start                            | Work Preferences        |
+| default_break_end   | time         | -                     | '13:00:00'        | Default lunch break end                              | Work Preferences        |
+| service_type_ids    | uuid[]       | -                     | -                 | Array of service types this professional can perform | Professional Data       |
+| created_at          | timestamptz  | -                     | now()             | Record creation timestamp                            | Metadata                |
+| updated_at          | timestamptz  | -                     | now()             | Last update timestamp                                | Metadata                |
+| created_by          | uuid         | FK                    | -                 | User who created record                              | Audit Data              |
+| updated_by          | uuid         | FK                    | -                 | User who last updated record                         | Audit Data              |
 
 ## Advanced Aesthetic Compliance
 
@@ -59,7 +59,7 @@ CREATE POLICY "professionals_own_profile" ON professionals
 CREATE POLICY "clinic_staff_colleagues" ON professionals
   FOR SELECT USING (
     clinic_id IN (
-      SELECT clinic_id FROM professionals 
+      SELECT clinic_id FROM professionals
       WHERE user_id = auth.uid()
     )
   );
@@ -80,7 +80,7 @@ CREATE POLICY "patients_view_professionals" ON professionals
   FOR SELECT USING (
     is_active = true AND
     clinic_id IN (
-      SELECT clinic_id FROM patients 
+      SELECT clinic_id FROM patients
       WHERE auth.uid()::text = id::text
     )
   );
@@ -89,6 +89,7 @@ CREATE POLICY "patients_view_professionals" ON professionals
 ## Professional License Validation
 
 ### Brazilian Professional Councils
+
 - **CRM**: Conselho Regional de Medicina (Medical Doctors)
 - **CRO**: Conselho Regional de Odontologia (Dentists)
 - **COREN**: Conselho Regional de Enfermagem (Nurses)
@@ -97,6 +98,7 @@ CREATE POLICY "patients_view_professionals" ON professionals
 - **CRN**: Conselho Regional de Nutrição (Nutritionists)
 
 ### License Validation Process
+
 ```sql
 -- Automatic license validation trigger
 CREATE TRIGGER professional_license_validation_trigger
@@ -140,12 +142,14 @@ CREATE TRIGGER professional_status_change_trigger
 ## Work Schedule Management
 
 ### Default Schedule Configuration
+
 - **Standard Hours**: 8:00 AM - 6:00 PM (configurable per professional)
 - **Lunch Break**: 12:00 PM - 1:00 PM (configurable)
 - **Weekend Work**: Optional flag for weekend availability
 - **Service Types**: Array of procedures/services professional can perform
 
 ### Integration with Availability System
+
 - Links to `professional_availability` table for detailed scheduling
 - Integration with appointment conflict prevention
 - Real-time availability calculation for booking system
@@ -153,6 +157,7 @@ CREATE TRIGGER professional_status_change_trigger
 ## Performance Optimizations
 
 ### Indexes
+
 ```sql
 -- Core professional queries
 CREATE INDEX idx_professionals_clinic_active ON professionals (clinic_id, is_active);
@@ -167,29 +172,33 @@ CREATE INDEX idx_professionals_name_search ON professionals USING GIN (to_tsvect
 ```
 
 ### Service Type Array Operations
+
 ```sql
 -- Check if professional can perform specific service
-SELECT * FROM professionals 
+SELECT * FROM professionals
 WHERE service_type_ids @> ARRAY['service-uuid']::uuid[];
 
 -- Find professionals for multiple services
-SELECT * FROM professionals 
+SELECT * FROM professionals
 WHERE service_type_ids && ARRAY['service1', 'service2']::uuid[];
 ```
 
 ## Integration Points
 
 ### Authentication System
+
 - **Supabase Auth**: Links to auth.users via user_id
 - **Multi-factor Authentication**: Required for healthcare professionals
 - **Session Management**: Professional activity tracking
 
 ### Professional Council APIs
+
 - **Real-time License Validation**: Integration with Brazilian professional councils
 - **Automatic Status Updates**: License expiration and suspension alerts
 - **Compliance Monitoring**: Continuous professional qualification tracking
 
 ### Scheduling System
+
 - **Availability Management**: Integration with professional_availability table
 - **Conflict Prevention**: Real-time appointment scheduling validation
 - **Workload Balancing**: AI-powered appointment distribution
@@ -197,16 +206,19 @@ WHERE service_type_ids && ARRAY['service1', 'service2']::uuid[];
 ## Security Features
 
 ### Data Protection
+
 - **License Number Encryption**: Sensitive professional credentials protected
 - **Role-based Access**: Granular permissions based on professional role
 - **Audit Logging**: Complete tracking of professional data changes
 
 ### Professional Verification
+
 - **License Validation**: Automatic verification with professional councils
 - **Photo Verification**: Optional professional photo for identification
 - **Digital Signature**: Integration with digital certificate systems
 
 ### Compliance Monitoring
+
 - **CFM Compliance**: Federal Council of Medicine requirements
 - **Professional Ethics**: Code of conduct enforcement
 - **Continuing Education**: Professional development tracking

@@ -42,15 +42,15 @@ export class AestheticFeatureExtractor {
     features.push(
       relevantHistory.length / 5, // Normalized count
       relevantHistory.length > 0
-        ? relevantHistory.reduce((sum, t) => sum + t.satisfaction, 0)
-          / (relevantHistory.length * 10)
+        ? relevantHistory.reduce((sum, t) => sum + t.satisfaction, 0) /
+            (relevantHistory.length * 10)
         : 0,
       relevantHistory.length > 0
         ? relevantHistory.reduce(
-          (sum, t) => sum + t.outcome.effectivenesss,
-          0,
-        )
-          / (relevantHistory.length * 10)
+            (sum, t) => sum + t.outcome.effectivenesss,
+            0,
+          ) /
+            (relevantHistory.length * 10)
         : 0,
       patient.previousTreatments.some((t) => t.complications.length > 0)
         ? 1
@@ -62,8 +62,8 @@ export class AestheticFeatureExtractor {
     features.push(
       this.encodeTreatmentType(treatment.treatmentType),
       treatment.targetAreas.length / 5, // Normalized area count
-      treatment.targetAreas.reduce((sum, area) => sum + area.severity, 0)
-        / (treatment.targetAreas.length * 10),
+      treatment.targetAreas.reduce((sum, area) => sum + area.severity, 0) /
+        (treatment.targetAreas.length * 10),
       this.encodeExpectationLevel(treatment.goals.expectations),
       this.encodeUrgency(treatment.urgency),
       treatment.goals.naturalLook ? 1 : 0,
@@ -201,7 +201,9 @@ export class AestheticFeatureExtractor {
       this.evaluatePhotodamage(patient),
       patient.lifestyle.sunExposure === "high" ? 1 : 0,
       patient.lifestyle.skincare.retinoidUse ? 1 : 0,
-      patient.medicalHistory.medications.some((m) => m.name.includes("photosensitizing"))
+      patient.medicalHistory.medications.some((m) =>
+        m.name.includes("photosensitizing"),
+      )
         ? 1
         : 0,
       // Previous laser experience
@@ -374,8 +376,9 @@ export class AestheticFeatureExtractor {
       (t) => t.type === "botox",
     );
     if (botoxHistory.length > 0) {
-      const avgSatisfaction = botoxHistory.reduce((sum, t) => sum + t.satisfaction, 0)
-        / botoxHistory.length;
+      const avgSatisfaction =
+        botoxHistory.reduce((sum, t) => sum + t.satisfaction, 0) /
+        botoxHistory.length;
       if (avgSatisfaction < 7) {
         activityScore += 0.1; // Low satisfaction may indicate strong muscles
       }
@@ -424,7 +427,7 @@ export class AestheticFeatureExtractor {
 
     // Previous treatment complications increase risk
     const hasAsymmetryHistory = patient.previousTreatments.some((t) =>
-      t.complications.includes("asymmetry")
+      t.complications.includes("asymmetry"),
     );
     if (hasAsymmetryHistory) {
       riskScore += 0.3;
@@ -616,8 +619,8 @@ export class AestheticFeatureExtractor {
     // Allergy history
     const hasRelevantAllergies = patient.medicalHistory.allergies.some(
       (allergy) =>
-        allergy.toLowerCase().includes("hyaluronic")
-        || allergy.toLowerCase().includes("lidocaine"),
+        allergy.toLowerCase().includes("hyaluronic") ||
+        allergy.toLowerCase().includes("lidocaine"),
     );
     if (hasRelevantAllergies) {
       compatibility -= 0.4;
@@ -656,7 +659,7 @@ export class AestheticFeatureExtractor {
     ];
 
     const hasComplexCombination = complexCombinations.some((combo) =>
-      combo.every((area) => areas.includes(area))
+      combo.every((area) => areas.includes(area)),
     );
     if (hasComplexCombination) {
       complexity += 0.2;
@@ -675,9 +678,10 @@ export class AestheticFeatureExtractor {
       jawline: 0.7,
     };
 
-    const avgDifficulty = areas.reduce((sum, area) => {
-      return sum + (difficultyMap[area as keyof typeof difficultyMap] || 0.5);
-    }, 0) / areas.length;
+    const avgDifficulty =
+      areas.reduce((sum, area) => {
+        return sum + (difficultyMap[area as keyof typeof difficultyMap] || 0.5);
+      }, 0) / areas.length;
 
     return avgDifficulty;
   }
@@ -706,7 +710,9 @@ export class AestheticFeatureExtractor {
 
     // Area-specific factors
     const highMaintenanceAreas = new Set(["lips", "nasolabial-folds"]);
-    const hasHighMaintenanceAreas = areas.some((area) => highMaintenanceAreas.has(area));
+    const hasHighMaintenanceAreas = areas.some((area) =>
+      highMaintenanceAreas.has(area),
+    );
     if (hasHighMaintenanceAreas) {
       maintenance += 0.1;
     }
@@ -758,8 +764,8 @@ export class AestheticFeatureExtractor {
     if (
       patient.medicalHistory.conditions.some(
         (c) =>
-          c.name.toLowerCase().includes("thyroid")
-          || c.name.toLowerCase().includes("kidney"),
+          c.name.toLowerCase().includes("thyroid") ||
+          c.name.toLowerCase().includes("kidney"),
       )
     ) {
       proneness += 0.2;
@@ -799,8 +805,8 @@ export class AestheticFeatureExtractor {
     if (
       patient.medicalHistory.conditions.some(
         (c) =>
-          c.name.toLowerCase().includes("eczema")
-          || c.name.toLowerCase().includes("dermatitis"),
+          c.name.toLowerCase().includes("eczema") ||
+          c.name.toLowerCase().includes("dermatitis"),
       )
     ) {
       sensitivity += 0.3;
@@ -826,9 +832,9 @@ export class AestheticFeatureExtractor {
   ): boolean {
     return patient.previousTreatments.some(
       (t) =>
-        t.type === treatmentType
-        && t.notes
-        && areas.some((area) => t.notes.toLowerCase().includes(area)),
+        t.type === treatmentType &&
+        t.notes &&
+        areas.some((area) => t.notes.toLowerCase().includes(area)),
     );
   }
 
@@ -964,8 +970,8 @@ export class AestheticFeatureExtractor {
     // Photosensitizing medications
     const photosensitizingMeds = patient.medicalHistory.medications.filter(
       (m) =>
-        m.name.toLowerCase().includes("tretinoin")
-        || m.name.toLowerCase().includes("doxycycline"),
+        m.name.toLowerCase().includes("tretinoin") ||
+        m.name.toLowerCase().includes("doxycycline"),
     );
     risk += photosensitizingMeds.length * 0.3;
 
@@ -1010,17 +1016,19 @@ export class AestheticFeatureExtractor {
     let careScore = 0.5;
 
     // Previous treatment compliance (estimated from satisfaction scores)
-    const avgSatisfaction = patient.previousTreatments.length > 0
-      ? patient.previousTreatments.reduce(
-        (sum, t) => sum + t.satisfaction,
-        0,
-      ) / patient.previousTreatments.length
-      : 7; // Default assumption
+    const avgSatisfaction =
+      patient.previousTreatments.length > 0
+        ? patient.previousTreatments.reduce(
+            (sum, t) => sum + t.satisfaction,
+            0,
+          ) / patient.previousTreatments.length
+        : 7; // Default assumption
 
     careScore += (avgSatisfaction / 10) * 0.3;
 
     // Skincare routine indicates care level
-    const routineScore = Object.values(patient.lifestyle.skincare).filter(Boolean).length / 6;
+    const routineScore =
+      Object.values(patient.lifestyle.skincare).filter(Boolean).length / 6;
     careScore += routineScore * 0.2;
 
     return Math.min(careScore, 1);
@@ -1060,9 +1068,9 @@ export class AestheticFeatureExtractor {
     // Previous pigmentation issues
     const hasPigmentationHistory = patient.previousTreatments.some(
       (t) =>
-        t.complications.includes("pigmentation")
-        || t.complications.includes("hyperpigmentation")
-        || t.complications.includes("hypopigmentation"),
+        t.complications.includes("pigmentation") ||
+        t.complications.includes("hyperpigmentation") ||
+        t.complications.includes("hypopigmentation"),
     );
     if (hasPigmentationHistory) {
       risk += 0.3;
@@ -1087,8 +1095,8 @@ export class AestheticFeatureExtractor {
     // Previous scarring
     const hasScarHistory = patient.previousTreatments.some(
       (t) =>
-        t.complications.includes("scar")
-        || t.complications.includes("scarring"),
+        t.complications.includes("scar") ||
+        t.complications.includes("scarring"),
     );
     if (hasScarHistory) {
       risk += 0.3;
@@ -1110,7 +1118,7 @@ export class AestheticFeatureExtractor {
 
     // Previous treatment history may indicate tolerance
     const hasMinimalDowntimeTreatments = patient.previousTreatments.some((t) =>
-      ["botox", "dermal-fillers", "microneedling"].includes(t.type)
+      ["botox", "dermal-fillers", "microneedling"].includes(t.type),
     );
     if (hasMinimalDowntimeTreatments) {
       tolerance += 0.2;

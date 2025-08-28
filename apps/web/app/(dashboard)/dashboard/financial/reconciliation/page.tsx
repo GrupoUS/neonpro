@@ -84,8 +84,8 @@ export default function ReconciliationPage() {
         <Alert data-testid="permission-denied-alert" variant="destructive">
           <Shield className="h-4 w-4" />
           <AlertDescription>
-            Permissão insuficiente para acessar dados financeiros. Entre em contato com o
-            administrador da clínica.
+            Permissão insuficiente para acessar dados financeiros. Entre em
+            contato com o administrador da clínica.
           </AlertDescription>
         </Alert>
       </div>
@@ -105,7 +105,8 @@ export default function ReconciliationPage() {
           Reconciliação Financeira
         </h1>
         <p className="text-muted-foreground" data-testid="page-description">
-          Conciliação de pagamentos e procedimentos médicos com conformidade LGPD
+          Conciliação de pagamentos e procedimentos médicos com conformidade
+          LGPD
         </p>
       </div>
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">

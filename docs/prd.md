@@ -29,12 +29,14 @@ Nenhuma plataforma existente combina IA preditiva + compliance brasileiro + work
 ### **Arquitetura IA-First**
 
 **Stack Foundation (Preservado):**
+
 - Next.js 15 com React 19 e App Router
 - Supabase PostgreSQL com Real-time subscriptions
 - Turborepo monorepo com service layer
 - shadcn/ui component library
 
 **AI Enhancement Layer (Novo):**
+
 - OpenAI GPT-4 com otimização português
 - Modelos ML customizados (XGBoost para no-show prediction)
 - Vector database (Pinecone) para RAG
@@ -43,16 +45,19 @@ Nenhuma plataforma existente combina IA preditiva + compliance brasileiro + work
 ### **Desafios Técnicos Específicos**
 
 #### **1. Sistema de Chat Dual Interface**
+
 - **Complexidade:** Interface externa (pacientes) + interna (equipe)
 - **Requisito:** Contexto compartilhado mas permissões diferenciadas
 - **Solução:** Role-based context switching com session management
 
 #### **2. Engine Anti-No-Show ML**
+
 - **Complexidade:** Predição em tempo real com múltiplas variáveis
 - **Requisito:** Integração com sistema de agendamento existente
 - **Solução:** Feature engineering + XGBoost + real-time scoring
 
 #### **3. Compliance Automation**
+
 - **Complexidade:** LGPD + ANVISA + CFM requirements
 - **Requisito:** Audit trails automáticos e relatórios regulatórios
 - **Solução:** Event sourcing + automated compliance monitoring
@@ -64,12 +69,14 @@ Nenhuma plataforma existente combina IA preditiva + compliance brasileiro + work
 ### **Requisitos Funcionais**
 
 #### **Interface Externa (Pacientes)**
+
 - Smart booking com linguagem natural
 - FAQ automatizado em português
 - Suporte 24/7 com handoff para humanos
 - Integração com sistema de agendamento
 
 #### **Interface Interna (Equipe)**
+
 - Consultas em linguagem natural ao banco de dados
 - Análise de histórico do paciente
 - Documentação automatizada
@@ -78,6 +85,7 @@ Nenhuma plataforma existente combina IA preditiva + compliance brasileiro + work
 ### **Especificações Técnicas**
 
 **APIs Core:**
+
 ```typescript
 // External Chat API
 POST /api/v1/chat/external
@@ -102,6 +110,7 @@ POST /api/v1/chat/internal
 ```
 
 **RAG Infrastructure:**
+
 - Vector database (Pinecone) para semantic search
 - Embedding model para contexto português
 - Document store com knowledge base da clínica
@@ -109,11 +118,13 @@ POST /api/v1/chat/internal
 - Hallucination prevention with source attribution
 
 **AI Model Integration:**
+
 - Endpoint for LLM with custom fine-tuning
 - API for real-time context assembly
 - Integration with vector database for RAG
 
 **API Specifications:**
+
 ```typescript
 POST /api/v1/chat/enhanced
 {
@@ -128,6 +139,7 @@ POST /api/v1/chat/enhanced
 ```
 
 **Response Schema:**
+
 ```typescript
 {
   response: string
@@ -143,6 +155,7 @@ POST /api/v1/chat/enhanced
 ```
 
 **API Documentation:**
+
 ```yaml
 POST /api/v1/chat/enhanced
 summary: Enhanced AI Chat with Context Assembly
@@ -228,12 +241,14 @@ requestBody:
 ### **Requisitos Funcionais**
 
 #### **Avaliação de Risco ML**
+
 - Score de risco 0-100% para cada agendamento
 - Análise de padrões comportamentais do paciente
 - Fatores externos (clima, feriados, eventos)
 - Histórico de no-shows e reagendamentos
 
 #### **Intervenções Proativas**
+
 - SMS/WhatsApp personalizados baseados no perfil
 - Ofertas de reagendamento para alto risco (>70%)
 - Lembretes inteligentes com timing otimizado
@@ -242,6 +257,7 @@ requestBody:
 ### **Especificações Técnicas**
 
 **Core ML Architecture:**
+
 - Gradient Boosting (XGBoost) com 92%+ accuracy
 - Real-time scoring (sub-segundo)
 - 47+ features preditivos
@@ -286,6 +302,7 @@ requestBody:
    - Mobile app notification interactions
 
 **Intervention Optimization:**
+
 - **A/B Testing Framework**: Continuous optimization of intervention strategies
 - **Personalization Engine**: Tailored messages based on patient psychology profiles
 - **Multi-channel Coordination**: SMS, email, WhatsApp, and phone call orchestration
@@ -293,7 +310,7 @@ requestBody:
 
 **API Specifications:**
 
-```yaml
+````yaml
 # OpenAPI 3.0 Specification for Engine Anti-No-Show
 
 /api/v1/no-show/risk-assessment:
@@ -378,14 +395,16 @@ POST /api/v1/no-show/interventions
   intervention_type: string
   personalization_data: object
 }
-```
+````
 
 **Dashboard Integration:**
+
 - Indicadores visuais de risco no calendário
 - Alertas automáticos para risco >70%
 - Analytics de ROI das intervenções
 
 **Business Impact:**
+
 - 25% redução em no-shows
 - R$ 1.8M+ proteção anual de receita
 - Otimização de recursos e agenda
@@ -401,6 +420,7 @@ POST /api/v1/no-show/interventions
 **Requisitos Funcionais:**
 
 **LGPD Compliance:**
+
 - Gestão granular de consentimento (tratamento, marketing, analytics)
 - Portal self-service para direitos do titular
 - Retenção automática por 20 anos (prontuários médicos)
@@ -408,12 +428,14 @@ POST /api/v1/no-show/interventions
 - Criptografia end-to-end
 
 **ANVISA Integration:**
+
 - Validação automática de equipamentos registrados
 - Rastreamento de lotes de produtos injetáveis
 - Relatórios de eventos adversos
 - Validação de credenciais profissionais (CFM)
 
 **APIs Core:**
+
 ```typescript
 // Consent Management
 POST /api/v1/compliance/consent
@@ -432,6 +454,7 @@ POST /api/v1/compliance/data-export
 ```
 
 **Monitoramento Automático:**
+
 - Validação de consentimento em tempo real
 - Auditoria de acesso a dados pessoais
 - Alertas de não conformidade
@@ -456,16 +479,19 @@ POST /api/v1/compliance/data-export
 ## 🎯 Tecnologias Core
 
 ### **Engine Anti-No-Show**
+
 - Sistema ML com 92%+ acurácia na prevenção de faltas
 - Intervenções automáticas (SMS, WhatsApp, reagendamento)
 - Impacto: 25% redução no-show = R$ 1.8M+ proteção anual
 
 ### **CRM Comportamental**
+
 - Análise de padrões de comunicação e preferências
 - Otimização de timing de agendamentos
 - Previsão de retenção e lifetime value
 
 ### **Gestão Preditiva de Estoque**
+
 - Previsão de demanda baseada em padrões
 - Reposição automática integrada com fornecedores
 - Otimização de custos e prevenção de desperdícios
@@ -475,18 +501,21 @@ POST /api/v1/compliance/data-export
 ### **Fases de Desenvolvimento**
 
 **Fase 1: Fundação (4-6 semanas)**
+
 - Performance otimizada (<1s load time)
 - Arquitetura mobile-first (PWA)
 - Compliance LGPD/ANVISA
 - Biblioteca de componentes
 
 **Fase 2: Arquitetura Inteligente (6-8 semanas)**
+
 - Schema de dados para IA
 - Autenticação avançada
 - Pipeline de analytics
 - Localização brasileira
 
 **Fase 3: Integração IA (8-12 semanas)**
+
 - Universal AI Chat (24/7 em português)
 - Engine Anti-No-Show (ML com 92%+ acurácia)
 - Dashboard inteligente
@@ -497,12 +526,14 @@ POST /api/v1/compliance/data-export
 ## 🛠 Arquitetura Técnica
 
 ### **Stack Tecnológico Core**
+
 - **Frontend**: Next.js 15, React 19, Tailwind CSS, shadcn/ui
 - **Backend**: Node.js 20+, tRPC, PostgreSQL via Supabase
 - **IA**: OpenAI GPT-5, embeddings, XGBoost para predições
 - **Infraestrutura**: Vercel, Redis, monitoramento Sentry
 
 ### **Estratégia Brownfield**
+
 - Funcionalidades IA como melhorias aditivas
 - Zero breaking changes no sistema existente
 - Rollout gradual com feature flags
@@ -513,12 +544,14 @@ POST /api/v1/compliance/data-export
 ## 📊 Métricas de Sucesso
 
 ### **KPIs Primários**
+
 - **Redução No-Show**: 25% de melhoria
 - **Tempo Resposta IA**: <2 segundos
 - **Acurácia IA**: 90%+ respostas corretas
 - **Eficiência Staff**: 40% redução tarefas administrativas
 
 ### **Qualidade & Performance**
+
 - **Uptime**: 99.9% disponibilidade
 - **Taxa Erro**: <0.1% predições IA
 - **Compliance**: 100% LGPD/ANVISA
@@ -529,12 +562,14 @@ POST /api/v1/compliance/data-export
 ## 🔒 Gestão de Riscos
 
 ### **Mitigação Técnica**
+
 - Deploy zero-downtime com rollback automático
 - Isolamento performance serviços IA
 - Segurança end-to-end por design
 - Auditoria imutável de dados
 
 ### **Mitigação Negócio**
+
 - Treinamento staff abrangente
 - Validação ROI por fase
 - Revisão legal compliance
@@ -545,12 +580,14 @@ POST /api/v1/compliance/data-export
 ## 🚀 Estratégia de Lançamento
 
 ### **Go-to-Market**
+
 - **Programa Piloto**: 10 clínicas selecionadas
 - **Rollout Faseado**: Expansão gradual base existente
 - **Posicionamento**: Primeira plataforma IA-nativa para estética brasileira
 - **Parcerias**: Integração fornecedores e associações
 
 ### **Proposta de Valor**
+
 - ROI quantificado com payback garantido
 - Zero disrupção workflows existentes
 - Vantagem compliance regulatória

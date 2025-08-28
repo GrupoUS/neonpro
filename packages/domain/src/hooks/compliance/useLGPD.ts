@@ -303,7 +303,7 @@ export function useDataSubjectRights() {
   );
 
   const createRequest = useCallback(
-    async (requestData: { request_type: string; description?: string; }) => {
+    async (requestData: { request_type: string; description?: string }) => {
       try {
         const response = await fetch("/api/lgpd/data-subject-rights", {
           method: "POST",
@@ -652,7 +652,7 @@ export function useComplianceAssessment() {
   );
 
   const createAssessment = useCallback(
-    async (assessmentData: { assessment_type: "manual" | "automated"; }) => {
+    async (assessmentData: { assessment_type: "manual" | "automated" }) => {
       try {
         const response = await fetch("/api/lgpd/compliance", {
           method: "POST",

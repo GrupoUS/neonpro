@@ -38,15 +38,21 @@ export const validateCPF = (cpf: string): boolean => {
     sum += parseInt(digits[i]) * (10 - i);
   }
   let checkDigit = 11 - (sum % 11);
-  if (checkDigit >= 10) {checkDigit = 0;}
-  if (parseInt(digits[9]) !== checkDigit) {return false;}
+  if (checkDigit >= 10) {
+    checkDigit = 0;
+  }
+  if (parseInt(digits[9]) !== checkDigit) {
+    return false;
+  }
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
     sum += parseInt(digits[i]) * (11 - i);
   }
   checkDigit = 11 - (sum % 11);
-  if (checkDigit >= 10) {checkDigit = 0;}
+  if (checkDigit >= 10) {
+    checkDigit = 0;
+  }
 
   return parseInt(digits[10]) === checkDigit;
 };
@@ -78,7 +84,9 @@ export const formatCurrency = (value: number): string => {
  * LGPD compliance utility
  */
 export const anonymizeData = (data: string, visibleChars = 3): string => {
-  if (data.length <= visibleChars) {return data;}
+  if (data.length <= visibleChars) {
+    return data;
+  }
   return data.slice(0, visibleChars) + "*".repeat(data.length - visibleChars);
 };
 
@@ -86,8 +94,12 @@ export const anonymizeData = (data: string, visibleChars = 3): string => {
  * Error handling utility
  */
 export const getErrorMessage = (error: unknown): string => {
-  if (error instanceof Error) {return error.message;}
-  if (typeof error === "string") {return error;}
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === "string") {
+    return error;
+  }
   return "Erro inesperado";
 };
 

@@ -38,7 +38,7 @@ import { useEffect, useState } from "react";
 interface NavigationItem {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string; }>;
+  icon: React.ComponentType<{ className?: string }>;
   badge?: string;
   category: "main" | "dashboard" | "tools" | "settings";
   description?: string;
@@ -255,9 +255,11 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
                                 <span className="truncate">{item.label}</span>
                                 {item.badge && (
                                   <Badge
-                                    variant={item.badge === "IA"
-                                      ? "secondary"
-                                      : "default"}
+                                    variant={
+                                      item.badge === "IA"
+                                        ? "secondary"
+                                        : "default"
+                                    }
                                     className="ml-2 text-xs"
                                   >
                                     {item.badge}
