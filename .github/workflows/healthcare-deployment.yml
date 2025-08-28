@@ -8,7 +8,7 @@ on:
 
 env:
   NODE_VERSION: '20'
-  PNPM_VERSION: '8'
+  PNPM_VERSION: '8.15.6'
   TURBO_TELEMETRY_DISABLED: 1
 
 # Permissions for deployment operations
@@ -71,10 +71,14 @@ jobs:
           echo "🛡️ TypeScript security validation..."
           pnpm type-check || echo "Type checking failed - security risk"
 
+      - name: 🔧 Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: typescript,javascript
+        continue-on-error: true
+
       - name: 🔒 Advanced Security Scanning
         uses: github/codeql-action/analyze@v3
-        with:
-          languages: ['typescript', 'javascript']
         continue-on-error: true
 
   # =============================================================================
