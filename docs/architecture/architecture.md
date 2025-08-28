@@ -22,10 +22,12 @@ const coreFeatures = {
   professionals: "Gestão de profissionais + especialidades",
   aiChat: "FAQ inteligente + suporte automatizado",
   noShowPrediction: "ML para reduzir faltas em consultas",
-  lgpdCompliance: "Automatização de compliance LGPD"
+  lgpdCompliance: "Automatização de compliance LGPD",
 };
 ```
+
 ### Documentation References
+
 - Tech stack: docs/architecture/tech-stack.md
 - Application flows: docs/app-flows/ (Mermaid diagrams), docs/app-flows.md (guidelines)
 - Database schema: docs/database-schema.md
@@ -44,6 +46,7 @@ const coreFeatures = {
 ## 🛠️ Stack Tecnológico
 
 ### Frontend
+
 - **Next.js 15**: App Router + React Server Components
 - **TypeScript**: Type safety completo
 - **Tailwind CSS**: Styling utilitário
@@ -51,18 +54,21 @@ const coreFeatures = {
 - **Framer Motion**: Animações e transições
 
 ### Backend
+
 - **Hono.dev**: Framework web moderno e rápido
 - **tRPC**: Type-safe APIs
 - **Supabase**: Database + Auth + Realtime
 - **PostgreSQL**: Database principal
 
 ### AI & Integrações
+
 - **OpenAI GPT-4**: Chat inteligente
 - **Vercel AI SDK**: Integração de IA
 - **Supabase Vector**: Embeddings e busca semântica
 - **Resend**: Email transacional
 
 ### DevOps & Monitoramento
+
 - **Vercel**: Deploy e hosting
 - **Sentry**: Error tracking
 - **Turborepo**: Monorepo management
@@ -118,7 +124,7 @@ const lgpdCompliance = {
   rightToForget: "Exclusão automática de dados",
   dataPortability: "Export completo em JSON",
   auditTrail: "Log completo de todas as operações",
-  encryption: "Dados sensíveis criptografados"
+  encryption: "Dados sensíveis criptografados",
 };
 ```
 
@@ -129,7 +135,7 @@ const anvisaCompliance = {
   procedureLogging: "Log automático de procedimentos",
   deviceTracking: "Rastreamento de equipamentos",
   adverseEvents: "Notificação automática de eventos",
-  documentation: "Assinatura digital + timestamp"
+  documentation: "Assinatura digital + timestamp",
 };
 ```
 
@@ -143,7 +149,7 @@ const aiChatFeatures = {
   appointmentBooking: "Agendamento via chat",
   procedureInfo: "Informações sobre procedimentos",
   postCareGuidance: "Orientações pós-procedimento",
-  emergencyDetection: "Detecção de situações de emergência"
+  emergencyDetection: "Detecção de situações de emergência",
 };
 ```
 
@@ -157,13 +163,13 @@ const noShowPrediction = {
     "Tipo de procedimento",
     "Dia da semana",
     "Condições climáticas",
-    "Distância da clínica"
+    "Distância da clínica",
   ],
   actions: {
     highRisk: "Ligação de confirmação automática",
     mediumRisk: "SMS de lembrete",
-    lowRisk: "Email de confirmação"
-  }
+    lowRisk: "Email de confirmação",
+  },
 };
 ```
 
@@ -267,7 +273,7 @@ const deploymentStrategy = {
   backend: "Vercel Serverless Functions",
   database: "Supabase (PostgreSQL gerenciado)",
   monitoring: "Sentry + Vercel Analytics",
-  cdn: "Vercel Edge Network"
+  cdn: "Vercel Edge Network",
 };
 ```
 

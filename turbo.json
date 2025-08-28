@@ -4,7 +4,7 @@
     "**/.env.*local",
     "**/package.json",
     "**/tsconfig.json",
-    "biome.jsonc",
+    "dprint.json",
     "pnpm-workspace.yaml"
   ],
   "globalEnv": [
@@ -391,7 +391,15 @@
     "lint": {
       "inputs": [
         "**/*.{ts,tsx,js,jsx}",
-        "biome.jsonc"
+        "dprint.json"
+      ],
+      "outputs": [],
+      "outputLogs": "new-only"
+    },
+    "lint:fix": {
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx}",
+        "dprint.json"
       ],
       "outputs": [],
       "outputLogs": "new-only"
@@ -411,8 +419,16 @@
     },
     "format": {
       "inputs": [
-        "**/*.{ts,tsx,js,jsx,json,md}",
-        "biome.jsonc"
+        "**/*.{ts,tsx,js,jsx,json,md,toml,yaml,yml,css,scss,sass,less}",
+        "dprint.json"
+      ],
+      "outputs": [],
+      "outputLogs": "new-only"
+    },
+    "format:check": {
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx,json,md,toml,yaml,yml,css,scss,sass,less}",
+        "dprint.json"
       ],
       "outputs": [],
       "outputLogs": "new-only"
@@ -516,6 +532,20 @@
         "compliance-reports/anvisa/**"
       ]
     },
+    "ci:check": {
+      "dependsOn": [
+        "format:check",
+        "lint",
+        "type-check",
+        "test:healthcare"
+      ],
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx}",
+        "dprint.json"
+      ],
+      "outputs": [],
+      "outputLogs": "full"
+    },
     "ci-check": {
       "dependsOn": [
         "lint",
@@ -524,7 +554,7 @@
       ],
       "inputs": [
         "**/*.{ts,tsx,js,jsx}",
-        "biome.jsonc"
+        "dprint.json"
       ],
       "outputs": [],
       "outputLogs": "full"

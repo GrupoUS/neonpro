@@ -1,35 +1,35 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { cn } from '@/lib/utils';
-import { 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import {
+  AlertTriangle,
   Bell,
   BellRing,
-  AlertTriangle,
-  Clock,
-  User,
-  Phone,
+  Calendar,
   CheckCircle,
-  X,
+  Clock,
+  Filter,
   Pause,
+  Phone,
   Play,
   Settings,
-  Filter,
-  Calendar,
-  TrendingUp
-} from 'lucide-react';
+  TrendingUp,
+  User,
+  X,
+} from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 // Types
 export interface StaffAlert {
   id: string;
-  type: 'high_risk' | 'critical_risk' | 'intervention_needed' | 'system_notification';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  type: "high_risk" | "critical_risk" | "intervention_needed" | "system_notification";
+  priority: "low" | "medium" | "high" | "critical";
   title: string;
   message: string;
   appointmentId?: string;
@@ -39,7 +39,7 @@ export interface StaffAlert {
   assignedToName?: string;
   createdAt: string;
   expiresAt?: string;
-  status: 'unread' | 'acknowledged' | 'resolved' | 'dismissed';
+  status: "unread" | "acknowledged" | "resolved" | "dismissed";
   actions?: AlertAction[];
   metadata?: {
     riskScore?: number;
@@ -52,7 +52,7 @@ export interface StaffAlert {
 export interface AlertAction {
   id: string;
   label: string;
-  type: 'primary' | 'secondary' | 'danger';
+  type: "primary" | "secondary" | "danger";
   handler: string; // Function name or action type
 }
 
@@ -79,38 +79,38 @@ export interface StaffAlertSystemProps {
 // Alert priority configuration
 const ALERT_PRIORITY_CONFIG = {
   critical: {
-    color: 'border-red-500 bg-red-50 text-red-900',
-    badgeColor: 'bg-red-100 text-red-800',
+    color: "border-red-500 bg-red-50 text-red-900",
+    badgeColor: "bg-red-100 text-red-800",
     icon: AlertTriangle,
-    sound: true
+    sound: true,
   },
   high: {
-    color: 'border-orange-500 bg-orange-50 text-orange-900',
-    badgeColor: 'bg-orange-100 text-orange-800',
+    color: "border-orange-500 bg-orange-50 text-orange-900",
+    badgeColor: "bg-orange-100 text-orange-800",
     icon: BellRing,
-    sound: true
+    sound: true,
   },
   medium: {
-    color: 'border-yellow-500 bg-yellow-50 text-yellow-900',
-    badgeColor: 'bg-yellow-100 text-yellow-800',
+    color: "border-yellow-500 bg-yellow-50 text-yellow-900",
+    badgeColor: "bg-yellow-100 text-yellow-800",
     icon: Bell,
-    sound: false
+    sound: false,
   },
   low: {
-    color: 'border-blue-500 bg-blue-50 text-blue-900',
-    badgeColor: 'bg-blue-100 text-blue-800',
+    color: "border-blue-500 bg-blue-50 text-blue-900",
+    badgeColor: "bg-blue-100 text-blue-800",
     icon: Bell,
-    sound: false
-  }
+    sound: false,
+  },
 };
 
 // Snooze options
 const SNOOZE_OPTIONS = [
-  { minutes: 5, label: '5 minutos' },
-  { minutes: 15, label: '15 minutos' },
-  { minutes: 30, label: '30 minutos' },
-  { minutes: 60, label: '1 hora' },
-  { minutes: 240, label: '4 horas' }
+  { minutes: 5, label: "5 minutos" },
+  { minutes: 15, label: "15 minutos" },
+  { minutes: 30, label: "30 minutos" },
+  { minutes: 60, label: "1 hora" },
+  { minutes: 240, label: "4 horas" },
 ];
 
 export function StaffAlertSystem({
@@ -122,9 +122,9 @@ export function StaffAlertSystem({
   onSnoozeAlert,
   soundEnabled = true,
   onSoundToggle,
-  className = ''
+  className = "",
 }: StaffAlertSystemProps) {
-  const [filter, setFilter] = useState<'all' | 'unread' | 'assigned'>('unread');
+  const [filter, setFilter] = useState<"all" | "unread" | "assigned">("unread");
   const [soundPlaying, setSoundPlaying] = useState(false);
 
   // Filter alerts
@@ -132,10 +132,10 @@ export function StaffAlertSystem({
     let filtered = alerts;
 
     switch (filter) {
-      case 'unread':
-        filtered = alerts.filter(alert => alert.status === 'unread');
+      case "unread":
+        filtered = alerts.filter(alert => alert.status === "unread");
         break;
-      case 'assigned':
+      case "assigned":
         filtered = alerts.filter(alert => alert.assignedTo === currentUser.id);
         break;
       default:
@@ -156,10 +156,12 @@ export function StaffAlertSystem({
   const alertStats = useMemo(() => {
     return {
       total: alerts.length,
-      unread: alerts.filter(a => a.status === 'unread').length,
-      critical: alerts.filter(a => a.priority === 'critical' && a.status === 'unread').length,
-      high: alerts.filter(a => a.priority === 'high' && a.status === 'unread').length,
-      assigned: alerts.filter(a => a.assignedTo === currentUser.id && a.status !== 'resolved').length
+      unread: alerts.filter(a => a.status === "unread").length,
+      critical: alerts.filter(a => a.priority === "critical" && a.status === "unread").length,
+      high: alerts.filter(a => a.priority === "high" && a.status === "unread").length,
+      assigned: alerts.filter(a =>
+        a.assignedTo === currentUser.id && a.status !== "resolved"
+      ).length,
     };
   }, [alerts, currentUser.id]);
 
@@ -167,10 +169,10 @@ export function StaffAlertSystem({
   useEffect(() => {
     if (!soundEnabled || soundPlaying) return;
 
-    const newCriticalAlerts = alerts.filter(alert => 
-      alert.priority === 'critical' && 
-      alert.status === 'unread' &&
-      new Date().getTime() - new Date(alert.createdAt).getTime() < 5000 // Last 5 seconds
+    const newCriticalAlerts = alerts.filter(alert =>
+      alert.priority === "critical"
+      && alert.status === "unread"
+      && new Date().getTime() - new Date(alert.createdAt).getTime() < 5000 // Last 5 seconds
     );
 
     if (newCriticalAlerts.length > 0) {
@@ -186,15 +188,15 @@ export function StaffAlertSystem({
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / (1000 * 60));
-    
-    if (diffMins < 1) return 'Agora mesmo';
+
+    if (diffMins < 1) return "Agora mesmo";
     if (diffMins < 60) return `${diffMins}min atrás`;
     if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h atrás`;
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
     }).format(date);
   }, []);
 
@@ -214,7 +216,7 @@ export function StaffAlertSystem({
   }, [onSnoozeAlert]);
 
   return (
-    <div className={cn('flex flex-col h-full', className)}>
+    <div className={cn("flex flex-col h-full", className)}>
       {/* Header */}
       <Card className="mb-4">
         <CardHeader className="pb-3">
@@ -247,7 +249,7 @@ export function StaffAlertSystem({
             </div>
           </div>
         </CardHeader>
-        
+
         <CardContent>
           {/* Statistics */}
           <div className="grid grid-cols-4 gap-4 mb-4">
@@ -272,14 +274,14 @@ export function StaffAlertSystem({
           {/* Filter Buttons */}
           <div className="flex gap-2">
             {[
-              { key: 'unread', label: `Não lidos (${alertStats.unread})` },
-              { key: 'assigned', label: `Atribuídos (${alertStats.assigned})` },
-              { key: 'all', label: `Todos (${alertStats.total})` }
+              { key: "unread", label: `Não lidos (${alertStats.unread})` },
+              { key: "assigned", label: `Atribuídos (${alertStats.assigned})` },
+              { key: "all", label: `Todos (${alertStats.total})` },
             ].map(filterOption => (
               <Button
                 key={filterOption.key}
                 size="sm"
-                variant={filter === filterOption.key ? 'default' : 'outline'}
+                variant={filter === filterOption.key ? "default" : "outline"}
                 onClick={() => setFilter(filterOption.key as any)}
               >
                 <Filter className="h-3 w-3 mr-1" />
@@ -294,176 +296,181 @@ export function StaffAlertSystem({
       <Card className="flex-1">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium">
-            {filter === 'unread' && 'Alertas Não Lidos'}
-            {filter === 'assigned' && 'Alertas Atribuídos a Mim'}
-            {filter === 'all' && 'Todos os Alertas'}
+            {filter === "unread" && "Alertas Não Lidos"}
+            {filter === "assigned" && "Alertas Atribuídos a Mim"}
+            {filter === "all" && "Todos os Alertas"}
           </CardTitle>
         </CardHeader>
-        
+
         <CardContent className="p-0">
           <ScrollArea className="h-[400px]">
             <div className="space-y-2 p-4">
-              {filteredAlerts.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <CheckCircle className="h-8 w-8 mx-auto mb-2" />
-                  <div className="text-sm">
-                    {filter === 'unread' && 'Nenhum alerta não lido'}
-                    {filter === 'assigned' && 'Nenhum alerta atribuído'}
-                    {filter === 'all' && 'Nenhum alerta'}
+              {filteredAlerts.length === 0
+                ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <CheckCircle className="h-8 w-8 mx-auto mb-2" />
+                    <div className="text-sm">
+                      {filter === "unread" && "Nenhum alerta não lido"}
+                      {filter === "assigned" && "Nenhum alerta atribuído"}
+                      {filter === "all" && "Nenhum alerta"}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                filteredAlerts.map(alert => {
-                  const config = ALERT_PRIORITY_CONFIG[alert.priority];
-                  const IconComponent = config.icon;
-                  const isExpired = alert.expiresAt && new Date(alert.expiresAt) < new Date();
+                )
+                : (
+                  filteredAlerts.map(alert => {
+                    const config = ALERT_PRIORITY_CONFIG[alert.priority];
+                    const IconComponent = config.icon;
+                    const isExpired = alert.expiresAt && new Date(alert.expiresAt) < new Date();
 
-                  return (
-                    <Card
-                      key={alert.id}
-                      className={cn(
-                        'transition-all duration-200 hover:shadow-md border-l-4',
-                        config.color,
-                        alert.status === 'unread' && 'shadow-sm',
-                        isExpired && 'opacity-60'
-                      )}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          {/* Icon */}
-                          <div className="flex-shrink-0 pt-1">
-                            <IconComponent className={cn(
-                              'h-5 w-5',
-                              alert.status === 'unread' && config.sound && 'animate-pulse'
-                            )} />
-                          </div>
+                    return (
+                      <Card
+                        key={alert.id}
+                        className={cn(
+                          "transition-all duration-200 hover:shadow-md border-l-4",
+                          config.color,
+                          alert.status === "unread" && "shadow-sm",
+                          isExpired && "opacity-60",
+                        )}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start gap-3">
+                            {/* Icon */}
+                            <div className="flex-shrink-0 pt-1">
+                              <IconComponent
+                                className={cn(
+                                  "h-5 w-5",
+                                  alert.status === "unread" && config.sound && "animate-pulse",
+                                )}
+                              />
+                            </div>
 
-                          {/* Content */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-sm truncate">
-                                {alert.title}
-                              </h4>
-                              <Badge className={config.badgeColor}>
-                                {alert.priority}
-                              </Badge>
-                              {alert.status === 'unread' && (
-                                <div className="h-2 w-2 bg-red-500 rounded-full" />
+                            {/* Content */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="font-medium text-sm truncate">
+                                  {alert.title}
+                                </h4>
+                                <Badge className={config.badgeColor}>
+                                  {alert.priority}
+                                </Badge>
+                                {alert.status === "unread" && (
+                                  <div className="h-2 w-2 bg-red-500 rounded-full" />
+                                )}
+                              </div>
+
+                              <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                                {alert.message}
+                              </p>
+
+                              {/* Metadata */}
+                              {(alert.patientName || alert.metadata?.appointmentTime) && (
+                                <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
+                                  {alert.patientName && (
+                                    <span className="flex items-center gap-1">
+                                      <User className="h-3 w-3" />
+                                      {alert.patientName}
+                                    </span>
+                                  )}
+                                  {alert.metadata?.appointmentTime && (
+                                    <span className="flex items-center gap-1">
+                                      <Calendar className="h-3 w-3" />
+                                      {new Intl.DateTimeFormat("pt-BR", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      }).format(new Date(alert.metadata.appointmentTime))}
+                                    </span>
+                                  )}
+                                  {alert.metadata?.riskScore && (
+                                    <span className="flex items-center gap-1">
+                                      <TrendingUp className="h-3 w-3" />
+                                      {Math.round(alert.metadata.riskScore * 100)}% risco
+                                    </span>
+                                  )}
+                                </div>
                               )}
-                            </div>
-                            
-                            <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                              {alert.message}
-                            </p>
 
-                            {/* Metadata */}
-                            {(alert.patientName || alert.metadata?.appointmentTime) && (
-                              <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
-                                {alert.patientName && (
-                                  <span className="flex items-center gap-1">
-                                    <User className="h-3 w-3" />
-                                    {alert.patientName}
-                                  </span>
-                                )}
-                                {alert.metadata?.appointmentTime && (
-                                  <span className="flex items-center gap-1">
-                                    <Calendar className="h-3 w-3" />
-                                    {new Intl.DateTimeFormat('pt-BR', {
-                                      day: '2-digit',
-                                      month: '2-digit',
-                                      hour: '2-digit',
-                                      minute: '2-digit'
-                                    }).format(new Date(alert.metadata.appointmentTime))}
-                                  </span>
-                                )}
-                                {alert.metadata?.riskScore && (
-                                  <span className="flex items-center gap-1">
-                                    <TrendingUp className="h-3 w-3" />
-                                    {Math.round(alert.metadata.riskScore * 100)}% risco
-                                  </span>
-                                )}
-                              </div>
-                            )}
+                              {/* Assignment */}
+                              {alert.assignedToName && (
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                                  <Avatar className="h-4 w-4">
+                                    <AvatarFallback className="text-xs">
+                                      {alert.assignedToName.charAt(0).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <span>Atribuído a {alert.assignedToName}</span>
+                                </div>
+                              )}
 
-                            {/* Assignment */}
-                            {alert.assignedToName && (
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                                <Avatar className="h-4 w-4">
-                                  <AvatarFallback className="text-xs">
-                                    {alert.assignedToName.charAt(0).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <span>Atribuído a {alert.assignedToName}</span>
-                              </div>
-                            )}
-
-                            {/* Actions */}
-                            {alert.actions && alert.actions.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mb-2">
-                                {alert.actions.map(action => (
-                                  <Button
-                                    key={action.id}
-                                    size="sm"
-                                    variant={action.type === 'primary' ? 'default' : 'outline'}
-                                    className={cn(
-                                      'h-6 px-2 text-xs',
-                                      action.type === 'danger' && 'text-red-600 hover:text-red-700'
-                                    )}
-                                    onClick={() => handleAlertAction(alert.id, action.handler)}
-                                  >
-                                    {action.label}
-                                  </Button>
-                                ))}
-                              </div>
-                            )}
-
-                            {/* Footer */}
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                <Clock className="h-3 w-3" />
-                                {formatRelativeTime(alert.createdAt)}
-                                {isExpired && (
-                                  <span className="text-red-500 ml-1">(expirado)</span>
-                                )}
-                              </div>
-
-                              <div className="flex items-center gap-1">
-                                {/* Snooze Dropdown */}
-                                <select
-                                  className="text-xs border rounded px-1 py-0.5"
-                                  onChange={(e) => {
-                                    const minutes = parseInt(e.target.value);
-                                    if (minutes) {
-                                      handleSnooze(alert.id, minutes);
-                                    }
-                                  }}
-                                  defaultValue=""
-                                >
-                                  <option value="" disabled>Soneca</option>
-                                  {SNOOZE_OPTIONS.map(option => (
-                                    <option key={option.minutes} value={option.minutes}>
-                                      {option.label}
-                                    </option>
+                              {/* Actions */}
+                              {alert.actions && alert.actions.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mb-2">
+                                  {alert.actions.map(action => (
+                                    <Button
+                                      key={action.id}
+                                      size="sm"
+                                      variant={action.type === "primary" ? "default" : "outline"}
+                                      className={cn(
+                                        "h-6 px-2 text-xs",
+                                        action.type === "danger"
+                                          && "text-red-600 hover:text-red-700",
+                                      )}
+                                      onClick={() => handleAlertAction(alert.id, action.handler)}
+                                    >
+                                      {action.label}
+                                    </Button>
                                   ))}
-                                </select>
+                                </div>
+                              )}
 
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-6 w-6 p-0"
-                                  onClick={() => handleDismiss(alert.id)}
-                                >
-                                  <X className="h-3 w-3" />
-                                </Button>
+                              {/* Footer */}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                  <Clock className="h-3 w-3" />
+                                  {formatRelativeTime(alert.createdAt)}
+                                  {isExpired && (
+                                    <span className="text-red-500 ml-1">(expirado)</span>
+                                  )}
+                                </div>
+
+                                <div className="flex items-center gap-1">
+                                  {/* Snooze Dropdown */}
+                                  <select
+                                    className="text-xs border rounded px-1 py-0.5"
+                                    onChange={(e) => {
+                                      const minutes = parseInt(e.target.value);
+                                      if (minutes) {
+                                        handleSnooze(alert.id, minutes);
+                                      }
+                                    }}
+                                    defaultValue=""
+                                  >
+                                    <option value="" disabled>Soneca</option>
+                                    {SNOOZE_OPTIONS.map(option => (
+                                      <option key={option.minutes} value={option.minutes}>
+                                        {option.label}
+                                      </option>
+                                    ))}
+                                  </select>
+
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-6 w-6 p-0"
+                                    onClick={() => handleDismiss(alert.id)}
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })
-              )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })
+                )}
             </div>
           </ScrollArea>
         </CardContent>

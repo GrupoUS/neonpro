@@ -5,6 +5,7 @@
 ### 5.1 Core Features (Must Have)
 
 **Universal AI Chat System** (Priority: High | Critical)
+
 - Chat inteligente bilíngue (português/inglês) para pacientes e equipe
 - Integração com WhatsApp, SMS e interface web/mobile
 - Respostas contextuais baseadas em histórico do paciente
@@ -12,6 +13,7 @@
 - Tempo de resposta <2 segundos
 
 **Engine Anti-No-Show** (Priority: High | Critical)
+
 - Análise preditiva de risco de no-show por paciente
 - Sistema de pontuação baseado em ML (0-100)
 - Intervenções automatizadas escalonadas
@@ -19,6 +21,7 @@
 - Relatórios de eficácia e ROI
 
 **Dashboard de Comando Unificado** (Priority: High | Critical)
+
 - Visão 360° da clínica em tempo real
 - Métricas de performance e KPIs
 - Alertas inteligentes e notificações
@@ -26,6 +29,7 @@
 - Personalização por perfil de usuário
 
 **Sistema de Agendamento Inteligente** (Priority: High | Critical)
+
 - Agendamento online com disponibilidade em tempo real
 - Otimização automática de horários
 - Gestão de salas e recursos
@@ -35,6 +39,7 @@
 ### 5.2 Enhanced Features (Should Have)
 
 **CRM Comportamental** (Priority: Medium)
+
 - Perfil comportamental detalhado de cada paciente
 - Análise de preferências e padrões de consumo
 - Comunicação personalizada baseada em IA
@@ -42,6 +47,7 @@
 - Otimização de tempo de tratamento
 
 **Gestor de Estoque Preditivo** (Priority: Medium)
+
 - Controle de estoque com IA preditiva
 - Reabastecimento automático baseado em padrões
 - Gestão de validade e alertas de vencimento
@@ -49,6 +55,7 @@
 - Integração com fornecedores
 
 **Assistente de Gestão IA** (Priority: Medium)
+
 - Insights preditivos para tomada de decisão
 - Otimização de processos operacionais
 - Análise de performance da equipe
@@ -56,6 +63,7 @@
 - Relatórios executivos inteligentes
 
 **Sistema de Compliance Automatizado** (Priority: Medium)
+
 - Conformidade automática com LGPD, ANVISA
 - Auditoria contínua de processos
 - Documentação automática de conformidade
@@ -65,6 +73,7 @@
 ### 5.3 Future Considerations (Could Have)
 
 **Simulador de Resultados AR** (Priority: Low)
+
 - Realidade aumentada para visualização de resultados
 - Integração com câmera de dispositivos móveis
 - Biblioteca de tratamentos e resultados esperados
@@ -72,6 +81,7 @@
 - Compartilhamento de simulações
 
 **Modo Auto-Piloto** (Priority: Low)
+
 - Operação autônoma de processos rotineiros
 - Tomada de decisão automatizada baseada em IA
 - Intervenção humana apenas em exceções
@@ -79,6 +89,7 @@
 - Monitoramento de performance autônoma
 
 **Digital Twin Practice** (Priority: Low)
+
 - Gêmeo digital completo da clínica
 - Simulação de cenários e estratégias
 - Otimização preditiva de recursos
@@ -90,24 +101,28 @@
 ### 6.1 Design Principles
 
 **Mobile-First Philosophy**
+
 - Prioridade absoluta para experiência mobile (95% dos pacientes)
 - Interface touch-optimized com gestos intuitivos
 - Carregamento rápido mesmo em conexões lentas
 - Offline-first para funcionalidades críticas
 
 **Simplicidade Inteligente**
+
 - Interface limpa com foco em ações principais
 - Redução de cliques para tarefas frequentes
 - Navegação contextual baseada no perfil do usuário
 - Feedback visual imediato para todas as ações
 
 **Acessibilidade Universal**
+
 - Conformidade com WCAG 2.1 AA
 - Suporte a leitores de tela
 - Alto contraste e fontes legíveis
 - Navegação por teclado completa
 
 **Personalização Inteligente**
+
 - Interface adaptativa baseada em uso
 - Dashboards personalizados por perfil
 - Preferências de notificação granulares
@@ -116,18 +131,21 @@
 ### 6.2 Key User Flows
 
 **Fluxo de Agendamento (Paciente)**
+
 - **Entry points**: Chat IA, app mobile, website, WhatsApp
 - **Happy path**: Acesso → Seleção de serviço → Escolha de horário → Confirmação → Lembrete
 - **Alternative paths**: Reagendamento, cancelamento, lista de espera
 - **Error handling**: Horários indisponíveis, dados incompletos, falhas de conexão
 
 **Fluxo de Gestão (Proprietário)**
+
 - **Entry points**: Dashboard web, app mobile, notificações push
 - **Happy path**: Login → Dashboard executivo → Análise de KPIs → Ações estratégicas
 - **Alternative paths**: Relatórios detalhados, configurações, gestão de equipe
 - **Error handling**: Dados não carregados, permissões insuficientes, timeouts
 
 **Fluxo de Atendimento (Equipe)**
+
 - **Entry points**: App mobile, terminal da clínica, tablet
 - **Happy path**: Check-in → Histórico do paciente → Atendimento → Follow-up
 - **Alternative paths**: Emergências, transferências, reagendamentos
@@ -136,6 +154,7 @@
 ### 6.3 Responsive Design Requirements
 
 **Mobile-first (320px-768px)**
+
 - Navegação bottom-tab com 4-5 itens principais
 - Gestos swipe para navegação lateral
 - FAB (Floating Action Button) para ações primárias
@@ -143,6 +162,7 @@
 - Formulários step-by-step
 
 **Tablet considerations (768px-1024px)**
+
 - Sidebar colapsível com navegação expandida
 - Multi-panel views para dashboards
 - Drag & drop para agendamentos
@@ -150,6 +170,7 @@
 - Split-screen para comparações
 
 **Desktop enhancements (1024px+)**
+
 - Múltiplas janelas e abas
 - Atalhos de teclado para power users
 - Visualizações de dados complexas
@@ -159,6 +180,7 @@
 ### 6.4 Interface Requirements
 
 **Navigation**
+
 - Breadcrumbs contextuais
 - Menu hamburger com categorização
 - Search global com filtros inteligentes
@@ -166,6 +188,7 @@
 - Deep linking para compartilhamento
 
 **Information architecture**
+
 - Hierarquia clara com máximo 3 níveis
 - Agrupamento lógico por contexto de uso
 - Labels descritivos e consistentes
@@ -173,6 +196,7 @@
 - Shortcuts para usuários experientes
 
 **Visual design**
+
 - Sistema de design NeonPro consistente
 - Cores: Azul médico (#0066CC), Verde saúde (#00CC66)
 - Tipografia: Inter (sistema), Roboto (fallback)
@@ -180,6 +204,7 @@
 - Iconografia: Phosphor icons, outline style
 
 **Accessibility**
+
 - Contraste mínimo 4.5:1 para texto normal
 - Focus indicators visíveis em todos os elementos
 - Labels descritivos para screen readers
@@ -191,6 +216,7 @@
 ### 7.1 System Architecture
 
 **Arquitetura Moderna e Escalável**
+
 - **Frontend**: Next.js 15 + React 19 + TypeScript
 - **Backend**: Supabase (PostgreSQL + Edge Functions)
 - **Monorepo**: Turborepo para gestão de múltiplos pacotes
@@ -198,6 +224,7 @@
 - **Estado Global**: Zustand + React Query
 
 **Infraestrutura Cloud-Native**
+
 - **Hosting**: Vercel (Frontend) + Supabase (Backend)
 - **CDN**: Vercel Edge Network para performance global
 - **Database**: PostgreSQL com extensões de IA (pgvector)
@@ -205,6 +232,7 @@
 - **Monitoring**: Vercel Analytics + Supabase Metrics
 
 **Arquitetura de IA**
+
 - **LLM Principal**: OpenAI GPT-4 Turbo para chat inteligente
 - **ML Customizado**: Modelos próprios para previsão de no-show
 - **Vector Database**: pgvector para busca semântica
@@ -212,6 +240,7 @@
 - **Edge Computing**: Processamento de IA próximo aos usuários
 
 **Microserviços e APIs**
+
 - **API Gateway**: Supabase Edge Functions
 - **Authentication**: Supabase Auth com MFA
 - **Real-time**: WebSockets via Supabase Realtime
@@ -221,6 +250,7 @@
 ### 7.2 Data Requirements
 
 **Modelo de Dados Principal**
+
 ```sql
 -- Clínicas
 CREATE TABLE clinics (
@@ -264,6 +294,7 @@ CREATE TABLE ai_conversations (
 ```
 
 **Gestão de Dados**
+
 - **Backup**: Backup automático diário com retenção de 30 dias
 - **Replicação**: Multi-region para alta disponibilidade
 - **Archiving**: Dados antigos movidos para cold storage após 2 anos
@@ -272,6 +303,7 @@ CREATE TABLE ai_conversations (
 ### 7.3 Performance Requirements
 
 **Métricas de Performance**
+
 - **Tempo de Carregamento**: <2s para primeira página
 - **Tempo de Resposta API**: <500ms para 95% das requisições
 - **Chat IA**: <2s para respostas contextuais
@@ -279,6 +311,7 @@ CREATE TABLE ai_conversations (
 - **Throughput**: 10.000+ requisições simultâneas
 
 **Otimizações Implementadas**
+
 - **Code Splitting**: Carregamento sob demanda de componentes
 - **Image Optimization**: WebP/AVIF com lazy loading
 - **Caching**: Redis para cache de sessões e dados frequentes
@@ -286,6 +319,7 @@ CREATE TABLE ai_conversations (
 - **Database**: Índices otimizados e query optimization
 
 **Monitoramento Contínuo**
+
 - **Core Web Vitals**: LCP <2.5s, FID <100ms, CLS <0.1
 - **Real User Monitoring**: Métricas de usuários reais
 - **Synthetic Monitoring**: Testes automatizados 24/7
@@ -295,6 +329,7 @@ CREATE TABLE ai_conversations (
 ### 7.4 Security & Compliance
 
 **Autenticação e Autorização**
+
 - **Multi-Factor Authentication**: SMS, TOTP, biometria
 - **Role-Based Access Control**: Permissões granulares por função
 - **Session Management**: JWT com refresh tokens seguros
@@ -302,6 +337,7 @@ CREATE TABLE ai_conversations (
 - **Account Lockout**: Proteção contra ataques de força bruta
 
 **Proteção de Dados**
+
 - **Encryption at Rest**: AES-256 para dados sensíveis
 - **Encryption in Transit**: TLS 1.3 para todas as comunicações
 - **Data Masking**: Dados sensíveis mascarados em logs
@@ -309,6 +345,7 @@ CREATE TABLE ai_conversations (
 - **Audit Logs**: Rastreamento completo de ações sensíveis
 
 **Compliance Regulatório**
+
 - **LGPD**: Conformidade completa com lei brasileira
 - **ANVISA**: Atendimento a regulamentações de saúde
 - **Normas Profissionais**: Conformidade com normas de procedimentos estéticos
@@ -316,6 +353,7 @@ CREATE TABLE ai_conversations (
 - **SOC 2**: Auditoria de controles de segurança
 
 **Segurança de Aplicação**
+
 - **OWASP Top 10**: Proteção contra vulnerabilidades conhecidas
 - **Input Validation**: Sanitização de todas as entradas
 - **SQL Injection**: Prepared statements e ORM seguro
@@ -323,6 +361,7 @@ CREATE TABLE ai_conversations (
 - **CSRF Protection**: Tokens CSRF em formulários
 
 **Monitoramento de Segurança**
+
 - **SIEM**: Security Information and Event Management
 - **Intrusion Detection**: Detecção automática de atividades suspeitas
 - **Vulnerability Scanning**: Varreduras automáticas de segurança

@@ -4,28 +4,28 @@
 
 ## Project Identity
 
-* **Name:** [NOME_PROJETO]
-* **Domain:** [DOMÍNIO]
-* **Description:** {Brief description of what this project does and its main purpose}
-* **Target Audience:** {Primary users or stakeholders}
-* **Project Type:** {Web Application | API Service | Mobile App | etc.}
+- **Name:** [NOME_PROJETO]
+- **Domain:** [DOMÍNIO]
+- **Description:** {Brief description of what this project does and its main purpose}
+- **Target Audience:** {Primary users or stakeholders}
+- **Project Type:** {Web Application | API Service | Mobile App | etc.}
 
 ## Project Configuration
 
 ### Database Configuration
 
-* **Supabase Project:**
-  * **Name:** `{supabase-project-name}`
-  * **ID:** `{supabase-project-id}`
-  * **URL:** `{supabase-url}`
+- **Supabase Project:**
+  - **Name:** `{supabase-project-name}`
+  - **ID:** `{supabase-project-id}`
+  - **URL:** `{supabase-url}`
 
 ### External Services (Optional)
 
-* **Authentication:** {Service name and configuration}
-* **Payment Processing:** {Stripe, PayPal, etc.}
-* **Email Service:** {SendGrid, Resend, etc.}
-* **File Storage:** {AWS S3, Cloudinary, etc.}
-* **Analytics:** {Google Analytics, Mixpanel, etc.}
+- **Authentication:** {Service name and configuration}
+- **Payment Processing:** {Stripe, PayPal, etc.}
+- **Email Service:** {SendGrid, Resend, etc.}
+- **File Storage:** {AWS S3, Cloudinary, etc.}
+- **Analytics:** {Google Analytics, Mixpanel, etc.}
 
 ## Business Logic & Features
 
@@ -37,27 +37,27 @@
 
 ### User Roles & Permissions
 
-* **{Role 1}:** {Permissions and access level}
-* **{Role 2}:** {Permissions and access level}
-* **{Role 3}:** {Permissions and access level}
+- **{Role 1}:** {Permissions and access level}
+- **{Role 2}:** {Permissions and access level}
+- **{Role 3}:** {Permissions and access level}
 
 ### Business Rules
 
-* **{Rule 1}:** {Description of business logic}
-* **{Rule 2}:** {Description of business logic}
-* **{Rule 3}:** {Description of business logic}
+- **{Rule 1}:** {Description of business logic}
+- **{Rule 2}:** {Description of business logic}
+- **{Rule 3}:** {Description of business logic}
 
 ## Development Rules
 
 Follow the development rules and guidelines found in the `/rules` directory:
 
-* **Code Style:** Follow established patterns and conventions
-* **Testing:** Implement comprehensive test coverage
-* **Documentation:** Maintain clear and updated documentation
-* **Version Control:** Use semantic commits and proper branching
-* **Performance:** Optimize for speed and efficiency
-* **Security:** Follow security best practices
-* **Accessibility:** Ensure WCAG compliance
+- **Code Style:** Follow established patterns and conventions
+- **Testing:** Implement comprehensive test coverage
+- **Documentation:** Maintain clear and updated documentation
+- **Version Control:** Use semantic commits and proper branching
+- **Performance:** Optimize for speed and efficiency
+- **Security:** Follow security best practices
+- **Accessibility:** Ensure WCAG compliance
 
 ## References
 

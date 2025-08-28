@@ -108,16 +108,16 @@ export class EnterpriseAuditService {
   async log(eventType: string, data: unknown): Promise<void>;
   async log(eventOrType: AuditEvent | string, data?: unknown): Promise<void> {
     let event: AuditEvent;
-    
-    if (typeof eventOrType === 'string') {
+
+    if (typeof eventOrType === "string") {
       event = {
         id: crypto.randomUUID(),
         timestamp: new Date(),
-        userId: 'system',
+        userId: "system",
         action: eventOrType,
-        resource: 'unknown',
-        outcome: 'success',
-        details: data
+        resource: "unknown",
+        outcome: "success",
+        details: data,
       };
     } else {
       event = eventOrType;

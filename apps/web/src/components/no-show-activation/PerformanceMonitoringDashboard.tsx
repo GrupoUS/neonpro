@@ -1,39 +1,45 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import {
+  Activity,
+  AlertCircle,
   BarChart3,
-  TrendingUp,
-  TrendingDown,
-  Target,
+  Calendar,
+  CheckCircle,
   Clock,
   DollarSign,
-  Users,
-  AlertCircle,
-  CheckCircle,
-  RefreshCw,
   Download,
-  Calendar,
-  Activity,
-  Zap,
-  Phone,
   Mail,
-  MessageSquare
-} from 'lucide-react';
+  MessageSquare,
+  Phone,
+  RefreshCw,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 // Types for performance data
 export interface PerformanceMetrics {
   period: {
     startDate: string;
     endDate: string;
-    periodType: 'day' | 'week' | 'month' | 'quarter';
+    periodType: "day" | "week" | "month" | "quarter";
   };
   predictions: {
     totalPredictions: number;
@@ -100,7 +106,7 @@ export interface MonthlyROI {
 
 export interface InterventionTrend {
   date: string;
-  type: 'sms' | 'email' | 'phone';
+  type: "sms" | "email" | "phone";
   count: number;
   successRate: number;
   cost: number;
@@ -110,8 +116,8 @@ export interface PerformanceMonitoringDashboardProps {
   metrics: PerformanceMetrics;
   loading?: boolean;
   onRefresh?: () => void;
-  onExportReport?: (format: 'pdf' | 'excel', period: string) => void;
-  onPeriodChange?: (period: 'day' | 'week' | 'month' | 'quarter') => void;
+  onExportReport?: (format: "pdf" | "excel", period: string) => void;
+  onPeriodChange?: (period: "day" | "week" | "month" | "quarter") => void;
   className?: string;
 }
 
@@ -122,7 +128,7 @@ const PERFORMANCE_TARGETS = {
   responseRate: 0.60, // Target 60% patient response rate
   staffResponseTime: 300, // Target 5 minutes in seconds
   annualROI: 150000, // Target R$ 150,000 annual savings
-  interventionCost: 2.50 // Target R$ 2.50 per intervention
+  interventionCost: 2.50, // Target R$ 2.50 per intervention
 };
 
 export function PerformanceMonitoringDashboard({
@@ -131,36 +137,47 @@ export function PerformanceMonitoringDashboard({
   onRefresh,
   onExportReport,
   onPeriodChange,
-  className = ''
+  className = "",
 }: PerformanceMonitoringDashboardProps) {
-  const [selectedTab, setSelectedTab] = useState('overview');
+  const [selectedTab, setSelectedTab] = useState("overview");
   const [refreshing, setRefreshing] = useState(false);
 
   // Calculate performance indicators
   const performanceIndicators = useMemo(() => {
     return {
-      accuracyStatus: metrics.predictions.accuracy >= PERFORMANCE_TARGETS.accuracy ? 'success' : 'warning',
-      reductionStatus: metrics.appointments.reductionPercentage >= PERFORMANCE_TARGETS.noShowReduction ? 'success' : 'warning',
-      responseStatus: metrics.interventions.responseRate >= PERFORMANCE_TARGETS.responseRate ? 'success' : 'warning',
-      roiStatus: metrics.financial.projectedAnnualROI >= PERFORMANCE_TARGETS.annualROI ? 'success' : 'warning',
-      staffStatus: metrics.staff.averageResponseTime <= PERFORMANCE_TARGETS.staffResponseTime ? 'success' : 'warning'
+      accuracyStatus: metrics.predictions.accuracy >= PERFORMANCE_TARGETS.accuracy
+        ? "success"
+        : "warning",
+      reductionStatus:
+        metrics.appointments.reductionPercentage >= PERFORMANCE_TARGETS.noShowReduction
+          ? "success"
+          : "warning",
+      responseStatus: metrics.interventions.responseRate >= PERFORMANCE_TARGETS.responseRate
+        ? "success"
+        : "warning",
+      roiStatus: metrics.financial.projectedAnnualROI >= PERFORMANCE_TARGETS.annualROI
+        ? "success"
+        : "warning",
+      staffStatus: metrics.staff.averageResponseTime <= PERFORMANCE_TARGETS.staffResponseTime
+        ? "success"
+        : "warning",
     };
   }, [metrics]);
 
   // Format Brazilian currency
   const formatCurrency = useCallback((amount: number): string => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(amount);
   }, []);
 
   // Format percentage
   const formatPercentage = useCallback((value: number, decimals: number = 1): string => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'percent',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "percent",
       minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals
+      maximumFractionDigits: decimals,
     }).format(value);
   }, []);
 
@@ -174,14 +191,14 @@ export function PerformanceMonitoringDashboard({
   }, [onRefresh]);
 
   // Handle export
-  const handleExport = useCallback((format: 'pdf' | 'excel') => {
+  const handleExport = useCallback((format: "pdf" | "excel") => {
     if (onExportReport) {
       onExportReport(format, metrics.period.periodType);
     }
   }, [onExportReport, metrics.period.periodType]);
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("space-y-6", className)}>
       {/* Header */}
       <Card>
         <CardHeader>
@@ -206,31 +223,33 @@ export function PerformanceMonitoringDashboard({
                   <SelectItem value="quarter">Trimestre</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => handleExport('excel')}
+                onClick={() => handleExport("excel")}
               >
                 <Download className="h-4 w-4 mr-1" />
                 Excel
               </Button>
-              
+
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => handleExport('pdf')}
+                onClick={() => handleExport("pdf")}
               >
                 <Download className="h-4 w-4 mr-1" />
                 PDF
               </Button>
-              
+
               <Button
                 size="sm"
                 disabled={loading || refreshing}
                 onClick={handleRefresh}
               >
-                <RefreshCw className={cn('h-4 w-4 mr-1', (loading || refreshing) && 'animate-spin')} />
+                <RefreshCw
+                  className={cn("h-4 w-4 mr-1", (loading || refreshing) && "animate-spin")}
+                />
                 Atualizar
               </Button>
             </div>
@@ -250,21 +269,27 @@ export function PerformanceMonitoringDashboard({
         <TabsContent value="overview" className="space-y-6">
           {/* Key Performance Indicators */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <Card className={cn(
-              'border-l-4',
-              performanceIndicators.accuracyStatus === 'success' ? 'border-l-green-500' : 'border-l-yellow-500'
-            )}>
+            <Card
+              className={cn(
+                "border-l-4",
+                performanceIndicators.accuracyStatus === "success"
+                  ? "border-l-green-500"
+                  : "border-l-yellow-500",
+              )}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Precisão do Modelo</p>
-                    <p className="text-2xl font-bold">{formatPercentage(metrics.predictions.accuracy)}</p>
+                    <p className="text-2xl font-bold">
+                      {formatPercentage(metrics.predictions.accuracy)}
+                    </p>
                   </div>
                   <Target className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <div className="mt-2">
-                  <Progress 
-                    value={metrics.predictions.accuracy * 100} 
+                  <Progress
+                    value={metrics.predictions.accuracy * 100}
                     className="h-2"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
@@ -274,21 +299,27 @@ export function PerformanceMonitoringDashboard({
               </CardContent>
             </Card>
 
-            <Card className={cn(
-              'border-l-4',
-              performanceIndicators.reductionStatus === 'success' ? 'border-l-green-500' : 'border-l-yellow-500'
-            )}>
+            <Card
+              className={cn(
+                "border-l-4",
+                performanceIndicators.reductionStatus === "success"
+                  ? "border-l-green-500"
+                  : "border-l-yellow-500",
+              )}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Redução de Faltas</p>
-                    <p className="text-2xl font-bold">{formatPercentage(metrics.appointments.reductionPercentage)}</p>
+                    <p className="text-2xl font-bold">
+                      {formatPercentage(metrics.appointments.reductionPercentage)}
+                    </p>
                   </div>
                   <TrendingDown className="h-8 w-8 text-green-600" />
                 </div>
                 <div className="mt-2">
-                  <Progress 
-                    value={metrics.appointments.reductionPercentage * 100} 
+                  <Progress
+                    value={metrics.appointments.reductionPercentage * 100}
                     className="h-2"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
@@ -298,21 +329,27 @@ export function PerformanceMonitoringDashboard({
               </CardContent>
             </Card>
 
-            <Card className={cn(
-              'border-l-4',
-              performanceIndicators.responseStatus === 'success' ? 'border-l-green-500' : 'border-l-yellow-500'
-            )}>
+            <Card
+              className={cn(
+                "border-l-4",
+                performanceIndicators.responseStatus === "success"
+                  ? "border-l-green-500"
+                  : "border-l-yellow-500",
+              )}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Taxa de Resposta</p>
-                    <p className="text-2xl font-bold">{formatPercentage(metrics.interventions.responseRate)}</p>
+                    <p className="text-2xl font-bold">
+                      {formatPercentage(metrics.interventions.responseRate)}
+                    </p>
                   </div>
                   <Phone className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <div className="mt-2">
-                  <Progress 
-                    value={metrics.interventions.responseRate * 100} 
+                  <Progress
+                    value={metrics.interventions.responseRate * 100}
                     className="h-2"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
@@ -322,21 +359,30 @@ export function PerformanceMonitoringDashboard({
               </CardContent>
             </Card>
 
-            <Card className={cn(
-              'border-l-4',
-              performanceIndicators.roiStatus === 'success' ? 'border-l-green-500' : 'border-l-yellow-500'
-            )}>
+            <Card
+              className={cn(
+                "border-l-4",
+                performanceIndicators.roiStatus === "success"
+                  ? "border-l-green-500"
+                  : "border-l-yellow-500",
+              )}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">ROI Projetado</p>
-                    <p className="text-2xl font-bold">{formatCurrency(metrics.financial.projectedAnnualROI)}</p>
+                    <p className="text-2xl font-bold">
+                      {formatCurrency(metrics.financial.projectedAnnualROI)}
+                    </p>
                   </div>
                   <DollarSign className="h-8 w-8 text-green-600" />
                 </div>
                 <div className="mt-2">
-                  <Progress 
-                    value={Math.min(100, (metrics.financial.projectedAnnualROI / PERFORMANCE_TARGETS.annualROI) * 100)} 
+                  <Progress
+                    value={Math.min(
+                      100,
+                      (metrics.financial.projectedAnnualROI / PERFORMANCE_TARGETS.annualROI) * 100,
+                    )}
                     className="h-2"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
@@ -346,10 +392,14 @@ export function PerformanceMonitoringDashboard({
               </CardContent>
             </Card>
 
-            <Card className={cn(
-              'border-l-4',
-              performanceIndicators.staffStatus === 'success' ? 'border-l-green-500' : 'border-l-yellow-500'
-            )}>
+            <Card
+              className={cn(
+                "border-l-4",
+                performanceIndicators.staffStatus === "success"
+                  ? "border-l-green-500"
+                  : "border-l-yellow-500",
+              )}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -361,8 +411,13 @@ export function PerformanceMonitoringDashboard({
                   <Clock className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <div className="mt-2">
-                  <Progress 
-                    value={Math.max(0, 100 - (metrics.staff.averageResponseTime / PERFORMANCE_TARGETS.staffResponseTime) * 100)} 
+                  <Progress
+                    value={Math.max(
+                      0,
+                      100
+                        - (metrics.staff.averageResponseTime
+                            / PERFORMANCE_TARGETS.staffResponseTime) * 100,
+                    )}
                     className="h-2"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
@@ -380,8 +435,12 @@ export function PerformanceMonitoringDashboard({
                 <div className="flex items-center gap-2">
                   <Activity className="h-5 w-5 text-blue-600" />
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Consultas Analisadas</p>
-                    <p className="text-xl font-bold">{metrics.appointments.totalScheduled.toLocaleString('pt-BR')}</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Consultas Analisadas
+                    </p>
+                    <p className="text-xl font-bold">
+                      {metrics.appointments.totalScheduled.toLocaleString("pt-BR")}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -392,8 +451,12 @@ export function PerformanceMonitoringDashboard({
                 <div className="flex items-center gap-2">
                   <Zap className="h-5 w-5 text-orange-600" />
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Intervenções Enviadas</p>
-                    <p className="text-xl font-bold">{metrics.interventions.totalSent.toLocaleString('pt-BR')}</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Intervenções Enviadas
+                    </p>
+                    <p className="text-xl font-bold">
+                      {metrics.interventions.totalSent.toLocaleString("pt-BR")}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -405,7 +468,9 @@ export function PerformanceMonitoringDashboard({
                   <CheckCircle className="h-5 w-5 text-green-600" />
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Faltas Prevenidas</p>
-                    <p className="text-xl font-bold">{metrics.appointments.preventedNoShows.toLocaleString('pt-BR')}</p>
+                    <p className="text-xl font-bold">
+                      {metrics.appointments.preventedNoShows.toLocaleString("pt-BR")}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -417,7 +482,9 @@ export function PerformanceMonitoringDashboard({
                   <Users className="h-5 w-5 text-purple-600" />
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Alertas da Equipe</p>
-                    <p className="text-xl font-bold">{metrics.staff.totalAlerts.toLocaleString('pt-BR')}</p>
+                    <p className="text-xl font-bold">
+                      {metrics.staff.totalAlerts.toLocaleString("pt-BR")}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -437,39 +504,52 @@ export function PerformanceMonitoringDashboard({
                   <span className="text-sm font-medium">Precisão (Accuracy)</span>
                   <div className="flex items-center gap-2">
                     <Progress value={metrics.predictions.accuracy * 100} className="w-20 h-2" />
-                    <span className="text-sm font-bold">{formatPercentage(metrics.predictions.accuracy)}</span>
+                    <span className="text-sm font-bold">
+                      {formatPercentage(metrics.predictions.accuracy)}
+                    </span>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Precisão (Precision)</span>
                   <div className="flex items-center gap-2">
                     <Progress value={metrics.predictions.precision * 100} className="w-20 h-2" />
-                    <span className="text-sm font-bold">{formatPercentage(metrics.predictions.precision)}</span>
+                    <span className="text-sm font-bold">
+                      {formatPercentage(metrics.predictions.precision)}
+                    </span>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Recall</span>
                   <div className="flex items-center gap-2">
                     <Progress value={metrics.predictions.recall * 100} className="w-20 h-2" />
-                    <span className="text-sm font-bold">{formatPercentage(metrics.predictions.recall)}</span>
+                    <span className="text-sm font-bold">
+                      {formatPercentage(metrics.predictions.recall)}
+                    </span>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">F1-Score</span>
                   <div className="flex items-center gap-2">
                     <Progress value={metrics.predictions.f1Score * 100} className="w-20 h-2" />
-                    <span className="text-sm font-bold">{formatPercentage(metrics.predictions.f1Score)}</span>
+                    <span className="text-sm font-bold">
+                      {formatPercentage(metrics.predictions.f1Score)}
+                    </span>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Confiança Média</span>
                   <div className="flex items-center gap-2">
-                    <Progress value={metrics.predictions.modelConfidence * 100} className="w-20 h-2" />
-                    <span className="text-sm font-bold">{formatPercentage(metrics.predictions.modelConfidence)}</span>
+                    <Progress
+                      value={metrics.predictions.modelConfidence * 100}
+                      className="w-20 h-2"
+                    />
+                    <span className="text-sm font-bold">
+                      {formatPercentage(metrics.predictions.modelConfidence)}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -486,7 +566,7 @@ export function PerformanceMonitoringDashboard({
                   </div>
                   <div className="text-sm text-muted-foreground">Faltas Prevenidas</div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center">
                     <div className="text-xl font-bold text-red-600">
@@ -501,7 +581,7 @@ export function PerformanceMonitoringDashboard({
                     <div className="text-xs text-muted-foreground">Taxa Depois</div>
                   </div>
                 </div>
-                
+
                 <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                   <div className="flex items-center gap-2">
                     <TrendingDown className="h-5 w-5 text-green-600" />
@@ -526,7 +606,9 @@ export function PerformanceMonitoringDashboard({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics.interventions.smsCount.toLocaleString('pt-BR')}</div>
+                <div className="text-2xl font-bold">
+                  {metrics.interventions.smsCount.toLocaleString("pt-BR")}
+                </div>
                 <p className="text-sm text-muted-foreground">Enviados</p>
                 <div className="mt-4">
                   <div className="flex items-center justify-between text-sm">
@@ -546,7 +628,9 @@ export function PerformanceMonitoringDashboard({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics.interventions.emailCount.toLocaleString('pt-BR')}</div>
+                <div className="text-2xl font-bold">
+                  {metrics.interventions.emailCount.toLocaleString("pt-BR")}
+                </div>
                 <p className="text-sm text-muted-foreground">Enviados</p>
                 <div className="mt-4">
                   <div className="flex items-center justify-between text-sm">
@@ -566,7 +650,9 @@ export function PerformanceMonitoringDashboard({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics.interventions.phoneCallCount.toLocaleString('pt-BR')}</div>
+                <div className="text-2xl font-bold">
+                  {metrics.interventions.phoneCallCount.toLocaleString("pt-BR")}
+                </div>
                 <p className="text-sm text-muted-foreground">Realizadas</p>
                 <div className="mt-4">
                   <div className="flex items-center justify-between text-sm">
@@ -594,7 +680,7 @@ export function PerformanceMonitoringDashboard({
                   </div>
                   <div className="text-sm text-muted-foreground">ROI Líquido no Período</div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-sm">Economia com Prevenção:</span>
@@ -629,23 +715,29 @@ export function PerformanceMonitoringDashboard({
                   </div>
                   <div className="text-sm text-muted-foreground">ROI Projetado (12 meses)</div>
                 </div>
-                
+
                 <div className="mt-4">
                   <div className="flex items-center justify-between text-sm mb-2">
                     <span>Progresso para Meta Anual</span>
                     <span className="font-medium">
-                      {Math.round((metrics.financial.projectedAnnualROI / PERFORMANCE_TARGETS.annualROI) * 100)}%
+                      {Math.round(
+                        (metrics.financial.projectedAnnualROI / PERFORMANCE_TARGETS.annualROI)
+                          * 100,
+                      )}%
                     </span>
                   </div>
-                  <Progress 
-                    value={Math.min(100, (metrics.financial.projectedAnnualROI / PERFORMANCE_TARGETS.annualROI) * 100)} 
+                  <Progress
+                    value={Math.min(
+                      100,
+                      (metrics.financial.projectedAnnualROI / PERFORMANCE_TARGETS.annualROI) * 100,
+                    )}
                     className="h-3"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Meta: {formatCurrency(PERFORMANCE_TARGETS.annualROI)}
                   </p>
                 </div>
-                
+
                 {metrics.financial.projectedAnnualROI >= PERFORMANCE_TARGETS.annualROI && (
                   <div className="p-3 bg-green-50 rounded-lg border border-green-200">
                     <div className="flex items-center gap-2">

@@ -93,13 +93,6 @@ interface User {
   lastSeen: Date;
 }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 interface Activity {
   id: string;
   user: User;
@@ -109,20 +102,6 @@ interface Activity {
   metadata?: Record<string, string | number | boolean>;
 }
 
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 interface Metric {
   id: string;
   label: string;
@@ -134,13 +113,6 @@ interface Metric {
   icon: React.ComponentType<{ className?: string; }>;
 }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 interface Task {
   id: string;
   title: string;
@@ -180,20 +152,6 @@ interface Notification {
   };
 }
 
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 // AI Enhancement Types
 interface AIInsight {
   id: string;

@@ -97,30 +97,32 @@ export const useAIScheduling = (
   const wsConnectionRef = useRef<WebSocket | null>(null);
 
   // Handle real-time updates from WebSocket
-<<<<<<< Updated upstream
-  const handleRealtimeUpdate = useCallback((data: any) => {
-    switch (data.type) {
-=======
   const handleRealtimeUpdate = useCallback((data: unknown) => {
-    const updateData = data as { type?: string; affectedSlots?: unknown; };
+    const updateData = data as {
+      type?: string;
+      affectedSlots?: unknown;
+      score?: number;
+      analytics?: unknown;
+    };
     switch (updateData.type) {
->>>>>>> Stashed changes
       case "schedule_change": {
         // Refresh available slots
-        if (data.affectedSlots) {
+        if (updateData.affectedSlots) {
         }
         break;
       }
 
       case "optimization_opportunity": {
         // New optimization opportunity detected
-        setOptimizationScore(data.score);
+        if (updateData.score) {
+          setOptimizationScore(updateData.score);
+        }
         break;
       }
 
       case "analytics_update": {
         // Real-time analytics update
-        setAnalytics((prev) => ({ ...prev, ...data.analytics }));
+        setAnalytics((prev) => ({ ...prev, ...updateData.analytics }));
         break;
       }
 

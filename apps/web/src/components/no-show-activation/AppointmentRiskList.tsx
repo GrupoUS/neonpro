@@ -1,29 +1,35 @@
 "use client";
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import RiskScoreIndicator, { RiskScoreData } from './RiskScoreIndicator';
-import { cn } from '@/lib/utils';
-import { 
-  Calendar,
-  Clock,
-  User,
-  Search,
-  Filter,
-  RefreshCw,
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import {
   AlertTriangle,
-  TrendingUp,
-  Phone,
-  Mail,
+  Calendar,
   ChevronRight,
+  Clock,
+  Filter,
+  Mail,
+  Phone,
+  RefreshCw,
+  Search,
   SortAsc,
-  SortDesc
-} from 'lucide-react';
+  SortDesc,
+  TrendingUp,
+  User,
+} from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import RiskScoreIndicator, { RiskScoreData } from "./RiskScoreIndicator";
 
 // Types
 export interface AppointmentData {
@@ -36,7 +42,7 @@ export interface AppointmentData {
   appointmentTime: string;
   appointmentType: string;
   doctorName: string;
-  status: 'scheduled' | 'confirmed' | 'cancelled' | 'completed' | 'no_show';
+  status: "scheduled" | "confirmed" | "cancelled" | "completed" | "no_show";
   riskScore: RiskScoreData;
   lastContactDate?: string;
   interventionsCount: number;
@@ -48,25 +54,25 @@ export interface AppointmentRiskListProps {
   onRefresh?: () => void;
   onAppointmentSelect?: (appointment: AppointmentData) => void;
   onInterventionTrigger?: (appointmentId: string, riskLevel: string) => void;
-  onContactPatient?: (patientId: string, method: 'phone' | 'email') => void;
+  onContactPatient?: (patientId: string, method: "phone" | "email") => void;
   className?: string;
 }
 
 // Filter and sort options
 const RISK_FILTER_OPTIONS = [
-  { value: 'all', label: 'Todos os Riscos' },
-  { value: 'critical', label: 'Risco Crítico' },
-  { value: 'high', label: 'Alto Risco' },
-  { value: 'medium', label: 'Risco Moderado' },
-  { value: 'low', label: 'Baixo Risco' }
+  { value: "all", label: "Todos os Riscos" },
+  { value: "critical", label: "Risco Crítico" },
+  { value: "high", label: "Alto Risco" },
+  { value: "medium", label: "Risco Moderado" },
+  { value: "low", label: "Baixo Risco" },
 ];
 
 const SORT_OPTIONS = [
-  { value: 'risk_desc', label: 'Maior Risco Primeiro' },
-  { value: 'risk_asc', label: 'Menor Risco Primeiro' },
-  { value: 'date_asc', label: 'Data Mais Próxima' },
-  { value: 'date_desc', label: 'Data Mais Distante' },
-  { value: 'patient_name', label: 'Nome do Paciente' }
+  { value: "risk_desc", label: "Maior Risco Primeiro" },
+  { value: "risk_asc", label: "Menor Risco Primeiro" },
+  { value: "date_asc", label: "Data Mais Próxima" },
+  { value: "date_desc", label: "Data Mais Distante" },
+  { value: "patient_name", label: "Nome do Paciente" },
 ];
 
 export function AppointmentRiskList({
@@ -76,11 +82,11 @@ export function AppointmentRiskList({
   onAppointmentSelect,
   onInterventionTrigger,
   onContactPatient,
-  className = ''
+  className = "",
 }: AppointmentRiskListProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [riskFilter, setRiskFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('risk_desc');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [riskFilter, setRiskFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("risk_desc");
   const [expandedAppointment, setExpandedAppointment] = useState<string | null>(null);
 
   // Filtered and sorted appointments
@@ -90,35 +96,33 @@ export function AppointmentRiskList({
     // Apply search filter
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase().trim();
-      filtered = filtered.filter(appointment => 
-        appointment.patientName.toLowerCase().includes(term) ||
-        appointment.appointmentType.toLowerCase().includes(term) ||
-        appointment.doctorName.toLowerCase().includes(term)
+      filtered = filtered.filter(appointment =>
+        appointment.patientName.toLowerCase().includes(term)
+        || appointment.appointmentType.toLowerCase().includes(term)
+        || appointment.doctorName.toLowerCase().includes(term)
       );
     }
 
     // Apply risk filter
-    if (riskFilter !== 'all') {
-      filtered = filtered.filter(appointment => 
-        appointment.riskScore.riskCategory === riskFilter
-      );
+    if (riskFilter !== "all") {
+      filtered = filtered.filter(appointment => appointment.riskScore.riskCategory === riskFilter);
     }
 
     // Apply sorting
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'risk_desc':
+        case "risk_desc":
           return b.riskScore.noShowProbability - a.riskScore.noShowProbability;
-        case 'risk_asc':
+        case "risk_asc":
           return a.riskScore.noShowProbability - b.riskScore.noShowProbability;
-        case 'date_asc':
-          return new Date(`${a.appointmentDate} ${a.appointmentTime}`).getTime() - 
-                 new Date(`${b.appointmentDate} ${b.appointmentTime}`).getTime();
-        case 'date_desc':
-          return new Date(`${b.appointmentDate} ${b.appointmentTime}`).getTime() - 
-                 new Date(`${a.appointmentDate} ${a.appointmentTime}`).getTime();
-        case 'patient_name':
-          return a.patientName.localeCompare(b.patientName, 'pt-BR');
+        case "date_asc":
+          return new Date(`${a.appointmentDate} ${a.appointmentTime}`).getTime()
+            - new Date(`${b.appointmentDate} ${b.appointmentTime}`).getTime();
+        case "date_desc":
+          return new Date(`${b.appointmentDate} ${b.appointmentTime}`).getTime()
+            - new Date(`${a.appointmentDate} ${a.appointmentTime}`).getTime();
+        case "patient_name":
+          return a.patientName.localeCompare(b.patientName, "pt-BR");
         default:
           return 0;
       }
@@ -135,7 +139,7 @@ export function AppointmentRiskList({
       high: 0,
       medium: 0,
       low: 0,
-      avgRisk: 0
+      avgRisk: 0,
     };
 
     appointments.forEach(appointment => {
@@ -154,37 +158,35 @@ export function AppointmentRiskList({
   const formatDateTime = useCallback((date: string, time: string) => {
     const datetime = new Date(`${date} ${time}`);
     return {
-      date: new Intl.DateTimeFormat('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
+      date: new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
       }).format(datetime),
-      time: new Intl.DateTimeFormat('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit'
+      time: new Intl.DateTimeFormat("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
       }).format(datetime),
-      weekday: new Intl.DateTimeFormat('pt-BR', {
-        weekday: 'short'
-      }).format(datetime)
+      weekday: new Intl.DateTimeFormat("pt-BR", {
+        weekday: "short",
+      }).format(datetime),
     };
   }, []);
 
   // Handle appointment expansion
   const toggleAppointmentExpansion = useCallback((appointmentId: string) => {
-    setExpandedAppointment(current => 
-      current === appointmentId ? null : appointmentId
-    );
+    setExpandedAppointment(current => current === appointmentId ? null : appointmentId);
   }, []);
 
   // Handle patient contact
-  const handleContactPatient = useCallback((patientId: string, method: 'phone' | 'email') => {
+  const handleContactPatient = useCallback((patientId: string, method: "phone" | "email") => {
     if (onContactPatient) {
       onContactPatient(patientId, method);
     }
   }, [onContactPatient]);
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("space-y-6", className)}>
       {/* Header with Stats */}
       <Card>
         <CardHeader className="pb-4">
@@ -198,12 +200,12 @@ export function AppointmentRiskList({
               disabled={loading}
               onClick={onRefresh}
             >
-              <RefreshCw className={cn('h-4 w-4 mr-1', loading && 'animate-spin')} />
+              <RefreshCw className={cn("h-4 w-4 mr-1", loading && "animate-spin")} />
               Atualizar
             </Button>
           </div>
         </CardHeader>
-        
+
         <CardContent>
           {/* Risk Statistics */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
@@ -256,7 +258,7 @@ export function AppointmentRiskList({
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-[200px]">
                   <SortAsc className="h-4 w-4 mr-1" />
@@ -277,164 +279,174 @@ export function AppointmentRiskList({
 
       {/* Appointment List */}
       <div className="space-y-3">
-        {loading ? (
-          <div className="space-y-3">
-            {[...Array(3)].map((_, i) => (
-              <Card key={i} className="animate-pulse">
-                <CardContent className="p-4">
-                  <div className="h-4 bg-muted rounded w-3/4 mb-2" />
-                  <div className="h-3 bg-muted rounded w-1/2" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : filteredAppointments.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <div className="text-muted-foreground">
-                {searchTerm || riskFilter !== 'all' ? 
-                  'Nenhuma consulta encontrada com os filtros aplicados.' : 
-                  'Nenhuma consulta encontrada.'
-                }
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          filteredAppointments.map(appointment => {
-            const datetime = formatDateTime(appointment.appointmentDate, appointment.appointmentTime);
-            const isExpanded = expandedAppointment === appointment.appointmentId;
-            
-            return (
-              <Card key={appointment.appointmentId} className={cn(
-                'transition-all duration-200 hover:shadow-md',
-                appointment.riskScore.riskCategory === 'critical' && 'border-red-200',
-                appointment.riskScore.riskCategory === 'high' && 'border-orange-200'
-              )}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                      {/* Risk Indicator */}
-                      <RiskScoreIndicator
-                        riskData={appointment.riskScore}
-                        size="md"
-                        showDetails={false}
-                        showTooltip={true}
-                        interactive={true}
-                        onInterventionTrigger={onInterventionTrigger}
-                      />
-                      
-                      {/* Appointment Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-medium truncate">
-                            {appointment.patientName}
-                          </h3>
-                          {appointment.interventionsCount > 0 && (
-                            <Badge variant="outline" className="text-xs">
-                              {appointment.interventionsCount} intervenções
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            {datetime.date} ({datetime.weekday})
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {datetime.time}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <User className="h-3 w-3" />
-                            {appointment.doctorName}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+        {loading
+          ? (
+            <div className="space-y-3">
+              {[...Array(3)].map((_, i) => (
+                <Card key={i} className="animate-pulse">
+                  <CardContent className="p-4">
+                    <div className="h-4 bg-muted rounded w-3/4 mb-2" />
+                    <div className="h-3 bg-muted rounded w-1/2" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )
+          : filteredAppointments.length === 0
+          ? (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <div className="text-muted-foreground">
+                  {searchTerm || riskFilter !== "all"
+                    ? "Nenhuma consulta encontrada com os filtros aplicados."
+                    : "Nenhuma consulta encontrada."}
+                </div>
+              </CardContent>
+            </Card>
+          )
+          : (
+            filteredAppointments.map(appointment => {
+              const datetime = formatDateTime(
+                appointment.appointmentDate,
+                appointment.appointmentTime,
+              );
+              const isExpanded = expandedAppointment === appointment.appointmentId;
 
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-2">
-                      {(appointment.riskScore.riskCategory === 'high' || appointment.riskScore.riskCategory === 'critical') && (
-                        <>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleContactPatient(appointment.patientId, 'phone')}
-                          >
-                            <Phone className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleContactPatient(appointment.patientId, 'email')}
-                          >
-                            <Mail className="h-4 w-4" />
-                          </Button>
-                        </>
-                      )}
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => toggleAppointmentExpansion(appointment.appointmentId)}
-                      >
-                        <ChevronRight className={cn(
-                          'h-4 w-4 transition-transform',
-                          isExpanded && 'rotate-90'
-                        )} />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Expanded Details */}
-                  {isExpanded && (
-                    <>
-                      <Separator className="my-4" />
-                      <div className="space-y-4">
+              return (
+                <Card
+                  key={appointment.appointmentId}
+                  className={cn(
+                    "transition-all duration-200 hover:shadow-md",
+                    appointment.riskScore.riskCategory === "critical" && "border-red-200",
+                    appointment.riskScore.riskCategory === "high" && "border-orange-200",
+                  )}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        {/* Risk Indicator */}
                         <RiskScoreIndicator
                           riskData={appointment.riskScore}
                           size="md"
-                          showDetails={true}
-                          showTooltip={false}
+                          showDetails={false}
+                          showTooltip={true}
                           interactive={true}
                           onInterventionTrigger={onInterventionTrigger}
                         />
-                        
-                        {/* Additional appointment details */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <strong>Tipo de Consulta:</strong> {appointment.appointmentType}
+
+                        {/* Appointment Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-medium truncate">
+                              {appointment.patientName}
+                            </h3>
+                            {appointment.interventionsCount > 0 && (
+                              <Badge variant="outline" className="text-xs">
+                                {appointment.interventionsCount} intervenções
+                              </Badge>
+                            )}
                           </div>
-                          <div>
-                            <strong>Status:</strong> {appointment.status}
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              {datetime.date} ({datetime.weekday})
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {datetime.time}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <User className="h-3 w-3" />
+                              {appointment.doctorName}
+                            </span>
                           </div>
-                          <div>
-                            <strong>Telefone:</strong> {appointment.patientPhone}
-                          </div>
-                          <div>
-                            <strong>Email:</strong> {appointment.patientEmail}
-                          </div>
-                          {appointment.lastContactDate && (
-                            <div className="md:col-span-2">
-                              <strong>Último Contato:</strong> {
-                                new Intl.DateTimeFormat('pt-BR', {
-                                  day: '2-digit',
-                                  month: '2-digit',
-                                  year: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                }).format(new Date(appointment.lastContactDate))
-                              }
-                            </div>
-                          )}
                         </div>
                       </div>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })
-        )}
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-2">
+                        {(appointment.riskScore.riskCategory === "high"
+                          || appointment.riskScore.riskCategory === "critical") && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleContactPatient(appointment.patientId, "phone")}
+                            >
+                              <Phone className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleContactPatient(appointment.patientId, "email")}
+                            >
+                              <Mail className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => toggleAppointmentExpansion(appointment.appointmentId)}
+                        >
+                          <ChevronRight
+                            className={cn(
+                              "h-4 w-4 transition-transform",
+                              isExpanded && "rotate-90",
+                            )}
+                          />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Expanded Details */}
+                    {isExpanded && (
+                      <>
+                        <Separator className="my-4" />
+                        <div className="space-y-4">
+                          <RiskScoreIndicator
+                            riskData={appointment.riskScore}
+                            size="md"
+                            showDetails={true}
+                            showTooltip={false}
+                            interactive={true}
+                            onInterventionTrigger={onInterventionTrigger}
+                          />
+
+                          {/* Additional appointment details */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <strong>Tipo de Consulta:</strong> {appointment.appointmentType}
+                            </div>
+                            <div>
+                              <strong>Status:</strong> {appointment.status}
+                            </div>
+                            <div>
+                              <strong>Telefone:</strong> {appointment.patientPhone}
+                            </div>
+                            <div>
+                              <strong>Email:</strong> {appointment.patientEmail}
+                            </div>
+                            {appointment.lastContactDate && (
+                              <div className="md:col-span-2">
+                                <strong>Último Contato:</strong> {new Intl.DateTimeFormat("pt-BR", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }).format(new Date(appointment.lastContactDate))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
       </div>
     </div>
   );

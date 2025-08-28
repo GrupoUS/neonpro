@@ -304,6 +304,7 @@ const { register, formState: { errors } } = useForm();
   - Use ARIA to “fix” invalid markup or contradict native semantics.
 
 ### Examples
+
 ```tsx
 // ✅ Button with accessible name and help text
 <button className="btn" aria-describedby="save-hint">Save changes</button>
@@ -312,10 +313,14 @@ const { register, formState: { errors } } = useForm();
 
 ```css
 /* ✅ Visible focus outline */
-.btn:focus-visible { outline: 3px solid #0a84ff; outline-offset: 2px; }
+.btn:focus-visible {
+  outline: 3px solid #0a84ff;
+  outline-offset: 2px;
+}
 ```
 
 ### Validation Criteria
+
 - axe/Lighthouse shows no critical violations; contrast checks pass.
 - Keyboard-only navigation succeeds with visible focus on all interactive elements.
 - Forms have programmatically associated labels and error/help text via aria-describedby.

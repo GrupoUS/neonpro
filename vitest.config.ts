@@ -62,7 +62,7 @@ export default defineConfig({
     ],
 
     exclude: [
-      // === BIOME IGNORE PATTERNS (SYNCHRONIZED) ===
+      // === STANDARD IGNORE PATTERNS ===
       "**/node_modules/**",
       "**/dist/**",
       "**/build/**",
@@ -149,7 +149,7 @@ export default defineConfig({
         "tools/tests/**",
       ],
       exclude: [
-        // === BIOME IGNORE PATTERNS (SYNCHRONIZED) ===
+        // === STANDARD IGNORE PATTERNS ===
         "**/node_modules/**",
         "**/dist/**",
         "**/build/**",

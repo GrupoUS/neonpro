@@ -33,8 +33,6 @@ interface StrategyData {
   last_executed: string;
 }
 
-
-
 const StrategiesParamsSchema = z.object({
   clinicId: z.string().uuid("Invalid clinic ID format"),
 });

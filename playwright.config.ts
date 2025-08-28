@@ -16,9 +16,9 @@ export default defineConfig({
   // Optimized test patterns - E2E ONLY
   testMatch: ["**/*.spec.ts"],
 
-  // EXCLUDE PATTERNS - SYNCHRONIZED WITH BIOME.JSON
+  // EXCLUDE PATTERNS - STANDARD IGNORE PATTERNS
   testIgnore: [
-    // === BIOME IGNORE PATTERNS (SYNCHRONIZED) ===
+    // === STANDARD IGNORE PATTERNS ===
     "**/node_modules/**",
     "**/dist/**",
     "**/build/**",

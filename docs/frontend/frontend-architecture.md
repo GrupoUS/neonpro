@@ -24,20 +24,21 @@ The NeonPro frontend architecture implements a **modern, accessible, and AI-enha
 Based on analysis of TweakCN's NEONPRO theme, we implement these healthcare-adapted components:
 
 #### **Dashboard Analytics Components**
+
 ```typescript
 // Revenue & Growth Visualization (inspired by $15,231.89 display)
 interface HealthcareRevenueMetrics {
   totalRevenue: {
     value: number;
-    currency: 'BRL';
-    period: 'monthly' | 'quarterly' | 'yearly';
+    currency: "BRL";
+    period: "monthly" | "quarterly" | "yearly";
     growth: {
       percentage: number; // e.g., +20.1%
-      trend: 'positive' | 'negative' | 'neutral';
-      comparison: 'last_period' | 'year_over_year';
+      trend: "positive" | "negative" | "neutral";
+      comparison: "last_period" | "year_over_year";
     };
   };
-  
+
   patientMetrics: {
     totalPatients: number;
     newPatients: number;
@@ -58,7 +59,7 @@ export function HealthcareMetricCard({
   changeType,
   icon,
   trendData,
-  currency = 'BRL'
+  currency = "BRL",
 }: HealthcareMetricCardProps) {
   return (
     <Card className="healthcare-metric-card group hover:shadow-lg transition-shadow">
@@ -72,23 +73,27 @@ export function HealthcareMetricCard({
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="text-2xl font-bold">
-          {currency === 'BRL' ? formatCurrency(value, 'BRL') : value}
+          {currency === "BRL" ? formatCurrency(value, "BRL") : value}
         </div>
-        <div className={cn(
-          "flex items-center gap-1 text-xs",
-          changeType === 'positive' ? 'text-green-600' : 
-          changeType === 'negative' ? 'text-red-600' : 
-          'text-gray-600'
-        )}>
+        <div
+          className={cn(
+            "flex items-center gap-1 text-xs",
+            changeType === "positive"
+              ? "text-green-600"
+              : changeType === "negative"
+              ? "text-red-600"
+              : "text-gray-600",
+          )}
+        >
           <TrendIcon changeType={changeType} />
           <span>{change}</span>
           <span className="text-muted-foreground">do mês anterior</span>
         </div>
         {trendData && (
-          <TrendChart 
-            data={trendData} 
+          <TrendChart
+            data={trendData}
             className="mt-2 h-8"
-            color={changeType === 'positive' ? '#16a34a' : '#dc2626'}
+            color={changeType === "positive" ? "#16a34a" : "#dc2626"}
           />
         )}
       </CardContent>
@@ -98,6 +103,7 @@ export function HealthcareMetricCard({
 ```
 
 #### **Calendar & Scheduling Components**
+
 ```typescript
 // Enhanced appointment calendar (based on June 2025 calendar)
 interface AppointmentCalendarProps {
@@ -105,16 +111,16 @@ interface AppointmentCalendarProps {
   availableSlots: AvailableTimeSlot[];
   clinicHours: {
     start: string; // "08:00"
-    end: string;   // "18:00"
-    lunch: { start: string; end: string } | null;
+    end: string; // "18:00"
+    lunch: { start: string; end: string; } | null;
   };
   brazilianHolidays: BrazilianHoliday[];
-  timezone: 'America/Sao_Paulo';
+  timezone: "America/Sao_Paulo";
 }
 
 export function AppointmentCalendar(props: AppointmentCalendarProps) {
   const { appointments, availableSlots, clinicHours, brazilianHolidays } = props;
-  
+
   return (
     <Card className="appointment-calendar">
       <CardHeader>
@@ -134,14 +140,14 @@ export function AppointmentCalendar(props: AppointmentCalendarProps) {
           className="healthcare-calendar"
           components={{
             Day: ({ date, ...props }) => (
-              <CalendarDay 
+              <CalendarDay
                 date={date}
                 appointments={getAppointmentsForDate(appointments, date)}
                 isHoliday={isHolidayDate(brazilianHolidays, date)}
                 availability={getAvailabilityForDate(availableSlots, date)}
                 {...props}
               />
-            )
+            ),
           }}
         />
         <AppointmentLegend />
@@ -152,6 +158,7 @@ export function AppointmentCalendar(props: AppointmentCalendarProps) {
 ```
 
 #### **Payment & Financial Management**
+
 ```typescript
 // Financial dashboard with ANS integration (from payment table analysis)
 interface PaymentStatusTableProps {
@@ -162,7 +169,7 @@ interface PaymentStatusTableProps {
 
 export function PaymentStatusTable(props: PaymentStatusTableProps) {
   const { payments, ansIntegration, lgpdCompliant } = props;
-  
+
   return (
     <Card className="financial-management">
       <CardHeader>
@@ -204,18 +211,16 @@ export function PaymentStatusTable(props: PaymentStatusTableProps) {
                 </TableCell>
                 <TableCell>{payment.procedure}</TableCell>
                 <TableCell>
-                  {formatCurrency(payment.amount, 'BRL')}
+                  {formatCurrency(payment.amount, "BRL")}
                 </TableCell>
                 <TableCell>
-                  <PaymentStatusBadge 
+                  <PaymentStatusBadge
                     status={payment.status}
                     ansVerified={payment.ansVerified}
                   />
                 </TableCell>
                 <TableCell>
-                  {payment.insurance && (
-                    <ANSInsuranceBadge insurance={payment.insurance} />
-                  )}
+                  {payment.insurance && <ANSInsuranceBadge insurance={payment.insurance} />}
                 </TableCell>
                 <TableCell>
                   <PaymentActionsMenu payment={payment} />
@@ -231,48 +236,45 @@ export function PaymentStatusTable(props: PaymentStatusTableProps) {
 ```
 
 ### **TweakCN Color System for Healthcare**
+
 ```css
 /* Enhanced healthcare color system inspired by NEONPRO */
 :root {
   /* Primary healthcare colors */
-  --neonpro-primary: hsl(221, 83%, 53%);      /* Professional blue */
-  --neonpro-success: hsl(142, 76%, 36%);     /* Revenue growth green */
-  --neonpro-warning: hsl(32, 95%, 44%);      /* Processing orange */
-  --neonpro-danger: hsl(0, 84%, 60%);        /* Critical alerts red */
-  --neonpro-info: hsl(188, 91%, 37%);        /* Information cyan */
-  
+  --neonpro-primary: hsl(221, 83%, 53%); /* Professional blue */
+  --neonpro-success: hsl(142, 76%, 36%); /* Revenue growth green */
+  --neonpro-warning: hsl(32, 95%, 44%); /* Processing orange */
+  --neonpro-danger: hsl(0, 84%, 60%); /* Critical alerts red */
+  --neonpro-info: hsl(188, 91%, 37%); /* Information cyan */
+
   /* Brazilian healthcare compliance */
-  --brasil-primary: hsl(140, 100%, 29%);     /* Brazilian flag green */
-  --brasil-secondary: hsl(51, 100%, 50%);    /* Brazilian flag yellow */
-  --lgpd-compliant: hsl(158, 64%, 52%);      /* LGPD compliance green */
-  --anvisa-approved: hsl(221, 83%, 53%);     /* ANVISA regulation blue */
-  --cfm-validated: hsl(271, 81%, 56%);       /* CFM validation purple */
-  
+  --brasil-primary: hsl(140, 100%, 29%); /* Brazilian flag green */
+  --brasil-secondary: hsl(51, 100%, 50%); /* Brazilian flag yellow */
+  --lgpd-compliant: hsl(158, 64%, 52%); /* LGPD compliance green */
+  --anvisa-approved: hsl(221, 83%, 53%); /* ANVISA regulation blue */
+  --cfm-validated: hsl(271, 81%, 56%); /* CFM validation purple */
+
   /* TweakCN-inspired surfaces and effects */
   --card-bg: hsl(0, 0%, 100%);
   --card-border: hsl(220, 13%, 91%);
   --card-shadow: 0 4px 6px -1px hsl(0 0% 0% / 0.1);
   --card-shadow-hover: 0 10px 15px -3px hsl(0 0% 0% / 0.1);
-  
+
   /* Healthcare-specific gradients */
-  --revenue-gradient: linear-gradient(135deg, 
-    var(--neonpro-success) 0%, 
-    var(--lgpd-compliant) 100%);
-  --dashboard-gradient: linear-gradient(135deg, 
-    hsl(210, 40%, 98%) 0%, 
-    hsl(210, 40%, 90%) 100%);
-  --emergency-gradient: linear-gradient(135deg,
-    var(--neonpro-danger) 0%,
-    hsl(0, 100%, 67%) 100%);
+  --revenue-gradient: linear-gradient(
+    135deg,
+    var(--neonpro-success) 0%,
+    var(--lgpd-compliant) 100%
+  );
+  --dashboard-gradient: linear-gradient(135deg, hsl(210, 40%, 98%) 0%, hsl(210, 40%, 90%) 100%);
+  --emergency-gradient: linear-gradient(135deg, var(--neonpro-danger) 0%, hsl(0, 100%, 67%) 100%);
 }
 
 /* Dark mode healthcare colors */
 [data-theme="dark"] {
   --card-bg: hsl(220, 13%, 9%);
   --card-border: hsl(220, 13%, 18%);
-  --dashboard-gradient: linear-gradient(135deg, 
-    hsl(220, 13%, 9%) 0%, 
-    hsl(220, 13%, 15%) 100%);
+  --dashboard-gradient: linear-gradient(135deg, hsl(220, 13%, 9%) 0%, hsl(220, 13%, 15%) 100%);
 }
 ```
 
@@ -285,12 +287,13 @@ export function PaymentStatusTable(props: PaymentStatusTableProps) {
 Based on frontend specification analysis, implementing dual chat systems:
 
 #### **External Patient Chat Widget**
+
 ```typescript
 interface PatientChatWidgetProps {
   patientId: string;
   initialContext?: PatientContext;
   emergencyMode?: boolean;
-  language?: 'pt-BR' | 'en-US';
+  language?: "pt-BR" | "en-US";
 }
 
 export function PatientChatWidget(props: PatientChatWidgetProps) {
@@ -298,7 +301,7 @@ export function PatientChatWidget(props: PatientChatWidgetProps) {
   const [session, setSession] = useState<ChatSession | null>(null);
   const [confidence, setConfidence] = useState<number>(0);
   const [escalationReady, setEscalationReady] = useState<boolean>(false);
-  
+
   // AI confidence monitoring
   useEffect(() => {
     if (confidence < 0.7) {
@@ -306,12 +309,14 @@ export function PatientChatWidget(props: PatientChatWidgetProps) {
       // Automatically suggest human handoff
     }
   }, [confidence]);
-  
+
   return (
-    <Card className={cn(
-      "ai-chat-widget",
-      emergencyMode && "border-red-500 bg-red-50"
-    )}>
+    <Card
+      className={cn(
+        "ai-chat-widget",
+        emergencyMode && "border-red-500 bg-red-50",
+      )}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm flex items-center gap-2">
@@ -334,27 +339,24 @@ export function PatientChatWidget(props: PatientChatWidgetProps) {
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
-        <ChatHistory 
-          messages={session?.messages || []} 
+        <ChatHistory
+          messages={session?.messages || []}
           isLoading={session?.isLoading}
           emergencyMode={emergencyMode}
         />
-        
-        <ChatInput 
+
+        <ChatInput
           onSendMessage={handleSendMessage}
           disabled={session?.isLoading}
-          placeholder={emergencyMode ? 
-            "Descreva sua emergência..." : 
-            "Como posso ajudá-lo hoje?"
-          }
+          placeholder={emergencyMode
+            ? "Descreva sua emergência..."
+            : "Como posso ajudá-lo hoje?"}
           emergencyMode={emergencyMode}
         />
-        
-        {initialContext && (
-          <PatientContextDisplay context={initialContext} />
-        )}
+
+        {initialContext && <PatientContextDisplay context={initialContext} />}
       </CardContent>
     </Card>
   );
@@ -362,6 +364,7 @@ export function PatientChatWidget(props: PatientChatWidgetProps) {
 ```
 
 #### **Internal Staff AI Assistant**
+
 ```typescript
 interface StaffAIAssistantProps {
   staffId: string;
@@ -373,7 +376,7 @@ export function StaffAIAssistant(props: StaffAIAssistantProps) {
   const { staffId, currentPatient, contextualData } = props;
   const [queries, setQueries] = useState<NaturalLanguageQuery[]>([]);
   const [queryHistory, setQueryHistory] = useState<QueryHistoryEntry[]>([]);
-  
+
   return (
     <div className="staff-ai-assistant">
       <Card>
@@ -386,21 +389,21 @@ export function StaffAIAssistant(props: StaffAIAssistantProps) {
             <QueryHistoryToggle history={queryHistory} />
           </div>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
-          <NaturalLanguageQueryBar 
+          <NaturalLanguageQueryBar
             onQuery={handleNaturalLanguageQuery}
             currentPatient={currentPatient}
             contextualData={contextualData}
             placeholder="Ex: 'Quais pacientes têm consulta hoje?'"
           />
-          
-          <QuickActions 
+
+          <QuickActions
             currentPatient={currentPatient}
             suggestedActions={generateContextAwareActions(contextualData)}
           />
-          
-          <ContextAwareResults 
+
+          <ContextAwareResults
             queries={queries}
             patientContext={currentPatient}
           />
@@ -423,9 +426,9 @@ interface NoShowPreventionPanelProps {
 
 export function NoShowPreventionPanel(props: NoShowPreventionPanelProps) {
   const { appointments, interventionQueue, successMetrics } = props;
-  
+
   const highRiskAppointments = appointments.filter(apt => apt.riskScore > 0.7);
-  
+
   return (
     <Card className="no-show-prevention">
       <CardHeader>
@@ -439,7 +442,7 @@ export function NoShowPreventionPanel(props: NoShowPreventionPanelProps) {
           </Badge>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         <div className="grid grid-cols-3 gap-4">
           <MetricCard
@@ -461,18 +464,18 @@ export function NoShowPreventionPanel(props: NoShowPreventionPanelProps) {
             variant="success"
           />
         </div>
-        
+
         <div className="space-y-2">
           <h4 className="text-sm font-medium">Ações Recomendadas</h4>
           {interventionQueue.slice(0, 5).map((intervention) => (
-            <InterventionCard 
+            <InterventionCard
               key={intervention.id}
               intervention={intervention}
               onExecute={executeIntervention}
             />
           ))}
         </div>
-        
+
         <RiskScoreDistribution appointments={appointments} />
       </CardContent>
     </Card>
@@ -485,37 +488,48 @@ export function NoShowPreventionPanel(props: NoShowPreventionPanelProps) {
 ## 🇧🇷 **Brazilian Healthcare Compliance Components**
 
 ### **CFM License Validation**
+
 ```typescript
 interface CFMValidationBadgeProps {
   license: string;
   specialty: string;
   validUntil: Date;
-  status: 'active' | 'pending' | 'expired' | 'suspended';
+  status: "active" | "pending" | "expired" | "suspended";
 }
 
 export function CFMValidationBadge(props: CFMValidationBadgeProps) {
   const { license, specialty, validUntil, status } = props;
-  
+
   const getStatusVariant = (status: string) => {
     switch (status) {
-      case 'active': return 'success';
-      case 'pending': return 'warning';
-      case 'expired': return 'destructive';
-      case 'suspended': return 'secondary';
-      default: return 'outline';
+      case "active":
+        return "success";
+      case "pending":
+        return "warning";
+      case "expired":
+        return "destructive";
+      case "suspended":
+        return "secondary";
+      default:
+        return "outline";
     }
   };
-  
+
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'active': return 'CFM Ativo';
-      case 'pending': return 'CFM Pendente';
-      case 'expired': return 'CFM Expirado';
-      case 'suspended': return 'CFM Suspenso';
-      default: return 'CFM Desconhecido';
+      case "active":
+        return "CFM Ativo";
+      case "pending":
+        return "CFM Pendente";
+      case "expired":
+        return "CFM Expirado";
+      case "suspended":
+        return "CFM Suspenso";
+      default:
+        return "CFM Desconhecido";
     }
   };
-  
+
   return (
     <Tooltip>
       <TooltipTrigger>
@@ -526,9 +540,15 @@ export function CFMValidationBadge(props: CFMValidationBadgeProps) {
       </TooltipTrigger>
       <TooltipContent>
         <div className="space-y-1 text-xs">
-          <p><strong>CRM:</strong> {license}</p>
-          <p><strong>Especialidade:</strong> {specialty}</p>
-          <p><strong>Válido até:</strong> {format(validUntil, 'dd/MM/yyyy')}</p>
+          <p>
+            <strong>CRM:</strong> {license}
+          </p>
+          <p>
+            <strong>Especialidade:</strong> {specialty}
+          </p>
+          <p>
+            <strong>Válido até:</strong> {format(validUntil, "dd/MM/yyyy")}
+          </p>
         </div>
       </TooltipContent>
     </Tooltip>
@@ -537,6 +557,7 @@ export function CFMValidationBadge(props: CFMValidationBadgeProps) {
 ```
 
 ### **ANS Insurance Integration**
+
 ```typescript
 interface ANSInsuranceCheckerProps {
   cardNumber: string;
@@ -548,7 +569,7 @@ export function ANSInsuranceChecker(props: ANSInsuranceCheckerProps) {
   const { cardNumber, patientId, onVerificationComplete } = props;
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationResult, setVerificationResult] = useState<ANSVerificationResult | null>(null);
-  
+
   const handleVerifyInsurance = async () => {
     setIsVerifying(true);
     try {
@@ -556,12 +577,12 @@ export function ANSInsuranceChecker(props: ANSInsuranceCheckerProps) {
       setVerificationResult(result);
       onVerificationComplete(result);
     } catch (error) {
-      console.error('ANS verification failed:', error);
+      console.error("ANS verification failed:", error);
     } finally {
       setIsVerifying(false);
     }
   };
-  
+
   return (
     <Card className="ans-insurance-checker">
       <CardHeader>
@@ -570,31 +591,27 @@ export function ANSInsuranceChecker(props: ANSInsuranceCheckerProps) {
           Verificação ANS
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         <div className="flex gap-2">
-          <Input 
+          <Input
             placeholder="Número da carteirinha"
             value={cardNumber}
             readOnly
           />
-          <Button 
+          <Button
             onClick={handleVerifyInsurance}
             disabled={isVerifying}
             size="sm"
           >
-            {isVerifying ? (
-              <Loader2 className="w-3 h-3 animate-spin mr-1" />
-            ) : (
-              <CheckCircle className="w-3 h-3 mr-1" />
-            )}
+            {isVerifying
+              ? <Loader2 className="w-3 h-3 animate-spin mr-1" />
+              : <CheckCircle className="w-3 h-3 mr-1" />}
             Verificar
           </Button>
         </div>
-        
-        {verificationResult && (
-          <ANSVerificationResult result={verificationResult} />
-        )}
+
+        {verificationResult && <ANSVerificationResult result={verificationResult} />}
       </CardContent>
     </Card>
   );
@@ -602,6 +619,7 @@ export function ANSInsuranceChecker(props: ANSInsuranceCheckerProps) {
 ```
 
 ### **LGPD Consent Management**
+
 ```typescript
 interface LGPDConsentManagerProps {
   patientId: string;
@@ -612,7 +630,7 @@ interface LGPDConsentManagerProps {
 
 export function LGPDConsentManager(props: LGPDConsentManagerProps) {
   const { patientId, consentTypes, currentConsents, onConsentUpdate } = props;
-  
+
   return (
     <Card className="lgpd-consent-manager">
       <CardHeader>
@@ -627,47 +645,45 @@ export function LGPDConsentManager(props: LGPDConsentManagerProps) {
           </Badge>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {consentTypes.map((consentType) => {
           const currentConsent = currentConsents.find(
-            c => c.type === consentType.id
+            c => c.type === consentType.id,
           );
-          
+
           return (
             <div key={consentType.id} className="space-y-2 p-3 border rounded-lg">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-medium">{consentType.title}</h4>
-                <ConsentStatusBadge 
-                  status={currentConsent?.status || 'pending'}
+                <ConsentStatusBadge
+                  status={currentConsent?.status || "pending"}
                 />
               </div>
-              
+
               <p className="text-xs text-muted-foreground">
                 {consentType.description}
               </p>
-              
+
               <div className="flex items-center gap-2">
                 <Switch
                   checked={currentConsent?.granted || false}
-                  onCheckedChange={(checked) => 
-                    handleConsentChange(consentType.id, checked)
-                  }
+                  onCheckedChange={(checked) => handleConsentChange(consentType.id, checked)}
                 />
                 <span className="text-xs">
-                  {currentConsent?.granted ? 'Consentido' : 'Não consentido'}
+                  {currentConsent?.granted ? "Consentido" : "Não consentido"}
                 </span>
               </div>
-              
+
               {currentConsent && (
-                <ConsentAuditTrail 
+                <ConsentAuditTrail
                   auditTrail={currentConsent.auditTrail}
                 />
               )}
             </div>
           );
         })}
-        
+
         <ConsentWithdrawalFlow patientId={patientId} />
       </CardContent>
     </Card>
@@ -680,31 +696,32 @@ export function LGPDConsentManager(props: LGPDConsentManagerProps) {
 ## 📱 **Mobile-First Emergency Interface**
 
 ### **Life-Critical Priority Design**
+
 ```typescript
 interface MobileEmergencyInterfaceProps {
   patientId?: string;
-  emergencyType: 'medical' | 'system' | 'security';
+  emergencyType: "medical" | "system" | "security";
   criticalInformation: CriticalPatientInfo;
 }
 
 export function MobileEmergencyInterface(props: MobileEmergencyInterfaceProps) {
   const { patientId, emergencyType, criticalInformation } = props;
   const [offlineMode, setOfflineMode] = useState(false);
-  
+
   // Detect offline status
   useEffect(() => {
     const handleOffline = () => setOfflineMode(true);
     const handleOnline = () => setOfflineMode(false);
-    
-    window.addEventListener('offline', handleOffline);
-    window.addEventListener('online', handleOnline);
-    
+
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+
     return () => {
-      window.removeEventListener('offline', handleOffline);
-      window.removeEventListener('online', handleOnline);
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline);
     };
   }, []);
-  
+
   return (
     <div className="mobile-emergency-interface min-h-screen bg-red-50">
       {/* Full-screen critical info header */}
@@ -720,7 +737,7 @@ export function MobileEmergencyInterface(props: MobileEmergencyInterfaceProps) {
           )}
         </div>
       </div>
-      
+
       {/* Zero-distraction critical information */}
       <div className="p-6 space-y-6">
         {/* Color-coded alerts */}
@@ -732,27 +749,28 @@ export function MobileEmergencyInterface(props: MobileEmergencyInterfaceProps) {
               priority={alert.priority}
               className={cn(
                 "text-lg p-4 rounded-lg",
-                alert.priority === 'life-threatening' && "bg-red-100 border-red-500 text-red-900",
-                alert.priority === 'medications' && "bg-orange-100 border-orange-500 text-orange-900",
-                alert.priority === 'cautions' && "bg-yellow-100 border-yellow-500 text-yellow-900"
+                alert.priority === "life-threatening" && "bg-red-100 border-red-500 text-red-900",
+                alert.priority === "medications"
+                  && "bg-orange-100 border-orange-500 text-orange-900",
+                alert.priority === "cautions" && "bg-yellow-100 border-yellow-500 text-yellow-900",
               )}
             />
           ))}
         </div>
-        
+
         {/* One-thumb operation buttons */}
         <div className="space-y-3">
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             className="w-full h-16 text-lg bg-red-600 hover:bg-red-700"
             onClick={callEmergencyServices}
           >
             <Phone className="w-6 h-6 mr-2" />
             LIGAR 192 (SAMU)
           </Button>
-          
-          <Button 
-            size="lg" 
+
+          <Button
+            size="lg"
             variant="outline"
             className="w-full h-16 text-lg border-red-300"
             onClick={contactResponsibleDoctor}
@@ -760,9 +778,9 @@ export function MobileEmergencyInterface(props: MobileEmergencyInterfaceProps) {
             <Stethoscope className="w-6 h-6 mr-2" />
             CONTATAR MÉDICO RESPONSÁVEL
           </Button>
-          
-          <Button 
-            size="lg" 
+
+          <Button
+            size="lg"
             variant="outline"
             className="w-full h-16 text-lg"
             onClick={showAllMedicalInfo}
@@ -772,11 +790,11 @@ export function MobileEmergencyInterface(props: MobileEmergencyInterfaceProps) {
           </Button>
         </div>
       </div>
-      
+
       {/* Emergency cache status */}
       {offlineMode && (
         <div className="fixed bottom-4 left-4 right-4">
-          <OfflineModeIndicator 
+          <OfflineModeIndicator
             cacheStatus={criticalInformation.cacheStatus}
           />
         </div>
@@ -787,7 +805,8 @@ export function MobileEmergencyInterface(props: MobileEmergencyInterfaceProps) {
 ```
 
 ### **Responsive AI Chat Integration**
-```typescript
+
+````typescript
 interface ResponsiveAIChatProps {
   deviceType: 'mobile' | 'tablet' | 'desktop';
   emergencyMode?: boolean;
@@ -943,49 +962,53 @@ export function AccessibilityProvider({
     </AccessibilityContext.Provider>
   );
 }
-```
+````
 
 ### **Screen Reader Optimization (Portuguese)**
+
 ```typescript
 // Brazilian Portuguese screen reader support
 export class BrazilianScreenReaderOptimizer {
-  private language = 'pt-BR';
+  private language = "pt-BR";
   private medicalTerms = new Map<string, string>([
-    ['Appointment', 'Consulta médica'],
-    ['Prescription', 'Receita médica'],
-    ['Medication', 'Medicamento'],
-    ['Emergency', 'Emergência médica'],
-    ['Patient', 'Paciente'],
-    ['Doctor', 'Médico']
+    ["Appointment", "Consulta médica"],
+    ["Prescription", "Receita médica"],
+    ["Medication", "Medicamento"],
+    ["Emergency", "Emergência médica"],
+    ["Patient", "Paciente"],
+    ["Doctor", "Médico"],
   ]);
-  
+
   announcePatientData(patient: Patient): string {
     return [
       `Paciente: ${patient.firstName} ${patient.lastName}`,
       `Data de nascimento: ${this.formatDateForScreenReader(patient.dateOfBirth)}`,
       `Telefone: ${this.formatPhoneForScreenReader(patient.phone)}`,
-      patient.alerts.length > 0 && `Alertas médicos: ${patient.alerts.join(', ')}`
-    ].filter(Boolean).join('. ');
+      patient.alerts.length > 0 && `Alertas médicos: ${patient.alerts.join(", ")}`,
+    ].filter(Boolean).join(". ");
   }
-  
+
   announceMedicalValue(value: MedicalValue): string {
-    const interpretation = value.interpretation === 'normal' ? 'normal' : 
-                          value.interpretation === 'high' ? 'elevado' : 'baixo';
+    const interpretation = value.interpretation === "normal"
+      ? "normal"
+      : value.interpretation === "high"
+      ? "elevado"
+      : "baixo";
     return `${value.measurement} ${value.unit}, resultado ${interpretation}`;
   }
-  
+
   private formatDateForScreenReader(date: Date): string {
-    return date.toLocaleDateString('pt-BR', { 
-      day: 'numeric', 
-      month: 'long', 
-      year: 'numeric',
-      weekday: 'long'
+    return date.toLocaleDateString("pt-BR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      weekday: "long",
     });
   }
-  
+
   private formatPhoneForScreenReader(phone: string): string {
     // Format Brazilian phone for better pronunciation
-    const cleaned = phone.replace(/\D/g, '');
+    const cleaned = phone.replace(/\D/g, "");
     if (cleaned.length === 11) {
       return `${cleaned.slice(0, 2)} ${cleaned.slice(2, 7)} ${cleaned.slice(7)}`;
     }
@@ -994,25 +1017,25 @@ export class BrazilianScreenReaderOptimizer {
 }
 
 // Screen reader announcements component
-export function ScreenReaderAnnouncements({ 
-  announcements 
+export function ScreenReaderAnnouncements({
+  announcements,
 }: ScreenReaderAnnouncementsProps) {
-  const [currentAnnouncement, setCurrentAnnouncement] = useState('');
-  
+  const [currentAnnouncement, setCurrentAnnouncement] = useState("");
+
   useEffect(() => {
     if (announcements.length > 0) {
       const latest = announcements[announcements.length - 1];
       setCurrentAnnouncement(latest.message);
-      
+
       // Clear after announcement duration
       setTimeout(() => {
-        setCurrentAnnouncement('');
+        setCurrentAnnouncement("");
       }, 3000);
     }
   }, [announcements]);
-  
+
   return (
-    <div 
+    <div
       aria-live="polite"
       aria-atomic="true"
       className="sr-only"
@@ -1025,117 +1048,119 @@ export function ScreenReaderAnnouncements({
 ```
 
 ### **Regional Accessibility Variations**
+
 ```typescript
 // Accessibility tiers based on Brazilian regions
 interface RegionalAccessibilityConfig {
   tier1: {
-    regions: ['São Paulo', 'Rio de Janeiro', 'Brasília'];
+    regions: ["São Paulo", "Rio de Janeiro", "Brasília"];
     features: {
       fullAccessibility: true;
       voiceNavigation: true;
       gestureSupport: true;
-      offlineCapability: 'complete';
-      connectivity: '4G/5G-optimized';
+      offlineCapability: "complete";
+      connectivity: "4G/5G-optimized";
     };
   };
-  
+
   tier2: {
-    regions: ['Salvador', 'Fortaleza', 'Belo Horizonte', 'Manaus'];
+    regions: ["Salvador", "Fortaleza", "Belo Horizonte", "Manaus"];
     features: {
       standardAccessibility: true;
       voiceNavigation: true;
       remoteSupport: true;
-      offlineCapability: 'essential';
-      connectivity: '3G/4G-optimized';
+      offlineCapability: "essential";
+      connectivity: "3G/4G-optimized";
     };
   };
-  
+
   tier3: {
-    regions: ['Interior cities', 'Smaller capitals'];
+    regions: ["Interior cities", "Smaller capitals"];
     features: {
       lightweightAccessibility: true;
       textBasedNavigation: true;
-      offlineCapability: 'critical-only';
-      connectivity: '3G-optimized';
+      offlineCapability: "critical-only";
+      connectivity: "3G-optimized";
       dataConservation: true;
     };
   };
-  
+
   tier4: {
-    regions: ['Rural areas', 'Remote locations'];
+    regions: ["Rural areas", "Remote locations"];
     features: {
       smsAccessibility: true;
       voiceOnlyNavigation: true;
-      offlineCapability: 'emergency-only';
-      connectivity: '2G-compatible';
-      dataConservation: 'maximum';
+      offlineCapability: "emergency-only";
+      connectivity: "2G-compatible";
+      dataConservation: "maximum";
     };
   };
 }
 ```
 
 ### **Post-Procedure Accessibility Support**
+
 ```typescript
 // Specialized accessibility for recovering patients
 interface PostProcedureA11yProps {
-  procedureType: 'surgery' | 'injection' | 'laser' | 'other';
-  affectedAreas: ('hands' | 'eyes' | 'face' | 'mobility')[];
-  medicationEffects: ('drowsiness' | 'vision-blur' | 'coordination')[];
-  recoveryStage: 'immediate' | 'short-term' | 'long-term';
+  procedureType: "surgery" | "injection" | "laser" | "other";
+  affectedAreas: ("hands" | "eyes" | "face" | "mobility")[];
+  medicationEffects: ("drowsiness" | "vision-blur" | "coordination")[];
+  recoveryStage: "immediate" | "short-term" | "long-term";
 }
 
 export function PostProcedureAccessibility(props: PostProcedureA11yProps) {
   const { affectedAreas, medicationEffects, recoveryStage } = props;
-  
+
   const getA11yModifications = () => {
     const modifications: AccessibilityModification[] = [];
-    
+
     // Hand-related modifications
-    if (affectedAreas.includes('hands')) {
+    if (affectedAreas.includes("hands")) {
       modifications.push({
-        type: 'one-handed-navigation',
-        priority: 'high',
-        features: ['large-touch-targets', 'gesture-alternatives', 'voice-commands']
+        type: "one-handed-navigation",
+        priority: "high",
+        features: ["large-touch-targets", "gesture-alternatives", "voice-commands"],
       });
     }
-    
+
     // Vision-related modifications
-    if (affectedAreas.includes('eyes') || medicationEffects.includes('vision-blur')) {
+    if (affectedAreas.includes("eyes") || medicationEffects.includes("vision-blur")) {
       modifications.push({
-        type: 'enhanced-visual',
-        priority: 'critical',
-        features: ['extra-large-text', 'maximum-contrast', 'screen-reader-emphasis']
+        type: "enhanced-visual",
+        priority: "critical",
+        features: ["extra-large-text", "maximum-contrast", "screen-reader-emphasis"],
       });
     }
-    
+
     // Cognitive modifications for medication effects
-    if (medicationEffects.includes('drowsiness')) {
+    if (medicationEffects.includes("drowsiness")) {
       modifications.push({
-        type: 'simplified-interface',
-        priority: 'high',
-        features: ['reduced-options', 'clear-hierarchy', 'progress-confirmation']
+        type: "simplified-interface",
+        priority: "high",
+        features: ["reduced-options", "clear-hierarchy", "progress-confirmation"],
       });
     }
-    
+
     return modifications;
   };
-  
+
   const modifications = getA11yModifications();
-  
+
   return (
     <AccessibilityModeProvider modifications={modifications}>
       <div className="post-procedure-interface">
-        <RecoveryStatusBar 
+        <RecoveryStatusBar
           stage={recoveryStage}
           affectedAreas={affectedAreas}
         />
-        <SimplifiedNavigation 
-          largeTargets={affectedAreas.includes('hands')}
-          voiceEnabled={affectedAreas.includes('hands')}
+        <SimplifiedNavigation
+          largeTargets={affectedAreas.includes("hands")}
+          voiceEnabled={affectedAreas.includes("hands")}
         />
-        <MedicationReminders 
-          largeText={medicationEffects.includes('drowsiness')}
-          audioAlerts={affectedAreas.includes('eyes')}
+        <MedicationReminders
+          largeText={medicationEffects.includes("drowsiness")}
+          audioAlerts={affectedAreas.includes("eyes")}
         />
       </div>
     </AccessibilityModeProvider>
@@ -1148,142 +1173,145 @@ export function PostProcedureAccessibility(props: PostProcedureA11yProps) {
 ## ⚡ **Performance Optimization for Brazilian Infrastructure**
 
 ### **Brazilian Connectivity Reality**
+
 ```typescript
 // Performance targets for Brazilian healthcare environment
 interface BrazilianPerformanceTargets {
   connectivityTiers: {
     // São Paulo/Rio premium connections
     tier1: {
-      mobile4G: '<2.5s for critical patient data';
-      desktop: '<1.5s for admin workflows';
-      target: 'premium-experience';
+      mobile4G: "<2.5s for critical patient data";
+      desktop: "<1.5s for admin workflows";
+      target: "premium-experience";
     };
-    
-    // Regional capitals standard connections  
+
+    // Regional capitals standard connections
     tier2: {
-      mobile4G: '<3.5s for patient data with graceful loading';
-      mobile3G: '<5s with progressive enhancement';
-      target: 'reliable-experience';
+      mobile4G: "<3.5s for patient data with graceful loading";
+      mobile3G: "<5s with progressive enhancement";
+      target: "reliable-experience";
     };
-    
+
     // Interior cities limited connections
     tier3: {
-      mobile3G: '<5s with aggressive optimization';
-      mobile2G: '<8s critical features only';
-      target: 'functional-experience';
+      mobile3G: "<5s with aggressive optimization";
+      mobile2G: "<8s critical features only";
+      target: "functional-experience";
     };
-    
+
     // Emergency access (any connection)
     emergency: {
-      any: '<1s for life-critical data';
-      offline: 'immediate from cache';
-      target: 'life-saving-access';
+      any: "<1s for life-critical data";
+      offline: "immediate from cache";
+      target: "life-saving-access";
     };
   };
-  
+
   healthcareWorkflowTargets: {
-    patientLookup: '<200ms first byte';
-    appointmentBooking: '<500ms interaction response';
-    emergencyAccess: '<100ms critical data';
-    complianceReporting: '<2s LGPD audit generation';
-    aiChatResponse: '<1.5s AI processing';
-    noShowPrevention: '<800ms risk calculation';
+    patientLookup: "<200ms first byte";
+    appointmentBooking: "<500ms interaction response";
+    emergencyAccess: "<100ms critical data";
+    complianceReporting: "<2s LGPD audit generation";
+    aiChatResponse: "<1.5s AI processing";
+    noShowPrevention: "<800ms risk calculation";
   };
 }
 ```
 
 ### **Code Splitting Strategy for Healthcare**
+
 ```typescript
 // Strategic code splitting for healthcare modules
 export const HealthcareCodeSplitting = {
   // Critical path - loaded immediately (< 100ms)
   immediate: {
-    authentication: () => import('@/features/auth'),
-    emergencyAccess: () => import('@/features/emergency'),
-    patientLookup: () => import('@/features/patient-search'),
-    coreComponents: () => import('@/components/healthcare-core'),
+    authentication: () => import("@/features/auth"),
+    emergencyAccess: () => import("@/features/emergency"),
+    patientLookup: () => import("@/features/patient-search"),
+    coreComponents: () => import("@/components/healthcare-core"),
   },
-  
+
   // High priority - lazy loaded on interaction (< 500ms)
   interactive: {
-    appointmentBooking: () => import('@/features/appointments'),
-    patientDashboard: () => import('@/features/patient-dashboard'),
-    aiChatWidget: () => import('@/features/ai-chat'),
-    paymentProcessing: () => import('@/features/payments'),
+    appointmentBooking: () => import("@/features/appointments"),
+    patientDashboard: () => import("@/features/patient-dashboard"),
+    aiChatWidget: () => import("@/features/ai-chat"),
+    paymentProcessing: () => import("@/features/payments"),
   },
-  
+
   // Standard priority - loaded on demand (< 1s)
   onDemand: {
-    reports: () => import('@/features/reports'),
-    settings: () => import('@/features/settings'),
-    teamManagement: () => import('@/features/team'),
-    inventoryManagement: () => import('@/features/inventory'),
+    reports: () => import("@/features/reports"),
+    settings: () => import("@/features/settings"),
+    teamManagement: () => import("@/features/team"),
+    inventoryManagement: () => import("@/features/inventory"),
   },
-  
+
   // Background priority - loaded during idle time
   background: {
-    analytics: () => import('@/features/analytics'),
-    auditLogs: () => import('@/features/audit'),
-    systemConfiguration: () => import('@/features/system-config'),
-    advancedReporting: () => import('@/features/advanced-reports'),
+    analytics: () => import("@/features/analytics"),
+    auditLogs: () => import("@/features/audit"),
+    systemConfiguration: () => import("@/features/system-config"),
+    advancedReporting: () => import("@/features/advanced-reports"),
   },
-  
+
   // Brazilian healthcare specific modules
   compliance: {
-    lgpdManager: () => import('@/features/lgpd'),
-    ansIntegration: () => import('@/features/ans-integration'), 
-    cfmValidation: () => import('@/features/cfm-validation'),
-    anvisaReporting: () => import('@/features/anvisa'),
+    lgpdManager: () => import("@/features/lgpd"),
+    ansIntegration: () => import("@/features/ans-integration"),
+    cfmValidation: () => import("@/features/cfm-validation"),
+    anvisaReporting: () => import("@/features/anvisa"),
   },
-  
+
   // Emergency modules with offline cache
   emergency: {
-    patientEmergencyData: () => import('@/features/emergency-data'),
-    offlinePatientCache: () => import('@/features/offline-cache'),
-    emergencyContacts: () => import('@/features/emergency-contacts'),
-    criticalAlerts: () => import('@/features/critical-alerts'),
-  }
+    patientEmergencyData: () => import("@/features/emergency-data"),
+    offlinePatientCache: () => import("@/features/offline-cache"),
+    emergencyContacts: () => import("@/features/emergency-contacts"),
+    criticalAlerts: () => import("@/features/critical-alerts"),
+  },
 };
 
 // Dynamic import with performance monitoring
 export async function loadHealthcareModule(
   moduleKey: keyof typeof HealthcareCodeSplitting.interactive,
-  performanceContext: PerformanceContext
+  performanceContext: PerformanceContext,
 ) {
   const startTime = performance.now();
-  
+
   try {
     const module = await HealthcareCodeSplitting.interactive[moduleKey]();
     const loadTime = performance.now() - startTime;
-    
+
     // Monitor performance by region
     trackModulePerformance({
       module: moduleKey,
       loadTime,
       region: performanceContext.region,
       connectionType: performanceContext.connectionType,
-      success: true
+      success: true,
     });
-    
+
     return module;
   } catch (error) {
     const loadTime = performance.now() - startTime;
-    
+
     trackModulePerformance({
       module: moduleKey,
       loadTime,
       region: performanceContext.region,
       connectionType: performanceContext.connectionType,
       success: false,
-      error: error.message
+      error: error.message,
     });
-    
+
     throw error;
   }
 }
 ```
 
 ### **Offline-First Architecture for Healthcare**
+
 ```typescript
 // Comprehensive offline support for Brazilian healthcare
 export class HealthcareOfflineManager {
@@ -1292,90 +1320,90 @@ export class HealthcareOfflineManager {
     essential: {
       emergencyPatientData: {
         limit: 200,
-        priority: 'critical',
-        ttl: '24h',
-        syncStrategy: 'immediate'
+        priority: "critical",
+        ttl: "24h",
+        syncStrategy: "immediate",
       },
       appointmentSchedule: {
-        limit: 'next-7-days',
-        priority: 'high', 
-        ttl: '4h',
-        syncStrategy: 'background'
+        limit: "next-7-days",
+        priority: "high",
+        ttl: "4h",
+        syncStrategy: "background",
       },
       medicationAlerts: {
-        limit: 'all-active',
-        priority: 'critical',
-        ttl: '1h',
-        syncStrategy: 'immediate'
+        limit: "all-active",
+        priority: "critical",
+        ttl: "1h",
+        syncStrategy: "immediate",
       },
       lgpdConsentStatus: {
-        limit: 'all-active-patients',
-        priority: 'high',
-        ttl: '24h',
-        syncStrategy: 'background'
-      }
+        limit: "all-active-patients",
+        priority: "high",
+        ttl: "24h",
+        syncStrategy: "background",
+      },
     },
-    
+
     // Sync priorities when connection restored
     syncPriorities: {
       priority1: [
-        'emergency-access-logs',
-        'critical-patient-updates',
-        'new-medication-alerts'
+        "emergency-access-logs",
+        "critical-patient-updates",
+        "new-medication-alerts",
       ],
       priority2: [
-        'appointment-changes',
-        'patient-communications',
-        'payment-updates'
+        "appointment-changes",
+        "patient-communications",
+        "payment-updates",
       ],
       priority3: [
-        'administrative-updates',
-        'compliance-reports',
-        'system-logs'
-      ]
-    }
+        "administrative-updates",
+        "compliance-reports",
+        "system-logs",
+      ],
+    },
   };
-  
+
   async cacheEssentialData(): Promise<void> {
     const essentialData = await Promise.all([
       this.cacheEmergencyPatientData(),
       this.cacheUpcomingAppointments(),
       this.cacheMedicationAlerts(),
-      this.cacheLGPDConsentStatus()
+      this.cacheLGPDConsentStatus(),
     ]);
-    
-    console.log('Essential healthcare data cached for offline access');
+
+    console.log("Essential healthcare data cached for offline access");
   }
-  
+
   async handleOfflineAccess(request: OfflineRequest): Promise<OfflineResponse> {
     switch (request.type) {
-      case 'emergency-patient-lookup':
+      case "emergency-patient-lookup":
         return await this.getEmergencyPatientData(request.patientId);
-        
-      case 'medication-check':
+
+      case "medication-check":
         return await this.getMedicationAlerts(request.patientId);
-        
-      case 'appointment-verification':
+
+      case "appointment-verification":
         return await this.getAppointmentData(request.appointmentId);
-        
-      case 'lgpd-consent-check':
+
+      case "lgpd-consent-check":
         return await this.getLGPDConsentStatus(request.patientId);
-        
+
       default:
-        return { 
-          success: false, 
-          error: 'Funcionalidade não disponível offline',
-          fallback: 'Conecte-se à internet para acessar esta função'
+        return {
+          success: false,
+          error: "Funcionalidade não disponível offline",
+          fallback: "Conecte-se à internet para acessar esta função",
         };
     }
   }
-  
+
   private async syncWhenOnline(): Promise<void> {
     const { priority1, priority2, priority3 } = this.cacheConfig.syncPriorities;
-    
+
     // Immediate sync for critical updates
     await this.syncDataGroup(priority1);
-    
+
     // Background sync for standard updates
     setTimeout(() => this.syncDataGroup(priority2), 5000);
     setTimeout(() => this.syncDataGroup(priority3), 15000);
@@ -1384,53 +1412,54 @@ export class HealthcareOfflineManager {
 ```
 
 ### **Brazilian CDN and Asset Optimization**
+
 ```typescript
 // CDN configuration for Brazilian healthcare
 export const BrazilianCDNConfig = {
   primaryNodes: [
-    'sao-paulo-1',      // Primary São Paulo node
-    'rio-janeiro-1',    // Rio de Janeiro node  
-    'brasilia-1',       // Brasília government node
+    "sao-paulo-1", // Primary São Paulo node
+    "rio-janeiro-1", // Rio de Janeiro node
+    "brasilia-1", // Brasília government node
   ],
   secondaryNodes: [
-    'salvador-1',       // Northeast region
-    'fortaleza-1',      // Northeast coast
-    'manaus-1',         // North region
-    'porto-alegre-1'    // South region
+    "salvador-1", // Northeast region
+    "fortaleza-1", // Northeast coast
+    "manaus-1", // North region
+    "porto-alegre-1", // South region
   ],
-  
+
   assetOptimization: {
     images: {
-      formats: ['webp', 'avif', 'jpeg'], // Progressive enhancement
+      formats: ["webp", "avif", "jpeg"], // Progressive enhancement
       sizes: [640, 750, 828, 1080, 1200, 1920],
       quality: {
-        mobile: 75,        // Optimize for data usage
-        desktop: 85,       // Higher quality for desktop
-        emergency: 60,     // Maximum compression for emergency
+        mobile: 75, // Optimize for data usage
+        desktop: 85, // Higher quality for desktop
+        emergency: 60, // Maximum compression for emergency
       },
-      lazy: true,          // Lazy loading for non-critical images
-      placeholder: 'blur', // Blur placeholder for smooth loading
+      lazy: true, // Lazy loading for non-critical images
+      placeholder: "blur", // Blur placeholder for smooth loading
     },
-    
+
     fonts: {
-      preload: ['inter-400', 'inter-600'], // Critical fonts only
-      display: 'swap',     // Prevent invisible text during load
-      subset: 'latin-ext', // Include Portuguese characters
+      preload: ["inter-400", "inter-600"], // Critical fonts only
+      display: "swap", // Prevent invisible text during load
+      subset: "latin-ext", // Include Portuguese characters
     },
-    
+
     scripts: {
-      compression: 'brotli', // Best compression for modern browsers
-      fallback: 'gzip',      // Fallback for older browsers
-      minification: 'esbuild', // Fast minification
-    }
+      compression: "brotli", // Best compression for modern browsers
+      fallback: "gzip", // Fallback for older browsers
+      minification: "esbuild", // Fast minification
+    },
   },
-  
+
   caching: {
-    static: '1y',          // Long cache for static assets
-    api: '5m',             // Short cache for dynamic data
-    patient: 'no-cache',   // Never cache patient data
-    emergency: '1m',       // Brief cache for emergency data
-  }
+    static: "1y", // Long cache for static assets
+    api: "5m", // Short cache for dynamic data
+    patient: "no-cache", // Never cache patient data
+    emergency: "1m", // Brief cache for emergency data
+  },
 };
 ```
 
@@ -1439,52 +1468,53 @@ export const BrazilianCDNConfig = {
 ## 🎯 **Implementation Guidelines & Best Practices**
 
 ### **Component Development Standards**
+
 ```typescript
 // Healthcare component development checklist
 interface HealthcareComponentStandards {
   accessibility: {
     required: [
-      'semantic-html',
-      'aria-labels', 
-      'keyboard-navigation',
-      'screen-reader-support',
-      'color-contrast-7-1'
+      "semantic-html",
+      "aria-labels",
+      "keyboard-navigation",
+      "screen-reader-support",
+      "color-contrast-7-1",
     ];
     healthcare: [
-      'emergency-shortcuts',
-      'one-hand-navigation',
-      'voice-commands',
-      'large-touch-targets'
+      "emergency-shortcuts",
+      "one-hand-navigation",
+      "voice-commands",
+      "large-touch-targets",
     ];
   };
-  
+
   performance: {
     required: [
-      'lazy-loading',
-      'code-splitting',
-      'image-optimization',
-      'bundle-analysis'
+      "lazy-loading",
+      "code-splitting",
+      "image-optimization",
+      "bundle-analysis",
     ];
     brazilian: [
-      'offline-capability', 
-      '3g-optimization',
-      'data-conservation',
-      'progressive-enhancement'
+      "offline-capability",
+      "3g-optimization",
+      "data-conservation",
+      "progressive-enhancement",
     ];
   };
-  
+
   compliance: {
     lgpd: [
-      'consent-tracking',
-      'data-minimization',
-      'audit-logging',
-      'user-control'
+      "consent-tracking",
+      "data-minimization",
+      "audit-logging",
+      "user-control",
     ];
     healthcare: [
-      'cfm-validation',
-      'ans-integration',
-      'anvisa-reporting',
-      'patient-privacy'
+      "cfm-validation",
+      "ans-integration",
+      "anvisa-reporting",
+      "patient-privacy",
     ];
   };
 }
@@ -1494,46 +1524,46 @@ export function HealthcareComponentTemplate({
   children,
   emergencyMode = false,
   offlineSupport = true,
-  a11yMode = 'standard'
+  a11yMode = "standard",
 }: HealthcareComponentProps) {
   // Accessibility hooks
   const { announceToScreenReader } = useScreenReader();
   const { isHighContrast, fontSize } = useAccessibility();
-  
+
   // Performance hooks
   const { isOffline } = useNetworkStatus();
   const { preloadCriticalData } = useOfflineCache();
-  
+
   // Compliance hooks
   const { trackLGPDAccess } = useLGPDCompliance();
   const { validateCFMAccess } = useCFMValidation();
-  
+
   return (
-    <div 
+    <div
       className={cn(
-        'healthcare-component',
-        emergencyMode && 'emergency-mode',
-        isHighContrast && 'high-contrast',
+        "healthcare-component",
+        emergencyMode && "emergency-mode",
+        isHighContrast && "high-contrast",
         `font-size-${fontSize}`,
-        isOffline && 'offline-mode'
+        isOffline && "offline-mode",
       )}
       role="main"
-      aria-live={emergencyMode ? 'assertive' : 'polite'}
+      aria-live={emergencyMode ? "assertive" : "polite"}
     >
       {/* Offline indicator */}
       {isOffline && <OfflineModeIndicator />}
-      
+
       {/* Emergency header */}
       {emergencyMode && <EmergencyHeader />}
-      
+
       {/* Main content */}
       <div className="healthcare-content">
         {children}
       </div>
-      
+
       {/* Accessibility announcements */}
       <ScreenReaderAnnouncements />
-      
+
       {/* LGPD compliance tracking */}
       <LGPDTrackingConsent />
     </div>
@@ -1542,59 +1572,60 @@ export function HealthcareComponentTemplate({
 ```
 
 ### **Testing Strategy for Healthcare Components**
+
 ```typescript
 // Comprehensive testing approach for healthcare frontend
 export const HealthcareTestingStrategy = {
   // Unit tests for critical healthcare functions
   unit: {
     emergency: [
-      'emergency-data-access',
-      'offline-patient-lookup',
-      'critical-alert-display'
+      "emergency-data-access",
+      "offline-patient-lookup",
+      "critical-alert-display",
     ],
     compliance: [
-      'lgpd-consent-validation',
-      'cfm-license-check',
-      'ans-integration-flow'
+      "lgpd-consent-validation",
+      "cfm-license-check",
+      "ans-integration-flow",
     ],
     accessibility: [
-      'screen-reader-announcements',
-      'keyboard-navigation',
-      'color-contrast-validation'
+      "screen-reader-announcements",
+      "keyboard-navigation",
+      "color-contrast-validation",
     ],
     performance: [
-      'bundle-size-limits',
-      'load-time-targets',
-      'offline-functionality'
-    ]
+      "bundle-size-limits",
+      "load-time-targets",
+      "offline-functionality",
+    ],
   },
-  
+
   // Integration tests for healthcare workflows
   integration: {
     patientWorkflow: [
-      'patient-registration-complete',
-      'appointment-booking-end-to-end',
-      'payment-processing-with-ans'
+      "patient-registration-complete",
+      "appointment-booking-end-to-end",
+      "payment-processing-with-ans",
     ],
     emergencyWorkflow: [
-      'emergency-access-speed',
-      'offline-emergency-data',
-      'emergency-contact-integration'
+      "emergency-access-speed",
+      "offline-emergency-data",
+      "emergency-contact-integration",
     ],
     complianceWorkflow: [
-      'lgpd-consent-complete-flow',
-      'cfm-validation-integration',
-      'audit-trail-generation'
-    ]
+      "lgpd-consent-complete-flow",
+      "cfm-validation-integration",
+      "audit-trail-generation",
+    ],
   },
-  
+
   // E2E tests for critical healthcare scenarios
   e2e: {
-    emergency: 'emergency-patient-access-under-30-seconds',
-    compliance: 'complete-lgpd-workflow-validation',
-    accessibility: 'screen-reader-complete-navigation',
-    performance: 'brazilian-3g-network-simulation'
-  }
+    emergency: "emergency-patient-access-under-30-seconds",
+    compliance: "complete-lgpd-workflow-validation",
+    accessibility: "screen-reader-complete-navigation",
+    performance: "brazilian-3g-network-simulation",
+  },
 };
 ```
 
@@ -1603,96 +1634,98 @@ export const HealthcareTestingStrategy = {
 ## 📊 **Architecture Quality Metrics**
 
 ### **Success Criteria & KPIs**
+
 ```typescript
 interface FrontendArchitectureKPIs {
   // TweakCN theme integration
   designConsistency: {
-    componentPatternMatch: '100%';
-    visualDesignScore: '9.5+/10';
-    themeConsistency: '100%';
-    brandAlignment: 'complete';
+    componentPatternMatch: "100%";
+    visualDesignScore: "9.5+/10";
+    themeConsistency: "100%";
+    brandAlignment: "complete";
   };
-  
+
   // AI component integration
   aiIntegration: {
-    chatResponseTime: '<1.5s';
-    aiConfidenceAccuracy: '>85%';
-    escalationEffectiveness: '>90%';
-    noShowPrevention: '>75%';
+    chatResponseTime: "<1.5s";
+    aiConfidenceAccuracy: ">85%";
+    escalationEffectiveness: ">90%";
+    noShowPrevention: ">75%";
   };
-  
+
   // Brazilian healthcare compliance
   regulatoryCompliance: {
-    lgpdCompliance: '100%';
-    cfmIntegration: 'complete';
-    ansIntegration: 'functional';
-    anvisaReporting: 'compliant';
+    lgpdCompliance: "100%";
+    cfmIntegration: "complete";
+    ansIntegration: "functional";
+    anvisaReporting: "compliant";
   };
-  
+
   // Accessibility excellence
   accessibility: {
-    wcagCompliance: 'AA+';
-    screenReaderSupport: 'complete';
-    multiGenerationalSupport: 'excellent';
-    emergencyAccess: '<100ms';
+    wcagCompliance: "AA+";
+    screenReaderSupport: "complete";
+    multiGenerationalSupport: "excellent";
+    emergencyAccess: "<100ms";
   };
-  
+
   // Performance targets
   performance: {
-    brazilianInfrastructure: 'optimized';
-    offlineCapability: 'comprehensive';
-    loadTimes: 'tier-appropriate';
-    dataConservation: 'maximum';
+    brazilianInfrastructure: "optimized";
+    offlineCapability: "comprehensive";
+    loadTimes: "tier-appropriate";
+    dataConservation: "maximum";
   };
 }
 ```
 
 ### **Implementation Phases**
+
 ```typescript
 const FrontendImplementationPhases = {
   phase1: {
-    title: 'Foundation & TweakCN Integration',
-    duration: '2-3 weeks',
+    title: "Foundation & TweakCN Integration",
+    duration: "2-3 weeks",
     deliverables: [
-      'TweakCN theme system implementation',
-      'Core healthcare component library',
-      'Brazilian color system & typography',
-      'Basic accessibility framework'
-    ]
+      "TweakCN theme system implementation",
+      "Core healthcare component library",
+      "Brazilian color system & typography",
+      "Basic accessibility framework",
+    ],
   },
-  
+
   phase2: {
-    title: 'AI Components & Brazilian Compliance',
-    duration: '3-4 weeks', 
+    title: "AI Components & Brazilian Compliance",
+    duration: "3-4 weeks",
     deliverables: [
-      'Universal AI chat system',
-      'Anti-no-show engine integration',
-      'LGPD compliance components',
-      'CFM/ANS validation systems'
-    ]
+      "Universal AI chat system",
+      "Anti-no-show engine integration",
+      "LGPD compliance components",
+      "CFM/ANS validation systems",
+    ],
   },
-  
+
   phase3: {
-    title: 'Mobile Emergency & Performance',
-    duration: '2-3 weeks',
+    title: "Mobile Emergency & Performance",
+    duration: "2-3 weeks",
     deliverables: [
-      'Mobile-first emergency interface',
-      'Offline healthcare functionality',
-      'Brazilian infrastructure optimization',
-      'Performance monitoring system'
-    ]
+      "Mobile-first emergency interface",
+      "Offline healthcare functionality",
+      "Brazilian infrastructure optimization",
+      "Performance monitoring system",
+    ],
   },
-  
+
   phase4: {
-    title: 'Accessibility Excellence & Testing',
-    duration: '2-3 weeks',
+    title: "Accessibility Excellence & Testing",
+    duration: "2-3 weeks",
     deliverables: [
-      'WCAG 2.1 AA+ compliance',
-      'Multi-generational design patterns',
-      'Comprehensive testing suite',
-      'Documentation & handoff'
-    ]
-  }
+      "WCAG 2.1 AA+ compliance",
+      "Multi-generational design patterns",
+      "Comprehensive testing suite",
+      "Documentation & handoff",
+    ],
+  },
 };
 ```
 
@@ -1701,6 +1734,7 @@ const FrontendImplementationPhases = {
 ## 🚀 **Next Steps & Action Items**
 
 ### **Immediate Implementation Actions**
+
 1. **Set up TweakCN theme system** with healthcare color palette
 2. **Implement core component library** with shadcn/ui foundation
 3. **Create AI chat widget architecture** with confidence monitoring
@@ -1709,6 +1743,7 @@ const FrontendImplementationPhases = {
 6. **Implement accessibility framework** with Portuguese screen reader support
 
 ### **Success Validation**
+
 - [ ] TweakCN design patterns successfully integrated
 - [ ] AI components functional with healthcare workflows
 - [ ] Brazilian regulatory compliance validated

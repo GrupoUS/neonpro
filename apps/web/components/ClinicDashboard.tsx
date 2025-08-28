@@ -137,34 +137,9 @@ const MOCK_DOCTORS: DoctorStats[] = [
 ];
 
 export default function ClinicDashboard() {
-<<<<<<< Updated upstream
-  const [metrics, _setMetrics] = useState<ClinicMetrics>(MOCK_METRICS);
-  const [activities, _setActivities] = useState<RecentActivity[]>(MOCK_ACTIVITIES);
-  const [doctors, _setDoctors] = useState<DoctorStats[]>(MOCK_DOCTORS);
-  const [_timeRange, _setTimeRange] = useState("today");
-=======
   const [metrics] = useState<ClinicMetrics>(MOCK_METRICS);
   const [activities] = useState<RecentActivity[]>(MOCK_ACTIVITIES);
   const [doctors] = useState<DoctorStats[]>(MOCK_DOCTORS);
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
   const getActivityIcon = (type: RecentActivity["type"]) => {
     switch (type) {

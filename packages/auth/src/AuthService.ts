@@ -321,7 +321,10 @@ export class AuthService extends EnhancedServiceBase {
    */
   async verifyMfaSetup(userId: string, code: string): Promise<boolean> {
     try {
-      const setup = await this.cache.get(`mfa_setup_${userId}`) as { secret: string; backupCodes: string[] } | null;
+      const setup = await this.cache.get(`mfa_setup_${userId}`) as {
+        secret: string;
+        backupCodes: string[];
+      } | null;
       if (!setup) {
         return false;
       }
@@ -561,9 +564,9 @@ export class AuthService extends EnhancedServiceBase {
       id: crypto.randomUUID(),
       timestamp: new Date(),
       userId: email,
-      action: 'failed_login_attempt',
-      resource: 'authentication',
-      outcome: 'failure'
+      action: "failed_login_attempt",
+      resource: "authentication",
+      outcome: "failure",
     });
   }
 
@@ -576,7 +579,9 @@ export class AuthService extends EnhancedServiceBase {
       permissions: (dbUser.permissions as Permission[]) || [],
       isActive: dbUser.is_active as boolean ?? true,
       mfaEnabled: dbUser.mfa_enabled as boolean,
-      lastLogin: dbUser.last_login ? new Date(dbUser.last_login as string | number | Date) : undefined,
+      lastLogin: dbUser.last_login
+        ? new Date(dbUser.last_login as string | number | Date)
+        : undefined,
       createdAt: new Date(dbUser.created_at as string | number | Date),
       updatedAt: new Date(dbUser.updated_at as string | number | Date),
     };

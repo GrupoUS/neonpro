@@ -195,7 +195,7 @@ function generateHotp(secret: string, counter: number): string {
   // Convert counter to 8-byte buffer
   const counterBuffer = Buffer.alloc(COUNTER_BUFFER_SIZE);
   counterBuffer.writeUInt32BE(Math.floor(counter / HIGH_BITS_DIVISOR), 0);
-  // biome-ignore lint/suspicious/noBitwiseOperators: Bitwise mask required for 32-bit integer extraction in HOTP
+  // oxlint-disable-next-line no-bitwise
   counterBuffer.writeUInt32BE(counter & 0xFF_FF_FF_FF, BUFFER_OFFSET_HIGH_BITS);
 
   // Generate HMAC
@@ -205,10 +205,10 @@ function generateHotp(secret: string, counter: number): string {
   const digest = hmac.digest();
 
   // Dynamic truncation
-  // biome-ignore lint/suspicious/noBitwiseOperators: Bitwise operations are required for HOTP cryptographic algorithm
+  // oxlint-disable-next-line no-bitwise
   const offset = digest.at(-1) & 0x0F;
   // HOTP dynamic truncation algorithm (RFC 4226) requires bitwise operations
-  // biome-ignore lint/suspicious/noBitwiseOperators: HOTP algorithm requires bitwise operations
+  // oxlint-disable-next-line no-bitwise
   const code = ((digest[offset] & HOTP_MASK) << 24)
     | ((digest[offset + 1] & BYTE_MASK) << 16)
     | ((digest[offset + 2] & BYTE_MASK) << 8)
@@ -234,7 +234,7 @@ function base32Decode(encoded: string): Buffer {
   const output: number[] = [];
 
   for (let i = 0; i < cleanEncoded.length; i++) {
-    // biome-ignore lint/suspicious/noBitwiseOperators: Base32 decoding requires bitwise operations
+    // oxlint-disable-next-line no-bitwise
     value = (value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
     bits += BASE32_BITS_PER_CHAR;
 

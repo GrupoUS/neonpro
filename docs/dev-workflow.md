@@ -4,10 +4,11 @@
 
 ## Pre-Development Guidelines
 
-**📚 Documentation Consultation:** 
+**📚 Documentation Consultation:**
 ⚠️ **IMPORTANT**: Only consult documentation when you have specific questions or uncertainties. Avoid loading unnecessary context.
 
 When you have ANY doubt during development:
+
 - First consult the `/docs` folder for relevant documentation
 - Check `docs/architecture.md` for architectural decisions
 - Review `docs/tech-stack.md` for technology guidelines
@@ -18,15 +19,18 @@ When you have ANY doubt during development:
 ## Mandatory Development Steps
 
 ### 1. **Planning & Task List**
+
 - Create a detailed task list using the todo tool to implement the feature
 - Break down complex features into manageable subtasks
 - Mark tasks as in_progress when starting, completed when finished
 
 ### 2. **Branch Creation**
+
 - Create a specific branch for the feature following naming conventions
 - Use descriptive branch names (e.g., `feature/user-authentication`, `fix/payment-validation`)
 
 ### 3. **TDD Implementation (Red-Green-Refactor)**
+
 - **MANDATORY**: Follow the TDD process as described in `docs/ttd-flow.md`
 - **TDD Cycle for each feature component:**
   1. **RED**: Write failing test first (describe expected behavior)
@@ -48,6 +52,7 @@ When you have ANY doubt during development:
   - **Documentation First**: Check existing patterns before creating new ones
 
 ### 4. **Test Execution & Validation**
+
 - Run `npm test` to execute all unit tests
 - **Correction Loop**: If tests fail:
   - Fix the issues following TDD principles
@@ -61,11 +66,13 @@ When you have ANY doubt during development:
 - Only proceed when all unit tests are green and coverage meets requirements
 
 ### 5. **Code Quality Check**
+
 - Run `npx next lint` to check for linting issues
 - Run `npx tsc --noEmit` to verify TypeScript compilation
 - Fix any errors or warnings before proceeding
 
 ### 6. **External Code Review**
+
 - Ask user to run CodeRabbit for automated code review
 - **Optional**: Run SonarQube analysis for additional quality checks
 - Wait for user confirmation before proceeding
@@ -75,17 +82,20 @@ When you have ANY doubt during development:
   - Continue until ALL quality checks pass
 
 ### 7. **Pull Request & Code Review**
+
 - Create PR with clear description of changes
 - Include testing instructions and any breaking changes
 - **Automatic Quality Checks**: SonarQube and CodeRabbit run automatically on PR
 - Request evaluation by another developer
 
 ### 8. **Merge to Main**
+
 - **Conflict Check**: Verify if there are any merge conflicts with main branch
 - Resolve any conflicts before merging
 - Complete the merge to main branch
 
 ### 9. **Memory Documentation Protocol**
+
 - **MANDATORY**: Follow the Proactive Update Protocol from `rules/memory.md`:
   - Create `mistakes/[error-category].md` if any mistake was made and corrected
   - Create `features/[feature-name].md` for new features or modified behavior
@@ -96,6 +106,7 @@ When you have ANY doubt during development:
 - **Test Documentation**: Document any new test patterns, mocks, or testing utilities created during TDD process
 
 ### 10. **Documentation Folder Updates**
+
 - **Evaluate and Suggest**: Assess if the following documentation folders need updates based on the implemented feature:
   - Application flows (`docs/app-flows/`) - if user flows were modified
   - API documentation (`docs/apis/`) - if endpoints were created/modified
@@ -104,6 +115,7 @@ When you have ANY doubt during development:
 - **Suggest to User**: Recommend specific updates needed and ask user to review/update the identified documentation folders
 
 ### 11. **Out-of-Scope Documentation**
+
 - **Documentation Agent**: For new documentation not covered by existing folders or protocols
 - Use the documentation agent (`agents/documentation.md`) to create comprehensive documentation for:
   - New concepts or patterns introduced

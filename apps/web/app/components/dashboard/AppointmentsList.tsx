@@ -3,9 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowRight, Calendar, Clock } from "lucide-react";
+import { ArrowRight, Calendar, Clock, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { APPOINTMENT_SKELETON_INDEXES, DASHBOARD_CONSTANTS } from "./constants";
+import { RiskIndicatorWithTooltip } from "@/components/no-show/risk-indicator";
+import { useEnhancedAppointments } from "@/hooks/use-no-show-prediction";
+import { INTERVENTION_ACTIONS_PT } from "@/types/no-show-prediction";
 
 interface Appointment {
   id: string;
@@ -26,6 +29,13 @@ export function AppointmentsList({
   todaysAppointments,
 }: AppointmentsListProps) {
   const router = useRouter();
+  
+  // Enhanced appointments with risk predictions
+  const { 
+    appointments: enhancedAppointments, 
+    isLoading: predictionsLoading,
+    error: predictionsError 
+  } = useEnhancedAppointments(todaysAppointments);
 
   const handleViewAllAppointments = () => {
     router.push("/appointments");

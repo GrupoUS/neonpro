@@ -1,6 +1,7 @@
 # Epics
 
 This folder contains the epics referenced by Section 12 of the PRD. For now, we are keeping only this README as the skeleton. When you are ready, you can either:
+
 - Create one file per epic (kebab-case file names), or
 - Document multiple epics directly in this README using the template below
 
@@ -25,6 +26,7 @@ Keep everything generic and replace placeholders with your project-specific deta
 ---
 
 ## Examples of possible epic names (illustrative only)
+
 - core-visualization
 - user-management
 - monetization
