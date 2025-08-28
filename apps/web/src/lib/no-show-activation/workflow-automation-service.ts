@@ -12,11 +12,7 @@
  * - Performance monitoring and ROI tracking
  */
 
-import type {
-  RiskScoreData,
-  StaffAlert,
-  StaffMember,
-} from "@/components/no-show-activation";
+import type { RiskScoreData, StaffAlert, StaffMember } from "@/components/no-show-activation";
 
 // Workflow Configuration Types
 export interface WorkflowRule {
@@ -199,9 +195,11 @@ class WorkflowAutomationService {
     staffMembers: StaffMember[],
   ): Promise<string[]> {
     console.log(
-      `🤖 Processing risk score for appointment ${appointmentId}: ${Math.round(
-        riskData.noShowProbability * 100,
-      )}%`,
+      `🤖 Processing risk score for appointment ${appointmentId}: ${
+        Math.round(
+          riskData.noShowProbability * 100,
+        )
+      }%`,
     );
 
     const applicableRules = this.findApplicableRules(riskData, appointmentId);
@@ -376,12 +374,11 @@ class WorkflowAutomationService {
       const alert: StaffAlert = {
         id: `alert_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         type: alertType,
-        priority:
-          riskData.riskCategory === "critical"
-            ? "critical"
-            : riskData.riskCategory === "high"
-              ? "high"
-              : "medium",
+        priority: riskData.riskCategory === "critical"
+          ? "critical"
+          : riskData.riskCategory === "high"
+          ? "high"
+          : "medium",
         title: this.generateAlertTitle(alertType, riskData),
         message: this.generateAlertMessage(alertType, riskData, appointmentId),
         appointmentId,
@@ -503,8 +500,8 @@ class WorkflowAutomationService {
         switch (trigger.type) {
           case "risk_threshold":
             return (
-              riskData.noShowProbability >=
-              (trigger.config.riskThreshold || 0.75)
+              riskData.noShowProbability
+                >= (trigger.config.riskThreshold || 0.75)
             );
           case "time_based":
             // Would implement time-based triggers
@@ -565,8 +562,8 @@ class WorkflowAutomationService {
       alertType === "critical_risk"
         ? "Ação imediata recomendada."
         : alertType === "high_risk"
-          ? "Considere entrar em contato com o paciente."
-          : "Monitore a situação e considere intervenção."
+        ? "Considere entrar em contato com o paciente."
+        : "Monitore a situação e considere intervenção."
     }`;
   }
 
@@ -613,8 +610,7 @@ class WorkflowAutomationService {
     // Critical Risk Alert Rule
     this.addRule({
       name: "Alerta de Risco Crítico",
-      description:
-        "Envia alerta para equipe quando risco de falta for crítico (>85%)",
+      description: "Envia alerta para equipe quando risco de falta for crítico (>85%)",
       enabled: true,
       priority: 100,
       triggers: [
@@ -639,8 +635,7 @@ class WorkflowAutomationService {
     // High Risk Intervention Rule
     this.addRule({
       name: "Intervenção Alto Risco",
-      description:
-        "Agenda intervenção automática para consultas de alto risco (>65%)",
+      description: "Agenda intervenção automática para consultas de alto risco (>65%)",
       enabled: true,
       priority: 80,
       triggers: [
@@ -720,8 +715,7 @@ class WorkflowAutomationService {
       totalExecutions: executions.length,
       successfulExecutions: successful.length,
       failedExecutions: failed.length,
-      averageExecutionTime:
-        successful.length > 0 ? totalExecTime / successful.length : 0,
+      averageExecutionTime: successful.length > 0 ? totalExecTime / successful.length : 0,
       alertsSent: this.countActionResults("send_alert"),
       interventionsTriggered: this.countActionResults("schedule_intervention"),
       staffEngagement: {
@@ -742,8 +736,8 @@ class WorkflowAutomationService {
     for (const execution of this.executions.values()) {
       count += execution.results.filter(
         (r) =>
-          r.success &&
-          execution.steps.find(
+          r.success
+          && execution.steps.find(
             (s) => s.id === r.stepId && s.actionType === actionType,
           ),
       ).length;
@@ -753,13 +747,11 @@ class WorkflowAutomationService {
 
   public getExecutions(): WorkflowExecution[] {
     return Array.from(this.executions.values()).sort(
-      (a, b) =>
-        new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime(),
+      (a, b) => new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime(),
     );
   }
 }
 
 // Export singleton instance
-export const workflowAutomationService =
-  WorkflowAutomationService.getInstance();
+export const workflowAutomationService = WorkflowAutomationService.getInstance();
 export default WorkflowAutomationService;

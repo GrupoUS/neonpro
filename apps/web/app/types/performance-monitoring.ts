@@ -92,7 +92,7 @@ export interface DashboardChart {
   dataSource: string;
   data: ChartDataPoint[];
   config: ChartConfig;
-  position: { x: number; y: number; width: number; height: number };
+  position: { x: number; y: number; width: number; height: number; };
 }
 
 export interface ChartConfig {
@@ -137,7 +137,7 @@ export interface StaffPerformanceReport {
   staffName: string;
   department: string;
   role: string;
-  period: { start: Date; end: Date };
+  period: { start: Date; end: Date; };
 
   // Alert handling
   alertsReceived: number;
@@ -150,7 +150,7 @@ export interface StaffPerformanceReport {
   interventionsAttempted: number;
   interventionsSuccessful: number;
   interventionSuccessRate: number;
-  interventionTypes: { [key: string]: number };
+  interventionTypes: { [key: string]: number; };
 
   // Patient outcomes
   patientsContacted: number;
@@ -175,7 +175,7 @@ export interface PerformanceBadge {
 
 export interface ExportOptions {
   format: "pdf" | "excel" | "csv" | "png";
-  dateRange: { start: Date; end: Date };
+  dateRange: { start: Date; end: Date; };
   includedSections: string[];
   title?: string;
   includeCharts: boolean;
@@ -183,7 +183,7 @@ export interface ExportOptions {
 }
 
 export interface ROICalculation {
-  period: { start: Date; end: Date };
+  period: { start: Date; end: Date; };
 
   // Investment (costs)
   systemCosts: number; // R$ - technology and implementation

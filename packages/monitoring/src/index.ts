@@ -21,10 +21,7 @@
 // ============================================================================
 
 // Web Vitals monitoring with healthcare optimization
-export {
-  HEALTHCARE_THRESHOLDS,
-  HealthcareWebVitals,
-} from "./web-vitals/core-web-vitals";
+export { HEALTHCARE_THRESHOLDS, HealthcareWebVitals } from "./web-vitals/core-web-vitals";
 
 // Metric collectors for comprehensive monitoring
 export { AIMetricsCollector } from "./collectors/ai-metrics-collector";

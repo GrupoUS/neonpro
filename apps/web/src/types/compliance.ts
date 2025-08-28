@@ -583,62 +583,53 @@ export interface ComplianceAPIResponse<T = any> {
 // =============================================================================
 
 export type {
-  // CFM exports
-  CFMState,
-  CFMLicenseStatus,
-  MedicalSpecialty,
-  CFMValidationBadgeProps,
-  CFMValidationResult,
-  CFMProfessional,
-
-  // ANVISA exports
-  ANVISAControlledClass,
-  PrescriptionType,
-  ANVISASubstance,
-  ANVISATrackerProps,
-  ControlledPrescription,
-
-  // LGPD exports
-  LGPDConsentType,
-  LGPDConsentStatus,
-  LGPDConsentRecord,
-  LGPDAuditEntry,
-  LGPDConsentManagerProps,
-  LGPDDataSubjectRights,
-
+  ANSBeneficiaryData,
+  ANSCoverageStatus,
+  ANSInsuranceCheckerProps,
   // ANS exports
   ANSPlanType,
-  ANSCoverageStatus,
-  ANSBeneficiaryData,
-  ANSInsuranceCheckerProps,
   ANSVerificationResult,
-
-  // Emergency exports
-  EmergencyProtocolType,
-  TriageLevel,
-  EmergencyProtocol,
-  EmergencyProtocolStep,
-  EmergencyProtocolsProps,
-  EmergencyContact,
-
+  // ANVISA exports
+  ANVISAControlledClass,
+  ANVISASubstance,
+  ANVISATrackerProps,
+  AuditAction,
+  // Audit exports
+  AuditTrailEntry,
   // Address exports
   BrazilianAddress,
   BrazilianAddressInputProps,
-
+  CFMLicenseStatus,
+  CFMProfessional,
+  // CFM exports
+  CFMState,
+  CFMValidationBadgeProps,
+  CFMValidationResult,
+  ComplianceAction,
+  ComplianceAlert,
+  ComplianceAPIResponse,
+  ComplianceDashboardProps,
   // Dashboard exports
   ComplianceMetrics,
-  ComplianceAlert,
-  ComplianceAction,
-  ComplianceDashboardProps,
-
-  // Audit exports
-  AuditTrailEntry,
-  AuditAction,
-
   // Reporting exports
   ComplianceReport,
-
+  ControlledPrescription,
+  EmergencyContact,
+  EmergencyProtocol,
+  EmergencyProtocolsProps,
+  EmergencyProtocolStep,
+  // Emergency exports
+  EmergencyProtocolType,
+  LGPDAuditEntry,
+  LGPDConsentManagerProps,
+  LGPDConsentRecord,
+  LGPDConsentStatus,
+  // LGPD exports
+  LGPDConsentType,
+  LGPDDataSubjectRights,
+  MedicalSpecialty,
+  PrescriptionType,
+  TriageLevel,
   // Utility exports
   ValidationResponse,
-  ComplianceAPIResponse,
 };

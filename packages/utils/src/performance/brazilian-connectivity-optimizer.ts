@@ -138,8 +138,7 @@ export class BrazilianConnectivityOptimizer {
 
   static getInstance(): BrazilianConnectivityOptimizer {
     if (!BrazilianConnectivityOptimizer.instance) {
-      BrazilianConnectivityOptimizer.instance =
-        new BrazilianConnectivityOptimizer();
+      BrazilianConnectivityOptimizer.instance = new BrazilianConnectivityOptimizer();
     }
     return BrazilianConnectivityOptimizer.instance;
   }
@@ -153,8 +152,7 @@ export class BrazilianConnectivityOptimizer {
       return "tier2_standard"; // Default for server-side
     }
 
-    const connection =
-      (navigator as any).connection || (navigator as any).mozConnection;
+    const connection = (navigator as any).connection || (navigator as any).mozConnection;
 
     if (connection) {
       const effectiveType = connection.effectiveType;
@@ -167,8 +165,8 @@ export class BrazilianConnectivityOptimizer {
 
       // Standard connections (3G, slower 4G)
       if (
-        effectiveType === "3g" ||
-        (effectiveType === "4g" && downlink <= 10)
+        effectiveType === "3g"
+        || (effectiveType === "4g" && downlink <= 10)
       ) {
         return "tier2_standard";
       }
@@ -444,8 +442,8 @@ export class BrazilianConnectivityOptimizer {
     resourceName: string,
   ): "critical" | "secondary" | "optional" {
     if (
-      resourceName.includes("emergency") ||
-      resourceName.includes("patient")
+      resourceName.includes("emergency")
+      || resourceName.includes("patient")
     ) {
       return "critical";
     }
@@ -517,8 +515,8 @@ export class BrazilianConnectivityOptimizer {
     const tier = this.detectConnectivityTier();
 
     return (
-      this.brazilianRegions.find((region) => region.tier === tier) ||
-      this.brazilianRegions[0]
+      this.brazilianRegions.find((region) => region.tier === tier)
+      || this.brazilianRegions[0]
     ); // fallback to São Paulo
   }
 
@@ -534,8 +532,7 @@ export class BrazilianConnectivityOptimizer {
 }
 
 // Export singleton instance
-export const brazilianConnectivityOptimizer =
-  BrazilianConnectivityOptimizer.getInstance();
+export const brazilianConnectivityOptimizer = BrazilianConnectivityOptimizer.getInstance();
 
 // Export class for testing
 export { BrazilianConnectivityOptimizer };

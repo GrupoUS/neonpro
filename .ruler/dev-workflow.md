@@ -187,6 +187,8 @@ RESEARCH_EXECUTION_FRAMEWORK:
   - Complex hooks: 85%+
   - Utilities/validators: 80%+
 - Only proceed when all unit tests are green and coverage meets requirements
+- Use Tasks tests to complement unit tests
+- Run `pnpm test:tasks` to execute all task tests
 
 ### 5. **Code Quality Check**
 

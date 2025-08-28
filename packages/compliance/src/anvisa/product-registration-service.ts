@@ -109,11 +109,10 @@ export class ProductRegistrationService {
       "product_id" | "created_at" | "updated_at" | "audit_trail"
     >,
     userId: string,
-  ): Promise<{ success: boolean; data?: ProductRegistration; error?: string }> {
+  ): Promise<{ success: boolean; data?: ProductRegistration; error?: string; }> {
     try {
       // Constitutional validation
-      const validationResult =
-        await this.validateProductRegistration(productData);
+      const validationResult = await this.validateProductRegistration(productData);
       if (!validationResult.valid) {
         return { success: false, error: validationResult.error };
       }
@@ -233,7 +232,7 @@ export class ProductRegistrationService {
     updates: Partial<ProductRegistration>,
     userId: string,
     reason: string,
-  ): Promise<{ success: boolean; data?: ProductRegistration; error?: string }> {
+  ): Promise<{ success: boolean; data?: ProductRegistration; error?: string; }> {
     try {
       // Get current product data for audit trail
       const { data: currentProduct, error: fetchError } = await this.supabase
@@ -303,14 +302,13 @@ export class ProductRegistrationService {
 
   private async validateProductRegistration(
     productData: Partial<ProductRegistration>,
-  ): Promise<{ valid: boolean; error?: string }> {
+  ): Promise<{ valid: boolean; error?: string; }> {
     try {
       // Constitutional validation rules
       if (!productData.anvisa_registration_number) {
         return {
           valid: false,
-          error:
-            "ANVISA registration number is mandatory for constitutional compliance",
+          error: "ANVISA registration number is mandatory for constitutional compliance",
         };
       }
 
@@ -327,8 +325,7 @@ export class ProductRegistrationService {
       if (!productData.registration_expiry) {
         return {
           valid: false,
-          error:
-            "Registration expiry date is required for constitutional monitoring",
+          error: "Registration expiry date is required for constitutional monitoring",
         };
       }
 
@@ -339,8 +336,7 @@ export class ProductRegistrationService {
       if (expiryDate < currentDate) {
         return {
           valid: false,
-          error:
-            "Registration has expired - renewal required for constitutional compliance",
+          error: "Registration has expired - renewal required for constitutional compliance",
         };
       }
 
@@ -353,8 +349,8 @@ export class ProductRegistrationService {
       ];
       if (
         !(
-          productData.product_category &&
-          validCategories.includes(productData.product_category)
+          productData.product_category
+          && validCategories.includes(productData.product_category)
         )
       ) {
         return {
@@ -406,13 +402,14 @@ export class ProductRegistrationService {
             tenant_id: product.tenant_id,
             scheduled_date: alertDate.toISOString(),
             alert_status: "scheduled",
-            priority:
-              alertDate.getTime() === expiryDate.getTime()
-                ? "critical"
-                : "warning",
-            message: `ANVISA product registration expires on ${expiryDate.toLocaleDateString(
-              "pt-BR",
-            )}`,
+            priority: alertDate.getTime() === expiryDate.getTime()
+              ? "critical"
+              : "warning",
+            message: `ANVISA product registration expires on ${
+              expiryDate.toLocaleDateString(
+                "pt-BR",
+              )
+            }`,
             constitutional_compliance: true,
           });
         }
@@ -465,7 +462,7 @@ export class ProductRegistrationService {
    */
   async generateComplianceReport(
     tenantId: string,
-  ): Promise<{ success: boolean; data?: unknown; error?: string }> {
+  ): Promise<{ success: boolean; data?: unknown; error?: string; }> {
     try {
       const { data: products, error } = await this.supabase
         .from("anvisa_product_registrations")
@@ -481,16 +478,14 @@ export class ProductRegistrationService {
 
       const report = {
         total_products: products?.length || 0,
-        active_registrations:
-          products?.filter((p) => p.registration_status === "active").length ||
-          0,
-        expiring_soon:
-          products?.filter((p) => {
-            const expiry = new Date(p.registration_expiry);
-            const thirtyDaysFromNow = new Date();
-            thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-            return expiry <= thirtyDaysFromNow;
-          }).length || 0,
+        active_registrations: products?.filter((p) => p.registration_status === "active").length
+          || 0,
+        expiring_soon: products?.filter((p) => {
+          const expiry = new Date(p.registration_expiry);
+          const thirtyDaysFromNow = new Date();
+          thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+          return expiry <= thirtyDaysFromNow;
+        }).length || 0,
         constitutional_compliance_score: 9.9, // Constitutional healthcare standard
         generated_at: new Date().toISOString(),
       };

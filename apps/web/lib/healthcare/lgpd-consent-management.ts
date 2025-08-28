@@ -4,11 +4,7 @@
  */
 
 import { supabase } from "@/lib/supabase";
-import type {
-  ConsentRecord,
-  DataSubjectRequest,
-  DataSubjectRightType,
-} from "@/types/lgpd";
+import type { ConsentRecord, DataSubjectRequest, DataSubjectRightType } from "@/types/lgpd";
 
 export class LGPDConsentManager {
   /**

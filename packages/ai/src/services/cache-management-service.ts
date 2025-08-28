@@ -442,8 +442,7 @@ export class CacheManagementService extends EnhancedAIService<
       });
 
       // Get runtime statistics
-      const hitCount =
-        this.getStat("cache_hits") + this.getStat("db_cache_hits");
+      const hitCount = this.getStat("cache_hits") + this.getStat("db_cache_hits");
       const missCount = this.getStat("cache_misses");
       const totalRequests = hitCount + missCount;
       const hitRate = totalRequests > 0 ? (hitCount / totalRequests) * 100 : 0;
@@ -456,8 +455,7 @@ export class CacheManagementService extends EnhancedAIService<
         miss_rate_percentage: missRate,
         average_ttl_seconds: this.DEFAULT_TTL, // Could be calculated from actual data
         performance: {
-          hits_last_hour:
-            this.getStat("cache_hits") + this.getStat("db_cache_hits"),
+          hits_last_hour: this.getStat("cache_hits") + this.getStat("db_cache_hits"),
           misses_last_hour: this.getStat("cache_misses"),
           sets_last_hour: this.getStat("cache_sets"),
           deletes_last_hour: this.getStat("cache_deletes"),
@@ -561,7 +559,7 @@ export class CacheManagementService extends EnhancedAIService<
     }
 
     const namespace = input.namespace || "default";
-    const results: { key: string; success: boolean; error?: string }[] = [];
+    const results: { key: string; success: boolean; error?: string; }[] = [];
 
     const cacheEntries: Partial<CacheEntry>[] = [];
 

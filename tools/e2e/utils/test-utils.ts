@@ -1,7 +1,7 @@
-import type { Page, BrowserContext } from "@playwright/test";
+import type { BrowserContext, Page } from "@playwright/test";
 import { expect } from "@playwright/test";
-import { LoginPage } from "../pages/LoginPage";
 import { DashboardPage } from "../pages/DashboardPage";
+import { LoginPage } from "../pages/LoginPage";
 
 /**
  * Utilitários comuns para testes E2E
@@ -17,7 +17,7 @@ export class TestUtils {
       email: string;
       password: string;
     } = TestUtils.getValidCredentials(),
-  ): Promise<{ loginPage: LoginPage; dashboardPage: DashboardPage }> {
+  ): Promise<{ loginPage: LoginPage; dashboardPage: DashboardPage; }> {
     const loginPage = new LoginPage(page);
     const dashboardPage = new DashboardPage(page);
 
@@ -48,7 +48,7 @@ export class TestUtils {
   static async waitForElementWithRetry(
     page: Page,
     selector: string,
-    options: { timeout?: number; retries?: number } = {},
+    options: { timeout?: number; retries?: number; } = {},
   ): Promise<boolean> {
     const { timeout = 5000, retries = 3 } = options;
 
@@ -85,7 +85,7 @@ export class TestUtils {
   static async takeScreenshot(
     page: Page,
     name: string,
-    options: { fullPage?: boolean; path?: string } = {},
+    options: { fullPage?: boolean; path?: string; } = {},
   ): Promise<string> {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `${name}-${timestamp}.png`;
@@ -150,12 +150,10 @@ export class TestUtils {
 
       return {
         loadTime: navigation.loadEventEnd - navigation.loadEventStart,
-        domContentLoaded:
-          navigation.domContentLoadedEventEnd -
-          navigation.domContentLoadedEventStart,
-        firstContentfulPaint:
-          paint.find((p) => p.name === "first-contentful-paint")?.startTime ||
-          0,
+        domContentLoaded: navigation.domContentLoadedEventEnd
+          - navigation.domContentLoadedEventStart,
+        firstContentfulPaint: paint.find((p) => p.name === "first-contentful-paint")?.startTime
+          || 0,
       };
     });
 
@@ -304,18 +302,14 @@ export class TestUtils {
 
   // Utilitários de geração de dados
   private static generateCPF(): string {
-    const numbers = Array.from({ length: 9 }, () =>
-      Math.floor(Math.random() * 10),
-    );
+    const numbers = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
 
     // Calcular dígitos verificadores (simplificado para teste)
-    const digit1 =
-      numbers.reduce((sum, num, index) => sum + num * (10 - index), 0) % 11;
-    const digit2 =
-      [...numbers, digit1].reduce(
-        (sum, num, index) => sum + num * (11 - index),
-        0,
-      ) % 11;
+    const digit1 = numbers.reduce((sum, num, index) => sum + num * (10 - index), 0) % 11;
+    const digit2 = [...numbers, digit1].reduce(
+      (sum, num, index) => sum + num * (11 - index),
+      0,
+    ) % 11;
 
     return [
       ...numbers,

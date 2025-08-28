@@ -124,7 +124,7 @@ export function useRealtimeAppointments(
     patientId?: string;
     professionalId?: string;
     clinicId?: string;
-    dateRange?: { start: string; end: string };
+    dateRange?: { start: string; end: string; };
     config?: RealtimeQueryConfig;
   },
 ) {

@@ -194,7 +194,7 @@ export function anonymizeAuditData(
 
 // Generate audit report for compliance verification
 export interface AuditReport {
-  period: { start: Date; end: Date };
+  period: { start: Date; end: Date; };
   total_entries: number;
   by_action: Record<string, number>;
   by_user: Record<string, number>;
@@ -232,10 +232,9 @@ export function generateAuditReport(
   }
 
   // Calculate compliance score (100% if no violations)
-  const complianceScore =
-    violations.length === 0
-      ? 100
-      : Math.max(0, 100 - (violations.length / filteredLogs.length) * 100);
+  const complianceScore = violations.length === 0
+    ? 100
+    : Math.max(0, 100 - (violations.length / filteredLogs.length) * 100);
 
   return {
     period: { start: startDate, end: endDate },

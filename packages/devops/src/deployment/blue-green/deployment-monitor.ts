@@ -110,14 +110,12 @@ export class DeploymentMonitor {
     const completedDeployments = this.deploymentHistory.filter(
       (d) => d.endTime,
     );
-    const averageTime =
-      completedDeployments.length > 0
-        ? completedDeployments.reduce((sum, d) => {
-            const duration =
-              (d.endTime?.getTime() ?? 0) - d.startTime.getTime();
-            return sum + duration;
-          }, 0) / completedDeployments.length
-        : 0;
+    const averageTime = completedDeployments.length > 0
+      ? completedDeployments.reduce((sum, d) => {
+        const duration = (d.endTime?.getTime() ?? 0) - d.startTime.getTime();
+        return sum + duration;
+      }, 0) / completedDeployments.length
+      : 0;
 
     return {
       totalDeployments: total,

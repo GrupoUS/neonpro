@@ -191,8 +191,7 @@ export async function POST(request: NextRequest) {
         if (!name || !description || !modelType || !version) {
           return NextResponse.json(
             {
-              error:
-                "Missing required fields: name, description, modelType, version",
+              error: "Missing required fields: name, description, modelType, version",
             },
             { status: 400 },
           );

@@ -179,10 +179,10 @@ class AuditStore {
     try {
       // Import supabase client
       const { supabase } = await import("../lib/supabase.js");
-      
+
       // Insert audit log into database
       const { error } = await supabase
-        .from('audit_logs')
+        .from("audit_logs")
         .insert({
           audit_id: log.auditId,
           timestamp: log.timestamp,
@@ -207,24 +207,24 @@ class AuditStore {
           request_id: log.requestId,
           session_id: log.sessionId,
           country: log.country,
-          region: log.region
+          region: log.region,
         });
 
       if (error) {
         logger.error("Failed to persist audit log to database", {
           error: error.message,
           auditId: log.auditId,
-          userId: log.userId
+          userId: log.userId,
         });
       }
     } catch (error) {
       logger.error("Error persisting audit log", {
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         auditId: log.auditId,
-        userId: log.userId
+        userId: log.userId,
       });
     }
-    
+
     // Also log to console for immediate visibility
     logger.info("Audit log entry", {
       userId: log.userId,
@@ -271,9 +271,9 @@ const extractUserContext = (c: Context) => {
   if (authHeader?.startsWith("Bearer ")) {
     try {
       const token = authHeader.slice(7); // Remove "Bearer " prefix
-      
+
       // Check if user context is already available from auth middleware
-      const user = c.get('user');
+      const user = c.get("user");
       if (user) {
         return {
           userId: user.id || user.userId,
@@ -285,19 +285,19 @@ const extractUserContext = (c: Context) => {
       // Fallback: decode JWT manually if user context not available
       // Note: This is a basic decode without verification for audit purposes only
       // The actual verification should be done in the auth middleware
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      
+      const payload = JSON.parse(atob(token.split(".")[1]));
+
       return {
         userId: payload.sub || payload.userId || payload.id,
         userEmail: payload.email,
         userRole: payload.role || payload.user_role,
       };
     } catch (error) {
-      logger.warn('Failed to extract user context from JWT for audit', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      logger.warn("Failed to extract user context from JWT for audit", {
+        error: error instanceof Error ? error.message : "Unknown error",
         hasAuthHeader: !!authHeader,
       });
-      
+
       return {
         userId: undefined,
         userEmail: undefined,

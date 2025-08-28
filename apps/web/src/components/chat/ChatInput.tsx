@@ -6,13 +6,13 @@
 
 "use client";
 
-import type { KeyboardEvent } from "react";
-import React, { useState, useRef, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import type { MessageType, HealthcareContext } from "@/types/chat";
+import type { HealthcareContext, MessageType } from "@/types/chat";
+import type { KeyboardEvent } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 // Icons (would be imported from lucide-react or similar)
-const SendIcon = ({ className }: { className?: string }) => (
+const SendIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -37,7 +37,7 @@ const SendIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const SmileIcon = ({ className }: { className?: string }) => (
+const SmileIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -79,7 +79,7 @@ const SmileIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const PaperclipIcon = ({ className }: { className?: string }) => (
+const PaperclipIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -95,7 +95,7 @@ const PaperclipIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const MicIcon = ({ className }: { className?: string }) => (
+const MicIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -135,7 +135,7 @@ const MicIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const AlertTriangleIcon = ({ className }: { className?: string }) => (
+const AlertTriangleIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -169,7 +169,7 @@ const AlertTriangleIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const BotIcon = ({ className }: { className?: string }) => (
+const BotIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -329,7 +329,7 @@ export default function ChatInput({
 
       // Emergency keyword detection
       const hasEmergencyKeyword = EMERGENCY_KEYWORDS.some((keyword) =>
-        value.toLowerCase().includes(keyword.toLowerCase()),
+        value.toLowerCase().includes(keyword.toLowerCase())
       );
 
       if (hasEmergencyKeyword && !emergencyDetected) {
@@ -347,8 +347,8 @@ export default function ChatInput({
             "💡 Posso ajudar você a avaliar a intensidade da dor de 1 a 10?",
           );
         } else if (
-          value.toLowerCase().includes("medicamento") ||
-          value.toLowerCase().includes("remédio")
+          value.toLowerCase().includes("medicamento")
+          || value.toLowerCase().includes("remédio")
         ) {
           setAISuggestion(
             "💡 Lembre-se de informar sobre alergias e outros medicamentos que está tomando.",
@@ -487,8 +487,8 @@ export default function ChatInput({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        emojiPickerRef.current &&
-        !emojiPickerRef.current.contains(event.target as Node)
+        emojiPickerRef.current
+        && !emojiPickerRef.current.contains(event.target as Node)
       ) {
         setShowEmojiPicker(false);
       }
@@ -546,8 +546,7 @@ export default function ChatInput({
           <div className="flex items-center gap-2">
             <AlertTriangleIcon className="w-4 h-4 text-red-600 flex-shrink-0" />
             <p className="text-sm text-red-800 dark:text-red-200 font-medium">
-              Emergência detectada. Esta mensagem será tratada com prioridade
-              alta.
+              Emergência detectada. Esta mensagem será tratada com prioridade alta.
             </p>
           </div>
         </div>
@@ -566,10 +565,10 @@ export default function ChatInput({
                   {category === "medical"
                     ? "Médico"
                     : category === "emotions"
-                      ? "Emoções"
-                      : category === "body"
-                        ? "Corpo"
-                        : "Emergência"}
+                    ? "Emoções"
+                    : category === "body"
+                    ? "Corpo"
+                    : "Emergência"}
                 </div>
                 <div className="grid grid-cols-5 gap-1">
                   {emojis.map((emoji) => (
@@ -607,8 +606,8 @@ export default function ChatInput({
             emergencyMode
               ? "border-red-300 dark:border-red-700"
               : "border-gray-300 dark:border-gray-600",
-            emergencyDetected &&
-              "border-red-500 dark:border-red-400 shadow-red-200 dark:shadow-red-900",
+            emergencyDetected
+              && "border-red-500 dark:border-red-400 shadow-red-200 dark:shadow-red-900",
             "focus-within:border-green-500 dark:focus-within:border-green-400",
             "transition-all duration-200",
           )}
@@ -619,9 +618,7 @@ export default function ChatInput({
             value={message}
             onChange={(e) => handleMessageChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={
-              emergencyMode ? "Descreva a emergência..." : placeholder
-            }
+            placeholder={emergencyMode ? "Descreva a emergência..." : placeholder}
             disabled={disabled}
             maxLength={maxLength}
             rows={1}

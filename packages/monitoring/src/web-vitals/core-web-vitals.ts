@@ -3,14 +3,7 @@
  * Optimized for clinical workflows and medical data handling
  */
 
-import type {
-  CLSMetric,
-  FCPMetric,
-  FIDMetric,
-  INPMetric,
-  LCPMetric,
-  TTFBMetric,
-} from "web-vitals";
+import type { CLSMetric, FCPMetric, FIDMetric, INPMetric, LCPMetric, TTFBMetric } from "web-vitals";
 import { onCLS, onFCP, onFID, onINP, onLCP, onTTFB } from "web-vitals";
 import type {
   HealthcareVitalsMetric,
@@ -251,19 +244,18 @@ class HealthcareWebVitals {
     const observer = new PerformanceObserver((list) => {
       list.getEntries().forEach((entry) => {
         if (
-          entry.name.includes("patient-lookup") ||
-          entry.name.includes("/api/patients")
+          entry.name.includes("patient-lookup")
+          || entry.name.includes("/api/patients")
         ) {
           const metric: HealthcareVitalsMetric = {
             name: "TTFB",
             value: entry.duration,
             delta: entry.duration,
-            rating:
-              entry.duration <= this.thresholds.patientLookup.good
-                ? "good"
-                : entry.duration <= this.thresholds.patientLookup.poor
-                  ? "needs-improvement"
-                  : "poor",
+            rating: entry.duration <= this.thresholds.patientLookup.good
+              ? "good"
+              : entry.duration <= this.thresholds.patientLookup.poor
+              ? "needs-improvement"
+              : "poor",
             id: `patient-lookup-${Date.now()}`,
             navigationType: "navigate",
             timestamp: Date.now(),
@@ -294,20 +286,19 @@ class HealthcareWebVitals {
             if (node.nodeType === Node.ELEMENT_NODE) {
               const element = node as Element;
               if (
-                element.tagName === "FORM" ||
-                element.classList.contains("medical-form")
+                element.tagName === "FORM"
+                || element.classList.contains("medical-form")
               ) {
                 const renderTime = performance.now();
                 const metric: HealthcareVitalsMetric = {
                   name: "LCP",
                   value: renderTime,
                   delta: renderTime,
-                  rating:
-                    renderTime <= this.thresholds.medicalFormLoad.good
-                      ? "good"
-                      : renderTime <= this.thresholds.medicalFormLoad.poor
-                        ? "needs-improvement"
-                        : "poor",
+                  rating: renderTime <= this.thresholds.medicalFormLoad.good
+                    ? "good"
+                    : renderTime <= this.thresholds.medicalFormLoad.poor
+                    ? "needs-improvement"
+                    : "poor",
                   id: `medical-form-${Date.now()}`,
                   navigationType: "navigate",
                   timestamp: Date.now(),
@@ -345,12 +336,11 @@ class HealthcareWebVitals {
         name: "INP",
         value: timeSinceLastUpdate,
         delta: timeSinceLastUpdate,
-        rating:
-          timeSinceLastUpdate <= this.thresholds.realTimeUpdate.good
-            ? "good"
-            : timeSinceLastUpdate <= this.thresholds.realTimeUpdate.poor
-              ? "needs-improvement"
-              : "poor",
+        rating: timeSinceLastUpdate <= this.thresholds.realTimeUpdate.good
+          ? "good"
+          : timeSinceLastUpdate <= this.thresholds.realTimeUpdate.poor
+          ? "needs-improvement"
+          : "poor",
         id: `realtime-update-${Date.now()}`,
         navigationType: "navigate",
         timestamp: Date.now(),
@@ -374,8 +364,8 @@ class HealthcareWebVitals {
     document.addEventListener("click", (event) => {
       const target = event.target as Element;
       if (
-        target.closest(".scheduling-calendar") ||
-        target.closest(".appointment-form")
+        target.closest(".scheduling-calendar")
+        || target.closest(".appointment-form")
       ) {
         const interactionTime = performance.now();
 
@@ -385,12 +375,11 @@ class HealthcareWebVitals {
             name: "FID",
             value: responseTime,
             delta: responseTime,
-            rating:
-              responseTime <= this.thresholds.procedureScheduling.good
-                ? "good"
-                : responseTime <= this.thresholds.procedureScheduling.poor
-                  ? "needs-improvement"
-                  : "poor",
+            rating: responseTime <= this.thresholds.procedureScheduling.good
+              ? "good"
+              : responseTime <= this.thresholds.procedureScheduling.poor
+              ? "needs-improvement"
+              : "poor",
             id: `procedure-scheduling-${Date.now()}`,
             navigationType: "navigate",
             timestamp: Date.now(),

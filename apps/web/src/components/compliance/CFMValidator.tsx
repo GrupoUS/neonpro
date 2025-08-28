@@ -4,21 +4,21 @@
  * Integrated with CFM database and audit trail
  */
 
-import React, { useState, useEffect, useCallback } from "react";
 import { cn } from "@neonpro/utils";
 import {
-  Shield,
-  CheckCircle,
-  AlertTriangle,
-  XCircle,
-  Clock,
-  RefreshCw,
-  Info,
   AlertCircle,
+  AlertTriangle,
   Calendar,
-  User,
+  CheckCircle,
+  Clock,
   FileText,
+  Info,
+  RefreshCw,
+  Shield,
+  User,
+  XCircle,
 } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import type {
   CFMValidationBadgeProps,
@@ -27,10 +27,7 @@ import type {
 } from "../../types/compliance";
 import { CFMLicenseStatus, MedicalSpecialty } from "../../types/compliance";
 
-import {
-  cfmValidationService,
-  cfmUtils,
-} from "../../lib/compliance/cfm-professional-validation";
+import { cfmUtils, cfmValidationService } from "../../lib/compliance/cfm-professional-validation";
 
 // Status configuration with NEONPRO theme colors
 const STATUS_CONFIG = {
@@ -99,8 +96,9 @@ export const CFMValidationInput: React.FC<CFMValidationInputProps> = ({
 }) => {
   const [crmNumber, setCrmNumber] = useState("");
   const [isValidating, setIsValidating] = useState(false);
-  const [validationResult, setValidationResult] =
-    useState<ValidationResponse<CFMValidationResult> | null>(null);
+  const [validationResult, setValidationResult] = useState<
+    ValidationResponse<CFMValidationResult> | null
+  >(null);
 
   const validateCRM = useCallback(
     async (crm: string) => {
@@ -118,8 +116,8 @@ export const CFMValidationInput: React.FC<CFMValidationInputProps> = ({
         const errorResult: ValidationResponse<CFMValidationResult> = {
           isValid: false,
           errors: [
-            "Erro na validação: " +
-              (error instanceof Error ? error.message : "Erro desconhecido"),
+            "Erro na validação: "
+            + (error instanceof Error ? error.message : "Erro desconhecido"),
           ],
           warnings: [],
           timestamp: new Date(),
@@ -172,8 +170,8 @@ export const CFMValidationInput: React.FC<CFMValidationInputProps> = ({
               validationResult?.isValid === true
                 ? "border-green-300"
                 : validationResult?.isValid === false
-                  ? "border-red-300"
-                  : "border-gray-200",
+                ? "border-red-300"
+                : "border-gray-200",
             )}
           />
 
@@ -183,11 +181,9 @@ export const CFMValidationInput: React.FC<CFMValidationInputProps> = ({
               disabled={isValidating || !crmNumber.trim()}
               className="px-4 py-3 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              {isValidating ? (
-                <RefreshCw className="w-4 h-4 animate-spin" />
-              ) : (
-                <Shield className="w-4 h-4" />
-              )}
+              {isValidating
+                ? <RefreshCw className="w-4 h-4 animate-spin" />
+                : <Shield className="w-4 h-4" />}
               Validar
             </button>
           )}
@@ -222,9 +218,7 @@ export const CFMValidationInput: React.FC<CFMValidationInputProps> = ({
               <div>
                 <p className="font-medium text-red-800">Erro na validação</p>
                 <ul className="text-sm text-red-600 mt-1">
-                  {validationResult.errors.map((error, index) => (
-                    <li key={index}>• {error}</li>
-                  ))}
+                  {validationResult.errors.map((error, index) => <li key={index}>• {error}</li>)}
                 </ul>
               </div>
             </div>
@@ -385,8 +379,9 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
   onValidationComplete,
   className,
 }) => {
-  const [validationResult, setValidationResult] =
-    useState<ValidationResponse<CFMValidationResult> | null>(null);
+  const [validationResult, setValidationResult] = useState<
+    ValidationResponse<CFMValidationResult> | null
+  >(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -421,16 +416,14 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
       <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">
-            {professionalName ||
-              professional?.doctorName ||
-              "Profissional de Saúde"}
+            {professionalName
+              || professional?.doctorName
+              || "Profissional de Saúde"}
           </h3>
           <p className="text-sm text-gray-600">{crmNumber}</p>
         </div>
 
-        {isLoading && (
-          <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
-        )}
+        {isLoading && <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />}
       </div>
 
       {/* Validation Badge */}
@@ -487,8 +480,7 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
           {/* Last Verified */}
           <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
             <span>
-              Última verificação:{" "}
-              {professional.lastVerified.toLocaleString("pt-BR")}
+              Última verificação: {professional.lastVerified.toLocaleString("pt-BR")}
             </span>
             <span className="capitalize">
               Fonte: {professional.verificationSource}
@@ -498,23 +490,23 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
       )}
 
       {/* Error State */}
-      {validationResult &&
-        !validationResult.isValid &&
-        validationResult.errors.length > 0 && (
-          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-start gap-2">
-              <XCircle className="w-4 h-4 text-red-600 mt-0.5" />
-              <div>
-                <p className="font-medium text-red-800 text-sm">
-                  Erro na validação
-                </p>
-                <p className="text-xs text-red-600 mt-1">
-                  {validationResult.errors[0]}
-                </p>
-              </div>
+      {validationResult
+        && !validationResult.isValid
+        && validationResult.errors.length > 0 && (
+        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-start gap-2">
+            <XCircle className="w-4 h-4 text-red-600 mt-0.5" />
+            <div>
+              <p className="font-medium text-red-800 text-sm">
+                Erro na validação
+              </p>
+              <p className="text-xs text-red-600 mt-1">
+                {validationResult.errors[0]}
+              </p>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 };
@@ -533,9 +525,11 @@ export const CFMBatchValidator: React.FC<CFMBatchValidatorProps> = ({
   onValidationComplete,
   className,
 }) => {
-  const [results, setResults] = useState<ValidationResponse<
-    CFMValidationResult[]
-  > | null>(null);
+  const [results, setResults] = useState<
+    ValidationResponse<
+      CFMValidationResult[]
+    > | null
+  >(null);
   const [isValidating, setIsValidating] = useState(false);
 
   useEffect(() => {
@@ -547,8 +541,7 @@ export const CFMBatchValidator: React.FC<CFMBatchValidatorProps> = ({
   const validateBatch = async () => {
     setIsValidating(true);
     try {
-      const result =
-        await cfmValidationService.validateMultipleLicenses(crmNumbers);
+      const result = await cfmValidationService.validateMultipleLicenses(crmNumbers);
       setResults(result);
       onValidationComplete?.(result);
     } catch (error) {
@@ -573,9 +566,7 @@ export const CFMBatchValidator: React.FC<CFMBatchValidatorProps> = ({
         <h3 className="text-lg font-semibold text-gray-900">
           Validação em Lote ({crmNumbers.length} licenças)
         </h3>
-        {isValidating && (
-          <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
-        )}
+        {isValidating && <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />}
       </div>
 
       {results && (
@@ -596,9 +587,8 @@ export const CFMBatchValidator: React.FC<CFMBatchValidatorProps> = ({
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-yellow-600">
-                {results.data?.filter((r) =>
-                  cfmUtils.isLicenseExpiringSoon(r.validUntil),
-                ).length || 0}
+                {results.data?.filter((r) => cfmUtils.isLicenseExpiringSoon(r.validUntil)).length
+                  || 0}
               </div>
               <div className="text-sm text-gray-600">Expirando</div>
             </div>

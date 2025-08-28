@@ -9,18 +9,8 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -105,7 +95,7 @@ export function MedicalTermReader({
 }
 
 // Screen reader only text
-export function ScreenReaderOnly({ children }: { children: React.ReactNode }) {
+export function ScreenReaderOnly({ children }: { children: React.ReactNode; }) {
   return <span className="sr-only">{children}</span>;
 }
 
@@ -125,7 +115,7 @@ export function LiveRegion({
 }
 
 // Focus trap utility for modals and overlays
-export function FocusTrap({ children }: { children: React.ReactNode }) {
+export function FocusTrap({ children }: { children: React.ReactNode; }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -465,9 +455,7 @@ export function AccessibilityPanel() {
                   <Slider
                     id="font-size-slider"
                     value={[preferences.fontSize]}
-                    onValueChange={([value]) =>
-                      updatePreference("fontSize", value)
-                    }
+                    onValueChange={([value]) => updatePreference("fontSize", value)}
                     min={12}
                     max={24}
                     step={1}
@@ -489,9 +477,7 @@ export function AccessibilityPanel() {
                   <Switch
                     id="high-contrast-switch"
                     checked={preferences.highContrast}
-                    onCheckedChange={(checked) =>
-                      updatePreference("highContrast", checked)
-                    }
+                    onCheckedChange={(checked) => updatePreference("highContrast", checked)}
                   />
                 </div>
 
@@ -509,9 +495,7 @@ export function AccessibilityPanel() {
                   <Switch
                     id="reduceMotion"
                     checked={preferences.reducedMotion}
-                    onCheckedChange={(checked) =>
-                      updatePreference("reducedMotion", checked)
-                    }
+                    onCheckedChange={(checked) => updatePreference("reducedMotion", checked)}
                   />
                 </div>
 
@@ -525,9 +509,7 @@ export function AccessibilityPanel() {
                   </div>
                   <Switch
                     checked={preferences.screenReader}
-                    onCheckedChange={(checked) =>
-                      updatePreference("screenReader", checked)
-                    }
+                    onCheckedChange={(checked) => updatePreference("screenReader", checked)}
                   />
                 </div>
 
@@ -541,29 +523,23 @@ export function AccessibilityPanel() {
                   </div>
                   <Switch
                     checked={preferences.keyboardNavigation}
-                    onCheckedChange={(checked) =>
-                      updatePreference("keyboardNavigation", checked)
-                    }
+                    onCheckedChange={(checked) => updatePreference("keyboardNavigation", checked)}
                   />
                 </div>
 
                 {/* Sound */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    {preferences.soundEnabled ? (
-                      <Volume2 className="h-4 w-4" />
-                    ) : (
-                      <VolumeX className="h-4 w-4" />
-                    )}
+                    {preferences.soundEnabled
+                      ? <Volume2 className="h-4 w-4" />
+                      : <VolumeX className="h-4 w-4" />}
                     <label className="text-sm font-medium">
                       Sons do Sistema
                     </label>
                   </div>
                   <Switch
                     checked={preferences.soundEnabled}
-                    onCheckedChange={(checked) =>
-                      updatePreference("soundEnabled", checked)
-                    }
+                    onCheckedChange={(checked) => updatePreference("soundEnabled", checked)}
                   />
                 </div>
               </div>
@@ -588,8 +564,7 @@ export function AccessibilityPanel() {
                   <Switch
                     checked={preferences.medicalTerminologyHelp}
                     onCheckedChange={(checked) =>
-                      updatePreference("medicalTerminologyHelp", checked)
-                    }
+                      updatePreference("medicalTerminologyHelp", checked)}
                   />
                 </div>
 
@@ -604,8 +579,7 @@ export function AccessibilityPanel() {
                   <Switch
                     checked={preferences.emergencyHighContrast}
                     onCheckedChange={(checked) =>
-                      updatePreference("emergencyHighContrast", checked)
-                    }
+                      updatePreference("emergencyHighContrast", checked)}
                   />
                 </div>
 
@@ -620,9 +594,7 @@ export function AccessibilityPanel() {
                     </div>
                     <Switch
                       checked={preferences.voiceNavigation}
-                      onCheckedChange={(checked) =>
-                        updatePreference("voiceNavigation", checked)
-                      }
+                      onCheckedChange={(checked) => updatePreference("voiceNavigation", checked)}
                     />
                   </div>
                   {preferences.voiceNavigation && (
@@ -650,9 +622,7 @@ export function AccessibilityPanel() {
                   </div>
                   <Switch
                     checked={preferences.largerTouchTargets}
-                    onCheckedChange={(checked) =>
-                      updatePreference("largerTouchTargets", checked)
-                    }
+                    onCheckedChange={(checked) => updatePreference("largerTouchTargets", checked)}
                   />
                 </div>
 
@@ -666,9 +636,7 @@ export function AccessibilityPanel() {
                   </div>
                   <Switch
                     checked={preferences.medicalAlertsAudio}
-                    onCheckedChange={(checked) =>
-                      updatePreference("medicalAlertsAudio", checked)
-                    }
+                    onCheckedChange={(checked) => updatePreference("medicalAlertsAudio", checked)}
                   />
                 </div>
 
@@ -682,9 +650,7 @@ export function AccessibilityPanel() {
                   </div>
                   <Switch
                     checked={preferences.cognitiveAssistance}
-                    onCheckedChange={(checked) =>
-                      updatePreference("cognitiveAssistance", checked)
-                    }
+                    onCheckedChange={(checked) => updatePreference("cognitiveAssistance", checked)}
                   />
                 </div>
               </div>
@@ -709,8 +675,7 @@ export function AccessibilityPanel() {
                   <Switch
                     checked={preferences.portugueseScreenReader}
                     onCheckedChange={(checked) =>
-                      updatePreference("portugueseScreenReader", checked)
-                    }
+                      updatePreference("portugueseScreenReader", checked)}
                   />
                 </div>
 
@@ -724,9 +689,7 @@ export function AccessibilityPanel() {
                   </div>
                   <Switch
                     checked={preferences.dyslexiaFriendlyFont}
-                    onCheckedChange={(checked) =>
-                      updatePreference("dyslexiaFriendlyFont", checked)
-                    }
+                    onCheckedChange={(checked) => updatePreference("dyslexiaFriendlyFont", checked)}
                   />
                 </div>
 
@@ -741,8 +704,7 @@ export function AccessibilityPanel() {
                       updatePreference(
                         "colorBlindnessSupport",
                         e.target.value as unknown,
-                      )
-                    }
+                      )}
                     className="w-full p-2 rounded-md border border-input bg-background text-sm"
                   >
                     <option value="none">Nenhum</option>
@@ -768,9 +730,7 @@ export function AccessibilityPanel() {
                   </div>
                   <Switch
                     checked={preferences.slowAnimations}
-                    onCheckedChange={(checked) =>
-                      updatePreference("slowAnimations", checked)
-                    }
+                    onCheckedChange={(checked) => updatePreference("slowAnimations", checked)}
                   />
                 </div>
               </div>

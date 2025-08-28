@@ -234,8 +234,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
         });
 
         if (user && user.role === "DOCTOR") {
-          const validation =
-            await mockAuthService.validateHealthcareProfessional(user);
+          const validation = await mockAuthService.validateHealthcareProfessional(user);
           if (!validation.isValid) {
             return c.json(
               {

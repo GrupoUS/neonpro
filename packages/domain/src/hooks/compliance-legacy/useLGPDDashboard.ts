@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 // Mock toast function since sonner is not available
-const toast = (_options: { title: string; description: string }) => {};
+const toast = (_options: { title: string; description: string; }) => {};
 
 // Mock types based on the LGPD types found in the project
 export interface LGPDMetrics {
@@ -113,7 +113,7 @@ class LGPDComplianceManager {
     limit: number;
     sortBy: string;
     sortOrder: string;
-  }): Promise<{ data: ConsentRecord[] }> {
+  }): Promise<{ data: ConsentRecord[]; }> {
     // Mock implementation
     return {
       data: [],
@@ -125,7 +125,7 @@ class LGPDComplianceManager {
     limit: number;
     sortBy: string;
     sortOrder: string;
-  }): Promise<{ data: DataSubjectRequest[] }> {
+  }): Promise<{ data: DataSubjectRequest[]; }> {
     // Mock implementation
     return {
       data: [],
@@ -137,7 +137,7 @@ class LGPDComplianceManager {
     limit: number;
     sortBy: string;
     sortOrder: string;
-  }): Promise<{ data: BreachIncident[] }> {
+  }): Promise<{ data: BreachIncident[]; }> {
     // Mock implementation
     return {
       data: [],
@@ -148,7 +148,7 @@ class LGPDComplianceManager {
     limit: number;
     sortBy: string;
     sortOrder: string;
-  }): Promise<{ data: ComplianceAssessment[] }> {
+  }): Promise<{ data: ComplianceAssessment[]; }> {
     // Mock implementation
     return {
       data: [],
@@ -234,10 +234,9 @@ export function useLGPDDashboard(): UseLGPDDashboardReturn {
       });
       setRecentAssessments(assessmentsData.data);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Erro ao carregar dados do dashboard";
+      const errorMessage = error instanceof Error
+        ? error.message
+        : "Erro ao carregar dados do dashboard";
       setError(errorMessage);
       toast({
         title: "Erro",
@@ -270,10 +269,18 @@ export function useLGPDDashboard(): UseLGPDDashboardReturn {
       // Create CSV content
       const csvContent = [
         "Métrica,Valor,Data de Geração",
-        `Conformidade Geral,${metrics.overallCompliance || metrics.compliance_percentage}%,${new Date().toISOString()}`,
-        `Consentimentos Ativos,${metrics.activeConsents || metrics.active_consents},${new Date().toISOString()}`,
-        `Solicitações Pendentes,${metrics.pendingRequests || metrics.pending_requests},${new Date().toISOString()}`,
-        `Incidentes Ativos,${metrics.activeIncidents || metrics.active_breaches},${new Date().toISOString()}`,
+        `Conformidade Geral,${metrics.overallCompliance || metrics.compliance_percentage}%,${
+          new Date().toISOString()
+        }`,
+        `Consentimentos Ativos,${metrics.activeConsents || metrics.active_consents},${
+          new Date().toISOString()
+        }`,
+        `Solicitações Pendentes,${metrics.pendingRequests || metrics.pending_requests},${
+          new Date().toISOString()
+        }`,
+        `Incidentes Ativos,${metrics.activeIncidents || metrics.active_breaches},${
+          new Date().toISOString()
+        }`,
         `Avaliações Concluídas,${metrics.completedAssessments || 0},${new Date().toISOString()}`,
         `Pontuação Média,${metrics.averageScore || 0},${new Date().toISOString()}`,
       ].join("\n");
@@ -297,8 +304,7 @@ export function useLGPDDashboard(): UseLGPDDashboardReturn {
         description: "Métricas LGPD exportadas com sucesso.",
       });
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Erro ao exportar métricas";
+      const errorMessage = error instanceof Error ? error.message : "Erro ao exportar métricas";
       toast({
         title: "Erro na exportação",
         description: errorMessage,

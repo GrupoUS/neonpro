@@ -10,9 +10,7 @@ test.describe("Healthcare Authentication Flow", () => {
     await page.goto("/");
   });
 
-  test("should complete patient registration with LGPD consent", async ({
-    page,
-  }) => {
+  test("should complete patient registration with LGPD consent", async ({ page }) => {
     // Navigate to registration
     await page.click('[data-testid="register-button"]');
     await expect(page).toHaveURL(/.*\/register/);
@@ -46,9 +44,7 @@ test.describe("Healthcare Authentication Flow", () => {
     ).toBeVisible();
   });
 
-  test("should handle patient authentication with healthcare validation", async ({
-    page,
-  }) => {
+  test("should handle patient authentication with healthcare validation", async ({ page }) => {
     // Login flow
     await page.click('[data-testid="login-button"]');
     await page.fill('[data-testid="login-email"]', "patient@test.com");
@@ -100,9 +96,7 @@ test.describe("Healthcare Authentication Flow", () => {
     ).toBeVisible();
   });
 
-  test("should handle healthcare professional authentication", async ({
-    page,
-  }) => {
+  test("should handle healthcare professional authentication", async ({ page }) => {
     // Professional login
     await page.goto("/professional/login");
     await page.fill('[data-testid="professional-crm"]', "CRM12345SP");

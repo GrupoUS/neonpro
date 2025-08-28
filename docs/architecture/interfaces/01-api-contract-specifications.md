@@ -52,9 +52,11 @@ securitySchemes:
 ### Base Path: `/auth`
 
 #### POST /login
+
 **Description**: Authenticate user and obtain access tokens
 
 **Request Body**:
+
 ```json
 {
   "email": "string", // Required, valid email format
@@ -63,6 +65,7 @@ securitySchemes:
 ```
 
 **Success Response (200)**:
+
 ```json
 {
   "success": true,
@@ -90,14 +93,17 @@ securitySchemes:
 ```
 
 **Error Responses**:
+
 - `401 INVALID_CREDENTIALS`: Email ou senha incorretos
 - `429 RATE_LIMIT_EXCEEDED`: Muitas tentativas de login
 - `500 INTERNAL_ERROR`: Erro interno do servidor
 
 #### POST /register
+
 **Description**: Register new user account
 
 **Request Body**:
+
 ```json
 {
   "email": "string", // Required, valid email
@@ -110,6 +116,7 @@ securitySchemes:
 ```
 
 **Success Response (201)**:
+
 ```json
 {
   "success": true,
@@ -130,9 +137,11 @@ securitySchemes:
 ```
 
 #### POST /refresh
+
 **Description**: Refresh access token using refresh token
 
 **Request Body**:
+
 ```json
 {
   "refreshToken": "string" // Required, valid refresh token
@@ -140,14 +149,17 @@ securitySchemes:
 ```
 
 #### GET /profile
+
 **Description**: Get current user profile (requires authentication)
 
-**Headers**: 
+**Headers**:
+
 ```
 Authorization: Bearer <access-token>
 ```
 
 **Success Response (200)**:
+
 ```json
 {
   "success": true,
@@ -167,12 +179,15 @@ Authorization: Bearer <access-token>
 ```
 
 #### POST /logout
+
 **Description**: Logout and invalidate tokens
 
 #### POST /forgot-password
+
 **Description**: Request password reset link
 
 **Request Body**:
+
 ```json
 {
   "email": "string" // Required, registered email address
@@ -180,9 +195,11 @@ Authorization: Bearer <access-token>
 ```
 
 #### POST /reset-password
+
 **Description**: Reset password using reset token
 
 **Request Body**:
+
 ```json
 {
   "token": "string", // Required, valid reset token
@@ -191,9 +208,11 @@ Authorization: Bearer <access-token>
 ```
 
 #### POST /change-password
+
 **Description**: Change password for authenticated user
 
 **Request Body**:
+
 ```json
 {
   "currentPassword": "string", // Required
@@ -206,21 +225,25 @@ Authorization: Bearer <access-token>
 ## 👨‍⚕️ Healthcare Professionals API
 
 ### Base Path: `/professionals`
+
 ### Authentication: Required for all endpoints
 
 #### GET /
+
 **Description**: List healthcare professionals with filtering and pagination
 
 **Query Parameters**:
+
 ```yaml
 page: integer (default: 1, min: 1)
-limit: integer (default: 10, min: 1, max: 100)
-search: string (optional, name search)
-profession: enum [dermatologist, plastic_surgeon, esthetician, nurse, administrator]
-isActive: boolean (optional)
+    limit: integer (default: 10, min: 1, max: 100)
+          search: string (optional, name search)
+          profession: enum [dermatologist, plastic_surgeon, esthetician, nurse, administrator]
+          isActive: boolean (optional)
 ```
 
 **Success Response (200)**:
+
 ```json
 {
   "success": true,
@@ -250,9 +273,11 @@ isActive: boolean (optional)
 ```
 
 #### GET /:id
+
 **Description**: Get professional by ID with complete profile
 
 **Success Response (200)**:
+
 ```json
 {
   "success": true,
@@ -281,9 +306,11 @@ isActive: boolean (optional)
 ```
 
 #### POST /
+
 **Description**: Create new healthcare professional
 
 **Request Body**:
+
 ```json
 {
   "fullName": "string", // Required, 2-100 characters
@@ -301,17 +328,21 @@ isActive: boolean (optional)
 ```
 
 #### PUT /:id
+
 **Description**: Update healthcare professional
 
 **Request Body**: Same as POST / with all fields optional
 
 #### DELETE /:id
+
 **Description**: Soft delete healthcare professional
 
 #### GET /:id/stats
+
 **Description**: Get professional performance statistics
 
 **Success Response (200)**:
+
 ```json
 {
   "success": true,
@@ -329,14 +360,17 @@ isActive: boolean (optional)
 ```
 
 #### GET /:id/availability
+
 **Description**: Get professional availability for specific date
 
 **Query Parameters**:
+
 ```yaml
 date: string (YYYY-MM-DD format, default: today)
 ```
 
 **Success Response (200)**:
+
 ```json
 {
   "success": true,
@@ -354,21 +388,25 @@ date: string (YYYY-MM-DD format, default: today)
 ## 🏥 Patients API
 
 ### Base Path: `/patients`
+
 ### Authentication: Required for all endpoints
 
 #### GET /
+
 **Description**: List patients with LGPD privacy controls
 
 **Query Parameters**:
+
 ```yaml
 page: integer (default: 1)
-limit: integer (default: 10, max: 100)
-search: string (optional, encrypted search)
-cpf: string (optional, encrypted CPF search)
-isActive: boolean (optional)
+  limit: integer (default: 10, max: 100)
+      search: string (optional, encrypted search)
+      cpf: string (optional, encrypted CPF search)
+      isActive: boolean (optional)
 ```
 
 **Success Response (200)**:
+
 ```json
 {
   "success": true,
@@ -402,9 +440,11 @@ isActive: boolean (optional)
 ```
 
 #### POST /
+
 **Description**: Create new patient record with LGPD consent
 
 **Request Body**:
+
 ```json
 {
   "fullName": "string", // Required, will be encrypted
@@ -435,9 +475,11 @@ isActive: boolean (optional)
 ```
 
 #### GET /:id
+
 **Description**: Get patient by ID (full access requires specific permissions)
 
 #### PUT /:id
+
 **Description**: Update patient record with audit trail
 
 ---
@@ -445,27 +487,32 @@ isActive: boolean (optional)
 ## 📅 Appointments API
 
 ### Base Path: `/appointments`
+
 ### Authentication: Required for all endpoints
 
 #### GET /
+
 **Description**: List appointments with filtering
 
 **Query Parameters**:
+
 ```yaml
 page: integer (default: 1)
-limit: integer (default: 10, max: 100)
-professionalId: uuid (optional)
-patientId: uuid (optional)
-status: enum [scheduled, confirmed, in_progress, completed, cancelled]
-date: string (YYYY-MM-DD format)
-startDate: string (range start)
-endDate: string (range end)
+  limit: integer (default: 10, max: 100)
+      professionalId: uuid (optional)
+      patientId: uuid (optional)
+      status: enum [scheduled, confirmed, in_progress, completed, cancelled]
+      date: string (YYYY-MM-DD format)
+      startDate: string (range start)
+      endDate: string (range end)
 ```
 
 #### POST /
+
 **Description**: Schedule new appointment
 
 **Request Body**:
+
 ```json
 {
   "patientId": "uuid", // Required
@@ -479,12 +526,15 @@ endDate: string (range end)
 ```
 
 #### GET /:id
+
 **Description**: Get appointment details
 
 #### PUT /:id
+
 **Description**: Update appointment
 
 #### DELETE /:id
+
 **Description**: Cancel appointment
 
 ---
@@ -492,21 +542,27 @@ endDate: string (range end)
 ## 🏥 Services API
 
 ### Base Path: `/services`
+
 ### Authentication: Required for all endpoints
 
 #### GET /
+
 **Description**: List available services
 
 #### POST /
+
 **Description**: Create new service
 
 #### GET /:id
+
 **Description**: Get service details
 
 #### PUT /:id
+
 **Description**: Update service
 
 #### DELETE /:id
+
 **Description**: Remove service
 
 ---
@@ -514,18 +570,23 @@ endDate: string (range end)
 ## 🏢 Clinics API
 
 ### Base Path: `/clinics`
+
 ### Authentication: Required for all endpoints
 
 #### GET /
+
 **Description**: List clinics
 
 #### POST /
+
 **Description**: Create new clinic
 
 #### GET /:id
+
 **Description**: Get clinic details
 
 #### PUT /:id
+
 **Description**: Update clinic
 
 ---
@@ -533,13 +594,17 @@ endDate: string (range end)
 ## ⚖️ Compliance API
 
 ### Base Path: `/compliance`
+
 ### Authentication: Required for all endpoints
+
 ### Special: Healthcare regulatory compliance endpoints
 
 #### GET /audit-logs
+
 **Description**: Retrieve audit logs for compliance reporting
 
 **Query Parameters**:
+
 ```yaml
 startDate: string (ISO date)
 endDate: string (ISO date)
@@ -547,13 +612,15 @@ action: string (optional, filter by action type)
 userId: uuid (optional, filter by user)
 resourceType: string (optional, patients|appointments|professionals)
 page: integer (default: 1)
-limit: integer (default: 50, max: 1000)
+  limit: integer (default: 50, max: 1000)
 ```
 
 #### POST /anvisa-report
+
 **Description**: Generate ANVISA compliance report
 
 **Request Body**:
+
 ```json
 {
   "reportType": "adverse_events|medication_tracking|facility_inspection",
@@ -564,12 +631,15 @@ limit: integer (default: 50, max: 1000)
 ```
 
 #### GET /lgpd-requests
+
 **Description**: List LGPD data subject requests
 
 #### POST /lgpd-requests
+
 **Description**: Process LGPD data subject request
 
 **Request Body**:
+
 ```json
 {
   "requestType": "access|rectification|erasure|portability|restriction",
@@ -580,9 +650,11 @@ limit: integer (default: 50, max: 1000)
 ```
 
 #### PUT /consent/:patientId
+
 **Description**: Update patient consent preferences
 
 **Request Body**:
+
 ```json
 {
   "dataProcessing": true,
@@ -597,12 +669,15 @@ limit: integer (default: 50, max: 1000)
 ## 🩺 Health Check API
 
 ### Base Path: `/health`
+
 ### Authentication: Not required for basic health check
 
 #### GET /
+
 **Description**: Basic API health check
 
 **Success Response (200)**:
+
 ```json
 {
   "status": "healthy",
@@ -613,9 +688,11 @@ limit: integer (default: 50, max: 1000)
 ```
 
 #### GET /deep
+
 **Description**: Comprehensive health check (requires authentication)
 
 **Success Response (200)**:
+
 ```json
 {
   "status": "healthy",
@@ -643,16 +720,21 @@ limit: integer (default: 50, max: 1000)
 ## 🤖 AI & Analytics API
 
 ### Base Path: `/ai`
+
 ### Authentication: Required for all endpoints
+
 ### Special: AI-powered features with healthcare context
 
 #### POST /analyze-appointment
+
 **Description**: AI analysis for appointment optimization
 
 #### POST /risk-assessment
+
 **Description**: Patient risk assessment using AI
 
 #### GET /insights/dashboard
+
 **Description**: AI-powered dashboard insights
 
 ---
@@ -660,6 +742,7 @@ limit: integer (default: 50, max: 1000)
 ## 📊 Common Response Patterns
 
 ### Success Response Format
+
 ```json
 {
   "success": true,
@@ -670,6 +753,7 @@ limit: integer (default: 50, max: 1000)
 ```
 
 ### Error Response Format
+
 ```json
 {
   "success": false,
@@ -681,6 +765,7 @@ limit: integer (default: 50, max: 1000)
 ```
 
 ### Common Error Codes
+
 - `VALIDATION_ERROR`: Input validation failed
 - `UNAUTHORIZED`: Authentication required or invalid
 - `FORBIDDEN`: Insufficient permissions
@@ -693,6 +778,7 @@ limit: integer (default: 50, max: 1000)
 - `INVALID_LICENSE`: Professional license validation failed
 
 ### Pagination Format
+
 ```json
 {
   "pagination": {
@@ -734,6 +820,7 @@ Default rate limits per endpoint category:
 - **AI Analytics**: 20 requests/hour per user
 
 Rate limit headers included in responses:
+
 ```yaml
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95

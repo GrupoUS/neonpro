@@ -3,8 +3,8 @@
  * Configures global test environment, mocks, and utilities
  */
 
-import { vi, beforeEach, afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
+import { afterEach, beforeEach, vi } from "vitest";
 import "@testing-library/jest-dom";
 
 // Global test configuration
@@ -204,8 +204,8 @@ const originalError = console.error;
 beforeEach(() => {
   console.error = (...args: unknown[]) => {
     if (
-      typeof args[0] === "string" &&
-      args[0].includes("Warning: ReactDOM.render is no longer supported")
+      typeof args[0] === "string"
+      && args[0].includes("Warning: ReactDOM.render is no longer supported")
     ) {
       return;
     }

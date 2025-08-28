@@ -10,10 +10,7 @@ import { Hono } from "hono";
 
 import { HTTP_STATUS } from "./ar-simulator-constants";
 import { getErrorMessage } from "./ar-simulator-helpers";
-import {
-  CompareSimulationsSchema,
-  CreateSimulationSchema,
-} from "./ar-simulator-schemas";
+import { CompareSimulationsSchema, CreateSimulationSchema } from "./ar-simulator-schemas";
 
 // =============================================================================
 // ROUTER SETUP

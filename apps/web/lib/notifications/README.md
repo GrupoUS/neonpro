@@ -522,11 +522,7 @@ class TemplateEngine {
 ### Exemplo Completo: Sistema de Lembretes
 
 ```typescript
-import {
-  automationEngine,
-  notificationManager,
-  templateEngine,
-} from "@/lib/notifications";
+import { automationEngine, notificationManager, templateEngine } from "@/lib/notifications";
 
 // 1. Criar template
 const reminderTemplate = await templateEngine.createTemplate({

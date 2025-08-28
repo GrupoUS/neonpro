@@ -233,25 +233,31 @@ export class DeploymentMonitor {
 
     if (deployment.errorRate > alertThresholds.errorRate) {
       alerts.push(
-        `Error rate (${deployment.errorRate.toFixed(
-          2,
-        )}%) exceeds threshold (${alertThresholds.errorRate}%)`,
+        `Error rate (${
+          deployment.errorRate.toFixed(
+            2,
+          )
+        }%) exceeds threshold (${alertThresholds.errorRate}%)`,
       );
     }
 
     if (deployment.responseTime > alertThresholds.responseTime) {
       alerts.push(
-        `Response time (${deployment.responseTime.toFixed(
-          2,
-        )}ms) exceeds threshold (${alertThresholds.responseTime}ms)`,
+        `Response time (${
+          deployment.responseTime.toFixed(
+            2,
+          )
+        }ms) exceeds threshold (${alertThresholds.responseTime}ms)`,
       );
     }
 
     if (deployment.healthScore < alertThresholds.healthScore) {
       alerts.push(
-        `Health score (${deployment.healthScore.toFixed(
-          2,
-        )}) below threshold (${alertThresholds.healthScore})`,
+        `Health score (${
+          deployment.healthScore.toFixed(
+            2,
+          )
+        }) below threshold (${alertThresholds.healthScore})`,
       );
     }
 

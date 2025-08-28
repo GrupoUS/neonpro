@@ -53,26 +53,24 @@ export interface WebVitalsMetric extends PerformanceMetric {
   id: string;
 }
 
-export interface HealthcareVitalsMetric
-  extends WebVitalsMetric,
-    HealthcareContext {
+export interface HealthcareVitalsMetric extends WebVitalsMetric, HealthcareContext {
   criticalPath: boolean;
   complianceCategory?: "lgpd-sensitive" | "anvisa-regulated" | "cfm-controlled";
 }
 
 export interface PerformanceThresholds {
-  CLS: { good: number; poor: number };
-  FCP: { good: number; poor: number };
-  FID: { good: number; poor: number };
-  LCP: { good: number; poor: number };
-  TTFB: { good: number; poor: number };
-  INP: { good: number; poor: number };
+  CLS: { good: number; poor: number; };
+  FCP: { good: number; poor: number; };
+  FID: { good: number; poor: number; };
+  LCP: { good: number; poor: number; };
+  TTFB: { good: number; poor: number; };
+  INP: { good: number; poor: number; };
 
   // Healthcare-specific thresholds
-  patientLookup: { good: number; poor: number };
-  medicalFormLoad: { good: number; poor: number };
-  procedureScheduling: { good: number; poor: number };
-  realTimeUpdate: { good: number; poor: number };
+  patientLookup: { good: number; poor: number; };
+  medicalFormLoad: { good: number; poor: number; };
+  procedureScheduling: { good: number; poor: number; };
+  realTimeUpdate: { good: number; poor: number; };
 }
 
 export type PerformanceEventHandler = (metric: HealthcareVitalsMetric) => void;
@@ -276,7 +274,7 @@ export interface AlertRule {
 export interface PerformanceDashboardData {
   webVitals: {
     current: WebVitalsMetric[];
-    trends: { timestamp: string; value: number }[];
+    trends: { timestamp: string; value: number; }[];
     alerts: PerformanceAlert[];
   };
   aiMetrics: {
@@ -286,16 +284,16 @@ export interface PerformanceDashboardData {
       accuracy: number;
       responseTime: number;
     }[];
-    driftDetection: { timestamp: string; driftScore: number }[];
+    driftDetection: { timestamp: string; driftScore: number; }[];
   };
   cacheMetrics: {
     current: CacheMetric[];
-    hitRates: { layer: string; hitRate: number }[];
-    performance: { timestamp: string; responseTime: number }[];
+    hitRates: { layer: string; hitRate: number; }[];
+    performance: { timestamp: string; responseTime: number; }[];
   };
   systemMetrics: {
     current: SystemMetric[];
-    resourceUsage: { resource: string; usage: number; capacity: number }[];
+    resourceUsage: { resource: string; usage: number; capacity: number; }[];
     healthStatus: "healthy" | "warning" | "critical";
   };
   lastUpdated: string;
@@ -306,7 +304,7 @@ export interface PerformanceReport {
   id: string;
   title: string;
   generatedAt: string;
-  period: { start: string; end: string };
+  period: { start: string; end: string; };
   summary: {
     totalMetrics: number;
     alertsGenerated: number;

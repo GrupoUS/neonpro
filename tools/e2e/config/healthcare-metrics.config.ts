@@ -49,8 +49,7 @@ export interface HealthcarePerformanceBudget {
 export const HEALTHCARE_CRITICAL_METRICS: HealthcareMetric[] = [
   {
     name: "patientDataLoadTime",
-    description:
-      "Time to load critical patient data (demographics, allergies, medications)",
+    description: "Time to load critical patient data (demographics, allergies, medications)",
     threshold: 2000, // 2 seconds - critical for emergency situations
     unit: "ms",
     critical: true,
@@ -303,17 +302,16 @@ export const HEALTHCARE_PERFORMANCE_ASSERTIONS = {
     },
 
     emergencyResponse: {
-      description:
-        "Emergency scenarios must meet strict performance requirements",
+      description: "Emergency scenarios must meet strict performance requirements",
       assertion: (metrics: Record<string, number>, pageType: string) => {
         if (pageType !== "emergency") {
           return true;
         }
         const budget = HEALTHCARE_PERFORMANCE_BUDGETS.emergency;
         return (
-          metrics.patientDataLoadTime <= budget.patientDataLoadTime &&
-          metrics.prescriptionLoadTime <= budget.prescriptionLoadTime &&
-          metrics.lcp <= budget.lcp
+          metrics.patientDataLoadTime <= budget.patientDataLoadTime
+          && metrics.prescriptionLoadTime <= budget.prescriptionLoadTime
+          && metrics.lcp <= budget.lcp
         );
       },
     },
@@ -348,13 +346,12 @@ export const HEALTHCARE_PERFORMANCE_ASSERTIONS = {
     coreWebVitals: {
       description: "Core Web Vitals must meet healthcare standards",
       assertion: (metrics: Record<string, number>, pageType: string = "clinical") => {
-        const budget =
-          HEALTHCARE_PERFORMANCE_BUDGETS[pageType] ||
-          HEALTHCARE_PERFORMANCE_BUDGETS.clinical;
+        const budget = HEALTHCARE_PERFORMANCE_BUDGETS[pageType]
+          || HEALTHCARE_PERFORMANCE_BUDGETS.clinical;
         return (
-          metrics.lcp <= budget.lcp &&
-          metrics.fid <= budget.fid &&
-          metrics.cls <= budget.cls
+          metrics.lcp <= budget.lcp
+          && metrics.fid <= budget.fid
+          && metrics.cls <= budget.cls
         );
       },
     },
@@ -363,9 +360,9 @@ export const HEALTHCARE_PERFORMANCE_ASSERTIONS = {
       description: "User interactions must be responsive",
       assertion: (metrics: Record<string, number>) => {
         return (
-          metrics.formSubmissionTime <= 3000 && // 3s max for form submission
-          metrics.searchResponseTime <= 1500 && // 1.5s max for search
-          metrics.navigationTime <= 1000 // 1s max for navigation
+          metrics.formSubmissionTime <= 3000 // 3s max for form submission
+          && metrics.searchResponseTime <= 1500 // 1.5s max for search
+          && metrics.navigationTime <= 1000 // 1s max for navigation
         );
       },
     },
@@ -379,8 +376,8 @@ export function getHealthcarePerformanceBudget(
   pageType: string,
 ): HealthcarePerformanceBudget {
   return (
-    HEALTHCARE_PERFORMANCE_BUDGETS[pageType] ||
-    HEALTHCARE_PERFORMANCE_BUDGETS.clinical
+    HEALTHCARE_PERFORMANCE_BUDGETS[pageType]
+    || HEALTHCARE_PERFORMANCE_BUDGETS.clinical
   );
 }
 
@@ -448,9 +445,9 @@ export function validateHealthcareMetrics(
   criticalMetrics.forEach((metric) => {
     const budgetValue = (budget as any)[metric.name];
     if (
-      metrics[metric.name] &&
-      budgetValue &&
-      metrics[metric.name] > budgetValue
+      metrics[metric.name]
+      && budgetValue
+      && metrics[metric.name] > budgetValue
     ) {
       failures.push({
         metric: metric.name,

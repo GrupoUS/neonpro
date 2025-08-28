@@ -3,7 +3,7 @@
  * Handles dashboard page interactions and validations
  */
 
-import type { Page, Locator } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import { BasePage } from "./BasePage";
 
 export class DashboardPage extends BasePage {

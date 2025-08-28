@@ -38,16 +38,7 @@ import {
   TabsTrigger,
   Textarea,
 } from "@neonpro/ui";
-import {
-  Calendar,
-  Edit,
-  Heart,
-  Mail,
-  Phone,
-  Plus,
-  Search,
-  Trash2,
-} from "lucide-react";
+import { Calendar, Edit, Heart, Mail, Phone, Plus, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 interface Patient {
@@ -123,13 +114,11 @@ export default function PacientesPage() {
   // const [_isLoading, _setIsLoading] = useState(false); // Commented out - not used
 
   const filteredPatients = patients.filter((patient) => {
-    const matchesSearch =
-      patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      patient.phone.includes(searchQuery);
+    const matchesSearch = patient.name.toLowerCase().includes(searchQuery.toLowerCase())
+      || patient.email.toLowerCase().includes(searchQuery.toLowerCase())
+      || patient.phone.includes(searchQuery);
 
-    const matchesFilter =
-      filterStatus === "all" || patient.status === filterStatus;
+    const matchesFilter = filterStatus === "all" || patient.status === filterStatus;
 
     return matchesSearch && matchesFilter;
   });
@@ -156,11 +145,9 @@ export default function PacientesPage() {
   };
 
   const getStatusBadge = (status: string) => {
-    return status === "active" ? (
-      <Badge className="bg-green-100 text-green-800">Ativo</Badge>
-    ) : (
-      <Badge className="bg-gray-100 text-gray-800">Inativo</Badge>
-    );
+    return status === "active"
+      ? <Badge className="bg-green-100 text-green-800">Ativo</Badge>
+      : <Badge className="bg-gray-100 text-gray-800">Inativo</Badge>;
   };
 
   const calculateAge = (dateOfBirth: string) => {
@@ -170,8 +157,8 @@ export default function PacientesPage() {
     const monthDiff = today.getMonth() - birth.getMonth();
 
     if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
+      monthDiff < 0
+      || (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
       age--;
     }
@@ -267,8 +254,8 @@ export default function PacientesPage() {
                           {patient.gender === "M"
                             ? "Masculino"
                             : patient.gender === "F"
-                              ? "Feminino"
-                              : "Outro"}
+                            ? "Feminino"
+                            : "Outro"}
                         </p>
                       </div>
                     </div>
@@ -289,18 +276,20 @@ export default function PacientesPage() {
                     {calculateAge(patient.dateOfBirth)} anos
                   </TableCell>
                   <TableCell>
-                    {patient.lastVisit ? (
-                      <div className="flex items-center text-sm">
-                        <Calendar className="mr-1 h-3 w-3" />
-                        {new Date(patient.lastVisit).toLocaleDateString(
-                          "pt-BR",
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground">
-                        Sem consultas
-                      </span>
-                    )}
+                    {patient.lastVisit
+                      ? (
+                        <div className="flex items-center text-sm">
+                          <Calendar className="mr-1 h-3 w-3" />
+                          {new Date(patient.lastVisit).toLocaleDateString(
+                            "pt-BR",
+                          )}
+                        </div>
+                      )
+                      : (
+                        <span className="text-muted-foreground">
+                          Sem consultas
+                        </span>
+                      )}
                   </TableCell>
                   <TableCell>{getStatusBadge(patient.status)}</TableCell>
                   <TableCell>
@@ -455,9 +444,9 @@ export default function PacientesPage() {
               <Alert>
                 <Heart className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>LGPD:</strong> Os dados pessoais são tratados conforme
-                  a Lei Geral de Proteção de Dados. O paciente deve consentir
-                  com o tratamento de seus dados.
+                  <strong>LGPD:</strong>{" "}
+                  Os dados pessoais são tratados conforme a Lei Geral de Proteção de Dados. O
+                  paciente deve consentir com o tratamento de seus dados.
                 </AlertDescription>
               </Alert>
             </TabsContent>

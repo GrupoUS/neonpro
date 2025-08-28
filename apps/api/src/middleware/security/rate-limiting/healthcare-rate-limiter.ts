@@ -17,7 +17,7 @@ import { HealthcareRole } from "../auth/jwt-validation";
 // Healthcare endpoint categories for rate limiting
 export enum HealthcareEndpointCategory {
   PATIENT_DATA = "patient_data",
-  MEDICAL_RECORDS = "medical_records", 
+  MEDICAL_RECORDS = "medical_records",
   APPOINTMENTS = "appointments",
   EMERGENCY = "emergency",
   COMPLIANCE = "compliance",
@@ -29,7 +29,7 @@ export enum HealthcareEndpointCategory {
 // Emergency access types
 export enum EmergencyAccessType {
   MEDICAL = "medical",
-  LIFE_THREATENING = "life_threatening", 
+  LIFE_THREATENING = "life_threatening",
   URGENT_CARE = "urgent_care",
   MASS_CASUALTY = "mass_casualty",
 }
@@ -49,22 +49,22 @@ interface HealthcareRateLimitConfig {
   category: HealthcareEndpointCategory;
   endpoint_pattern: string;
   description: string;
-  
+
   // Rate limits by user type
   limits: {
-    anonymous: { requests: number; window: RateLimitWindow };
-    authenticated: { requests: number; window: RateLimitWindow };
-    healthcare_provider: { requests: number; window: RateLimitWindow };
-    emergency_physician: { requests: number; window: RateLimitWindow };
-    admin: { requests: number; window: RateLimitWindow };
+    anonymous: { requests: number; window: RateLimitWindow; };
+    authenticated: { requests: number; window: RateLimitWindow; };
+    healthcare_provider: { requests: number; window: RateLimitWindow; };
+    emergency_physician: { requests: number; window: RateLimitWindow; };
+    admin: { requests: number; window: RateLimitWindow; };
   };
-  
+
   // Healthcare-specific settings
   patient_data_access: boolean;
   requires_license: boolean;
   emergency_bypass: boolean;
   emergency_multiplier: number; // Multiplier for emergency access
-  
+
   // Compliance settings
   audit_required: boolean;
   lgpd_sensitive: boolean;
@@ -204,7 +204,7 @@ interface RateLimitStorage {
 
 // In-memory storage implementation (for development/testing)
 class MemoryRateLimitStorage implements RateLimitStorage {
-  private store = new Map<string, { value: number; expires: number }>();
+  private store = new Map<string, { value: number; expires: number; }>();
 
   async get(key: string): Promise<number | null> {
     const entry = this.store.get(key);
@@ -281,7 +281,7 @@ export class HealthcareRateLimiter {
     options?: {
       monitoring?: boolean;
       alerting?: boolean;
-    }
+    },
   ) {
     this.storage = storage || new MemoryRateLimitStorage();
     this.monitoringEnabled = options?.monitoring ?? true;
@@ -299,7 +299,7 @@ export class HealthcareRateLimiter {
       type: EmergencyAccessType;
       justification: string;
       patientId?: string;
-    }
+    },
   ): Promise<RateLimitResult> {
     // Find matching rate limit configuration
     const config = this.findRateLimitConfig(endpoint);
@@ -317,7 +317,7 @@ export class HealthcareRateLimiter {
     // Determine user type and limits
     const userType = this.getUserType(userRole);
     const limits = config.limits[userType];
-    
+
     if (!limits) {
       return {
         allowed: false,
@@ -334,7 +334,7 @@ export class HealthcareRateLimiter {
         config,
         limits,
         emergencyContext,
-        userId
+        userId,
       );
       if (bypassResult.emergencyBypass) {
         await this.logEmergencyAccess(userId, endpoint, emergencyContext);
@@ -345,7 +345,7 @@ export class HealthcareRateLimiter {
     // Standard rate limiting check
     const key = this.generateRateLimitKey(userId, endpoint, limits.window);
     const currentCount = await this.storage.increment(key, limits.window);
-    
+
     const allowed = currentCount <= limits.requests;
     const remaining = Math.max(0, limits.requests - currentCount);
     const resetTime = Date.now() + limits.window;
@@ -373,28 +373,29 @@ export class HealthcareRateLimiter {
    */
   private async checkEmergencyBypass(
     config: HealthcareRateLimitConfig,
-    normalLimits: { requests: number; window: RateLimitWindow },
+    normalLimits: { requests: number; window: RateLimitWindow; },
     emergencyContext: {
       type: EmergencyAccessType;
       justification: string;
       patientId?: string;
     },
-    userId: string
+    userId: string,
   ): Promise<RateLimitResult> {
     // Calculate emergency limits
     const emergencyLimit = Math.floor(normalLimits.requests * config.emergency_multiplier);
     const key = this.generateEmergencyKey(userId, emergencyContext.type, normalLimits.window);
-    
+
     const currentCount = await this.storage.increment(key, normalLimits.window);
     const allowed = currentCount <= emergencyLimit;
-    
+
     return {
       allowed,
       remaining: Math.max(0, emergencyLimit - currentCount),
       resetTime: Date.now() + normalLimits.window,
       limit: emergencyLimit,
       emergencyBypass: true,
-      bypassReason: `Emergency access: ${emergencyContext.type} - ${emergencyContext.justification}`,
+      bypassReason:
+        `Emergency access: ${emergencyContext.type} - ${emergencyContext.justification}`,
     };
   }
 
@@ -403,7 +404,7 @@ export class HealthcareRateLimiter {
    */
   private findRateLimitConfig(endpoint: string): HealthcareRateLimitConfig | null {
     for (const config of HEALTHCARE_RATE_LIMITS) {
-      if (endpoint.includes(config.endpoint_pattern.replace('/api/v1', ''))) {
+      if (endpoint.includes(config.endpoint_pattern.replace("/api/v1", ""))) {
         return config;
       }
     }
@@ -413,21 +414,21 @@ export class HealthcareRateLimiter {
   /**
    * Map healthcare role to user type for rate limiting
    */
-  private getUserType(role: HealthcareRole): keyof HealthcareRateLimitConfig['limits'] {
+  private getUserType(role: HealthcareRole): keyof HealthcareRateLimitConfig["limits"] {
     switch (role) {
       case HealthcareRole.EMERGENCY_PHYSICIAN:
-        return 'emergency_physician';
+        return "emergency_physician";
       case HealthcareRole.PHYSICIAN:
       case HealthcareRole.NURSE:
       case HealthcareRole.PHARMACIST:
       case HealthcareRole.PHYSIOTHERAPIST:
-        return 'healthcare_provider';
+        return "healthcare_provider";
       case HealthcareRole.ADMIN:
-        return 'admin';
+        return "admin";
       case HealthcareRole.PATIENT:
-        return 'authenticated';
+        return "authenticated";
       default:
-        return 'anonymous';
+        return "anonymous";
     }
   }
 
@@ -442,7 +443,11 @@ export class HealthcareRateLimiter {
   /**
    * Generate emergency access key
    */
-  private generateEmergencyKey(userId: string, emergencyType: EmergencyAccessType, window: RateLimitWindow): string {
+  private generateEmergencyKey(
+    userId: string,
+    emergencyType: EmergencyAccessType,
+    window: RateLimitWindow,
+  ): string {
     const windowStart = Math.floor(Date.now() / window) * window;
     return `emergency_rate_limit:${userId}:${emergencyType}:${windowStart}`;
   }
@@ -457,7 +462,7 @@ export class HealthcareRateLimiter {
       type: EmergencyAccessType;
       justification: string;
       patientId?: string;
-    }
+    },
   ): Promise<void> {
     const logEntry = {
       timestamp: new Date().toISOString(),
@@ -466,12 +471,12 @@ export class HealthcareRateLimiter {
       emergencyType: emergencyContext.type,
       justification: emergencyContext.justification,
       patientId: emergencyContext.patientId,
-      action: 'EMERGENCY_RATE_LIMIT_BYPASS',
+      action: "EMERGENCY_RATE_LIMIT_BYPASS",
     };
 
     // Log to audit system (implementation depends on your audit system)
-    console.log('🚨 EMERGENCY ACCESS LOG:', JSON.stringify(logEntry, null, 2));
-    
+    console.log("🚨 EMERGENCY ACCESS LOG:", JSON.stringify(logEntry, null, 2));
+
     // TODO: Integrate with your audit logging system
     // await auditLogger.logEmergencyAccess(logEntry);
   }
@@ -484,7 +489,7 @@ export class HealthcareRateLimiter {
     endpoint: string,
     category: HealthcareEndpointCategory,
     currentCount: number,
-    limit: number
+    limit: number,
   ): Promise<void> {
     const metrics = {
       timestamp: Date.now(),
@@ -498,7 +503,7 @@ export class HealthcareRateLimiter {
 
     // TODO: Send to monitoring system (Prometheus, CloudWatch, etc.)
     if (metrics.utilizationPercent > 80) {
-      console.warn('⚠️  High rate limit utilization:', metrics);
+      console.warn("⚠️  High rate limit utilization:", metrics);
     }
   }
 
@@ -509,11 +514,11 @@ export class HealthcareRateLimiter {
     userId: string,
     endpoint: string,
     config: HealthcareRateLimitConfig,
-    currentCount: number
+    currentCount: number,
   ): Promise<void> {
     const alert = {
-      level: 'WARNING',
-      type: 'RATE_LIMIT_EXCEEDED',
+      level: "WARNING",
+      type: "RATE_LIMIT_EXCEEDED",
       timestamp: new Date().toISOString(),
       userId,
       endpoint,
@@ -525,8 +530,8 @@ export class HealthcareRateLimiter {
       requiresLicense: config.requires_license,
     };
 
-    console.warn('🚨 RATE LIMIT ALERT:', JSON.stringify(alert, null, 2));
-    
+    console.warn("🚨 RATE LIMIT ALERT:", JSON.stringify(alert, null, 2));
+
     // TODO: Send to alerting system (PagerDuty, Slack, etc.)
     // await alertingSystem.sendAlert(alert);
   }
@@ -540,19 +545,19 @@ export function createHealthcareRateLimiter(
   options?: {
     monitoring?: boolean;
     alerting?: boolean;
-  }
+  },
 ): MiddlewareHandler {
   const rateLimiter = new HealthcareRateLimiter(storage, options);
 
   return async (c: Context, next) => {
     try {
       // Extract user information from JWT token (set by auth middleware)
-      const user = c.get('user');
-      const userId = user?.id || 'anonymous';
+      const user = c.get("user");
+      const userId = user?.id || "anonymous";
       const userRole = user?.role || HealthcareRole.PATIENT;
 
       // Extract emergency context if present
-      const emergencyHeader = c.req.header('X-Emergency-Access');
+      const emergencyHeader = c.req.header("X-Emergency-Access");
       let emergencyContext: {
         type: EmergencyAccessType;
         justification: string;
@@ -563,7 +568,7 @@ export function createHealthcareRateLimiter(
         try {
           emergencyContext = JSON.parse(emergencyHeader);
         } catch (e) {
-          console.warn('Invalid emergency access header:', emergencyHeader);
+          console.warn("Invalid emergency access header:", emergencyHeader);
         }
       }
 
@@ -572,24 +577,24 @@ export function createHealthcareRateLimiter(
         userId,
         userRole,
         c.req.path,
-        emergencyContext
+        emergencyContext,
       );
 
       // Set rate limit headers
-      c.header('X-RateLimit-Limit', result.limit.toString());
-      c.header('X-RateLimit-Remaining', result.remaining.toString());
-      c.header('X-RateLimit-Reset', Math.ceil(result.resetTime / 1000).toString());
+      c.header("X-RateLimit-Limit", result.limit.toString());
+      c.header("X-RateLimit-Remaining", result.remaining.toString());
+      c.header("X-RateLimit-Reset", Math.ceil(result.resetTime / 1000).toString());
 
       if (result.emergencyBypass) {
-        c.header('X-Emergency-Bypass', 'true');
-        c.header('X-Emergency-Reason', result.bypassReason || 'Emergency access granted');
+        c.header("X-Emergency-Bypass", "true");
+        c.header("X-Emergency-Reason", result.bypassReason || "Emergency access granted");
       }
 
       if (!result.allowed) {
         return c.json({
           success: false,
-          error: 'RATE_LIMIT_EXCEEDED',
-          message: 'Too many requests. Please try again later.',
+          error: "RATE_LIMIT_EXCEEDED",
+          message: "Too many requests. Please try again later.",
           details: {
             limit: result.limit,
             remaining: result.remaining,
@@ -601,7 +606,7 @@ export function createHealthcareRateLimiter(
 
       await next();
     } catch (error) {
-      console.error('Healthcare rate limiter error:', error);
+      console.error("Healthcare rate limiter error:", error);
       // On error, allow the request to proceed (fail open for healthcare)
       await next();
     }
@@ -616,7 +621,7 @@ export function createRedisHealthcareRateLimiter(
   options?: {
     monitoring?: boolean;
     alerting?: boolean;
-  }
+  },
 ): MiddlewareHandler {
   const storage = new RedisRateLimitStorage(redisClient);
   return createHealthcareRateLimiter(storage, options);
@@ -628,7 +633,7 @@ export function createRedisHealthcareRateLimiter(
 export function createEmergencyBypassHeader(
   type: EmergencyAccessType,
   justification: string,
-  patientId?: string
+  patientId?: string,
 ): string {
   return JSON.stringify({
     type,

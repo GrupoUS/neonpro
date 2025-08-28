@@ -271,8 +271,7 @@ export function useAuthStatus() {
     isLoading,
     error,
     hasRole: (role: string) => user?.role === role,
-    hasPermission: (permission: string) =>
-      user?.permissions?.includes(permission) ?? false,
+    hasPermission: (permission: string) => user?.permissions?.includes(permission) ?? false,
   };
 }
 

@@ -10,13 +10,11 @@
  * @author NeonPro Healthcare AI Team
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -24,47 +22,49 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Activity,
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  Shield,
-  Brain,
-  Zap,
-  Users,
-  BarChart3,
-  PieChart,
-  Calendar,
-  Stethoscope,
-  Heart,
-  RefreshCw,
-  Download,
-  Filter,
-  Search,
-  Bell,
-  Settings,
-  ChevronRight,
-  ChevronDown,
-  Eye,
-  Target,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Info,
-} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import type {
-  AnalyticsDashboardProps,
-  HealthcareAnalytics,
-  MetricCard,
   AIInsight,
   AIRecommendation,
-  CriticalAlert,
-  ComplianceAnalytics,
+  AnalyticsDashboardProps,
   BrazilianHealthcareIntelligence,
+  ComplianceAnalytics,
+  CriticalAlert,
+  HealthcareAnalytics,
+  MetricCard,
 } from "@/types/analytics";
+import {
+  Activity,
+  AlertCircle,
+  AlertTriangle,
+  BarChart3,
+  Bell,
+  Brain,
+  Calendar,
+  CheckCircle,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Download,
+  Eye,
+  Filter,
+  Heart,
+  Info,
+  PieChart,
+  RefreshCw,
+  Search,
+  Settings,
+  Shield,
+  Stethoscope,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 // ====== MOCK DATA FOR DEMONSTRATION ======
 const mockAnalyticsData: HealthcareAnalytics = {
@@ -160,8 +160,7 @@ const mockAnalyticsData: HealthcareAnalytics = {
       type: "trend",
       priority: "high",
       title: "Aumento na Taxa de Sucesso",
-      description:
-        "Taxa de sucesso dos tratamentos a laser aumentou 12% no último mês",
+      description: "Taxa de sucesso dos tratamentos a laser aumentou 12% no último mês",
       confidence: 0.89,
       actionRequired: false,
       relatedData: ["laser-treatments"],
@@ -173,8 +172,7 @@ const mockAnalyticsData: HealthcareAnalytics = {
       type: "anomaly",
       priority: "critical",
       title: "Padrão Anômalo de No-Show",
-      description:
-        "Aumento significativo de faltas em consultas às quintas-feiras",
+      description: "Aumento significativo de faltas em consultas às quintas-feiras",
       confidence: 0.94,
       actionRequired: true,
       relatedData: ["appointments", "no-show"],
@@ -186,8 +184,7 @@ const mockAnalyticsData: HealthcareAnalytics = {
       id: "rec-1",
       category: "optimization",
       title: "Otimizar Agendamento de Quinta-feira",
-      description:
-        "Implementar lembretes personalizados para reduzir no-show às quintas",
+      description: "Implementar lembretes personalizados para reduzir no-show às quintas",
       expectedOutcome: "Redução de 25% no no-show",
       confidenceLevel: 0.87,
       evidenceLevel: "B",
@@ -282,8 +279,7 @@ export default function AnalyticsDashboard({
 }: AnalyticsDashboardProps) {
   // ====== STATE MANAGEMENT ======
   const [isLoading, setIsLoading] = useState(false);
-  const [analytics, setAnalytics] =
-    useState<HealthcareAnalytics>(mockAnalyticsData);
+  const [analytics, setAnalytics] = useState<HealthcareAnalytics>(mockAnalyticsData);
   const [selectedDateRange, setSelectedDateRange] = useState(dateRange);
   const [activeTab, setActiveTab] = useState("overview");
   const [alerts, setAlerts] = useState<CriticalAlert[]>([]);
@@ -348,21 +344,18 @@ export default function AnalyticsDashboard({
     setExpandedInsights((prev) =>
       prev.includes(insightId)
         ? prev.filter((id) => id !== insightId)
-        : [...prev, insightId],
+        : [...prev, insightId]
     );
   }, []);
 
   // ====== COMPUTED VALUES ======
   const criticalInsights = useMemo(
-    () =>
-      analytics.insights.filter((insight) => insight.priority === "critical"),
+    () => analytics.insights.filter((insight) => insight.priority === "critical"),
     [analytics.insights],
   );
 
   const overallHealthScore = useMemo(() => {
-    const metrics = dashboardMetrics.map((m) =>
-      parseFloat(String(m.value).replace(/[^\d.]/g, "")),
-    );
+    const metrics = dashboardMetrics.map((m) => parseFloat(String(m.value).replace(/[^\d.]/g, "")));
     return Math.round(
       metrics.reduce((sum, val) => sum + val, 0) / metrics.length,
     );
@@ -390,9 +383,7 @@ export default function AnalyticsDashboard({
           {metric.title}
         </CardTitle>
         <div className="flex items-center space-x-2">
-          {metric.icon && (
-            <metric.icon className="h-4 w-4 text-muted-foreground" />
-          )}
+          {metric.icon && <metric.icon className="h-4 w-4 text-muted-foreground" />}
           {metric.status && (
             <Badge
               variant={metric.status === "good" ? "default" : "destructive"}
@@ -410,24 +401,24 @@ export default function AnalyticsDashboard({
               {metric.format === "currency"
                 ? metric.value
                 : metric.format === "percentage"
-                  ? `${metric.value}%`
-                  : metric.value}
+                ? `${metric.value}%`
+                : metric.value}
             </div>
             {metric.change !== undefined && (
               <div className="flex items-center space-x-2 text-sm">
-                {metric.changeDirection === "up" ? (
-                  <TrendingUp className="h-4 w-4 text-green-500" />
-                ) : metric.changeDirection === "down" ? (
-                  <TrendingDown className="h-4 w-4 text-red-500" />
-                ) : null}
+                {metric.changeDirection === "up"
+                  ? <TrendingUp className="h-4 w-4 text-green-500" />
+                  : metric.changeDirection === "down"
+                  ? <TrendingDown className="h-4 w-4 text-red-500" />
+                  : null}
                 <span
                   className={cn(
                     "font-medium",
                     metric.changeDirection === "up"
                       ? "text-green-600"
                       : metric.changeDirection === "down"
-                        ? "text-red-600"
-                        : "text-muted-foreground",
+                      ? "text-red-600"
+                      : "text-muted-foreground",
                   )}
                 >
                   {metric.change > 0 ? "+" : ""}
@@ -467,11 +458,9 @@ export default function AnalyticsDashboard({
               </span>
             </div>
             <Progress
-              value={
-                (parseFloat(String(metric.value).replace(/[^\d.]/g, "")) /
-                  metric.target) *
-                100
-              }
+              value={(parseFloat(String(metric.value).replace(/[^\d.]/g, ""))
+                / metric.target)
+                * 100}
               className="h-2"
             />
           </div>
@@ -497,39 +486,35 @@ export default function AnalyticsDashboard({
                 insight.priority === "critical"
                   ? "bg-red-100 text-red-600"
                   : insight.priority === "high"
-                    ? "bg-orange-100 text-orange-600"
-                    : insight.priority === "medium"
-                      ? "bg-yellow-100 text-yellow-600"
-                      : "bg-blue-100 text-blue-600",
+                  ? "bg-orange-100 text-orange-600"
+                  : insight.priority === "medium"
+                  ? "bg-yellow-100 text-yellow-600"
+                  : "bg-blue-100 text-blue-600",
               )}
             >
-              {insight.type === "trend" ? (
-                <TrendingUp className="h-4 w-4" />
-              ) : insight.type === "anomaly" ? (
-                <AlertTriangle className="h-4 w-4" />
-              ) : insight.type === "prediction" ? (
-                <Brain className="h-4 w-4" />
-              ) : (
-                <Target className="h-4 w-4" />
-              )}
+              {insight.type === "trend"
+                ? <TrendingUp className="h-4 w-4" />
+                : insight.type === "anomaly"
+                ? <AlertTriangle className="h-4 w-4" />
+                : insight.type === "prediction"
+                ? <Brain className="h-4 w-4" />
+                : <Target className="h-4 w-4" />}
             </div>
             <div>
               <CardTitle className="text-base">{insight.title}</CardTitle>
               <div className="flex items-center space-x-2 mt-1">
                 <Badge
-                  variant={
-                    insight.priority === "critical"
-                      ? "destructive"
-                      : "secondary"
-                  }
+                  variant={insight.priority === "critical"
+                    ? "destructive"
+                    : "secondary"}
                 >
                   {insight.priority === "critical"
                     ? "Crítico"
                     : insight.priority === "high"
-                      ? "Alto"
-                      : insight.priority === "medium"
-                        ? "Médio"
-                        : "Baixo"}
+                    ? "Alto"
+                    : insight.priority === "medium"
+                    ? "Médio"
+                    : "Baixo"}
                 </Badge>
                 <span className="text-sm text-muted-foreground">
                   Confiança: {(insight.confidence * 100).toFixed(0)}%
@@ -546,11 +531,9 @@ export default function AnalyticsDashboard({
                 Ação Necessária
               </Badge>
             )}
-            {expandedInsights.includes(insight.id) ? (
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            )}
+            {expandedInsights.includes(insight.id)
+              ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
           </div>
         </div>
       </CardHeader>
@@ -585,10 +568,10 @@ export default function AnalyticsDashboard({
                 {recommendation.category === "treatment"
                   ? "Tratamento"
                   : recommendation.category === "prevention"
-                    ? "Prevenção"
-                    : recommendation.category === "optimization"
-                      ? "Otimização"
-                      : "Compliance"}
+                  ? "Prevenção"
+                  : recommendation.category === "optimization"
+                  ? "Otimização"
+                  : "Compliance"}
               </Badge>
               <Badge variant="outline">
                 Nível {recommendation.evidenceLevel}
@@ -619,19 +602,17 @@ export default function AnalyticsDashboard({
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Dificuldade:</span>
             <Badge
-              variant={
-                recommendation.implementation.difficulty === "easy"
-                  ? "default"
-                  : recommendation.implementation.difficulty === "moderate"
-                    ? "secondary"
-                    : "destructive"
-              }
+              variant={recommendation.implementation.difficulty === "easy"
+                ? "default"
+                : recommendation.implementation.difficulty === "moderate"
+                ? "secondary"
+                : "destructive"}
             >
               {recommendation.implementation.difficulty === "easy"
                 ? "Fácil"
                 : recommendation.implementation.difficulty === "moderate"
-                  ? "Moderada"
-                  : "Difícil"}
+                ? "Moderada"
+                : "Difícil"}
             </Badge>
           </div>
           <div className="flex justify-between text-sm">
@@ -744,10 +725,10 @@ export default function AnalyticsDashboard({
                   complianceStatus.status === "excellent"
                     ? "bg-green-600"
                     : complianceStatus.status === "good"
-                      ? "bg-blue-600"
-                      : complianceStatus.status === "warning"
-                        ? "bg-yellow-600"
-                        : "bg-red-600",
+                    ? "bg-blue-600"
+                    : complianceStatus.status === "warning"
+                    ? "bg-yellow-600"
+                    : "bg-red-600",
                 )}
               >
                 Compliance: {analytics.analytics.complianceMetrics.overallScore}
@@ -903,21 +884,19 @@ export default function AnalyticsDashboard({
                         activity.type === "appointment"
                           ? "bg-blue-100 text-blue-600"
                           : activity.type === "treatment"
-                            ? "bg-green-100 text-green-600"
-                            : activity.type === "result"
-                              ? "bg-purple-100 text-purple-600"
-                              : "bg-yellow-100 text-yellow-600",
+                          ? "bg-green-100 text-green-600"
+                          : activity.type === "result"
+                          ? "bg-purple-100 text-purple-600"
+                          : "bg-yellow-100 text-yellow-600",
                       )}
                     >
-                      {activity.type === "appointment" ? (
-                        <Calendar className="h-4 w-4" />
-                      ) : activity.type === "treatment" ? (
-                        <Stethoscope className="h-4 w-4" />
-                      ) : activity.type === "result" ? (
-                        <Eye className="h-4 w-4" />
-                      ) : (
-                        <CheckCircle className="h-4 w-4" />
-                      )}
+                      {activity.type === "appointment"
+                        ? <Calendar className="h-4 w-4" />
+                        : activity.type === "treatment"
+                        ? <Stethoscope className="h-4 w-4" />
+                        : activity.type === "result"
+                        ? <Eye className="h-4 w-4" />
+                        : <CheckCircle className="h-4 w-4" />}
                     </div>
                     <div className="flex-1">
                       <div className="font-medium">{activity.action}</div>
@@ -942,8 +921,7 @@ export default function AnalyticsDashboard({
               Predições IA em Desenvolvimento
             </h3>
             <p className="text-muted-foreground">
-              Sistema de predições inteligentes será implementado na próxima
-              fase
+              Sistema de predições inteligentes será implementado na próxima fase
             </p>
           </div>
         </TabsContent>
@@ -953,8 +931,7 @@ export default function AnalyticsDashboard({
             <Activity className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-lg font-medium">Monitoramento em Tempo Real</h3>
             <p className="text-muted-foreground">
-              Sistema de monitoramento avançado será implementado na próxima
-              fase
+              Sistema de monitoramento avançado será implementado na próxima fase
             </p>
           </div>
         </TabsContent>
@@ -973,10 +950,8 @@ export default function AnalyticsDashboard({
                 <div className="space-y-4">
                   <div className="text-center">
                     <div className="text-3xl font-bold text-green-600">
-                      {
-                        analytics.analytics.complianceMetrics.cfmCompliance
-                          .overallScore
-                      }
+                      {analytics.analytics.complianceMetrics.cfmCompliance
+                        .overallScore}
                       %
                     </div>
                     <div className="text-sm text-muted-foreground">
@@ -984,40 +959,32 @@ export default function AnalyticsDashboard({
                     </div>
                   </div>
                   <Progress
-                    value={
-                      analytics.analytics.complianceMetrics.cfmCompliance
-                        .overallScore
-                    }
+                    value={analytics.analytics.complianceMetrics.cfmCompliance
+                      .overallScore}
                     className="h-2"
                   />
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Validação CRM</span>
                       <span className="font-medium">
-                        {
-                          analytics.analytics.complianceMetrics.cfmCompliance
-                            .licenseValidation
-                        }
+                        {analytics.analytics.complianceMetrics.cfmCompliance
+                          .licenseValidation}
                         %
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Ética Profissional</span>
                       <span className="font-medium">
-                        {
-                          analytics.analytics.complianceMetrics.cfmCompliance
-                            .professionalEthics
-                        }
+                        {analytics.analytics.complianceMetrics.cfmCompliance
+                          .professionalEthics}
                         %
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Educação Continuada</span>
                       <span className="font-medium">
-                        {
-                          analytics.analytics.complianceMetrics.cfmCompliance
-                            .continuingEducation
-                        }
+                        {analytics.analytics.complianceMetrics.cfmCompliance
+                          .continuingEducation}
                         %
                       </span>
                     </div>
@@ -1038,10 +1005,8 @@ export default function AnalyticsDashboard({
                 <div className="space-y-4">
                   <div className="text-center">
                     <div className="text-3xl font-bold text-blue-600">
-                      {
-                        analytics.analytics.complianceMetrics.anvisaCompliance
-                          .overallScore
-                      }
+                      {analytics.analytics.complianceMetrics.anvisaCompliance
+                        .overallScore}
                       %
                     </div>
                     <div className="text-sm text-muted-foreground">
@@ -1049,40 +1014,32 @@ export default function AnalyticsDashboard({
                     </div>
                   </div>
                   <Progress
-                    value={
-                      analytics.analytics.complianceMetrics.anvisaCompliance
-                        .overallScore
-                    }
+                    value={analytics.analytics.complianceMetrics.anvisaCompliance
+                      .overallScore}
                     className="h-2"
                   />
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Substâncias Controladas</span>
                       <span className="font-medium">
-                        {
-                          analytics.analytics.complianceMetrics.anvisaCompliance
-                            .controlledSubstances
-                        }
+                        {analytics.analytics.complianceMetrics.anvisaCompliance
+                          .controlledSubstances}
                         %
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Licença Sanitária</span>
                       <span className="font-medium">
-                        {
-                          analytics.analytics.complianceMetrics.anvisaCompliance
-                            .sanitaryLicense
-                        }
+                        {analytics.analytics.complianceMetrics.anvisaCompliance
+                          .sanitaryLicense}
                         %
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Validação Equipamentos</span>
                       <span className="font-medium">
-                        {
-                          analytics.analytics.complianceMetrics.anvisaCompliance
-                            .equipmentValidation
-                        }
+                        {analytics.analytics.complianceMetrics.anvisaCompliance
+                          .equipmentValidation}
                         %
                       </span>
                     </div>
@@ -1103,10 +1060,8 @@ export default function AnalyticsDashboard({
                 <div className="space-y-4">
                   <div className="text-center">
                     <div className="text-3xl font-bold text-purple-600">
-                      {
-                        analytics.analytics.complianceMetrics.lgpdCompliance
-                          .overallScore
-                      }
+                      {analytics.analytics.complianceMetrics.lgpdCompliance
+                        .overallScore}
                       %
                     </div>
                     <div className="text-sm text-muted-foreground">
@@ -1114,40 +1069,32 @@ export default function AnalyticsDashboard({
                     </div>
                   </div>
                   <Progress
-                    value={
-                      analytics.analytics.complianceMetrics.lgpdCompliance
-                        .overallScore
-                    }
+                    value={analytics.analytics.complianceMetrics.lgpdCompliance
+                      .overallScore}
                     className="h-2"
                   />
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Processamento Dados</span>
                       <span className="font-medium">
-                        {
-                          analytics.analytics.complianceMetrics.lgpdCompliance
-                            .dataProcessing
-                        }
+                        {analytics.analytics.complianceMetrics.lgpdCompliance
+                          .dataProcessing}
                         %
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Gestão Consentimento</span>
                       <span className="font-medium">
-                        {
-                          analytics.analytics.complianceMetrics.lgpdCompliance
-                            .consentManagement
-                        }
+                        {analytics.analytics.complianceMetrics.lgpdCompliance
+                          .consentManagement}
                         %
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Medidas Segurança</span>
                       <span className="font-medium">
-                        {
-                          analytics.analytics.complianceMetrics.lgpdCompliance
-                            .securityMeasures
-                        }
+                        {analytics.analytics.complianceMetrics.lgpdCompliance
+                          .securityMeasures}
                         %
                       </span>
                     </div>

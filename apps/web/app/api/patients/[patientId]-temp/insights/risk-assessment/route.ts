@@ -9,7 +9,7 @@ const patientInsights = new PatientInsightsIntegration();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ patientId: string }> },
+  { params }: { params: Promise<{ patientId: string; }>; },
 ) {
   try {
     const supabase = await createClient();
@@ -52,7 +52,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ patientId: string }> },
+  { params }: { params: Promise<{ patientId: string; }>; },
 ) {
   try {
     const supabase = await createClient();
@@ -74,8 +74,7 @@ export async function POST(
 
     let recommendations: unknown[] = [];
     if (includeRecommendations) {
-      const treatmentGuidance =
-        await patientInsights.getTreatmentRecommendations(patientId);
+      const treatmentGuidance = await patientInsights.getTreatmentRecommendations(patientId);
       recommendations = treatmentGuidance.recommendations || [];
     }
 

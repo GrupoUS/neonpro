@@ -3,7 +3,7 @@
  * Handles emergency department workflows and critical patient care scenarios
  */
 
-import type { Page, Locator } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import { BasePage } from "./base.page";
 
 export interface TriageFormData {

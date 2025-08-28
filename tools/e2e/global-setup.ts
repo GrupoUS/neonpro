@@ -1,8 +1,8 @@
 import type { FullConfig } from "@playwright/test";
 import { chromium } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
-import path from "node:path";
 import fs from "node:fs";
+import path from "node:path";
 
 /**
  * Setup global para testes E2E do Playwright
@@ -174,16 +174,15 @@ async function createTestUsers() {
   try {
     for (const user of testUsers) {
       // Criar usuário no Supabase Auth
-      const { data: authData, error: authError } =
-        await supabase.auth.admin.createUser({
-          email: user.email,
-          password: user.password,
-          email_confirm: true,
-          user_metadata: {
-            name: user.name,
-            role: user.role,
-          },
-        });
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        email: user.email,
+        password: user.password,
+        email_confirm: true,
+        user_metadata: {
+          name: user.name,
+          role: user.role,
+        },
+      });
 
       if (authError && !authError.message.includes("already registered")) {
         console.warn(

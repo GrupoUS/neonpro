@@ -236,7 +236,9 @@ export class BundleAnalyzer {
         recommendations.push({
           type: "code-splitting",
           severity: "high",
-          description: `Chunk '${chunk.name}' is ${Math.round(chunk.size / 1024)}KB. Consider splitting further.`,
+          description: `Chunk '${chunk.name}' is ${
+            Math.round(chunk.size / 1024)
+          }KB. Consider splitting further.`,
           impact: Math.floor(chunk.size * 0.3),
           action: `Split ${chunk.name} into smaller, feature-specific chunks`,
         });
@@ -288,11 +290,9 @@ export class BundleAnalyzer {
       recommendations.push({
         type: "code-splitting",
         severity: "medium",
-        description:
-          "AI features should be lazy-loaded for Brazilian connectivity",
+        description: "AI features should be lazy-loaded for Brazilian connectivity",
         impact: aiChunk.size,
-        action:
-          "Set AI chunk load priority to 'low' and implement progressive loading",
+        action: "Set AI chunk load priority to 'low' and implement progressive loading",
       });
     }
 
@@ -329,9 +329,7 @@ export class BundleAnalyzer {
 
     // Bonus for healthcare-optimized structure
     const hasEmergencyChunk = chunks.some((c) =>
-      this.BRAZILIAN_HEALTHCARE_MODULES.critical.some((mod) =>
-        c.name.includes(mod),
-      ),
+      this.BRAZILIAN_HEALTHCARE_MODULES.critical.some((mod) => c.name.includes(mod))
     );
     if (hasEmergencyChunk) {
       score += 10;
@@ -429,10 +427,9 @@ export class BundleAnalyzer {
       },
       compiler: {
         removeConsole: process.env.NODE_ENV === "production",
-        reactRemoveProperties:
-          process.env.NODE_ENV === "production"
-            ? { properties: ["^data-testid$"] }
-            : false,
+        reactRemoveProperties: process.env.NODE_ENV === "production"
+          ? { properties: ["^data-testid$"] }
+          : false,
       },
       images: {
         formats: ["image/webp", "image/avif"],
@@ -514,35 +511,51 @@ export class BundleAnalyzer {
 - **Target**: ${Math.round(this.config.targetBundleSize / 1024)}KB
 
 ### 🏥 Healthcare Module Analysis
-${analysis.chunks
-  .map((chunk) => {
-    const priority = chunk.loadPriority;
-    const icon =
-      priority === "high" ? "🚨" : priority === "medium" ? "⚡" : "📊";
-    return `${icon} **${chunk.name}**: ${Math.round(chunk.size / 1024)}KB (${chunk.isAsync ? "Async" : "Sync"})`;
-  })
-  .join("\n")}
+${
+      analysis.chunks
+        .map((chunk) => {
+          const priority = chunk.loadPriority;
+          const icon = priority === "high" ? "🚨" : priority === "medium" ? "⚡" : "📊";
+          return `${icon} **${chunk.name}**: ${Math.round(chunk.size / 1024)}KB (${
+            chunk.isAsync ? "Async" : "Sync"
+          })`;
+        })
+        .join("\n")
+    }
 
 ### 🔍 Top Recommendations
-${analysis.recommendations
-  .slice(0, 5)
-  .map((rec, i) => {
-    const severity =
-      rec.severity === "high" ? "🔴" : rec.severity === "medium" ? "🟡" : "🟢";
-    const savings = Math.round(rec.impact / 1024);
-    return `${i + 1}. ${severity} ${rec.description}\n   💾 **Savings**: ${savings}KB\n   🔧 **Action**: ${rec.action}`;
-  })
-  .join("\n\n")}
+${
+      analysis.recommendations
+        .slice(0, 5)
+        .map((rec, i) => {
+          const severity = rec.severity === "high" ? "🔴" : rec.severity === "medium" ? "🟡" : "🟢";
+          const savings = Math.round(rec.impact / 1024);
+          return `${
+            i + 1
+          }. ${severity} ${rec.description}\n   💾 **Savings**: ${savings}KB\n   🔧 **Action**: ${rec.action}`;
+        })
+        .join("\n\n")
+    }
 
 ### 🌐 Brazilian Connectivity Optimization
-- Emergency protocols: ${analysis.chunks.some((c) => c.name.includes("emergency")) ? "✅" : "❌"} Properly chunked
-- Patient management: ${analysis.chunks.some((c) => c.name.includes("patient")) ? "✅" : "❌"} Optimized
-- AI features: ${analysis.chunks.some((c) => c.name.includes("ai") && c.isAsync) ? "✅" : "❌"} Lazy loaded
+- Emergency protocols: ${
+      analysis.chunks.some((c) => c.name.includes("emergency")) ? "✅" : "❌"
+    } Properly chunked
+- Patient management: ${
+      analysis.chunks.some((c) => c.name.includes("patient")) ? "✅" : "❌"
+    } Optimized
+- AI features: ${
+      analysis.chunks.some((c) => c.name.includes("ai") && c.isAsync) ? "✅" : "❌"
+    } Lazy loaded
 
 ### 📈 Performance Targets
 - Tier 1 (São Paulo/Rio): Target ${Math.round(this.config.targetBundleSize / 1024)}KB ✅
-- Tier 2 (Regional): Target ${Math.round((this.config.targetBundleSize * 0.75) / 1024)}KB ${analysis.brotliSize <= this.config.targetBundleSize * 0.75 ? "✅" : "⚠️"}
-- Tier 3 (Interior): Target ${Math.round((this.config.targetBundleSize * 0.5) / 1024)}KB ${analysis.brotliSize <= this.config.targetBundleSize * 0.5 ? "✅" : "❌"}
+- Tier 2 (Regional): Target ${Math.round((this.config.targetBundleSize * 0.75) / 1024)}KB ${
+      analysis.brotliSize <= this.config.targetBundleSize * 0.75 ? "✅" : "⚠️"
+    }
+- Tier 3 (Interior): Target ${Math.round((this.config.targetBundleSize * 0.5) / 1024)}KB ${
+      analysis.brotliSize <= this.config.targetBundleSize * 0.5 ? "✅" : "❌"
+    }
 `;
 
     return report.trim();

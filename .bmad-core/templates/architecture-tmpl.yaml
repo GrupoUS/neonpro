@@ -335,14 +335,14 @@ sections:
     elicit: true
     examples:
       - |
-        project-root/
-        ├── packages/
-        │   ├── api/                    # Backend API service
-        │   ├── web/                    # Frontend application
-        │   ├── shared/                 # Shared utilities/types
-        │   └── infrastructure/         # IaC definitions
-        ├── scripts/                    # Monorepo management scripts
-        └── package.json                # Root package.json with workspaces
+          project-root/
+          ├── packages/
+          │   ├── api/                    # Backend API service
+          │   ├── web/                    # Frontend application
+          │   ├── shared/                 # Shared utilities/types
+          │   └── infrastructure/         # IaC definitions
+          ├── scripts/                    # Monorepo management scripts
+          └── package.json                # Root package.json with workspaces
 
   - id: infrastructure-deployment
     title: Infrastructure and Deployment

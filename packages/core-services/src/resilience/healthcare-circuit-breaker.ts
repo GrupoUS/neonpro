@@ -59,6 +59,7 @@ export class HealthcareCircuitBreaker {
   } /**
    * Execute an operation with circuit breaker protection
    */
+
   async call<T>(operation: () => Promise<T>): Promise<T> {
     this.metrics.totalCalls++;
 
@@ -103,6 +104,7 @@ export class HealthcareCircuitBreaker {
   } /**
    * Handle successful operation
    */
+
   private onSuccess(): void {
     this.metrics.successCalls++;
     this.metrics.lastSuccessTime = new Date();
@@ -153,6 +155,7 @@ export class HealthcareCircuitBreaker {
   } /**
    * Transition to CLOSED state
    */
+
   private transitionToClosed(): void {
     const previousState = this.state;
     this.state = CircuitBreakerState.CLOSED;
@@ -213,6 +216,7 @@ export class HealthcareCircuitBreaker {
   } /**
    * Trigger alert for healthcare-critical service failures
    */
+
   private triggerHealthcareCriticalAlert(error: unknown): void {
     // TODO: Implement actual alerting system integration
     console.error(

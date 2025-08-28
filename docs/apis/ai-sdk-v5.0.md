@@ -59,7 +59,7 @@ type MyDataParts = {
     weather?: string;
     status: "loading" | "success";
   };
-  "data-notification": { message: string; level: "info" | "warning" | "error" };
+  "data-notification": { message: string; level: "info" | "warning" | "error"; };
 };
 
 type MyUITools = InferUITools<typeof tools>;
@@ -602,8 +602,7 @@ const result = streamText({
 
 // ✅ DO: Custom transformation
 const upperCaseTransform =
-  <TOOLS extends ToolSet>() =>
-  (options: { tools: TOOLS; stopStream: () => void }) =>
+  <TOOLS extends ToolSet>() => (options: { tools: TOOLS; stopStream: () => void; }) =>
     new TransformStream<TextStreamPart<TOOLS>, TextStreamPart<TOOLS>>({
       transform(chunk, controller) {
         controller.enqueue(

@@ -66,9 +66,7 @@ export default function RegisterPage() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Seu nome completo"
           />
-          {errors.name && (
-            <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-          )}
+          {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
         </div>
 
         <div>
@@ -85,9 +83,7 @@ export default function RegisterPage() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="seu@email.com"
           />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-          )}
+          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
         </div>
 
         <div>
@@ -110,11 +106,9 @@ export default function RegisterPage() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute inset-y-0 right-0 flex items-center pr-3"
             >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4 text-gray-400" />
-              ) : (
-                <Eye className="h-4 w-4 text-gray-400" />
-              )}
+              {showPassword
+                ? <EyeOff className="h-4 w-4 text-gray-400" />
+                : <Eye className="h-4 w-4 text-gray-400" />}
             </button>
           </div>
           {errors.password && (
@@ -144,11 +138,9 @@ export default function RegisterPage() {
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute inset-y-0 right-0 flex items-center pr-3"
             >
-              {showConfirmPassword ? (
-                <EyeOff className="h-4 w-4 text-gray-400" />
-              ) : (
-                <Eye className="h-4 w-4 text-gray-400" />
-              )}
+              {showConfirmPassword
+                ? <EyeOff className="h-4 w-4 text-gray-400" />
+                : <Eye className="h-4 w-4 text-gray-400" />}
             </button>
           </div>
           {errors.confirmPassword && (
@@ -166,9 +158,8 @@ export default function RegisterPage() {
 
         <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
           <p className="text-xs text-blue-600">
-            Ao criar uma conta, você concorda com nossos Termos de Uso e
-            Política de Privacidade, incluindo as diretrizes LGPD para proteção
-            de dados.
+            Ao criar uma conta, você concorda com nossos Termos de Uso e Política de Privacidade,
+            incluindo as diretrizes LGPD para proteção de dados.
           </p>
         </div>
 

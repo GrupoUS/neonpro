@@ -36,7 +36,7 @@ class MockCacheService implements CacheService {
 }
 
 class MockLoggerService implements LoggerService {
-  logs: { level: string; message: string; meta?: unknown }[] = [];
+  logs: { level: string; message: string; meta?: unknown; }[] = [];
 
   async info(message: string, meta?: Record<string, unknown>): Promise<void> {
     this.logs.push({ level: "info", message, meta });
@@ -103,25 +103,25 @@ class MockMetricsService implements MetricsService {
 }
 
 class MockDatabaseService implements Partial<DatabaseService> {
-  auditLogs: { create: Mock } = {
+  auditLogs: { create: Mock; } = {
     create: vi.fn().mockResolvedValue({}),
   };
 
-  complianceEvents: { create: Mock } = {
+  complianceEvents: { create: Mock; } = {
     create: vi.fn().mockResolvedValue({}),
   };
 }
 
 // Test implementation of EnhancedAIService
 class TestAIService extends EnhancedAIService<
-  { input: string },
-  { output: string }
+  { input: string; },
+  { output: string; }
 > {
   protected serviceId = "test-service";
   protected version = "1.0.0";
   protected description = "Test AI service";
 
-  async execute(input: { input: string }): Promise<{ output: string }> {
+  async execute(input: { input: string; }): Promise<{ output: string; }> {
     if (input.input === "error") {
       throw new Error("Test error");
     }
@@ -272,8 +272,8 @@ describe("enhancedAIService", () => {
 
       const hasExecutionLog = infoLogs.some(
         (log) =>
-          log.message.includes("Service execution") ||
-          log.message.includes("completed"),
+          log.message.includes("Service execution")
+          || log.message.includes("completed"),
       );
       expect(hasExecutionLog).toBeTruthy();
     });
@@ -524,9 +524,7 @@ describe("enhancedAIService utilities", () => {
       const service = new TestAIService();
 
       // Valid input
-      expect(() =>
-        (service as unknown).validateInput({ input: "valid" }),
-      ).not.toThrow();
+      expect(() => (service as unknown).validateInput({ input: "valid" })).not.toThrow();
 
       // Invalid input
       expect(() => (service as unknown).validateInput()).toThrow(

@@ -9,10 +9,10 @@ reviews:
   # Enable automatic reviews
   auto_review:
     enabled: true
-  
+
   # Review depth
   review_level: "thorough"
-  
+
   # Focus areas for healthcare compliance
   review_focus:
     - "security"
@@ -22,14 +22,14 @@ reviews:
     - "error_handling"
     - "logging"
     - "validation"
-  
+
   # Healthcare-specific checks
   healthcare_compliance:
     lgpd: true
     anvisa: true
     cfm: true
-    hipaa: false  # Not applicable for Brazilian healthcare
-  
+    hipaa: false # Not applicable for Brazilian healthcare
+
   # Code quality thresholds
   code_quality:
     complexity_threshold: 10
@@ -67,17 +67,17 @@ custom_rules:
     description: "Ensure patient data is properly validated"
     pattern: "patient|paciente|cpf|rg|sus"
     severity: "high"
-  
+
   - name: "medical_data_encryption"
     description: "Check for proper encryption of medical data"
     pattern: "medical|medico|exame|diagnostico|prescription|receita"
     severity: "high"
-  
+
   - name: "audit_logging"
     description: "Ensure audit trails for sensitive operations"
     pattern: "delete|update|create.*patient|create.*medical"
     severity: "medium"
-  
+
   - name: "error_handling"
     description: "Proper error handling without data leakage"
     pattern: "try.*catch|throw.*Error"
@@ -89,10 +89,10 @@ integrations:
     auto_comment: true
     auto_approve_minor: false
     block_on_security_issues: true
-  
+
   slack:
     enabled: false
-  
+
   teams:
     enabled: false
 

@@ -10,13 +10,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { apiClient } from "@neonpro/shared/api-client";
 import type { UserRole } from "@neonpro/shared/schemas";
 import type { QueryClient } from "@tanstack/react-query";
-import {
-  createRootRoute,
-  createRoute,
-  createRouter,
-  Link,
-  redirect,
-} from "@tanstack/react-router";
+import { createRootRoute, createRoute, createRouter, Link, redirect } from "@tanstack/react-router";
 import React from "react";
 import { z } from "zod";
 

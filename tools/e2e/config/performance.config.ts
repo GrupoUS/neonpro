@@ -168,13 +168,12 @@ export function getPerformanceBudget(url: string): PerformanceBudget {
   const pathname = new URL(url, "http://localhost").pathname;
 
   // Find matching page type
-  const pageType =
-    Object.entries(PAGE_TYPE_MAPPING).find(([pattern, _]) => {
-      // Simple pattern matching - can be enhanced with regex if needed
-      return (
-        pathname.startsWith(pattern.replace("[id]", "")) || pathname === pattern
-      );
-    })?.[1] || "standard";
+  const pageType = Object.entries(PAGE_TYPE_MAPPING).find(([pattern, _]) => {
+    // Simple pattern matching - can be enhanced with regex if needed
+    return (
+      pathname.startsWith(pattern.replace("[id]", "")) || pathname === pattern
+    );
+  })?.[1] || "standard";
 
   return PERFORMANCE_BUDGETS[pageType as keyof typeof PERFORMANCE_BUDGETS];
 }

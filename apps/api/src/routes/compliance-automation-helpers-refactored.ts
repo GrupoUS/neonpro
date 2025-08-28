@@ -1,6 +1,6 @@
 /**
  * Compliance Automation Helper Functions - Refactored
- * 
+ *
  * IMPROVEMENTS:
  * ✅ Full type safety - no more unknown[] types
  * ✅ Pure functions - removed unnecessary async
@@ -9,20 +9,17 @@
  * ✅ KISS principle applied
  */
 
-import {
-  COMPLIANCE_STANDARDS,
-  MAGIC_NUMBERS,
-} from "./compliance-automation-constants";
+import { COMPLIANCE_STANDARDS, MAGIC_NUMBERS } from "./compliance-automation-constants";
 import type {
-  ComplianceHistoryEntry,
-  ComplianceTrends,
   ComplianceAlert,
-  SeverityCount,
+  ComplianceAutomationResult,
+  ComplianceHistoryEntry,
+  ComplianceOverview,
   ComplianceReportData,
   ComplianceReportSummary,
+  ComplianceTrends,
   ComplianceValidationResult,
-  ComplianceAutomationResult,
-  ComplianceOverview,
+  SeverityCount,
 } from "./compliance-automation-types";
 
 // =============================================================================
@@ -46,7 +43,7 @@ function calculateComplianceConsistency(scores: readonly number[]): number {
 
 function determineTrend(scores: readonly number[]): "improving" | "stable" | "declining" {
   if (scores.length < 2) return "stable";
-  
+
   const firstScore = scores[0];
   const lastScore = scores[scores.length - 1];
   const trendPercentage = ((lastScore - firstScore) / firstScore) * MAGIC_NUMBERS.HUNDRED;
@@ -65,7 +62,7 @@ function determineTrend(scores: readonly number[]): "improving" | "stable" | "de
  * Pure function - no side effects, fully type-safe
  */
 export function calculateComplianceTrends(
-  complianceHistory: readonly ComplianceHistoryEntry[]
+  complianceHistory: readonly ComplianceHistoryEntry[],
 ): ComplianceTrends {
   // Handle empty or insufficient data
   if (!complianceHistory || complianceHistory.length < MAGIC_NUMBERS.TWO) {
@@ -80,10 +77,10 @@ export function calculateComplianceTrends(
 
   const scores = complianceHistory.map(entry => entry.overall_score);
   const averageScore = calculateAverage(scores);
-  
+
   return {
     areas_declining: [], // Area-specific analysis
-        areas_improving: [], // Area-specific analysis  
+    areas_improving: [], // Area-specific analysis
     average_score: roundToTwoDecimals(averageScore),
     compliance_consistency: calculateComplianceConsistency(scores),
     score_trend: determineTrend(scores),
@@ -95,7 +92,7 @@ export function calculateComplianceTrends(
  * Pure function with proper type safety
  */
 export function categorizeAlertsBySeverity(
-  alerts: readonly ComplianceAlert[]
+  alerts: readonly ComplianceAlert[],
 ): SeverityCount {
   if (!alerts || alerts.length === 0) {
     return {
@@ -106,17 +103,14 @@ export function categorizeAlertsBySeverity(
     };
   }
 
-  const criticalCount = alerts.filter(alert => 
-    alert.severity === "critical" || alert.severity === "constitutional_violation"
-  ).length;
+  const criticalCount =
+    alerts.filter(alert =>
+      alert.severity === "critical" || alert.severity === "constitutional_violation"
+    ).length;
 
-  const warningCount = alerts.filter(alert => 
-    alert.severity === "warning"
-  ).length;
+  const warningCount = alerts.filter(alert => alert.severity === "warning").length;
 
-  const infoCount = alerts.filter(alert => 
-    alert.severity === "info"
-  ).length;
+  const infoCount = alerts.filter(alert => alert.severity === "info").length;
 
   return {
     critical: criticalCount,
@@ -135,11 +129,11 @@ export function generateComplianceReportSummary(
   startDate: Date,
   endDate: Date,
   periodDays: number,
-  reportType: string
+  reportType: string,
 ): ComplianceReportSummary {
   const compliance_overview: ComplianceOverview = {
     areas_analyzed: ["LGPD", "ANVISA", "CFM"],
-    average_score: reportData.length > 0 
+    average_score: reportData.length > 0
       ? roundToTwoDecimals(calculateAverage(reportData.map(r => r.overall_score)))
       : COMPLIANCE_STANDARDS.MINIMUM_SCORE,
     constitutional_compliance_rate: reportData.length > 0
@@ -168,7 +162,7 @@ export function generateComplianceReportSummary(
  */
 export function createComplianceAutomationResult<T>(
   data: T,
-  compliance_score?: number
+  compliance_score?: number,
 ): ComplianceAutomationResult<T> {
   return {
     success: true,
@@ -188,7 +182,7 @@ export function createComplianceReport(data: ComplianceReportData): ComplianceRe
     new Date(data.startDate),
     new Date(data.endDate),
     data.periodDays,
-    data.reportType
+    data.reportType,
   );
 }
 

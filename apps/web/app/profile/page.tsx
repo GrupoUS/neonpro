@@ -86,17 +86,19 @@ export default function ProfilePage() {
           onClick={() => setIsEditing(!isEditing)}
           variant={isEditing ? "outline" : "default"}
         >
-          {isEditing ? (
-            <>
-              <Save className="mr-2 h-4 w-4" />
-              Salvar
-            </>
-          ) : (
-            <>
-              <Edit className="mr-2 h-4 w-4" />
-              Editar
-            </>
-          )}
+          {isEditing
+            ? (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Salvar
+              </>
+            )
+            : (
+              <>
+                <Edit className="mr-2 h-4 w-4" />
+                Editar
+              </>
+            )}
         </Button>
       </div>
 
@@ -154,8 +156,7 @@ export default function ProfilePage() {
                       setProfileData((prev) => ({
                         ...prev,
                         firstName: e.target.value,
-                      }))
-                    }
+                      }))}
                     value={profileData.firstName}
                   />
                 </div>
@@ -168,8 +169,7 @@ export default function ProfilePage() {
                       setProfileData((prev) => ({
                         ...prev,
                         lastName: e.target.value,
-                      }))
-                    }
+                      }))}
                     value={profileData.lastName}
                   />
                 </div>
@@ -195,8 +195,7 @@ export default function ProfilePage() {
                       setProfileData((prev) => ({
                         ...prev,
                         phone: e.target.value,
-                      }))
-                    }
+                      }))}
                     value={profileData.phone}
                   />
                 </div>
@@ -207,9 +206,7 @@ export default function ProfilePage() {
                 <Textarea
                   disabled={!isEditing}
                   id="bio"
-                  onChange={(e) =>
-                    setProfileData((prev) => ({ ...prev, bio: e.target.value }))
-                  }
+                  onChange={(e) => setProfileData((prev) => ({ ...prev, bio: e.target.value }))}
                   placeholder="Conte um pouco sobre você..."
                   rows={3}
                   value={profileData.bio}
@@ -226,8 +223,7 @@ export default function ProfilePage() {
                       setProfileData((prev) => ({
                         ...prev,
                         city: e.target.value,
-                      }))
-                    }
+                      }))}
                     value={profileData.city}
                   />
                 </div>
@@ -240,8 +236,7 @@ export default function ProfilePage() {
                       setProfileData((prev) => ({
                         ...prev,
                         state: e.target.value,
-                      }))
-                    }
+                      }))}
                     value={profileData.state}
                   />
                 </div>
@@ -254,8 +249,7 @@ export default function ProfilePage() {
                       setProfileData((prev) => ({
                         ...prev,
                         zipCode: e.target.value,
-                      }))
-                    }
+                      }))}
                     value={profileData.zipCode}
                   />
                 </div>
@@ -301,8 +295,7 @@ export default function ProfilePage() {
                       setProfileData((prev) => ({
                         ...prev,
                         crm: e.target.value,
-                      }))
-                    }
+                      }))}
                     placeholder="CRM/SP 123456"
                     value={profileData.crm}
                   />
@@ -318,8 +311,7 @@ export default function ProfilePage() {
                     setProfileData((prev) => ({
                       ...prev,
                       address: e.target.value,
-                    }))
-                  }
+                    }))}
                   placeholder="Endereço completo do consultório..."
                   rows={2}
                   value={profileData.address}
@@ -329,8 +321,7 @@ export default function ProfilePage() {
               <Alert>
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  Suas informações profissionais são verificadas e protegidas
-                  conforme LGPD.
+                  Suas informações profissionais são verificadas e protegidas conforme LGPD.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -357,8 +348,7 @@ export default function ProfilePage() {
                 <Switch
                   checked={preferences.emailNotifications}
                   onCheckedChange={(checked) =>
-                    handlePreferenceChange("emailNotifications", checked)
-                  }
+                    handlePreferenceChange("emailNotifications", checked)}
                 />
               </div>
 
@@ -371,9 +361,7 @@ export default function ProfilePage() {
                 </div>
                 <Switch
                   checked={preferences.smsNotifications}
-                  onCheckedChange={(checked) =>
-                    handlePreferenceChange("smsNotifications", checked)
-                  }
+                  onCheckedChange={(checked) => handlePreferenceChange("smsNotifications", checked)}
                 />
               </div>
 
@@ -386,9 +374,7 @@ export default function ProfilePage() {
                 </div>
                 <Switch
                   checked={preferences.marketingEmails}
-                  onCheckedChange={(checked) =>
-                    handlePreferenceChange("marketingEmails", checked)
-                  }
+                  onCheckedChange={(checked) => handlePreferenceChange("marketingEmails", checked)}
                 />
               </div>
             </CardContent>
@@ -411,9 +397,7 @@ export default function ProfilePage() {
                 </div>
                 <Switch
                   checked={preferences.darkMode}
-                  onCheckedChange={(checked) =>
-                    handlePreferenceChange("darkMode", checked)
-                  }
+                  onCheckedChange={(checked) => handlePreferenceChange("darkMode", checked)}
                 />
               </div>
 
@@ -458,9 +442,7 @@ export default function ProfilePage() {
                   )}
                   <Switch
                     checked={preferences.twoFactorAuth}
-                    onCheckedChange={(checked) =>
-                      handlePreferenceChange("twoFactorAuth", checked)
-                    }
+                    onCheckedChange={(checked) => handlePreferenceChange("twoFactorAuth", checked)}
                   />
                 </div>
               </div>
@@ -498,8 +480,7 @@ export default function ProfilePage() {
               <Alert>
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  Sua conta está protegida com criptografia de ponta a ponta e
-                  conformidade LGPD.
+                  Sua conta está protegida com criptografia de ponta a ponta e conformidade LGPD.
                 </AlertDescription>
               </Alert>
             </CardContent>

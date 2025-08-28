@@ -1,8 +1,8 @@
-import { test, expect } from "@playwright/test";
-import { LoginPage } from "../../pages/LoginPage";
+import { expect, test } from "@playwright/test";
 import { DashboardPage } from "../../pages/DashboardPage";
+import { LoginPage } from "../../pages/LoginPage";
 import { PatientsPage } from "../../pages/PatientsPage";
-import { TestUtils, TEST_CONSTANTS } from "../../utils/test-utils";
+import { TEST_CONSTANTS, TestUtils } from "../../utils/test-utils";
 
 /**
  * Testes E2E para gerenciamento de pacientes
@@ -54,9 +54,7 @@ test.describe("Patients Management", () => {
     expect(searchResults).toContain(patientData.name);
   });
 
-  test("should validate required fields when creating patient", async ({
-    page,
-  }) => {
+  test("should validate required fields when creating patient", async ({ page }) => {
     // Act
     await patientsPage.clickAddPatient();
     await patientsPage.savePatient(); // Tentar salvar sem preencher
@@ -66,8 +64,7 @@ test.describe("Patients Management", () => {
 
     const nameError = await patientsPage.getFieldValidationError("name");
     const cpfError = await patientsPage.getFieldValidationError("cpf");
-    const birthDateError =
-      await patientsPage.getFieldValidationError("birthDate");
+    const birthDateError = await patientsPage.getFieldValidationError("birthDate");
 
     expect(nameError).toContain("obrigatório");
     expect(cpfError).toContain("obrigatório");
@@ -211,9 +208,7 @@ test.describe("Patients Management", () => {
 
   test("should paginate through patient list", async ({ page }) => {
     // Arrange - Criar muitos pacientes para testar paginação
-    const patients = Array.from({ length: 25 }, () =>
-      TestUtils.generatePatientData(),
-    );
+    const patients = Array.from({ length: 25 }, () => TestUtils.generatePatientData());
 
     for (const patient of patients) {
       await patientsPage.createPatientViaAPI(patient);
@@ -392,9 +387,7 @@ test.describe("Patients Performance", () => {
       page,
       TEST_CONSTANTS.API_ENDPOINTS.PATIENTS,
       {
-        patients: Array.from({ length: 1000 }, () =>
-          TestUtils.generatePatientData(),
-        ),
+        patients: Array.from({ length: 1000 }, () => TestUtils.generatePatientData()),
       },
     );
 

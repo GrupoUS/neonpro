@@ -48,10 +48,7 @@ services, appointment management, document handling, and communication features.
 ## Installation
 
 ```typescript
-import {
-  createDefaultPortalConfig,
-  PatientPortal,
-} from "@neonpro/patient-portal";
+import { createDefaultPortalConfig, PatientPortal } from "@neonpro/patient-portal";
 
 // Initialize with default configuration
 const config = createDefaultPortalConfig();

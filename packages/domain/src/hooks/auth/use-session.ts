@@ -129,25 +129,23 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
   const securityCheckRef = useRef<NodeJS.Timeout | null>(null);
 
   // Session validation
-  const validateSession =
-    useCallback(async (): Promise<SessionValidationResult> => {
-      try {
-        // Placeholder implementation
-        const result: SessionValidationResult = {
-          valid: false,
-          session: undefined,
-          error: "Not implemented",
-        };
-        return result;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Session validation failed";
-        return {
-          valid: false,
-          error: errorMessage,
-        };
-      }
-    }, []);
+  const validateSession = useCallback(async (): Promise<SessionValidationResult> => {
+    try {
+      // Placeholder implementation
+      const result: SessionValidationResult = {
+        valid: false,
+        session: undefined,
+        error: "Not implemented",
+      };
+      return result;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Session validation failed";
+      return {
+        valid: false,
+        error: errorMessage,
+      };
+    }
+  }, []);
 
   // Login function
   const login = useCallback(
@@ -159,8 +157,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
         toast("Login successful");
         return true;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Login failed";
+        const errorMessage = error instanceof Error ? error.message : "Login failed";
         setError(errorMessage);
         toast("Login failed");
         return false;
@@ -191,8 +188,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
       router.push("/auth/login");
       toast("Logout successful");
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Logout failed";
+      const errorMessage = error instanceof Error ? error.message : "Logout failed";
       setError(errorMessage);
       toast("Logout failed");
     } finally {
@@ -205,8 +201,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
     try {
       return true;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Session refresh failed";
+      const errorMessage = error instanceof Error ? error.message : "Session refresh failed";
       setError(errorMessage);
       return false;
     }
@@ -218,8 +213,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
       try {
         return true;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Session extension failed";
+        const errorMessage = error instanceof Error ? error.message : "Session extension failed";
         setError(errorMessage);
         return false;
       }
@@ -232,8 +226,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
     try {
       return true;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to terminate sessions";
+      const errorMessage = error instanceof Error ? error.message : "Failed to terminate sessions";
       setError(errorMessage);
       return false;
     }
@@ -245,8 +238,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
       try {
         return true;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to revoke device";
+        const errorMessage = error instanceof Error ? error.message : "Failed to revoke device";
         setError(errorMessage);
         return false;
       }
@@ -260,8 +252,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
       try {
         return true;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to trust device";
+        const errorMessage = error instanceof Error ? error.message : "Failed to trust device";
         setError(errorMessage);
         return false;
       }
@@ -273,13 +264,10 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
   const dismissAlert = useCallback(
     async (alertId: string): Promise<boolean> => {
       try {
-        setSecurityAlerts((prev) =>
-          prev.filter((alert) => alert.id !== alertId),
-        );
+        setSecurityAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
         return true;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to dismiss alert";
+        const errorMessage = error instanceof Error ? error.message : "Failed to dismiss alert";
         setError(errorMessage);
         return false;
       }

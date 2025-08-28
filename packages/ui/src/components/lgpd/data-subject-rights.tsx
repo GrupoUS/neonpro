@@ -1,34 +1,15 @@
 "use client";
 
-import {
-  AlertCircle,
-  Download,
-  Edit,
-  FileText,
-  Settings,
-  Trash2,
-} from "lucide-react";
+import { AlertCircle, Download, Edit, FileText, Settings, Trash2 } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "../Alert";
 import { Button } from "../Button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../Card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
 import { Input } from "../Input";
 import { Label } from "../Label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../Select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../Select";
 import { Textarea } from "../Textarea";
 
 // ============================================================================
@@ -96,8 +77,7 @@ export function DataSubjectRights() {
     {
       value: "portability",
       label: "Portabilidade de Dados",
-      description:
-        "Solicitar seus dados em formato estruturado e interoperável",
+      description: "Solicitar seus dados em formato estruturado e interoperável",
       icon: <Download className="h-4 w-4" />,
     },
     {
@@ -187,8 +167,7 @@ export function DataSubjectRights() {
             Direitos do Titular dos Dados - LGPD
           </CardTitle>
           <CardDescription>
-            Exerça seus direitos previstos na Lei Geral de Proteção de Dados
-            (LGPD)
+            Exerça seus direitos previstos na Lei Geral de Proteção de Dados (LGPD)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -196,9 +175,7 @@ export function DataSubjectRights() {
           <div>
             <Label htmlFor="request-type">Tipo de Solicitação</Label>
             <Select
-              onValueChange={(value: RequestType) =>
-                setSelectedRequestType(value)
-              }
+              onValueChange={(value: RequestType) => setSelectedRequestType(value)}
               value={selectedRequestType}
             >
               <SelectTrigger>
@@ -227,8 +204,7 @@ export function DataSubjectRights() {
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                <strong>{selectedRequest.label}:</strong>{" "}
-                {selectedRequest.description}
+                <strong>{selectedRequest.label}:</strong> {selectedRequest.description}
               </AlertDescription>
             </Alert>
           )}
@@ -247,8 +223,7 @@ export function DataSubjectRights() {
                 <Input
                   id="rectification-field"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setRectificationField(e.target.value)
-                  }
+                    setRectificationField(e.target.value)}
                   placeholder="Ex: Nome, Email, Telefone..."
                   value={rectificationField}
                 />
@@ -259,8 +234,7 @@ export function DataSubjectRights() {
                 <Input
                   id="rectification-old-value"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setRectificationOldValue(e.target.value)
-                  }
+                    setRectificationOldValue(e.target.value)}
                   placeholder="Valor atualmente registrado (opcional)"
                   value={rectificationOldValue}
                 />
@@ -271,8 +245,7 @@ export function DataSubjectRights() {
                 <Input
                   id="rectification-new-value"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setRectificationNewValue(e.target.value)
-                  }
+                    setRectificationNewValue(e.target.value)}
                   placeholder="Valor correto que deve ser registrado"
                   value={rectificationNewValue}
                 />
@@ -285,8 +258,7 @@ export function DataSubjectRights() {
                 <Textarea
                   id="rectification-reason"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    setRectificationReason(e.target.value)
-                  }
+                    setRectificationReason(e.target.value)}
                   placeholder="Explique por que esta correção é necessária..."
                   rows={3}
                   value={rectificationReason}
@@ -304,8 +276,7 @@ export function DataSubjectRights() {
               <Textarea
                 id="request-details"
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  setRequestDetails(e.target.value)
-                }
+                  setRequestDetails(e.target.value)}
                 placeholder="Forneça detalhes adicionais sobre sua solicitação..."
                 rows={4}
                 value={requestDetails}
@@ -326,9 +297,9 @@ export function DataSubjectRights() {
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Importante:</strong> Suas solicitações serão processadas
-              em até 15 dias úteis, conforme previsto na LGPD. Você receberá
-              atualizações sobre o status por email.
+              <strong>Importante:</strong>{" "}
+              Suas solicitações serão processadas em até 15 dias úteis, conforme previsto na LGPD.
+              Você receberá atualizações sobre o status por email.
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -343,21 +314,26 @@ export function DataSubjectRights() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {requests.length === 0 ? (
-            <div className="py-8 text-center text-gray-500">
-              <FileText className="mx-auto mb-4 h-12 w-12 opacity-50" />
-              <p>Nenhuma solicitação encontrada</p>
-              <p className="text-sm">
-                Suas solicitações aparecerão aqui após serem criadas
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {requests.map((request) => (
-                <RequestHistoryCard key={request.id} request={request} />
-              ))}
-            </div>
-          )}
+          {requests.length === 0
+            ? (
+              <div className="py-8 text-center text-gray-500">
+                <FileText className="mx-auto mb-4 h-12 w-12 opacity-50" />
+                <p>Nenhuma solicitação encontrada</p>
+                <p className="text-sm">
+                  Suas solicitações aparecerão aqui após serem criadas
+                </p>
+              </div>
+            )
+            : (
+              <div className="space-y-4">
+                {requests.map((request) => (
+                  <RequestHistoryCard
+                    key={request.id}
+                    request={request}
+                  />
+                ))}
+              </div>
+            )}
         </CardContent>
       </Card>
     </div>
@@ -420,20 +396,20 @@ function RequestHistoryCard({ request }: RequestHistoryCardProps) {
           <div>
             <h4 className="font-medium">{request.requestType}</h4>
             <p className="text-gray-600 text-sm">
-              Solicitado em:{" "}
-              {new Date(request.requestedAt).toLocaleString("pt-BR")}
+              Solicitado em: {new Date(request.requestedAt).toLocaleString("pt-BR")}
             </p>
             {request.completedAt && (
               <p className="text-gray-600 text-sm">
-                Concluído em:{" "}
-                {new Date(request.completedAt).toLocaleString("pt-BR")}
+                Concluído em: {new Date(request.completedAt).toLocaleString("pt-BR")}
               </p>
             )}
           </div>
           <div
-            className={`rounded-full px-2 py-1 font-medium text-xs ${getStatusColor(
-              request.status,
-            )}`}
+            className={`rounded-full px-2 py-1 font-medium text-xs ${
+              getStatusColor(
+                request.status,
+              )
+            }`}
           >
             {getStatusLabel(request.status)}
           </div>

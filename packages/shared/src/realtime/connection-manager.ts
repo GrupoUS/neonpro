@@ -5,9 +5,9 @@
  */
 
 // Temporary: Use relative path until module resolution is fixed
-import type { Database } from "../types/database.types";
 import { createClient } from "@supabase/supabase-js";
 import type { RealtimeChannel, SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "../types/database.types";
 
 export interface ConnectionConfig {
   url: string;
@@ -417,8 +417,8 @@ export class SupabaseRealtimeManager {
 
     const maxScore = 100;
     const retryPenalty = this.connectionStatus.totalRetries * 10;
-    const inactiveChannelPenalty =
-      (this.subscriptions.size - this.connectionStatus.activeChannels) * 5;
+    const inactiveChannelPenalty = (this.subscriptions.size - this.connectionStatus.activeChannels)
+      * 5;
 
     return Math.max(0, maxScore - retryPenalty - inactiveChannelPenalty);
   }

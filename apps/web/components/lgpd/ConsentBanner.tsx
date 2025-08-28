@@ -1,13 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   AlertTriangle,
@@ -58,8 +52,7 @@ export default function ConsentBanner({
       description:
         "Processamento de dados pessoais e de saúde necessários para prestação de cuidados médicos.",
       required: true,
-      lawfulBasis:
-        "Cuidados de saúde (Art. 11, LGPD) + Execução de contrato (Art. 7, V)",
+      lawfulBasis: "Cuidados de saúde (Art. 11, LGPD) + Execução de contrato (Art. 7, V)",
       examples: [
         "Nome completo, CPF, RG para identificação",
         "Dados de contato para comunicação médica",
@@ -76,8 +69,7 @@ export default function ConsentBanner({
       description:
         "Dados para melhorar funcionalidades do sistema como lembretes de consulta e histórico.",
       required: false,
-      lawfulBasis:
-        "Legítimo interesse (Art. 7, IX) + Consentimento (Art. 7, I)",
+      lawfulBasis: "Legítimo interesse (Art. 7, IX) + Consentimento (Art. 7, I)",
       examples: [
         "Preferências de agendamento",
         "Histórico de consultas e procedimentos",
@@ -91,8 +83,7 @@ export default function ConsentBanner({
       id: "analytics",
       type: "analytics",
       title: "Analytics e Melhoria dos Serviços Médicos",
-      description:
-        "Análise agregada e anônima para melhorar qualidade dos cuidados médicos.",
+      description: "Análise agregada e anônima para melhorar qualidade dos cuidados médicos.",
       required: false,
       lawfulBasis: "Consentimento (Art. 7, I)",
       examples: [
@@ -204,9 +195,8 @@ export default function ConsentBanner({
               </CardTitle>
               <CardDescription className="text-base">
                 Em conformidade com a{" "}
-                <strong>Lei Geral de Proteção de Dados (LGPD)</strong>,
-                precisamos do seu consentimento explícito para processar seus
-                dados pessoais.
+                <strong>Lei Geral de Proteção de Dados (LGPD)</strong>, precisamos do seu
+                consentimento explícito para processar seus dados pessoais.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -219,23 +209,19 @@ export default function ConsentBanner({
                     </h3>
                     <ul className="space-y-1 text-blue-800 text-sm">
                       <li>
-                        • <strong>Acesso:</strong> Solicitar cópia dos seus
-                        dados
+                        • <strong>Acesso:</strong> Solicitar cópia dos seus dados
                       </li>
                       <li>
-                        • <strong>Retificação:</strong> Corrigir dados
-                        incorretos
+                        • <strong>Retificação:</strong> Corrigir dados incorretos
                       </li>
                       <li>
                         • <strong>Exclusão:</strong> Apagar dados desnecessários
                       </li>
                       <li>
-                        • <strong>Portabilidade:</strong> Transferir dados para
-                        outro serviço
+                        • <strong>Portabilidade:</strong> Transferir dados para outro serviço
                       </li>
                       <li>
-                        • <strong>Retirar consentimento:</strong> A qualquer
-                        momento
+                        • <strong>Retirar consentimento:</strong> A qualquer momento
                       </li>
                     </ul>
                   </div>
@@ -250,9 +236,9 @@ export default function ConsentBanner({
                       Dados Médicos
                     </h3>
                     <p className="text-amber-800 text-sm">
-                      Como sistema de saúde, alguns dados são{" "}
-                      <strong>obrigatórios por lei</strong> para prestação de
-                      cuidados médicos e podem ter períodos de retenção
+                      Como sistema de saúde, alguns dados são <strong>obrigatórios por lei</strong>
+                      {" "}
+                      para prestação de cuidados médicos e podem ter períodos de retenção
                       específicos conforme regulamentações sanitárias.
                     </p>
                   </div>
@@ -296,8 +282,7 @@ export default function ConsentBanner({
               </div>
             </CardContent>
           </>
-        )}{" "}
-        {/* Detailed Consent Selection */}
+        )} {/* Detailed Consent Selection */}
         {step === "detailed" && (
           <>
             <CardHeader>
@@ -306,8 +291,8 @@ export default function ConsentBanner({
                 <span>Personalizar Consentimentos</span>
               </CardTitle>
               <CardDescription>
-                Escolha exatamente quais dados você permite que processemos.
-                Você pode alterar essas preferências a qualquer momento.
+                Escolha exatamente quais dados você permite que processemos. Você pode alterar essas
+                preferências a qualquer momento.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -340,8 +325,7 @@ export default function ConsentBanner({
                           disabled={option.required}
                           id={option.id}
                           onCheckedChange={(checked) =>
-                            handleConsentChange(option.id, checked as boolean)
-                          }
+                            handleConsentChange(option.id, checked as boolean)}
                         />
                       </div>
                     </div>
@@ -352,9 +336,7 @@ export default function ConsentBanner({
                         Exemplos de dados processados:
                       </h4>
                       <ul className="space-y-1 text-gray-600 text-sm">
-                        {option.examples.map((example, idx) => (
-                          <li key={idx}>• {example}</li>
-                        ))}
+                        {option.examples.map((example, idx) => <li key={idx}>• {example}</li>)}
                       </ul>
                     </div>
                   </CardContent>
@@ -445,13 +427,12 @@ export default function ConsentBanner({
                   <Info className="mt-0.5 h-5 w-5 text-blue-600" />
                   <div className="text-blue-800 text-sm">
                     <p className="mb-2">
-                      <strong>Lembre-se:</strong> Você pode alterar estes
-                      consentimentos a qualquer momento através do Painel de
+                      <strong>Lembre-se:</strong>{" "}
+                      Você pode alterar estes consentimentos a qualquer momento através do Painel de
                       Conformidade LGPD na sua conta.
                     </p>
                     <p>
-                      <strong>Contato do DPO:</strong> dpo@neonpro.com.br | (11)
-                      99999-9999
+                      <strong>Contato do DPO:</strong> dpo@neonpro.com.br | (11) 99999-9999
                     </p>
                   </div>
                 </div>

@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -68,14 +68,12 @@ export async function POST(
       .update({
         status: authResult.status === "authorized" ? "authorized" : "rejected",
         authorization_code: authResult.authorization_key,
-        authorization_date:
-          authResult.status === "authorized"
-            ? authResult.authorized_at || new Date().toISOString()
-            : undefined,
-        rejection_reason:
-          authResult.status === "authorized"
-            ? undefined
-            : "Authorization failed",
+        authorization_date: authResult.status === "authorized"
+          ? authResult.authorized_at || new Date().toISOString()
+          : undefined,
+        rejection_reason: authResult.status === "authorized"
+          ? undefined
+          : "Authorization failed",
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)

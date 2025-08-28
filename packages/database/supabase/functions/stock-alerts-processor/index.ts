@@ -7,8 +7,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 interface StockAlert {
@@ -163,8 +162,8 @@ serve(async (req) => {
 
         // Check for low stock
         if (
-          item.current_stock <= item.minimum_threshold &&
-          item.current_stock > 0
+          item.current_stock <= item.minimum_threshold
+          && item.current_stock > 0
         ) {
           alerts.push({
             tenant_id: tenantId,

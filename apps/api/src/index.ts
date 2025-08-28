@@ -35,8 +35,8 @@ import { timing } from "hono/timing";
 // Import comprehensive healthcare security middleware
 import {
   createHealthcareAPISecurityStack,
-  SecurityEnvironment,
   EndpointSecurityLevel,
+  SecurityEnvironment,
   ValidationContext,
 } from "@/middleware/security";
 
@@ -71,22 +71,23 @@ const app = new Hono<AppEnv>();
 // 🛡️ HEALTHCARE SECURITY CONFIGURATION
 // ====================================
 // Comprehensive production-ready security stack for Brazilian healthcare applications
-const securityEnvironment = IS_PRODUCTION 
-  ? SecurityEnvironment.PRODUCTION 
+const securityEnvironment = IS_PRODUCTION
+  ? SecurityEnvironment.PRODUCTION
   : SecurityEnvironment.DEVELOPMENT;
 
 // Configure healthcare security stack
-const { middlewares: securityMiddlewares, orchestrator, validationMiddlewares } = createHealthcareAPISecurityStack(
-  securityEnvironment,
-  EndpointSecurityLevel.PROVIDER_DASHBOARD, // Default security level for API
-  {
-    jwtSecret: process.env.JWT_SECRET || "your-healthcare-secret-key-change-in-production",
-    // redisClient: redisClient, // Uncomment when Redis is configured
-    // auditLogger: auditLogger, // Uncomment when audit system is configured  
-    // monitoringSystem: monitoring, // Uncomment when monitoring is configured
-    // emergencyNotificationSystem: alerts, // Uncomment when alerting is configured
-  }
-);
+const { middlewares: securityMiddlewares, orchestrator, validationMiddlewares } =
+  createHealthcareAPISecurityStack(
+    securityEnvironment,
+    EndpointSecurityLevel.PROVIDER_DASHBOARD, // Default security level for API
+    {
+      jwtSecret: process.env.JWT_SECRET || "your-healthcare-secret-key-change-in-production",
+      // redisClient: redisClient, // Uncomment when Redis is configured
+      // auditLogger: auditLogger, // Uncomment when audit system is configured
+      // monitoringSystem: monitoring, // Uncomment when monitoring is configured
+      // emergencyNotificationSystem: alerts, // Uncomment when alerting is configured
+    },
+  );
 
 // Global middleware stack (order is critical for security)
 app.use("*", timing());
@@ -97,6 +98,9 @@ app.use("*", logger());
 securityMiddlewares.forEach((middleware) => {
   app.use("*", middleware);
 });
+
+// Apply audit middleware globally for compliance tracking
+app.use("*", auditMiddleware);
 
 // Compression for better performance (after security)
 app.use("*", compress());
@@ -109,7 +113,7 @@ if (!IS_PRODUCTION) {
 // 🚨 LEGACY MIDDLEWARE (DEPRECATED - Use new security stack above)
 // These will be gradually removed as we fully migrate to the new security architecture
 // app.use("*", auditMiddleware()); // ✅ Replaced by healthcare security audit logging
-// app.use("*", lgpdMiddleware()); // ✅ Replaced by healthcare LGPD compliance middleware  
+// app.use("*", lgpdMiddleware()); // ✅ Replaced by healthcare LGPD compliance middleware
 // app.use("*", rateLimitMiddleware()); // ✅ Replaced by healthcare rate limiting with emergency bypass
 
 // Database middleware
@@ -133,8 +137,7 @@ const getDocsUrl = (): string => "/docs";
 app.get("/", (context) => {
   const docsUrl = getDocsUrl();
   return context.json({
-    description:
-      "Sistema de gestão para clínicas de estética multiprofissionais brasileiras",
+    description: "Sistema de gestão para clínicas de estética multiprofissionais brasileiras",
     docs: docsUrl,
     environment: ENVIRONMENT,
     features: [
@@ -205,8 +208,7 @@ app.get("/health", async (context) => {
       version: "1.0.0",
     };
 
-    const isHealthy =
-      healthData.services.database && healthData.services.supabase;
+    const isHealthy = healthData.services.database && healthData.services.supabase;
     const responseStatus = getResponseStatus(isHealthy);
 
     return context.json(healthData, responseStatus);
@@ -231,38 +233,29 @@ app.get("/health", async (context) => {
 const apiV1 = new Hono<AppEnv>()
   // Authentication routes (no additional validation needed - handled by security stack)
   .route("/auth", authRoutes)
-  
   // Clinic management routes (provider registration validation)
   .use("/clinics/*", validationMiddlewares.providerRegistration) // For clinic/provider registration
   .route("/clinics", clinicRoutes)
-  
   // Patient routes (patient data validation with LGPD compliance)
   .use("/patients/*", validationMiddlewares.patientRegistration) // For new patient registration
   .use("/patients/*/update", validationMiddlewares.patientUpdate) // For patient data updates
   .route("/patients", patientRoutes)
-  
   // Appointment routes (appointment booking validation)
   .use("/appointments/*", validationMiddlewares.appointmentBooking)
   .route("/appointments", appointmentRoutes)
-  
   // Professional routes (healthcare provider validation)
   .use("/professionals/*", validationMiddlewares.providerRegistration)
   .route("/professionals", professionalsRoutes)
-  
   // Services routes (standard validation)
   .route("/services", servicesRoutes)
-  
   // Analytics routes (no patient data validation needed)
   .route("/analytics", analyticsRoutes)
-  
   // Compliance routes (enhanced security - medical records level)
   .use("/compliance/*", ...orchestrator.createSecurityMiddleware()) // Enhanced security for compliance
   .route("/compliance", complianceRoutes)
-  
   // Compliance automation routes (enhanced security)
   .use("/compliance-automation/*", ...orchestrator.createSecurityMiddleware())
   .route("/compliance-automation", complianceAutomationRoutes)
-  
   // AI routes (standard validation)
   .route("/ai", aiRoutes);
 
@@ -274,22 +267,22 @@ app.route("/api/v1", apiV1);
 // Special emergency access endpoints with enhanced security and audit logging
 const emergencyV1 = new Hono<AppEnv>()
   // Apply maximum security for emergency endpoints
-  .use("*", ...createHealthcareAPISecurityStack(
-    SecurityEnvironment.PRODUCTION,
-    EndpointSecurityLevel.EMERGENCY_ACCESS,
-    {
-      jwtSecret: process.env.JWT_SECRET,
-      // Enhanced monitoring for emergency access
-    }
-  ).middlewares)
-  
+  .use(
+    "*",
+    ...createHealthcareAPISecurityStack(
+      SecurityEnvironment.PRODUCTION,
+      EndpointSecurityLevel.EMERGENCY_ACCESS,
+      {
+        jwtSecret: process.env.JWT_SECRET,
+        // Enhanced monitoring for emergency access
+      },
+    ).middlewares,
+  )
   // Emergency patient access
   .use("/patients/*", validationMiddlewares.emergencyAccess)
   .route("/patients", patientRoutes)
-  
   // Emergency medical records access
   .route("/medical-records", patientRoutes) // Reuse patient routes for medical records in emergency
-  
   // Emergency appointment scheduling
   .use("/appointments/*", validationMiddlewares.emergencyAccess)
   .route("/appointments", appointmentRoutes);
@@ -304,10 +297,10 @@ app.post("/api/v1/security/csp-report", async (c) => {
   try {
     const report = await c.req.json();
     console.warn("🚨 CSP Violation Report:", JSON.stringify(report, null, 2));
-    
+
     // TODO: Send to monitoring system
     // await monitoringSystem.reportCSPViolation(report);
-    
+
     return c.json({ success: true, message: "CSP report received" });
   } catch (error) {
     console.error("CSP report handler error:", error);
@@ -358,7 +351,7 @@ app.notFound((context) =>
       },
     },
     HTTP_STATUS_NOT_FOUND,
-  ),
+  )
 );
 
 // 🏥 Enhanced Healthcare Error Handler
@@ -366,26 +359,26 @@ app.notFound((context) =>
 // The security middleware stack includes comprehensive error handling,
 // but this serves as a final fallback with healthcare-specific context
 app.onError(async (err, c) => {
-  console.error('🚨 Healthcare API Error:', err);
-  
+  console.error("🚨 Healthcare API Error:", err);
+
   // Add healthcare context to error
   const healthcareContext = {
-    emergencyAccess: !!c.req.header('X-Emergency-Access'),
-    patientDataInvolved: c.req.path.includes('/patients'),
-    medicalRecordsInvolved: c.req.path.includes('/medical-records'),
-    complianceEndpoint: c.req.path.includes('/compliance'),
+    emergencyAccess: !!c.req.header("X-Emergency-Access"),
+    patientDataInvolved: c.req.path.includes("/patients"),
+    medicalRecordsInvolved: c.req.path.includes("/medical-records"),
+    complianceEndpoint: c.req.path.includes("/compliance"),
   };
-  
+
   // Log for audit if patient data is involved
   if (healthcareContext.patientDataInvolved || healthcareContext.medicalRecordsInvolved) {
-    console.warn('🏥 Patient Data Error Context:', {
+    console.warn("🏥 Patient Data Error Context:", {
       path: c.req.path,
       method: c.req.method,
       emergency: healthcareContext.emergencyAccess,
       timestamp: new Date().toISOString(),
     });
   }
-  
+
   // Return LGPD-compliant error response (no sensitive information)
   return c.json({
     success: false,

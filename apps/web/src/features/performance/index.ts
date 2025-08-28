@@ -10,8 +10,8 @@ export function WebVitalsReporter() {
 
       // Only log in development or with explicit consent
       if (
-        process.env.NODE_ENV === "development" ||
-        window.localStorage.getItem("performance-consent") === "true"
+        process.env.NODE_ENV === "development"
+        || window.localStorage.getItem("performance-consent") === "true"
       ) {
         // Send to monitoring service (if available)
         if (typeof window !== "undefined" && "gtag" in window) {

@@ -244,7 +244,6 @@ graph TD
 👤 `Client Name` | 📅 `Next Apt` | 🏥 `Treatment Status` | ✅ `Compliance` | 💰 `Financial`
 
 ````
-
 **Responsive Navigation Strategy**:
 
 - **Desktop**: Full horizontal navigation with persistent elements
@@ -782,8 +781,7 @@ excellence.
 ```css
 /* Brand Typography System */
 --font-brand-primary: "Montserrat", sans-serif; /* Brazilian-designed warmth */
---font-brand-secondary:
-  "Source Sans Pro", sans-serif; /* International readability */
+--font-brand-secondary: "Source Sans Pro", sans-serif; /* International readability */
 --font-aesthetic-professional-data:
   "IBM Plex Mono", monospace; /* Technical precision with personality */
 

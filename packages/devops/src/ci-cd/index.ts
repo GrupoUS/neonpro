@@ -145,14 +145,16 @@ Overall Score: ${qualityResults.score}/10
 Status: ${qualityResults.passed ? "✅ PASSED" : "❌ FAILED"}
 
 ### Individual Gates:
-${qualityResults.results
-  .map(
-    (result) =>
-      `- ${result.name}: ${result.actual}% (threshold: ${result.threshold}%) ${
-        result.passed ? "✅" : "❌"
-      }`,
-  )
-  .join("\n")}
+${
+      qualityResults.results
+        .map(
+          (result) =>
+            `- ${result.name}: ${result.actual}% (threshold: ${result.threshold}%) ${
+              result.passed ? "✅" : "❌"
+            }`,
+        )
+        .join("\n")
+    }
 
 ## Healthcare Compliance Status:
 - LGPD Compliance: ${this.config.complianceValidation.lgpd ? "✅ Enabled" : "❌ Disabled"}

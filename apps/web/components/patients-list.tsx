@@ -58,9 +58,7 @@ export function PatientsList() {
         return <Badge variant="secondary">Inativo</Badge>;
       }
       case "pending": {
-        return (
-          <Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>
-        );
+        return <Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>;
       }
       default: {
         return <Badge variant="outline">{status}</Badge>;

@@ -196,8 +196,7 @@ export class MultiClinicManagementService {
     await this.validateTenantLgpdCompliance(validatedTenant);
 
     // Initialize tenant with privacy-by-design
-    const tenant =
-      await this.initializeTenantWithPrivacyByDesign(validatedTenant);
+    const tenant = await this.initializeTenantWithPrivacyByDesign(validatedTenant);
 
     // Store tenant
     this.tenants.set(tenant.tenant_id, tenant);
@@ -221,8 +220,7 @@ export class MultiClinicManagementService {
       },
       privacy_impact_assessment: {
         data_types_processed: ["tenant_metadata", "clinic_information"],
-        privacy_protection_level:
-          tenant.tenant_settings.privacy_protection_level,
+        privacy_protection_level: tenant.tenant_settings.privacy_protection_level,
         anonymization_applied: this.config.privacy_by_design,
         consent_required: false, // Tenant setup does not require patient consent
       },
@@ -280,8 +278,7 @@ export class MultiClinicManagementService {
     const validatedClinic = ClinicSchema.parse(fullClinicData);
 
     // Regulatory validation
-    const regulatoryApprovals =
-      await this.validateClinicRegulatoryCompliance(validatedClinic);
+    const regulatoryApprovals = await this.validateClinicRegulatoryCompliance(validatedClinic);
 
     // ANVISA license validation
     await this.validateAnvisaLicense(validatedClinic);
@@ -385,8 +382,8 @@ export class MultiClinicManagementService {
 
     // Cross-clinic data sharing validation
     if (
-      validatedOperation.privacy_requirements.cross_clinic_sharing &&
-      !this.config.cross_clinic_data_sharing
+      validatedOperation.privacy_requirements.cross_clinic_sharing
+      && !this.config.cross_clinic_data_sharing
     ) {
       throw new Error("Cross-clinic data sharing not enabled for this tenant");
     }
@@ -395,8 +392,7 @@ export class MultiClinicManagementService {
     await this.validateOperationCompliance(validatedOperation, clinic);
 
     // Apply privacy protection measures
-    const privacyProtection =
-      await this.applyOperationPrivacyProtection(validatedOperation);
+    const privacyProtection = await this.applyOperationPrivacyProtection(validatedOperation);
 
     // Execute operation based on type
     // Mark operation as completed
@@ -412,19 +408,14 @@ export class MultiClinicManagementService {
       action_parameters: {
         operation_type: validatedOperation.operation_type,
         operation_id: validatedOperation.operation_id,
-        patient_data_involved:
-          validatedOperation.privacy_requirements.patient_data_involved,
-        cross_clinic_sharing:
-          validatedOperation.privacy_requirements.cross_clinic_sharing,
+        patient_data_involved: validatedOperation.privacy_requirements.patient_data_involved,
+        cross_clinic_sharing: validatedOperation.privacy_requirements.cross_clinic_sharing,
       },
       compliance_validation_result: {
-        anvisa_approval:
-          !validatedOperation.compliance_validation.anvisa_approval_required,
-        cfm_validation:
-          !validatedOperation.compliance_validation.cfm_validation_required,
-        constitutional_review:
-          !validatedOperation.compliance_validation
-            .constitutional_review_needed,
+        anvisa_approval: !validatedOperation.compliance_validation.anvisa_approval_required,
+        cfm_validation: !validatedOperation.compliance_validation.cfm_validation_required,
+        constitutional_review: !validatedOperation.compliance_validation
+          .constitutional_review_needed,
       },
       privacy_impact_assessment: privacyProtection,
       constitutional_compliance_score: 9.9,
@@ -643,8 +634,8 @@ export class MultiClinicManagementService {
 
     // Validate privacy protection level
     if (
-      tenant.tenant_settings.privacy_protection_level === "basic" &&
-      tenant.tenant_type === "healthcare_network"
+      tenant.tenant_settings.privacy_protection_level === "basic"
+      && tenant.tenant_type === "healthcare_network"
     ) {
       throw new Error(
         "Healthcare networks require advanced privacy protection",
@@ -678,8 +669,7 @@ export class MultiClinicManagementService {
       lgpd_compliant: true,
       anvisa_compliant: clinic.compliance_status.anvisa_compliant,
       cfm_compliant: clinic.compliance_status.cfm_compliant,
-      constitutional_compliant:
-        clinic.compliance_status.constitutional_compliant,
+      constitutional_compliant: clinic.compliance_status.constitutional_compliant,
       cnes_valid: clinic.cnes_code.length === 7,
       license_valid: new Date(clinic.license_details.valid_until) > new Date(),
     };
@@ -727,8 +717,8 @@ export class MultiClinicManagementService {
   ): Promise<void> {
     if (operation.privacy_requirements.patient_data_involved) {
       if (
-        operation.privacy_requirements.lgpd_consent_required &&
-        !operation.privacy_requirements.anonymization_required
+        operation.privacy_requirements.lgpd_consent_required
+        && !operation.privacy_requirements.anonymization_required
       ) {
         throw new Error(
           "Patient consent or anonymization required for patient data operations",
@@ -736,8 +726,8 @@ export class MultiClinicManagementService {
       }
 
       if (
-        tenant.tenant_settings.privacy_protection_level === "maximum" &&
-        !operation.privacy_requirements.anonymization_required
+        tenant.tenant_settings.privacy_protection_level === "maximum"
+        && !operation.privacy_requirements.anonymization_required
       ) {
         throw new Error(
           "Maximum privacy protection requires anonymization for patient data operations",
@@ -752,24 +742,24 @@ export class MultiClinicManagementService {
   ): Promise<void> {
     // Validate ANVISA compliance if required
     if (
-      operation.compliance_validation.anvisa_approval_required &&
-      !clinic.compliance_status.anvisa_compliant
+      operation.compliance_validation.anvisa_approval_required
+      && !clinic.compliance_status.anvisa_compliant
     ) {
       throw new Error("ANVISA compliance required for this operation");
     }
 
     // Validate CFM compliance if required
     if (
-      operation.compliance_validation.cfm_validation_required &&
-      !clinic.compliance_status.cfm_compliant
+      operation.compliance_validation.cfm_validation_required
+      && !clinic.compliance_status.cfm_compliant
     ) {
       throw new Error("CFM compliance required for this operation");
     }
 
     // Validate constitutional compliance
     if (
-      operation.compliance_validation.constitutional_review_needed &&
-      !clinic.compliance_status.constitutional_compliant
+      operation.compliance_validation.constitutional_review_needed
+      && !clinic.compliance_status.constitutional_compliant
     ) {
       throw new Error("Constitutional compliance required for this operation");
     }
@@ -853,9 +843,8 @@ export class MultiClinicManagementService {
       operational: clinic.operational_status === "active" ? 10 : 7,
     };
 
-    const overallScore =
-      Object.values(scores).reduce((sum, score) => sum + score, 0) /
-      Object.keys(scores).length;
+    const overallScore = Object.values(scores).reduce((sum, score) => sum + score, 0)
+      / Object.keys(scores).length;
 
     const areasOfConcern = Object.entries(scores)
       .filter(([_, score]) => score < 9)
@@ -957,8 +946,8 @@ export class MultiClinicManagementService {
     // Ensure both clinics are compliant before allowing resource sharing
     if (
       !(
-        sourceClinic.compliance_status.constitutional_compliant &&
-        targetClinic.compliance_status.constitutional_compliant
+        sourceClinic.compliance_status.constitutional_compliant
+        && targetClinic.compliance_status.constitutional_compliant
       )
     ) {
       throw new Error(
@@ -967,10 +956,10 @@ export class MultiClinicManagementService {
     }
 
     if (
-      resourceType.includes("patient") &&
-      !(
-        sourceClinic.compliance_status.lgpd_compliant &&
-        targetClinic.compliance_status.lgpd_compliant
+      resourceType.includes("patient")
+      && !(
+        sourceClinic.compliance_status.lgpd_compliant
+        && targetClinic.compliance_status.lgpd_compliant
       )
     ) {
       throw new Error(
@@ -1071,7 +1060,7 @@ export function createMultiClinicManagementService(
  */
 export async function validateMultiClinicManagement(
   config: MultiClinicConfig,
-): Promise<{ valid: boolean; violations: string[] }> {
+): Promise<{ valid: boolean; violations: string[]; }> {
   const violations: string[] = [];
 
   // Validate tenant isolation requirement

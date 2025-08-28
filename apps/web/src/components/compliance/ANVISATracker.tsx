@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -19,15 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -37,47 +30,43 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
-  Shield,
-  FileText,
-  Calendar,
-  User,
-  Pill,
+  Activity,
+  AlertCircle,
   AlertTriangle,
+  Calendar,
   CheckCircle,
   Clock,
-  Search,
-  Plus,
   Download,
-  RefreshCw,
-  Eye,
   Edit,
-  Trash2,
+  Eye,
+  FileText,
   Filter,
-  AlertCircle,
-  Activity,
   Package,
+  Pill,
+  Plus,
+  RefreshCw,
+  Search,
+  Shield,
+  Trash2,
+  User,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import type {
-  ControlledSubstance,
   ControlledPrescription,
+  ControlledPrescriptionStatus,
+  ControlledSubstance,
   ControlledSubstanceClass,
   PrescriptionType,
-  ControlledPrescriptionStatus,
 } from "@/lib/compliance/anvisa-controlled-substances";
 import {
-  ANVISAValidationResult,
   ANVISAControlledSubstancesService,
+  ANVISAValidationResult,
 } from "@/lib/compliance/anvisa-controlled-substances";
 
 // Initialize ANVISA service
@@ -196,8 +185,9 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
     ControlledPrescriptionStatus | "all"
   >("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [selectedPrescription, setSelectedPrescription] =
-    useState<ControlledPrescription | null>(null);
+  const [selectedPrescription, setSelectedPrescription] = useState<ControlledPrescription | null>(
+    null,
+  );
 
   const [formData, setFormData] = useState<PrescriptionFormData>({
     patientId: "",
@@ -331,26 +321,22 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
   };
 
   const filteredSubstances = substances.filter((substance) => {
-    const matchesSearch =
-      substance.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      substance.activeIngredient
+    const matchesSearch = substance.name.toLowerCase().includes(searchTerm.toLowerCase())
+      || substance.activeIngredient
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-    const matchesClass =
-      classFilter === "all" || substance.class === classFilter;
+    const matchesClass = classFilter === "all" || substance.class === classFilter;
     return matchesSearch && matchesClass;
   });
 
   const filteredPrescriptions = prescriptions.filter((prescription) => {
-    const matchesSearch =
-      prescription.patientName
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      prescription.professionalName
+    const matchesSearch = prescription.patientName
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+      || prescription.professionalName
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || prescription.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || prescription.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -402,8 +388,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                         setFormData((prev) => ({
                           ...prev,
                           patientName: e.target.value,
-                        }))
-                      }
+                        }))}
                       placeholder="Nome completo"
                     />
                   </div>
@@ -416,8 +401,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                         setFormData((prev) => ({
                           ...prev,
                           patientCpf: e.target.value,
-                        }))
-                      }
+                        }))}
                       placeholder="000.000.000-00"
                     />
                   </div>
@@ -439,8 +423,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                         setFormData((prev) => ({
                           ...prev,
                           professionalName: e.target.value,
-                        }))
-                      }
+                        }))}
                       placeholder="Dr./Dra. Nome"
                     />
                   </div>
@@ -453,8 +436,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                         setFormData((prev) => ({
                           ...prev,
                           professionalCrm: e.target.value,
-                        }))
-                      }
+                        }))}
                       placeholder="CRM/UF 123456"
                     />
                   </div>
@@ -470,8 +452,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                     <Select
                       value={formData.substanceId}
                       onValueChange={(value) =>
-                        setFormData((prev) => ({ ...prev, substanceId: value }))
-                      }
+                        setFormData((prev) => ({ ...prev, substanceId: value }))}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione a substância" />
@@ -498,8 +479,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                         setFormData((prev) => ({
                           ...prev,
                           prescriptionType: value,
-                        }))
-                      }
+                        }))}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Tipo de receita" />
@@ -529,8 +509,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                         setFormData((prev) => ({
                           ...prev,
                           quantity: parseInt(e.target.value) || 1,
-                        }))
-                      }
+                        }))}
                     />
                   </div>
                   <div>
@@ -542,8 +521,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                         setFormData((prev) => ({
                           ...prev,
                           dosage: e.target.value,
-                        }))
-                      }
+                        }))}
                       placeholder="10mg, 5ml, etc."
                     />
                   </div>
@@ -559,8 +537,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                         setFormData((prev) => ({
                           ...prev,
                           validityDays: parseInt(e.target.value) || 30,
-                        }))
-                      }
+                        }))}
                     />
                   </div>
                 </div>
@@ -573,8 +550,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                       setFormData((prev) => ({
                         ...prev,
                         instructions: e.target.value,
-                      }))
-                    }
+                      }))}
                     placeholder="Instruções detalhadas para o paciente"
                     rows={3}
                   />
@@ -590,8 +566,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                       setFormData((prev) => ({
                         ...prev,
                         specialAuthorization: e.target.value,
-                      }))
-                    }
+                      }))}
                     placeholder="Número da autorização especial"
                   />
                 </div>
@@ -629,9 +604,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
         </div>
         <Select
           value={classFilter}
-          onValueChange={(value: ControlledSubstanceClass | "all") =>
-            setClassFilter(value)
-          }
+          onValueChange={(value: ControlledSubstanceClass | "all") => setClassFilter(value)}
         >
           <SelectTrigger className="w-48">
             <SelectValue />
@@ -663,8 +636,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
             <Select
               value={statusFilter}
               onValueChange={(value: ControlledPrescriptionStatus | "all") =>
-                setStatusFilter(value)
-              }
+                setStatusFilter(value)}
             >
               <SelectTrigger className="w-48">
                 <SelectValue />
@@ -752,10 +724,8 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                                     </Badge>
                                   </TooltipTrigger>
                                   <TooltipContent>
-                                    {
-                                      SUBSTANCE_CLASS_CONFIG[substance.class]
-                                        ?.description
-                                    }
+                                    {SUBSTANCE_CLASS_CONFIG[substance.class]
+                                      ?.description}
                                   </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
@@ -765,8 +735,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                                 {substance?.name || "Substância não encontrada"}
                               </div>
                               <div className="text-xs text-muted-foreground">
-                                {prescription.quantity} unidades -{" "}
-                                {prescription.dosage}
+                                {prescription.quantity} unidades - {prescription.dosage}
                               </div>
                             </div>
                           </div>
@@ -872,11 +841,9 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                         <TableCell>
                           <Badge
                             variant="outline"
-                            className={
-                              substance.isActive
-                                ? "text-green-700 bg-green-50"
-                                : "text-red-700 bg-red-50"
-                            }
+                            className={substance.isActive
+                              ? "text-green-700 bg-green-50"
+                              : "text-red-700 bg-red-50"}
                           >
                             {substance.isActive ? "Ativo" : "Inativo"}
                           </Badge>
@@ -917,10 +884,8 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
-                      {
-                        prescriptions.filter((p) => p.status === "active")
-                          .length
-                      }
+                      {prescriptions.filter((p) => p.status === "active")
+                        .length}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Receitas Ativas
@@ -938,10 +903,8 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
-                      {
-                        prescriptions.filter((p) => p.status === "expired")
-                          .length
-                      }
+                      {prescriptions.filter((p) => p.status === "expired")
+                        .length}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Receitas Expiradas
@@ -963,9 +926,8 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Os relatórios são gerados automaticamente e devem ser enviados
-                  mensalmente para a ANVISA. Certifique-se de que todas as
-                  receitas estão devidamente registradas.
+                  Os relatórios são gerados automaticamente e devem ser enviados mensalmente para a
+                  ANVISA. Certifique-se de que todas as receitas estão devidamente registradas.
                 </AlertDescription>
               </Alert>
 

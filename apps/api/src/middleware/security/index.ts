@@ -17,45 +17,48 @@ import type { MiddlewareHandler } from "hono";
 
 // Import all security middleware components
 import { createJWTAuthMiddleware, HealthcareRole } from "./auth/jwt-validation";
-import { createHealthcareRateLimiter, createRedisHealthcareRateLimiter } from "./rate-limiting/healthcare-rate-limiter";
+import { createHealthcareErrorHandler } from "./error-handling/healthcare-error-handler";
 import {
-  createHealthcareValidationMiddleware,
-  ValidationContext,
-  validationMiddlewares,
-} from "./validation/healthcare-validation-middleware";
+  createHealthcareCORSMiddleware,
+  healthcareCORSMiddlewares,
+  HealthcareCORSPolicy,
+} from "./headers/healthcare-cors-middleware";
 import {
   createSecurityHeadersMiddleware,
   securityHeadersMiddlewares,
 } from "./headers/security-headers-middleware";
 import {
-  createHealthcareCORSMiddleware,
-  HealthcareCORSPolicy,
-  healthcareCORSMiddlewares,
-} from "./headers/healthcare-cors-middleware";
-import { createHealthcareErrorHandler } from "./error-handling/healthcare-error-handler";
+  createHealthcareRateLimiter,
+  createRedisHealthcareRateLimiter,
+} from "./rate-limiting/healthcare-rate-limiter";
+import {
+  createHealthcareValidationMiddleware,
+  ValidationContext,
+  validationMiddlewares,
+} from "./validation/healthcare-validation-middleware";
 
 // Environment configuration types
 export enum SecurityEnvironment {
   DEVELOPMENT = "development",
-  STAGING = "staging", 
+  STAGING = "staging",
   PRODUCTION = "production",
 }
 
 // Healthcare endpoint security levels
 export enum EndpointSecurityLevel {
-  PUBLIC = "public",              // Marketing pages, public info
-  PATIENT_PORTAL = "patient_portal",     // Patient self-service
+  PUBLIC = "public", // Marketing pages, public info
+  PATIENT_PORTAL = "patient_portal", // Patient self-service
   PROVIDER_DASHBOARD = "provider_dashboard", // Healthcare provider access
-  MEDICAL_RECORDS = "medical_records",   // Sensitive medical data
+  MEDICAL_RECORDS = "medical_records", // Sensitive medical data
   EMERGENCY_ACCESS = "emergency_access", // Emergency procedures
-  ADMINISTRATIVE = "administrative",     // System administration
+  ADMINISTRATIVE = "administrative", // System administration
 }
 
 // Security configuration interface
 interface HealthcareSecurityConfig {
   environment: SecurityEnvironment;
   endpointLevel: EndpointSecurityLevel;
-  
+
   // Component configurations
   authentication: {
     enabled: boolean;
@@ -64,7 +67,7 @@ interface HealthcareSecurityConfig {
     requireHealthcareLicense: boolean;
     allowedRoles: HealthcareRole[];
   };
-  
+
   rateLimiting: {
     enabled: boolean;
     storage: "memory" | "redis";
@@ -73,34 +76,34 @@ interface HealthcareSecurityConfig {
     monitoring: boolean;
     alerting: boolean;
   };
-  
+
   inputValidation: {
     enabled: boolean;
     emergencyBypass: boolean;
     auditLogger?: any;
     contexts: ValidationContext[];
   };
-  
+
   securityHeaders: {
     enabled: boolean;
     configName: string;
     skipPaths: string[];
   };
-  
+
   cors: {
     enabled: boolean;
     policy: HealthcareCORSPolicy;
     emergencyBypass: boolean;
     auditLogger?: any;
   };
-  
+
   errorHandling: {
     enabled: boolean;
     auditLogger?: any;
     monitoringSystem?: any;
     emergencyNotificationSystem?: any;
   };
-  
+
   // Healthcare-specific settings
   healthcare: {
     lgpdCompliance: boolean;
@@ -316,7 +319,7 @@ const HEALTHCARE_SECURITY_CONFIGURATIONS: Record<string, HealthcareSecurityConfi
  */
 export class HealthcareSecurityOrchestrator {
   private config: HealthcareSecurityConfig;
-  
+
   constructor(configName: string = "development", overrides?: Partial<HealthcareSecurityConfig>) {
     this.config = {
       ...HEALTHCARE_SECURITY_CONFIGURATIONS[configName],
@@ -378,7 +381,7 @@ export class HealthcareSecurityOrchestrator {
    */
   getValidationMiddlewares() {
     const auditLogger = this.config.inputValidation.auditLogger;
-    
+
     return {
       patientRegistration: validationMiddlewares.patientRegistration(auditLogger),
       patientUpdate: validationMiddlewares.patientUpdate(auditLogger),
@@ -443,7 +446,10 @@ export const healthcareSecurityMiddlewares = {
    * Maximum security for medical records and sensitive healthcare data
    */
   medicalRecords: (overrides?: Partial<HealthcareSecurityConfig>) => {
-    const orchestrator = new HealthcareSecurityOrchestrator("medical_records_production", overrides);
+    const orchestrator = new HealthcareSecurityOrchestrator(
+      "medical_records_production",
+      overrides,
+    );
     return orchestrator.createSecurityMiddleware();
   },
 
@@ -459,7 +465,10 @@ export const healthcareSecurityMiddlewares = {
    * Emergency access with enhanced logging and monitoring
    */
   emergencyAccess: (overrides?: Partial<HealthcareSecurityConfig>) => {
-    const orchestrator = new HealthcareSecurityOrchestrator("emergency_access_production", overrides);
+    const orchestrator = new HealthcareSecurityOrchestrator(
+      "emergency_access_production",
+      overrides,
+    );
     return orchestrator.createSecurityMiddleware();
   },
 
@@ -486,23 +495,23 @@ export const healthcareSecurityMiddlewares = {
 export const securityComponents = {
   // Authentication
   jwtAuth: createJWTAuthMiddleware,
-  
+
   // Rate limiting
   rateLimiting: createHealthcareRateLimiter,
   redisRateLimiting: createRedisHealthcareRateLimiter,
-  
+
   // Input validation
   validation: createHealthcareValidationMiddleware,
   validationPresets: validationMiddlewares,
-  
+
   // Security headers
   securityHeaders: createSecurityHeadersMiddleware,
   securityHeaderPresets: securityHeadersMiddlewares,
-  
+
   // CORS
   cors: createHealthcareCORSMiddleware,
   corsPresets: healthcareCORSMiddlewares,
-  
+
   // Error handling
   errorHandler: createHealthcareErrorHandler,
 };
@@ -512,7 +521,7 @@ export const securityComponents = {
  */
 export const securityPresets = {
   MEDICAL_RECORDS_PRODUCTION: "medical_records_production",
-  PATIENT_PORTAL_PRODUCTION: "patient_portal_production", 
+  PATIENT_PORTAL_PRODUCTION: "patient_portal_production",
   EMERGENCY_ACCESS_PRODUCTION: "emergency_access_production",
   DEVELOPMENT: "development",
 };
@@ -529,7 +538,7 @@ export function createHealthcareAPISecurityStack(
     auditLogger?: any;
     monitoringSystem?: any;
     emergencyNotificationSystem?: any;
-  }
+  },
 ): {
   middlewares: MiddlewareHandler[];
   orchestrator: HealthcareSecurityOrchestrator;
@@ -537,7 +546,7 @@ export function createHealthcareAPISecurityStack(
 } {
   // Determine configuration based on environment and endpoint level
   let configName = "development";
-  
+
   if (environment === SecurityEnvironment.PRODUCTION) {
     switch (endpointLevel) {
       case EndpointSecurityLevel.MEDICAL_RECORDS:
@@ -586,20 +595,20 @@ export function createHealthcareAPISecurityStack(
  * Export all types and enums for external use
  */
 export {
-  SecurityEnvironment,
   EndpointSecurityLevel,
-  HealthcareRole,
-  ValidationContext,
   HealthcareCORSPolicy,
+  HealthcareRole,
+  SecurityEnvironment,
+  ValidationContext,
 };
 
 /**
  * Export individual middleware creation functions
  */
 export * from "./auth/jwt-validation";
-export * from "./rate-limiting/healthcare-rate-limiter"; 
-export * from "./validation/healthcare-validation-middleware";
-export * from "./validation/brazilian-healthcare-validator";
-export * from "./headers/security-headers-middleware";
-export * from "./headers/healthcare-cors-middleware";
 export * from "./error-handling/healthcare-error-handler";
+export * from "./headers/healthcare-cors-middleware";
+export * from "./headers/security-headers-middleware";
+export * from "./rate-limiting/healthcare-rate-limiter";
+export * from "./validation/brazilian-healthcare-validator";
+export * from "./validation/healthcare-validation-middleware";

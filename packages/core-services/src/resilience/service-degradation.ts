@@ -43,8 +43,7 @@ export const healthcareServiceDegradations: Record<
         level: DegradationLevel.LEVEL_1,
         condition: "payment_service_down",
         fallback: "allow_booking_without_payment",
-        userMessage:
-          "Pagamento será processado quando o serviço for restaurado",
+        userMessage: "Pagamento será processado quando o serviço for restaurado",
         disabledFeatures: ["instant_payment"],
       },
       {
@@ -58,8 +57,7 @@ export const healthcareServiceDegradations: Record<
         level: DegradationLevel.LEVEL_3,
         condition: "external_calendar_down",
         fallback: "internal_scheduling_only",
-        userMessage:
-          "Sincronização com calendários externos temporariamente desabilitada",
+        userMessage: "Sincronização com calendários externos temporariamente desabilitada",
         disabledFeatures: ["calendar_sync", "google_calendar"],
       },
     ],
@@ -77,8 +75,7 @@ export const healthcareServiceDegradations: Record<
         level: DegradationLevel.LEVEL_1,
         condition: "external_medical_records_down",
         fallback: "local_records_only",
-        userMessage:
-          "Acesso a registros médicos externos temporariamente limitado",
+        userMessage: "Acesso a registros médicos externos temporariamente limitado",
         disabledFeatures: ["external_records_import"],
       },
       {
@@ -119,8 +116,7 @@ export const healthcareServiceDegradations: Record<
         level: DegradationLevel.LEVEL_3,
         condition: "all_external_comm_down",
         fallback: "manual_communication",
-        userMessage:
-          "Comunicação automática indisponível, contato manual necessário",
+        userMessage: "Comunicação automática indisponível, contato manual necessário",
         disabledFeatures: ["automated_messaging"],
       },
     ],

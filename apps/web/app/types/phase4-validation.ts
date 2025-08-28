@@ -401,5 +401,4 @@ export const BrazilianHealthcareValidationPresets = {
   },
 } as const;
 
-export type ValidationPreset =
-  keyof typeof BrazilianHealthcareValidationPresets;
+export type ValidationPreset = keyof typeof BrazilianHealthcareValidationPresets;

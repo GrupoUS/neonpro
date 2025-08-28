@@ -266,32 +266,32 @@ class InMemoryTokenBlacklist implements TokenBlacklistStore {
 
   async addToBlacklist(jti: string, expiresAt: Date): Promise<void> {
     this.blacklistedTokens.set(jti, expiresAt);
-    
+
     // Log blacklist event for security monitoring
-    console.warn('[TOKEN_BLACKLISTED]', {
-      jti: jti.substring(0, 8) + '***', // Mask JTI for privacy
+    console.warn("[TOKEN_BLACKLISTED]", {
+      jti: jti.substring(0, 8) + "***", // Mask JTI for privacy
       expiresAt: expiresAt.toISOString(),
       timestamp: new Date().toISOString(),
-      reason: 'MANUAL_REVOCATION'
+      reason: "MANUAL_REVOCATION",
     });
   }
 
   async cleanup(): Promise<void> {
     const now = new Date();
     let cleanedCount = 0;
-    
+
     for (const [jti, expiresAt] of this.blacklistedTokens.entries()) {
       if (now > expiresAt) {
         this.blacklistedTokens.delete(jti);
         cleanedCount++;
       }
     }
-    
+
     if (cleanedCount > 0) {
-      console.info('[TOKEN_BLACKLIST_CLEANUP]', {
+      console.info("[TOKEN_BLACKLIST_CLEANUP]", {
         cleanedTokens: cleanedCount,
         remainingTokens: this.blacklistedTokens.size,
-        timestamp: now.toISOString()
+        timestamp: now.toISOString(),
       });
     }
   }
@@ -311,23 +311,23 @@ class InMemoryTokenBlacklist implements TokenBlacklistStore {
 /*
 class RedisTokenBlacklist implements TokenBlacklistStore {
   private redis: any; // Redis client
-  
+
   constructor(redisClient: any) {
     this.redis = redisClient;
   }
-  
+
   async isBlacklisted(jti: string): Promise<boolean> {
     const result = await this.redis.get(`blacklist:${jti}`);
     return result !== null;
   }
-  
+
   async addToBlacklist(jti: string, expiresAt: Date): Promise<void> {
     const ttl = Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
     if (ttl > 0) {
       await this.redis.setex(`blacklist:${jti}`, ttl, '1');
     }
   }
-  
+
   async cleanup(): Promise<void> {
     // Redis handles TTL automatically, no manual cleanup needed
   }
@@ -345,12 +345,12 @@ const isTokenBlacklisted = async (jti: string): Promise<boolean> => {
     return await tokenBlacklist.isBlacklisted(jti);
   } catch (error) {
     // Log error but don't block authentication on blacklist check failure
-    console.error('[TOKEN_BLACKLIST_CHECK_ERROR]', {
-      jti: jti.substring(0, 8) + '***',
-      error: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+    console.error("[TOKEN_BLACKLIST_CHECK_ERROR]", {
+      jti: jti.substring(0, 8) + "***",
+      error: error instanceof Error ? error.message : "Unknown error",
+      timestamp: new Date().toISOString(),
     });
-    
+
     // In case of error, assume token is not blacklisted to avoid blocking valid users
     // But this should be monitored and investigated
     return false;
@@ -364,10 +364,10 @@ export const blacklistToken = async (jti: string, expiresAt: Date): Promise<void
   try {
     await tokenBlacklist.addToBlacklist(jti, expiresAt);
   } catch (error) {
-    console.error('[TOKEN_BLACKLIST_ADD_ERROR]', {
-      jti: jti.substring(0, 8) + '***',
-      error: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+    console.error("[TOKEN_BLACKLIST_ADD_ERROR]", {
+      jti: jti.substring(0, 8) + "***",
+      error: error instanceof Error ? error.message : "Unknown error",
+      timestamp: new Date().toISOString(),
     });
     throw error; // Re-throw to ensure logout/revocation fails if blacklisting fails
   }

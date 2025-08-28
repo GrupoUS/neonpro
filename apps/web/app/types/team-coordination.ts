@@ -530,8 +530,8 @@ export interface DashboardWidget {
     | "communication"
     | "resources";
   title: string;
-  position: { x: number; y: number };
-  size: { width: number; height: number };
+  position: { x: number; y: number; };
+  size: { width: number; height: number; };
   config: Record<string, unknown>; // Widget-specific configuration
   isVisible: boolean;
   permissions: string[]; // Required permissions to view
@@ -540,7 +540,7 @@ export interface DashboardWidget {
 export interface DashboardFilters {
   departments: string[];
   roles: ProfessionalRole[];
-  dateRange: { start: Date; end: Date };
+  dateRange: { start: Date; end: Date; };
   shiftTypes: ShiftType[];
   showInactiveStaff: boolean;
 }

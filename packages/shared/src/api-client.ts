@@ -280,7 +280,7 @@ class AuthTokenManager {
     }
   }
 
-  async refreshAccessToken(config: { baseUrl: string }): Promise<string> {
+  async refreshAccessToken(config: { baseUrl: string; }): Promise<string> {
     // Prevent multiple simultaneous refresh attempts
     if (this.refreshPromise) {
       return this.refreshPromise;
@@ -456,12 +456,12 @@ export const ApiUtils = {
   isNetworkError: (error: Error): boolean => {
     // Network errors that should be retried
     return (
-      error.name === "TypeError" ||
-      error.name === "NetworkError" ||
-      error.message.includes("fetch") ||
-      error.message.includes("network") ||
-      error.message.includes("timeout") ||
-      error.message.includes("connection")
+      error.name === "TypeError"
+      || error.name === "NetworkError"
+      || error.message.includes("fetch")
+      || error.message.includes("network")
+      || error.message.includes("timeout")
+      || error.message.includes("connection")
     );
   },
 };
@@ -544,8 +544,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
           // Handle 401 (token expired) - try to refresh
           if (response.status === 401 && attempt === 0) {
             try {
-              const newToken =
-                await tokenManager.refreshAccessToken(finalConfig);
+              const newToken = await tokenManager.refreshAccessToken(finalConfig);
 
               // Retry with new token
               const newInit = {
@@ -631,9 +630,8 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
             },
             error: lastError,
             attempt,
-            isRetryable:
-              attempt < finalConfig.retries &&
-              !lastError.message.includes("AbortError"),
+            isRetryable: attempt < finalConfig.retries
+              && !lastError.message.includes("AbortError"),
           };
 
           if (config.onError) {
@@ -834,14 +832,14 @@ export const ApiHelpers = {
     }
 
     if (typeof error === "object" && error && "message" in error) {
-      return String((error as { message: any }).message);
+      return String((error as { message: any; }).message);
     }
 
     if (typeof error === "object" && error && "error" in error) {
       const apiError = error as ApiErrorObject;
       if (
-        apiError.error?.error?.validation_errors?.length &&
-        apiError.error.error.validation_errors.length > 0
+        apiError.error?.error?.validation_errors?.length
+        && apiError.error.error.validation_errors.length > 0
       ) {
         return apiError.error.error.validation_errors
           .map((ve) => `${ve.field}: ${ve.message}`)
@@ -859,11 +857,11 @@ export const ApiHelpers = {
   isNetworkError: (error: unknown): boolean => {
     if (error instanceof Error) {
       return (
-        error.message.includes("fetch") ||
-        error.message.includes("network") ||
-        error.message.includes("timeout") ||
-        error.name === "AbortError" ||
-        error.name === "NetworkError"
+        error.message.includes("fetch")
+        || error.message.includes("network")
+        || error.message.includes("timeout")
+        || error.name === "AbortError"
+        || error.name === "NetworkError"
       );
     }
     return false;
@@ -876,12 +874,12 @@ export const ApiHelpers = {
       const errorCode = apiError.error?.error?.code;
       return errorCode
         ? [
-            "UNAUTHORIZED",
-            "FORBIDDEN",
-            "TOKEN_EXPIRED",
-            "INVALID_CREDENTIALS",
-            "SESSION_EXPIRED",
-          ].includes(errorCode)
+          "UNAUTHORIZED",
+          "FORBIDDEN",
+          "TOKEN_EXPIRED",
+          "INVALID_CREDENTIALS",
+          "SESSION_EXPIRED",
+        ].includes(errorCode)
         : false;
     }
     return false;
@@ -892,10 +890,10 @@ export const ApiHelpers = {
     if (typeof error === "object" && error && "error" in error) {
       const apiError = error as ApiErrorObject;
       return (
-        apiError.error?.error?.code === "VALIDATION_ERROR" ||
-        (apiError.error?.error?.validation_errors?.length &&
-          apiError.error.error.validation_errors.length > 0) ||
-        false
+        apiError.error?.error?.code === "VALIDATION_ERROR"
+        || (apiError.error?.error?.validation_errors?.length
+          && apiError.error.error.validation_errors.length > 0)
+        || false
       );
     }
     return false;

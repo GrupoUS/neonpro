@@ -41,27 +41,20 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
     app = new Hono();
 
     // Professional management endpoints
-    app.post("/api/v1/professionals", (c) =>
-      c.json({ success: true, id: mockProfessional.id }),
-    );
+    app.post("/api/v1/professionals", (c) => c.json({ success: true, id: mockProfessional.id }));
 
-    app.get("/api/v1/professionals/:id/credentials", (c) =>
-      c.json({ success: true, credentials: mockProfessional }),
+    app.get(
+      "/api/v1/professionals/:id/credentials",
+      (c) => c.json({ success: true, credentials: mockProfessional }),
     );
 
     // Medical records endpoints
-    app.post("/api/v1/medical-records", (c) =>
-      c.json({ success: true, recordId: "mr_123" }),
-    );
+    app.post("/api/v1/medical-records", (c) => c.json({ success: true, recordId: "mr_123" }));
 
-    app.get("/api/v1/medical-records/:id", (c) =>
-      c.json({ success: true, record: {} }),
-    );
+    app.get("/api/v1/medical-records/:id", (c) => c.json({ success: true, record: {} }));
 
     // Emergency access endpoint
-    app.post("/api/v1/emergency/access", (c) =>
-      c.json({ success: true, accessGranted: true }),
-    );
+    app.post("/api/v1/emergency/access", (c) => c.json({ success: true, accessGranted: true }));
 
     _client = testClient(app);
   });
@@ -125,8 +118,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
           professionalCRM: mockProfessional.crmNumber,
         };
 
-        const isValidPrescription =
-          await validatePrescriptionAgainstANVISA(prescription);
+        const isValidPrescription = await validatePrescriptionAgainstANVISA(prescription);
         expect(isValidPrescription).toBeTruthy();
       });
 
@@ -137,8 +129,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
           dosage: "100mg",
         };
 
-        const isValidPrescription =
-          await validatePrescriptionAgainstANVISA(invalidPrescription);
+        const isValidPrescription = await validatePrescriptionAgainstANVISA(invalidPrescription);
         expect(isValidPrescription).toBeFalsy();
       });
     });
@@ -170,8 +161,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
           description: "Equipment failure causing patient harm",
         };
 
-        const autoSubmission =
-          await autoSubmitCriticalEventToANVISA(criticalEvent);
+        const autoSubmission = await autoSubmitCriticalEventToANVISA(criticalEvent);
         expect(autoSubmission.submitted).toBeTruthy();
         expect(autoSubmission.submissionTime).toBeTruthy();
       });
@@ -267,8 +257,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
           recordType: "MEDICAL_HISTORY",
         };
 
-        const accessAttempt =
-          await attemptMedicalRecordAccess(unauthorizedAccess);
+        const accessAttempt = await attemptMedicalRecordAccess(unauthorizedAccess);
         expect(accessAttempt.allowed).toBeFalsy();
         expect(accessAttempt.violation).toBe("CONFIDENTIALITY_BREACH");
 
@@ -338,8 +327,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
         const emergencyAccessId = "emergency_123";
 
         // Emergency access should be flagged for review
-        const reviewRequired =
-          await checkEmergencyAccessReview(emergencyAccessId);
+        const reviewRequired = await checkEmergencyAccessReview(emergencyAccessId);
         expect(reviewRequired.requiresReview).toBeTruthy();
         expect(reviewRequired.reviewDeadline).toBeTruthy();
 
@@ -363,8 +351,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
           grantedAt: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(), // 25 hours ago
         };
 
-        const isExpiredAccessValid =
-          validateEmergencyAccessDuration(expiredAccess);
+        const isExpiredAccessValid = validateEmergencyAccessDuration(expiredAccess);
         expect(isExpiredAccessValid).toBeFalsy();
       });
     });
@@ -465,8 +452,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
         modificationType: "CONTENT_CHANGE",
       };
 
-      const modificationResult =
-        await attemptRecordModification(modificationAttempt);
+      const modificationResult = await attemptRecordModification(modificationAttempt);
       expect(modificationResult.allowed).toBeFalsy();
       expect(modificationResult.securityViolation).toBeTruthy();
       expect(modificationResult.auditLogged).toBeTruthy();

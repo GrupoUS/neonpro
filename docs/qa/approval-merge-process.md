@@ -7,7 +7,9 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 ## Níveis de Aprovação
 
 ### 1. Aprovação Padrão
+
 **Critérios Mínimos:**
+
 - ✅ Todos os testes automatizados passando
 - ✅ Code coverage ≥ 80%
 - ✅ Análise de segurança sem issues críticos
@@ -15,13 +17,16 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 - ✅ Checklist de code review completo
 
 **Aplicável para:**
+
 - Correções de bugs não críticos
 - Melhorias de performance
 - Refatorações menores
 - Atualizações de documentação
 
 ### 2. Aprovação Crítica
+
 **Critérios Obrigatórios:**
+
 - ✅ Todos os critérios da aprovação padrão
 - ✅ 2 aprovações de desenvolvedores sêniores
 - ✅ 1 aprovação de tech lead ou arquiteto
@@ -29,6 +34,7 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 - ✅ Revisão de impacto em produção
 
 **Aplicável para:**
+
 - Mudanças na arquitetura
 - Alterações em APIs públicas
 - Modificações no banco de dados
@@ -36,7 +42,9 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 - Mudanças em configurações de segurança
 
 ### 3. Aprovação de Conformidade de Saúde
+
 **Critérios Especiais:**
+
 - ✅ Todos os critérios da aprovação crítica
 - ✅ 1 aprovação de especialista em conformidade
 - ✅ Validação LGPD completa
@@ -45,6 +53,7 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 - ✅ Testes de privacidade de dados
 
 **Aplicável para:**
+
 - Funcionalidades que manipulam dados de pacientes
 - Integrações com sistemas de saúde
 - Implementação de relatórios médicos
@@ -56,6 +65,7 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 ### Pré-Merge Checklist
 
 #### Validações Automáticas
+
 - [ ] CI/CD pipeline completo
 - [ ] Testes unitários (100% dos novos códigos)
 - [ ] Testes de integração
@@ -64,6 +74,7 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 - [ ] Build de produção bem-sucedido
 
 #### Validações Manuais
+
 - [ ] Code review aprovado
 - [ ] Documentação atualizada
 - [ ] Changelog atualizado
@@ -73,24 +84,31 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 ### Estratégias de Merge
 
 #### 1. Squash and Merge (Padrão)
+
 **Quando usar:**
+
 - Feature branches pequenas
 - Correções de bugs
 - Commits de desenvolvimento múltiplos
 
 **Benefícios:**
+
 - Histórico limpo
 - Facilita rollbacks
 - Reduz ruído no git log
 
 #### 2. Merge Commit
+
 **Quando usar:**
+
 - Features grandes com múltiplos desenvolvedores
 - Necessidade de preservar histórico detalhado
 - Branches de longa duração
 
 #### 3. Rebase and Merge
+
 **Quando usar:**
+
 - Commits já bem organizados
 - Necessidade de histórico linear
 - Features pequenas com commits atômicos
@@ -98,6 +116,7 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 ### Processo de Deploy
 
 #### Staging Deploy
+
 1. **Automático após merge em `develop`**
 2. **Validações em staging:**
    - Smoke tests
@@ -106,6 +125,7 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
    - Testes de conformidade
 
 #### Production Deploy
+
 1. **Manual após aprovação em staging**
 2. **Pré-deploy checklist:**
    - [ ] Backup do banco de dados
@@ -124,18 +144,21 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 ### Gates Obrigatórios
 
 #### Code Quality Gate
+
 - **Complexity:** Cyclomatic complexity ≤ 10
 - **Duplication:** Code duplication ≤ 3%
 - **Coverage:** Test coverage ≥ 80%
 - **Maintainability:** Maintainability index ≥ 70
 
 #### Security Gate
+
 - **Vulnerabilities:** Zero vulnerabilidades críticas
 - **Dependencies:** Todas as dependências atualizadas
 - **Secrets:** Nenhum secret hardcoded
 - **OWASP:** Compliance com OWASP Top 10
 
 #### Healthcare Compliance Gate
+
 - **LGPD:** Conformidade com proteção de dados
 - **ANVISA:** Conformidade com regulamentações médicas
 - **CFM:** Conformidade com normas do CFM
@@ -144,6 +167,7 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 ### Gates Consultivos
 
 #### Performance Gate
+
 - **Bundle Size:** Aumento ≤ 5%
 - **Load Time:** Tempo de carregamento ≤ 3s
 - **Memory Usage:** Uso de memória otimizado
@@ -154,6 +178,7 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 ### Problemas Comuns
 
 #### Merge Conflicts
+
 1. **Resolução local:**
    ```bash
    git checkout feature-branch
@@ -168,12 +193,14 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
    - Branches de vida curta
 
 #### Falhas em Quality Gates
+
 1. **Análise do problema**
 2. **Correção local**
 3. **Re-execução dos testes**
 4. **Nova submissão para review**
 
 #### Rollback de Deploy
+
 1. **Detecção do problema**
 2. **Ativação do rollback automático**
 3. **Verificação da estabilidade**
@@ -182,18 +209,21 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 ## Métricas e Monitoramento
 
 ### Métricas de Processo
+
 - **Lead Time:** Tempo do commit ao deploy
 - **Cycle Time:** Tempo do PR ao merge
 - **MTTR:** Mean Time To Recovery
 - **Deployment Frequency:** Frequência de deploys
 
 ### Métricas de Qualidade
+
 - **Defect Escape Rate:** Taxa de bugs em produção
 - **Test Coverage Trend:** Tendência de cobertura
 - **Security Issues:** Issues de segurança por sprint
 - **Compliance Violations:** Violações de conformidade
 
 ### Dashboards
+
 - **GitHub Actions:** Status dos pipelines
 - **SonarQube:** Qualidade de código
 - **DeepSource:** Análise contínua
@@ -202,17 +232,20 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 ## Melhoria Contínua
 
 ### Retrospectivas
+
 - **Frequência:** Quinzenal
 - **Participantes:** Equipe de desenvolvimento
 - **Foco:** Processo de merge e qualidade
 
 ### Otimizações
+
 - **Automação:** Reduzir steps manuais
 - **Feedback:** Acelerar ciclo de feedback
 - **Tooling:** Melhorar ferramentas de desenvolvimento
 - **Training:** Capacitação contínua da equipe
 
 ### Evolução do Processo
+
 - **Versioning:** Versionamento deste documento
 - **Change Management:** Processo de mudanças
 - **Communication:** Comunicação de atualizações
@@ -220,7 +253,7 @@ Este documento define o processo estruturado de aprovação e merge para Pull Re
 
 ---
 
-**Versão:** 1.0  
-**Última Atualização:** Janeiro 2025  
-**Responsável:** Equipe de Arquitetura NeonPro  
+**Versão:** 1.0\
+**Última Atualização:** Janeiro 2025\
+**Responsável:** Equipe de Arquitetura NeonPro\
 **Próxima Revisão:** Março 2025

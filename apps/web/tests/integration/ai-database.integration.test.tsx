@@ -198,8 +198,7 @@ describe("aI Feature Flags Database", () => {
         name: `performance_test_flag_${i}`,
         enabled: i % 2 === 0,
         metadata: { category: i < 5 ? "ai_services" : "general" },
-      }),
-    );
+      }));
 
     const { data: insertedFlags, error: insertError } = await supabaseClient
       .from("ai_feature_flags")
@@ -371,8 +370,7 @@ describe("aI Audit Logging Database", () => {
   });
 
   it("should log AI service operations with complete details", async () => {
-    const stopTimer =
-      TestPerformanceMonitor.startMeasurement("audit_log_creation");
+    const stopTimer = TestPerformanceMonitor.startMeasurement("audit_log_creation");
 
     const testAudit = AIDBTestDataFactory.createAuditEntry({
       action: "ai_diagnosis_generated",
@@ -508,19 +506,20 @@ describe("aI Monitoring Database", () => {
   });
 
   it("should record performance metrics efficiently", async () => {
-    const stopTimer =
-      TestPerformanceMonitor.startMeasurement("metrics_recording");
+    const stopTimer = TestPerformanceMonitor.startMeasurement("metrics_recording");
 
-    const testMetrics = Array.from({ length: 25 }, (_, i) =>
-      AIDBTestDataFactory.createMonitoringMetric({
-        service: "universal_chat",
-        metric_name: "response_time_ms",
-        metric_value: 800 + i * 50, // Varying response times
-        tags: {
-          user_id: `test-user-${i % 5}`,
-          endpoint: "/api/ai/universal-chat/message",
-        },
-      }),
+    const testMetrics = Array.from(
+      { length: 25 },
+      (_, i) =>
+        AIDBTestDataFactory.createMonitoringMetric({
+          service: "universal_chat",
+          metric_name: "response_time_ms",
+          metric_value: 800 + i * 50, // Varying response times
+          tags: {
+            user_id: `test-user-${i % 5}`,
+            endpoint: "/api/ai/universal-chat/message",
+          },
+        }),
     );
 
     const { data: insertedMetrics, error: insertError } = await supabaseClient
@@ -586,9 +585,8 @@ describe("aI Monitoring Database", () => {
     expect(metrics).toHaveLength(3);
 
     // Manual aggregation for test validation
-    const avgValue =
-      metrics.reduce((sum: number, m: unknown) => sum + m.metric_value, 0) /
-      metrics.length;
+    const avgValue = metrics.reduce((sum: number, m: unknown) => sum + m.metric_value, 0)
+      / metrics.length;
     expect(avgValue).toBeCloseTo(616.67, 1); // (500 + 750 + 600) / 3
 
     expect(duration).toBeLessThan(
@@ -601,13 +599,15 @@ describe("aI Monitoring Database", () => {
 
     // Simulate high-volume metric ingestion
     const batchSize = 100;
-    const testMetrics = Array.from({ length: batchSize }, (_, i) =>
-      AIDBTestDataFactory.createMonitoringMetric({
-        service: "high_volume_test",
-        metric_name: "request_count",
-        metric_value: i + 1,
-        timestamp: new Date(Date.now() + i * 1000).toISOString(), // Spread over time
-      }),
+    const testMetrics = Array.from(
+      { length: batchSize },
+      (_, i) =>
+        AIDBTestDataFactory.createMonitoringMetric({
+          service: "high_volume_test",
+          metric_name: "request_count",
+          metric_value: i + 1,
+          timestamp: new Date(Date.now() + i * 1000).toISOString(), // Spread over time
+        }),
     );
 
     const { data: insertedMetrics, error: insertError } = await supabaseClient
@@ -801,8 +801,7 @@ describe("aI Chat Database", () => {
           timestamp: new Date().toISOString(),
         })
         .select("id")
-        .single(),
-    );
+        .single());
 
     const results = await Promise.allSettled(concurrentMessages);
     const duration = performance.now() - startTime;

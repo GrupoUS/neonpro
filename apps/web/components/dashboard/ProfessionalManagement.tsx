@@ -26,9 +26,7 @@ export default function ProfessionalManagement({
     <div className="professional-management">
       <h2>Professional Management</h2>
       <div className="professionals-list">
-        {professionals.length === 0 ? (
-          <p>No professionals found</p>
-        ) : (
+        {professionals.length === 0 ? <p>No professionals found</p> : (
           professionals.map((_prof, index) => (
             <div className="professional-card" key={index}>
               Professional {index + 1}

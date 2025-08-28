@@ -1,20 +1,16 @@
 import type {
   LGPDConsentRecord,
-  LGPDDataProcessingActivity,
   LGPDConsentType,
-  LGPDDataCategory,
-  LGPDProcessingPurpose,
   LGPDConsentWithdrawalRequest,
-  LGPDDataPortabilityRequest,
+  LGPDDataCategory,
   LGPDDataDeletionRequest,
+  LGPDDataPortabilityRequest,
+  LGPDDataProcessingActivity,
   LGPDDataRectificationRequest,
+  LGPDProcessingPurpose,
   ValidationResponse,
 } from "@/types/compliance";
-import {
-  LGPDDataSubjectRights,
-  LGPDConsentStatus,
-  LGPDLegalBasis,
-} from "@/types/compliance";
+import { LGPDConsentStatus, LGPDDataSubjectRights, LGPDLegalBasis } from "@/types/compliance";
 
 /**
  * LGPD (Lei Geral de Proteção de Dados) Consent Management Service
@@ -40,10 +36,8 @@ import {
 export class LGPDConsentManagementService {
   private static instance: LGPDConsentManagementService;
   private consentRecords: Map<string, LGPDConsentRecord> = new Map();
-  private processingActivities: Map<string, LGPDDataProcessingActivity> =
-    new Map();
-  private withdrawalRequests: Map<string, LGPDConsentWithdrawalRequest> =
-    new Map();
+  private processingActivities: Map<string, LGPDDataProcessingActivity> = new Map();
+  private withdrawalRequests: Map<string, LGPDConsentWithdrawalRequest> = new Map();
   private auditLog: {
     timestamp: Date;
     action: string;
@@ -57,8 +51,7 @@ export class LGPDConsentManagementService {
 
   public static getInstance(): LGPDConsentManagementService {
     if (!LGPDConsentManagementService.instance) {
-      LGPDConsentManagementService.instance =
-        new LGPDConsentManagementService();
+      LGPDConsentManagementService.instance = new LGPDConsentManagementService();
     }
     return LGPDConsentManagementService.instance;
   }
@@ -71,8 +64,7 @@ export class LGPDConsentManagementService {
       {
         id: "medical-records",
         name: "Gestão de Prontuários Médicos",
-        description:
-          "Criação, armazenamento e gestão de prontuários médicos eletrônicos",
+        description: "Criação, armazenamento e gestão de prontuários médicos eletrônicos",
         controller: {
           name: "NeonPro Healthcare",
           contact: "dpo@neonpro.com.br",
@@ -131,8 +123,7 @@ export class LGPDConsentManagementService {
       {
         id: "financial-management",
         name: "Gestão Financeira",
-        description:
-          "Processamento de pagamentos, faturamento e gestão financeira",
+        description: "Processamento de pagamentos, faturamento e gestão financeira",
         controller: {
           name: "NeonPro Healthcare",
           contact: "dpo@neonpro.com.br",
@@ -209,7 +200,7 @@ export class LGPDConsentManagementService {
       consentType: LGPDConsentType;
       purposes: LGPDProcessingPurpose[];
       dataCategories: LGPDDataCategory[];
-      optionalConsents?: { purpose: string; granted: boolean }[];
+      optionalConsents?: { purpose: string; granted: boolean; }[];
       communicationChannel: "web" | "mobile" | "email" | "sms" | "in-person";
       ipAddress?: string;
       userAgent?: string;
@@ -303,16 +294,15 @@ export class LGPDConsentManagementService {
 
     // Check if consent is required for this legal basis
     if (
-      activity.legalBasis === "consent" &&
-      consentData.consentType === "implied"
+      activity.legalBasis === "consent"
+      && consentData.consentType === "implied"
     ) {
       errors.push("Consentimento explícito é obrigatório para esta atividade");
     }
 
     // Validate purposes alignment
     const invalidPurposes = consentData.purposes.filter(
-      (purpose: LGPDProcessingPurpose) =>
-        !activity.processingPurposes.includes(purpose),
+      (purpose: LGPDProcessingPurpose) => !activity.processingPurposes.includes(purpose),
     );
     if (invalidPurposes.length > 0) {
       errors.push(`Finalidades não autorizadas: ${invalidPurposes.join(", ")}`);
@@ -320,8 +310,7 @@ export class LGPDConsentManagementService {
 
     // Validate data categories alignment
     const invalidCategories = consentData.dataCategories.filter(
-      (category: LGPDDataCategory) =>
-        !activity.dataCategories.includes(category),
+      (category: LGPDDataCategory) => !activity.dataCategories.includes(category),
     );
     if (invalidCategories.length > 0) {
       errors.push(
@@ -455,9 +444,9 @@ export class LGPDConsentManagementService {
       const now = new Date();
       consents.forEach((consent) => {
         if (
-          consent.expirationDate &&
-          consent.expirationDate < now &&
-          consent.status === "given"
+          consent.expirationDate
+          && consent.expirationDate < now
+          && consent.status === "given"
         ) {
           consent.status = "expired";
           consent.lastUpdated = new Date();
@@ -611,8 +600,7 @@ export class LGPDConsentManagementService {
     // Check for legal retention requirements
     const activities = Array.from(this.processingActivities.values());
     const hasLegalRetention = activities.some(
-      (activity) =>
-        activity.legalBasis === "legal-obligation" && activity.isActive,
+      (activity) => activity.legalBasis === "legal-obligation" && activity.isActive,
     );
 
     const request: LGPDDataDeletionRequest = {
@@ -657,8 +645,7 @@ export class LGPDConsentManagementService {
       field: requestDetails.field,
       currentValue: requestDetails.currentValue,
       newValue: requestDetails.newValue,
-      justification:
-        requestDetails.justification || "Correção solicitada pelo titular",
+      justification: requestDetails.justification || "Correção solicitada pelo titular",
       status: "approved",
       processedDate: new Date(),
     };
@@ -699,7 +686,7 @@ export class LGPDConsentManagementService {
     startDate: Date,
     endDate: Date,
   ): ValidationResponse<{
-    period: { start: Date; end: Date };
+    period: { start: Date; end: Date; };
     totalConsents: number;
     consentsByType: Record<LGPDConsentType, number>;
     withdrawals: number;
@@ -710,23 +697,22 @@ export class LGPDConsentManagementService {
   }> {
     try {
       const consentsInPeriod = Array.from(this.consentRecords.values()).filter(
-        (consent) =>
-          consent.consentDate >= startDate && consent.consentDate <= endDate,
+        (consent) => consent.consentDate >= startDate && consent.consentDate <= endDate,
       );
 
       const withdrawalsInPeriod = Array.from(
         this.withdrawalRequests.values(),
       ).filter(
         (withdrawal) =>
-          withdrawal.requestDate >= startDate &&
-          withdrawal.requestDate <= endDate,
+          withdrawal.requestDate >= startDate
+          && withdrawal.requestDate <= endDate,
       );
 
       const requestsInPeriod = this.auditLog.filter(
         (log) =>
-          log.timestamp >= startDate &&
-          log.timestamp <= endDate &&
-          log.action.includes("request"),
+          log.timestamp >= startDate
+          && log.timestamp <= endDate
+          && log.action.includes("request"),
       );
 
       const consentsByType = consentsInPeriod.reduce(

@@ -57,8 +57,7 @@ export class MLPipelineStatus {
         accuracy: `${(noShowMetrics.accuracy * 100).toFixed(1)}%`,
         targetAccuracy: "95%",
         roiProjection: "$468,750/year",
-        status:
-          noShowMetrics.accuracy >= 0.95 ? "TARGET_ACHIEVED" : "OPTIMIZING",
+        status: noShowMetrics.accuracy >= 0.95 ? "TARGET_ACHIEVED" : "OPTIMIZING",
       },
       pipeline: {
         modelManagement: "active",
@@ -159,10 +158,9 @@ export const MLPipelineUtils = {
     riskScore: `${Math.round(prediction.riskScore * 100)}%`,
     riskLevel: prediction.riskLevel.toUpperCase(),
     confidence: `${Math.round(prediction.confidence * 100)}%`,
-    preventedLoss:
-      prediction.riskLevel === "high" || prediction.riskLevel === "critical"
-        ? "$312.50"
-        : "$0",
+    preventedLoss: prediction.riskLevel === "high" || prediction.riskLevel === "critical"
+      ? "$312.50"
+      : "$0",
   }),
 
   /**
@@ -238,8 +236,7 @@ export interface ArchonSearchOptions {
 export class ArchonKnowledgeService {
   private isAvailable = false;
   private lastHealthCheck: Date | null = undefined;
-  private cache: Map<string, { result: ArchonQueryResult; expiry: Date }> =
-    new Map();
+  private cache: Map<string, { result: ArchonQueryResult; expiry: Date; }> = new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
   constructor() {
@@ -557,8 +554,7 @@ export class ArchonKnowledgeService {
       success: false,
       data: [
         {
-          content:
-            "Archon MCP server não disponível. Utilizando conhecimento base do assistente.",
+          content: "Archon MCP server não disponível. Utilizando conhecimento base do assistente.",
           title: "Fallback Response",
           source: "fallback",
         },
@@ -625,12 +621,12 @@ export const archonKnowledge = new ArchonKnowledgeService();
  */
 export async function queryHealthcareKnowledge(
   query: string,
-  context?: { userRole?: string; specialty?: string },
+  context?: { userRole?: string; specialty?: string; },
 ): Promise<ArchonQueryResult> {
   const enhancedQuery = context
     ? `Healthcare ${context.specialty || "general"} for ${
-        context.userRole || "professional"
-      }: ${query}`
+      context.userRole || "professional"
+    }: ${query}`
     : `Healthcare: ${query}`;
 
   return archonKnowledge.performRAGQuery(enhancedQuery, 5);

@@ -84,17 +84,16 @@ const HEALTH_CHECK_CONFIGS = {
 
 export function useSystemHealth(config: SystemHealthConfig = {}) {
   const supabase = createClient();
-  const [systemHealthSummary, setSystemHealthSummary] =
-    useState<SystemHealthSummary>({
-      overall_health: "healthy",
-      total_components: 0,
-      healthy_components: 0,
-      degraded_components: 0,
-      unhealthy_components: 0,
-      down_components: 0,
-      average_response_time: 0,
-      uptime_percentage: 100,
-    });
+  const [systemHealthSummary, setSystemHealthSummary] = useState<SystemHealthSummary>({
+    overall_health: "healthy",
+    total_components: 0,
+    healthy_components: 0,
+    degraded_components: 0,
+    unhealthy_components: 0,
+    down_components: 0,
+    average_response_time: 0,
+    uptime_percentage: 100,
+  });
   const [recentChecks, setRecentChecks] = useState<SystemHealthCheck[]>([]);
   const [loading, setLoading] = useState(true);
   const [isChecking, setIsChecking] = useState(false);
@@ -138,76 +137,74 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
   );
 
   // Check Supabase Database health
-  const checkSupabaseDatabase =
-    useCallback(async (): Promise<HealthCheckResult> => {
-      const startTime = Date.now();
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("count")
-          .limit(1)
-          .single();
+  const checkSupabaseDatabase = useCallback(async (): Promise<HealthCheckResult> => {
+    const startTime = Date.now();
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("count")
+        .limit(1)
+        .single();
 
-        const responseTime = Date.now() - startTime;
+      const responseTime = Date.now() - startTime;
 
-        if (error) {
-          return {
-            component: "supabase_database",
-            status: "unhealthy",
-            responseTime,
-            error: error.message,
-            details: { error_code: error.code },
-          };
-        }
-
+      if (error) {
         return {
           component: "supabase_database",
-          status: getHealthStatus(responseTime, 0, "supabase_database"),
+          status: "unhealthy",
           responseTime,
-          details: { query_successful: true },
-        };
-      } catch (error) {
-        return {
-          component: "supabase_database",
-          status: "down",
-          responseTime: Date.now() - startTime,
-          error: error instanceof Error ? error.message : "Unknown error",
+          error: error.message,
+          details: { error_code: error.code },
         };
       }
-    }, [supabase, getHealthStatus]);
+
+      return {
+        component: "supabase_database",
+        status: getHealthStatus(responseTime, 0, "supabase_database"),
+        responseTime,
+        details: { query_successful: true },
+      };
+    } catch (error) {
+      return {
+        component: "supabase_database",
+        status: "down",
+        responseTime: Date.now() - startTime,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  }, [supabase, getHealthStatus]);
 
   // Check Supabase Auth health
-  const checkSupabaseAuth =
-    useCallback(async (): Promise<HealthCheckResult> => {
-      const startTime = Date.now();
-      try {
-        const { data, error } = await supabase.auth.getSession();
-        const responseTime = Date.now() - startTime;
+  const checkSupabaseAuth = useCallback(async (): Promise<HealthCheckResult> => {
+    const startTime = Date.now();
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      const responseTime = Date.now() - startTime;
 
-        if (error) {
-          return {
-            component: "supabase_auth",
-            status: "unhealthy",
-            responseTime,
-            error: error.message,
-          };
-        }
-
+      if (error) {
         return {
           component: "supabase_auth",
-          status: getHealthStatus(responseTime, 0, "supabase_auth"),
+          status: "unhealthy",
           responseTime,
-          details: { auth_accessible: true },
-        };
-      } catch (error) {
-        return {
-          component: "supabase_auth",
-          status: "down",
-          responseTime: Date.now() - startTime,
-          error: error instanceof Error ? error.message : "Unknown error",
+          error: error.message,
         };
       }
-    }, [supabase, getHealthStatus]);
+
+      return {
+        component: "supabase_auth",
+        status: getHealthStatus(responseTime, 0, "supabase_auth"),
+        responseTime,
+        details: { auth_accessible: true },
+      };
+    } catch (error) {
+      return {
+        component: "supabase_auth",
+        status: "down",
+        responseTime: Date.now() - startTime,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  }, [supabase, getHealthStatus]);
 
   // Check Redis Cache health (via edge function or API)
   const checkRedisCache = useCallback(async (): Promise<HealthCheckResult> => {
@@ -235,81 +232,79 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
   }, [getHealthStatus]);
 
   // Check AI Chat Service health
-  const checkAIChatService =
-    useCallback(async (): Promise<HealthCheckResult> => {
-      const startTime = Date.now();
-      try {
-        // Test AI service with a simple health check request
-        // This would call your AI service endpoint
-        const response = await fetch("/api/ai/health", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
+  const checkAIChatService = useCallback(async (): Promise<HealthCheckResult> => {
+    const startTime = Date.now();
+    try {
+      // Test AI service with a simple health check request
+      // This would call your AI service endpoint
+      const response = await fetch("/api/ai/health", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
 
-        const responseTime = Date.now() - startTime;
+      const responseTime = Date.now() - startTime;
 
-        if (!response.ok) {
-          return {
-            component: "ai_chat_service",
-            status: "unhealthy",
-            responseTime,
-            error: `HTTP ${response.status}: ${response.statusText}`,
-          };
-        }
-
+      if (!response.ok) {
         return {
           component: "ai_chat_service",
-          status: getHealthStatus(responseTime, 0, "ai_chat_service"),
+          status: "unhealthy",
           responseTime,
-          details: { service_responsive: true },
-        };
-      } catch (error) {
-        return {
-          component: "ai_chat_service",
-          status: "down",
-          responseTime: Date.now() - startTime,
-          error: error instanceof Error ? error.message : "Service unreachable",
+          error: `HTTP ${response.status}: ${response.statusText}`,
         };
       }
-    }, [getHealthStatus]);
+
+      return {
+        component: "ai_chat_service",
+        status: getHealthStatus(responseTime, 0, "ai_chat_service"),
+        responseTime,
+        details: { service_responsive: true },
+      };
+    } catch (error) {
+      return {
+        component: "ai_chat_service",
+        status: "down",
+        responseTime: Date.now() - startTime,
+        error: error instanceof Error ? error.message : "Service unreachable",
+      };
+    }
+  }, [getHealthStatus]);
 
   // Check Prediction Engine health
-  const checkPredictionEngine =
-    useCallback(async (): Promise<HealthCheckResult> => {
-      const startTime = Date.now();
-      try {
-        // Test prediction service
-        const response = await fetch("/api/predictions/health", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
+  const checkPredictionEngine = useCallback(async (): Promise<HealthCheckResult> => {
+    const startTime = Date.now();
+    try {
+      // Test prediction service
+      const response = await fetch("/api/predictions/health", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
 
-        const responseTime = Date.now() - startTime;
+      const responseTime = Date.now() - startTime;
 
-        if (!response.ok) {
-          return {
-            component: "prediction_engine",
-            status: "unhealthy",
-            responseTime,
-            error: `HTTP ${response.status}: ${response.statusText}`,
-          };
-        }
-
+      if (!response.ok) {
         return {
           component: "prediction_engine",
-          status: getHealthStatus(responseTime, 0, "prediction_engine"),
+          status: "unhealthy",
           responseTime,
-          details: { prediction_service_active: true },
-        };
-      } catch (error) {
-        return {
-          component: "prediction_engine",
-          status: "down",
-          responseTime: Date.now() - startTime,
-          error: error instanceof Error ? error.message : "Service unreachable",
+          error: `HTTP ${response.status}: ${response.statusText}`,
         };
       }
-    }, [getHealthStatus]);
+
+      return {
+        component: "prediction_engine",
+        status: getHealthStatus(responseTime, 0, "prediction_engine"),
+        responseTime,
+        details: { prediction_service_active: true },
+      };
+    } catch (error) {
+      return {
+        component: "prediction_engine",
+        status: "down",
+        responseTime: Date.now() - startTime,
+        error: error instanceof Error ? error.message : "Service unreachable",
+      };
+    }
+  }, [getHealthStatus]);
 
   // Generic service health check
   const checkGenericService = useCallback(
@@ -408,20 +403,18 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
           error_details: result.error
             ? { error: result.error, ...result.details }
             : result.details || {},
-          uptime_percentage:
-            result.status === "healthy"
-              ? 100
-              : result.status === "degraded"
-                ? 95
-                : 0,
+          uptime_percentage: result.status === "healthy"
+            ? 100
+            : result.status === "degraded"
+            ? 95
+            : 0,
           last_error_at: result.error ? new Date().toISOString() : undefined,
           alert_sent: false,
-          escalation_level:
-            result.status === "down"
-              ? 3
-              : result.status === "unhealthy"
-                ? 2
-                : 0,
+          escalation_level: result.status === "down"
+            ? 3
+            : result.status === "unhealthy"
+            ? 2
+            : 0,
           checked_at: new Date().toISOString(),
         };
 
@@ -448,12 +441,9 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
         setIsChecking(true);
         checkInProgress.current = true;
 
-        const componentsToCheck =
-          components ||
-          (Object.keys(HEALTH_CHECK_CONFIGS) as SystemComponent[]);
-        const checkPromises = componentsToCheck.map((component) =>
-          checkComponentHealth(component),
-        );
+        const componentsToCheck = components
+          || (Object.keys(HEALTH_CHECK_CONFIGS) as SystemComponent[]);
+        const checkPromises = componentsToCheck.map((component) => checkComponentHealth(component));
 
         const results = await Promise.allSettled(checkPromises);
         const healthResults: HealthCheckResult[] = [];
@@ -537,17 +527,15 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
           (c) => c.health_status === "down",
         ).length;
 
-        const avgResponseTime =
-          latestChecksArray
-            .filter((c) => c.response_time_ms)
-            .reduce((sum, c) => sum + (c.response_time_ms || 0), 0) /
-            latestChecksArray.filter((c) => c.response_time_ms).length || 0;
+        const avgResponseTime = latestChecksArray
+              .filter((c) => c.response_time_ms)
+              .reduce((sum, c) => sum + (c.response_time_ms || 0), 0)
+            / latestChecksArray.filter((c) => c.response_time_ms).length || 0;
 
-        const overallUptime =
-          latestChecksArray.reduce(
-            (sum, c) => sum + (c.uptime_percentage || 100),
-            0,
-          ) / totalComponents;
+        const overallUptime = latestChecksArray.reduce(
+          (sum, c) => sum + (c.uptime_percentage || 100),
+          0,
+        ) / totalComponents;
 
         // Determine overall health
         let overallHealth: HealthStatus = "healthy";
@@ -564,8 +552,8 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
           .filter((c) => c.health_status !== "healthy" && c.last_error_at)
           .sort(
             (a, b) =>
-              new Date(b.last_error_at!).getTime() -
-              new Date(a.last_error_at!).getTime(),
+              new Date(b.last_error_at!).getTime()
+              - new Date(a.last_error_at!).getTime(),
           )[0];
 
         setSystemHealthSummary({
@@ -579,10 +567,10 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
           uptime_percentage: Math.round(overallUptime * 100) / 100,
           last_incident: lastIncident
             ? {
-                component: lastIncident.component_name as SystemComponent,
-                incident_time: lastIncident.last_error_at!,
-                recovery_time: lastIncident.recovery_time_seconds || 0,
-              }
+              component: lastIncident.component_name as SystemComponent,
+              incident_time: lastIncident.last_error_at!,
+              recovery_time: lastIncident.recovery_time_seconds || 0,
+            }
             : undefined,
         });
 

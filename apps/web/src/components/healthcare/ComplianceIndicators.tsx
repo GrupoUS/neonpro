@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import {
@@ -17,6 +16,7 @@ import {
   User,
   XCircle,
 } from "lucide-react";
+import React from "react";
 
 // CFM License Status Types
 export type CFMLicenseStatus =
@@ -227,9 +227,7 @@ export function LGPDConsentIndicator({
         </CardTitle>
         <Badge
           variant={compliancePercentage === 100 ? "default" : "secondary"}
-          className={
-            compliancePercentage === 100 ? "bg-green-100 text-green-800" : ""
-          }
+          className={compliancePercentage === 100 ? "bg-green-100 text-green-800" : ""}
         >
           {compliancePercentage.toFixed(0)}%
         </Badge>
@@ -268,8 +266,7 @@ export function LGPDConsentIndicator({
                           onClick={() =>
                             onUpdateConsent(
                               type as keyof LGPDConsentIndicatorProps["consentTypes"],
-                            )
-                          }
+                            )}
                         >
                           Atualizar
                         </Button>
@@ -390,8 +387,8 @@ export function ComplianceDashboard({
             <div className="flex items-center p-3 bg-red-50 border border-red-200 rounded-md">
               <AlertTriangle className="h-4 w-4 text-red-600 mr-2" />
               <span className="text-sm text-red-800">
-                {criticalIssues}{" "}
-                {criticalIssues === 1 ? "questão crítica" : "questões críticas"}{" "}
+                {criticalIssues} {criticalIssues === 1 ? "questão crítica" : "questões críticas"}
+                {" "}
                 {criticalIssues === 1 ? "requer" : "requerem"} atenção imediata
               </span>
             </div>

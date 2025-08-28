@@ -18,10 +18,8 @@
 ```typescript
 const coreFeatures = {
   patients: "CRUD completo + histórico estético avançado",
-  appointments:
-    "Agendamento + calendário + notificações para procedimentos estéticos",
-  professionals:
-    "Gestão de profissionais + especialidades em estética avançada",
+  appointments: "Agendamento + calendário + notificações para procedimentos estéticos",
+  professionals: "Gestão de profissionais + especialidades em estética avançada",
   aiChat: "FAQ inteligente + suporte automatizado para estética",
   noShowPrediction: "ML para reduzir faltas em consultas estéticas",
   lgpdCompliance: "Automatização de compliance LGPD para clínicas estéticas",

@@ -149,11 +149,10 @@ export class EnterpriseCacheService {
     };
   } {
     const cacheStats = this.cacheManager.getStats();
-    const successRate =
-      this.metrics.totalOperations > 0
-        ? (this.metrics.successfulOperations / this.metrics.totalOperations) *
-          100
-        : 0;
+    const successRate = this.metrics.totalOperations > 0
+      ? (this.metrics.successfulOperations / this.metrics.totalOperations)
+        * 100
+      : 0;
 
     return {
       performance: {
@@ -208,8 +207,7 @@ export class EnterpriseCacheService {
    */
   exportAuditTrail(format: "json" | "csv" = "json"): string {
     if (format === "csv") {
-      const headers =
-        "Timestamp,Operation,Key,Layer,Success,ExecutionTime,Metadata\n";
+      const headers = "Timestamp,Operation,Key,Layer,Success,ExecutionTime,Metadata\n";
       const rows = this.auditLog
         .map(
           (entry) =>
@@ -236,11 +234,10 @@ export class EnterpriseCacheService {
     let status: "healthy" | "degraded" | "unhealthy" = "healthy";
 
     // Check success rate
-    const successRate =
-      this.metrics.totalOperations > 0
-        ? (this.metrics.successfulOperations / this.metrics.totalOperations) *
-          100
-        : 100;
+    const successRate = this.metrics.totalOperations > 0
+      ? (this.metrics.successfulOperations / this.metrics.totalOperations)
+        * 100
+      : 100;
 
     if (successRate < 95) {
       issues.push(`Low success rate: ${successRate.toFixed(2)}%`);
@@ -252,8 +249,7 @@ export class EnterpriseCacheService {
       issues.push(
         `High average response time: ${this.metrics.averageResponseTime}ms`,
       );
-      status =
-        this.metrics.averageResponseTime > 2000 ? "unhealthy" : "degraded";
+      status = this.metrics.averageResponseTime > 2000 ? "unhealthy" : "degraded";
     }
 
     return {
@@ -282,8 +278,8 @@ export class EnterpriseCacheService {
     }
 
     this.metrics.totalResponseTime += executionTime;
-    this.metrics.averageResponseTime =
-      this.metrics.totalResponseTime / this.metrics.totalOperations;
+    this.metrics.averageResponseTime = this.metrics.totalResponseTime
+      / this.metrics.totalOperations;
 
     // Add to audit log
     this.auditLog.push({

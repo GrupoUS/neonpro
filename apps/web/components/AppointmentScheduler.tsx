@@ -166,9 +166,7 @@ export default function AppointmentScheduler() {
     newStatus: Appointment["status"],
   ) => {
     setAppointments((prev) =>
-      prev.map((apt) =>
-        apt.id === appointmentId ? { ...apt, status: newStatus } : apt,
-      ),
+      prev.map((apt) => apt.id === appointmentId ? { ...apt, status: newStatus } : apt)
     );
   };
 
@@ -256,8 +254,7 @@ export default function AppointmentScheduler() {
                     setFormData((prev) => ({
                       ...prev,
                       patientName: e.target.value,
-                    }))
-                  }
+                    }))}
                   placeholder="Nome completo"
                   value={formData.patientName}
                 />
@@ -270,8 +267,7 @@ export default function AppointmentScheduler() {
                     setFormData((prev) => ({
                       ...prev,
                       patientEmail: e.target.value,
-                    }))
-                  }
+                    }))}
                   placeholder="email@exemplo.com"
                   type="email"
                   value={formData.patientEmail}
@@ -285,8 +281,7 @@ export default function AppointmentScheduler() {
                     setFormData((prev) => ({
                       ...prev,
                       patientPhone: e.target.value,
-                    }))
-                  }
+                    }))}
                   placeholder="(11) 99999-9999"
                   value={formData.patientPhone}
                 />
@@ -294,9 +289,7 @@ export default function AppointmentScheduler() {
               <div className="space-y-2">
                 <Label htmlFor="doctor">Médico</Label>
                 <Select
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, doctor: value }))
-                  }
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, doctor: value }))}
                   value={formData.doctor}
                 >
                   <SelectTrigger>
@@ -318,8 +311,7 @@ export default function AppointmentScheduler() {
                     setFormData((prev) => ({
                       ...prev,
                       type: value as Appointment["type"],
-                    }))
-                  }
+                    }))}
                   value={formData.type}
                 >
                   <SelectTrigger>
@@ -337,9 +329,7 @@ export default function AppointmentScheduler() {
               <div className="space-y-2">
                 <Label htmlFor="time">Horário</Label>
                 <Select
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, time: value }))
-                  }
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, time: value }))}
                   value={formData.time}
                 >
                   <SelectTrigger>
@@ -373,9 +363,7 @@ export default function AppointmentScheduler() {
               <Label htmlFor="notes">Observações</Label>
               <Input
                 id="notes"
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, notes: e.target.value }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
                 placeholder="Observações adicionais..."
                 value={formData.notes}
               />
@@ -421,75 +409,76 @@ export default function AppointmentScheduler() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {filteredAppointments.length === 0 ? (
-              <div className="py-8 text-center">
-                <CalendarIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 font-medium text-gray-900 text-sm">
-                  Nenhum agendamento
-                </h3>
-                <p className="mt-1 text-gray-500 text-sm">
-                  Não há consultas agendadas para esta data.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredAppointments.map((appointment) => (
-                  <div
-                    className="flex items-center justify-between rounded-lg border p-4"
-                    key={appointment.id}
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-2">
-                        {getStatusIcon(appointment.status)}
-                        <div>
-                          <h4 className="font-medium">
-                            {appointment.patientName}
-                          </h4>
-                          <div className="flex items-center space-x-4 text-muted-foreground text-sm">
-                            <span className="flex items-center">
-                              <Clock className="mr-1 h-3 w-3" />
-                              {appointment.time}
-                            </span>
-                            <span className="flex items-center">
-                              <User className="mr-1 h-3 w-3" />
-                              {appointment.doctor}
-                            </span>
-                            <span>{appointment.specialty}</span>
+            {filteredAppointments.length === 0
+              ? (
+                <div className="py-8 text-center">
+                  <CalendarIcon className="mx-auto h-12 w-12 text-gray-400" />
+                  <h3 className="mt-2 font-medium text-gray-900 text-sm">
+                    Nenhum agendamento
+                  </h3>
+                  <p className="mt-1 text-gray-500 text-sm">
+                    Não há consultas agendadas para esta data.
+                  </p>
+                </div>
+              )
+              : (
+                <div className="space-y-4">
+                  {filteredAppointments.map((appointment) => (
+                    <div
+                      className="flex items-center justify-between rounded-lg border p-4"
+                      key={appointment.id}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2">
+                          {getStatusIcon(appointment.status)}
+                          <div>
+                            <h4 className="font-medium">
+                              {appointment.patientName}
+                            </h4>
+                            <div className="flex items-center space-x-4 text-muted-foreground text-sm">
+                              <span className="flex items-center">
+                                <Clock className="mr-1 h-3 w-3" />
+                                {appointment.time}
+                              </span>
+                              <span className="flex items-center">
+                                <User className="mr-1 h-3 w-3" />
+                                {appointment.doctor}
+                              </span>
+                              <span>{appointment.specialty}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center space-x-2">
-                      {getStatusBadge(appointment.status)}
-                      <Select
-                        onValueChange={(value) =>
-                          handleStatusChange(
-                            appointment.id,
-                            value as Appointment["status"],
-                          )
-                        }
-                        value={appointment.status}
-                      >
-                        <SelectTrigger className="w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="scheduled">Agendado</SelectItem>
-                          <SelectItem value="confirmed">Confirmado</SelectItem>
-                          <SelectItem value="completed">Concluído</SelectItem>
-                          <SelectItem value="cancelled">Cancelado</SelectItem>
-                          <SelectItem value="no-show">Faltou</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button size="sm" variant="outline">
-                        <Edit className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center space-x-2">
+                        {getStatusBadge(appointment.status)}
+                        <Select
+                          onValueChange={(value) =>
+                            handleStatusChange(
+                              appointment.id,
+                              value as Appointment["status"],
+                            )}
+                          value={appointment.status}
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="scheduled">Agendado</SelectItem>
+                            <SelectItem value="confirmed">Confirmado</SelectItem>
+                            <SelectItem value="completed">Concluído</SelectItem>
+                            <SelectItem value="cancelled">Cancelado</SelectItem>
+                            <SelectItem value="no-show">Faltou</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button size="sm" variant="outline">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
           </CardContent>
         </Card>
       </div>
@@ -503,12 +492,9 @@ export default function AppointmentScheduler() {
               <div>
                 <p className="font-medium text-sm">Hoje</p>
                 <p className="font-bold text-2xl">
-                  {
-                    appointments.filter(
-                      (apt) =>
-                        apt.date.toDateString() === new Date().toDateString(),
-                    ).length
-                  }
+                  {appointments.filter(
+                    (apt) => apt.date.toDateString() === new Date().toDateString(),
+                  ).length}
                 </p>
               </div>
             </div>
@@ -522,10 +508,8 @@ export default function AppointmentScheduler() {
               <div>
                 <p className="font-medium text-sm">Confirmados</p>
                 <p className="font-bold text-2xl">
-                  {
-                    appointments.filter((apt) => apt.status === "confirmed")
-                      .length
-                  }
+                  {appointments.filter((apt) => apt.status === "confirmed")
+                    .length}
                 </p>
               </div>
             </div>
@@ -539,10 +523,8 @@ export default function AppointmentScheduler() {
               <div>
                 <p className="font-medium text-sm">Cancelados</p>
                 <p className="font-bold text-2xl">
-                  {
-                    appointments.filter((apt) => apt.status === "cancelled")
-                      .length
-                  }
+                  {appointments.filter((apt) => apt.status === "cancelled")
+                    .length}
                 </p>
               </div>
             </div>
@@ -556,10 +538,8 @@ export default function AppointmentScheduler() {
               <div>
                 <p className="font-medium text-sm">Faltas</p>
                 <p className="font-bold text-2xl">
-                  {
-                    appointments.filter((apt) => apt.status === "no-show")
-                      .length
-                  }
+                  {appointments.filter((apt) => apt.status === "no-show")
+                    .length}
                 </p>
               </div>
             </div>

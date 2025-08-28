@@ -44,7 +44,8 @@ function runTest(test, testType = "UNIT") {
       const command = `npx playwright test ${test.file} --reporter=list --timeout=${test.timeout}`;
     } else {
       // Run Jest tests with isolated configuration
-      const command = `npx jest ${test.file} --verbose --detectOpenHandles --forceExit --timeout=${test.timeout}`;
+      const command =
+        `npx jest ${test.file} --verbose --detectOpenHandles --forceExit --timeout=${test.timeout}`;
     }
 
     const endTime = Date.now();

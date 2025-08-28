@@ -414,9 +414,7 @@ if (require.main === module) {
     }
 
     case "health-check": {
-      ProductionHealthCheck.runHealthChecks().then((passed) =>
-        process.exit(passed ? 0 : 1),
-      );
+      ProductionHealthCheck.runHealthChecks().then((passed) => process.exit(passed ? 0 : 1));
       break;
     }
 

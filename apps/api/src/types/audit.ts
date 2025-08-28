@@ -1,48 +1,48 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Enum para ações de auditoria
 export enum AuditAction {
-  CREATE = 'CREATE',
-  READ = 'READ',
-  UPDATE = 'UPDATE',
-  DELETE = 'DELETE',
-  LOGIN = 'LOGIN',
-  LOGOUT = 'LOGOUT',
-  EXPORT = 'EXPORT',
-  IMPORT = 'IMPORT',
-  BACKUP = 'BACKUP',
-  RESTORE = 'RESTORE',
-  PERMISSION_CHANGE = 'PERMISSION_CHANGE',
-  PASSWORD_CHANGE = 'PASSWORD_CHANGE',
-  DATA_ACCESS = 'DATA_ACCESS',
-  REPORT_GENERATE = 'REPORT_GENERATE',
-  SYSTEM_CONFIG = 'SYSTEM_CONFIG'
+  CREATE = "CREATE",
+  READ = "READ",
+  UPDATE = "UPDATE",
+  DELETE = "DELETE",
+  LOGIN = "LOGIN",
+  LOGOUT = "LOGOUT",
+  EXPORT = "EXPORT",
+  IMPORT = "IMPORT",
+  BACKUP = "BACKUP",
+  RESTORE = "RESTORE",
+  PERMISSION_CHANGE = "PERMISSION_CHANGE",
+  PASSWORD_CHANGE = "PASSWORD_CHANGE",
+  DATA_ACCESS = "DATA_ACCESS",
+  REPORT_GENERATE = "REPORT_GENERATE",
+  SYSTEM_CONFIG = "SYSTEM_CONFIG",
 }
 
 // Enum para tipos de recursos
 export enum ResourceType {
-  PATIENT = 'PATIENT',
-  APPOINTMENT = 'APPOINTMENT',
-  PROFESSIONAL = 'PROFESSIONAL',
-  PAYMENT = 'PAYMENT',
-  TREATMENT = 'TREATMENT',
-  MEDICAL_RECORD = 'MEDICAL_RECORD',
-  USER = 'USER',
-  ROLE = 'ROLE',
-  PERMISSION = 'PERMISSION',
-  SYSTEM = 'SYSTEM',
-  REPORT = 'REPORT',
-  BACKUP = 'BACKUP',
-  CONFIGURATION = 'CONFIGURATION',
-  AUDIT_LOG = 'AUDIT_LOG'
+  PATIENT = "PATIENT",
+  APPOINTMENT = "APPOINTMENT",
+  PROFESSIONAL = "PROFESSIONAL",
+  PAYMENT = "PAYMENT",
+  TREATMENT = "TREATMENT",
+  MEDICAL_RECORD = "MEDICAL_RECORD",
+  USER = "USER",
+  ROLE = "ROLE",
+  PERMISSION = "PERMISSION",
+  SYSTEM = "SYSTEM",
+  REPORT = "REPORT",
+  BACKUP = "BACKUP",
+  CONFIGURATION = "CONFIGURATION",
+  AUDIT_LOG = "AUDIT_LOG",
 }
 
 // Enum para níveis de severidade
 export enum AuditSeverity {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL'
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+  CRITICAL = "CRITICAL",
 }
 
 // Schema de validação para evento de auditoria
@@ -55,7 +55,7 @@ export const AuditEventSchema = z.object({
   resource_name: z.string().optional(),
   ip_address: z.string().ip().optional(),
   user_agent: z.string().optional(),
-  method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']).optional(),
+  method: z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]).optional(),
   endpoint: z.string().optional(),
   status_code: z.number().optional(),
   severity: z.nativeEnum(AuditSeverity).default(AuditSeverity.LOW),
@@ -64,7 +64,7 @@ export const AuditEventSchema = z.object({
   after_data: z.record(z.any()).optional(),
   error_message: z.string().optional(),
   duration_ms: z.number().optional(),
-  timestamp: z.date().default(() => new Date())
+  timestamp: z.date().default(() => new Date()),
 });
 
 // Tipo inferido do schema
@@ -90,8 +90,8 @@ export const AuditFilterSchema = z.object({
   status_code: z.number().optional(),
   limit: z.number().min(1).max(1000).default(100),
   offset: z.number().min(0).default(0),
-  sort_by: z.enum(['timestamp', 'action', 'severity', 'user_id']).default('timestamp'),
-  sort_order: z.enum(['asc', 'desc']).default('desc')
+  sort_by: z.enum(["timestamp", "action", "severity", "user_id"]).default("timestamp"),
+  sort_order: z.enum(["asc", "desc"]).default("desc"),
 });
 
 export type AuditFilter = z.infer<typeof AuditFilterSchema>;
@@ -102,9 +102,9 @@ export interface AuditStats {
   events_by_action: Record<AuditAction, number>;
   events_by_resource: Record<ResourceType, number>;
   events_by_severity: Record<AuditSeverity, number>;
-  top_users: Array<{ user_id: string; count: number }>;
+  top_users: Array<{ user_id: string; count: number; }>;
   recent_critical_events: AuditLogEntry[];
-  daily_activity: Array<{ date: string; count: number }>;
+  daily_activity: Array<{ date: string; count: number; }>;
 }
 
 // Interface para configuração de auditoria
@@ -121,7 +121,7 @@ export interface AuditConfig {
 
 // Interface para exportação de logs
 export interface AuditExportOptions {
-  format: 'json' | 'csv' | 'pdf';
+  format: "json" | "csv" | "pdf";
   filters: AuditFilter;
   include_details: boolean;
   include_sensitive_data: boolean;
@@ -152,7 +152,7 @@ export interface AuditContext {
 // Evento de alerta crítico
 export interface CriticalAuditAlert {
   event: AuditLogEntry;
-  alert_type: 'UNAUTHORIZED_ACCESS' | 'DATA_BREACH' | 'SYSTEM_COMPROMISE' | 'SUSPICIOUS_ACTIVITY';
+  alert_type: "UNAUTHORIZED_ACCESS" | "DATA_BREACH" | "SYSTEM_COMPROMISE" | "SUSPICIOUS_ACTIVITY";
   description: string;
   recommended_actions: string[];
   auto_resolved: boolean;

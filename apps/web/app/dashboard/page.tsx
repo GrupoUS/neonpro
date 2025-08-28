@@ -30,8 +30,7 @@ export default function DashboardPage({
               Dashboard Principal
             </h1>
             <p className="text-muted-foreground">
-              Dashboard inteligente com análise em tempo real e compliance
-              LGPD/ANVISA/CFM
+              Dashboard inteligente com análise em tempo real e compliance LGPD/ANVISA/CFM
             </p>
           </div>
 

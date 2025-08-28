@@ -2,11 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useVoiceNavigation } from "@/hooks/use-voice-navigation";
 import { cn } from "@/lib/utils";
 import { Activity, Command, Mic, MicOff, Volume2 } from "lucide-react";
@@ -71,11 +67,7 @@ export function VoiceNavigationButton({
           isProcessing && "animate-pulse",
         )}
       >
-        {isListening ? (
-          <MicOff className="h-4 w-4" />
-        ) : (
-          <Mic className="h-4 w-4" />
-        )}
+        {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
 
         {isListening && (
           <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-400 rounded-full animate-ping" />
@@ -102,9 +94,7 @@ export function VoiceNavigationButton({
             {lastCommand && (
               <div className="text-xs text-muted-foreground">
                 <p>Último comando: "{lastCommand}"</p>
-                {confidence > 0 && (
-                  <p>Confiança: {Math.round(confidence * 100)}%</p>
-                )}
+                {confidence > 0 && <p>Confiança: {Math.round(confidence * 100)}%</p>}
               </div>
             )}
 
@@ -122,9 +112,7 @@ export function VoiceNavigationButton({
                     Navegação
                   </h5>
                   <ul className="space-y-1 text-xs text-muted-foreground">
-                    {navigationCommands.map((cmd) => (
-                      <li key={cmd.id}>• {cmd.description}</li>
-                    ))}
+                    {navigationCommands.map((cmd) => <li key={cmd.id}>• {cmd.description}</li>)}
                   </ul>
                 </div>
               )}
@@ -135,9 +123,7 @@ export function VoiceNavigationButton({
                     Pacientes
                   </h5>
                   <ul className="space-y-1 text-xs text-muted-foreground">
-                    {patientCommands.map((cmd) => (
-                      <li key={cmd.id}>• {cmd.description}</li>
-                    ))}
+                    {patientCommands.map((cmd) => <li key={cmd.id}>• {cmd.description}</li>)}
                   </ul>
                 </div>
               )}
@@ -148,9 +134,7 @@ export function VoiceNavigationButton({
                     Agenda
                   </h5>
                   <ul className="space-y-1 text-xs text-muted-foreground">
-                    {appointmentCommands.map((cmd) => (
-                      <li key={cmd.id}>• {cmd.description}</li>
-                    ))}
+                    {appointmentCommands.map((cmd) => <li key={cmd.id}>• {cmd.description}</li>)}
                   </ul>
                 </div>
               )}
@@ -161,9 +145,7 @@ export function VoiceNavigationButton({
                     Estoque
                   </h5>
                   <ul className="space-y-1 text-xs text-muted-foreground">
-                    {inventoryCommands.map((cmd) => (
-                      <li key={cmd.id}>• {cmd.description}</li>
-                    ))}
+                    {inventoryCommands.map((cmd) => <li key={cmd.id}>• {cmd.description}</li>)}
                   </ul>
                 </div>
               )}
@@ -174,9 +156,7 @@ export function VoiceNavigationButton({
                     Emergência
                   </h5>
                   <ul className="space-y-1 text-xs text-muted-foreground">
-                    {emergencyCommands.map((cmd) => (
-                      <li key={cmd.id}>• {cmd.description}</li>
-                    ))}
+                    {emergencyCommands.map((cmd) => <li key={cmd.id}>• {cmd.description}</li>)}
                   </ul>
                 </div>
               )}

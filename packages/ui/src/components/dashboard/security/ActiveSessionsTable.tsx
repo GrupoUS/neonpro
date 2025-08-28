@@ -28,21 +28,8 @@ import {
 } from "../../ui/dialog";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
 
 interface ActiveSession {
   id: string;
@@ -74,8 +61,7 @@ export function ActiveSessionsTable() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [riskFilter, setRiskFilter] = useState<string>("all");
-  const [selectedSession, setSelectedSession] =
-    useState<ActiveSession | null>();
+  const [selectedSession, setSelectedSession] = useState<ActiveSession | null>();
 
   const fetchSessions = async () => {
     try {
@@ -175,21 +161,19 @@ export function ActiveSessionsTable() {
   };
 
   const filteredSessions = sessions.filter((session) => {
-    const matchesSearch =
-      session.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      session.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      session.ip_address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      session.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      session.browser?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = session.user_email?.toLowerCase().includes(searchTerm.toLowerCase())
+      || session.user_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      || session.ip_address?.toLowerCase().includes(searchTerm.toLowerCase())
+      || session.location?.toLowerCase().includes(searchTerm.toLowerCase())
+      || session.browser?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesRisk =
-      riskFilter === "all" ||
-      (riskFilter === "high" && session.risk_score >= 80) ||
-      (riskFilter === "medium" &&
-        session.risk_score >= 60 &&
-        session.risk_score < 80) ||
-      (riskFilter === "low" && session.risk_score < 60) ||
-      (riskFilter === "suspicious" && session.is_suspicious);
+    const matchesRisk = riskFilter === "all"
+      || (riskFilter === "high" && session.risk_score >= 80)
+      || (riskFilter === "medium"
+        && session.risk_score >= 60
+        && session.risk_score < 80)
+      || (riskFilter === "low" && session.risk_score < 60)
+      || (riskFilter === "suspicious" && session.is_suspicious);
 
     return matchesSearch && matchesRisk;
   });
@@ -306,228 +290,230 @@ export function ActiveSessionsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredSessions.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  className="py-8 text-center text-muted-foreground"
-                  colSpan={7}
-                >
-                  Nenhuma sessão ativa encontrada
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredSessions.map((session) => (
-                <TableRow
-                  className={`
+            {filteredSessions.length === 0
+              ? (
+                <TableRow>
+                  <TableCell
+                    className="py-8 text-center text-muted-foreground"
+                    colSpan={7}
+                  >
+                    Nenhuma sessão ativa encontrada
+                  </TableCell>
+                </TableRow>
+              )
+              : (
+                filteredSessions.map((session) => (
+                  <TableRow
+                    className={`
                     ${session.is_current_session ? "bg-blue-50/50" : ""} 
                     ${session.is_suspicious ? "bg-red-50/50" : ""}
                   `}
-                  key={session.id}
-                >
-                  <TableCell>
-                    <div>
-                      <div className="flex items-center space-x-2 font-medium">
-                        <span>{session.user_name || session.user_email}</span>
-                        {session.is_current_session && (
-                          <Badge className="text-xs" variant="outline">
-                            Esta Sessão
-                          </Badge>
-                        )}
-                        {session.is_suspicious && (
-                          <AlertTriangle className="h-4 w-4 text-red-500" />
-                        )}
-                      </div>
-                      <div className="text-muted-foreground text-sm">
-                        {session.user_role && (
-                          <Badge className="text-xs" variant="outline">
-                            {session.user_role}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      {getDeviceIcon(session.device_type || "desktop")}
+                    key={session.id}
+                  >
+                    <TableCell>
                       <div>
-                        <div className="font-medium text-sm">
-                          {session.device_type || "Desktop"}
+                        <div className="flex items-center space-x-2 font-medium">
+                          <span>{session.user_name || session.user_email}</span>
+                          {session.is_current_session && (
+                            <Badge className="text-xs" variant="outline">
+                              Esta Sessão
+                            </Badge>
+                          )}
+                          {session.is_suspicious && (
+                            <AlertTriangle className="h-4 w-4 text-red-500" />
+                          )}
                         </div>
-                        <div className="text-muted-foreground text-xs">
-                          {session.operating_system}
+                        <div className="text-muted-foreground text-sm">
+                          {session.user_role && (
+                            <Badge className="text-xs" variant="outline">
+                              {session.user_role}
+                            </Badge>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="flex items-center space-x-1">
-                        <code className="rounded bg-muted px-1 py-0.5 text-sm">
-                          {session.ip_address}
-                        </code>
-                      </div>
-                      {session.location && (
-                        <div className="flex items-center space-x-1 text-muted-foreground text-sm">
-                          <MapPin className="h-3 w-3" />
-                          <span>{session.location}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        {getDeviceIcon(session.device_type || "desktop")}
+                        <div>
+                          <div className="font-medium text-sm">
+                            {session.device_type || "Desktop"}
+                          </div>
+                          <div className="text-muted-foreground text-xs">
+                            {session.operating_system}
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">{session.browser || "N/A"}</div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant={getRiskColor(session.risk_score)}>
-                        {getRiskLevel(session.risk_score)}
-                      </Badge>
-                      <span className="text-muted-foreground text-xs">
-                        {session.risk_score}%
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      {format(
-                        new Date(session.last_activity_at),
-                        "dd/MM/yyyy HH:mm",
-                        {
-                          locale: ptBR,
-                        },
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end space-x-2">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            onClick={() => setSelectedSession(session)}
-                            size="sm"
-                            variant="ghost"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle className="flex items-center space-x-2">
-                              <Users className="h-5 w-5" />
-                              <span>Detalhes da Sessão</span>
-                              {selectedSession?.is_current_session && (
-                                <Badge variant="outline">Sessão Atual</Badge>
-                              )}
-                            </DialogTitle>
-                            <DialogDescription>
-                              Informações detalhadas da sessão #{session.id}
-                            </DialogDescription>
-                          </DialogHeader>
-                          {selectedSession && (
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                  <Label>Usuário</Label>
-                                  <div className="mt-1 text-sm">
-                                    {selectedSession.user_name ||
-                                      selectedSession.user_email}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="flex items-center space-x-1">
+                          <code className="rounded bg-muted px-1 py-0.5 text-sm">
+                            {session.ip_address}
+                          </code>
+                        </div>
+                        {session.location && (
+                          <div className="flex items-center space-x-1 text-muted-foreground text-sm">
+                            <MapPin className="h-3 w-3" />
+                            <span>{session.location}</span>
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">{session.browser || "N/A"}</div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant={getRiskColor(session.risk_score)}>
+                          {getRiskLevel(session.risk_score)}
+                        </Badge>
+                        <span className="text-muted-foreground text-xs">
+                          {session.risk_score}%
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        {format(
+                          new Date(session.last_activity_at),
+                          "dd/MM/yyyy HH:mm",
+                          {
+                            locale: ptBR,
+                          },
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end space-x-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              onClick={() => setSelectedSession(session)}
+                              size="sm"
+                              variant="ghost"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center space-x-2">
+                                <Users className="h-5 w-5" />
+                                <span>Detalhes da Sessão</span>
+                                {selectedSession?.is_current_session && (
+                                  <Badge variant="outline">Sessão Atual</Badge>
+                                )}
+                              </DialogTitle>
+                              <DialogDescription>
+                                Informações detalhadas da sessão #{session.id}
+                              </DialogDescription>
+                            </DialogHeader>
+                            {selectedSession && (
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <Label>Usuário</Label>
+                                    <div className="mt-1 text-sm">
+                                      {selectedSession.user_name
+                                        || selectedSession.user_email}
+                                    </div>
                                   </div>
-                                </div>
-                                <div>
-                                  <Label>Função</Label>
-                                  <div className="mt-1">
-                                    <Badge variant="outline">
-                                      {selectedSession.user_role || "N/A"}
-                                    </Badge>
+                                  <div>
+                                    <Label>Função</Label>
+                                    <div className="mt-1">
+                                      <Badge variant="outline">
+                                        {selectedSession.user_role || "N/A"}
+                                      </Badge>
+                                    </div>
                                   </div>
-                                </div>
-                                <div>
-                                  <Label>IP Address</Label>
-                                  <div className="mt-1">
-                                    <code className="rounded bg-muted px-2 py-1 text-sm">
-                                      {selectedSession.ip_address}
-                                    </code>
+                                  <div>
+                                    <Label>IP Address</Label>
+                                    <div className="mt-1">
+                                      <code className="rounded bg-muted px-2 py-1 text-sm">
+                                        {selectedSession.ip_address}
+                                      </code>
+                                    </div>
                                   </div>
-                                </div>
-                                <div>
-                                  <Label>Localização</Label>
-                                  <div className="mt-1 text-sm">
-                                    {selectedSession.location || "N/A"}
+                                  <div>
+                                    <Label>Localização</Label>
+                                    <div className="mt-1 text-sm">
+                                      {selectedSession.location || "N/A"}
+                                    </div>
                                   </div>
-                                </div>
-                                <div>
-                                  <Label>Dispositivo</Label>
-                                  <div className="mt-1 text-sm">
-                                    {selectedSession.device_type || "Desktop"}
+                                  <div>
+                                    <Label>Dispositivo</Label>
+                                    <div className="mt-1 text-sm">
+                                      {selectedSession.device_type || "Desktop"}
+                                    </div>
                                   </div>
-                                </div>
-                                <div>
-                                  <Label>Sistema Operacional</Label>
-                                  <div className="mt-1 text-sm">
-                                    {selectedSession.operating_system || "N/A"}
+                                  <div>
+                                    <Label>Sistema Operacional</Label>
+                                    <div className="mt-1 text-sm">
+                                      {selectedSession.operating_system || "N/A"}
+                                    </div>
                                   </div>
-                                </div>
-                                <div>
-                                  <Label>Navegador</Label>
-                                  <div className="mt-1 text-sm">
-                                    {selectedSession.browser || "N/A"}
+                                  <div>
+                                    <Label>Navegador</Label>
+                                    <div className="mt-1 text-sm">
+                                      {selectedSession.browser || "N/A"}
+                                    </div>
                                   </div>
-                                </div>
-                                <div>
-                                  <Label>Pontuação de Risco</Label>
-                                  <div className="mt-1">
-                                    <Badge
-                                      variant={getRiskColor(
-                                        selectedSession.risk_score,
+                                  <div>
+                                    <Label>Pontuação de Risco</Label>
+                                    <div className="mt-1">
+                                      <Badge
+                                        variant={getRiskColor(
+                                          selectedSession.risk_score,
+                                        )}
+                                      >
+                                        {getRiskLevel(selectedSession.risk_score)}{" "}
+                                        ({selectedSession.risk_score}%)
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <Label>Criada em</Label>
+                                    <div className="mt-1 text-sm">
+                                      {format(
+                                        new Date(selectedSession.created_at),
+                                        "dd/MM/yyyy HH:mm:ss",
+                                        {
+                                          locale: ptBR,
+                                        },
                                       )}
-                                    >
-                                      {getRiskLevel(selectedSession.risk_score)}{" "}
-                                      ({selectedSession.risk_score}%)
-                                    </Badge>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <Label>Última Atividade</Label>
+                                    <div className="mt-1 text-sm">
+                                      {format(
+                                        new Date(
+                                          selectedSession.last_activity_at,
+                                        ),
+                                        "dd/MM/yyyy HH:mm:ss",
+                                        {
+                                          locale: ptBR,
+                                        },
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <Label>Expira em</Label>
+                                    <div className="mt-1 text-sm">
+                                      {format(
+                                        new Date(selectedSession.expires_at),
+                                        "dd/MM/yyyy HH:mm:ss",
+                                        {
+                                          locale: ptBR,
+                                        },
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                                <div>
-                                  <Label>Criada em</Label>
-                                  <div className="mt-1 text-sm">
-                                    {format(
-                                      new Date(selectedSession.created_at),
-                                      "dd/MM/yyyy HH:mm:ss",
-                                      {
-                                        locale: ptBR,
-                                      },
-                                    )}
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Última Atividade</Label>
-                                  <div className="mt-1 text-sm">
-                                    {format(
-                                      new Date(
-                                        selectedSession.last_activity_at,
-                                      ),
-                                      "dd/MM/yyyy HH:mm:ss",
-                                      {
-                                        locale: ptBR,
-                                      },
-                                    )}
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Expira em</Label>
-                                  <div className="mt-1 text-sm">
-                                    {format(
-                                      new Date(selectedSession.expires_at),
-                                      "dd/MM/yyyy HH:mm:ss",
-                                      {
-                                        locale: ptBR,
-                                      },
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
 
-                              {selectedSession.security_flags &&
-                                selectedSession.security_flags.length > 0 && (
+                                {selectedSession.security_flags
+                                  && selectedSession.security_flags.length > 0 && (
                                   <div>
                                     <Label>Flags de Segurança</Label>
                                     <div className="mt-1 flex flex-wrap gap-2">
@@ -542,51 +528,52 @@ export function ActiveSessionsTable() {
                                   </div>
                                 )}
 
-                              {selectedSession.is_suspicious && (
-                                <Alert>
-                                  <AlertTriangle className="h-4 w-4" />
-                                  <AlertDescription>
-                                    Esta sessão foi marcada como suspeita devido
-                                    a atividade incomum.
-                                  </AlertDescription>
-                                </Alert>
-                              )}
+                                {selectedSession.is_suspicious && (
+                                  <Alert>
+                                    <AlertTriangle className="h-4 w-4" />
+                                    <AlertDescription>
+                                      Esta sessão foi marcada como suspeita devido a atividade
+                                      incomum.
+                                    </AlertDescription>
+                                  </Alert>
+                                )}
 
-                              {selectedSession.session_data &&
-                                Object.keys(selectedSession.session_data)
-                                  .length > 0 && (
-                                  <div>
-                                    <Label>Dados da Sessão</Label>
-                                    <div className="mt-1">
-                                      <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
+                                {selectedSession.session_data
+                                  && Object.keys(selectedSession.session_data)
+                                      .length > 0
+                                  && (
+                                    <div>
+                                      <Label>Dados da Sessão</Label>
+                                      <div className="mt-1">
+                                        <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
                                         {JSON.stringify(
                                           selectedSession.session_data,
                                           undefined,
                                           2,
                                         )}
-                                      </pre>
+                                        </pre>
+                                      </div>
                                     </div>
-                                  </div>
-                                )}
-                            </div>
-                          )}
-                        </DialogContent>
-                      </Dialog>
+                                  )}
+                              </div>
+                            )}
+                          </DialogContent>
+                        </Dialog>
 
-                      {!session.is_current_session && (
-                        <Button
-                          onClick={() => handleTerminateSession(session.id)}
-                          size="sm"
-                          variant="destructive"
-                        >
-                          <LogOut className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+                        {!session.is_current_session && (
+                          <Button
+                            onClick={() => handleTerminateSession(session.id)}
+                            size="sm"
+                            variant="destructive"
+                          >
+                            <LogOut className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
           </TableBody>
         </Table>
       </div>
@@ -596,8 +583,7 @@ export function ActiveSessionsTable() {
         Mostrando {filteredSessions.length} de {sessions.length} sessões ativas
         {sessions.some((s) => s.is_suspicious).length > 0 && (
           <span className="ml-2 text-red-600">
-            • {sessions.filter((s) => s.is_suspicious).length} sessões suspeitas
-            detectadas
+            • {sessions.filter((s) => s.is_suspicious).length} sessões suspeitas detectadas
           </span>
         )}
       </div>

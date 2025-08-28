@@ -170,19 +170,21 @@ export class ProcedureClassificationService {
   ): Promise<ConstitutionalResponse<ProcedureClassification>> {
     try {
       // Step 1: Validate procedure classification data
-      const validatedClassification =
-        ProcedureClassificationSchema.parse(classification);
+      const validatedClassification = ProcedureClassificationSchema.parse(classification);
 
       // Step 2: Constitutional healthcare validation
-      const constitutionalValidation =
-        await this.validateConstitutionalRequirements(validatedClassification);
+      const constitutionalValidation = await this.validateConstitutionalRequirements(
+        validatedClassification,
+      );
 
       if (!constitutionalValidation.valid) {
         return {
           success: false,
-          error: `Constitutional procedure validation failed: ${constitutionalValidation.violations.join(
-            ", ",
-          )}`,
+          error: `Constitutional procedure validation failed: ${
+            constitutionalValidation.violations.join(
+              ", ",
+            )
+          }`,
           complianceScore: constitutionalValidation.score,
           regulatoryValidation: { lgpd: true, anvisa: false, cfm: false },
           auditTrail: await this.createAuditEvent(
@@ -213,8 +215,9 @@ export class ProcedureClassificationService {
       }
 
       // Step 4: Professional qualification validation
-      const professionalValidation =
-        await this.validateProfessionalRequirements(validatedClassification);
+      const professionalValidation = await this.validateProfessionalRequirements(
+        validatedClassification,
+      );
 
       // Step 5: Patient safety assessment
       const safetyAssessment = await this.assessPatientSafety(
@@ -232,21 +235,18 @@ export class ProcedureClassificationService {
       // Step 7: Store procedure classification
       const classifiedProcedure = await this.storeProcedureClassification({
         ...validatedClassification,
-        classificationId:
-          validatedClassification.classificationId || crypto.randomUUID(),
+        classificationId: validatedClassification.classificationId || crypto.randomUUID(),
         constitutionalValidation: {
           patientSafetyValidated: true,
           medicalEthicsCompliant: true,
-          qualityStandardsMet:
-            complianceScore >= this.constitutionalQualityStandard,
+          qualityStandardsMet: complianceScore >= this.constitutionalQualityStandard,
           regulatoryComplianceScore: complianceScore,
           lastValidationDate: new Date(),
-          validatedBy:
-            validatedClassification.constitutionalValidation.validatedBy,
+          validatedBy: validatedClassification.constitutionalValidation.validatedBy,
         },
         nextReviewDate: new Date(
-          Date.now() +
-            this.classificationReviewMonths * 30 * 24 * 60 * 60 * 1000,
+          Date.now()
+            + this.classificationReviewMonths * 30 * 24 * 60 * 60 * 1000,
         ),
       });
 
@@ -281,10 +281,9 @@ export class ProcedureClassificationService {
 
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown procedure classification error",
+        error: error instanceof Error
+          ? error.message
+          : "Unknown procedure classification error",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -312,8 +311,7 @@ export class ProcedureClassificationService {
       }
 
       // Step 2: Perform comprehensive validation
-      const validationResult =
-        await this.performClassificationValidation(classification);
+      const validationResult = await this.performClassificationValidation(classification);
 
       // Step 3: Generate audit trail
       const auditTrail = await this.createAuditEvent(
@@ -346,10 +344,9 @@ export class ProcedureClassificationService {
 
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to validate classification",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to validate classification",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -377,8 +374,8 @@ export class ProcedureClassificationService {
 
     // Patient safety validation
     if (
-      classification.riskLevel === "CRITICAL" &&
-      !classification.requirementsForExecution.supervisionRequired
+      classification.riskLevel === "CRITICAL"
+      && !classification.requirementsForExecution.supervisionRequired
     ) {
       violations.push(
         "Critical risk procedures require supervision (constitutional patient safety)",
@@ -396,8 +393,8 @@ export class ProcedureClassificationService {
 
     // Age protection validation
     if (
-      classification.patientEligibility.minimumAge < 18 &&
-      !classification.patientEligibility.parentalConsentAge
+      classification.patientEligibility.minimumAge < 18
+      && !classification.patientEligibility.parentalConsentAge
     ) {
       violations.push(
         "Parental consent age must be specified for minor procedures",
@@ -407,9 +404,9 @@ export class ProcedureClassificationService {
 
     // High-risk procedure validation
     if (
-      (classification.riskLevel === "HIGH" ||
-        classification.riskLevel === "CRITICAL") &&
-      !classification.requirementsForExecution.preOperativeAssessment
+      (classification.riskLevel === "HIGH"
+        || classification.riskLevel === "CRITICAL")
+      && !classification.requirementsForExecution.preOperativeAssessment
     ) {
       violations.push(
         "Pre-operative assessment required for high-risk procedures",
@@ -419,9 +416,9 @@ export class ProcedureClassificationService {
 
     // Professional qualification validation
     if (
-      classification.riskLevel === "HIGH" &&
-      classification.requirementsForExecution.minimumProfessionalLevel ===
-        "TECHNICIAN"
+      classification.riskLevel === "HIGH"
+      && classification.requirementsForExecution.minimumProfessionalLevel
+        === "TECHNICIAN"
     ) {
       violations.push(
         "High-risk procedures require physician-level professionals",
@@ -453,8 +450,8 @@ export class ProcedureClassificationService {
 
     // Risk level appropriate to invasiveness
     if (
-      classification.invasivenessLevel === "HIGHLY_INVASIVE" &&
-      classification.riskLevel === "LOW"
+      classification.invasivenessLevel === "HIGHLY_INVASIVE"
+      && classification.riskLevel === "LOW"
     ) {
       issues.push(
         "Highly invasive procedures cannot be classified as low risk",
@@ -464,8 +461,8 @@ export class ProcedureClassificationService {
 
     // Anesthesia requirements validation
     if (
-      classification.anesthesiaRequired === "GENERAL" &&
-      classification.riskLevel === "LOW"
+      classification.anesthesiaRequired === "GENERAL"
+      && classification.riskLevel === "LOW"
     ) {
       issues.push(
         "General anesthesia procedures require higher risk classification",
@@ -475,8 +472,8 @@ export class ProcedureClassificationService {
 
     // Specialist requirement validation
     if (
-      classification.riskLevel === "HIGH" &&
-      !classification.specialistRequired
+      classification.riskLevel === "HIGH"
+      && !classification.specialistRequired
     ) {
       issues.push("High-risk procedures require specialist oversight");
       score -= 2;
@@ -484,8 +481,8 @@ export class ProcedureClassificationService {
 
     // Facility requirements for high-risk procedures
     if (
-      classification.riskLevel === "HIGH" &&
-      classification.requirementsForExecution.facilityRequirements.length === 0
+      classification.riskLevel === "HIGH"
+      && classification.requirementsForExecution.facilityRequirements.length === 0
     ) {
       issues.push(
         "High-risk procedures require specific facility requirements",
@@ -505,20 +502,19 @@ export class ProcedureClassificationService {
   // Additional helper methods (implementation stubs)
   private async validateProfessionalRequirements(
     _classification: ProcedureClassification,
-  ): Promise<{ valid: boolean; score: ComplianceScore }> {
+  ): Promise<{ valid: boolean; score: ComplianceScore; }> {
     return { valid: true, score: 9.5 };
   }
 
   private async assessPatientSafety(
     _classification: ProcedureClassification,
-  ): Promise<{ safe: boolean; score: ComplianceScore }> {
+  ): Promise<{ safe: boolean; score: ComplianceScore; }> {
     return { safe: true, score: 9.8 };
   }
 
   private calculateComplianceScore(...validations: unknown[]): ComplianceScore {
     const scores = validations.map((v) => v.score || 9);
-    const average =
-      scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
     return Math.min(10, Math.max(0, average)) as ComplianceScore;
   }
 

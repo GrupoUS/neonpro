@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
 import type {
-  StaffAlert,
   AlertDashboardStats,
   AlertFilters,
   Intervention,
+  StaffAlert,
 } from "@/types/staff-alerts";
-import { StaffMember, EscalationRule } from "@/types/staff-alerts";
+import { EscalationRule, StaffMember } from "@/types/staff-alerts";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseStaffAlertsOptions {
   realTimeUpdates?: boolean;
@@ -151,8 +151,8 @@ export function useStaffAlerts({
           prev.map((alert) =>
             alert.id === alertId
               ? { ...alert, status: "acknowledged", acknowledgedAt: new Date() }
-              : alert,
-          ),
+              : alert
+          )
         );
 
         // Refresh to get updated stats
@@ -185,13 +185,13 @@ export function useStaffAlerts({
           prev.map((alert) =>
             alert.id === alertId
               ? {
-                  ...alert,
-                  status: "assigned",
-                  assignedTo: staffMemberId,
-                  assignedAt: new Date(),
-                }
-              : alert,
-          ),
+                ...alert,
+                status: "assigned",
+                assignedTo: staffMemberId,
+                assignedAt: new Date(),
+              }
+              : alert
+          )
         );
 
         await fetchAlerts();
@@ -221,8 +221,8 @@ export function useStaffAlerts({
           prev.map((alert) =>
             alert.id === alertId
               ? { ...alert, status: "resolved", resolvedAt: new Date() }
-              : alert,
-          ),
+              : alert
+          )
         );
 
         await fetchAlerts();
@@ -251,9 +251,7 @@ export function useStaffAlerts({
 
         // Update local state optimistically
         setAlerts((prev) =>
-          prev.map((alert) =>
-            alert.id === alertId ? { ...alert, status: "dismissed" } : alert,
-          ),
+          prev.map((alert) => alert.id === alertId ? { ...alert, status: "dismissed" } : alert)
         );
 
         await fetchAlerts();
@@ -389,8 +387,8 @@ export function useStaffAlerts({
           const message = JSON.parse(event.data);
 
           if (
-            message.type === "alert_created" ||
-            message.type === "alert_updated"
+            message.type === "alert_created"
+            || message.type === "alert_updated"
           ) {
             fetchAlerts();
           }

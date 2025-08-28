@@ -7,12 +7,8 @@
  */
 
 // Import Notification from local database types (temporary workaround)
+import type { ApiResponse, PaginatedResponse, PaginationParams } from "./api.types";
 import type { Notification } from "./database.types";
-import type {
-  ApiResponse,
-  PaginatedResponse,
-  PaginationParams,
-} from "./api.types";
 
 // Re-export commonly used types for convenience
 export type {
@@ -76,7 +72,7 @@ export * from "./responses.types";
 
 // Utility types for common patterns
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-export type Required<T, K extends keyof T> = T & { [P in K]-?: T[P] };
+export type Required<T, K extends keyof T> = T & { [P in K]-?: T[P]; };
 export type Nullable<T> = T | null;
 export type NonNullable<T> = T extends null | undefined ? never : T;
 
@@ -129,16 +125,17 @@ export const APPOINTMENT_TYPES = [
 
 // Type utilities for form handling
 export type FormData<T> = {
-  [K in keyof T]: T[K] extends string | number | boolean | null | undefined
-    ? T[K]
+  [K in keyof T]: T[K] extends string | number | boolean | null | undefined ? T[K]
     : string;
 };
 
-export type FormErrors<T> = {
-  [K in keyof T]?: string | string[];
-} & {
-  _global?: string[];
-};
+export type FormErrors<T> =
+  & {
+    [K in keyof T]?: string | string[];
+  }
+  & {
+    _global?: string[];
+  };
 
 // API endpoint utilities
 export type EndpointMethod<T> = T extends `${string}:${infer M}` ? M : "GET";
@@ -153,7 +150,7 @@ export interface CrudOperations<
   create: (data: TCreate) => Promise<ApiResponse<T>>;
   read: (id: EntityId) => Promise<ApiResponse<T>>;
   update: (id: EntityId, data: TUpdate) => Promise<ApiResponse<T>>;
-  delete: (id: EntityId) => Promise<ApiResponse<{ id: EntityId }>>;
+  delete: (id: EntityId) => Promise<ApiResponse<{ id: EntityId; }>>;
   list: (params?: PaginationParams) => Promise<PaginatedResponse<T>>;
 }
 
@@ -233,8 +230,7 @@ export interface EnvironmentConfig {
 
 // Type guards
 export const isUUID = (value: string): value is UUID => {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(value);
 };
 

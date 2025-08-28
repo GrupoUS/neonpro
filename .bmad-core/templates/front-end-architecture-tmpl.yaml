@@ -79,14 +79,14 @@ sections:
               "{{framework}}",
               "{{version}}",
               "{{purpose}}",
-              "{{why_chosen}}"
+              "{{why_chosen}}",
             ]
           - [
               "UI Library",
               "{{ui_library}}",
               "{{version}}",
               "{{purpose}}",
-              "{{why_chosen}}"
+              "{{why_chosen}}",
             ]
           - [
               "State Management",
@@ -100,28 +100,28 @@ sections:
               "{{routing_library}}",
               "{{version}}",
               "{{purpose}}",
-              "{{why_chosen}}"
+              "{{why_chosen}}",
             ]
           - [
               "Build Tool",
               "{{build_tool}}",
               "{{version}}",
               "{{purpose}}",
-              "{{why_chosen}}"
+              "{{why_chosen}}",
             ]
           - [
               "Styling",
               "{{styling_solution}}",
               "{{version}}",
               "{{purpose}}",
-              "{{why_chosen}}"
+              "{{why_chosen}}",
             ]
           - [
               "Testing",
               "{{test_framework}}",
               "{{version}}",
               "{{purpose}}",
-              "{{why_chosen}}"
+              "{{why_chosen}}",
             ]
           - [
               "Component Library",
@@ -135,21 +135,21 @@ sections:
               "{{form_library}}",
               "{{version}}",
               "{{purpose}}",
-              "{{why_chosen}}"
+              "{{why_chosen}}",
             ]
           - [
               "Animation",
               "{{animation_lib}}",
               "{{version}}",
               "{{purpose}}",
-              "{{why_chosen}}"
+              "{{why_chosen}}",
             ]
           - [
               "Dev Tools",
               "{{dev_tools}}",
               "{{version}}",
               "{{purpose}}",
-              "{{why_chosen}}"
+              "{{why_chosen}}",
             ]
 
   - id: project-structure

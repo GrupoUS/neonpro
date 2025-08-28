@@ -96,8 +96,8 @@ def calcular_risco_no_show(paciente, consulta, contexto):
 
 ### US-001: Análise Comportamental Automática
 
-**Como** sistema  
-**Quero** analisar o comportamento de cada paciente  
+**Como** sistema\
+**Quero** analisar o comportamento de cada paciente\
 **Para** calcular o risco de no-show em tempo real
 
 **Critérios de Aceitação:**
@@ -109,8 +109,8 @@ def calcular_risco_no_show(paciente, consulta, contexto):
 
 ### US-002: Intervenções Preventivas Automatizadas
 
-**Como** sistema  
-**Quero** executar intervenções baseadas no risco  
+**Como** sistema\
+**Quero** executar intervenções baseadas no risco\
 **Para** reduzir a probabilidade de no-show
 
 **Critérios de Aceitação:**
@@ -122,8 +122,8 @@ def calcular_risco_no_show(paciente, consulta, contexto):
 
 ### US-003: Dashboard de Monitoramento
 
-**Como** gestor da clínica  
-**Quero** acompanhar métricas do engine anti-no-show  
+**Como** gestor da clínica\
+**Quero** acompanhar métricas do engine anti-no-show\
 **Para** validar ROI e otimizar estratégias
 
 **Critérios de Aceitação:**
@@ -135,8 +135,8 @@ def calcular_risco_no_show(paciente, consulta, contexto):
 
 ### US-004: Otimização Contínua
 
-**Como** sistema  
-**Quero** aprender com resultados das intervenções  
+**Como** sistema\
+**Quero** aprender com resultados das intervenções\
 **Para** melhorar continuamente a precisão
 
 **Critérios de Aceitação:**

@@ -1,20 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowRight, Calendar, Clock, AlertTriangle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { APPOINTMENT_SKELETON_INDEXES, DASHBOARD_CONSTANTS } from "./constants";
 import { RiskIndicatorWithTooltip } from "@/components/no-show/risk-indicator";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useEnhancedAppointments } from "@/hooks/use-no-show-prediction";
 import { INTERVENTION_ACTIONS_PT } from "@/types/no-show-prediction";
+import { AlertTriangle, ArrowRight, Calendar, Clock } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { APPOINTMENT_SKELETON_INDEXES, DASHBOARD_CONSTANTS } from "./constants";
 
 interface Appointment {
   id: string;
@@ -79,8 +73,8 @@ export function AppointmentsList({
                 hasRiskData && prediction.riskLevel === "critical"
                   ? "border-red-200 bg-red-50/30"
                   : hasRiskData && prediction.riskLevel === "high"
-                    ? "border-orange-200 bg-orange-50/30"
-                    : ""
+                  ? "border-orange-200 bg-orange-50/30"
+                  : ""
               }`}
               key={appointment.id}
             >
@@ -98,8 +92,7 @@ export function AppointmentsList({
                       tooltipContent={{
                         confidence: prediction.confidence,
                         topFactors: prediction.factors.slice(0, 3),
-                        recommendedActions:
-                          INTERVENTION_ACTIONS_PT[prediction.riskLevel] || [],
+                        recommendedActions: INTERVENTION_ACTIONS_PT[prediction.riskLevel] || [],
                       }}
                     />
                   )}
@@ -108,15 +101,15 @@ export function AppointmentsList({
                 <p className="text-muted-foreground text-xs">
                   {appointment.type || "Consulta"}
                 </p>
-                {hasRiskData &&
-                  prediction.riskLevel in ["high", "critical"] && (
-                    <div className="flex items-center gap-1 mt-1">
-                      <AlertTriangle className="h-3 w-3 text-orange-500" />
-                      <span className="text-xs text-orange-600">
-                        Ação preventiva recomendada
-                      </span>
-                    </div>
-                  )}
+                {hasRiskData
+                  && prediction.riskLevel in ["high", "critical"] && (
+                  <div className="flex items-center gap-1 mt-1">
+                    <AlertTriangle className="h-3 w-3 text-orange-500" />
+                    <span className="text-xs text-orange-600">
+                      Ação preventiva recomendada
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="flex items-center text-muted-foreground text-sm">
                 <Clock className="mr-1 h-3 w-3" />
@@ -154,8 +147,8 @@ export function AppointmentsList({
     );
     const highRiskCount = appointmentsWithRisk.filter(
       (apt) =>
-        apt.riskPrediction &&
-        ["high", "critical"].includes(apt.riskPrediction.riskLevel),
+        apt.riskPrediction
+        && ["high", "critical"].includes(apt.riskPrediction.riskLevel),
     ).length;
 
     return { total: appointmentsWithRisk.length, highRisk: highRiskCount };
@@ -165,9 +158,9 @@ export function AppointmentsList({
 
   const shouldShowViewAllButton = () => {
     return (
-      !appointmentsLoading &&
-      enhancedAppointments.length >
-        DASHBOARD_CONSTANTS.TODAYS_APPOINTMENTS_LIMIT
+      !appointmentsLoading
+      && enhancedAppointments.length
+        > DASHBOARD_CONSTANTS.TODAYS_APPOINTMENTS_LIMIT
     );
   };
 
@@ -192,9 +185,7 @@ export function AppointmentsList({
           {riskStats.total > 0
             ? `Agenda de hoje • ${riskStats.total} com predição de risco`
             : "Agenda de hoje"}
-          {predictionsError && (
-            <span className="text-red-500"> • Erro ao carregar predições</span>
-          )}
+          {predictionsError && <span className="text-red-500">• Erro ao carregar predições</span>}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

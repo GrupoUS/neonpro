@@ -5,12 +5,12 @@
  */
 
 import type {
-  ANVISASubstance,
   ANVISAControlledClass,
-  PrescriptionType,
-  ControlledPrescription,
+  ANVISASubstance,
   AuditTrailEntry,
   ComplianceAPIResponse,
+  ControlledPrescription,
+  PrescriptionType,
   ValidationResponse,
 } from "../../types/compliance";
 
@@ -162,8 +162,7 @@ export class ANVISAControlledSubstancesService {
 
   public static getInstance(): ANVISAControlledSubstancesService {
     if (!ANVISAControlledSubstancesService.instance) {
-      ANVISAControlledSubstancesService.instance =
-        new ANVISAControlledSubstancesService();
+      ANVISAControlledSubstancesService.instance = new ANVISAControlledSubstancesService();
     }
     return ANVISAControlledSubstancesService.instance;
   }
@@ -186,17 +185,15 @@ export class ANVISAControlledSubstancesService {
 
     for (const substance of this.substances.values()) {
       if (
-        substance.substanceName.toLowerCase().includes(searchTerm) ||
-        substance.commercialName.toLowerCase().includes(searchTerm) ||
-        substance.activeIngredient.toLowerCase().includes(searchTerm)
+        substance.substanceName.toLowerCase().includes(searchTerm)
+        || substance.commercialName.toLowerCase().includes(searchTerm)
+        || substance.activeIngredient.toLowerCase().includes(searchTerm)
       ) {
         results.push(substance);
       }
     }
 
-    return results.sort((a, b) =>
-      a.substanceName.localeCompare(b.substanceName),
-    );
+    return results.sort((a, b) => a.substanceName.localeCompare(b.substanceName));
   }
 
   /**
@@ -220,9 +217,7 @@ export class ANVISAControlledSubstancesService {
       }
     }
 
-    return results.sort((a, b) =>
-      a.substanceName.localeCompare(b.substanceName),
-    );
+    return results.sort((a, b) => a.substanceName.localeCompare(b.substanceName));
   }
 
   /**
@@ -314,7 +309,8 @@ export class ANVISAControlledSubstancesService {
         riskLevel: substance.controlledClass.startsWith("A")
           ? "high"
           : "medium",
-        description: `Prescribed ${substance.substanceName} (${substance.controlledClass}) - ${prescriptionData.quantity} units`,
+        description:
+          `Prescribed ${substance.substanceName} (${substance.controlledClass}) - ${prescriptionData.quantity} units`,
       });
 
       return {
@@ -329,8 +325,8 @@ export class ANVISAControlledSubstancesService {
       return {
         isValid: false,
         errors: [
-          "Erro interno ao criar prescrição: " +
-            (error instanceof Error ? error.message : "Erro desconhecido"),
+          "Erro interno ao criar prescrição: "
+          + (error instanceof Error ? error.message : "Erro desconhecido"),
         ],
         warnings: [],
         timestamp: new Date(),
@@ -360,14 +356,14 @@ export class ANVISAControlledSubstancesService {
     }
 
     if (
-      prescription.status !== "prescribed" &&
-      prescription.status !== "partially-dispensed"
+      prescription.status !== "prescribed"
+      && prescription.status !== "partially-dispensed"
     ) {
       return {
         isValid: false,
         errors: [
-          "Prescrição não pode ser dispensada no status atual: " +
-            prescription.status,
+          "Prescrição não pode ser dispensada no status atual: "
+          + prescription.status,
         ],
         warnings: [],
         timestamp: new Date(),
@@ -385,8 +381,7 @@ export class ANVISAControlledSubstancesService {
       };
     }
 
-    const totalDispensed =
-      (prescription.dispensedQuantity || 0) + dispensedQuantity;
+    const totalDispensed = (prescription.dispensedQuantity || 0) + dispensedQuantity;
     if (totalDispensed > prescription.quantity) {
       return {
         isValid: false,
@@ -403,10 +398,9 @@ export class ANVISAControlledSubstancesService {
       dispensedQuantity: totalDispensed,
       dispensedDate: new Date(),
       pharmacyId,
-      status:
-        totalDispensed === prescription.quantity
-          ? "dispensed"
-          : "partially-dispensed",
+      status: totalDispensed === prescription.quantity
+        ? "dispensed"
+        : "partially-dispensed",
     };
 
     this.prescriptions.set(prescriptionId, updatedPrescription);
@@ -484,9 +478,9 @@ export class ANVISAControlledSubstancesService {
 
     for (const prescription of this.prescriptions.values()) {
       if (
-        prescription.validUntil <= cutoffDate &&
-        (prescription.status === "prescribed" ||
-          prescription.status === "partially-dispensed")
+        prescription.validUntil <= cutoffDate
+        && (prescription.status === "prescribed"
+          || prescription.status === "partially-dispensed")
       ) {
         results.push(prescription);
       }
@@ -652,8 +646,7 @@ export class ANVISAControlledSubstancesService {
 }
 
 // Export singleton instance
-export const anvisaControlledSubstancesService =
-  ANVISAControlledSubstancesService.getInstance();
+export const anvisaControlledSubstancesService = ANVISAControlledSubstancesService.getInstance();
 
 // Utility functions
 export const anvisaUtils = {

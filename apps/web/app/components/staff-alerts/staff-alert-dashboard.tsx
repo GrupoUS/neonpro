@@ -1,30 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Alert as AlertUI, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Alert as AlertUI,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -33,35 +12,46 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import {
-  Bell,
-  Search,
-  Filter,
-  Clock,
-  User,
-  Phone,
-  MessageSquare,
-  Calendar,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  ArrowUp,
-  MoreVertical,
-  Smartphone,
-  Desktop,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useStaffAlerts } from "@/hooks/use-staff-alerts";
+import { cn } from "@/lib/utils";
 import type { StaffAlert } from "@/types/staff-alerts";
 import {
-  ALERT_STATUS_LABELS_PT,
-  ALERT_PRIORITY_LABELS_PT,
   ALERT_PRIORITY_COLORS,
+  ALERT_PRIORITY_LABELS_PT,
+  ALERT_STATUS_LABELS_PT,
   DEPARTMENT_LABELS_PT,
   INTERVENTION_TYPE_LABELS_PT,
 } from "@/types/staff-alerts";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import {
+  AlertTriangle,
+  ArrowUp,
+  Bell,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Desktop,
+  Filter,
+  MessageSquare,
+  MoreVertical,
+  Phone,
+  Search,
+  Smartphone,
+  User,
+  XCircle,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface StaffAlertDashboardProps {
   staffMemberId?: string;
@@ -108,10 +98,9 @@ export function StaffAlertDashboard({
 
   // Filter alerts based on search term and tab
   const filteredAlerts = alerts.filter((alert) => {
-    const matchesSearch =
-      searchTerm === "" ||
-      alert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      alert.message.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = searchTerm === ""
+      || alert.title.toLowerCase().includes(searchTerm.toLowerCase())
+      || alert.message.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesTab = activeTab === "all" || alert.status === activeTab;
 
@@ -220,10 +209,10 @@ export function StaffAlertDashboard({
                     alert.priority === "critical"
                       ? "bg-red-100"
                       : alert.priority === "urgent"
-                        ? "bg-orange-100"
-                        : alert.priority === "high"
-                          ? "bg-yellow-100"
-                          : "bg-blue-100",
+                      ? "bg-orange-100"
+                      : alert.priority === "high"
+                      ? "bg-yellow-100"
+                      : "bg-blue-100",
                   )}
                 >
                   {getAlertIcon(alert)}
@@ -259,9 +248,7 @@ export function StaffAlertDashboard({
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() =>
-                            handleQuickAction(alert, "acknowledge")
-                          }
+                          onClick={() => handleQuickAction(alert, "acknowledge")}
                           className="h-6 px-2 text-xs"
                         >
                           Confirmar
@@ -438,10 +425,10 @@ export function StaffAlertDashboard({
                     key={alert.id}
                     className={cn(
                       "p-4 cursor-pointer transition-colors hover:bg-muted/50",
-                      alert.priority === "critical" &&
-                        "border-red-200 bg-red-50/30",
-                      alert.priority === "urgent" &&
-                        "border-orange-200 bg-orange-50/30",
+                      alert.priority === "critical"
+                        && "border-red-200 bg-red-50/30",
+                      alert.priority === "urgent"
+                        && "border-orange-200 bg-orange-50/30",
                     )}
                   >
                     <div className="flex items-start gap-4">
@@ -451,10 +438,10 @@ export function StaffAlertDashboard({
                           alert.priority === "critical"
                             ? "bg-red-100"
                             : alert.priority === "urgent"
-                              ? "bg-orange-100"
-                              : alert.priority === "high"
-                                ? "bg-yellow-100"
-                                : "bg-blue-100",
+                            ? "bg-orange-100"
+                            : alert.priority === "high"
+                            ? "bg-yellow-100"
+                            : "bg-blue-100",
                         )}
                       >
                         {getAlertIcon(alert)}
@@ -490,9 +477,7 @@ export function StaffAlertDashboard({
                             <span>
                               Depto: {DEPARTMENT_LABELS_PT[alert.department]}
                             </span>
-                            {alert.assignedTo && (
-                              <span>Atribuído: {alert.assignedTo}</span>
-                            )}
+                            {alert.assignedTo && <span>Atribuído: {alert.assignedTo}</span>}
                           </div>
 
                           <div className="flex gap-2">
@@ -500,9 +485,7 @@ export function StaffAlertDashboard({
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() =>
-                                  handleQuickAction(alert, "acknowledge")
-                                }
+                                onClick={() => handleQuickAction(alert, "acknowledge")}
                               >
                                 Confirmar
                               </Button>
@@ -511,9 +494,7 @@ export function StaffAlertDashboard({
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() =>
-                                  handleQuickAction(alert, "assign")
-                                }
+                                onClick={() => handleQuickAction(alert, "assign")}
                               >
                                 Atribuir a Mim
                               </Button>
@@ -525,18 +506,14 @@ export function StaffAlertDashboard({
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() =>
-                                    handleQuickAction(alert, "resolve")
-                                  }
+                                  onClick={() => handleQuickAction(alert, "resolve")}
                                 >
                                   Resolver
                                 </Button>
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() =>
-                                    handleQuickAction(alert, "escalate")
-                                  }
+                                  onClick={() => handleQuickAction(alert, "escalate")}
                                 >
                                   Escalar
                                 </Button>

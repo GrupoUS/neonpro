@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { cn } from "@/lib/utils";
-import type { HealthcareContext, SenderType } from "@/types/chat";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import type { HealthcareContext, SenderType } from "@/types/chat";
 import { Bot, Stethoscope, User } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 /**
  * TypingIndicator.tsx
@@ -116,22 +116,20 @@ export function TypingIndicator({
                 <AvatarFallback
                   className={cn(
                     "text-xs font-medium",
-                    user.type === "healthcare_professional" &&
-                      "bg-blue-100 text-blue-700 dark:bg-blue-900/50",
-                    user.type === "ai_assistant" &&
-                      "bg-purple-100 text-purple-700 dark:bg-purple-900/50",
-                    user.type === "patient" &&
-                      "bg-green-100 text-green-700 dark:bg-green-900/50",
+                    user.type === "healthcare_professional"
+                      && "bg-blue-100 text-blue-700 dark:bg-blue-900/50",
+                    user.type === "ai_assistant"
+                      && "bg-purple-100 text-purple-700 dark:bg-purple-900/50",
+                    user.type === "patient"
+                      && "bg-green-100 text-green-700 dark:bg-green-900/50",
                     isEmergency && "bg-red-100 text-red-700 dark:bg-red-900/50",
                   )}
                 >
-                  {user.type === "ai_assistant" ? (
-                    <Bot className="w-4 h-4" />
-                  ) : user.type === "healthcare_professional" ? (
-                    <Stethoscope className="w-4 h-4" />
-                  ) : (
-                    <User className="w-4 h-4" />
-                  )}
+                  {user.type === "ai_assistant"
+                    ? <Bot className="w-4 h-4" />
+                    : user.type === "healthcare_professional"
+                    ? <Stethoscope className="w-4 h-4" />
+                    : <User className="w-4 h-4" />}
                 </AvatarFallback>
               </Avatar>
 
@@ -144,8 +142,8 @@ export function TypingIndicator({
                   {user.healthcare_context.professional_info.cfm_number
                     ? `CFM ${user.healthcare_context.professional_info.cfm_number}`
                     : user.healthcare_context.professional_info.specialty
-                        ?.slice(0, 3)
-                        .toUpperCase()}
+                      ?.slice(0, 3)
+                      .toUpperCase()}
                 </Badge>
               )}
 
@@ -210,10 +208,10 @@ export function TypingIndicator({
                   {healthcareContext.consultation_type === "emergency"
                     ? "Emergência"
                     : healthcareContext.consultation_type === "consultation"
-                      ? "Consulta"
-                      : healthcareContext.consultation_type === "followup"
-                        ? "Acompanhamento"
-                        : "Teleconsulta"}
+                    ? "Consulta"
+                    : healthcareContext.consultation_type === "followup"
+                    ? "Acompanhamento"
+                    : "Teleconsulta"}
                 </Badge>
               )}
 
@@ -309,12 +307,11 @@ function getAccessibilityLabel(
 
   if (users.length === 1) {
     const user = users[0];
-    const role =
-      user.type === "healthcare_professional"
-        ? "profissional de saúde"
-        : user.type === "ai_assistant"
-          ? "assistente de IA"
-          : "paciente";
+    const role = user.type === "healthcare_professional"
+      ? "profissional de saúde"
+      : user.type === "ai_assistant"
+      ? "assistente de IA"
+      : "paciente";
 
     return `${emergencyPrefix}${user.name}, ${role}, está digitando uma mensagem`;
   }
@@ -332,9 +329,7 @@ export function useTypingIndicator() {
     setTypingUsers((prev) => {
       const exists = prev.find((u) => u.id === user.id);
       if (exists) {
-        return prev.map((u) =>
-          u.id === user.id ? { ...user, started_at: new Date() } : u,
-        );
+        return prev.map((u) => u.id === user.id ? { ...user, started_at: new Date() } : u);
       }
       return [...prev, { ...user, started_at: new Date() }];
     });

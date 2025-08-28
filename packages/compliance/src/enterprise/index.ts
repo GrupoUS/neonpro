@@ -83,22 +83,13 @@ import type {
   createHealthcareIntelligenceService,
   createPrivacyPreservingAnalyticsService,
 } from "./analytics";
-import {
-  createEnterpriseAuditServices,
-  validateEnterpriseAuditCompliance,
-} from "./audit";
+import { createEnterpriseAuditServices, validateEnterpriseAuditCompliance } from "./audit";
 import {
   createMultiClinicManagementService,
   validateMultiClinicManagement,
 } from "./management/multi-clinic-management";
-import {
-  createEnterpriseSecurityServices,
-  validateEnterpriseSecurityCompliance,
-} from "./security";
-import type {
-  createApiRateLimitingService,
-  createHealthcareRbacService,
-} from "./security";
+import { createEnterpriseSecurityServices, validateEnterpriseSecurityCompliance } from "./security";
+import type { createApiRateLimitingService, createHealthcareRbacService } from "./security";
 
 // Enterprise Security Module
 export {
@@ -233,8 +224,7 @@ export async function validateEnterpriseHealthcareCompliance(
 
   // Validate Enterprise Management compliance
   try {
-    const managementValidation =
-      await validateMultiClinicManagement(managementConfig);
+    const managementValidation = await validateMultiClinicManagement(managementConfig);
     if (!managementValidation.valid) {
       violations.push(
         ...managementValidation.violations.map(
@@ -268,8 +258,7 @@ export async function validateEnterpriseHealthcareCompliance(
   }
 
   // Calculate overall compliance score
-  const averageScore =
-    Object.values(moduleScores).reduce((sum, score) => sum + score, 0) / 4;
+  const averageScore = Object.values(moduleScores).reduce((sum, score) => sum + score, 0) / 4;
 
   return {
     valid: violations.length === 0 && averageScore >= 9.9,
@@ -298,8 +287,7 @@ export const ENTERPRISE_HEALTHCARE_MODULE = {
     audit: {
       name: "Enterprise Audit",
       services: 3,
-      description:
-        "Real-time compliance monitoring, scoring, and audit trail generation",
+      description: "Real-time compliance monitoring, scoring, and audit trail generation",
       constitutional_features: [
         "Real-time constitutional compliance monitoring",
         "Automated compliance scoring with ≥9.9/10 standards",
@@ -320,8 +308,7 @@ export const ENTERPRISE_HEALTHCARE_MODULE = {
     management: {
       name: "Enterprise Management",
       services: 1,
-      description:
-        "Multi-clinic and multi-tenant management with regulatory compliance",
+      description: "Multi-clinic and multi-tenant management with regulatory compliance",
       constitutional_features: [
         "Constitutional healthcare multi-clinic management",
         "Tenant isolation with LGPD compliance",
@@ -331,8 +318,7 @@ export const ENTERPRISE_HEALTHCARE_MODULE = {
     security: {
       name: "Enterprise Security",
       services: 2,
-      description:
-        "Healthcare RBAC and API rate limiting with constitutional protection",
+      description: "Healthcare RBAC and API rate limiting with constitutional protection",
       constitutional_features: [
         "Constitutional healthcare access control with CFM validation",
         "API protection with healthcare priority routing",

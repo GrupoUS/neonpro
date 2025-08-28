@@ -35,8 +35,7 @@ function generateMockStats(timeRange: string): DashboardStats {
     },
   };
 
-  const stats =
-    baseStats[timeRange as keyof typeof baseStats] || baseStats["24h"];
+  const stats = baseStats[timeRange as keyof typeof baseStats] || baseStats["24h"];
 
   return {
     ...stats,

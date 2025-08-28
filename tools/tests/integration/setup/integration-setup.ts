@@ -3,9 +3,9 @@
  * Configures mocks, utilities, and environment for integration tests
  */
 
-import { vi, beforeEach, afterEach, beforeAll, afterAll } from "vitest";
 import { createClient } from "@supabase/supabase-js";
 import { cleanup } from "@testing-library/react";
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 
 // Global test utilities
 declare global {
@@ -221,13 +221,11 @@ vi.mock("next/navigation", () => ({
 
 // Mock environment variables
 process.env.NODE_ENV = "test";
-process.env.NEXT_PUBLIC_SUPABASE_URL =
-  process.env.TEST_SUPABASE_URL || "http://localhost:54321";
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY =
-  process.env.TEST_SUPABASE_ANON_KEY || "test-key";
+process.env.NEXT_PUBLIC_SUPABASE_URL = process.env.TEST_SUPABASE_URL || "http://localhost:54321";
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = process.env.TEST_SUPABASE_ANON_KEY || "test-key";
 
 // Export utilities for use in tests
-export { resetDatabase, createTestUser, createTestPatient, waitForAsync };
+export { createTestPatient, createTestUser, resetDatabase, waitForAsync };
 
 // Export test data factories
 export const testDataFactories = {

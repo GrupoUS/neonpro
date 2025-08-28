@@ -1,13 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -45,10 +39,9 @@ export default function PatientsPage() {
   const { patients, loading, error, refreshPatients } = usePatients();
 
   const filteredPatients = patients.filter((patient) => {
-    const matchesSearch =
-      patient.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      patient.email.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      patient.phone?.includes(filters.searchTerm);
+    const matchesSearch = patient.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
+      || patient.email.toLowerCase().includes(filters.searchTerm.toLowerCase())
+      || patient.phone?.includes(filters.searchTerm);
 
     return matchesSearch;
   });
@@ -127,8 +120,7 @@ export default function PatientsPage() {
                     setFilters((prev) => ({
                       ...prev,
                       searchTerm: e.target.value,
-                    }))
-                  }
+                    }))}
                   placeholder="Buscar por nome, email ou telefone..."
                   value={filters.searchTerm}
                 />
@@ -263,8 +255,8 @@ export default function PatientsPage() {
                         {patient.gender === "M"
                           ? "Masculino"
                           : patient.gender === "F"
-                            ? "Feminino"
-                            : "Outro"}
+                          ? "Feminino"
+                          : "Outro"}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">

@@ -6,25 +6,25 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import type {
   ChatConversation,
   ChatMessage,
+  HealthcareContext,
+  MessageType,
   PresenceStatus,
   SenderType,
-  MessageType,
-  HealthcareContext,
 } from "@/types/chat";
 import { ConversationType } from "@/types/chat";
-import MessageBubble from "./MessageBubble";
-import ChatInput from "./ChatInput";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ChatHeader from "./ChatHeader";
+import ChatInput from "./ChatInput";
 import ChatSidebar from "./ChatSidebar";
+import MessageBubble from "./MessageBubble";
 import TypingIndicator from "./TypingIndicator";
 
 // Icons (would be imported from lucide-react or similar)
-const MessageCircleIcon = ({ className }: { className?: string }) => (
+const MessageCircleIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -40,7 +40,7 @@ const MessageCircleIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const StethoscopeIcon = ({ className }: { className?: string }) => (
+const StethoscopeIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -114,8 +114,7 @@ export default function ChatInterface({
       background: "bg-white dark:bg-gray-900",
       border: "border-gray-200 dark:border-gray-700",
       text: "text-gray-900 dark:text-gray-100",
-      healthcare:
-        "bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800",
+      healthcare: "bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800",
       ai: "bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800",
       emergency: "bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800",
     },
@@ -123,11 +122,9 @@ export default function ChatInterface({
       background: "bg-gray-900 dark:bg-gray-950",
       border: "border-gray-700 dark:border-gray-600",
       text: "text-gray-100 dark:text-gray-50",
-      healthcare:
-        "bg-green-950 dark:bg-green-900 border-green-800 dark:border-green-700",
+      healthcare: "bg-green-950 dark:bg-green-900 border-green-800 dark:border-green-700",
       ai: "bg-blue-950 dark:bg-blue-900 border-blue-800 dark:border-blue-700",
-      emergency:
-        "bg-red-950 dark:bg-red-900 border-red-800 dark:border-red-700",
+      emergency: "bg-red-950 dark:bg-red-900 border-red-800 dark:border-red-700",
     },
   };
 
@@ -245,7 +242,8 @@ export default function ChatInterface({
             sender_type: "ai_assistant",
             message_type: "text",
             content: {
-              text: "Olá! Sou o assistente IA da NeonPro. Como posso ajudá-lo hoje com suas questões de saúde e estética?",
+              text:
+                "Olá! Sou o assistente IA da NeonPro. Como posso ajudá-lo hoje com suas questões de saúde e estética?",
               ai_response: {
                 ai_model: "neonpro-assistant",
                 confidence_score: 0.95,
@@ -258,10 +256,8 @@ export default function ChatInterface({
                     {
                       consideration_type: "language",
                       description: "Comunicação em português brasileiro",
-                      impact_on_treatment:
-                        "Melhor compreensão e adesão ao tratamento",
-                      recommended_approach:
-                        "Usar terminologia médica acessível",
+                      impact_on_treatment: "Melhor compreensão e adesão ao tratamento",
+                      recommended_approach: "Usar terminologia médica acessível",
                     },
                   ],
                 },
@@ -371,7 +367,7 @@ export default function ChatInterface({
             ...prev.messages,
             [state.activeConversation!.id]:
               prev.messages[state.activeConversation!.id]?.map((msg) =>
-                msg.id === newMessage.id ? { ...msg, status: "sent" } : msg,
+                msg.id === newMessage.id ? { ...msg, status: "sent" } : msg
               ) || [],
           },
         }));
@@ -386,7 +382,8 @@ export default function ChatInterface({
               sender_type: "ai_assistant",
               message_type: "text",
               content: {
-                text: "Entendi sua mensagem. Com base no que você descreveu, posso fornecer algumas informações gerais. Para um diagnóstico preciso, recomendo uma consulta com um profissional médico. Gostaria que eu agende uma consulta para você?",
+                text:
+                  "Entendi sua mensagem. Com base no que você descreveu, posso fornecer algumas informações gerais. Para um diagnóstico preciso, recomendo uma consulta com um profissional médico. Gostaria que eu agende uma consulta para você?",
                 ai_response: {
                   ai_model: "neonpro-assistant",
                   confidence_score: 0.87,
@@ -396,12 +393,10 @@ export default function ChatInterface({
                     {
                       action_type: "schedule_appointment",
                       priority: "medium",
-                      description:
-                        "Agendar consulta médica para avaliação presencial",
+                      description: "Agendar consulta médica para avaliação presencial",
                       parameters: {
-                        specialty:
-                          healthcareContext?.medical_specialty ||
-                          "clinica_medica",
+                        specialty: healthcareContext?.medical_specialty
+                          || "clinica_medica",
                         urgency: "routine",
                       },
                     },
@@ -441,7 +436,7 @@ export default function ChatInterface({
             ...prev.messages,
             [state.activeConversation!.id]:
               prev.messages[state.activeConversation!.id]?.map((msg) =>
-                msg.id === newMessage.id ? { ...msg, status: "failed" } : msg,
+                msg.id === newMessage.id ? { ...msg, status: "failed" } : msg
               ) || [],
           },
         }));
@@ -535,108 +530,106 @@ export default function ChatInterface({
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {state.activeConversation ? (
-          <>
-            {/* Chat Header */}
-            <ChatHeader
-              conversation={state.activeConversation}
-              presenceStatus={state.presenceStatus}
-              onToggleSidebar={toggleSidebar}
-              sidebarCollapsed={state.sidebarCollapsed}
-              emergencyMode={emergencyMode}
-              className={cn("border-b", currentTheme.border)}
-            />
+        {state.activeConversation
+          ? (
+            <>
+              {/* Chat Header */}
+              <ChatHeader
+                conversation={state.activeConversation}
+                presenceStatus={state.presenceStatus}
+                onToggleSidebar={toggleSidebar}
+                sidebarCollapsed={state.sidebarCollapsed}
+                emergencyMode={emergencyMode}
+                className={cn("border-b", currentTheme.border)}
+              />
 
-            {/* Messages Area */}
-            <div
-              ref={messagesContainerRef}
-              className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth"
-            >
-              {currentMessages.map((message) => (
-                <MessageBubble
-                  key={message.id}
-                  message={message}
-                  currentUserId={currentUserId}
-                  showAvatar
-                  showTimestamp
-                  emergencyMode={emergencyMode}
-                  className="animate-in slide-in-from-bottom-2 duration-300"
-                />
-              ))}
+              {/* Messages Area */}
+              <div
+                ref={messagesContainerRef}
+                className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth"
+              >
+                {currentMessages.map((message) => (
+                  <MessageBubble
+                    key={message.id}
+                    message={message}
+                    currentUserId={currentUserId}
+                    showAvatar
+                    showTimestamp
+                    emergencyMode={emergencyMode}
+                    className="animate-in slide-in-from-bottom-2 duration-300"
+                  />
+                ))}
 
-              {/* Typing Indicator */}
-              {state.typingUsers.length > 0 && (
-                <TypingIndicator
-                  typingUsers={state.typingUsers}
-                  conversation={state.activeConversation}
-                />
-              )}
+                {/* Typing Indicator */}
+                {state.typingUsers.length > 0 && (
+                  <TypingIndicator
+                    typingUsers={state.typingUsers}
+                    conversation={state.activeConversation}
+                  />
+                )}
 
-              <div ref={messagesEndRef} />
-            </div>
+                <div ref={messagesEndRef} />
+              </div>
 
-            {/* Chat Input */}
-            <ChatInput
-              onSendMessage={handleMessageSend}
-              disabled={false}
-              placeholder={
-                aiEnabled
+              {/* Chat Input */}
+              <ChatInput
+                onSendMessage={handleMessageSend}
+                disabled={false}
+                placeholder={aiEnabled
                   ? "Digite sua mensagem... O assistente IA está pronto para ajudar!"
-                  : "Digite sua mensagem..."
-              }
-              healthcareContext={healthcareContext}
-              emergencyMode={emergencyMode}
-              className={cn("border-t", currentTheme.border)}
-            />
-          </>
-        ) : (
-          /* No Conversation Selected */
-          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-            <div
-              className={cn(
-                "p-6 rounded-full mb-6",
-                aiEnabled ? currentTheme.ai : currentTheme.healthcare,
-              )}
-            >
-              {aiEnabled ? (
-                <MessageCircleIcon className="w-12 h-12 text-blue-600" />
-              ) : (
-                <StethoscopeIcon className="w-12 h-12 text-green-600" />
-              )}
-            </div>
-
-            <h3 className={cn("text-xl font-semibold mb-2", currentTheme.text)}>
-              {aiEnabled ? "Assistente IA NeonPro" : "Chat NeonPro"}
-            </h3>
-
-            <p
-              className={cn(
-                "text-gray-600 dark:text-gray-400 mb-6 max-w-md",
-                currentTheme.text,
-              )}
-            >
-              {aiEnabled
-                ? "Converse com nosso assistente IA especializado em saúde e estética. Tire dúvidas, agende consultas e receba orientações personalizadas."
-                : "Selecione uma conversa para começar a trocar mensagens com profissionais de saúde."}
-            </p>
-
-            {aiEnabled && (
+                  : "Digite sua mensagem..."}
+                healthcareContext={healthcareContext}
+                emergencyMode={emergencyMode}
+                className={cn("border-t", currentTheme.border)}
+              />
+            </>
+          )
+          : (
+            /* No Conversation Selected */
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
               <div
                 className={cn(
-                  "p-4 rounded-lg border-2 border-dashed",
-                  currentTheme.ai,
-                  "border-blue-300 dark:border-blue-700",
+                  "p-6 rounded-full mb-6",
+                  aiEnabled ? currentTheme.ai : currentTheme.healthcare,
                 )}
               >
-                <p className="text-sm text-blue-800 dark:text-blue-200">
-                  💡 <strong>Dica:</strong> O assistente pode ajudar com
-                  informações gerais sobre saúde, mas sempre procure um
-                  profissional médico para diagnósticos específicos.
-                </p>
+                {aiEnabled
+                  ? <MessageCircleIcon className="w-12 h-12 text-blue-600" />
+                  : <StethoscopeIcon className="w-12 h-12 text-green-600" />}
               </div>
-            )}
-          </div>
-        )}
+
+              <h3 className={cn("text-xl font-semibold mb-2", currentTheme.text)}>
+                {aiEnabled ? "Assistente IA NeonPro" : "Chat NeonPro"}
+              </h3>
+
+              <p
+                className={cn(
+                  "text-gray-600 dark:text-gray-400 mb-6 max-w-md",
+                  currentTheme.text,
+                )}
+              >
+                {aiEnabled
+                  ? "Converse com nosso assistente IA especializado em saúde e estética. Tire dúvidas, agende consultas e receba orientações personalizadas."
+                  : "Selecione uma conversa para começar a trocar mensagens com profissionais de saúde."}
+              </p>
+
+              {aiEnabled && (
+                <div
+                  className={cn(
+                    "p-4 rounded-lg border-2 border-dashed",
+                    currentTheme.ai,
+                    "border-blue-300 dark:border-blue-700",
+                  )}
+                >
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    💡 <strong>Dica:</strong>{" "}
+                    O assistente pode ajudar com informações gerais sobre saúde, mas sempre procure
+                    um profissional médico para diagnósticos específicos.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
       </div>
     </div>
   );

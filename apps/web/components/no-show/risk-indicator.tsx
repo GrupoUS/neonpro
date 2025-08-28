@@ -1,15 +1,10 @@
 "use client";
 
-import React from "react";
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { AlertTriangle, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { AlertTriangle, CheckCircle, Clock, XCircle } from "lucide-react";
+import React from "react";
 
 export interface RiskLevel {
   level: "low" | "medium" | "high" | "critical";
@@ -85,8 +80,7 @@ export function RiskIndicator({
         <TooltipContent className="max-w-sm p-4">
           <div className="space-y-2">
             <div className="font-semibold text-sm">
-              {config.label} - {risk.score.toFixed(1)}% de chance de não
-              comparecimento
+              {config.label} - {risk.score.toFixed(1)}% de chance de não comparecimento
             </div>
 
             {risk.factors.length > 0 && (
@@ -197,8 +191,8 @@ export function useRiskCalculation() {
 
       // Horário da consulta
       if (
-        factors.timeOfDay === "early_morning" ||
-        factors.timeOfDay === "late_afternoon"
+        factors.timeOfDay === "early_morning"
+        || factors.timeOfDay === "late_afternoon"
       ) {
         score += 8;
         riskFactors.push("Horário com maior índice de faltas");

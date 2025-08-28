@@ -51,10 +51,9 @@ export function createRiskAssessmentService(
       .mockImplementation(async (riskData: unknown) => {
         return {
           treatmentId: `treatment-${Math.random().toString(36).slice(2, 9)}`,
-          predictedOutcome:
-            riskData.riskLevel === "high"
-              ? "requires monitoring"
-              : "standard care",
+          predictedOutcome: riskData.riskLevel === "high"
+            ? "requires monitoring"
+            : "standard care",
           confidence: 0.85,
           timeline: "2-4 weeks",
         };
@@ -74,8 +73,7 @@ export function createRiskAssessmentService(
     processVitalSigns: vi
       .fn()
       .mockImplementation(async (vitalSigns: unknown) => {
-        const isStable =
-          vitalSigns.heartRate >= 60 && vitalSigns.heartRate <= 100;
+        const isStable = vitalSigns.heartRate >= 60 && vitalSigns.heartRate <= 100;
         return {
           processedAt: new Date().toISOString(),
           status: isStable ? "stable" : "requires_attention",
@@ -144,8 +142,7 @@ export function createRiskAssessmentService(
 
           // Comprehensive risk assessment execution
           const riskAssessment = await service.assessPatientRisk(patientData);
-          const treatmentPrediction =
-            await service.createTreatmentPrediction(riskAssessment);
+          const treatmentPrediction = await service.createTreatmentPrediction(riskAssessment);
 
           // Performance and compliance checks
           const performanceResult = await service.checkPerformanceCompliance();

@@ -13,7 +13,7 @@ export type { ComplianceReport } from "./compliance";
 
 // Re-export performance optimization utilities
 export {
-  brazilianConnectivityOptimizer,
   brazilianBundleAnalyzer,
+  brazilianConnectivityOptimizer,
   brazilianInfrastructureMonitoring,
 } from "./performance";

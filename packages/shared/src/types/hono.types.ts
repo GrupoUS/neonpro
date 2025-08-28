@@ -25,7 +25,7 @@ export type NeonProHandler<T = unknown> = (
 
 // Validated route handler with Zod
 export type ValidatedHandler<TInput = unknown, TOutput = unknown> = (
-  c: NeonProContext & { req: { valid: (target: string) => TInput } },
+  c: NeonProContext & { req: { valid: (target: string) => TInput; }; },
 ) => Promise<ApiResponse<TOutput>> | ApiResponse<TOutput>;
 
 // Route configuration for type inference
@@ -59,82 +59,80 @@ export interface RouteConfig<TInput = unknown, TOutput = unknown> {
 }
 
 // Hono App Type inference helpers
-export type ExtractRouteInput<T> =
-  T extends RouteConfig<infer I, any> ? I : never;
-export type ExtractRouteOutput<T> =
-  T extends RouteConfig<any, infer O> ? O : never;
+export type ExtractRouteInput<T> = T extends RouteConfig<infer I, any> ? I : never;
+export type ExtractRouteOutput<T> = T extends RouteConfig<any, infer O> ? O : never;
 
 // RPC Client types for frontend
 export interface RpcClient {
   // Auth endpoints
   auth: {
     login: {
-      $post: (data: { json: LoginRequest }) => Promise<Response>;
+      $post: (data: { json: LoginRequest; }) => Promise<Response>;
     };
     register: {
-      $post: (data: { json: RegisterRequest }) => Promise<Response>;
+      $post: (data: { json: RegisterRequest; }) => Promise<Response>;
     };
     logout: {
       $post: () => Promise<Response>;
     };
     refresh: {
-      $post: (data: { json: RefreshTokenRequest }) => Promise<Response>;
+      $post: (data: { json: RefreshTokenRequest; }) => Promise<Response>;
     };
     profile: {
       $get: () => Promise<Response>;
-      $put: (data: { json: UpdateProfileRequest }) => Promise<Response>;
+      $put: (data: { json: UpdateProfileRequest; }) => Promise<Response>;
     };
   };
 
   // Patient endpoints
   patients: {
-    $get: (params?: { query?: PatientsQuery }) => Promise<Response>;
-    $post: (data: { json: CreatePatientRequest }) => Promise<Response>;
+    $get: (params?: { query?: PatientsQuery; }) => Promise<Response>;
+    $post: (data: { json: CreatePatientRequest; }) => Promise<Response>;
   } & {
     [key: `${string}`]: {
       $get: () => Promise<Response>;
-      $put: (data: { json: UpdatePatientRequest }) => Promise<Response>;
+      $put: (data: { json: UpdatePatientRequest; }) => Promise<Response>;
       $delete: () => Promise<Response>;
     };
   };
 
   // Appointment endpoints
   appointments: {
-    $get: (params?: { query?: AppointmentsQuery }) => Promise<Response>;
-    $post: (data: { json: CreateAppointmentRequest }) => Promise<Response>;
+    $get: (params?: { query?: AppointmentsQuery; }) => Promise<Response>;
+    $post: (data: { json: CreateAppointmentRequest; }) => Promise<Response>;
     availability: {
-      $get: (params?: { query?: AvailabilityQuery }) => Promise<Response>;
+      $get: (params?: { query?: AvailabilityQuery; }) => Promise<Response>;
     };
   } & {
     [key: `${string}`]: {
       $get: () => Promise<Response>;
-      $put: (data: { json: UpdateAppointmentRequest }) => Promise<Response>;
+      $put: (data: { json: UpdateAppointmentRequest; }) => Promise<Response>;
       $delete: () => Promise<Response>;
     };
   };
 
   // Professional endpoints
   professionals: {
-    $get: (params?: { query?: ProfessionalsQuery }) => Promise<Response>;
-    $post: (data: { json: CreateProfessionalRequest }) => Promise<Response>;
+    $get: (params?: { query?: ProfessionalsQuery; }) => Promise<Response>;
+    $post: (data: { json: CreateProfessionalRequest; }) => Promise<Response>;
   } & {
     [key: `${string}`]: {
       $get: () => Promise<Response>;
-      $put: (data: { json: UpdateProfessionalRequest }) => Promise<Response>;
+      $put: (data: { json: UpdateProfessionalRequest; }) => Promise<Response>;
       $delete: () => Promise<Response>;
       stats: {
         $get: () => Promise<Response>;
       };
       availability: {
-        $get: (params?: { query?: { date: string } }) => Promise<Response>;
+        $get: (params?: { query?: { date: string; }; }) => Promise<Response>;
       };
     };
   };
 
   // Service endpoints
   services: {
-    $get: (params?: { query?: ServicesQuery }) => Promise<Response>;
-    $post: (data: { json: CreateServiceRequest }) => Promise<Response>;
+    $get: (params?: { query?: ServicesQuery; }) => Promise<Response>;
+    $post: (data: { json: CreateServiceRequest; }) => Promise<Response>;
     category: {
       [key: `${string}`]: {
         $get: () => Promise<Response>;
@@ -143,7 +141,7 @@ export interface RpcClient {
   } & {
     [key: `${string}`]: {
       $get: () => Promise<Response>;
-      $put: (data: { json: UpdateServiceRequest }) => Promise<Response>;
+      $put: (data: { json: UpdateServiceRequest; }) => Promise<Response>;
       $delete: () => Promise<Response>;
       compliance: {
         $get: () => Promise<Response>;
@@ -154,13 +152,13 @@ export interface RpcClient {
   // Analytics endpoints
   analytics: {
     dashboard: {
-      $get: (params?: { query?: AnalyticsQuery }) => Promise<Response>;
+      $get: (params?: { query?: AnalyticsQuery; }) => Promise<Response>;
     };
     revenue: {
-      $get: (params?: { query?: RevenueQuery }) => Promise<Response>;
+      $get: (params?: { query?: RevenueQuery; }) => Promise<Response>;
     };
     appointments: {
-      $get: (params?: { query?: AnalyticsQuery }) => Promise<Response>;
+      $get: (params?: { query?: AnalyticsQuery; }) => Promise<Response>;
     };
     patients: {
       $get: () => Promise<Response>;
@@ -169,7 +167,7 @@ export interface RpcClient {
       $get: () => Promise<Response>;
     };
     reports: {
-      $post: (data: { json: CustomReportRequest }) => Promise<Response>;
+      $post: (data: { json: CustomReportRequest; }) => Promise<Response>;
     };
   };
 
@@ -181,10 +179,10 @@ export interface RpcClient {
       };
       requests: {
         $get: () => Promise<Response>;
-        $post: (data: { json: LGPDRequestData }) => Promise<Response>;
+        $post: (data: { json: LGPDRequestData; }) => Promise<Response>;
       };
       consent: {
-        $put: (data: { json: ConsentUpdateData }) => Promise<Response>;
+        $put: (data: { json: ConsentUpdateData; }) => Promise<Response>;
       };
     };
     anvisa: {
@@ -192,12 +190,12 @@ export interface RpcClient {
         $get: () => Promise<Response>;
       };
       reports: {
-        $post: (data: { json: AnvisaReportData }) => Promise<Response>;
+        $post: (data: { json: AnvisaReportData; }) => Promise<Response>;
       };
     };
     audit: {
       logs: {
-        $get: (params?: { query?: AuditLogsQuery }) => Promise<Response>;
+        $get: (params?: { query?: AuditLogsQuery; }) => Promise<Response>;
       };
     };
     export: {
@@ -448,18 +446,14 @@ export interface AuditLogsQuery {
 
 // Type utilities for Hono RPC
 export type InferRequestType<T> = T extends {
-  $post: (data: { json: infer R }) => any;
-}
-  ? R
-  : T extends { $put: (data: { json: infer R }) => any }
-    ? R
-    : never;
+  $post: (data: { json: infer R; }) => any;
+} ? R
+  : T extends { $put: (data: { json: infer R; }) => any; } ? R
+  : never;
 
-export type InferResponseType<T> = T extends { $get: () => Promise<infer R> }
-  ? R
-  : T extends { $post: (data: unknown) => Promise<infer R> }
-    ? R
-    : never;
+export type InferResponseType<T> = T extends { $get: () => Promise<infer R>; } ? R
+  : T extends { $post: (data: unknown) => Promise<infer R>; } ? R
+  : never;
 
 // RPC Error types
 export interface RpcError {
@@ -474,10 +468,10 @@ export interface RpcError {
 // Type guard for RPC responses
 export const isRpcError = (response: unknown): response is RpcError => {
   return (
-    typeof response === "object" &&
-    response !== null &&
-    "success" in response &&
-    (response as { success: boolean }).success === false
+    typeof response === "object"
+    && response !== null
+    && "success" in response
+    && (response as { success: boolean; }).success === false
   );
 };
 

@@ -192,8 +192,7 @@ export class HealthcareRBAC {
     {
       id: "receptionist",
       name: "Receptionist",
-      description:
-        "Front desk staff managing appointments and basic patient info",
+      description: "Front desk staff managing appointments and basic patient info",
       hierarchy_level: 2,
       permissions: [
         "patient:read",

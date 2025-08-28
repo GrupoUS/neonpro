@@ -461,8 +461,7 @@ export interface WarningAlert extends Omit<CriticalAlert, "severity"> {
   expiresAt?: Date;
 }
 
-export interface ComplianceAlert
-  extends Omit<CriticalAlert, "type" | "severity"> {
+export interface ComplianceAlert extends Omit<CriticalAlert, "type" | "severity"> {
   type: "compliance";
   severity: "warning" | "error";
   regulatoryBody: "CFM" | "ANVISA" | "ANS" | "LGPD";

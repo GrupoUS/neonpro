@@ -1,21 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Activity,
-  AlertTriangle,
-  Calendar,
-  Plus,
-  TrendingUp,
-  Users,
-} from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Activity, AlertTriangle, Calendar, Plus, TrendingUp, Users } from "lucide-react";
 import Link from "next/link";
 
 const stats = [

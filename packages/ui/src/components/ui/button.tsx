@@ -19,9 +19,9 @@ const buttonVariants = cva(
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground active:bg-accent/80",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 active:bg-secondary/90",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground active:bg-accent/80",
-        link: "text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 focus-visible:ring-0",
+        ghost: "hover:bg-accent hover:text-accent-foreground active:bg-accent/80",
+        link:
+          "text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 focus-visible:ring-0",
 
         // NEONPROV1 Healthcare-specific variants
         medical:
@@ -32,7 +32,8 @@ const buttonVariants = cva(
           "bg-gradient-to-br from-success via-success/80 to-success text-success-foreground shadow-healthcare-md transition-all duration-300 hover:shadow-healthcare-lg focus-visible:ring-success/30 active:scale-[0.98]",
         warning:
           "bg-gradient-to-br from-warning via-warning/80 to-warning text-warning-foreground shadow-healthcare-md transition-all duration-300 hover:shadow-healthcare-lg focus-visible:ring-warning/30 active:scale-[0.98]",
-        info: "bg-gradient-to-br from-accent via-accent/80 to-accent text-accent-foreground shadow-healthcare-md transition-all duration-300 hover:shadow-healthcare-lg focus-visible:ring-accent/30 active:scale-[0.98]",
+        info:
+          "bg-gradient-to-br from-accent via-accent/80 to-accent text-accent-foreground shadow-healthcare-md transition-all duration-300 hover:shadow-healthcare-lg focus-visible:ring-accent/30 active:scale-[0.98]",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -50,9 +51,7 @@ const buttonVariants = cva(
   },
 );
 
-interface ButtonProps
-  extends React.ComponentProps<"button">,
-    VariantProps<typeof buttonVariants> {
+interface ButtonProps extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
   loadingText?: string;
@@ -100,15 +99,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       }
     };
     // Auto-map priority to variant if variant not specified
-    const finalVariant =
-      variant ||
-      (priority === "critical"
+    const finalVariant = variant
+      || (priority === "critical"
         ? "emergency"
         : priority === "high"
-          ? "warning"
-          : priority === "low"
-            ? "ghost"
-            : "default");
+        ? "warning"
+        : priority === "low"
+        ? "ghost"
+        : "default");
 
     const isDisabled = disabled || loading;
 

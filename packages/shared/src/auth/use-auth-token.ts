@@ -185,7 +185,7 @@ export function useAuthToken() {
   const login = useCallback(
     async (
       credentials: LoginCredentials,
-    ): Promise<{ success: boolean; error?: string }> => {
+    ): Promise<{ success: boolean; error?: string; }> => {
       updateAuthState({ isLoading: true, error: null });
 
       try {
@@ -228,8 +228,7 @@ export function useAuthToken() {
 
         return { success: false, error: "Resposta inválida do servidor" };
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Erro de rede";
+        const errorMessage = error instanceof Error ? error.message : "Erro de rede";
         updateAuthState({
           isLoading: false,
           error: errorMessage,

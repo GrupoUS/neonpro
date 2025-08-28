@@ -4,25 +4,25 @@
  * Optimized for Brazilian healthcare team management
  */
 
-import React, { useState } from "react";
 import { cn } from "@neonpro/utils";
 import {
-  User,
-  Crown,
-  Code,
   Calculator,
-  Stethoscope,
-  UserCheck,
-  Shield,
-  Settings,
-  Phone,
+  Code,
+  Crown,
+  Edit,
   Mail,
   MapPin,
   MoreVertical,
-  Edit,
+  Phone,
+  Settings,
+  Shield,
+  Stethoscope,
   Trash2,
+  User,
+  UserCheck,
   UserPlus,
 } from "lucide-react";
+import React, { useState } from "react";
 
 // Brazilian healthcare team roles
 export type TeamRole =
@@ -201,7 +201,7 @@ const STATUS_CONFIG = {
 } as const;
 
 // Role badge component
-const RoleBadge: React.FC<{ role: TeamRole }> = ({ role }) => {
+const RoleBadge: React.FC<{ role: TeamRole; }> = ({ role }) => {
   const config = ROLE_CONFIG[role];
   const Icon = config.icon;
 
@@ -221,7 +221,7 @@ const RoleBadge: React.FC<{ role: TeamRole }> = ({ role }) => {
 };
 
 // Status indicator component
-const StatusIndicator: React.FC<{ status: TeamMember["status"] }> = ({
+const StatusIndicator: React.FC<{ status: TeamMember["status"]; }> = ({
   status,
 }) => {
   const config = STATUS_CONFIG[status];
@@ -260,15 +260,15 @@ const MemberAvatar: React.FC<{
         sizeClasses[size],
       )}
     >
-      {member.avatar ? (
-        <img
-          src={member.avatar}
-          alt={member.name}
-          className="w-full h-full rounded-full object-cover"
-        />
-      ) : (
-        <span>{initials}</span>
-      )}
+      {member.avatar
+        ? (
+          <img
+            src={member.avatar}
+            alt={member.name}
+            className="w-full h-full rounded-full object-cover"
+          />
+        )
+        : <span>{initials}</span>}
     </div>
   );
 };
@@ -450,14 +450,12 @@ export const TeamMembersList: React.FC<TeamMembersListProps> = ({
 }) => {
   // Filter members
   const filteredMembers = members.filter((member) => {
-    const matchesSearch =
-      !searchQuery ||
-      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = !searchQuery
+      || member.name.toLowerCase().includes(searchQuery.toLowerCase())
+      || member.email.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesRole = roleFilter === "all" || member.role === roleFilter;
-    const matchesStatus =
-      statusFilter === "all" || member.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || member.status === statusFilter;
 
     return matchesSearch && matchesRole && matchesStatus;
   });
@@ -539,37 +537,43 @@ export const TeamMembersList: React.FC<TeamMembersListProps> = ({
             : "",
         )}
       >
-        {loading ? (
-          <div className="p-8 text-center text-gray-500">
-            Carregando membros da equipe...
-          </div>
-        ) : filteredMembers.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            Nenhum membro encontrado
-          </div>
-        ) : variant === "card" ? (
-          filteredMembers.map((member) => (
-            <MemberCard
-              key={member.id}
-              member={member}
-              showActions={showActions}
-              onEdit={onMemberEdit}
-              onRemove={onMemberRemove}
-              onClick={onMemberClick}
-            />
-          ))
-        ) : (
-          filteredMembers.map((member) => (
-            <MemberListItem
-              key={member.id}
-              member={member}
-              showActions={showActions}
-              onEdit={onMemberEdit}
-              onRemove={onMemberRemove}
-              onClick={onMemberClick}
-            />
-          ))
-        )}
+        {loading
+          ? (
+            <div className="p-8 text-center text-gray-500">
+              Carregando membros da equipe...
+            </div>
+          )
+          : filteredMembers.length === 0
+          ? (
+            <div className="p-8 text-center text-gray-500">
+              Nenhum membro encontrado
+            </div>
+          )
+          : variant === "card"
+          ? (
+            filteredMembers.map((member) => (
+              <MemberCard
+                key={member.id}
+                member={member}
+                showActions={showActions}
+                onEdit={onMemberEdit}
+                onRemove={onMemberRemove}
+                onClick={onMemberClick}
+              />
+            ))
+          )
+          : (
+            filteredMembers.map((member) => (
+              <MemberListItem
+                key={member.id}
+                member={member}
+                showActions={showActions}
+                onEdit={onMemberEdit}
+                onRemove={onMemberRemove}
+                onClick={onMemberClick}
+              />
+            ))
+          )}
       </div>
     </div>
   );

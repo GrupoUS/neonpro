@@ -247,6 +247,7 @@ sequenceDiagram
 ## 🔐 Security & Compliance Data Flows
 
 ### 🛡️ Security Middleware Stack Processing Order
+
 1. **Request ID Generation** - Unique identifier for request tracking
 2. **Rate Limiting** - Healthcare-specific endpoint protection
 3. **Authentication** - JWT validation with professional licenses
@@ -257,11 +258,12 @@ sequenceDiagram
 8. **Response Security** - Headers and data sanitization
 
 ### 📊 Audit Trail Data Structure
+
 ```json
 {
   "audit_id": "uuid",
   "timestamp": "2025-08-28T22:15:00Z",
-  "user_id": "uuid", 
+  "user_id": "uuid",
   "clinic_id": "uuid",
   "action": "patient_data_access",
   "resource": "/patients/123/medical-history",
@@ -289,10 +291,11 @@ sequenceDiagram
 ```
 
 ### 🏥 Healthcare Role Permissions Matrix
-| Role | Patient Data | Medical Records | Emergency Access | License Required |
-|------|--------------|-----------------|------------------|------------------|
-| Patient | Own Only | Own Only | No | No |
-| Healthcare Provider | Clinic Patients | Clinic Patients | No | Yes (CRM/CRF/etc) |
-| Emergency Physician | All (with audit) | All (with audit) | Yes | Yes (CRM) |
-| Clinic Manager | Clinic Overview | Summary Only | No | Optional |
-| Admin | Configuration | No | No | No |
+
+| Role                | Patient Data     | Medical Records  | Emergency Access | License Required  |
+| ------------------- | ---------------- | ---------------- | ---------------- | ----------------- |
+| Patient             | Own Only         | Own Only         | No               | No                |
+| Healthcare Provider | Clinic Patients  | Clinic Patients  | No               | Yes (CRM/CRF/etc) |
+| Emergency Physician | All (with audit) | All (with audit) | Yes              | Yes (CRM)         |
+| Clinic Manager      | Clinic Overview  | Summary Only     | No               | Optional          |
+| Admin               | Configuration    | No               | No               | No                |

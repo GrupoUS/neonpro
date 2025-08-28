@@ -7,6 +7,7 @@
 ### 1. Funcionalidade
 
 #### Lógica de Negócio
+
 - [ ] O código implementa corretamente os requisitos especificados
 - [ ] A lógica de negócio está clara e bem estruturada
 - [ ] Casos extremos (edge cases) são tratados adequadamente
@@ -14,6 +15,7 @@
 - [ ] Tratamento de erros está presente e apropriado
 
 #### Performance
+
 - [ ] Não há loops desnecessários ou ineficientes
 - [ ] Consultas ao banco de dados são otimizadas
 - [ ] Uso de memória é adequado
@@ -23,6 +25,7 @@
 ### 2. Qualidade do Código
 
 #### Estrutura e Organização
+
 - [ ] Código segue os padrões de arquitetura definidos
 - [ ] Funções/métodos têm tamanho apropriado (< 50 linhas)
 - [ ] Classes têm responsabilidade única
@@ -30,6 +33,7 @@
 - [ ] Estrutura de pastas segue o source-tree definido
 
 #### Nomenclatura e Legibilidade
+
 - [ ] Nomes de variáveis são descritivos e claros
 - [ ] Nomes de funções expressam claramente sua finalidade
 - [ ] Constantes são nomeadas em UPPER_CASE
@@ -37,6 +41,7 @@
 - [ ] Código é auto-documentado
 
 #### Padrões de Codificação
+
 - [ ] Segue as convenções do TypeScript/JavaScript
 - [ ] Indentação consistente (2 espaços)
 - [ ] Uso correto de tipos TypeScript
@@ -46,6 +51,7 @@
 ### 3. Segurança
 
 #### Proteção de Dados
+
 - [ ] Dados sensíveis não são expostos em logs
 - [ ] Senhas e tokens não estão hardcoded
 - [ ] Validação de entrada previne injeção de código
@@ -53,6 +59,7 @@
 - [ ] Criptografia aplicada a dados sensíveis
 
 #### Vulnerabilidades Comuns
+
 - [ ] Prevenção contra XSS (Cross-Site Scripting)
 - [ ] Proteção contra CSRF (Cross-Site Request Forgery)
 - [ ] Validação de tipos e sanitização de dados
@@ -62,6 +69,7 @@
 ### 4. Testes
 
 #### Cobertura de Testes
+
 - [ ] Testes unitários cobrem funcionalidades críticas
 - [ ] Testes de integração validam fluxos completos
 - [ ] Testes E2E cobrem cenários de usuário
@@ -69,6 +77,7 @@
 - [ ] Testes são determinísticos (não flaky)
 
 #### Qualidade dos Testes
+
 - [ ] Testes são legíveis e bem estruturados
 - [ ] Mocks e stubs são utilizados apropriadamente
 - [ ] Testes validam comportamentos, não implementação
@@ -80,6 +89,7 @@
 ### 1. LGPD (Lei Geral de Proteção de Dados)
 
 #### Proteção de Dados Pessoais
+
 - [ ] Dados pessoais são identificados e classificados
 - [ ] Consentimento é coletado quando necessário
 - [ ] Dados são minimizados (apenas o necessário)
@@ -87,6 +97,7 @@
 - [ ] Direitos do titular são respeitados
 
 #### Segurança da Informação
+
 - [ ] Criptografia em trânsito (HTTPS/TLS)
 - [ ] Criptografia em repouso para dados sensíveis
 - [ ] Controle de acesso baseado em funções
@@ -96,6 +107,7 @@
 ### 2. ANVISA (Agência Nacional de Vigilância Sanitária)
 
 #### Classificação de Software Médico
+
 - [ ] Funcionalidade não interfere em decisões médicas críticas
 - [ ] Classificação de risco documentada
 - [ ] Validação de algoritmos médicos
@@ -103,6 +115,7 @@
 - [ ] Controle de versão rigoroso
 
 #### Gestão de Qualidade
+
 - [ ] Documentação técnica atualizada
 - [ ] Procedimentos de teste documentados
 - [ ] Gestão de riscos implementada
@@ -112,6 +125,7 @@
 ### 3. CFM (Conselho Federal de Medicina)
 
 #### Prontuário Eletrônico
+
 - [ ] Integridade dos dados médicos
 - [ ] Assinatura digital implementada
 - [ ] Histórico de alterações preservado
@@ -119,6 +133,7 @@
 - [ ] Acesso controlado por perfil médico
 
 #### Telemedicina
+
 - [ ] Identificação segura de pacientes
 - [ ] Consentimento informado documentado
 - [ ] Privacidade em consultas remotas
@@ -128,18 +143,21 @@
 ## 🔧 Ferramentas Automáticas
 
 ### DeepSource
+
 - [ ] Todas as issues críticas resolvidas
 - [ ] Issues de segurança endereçadas
 - [ ] Code smells principais corrigidos
 - [ ] Métricas de qualidade mantidas
 
 ### CodeRabbit
+
 - [ ] Feedback de IA revisado e aplicado
 - [ ] Sugestões de melhoria consideradas
 - [ ] Padrões de código validados
 - [ ] Potenciais bugs identificados
 
 ### SonarQube (se aplicável)
+
 - [ ] Quality Gate passou
 - [ ] Vulnerabilidades de segurança zeradas
 - [ ] Code coverage mantido
@@ -148,6 +166,7 @@
 ## 📋 Processo de Aprovação
 
 ### Critérios Mínimos
+
 - [ ] Todos os testes automatizados passando
 - [ ] Checklist de code review completo
 - [ ] Aprovação de pelo menos 1 reviewer
@@ -155,6 +174,7 @@
 - [ ] Documentação atualizada
 
 ### Critérios para Mudanças Críticas
+
 - [ ] Aprovação de 2+ reviewers
 - [ ] Aprovação do tech lead
 - [ ] Testes de regressão executados
@@ -162,6 +182,7 @@
 - [ ] Validação de compliance
 
 ### Critérios para Mudanças de Saúde
+
 - [ ] Revisão por especialista em regulamentação
 - [ ] Validação de compliance LGPD/ANVISA/CFM
 - [ ] Testes de segurança específicos
@@ -171,12 +192,14 @@
 ## 🚀 Pós-Merge
 
 ### Monitoramento
+
 - [ ] Métricas de performance monitoradas
 - [ ] Logs de erro verificados
 - [ ] Alertas configurados
 - [ ] Rollback testado
 
 ### Documentação
+
 - [ ] Changelog atualizado
 - [ ] Documentação técnica revisada
 - [ ] Knowledge base atualizada

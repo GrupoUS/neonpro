@@ -4,29 +4,29 @@
  * digital signatures, and telemedicine compliance
  */
 
+import type {
+  BrazilianState,
+  CFMComplianceLog,
+  CFMComplianceReport,
+  CFMDocumentType,
+  CFMEducationCategory,
+  CFMLicenseStatus,
+  CFMLicenseValidation,
+  CFMOperationResult,
+  CFMValidationResult,
+  ContinuingEducation,
+  Database,
+  DatabaseArrayResponse,
+  DatabaseResponse,
+  DigitalSignature,
+  MedicalProfessional,
+  TelemedicineRequirements,
+  TelemedicineSession,
+  TelemedicineSessionType,
+} from "@neonpro/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@supabase/supabase-js";
 import { createHash } from "node:crypto";
-import type {
-  Database,
-  MedicalProfessional,
-  DigitalSignature,
-  TelemedicineSession,
-  ContinuingEducation,
-  CFMComplianceReport,
-  CFMValidationResult,
-  CFMOperationResult,
-  DatabaseResponse,
-  DatabaseArrayResponse,
-  CFMLicenseValidation,
-  TelemedicineRequirements,
-  CFMComplianceLog,
-  BrazilianState,
-  CFMLicenseStatus,
-  CFMDocumentType,
-  TelemedicineSessionType,
-  CFMEducationCategory,
-} from "@neonpro/types";
 
 /**
  * Enhanced CFM Compliance Service
@@ -103,10 +103,9 @@ export class CFMComplianceService {
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown error during registration",
+        error: error instanceof Error
+          ? error.message
+          : "Unknown error during registration",
       };
     }
   }
@@ -156,8 +155,7 @@ export class CFMComplianceService {
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error ? error.message : "Unknown validation error",
+        error: error instanceof Error ? error.message : "Unknown validation error",
       };
     }
   }
@@ -252,10 +250,9 @@ export class CFMComplianceService {
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown error fetching expiring licenses",
+        error: error instanceof Error
+          ? error.message
+          : "Unknown error fetching expiring licenses",
       };
     }
   }
@@ -334,10 +331,9 @@ export class CFMComplianceService {
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown error creating signature",
+        error: error instanceof Error
+          ? error.message
+          : "Unknown error creating signature",
       };
     }
   }
@@ -364,13 +360,13 @@ export class CFMComplianceService {
       }
 
       // Validate signature integrity (simplified validation)
-      const expectedSignatureData = `${signature.document_hash}:${signature.professional_id}:${signature.timestamp}`;
+      const expectedSignatureData =
+        `${signature.document_hash}:${signature.professional_id}:${signature.timestamp}`;
       const expectedHash = createHash("sha256")
         .update(expectedSignatureData)
         .digest("hex");
 
-      const isValid =
-        signature.signature_hash === expectedHash && signature.is_valid;
+      const isValid = signature.signature_hash === expectedHash && signature.is_valid;
 
       // Update validation status if changed
       if (isValid !== signature.is_valid) {
@@ -387,10 +383,9 @@ export class CFMComplianceService {
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown error validating signature",
+        error: error instanceof Error
+          ? error.message
+          : "Unknown error validating signature",
       };
     }
   }
@@ -417,13 +412,12 @@ export class CFMComplianceService {
       }
 
       if (
-        !professional?.telemedicine_certified ||
-        professional.license_status !== "active"
+        !professional?.telemedicine_certified
+        || professional.license_status !== "active"
       ) {
         return {
           success: false,
-          error:
-            "Professional not certified for telemedicine or license inactive",
+          error: "Professional not certified for telemedicine or license inactive",
         };
       }
 
@@ -463,10 +457,9 @@ export class CFMComplianceService {
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown error starting telemedicine session",
+        error: error instanceof Error
+          ? error.message
+          : "Unknown error starting telemedicine session",
       };
     }
   }
@@ -533,10 +526,9 @@ export class CFMComplianceService {
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown error ending session",
+        error: error instanceof Error
+          ? error.message
+          : "Unknown error ending session",
       };
     }
   }
@@ -575,10 +567,9 @@ export class CFMComplianceService {
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown error recording education",
+        error: error instanceof Error
+          ? error.message
+          : "Unknown error recording education",
       };
     }
   }
@@ -601,8 +592,7 @@ export class CFMComplianceService {
         return;
       }
 
-      const updatedHours =
-        professional.continuing_education_hours + additionalHours;
+      const updatedHours = professional.continuing_education_hours + additionalHours;
 
       await this.supabase
         .from("medical_professionals")
@@ -640,22 +630,20 @@ export class CFMComplianceService {
       // CFM requires minimum continuing education hours per period
       const minimumHoursPerYear = 100;
       const yearsActive = Math.ceil(
-        (Date.now() - new Date(professional.created_at).getTime()) /
-          (1000 * 60 * 60 * 24 * 365),
+        (Date.now() - new Date(professional.created_at).getTime())
+          / (1000 * 60 * 60 * 24 * 365),
       );
       const requiredHours = minimumHoursPerYear * Math.max(1, yearsActive);
 
-      const meetsRequirements =
-        professional.continuing_education_hours >= requiredHours;
+      const meetsRequirements = professional.continuing_education_hours >= requiredHours;
 
       return { success: true, data: meetsRequirements };
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown error validating requirements",
+        error: error instanceof Error
+          ? error.message
+          : "Unknown error validating requirements",
       };
     }
   }
@@ -700,10 +688,10 @@ export class CFMComplianceService {
       ]);
 
       if (
-        professionalsResult.error ||
-        signaturesResult.error ||
-        sessionsResult.error ||
-        educationResult.error
+        professionalsResult.error
+        || signaturesResult.error
+        || sessionsResult.error
+        || educationResult.error
       ) {
         return {
           success: false,
@@ -776,10 +764,9 @@ export class CFMComplianceService {
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown error generating report",
+        error: error instanceof Error
+          ? error.message
+          : "Unknown error generating report",
       };
     }
   }

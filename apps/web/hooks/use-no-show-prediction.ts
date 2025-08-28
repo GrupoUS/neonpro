@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
 import type { RiskLevel } from "@/components/no-show/risk-indicator";
+import { useCallback, useEffect, useState } from "react";
 
 export interface NoShowPrediction {
   appointmentId: string;
@@ -173,7 +173,7 @@ export function useNoShowPrediction(
             0,
             Math.min(100, p.riskScore + (Math.random() - 0.5) * 5),
           ),
-        })),
+        }))
       );
     }, 30_000); // Atualizar a cada 30 segundos
 
@@ -192,11 +192,10 @@ export function useNoShowPrediction(
 
 // Hook para appointments com previsões integradas
 export function useEnhancedAppointments() {
-  const { predictions, loading, error, calculateRiskLevel } =
-    useNoShowPrediction({
-      autoRefresh: true,
-      enableRealTime: true,
-    });
+  const { predictions, loading, error, calculateRiskLevel } = useNoShowPrediction({
+    autoRefresh: true,
+    enableRealTime: true,
+  });
 
   const [appointments, setAppointments] = useState<AppointmentWithPrediction[]>(
     [],

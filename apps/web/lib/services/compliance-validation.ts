@@ -53,8 +53,7 @@ export class ComplianceValidationService {
     const acceptanceCriteriaMet = this.checkAcceptanceCriteria(testResults);
 
     const report: ComplianceValidationReport = {
-      overall_status:
-        overallScore >= 95 && acceptanceCriteriaMet ? "passed" : "failed",
+      overall_status: overallScore >= 95 && acceptanceCriteriaMet ? "passed" : "failed",
       overall_score: overallScore,
       test_results: testResults,
       acceptance_criteria_met: acceptanceCriteriaMet,
@@ -88,8 +87,7 @@ export class ComplianceValidationService {
       });
 
       // Test AI risk assessment compliance
-      const riskAssessmentTest =
-        await this.testAIRiskAssessmentCompliance(tenantId);
+      const riskAssessmentTest = await this.testAIRiskAssessmentCompliance(tenantId);
       results.push({
         test_name: "AI Risk Assessment Compliance Integration",
         status: riskAssessmentTest.isCompliant ? "passed" : "failed",
@@ -128,8 +126,7 @@ export class ComplianceValidationService {
 
     try {
       // Test compliance metrics monitoring
-      const metricsTest =
-        await complianceRiskPredictionService.analyzeComplianceRisks(tenantId);
+      const metricsTest = await complianceRiskPredictionService.analyzeComplianceRisks(tenantId);
 
       results.push({
         test_name: "Real-time Compliance Risk Monitoring",
@@ -199,12 +196,11 @@ export class ComplianceValidationService {
         0,
       );
 
-      const anvisaReport =
-        await regulatoryReportingService.generateANVISAReport(
-          tenantId,
-          quarterStart.toISOString(),
-          quarterEnd.toISOString(),
-        );
+      const anvisaReport = await regulatoryReportingService.generateANVISAReport(
+        tenantId,
+        quarterStart.toISOString(),
+        quarterEnd.toISOString(),
+      );
 
       results.push({
         test_name: "ANVISA Automated Reporting",
@@ -280,8 +276,7 @@ export class ComplianceValidationService {
     const results: ValidationResult[] = [];
 
     try {
-      const scoreResult =
-        await lgpdComplianceTracker.calculateComplianceScore(tenantId);
+      const scoreResult = await lgpdComplianceTracker.calculateComplianceScore(tenantId);
 
       if (scoreResult.score) {
         const meetsTarget = scoreResult.score.overall_score >= 95;
@@ -295,8 +290,7 @@ export class ComplianceValidationService {
         });
 
         // Test automated remediation
-        const hasRemediationActions =
-          scoreResult.score.remediation_actions.length > 0;
+        const hasRemediationActions = scoreResult.score.remediation_actions.length > 0;
         results.push({
           test_name: "LGPD Automated Remediation",
           status: "passed",
@@ -359,10 +353,9 @@ export class ComplianceValidationService {
       results.push({
         test_name: "Comprehensive Audit Trail",
         status: missingActions.length === 0 ? "passed" : "warning",
-        message:
-          missingActions.length === 0
-            ? "All required audit actions are logged"
-            : `Missing audit logs for: ${missingActions.join(", ")}`,
+        message: missingActions.length === 0
+          ? "All required audit actions are logged"
+          : `Missing audit logs for: ${missingActions.join(", ")}`,
         details: {
           total_logs: auditLogs?.length || 0,
           missing_actions: missingActions,
@@ -371,16 +364,15 @@ export class ComplianceValidationService {
 
       // Test audit log retention
       const oldestLog = auditLogs?.reduce((oldest, log) =>
-        new Date(log.created_at) < new Date(oldest.created_at) ? log : oldest,
+        new Date(log.created_at) < new Date(oldest.created_at) ? log : oldest
       );
 
       results.push({
         test_name: "Audit Log Retention",
         status: auditLogs && auditLogs.length > 0 ? "passed" : "warning",
-        message:
-          auditLogs && auditLogs.length > 0
-            ? `Audit logs maintained - oldest entry: ${oldestLog?.created_at}`
-            : "No audit logs found",
+        message: auditLogs && auditLogs.length > 0
+          ? `Audit logs maintained - oldest entry: ${oldestLog?.created_at}`
+          : "No audit logs found",
         details: {
           oldest_log_date: oldestLog?.created_at,
           total_logs: auditLogs?.length || 0,
@@ -407,8 +399,7 @@ export class ComplianceValidationService {
 
     try {
       // Test component compliance validation
-      const componentTest =
-        await this.validator.validateComponentCompliance("/test/component");
+      const componentTest = await this.validator.validateComponentCompliance("/test/component");
 
       results.push({
         test_name: "Automated Component Compliance Validation",
@@ -459,8 +450,7 @@ export class ComplianceValidationService {
     // Test the ML risk assessment compliance
     return {
       isCompliant: true,
-      message:
-        "AI risk assessment includes LGPD consent validation and CFM compliance checks",
+      message: "AI risk assessment includes LGPD consent validation and CFM compliance checks",
       features: [
         "LGPD_validation",
         "CFM_compliance",
@@ -499,27 +489,27 @@ export class ComplianceValidationService {
     for (const result of results) {
       if (result.status === "passed") {
         if (
-          result.test_name.includes("AI") &&
-          result.test_name.includes("Compliance")
+          result.test_name.includes("AI")
+          && result.test_name.includes("Compliance")
         ) {
           criteriaChecks.ai_compliance_validation = true;
         }
         if (
-          result.test_name.includes("Real-time") &&
-          result.test_name.includes("Monitoring")
+          result.test_name.includes("Real-time")
+          && result.test_name.includes("Monitoring")
         ) {
           criteriaChecks.real_time_monitoring = true;
         }
         if (
-          result.test_name.includes("Automated") &&
-          result.test_name.includes("Reporting")
+          result.test_name.includes("Automated")
+          && result.test_name.includes("Reporting")
         ) {
           criteriaChecks.automated_reporting = true;
         }
         if (
-          result.test_name.includes("LGPD") &&
-          result.score &&
-          result.score >= 95
+          result.test_name.includes("LGPD")
+          && result.score
+          && result.score >= 95
         ) {
           criteriaChecks.lgpd_score_95_percent = true;
         }
@@ -527,8 +517,8 @@ export class ComplianceValidationService {
           criteriaChecks.audit_trail_complete = true;
         }
         if (
-          result.test_name.includes("Automated") &&
-          result.test_name.includes("Compliance")
+          result.test_name.includes("Automated")
+          && result.test_name.includes("Compliance")
         ) {
           criteriaChecks.automation_functional = true;
         }

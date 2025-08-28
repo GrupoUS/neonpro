@@ -1,28 +1,20 @@
 import AnalyticsDashboard from "@/components/dashboard/analytics-dashboard";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  jest,
-  test,
-  vi,
-} from "vitest";
+import { afterEach, beforeEach, describe, expect, jest, test, vi } from "vitest";
 
 // Mock the recharts library
 vi.mock<typeof import("recharts")>("recharts", () => ({
-  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
+  ResponsiveContainer: ({ children }: { children: React.ReactNode; }) => (
     <div data-testid="responsive-container">{children}</div>
   ),
-  LineChart: ({ children }: { children: React.ReactNode }) => (
+  LineChart: ({ children }: { children: React.ReactNode; }) => (
     <div data-testid="line-chart">{children}</div>
   ),
-  BarChart: ({ children }: { children: React.ReactNode }) => (
+  BarChart: ({ children }: { children: React.ReactNode; }) => (
     <div data-testid="bar-chart">{children}</div>
   ),
-  PieChart: ({ children }: { children: React.ReactNode }) => (
+  PieChart: ({ children }: { children: React.ReactNode; }) => (
     <div data-testid="pie-chart">{children}</div>
   ),
   Line: () => <div data-testid="line" />,
@@ -79,13 +71,13 @@ vi.mock<typeof import("@/components/ui/card")>("@/components/ui/card", () => ({
       {children}
     </div>
   ),
-  CardHeader: ({ children }: { children: React.ReactNode }) => (
+  CardHeader: ({ children }: { children: React.ReactNode; }) => (
     <div data-testid="card-header">{children}</div>
   ),
-  CardTitle: ({ children }: { children: React.ReactNode }) => (
+  CardTitle: ({ children }: { children: React.ReactNode; }) => (
     <h3 data-testid="card-title">{children}</h3>
   ),
-  CardContent: ({ children }: { children: React.ReactNode }) => (
+  CardContent: ({ children }: { children: React.ReactNode; }) => (
     <div data-testid="card-content">{children}</div>
   ),
 }));
@@ -114,7 +106,7 @@ vi.mock<typeof import("@/components/ui/select")>(
         {children}
       </div>
     ),
-    SelectContent: ({ children }: { children: React.ReactNode }) => (
+    SelectContent: ({ children }: { children: React.ReactNode; }) => (
       <div data-testid="select-content">{children}</div>
     ),
     SelectItem: ({
@@ -128,10 +120,10 @@ vi.mock<typeof import("@/components/ui/select")>(
         {children}
       </div>
     ),
-    SelectTrigger: ({ children }: { children: React.ReactNode }) => (
+    SelectTrigger: ({ children }: { children: React.ReactNode; }) => (
       <div data-testid="select-trigger">{children}</div>
     ),
-    SelectValue: ({ placeholder }: { placeholder: string }) => (
+    SelectValue: ({ placeholder }: { placeholder: string; }) => (
       <div data-testid="select-value">{placeholder}</div>
     ),
   }),

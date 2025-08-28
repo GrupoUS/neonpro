@@ -37,7 +37,9 @@ export class HealthcareHealthChecks {
         name: "patient_data_access",
         passed: false,
         responseTime: Date.now() - startTime,
-        message: `Patient data access failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        message: `Patient data access failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
         timestamp: new Date(),
         metadata: {
           error: error instanceof Error ? error.stack : String(error),
@@ -68,13 +70,16 @@ export class HealthcareHealthChecks {
         name: "appointment_booking",
         passed: false,
         responseTime: Date.now() - startTime,
-        message: `Appointment booking failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        message: `Appointment booking failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
         timestamp: new Date(),
       };
     }
   } /**
    * Check emergency access functionality
    */
+
   static async checkEmergencyAccess(): Promise<HealthCheckResult> {
     const startTime = Date.now();
 
@@ -92,7 +97,9 @@ export class HealthcareHealthChecks {
         name: "emergency_access",
         passed: false,
         responseTime: Date.now() - startTime,
-        message: `Emergency access failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        message: `Emergency access failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
         timestamp: new Date(),
       };
     }
@@ -122,7 +129,9 @@ export class HealthcareHealthChecks {
         name: "audit_logging",
         passed: false,
         responseTime: Date.now() - startTime,
-        message: `Audit logging failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        message: `Audit logging failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
         timestamp: new Date(),
       };
     }
@@ -146,8 +155,7 @@ export class HealthcareHealthChecks {
     ]);
 
     const failedChecks = checks.filter((check) => !check.passed);
-    const overallHealth =
-      ((checks.length - failedChecks.length) / checks.length) * 100;
+    const overallHealth = ((checks.length - failedChecks.length) / checks.length) * 100;
 
     let status: "healthy" | "degraded" | "critical";
     if (overallHealth >= 90) {

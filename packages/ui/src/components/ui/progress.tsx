@@ -12,16 +12,12 @@ const progressVariants = cva(
     variants: {
       variant: {
         default: "from-muted/80 via-muted/60 to-muted/80",
-        medical:
-          "from-primary/20 via-primary/15 to-primary/20 backdrop-blur-sm",
-        treatment:
-          "from-secondary/20 via-secondary/15 to-secondary/20 backdrop-blur-sm",
+        medical: "from-primary/20 via-primary/15 to-primary/20 backdrop-blur-sm",
+        treatment: "from-secondary/20 via-secondary/15 to-secondary/20 backdrop-blur-sm",
         critical:
           "from-destructive/20 via-destructive/15 to-destructive/20 shadow-healthcare-md backdrop-blur-sm",
-        warning:
-          "from-warning/20 via-warning/15 to-warning/20 backdrop-blur-sm",
-        success:
-          "from-success/20 via-success/15 to-success/20 backdrop-blur-sm",
+        warning: "from-warning/20 via-warning/15 to-warning/20 backdrop-blur-sm",
+        success: "from-success/20 via-success/15 to-success/20 backdrop-blur-sm",
       },
       size: {
         default: "h-2",
@@ -43,19 +39,17 @@ const progressBarVariants = cva(
     variants: {
       variant: {
         default: "bg-gradient-primary shadow-primary/20",
-        medical:
-          "bg-gradient-to-r from-primary via-primary/90 to-primary shadow-primary/30",
+        medical: "bg-gradient-to-r from-primary via-primary/90 to-primary shadow-primary/30",
         treatment:
           "bg-gradient-to-r from-secondary via-secondary/90 to-secondary shadow-secondary/30",
         critical:
           "bg-gradient-to-r from-destructive via-destructive/90 to-destructive shadow-destructive/40",
-        warning:
-          "bg-gradient-to-r from-warning via-warning/90 to-warning shadow-warning/30",
-        success:
-          "bg-gradient-to-r from-success via-success/90 to-success shadow-success/30",
+        warning: "bg-gradient-to-r from-warning via-warning/90 to-warning shadow-warning/30",
+        success: "bg-gradient-to-r from-success via-success/90 to-success shadow-success/30",
       },
       animated: {
-        true: "relative animate-pulse-healthcare bg-gradient-to-r before:absolute before:inset-0 before:animate-slide-in-right before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent",
+        true:
+          "relative animate-pulse-healthcare bg-gradient-to-r before:absolute before:inset-0 before:animate-slide-in-right before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent",
         false: "",
       },
     },
@@ -67,9 +61,11 @@ const progressBarVariants = cva(
 );
 
 interface ProgressProps
-  extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>,
+  extends
+    React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>,
     VariantProps<typeof progressVariants>,
-    VariantProps<typeof progressBarVariants> {
+    VariantProps<typeof progressBarVariants>
+{
   showValue?: boolean;
   showLabel?: boolean;
   label?: string;
@@ -141,8 +137,7 @@ const Progress = React.forwardRef<
 );
 Progress.displayName = ProgressPrimitive.Root.displayName; // Healthcare-specific progress components
 
-interface TreatmentProgressProps
-  extends Omit<ProgressProps, "variant" | "label"> {
+interface TreatmentProgressProps extends Omit<ProgressProps, "variant" | "label"> {
   treatmentName: string;
   phase: "initial" | "active" | "maintenance" | "completed";
   completedSessions: number;
@@ -261,10 +256,10 @@ const TreatmentProgress = React.forwardRef<
                 {patientResponse === "excellent"
                   ? "Excelente"
                   : patientResponse === "good"
-                    ? "Boa"
-                    : patientResponse === "fair"
-                      ? "Regular"
-                      : "Baixa"}
+                  ? "Boa"
+                  : patientResponse === "fair"
+                  ? "Regular"
+                  : "Baixa"}
               </span>
             </div>
           </div>
@@ -280,8 +275,7 @@ const TreatmentProgress = React.forwardRef<
 );
 TreatmentProgress.displayName = "TreatmentProgress";
 
-interface LGPDComplianceProgressProps
-  extends Omit<ProgressProps, "variant" | "label"> {
+interface LGPDComplianceProgressProps extends Omit<ProgressProps, "variant" | "label"> {
   overallScore: number;
   categories: {
     name: string;
@@ -345,8 +339,8 @@ const LGPDComplianceProgress = React.forwardRef<
             {overallScore >= 90
               ? "Excelente"
               : overallScore >= 70
-                ? "Bom"
-                : "Precisa atenção"}
+              ? "Bom"
+              : "Precisa atenção"}
           </div>
         </div>
       </div>
@@ -404,8 +398,7 @@ const LGPDComplianceProgress = React.forwardRef<
   );
 });
 LGPDComplianceProgress.displayName = "LGPDComplianceProgress";
-interface PatientRecoveryProgressProps
-  extends Omit<ProgressProps, "variant" | "label"> {
+interface PatientRecoveryProgressProps extends Omit<ProgressProps, "variant" | "label"> {
   patientName: string;
   condition: string;
   recoveryStage: "critical" | "stable" | "improving" | "recovered";

@@ -282,9 +282,9 @@ export class ComplianceAuditor {
     if (rule.applicableEvents.length > 0) {
       const eventMatches = rule.applicableEvents.some(
         (applicableEvent) =>
-          event.eventType.includes(applicableEvent) ||
-          event.category === applicableEvent ||
-          event.operationType === applicableEvent,
+          event.eventType.includes(applicableEvent)
+          || event.category === applicableEvent
+          || event.operationType === applicableEvent,
       );
 
       if (!eventMatches) {
@@ -318,42 +318,42 @@ export class ComplianceAuditor {
   private isLGPDApplicable(event: AuditEvent): boolean {
     // LGPD applies to any personal data processing
     return !!(
-      event.patientId ||
-      event.userId ||
-      event.resourceType.toLowerCase().includes("patient") ||
-      event.resourceType.toLowerCase().includes("user") ||
-      event.category === "DATA_ACCESS"
+      event.patientId
+      || event.userId
+      || event.resourceType.toLowerCase().includes("patient")
+      || event.resourceType.toLowerCase().includes("user")
+      || event.category === "DATA_ACCESS"
     );
   }
 
   private isANVISAApplicable(event: AuditEvent): boolean {
     // ANVISA applies to medical procedures, devices, and AI predictions
     return !!(
-      event.resourceType.toLowerCase().includes("procedure") ||
-      event.resourceType.toLowerCase().includes("device") ||
-      event.resourceType.toLowerCase().includes("prediction") ||
-      event.resourceType.toLowerCase().includes("treatment") ||
-      event.category === "MEDICAL_PROCEDURE"
+      event.resourceType.toLowerCase().includes("procedure")
+      || event.resourceType.toLowerCase().includes("device")
+      || event.resourceType.toLowerCase().includes("prediction")
+      || event.resourceType.toLowerCase().includes("treatment")
+      || event.category === "MEDICAL_PROCEDURE"
     );
   }
 
   private isCFMApplicable(event: AuditEvent): boolean {
     // CFM applies to medical professional actions
     return !!(
-      event.metadata?.medicalProfessional ||
-      event.resourceType.toLowerCase().includes("diagnosis") ||
-      event.resourceType.toLowerCase().includes("prescription") ||
-      event.category === "MEDICAL_PROCEDURE"
+      event.metadata?.medicalProfessional
+      || event.resourceType.toLowerCase().includes("diagnosis")
+      || event.resourceType.toLowerCase().includes("prescription")
+      || event.category === "MEDICAL_PROCEDURE"
     );
   }
 
   private isHIPAAApplicable(event: AuditEvent): boolean {
     // HIPAA applies to protected health information
     return !!(
-      event.patientId ||
-      event.resourceType.toLowerCase().includes("medical") ||
-      event.resourceType.toLowerCase().includes("health") ||
-      event.category === "DATA_ACCESS"
+      event.patientId
+      || event.resourceType.toLowerCase().includes("medical")
+      || event.resourceType.toLowerCase().includes("health")
+      || event.category === "DATA_ACCESS"
     );
   }
 
@@ -506,8 +506,8 @@ export class ComplianceAuditor {
     event: AuditEvent,
   ): Promise<boolean> {
     if (
-      event.operationType !== "EXECUTE" ||
-      !event.resourceType.includes("procedure")
+      event.operationType !== "EXECUTE"
+      || !event.resourceType.includes("procedure")
     ) {
       return false;
     }
@@ -526,8 +526,8 @@ export class ComplianceAuditor {
     event: AuditEvent,
   ): Promise<boolean> {
     if (
-      !event.resourceType.includes("prediction") ||
-      !event.metadata?.aiConfidence
+      !event.resourceType.includes("prediction")
+      || !event.metadata?.aiConfidence
     ) {
       return false;
     }
@@ -556,8 +556,7 @@ export class ComplianceAuditor {
       return true; // Medical action without CFM license
     }
 
-    const expired =
-      license.expiry_date && new Date(license.expiry_date) < new Date();
+    const expired = license.expiry_date && new Date(license.expiry_date) < new Date();
 
     return !license.valid || expired;
   }
@@ -640,7 +639,7 @@ export class ComplianceAuditor {
           active: rule.active,
           version: rule.version,
           lastUpdated: rule.last_updated,
-        }),
+        })
       );
 
       this.complianceRules.set(framework, validatedRules);
@@ -669,8 +668,7 @@ export class ComplianceAuditor {
         framework: "LGPD",
         category: "Data Processing Consent",
         rule: "Patient consent required for personal data processing",
-        description:
-          "All personal health data processing requires explicit patient consent",
+        description: "All personal health data processing requires explicit patient consent",
         severity: "CRITICAL",
         autoRemediation: true,
         remediationSteps: [
@@ -690,8 +688,7 @@ export class ComplianceAuditor {
         framework: "ANVISA",
         category: "AI Prediction Validation",
         rule: "AI predictions require ≥95% confidence for medical decisions",
-        description:
-          "ANVISA requires high confidence AI predictions for medical device software",
+        description: "ANVISA requires high confidence AI predictions for medical device software",
         severity: "HIGH",
         autoRemediation: true,
         remediationSteps: [
@@ -711,8 +708,7 @@ export class ComplianceAuditor {
         framework: "CFM",
         category: "Professional License Validation",
         rule: "Medical procedures require valid CFM license",
-        description:
-          "All medical procedures must be performed by CFM-licensed professionals",
+        description: "All medical procedures must be performed by CFM-licensed professionals",
         severity: "CRITICAL",
         autoRemediation: false,
         remediationSteps: [
@@ -796,7 +792,7 @@ export class ComplianceAuditor {
     violations: ComplianceViolation[],
   ): Promise<void> {
     const autoRemediableViolations = violations.filter((v) =>
-      v.remediationActions.some((action) => action.automated),
+      v.remediationActions.some((action) => action.automated)
     );
 
     for (const violation of autoRemediableViolations) {
@@ -937,8 +933,8 @@ export class ComplianceAuditor {
     const newStatus = allCompleted
       ? "RESOLVED"
       : anyFailed
-        ? "IN_PROGRESS"
-        : "IN_PROGRESS";
+      ? "IN_PROGRESS"
+      : "IN_PROGRESS";
     const resolvedAt = allCompleted ? new Date().toISOString() : undefined;
 
     await this.supabase
@@ -971,8 +967,7 @@ export class ComplianceAuditor {
       const { totalAudits: totalEvents } = this;
       const { totalViolations: violations } = this;
       const compliantEvents = totalEvents - violations;
-      const complianceScore =
-        totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 100;
+      const complianceScore = totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 100;
 
       return {
         framework,
@@ -982,8 +977,7 @@ export class ComplianceAuditor {
         criticalViolations: Math.floor(violations * 0.1), // Estimate
         complianceScore,
         averageResolutionTime: 2_400_000, // 40 minutes average (mock)
-        autoRemediationRate:
-          this.totalAudits > 0 ? this.autoRemediations / this.totalAudits : 0,
+        autoRemediationRate: this.totalAudits > 0 ? this.autoRemediations / this.totalAudits : 0,
         falsePositiveRate: 0.02, // 2% (mock)
       };
     });
@@ -1030,7 +1024,7 @@ export class ComplianceAuditor {
         status: v.status,
         remediationActions: v.remediation_actions,
         metadata: v.metadata,
-      }),
+      })
     );
 
     // Calculate summary
@@ -1040,8 +1034,7 @@ export class ComplianceAuditor {
       (v) => v.severity === "CRITICAL",
     ).length;
     const compliantEvents = totalEvents - totalViolations;
-    const complianceScore =
-      totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 100;
+    const complianceScore = totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 100;
 
     const report: ComplianceReport = {
       id: `report_${Date.now()}_${framework}`,

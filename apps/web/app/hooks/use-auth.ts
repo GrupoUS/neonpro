@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -46,31 +46,31 @@ export function useAuth(): UseAuthReturn {
   const checkAuthSession = async () => {
     try {
       setIsLoading(true);
-      
+
       const { data: { user }, error } = await supabase.auth.getUser();
-      
+
       if (error) {
-        console.error('Error getting user:', error);
+        console.error("Error getting user:", error);
         setUser(null);
         return;
       }
-      
+
       if (user) {
         // Fetch user profile from our custom users table
         const { data: profile, error: profileError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', user.id)
+          .from("users")
+          .select("*")
+          .eq("id", user.id)
           .single();
-          
+
         if (profileError) {
-          console.error('Error fetching user profile:', profileError);
+          console.error("Error fetching user profile:", profileError);
           // Fallback to basic user data from auth
           const basicUser: User = {
             id: user.id,
-            email: user.email || '',
-            name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
-            role: user.user_metadata?.role || 'patient',
+            email: user.email || "",
+            name: user.user_metadata?.name || user.email?.split("@")[0] || "User",
+            role: user.user_metadata?.role || "patient",
             clinic_id: user.user_metadata?.clinic_id,
             license_number: user.user_metadata?.license_number,
           };
@@ -127,9 +127,9 @@ export function useAuth(): UseAuthReturn {
       setIsLoading(true);
 
       const { error } = await supabase.auth.signOut();
-      
+
       if (error) {
-        console.error('Logout error:', error);
+        console.error("Logout error:", error);
         throw new Error(error.message);
       }
 
@@ -154,8 +154,8 @@ export function useAuth(): UseAuthReturn {
             name: userData.name,
             role: userData.role,
             clinic_id: userData.clinic_id,
-          }
-        }
+          },
+        },
       });
 
       if (error) {
@@ -165,7 +165,7 @@ export function useAuth(): UseAuthReturn {
       if (data.user) {
         // Create user profile in our custom users table
         const { error: profileError } = await supabase
-          .from('users')
+          .from("users")
           .insert({
             id: data.user.id,
             email: userData.email,
@@ -177,7 +177,7 @@ export function useAuth(): UseAuthReturn {
           });
 
         if (profileError) {
-          console.error('Error creating user profile:', profileError);
+          console.error("Error creating user profile:", profileError);
           // Don't throw here as the auth user was created successfully
         }
 

@@ -1,26 +1,17 @@
 "use client";
 
-import type { ErrorInfo, ReactNode } from "react";
-import React, { Component } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { AlertTriangle, RefreshCw, Phone } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   createHealthcareError,
   ErrorCategory,
   ErrorSeverity,
 } from "@neonpro/shared/errors/error-utils";
-import type {
-  HealthcareError,
-  ErrorContext,
-} from "@neonpro/shared/errors/healthcare-error-types";
+import type { ErrorContext, HealthcareError } from "@neonpro/shared/errors/healthcare-error-types";
+import { AlertTriangle, Phone, RefreshCw } from "lucide-react";
+import type { ErrorInfo, ReactNode } from "react";
+import React, { Component } from "react";
 
 interface Props {
   children: ReactNode;
@@ -80,8 +71,8 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
         context: {
           ...error.context,
           // Sanitize sensitive data for LGPD compliance
-          patientId: error.context.patientId ? '[REDACTED]' : undefined,
-          userId: error.context.userId ? '[REDACTED]' : undefined,
+          patientId: error.context.patientId ? "[REDACTED]" : undefined,
+          userId: error.context.userId ? "[REDACTED]" : undefined,
         },
         timestamp: error.timestamp,
         componentStack: errorInfo.componentStack,
@@ -90,28 +81,28 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
       };
 
       // Send to compliance API endpoint
-      await fetch('/api/compliance/error-logs', {
-        method: 'POST',
+      await fetch("/api/compliance/error-logs", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'X-Compliance-Log': 'true',
+          "Content-Type": "application/json",
+          "X-Compliance-Log": "true",
         },
         body: JSON.stringify(complianceLog),
       }).catch(err => {
         // Fallback to console if API fails
-        console.error('[COMPLIANCE LOG FALLBACK]', complianceLog, err);
+        console.error("[COMPLIANCE LOG FALLBACK]", complianceLog, err);
       });
 
       // Also log to local storage for offline scenarios
-      const existingLogs = JSON.parse(localStorage.getItem('compliance-error-logs') || '[]');
+      const existingLogs = JSON.parse(localStorage.getItem("compliance-error-logs") || "[]");
       existingLogs.push(complianceLog);
       // Keep only last 50 logs to prevent storage overflow
       if (existingLogs.length > 50) {
         existingLogs.splice(0, existingLogs.length - 50);
       }
-      localStorage.setItem('compliance-error-logs', JSON.stringify(existingLogs));
+      localStorage.setItem("compliance-error-logs", JSON.stringify(existingLogs));
     } catch (logError) {
-      console.error('[COMPLIANCE LOG ERROR]', logError);
+      console.error("[COMPLIANCE LOG ERROR]", logError);
     }
   }
 
@@ -120,10 +111,10 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
       const securityAlert = {
         alertId: `SEC_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         errorId: error.id,
-        alertType: 'PATIENT_DATA_ERROR',
+        alertType: "PATIENT_DATA_ERROR",
         severity: error.severity,
         patientDataInvolved: !!error.context.patientId,
-        medicalRecordsInvolved: error.context.endpoint?.includes('medical-records') || false,
+        medicalRecordsInvolved: error.context.endpoint?.includes("medical-records") || false,
         complianceRisk: error.complianceRisk,
         timestamp: error.timestamp,
         context: {
@@ -135,30 +126,31 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
       };
 
       // Send immediate security alert
-      await fetch('/api/security/alerts', {
-        method: 'POST',
+      await fetch("/api/security/alerts", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'X-Security-Alert': 'true',
-          'X-Priority': error.severity === 'critical' ? 'IMMEDIATE' : 'HIGH',
+          "Content-Type": "application/json",
+          "X-Security-Alert": "true",
+          "X-Priority": error.severity === "critical" ? "IMMEDIATE" : "HIGH",
         },
         body: JSON.stringify(securityAlert),
       }).catch(err => {
-        console.error('[SECURITY ALERT FALLBACK]', securityAlert, err);
+        console.error("[SECURITY ALERT FALLBACK]", securityAlert, err);
       });
 
       // If critical, also trigger browser notification (if permitted)
-      if (error.severity === 'critical' && 'Notification' in window) {
-        if (Notification.permission === 'granted') {
-          new Notification('Alerta de Segurança Crítico', {
-            body: 'Erro crítico detectado envolvendo dados de paciente. Equipe de segurança notificada.',
-            icon: '/icons/security-alert.png',
-            tag: 'security-alert',
+      if (error.severity === "critical" && "Notification" in window) {
+        if (Notification.permission === "granted") {
+          new Notification("Alerta de Segurança Crítico", {
+            body:
+              "Erro crítico detectado envolvendo dados de paciente. Equipe de segurança notificada.",
+            icon: "/icons/security-alert.png",
+            tag: "security-alert",
           });
         }
       }
     } catch (alertError) {
-      console.error('[SECURITY ALERT ERROR]', alertError);
+      console.error("[SECURITY ALERT ERROR]", alertError);
     }
   }
 
@@ -175,12 +167,16 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
         timestamp: error.timestamp,
         performanceMetrics: {
           // Collect performance timing data
-          navigationTiming: performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming,
-          memoryUsage: (performance as any).memory ? {
-            usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
-            totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
-            jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit,
-          } : undefined,
+          navigationTiming: performance.getEntriesByType(
+            "navigation",
+          )[0] as PerformanceNavigationTiming,
+          memoryUsage: (performance as any).memory
+            ? {
+              usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
+              totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
+              jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit,
+            }
+            : undefined,
           connectionType: (navigator as any).connection?.effectiveType,
           userAgent: navigator.userAgent,
           viewport: {
@@ -197,22 +193,22 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
       };
 
       // Send to performance monitoring service
-      await fetch('/api/monitoring/performance', {
-        method: 'POST',
+      await fetch("/api/monitoring/performance", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'X-Performance-Log': 'true',
+          "Content-Type": "application/json",
+          "X-Performance-Log": "true",
         },
         body: JSON.stringify(performanceData),
       }).catch(err => {
-        console.error('[PERFORMANCE MONITOR FALLBACK]', performanceData, err);
+        console.error("[PERFORMANCE MONITOR FALLBACK]", performanceData, err);
       });
 
       // Also send to external monitoring service (e.g., Sentry, DataDog)
       if (window.gtag) {
-        window.gtag('event', 'exception', {
+        window.gtag("event", "exception", {
           description: `Healthcare Error: ${error.category}`,
-          fatal: error.severity === 'critical',
+          fatal: error.severity === "critical",
           custom_map: {
             error_id: error.id,
             category: error.category,
@@ -221,7 +217,7 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
         });
       }
     } catch (monitorError) {
-      console.error('[PERFORMANCE MONITOR ERROR]', monitorError);
+      console.error("[PERFORMANCE MONITOR ERROR]", monitorError);
     }
   }
 
@@ -238,7 +234,7 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
       const escalationData = {
         escalationId: `ESC_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         errorId: error.id,
-        escalationType: 'USER_INITIATED',
+        escalationType: "USER_INITIATED",
         severity: error.severity,
         category: error.category,
         patientImpact: error.patientImpact,
@@ -248,55 +244,55 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
           endpoint: error.context.endpoint,
           timestamp: new Date().toISOString(),
         },
-        escalationReason: 'User requested technical support',
+        escalationReason: "User requested technical support",
       };
 
       // Send escalation to support system
-      const response = await fetch('/api/support/escalate', {
-        method: 'POST',
+      const response = await fetch("/api/support/escalate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'X-Escalation': 'true',
-          'X-Priority': error.severity === 'critical' ? 'URGENT' : 'HIGH',
+          "Content-Type": "application/json",
+          "X-Escalation": "true",
+          "X-Priority": error.severity === "critical" ? "URGENT" : "HIGH",
         },
         body: JSON.stringify(escalationData),
       });
 
       if (response.ok) {
         const result = await response.json();
-        
+
         // Show success message to user
-        if ('Notification' in window && Notification.permission === 'granted') {
-          new Notification('Suporte Técnico Acionado', {
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification("Suporte Técnico Acionado", {
             body: `Ticket #${result.ticketId} criado. Nossa equipe entrará em contato em breve.`,
-            icon: '/icons/support.png',
-            tag: 'support-escalation',
+            icon: "/icons/support.png",
+            tag: "support-escalation",
           });
         }
 
         // Update UI to show escalation success
-        this.setState({ 
-          escalationStatus: 'success',
-          supportTicketId: result.ticketId 
+        this.setState({
+          escalationStatus: "success",
+          supportTicketId: result.ticketId,
         });
       } else {
-        throw new Error('Escalation API failed');
+        throw new Error("Escalation API failed");
       }
     } catch (escalationError) {
-      console.error('[ESCALATION ERROR]', escalationError);
-      
+      console.error("[ESCALATION ERROR]", escalationError);
+
       // Fallback: Open email client with pre-filled support email
       const subject = encodeURIComponent(`Erro Crítico do Sistema - ID: ${error.id}`);
       const body = encodeURIComponent(
-        `Detalhes do Erro:\n\n` +
-        `ID do Erro: ${error.id}\n` +
-        `Categoria: ${error.category}\n` +
-        `Severidade: ${error.severity}\n` +
-        `Timestamp: ${error.timestamp}\n` +
-        `Endpoint: ${error.context.endpoint || 'N/A'}\n\n` +
-        `Por favor, investiguem este erro com urgência.`
+        `Detalhes do Erro:\n\n`
+          + `ID do Erro: ${error.id}\n`
+          + `Categoria: ${error.category}\n`
+          + `Severidade: ${error.severity}\n`
+          + `Timestamp: ${error.timestamp}\n`
+          + `Endpoint: ${error.context.endpoint || "N/A"}\n\n`
+          + `Por favor, investiguem este erro com urgência.`,
       );
-      
+
       window.location.href = `mailto:suporte@neonpro.com.br?subject=${subject}&body=${body}`;
     }
     alert(
@@ -325,6 +321,7 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
  * Healthcare Error Fallback Component
  * Displays user-friendly error messages with appropriate actions
  */
+
 interface HealthcareErrorFallbackProps {
   error?: HealthcareError;
   onRetry: () => void;
@@ -363,8 +360,8 @@ function HealthcareErrorFallback({
     }
 
     if (
-      error.category === ErrorCategory.AUTHENTICATION ||
-      error.category === ErrorCategory.AUTHORIZATION
+      error.category === ErrorCategory.AUTHENTICATION
+      || error.category === ErrorCategory.AUTHORIZATION
     ) {
       return "Problema de autenticação detectado. Por favor, faça login novamente.";
     }
@@ -401,8 +398,7 @@ function HealthcareErrorFallback({
                     <strong>Categoria:</strong> {error.category}
                   </p>
                   <p>
-                    <strong>Horário:</strong>{" "}
-                    {error.timestamp.toLocaleString("pt-BR")}
+                    <strong>Horário:</strong> {error.timestamp.toLocaleString("pt-BR")}
                   </p>
                 </div>
               </AlertDescription>
@@ -434,10 +430,9 @@ function HealthcareErrorFallback({
                 Aviso de Segurança
               </AlertTitle>
               <AlertDescription className="text-red-700">
-                Este erro pode ter afetado dados de pacientes. A equipe de
-                segurança foi notificada automaticamente e está investigando. Se
-                você estava acessando informações sensíveis, por favor documente
-                as ações realizadas.
+                Este erro pode ter afetado dados de pacientes. A equipe de segurança foi notificada
+                automaticamente e está investigando. Se você estava acessando informações sensíveis,
+                por favor documente as ações realizadas.
               </AlertDescription>
             </Alert>
           )}

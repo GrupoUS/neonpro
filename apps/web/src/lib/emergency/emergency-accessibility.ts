@@ -52,8 +52,7 @@ class EmergencyAccessibilityValidator {
 
   public static getInstance(): EmergencyAccessibilityValidator {
     if (!EmergencyAccessibilityValidator.instance) {
-      EmergencyAccessibilityValidator.instance =
-        new EmergencyAccessibilityValidator();
+      EmergencyAccessibilityValidator.instance = new EmergencyAccessibilityValidator();
     }
     return EmergencyAccessibilityValidator.instance;
   }
@@ -95,8 +94,7 @@ class EmergencyAccessibilityValidator {
 
     // Calculate score based on issues
     score = this.calculateAccessibilityScore(issues);
-    const passed =
-      score >= 95 && issues.filter((i) => i.severity === "error").length === 0;
+    const passed = score >= 95 && issues.filter((i) => i.severity === "error").length === 0;
 
     const result: AccessibilityTestResult = {
       component: componentName,
@@ -132,8 +130,7 @@ class EmergencyAccessibilityValidator {
           rule: "ARIA Role Required",
           wcagCriterion: "4.1.2",
           element: `Emergency element ${index}`,
-          description:
-            "Emergency interface elements must have explicit ARIA roles",
+          description: "Emergency interface elements must have explicit ARIA roles",
           solution: "Add role='region', role='alert', or appropriate ARIA role",
           impact: "critical",
         });
@@ -164,8 +161,7 @@ class EmergencyAccessibilityValidator {
           rule: "Emergency Alerts Live Region",
           wcagCriterion: "4.1.3",
           element: `Alert ${index}`,
-          description:
-            "Emergency alerts must use aria-live='assertive' for immediate announcement",
+          description: "Emergency alerts must use aria-live='assertive' for immediate announcement",
           solution: "Add aria-live='assertive' to emergency alerts",
           impact: "critical",
         });
@@ -231,16 +227,15 @@ class EmergencyAccessibilityValidator {
       // Check for focus indicators
       const computedStyle = window.getComputedStyle(el as Element);
       if (
-        computedStyle.outlineStyle === "none" &&
-        computedStyle.boxShadow === "none"
+        computedStyle.outlineStyle === "none"
+        && computedStyle.boxShadow === "none"
       ) {
         issues.push({
           severity: "error",
           rule: "Focus Indicator Required",
           wcagCriterion: "2.4.7",
           element: `Focusable element ${index}`,
-          description:
-            "All focusable elements must have visible focus indicators",
+          description: "All focusable elements must have visible focus indicators",
           solution: "Add focus styles with outline or box-shadow",
           impact: "serious",
         });
@@ -257,8 +252,7 @@ class EmergencyAccessibilityValidator {
         rule: "Skip Navigation",
         wcagCriterion: "2.4.1",
         element: "Component container",
-        description:
-          "Complex emergency interfaces should provide skip navigation",
+        description: "Complex emergency interfaces should provide skip navigation",
         solution: "Add skip links to main content areas",
         impact: "moderate",
       });
@@ -292,8 +286,8 @@ class EmergencyAccessibilityValidator {
 
         // Only check elements with both colors defined
         if (
-          textColor !== "rgba(0, 0, 0, 0)" &&
-          backgroundColor !== "rgba(0, 0, 0, 0)"
+          textColor !== "rgba(0, 0, 0, 0)"
+          && backgroundColor !== "rgba(0, 0, 0, 0)"
         ) {
           const contrast = this.calculateContrastRatio(
             textColor,
@@ -302,10 +296,9 @@ class EmergencyAccessibilityValidator {
           const fontSize = parseFloat(style.fontSize);
           const fontWeight = style.fontWeight;
 
-          const isLargeText =
-            fontSize >= 18 ||
-            (fontSize >= 14 &&
-              (fontWeight === "bold" || parseInt(fontWeight) >= 700));
+          const isLargeText = fontSize >= 18
+            || (fontSize >= 14
+              && (fontWeight === "bold" || parseInt(fontWeight) >= 700));
           const requiredRatio = isLargeText
             ? 4.5
             : this.config.minimumContrastRatio;
@@ -316,9 +309,10 @@ class EmergencyAccessibilityValidator {
               rule: "Color Contrast",
               wcagCriterion: isLargeText ? "1.4.6" : "1.4.11",
               element: `Text element ${index}`,
-              description: `Contrast ratio ${contrast.toFixed(2)}:1 is below required ${requiredRatio}:1`,
-              solution:
-                "Adjust text or background colors to meet contrast requirements",
+              description: `Contrast ratio ${
+                contrast.toFixed(2)
+              }:1 is below required ${requiredRatio}:1`,
+              solution: "Adjust text or background colors to meet contrast requirements",
               impact: "serious",
             });
           }
@@ -351,8 +345,7 @@ class EmergencyAccessibilityValidator {
         rule: "Semantic Markup",
         wcagCriterion: "1.3.1",
         element: "Component structure",
-        description:
-          "Excessive use of div/span elements instead of semantic HTML",
+        description: "Excessive use of div/span elements instead of semantic HTML",
         solution: "Replace generic elements with semantic HTML5 elements",
         impact: "moderate",
       });
@@ -424,8 +417,7 @@ class EmergencyAccessibilityValidator {
           rule: "Life-Threatening Alert Accessibility",
           wcagCriterion: "4.1.3",
           element: `Life-threatening alert ${index}`,
-          description:
-            "Life-threatening alerts must be immediately announced to screen readers",
+          description: "Life-threatening alerts must be immediately announced to screen readers",
           solution: "Add role='alert' and aria-live='assertive'",
           impact: "critical",
         });
@@ -444,8 +436,7 @@ class EmergencyAccessibilityValidator {
           rule: "Emergency Contact Identification",
           wcagCriterion: "2.4.6",
           element: `Emergency contact ${index}`,
-          description:
-            "Emergency contacts must be clearly identified for screen readers",
+          description: "Emergency contacts must be clearly identified for screen readers",
           solution: "Include 'emergency' in accessible name or aria-label",
           impact: "critical",
         });
@@ -585,16 +576,16 @@ class EmergencyAccessibilityValidator {
       .flatMap((r) => r.issues)
       .filter((i) => i.impact === "critical");
 
-    const overallScore =
-      this.testResults.length > 0
-        ? this.testResults.reduce((sum, r) => sum + r.score, 0) /
-          this.testResults.length
-        : 0;
+    const overallScore = this.testResults.length > 0
+      ? this.testResults.reduce((sum, r) => sum + r.score, 0)
+        / this.testResults.length
+      : 0;
 
-    const wcagLevel =
-      overallScore >= 95 ? "AAA" : overallScore >= 85 ? "AA" : "A";
+    const wcagLevel = overallScore >= 95 ? "AAA" : overallScore >= 85 ? "AA" : "A";
 
-    let summary = `Emergency interface accessibility: ${overallScore.toFixed(1)}% (WCAG ${wcagLevel})`;
+    let summary = `Emergency interface accessibility: ${
+      overallScore.toFixed(1)
+    }% (WCAG ${wcagLevel})`;
     if (criticalIssues.length > 0) {
       summary += ` ⚠️ ${criticalIssues.length} critical accessibility issues`;
     }
@@ -630,8 +621,7 @@ class EmergencyAccessibilityValidator {
 }
 
 // Export singleton instance
-export const emergencyAccessibility =
-  EmergencyAccessibilityValidator.getInstance();
+export const emergencyAccessibility = EmergencyAccessibilityValidator.getInstance();
 
 // Utility functions for component testing
 export const testEmergencyComponentAccessibility = async (

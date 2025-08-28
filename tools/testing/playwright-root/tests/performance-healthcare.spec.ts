@@ -25,9 +25,7 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
     });
   });
 
-  test("should validate emergency access performance (<100ms requirement)", async ({
-    page,
-  }) => {
+  test("should validate emergency access performance (<100ms requirement)", async ({ page }) => {
     // Test 1: Emergency Patient Data Access
     const testPatient = HealthcareDataAnonymizer.generateAnonymousPatient();
 
@@ -86,9 +84,7 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
     );
   });
 
-  test("should validate routine healthcare operations performance (<500ms requirement)", async ({
-    page,
-  }) => {
+  test("should validate routine healthcare operations performance (<500ms requirement)", async ({ page }) => {
     // Test 1: Patient Dashboard Loading
     await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
       page,
@@ -162,9 +158,7 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
     }
   });
 
-  test("should validate Core Web Vitals for patient interfaces (≥95% requirement)", async ({
-    page,
-  }) => {
+  test("should validate Core Web Vitals for patient interfaces (≥95% requirement)", async ({ page }) => {
     // Test 1: Patient Dashboard Core Web Vitals
     await page.goto("/dashboard/patient");
 
@@ -180,8 +174,8 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 
           entries.forEach((entry) => {
             if (
-              entry.entryType === "paint" &&
-              entry.name === "first-contentful-paint"
+              entry.entryType === "paint"
+              && entry.name === "first-contentful-paint"
             ) {
               metrics.fcp = entry.startTime;
             }
@@ -199,10 +193,9 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
           )[0] as PerformanceNavigationTiming;
           if (navigation) {
             metrics.ttfb = navigation.responseStart - navigation.requestStart;
-            metrics.domContentLoaded =
-              navigation.domContentLoadedEventEnd - navigation.navigationStart;
-            metrics.loadComplete =
-              navigation.loadEventEnd - navigation.navigationStart;
+            metrics.domContentLoaded = navigation.domContentLoadedEventEnd
+              - navigation.navigationStart;
+            metrics.loadComplete = navigation.loadEventEnd - navigation.navigationStart;
           }
 
           resolve(metrics);
@@ -219,14 +212,11 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
           )[0] as PerformanceNavigationTiming;
           resolve({
             ttfb: navigation?.responseStart - navigation?.requestStart || 0,
-            fcp:
-              performance.getEntriesByName("first-contentful-paint")[0]
-                ?.startTime || 0,
-            domContentLoaded:
-              navigation?.domContentLoadedEventEnd -
-                navigation?.navigationStart || 0,
-            loadComplete:
-              navigation?.loadEventEnd - navigation?.navigationStart || 0,
+            fcp: performance.getEntriesByName("first-contentful-paint")[0]
+              ?.startTime || 0,
+            domContentLoaded: navigation?.domContentLoadedEventEnd
+                - navigation?.navigationStart || 0,
+            loadComplete: navigation?.loadEventEnd - navigation?.navigationStart || 0,
           });
         }, 5000);
       });
@@ -259,9 +249,7 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
     expect(loadTestTime).toBeLessThan(2000);
   });
 
-  test("should validate mobile healthcare performance with accessibility", async ({
-    page,
-  }) => {
+  test("should validate mobile healthcare performance with accessibility", async ({ page }) => {
     // Set mobile viewport for healthcare mobile testing
     await page.setViewportSize({ width: 375, height: 667 });
 
@@ -295,8 +283,7 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
     }
 
     // Average touch response should be fast for healthcare mobile UX
-    const avgTouchResponse =
-      touchResponses.reduce((a, b) => a + b, 0) / touchResponses.length;
+    const avgTouchResponse = touchResponses.reduce((a, b) => a + b, 0) / touchResponses.length;
 
     expect(avgTouchResponse).toBeLessThan(300);
 
@@ -330,10 +317,7 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
     expect(accessibilityTestTime).toBeLessThan(500);
   });
 
-  test("should validate performance under various network conditions", async ({
-    page,
-    context,
-  }) => {
+  test("should validate performance under various network conditions", async ({ page, context }) => {
     // Test 1: Fast 3G Network Simulation
     await context.route("**/*", async (route) => {
       // Simulate Fast 3G: ~1.6 Mbps down, ~750 Kbps up, ~562ms latency
@@ -394,9 +378,7 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
     await context.setOffline(false);
   });
 
-  test("should validate database and API performance for healthcare operations", async ({
-    page,
-  }) => {
+  test("should validate database and API performance for healthcare operations", async ({ page }) => {
     // Test 1: Database Query Performance
     const dbQueries = [
       { endpoint: "/api/patients", operation: "Patient List" },
@@ -459,19 +441,17 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
     expect(largeDataTime).toBeLessThan(5000);
   });
 
-  test("should validate healthcare memory and resource usage", async ({
-    page,
-  }) => {
+  test("should validate healthcare memory and resource usage", async ({ page }) => {
     // Test 1: Memory Usage Monitoring
     await page.goto("/dashboard/patient");
 
     const initialMemory = await page.evaluate(() => {
       return (performance as unknown).memory
         ? {
-            usedJSMemory: (performance as unknown).memory.usedJSMemory,
-            totalJSMemory: (performance as unknown).memory.totalJSMemory,
-            jsMemoryLimit: (performance as unknown).memory.jsMemoryLimit,
-          }
+          usedJSMemory: (performance as unknown).memory.usedJSMemory,
+          totalJSMemory: (performance as unknown).memory.totalJSMemory,
+          jsMemoryLimit: (performance as unknown).memory.jsMemoryLimit,
+        }
         : undefined;
     });
 
@@ -485,16 +465,15 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
     const finalMemory = await page.evaluate(() => {
       return (performance as unknown).memory
         ? {
-            usedJSMemory: (performance as unknown).memory.usedJSMemory,
-            totalJSMemory: (performance as unknown).memory.totalJSMemory,
-            jsMemoryLimit: (performance as unknown).memory.jsMemoryLimit,
-          }
+          usedJSMemory: (performance as unknown).memory.usedJSMemory,
+          totalJSMemory: (performance as unknown).memory.totalJSMemory,
+          jsMemoryLimit: (performance as unknown).memory.jsMemoryLimit,
+        }
         : undefined;
     });
 
     if (initialMemory && finalMemory) {
-      const memoryIncrease =
-        finalMemory.usedJSMemory - initialMemory.usedJSMemory;
+      const memoryIncrease = finalMemory.usedJSMemory - initialMemory.usedJSMemory;
 
       // Memory usage should not increase excessively
       expect(memoryIncrease).toBeLessThan(50 * 1024 * 1024); // <50MB increase

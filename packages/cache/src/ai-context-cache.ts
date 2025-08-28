@@ -95,8 +95,8 @@ export class AIContextCacheLayer implements CacheOperation {
 
     // Validate token count
     if (
-      metadata?.tokenCount &&
-      metadata.tokenCount > this.config.maxTokensPerContext
+      metadata?.tokenCount
+      && metadata.tokenCount > this.config.maxTokensPerContext
     ) {
       console.warn(
         `Context ${key} exceeds max token count: ${metadata.tokenCount}`,
@@ -143,10 +143,9 @@ export class AIContextCacheLayer implements CacheOperation {
   }
 
   async getStats(): Promise<CacheStats> {
-    this.stats.hitRate =
-      this.stats.totalRequests > 0
-        ? (this.stats.hits / this.stats.totalRequests) * 100
-        : 0;
+    this.stats.hitRate = this.stats.totalRequests > 0
+      ? (this.stats.hits / this.stats.totalRequests) * 100
+      : 0;
     return { ...this.stats };
   }
 
@@ -281,7 +280,7 @@ export class AIContextCacheLayer implements CacheOperation {
     byImportance: Record<string, number>;
     averageTokenCount: number;
     hitRate: number;
-    topUsers: { userId: string; contextCount: number }[];
+    topUsers: { userId: string; contextCount: number; }[];
   }> {
     const byType: Record<string, number> = {};
     const byImportance: Record<string, number> = {};
@@ -294,8 +293,7 @@ export class AIContextCacheLayer implements CacheOperation {
       byType[metadata.contextType] = (byType[metadata.contextType] || 0) + 1;
 
       // Count by importance
-      byImportance[metadata.importance] =
-        (byImportance[metadata.importance] || 0) + 1;
+      byImportance[metadata.importance] = (byImportance[metadata.importance] || 0) + 1;
 
       // Count by user
       if (metadata.userId) {
@@ -376,16 +374,15 @@ export class AIContextCacheLayer implements CacheOperation {
       critical: 8,
     };
 
-    const importanceWeight =
-      importanceWeights[entry.importance as keyof typeof importanceWeights] ||
-      2;
+    const importanceWeight = importanceWeights[entry.importance as keyof typeof importanceWeights]
+      || 2;
 
     // Lower score = more likely to be evicted
     return (
-      age / 1000 +
-      accessRecency / 1000 -
-      accessFrequency * 1000 -
-      importanceWeight * 10_000
+      age / 1000
+      + accessRecency / 1000
+      - accessFrequency * 1000
+      - importanceWeight * 10_000
     );
   }
 
@@ -397,9 +394,8 @@ export class AIContextCacheLayer implements CacheOperation {
       this.responseTimeBuffer.shift();
     }
 
-    this.stats.averageResponseTime =
-      this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
-      this.responseTimeBuffer.length;
+    this.stats.averageResponseTime = this.responseTimeBuffer.reduce((a, b) => a + b, 0)
+      / this.responseTimeBuffer.length;
   }
 
   private resetStats(): void {

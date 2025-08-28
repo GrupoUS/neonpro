@@ -1,20 +1,11 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { AlertTriangle, CheckCircle, AlertCircle, XCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import type { RiskIndicatorProps } from "@/types/no-show-prediction";
-import {
-  RISK_THRESHOLDS,
-  RISK_LABELS_PT,
-  RISK_COLORS,
-} from "@/types/no-show-prediction";
+import { RISK_COLORS, RISK_LABELS_PT, RISK_THRESHOLDS } from "@/types/no-show-prediction";
+import { AlertCircle, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 
 /**
  * Risk Indicator Component for No-Show Prediction
@@ -34,8 +25,8 @@ export function RiskIndicator({
         size === "small"
           ? "h-3 w-3"
           : size === "medium"
-            ? "h-4 w-4"
-            : "h-5 w-5",
+          ? "h-4 w-4"
+          : "h-5 w-5",
       ),
     };
 
@@ -76,14 +67,12 @@ export function RiskIndicator({
           size === "small"
             ? "px-1 py-0 text-xs"
             : size === "medium"
-              ? "px-2 py-1 text-sm"
-              : "px-3 py-1 text-base",
+            ? "px-2 py-1 text-sm"
+            : "px-3 py-1 text-base",
         )}
       >
         {getRiskIcon(riskLevel)}
-        {showLabel && (
-          <span className="font-medium">{RISK_LABELS_PT[riskLevel]}</span>
-        )}
+        {showLabel && <span className="font-medium">{RISK_LABELS_PT[riskLevel]}</span>}
       </Badge>
 
       <span
@@ -93,8 +82,8 @@ export function RiskIndicator({
           size === "small"
             ? "text-xs"
             : size === "medium"
-              ? "text-sm"
-              : "text-base",
+            ? "text-sm"
+            : "text-base",
         )}
       >
         {riskScore}%
@@ -116,7 +105,7 @@ export function RiskIndicatorWithTooltip({
 }: RiskIndicatorProps & {
   tooltipContent?: {
     confidence: number;
-    topFactors: { factor: string; impact: number; description: string }[];
+    topFactors: { factor: string; impact: number; description: string; }[];
     recommendedActions: string[];
   };
 }) {

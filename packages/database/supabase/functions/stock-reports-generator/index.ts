@@ -7,8 +7,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 interface ReportConfig {
@@ -192,15 +191,14 @@ serve(async (req) => {
             items: expiryItems.map((item) => ({
               ...item,
               days_to_expiry: Math.ceil(
-                (new Date(item.expiry_date).getTime() - now.getTime()) /
-                  (1000 * 60 * 60 * 24),
+                (new Date(item.expiry_date).getTime() - now.getTime())
+                  / (1000 * 60 * 60 * 24),
               ),
-              status:
-                new Date(item.expiry_date) < now
-                  ? "expired"
-                  : new Date(item.expiry_date) <= thirtyDaysFromNow
-                    ? "expiring_soon"
-                    : "ok",
+              status: new Date(item.expiry_date) < now
+                ? "expired"
+                : new Date(item.expiry_date) <= thirtyDaysFromNow
+                ? "expiring_soon"
+                : "ok",
             })),
             healthcare_compliance: {
               anvisa_compliance: true,
@@ -247,15 +245,16 @@ serve(async (req) => {
               missing_registration: anvisaItems.filter(
                 (item) => !item.anvisa_registration,
               ).length,
-              compliance_rate:
-                anvisaItems.length > 0
-                  ? `${(
-                      (anvisaItems.filter((item) => item.anvisa_registration)
-                        .length /
-                        anvisaItems.length) *
-                      100
-                    ).toFixed(2)}%`
-                  : "100%",
+              compliance_rate: anvisaItems.length > 0
+                ? `${
+                  (
+                    (anvisaItems.filter((item) => item.anvisa_registration)
+                      .length
+                      / anvisaItems.length)
+                    * 100
+                  ).toFixed(2)
+                }%`
+                : "100%",
             },
             items: anvisaItems,
             compliance_issues: anvisaItems.filter(

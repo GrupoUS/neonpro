@@ -30,9 +30,7 @@ test.describe("🏥 Healthcare Regulatory Documents Dashboard", () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test("should navigate to regulatory documents with healthcare compliance", async ({
-    page,
-  }) => {
+  test("should navigate to regulatory documents with healthcare compliance", async ({ page }) => {
     // Test dashboard navigation with healthcare performance standards
     await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
       page,
@@ -63,9 +61,7 @@ test.describe("🏥 Healthcare Regulatory Documents Dashboard", () => {
     await HealthcareAccessibilityHelper.validateBrazilianAccessibility(page);
   });
 
-  test("should complete full document management flow with ANVISA compliance", async ({
-    page,
-  }) => {
+  test("should complete full document management flow with ANVISA compliance", async ({ page }) => {
     // Generate anonymous healthcare regulatory data
     const testDocument = {
       title: "ANVISA Compliance Document - Test",
@@ -138,9 +134,7 @@ test.describe("🏥 Healthcare Regulatory Documents Dashboard", () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test("should display healthcare regulatory expiration alerts with CFM compliance", async ({
-    page,
-  }) => {
+  test("should display healthcare regulatory expiration alerts with CFM compliance", async ({ page }) => {
     // Navigate to alerts section with healthcare performance
     await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
       page,
@@ -190,9 +184,7 @@ test.describe("🏥 Healthcare Regulatory Documents Dashboard", () => {
     await HealthcareAccessibilityHelper.validateAnxietyReduction(page);
   });
 
-  test("should handle errors gracefully with healthcare support standards", async ({
-    page,
-  }) => {
+  test("should handle errors gracefully with healthcare support standards", async ({ page }) => {
     // Test healthcare error handling for invalid form submission
     await page.getByTestId("add-document-button").click();
     await expect(page.getByTestId("document-form-modal")).toBeVisible();
@@ -267,9 +259,7 @@ test.describe("🏥 Healthcare Regulatory Documents Dashboard", () => {
     await HealthcareAccessibilityHelper.validateAnxietyReduction(page);
   });
 
-  test("should validate LGPD compliance for regulatory document management", async ({
-    page,
-  }) => {
+  test("should validate LGPD compliance for regulatory document management", async ({ page }) => {
     // Test LGPD compliance for regulatory documents
     await LGPDComplianceHelper.validateConsentManagement(page);
 
@@ -307,9 +297,7 @@ test.describe("🏥 Healthcare Regulatory Documents Dashboard", () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test("should handle mobile regulatory document management with healthcare accessibility", async ({
-    page,
-  }) => {
+  test("should handle mobile regulatory document management with healthcare accessibility", async ({ page }) => {
     // Set mobile viewport for healthcare mobile accessibility
     await page.setViewportSize({ width: 375, height: 667 });
 
@@ -344,9 +332,7 @@ test.describe("🏥 Healthcare Regulatory Documents Dashboard", () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test("should maintain healthcare security throughout regulatory document workflow", async ({
-    page,
-  }) => {
+  test("should maintain healthcare security throughout regulatory document workflow", async ({ page }) => {
     // Comprehensive healthcare security validation
     await HealthcareSecurityHelper.validateDataEncryption(page);
 
@@ -399,9 +385,7 @@ test.describe("🏥 Healthcare Regulatory Documents Dashboard", () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test("should validate constitutional healthcare compliance for regulatory framework", async ({
-    page,
-  }) => {
+  test("should validate constitutional healthcare compliance for regulatory framework", async ({ page }) => {
     // Test constitutional healthcare compliance integration
     await expect(
       page.getByTestId("constitutional-compliance-panel"),

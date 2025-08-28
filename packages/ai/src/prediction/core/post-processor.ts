@@ -233,7 +233,7 @@ export class AestheticPostProcessor {
   ): InjectionPoint[] {
     const areaDistribution: Record<
       string,
-      { percentage: number; technique: string }
+      { percentage: number; technique: string; }
     > = {
       forehead: { percentage: 0.25, technique: "horizontal_lines" },
       glabella: { percentage: 0.3, technique: "central_spread" },
@@ -278,10 +278,10 @@ export class AestheticPostProcessor {
     return depthMap[area] || "mid";
   }
 
-  private generateInjectionCoordinates(area: string): { x: number; y: number } {
+  private generateInjectionCoordinates(area: string): { x: number; y: number; } {
     // This would ideally use facial mapping data
     // For now, return relative coordinates
-    const coordinateMap: Record<string, { x: number; y: number }> = {
+    const coordinateMap: Record<string, { x: number; y: number; }> = {
       forehead: { x: 0.5, y: 0.2 },
       glabella: { x: 0.5, y: 0.3 },
       "crows-feet": { x: 0.7, y: 0.4 },
@@ -603,9 +603,9 @@ export class AestheticPostProcessor {
     }
 
     if (
-      patient.skinType.includes("4") ||
-      patient.skinType.includes("5") ||
-      patient.skinType.includes("6")
+      patient.skinType.includes("4")
+      || patient.skinType.includes("5")
+      || patient.skinType.includes("6")
     ) {
       recommendations.push("Monitor closely for pigmentation changes");
     }

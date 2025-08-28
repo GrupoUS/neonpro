@@ -41,8 +41,7 @@ export const RealTimePerformanceDashboard: React.FC<
   healthcareContext = {},
 }) => {
   // State management
-  const [dashboardData, setDashboardData] =
-    useState<PerformanceDashboardData | null>(null);
+  const [dashboardData, setDashboardData] = useState<PerformanceDashboardData | null>(null);
   const [alerts, setAlerts] = useState<PerformanceAlert[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string>("");
@@ -60,14 +59,13 @@ export const RealTimePerformanceDashboard: React.FC<
       setLoading(true);
 
       // Load recent metrics for each category
-      const [webVitals, aiMetrics, cacheMetrics, systemMetrics, recentAlerts] =
-        await Promise.all([
-          loadMetricsByCategory("web-vitals"),
-          loadMetricsByCategory("ai-metrics"),
-          loadMetricsByCategory("cache-metrics"),
-          loadMetricsByCategory("system-metrics"),
-          loadRecentAlerts(),
-        ]);
+      const [webVitals, aiMetrics, cacheMetrics, systemMetrics, recentAlerts] = await Promise.all([
+        loadMetricsByCategory("web-vitals"),
+        loadMetricsByCategory("ai-metrics"),
+        loadMetricsByCategory("cache-metrics"),
+        loadMetricsByCategory("system-metrics"),
+        loadRecentAlerts(),
+      ]);
 
       const newDashboardData: PerformanceDashboardData = {
         webVitals: {
@@ -375,9 +373,7 @@ export const RealTimePerformanceDashboard: React.FC<
           </div>
         </div>
 
-        {clinicId && (
-          <div className="text-sm text-gray-600">Clinic: {clinicId}</div>
-        )}
+        {clinicId && <div className="text-sm text-gray-600">Clinic: {clinicId}</div>}
       </div>
 
       {/* Alerts */}
@@ -394,10 +390,10 @@ export const RealTimePerformanceDashboard: React.FC<
                   alert.severity === "critical"
                     ? "border-red-500 bg-red-50"
                     : alert.severity === "error"
-                      ? "border-orange-500 bg-orange-50"
-                      : alert.severity === "warning"
-                        ? "border-yellow-500 bg-yellow-50"
-                        : "border-blue-500 bg-blue-50"
+                    ? "border-orange-500 bg-orange-50"
+                    : alert.severity === "warning"
+                    ? "border-yellow-500 bg-yellow-50"
+                    : "border-blue-500 bg-blue-50"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -496,8 +492,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
             status === "healthy"
               ? "bg-green-100 text-green-800"
               : status === "warning"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-red-100 text-red-800"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-red-100 text-red-800"
           }`}
         >
           {status}
@@ -556,9 +552,9 @@ const calculateSystemHealth = (
 
   const criticalMetrics = metrics.filter(
     (m) =>
-      (m.name === "cpu-usage" && m.value > 90) ||
-      (m.name === "memory-usage" && m.value > 90) ||
-      (m.name === "error-rate" && m.value > 5),
+      (m.name === "cpu-usage" && m.value > 90)
+      || (m.name === "memory-usage" && m.value > 90)
+      || (m.name === "error-rate" && m.value > 5),
   );
 
   if (criticalMetrics.length > 0) {
@@ -567,9 +563,9 @@ const calculateSystemHealth = (
 
   const warningMetrics = metrics.filter(
     (m) =>
-      (m.name === "cpu-usage" && m.value > 70) ||
-      (m.name === "memory-usage" && m.value > 70) ||
-      (m.name === "error-rate" && m.value > 1),
+      (m.name === "cpu-usage" && m.value > 70)
+      || (m.name === "memory-usage" && m.value > 70)
+      || (m.name === "error-rate" && m.value > 1),
   );
 
   return warningMetrics.length > 0 ? "warning" : "healthy";

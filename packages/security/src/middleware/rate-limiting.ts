@@ -39,7 +39,7 @@ export interface RateLimitStore {
   increment(
     key: string,
     windowSeconds: number,
-  ): Promise<{ count: number; remaining: number; resetTime: number }>;
+  ): Promise<{ count: number; remaining: number; resetTime: number; }>;
   reset(key: string): Promise<void>;
 }
 
@@ -50,13 +50,13 @@ export interface RateLimitStore {
 export class MemoryRateLimitStore implements RateLimitStore {
   private readonly store = new Map<
     string,
-    { count: number; resetTime: number }
+    { count: number; resetTime: number; }
   >();
 
   increment(
     key: string,
     windowSeconds: number,
-  ): Promise<{ count: number; remaining: number; resetTime: number }> {
+  ): Promise<{ count: number; remaining: number; resetTime: number; }> {
     const now = Date.now();
     const windowMs = windowSeconds * MILLISECONDS_PER_SECOND;
 
@@ -347,8 +347,7 @@ export const RateLimitLevel = {
   EXCEEDED: "exceeded",
 } as const;
 
-export type RateLimitLevel =
-  (typeof RateLimitLevel)[keyof typeof RateLimitLevel];
+export type RateLimitLevel = (typeof RateLimitLevel)[keyof typeof RateLimitLevel];
 
 /**
  * Determine alert level based on current usage

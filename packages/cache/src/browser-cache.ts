@@ -69,9 +69,8 @@ export class BrowserCacheLayer implements CacheOperation {
     }
 
     const effectiveTTL = ttl || this.config.defaultTTL;
-    const sensitiveData =
-      policy?.dataClassification === "CONFIDENTIAL" ||
-      policy?.dataClassification === "RESTRICTED";
+    const sensitiveData = policy?.dataClassification === "CONFIDENTIAL"
+      || policy?.dataClassification === "RESTRICTED";
 
     // Don't store highly sensitive data in browser cache
     if (policy?.dataClassification === "RESTRICTED") {
@@ -129,10 +128,9 @@ export class BrowserCacheLayer implements CacheOperation {
   }
 
   async getStats(): Promise<CacheStats> {
-    this.stats.hitRate =
-      this.stats.totalRequests > 0
-        ? (this.stats.hits / this.stats.totalRequests) * 100
-        : 0;
+    this.stats.hitRate = this.stats.totalRequests > 0
+      ? (this.stats.hits / this.stats.totalRequests) * 100
+      : 0;
     return { ...this.stats };
   }
 
@@ -173,7 +171,7 @@ export class BrowserCacheLayer implements CacheOperation {
 
   async clearPatientData(patientId: string): Promise<void> {
     const keysToDelete = Array.from(this.cache.keys()).filter((key) =>
-      key.includes(`patient_${patientId}`),
+      key.includes(`patient_${patientId}`)
     );
 
     for (const key of keysToDelete) {
@@ -286,9 +284,8 @@ export class BrowserCacheLayer implements CacheOperation {
       this.responseTimeBuffer.shift();
     }
 
-    this.stats.averageResponseTime =
-      this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
-      this.responseTimeBuffer.length;
+    this.stats.averageResponseTime = this.responseTimeBuffer.reduce((a, b) => a + b, 0)
+      / this.responseTimeBuffer.length;
   }
 
   private resetStats(): void {

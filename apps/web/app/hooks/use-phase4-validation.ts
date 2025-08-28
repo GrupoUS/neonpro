@@ -3,25 +3,25 @@
 
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
 import type {
+  SystemHealth,
+  ValidationAlert,
+  ValidationConfig,
+  ValidationDashboard,
   ValidationRule,
   ValidationSession,
-  ValidationConfig,
   ValidationStats,
-  ValidationDashboard,
   ValidationStatus,
   ValidationType,
-  ValidationAlert,
-  SystemHealth,
 } from "@/app/types/phase4-validation";
 import {
+  BrazilianHealthcareValidationPresets,
+  ValidationLabels,
+  ValidationLevel,
   ValidationRequest,
   ValidationResult,
-  ValidationLevel,
-  ValidationLabels,
-  BrazilianHealthcareValidationPresets,
 } from "@/app/types/phase4-validation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface UsePhase4ValidationOptions {
   clinic_id: string;
@@ -132,8 +132,7 @@ export function usePhase4Validation(
   const activeSessions = useMemo(
     () =>
       sessions.filter(
-        (session) =>
-          session.status === "validating" || session.status === "pending",
+        (session) => session.status === "validating" || session.status === "pending",
       ),
     [sessions],
   );
@@ -226,9 +225,7 @@ export function usePhase4Validation(
   const updateSessionInState = useCallback(
     (updatedSession: ValidationSession) => {
       setSessions((prev) =>
-        prev.map((session) =>
-          session.id === updatedSession.id ? updatedSession : session,
-        ),
+        prev.map((session) => session.id === updatedSession.id ? updatedSession : session)
       );
     },
     [],
@@ -275,8 +272,7 @@ export function usePhase4Validation(
 
         return session;
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Erro na validação";
+        const message = error instanceof Error ? error.message : "Erro na validação";
         setError(message);
         throw error;
       } finally {
@@ -374,9 +370,7 @@ export function usePhase4Validation(
       }
 
       const updatedRule: ValidationRule = await response.json();
-      setRules((prev) =>
-        prev.map((rule) => (rule.id === id ? updatedRule : rule)),
-      );
+      setRules((prev) => prev.map((rule) => (rule.id === id ? updatedRule : rule)));
       return updatedRule;
     },
     [],
@@ -540,8 +534,8 @@ export function usePhase4Validation(
         prev.map((session) =>
           session.id === sessionId
             ? { ...session, status: "failed" as ValidationStatus }
-            : session,
-        ),
+            : session
+        )
       );
     },
     [],
@@ -562,9 +556,7 @@ export function usePhase4Validation(
       }
 
       setAlerts((prev) =>
-        prev.map((alert) =>
-          alert.id === alertId ? { ...alert, acknowledged: true } : alert,
-        ),
+        prev.map((alert) => alert.id === alertId ? { ...alert, acknowledged: true } : alert)
       );
     },
     [],

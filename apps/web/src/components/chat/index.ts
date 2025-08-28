@@ -7,11 +7,11 @@
  */
 
 // Core chat interface components
-export { ChatInterface, type ChatInterfaceProps } from "./ChatInterface";
-export { MessageBubble, type MessageBubbleProps } from "./MessageBubble";
-export { ChatInput, type ChatInputProps } from "./ChatInput";
 export { ChatHeader, type ChatHeaderProps } from "./ChatHeader";
+export { ChatInput, type ChatInputProps } from "./ChatInput";
+export { ChatInterface, type ChatInterfaceProps } from "./ChatInterface";
 export { ChatSidebar, type ChatSidebarProps } from "./ChatSidebar";
+export { MessageBubble, type MessageBubbleProps } from "./MessageBubble";
 
 // Utility components
 export {
@@ -21,23 +21,19 @@ export {
   useTypingIndicator,
 } from "./TypingIndicator";
 
-export {
-  VoiceCommands,
-  type VoiceCommandsProps,
-  type VoiceRecording,
-} from "./VoiceCommands";
+export { VoiceCommands, type VoiceCommandsProps, type VoiceRecording } from "./VoiceCommands";
 
 // Re-export chat types for convenience
 export type {
-  ChatMessage,
-  ChatConversation,
-  MessageContent,
-  SenderType,
-  MessageType,
-  ConversationType,
-  MessageStatus,
-  HealthcareContext,
   AIResponse,
+  ChatConversation,
+  ChatMessage,
+  ConversationType,
   EmergencyContext,
+  HealthcareContext,
   LGPDComplianceInfo,
+  MessageContent,
+  MessageStatus,
+  MessageType,
+  SenderType,
 } from "@/types/chat";

@@ -3,13 +3,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -119,8 +113,7 @@ const mockCertificates: DigitalCertificate[] = [
     validFrom: "2023-01-15T00:00:00Z",
     validTo: "2026-01-15T23:59:59Z",
     serialNumber: "5A3B7C9D1E2F4A6B8C0D2E4F",
-    thumbprint:
-      "SHA256:1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+    thumbprint: "SHA256:1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
     keyUsage: ["Digital Signature", "Non Repudiation", "Key Encipherment"],
     isValid: true,
     isTrusted: true,
@@ -134,8 +127,7 @@ const mockCertificates: DigitalCertificate[] = [
     validFrom: "2023-06-01T00:00:00Z",
     validTo: "2025-06-01T23:59:59Z",
     serialNumber: "7F9E5B8A3C1D6F4E2A9B7C5D",
-    thumbprint:
-      "SHA256:9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e",
+    thumbprint: "SHA256:9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e",
     keyUsage: ["Digital Signature", "Non Repudiation"],
     isValid: true,
     isTrusted: true,
@@ -156,10 +148,8 @@ export function DigitalSignature({
   const [currentStep, setCurrentStep] = useState<
     "certificate" | "signature" | "validation" | "complete"
   >("certificate");
-  const [selectedCertificate, setSelectedCertificate] =
-    useState<DigitalCertificate | null>();
-  const [signatureData, setSignatureData] =
-    useState<DigitalSignatureData | null>();
+  const [selectedCertificate, setSelectedCertificate] = useState<DigitalCertificate | null>();
+  const [signatureData, setSignatureData] = useState<DigitalSignatureData | null>();
   const [isLoading, setIsLoading] = useState(false);
   const [validationProgress, setValidationProgress] = useState(0);
   const [visualSignature, setVisualSignature] = useState<string>("");
@@ -201,9 +191,8 @@ export function DigitalSignature({
       mpCompliance: certificate.isValid && certificate.isTrusted,
       lgpdCompliance: true, // Would validate LGPD compliance
       cfmCompliance: consentType === "medical_procedure",
-      icpBrasilValid:
-        certificate.certificateLevel === "A3" ||
-        certificate.certificateLevel === "A1",
+      icpBrasilValid: certificate.certificateLevel === "A3"
+        || certificate.certificateLevel === "A1",
       timestampValid: true, // Would validate RFC 3161 timestamp
       integrityHash: `SHA256:${Math.random().toString(36).slice(2, 15)}`,
       legalBasis: "consent",
@@ -352,8 +341,7 @@ export function DigitalSignature({
             Assinatura Digital - Consentimento LGPD
           </DialogTitle>
           <DialogDescription>
-            Processo de assinatura digital conforme MP 2.200-2/2001 e Lei
-            14.129/2021
+            Processo de assinatura digital conforme MP 2.200-2/2001 e Lei 14.129/2021
           </DialogDescription>
         </DialogHeader>
 
@@ -366,10 +354,10 @@ export function DigitalSignature({
                   currentStep === "certificate"
                     ? "text-blue-600"
                     : ["signature", "validation", "complete"].includes(
-                          currentStep,
-                        )
-                      ? "text-green-600"
-                      : "text-gray-400"
+                        currentStep,
+                      )
+                    ? "text-green-600"
+                    : "text-gray-400"
                 }`}
               >
                 <div
@@ -377,27 +365,27 @@ export function DigitalSignature({
                     currentStep === "certificate"
                       ? "border-blue-600 bg-blue-50"
                       : ["signature", "validation", "complete"].includes(
-                            currentStep,
-                          )
-                        ? "border-green-600 bg-green-50"
-                        : "border-gray-300"
+                          currentStep,
+                        )
+                      ? "border-green-600 bg-green-50"
+                      : "border-gray-300"
                   }`}
                 >
                   {["signature", "validation", "complete"].includes(
-                    currentStep,
-                  ) ? (
-                    <CheckCircle className="h-4 w-4" />
-                  ) : (
-                    "1"
-                  )}
+                      currentStep,
+                    )
+                    ? <CheckCircle className="h-4 w-4" />
+                    : (
+                      "1"
+                    )}
                 </div>
                 <span className="font-medium">Certificado</span>
               </div>
               <div
                 className={`h-1 w-16 ${
-                  currentStep === "signature" ||
-                  currentStep === "validation" ||
-                  currentStep === "complete"
+                  currentStep === "signature"
+                    || currentStep === "validation"
+                    || currentStep === "complete"
                     ? "bg-green-600"
                     : "bg-gray-300"
                 }`}
@@ -407,26 +395,26 @@ export function DigitalSignature({
                   currentStep === "signature"
                     ? "text-blue-600"
                     : currentStep === "validation" || currentStep === "complete"
-                      ? "text-green-600"
-                      : "text-gray-400"
+                    ? "text-green-600"
+                    : "text-gray-400"
                 }`}
               >
                 <div
                   className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${
                     currentStep === "signature"
                       ? "border-blue-600 bg-blue-50"
-                      : currentStep === "validation" ||
-                          currentStep === "complete"
-                        ? "border-green-600 bg-green-50"
-                        : "border-gray-300"
+                      : currentStep === "validation"
+                          || currentStep === "complete"
+                      ? "border-green-600 bg-green-50"
+                      : "border-gray-300"
                   }`}
                 >
-                  {currentStep === "validation" ||
-                  currentStep === "complete" ? (
-                    <CheckCircle className="h-4 w-4" />
-                  ) : (
-                    "2"
-                  )}
+                  {currentStep === "validation"
+                      || currentStep === "complete"
+                    ? <CheckCircle className="h-4 w-4" />
+                    : (
+                      "2"
+                    )}
                 </div>
                 <span className="font-medium">Assinatura</span>
               </div>
@@ -442,8 +430,8 @@ export function DigitalSignature({
                   currentStep === "validation"
                     ? "text-blue-600"
                     : currentStep === "complete"
-                      ? "text-green-600"
-                      : "text-gray-400"
+                    ? "text-green-600"
+                    : "text-gray-400"
                 }`}
               >
                 <div
@@ -451,13 +439,11 @@ export function DigitalSignature({
                     currentStep === "validation"
                       ? "border-blue-600 bg-blue-50"
                       : currentStep === "complete"
-                        ? "border-green-600 bg-green-50"
-                        : "border-gray-300"
+                      ? "border-green-600 bg-green-50"
+                      : "border-gray-300"
                   }`}
                 >
-                  {currentStep === "complete" ? (
-                    <CheckCircle className="h-4 w-4" />
-                  ) : (
+                  {currentStep === "complete" ? <CheckCircle className="h-4 w-4" /> : (
                     "3"
                   )}
                 </div>
@@ -476,8 +462,7 @@ export function DigitalSignature({
                     Selecionar Certificado Digital
                   </CardTitle>
                   <CardDescription>
-                    Escolha um certificado digital válido ICP-Brasil para
-                    assinar o consentimento
+                    Escolha um certificado digital válido ICP-Brasil para assinar o consentimento
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -506,9 +491,7 @@ export function DigitalSignature({
                                 {cert.subject.split(":")[0]}
                               </h4>
                               <Badge
-                                variant={
-                                  cert.isValid ? "default" : "destructive"
-                                }
+                                variant={cert.isValid ? "default" : "destructive"}
                               >
                                 {cert.certificateLevel}
                               </Badge>
@@ -528,8 +511,7 @@ export function DigitalSignature({
                                   <strong>Emissor:</strong> {cert.issuer}
                                 </p>
                                 <p>
-                                  <strong>Documento:</strong>{" "}
-                                  {cert.documentType}{" "}
+                                  <strong>Documento:</strong> {cert.documentType}{" "}
                                   {cert.subject.split(":")[1]}
                                 </p>
                               </div>
@@ -541,8 +523,7 @@ export function DigitalSignature({
                                   )}
                                 </p>
                                 <p>
-                                  <strong>Tipo:</strong>{" "}
-                                  {cert.keyUsage.join(", ")}
+                                  <strong>Tipo:</strong> {cert.keyUsage.join(", ")}
                                 </p>
                               </div>
                             </div>
@@ -565,8 +546,7 @@ export function DigitalSignature({
                     Declarações Legais Obrigatórias
                   </CardTitle>
                   <CardDescription>
-                    Confirmações necessárias para validade jurídica da
-                    assinatura digital
+                    Confirmações necessárias para validade jurídica da assinatura digital
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -579,17 +559,15 @@ export function DigitalSignature({
                           setLegalConfirmations((prev) => ({
                             ...prev,
                             understandsLegalEffects: checked as boolean,
-                          }))
-                        }
+                          }))}
                       />
                       <Label
                         className="text-sm leading-relaxed"
                         htmlFor="legal-effects"
                       >
-                        <strong>Efeitos Jurídicos:</strong> Declaro que
-                        compreendo que esta assinatura digital possui os mesmos
-                        efeitos jurídicos de uma assinatura manuscrita, conforme
-                        MP 2.200-2/2001.
+                        <strong>Efeitos Jurídicos:</strong>{" "}
+                        Declaro que compreendo que esta assinatura digital possui os mesmos efeitos
+                        jurídicos de uma assinatura manuscrita, conforme MP 2.200-2/2001.
                       </Label>
                     </div>
                     <div className="flex items-start gap-3">
@@ -600,17 +578,15 @@ export function DigitalSignature({
                           setLegalConfirmations((prev) => ({
                             ...prev,
                             confirmsIdentity: checked as boolean,
-                          }))
-                        }
+                          }))}
                       />
                       <Label
                         className="text-sm leading-relaxed"
                         htmlFor="identity-confirm"
                       >
-                        <strong>Confirmação de Identidade:</strong> Confirmo que
-                        sou o titular do certificado digital selecionado e
-                        possuo controle exclusivo da chave privada
-                        correspondente.
+                        <strong>Confirmação de Identidade:</strong>{" "}
+                        Confirmo que sou o titular do certificado digital selecionado e possuo
+                        controle exclusivo da chave privada correspondente.
                       </Label>
                     </div>
                     <div className="flex items-start gap-3">
@@ -621,16 +597,15 @@ export function DigitalSignature({
                           setLegalConfirmations((prev) => ({
                             ...prev,
                             acceptsLiability: checked as boolean,
-                          }))
-                        }
+                          }))}
                       />
                       <Label
                         className="text-sm leading-relaxed"
                         htmlFor="liability"
                       >
-                        <strong>Responsabilidade:</strong> Aceito total
-                        responsabilidade pelo uso deste certificado digital e
-                        pelas consequências legais desta assinatura.
+                        <strong>Responsabilidade:</strong>{" "}
+                        Aceito total responsabilidade pelo uso deste certificado digital e pelas
+                        consequências legais desta assinatura.
                       </Label>
                     </div>
                     <div className="flex items-start gap-3">
@@ -641,15 +616,14 @@ export function DigitalSignature({
                           setLegalConfirmations((prev) => ({
                             ...prev,
                             acknowledgesNonRepudiation: checked as boolean,
-                          }))
-                        }
+                          }))}
                       />
                       <Label
                         className="text-sm leading-relaxed"
                         htmlFor="non-repudiation"
                       >
-                        <strong>Irretratabilidade:</strong> Reconheço que não
-                        poderei negar a autoria desta assinatura digital,
+                        <strong>Irretratabilidade:</strong>{" "}
+                        Reconheço que não poderei negar a autoria desta assinatura digital,
                         garantindo o princípio do não-repúdio.
                       </Label>
                     </div>
@@ -662,9 +636,7 @@ export function DigitalSignature({
                       <Checkbox
                         checked={witnessRequired}
                         id="witness-required"
-                        onCheckedChange={(checked) =>
-                          setWitnessRequired(checked as boolean)
-                        }
+                        onCheckedChange={(checked) => setWitnessRequired(checked as boolean)}
                       />
                       <Label className="font-medium" htmlFor="witness-required">
                         Testemunha necessária (menor de idade ou incapaz)
@@ -682,8 +654,7 @@ export function DigitalSignature({
                               setWitnessInfo((prev) => ({
                                 ...prev,
                                 name: e.target.value,
-                              }))
-                            }
+                              }))}
                             placeholder="Nome completo da testemunha"
                             value={witnessInfo.name}
                           />
@@ -696,8 +667,7 @@ export function DigitalSignature({
                               setWitnessInfo((prev) => ({
                                 ...prev,
                                 cpf: e.target.value,
-                              }))
-                            }
+                              }))}
                             placeholder="000.000.000-00"
                             value={witnessInfo.cpf}
                           />
@@ -713,13 +683,11 @@ export function DigitalSignature({
                   Cancelar
                 </Button>
                 <Button
-                  disabled={
-                    !(
-                      selectedCertificate &&
-                      Object.values(legalConfirmations).every(Boolean)
-                    ) ||
-                    (witnessRequired && !(witnessInfo.name && witnessInfo.cpf))
-                  }
+                  disabled={!(
+                    selectedCertificate
+                    && Object.values(legalConfirmations).every(Boolean)
+                  )
+                    || (witnessRequired && !(witnessInfo.name && witnessInfo.cpf))}
                   onClick={handleCreateSignature}
                 >
                   Prosseguir para Assinatura
@@ -738,8 +706,7 @@ export function DigitalSignature({
                     Assinatura Visual (Opcional)
                   </CardTitle>
                   <CardDescription>
-                    Adicione uma assinatura visual para complementar a
-                    assinatura digital
+                    Adicione uma assinatura visual para complementar a assinatura digital
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -772,8 +739,7 @@ export function DigitalSignature({
                       </Button>
                     </div>
                     <p className="text-gray-600 text-sm">
-                      Desenhe sua assinatura no campo acima usando o mouse ou
-                      touch screen
+                      Desenhe sua assinatura no campo acima usando o mouse ou touch screen
                     </p>
                   </div>
                 </CardContent>
@@ -787,14 +753,16 @@ export function DigitalSignature({
                   Voltar
                 </Button>
                 <Button disabled={isLoading} onClick={handleCreateSignature}>
-                  {isLoading ? (
-                    <>
-                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                      Criando Assinatura...
-                    </>
-                  ) : (
-                    "Criar Assinatura Digital"
-                  )}
+                  {isLoading
+                    ? (
+                      <>
+                        <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                        Criando Assinatura...
+                      </>
+                    )
+                    : (
+                      "Criar Assinatura Digital"
+                    )}
                 </Button>
               </div>
             </div>
@@ -860,8 +828,7 @@ export function DigitalSignature({
                           <h4 className="font-medium">Informações Técnicas</h4>
                           <div className="space-y-1 text-gray-600 text-sm">
                             <p>
-                              <strong>Hash:</strong>{" "}
-                              {signatureData.signatureHash.slice(0, 20)}...
+                              <strong>Hash:</strong> {signatureData.signatureHash.slice(0, 20)}...
                             </p>
                             <p>
                               <strong>Timestamp:</strong>{" "}
@@ -893,9 +860,8 @@ export function DigitalSignature({
                 <CheckCircle className="h-4 w-4" />
                 <AlertTitle>Assinatura Digital Criada com Sucesso!</AlertTitle>
                 <AlertDescription>
-                  A assinatura digital foi criada e validada conforme a
-                  legislação brasileira. O documento possui validade jurídica
-                  plena.
+                  A assinatura digital foi criada e validada conforme a legislação brasileira. O
+                  documento possui validade jurídica plena.
                 </AlertDescription>
               </Alert>
 
@@ -971,12 +937,10 @@ export function DigitalSignature({
                         <div className="mt-1 text-gray-600 text-sm">
                           <p>IP: {signatureData.metadata.ipAddress}</p>
                           <p>
-                            Dispositivo:{" "}
-                            {signatureData.metadata.deviceInfo.platform}
+                            Dispositivo: {signatureData.metadata.deviceInfo.platform}
                           </p>
                           <p>
-                            Localização:{" "}
-                            {signatureData.metadata.deviceInfo.timezone}
+                            Localização: {signatureData.metadata.deviceInfo.timezone}
                           </p>
                         </div>
                       </div>

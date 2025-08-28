@@ -6,50 +6,50 @@
 
 // Core templates
 export {
-  HealthcareFeatureTemplate,
-  HealthcareFeaturePresets,
   createHealthcareFeature,
+  HealthcareFeaturePresets,
+  HealthcareFeatureTemplate,
 } from "./healthcare-feature-template";
 
 export type {
-  HealthcareFeatureConfig,
-  HealthcareContext,
   AuditMetadata,
+  FeatureConfigType,
+  FeaturePresetKey,
+  HealthcareContext,
+  HealthcareFeatureConfig,
   HealthcarePatient,
   HealthcarePatientSchema,
-  FeaturePresetKey,
-  FeatureConfigType,
 } from "./healthcare-feature-template";
 
 export {
-  HealthcareApiTemplate,
-  createHealthcareApi,
   BrazilianHealthcareSchemas,
+  createHealthcareApi,
+  HealthcareApiTemplate,
 } from "./healthcare-api-template";
 
 export type {
   HealthcareApiResponse,
-  PaginationParams,
-  PaginatedResponse,
-  HealthcareErrorCodes,
   HealthcareErrorCode,
+  HealthcareErrorCodes,
+  PaginatedResponse,
+  PaginationParams,
 } from "./healthcare-api-template";
 
 export {
-  HealthcareComponentTemplate,
+  BrazilianHealthcareFields,
   createHealthcareComponent,
   createHealthcareComponentWithPreset,
-  BrazilianHealthcareFields,
   HealthcareComponentPresets,
+  HealthcareComponentTemplate,
 } from "./healthcare-component-template";
 
 export type {
+  ComponentPresetKey,
+  HealthcareComponentActions,
+  HealthcareComponentConfig,
   HealthcareComponentProps,
   HealthcareComponentState,
-  HealthcareComponentConfig,
-  HealthcareComponentActions,
   ValidationState,
-  ComponentPresetKey,
 } from "./healthcare-component-template";
 
 // Template usage patterns for AI agents
@@ -174,16 +174,11 @@ export const TemplatePatternsGuide = {
 
   // Common error patterns and solutions
   troubleshooting: {
-    "Professional license required":
-      "User role is physician but no professionalLicense in context",
-    "LGPD consent required":
-      "Feature requires consent but lgpdConsent is false in context",
-    "Emergency access denied":
-      "Emergency access requested but allowsEmergencyAccess is false",
-    "Encryption failed":
-      "Check encryption keys and patient ID for data encryption",
-    "Validation failed":
-      "Input data does not match Brazilian healthcare format requirements",
+    "Professional license required": "User role is physician but no professionalLicense in context",
+    "LGPD consent required": "Feature requires consent but lgpdConsent is false in context",
+    "Emergency access denied": "Emergency access requested but allowsEmergencyAccess is false",
+    "Encryption failed": "Check encryption keys and patient ID for data encryption",
+    "Validation failed": "Input data does not match Brazilian healthcare format requirements",
   },
 };
 

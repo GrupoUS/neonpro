@@ -4,10 +4,7 @@
  */
 
 import { voiceNavigationService } from "@/lib/services/voice-navigation-service";
-import type {
-  VoiceCommand,
-  VoiceNavigationState,
-} from "@/lib/services/voice-navigation-service";
+import type { VoiceCommand, VoiceNavigationState } from "@/lib/services/voice-navigation-service";
 import { useCallback, useEffect, useState } from "react";
 
 interface UseVoiceNavigationReturn {

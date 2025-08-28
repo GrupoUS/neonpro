@@ -347,8 +347,7 @@ export class InfrastructureMonitoringService {
     config?: Partial<PerformanceDashboardConfig>,
   ): InfrastructureMonitoringService {
     if (!InfrastructureMonitoringService.instance) {
-      InfrastructureMonitoringService.instance =
-        new InfrastructureMonitoringService(config);
+      InfrastructureMonitoringService.instance = new InfrastructureMonitoringService(config);
     }
     return InfrastructureMonitoringService.instance;
   }
@@ -508,13 +507,14 @@ export class InfrastructureMonitoringService {
 
     // Performance alerts
     if (
-      metrics.healthcare.emergencyResponseTime >
-      thresholds.emergencyResponseTime
+      metrics.healthcare.emergencyResponseTime
+        > thresholds.emergencyResponseTime
     ) {
       this.createAlert({
         severity: "critical",
         type: "performance",
-        message: `Emergency response time exceeded: ${metrics.healthcare.emergencyResponseTime}ms > ${thresholds.emergencyResponseTime}ms`,
+        message:
+          `Emergency response time exceeded: ${metrics.healthcare.emergencyResponseTime}ms > ${thresholds.emergencyResponseTime}ms`,
         source: metrics.region,
       });
     }
@@ -523,7 +523,8 @@ export class InfrastructureMonitoringService {
       this.createAlert({
         severity: "high",
         type: "performance",
-        message: `Patient lookup time exceeded: ${metrics.healthcare.patientLookupTime}ms > ${thresholds.patientLookupTime}ms`,
+        message:
+          `Patient lookup time exceeded: ${metrics.healthcare.patientLookupTime}ms > ${thresholds.patientLookupTime}ms`,
         source: metrics.region,
       });
     }
@@ -532,7 +533,8 @@ export class InfrastructureMonitoringService {
       this.createAlert({
         severity: "medium",
         type: "performance",
-        message: `AI chat response time exceeded: ${metrics.healthcare.aiChatResponseTime}ms > ${thresholds.aiChatResponseTime}ms`,
+        message:
+          `AI chat response time exceeded: ${metrics.healthcare.aiChatResponseTime}ms > ${thresholds.aiChatResponseTime}ms`,
         source: metrics.region,
       });
     }
@@ -551,7 +553,9 @@ export class InfrastructureMonitoringService {
       this.createAlert({
         severity: "high",
         type: "infrastructure",
-        message: `High memory usage: ${metrics.resources.memory.toFixed(1)}% > ${thresholds.memoryUsage}%`,
+        message: `High memory usage: ${
+          metrics.resources.memory.toFixed(1)
+        }% > ${thresholds.memoryUsage}%`,
         source: metrics.region,
       });
     }
@@ -560,7 +564,9 @@ export class InfrastructureMonitoringService {
       this.createAlert({
         severity: "critical",
         type: "infrastructure",
-        message: `High disk usage: ${metrics.resources.disk.toFixed(1)}% > ${thresholds.diskUsage}%`,
+        message: `High disk usage: ${
+          metrics.resources.disk.toFixed(1)
+        }% > ${thresholds.diskUsage}%`,
         source: metrics.region,
       });
     }
@@ -569,7 +575,9 @@ export class InfrastructureMonitoringService {
       this.createAlert({
         severity: "high",
         type: "performance",
-        message: `Error rate exceeded: ${metrics.performance.errorRate.toFixed(2)}% > ${thresholds.errorRate}%`,
+        message: `Error rate exceeded: ${
+          metrics.performance.errorRate.toFixed(2)
+        }% > ${thresholds.errorRate}%`,
         source: metrics.region,
       });
     }
@@ -612,8 +620,7 @@ export class InfrastructureMonitoringService {
     for (const check of checks) {
       const now = new Date();
       const lastCheck = new Date(check.lastCheck);
-      const minutesSinceCheck =
-        (now.getTime() - lastCheck.getTime()) / (1000 * 60);
+      const minutesSinceCheck = (now.getTime() - lastCheck.getTime()) / (1000 * 60);
 
       if (minutesSinceCheck >= check.checkInterval) {
         const isCompliant = await this.performComplianceCheck(check);
@@ -743,13 +750,12 @@ export class InfrastructureMonitoringService {
         activeAlerts: activeAlerts.length,
         criticalAlerts: activeAlerts.filter((a) => a.severity === "critical")
           .length,
-        averageResponseTime:
-          recentMetrics.length > 0
-            ? recentMetrics.reduce(
-                (sum, m) => sum + m.performance.responseTime,
-                0,
-              ) / recentMetrics.length
-            : 0,
+        averageResponseTime: recentMetrics.length > 0
+          ? recentMetrics.reduce(
+            (sum, m) => sum + m.performance.responseTime,
+            0,
+          ) / recentMetrics.length
+          : 0,
         overallHealth: this.calculateOverallHealth(),
       },
       metrics: recentMetrics,
@@ -793,19 +799,18 @@ export class InfrastructureMonitoringService {
 }
 
 // Export singleton instance optimized for Brazilian healthcare
-export const brazilianInfrastructureMonitoring =
-  InfrastructureMonitoringService.getInstance({
-    refreshInterval: 30_000, // 30 seconds for healthcare systems
-    alertThresholds: {
-      emergencyResponseTime: 100, // Critical for Brazilian emergency care
-      patientLookupTime: 200, // Fast patient access
-      appointmentBookingTime: 500, // Reasonable booking time
-      aiChatResponseTime: 1500, // AI response under 1.5s
-      errorRate: 0.5, // Low error tolerance for healthcare
-      cpuUsage: 75, // Conservative CPU threshold
-      memoryUsage: 80, // Conservative memory threshold
-      diskUsage: 85, // Conservative disk threshold
-    },
-  });
+export const brazilianInfrastructureMonitoring = InfrastructureMonitoringService.getInstance({
+  refreshInterval: 30_000, // 30 seconds for healthcare systems
+  alertThresholds: {
+    emergencyResponseTime: 100, // Critical for Brazilian emergency care
+    patientLookupTime: 200, // Fast patient access
+    appointmentBookingTime: 500, // Reasonable booking time
+    aiChatResponseTime: 1500, // AI response under 1.5s
+    errorRate: 0.5, // Low error tolerance for healthcare
+    cpuUsage: 75, // Conservative CPU threshold
+    memoryUsage: 80, // Conservative memory threshold
+    diskUsage: 85, // Conservative disk threshold
+  },
+});
 
 export { InfrastructureMonitoringService };

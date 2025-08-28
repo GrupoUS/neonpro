@@ -1,25 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +13,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -37,71 +32,65 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Progress } from "@/components/ui/progress";
-import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
-  AlertTriangle,
-  Phone,
-  Heart,
-  Lungs,
-  Brain,
-  Shield,
-  Baby,
-  Pill,
-  Clock,
-  Users,
-  Bell,
   Activity,
-  FileText,
-  Search,
-  Plus,
-  Play,
-  Pause,
-  CheckCircle,
-  XCircle,
+  AlertCircle,
+  AlertTriangle,
   ArrowUp,
-  Timer,
-  MapPin,
-  User,
-  Stethoscope,
-  Truck,
-  Radio,
-  BookOpen,
+  Baby,
   BarChart3,
+  Bell,
+  BookOpen,
+  Brain,
   Calendar,
+  CheckCircle,
+  Clock,
   Download,
   Eye,
-  AlertCircle,
-  Zap,
-  PhoneCall,
-  UserCheck,
-  Settings,
+  FileText,
+  Heart,
   History,
+  Lungs,
+  MapPin,
+  Pause,
+  Phone,
+  PhoneCall,
+  Pill,
+  Play,
+  Plus,
+  Radio,
+  Search,
+  Settings,
+  Shield,
+  Stethoscope,
   Target,
+  Timer,
+  Truck,
+  User,
+  UserCheck,
+  Users,
+  XCircle,
+  Zap,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import type {
+  EmergencyCategory,
+  EmergencyContact,
+  EmergencyPriority,
   EmergencyProtocol,
   EmergencyResponse,
-  EmergencyContact,
-  EmergencyCategory,
-  EmergencyPriority,
   EmergencyResponseTeam,
 } from "@/lib/compliance/emergency-medical-protocols";
 import {
-  EmergencyStatus,
   EmergencyEscalationLevel,
-  EmergencyNotification,
   EmergencyMedicalProtocolsService,
+  EmergencyNotification,
+  EmergencyStatus,
 } from "@/lib/compliance/emergency-medical-protocols";
 
 // Initialize Emergency service
@@ -323,8 +312,7 @@ export const EmergencyProtocolsManager: React.FC<
   >("all");
   const [isEmergencyDialogOpen, setIsEmergencyDialogOpen] = useState(false);
   const [isActionDialogOpen, setIsActionDialogOpen] = useState(false);
-  const [selectedEmergency, setSelectedEmergency] =
-    useState<EmergencyResponse | null>(null);
+  const [selectedEmergency, setSelectedEmergency] = useState<EmergencyResponse | null>(null);
   const [actionType, setActionType] = useState<
     "update" | "escalate" | "resolve"
   >("update");
@@ -400,8 +388,7 @@ export const EmergencyProtocolsManager: React.FC<
         patientName: formData.patientName,
         patientAge: formData.patientAge,
         symptoms: formData.symptoms,
-        vitalSigns:
-          formData.vitalSigns.heartRate > 0 ? formData.vitalSigns : undefined,
+        vitalSigns: formData.vitalSigns.heartRate > 0 ? formData.vitalSigns : undefined,
         consciousness: formData.consciousness,
         location: formData.location,
         reportedBy: formData.reportedBy,
@@ -448,11 +435,11 @@ export const EmergencyProtocolsManager: React.FC<
               action: actionForm.action,
               medication: actionForm.medication.name
                 ? {
-                    name: actionForm.medication.name,
-                    dosage: actionForm.medication.dosage,
-                    time: new Date(),
-                    administeredBy: actionForm.medication.administeredBy,
-                  }
+                  name: actionForm.medication.name,
+                  dosage: actionForm.medication.dosage,
+                  time: new Date(),
+                  administeredBy: actionForm.medication.administeredBy,
+                }
                 : undefined,
               notes: actionForm.notes,
               userId: "current-user", // In real app, get from auth
@@ -483,9 +470,7 @@ export const EmergencyProtocolsManager: React.FC<
       if (result?.isValid) {
         // Update local state
         setActiveEmergencies((prev) =>
-          prev.map((emergency) =>
-            emergency.id === selectedEmergency.id ? result.data! : emergency,
-          ),
+          prev.map((emergency) => emergency.id === selectedEmergency.id ? result.data! : emergency)
         );
 
         setIsActionDialogOpen(false);
@@ -494,8 +479,8 @@ export const EmergencyProtocolsManager: React.FC<
           actionType === "update"
             ? "Ação registrada com sucesso"
             : actionType === "escalate"
-              ? "Emergência escalada com sucesso"
-              : "Emergência resolvida com sucesso",
+            ? "Emergência escalada com sucesso"
+            : "Emergência resolvida com sucesso",
         );
       } else {
         toast.error(result?.errors?.[0] || "Erro ao processar ação");
@@ -542,24 +527,18 @@ export const EmergencyProtocolsManager: React.FC<
   };
 
   const filteredProtocols = protocols.filter((protocol) => {
-    const matchesSearch =
-      protocol.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      protocol.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      categoryFilter === "all" || protocol.category === categoryFilter;
-    const matchesPriority =
-      priorityFilter === "all" || protocol.priority === priorityFilter;
+    const matchesSearch = protocol.name.toLowerCase().includes(searchTerm.toLowerCase())
+      || protocol.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter === "all" || protocol.category === categoryFilter;
+    const matchesPriority = priorityFilter === "all" || protocol.priority === priorityFilter;
     return matchesSearch && matchesCategory && matchesPriority;
   });
 
   const filteredEmergencies = activeEmergencies.filter((emergency) => {
-    const matchesSearch =
-      emergency.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emergency.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      categoryFilter === "all" || emergency.category === categoryFilter;
-    const matchesPriority =
-      priorityFilter === "all" || emergency.priority === priorityFilter;
+    const matchesSearch = emergency.patientName.toLowerCase().includes(searchTerm.toLowerCase())
+      || emergency.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter === "all" || emergency.category === categoryFilter;
+    const matchesPriority = priorityFilter === "all" || emergency.priority === priorityFilter;
     return matchesSearch && matchesCategory && matchesPriority;
   });
 
@@ -617,18 +596,14 @@ export const EmergencyProtocolsManager: React.FC<
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200">
               <AlertTriangle className="h-4 w-4 text-red-600" />
               <span className="text-sm font-medium text-red-700">
-                {
-                  activeEmergencies.filter((e) => e.priority === "critical")
-                    .length
-                }{" "}
-                Críticas
+                {activeEmergencies.filter((e) => e.priority === "critical")
+                  .length} Críticas
               </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-50 border border-orange-200">
               <Zap className="h-4 w-4 text-orange-600" />
               <span className="text-sm font-medium text-orange-700">
-                {activeEmergencies.filter((e) => e.priority === "high").length}{" "}
-                Altas
+                {activeEmergencies.filter((e) => e.priority === "high").length} Altas
               </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 border border-blue-200">
@@ -656,8 +631,7 @@ export const EmergencyProtocolsManager: React.FC<
                   Acionar Protocolo de Emergência
                 </DialogTitle>
                 <DialogDescription>
-                  Registrar nova emergência médica e acionar protocolos de
-                  resposta
+                  Registrar nova emergência médica e acionar protocolos de resposta
                 </DialogDescription>
               </DialogHeader>
 
@@ -675,8 +649,7 @@ export const EmergencyProtocolsManager: React.FC<
                           setFormData((prev) => ({
                             ...prev,
                             patientName: e.target.value,
-                          }))
-                        }
+                          }))}
                         placeholder="Nome completo"
                       />
                     </div>
@@ -689,8 +662,7 @@ export const EmergencyProtocolsManager: React.FC<
                           setFormData((prev) => ({
                             ...prev,
                             patientId: e.target.value,
-                          }))
-                        }
+                          }))}
                         placeholder="000.000.000-00"
                       />
                     </div>
@@ -706,8 +678,7 @@ export const EmergencyProtocolsManager: React.FC<
                           setFormData((prev) => ({
                             ...prev,
                             patientAge: parseInt(e.target.value) || 0,
-                          }))
-                        }
+                          }))}
                         placeholder="Idade do paciente"
                       />
                     </div>
@@ -727,8 +698,7 @@ export const EmergencyProtocolsManager: React.FC<
                           setFormData((prev) => ({
                             ...prev,
                             location: e.target.value,
-                          }))
-                        }
+                          }))}
                         placeholder="Sala, consultório, endereço..."
                       />
                     </div>
@@ -742,8 +712,7 @@ export const EmergencyProtocolsManager: React.FC<
                           setFormData((prev) => ({
                             ...prev,
                             consciousness: value,
-                          }))
-                        }
+                          }))}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o nível" />
@@ -773,8 +742,7 @@ export const EmergencyProtocolsManager: React.FC<
                         setFormData((prev) => ({
                           ...prev,
                           description: e.target.value,
-                        }))
-                      }
+                        }))}
                       placeholder="Descreva detalhadamente os sintomas apresentados e a situação encontrada..."
                       rows={4}
                     />
@@ -845,8 +813,7 @@ export const EmergencyProtocolsManager: React.FC<
                               ...prev.vitalSigns,
                               bloodPressure: e.target.value,
                             },
-                          }))
-                        }
+                          }))}
                         placeholder="120/80"
                       />
                     </div>
@@ -865,8 +832,7 @@ export const EmergencyProtocolsManager: React.FC<
                               ...prev.vitalSigns,
                               heartRate: parseInt(e.target.value) || 0,
                             },
-                          }))
-                        }
+                          }))}
                         placeholder="72"
                       />
                     </div>
@@ -885,8 +851,7 @@ export const EmergencyProtocolsManager: React.FC<
                               ...prev.vitalSigns,
                               oxygenSaturation: parseInt(e.target.value) || 0,
                             },
-                          }))
-                        }
+                          }))}
                         placeholder="98"
                       />
                     </div>
@@ -908,8 +873,7 @@ export const EmergencyProtocolsManager: React.FC<
                               ...prev.vitalSigns,
                               temperature: parseFloat(e.target.value) || 0,
                             },
-                          }))
-                        }
+                          }))}
                         placeholder="36.5"
                       />
                     </div>
@@ -928,8 +892,7 @@ export const EmergencyProtocolsManager: React.FC<
                               ...prev.vitalSigns,
                               respiratoryRate: parseInt(e.target.value) || 0,
                             },
-                          }))
-                        }
+                          }))}
                         placeholder="16"
                       />
                     </div>
@@ -948,8 +911,7 @@ export const EmergencyProtocolsManager: React.FC<
                               ...prev.vitalSigns,
                               glucoseLevel: parseInt(e.target.value) || 0,
                             },
-                          }))
-                        }
+                          }))}
                         placeholder="90"
                       />
                     </div>
@@ -969,8 +931,7 @@ export const EmergencyProtocolsManager: React.FC<
                           setFormData((prev) => ({
                             ...prev,
                             reportedBy: e.target.value,
-                          }))
-                        }
+                          }))}
                         placeholder="Nome do profissional que está relatando"
                       />
                     </div>
@@ -985,8 +946,7 @@ export const EmergencyProtocolsManager: React.FC<
                           setFormData((prev) => ({
                             ...prev,
                             contactNumber: e.target.value,
-                          }))
-                        }
+                          }))}
                         placeholder="(11) 99999-9999"
                       />
                     </div>
@@ -997,9 +957,8 @@ export const EmergencyProtocolsManager: React.FC<
                   <AlertTriangle className="h-4 w-4" />
                   <AlertTitle>Atenção</AlertTitle>
                   <AlertDescription>
-                    O protocolo de emergência será acionado imediatamente. Para
-                    emergências críticas, o SAMU (192) será contactado
-                    automaticamente.
+                    O protocolo de emergência será acionado imediatamente. Para emergências
+                    críticas, o SAMU (192) será contactado automaticamente.
                   </AlertDescription>
                 </Alert>
               </div>
@@ -1014,12 +973,10 @@ export const EmergencyProtocolsManager: React.FC<
                 <Button
                   variant="destructive"
                   onClick={handleTriggerEmergency}
-                  disabled={
-                    !formData.patientName ||
-                    !formData.description ||
-                    !formData.reportedBy ||
-                    formData.patientAge === 0
-                  }
+                  disabled={!formData.patientName
+                    || !formData.description
+                    || !formData.reportedBy
+                    || formData.patientAge === 0}
                 >
                   <AlertTriangle className="h-4 w-4 mr-2" />
                   ACIONAR EMERGÊNCIA
@@ -1043,9 +1000,7 @@ export const EmergencyProtocolsManager: React.FC<
         </div>
         <Select
           value={categoryFilter}
-          onValueChange={(value: EmergencyCategory | "all") =>
-            setCategoryFilter(value)
-          }
+          onValueChange={(value: EmergencyCategory | "all") => setCategoryFilter(value)}
         >
           <SelectTrigger className="w-48">
             <SelectValue />
@@ -1064,9 +1019,7 @@ export const EmergencyProtocolsManager: React.FC<
         </Select>
         <Select
           value={priorityFilter}
-          onValueChange={(value: EmergencyPriority | "all") =>
-            setPriorityFilter(value)
-          }
+          onValueChange={(value: EmergencyPriority | "all") => setPriorityFilter(value)}
         >
           <SelectTrigger className="w-48">
             <SelectValue />
@@ -1099,236 +1052,235 @@ export const EmergencyProtocolsManager: React.FC<
 
         {/* Active Emergencies */}
         <TabsContent value="active-emergencies" className="space-y-4">
-          {filteredEmergencies.length === 0 ? (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">
-                  Nenhuma Emergência Ativa
-                </h3>
-                <p className="text-muted-foreground">
-                  Não há emergências médicas ativas no momento.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-4">
-              {filteredEmergencies.map((emergency) => {
-                const protocol = protocols.find(
-                  (p) => p.id === emergency.protocolId,
-                );
-                const categoryConfig =
-                  EMERGENCY_CATEGORY_CONFIG[emergency.category];
-                const priorityConfig = PRIORITY_CONFIG[emergency.priority];
-                const statusConfig = STATUS_CONFIG[emergency.status];
-                const CategoryIcon = categoryConfig?.icon || AlertTriangle;
-                const PriorityIcon = priorityConfig?.icon || AlertTriangle;
-                const StatusIcon = statusConfig?.icon || Play;
+          {filteredEmergencies.length === 0
+            ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">
+                    Nenhuma Emergência Ativa
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Não há emergências médicas ativas no momento.
+                  </p>
+                </CardContent>
+              </Card>
+            )
+            : (
+              <div className="grid gap-4">
+                {filteredEmergencies.map((emergency) => {
+                  const protocol = protocols.find(
+                    (p) => p.id === emergency.protocolId,
+                  );
+                  const categoryConfig = EMERGENCY_CATEGORY_CONFIG[emergency.category];
+                  const priorityConfig = PRIORITY_CONFIG[emergency.priority];
+                  const statusConfig = STATUS_CONFIG[emergency.status];
+                  const CategoryIcon = categoryConfig?.icon || AlertTriangle;
+                  const PriorityIcon = priorityConfig?.icon || AlertTriangle;
+                  const StatusIcon = statusConfig?.icon || Play;
 
-                return (
-                  <Card
-                    key={emergency.id}
-                    className={cn(
-                      "border-l-4",
-                      emergency.priority === "critical" && "border-l-red-500",
-                      emergency.priority === "high" && "border-l-orange-500",
-                      emergency.priority === "medium" && "border-l-yellow-500",
-                      emergency.priority === "low" && "border-l-green-500",
-                    )}
-                  >
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <CategoryIcon className="h-5 w-5" />
-                            <CardTitle className="text-lg">
-                              {protocol?.name || "Protocolo não encontrado"}
-                            </CardTitle>
-                            <Badge
-                              variant="outline"
-                              className={cn(
-                                "text-xs",
-                                priorityConfig?.bg,
-                                priorityConfig?.text,
-                              )}
-                            >
-                              <PriorityIcon className="h-3 w-3 mr-1" />
-                              {priorityConfig?.label}
-                            </Badge>
-                            {emergency.samuCalled && (
+                  return (
+                    <Card
+                      key={emergency.id}
+                      className={cn(
+                        "border-l-4",
+                        emergency.priority === "critical" && "border-l-red-500",
+                        emergency.priority === "high" && "border-l-orange-500",
+                        emergency.priority === "medium" && "border-l-yellow-500",
+                        emergency.priority === "low" && "border-l-green-500",
+                      )}
+                    >
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <CategoryIcon className="h-5 w-5" />
+                              <CardTitle className="text-lg">
+                                {protocol?.name || "Protocolo não encontrado"}
+                              </CardTitle>
                               <Badge
                                 variant="outline"
-                                className="bg-red-50 text-red-700"
-                              >
-                                <Phone className="h-3 w-3 mr-1" />
-                                SAMU
-                              </Badge>
-                            )}
-                          </div>
-                          <CardDescription>
-                            <div className="flex items-center gap-4 text-sm">
-                              <div className="flex items-center gap-1">
-                                <User className="h-4 w-4" />
-                                {emergency.patientName} ({emergency.patientAge}{" "}
-                                anos)
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <MapPin className="h-4 w-4" />
-                                {emergency.location}
-                              </div>
-                              <div
                                 className={cn(
-                                  "flex items-center gap-1",
-                                  getResponseTimeColor(
-                                    emergency.startTime,
-                                    emergency.responseTime,
-                                  ),
+                                  "text-xs",
+                                  priorityConfig?.bg,
+                                  priorityConfig?.text,
                                 )}
                               >
-                                <Timer className="h-4 w-4" />
-                                {getElapsedTime(emergency.startTime)}
-                              </div>
-                            </div>
-                          </CardDescription>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant="outline"
-                            className={cn(statusConfig?.bg, statusConfig?.text)}
-                          >
-                            <StatusIcon className="h-3 w-3 mr-1" />
-                            {statusConfig?.label}
-                          </Badge>
-                          <Badge variant="outline" className="text-xs">
-                            {ESCALATION_CONFIG[emergency.escalationLevel].label}
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div>
-                        <div className="text-sm font-medium mb-2">
-                          Descrição:
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {emergency.description}
-                        </p>
-                      </div>
-
-                      {emergency.symptoms.length > 0 && (
-                        <div>
-                          <div className="text-sm font-medium mb-2">
-                            Sintomas:
-                          </div>
-                          <div className="flex flex-wrap gap-1">
-                            {emergency.symptoms.map((symptom) => (
-                              <Badge
-                                key={symptom}
-                                variant="secondary"
-                                className="text-xs"
-                              >
-                                {symptom}
+                                <PriorityIcon className="h-3 w-3 mr-1" />
+                                {priorityConfig?.label}
                               </Badge>
-                            ))}
+                              {emergency.samuCalled && (
+                                <Badge
+                                  variant="outline"
+                                  className="bg-red-50 text-red-700"
+                                >
+                                  <Phone className="h-3 w-3 mr-1" />
+                                  SAMU
+                                </Badge>
+                              )}
+                            </div>
+                            <CardDescription>
+                              <div className="flex items-center gap-4 text-sm">
+                                <div className="flex items-center gap-1">
+                                  <User className="h-4 w-4" />
+                                  {emergency.patientName} ({emergency.patientAge} anos)
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="h-4 w-4" />
+                                  {emergency.location}
+                                </div>
+                                <div
+                                  className={cn(
+                                    "flex items-center gap-1",
+                                    getResponseTimeColor(
+                                      emergency.startTime,
+                                      emergency.responseTime,
+                                    ),
+                                  )}
+                                >
+                                  <Timer className="h-4 w-4" />
+                                  {getElapsedTime(emergency.startTime)}
+                                </div>
+                              </div>
+                            </CardDescription>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant="outline"
+                              className={cn(statusConfig?.bg, statusConfig?.text)}
+                            >
+                              <StatusIcon className="h-3 w-3 mr-1" />
+                              {statusConfig?.label}
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              {ESCALATION_CONFIG[emergency.escalationLevel].label}
+                            </Badge>
                           </div>
                         </div>
-                      )}
-
-                      {emergency.vitalSigns && (
+                      </CardHeader>
+                      <CardContent className="space-y-4">
                         <div>
                           <div className="text-sm font-medium mb-2">
-                            Sinais Vitais:
+                            Descrição:
                           </div>
-                          <div className="grid grid-cols-3 gap-4 text-sm">
-                            {emergency.vitalSigns.bloodPressure && (
-                              <div>
-                                PA: {emergency.vitalSigns.bloodPressure}
-                              </div>
-                            )}
-                            {emergency.vitalSigns.heartRate > 0 && (
-                              <div>
-                                FC: {emergency.vitalSigns.heartRate} bpm
-                              </div>
-                            )}
-                            {emergency.vitalSigns.oxygenSaturation > 0 && (
-                              <div>
-                                SpO2: {emergency.vitalSigns.oxygenSaturation}%
-                              </div>
-                            )}
-                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {emergency.description}
+                          </p>
                         </div>
-                      )}
 
-                      {emergency.actionsPerformed.length > 0 && (
-                        <div>
-                          <div className="text-sm font-medium mb-2">
-                            Ações Realizadas:
+                        {emergency.symptoms.length > 0 && (
+                          <div>
+                            <div className="text-sm font-medium mb-2">
+                              Sintomas:
+                            </div>
+                            <div className="flex flex-wrap gap-1">
+                              {emergency.symptoms.map((symptom) => (
+                                <Badge
+                                  key={symptom}
+                                  variant="secondary"
+                                  className="text-xs"
+                                >
+                                  {symptom}
+                                </Badge>
+                              ))}
+                            </div>
                           </div>
-                          <div className="space-y-1">
-                            {emergency.actionsPerformed.map((action, index) => (
-                              <div
-                                key={index}
-                                className="text-xs text-muted-foreground"
-                              >
-                                {action.timestamp.toLocaleTimeString("pt-BR")} -{" "}
-                                {action.action}({action.performedBy})
-                              </div>
-                            ))}
+                        )}
+
+                        {emergency.vitalSigns && (
+                          <div>
+                            <div className="text-sm font-medium mb-2">
+                              Sinais Vitais:
+                            </div>
+                            <div className="grid grid-cols-3 gap-4 text-sm">
+                              {emergency.vitalSigns.bloodPressure && (
+                                <div>
+                                  PA: {emergency.vitalSigns.bloodPressure}
+                                </div>
+                              )}
+                              {emergency.vitalSigns.heartRate > 0 && (
+                                <div>
+                                  FC: {emergency.vitalSigns.heartRate} bpm
+                                </div>
+                              )}
+                              {emergency.vitalSigns.oxygenSaturation > 0 && (
+                                <div>
+                                  SpO2: {emergency.vitalSigns.oxygenSaturation}%
+                                </div>
+                              )}
+                            </div>
                           </div>
+                        )}
+
+                        {emergency.actionsPerformed.length > 0 && (
+                          <div>
+                            <div className="text-sm font-medium mb-2">
+                              Ações Realizadas:
+                            </div>
+                            <div className="space-y-1">
+                              {emergency.actionsPerformed.map((action, index) => (
+                                <div
+                                  key={index}
+                                  className="text-xs text-muted-foreground"
+                                >
+                                  {action.timestamp.toLocaleTimeString("pt-BR")} -{" "}
+                                  {action.action}({action.performedBy})
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              setSelectedEmergency(emergency);
+                              setActionType("update");
+                              setIsActionDialogOpen(true);
+                            }}
+                          >
+                            <FileText className="h-4 w-4 mr-2" />
+                            Registrar Ação
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedEmergency(emergency);
+                              setActionType("escalate");
+                              setIsActionDialogOpen(true);
+                            }}
+                          >
+                            <ArrowUp className="h-4 w-4 mr-2" />
+                            Escalar
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedEmergency(emergency);
+                              setActionType("resolve");
+                              setIsActionDialogOpen(true);
+                            }}
+                          >
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Resolver
+                          </Button>
                         </div>
-                      )}
-
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            setSelectedEmergency(emergency);
-                            setActionType("update");
-                            setIsActionDialogOpen(true);
-                          }}
-                        >
-                          <FileText className="h-4 w-4 mr-2" />
-                          Registrar Ação
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedEmergency(emergency);
-                            setActionType("escalate");
-                            setIsActionDialogOpen(true);
-                          }}
-                        >
-                          <ArrowUp className="h-4 w-4 mr-2" />
-                          Escalar
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedEmergency(emergency);
-                            setActionType("resolve");
-                            setIsActionDialogOpen(true);
-                          }}
-                        >
-                          <CheckCircle className="h-4 w-4 mr-2" />
-                          Resolver
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
         </TabsContent>
 
         {/* Protocols Tab */}
         <TabsContent value="protocols" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredProtocols.map((protocol) => {
-              const categoryConfig =
-                EMERGENCY_CATEGORY_CONFIG[protocol.category];
+              const categoryConfig = EMERGENCY_CATEGORY_CONFIG[protocol.category];
               const priorityConfig = PRIORITY_CONFIG[protocol.priority];
               const CategoryIcon = categoryConfig?.icon || AlertTriangle;
               const PriorityIcon = priorityConfig?.icon || AlertTriangle;
@@ -1377,13 +1329,10 @@ export const EmergencyProtocolsManager: React.FC<
                       <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
                         {protocol.triggerCriteria
                           .slice(0, 3)
-                          .map((criteria, index) => (
-                            <li key={index}>{criteria}</li>
-                          ))}
+                          .map((criteria, index) => <li key={index}>{criteria}</li>)}
                         {protocol.triggerCriteria.length > 3 && (
                           <li className="text-xs text-muted-foreground">
-                            +{protocol.triggerCriteria.length - 3} mais
-                            critérios...
+                            +{protocol.triggerCriteria.length - 3} mais critérios...
                           </li>
                         )}
                       </ul>
@@ -1396,13 +1345,10 @@ export const EmergencyProtocolsManager: React.FC<
                       <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
                         {protocol.immediateActions
                           .slice(0, 3)
-                          .map((action, index) => (
-                            <li key={index}>{action}</li>
-                          ))}
+                          .map((action, index) => <li key={index}>{action}</li>)}
                         {protocol.immediateActions.length > 3 && (
                           <li className="text-xs text-muted-foreground">
-                            +{protocol.immediateActions.length - 3} mais
-                            ações...
+                            +{protocol.immediateActions.length - 3} mais ações...
                           </li>
                         )}
                       </ul>
@@ -1668,12 +1614,9 @@ export const EmergencyProtocolsManager: React.FC<
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
-                      {
-                        activeEmergencies.filter(
-                          (e) =>
-                            e.priority === "critical" || e.priority === "high",
-                        ).length
-                      }
+                      {activeEmergencies.filter(
+                        (e) => e.priority === "critical" || e.priority === "high",
+                      ).length}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Alta Prioridade
@@ -1744,9 +1687,8 @@ export const EmergencyProtocolsManager: React.FC<
               <Alert>
                 <Activity className="h-4 w-4" />
                 <AlertDescription>
-                  Todos os protocolos de emergência estão em conformidade com as
-                  diretrizes do CFM e regulamentações da ANVISA para
-                  estabelecimentos de saúde.
+                  Todos os protocolos de emergência estão em conformidade com as diretrizes do CFM e
+                  regulamentações da ANVISA para estabelecimentos de saúde.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -1766,8 +1708,7 @@ export const EmergencyProtocolsManager: React.FC<
             <DialogDescription>
               {selectedEmergency && (
                 <>
-                  {selectedEmergency.patientName} -{" "}
-                  {selectedEmergency.description}
+                  {selectedEmergency.patientName} - {selectedEmergency.description}
                 </>
               )}
             </DialogDescription>
@@ -1785,8 +1726,7 @@ export const EmergencyProtocolsManager: React.FC<
                       setActionForm((prev) => ({
                         ...prev,
                         action: e.target.value,
-                      }))
-                    }
+                      }))}
                     placeholder="Ex: Administrou oxigênio, verificou sinais vitais..."
                   />
                 </div>
@@ -1806,8 +1746,7 @@ export const EmergencyProtocolsManager: React.FC<
                               ...prev.medication,
                               name: e.target.value,
                             },
-                          }))
-                        }
+                          }))}
                         placeholder="Nome do medicamento"
                       />
                     </div>
@@ -1823,8 +1762,7 @@ export const EmergencyProtocolsManager: React.FC<
                               ...prev.medication,
                               dosage: e.target.value,
                             },
-                          }))
-                        }
+                          }))}
                         placeholder="Ex: 10mg, 1 ampola..."
                       />
                     </div>
@@ -1840,8 +1778,7 @@ export const EmergencyProtocolsManager: React.FC<
                               ...prev.medication,
                               administeredBy: e.target.value,
                             },
-                          }))
-                        }
+                          }))}
                         placeholder="Nome do profissional"
                       />
                     </div>
@@ -1860,8 +1797,7 @@ export const EmergencyProtocolsManager: React.FC<
                     setActionForm((prev) => ({
                       ...prev,
                       escalationReason: e.target.value,
-                    }))
-                  }
+                    }))}
                   placeholder="Descreva o motivo da escalação..."
                   rows={3}
                 />
@@ -1873,9 +1809,7 @@ export const EmergencyProtocolsManager: React.FC<
               <Textarea
                 id="notes"
                 value={actionForm.notes}
-                onChange={(e) =>
-                  setActionForm((prev) => ({ ...prev, notes: e.target.value }))
-                }
+                onChange={(e) => setActionForm((prev) => ({ ...prev, notes: e.target.value }))}
                 placeholder="Observações sobre a ação realizada..."
                 rows={3}
               />
@@ -1891,10 +1825,8 @@ export const EmergencyProtocolsManager: React.FC<
             </Button>
             <Button
               onClick={handleEmergencyAction}
-              disabled={
-                (actionType === "update" && !actionForm.action) ||
-                (actionType === "escalate" && !actionForm.escalationReason)
-              }
+              disabled={(actionType === "update" && !actionForm.action)
+                || (actionType === "escalate" && !actionForm.escalationReason)}
             >
               {actionType === "update" && "Registrar Ação"}
               {actionType === "escalate" && "Escalar Emergência"}

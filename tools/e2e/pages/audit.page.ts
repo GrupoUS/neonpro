@@ -3,7 +3,7 @@
  * Handles audit trail, compliance monitoring, and security logging workflows
  */
 
-import type { Page, Locator } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import { BasePage } from "./base.page";
 
 export interface AuditLogEntry {
@@ -24,7 +24,7 @@ export interface AuditLogEntry {
 export interface ComplianceReport {
   reportId: string;
   generatedAt: string;
-  period: { start: string; end: string };
+  period: { start: string; end: string; };
   complianceScore: number;
   violations: {
     severity: "low" | "medium" | "high" | "critical";
@@ -37,11 +37,11 @@ export interface ComplianceReport {
 }
 
 export interface SecurityMetrics {
-  loginAttempts: { successful: number; failed: number };
-  dataAccess: { authorized: number; unauthorized: number };
-  dataModifications: { create: number; update: number; delete: number };
-  complianceViolations: { hipaa: number; gdpr: number; other: number };
-  systemEvents: { errors: number; warnings: number; info: number };
+  loginAttempts: { successful: number; failed: number; };
+  dataAccess: { authorized: number; unauthorized: number; };
+  dataModifications: { create: number; update: number; delete: number; };
+  complianceViolations: { hipaa: number; gdpr: number; other: number; };
+  systemEvents: { errors: number; warnings: number; info: number; };
 }
 
 export class AuditPage extends BasePage {
@@ -158,7 +158,7 @@ export class AuditPage extends BasePage {
    * @param filters - Filter criteria for audit log
    */
   async loadAuditLog(filters?: {
-    dateRange?: { start: string; end: string };
+    dateRange?: { start: string; end: string; };
     userId?: string;
     action?: string;
     resource?: string;
@@ -189,7 +189,7 @@ export class AuditPage extends BasePage {
    * @param filters - Filter criteria
    */
   async applyAuditFilters(filters: {
-    dateRange?: { start: string; end: string };
+    dateRange?: { start: string; end: string; };
     userId?: string;
     action?: string;
     resource?: string;
@@ -429,12 +429,12 @@ export class AuditPage extends BasePage {
       return metricsData
         ? JSON.parse(metricsData)
         : {
-            loginAttempts: { successful: 0, failed: 0 },
-            dataAccess: { authorized: 0, unauthorized: 0 },
-            dataModifications: { create: 0, update: 0, delete: 0 },
-            complianceViolations: { hipaa: 0, gdpr: 0, other: 0 },
-            systemEvents: { errors: 0, warnings: 0, info: 0 },
-          };
+          loginAttempts: { successful: 0, failed: 0 },
+          dataAccess: { authorized: 0, unauthorized: 0 },
+          dataModifications: { create: 0, update: 0, delete: 0 },
+          complianceViolations: { hipaa: 0, gdpr: 0, other: 0 },
+          systemEvents: { errors: 0, warnings: 0, info: 0 },
+        };
     });
   }
 
@@ -479,9 +479,9 @@ export class AuditPage extends BasePage {
       return activityData
         ? JSON.parse(activityData)
         : {
-            suspiciousActivities: [],
-            riskScore: 0,
-          };
+          suspiciousActivities: [],
+          riskScore: 0,
+        };
     });
   }
 
@@ -611,14 +611,14 @@ export class AuditPage extends BasePage {
       return healthData
         ? JSON.parse(healthData)
         : {
-            cpuUsage: 0,
-            memoryUsage: 0,
-            diskUsage: 0,
-            networkLatency: 0,
-            errorRate: 0,
-            uptime: 0,
-            activeUsers: 0,
-          };
+          cpuUsage: 0,
+          memoryUsage: 0,
+          diskUsage: 0,
+          networkLatency: 0,
+          errorRate: 0,
+          uptime: 0,
+          activeUsers: 0,
+        };
     });
   }
 
@@ -628,7 +628,7 @@ export class AuditPage extends BasePage {
    */
   async generateCustomReport(reportConfig: {
     title: string;
-    period: { start: string; end: string };
+    period: { start: string; end: string; };
     sections: string[];
     filters: Record<string, any>;
     format: "pdf" | "excel" | "csv";

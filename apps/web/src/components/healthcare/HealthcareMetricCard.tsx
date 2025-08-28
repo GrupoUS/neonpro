@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import {
@@ -16,6 +15,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+import React from "react";
 
 // TweakCN NEONPRO Healthcare Metric Card Types
 export interface HealthcareMetricCardProps {
@@ -144,9 +144,7 @@ export function HealthcareMetricCard({
             </span>
           )}
         </div>
-        {description && (
-          <p className="text-xs text-muted-foreground mt-1">{description}</p>
-        )}
+        {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
         {trend && trendValue && TrendIcon && (
           <div
             className={cn("flex items-center mt-2 text-xs", trendColors[trend])}
@@ -180,9 +178,7 @@ export function HealthcareMetricsGrid({
 
   return (
     <div className={cn("grid gap-4", gridCols[columns], className)}>
-      {metrics.map((metric, index) => (
-        <HealthcareMetricCard key={index} {...metric} />
-      ))}
+      {metrics.map((metric, index) => <HealthcareMetricCard key={index} {...metric} />)}
     </div>
   );
 }

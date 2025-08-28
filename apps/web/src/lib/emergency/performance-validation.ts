@@ -4,12 +4,12 @@
  * Brazilian healthcare performance standards compliance
  */
 
+import { emergencyCache } from "./emergency-cache";
 import {
   emergencyPerformance,
   measureEmergencyOperation,
   PerformanceMetric,
 } from "./emergency-performance";
-import { emergencyCache } from "./emergency-cache";
 
 export interface PerformanceValidationResult {
   testName: string;
@@ -472,11 +472,9 @@ export class EmergencyPerformanceValidator {
       ).length;
       const totalCriticalOperations = criticalOperations.length;
 
-      const overallPassed =
-        criticalOperationsPassed === totalCriticalOperations;
-      const averageResponseTime =
-        this.validationResults.reduce((sum, r) => sum + r.duration, 0) /
-        this.validationResults.length;
+      const overallPassed = criticalOperationsPassed === totalCriticalOperations;
+      const averageResponseTime = this.validationResults.reduce((sum, r) => sum + r.duration, 0)
+        / this.validationResults.length;
 
       // Generate recommendations
       const recommendations: string[] = [];
@@ -496,7 +494,10 @@ export class EmergencyPerformanceValidator {
         );
       }
 
-      const summary = `Performance Validation: ${criticalOperationsPassed}/${totalCriticalOperations} critical operations passed | Average: ${averageResponseTime.toFixed(1)}ms | Status: ${overallPassed ? "PASSED" : "FAILED"}`;
+      const summary =
+        `Performance Validation: ${criticalOperationsPassed}/${totalCriticalOperations} critical operations passed | Average: ${
+          averageResponseTime.toFixed(1)
+        }ms | Status: ${overallPassed ? "PASSED" : "FAILED"}`;
 
       return {
         suiteName: "Emergency Interface Performance Validation Suite",
@@ -538,12 +539,11 @@ export class EmergencyPerformanceValidator {
 
     validationSuite.results.forEach((result) => {
       const status = result.passed ? "✅" : "❌";
-      const urgency =
-        result.emergencyLevel === "life-threatening"
-          ? "🚨"
-          : result.emergencyLevel === "urgent"
-            ? "⚠️"
-            : "ℹ️";
+      const urgency = result.emergencyLevel === "life-threatening"
+        ? "🚨"
+        : result.emergencyLevel === "urgent"
+        ? "⚠️"
+        : "ℹ️";
       console.log(`${status} ${urgency} ${result.testName}`);
       console.log(
         `    Duration: ${result.duration.toFixed(2)}ms (threshold: ${result.threshold}ms)`,
@@ -589,5 +589,4 @@ export class EmergencyPerformanceValidator {
 }
 
 // Export performance validator instance
-export const emergencyPerformanceValidator =
-  new EmergencyPerformanceValidator();
+export const emergencyPerformanceValidator = new EmergencyPerformanceValidator();

@@ -5,14 +5,11 @@
  */
 
 import { Hono } from "hono";
-import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
+import { z } from "zod";
 // TODO: Import from @neonpro/utils when implementing
 // import { Logger } from '@neonpro/utils';
-import type {
-  HealthcareFeatureTemplate,
-  HealthcareContext,
-} from "./healthcare-feature-template";
+import type { HealthcareContext, HealthcareFeatureTemplate } from "./healthcare-feature-template";
 import { HealthcareFeatureConfig } from "./healthcare-feature-template";
 // TODO: Import from @neonpro/api/middleware when implementing
 // import { healthcareSecurityMiddleware, healthcareValidationMiddleware } from '@neonpro/api/middleware';
@@ -27,8 +24,7 @@ const Logger = {
 
 // Placeholder middleware for template compilation
 const healthcareSecurityMiddleware = async (c: any, next: any) => await next();
-const healthcareValidationMiddleware = async (c: any, next: any) =>
-  await next();
+const healthcareValidationMiddleware = async (c: any, next: any) => await next();
 
 // Standard API response types
 export interface HealthcareApiResponse<T> {
@@ -98,8 +94,7 @@ export const HealthcareErrorCodes = {
   BUSINESS_RULE_VIOLATION: "HC_VALID_004",
 } as const;
 
-export type HealthcareErrorCode =
-  (typeof HealthcareErrorCodes)[keyof typeof HealthcareErrorCodes];
+export type HealthcareErrorCode = (typeof HealthcareErrorCodes)[keyof typeof HealthcareErrorCodes];
 
 // Template for healthcare API endpoint implementation
 export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
@@ -115,7 +110,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   constructor(
     basePath: string,
     feature: HealthcareFeatureTemplate<T, CreateInput, UpdateInput>,
-    config?: { enableCors?: boolean; enableRateLimit?: boolean },
+    config?: { enableCors?: boolean; enableRateLimit?: boolean; },
   ) {
     this.basePath = basePath;
     this.feature = feature;
@@ -408,7 +403,7 @@ export function createHealthcareApi<T, CreateInput, UpdateInput>(
     context: HealthcareContext,
     pagination: PaginationParams,
   ) => Promise<T[] | PaginatedResponse<T>>,
-  options?: { enableHealthCheck?: boolean },
+  options?: { enableHealthCheck?: boolean; },
 ): Hono {
   class ConcreteHealthcareApi extends HealthcareApiTemplate<
     T,

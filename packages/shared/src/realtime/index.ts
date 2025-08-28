@@ -13,11 +13,7 @@ export {
   HEALTHCARE_PRIORITIES,
   HEALTHCARE_REALTIME_CONFIG,
 } from "./config";
-export type {
-  ChannelSubscription,
-  ConnectionConfig,
-  ConnectionStatus,
-} from "./connection-manager";
+export type { ChannelSubscription, ConnectionConfig, ConnectionStatus } from "./connection-manager";
 // Connection Management
 export {
   DEFAULT_CONFIG,
@@ -54,10 +50,7 @@ export type {
   UseRealtimePatientsReturn,
 } from "./hooks/use-realtime-patients";
 // Enhanced React Hooks
-export {
-  useOptimisticPatients,
-  useRealtimePatients,
-} from "./hooks/use-realtime-patients";
+export { useOptimisticPatients, useRealtimePatients } from "./hooks/use-realtime-patients";
 // React Provider
 export {
   RealtimeProvider,
@@ -88,8 +81,8 @@ export const RealtimeUtils = {
     ];
     return urgentKeywords.some(
       (keyword) =>
-        eventType.toLowerCase().includes(keyword) ||
-        priority?.toLowerCase().includes(keyword),
+        eventType.toLowerCase().includes(keyword)
+        || priority?.toLowerCase().includes(keyword),
     );
   },
 
@@ -98,15 +91,13 @@ export const RealtimeUtils = {
    */
   formatHealthcareMessage: (type: string, data: unknown): string => {
     const formatMap: Record<string, (data: any) => string> = {
-      patient_update: (data) =>
-        `Paciente ${data.name || data.id} foi atualizado`,
+      patient_update: (data) => `Paciente ${data.name || data.id} foi atualizado`,
       appointment_change: (data) =>
         `Agendamento ${data.id} foi ${data.status === "cancelled" ? "cancelado" : "alterado"}`,
       emergency_alert: (data) => `EMERGÊNCIA: ${data.message}`,
       compliance_violation: (data) => `Violação de compliance: ${data.type}`,
       lgpd_event: (data) => `Evento LGPD: ${data.action} - ${data.description}`,
-      anvisa_alert: (data) =>
-        `Alerta ANVISA: ${data.category} - ${data.message}`,
+      anvisa_alert: (data) => `Alerta ANVISA: ${data.category} - ${data.message}`,
     };
 
     return formatMap[type]?.(data) || `Evento: ${type}`;

@@ -28,7 +28,7 @@ export class ConfigurationService {
   async getConfiguration(
     tenantId: string,
     key: string,
-  ): Promise<{ value?: unknown; error?: string }> {
+  ): Promise<{ value?: unknown; error?: string; }> {
     try {
       const cacheKey = `${tenantId}:${key}`;
 
@@ -60,10 +60,9 @@ export class ConfigurationService {
       return { value: this.parseConfigValue(data) };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to get configuration",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to get configuration",
       };
     }
   }
@@ -71,7 +70,7 @@ export class ConfigurationService {
   async setConfiguration(
     tenantId: string,
     config: ConfigurationUpdate,
-  ): Promise<{ success?: boolean; error?: string }> {
+  ): Promise<{ success?: boolean; error?: string; }> {
     try {
       const configData: Partial<TenantConfiguration> = {
         tenant_id: tenantId,
@@ -102,10 +101,9 @@ export class ConfigurationService {
       return { success: true };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to set configuration",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to set configuration",
       };
     }
   }
@@ -113,7 +111,7 @@ export class ConfigurationService {
   async getAllConfigurations(
     tenantId: string,
     category?: string,
-  ): Promise<{ configurations?: TenantConfiguration[]; error?: string }> {
+  ): Promise<{ configurations?: TenantConfiguration[]; error?: string; }> {
     try {
       let query = supabase
         .from("tenant_configurations")
@@ -135,10 +133,9 @@ export class ConfigurationService {
       return { configurations: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to get configurations",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to get configurations",
       };
     }
   }
@@ -146,7 +143,7 @@ export class ConfigurationService {
   async deleteConfiguration(
     tenantId: string,
     key: string,
-  ): Promise<{ success?: boolean; error?: string }> {
+  ): Promise<{ success?: boolean; error?: string; }> {
     try {
       const { error } = await supabase
         .from("tenant_configurations")
@@ -166,10 +163,9 @@ export class ConfigurationService {
       return { success: true };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to delete configuration",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to delete configuration",
       };
     }
   }
@@ -201,7 +197,7 @@ export class ConfigurationService {
     key: string,
     value: unknown,
     description?: string,
-  ): Promise<{ success?: boolean; error?: string }> {
+  ): Promise<{ success?: boolean; error?: string; }> {
     return this.setConfiguration(tenantId, {
       key,
       value,
@@ -319,9 +315,7 @@ export class ConfigurationService {
       "private_key",
     ];
 
-    return sensitiveKeys.some((sensitive) =>
-      key.toLowerCase().includes(sensitive),
-    );
+    return sensitiveKeys.some((sensitive) => key.toLowerCase().includes(sensitive));
   }
 
   // Clear cache manually if needed

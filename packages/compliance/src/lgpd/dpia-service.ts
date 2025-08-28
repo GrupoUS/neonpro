@@ -7,11 +7,7 @@
  */
 
 import { z } from "zod";
-import type {
-  ComplianceScore,
-  ConstitutionalResponse,
-  DPIAAssessment,
-} from "../types";
+import type { ComplianceScore, ConstitutionalResponse, DPIAAssessment } from "../types";
 import { LGPDLegalBasis, PatientDataClassification } from "../types";
 
 /**
@@ -86,8 +82,7 @@ export class DPIAService {
       const riskAssessment = await this.conductRiskAssessment(validatedInput);
 
       // Step 4: Generate mitigation measures
-      const mitigationMeasures =
-        await this.generateMitigationMeasures(riskAssessment);
+      const mitigationMeasures = await this.generateMitigationMeasures(riskAssessment);
 
       // Step 5: Calculate constitutional compliance score
       const complianceScore = this.calculateConstitutionalScore(
@@ -159,24 +154,24 @@ export class DPIAService {
 
     // Check for high-risk processing (Art. 38 LGPD)
     if (
-      input.dataTypes.includes("SENSITIVE" as PatientDataClassification) ||
-      input.dataTypes.includes("HEALTH" as PatientDataClassification)
+      input.dataTypes.includes("SENSITIVE" as PatientDataClassification)
+      || input.dataTypes.includes("HEALTH" as PatientDataClassification)
     ) {
       risks.push("Processing sensitive health data");
       riskScore += 3;
     }
 
     if (
-      input.dataTypes.includes("GENETIC" as PatientDataClassification) ||
-      input.dataTypes.includes("BIOMETRIC" as PatientDataClassification)
+      input.dataTypes.includes("GENETIC" as PatientDataClassification)
+      || input.dataTypes.includes("BIOMETRIC" as PatientDataClassification)
     ) {
       risks.push("Processing genetic or biometric data");
       riskScore += 4;
     }
 
     if (
-      input.dataSubjects.minors ||
-      input.dataTypes.includes("CHILD" as PatientDataClassification)
+      input.dataSubjects.minors
+      || input.dataTypes.includes("CHILD" as PatientDataClassification)
     ) {
       risks.push("Processing data of children (Art. 14 LGPD)");
       riskScore += 3;
@@ -190,8 +185,8 @@ export class DPIAService {
     if (
       input.technologyUsed.some(
         (tech) =>
-          tech.toLowerCase().includes("ai") ||
-          tech.toLowerCase().includes("ml"),
+          tech.toLowerCase().includes("ai")
+          || tech.toLowerCase().includes("ml"),
       )
     ) {
       risks.push("Use of AI/ML automated decision-making");
@@ -257,8 +252,8 @@ export class DPIAService {
 
     // Compliance Risk Assessment
     if (
-      !input.legalBasis.includes("HEALTH_PROTECTION" as LGPDLegalBasis) &&
-      input.dataTypes.includes("HEALTH" as PatientDataClassification)
+      !input.legalBasis.includes("HEALTH_PROTECTION" as LGPDLegalBasis)
+      && input.dataTypes.includes("HEALTH" as PatientDataClassification)
     ) {
       complianceRisks.push(
         "Inappropriate legal basis for health data processing",
@@ -310,7 +305,7 @@ export class DPIAService {
 
   private async generateMitigationMeasures(
     riskAssessment: unknown,
-  ): Promise<{ measures: string[]; effectivenessScore: ComplianceScore }> {
+  ): Promise<{ measures: string[]; effectivenessScore: ComplianceScore; }> {
     const measures: string[] = [];
     let effectivenessScore = 0;
 
@@ -386,9 +381,7 @@ export class DPIAService {
       score += 0.5;
     }
     if (
-      mitigationMeasures.measures.some((m: string) =>
-        m.includes("constitutional"),
-      )
+      mitigationMeasures.measures.some((m: string) => m.includes("constitutional"))
     ) {
       score += 0.5;
     }
@@ -447,10 +440,9 @@ export class DPIAService {
 
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to retrieve DPIA assessment",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to retrieve DPIA assessment",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -491,10 +483,9 @@ export class DPIAService {
 
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to review DPIA assessment",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to review DPIA assessment",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,

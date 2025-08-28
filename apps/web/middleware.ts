@@ -63,9 +63,7 @@ export async function middleware(request: NextRequest) {
 
   // Protected routes that require authentication
   const protectedPaths = ["/dashboard", "/admin", "/settings", "/profile"];
-  const isProtectedPath = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path),
-  );
+  const isProtectedPath = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path));
 
   // Redirect to login if not authenticated and accessing protected route
   if (isProtectedPath && !user) {
@@ -74,9 +72,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect to dashboard if authenticated and accessing login/signup
   const authPaths = ["/login", "/signup"];
-  const isAuthPath = authPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path),
-  );
+  const isAuthPath = authPaths.some((path) => request.nextUrl.pathname.startsWith(path));
 
   if (isAuthPath && user) {
     return NextResponse.redirect(new URL("/dashboard", request.url));

@@ -4,21 +4,21 @@
  * Optimized for Brazilian healthcare payment tracking
  */
 
-import React, { useState, useMemo } from "react";
 import { cn } from "@neonpro/utils";
 import {
+  AlertCircle,
+  Calendar,
   CheckCircle,
   Clock,
-  XCircle,
-  AlertCircle,
-  Search,
-  Filter,
+  CreditCard,
   Download,
   Eye,
-  CreditCard,
-  Calendar,
+  Filter,
+  Search,
   User,
+  XCircle,
 } from "lucide-react";
+import React, { useMemo, useState } from "react";
 
 // Brazilian payment methods
 export type BrazilianPaymentMethod =
@@ -137,7 +137,7 @@ const PAYMENT_METHOD_LABELS = {
 } as const;
 
 // Status badge component
-const StatusBadge: React.FC<{ status: PaymentRecord["status"] }> = ({
+const StatusBadge: React.FC<{ status: PaymentRecord["status"]; }> = ({
   status,
 }) => {
   const config = STATUS_CONFIG[status];
@@ -160,7 +160,7 @@ const StatusBadge: React.FC<{ status: PaymentRecord["status"] }> = ({
 };
 
 // Payment method badge
-const PaymentMethodBadge: React.FC<{ method: BrazilianPaymentMethod }> = ({
+const PaymentMethodBadge: React.FC<{ method: BrazilianPaymentMethod; }> = ({
   method,
 }) => {
   return (
@@ -197,10 +197,9 @@ const maskEmail = (email: string) => {
     return email;
   }
 
-  const masked =
-    local.charAt(0) +
-    "*".repeat(local.length - 2) +
-    local.charAt(local.length - 1);
+  const masked = local.charAt(0)
+    + "*".repeat(local.length - 2)
+    + local.charAt(local.length - 1);
   return `${masked}@${domain}`;
 };
 
@@ -236,8 +235,7 @@ const PaymentRow: React.FC<{
           </div>
           {isDetailed && payment.installmentInfo && (
             <div className="text-xs text-gray-500">
-              {payment.installmentInfo.current}/{payment.installmentInfo.total}{" "}
-              parcelas
+              {payment.installmentInfo.current}/{payment.installmentInfo.total} parcelas
             </div>
           )}
         </div>
@@ -326,20 +324,17 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
   // Filter and search payments
   const filteredPayments = useMemo(() => {
     return payments.filter((payment) => {
-      const matchesSearch =
-        !searchQuery ||
-        payment.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        payment.patientEmail
+      const matchesSearch = !searchQuery
+        || payment.patientName.toLowerCase().includes(searchQuery.toLowerCase())
+        || payment.patientEmail
           .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        payment.invoiceNumber
+          .includes(searchQuery.toLowerCase())
+        || payment.invoiceNumber
           ?.toLowerCase()
           .includes(searchQuery.toLowerCase());
 
-      const matchesStatus =
-        statusFilter === "all" || payment.status === statusFilter;
-      const matchesMethod =
-        methodFilter === "all" || payment.method === methodFilter;
+      const matchesStatus = statusFilter === "all" || payment.status === statusFilter;
+      const matchesMethod = methodFilter === "all" || payment.method === methodFilter;
 
       return matchesSearch && matchesStatus && matchesMethod;
     });
@@ -386,21 +381,21 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
           {Object.entries(statusSummary).map(([status, count]) => (
             <div key={status} className="flex items-center gap-2 text-sm">
-              {status !== "total" ? (
-                <>
-                  <div
-                    className={cn(
-                      "w-2 h-2 rounded-full",
-                      STATUS_CONFIG[status as keyof typeof STATUS_CONFIG].dot,
-                    )}
-                  />
-                  <span className="text-gray-600">
-                    {STATUS_CONFIG[status as keyof typeof STATUS_CONFIG].label}:
-                  </span>
-                </>
-              ) : (
-                <span className="text-gray-600 font-medium">Total:</span>
-              )}
+              {status !== "total"
+                ? (
+                  <>
+                    <div
+                      className={cn(
+                        "w-2 h-2 rounded-full",
+                        STATUS_CONFIG[status as keyof typeof STATUS_CONFIG].dot,
+                      )}
+                    />
+                    <span className="text-gray-600">
+                      {STATUS_CONFIG[status as keyof typeof STATUS_CONFIG].label}:
+                    </span>
+                  </>
+                )
+                : <span className="text-gray-600 font-medium">Total:</span>}
               <span className="font-semibold text-gray-900">{count}</span>
             </div>
           ))}
@@ -483,35 +478,39 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
             </tr>
           </thead>
           <tbody>
-            {loading ? (
-              <tr>
-                <td
-                  colSpan={variant === "detailed" ? 7 : 6}
-                  className="px-4 py-8 text-center text-gray-500"
-                >
-                  Carregando pagamentos...
-                </td>
-              </tr>
-            ) : filteredPayments.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={variant === "detailed" ? 7 : 6}
-                  className="px-4 py-8 text-center text-gray-500"
-                >
-                  Nenhum pagamento encontrado
-                </td>
-              </tr>
-            ) : (
-              filteredPayments.map((payment) => (
-                <PaymentRow
-                  key={payment.id}
-                  payment={payment}
-                  variant={variant}
-                  onView={onPaymentView}
-                  onRefund={onPaymentRefund}
-                />
-              ))
-            )}
+            {loading
+              ? (
+                <tr>
+                  <td
+                    colSpan={variant === "detailed" ? 7 : 6}
+                    className="px-4 py-8 text-center text-gray-500"
+                  >
+                    Carregando pagamentos...
+                  </td>
+                </tr>
+              )
+              : filteredPayments.length === 0
+              ? (
+                <tr>
+                  <td
+                    colSpan={variant === "detailed" ? 7 : 6}
+                    className="px-4 py-8 text-center text-gray-500"
+                  >
+                    Nenhum pagamento encontrado
+                  </td>
+                </tr>
+              )
+              : (
+                filteredPayments.map((payment) => (
+                  <PaymentRow
+                    key={payment.id}
+                    payment={payment}
+                    variant={variant}
+                    onView={onPaymentView}
+                    onRefund={onPaymentRefund}
+                  />
+                ))
+              )}
           </tbody>
         </table>
       </div>
@@ -520,8 +519,7 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
           <div className="text-sm text-gray-600">
-            Página {currentPage} de {totalPages} • {filteredPayments.length}{" "}
-            resultados
+            Página {currentPage} de {totalPages} • {filteredPayments.length} resultados
           </div>
 
           <div className="flex items-center gap-2">

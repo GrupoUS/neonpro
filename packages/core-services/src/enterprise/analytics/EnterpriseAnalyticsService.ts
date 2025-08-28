@@ -213,9 +213,8 @@ export class EnterpriseAnalyticsService {
     serviceMetric.calls++;
 
     // Update average duration
-    serviceMetric.avgDuration =
-      (serviceMetric.avgDuration * (serviceMetric.calls - 1) + duration) /
-      serviceMetric.calls;
+    serviceMetric.avgDuration = (serviceMetric.avgDuration * (serviceMetric.calls - 1) + duration)
+      / serviceMetric.calls;
 
     if (!success) {
       serviceMetric.errorCount++;
@@ -223,10 +222,9 @@ export class EnterpriseAnalyticsService {
     }
 
     // Update overall average
-    this.metrics.avgResponseTime =
-      (this.metrics.avgResponseTime * (this.metrics.totalRequests - 1) +
-        duration) /
-      this.metrics.totalRequests;
+    this.metrics.avgResponseTime = (this.metrics.avgResponseTime * (this.metrics.totalRequests - 1)
+      + duration)
+      / this.metrics.totalRequests;
 
     // Track performance event
     await this.track("performance.operation", {
@@ -294,9 +292,8 @@ export class EnterpriseAnalyticsService {
         if (action === "returning") {
           this.healthcareMetrics.patients.returning += value;
         }
-        this.healthcareMetrics.patients.total =
-          this.healthcareMetrics.patients.new +
-          this.healthcareMetrics.patients.returning;
+        this.healthcareMetrics.patients.total = this.healthcareMetrics.patients.new
+          + this.healthcareMetrics.patients.returning;
         break;
       }
 
@@ -405,8 +402,7 @@ export class EnterpriseAnalyticsService {
         severity: "warning",
         message: "Average response time is above 1 second",
         value: this.metrics.avgResponseTime,
-        recommendation:
-          "Consider optimizing slow operations or scaling resources",
+        recommendation: "Consider optimizing slow operations or scaling resources",
       });
     }
 
@@ -422,11 +418,10 @@ export class EnterpriseAnalyticsService {
     }
 
     // Healthcare insights
-    const noShowRate =
-      this.healthcareMetrics.appointments.scheduled > 0
-        ? this.healthcareMetrics.appointments.noShows /
-          this.healthcareMetrics.appointments.scheduled
-        : 0;
+    const noShowRate = this.healthcareMetrics.appointments.scheduled > 0
+      ? this.healthcareMetrics.appointments.noShows
+        / this.healthcareMetrics.appointments.scheduled
+      : 0;
 
     if (noShowRate > 0.15) {
       insights.push({
@@ -434,8 +429,7 @@ export class EnterpriseAnalyticsService {
         severity: "warning",
         message: "No-show rate is above 15%",
         value: noShowRate,
-        recommendation:
-          "Implement reminder systems or appointment confirmation",
+        recommendation: "Implement reminder systems or appointment confirmation",
       });
     }
 
@@ -475,8 +469,8 @@ export class EnterpriseAnalyticsService {
   private async processEvent(event: AnalyticsEvent): Promise<void> {
     // Real-time processing
     if (
-      event.category === "error" &&
-      event.properties.severity === "critical"
+      event.category === "error"
+      && event.properties.severity === "critical"
     ) {
       await this.sendAlert(event);
     }
@@ -488,8 +482,8 @@ export class EnterpriseAnalyticsService {
 
     // Performance monitoring
     if (
-      event.category === "performance" &&
-      (event.properties.duration as number) > 5000
+      event.category === "performance"
+      && (event.properties.duration as number) > 5000
     ) {
       await this.sendAlert({
         ...event,

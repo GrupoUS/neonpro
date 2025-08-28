@@ -135,6 +135,7 @@ class EmergencyPerformanceMonitor {
   } /**
    * Get performance threshold based on emergency level
    */
+
   private getThreshold(
     emergencyLevel: PerformanceMetric["context"]["emergencyLevel"],
   ): number {
@@ -246,6 +247,7 @@ class EmergencyPerformanceMonitor {
   } /**
    * Trigger emergency optimization for critical performance issues
    */
+
   private triggerEmergencyOptimization(patientId: string): void {
     console.log(
       `🚨 TRIGGERING EMERGENCY OPTIMIZATION for patient: ${patientId}`,
@@ -336,6 +338,7 @@ class EmergencyPerformanceMonitor {
   } /**
    * Get performance statistics for monitoring
    */
+
   getPerformanceStats(): {
     totalOperations: number;
     successRate: number;
@@ -353,10 +356,9 @@ class EmergencyPerformanceMonitor {
       (m) => !m.success && m.context.emergencyLevel === "urgent",
     ).length;
 
-    const averageDuration =
-      total > 0
-        ? this.metrics.reduce((sum, m) => sum + m.duration, 0) / total
-        : 0;
+    const averageDuration = total > 0
+      ? this.metrics.reduce((sum, m) => sum + m.duration, 0) / total
+      : 0;
 
     const worstPerformers = [...this.metrics]
       .filter((m) => !m.success)
@@ -386,7 +388,9 @@ class EmergencyPerformanceMonitor {
     const stats = this.getPerformanceStats();
     const timestamp = new Date().toISOString();
 
-    let summary = `Emergency interface performance report - ${stats.successRate.toFixed(1)}% success rate`;
+    let summary = `Emergency interface performance report - ${
+      stats.successRate.toFixed(1)
+    }% success rate`;
     if (stats.criticalViolations > 0) {
       summary += ` ⚠️ ${stats.criticalViolations} critical violations detected`;
     }

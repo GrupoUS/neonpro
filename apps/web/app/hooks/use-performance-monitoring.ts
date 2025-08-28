@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
 import type {
-  PerformanceMetrics,
-  DashboardKPI,
-  PerformanceDashboard,
-  StaffPerformanceReport,
-  ROICalculation,
   DashboardFilters,
+  DashboardKPI,
   ExportOptions,
+  PerformanceDashboard,
+  PerformanceMetrics,
+  ROICalculation,
+  StaffPerformanceReport,
 } from "@/types/performance-monitoring";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UsePerformanceMonitoringOptions {
   clinicId?: string;
@@ -37,7 +37,7 @@ interface UsePerformanceMonitoringReturn {
   fetchMetrics: (filters?: DashboardFilters) => Promise<void>;
   fetchKPIs: (period?: string) => Promise<void>;
   fetchStaffReports: (filters?: DashboardFilters) => Promise<void>;
-  calculateROI: (period: { start: Date; end: Date }) => Promise<void>;
+  calculateROI: (period: { start: Date; end: Date; }) => Promise<void>;
   exportReport: (options: ExportOptions) => Promise<void>;
 
   // Filters and configuration
@@ -210,7 +210,7 @@ export function usePerformanceMonitoring({
   );
 
   const calculateROI = useCallback(
-    async (period: { start: Date; end: Date }) => {
+    async (period: { start: Date; end: Date; }) => {
       try {
         setError(null);
 

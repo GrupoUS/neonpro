@@ -104,8 +104,7 @@ class RBACSetup {
         throw error;
       }
 
-      const tablesWithRLS =
-        rlsStatus?.filter((table) => table.rowsecurity) || [];
+      const tablesWithRLS = rlsStatus?.filter((table) => table.rowsecurity) || [];
 
       // Check if policies exist
       const { data: policies, error: policiesError } = await this.supabase
@@ -200,10 +199,12 @@ class RBACSetup {
       }
 
       // Test minimum role functions
-      const { data: _minRoleTest, error: minRoleError } =
-        await this.supabase.rpc("has_minimum_role", {
+      const { data: _minRoleTest, error: minRoleError } = await this.supabase.rpc(
+        "has_minimum_role",
+        {
           required_role: "staff",
-        });
+        },
+      );
 
       if (minRoleError) {
       }

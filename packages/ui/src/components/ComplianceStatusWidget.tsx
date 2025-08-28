@@ -1,10 +1,4 @@
-import {
-  AlertCircle,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Shield,
-} from "lucide-react";
+import { AlertCircle, AlertTriangle, CheckCircle, Clock, Shield } from "lucide-react";
 import * as React from "react";
 import { cn } from "../utils/cn";
 import { Badge } from "./Badge";
@@ -151,8 +145,8 @@ const ComplianceSection: React.FC<{
   const overallStatus = checks.every((check) => check.status === "compliant")
     ? "compliant"
     : checks.some((check) => check.status === "non_compliant")
-      ? "non_compliant"
-      : "warning";
+    ? "non_compliant"
+    : "warning";
 
   return (
     <div className="space-y-3">

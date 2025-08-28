@@ -103,8 +103,7 @@ async function checkSupabaseConnection() {
 
 // 4. Aplicar Migration do Banco de Dados
 async function applyDatabaseMigration() {
-  const migrationPath =
-    "supabase/migrations/20250721130000_create_subscriptions_schema.sql";
+  const migrationPath = "supabase/migrations/20250721130000_create_subscriptions_schema.sql";
 
   if (!fs.existsSync(migrationPath)) {
     throw new Error("Arquivo de migration não encontrado");

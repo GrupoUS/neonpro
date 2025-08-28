@@ -87,9 +87,9 @@ export const authRoutes = new Hono()
 
       // Get user profile from our users table
       const { data: userProfile, error: profileError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', authData.user.id)
+        .from("users")
+        .select("*")
+        .eq("id", authData.user.id)
         .single();
 
       if (profileError || !userProfile) {
@@ -137,7 +137,7 @@ export const authRoutes = new Hono()
         expiresIn: authData.session.expires_in || 3600,
       };
 
-      const response: ApiResponse<{ user: AuthUser; tokens: AuthToken }> = {
+      const response: ApiResponse<{ user: AuthUser; tokens: AuthToken; }> = {
         success: true,
         data: { user, tokens },
         message: "Login realizado com sucesso",
@@ -145,7 +145,7 @@ export const authRoutes = new Hono()
 
       return c.json(response, HTTP_STATUS.OK);
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       return c.json(
         {
           success: false,
@@ -163,9 +163,9 @@ export const authRoutes = new Hono()
     try {
       // Check if user already exists
       const { data: existingUser } = await supabase
-        .from('users')
-        .select('id')
-        .eq('email', userData.email)
+        .from("users")
+        .select("id")
+        .eq("email", userData.email)
         .single();
 
       if (existingUser) {
@@ -180,7 +180,9 @@ export const authRoutes = new Hono()
       }
 
       // Validate license number if professional role
-      if (['healthcare_provider', 'clinic_staff'].includes(userData.role) && userData.licenseNumber) {
+      if (
+        ["healthcare_provider", "clinic_staff"].includes(userData.role) && userData.licenseNumber
+      ) {
         // TODO: Implement license validation with external service
         // For now, just check if license number is provided
         if (!userData.licenseNumber || userData.licenseNumber.length < 5) {
@@ -205,7 +207,7 @@ export const authRoutes = new Hono()
           role: userData.role,
           clinic_id: userData.clinicId,
           license_number: userData.licenseNumber,
-        }
+        },
       });
 
       if (authError) {
@@ -221,7 +223,7 @@ export const authRoutes = new Hono()
 
       // Create user profile in our users table
       const { error: profileError } = await supabase
-        .from('users')
+        .from("users")
         .insert({
           id: authData.user.id,
           email: userData.email,
@@ -239,7 +241,7 @@ export const authRoutes = new Hono()
       if (profileError) {
         // Cleanup: delete the auth user if profile creation failed
         await supabase.auth.admin.deleteUser(authData.user.id);
-        
+
         return c.json(
           {
             success: false,
@@ -252,12 +254,12 @@ export const authRoutes = new Hono()
 
       // Send verification email
       const { error: emailError } = await supabase.auth.admin.generateLink({
-        type: 'signup',
+        type: "signup",
         email: userData.email,
       });
 
       if (emailError) {
-        console.error('Error sending verification email:', emailError);
+        console.error("Error sending verification email:", emailError);
         // Don't fail the registration if email sending fails
       }
 
@@ -287,7 +289,7 @@ export const authRoutes = new Hono()
 
       return c.json(response, HTTP_STATUS.CREATED);
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error("Registration error:", error);
       return c.json(
         {
           success: false,
@@ -326,7 +328,7 @@ export const authRoutes = new Hono()
         expiresIn: sessionData.session.expires_in || 3600,
       };
 
-      const response: ApiResponse<{ tokens: AuthToken }> = {
+      const response: ApiResponse<{ tokens: AuthToken; }> = {
         success: true,
         data: { tokens },
         message: "Token renovado com sucesso",
@@ -334,7 +336,7 @@ export const authRoutes = new Hono()
 
       return c.json(response, HTTP_STATUS.OK);
     } catch (error) {
-      console.error('Refresh token error:', error);
+      console.error("Refresh token error:", error);
       return c.json(
         {
           success: false,
@@ -364,9 +366,9 @@ export const authRoutes = new Hono()
 
       // Fetch user from database
       const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
+        .from("users")
+        .select("*")
+        .eq("id", userId)
         .single();
 
       if (userError || !userData) {
@@ -414,19 +416,19 @@ export const authRoutes = new Hono()
   .post("/logout", async (c) => {
     try {
       // Get the authorization header
-      const authHeader = c.req.header('Authorization');
-      
-      if (authHeader && authHeader.startsWith('Bearer ')) {
+      const authHeader = c.req.header("Authorization");
+
+      if (authHeader && authHeader.startsWith("Bearer ")) {
         const token = authHeader.substring(7);
-        
+
         // Sign out the user from Supabase (invalidates the session)
         await supabase.auth.signOut();
-        
+
         // Note: In a production environment, you might want to maintain
         // a blacklist of invalidated tokens or use a token store
       }
 
-      const response: ApiResponse<{ loggedOut: boolean }> = {
+      const response: ApiResponse<{ loggedOut: boolean; }> = {
         success: true,
         data: { loggedOut: true },
         message: "Logout realizado com sucesso",
@@ -458,12 +460,12 @@ export const authRoutes = new Hono()
         });
 
         if (resetError) {
-          console.error('Password reset error:', resetError);
+          console.error("Password reset error:", resetError);
           // Don't reveal if email exists or not for security
         }
 
         // Always return success to prevent email enumeration attacks
-        const response: ApiResponse<{ emailSent: boolean }> = {
+        const response: ApiResponse<{ emailSent: boolean; }> = {
           success: true,
           data: { emailSent: true },
           message: "Se o email existir, um link de recuperação será enviado",
@@ -471,7 +473,7 @@ export const authRoutes = new Hono()
 
         return c.json(response, HTTP_STATUS.OK);
       } catch (error) {
-        console.error('Forgot password error:', error);
+        console.error("Forgot password error:", error);
         return c.json(
           {
             success: false,
@@ -494,7 +496,7 @@ export const authRoutes = new Hono()
         // Verify the reset token and update password using Supabase
         const { data: sessionData, error: verifyError } = await supabase.auth.verifyOtp({
           token_hash: token,
-          type: 'recovery',
+          type: "recovery",
         });
 
         if (verifyError || !sessionData.session) {
@@ -514,7 +516,7 @@ export const authRoutes = new Hono()
         });
 
         if (updateError) {
-          console.error('Password update error:', updateError);
+          console.error("Password update error:", updateError);
           return c.json(
             {
               success: false,
@@ -525,7 +527,7 @@ export const authRoutes = new Hono()
           );
         }
 
-        const response: ApiResponse<{ passwordChanged: boolean }> = {
+        const response: ApiResponse<{ passwordChanged: boolean; }> = {
           success: true,
           data: { passwordChanged: true },
           message: "Senha alterada com sucesso",
@@ -533,7 +535,7 @@ export const authRoutes = new Hono()
 
         return c.json(response, HTTP_STATUS.OK);
       } catch (error) {
-        console.error('Reset password error:', error);
+        console.error("Reset password error:", error);
         return c.json(
           {
             success: false,
@@ -619,7 +621,7 @@ export const authRoutes = new Hono()
         // Sign out to invalidate all existing tokens
         await supabase.auth.signOut();
 
-        const response: ApiResponse<{ passwordReset: boolean }> = {
+        const response: ApiResponse<{ passwordReset: boolean; }> = {
           success: true,
           data: { passwordReset: true },
           message: "Senha alterada com sucesso. Faça login novamente.",

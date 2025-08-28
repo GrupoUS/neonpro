@@ -14,13 +14,7 @@ export * from "@prisma/client";
 // ============================================================================
 
 // Healthcare authentication exports
-export {
-  getSession,
-  getUser,
-  requireHealthcareProfessional,
-  requireUser,
-  signOut,
-} from "./auth";
+export { getSession, getUser, requireHealthcareProfessional, requireUser, signOut } from "./auth";
 
 // Modern Supabase client exports
 export { createClient, createServerClient } from "./client";
@@ -262,8 +256,7 @@ export const DATABASE_CONFIG = {
 
 // Error messages for healthcare compliance
 export const HEALTHCARE_ERRORS = {
-  LGPD_CONSENT_REQUIRED:
-    "Consentimento LGPD é obrigatório para processar dados pessoais",
+  LGPD_CONSENT_REQUIRED: "Consentimento LGPD é obrigatório para processar dados pessoais",
   CFM_INVALID: "Número CFM inválido",
   CPF_INVALID: "CPF inválido",
   CNPJ_INVALID: "CNPJ inválido",

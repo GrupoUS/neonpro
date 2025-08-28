@@ -10,14 +10,14 @@ export {
 } from "./brazilian-connectivity-optimizer";
 
 export type {
-  ConnectivityTier,
-  BrazilianRegion,
-  PerformanceMetrics,
   BrazilianCDNConfig,
+  BrazilianRegion,
+  ConnectivityTier,
+  PerformanceMetrics,
 } from "./brazilian-connectivity-optimizer";
 
 // Bundle Analysis & Optimization
-export { BundleAnalyzer, brazilianBundleAnalyzer } from "./bundle-analyzer";
+export { brazilianBundleAnalyzer, BundleAnalyzer } from "./bundle-analyzer";
 
 export type {
   BundleAnalysisReport,
@@ -29,20 +29,20 @@ export type {
 
 // Infrastructure Monitoring & Performance Dashboard
 export {
-  InfrastructureMonitoringService,
   brazilianInfrastructureMonitoring,
+  InfrastructureMonitoringService,
 } from "./infrastructure-monitoring";
 
 export type {
-  PerformanceDashboardConfig,
+  Alert,
   AlertThresholds,
   BrazilianMonitoringRegion,
-  HealthcareWorkflowMonitoring,
-  CriticalPath,
-  SLATarget,
   ComplianceCheck,
+  CriticalPath,
+  HealthcareWorkflowMonitoring,
   MonitoringMetrics,
-  Alert,
+  PerformanceDashboardConfig,
+  SLATarget,
 } from "./infrastructure-monitoring";
 
 // Performance optimization utilities

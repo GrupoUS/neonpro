@@ -86,7 +86,7 @@ const mockAppointment = {
 };
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -98,9 +98,7 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 describe("real-time Updates Integration Tests", () => {
@@ -381,16 +379,15 @@ describe("real-time Updates Integration Tests", () => {
           (payload) => {
             if (payload.eventType === "INSERT") {
               // Check for scheduling conflicts
-              const existingAppointments =
-                (queryClient.getQueryData([
-                  "appointments",
-                  "doctor-123",
-                ]) as unknown[]) || [];
+              const existingAppointments = (queryClient.getQueryData([
+                "appointments",
+                "doctor-123",
+              ]) as unknown[]) || [];
               const conflict = existingAppointments.find(
                 (apt) =>
-                  apt.scheduled_at === payload.new.scheduled_at &&
-                  apt.id !== payload.new.id &&
-                  apt.status !== "cancelled",
+                  apt.scheduled_at === payload.new.scheduled_at
+                  && apt.id !== payload.new.id
+                  && apt.status !== "cancelled",
               );
 
               if (conflict) {

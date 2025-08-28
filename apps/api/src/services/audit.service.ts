@@ -1,20 +1,20 @@
-import { createClient } from '@supabase/supabase-js';
-import { z } from 'zod';
+import { createClient } from "@supabase/supabase-js";
+import { z } from "zod";
 import {
+  AuditAction,
+  AuditConfig,
   AuditEvent,
   AuditEventSchema,
-  AuditLogEntry,
+  AuditExportOptions,
   AuditFilter,
   AuditFilterSchema,
-  AuditStats,
-  AuditConfig,
-  AuditExportOptions,
+  AuditLogEntry,
   AuditResponse,
+  AuditSeverity,
+  AuditStats,
   CriticalAuditAlert,
-  AuditAction,
   ResourceType,
-  AuditSeverity
-} from '../types/audit';
+} from "../types/audit";
 
 export class AuditService {
   private supabase;
@@ -23,19 +23,19 @@ export class AuditService {
   constructor() {
     this.supabase = createClient(
       process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
-    
+
     // Configuração padrão
     this.config = {
       enabled: true,
       log_level: AuditSeverity.LOW,
       retention_days: 2555, // 7 anos para conformidade healthcare
-      excluded_endpoints: ['/health', '/metrics', '/favicon.ico'],
+      excluded_endpoints: ["/health", "/metrics", "/favicon.ico"],
       excluded_actions: [],
       auto_archive: true,
       alert_on_critical: true,
-      max_details_size: 10000 // 10KB max para details JSON
+      max_details_size: 10000, // 10KB max para details JSON
     };
   }
 
@@ -59,23 +59,23 @@ export class AuditService {
           validatedEvent.details = {
             ...validatedEvent.details,
             _truncated: true,
-            _original_size: detailsSize
+            _original_size: detailsSize,
           };
         }
       }
 
       // Inserir no banco
       const { data, error } = await this.supabase
-        .from('audit_logs')
+        .from("audit_logs")
         .insert({
           ...validatedEvent,
-          timestamp: validatedEvent.timestamp.toISOString()
+          timestamp: validatedEvent.timestamp.toISOString(),
         })
         .select()
         .single();
 
       if (error) {
-        console.error('Erro ao inserir log de auditoria:', error);
+        console.error("Erro ao inserir log de auditoria:", error);
         return null;
       }
 
@@ -83,7 +83,7 @@ export class AuditService {
         ...data,
         timestamp: new Date(data.timestamp),
         created_at: new Date(data.created_at),
-        updated_at: new Date(data.updated_at)
+        updated_at: new Date(data.updated_at),
       };
 
       // Verificar se é um evento crítico
@@ -93,7 +93,7 @@ export class AuditService {
 
       return auditEntry;
     } catch (error) {
-      console.error('Erro no serviço de auditoria:', error);
+      console.error("Erro no serviço de auditoria:", error);
       return null;
     }
   }
@@ -104,43 +104,43 @@ export class AuditService {
   async getLogs(filters: AuditFilter): Promise<AuditResponse<AuditLogEntry[]>> {
     try {
       const validatedFilters = AuditFilterSchema.parse(filters);
-      
+
       let query = this.supabase
-        .from('audit_logs')
-        .select('*', { count: 'exact' });
+        .from("audit_logs")
+        .select("*", { count: "exact" });
 
       // Aplicar filtros
       if (validatedFilters.start_date) {
-        query = query.gte('timestamp', validatedFilters.start_date);
+        query = query.gte("timestamp", validatedFilters.start_date);
       }
       if (validatedFilters.end_date) {
-        query = query.lte('timestamp', validatedFilters.end_date);
+        query = query.lte("timestamp", validatedFilters.end_date);
       }
       if (validatedFilters.user_id) {
-        query = query.eq('user_id', validatedFilters.user_id);
+        query = query.eq("user_id", validatedFilters.user_id);
       }
       if (validatedFilters.action) {
-        query = query.eq('action', validatedFilters.action);
+        query = query.eq("action", validatedFilters.action);
       }
       if (validatedFilters.resource_type) {
-        query = query.eq('resource_type', validatedFilters.resource_type);
+        query = query.eq("resource_type", validatedFilters.resource_type);
       }
       if (validatedFilters.resource_id) {
-        query = query.eq('resource_id', validatedFilters.resource_id);
+        query = query.eq("resource_id", validatedFilters.resource_id);
       }
       if (validatedFilters.severity) {
-        query = query.eq('severity', validatedFilters.severity);
+        query = query.eq("severity", validatedFilters.severity);
       }
       if (validatedFilters.ip_address) {
-        query = query.eq('ip_address', validatedFilters.ip_address);
+        query = query.eq("ip_address", validatedFilters.ip_address);
       }
       if (validatedFilters.status_code) {
-        query = query.eq('status_code', validatedFilters.status_code);
+        query = query.eq("status_code", validatedFilters.status_code);
       }
 
       // Ordenação e paginação
       query = query
-        .order(validatedFilters.sort_by, { ascending: validatedFilters.sort_order === 'asc' })
+        .order(validatedFilters.sort_by, { ascending: validatedFilters.sort_order === "asc" })
         .range(validatedFilters.offset, validatedFilters.offset + validatedFilters.limit - 1);
 
       const { data, error, count } = await query;
@@ -153,7 +153,7 @@ export class AuditService {
         ...log,
         timestamp: new Date(log.timestamp),
         created_at: new Date(log.created_at),
-        updated_at: new Date(log.updated_at)
+        updated_at: new Date(log.updated_at),
       }));
 
       return {
@@ -162,14 +162,14 @@ export class AuditService {
         total: count || 0,
         page: Math.floor(validatedFilters.offset / validatedFilters.limit) + 1,
         limit: validatedFilters.limit,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       return {
         success: false,
         data: [],
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-        timestamp: new Date()
+        message: error instanceof Error ? error.message : "Erro desconhecido",
+        timestamp: new Date(),
       };
     }
   }
@@ -184,9 +184,9 @@ export class AuditService {
 
       // Consulta base
       const { data: logs, error } = await this.supabase
-        .from('audit_logs')
-        .select('*')
-        .gte('timestamp', startDate.toISOString());
+        .from("audit_logs")
+        .select("*")
+        .gte("timestamp", startDate.toISOString());
 
       if (error) {
         throw new Error(`Erro ao gerar estatísticas: ${error.message}`);
@@ -196,34 +196,40 @@ export class AuditService {
         ...log,
         timestamp: new Date(log.timestamp),
         created_at: new Date(log.created_at),
-        updated_at: new Date(log.updated_at)
+        updated_at: new Date(log.updated_at),
       }));
 
       // Calcular estatísticas
       const stats: AuditStats = {
         total_events: auditLogs.length,
-        events_by_action: this.groupByField(auditLogs, 'action') as Record<AuditAction, number>,
-        events_by_resource: this.groupByField(auditLogs, 'resource_type') as Record<ResourceType, number>,
-        events_by_severity: this.groupByField(auditLogs, 'severity') as Record<AuditSeverity, number>,
+        events_by_action: this.groupByField(auditLogs, "action") as Record<AuditAction, number>,
+        events_by_resource: this.groupByField(auditLogs, "resource_type") as Record<
+          ResourceType,
+          number
+        >,
+        events_by_severity: this.groupByField(auditLogs, "severity") as Record<
+          AuditSeverity,
+          number
+        >,
         top_users: this.getTopUsers(auditLogs),
         recent_critical_events: auditLogs
           .filter(log => log.severity === AuditSeverity.CRITICAL)
           .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
           .slice(0, 10),
-        daily_activity: this.getDailyActivity(auditLogs, days)
+        daily_activity: this.getDailyActivity(auditLogs, days),
       };
 
       return {
         success: true,
         data: stats,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       return {
         success: false,
         data: {} as AuditStats,
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-        timestamp: new Date()
+        message: error instanceof Error ? error.message : "Erro desconhecido",
+        timestamp: new Date(),
       };
     }
   }
@@ -231,15 +237,17 @@ export class AuditService {
   /**
    * Exporta logs de auditoria
    */
-  async exportLogs(options: AuditExportOptions): Promise<AuditResponse<{ download_url: string; file_size: number }>> {
+  async exportLogs(
+    options: AuditExportOptions,
+  ): Promise<AuditResponse<{ download_url: string; file_size: number; }>> {
     try {
       const logsResponse = await this.getLogs({
         ...options.filters,
-        limit: 10000 // Limite para exportação
+        limit: 10000, // Limite para exportação
       });
 
       if (!logsResponse.success) {
-        throw new Error(logsResponse.message || 'Erro ao consultar logs para exportação');
+        throw new Error(logsResponse.message || "Erro ao consultar logs para exportação");
       }
 
       let exportData: any;
@@ -247,44 +255,44 @@ export class AuditService {
       let contentType: string;
 
       switch (options.format) {
-        case 'json':
+        case "json":
           exportData = JSON.stringify(logsResponse.data, null, 2);
           filename = `audit_logs_${Date.now()}.json`;
-          contentType = 'application/json';
+          contentType = "application/json";
           break;
-        
-        case 'csv':
+
+        case "csv":
           exportData = this.convertToCSV(logsResponse.data, options.include_details);
           filename = `audit_logs_${Date.now()}.csv`;
-          contentType = 'text/csv';
+          contentType = "text/csv";
           break;
-        
-        case 'pdf':
+
+        case "pdf":
           // Implementar geração de PDF (placeholder)
-          throw new Error('Exportação em PDF não implementada ainda');
-        
+          throw new Error("Exportação em PDF não implementada ainda");
+
         default:
-          throw new Error('Formato de exportação não suportado');
+          throw new Error("Formato de exportação não suportado");
       }
 
       // Salvar arquivo temporário (implementar storage)
-      const fileSize = Buffer.byteLength(exportData, 'utf8');
+      const fileSize = Buffer.byteLength(exportData, "utf8");
       const downloadUrl = `/api/audit/download/${filename}`; // Placeholder
 
       return {
         success: true,
         data: {
           download_url: downloadUrl,
-          file_size: fileSize
+          file_size: fileSize,
         },
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       return {
         success: false,
-        data: { download_url: '', file_size: 0 },
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-        timestamp: new Date()
+        data: { download_url: "", file_size: 0 },
+        message: error instanceof Error ? error.message : "Erro desconhecido",
+        timestamp: new Date(),
       };
     }
   }
@@ -298,18 +306,18 @@ export class AuditService {
       cutoffDate.setDate(cutoffDate.getDate() - this.config.retention_days);
 
       const { count, error } = await this.supabase
-        .from('audit_logs')
+        .from("audit_logs")
         .delete()
-        .lt('timestamp', cutoffDate.toISOString());
+        .lt("timestamp", cutoffDate.toISOString());
 
       if (error) {
-        console.error('Erro ao limpar logs antigos:', error);
+        console.error("Erro ao limpar logs antigos:", error);
         return 0;
       }
 
       return count || 0;
     } catch (error) {
-      console.error('Erro na limpeza de logs:', error);
+      console.error("Erro na limpeza de logs:", error);
       return 0;
     }
   }
@@ -317,10 +325,15 @@ export class AuditService {
   // Métodos privados auxiliares
   private shouldSkipEvent(event: AuditEvent): boolean {
     // Verificar nível de severidade
-    const severityLevels = [AuditSeverity.LOW, AuditSeverity.MEDIUM, AuditSeverity.HIGH, AuditSeverity.CRITICAL];
+    const severityLevels = [
+      AuditSeverity.LOW,
+      AuditSeverity.MEDIUM,
+      AuditSeverity.HIGH,
+      AuditSeverity.CRITICAL,
+    ];
     const configLevel = severityLevels.indexOf(this.config.log_level);
     const eventLevel = severityLevels.indexOf(event.severity);
-    
+
     if (eventLevel < configLevel) return true;
 
     // Verificar ações excluídas
@@ -336,12 +349,12 @@ export class AuditService {
 
   private async handleCriticalEvent(event: AuditLogEntry): Promise<void> {
     // Implementar lógica de alerta para eventos críticos
-    console.warn('EVENTO CRÍTICO DE AUDITORIA:', {
+    console.warn("EVENTO CRÍTICO DE AUDITORIA:", {
       id: event.id,
       action: event.action,
       resource_type: event.resource_type,
       user_id: event.user_id,
-      timestamp: event.timestamp
+      timestamp: event.timestamp,
     });
 
     // Aqui poderia integrar com sistemas de alerta (email, Slack, etc.)
@@ -349,13 +362,13 @@ export class AuditService {
 
   private groupByField(logs: AuditLogEntry[], field: keyof AuditLogEntry): Record<string, number> {
     return logs.reduce((acc, log) => {
-      const value = String(log[field] || 'unknown');
+      const value = String(log[field] || "unknown");
       acc[value] = (acc[value] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
   }
 
-  private getTopUsers(logs: AuditLogEntry[]): Array<{ user_id: string; count: number }> {
+  private getTopUsers(logs: AuditLogEntry[]): Array<{ user_id: string; count: number; }> {
     const userCounts = logs
       .filter(log => log.user_id)
       .reduce((acc, log) => {
@@ -370,20 +383,23 @@ export class AuditService {
       .slice(0, 10);
   }
 
-  private getDailyActivity(logs: AuditLogEntry[], days: number): Array<{ date: string; count: number }> {
+  private getDailyActivity(
+    logs: AuditLogEntry[],
+    days: number,
+  ): Array<{ date: string; count: number; }> {
     const dailyCounts: Record<string, number> = {};
-    
+
     // Inicializar todos os dias com 0
     for (let i = 0; i < days; i++) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = date.toISOString().split("T")[0];
       dailyCounts[dateStr] = 0;
     }
 
     // Contar eventos por dia
     logs.forEach(log => {
-      const dateStr = log.timestamp.toISOString().split('T')[0];
+      const dateStr = log.timestamp.toISOString().split("T")[0];
       if (dailyCounts.hasOwnProperty(dateStr)) {
         dailyCounts[dateStr]++;
       }
@@ -395,45 +411,58 @@ export class AuditService {
   }
 
   private convertToCSV(logs: AuditLogEntry[], includeDetails: boolean): string {
-    if (logs.length === 0) return '';
+    if (logs.length === 0) return "";
 
     const headers = [
-      'id', 'timestamp', 'user_id', 'session_id', 'action', 'resource_type',
-      'resource_id', 'resource_name', 'ip_address', 'user_agent', 'method',
-      'endpoint', 'status_code', 'severity', 'error_message', 'duration_ms'
+      "id",
+      "timestamp",
+      "user_id",
+      "session_id",
+      "action",
+      "resource_type",
+      "resource_id",
+      "resource_name",
+      "ip_address",
+      "user_agent",
+      "method",
+      "endpoint",
+      "status_code",
+      "severity",
+      "error_message",
+      "duration_ms",
     ];
 
     if (includeDetails) {
-      headers.push('details', 'before_data', 'after_data');
+      headers.push("details", "before_data", "after_data");
     }
 
-    const csvRows = [headers.join(',')];
+    const csvRows = [headers.join(",")];
 
     logs.forEach(log => {
       const row = headers.map(header => {
         let value = log[header as keyof AuditLogEntry];
-        
+
         if (value === null || value === undefined) {
-          return '';
+          return "";
         }
-        
-        if (typeof value === 'object') {
+
+        if (typeof value === "object") {
           value = JSON.stringify(value);
         }
-        
+
         // Escapar aspas duplas e envolver em aspas se necessário
         const stringValue = String(value);
-        if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+        if (stringValue.includes(",") || stringValue.includes('"') || stringValue.includes("\n")) {
           return `"${stringValue.replace(/"/g, '""')}"`;
         }
-        
+
         return stringValue;
       });
-      
-      csvRows.push(row.join(','));
+
+      csvRows.push(row.join(","));
     });
 
-    return csvRows.join('\n');
+    return csvRows.join("\n");
   }
 }
 

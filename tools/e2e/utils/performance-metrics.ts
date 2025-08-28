@@ -3,8 +3,8 @@
  * Provides comprehensive performance monitoring and reporting for Playwright tests
  */
 
-import type { Page, BrowserContext } from "@playwright/test";
-import { writeFileSync, existsSync, mkdirSync } from "node:fs";
+import type { BrowserContext, Page } from "@playwright/test";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 export interface PerformanceMetrics {
@@ -36,7 +36,7 @@ export interface PerformanceMetrics {
   url: string;
   timestamp: string;
   userAgent: string;
-  viewport: { width: number; height: number };
+  viewport: { width: number; height: number; };
 }
 
 export interface PerformanceBudget {
@@ -103,8 +103,7 @@ export class PerformanceMonitor {
       new PerformanceObserver((list) => {
         const entries = list.getEntries();
         entries.forEach((entry) => {
-          window.performanceMetrics.fid =
-            entry.processingStart - entry.startTime;
+          window.performanceMetrics.fid = entry.processingStart - entry.startTime;
         });
       }).observe({ type: "first-input", buffered: true });
 
@@ -135,8 +134,7 @@ export class PerformanceMonitor {
         const navigation = performance.getEntriesByType(
           "navigation",
         )[0] as PerformanceNavigationTiming;
-        window.performanceMetrics.ttfb =
-          navigation.responseStart - navigation.requestStart;
+        window.performanceMetrics.ttfb = navigation.responseStart - navigation.requestStart;
       });
     });
   }
@@ -248,8 +246,7 @@ export class PerformanceMonitor {
           (sum, r) => sum + r.transferSize,
           0,
         ),
-        domContentLoaded:
-          navigation.domContentLoadedEventEnd - navigation.navigationStart,
+        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.navigationStart,
         loadComplete: navigation.loadEventEnd - navigation.navigationStart,
       };
     });
@@ -285,9 +282,9 @@ export class PerformanceMonitor {
     budget: PerformanceBudget = DEFAULT_PERFORMANCE_BUDGET,
   ): {
     passed: boolean;
-    violations: { metric: string; actual: number; budget: number }[];
+    violations: { metric: string; actual: number; budget: number; }[];
   } {
-    const violations: { metric: string; actual: number; budget: number }[] = [];
+    const violations: { metric: string; actual: number; budget: number; }[] = [];
 
     Object.entries(budget).forEach(([key, budgetValue]) => {
       const actualValue = metrics[key as keyof PerformanceMetrics] as number;
@@ -401,11 +398,15 @@ export class PerformanceReporter {
                 <div class="metric-value">${avgMetrics.fcp.toFixed(0)}ms</div>
                 <div class="metric-label">First Contentful Paint</div>
             </div>
-            <div class="metric-card ${this.getMetricClass("patientDataLoadTime", avgMetrics.patientDataLoadTime)}">
+            <div class="metric-card ${
+      this.getMetricClass("patientDataLoadTime", avgMetrics.patientDataLoadTime)
+    }">
                 <div class="metric-value">${avgMetrics.patientDataLoadTime.toFixed(0)}ms</div>
                 <div class="metric-label">Patient Data Load Time</div>
             </div>
-            <div class="metric-card ${this.getMetricClass("formSubmissionTime", avgMetrics.formSubmissionTime)}">
+            <div class="metric-card ${
+      this.getMetricClass("formSubmissionTime", avgMetrics.formSubmissionTime)
+    }">
                 <div class="metric-value">${avgMetrics.formSubmissionTime.toFixed(0)}ms</div>
                 <div class="metric-label">Form Submission Time</div>
             </div>
@@ -413,17 +414,21 @@ export class PerformanceReporter {
         
         <h2>🧪 Test Results</h2>
         <div class="test-results">
-            ${this.metricsHistory
-              .map(
-                (metric) => `
+            ${
+      this.metricsHistory
+        .map(
+          (metric) => `
                 <div class="test-item">
                     <div class="test-name">${metric.testName}</div>
                     <div class="test-url">${metric.url}</div>
-                    <div class="timestamp">${new Date(metric.timestamp).toLocaleString("pt-BR")}</div>
+                    <div class="timestamp">${
+            new Date(metric.timestamp).toLocaleString("pt-BR")
+          }</div>
                 </div>
             `,
-              )
-              .join("")}
+        )
+        .join("")
+    }
         </div>
         
         <p><small>Generated on ${new Date().toLocaleString("pt-BR")}</small></p>
@@ -459,8 +464,7 @@ export class PerformanceReporter {
   }
 
   private getMetricClass(metric: string, value: number): string {
-    const budget =
-      DEFAULT_PERFORMANCE_BUDGET[metric as keyof PerformanceBudget];
+    const budget = DEFAULT_PERFORMANCE_BUDGET[metric as keyof PerformanceBudget];
     if (!budget) {
       return "";
     }
@@ -481,7 +485,7 @@ export class PerformanceReporter {
     totalTests: number;
     averageMetrics: Partial<PerformanceMetrics>;
     budgetViolations: number;
-    worstPerformingTests: { testName: string; metric: string; value: number }[];
+    worstPerformingTests: { testName: string; metric: string; value: number; }[];
   } {
     const averageMetrics = this.calculateAverageMetrics();
     const budgetViolations = this.metricsHistory.filter((metrics) => {
@@ -500,7 +504,7 @@ export class PerformanceReporter {
           metric,
           value: metrics[metric as keyof PerformanceMetrics] as number,
           budget,
-        })),
+        }))
       )
       .filter((item) => item.value > item.budget)
       .sort((a, b) => b.value / b.budget - a.value / a.budget)

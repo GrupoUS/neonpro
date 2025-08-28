@@ -62,27 +62,22 @@ export const QueryKeys = {
   // Patient queries
   patients: {
     all: () => ["patients"] as const,
-    list: (filters?: Record<string, unknown>) =>
-      ["patients", "list", filters] as const,
+    list: (filters?: Record<string, unknown>) => ["patients", "list", filters] as const,
     detail: (id: string) => ["patients", "detail", id] as const,
     search: (query: string) => ["patients", "search", query] as const,
     stats: () => ["patients", "stats"] as const,
-    appointments: (patientId: string) =>
-      ["patients", patientId, "appointments"] as const,
-    medical_records: (patientId: string) =>
-      ["patients", patientId, "medical_records"] as const,
+    appointments: (patientId: string) => ["patients", patientId, "appointments"] as const,
+    medical_records: (patientId: string) => ["patients", patientId, "medical_records"] as const,
   },
 
   // Appointment queries
   appointments: {
     all: () => ["appointments"] as const,
-    list: (filters?: Record<string, unknown>) =>
-      ["appointments", "list", filters] as const,
+    list: (filters?: Record<string, unknown>) => ["appointments", "list", filters] as const,
     detail: (id: string) => ["appointments", "detail", id] as const,
     calendar: (date: string) => ["appointments", "calendar", date] as const,
     upcoming: (userId: string) => ["appointments", "upcoming", userId] as const,
-    patient: (patientId: string) =>
-      ["appointments", "patient", patientId] as const,
+    patient: (patientId: string) => ["appointments", "patient", patientId] as const,
     professional: (professionalId: string) =>
       ["appointments", "professional", professionalId] as const,
   },
@@ -90,11 +85,9 @@ export const QueryKeys = {
   // Professional queries
   professionals: {
     all: () => ["professionals"] as const,
-    list: (filters?: Record<string, unknown>) =>
-      ["professionals", "list", filters] as const,
+    list: (filters?: Record<string, unknown>) => ["professionals", "list", filters] as const,
     detail: (id: string) => ["professionals", "detail", id] as const,
-    schedule: (professionalId: string) =>
-      ["professionals", professionalId, "schedule"] as const,
+    schedule: (professionalId: string) => ["professionals", professionalId, "schedule"] as const,
     availability: (professionalId: string, date: string) =>
       ["professionals", professionalId, "availability", date] as const,
   },
@@ -102,12 +95,10 @@ export const QueryKeys = {
   // Service queries
   services: {
     all: () => ["services"] as const,
-    list: (filters?: Record<string, unknown>) =>
-      ["services", "list", filters] as const,
+    list: (filters?: Record<string, unknown>) => ["services", "list", filters] as const,
     detail: (id: string) => ["services", "detail", id] as const,
     clinic: (clinicId: string) => ["services", "clinic", clinicId] as const,
-    professional: (professionalId: string) =>
-      ["services", "professional", professionalId] as const,
+    professional: (professionalId: string) => ["services", "professional", professionalId] as const,
   },
 
   // Analytics and reporting queries
@@ -116,16 +107,14 @@ export const QueryKeys = {
     dashboard: (userId: string) => ["analytics", "dashboard", userId] as const,
     reports: (type: string, filters?: Record<string, unknown>) =>
       ["analytics", "reports", type, filters] as const,
-    performance: (timeRange: string) =>
-      ["analytics", "performance", timeRange] as const,
+    performance: (timeRange: string) => ["analytics", "performance", timeRange] as const,
   },
 
   // Clinic management queries
   clinics: {
     all: () => ["clinics"] as const,
     detail: (id: string) => ["clinics", "detail", id] as const,
-    professionals: (clinicId: string) =>
-      ["clinics", clinicId, "professionals"] as const,
+    professionals: (clinicId: string) => ["clinics", clinicId, "professionals"] as const,
     services: (clinicId: string) => ["clinics", clinicId, "services"] as const,
     settings: (clinicId: string) => ["clinics", clinicId, "settings"] as const,
   },
@@ -133,11 +122,9 @@ export const QueryKeys = {
   // Medical records queries
   medical_records: {
     all: () => ["medical_records"] as const,
-    patient: (patientId: string) =>
-      ["medical_records", "patient", patientId] as const,
+    patient: (patientId: string) => ["medical_records", "patient", patientId] as const,
     detail: (id: string) => ["medical_records", "detail", id] as const,
-    history: (patientId: string) =>
-      ["medical_records", "history", patientId] as const,
+    history: (patientId: string) => ["medical_records", "history", patientId] as const,
   },
 
   // Compliance and audit queries
@@ -145,8 +132,7 @@ export const QueryKeys = {
     all: () => ["compliance"] as const,
     audit_logs: (filters?: Record<string, unknown>) =>
       ["compliance", "audit_logs", filters] as const,
-    lgpd_status: (userId: string) =>
-      ["compliance", "lgpd_status", userId] as const,
+    lgpd_status: (userId: string) => ["compliance", "lgpd_status", userId] as const,
     consent: (userId: string) => ["compliance", "consent", userId] as const,
   },
 
@@ -173,8 +159,7 @@ const createQueryClient = () => {
           }
           return failureCount < 3;
         },
-        retryDelay: (attemptIndex) =>
-          Math.min(1000 * 2 ** attemptIndex, 30_000),
+        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000),
       },
       mutations: {
         retry: (failureCount, error) => {
@@ -184,8 +169,7 @@ const createQueryClient = () => {
           }
           return failureCount < 2;
         },
-        retryDelay: (attemptIndex) =>
-          Math.min(1000 * 2 ** attemptIndex, 30_000),
+        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000),
       },
     },
   });
@@ -194,7 +178,7 @@ const createQueryClient = () => {
 /**
  * Query Provider Component
  */
-export function QueryProvider({ children }: { children: ReactNode }) {
+export function QueryProvider({ children }: { children: ReactNode; }) {
   const [queryClient] = useState(() => createQueryClient());
 
   return (

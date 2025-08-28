@@ -552,8 +552,8 @@ export class PrivacyPreservingAnalyticsService {
             col1Values,
             col2Values,
           );
-          correlations[numericColumns[i]][numericColumns[j]] =
-            Math.round(correlation * 1000) / 1000;
+          correlations[numericColumns[i]][numericColumns[j]] = Math.round(correlation * 1000)
+            / 1000;
         } else {
           correlations[numericColumns[i]][numericColumns[j]] = 0;
         }
@@ -600,8 +600,7 @@ export class PrivacyPreservingAnalyticsService {
 
       // Count frequency of each value
       for (const value of values) {
-        const key =
-          typeof value === "number" ? Math.floor(value / 10) * 10 : value;
+        const key = typeof value === "number" ? Math.floor(value / 10) * 10 : value;
         valueFrequency.set(key, (valueFrequency.get(key) || 0) + 1);
       }
 
@@ -650,11 +649,10 @@ export class PrivacyPreservingAnalyticsService {
       const trendData = [...timeGroups.entries()]
         .map(([period, values]) => {
           const numericValues = values.filter((val) => typeof val === "number");
-          const average =
-            numericValues.length > 0
-              ? numericValues.reduce((sum, val) => sum + val, 0) /
-                numericValues.length
-              : 0;
+          const average = numericValues.length > 0
+            ? numericValues.reduce((sum, val) => sum + val, 0)
+              / numericValues.length
+            : 0;
 
           return {
             period,
@@ -690,7 +688,7 @@ export class PrivacyPreservingAnalyticsService {
   /**
    * Get current privacy budget usage
    */
-  getPrivacyBudgetUsage(): { used: number; total: number; remaining: number } {
+  getPrivacyBudgetUsage(): { used: number; total: number; remaining: number; } {
     return {
       used: this.privacyBudgetUsed,
       total: this.config.max_privacy_budget,
@@ -765,13 +763,13 @@ export function createPrivacyPreservingAnalyticsService(
 export async function validatePrivacyPreservingAnalytics(
   query: PrivacyPreservingQuery,
   config: PrivacyPreservingAnalyticsConfig,
-): Promise<{ valid: boolean; violations: string[] }> {
+): Promise<{ valid: boolean; violations: string[]; }> {
   const violations: string[] = [];
 
   // Validate privacy level requirements
   if (
-    query.privacy_level === "high" &&
-    config.differential_privacy_epsilon > 1
+    query.privacy_level === "high"
+    && config.differential_privacy_epsilon > 1
   ) {
     violations.push("High privacy level requires epsilon ≤ 1.0");
   }

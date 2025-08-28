@@ -1,20 +1,14 @@
-import type { Context, Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
 import {
-  createHealthcareError,
   categorizeError,
+  createHealthcareError,
   generateErrorId,
 } from "@neonpro/shared/errors/error-utils";
-import {
-  ErrorCategory,
-  ErrorSeverity,
-} from "@neonpro/shared/errors/healthcare-error-types";
-import type {
-  HealthcareError,
-  ErrorContext,
-} from "@neonpro/shared/errors/healthcare-error-types";
-import { logger } from "../../lib/logger";
+import { ErrorCategory, ErrorSeverity } from "@neonpro/shared/errors/healthcare-error-types";
+import type { ErrorContext, HealthcareError } from "@neonpro/shared/errors/healthcare-error-types";
+import type { Context, Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
 import { auditLogger } from "../../lib/audit-logger";
+import { logger } from "../../lib/logger";
 
 /**
  * Healthcare-specific error handling middleware for Hono.dev
@@ -39,8 +33,7 @@ async function handleHealthcareError(
   error: unknown,
   c: Context,
 ): Promise<HealthcareError> {
-  const originalError =
-    error instanceof Error ? error : new Error(String(error));
+  const originalError = error instanceof Error ? error : new Error(String(error));
 
   // Extract context from request
   const context: ErrorContext = {
@@ -50,8 +43,7 @@ async function handleHealthcareError(
     requestId: c.get("requestId") || generateErrorId(),
     endpoint: c.req.path,
     userAgent: c.req.header("user-agent"),
-    ipAddress:
-      c.req.header("cf-connecting-ip") || c.req.header("x-forwarded-for"),
+    ipAddress: c.req.header("cf-connecting-ip") || c.req.header("x-forwarded-for"),
     sessionId: c.get("sessionId"),
   };
 
@@ -62,8 +54,8 @@ async function handleHealthcareError(
 
   // Handle LGPD compliance logging for patient data access errors
   if (
-    healthcareError.category === ErrorCategory.PATIENT_DATA ||
-    healthcareError.patientImpact
+    healthcareError.category === ErrorCategory.PATIENT_DATA
+    || healthcareError.patientImpact
   ) {
     await logLGPDComplianceError(healthcareError);
   }
@@ -77,17 +69,16 @@ async function handleHealthcareError(
 } /**
  * Extracts patient ID from request context
  */
+
 function extractPatientId(c: Context): string | undefined {
   // Try to extract from URL parameters
-  const patientIdFromParam =
-    c.req.param("patientId") || c.req.param("patient_id");
+  const patientIdFromParam = c.req.param("patientId") || c.req.param("patient_id");
   if (patientIdFromParam) {
     return patientIdFromParam;
   }
 
   // Try to extract from query parameters
-  const patientIdFromQuery =
-    c.req.query("patient_id") || c.req.query("patientId");
+  const patientIdFromQuery = c.req.query("patient_id") || c.req.query("patientId");
   if (patientIdFromQuery) {
     return patientIdFromQuery;
   }
@@ -141,6 +132,7 @@ async function logHealthcareError(
 } /**
  * Logs LGPD compliance errors for patient data access failures
  */
+
 async function logLGPDComplianceError(error: HealthcareError): Promise<void> {
   if (!error.context.patientId) {
     return;
@@ -197,6 +189,7 @@ async function triggerCriticalErrorAlert(
 } /**
  * Creates appropriate HTTP error response
  */
+
 function createErrorResponse(c: Context, error: HealthcareError): Response {
   const statusCode = getHttpStatusCode(error.category, error.severity);
 
@@ -257,6 +250,7 @@ function getHttpStatusCode(
 } /**
  * Sanitizes error messages to prevent information leakage
  */
+
 function sanitizeErrorMessage(
   message: string,
   category: ErrorCategory,

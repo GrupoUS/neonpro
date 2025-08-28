@@ -26,8 +26,7 @@ const Logger = {
 type EncryptionCategory = "sensitive" | "pii" | "medical" | "financial";
 
 const HealthcareEncryption = {
-  encrypt: (data: any, category: EncryptionCategory) =>
-    Promise.resolve(JSON.stringify(data)),
+  encrypt: (data: any, category: EncryptionCategory) => Promise.resolve(JSON.stringify(data)),
   decrypt: (encrypted: string, category: EncryptionCategory) =>
     Promise.resolve(JSON.parse(encrypted)),
 };
@@ -37,8 +36,7 @@ const AuditService = {
   getAuditLog: (entityId: string) => Promise.resolve([]),
 };
 
-const validateBrazilianCPF = (cpf: string) =>
-  /^\d{11}$/.test(cpf.replace(/\D/g, ""));
+const validateBrazilianCPF = (cpf: string) => /^\d{11}$/.test(cpf.replace(/\D/g, ""));
 const validateCRMNumber = (crm: string) => /^\d{4,6}$/.test(crm);
 
 // Base interfaces for healthcare features
@@ -113,8 +111,8 @@ export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
   ): Promise<void> {
     // Professional license validation for physician operations
     if (
-      this.config.requiresProfessionalLicense &&
-      context.userRole === "physician"
+      this.config.requiresProfessionalLicense
+      && context.userRole === "physician"
     ) {
       if (!context.professionalLicense) {
         throw new Error("Professional license required for this operation");
@@ -318,7 +316,7 @@ export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
     context: HealthcareContext,
   ): Promise<T[]> {
     const results: T[] = [];
-    const errors: { index: number; error: string }[] = [];
+    const errors: { index: number; error: string; }[] = [];
 
     for (let i = 0; i < inputs.length; i++) {
       const input = inputs[i];
@@ -447,13 +445,12 @@ export const HealthcareFeaturePresets = {
 
 // Type helpers for AI implementation
 export type FeaturePresetKey = keyof typeof HealthcareFeaturePresets;
-export type FeatureConfigType<K extends FeaturePresetKey> =
-  (typeof HealthcareFeaturePresets)[K];
+export type FeatureConfigType<K extends FeaturePresetKey> = (typeof HealthcareFeaturePresets)[K];
 
 // Utility for creating feature implementations
 export function createHealthcareFeature<T, CreateInput, UpdateInput>(
   preset: FeaturePresetKey,
-  implementation: new (
+  implementation: new(
     config: HealthcareFeatureConfig,
   ) => HealthcareFeatureTemplate<T, CreateInput, UpdateInput>,
 ): HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {

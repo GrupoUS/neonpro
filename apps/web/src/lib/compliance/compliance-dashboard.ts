@@ -1,25 +1,22 @@
-import type { CFMValidationResult } from "./cfm-professional-validation";
-import { CFMValidationService } from "./cfm-professional-validation";
-import type { ControlledPrescription } from "./anvisa-controlled-substances";
-import { ANVISAControlledSubstancesService } from "./anvisa-controlled-substances";
-import type { LGPDConsentRecord } from "./lgpd-consent-management";
-import { LGPDConsentManagementService } from "./lgpd-consent-management";
 import type {
-  EmergencyResponse,
-  EmergencyProtocol,
-} from "./emergency-medical-protocols";
-import { EmergencyMedicalProtocolsService } from "./emergency-medical-protocols";
-import type {
-  ComplianceDashboardData,
-  ComplianceScore,
   ComplianceAlert,
-  ComplianceReport,
-  ComplianceMetrics,
   ComplianceAuditItem,
-  ComplianceRiskLevel,
   ComplianceCategory,
+  ComplianceDashboardData,
+  ComplianceMetrics,
+  ComplianceReport,
+  ComplianceRiskLevel,
+  ComplianceScore,
   ValidationResponse,
 } from "@/types/compliance";
+import type { ControlledPrescription } from "./anvisa-controlled-substances";
+import { ANVISAControlledSubstancesService } from "./anvisa-controlled-substances";
+import type { CFMValidationResult } from "./cfm-professional-validation";
+import { CFMValidationService } from "./cfm-professional-validation";
+import type { EmergencyProtocol, EmergencyResponse } from "./emergency-medical-protocols";
+import { EmergencyMedicalProtocolsService } from "./emergency-medical-protocols";
+import type { LGPDConsentRecord } from "./lgpd-consent-management";
+import { LGPDConsentManagementService } from "./lgpd-consent-management";
 
 /**
  * Compliance Dashboard Service
@@ -134,8 +131,7 @@ export class ComplianceDashboardService {
     try {
       // Get data from all compliance services
       const cfmValidations = this.cfmService.getValidationHistory();
-      const controlledPrescriptions =
-        this.anvisaService.getControlledPrescriptions();
+      const controlledPrescriptions = this.anvisaService.getControlledPrescriptions();
       const consentRecords = this.lgpdService.getConsentRecords();
       const emergencyResponses = this.emergencyService.getActiveEmergencies();
       const emergencyProtocols = this.emergencyService.getEmergencyProtocols();
@@ -245,8 +241,8 @@ export class ComplianceDashboardService {
       if (!v.validUntil) {
         return false;
       }
-      const daysUntilExpiry =
-        (v.validUntil.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
+      const daysUntilExpiry = (v.validUntil.getTime() - new Date().getTime())
+        / (1000 * 60 * 60 * 24);
       return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
     }).length;
 
@@ -306,10 +302,8 @@ export class ComplianceDashboardService {
     ).length;
     const missingDocumentation = prescriptions.filter(
       (p) =>
-        !p.specialAuthorization &&
-        ["A1", "A2", "A3"].some((classType) =>
-          p.substanceId.includes(classType),
-        ),
+        !p.specialAuthorization
+        && ["A1", "A2", "A3"].some((classType) => p.substanceId.includes(classType)),
     ).length;
 
     let score = 100;
@@ -453,7 +447,8 @@ export class ComplianceDashboardService {
     return {
       score: Math.max(0, Math.min(100, score)),
       category: "emergency-protocols",
-      description: `${activeProtocols} protocolos ativos, ${activeEmergencies} emergências em andamento`,
+      description:
+        `${activeProtocols} protocolos ativos, ${activeEmergencies} emergências em andamento`,
       lastUpdated: new Date(),
       trends: {
         direction: activeEmergencies > 0 ? "down" : "stable",
@@ -564,8 +559,8 @@ export class ComplianceDashboardService {
       if (!v.validUntil) {
         return false;
       }
-      const daysUntilExpiry =
-        (v.validUntil.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
+      const daysUntilExpiry = (v.validUntil.getTime() - new Date().getTime())
+        / (1000 * 60 * 60 * 24);
       return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
     });
 
@@ -574,7 +569,8 @@ export class ComplianceDashboardService {
         id: `cfm-expiring-${Date.now()}`,
         category: "cfm-professional",
         title: "CRM Expirando em Breve",
-        description: `${expiringSoonCFM.length} profissionais com CRM expirando nos próximos 30 dias`,
+        description:
+          `${expiringSoonCFM.length} profissionais com CRM expirando nos próximos 30 dias`,
         severity: "warning",
         createdAt: new Date(),
         resolved: false,
@@ -596,7 +592,8 @@ export class ComplianceDashboardService {
         id: `anvisa-expired-${Date.now()}`,
         category: "anvisa-substances",
         title: "Receitas Controladas Expiradas",
-        description: `${expiredPrescriptions.length} receitas controladas expiradas necessitam atenção`,
+        description:
+          `${expiredPrescriptions.length} receitas controladas expiradas necessitam atenção`,
         severity: "warning",
         createdAt: new Date(),
         resolved: false,
@@ -706,33 +703,29 @@ export class ComplianceDashboardService {
         detailedAnalysis: {
           cfmCompliance: {
             score: dashboard.scores.cfm.score,
-            status:
-              dashboard.scores.cfm.score >= 80 ? "compliant" : "non-compliant",
+            status: dashboard.scores.cfm.score >= 80 ? "compliant" : "non-compliant",
             findings: this.generateCFMFindings(dashboard.scores.cfm),
             actions: this.generateCFMActions(dashboard.scores.cfm),
           },
           anvisaCompliance: {
             score: dashboard.scores.anvisa.score,
-            status:
-              dashboard.scores.anvisa.score >= 80
-                ? "compliant"
-                : "non-compliant",
+            status: dashboard.scores.anvisa.score >= 80
+              ? "compliant"
+              : "non-compliant",
             findings: this.generateANVISAFindings(dashboard.scores.anvisa),
             actions: this.generateANVISAActions(dashboard.scores.anvisa),
           },
           lgpdCompliance: {
             score: dashboard.scores.lgpd.score,
-            status:
-              dashboard.scores.lgpd.score >= 80 ? "compliant" : "non-compliant",
+            status: dashboard.scores.lgpd.score >= 80 ? "compliant" : "non-compliant",
             findings: this.generateLGPDFindings(dashboard.scores.lgpd),
             actions: this.generateLGPDActions(dashboard.scores.lgpd),
           },
           emergencyCompliance: {
             score: dashboard.scores.emergency.score,
-            status:
-              dashboard.scores.emergency.score >= 80
-                ? "compliant"
-                : "non-compliant",
+            status: dashboard.scores.emergency.score >= 80
+              ? "compliant"
+              : "non-compliant",
             findings: this.generateEmergencyFindings(
               dashboard.scores.emergency,
             ),
@@ -960,8 +953,7 @@ export class ComplianceDashboardService {
       },
       anvisa: {
         score: scores.anvisa?.score || 0,
-        status:
-          (scores.anvisa?.score || 0) >= 80 ? "compliant" : "non-compliant",
+        status: (scores.anvisa?.score || 0) >= 80 ? "compliant" : "non-compliant",
       },
       lgpd: {
         score: scores.lgpd?.score || 0,
@@ -969,8 +961,7 @@ export class ComplianceDashboardService {
       },
       emergency: {
         score: scores.emergency?.score || 0,
-        status:
-          (scores.emergency?.score || 0) >= 80 ? "compliant" : "non-compliant",
+        status: (scores.emergency?.score || 0) >= 80 ? "compliant" : "non-compliant",
       },
     };
   }
@@ -1006,8 +997,8 @@ export class ComplianceDashboardService {
   private calculateRiskIndicators(data: any): number {
     return this.complianceAlerts.filter(
       (alert) =>
-        (alert.riskLevel === "high" || alert.riskLevel === "critical") &&
-        !alert.resolved,
+        (alert.riskLevel === "high" || alert.riskLevel === "critical")
+        && !alert.resolved,
     ).length;
   }
 
@@ -1030,9 +1021,8 @@ export class ComplianceDashboardService {
         if (!v.validUntil) {
           return false;
         }
-        const daysUntilExpiry =
-          (v.validUntil.getTime() - new Date().getTime()) /
-          (1000 * 60 * 60 * 24);
+        const daysUntilExpiry = (v.validUntil.getTime() - new Date().getTime())
+          / (1000 * 60 * 60 * 24);
         return daysUntilExpiry <= 60 && daysUntilExpiry > 0;
       }).length || 0
     );
@@ -1138,8 +1128,7 @@ export class ComplianceDashboardService {
         id: "sample-alert-2",
         category: "anvisa-substances",
         title: "Relatório ANVISA Pendente",
-        description:
-          "Relatório mensal de substâncias controladas vence em 3 dias",
+        description: "Relatório mensal de substâncias controladas vence em 3 dias",
         severity: "high",
         createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
         resolved: false,

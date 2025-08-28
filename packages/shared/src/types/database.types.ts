@@ -239,16 +239,12 @@ export type PatientInsert = Database["public"]["Tables"]["patients"]["Insert"];
 export type PatientUpdate = Database["public"]["Tables"]["patients"]["Update"];
 
 export type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
-export type AppointmentInsert =
-  Database["public"]["Tables"]["appointments"]["Insert"];
-export type AppointmentUpdate =
-  Database["public"]["Tables"]["appointments"]["Update"];
+export type AppointmentInsert = Database["public"]["Tables"]["appointments"]["Insert"];
+export type AppointmentUpdate = Database["public"]["Tables"]["appointments"]["Update"];
 
 export type Notification = Database["public"]["Tables"]["notifications"]["Row"];
-export type NotificationInsert =
-  Database["public"]["Tables"]["notifications"]["Insert"];
-export type NotificationUpdate =
-  Database["public"]["Tables"]["notifications"]["Update"];
+export type NotificationInsert = Database["public"]["Tables"]["notifications"]["Insert"];
+export type NotificationUpdate = Database["public"]["Tables"]["notifications"]["Update"];
 
 export type HealthcareProfessional =
   Database["public"]["Tables"]["healthcare_professionals"]["Row"];

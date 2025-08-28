@@ -1,11 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import type {
-  NoShowPrediction,
-  AppointmentWithRisk,
-} from "@/types/no-show-prediction";
+import type { AppointmentWithRisk, NoShowPrediction } from "@/types/no-show-prediction";
 import { RISK_THRESHOLDS } from "@/types/no-show-prediction";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseNoShowPredictionOptions {
   appointmentIds?: string[];
@@ -178,12 +175,11 @@ export function useNoShowPrediction({
  */
 export function useEnhancedAppointments(appointments: any[]) {
   const appointmentIds = appointments.map((apt) => apt.id);
-  const { predictions, isLoading, error, getPredictionForAppointment } =
-    useNoShowPrediction({
-      appointmentIds,
-      realTimeUpdates: true,
-      refreshInterval: 60_000, // 1 minute
-    });
+  const { predictions, isLoading, error, getPredictionForAppointment } = useNoShowPrediction({
+    appointmentIds,
+    realTimeUpdates: true,
+    refreshInterval: 60_000, // 1 minute
+  });
 
   const enhancedAppointments: AppointmentWithRisk[] = appointments.map(
     (appointment) => ({

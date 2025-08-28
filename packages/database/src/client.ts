@@ -4,10 +4,7 @@
  * Healthcare compliance: LGPD + ANVISA + CFM + Multi-tenant isolation
  */
 
-import {
-  createBrowserClient,
-  createServerClient as createSSRServerClient,
-} from "@supabase/ssr";
+import { createBrowserClient, createServerClient as createSSRServerClient } from "@supabase/ssr";
 import type { Database } from "./types";
 
 // Healthcare environment validation
@@ -54,9 +51,9 @@ export function createClient() {
  * Required for Next.js 15 App Router and healthcare session management
  */
 export function createServerClient(cookieStore: {
-  getAll: () => { name: string; value: string }[];
+  getAll: () => { name: string; value: string; }[];
   setAll?: (
-    cookies: { name: string; value: string; options?: unknown }[],
+    cookies: { name: string; value: string; options?: unknown; }[],
   ) => void;
 }) {
   return createSSRServerClient<Database>(supabaseUrl, supabaseAnonKey, {
@@ -65,7 +62,7 @@ export function createServerClient(cookieStore: {
         return cookieStore.getAll();
       },
       setAll(
-        cookiesToSet: { name: string; value: string; options?: unknown }[],
+        cookiesToSet: { name: string; value: string; options?: unknown; }[],
       ) {
         if (cookieStore.setAll) {
           cookieStore.setAll(cookiesToSet);

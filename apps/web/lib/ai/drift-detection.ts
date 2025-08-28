@@ -10,8 +10,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/supabase";
 
-type ModelDriftMonitoring =
-  Database["public"]["Tables"]["model_drift_monitoring"]["Row"];
+type ModelDriftMonitoring = Database["public"]["Tables"]["model_drift_monitoring"]["Row"];
 type AIModel = Database["public"]["Tables"]["ai_models"]["Row"];
 
 export interface DriftMetrics {
@@ -112,8 +111,10 @@ export class DriftDetectionSystem {
       recentWindow,
       referenceWindow,
     );
-    const predictionDistributionDrift =
-      this.calculatePredictionDistributionDrift(recentWindow, referenceWindow);
+    const predictionDistributionDrift = this.calculatePredictionDistributionDrift(
+      recentWindow,
+      referenceWindow,
+    );
     const temporalDriftScore = this.calculateTemporalDrift(recentWindow);
 
     // Combine scores with weighted average
@@ -213,18 +214,16 @@ export class DriftDetectionSystem {
 
     // For no-show predictions, analyze key features
     if (recent[0]?.risk_score !== undefined) {
-      const recentAvgRisk =
-        recent.reduce((sum, p) => sum + p.risk_score, 0) / recent.length;
-      const referenceAvgRisk =
-        reference.reduce((sum, p) => sum + p.risk_score, 0) / reference.length;
+      const recentAvgRisk = recent.reduce((sum, p) => sum + p.risk_score, 0) / recent.length;
+      const referenceAvgRisk = reference.reduce((sum, p) => sum + p.risk_score, 0)
+        / reference.length;
 
       const riskShift = Math.abs(recentAvgRisk - referenceAvgRisk);
 
       // Analyze confidence distribution
-      const recentAvgConfidence =
-        recent.reduce((sum, p) => sum + p.confidence, 0) / recent.length;
-      const referenceAvgConfidence =
-        reference.reduce((sum, p) => sum + p.confidence, 0) / reference.length;
+      const recentAvgConfidence = recent.reduce((sum, p) => sum + p.confidence, 0) / recent.length;
+      const referenceAvgConfidence = reference.reduce((sum, p) => sum + p.confidence, 0)
+        / reference.length;
 
       const confidenceShift = Math.abs(
         recentAvgConfidence - referenceAvgConfidence,
@@ -234,16 +233,14 @@ export class DriftDetectionSystem {
     }
 
     // For general metrics, use response time and accuracy shifts
-    const recentAvgResponse =
-      recent.reduce((sum, p) => sum + (p.response_time || 0), 0) /
-      recent.length;
-    const referenceAvgResponse =
-      reference.reduce((sum, p) => sum + (p.response_time || 0), 0) /
-      reference.length;
+    const recentAvgResponse = recent.reduce((sum, p) => sum + (p.response_time || 0), 0)
+      / recent.length;
+    const referenceAvgResponse = reference.reduce((sum, p) => sum + (p.response_time || 0), 0)
+      / reference.length;
 
     return (
-      Math.abs(recentAvgResponse - referenceAvgResponse) /
-      Math.max(referenceAvgResponse, 1)
+      Math.abs(recentAvgResponse - referenceAvgResponse)
+      / Math.max(referenceAvgResponse, 1)
     );
   }
 
@@ -332,9 +329,8 @@ export class DriftDetectionSystem {
       let divergence = 0;
       for (const level in recentDist) {
         if (referenceDist[level] > 0) {
-          divergence +=
-            recentDist[level] *
-            Math.log(recentDist[level] / referenceDist[level]);
+          divergence += recentDist[level]
+            * Math.log(recentDist[level] / referenceDist[level]);
         }
       }
 
@@ -357,10 +353,9 @@ export class DriftDetectionSystem {
 
     // Calculate variance in predictions across time slots
     const variances = Object.values(timeSlots).map((slot) =>
-      this.calculateVariance(slot as unknown[]),
+      this.calculateVariance(slot as unknown[])
     );
-    const avgVariance =
-      variances.reduce((sum, v) => sum + v, 0) / variances.length;
+    const avgVariance = variances.reduce((sum, v) => sum + v, 0) / variances.length;
 
     return Math.min(1, avgVariance); // Normalize to 0-1
   }
@@ -383,10 +378,10 @@ export class DriftDetectionSystem {
     };
 
     return (
-      components.dataShift * weights.dataShift +
-      components.performance * weights.performance +
-      components.prediction * weights.prediction +
-      components.temporal * weights.temporal
+      components.dataShift * weights.dataShift
+      + components.performance * weights.performance
+      + components.prediction * weights.prediction
+      + components.temporal * weights.temporal
     );
   }
 
@@ -503,8 +498,7 @@ export class DriftDetectionSystem {
           model_id: modelId,
           drift_score: metrics.overallDriftScore,
           drift_type: this.getDriftType(metrics),
-          threshold_breached:
-            metrics.overallDriftScore > this.DRIFT_THRESHOLDS.medium,
+          threshold_breached: metrics.overallDriftScore > this.DRIFT_THRESHOLDS.medium,
           detection_period: `[${new Date().toISOString()}, ${new Date().toISOString()}]`,
           features_affected: Object.keys(metrics.featureDriftScores),
           alert_sent: metrics.overallDriftScore > this.DRIFT_THRESHOLDS.high,
@@ -622,8 +616,7 @@ export class DriftDetectionSystem {
 
     const risks = values.map((v) => v.risk_score || 0);
     const mean = risks.reduce((sum, r) => sum + r, 0) / risks.length;
-    const variance =
-      risks.reduce((sum, r) => sum + (r - mean) ** 2, 0) / risks.length;
+    const variance = risks.reduce((sum, r) => sum + (r - mean) ** 2, 0) / risks.length;
 
     return variance;
   }

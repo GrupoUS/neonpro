@@ -69,14 +69,7 @@ import {
   Zap,
 } from "lucide-react";
 import type React from "react";
-import {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from "react";
+import { createContext, useCallback, useEffect, useMemo, useReducer, useState } from "react";
 
 // Constants for time calculations
 const MILLISECONDS_PER_SECOND = 1000;
@@ -117,7 +110,7 @@ interface Metric {
   change: number;
   trend: "up" | "down" | "stable";
   format: "number" | "percentage" | "currency";
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; }>;
 }
 
 interface Task {
@@ -200,12 +193,12 @@ interface AIState {
 }
 
 type AIAction =
-  | { type: "SET_INSIGHTS"; payload: AIInsight[] }
-  | { type: "ADD_INSIGHT"; payload: AIInsight }
-  | { type: "SET_LOADING"; payload: boolean }
-  | { type: "SET_ERROR"; payload: string | null }
-  | { type: "UPDATE_FEATURE_FLAGS"; payload: Partial<FeatureFlags> }
-  | { type: "SET_LAST_UPDATE"; payload: Date };
+  | { type: "SET_INSIGHTS"; payload: AIInsight[]; }
+  | { type: "ADD_INSIGHT"; payload: AIInsight; }
+  | { type: "SET_LOADING"; payload: boolean; }
+  | { type: "SET_ERROR"; payload: string | null; }
+  | { type: "UPDATE_FEATURE_FLAGS"; payload: Partial<FeatureFlags>; }
+  | { type: "SET_LAST_UPDATE"; payload: Date; };
 
 // AI Context - Removed unused AIContext
 
@@ -331,8 +324,8 @@ const MOCK_USERS: User[] = [
     department: "Gestão",
     status: "offline",
     lastSeen: new Date(
-      Date.now() -
-        MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * 2,
+      Date.now()
+        - MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * 2,
     ),
   },
 ];
@@ -433,8 +426,7 @@ export default function NeonProHealthcareDashboard({
 
     const interval = setInterval(() => {
       // Simular atualizações em tempo real
-      const randomInsight =
-        MOCK_AI_INSIGHTS[Math.floor(Math.random() * MOCK_AI_INSIGHTS.length)];
+      const randomInsight = MOCK_AI_INSIGHTS[Math.floor(Math.random() * MOCK_AI_INSIGHTS.length)];
       const updatedInsight = {
         ...randomInsight,
         id: `${randomInsight.id}-${Date.now()}`,
@@ -493,10 +485,8 @@ export default function NeonProHealthcareDashboard({
 
     return (
       <Badge
-        className={
-          variants[status as keyof typeof variants] ||
-          "bg-gray-100 text-gray-800"
-        }
+        className={variants[status as keyof typeof variants]
+          || "bg-gray-100 text-gray-800"}
       >
         {status}
       </Badge>
@@ -505,51 +495,49 @@ export default function NeonProHealthcareDashboard({
 
   // AI Component Functions
   const SmartMetricCard = useMemo(
-    () =>
-      ({ metric }: { metric: Metric }) => {
-        const smartMetric = metric as SmartMetric;
-        const { prediction } = smartMetric;
+    () => ({ metric }: { metric: Metric; }) => {
+      const smartMetric = metric as SmartMetric;
+      const { prediction } = smartMetric;
 
-        return (
-          <Card className="relative">
-            {aiState.featureFlags.smartMetrics && prediction && (
-              <div className="absolute top-2 right-2">
-                <Badge className="text-xs" variant="outline">
-                  <Brain className="mr-1 h-3 w-3" />
-                  AI
-                </Badge>
+      return (
+        <Card className="relative">
+          {aiState.featureFlags.smartMetrics && prediction && (
+            <div className="absolute top-2 right-2">
+              <Badge className="text-xs" variant="outline">
+                <Brain className="mr-1 h-3 w-3" />
+                AI
+              </Badge>
+            </div>
+          )}
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="font-medium text-sm">
+              {metric.label}
+            </CardTitle>
+            {getMetricIcon(metric)}
+          </CardHeader>
+          <CardContent>
+            <div className="font-bold text-2xl">
+              {metric.format === "currency" && formatCurrency(metric.value)}
+              {metric.format === "percentage"
+                && formatPercentage(metric.value)}
+              {metric.format === "number" && metric.value.toLocaleString()}
+            </div>
+            <p className={`text-xs ${getChangeColor(metric.change)}`}>
+              {metric.change > 0 ? "+" : ""}
+              {metric.change.toFixed(1)}% desde o período anterior
+            </p>
+            {aiState.featureFlags.predictiveAnalytics && prediction && (
+              <div className="mt-2 rounded border border-blue-200 bg-blue-50 p-2">
+                <p className="text-blue-700 text-xs">
+                  <TrendingUp className="mr-1 inline h-3 w-3" />
+                  Previsão: {formatPercentage(prediction.confidence)} de confiança
+                </p>
               </div>
             )}
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="font-medium text-sm">
-                {metric.label}
-              </CardTitle>
-              {getMetricIcon(metric)}
-            </CardHeader>
-            <CardContent>
-              <div className="font-bold text-2xl">
-                {metric.format === "currency" && formatCurrency(metric.value)}
-                {metric.format === "percentage" &&
-                  formatPercentage(metric.value)}
-                {metric.format === "number" && metric.value.toLocaleString()}
-              </div>
-              <p className={`text-xs ${getChangeColor(metric.change)}`}>
-                {metric.change > 0 ? "+" : ""}
-                {metric.change.toFixed(1)}% desde o período anterior
-              </p>
-              {aiState.featureFlags.predictiveAnalytics && prediction && (
-                <div className="mt-2 rounded border border-blue-200 bg-blue-50 p-2">
-                  <p className="text-blue-700 text-xs">
-                    <TrendingUp className="mr-1 inline h-3 w-3" />
-                    Previsão: {formatPercentage(prediction.confidence)} de
-                    confiança
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        );
-      },
+          </CardContent>
+        </Card>
+      );
+    },
     [
       aiState.featureFlags,
       formatCurrency,
@@ -559,7 +547,7 @@ export default function NeonProHealthcareDashboard({
     ],
   );
 
-  const AIInsightWidget = useCallback(({ insight }: { insight: AIInsight }) => {
+  const AIInsightWidget = useCallback(({ insight }: { insight: AIInsight; }) => {
     const getInsightIcon = () => {
       switch (insight.type) {
         case "prediction": {
@@ -713,20 +701,16 @@ export default function NeonProHealthcareDashboard({
                     <Button
                       className="w-full justify-start"
                       onClick={() => setActiveTab("ai-insights")}
-                      variant={
-                        activeTab === "ai-insights" ? "default" : "ghost"
-                      }
+                      variant={activeTab === "ai-insights" ? "default" : "ghost"}
                     >
                       <Brain className="mr-2 h-4 w-4" />
                       IA Insights
                       {aiState.insights.filter((i) => i.impact === "critical")
-                        .length > 0 && (
+                            .length > 0 && (
                         <Badge className="ml-auto" variant="destructive">
-                          {
-                            aiState.insights.filter(
-                              (i) => i.impact === "critical",
-                            ).length
-                          }
+                          {aiState.insights.filter(
+                            (i) => i.impact === "critical",
+                          ).length}
                         </Badge>
                       )}
                     </Button>
@@ -776,31 +760,29 @@ export default function NeonProHealthcareDashboard({
             <TabsContent className="space-y-6" value="overview">
               {/* Enhanced Metrics Cards with AI */}
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                {MOCK_METRICS.map((metric) => (
-                  <SmartMetricCard key={metric.id} metric={metric} />
-                ))}
+                {MOCK_METRICS.map((metric) => <SmartMetricCard key={metric.id} metric={metric} />)}
               </div>
 
               {/* AI Insights Section */}
-              {aiState.featureFlags.aiInsights &&
-                aiState.insights.length > 0 && (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-lg">
-                        Insights Inteligentes
-                      </h3>
-                      <Badge variant="outline">
-                        <Brain className="mr-1 h-3 w-3" />
-                        AI Ativo
-                      </Badge>
-                    </div>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {aiState.insights.slice(0, 3).map((insight) => (
-                        <AIInsightWidget insight={insight} key={insight.id} />
-                      ))}
-                    </div>
+              {aiState.featureFlags.aiInsights
+                && aiState.insights.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-lg">
+                      Insights Inteligentes
+                    </h3>
+                    <Badge variant="outline">
+                      <Brain className="mr-1 h-3 w-3" />
+                      AI Ativo
+                    </Badge>
                   </div>
-                )}
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {aiState.insights.slice(0, 3).map((insight) => (
+                      <AIInsightWidget insight={insight} key={insight.id} />
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Charts Row */}
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -958,7 +940,9 @@ export default function NeonProHealthcareDashboard({
                     <CardContent>
                       <div className="space-y-4">
                         {aiState.insights
-                          .filter((insight) => insight.impact === "critical")
+                          .filter((insight) =>
+                            insight.impact === "critical"
+                          )
                           .slice(0, 3)
                           .map((insight) => (
                             <AIInsightWidget
@@ -967,8 +951,8 @@ export default function NeonProHealthcareDashboard({
                             />
                           ))}
                         {aiState.insights.filter(
-                          (insight) => insight.impact === "critical",
-                        ).length === 0 && (
+                              (insight) => insight.impact === "critical",
+                            ).length === 0 && (
                           <div className="flex h-32 items-center justify-center text-gray-500">
                             <div className="text-center">
                               <Brain className="mx-auto mb-2 h-8 w-8" />
@@ -1130,11 +1114,10 @@ export default function NeonProHealthcareDashboard({
                         </div>
 
                         <div className="text-gray-500 text-sm">
-                          Entrega:{" "}
-                          {format(
+                          Entrega: {format(
                             new Date(
-                              Date.now() +
-                                Math.random() * 30 * 24 * 60 * 60 * 1000,
+                              Date.now()
+                                + Math.random() * 30 * 24 * 60 * 60 * 1000,
                             ),
                             "dd/MM/yyyy",
                             {
@@ -1226,8 +1209,8 @@ export default function NeonProHealthcareDashboard({
                           <TableCell className="text-sm">
                             {format(
                               new Date(
-                                Date.now() +
-                                  Math.random() * 14 * 24 * 60 * 60 * 1000,
+                                Date.now()
+                                  + Math.random() * 14 * 24 * 60 * 60 * 1000,
                               ),
                               "dd/MM",
                               {
@@ -1370,8 +1353,7 @@ export default function NeonProHealthcareDashboard({
                             aiDispatch({
                               type: "UPDATE_FEATURE_FLAGS",
                               payload: { aiInsights: checked },
-                            })
-                          }
+                            })}
                         />
                         AI Insights
                       </label>
@@ -1388,8 +1370,7 @@ export default function NeonProHealthcareDashboard({
                             aiDispatch({
                               type: "UPDATE_FEATURE_FLAGS",
                               payload: { predictiveAnalytics: checked },
-                            })
-                          }
+                            })}
                         />
                         Análise Preditiva
                       </label>
@@ -1406,8 +1387,7 @@ export default function NeonProHealthcareDashboard({
                             aiDispatch({
                               type: "UPDATE_FEATURE_FLAGS",
                               payload: { realTimeAlerts: checked },
-                            })
-                          }
+                            })}
                         />
                         Alertas em Tempo Real
                       </label>
@@ -1424,8 +1404,7 @@ export default function NeonProHealthcareDashboard({
                             aiDispatch({
                               type: "UPDATE_FEATURE_FLAGS",
                               payload: { smartMetrics: checked },
-                            })
-                          }
+                            })}
                         />
                         Métricas Inteligentes
                       </label>

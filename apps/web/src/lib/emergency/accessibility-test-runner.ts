@@ -166,9 +166,10 @@ export class EmergencyAccessibilityTestRunner {
             ⚠️ CRITICAL ALLERGIES
           </h3>
           <div class="allergies-list">
-            ${mockData.patient.allergies
-              .map(
-                (allergy, index) => `
+            ${
+      mockData.patient.allergies
+        .map(
+          (allergy, index) => `
               <div 
                 class="allergy-item bg-red-100 dark:bg-red-900 border border-red-300 rounded p-2 mb-2"
                 role="listitem"
@@ -179,8 +180,9 @@ export class EmergencyAccessibilityTestRunner {
                 <span class="text-sm text-red-600 dark:text-red-300 ml-2">LIFE-THREATENING</span>
               </div>
             `,
-              )
-              .join("")}
+        )
+        .join("")
+    }
           </div>
         </div>
 
@@ -242,9 +244,10 @@ export class EmergencyAccessibilityTestRunner {
         </header>
 
         <div class="allergies-list space-y-3" role="list">
-          ${mockData.allergies
-            .map(
-              (allergy, index) => `
+          ${
+      mockData.allergies
+        .map(
+          (allergy, index) => `
             <div 
               class="allergy-card border-l-4 border-red-500 bg-white dark:bg-gray-900 p-4 rounded shadow"
               role="listitem"
@@ -261,7 +264,9 @@ export class EmergencyAccessibilityTestRunner {
                   ${allergy.allergen}
                 </h3>
                 <span 
-                  class="severity-badge bg-red-600 text-white px-2 py-1 rounded text-sm font-bold ${allergy.severity === "life-threatening" ? "animate-pulse" : ""}"
+                  class="severity-badge bg-red-600 text-white px-2 py-1 rounded text-sm font-bold ${
+            allergy.severity === "life-threatening" ? "animate-pulse" : ""
+          }"
                   aria-label="Severity: ${allergy.severity}"
                 >
                   ${allergy.severity.toUpperCase()}
@@ -278,15 +283,15 @@ export class EmergencyAccessibilityTestRunner {
                   <span aria-label="Emergency treatment: ${allergy.treatment}">${allergy.treatment}</span>
                 </p>
                 ${
-                  allergy.notes
-                    ? `
+            allergy.notes
+              ? `
                   <p class="notes">
                     <strong>Notes:</strong> 
                     <span aria-label="Additional notes: ${allergy.notes}">${allergy.notes}</span>
                   </p>
                 `
-                    : ""
-                }
+              : ""
+          }
               </div>
 
               <button
@@ -313,8 +318,9 @@ export class EmergencyAccessibilityTestRunner {
               </div>
             </div>
           `,
-            )
-            .join("")}
+        )
+        .join("")
+    }
         </div>
       </div>
     `;
@@ -508,25 +514,25 @@ export class EmergencyAccessibilityTestRunner {
         );
         testResults.push(result);
 
-        const passed =
-          result.passed && result.level === component.expectedLevel;
+        const passed = result.passed && result.level === component.expectedLevel;
         if (!passed) {
           overallResult = false;
         }
 
         console.log(
-          `${passed ? "✅" : "❌"} ${component.name}: ${result.score}% (${result.issues.length} issues)`,
+          `${
+            passed ? "✅" : "❌"
+          } ${component.name}: ${result.score}% (${result.issues.length} issues)`,
         );
 
         if (result.issues.length > 0) {
           console.log(`   Issues found:`);
           result.issues.forEach((issue) => {
-            const icon =
-              issue.severity === "error"
-                ? "🚨"
-                : issue.severity === "warning"
-                  ? "⚠️"
-                  : "ℹ️";
+            const icon = issue.severity === "error"
+              ? "🚨"
+              : issue.severity === "warning"
+              ? "⚠️"
+              : "ℹ️";
             console.log(`   ${icon} ${issue.rule}: ${issue.description}`);
           });
         }
@@ -542,12 +548,14 @@ export class EmergencyAccessibilityTestRunner {
 
     const passedTests = testResults.filter((r) => r.passed).length;
     const totalTests = testResults.length;
-    const averageScore =
-      testResults.length > 0
-        ? testResults.reduce((sum, r) => sum + r.score, 0) / testResults.length
-        : 0;
+    const averageScore = testResults.length > 0
+      ? testResults.reduce((sum, r) => sum + r.score, 0) / testResults.length
+      : 0;
 
-    const summary = `Emergency Interface Accessibility Test Results: ${passedTests}/${totalTests} components passed | Average score: ${averageScore.toFixed(1)}% | Overall: ${overallResult ? "PASSED" : "FAILED"}`;
+    const summary =
+      `Emergency Interface Accessibility Test Results: ${passedTests}/${totalTests} components passed | Average score: ${
+        averageScore.toFixed(1)
+      }% | Overall: ${overallResult ? "PASSED" : "FAILED"}`;
 
     console.log(`\n📊 ${summary}`);
 
@@ -560,5 +568,4 @@ export class EmergencyAccessibilityTestRunner {
 }
 
 // Export test runner instance
-export const emergencyAccessibilityTestRunner =
-  new EmergencyAccessibilityTestRunner();
+export const emergencyAccessibilityTestRunner = new EmergencyAccessibilityTestRunner();

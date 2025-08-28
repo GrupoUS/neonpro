@@ -165,9 +165,7 @@ class PerformanceTestUtils {
           }
 
           // Small delay between requests (100-500ms)
-          await new Promise((resolve) =>
-            setTimeout(resolve, 100 + Math.random() * 400),
-          );
+          await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 400));
         }
       }, i * rampUpInterval);
     }
@@ -177,7 +175,7 @@ class PerformanceTestUtils {
       setTimeout(
         resolve,
         durationMinutes * 60 * 1000 + rampUpSeconds * 1000 + 5000,
-      ),
+      )
     );
   }
 }
@@ -288,8 +286,7 @@ describe("aI Services Performance Tests", () => {
 
     it("should handle single chat requests within performance thresholds", async () => {
       const testSessionId = `perf-test-session-${Date.now()}`;
-      const testMessage =
-        testMessages[Math.floor(Math.random() * testMessages.length)];
+      const testMessage = testMessages[Math.floor(Math.random() * testMessages.length)];
 
       const stopTimer = PerformanceTestUtils.startMeasurement(
         "single_chat_request",
@@ -319,8 +316,7 @@ describe("aI Services Performance Tests", () => {
       await PerformanceTestUtils.simulateLoad(
         async () => {
           const testSessionId = `light-load-session-${Date.now()}-${Math.random()}`;
-          const testMessage =
-            testMessages[Math.floor(Math.random() * testMessages.length)];
+          const testMessage = testMessages[Math.floor(Math.random() * testMessages.length)];
           await client.sendChatMessage(testSessionId, testMessage);
         },
         scenario.concurrent_users,
@@ -355,8 +351,7 @@ describe("aI Services Performance Tests", () => {
       await PerformanceTestUtils.simulateLoad(
         async () => {
           const testSessionId = `normal-load-session-${Date.now()}-${Math.random()}`;
-          const testMessage =
-            testMessages[Math.floor(Math.random() * testMessages.length)];
+          const testMessage = testMessages[Math.floor(Math.random() * testMessages.length)];
           await client.sendChatMessage(testSessionId, testMessage);
         },
         scenario.concurrent_users,
@@ -432,10 +427,9 @@ describe("aI Services Performance Tests", () => {
     ];
 
     it("should process compliance validations quickly", async () => {
-      const testData =
-        complianceTestData[
-          Math.floor(Math.random() * complianceTestData.length)
-        ];
+      const testData = complianceTestData[
+        Math.floor(Math.random() * complianceTestData.length)
+      ];
 
       const stopTimer = PerformanceTestUtils.startMeasurement(
         "single_compliance_check",
@@ -467,10 +461,9 @@ describe("aI Services Performance Tests", () => {
 
       await PerformanceTestUtils.simulateLoad(
         async () => {
-          const testData =
-            complianceTestData[
-              Math.floor(Math.random() * complianceTestData.length)
-            ];
+          const testData = complianceTestData[
+            Math.floor(Math.random() * complianceTestData.length)
+          ];
           await client.validateCompliance(testData);
         },
         scenario.concurrent_users,
@@ -616,8 +609,7 @@ describe("aI Services Performance Tests", () => {
       );
 
       const finalMemory = process.memoryUsage();
-      const memoryIncrease =
-        (finalMemory.rss - initialMemory.rss) / 1024 / 1024; // MB
+      const memoryIncrease = (finalMemory.rss - initialMemory.rss) / 1024 / 1024; // MB
 
       // console.log("Final memory usage:", {
       //   rss: `${Math.round(finalMemory.rss / 1024 / 1024)}MB`,

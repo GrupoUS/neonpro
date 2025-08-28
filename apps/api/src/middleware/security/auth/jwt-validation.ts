@@ -12,13 +12,13 @@
  */
 
 import type { Context, MiddlewareHandler } from "hono";
-import { jwtVerify, type JWTPayload, type JWTVerifyResult } from "jose";
+import { type JWTPayload, jwtVerify, type JWTVerifyResult } from "jose";
 
 // Healthcare user roles with license requirements
 export enum HealthcareRole {
   ADMIN = "admin",
   EMERGENCY_PHYSICIAN = "emergency_physician",
-  HEALTHCARE_PROVIDER = "healthcare_provider", 
+  HEALTHCARE_PROVIDER = "healthcare_provider",
   CLINIC_MANAGER = "clinic_manager",
   CLINIC_STAFF = "clinic_staff",
   PATIENT = "patient",
@@ -42,13 +42,13 @@ export interface HealthcareJWTPayload extends JWTPayload {
   sub: string; // User ID
   email: string;
   name: string;
-  
+
   // Healthcare-specific claims
   role: HealthcareRole;
   clinic_id?: string;
   clinic_ids?: string[]; // For multi-clinic access
   professional_id?: string;
-  
+
   // Professional licensing
   license?: {
     number: string;
@@ -59,13 +59,13 @@ export interface HealthcareJWTPayload extends JWTPayload {
     is_active: boolean;
     last_validated: string;
   };
-  
+
   // Security context
   permissions: string[];
   session_id: string;
   device_id?: string;
   ip_address?: string;
-  
+
   // Emergency access
   emergency_access?: {
     granted: boolean;
@@ -73,7 +73,7 @@ export interface HealthcareJWTPayload extends JWTPayload {
     expires_at: number;
     justification: string;
   };
-  
+
   // Audit context
   issued_by: string; // System that issued the token
   purpose: string; // Authentication purpose
@@ -110,7 +110,7 @@ const DEFAULT_JWT_CONFIG: JWTValidationConfig = {
 
 // Audit logger for authentication events
 interface CriticalSecurityAlert {
-  level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   type: string;
   message: string;
   metadata: any;
@@ -122,47 +122,49 @@ class AuthenticationAuditLogger {
   private static async sendCriticalSecurityAlert(alert: CriticalSecurityAlert): Promise<void> {
     // Log to console for immediate visibility
     console.error(`[CRITICAL_SECURITY_ALERT_${alert.level}]`, alert);
-    
+
     // In production, integrate with:
     // - Emergency response systems
     // - Security Operations Center (SOC)
     // - Healthcare compliance officers
     // - Legal team for regulatory compliance
-    
+
     if (alert.requiresImmediate) {
       // Send immediate notifications via multiple channels
       await this.sendImmediateCriticalNotification(alert);
     }
-    
+
     if (alert.complianceRequired) {
       // Send to compliance team for regulatory reporting
       await this.sendComplianceNotification(alert);
     }
-    
+
     // Store in critical security audit log
     await this.storeCriticalSecurityEvent(alert);
   }
-  
-  private static async sendImmediateCriticalNotification(alert: CriticalSecurityAlert): Promise<void> {
+
+  private static async sendImmediateCriticalNotification(
+    alert: CriticalSecurityAlert,
+  ): Promise<void> {
     // Placeholder for immediate critical notification logic
     // In production: Emergency SMS, phone calls, Slack alerts, PagerDuty escalation
     console.error(`[IMMEDIATE_CRITICAL_NOTIFICATION]`, {
       timestamp: new Date().toISOString(),
       alert,
-      escalation: 'IMMEDIATE_RESPONSE_REQUIRED'
+      escalation: "IMMEDIATE_RESPONSE_REQUIRED",
     });
   }
-  
+
   private static async sendComplianceNotification(alert: CriticalSecurityAlert): Promise<void> {
     // Placeholder for compliance notification logic
     // In production: LGPD compliance system, ANVISA reporting, legal team alerts
     console.warn(`[COMPLIANCE_NOTIFICATION]`, {
       timestamp: new Date().toISOString(),
       alert,
-      regulatory: 'HEALTHCARE_COMPLIANCE_REQUIRED'
+      regulatory: "HEALTHCARE_COMPLIANCE_REQUIRED",
     });
   }
-  
+
   private static async storeCriticalSecurityEvent(alert: CriticalSecurityAlert): Promise<void> {
     // Placeholder for critical security event storage
     // In production: Immutable audit log, regulatory compliance database
@@ -170,7 +172,7 @@ class AuthenticationAuditLogger {
       timestamp: new Date().toISOString(),
       eventId: `crit_sec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       alert,
-      retention: 'PERMANENT_REGULATORY_RECORD'
+      retention: "PERMANENT_REGULATORY_RECORD",
     });
   }
 
@@ -216,12 +218,12 @@ class AuthenticationAuditLogger {
 
     // Immediately alert security team and compliance officer
     this.sendCriticalSecurityAlert({
-      level: 'CRITICAL',
-      type: 'EMERGENCY_ACCESS_GRANTED',
+      level: "CRITICAL",
+      type: "EMERGENCY_ACCESS_GRANTED",
       message: `Emergency access granted to user ${details.user_id} for ${details.emergency_type}`,
       metadata: details,
       requiresImmediate: true,
-      complianceRequired: true
+      complianceRequired: true,
     });
   }
 
@@ -262,11 +264,11 @@ class JWTKeyManager {
       if (!secret) {
         throw new Error("JWT_SECRET environment variable is required");
       }
-      
+
       if (secret.length < 32) {
         throw new Error("JWT_SECRET must be at least 32 characters long");
       }
-      
+
       this.jwtSecret = new TextEncoder().encode(secret);
     }
     return this.jwtSecret;
@@ -277,9 +279,9 @@ class JWTKeyManager {
       throw new Error("New JWT secret must be at least 32 characters long");
     }
     this.jwtSecret = new TextEncoder().encode(newSecret);
-    console.log("[JWT_SECRET_ROTATION]", { 
+    console.log("[JWT_SECRET_ROTATION]", {
       timestamp: new Date(),
-      message: "JWT secret rotated successfully" 
+      message: "JWT secret rotated successfully",
     });
   }
 }
@@ -363,7 +365,7 @@ export class HealthcareJWTValidator {
 
       // Validate required healthcare claims
       const missingClaims = this.config.requiredClaims.filter(
-        claim => !(claim in payload)
+        claim => !(claim in payload),
       );
 
       if (missingClaims.length > 0) {
@@ -430,7 +432,6 @@ export class HealthcareJWTValidator {
         isEmergency,
         validationErrors: validationErrors.length > 0 ? validationErrors : undefined,
       };
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown JWT validation error";
       validationErrors.push(errorMessage);
@@ -456,8 +457,8 @@ export class HealthcareJWTValidator {
    */
   private isEmergencyAccess(payload: HealthcareJWTPayload): boolean {
     return Boolean(
-      payload.emergency_access?.granted &&
-      payload.role === HealthcareRole.EMERGENCY_PHYSICIAN
+      payload.emergency_access?.granted
+        && payload.role === HealthcareRole.EMERGENCY_PHYSICIAN,
     );
   }
 
@@ -466,13 +467,13 @@ export class HealthcareJWTValidator {
    * TODO: Integrate with real Brazilian medical council APIs
    */
   private async validateProfessionalLicense(
-    license: NonNullable<HealthcareJWTPayload["license"]>
+    license: NonNullable<HealthcareJWTPayload["license"]>,
   ): Promise<boolean> {
     try {
       // Check expiration date
       const expirationDate = new Date(license.expiration_date);
       const now = new Date();
-      
+
       if (expirationDate <= now) {
         return false;
       }
@@ -484,8 +485,8 @@ export class HealthcareJWTValidator {
 
       // TODO: Make actual API call to respective council
       // Mock validation for development
-      const isValid = license.number.length >= 6 && 
-                     Object.values(ProfessionalLicenseType).includes(license.type);
+      const isValid = license.number.length >= 6
+        && Object.values(ProfessionalLicenseType).includes(license.type);
 
       // Log license validation
       AuthenticationAuditLogger.logLicenseValidation({
@@ -497,7 +498,6 @@ export class HealthcareJWTValidator {
       });
 
       return isValid;
-
     } catch (error) {
       console.error("[LICENSE_VALIDATION_ERROR]", {
         license_number: license.number,
@@ -513,16 +513,16 @@ export class HealthcareJWTValidator {
  * Main JWT authentication middleware
  */
 export const createJWTAuthMiddleware = (
-  config?: Partial<JWTValidationConfig>
+  config?: Partial<JWTValidationConfig>,
 ): MiddlewareHandler => {
   const validator = new HealthcareJWTValidator(config);
 
   return async (c: Context, next) => {
     const authHeader = c.req.header("Authorization");
-    const clientIP = c.req.header("CF-Connecting-IP") || 
-                    c.req.header("X-Forwarded-For") || 
-                    c.req.header("X-Real-IP") || 
-                    "unknown";
+    const clientIP = c.req.header("CF-Connecting-IP")
+      || c.req.header("X-Forwarded-For")
+      || c.req.header("X-Real-IP")
+      || "unknown";
     const userAgent = c.req.header("User-Agent") || "unknown";
 
     // Check for Bearer token
@@ -593,17 +593,16 @@ export const createJWTAuthMiddleware = (
       c.res.headers.set("X-User-Role", authResult.user.role);
       c.res.headers.set("X-Session-ID", authResult.user.session_id);
       c.res.headers.set("X-Auth-Method", "jwt");
-      
+
       if (authResult.isEmergency) {
         c.res.headers.set("X-Emergency-Access", "true");
         c.res.headers.set("X-Emergency-Type", authResult.user.emergency_access!.type);
       }
 
       await next();
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Authentication error";
-      
+
       AuthenticationAuditLogger.logAuthAttempt({
         success: false,
         ip_address: clientIP,
@@ -680,10 +679,10 @@ export const jwtAuthUtils = {
   },
 };
 
-export { 
-  HealthcareJWTValidator, 
+export {
   AuthenticationAuditLogger,
-  TokenBlacklist,
+  DEFAULT_JWT_CONFIG,
+  HealthcareJWTValidator,
   JWTKeyManager,
-  DEFAULT_JWT_CONFIG 
+  TokenBlacklist,
 };

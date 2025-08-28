@@ -118,7 +118,7 @@ export interface NotificationStats {
   deliveryRate: number;
   openRate: number;
   clickRate: number;
-  channelDistribution: { channel: NotificationChannel; count: number }[];
+  channelDistribution: { channel: NotificationChannel; count: number; }[];
 }
 
 export interface ExternalNotificationProvider {
@@ -356,8 +356,7 @@ export class NotificationService {
     treatmentPlanId: string,
     sessionNumber: number,
   ): Promise<Notification> {
-    const treatmentPlan =
-      await this.repository.getTreatmentPlan(treatmentPlanId);
+    const treatmentPlan = await this.repository.getTreatmentPlan(treatmentPlanId);
     if (!treatmentPlan) {
       throw new Error("Treatment plan not found");
     }
@@ -498,8 +497,8 @@ export class NotificationService {
     }
 
     if (
-      campaign.status !== CampaignStatus.SCHEDULED &&
-      campaign.status !== CampaignStatus.DRAFT
+      campaign.status !== CampaignStatus.SCHEDULED
+      && campaign.status !== CampaignStatus.DRAFT
     ) {
       throw new Error("Can only launch scheduled or draft campaigns");
     }
@@ -672,8 +671,7 @@ export class NotificationService {
 
   // Scheduled notification processing
   async processScheduledNotifications(): Promise<void> {
-    const scheduledNotifications =
-      await this.repository.getScheduledNotifications(new Date());
+    const scheduledNotifications = await this.repository.getScheduledNotifications(new Date());
 
     for (const notification of scheduledNotifications) {
       try {
@@ -695,12 +693,11 @@ export class NotificationService {
     );
 
     // Filter by date range if provided
-    const filteredNotifications =
-      startDate && endDate
-        ? allNotifications.filter(
-            (n) => n.sentAt && n.sentAt >= startDate && n.sentAt <= endDate,
-          )
-        : allNotifications;
+    const filteredNotifications = startDate && endDate
+      ? allNotifications.filter(
+        (n) => n.sentAt && n.sentAt >= startDate && n.sentAt <= endDate,
+      )
+      : allNotifications;
 
     const { length: totalSent } = filteredNotifications;
     const totalDelivered = filteredNotifications.filter(
@@ -717,8 +714,7 @@ export class NotificationService {
     ).length;
 
     const deliveryRate = totalSent > 0 ? (totalDelivered / totalSent) * 100 : 0;
-    const openRate =
-      totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0;
+    const openRate = totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0;
     const clickRate = totalOpened > 0 ? (totalClicked / totalOpened) * 100 : 0;
 
     // Channel distribution

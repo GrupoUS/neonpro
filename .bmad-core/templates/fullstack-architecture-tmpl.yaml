@@ -616,59 +616,59 @@ sections:
     language: plaintext
     examples:
       - |
-        {{project_name}}/
-        ├── .github/                    # CI/CD workflows
-        │   └── workflows/
-        │       ├── ci.yaml
-        │       └── deploy.yaml
-        ├── apps/                       # Application packages
-        │   ├── web/                    # Frontend application
-        │   │   ├── src/
-        │   │   │   ├── components/     # UI components
-        │   │   │   ├── pages/          # Page components/routes
-        │   │   │   ├── hooks/          # Custom React hooks
-        │   │   │   ├── services/       # API client services
-        │   │   │   ├── stores/         # State management
-        │   │   │   ├── styles/         # Global styles/themes
-        │   │   │   └── utils/          # Frontend utilities
-        │   │   ├── public/             # Static assets
-        │   │   ├── tests/              # Frontend tests
-        │   │   └── package.json
-        │   └── api/                    # Backend application
-        │       ├── src/
-        │       │   ├── routes/         # API routes/controllers
-        │       │   ├── services/       # Business logic
-        │       │   ├── models/         # Data models
-        │       │   ├── middleware/     # Express/API middleware
-        │       │   ├── utils/          # Backend utilities
-        │       │   └── {{serverless_or_server_entry}}
-        │       ├── tests/              # Backend tests
-        │       └── package.json
-        ├── packages/                   # Shared packages
-        │   ├── shared/                 # Shared types/utilities
-        │   │   ├── src/
-        │   │   │   ├── types/          # TypeScript interfaces
-        │   │   │   ├── constants/      # Shared constants
-        │   │   │   └── utils/          # Shared utilities
-        │   │   └── package.json
-        │   ├── ui/                     # Shared UI components
-        │   │   ├── src/
-        │   │   └── package.json
-        │   └── config/                 # Shared configuration
-        │       ├── eslint/
-        │       ├── typescript/
-        │       └── jest/
-        ├── infrastructure/             # IaC definitions
-        │   └── {{iac_structure}}
-        ├── scripts/                    # Build/deploy scripts
-        ├── docs/                       # Documentation
-        │   ├── prd.md
-        │   ├── front-end-spec.md
-        │   └── architecture.md
-        ├── .env.example                # Environment template
-        ├── package.json                # Root package.json
-        ├── {{monorepo_config}}         # Monorepo configuration
-        └── README.md
+          {{project_name}}/
+          ├── .github/                    # CI/CD workflows
+          │   └── workflows/
+          │       ├── ci.yaml
+          │       └── deploy.yaml
+          ├── apps/                       # Application packages
+          │   ├── web/                    # Frontend application
+          │   │   ├── src/
+          │   │   │   ├── components/     # UI components
+          │   │   │   ├── pages/          # Page components/routes
+          │   │   │   ├── hooks/          # Custom React hooks
+          │   │   │   ├── services/       # API client services
+          │   │   │   ├── stores/         # State management
+          │   │   │   ├── styles/         # Global styles/themes
+          │   │   │   └── utils/          # Frontend utilities
+          │   │   ├── public/             # Static assets
+          │   │   ├── tests/              # Frontend tests
+          │   │   └── package.json
+          │   └── api/                    # Backend application
+          │       ├── src/
+          │       │   ├── routes/         # API routes/controllers
+          │       │   ├── services/       # Business logic
+          │       │   ├── models/         # Data models
+          │       │   ├── middleware/     # Express/API middleware
+          │       │   ├── utils/          # Backend utilities
+          │       │   └── {{serverless_or_server_entry}}
+          │       ├── tests/              # Backend tests
+          │       └── package.json
+          ├── packages/                   # Shared packages
+          │   ├── shared/                 # Shared types/utilities
+          │   │   ├── src/
+          │   │   │   ├── types/          # TypeScript interfaces
+          │   │   │   ├── constants/      # Shared constants
+          │   │   │   └── utils/          # Shared utilities
+          │   │   └── package.json
+          │   ├── ui/                     # Shared UI components
+          │   │   ├── src/
+          │   │   └── package.json
+          │   └── config/                 # Shared configuration
+          │       ├── eslint/
+          │       ├── typescript/
+          │       └── jest/
+          ├── infrastructure/             # IaC definitions
+          │   └── {{iac_structure}}
+          ├── scripts/                    # Build/deploy scripts
+          ├── docs/                       # Documentation
+          │   ├── prd.md
+          │   ├── front-end-spec.md
+          │   └── architecture.md
+          ├── .env.example                # Environment template
+          ├── package.json                # Root package.json
+          ├── {{monorepo_config}}         # Monorepo configuration
+          └── README.md
 
   - id: development-workflow
     title: Development Workflow
@@ -753,19 +753,19 @@ sections:
               "Development",
               "{{dev_fe_url}}",
               "{{dev_be_url}}",
-              "Local development"
+              "Local development",
             ]
           - [
               "Staging",
               "{{staging_fe_url}}",
               "{{staging_be_url}}",
-              "Pre-production testing"
+              "Pre-production testing",
             ]
           - [
               "Production",
               "{{prod_fe_url}}",
               "{{prod_be_url}}",
-              "Live environment"
+              "Live environment",
             ]
 
   - id: security-performance

@@ -6,13 +6,13 @@
 
 "use client";
 
-import React, { useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import type { ChatConversation, PresenceStatus } from "@/types/chat";
 import { ConversationType, SenderType } from "@/types/chat";
+import React, { useCallback, useState } from "react";
 
 // Icons (would be imported from lucide-react or similar)
-const MenuIcon = ({ className }: { className?: string }) => (
+const MenuIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -49,7 +49,7 @@ const MenuIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const PhoneIcon = ({ className }: { className?: string }) => (
+const PhoneIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -65,7 +65,7 @@ const PhoneIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const VideoIcon = ({ className }: { className?: string }) => (
+const VideoIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -92,7 +92,7 @@ const VideoIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const InfoIcon = ({ className }: { className?: string }) => (
+const InfoIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -128,7 +128,7 @@ const InfoIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const SettingsIcon = ({ className }: { className?: string }) => (
+const SettingsIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -152,7 +152,7 @@ const SettingsIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const BotIcon = ({ className }: { className?: string }) => (
+const BotIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -187,7 +187,7 @@ const BotIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const StethoscopeIcon = ({ className }: { className?: string }) => (
+const StethoscopeIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -203,7 +203,7 @@ const StethoscopeIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const ShieldCheckIcon = ({ className }: { className?: string }) => (
+const ShieldCheckIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -313,9 +313,9 @@ export default function ChatHeader({
   // Get active participants (excluding current user)
   const activeParticipants = conversation.participants.filter(
     (p) =>
-      presenceStatus[p.user_id] === "online" ||
-      presenceStatus[p.user_id] === "busy" ||
-      p.user_type === "ai_assistant",
+      presenceStatus[p.user_id] === "online"
+      || presenceStatus[p.user_id] === "busy"
+      || p.user_type === "ai_assistant",
   );
 
   // Get healthcare context info
@@ -378,8 +378,8 @@ export default function ChatHeader({
       className={cn(
         "flex items-center justify-between px-4 py-3",
         "bg-white dark:bg-gray-900",
-        emergencyMode &&
-          "bg-red-50 dark:bg-red-950 border-b-2 border-red-200 dark:border-red-800",
+        emergencyMode
+          && "bg-red-50 dark:bg-red-950 border-b-2 border-red-200 dark:border-red-800",
         className,
       )}
     >
@@ -405,39 +405,39 @@ export default function ChatHeader({
           <div
             className={cn(
               "w-10 h-10 rounded-full flex items-center justify-center",
-              conversationInfo.color === "blue" &&
-                "bg-blue-100 dark:bg-blue-900",
-              conversationInfo.color === "green" &&
-                "bg-green-100 dark:bg-green-900",
-              conversationInfo.color === "teal" &&
-                "bg-teal-100 dark:bg-teal-900",
-              conversationInfo.color === "purple" &&
-                "bg-purple-100 dark:bg-purple-900",
+              conversationInfo.color === "blue"
+                && "bg-blue-100 dark:bg-blue-900",
+              conversationInfo.color === "green"
+                && "bg-green-100 dark:bg-green-900",
+              conversationInfo.color === "teal"
+                && "bg-teal-100 dark:bg-teal-900",
+              conversationInfo.color === "purple"
+                && "bg-purple-100 dark:bg-purple-900",
               conversationInfo.color === "red" && "bg-red-100 dark:bg-red-900",
-              conversationInfo.color === "indigo" &&
-                "bg-indigo-100 dark:bg-indigo-900",
-              conversationInfo.color === "gray" &&
-                "bg-gray-100 dark:bg-gray-800",
+              conversationInfo.color === "indigo"
+                && "bg-indigo-100 dark:bg-indigo-900",
+              conversationInfo.color === "gray"
+                && "bg-gray-100 dark:bg-gray-800",
               emergencyMode && "animate-pulse",
             )}
           >
             {React.createElement(conversationInfo.icon, {
               className: cn(
                 "w-5 h-5",
-                conversationInfo.color === "blue" &&
-                  "text-blue-600 dark:text-blue-400",
-                conversationInfo.color === "green" &&
-                  "text-green-600 dark:text-green-400",
-                conversationInfo.color === "teal" &&
-                  "text-teal-600 dark:text-teal-400",
-                conversationInfo.color === "purple" &&
-                  "text-purple-600 dark:text-purple-400",
-                conversationInfo.color === "red" &&
-                  "text-red-600 dark:text-red-400",
-                conversationInfo.color === "indigo" &&
-                  "text-indigo-600 dark:text-indigo-400",
-                conversationInfo.color === "gray" &&
-                  "text-gray-600 dark:text-gray-400",
+                conversationInfo.color === "blue"
+                  && "text-blue-600 dark:text-blue-400",
+                conversationInfo.color === "green"
+                  && "text-green-600 dark:text-green-400",
+                conversationInfo.color === "teal"
+                  && "text-teal-600 dark:text-teal-400",
+                conversationInfo.color === "purple"
+                  && "text-purple-600 dark:text-purple-400",
+                conversationInfo.color === "red"
+                  && "text-red-600 dark:text-red-400",
+                conversationInfo.color === "indigo"
+                  && "text-indigo-600 dark:text-indigo-400",
+                conversationInfo.color === "gray"
+                  && "text-gray-600 dark:text-gray-400",
               ),
             })}
           </div>
@@ -471,15 +471,15 @@ export default function ChatHeader({
             )}
 
             {/* AI Enabled Indicator */}
-            {conversation.ai_enabled &&
-              conversation.type !== "ai_assistant" && (
-                <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900 rounded-full">
-                  <BotIcon className="w-3 h-3 text-blue-600 dark:text-blue-400" />
-                  <span className="text-xs text-blue-700 dark:text-blue-300">
-                    IA
-                  </span>
-                </div>
-              )}
+            {conversation.ai_enabled
+              && conversation.type !== "ai_assistant" && (
+              <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900 rounded-full">
+                <BotIcon className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                <span className="text-xs text-blue-700 dark:text-blue-300">
+                  IA
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
@@ -526,8 +526,8 @@ export default function ChatHeader({
               "p-2 rounded-lg transition-colors",
               "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200",
               "hover:bg-gray-100 dark:hover:bg-gray-800",
-              emergencyMode &&
-                "text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900",
+              emergencyMode
+                && "text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900",
             )}
             title="Fazer chamada"
           >
@@ -543,8 +543,8 @@ export default function ChatHeader({
               "p-2 rounded-lg transition-colors",
               "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200",
               "hover:bg-gray-100 dark:hover:bg-gray-800",
-              emergencyMode &&
-                "text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900",
+              emergencyMode
+                && "text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900",
             )}
             title="Videochamada"
           >
@@ -559,8 +559,8 @@ export default function ChatHeader({
             "p-2 rounded-lg transition-colors",
             "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200",
             "hover:bg-gray-100 dark:hover:bg-gray-800",
-            emergencyMode &&
-              "text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900",
+            emergencyMode
+              && "text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900",
           )}
           title="Informações da conversa"
         >
@@ -575,8 +575,8 @@ export default function ChatHeader({
               "p-2 rounded-lg transition-colors",
               "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200",
               "hover:bg-gray-100 dark:hover:bg-gray-800",
-              emergencyMode &&
-                "text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900",
+              emergencyMode
+                && "text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900",
             )}
             title="Configurações"
           >

@@ -205,8 +205,7 @@ describe("bank Reconciliation API Integration Tests", () => {
         supabase
           .from("financial_transactions")
           .select("count(*)")
-          .eq("clinic_id", "test-clinic-123"),
-      );
+          .eq("clinic_id", "test-clinic-123"));
 
       const results = await Promise.all(concurrentRequests);
 

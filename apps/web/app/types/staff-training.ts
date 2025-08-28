@@ -205,7 +205,7 @@ export interface PracticalExerciseResult {
   id: string;
   completedAt: Date;
   overallScore: number; // percentage
-  criteriaScores: { [criterionId: string]: number };
+  criteriaScores: { [criterionId: string]: number; };
   feedback: string;
   evaluatedBy?: string; // for manual evaluation
 }

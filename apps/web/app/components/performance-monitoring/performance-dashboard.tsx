@@ -1,24 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,32 +11,39 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
-  TrendingUp,
-  TrendingDown,
-  Target,
-  Download,
-  RefreshCw,
-  Calendar,
-  Users,
-  DollarSign,
-  Activity,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  BarChart3,
-  LineChart,
-  PieChart,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePerformanceMonitoring } from "@/hooks/use-performance-monitoring";
-import type {
-  DashboardKPI,
-  ExportOptions,
-} from "@/types/performance-monitoring";
-import { KPI_LABELS_PT, CHART_COLORS } from "@/types/performance-monitoring";
+import { cn } from "@/lib/utils";
+import type { DashboardKPI, ExportOptions } from "@/types/performance-monitoring";
+import { CHART_COLORS, KPI_LABELS_PT } from "@/types/performance-monitoring";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  LineChart,
+  PieChart,
+  RefreshCw,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface PerformanceDashboardProps {
   clinicId?: string;
@@ -157,21 +148,23 @@ export function PerformanceDashboard({
       return <div className="w-4 h-4 rounded-full bg-gray-300" />;
     }
 
-    return kpi.trend === "up" ? (
-      <TrendingUp
-        className={cn(
-          "h-4 w-4",
-          isPositive ? "text-green-500" : "text-red-500",
-        )}
-      />
-    ) : (
-      <TrendingDown
-        className={cn(
-          "h-4 w-4",
-          isPositive ? "text-green-500" : "text-red-500",
-        )}
-      />
-    );
+    return kpi.trend === "up"
+      ? (
+        <TrendingUp
+          className={cn(
+            "h-4 w-4",
+            isPositive ? "text-green-500" : "text-red-500",
+          )}
+        />
+      )
+      : (
+        <TrendingDown
+          className={cn(
+            "h-4 w-4",
+            isPositive ? "text-green-500" : "text-red-500",
+          )}
+        />
+      );
   };
 
   return (
@@ -217,8 +210,7 @@ export function PerformanceDashboard({
 
           {lastUpdated && (
             <Badge variant="outline" className="text-xs">
-              Atualizado{" "}
-              {formatDistanceToNow(lastUpdated, {
+              Atualizado {formatDistanceToNow(lastUpdated, {
                 addSuffix: true,
                 locale: ptBR,
               })}
@@ -233,8 +225,8 @@ export function PerformanceDashboard({
           <Card key={kpi.id}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                {KPI_LABELS_PT[kpi.name as keyof typeof KPI_LABELS_PT] ||
-                  kpi.displayName}
+                {KPI_LABELS_PT[kpi.name as keyof typeof KPI_LABELS_PT]
+                  || kpi.displayName}
               </CardTitle>
               <div
                 className={cn(
@@ -242,10 +234,10 @@ export function PerformanceDashboard({
                   kpi.category === "prediction"
                     ? "bg-blue-100"
                     : kpi.category === "intervention"
-                      ? "bg-green-100"
-                      : kpi.category === "financial"
-                        ? "bg-yellow-100"
-                        : "bg-purple-100",
+                    ? "bg-green-100"
+                    : kpi.category === "financial"
+                    ? "bg-yellow-100"
+                    : "bg-purple-100",
                 )}
               >
                 {getKPIIcon(kpi.category)}
@@ -256,8 +248,7 @@ export function PerformanceDashboard({
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 {getTrendIcon(kpi)}
                 <span>
-                  {Math.abs(kpi.trendPercentage).toFixed(1)}% em relação ao
-                  período anterior
+                  {Math.abs(kpi.trendPercentage).toFixed(1)}% em relação ao período anterior
                 </span>
               </div>
               {kpi.target && (
@@ -346,13 +337,12 @@ export function PerformanceDashboard({
                     %
                   </p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    {metrics.length > 0 &&
-                      metrics[0].noShowRateImprovement > 0 && (
-                        <span className="text-green-600">
-                          ↓ {metrics[0].noShowRateImprovement.toFixed(1)}%
-                          melhoria
-                        </span>
-                      )}
+                    {metrics.length > 0
+                      && metrics[0].noShowRateImprovement > 0 && (
+                      <span className="text-green-600">
+                        ↓ {metrics[0].noShowRateImprovement.toFixed(1)}% melhoria
+                      </span>
+                    )}
                   </p>
                 </div>
               </CardContent>
@@ -376,8 +366,9 @@ export function PerformanceDashboard({
                   <p className="text-sm text-muted-foreground mt-2">
                     {metrics.length > 0 && (
                       <span>
-                        {metrics[0].interventionsSuccessful} de{" "}
-                        {metrics[0].interventionsAttempted} intervenções
+                        {metrics[0].interventionsSuccessful} de {metrics[0].interventionsAttempted}
+                        {" "}
+                        intervenções
                       </span>
                     )}
                   </p>

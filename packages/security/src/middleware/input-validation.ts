@@ -121,8 +121,7 @@ const ALLOWED_FILE_EXTENSIONS = ["pdf", "doc", "docx", "jpg", "jpeg", "png"];
 // Password and Security Limits
 const MIN_PASSWORD_LENGTH = 8;
 const MAX_PASSWORD_LENGTH = 128;
-const PASSWORD_COMPLEXITY_REGEX =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
+const PASSWORD_COMPLEXITY_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
 
 // Pagination and Query Limits
 const MAX_PAGE_SIZE = 100;
@@ -633,8 +632,7 @@ export const fileUploadSchema = z.object({
   fileType: z
     .string()
     .refine(
-      (type) =>
-        ALLOWED_FILE_EXTENSIONS.some((ext) => type.toLowerCase().includes(ext)),
+      (type) => ALLOWED_FILE_EXTENSIONS.some((ext) => type.toLowerCase().includes(ext)),
       `File type must be one of: ${ALLOWED_FILE_EXTENSIONS.join(", ")}`,
     ),
   patientId: z.string().uuid("Invalid patient ID format").optional(),
@@ -923,7 +921,7 @@ export function validateInput<T>(
 export async function validateRequestBody<T>(
   request: NextRequest,
   schema: z.ZodSchema<T>,
-): Promise<{ data?: T; error?: NextResponse }> {
+): Promise<{ data?: T; error?: NextResponse; }> {
   try {
     const body = await request.json();
     const validation = validateInput(schema, body);
@@ -987,8 +985,7 @@ export const sanitizeInput = (input: string): string => {
 };
 
 export const validateUUID = (uuid: string): boolean => {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(uuid);
 };
 

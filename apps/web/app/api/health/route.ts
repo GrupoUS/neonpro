@@ -67,12 +67,11 @@ export async function GET() {
       },
     };
 
-    const statusCode =
-      overallStatus === "healthy"
-        ? 200
-        : overallStatus === "degraded"
-          ? 200
-          : 503;
+    const statusCode = overallStatus === "healthy"
+      ? 200
+      : overallStatus === "degraded"
+      ? 200
+      : 503;
 
     return NextResponse.json(response, {
       status: statusCode,

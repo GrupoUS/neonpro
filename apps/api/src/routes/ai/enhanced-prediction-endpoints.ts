@@ -139,12 +139,11 @@ enhancedPredictionRoutes.post(
       }
 
       // Get enhanced prediction
-      const predictionResult =
-        await enhancedNoShowPredictionService.getEnhancedPredictionWithROI(
-          patient_profile,
-          appointment_context,
-          external_factors,
-        );
+      const predictionResult = await enhancedNoShowPredictionService.getEnhancedPredictionWithROI(
+        patient_profile,
+        appointment_context,
+        external_factors,
+      );
 
       // Calculate ROI impact
       const avgNoShowCost = 150;
@@ -184,31 +183,27 @@ enhancedPredictionRoutes.post(
           ),
           ensemble_method: predictionResult.prediction.ensemble_method,
           calibrated: true,
-          prediction_intervals:
-            predictionResult.prediction.prediction_intervals,
+          prediction_intervals: predictionResult.prediction.prediction_intervals,
         },
-        contributing_factors:
-          predictionResult.prediction.feature_importance_aggregated
-            .slice(0, 8)
-            .map((fi) => ({
-              factor_name: fi.feature_name,
-              impact_score: fi.importance_score,
-              impact_direction:
-                fi.importance_score > 0
-                  ? ("increases_risk" as const)
-                  : ("decreases_risk" as const),
-              confidence: fi.stability_score,
-            })),
+        contributing_factors: predictionResult.prediction.feature_importance_aggregated
+          .slice(0, 8)
+          .map((fi) => ({
+            factor_name: fi.feature_name,
+            impact_score: fi.importance_score,
+            impact_direction: fi.importance_score > 0
+              ? ("increases_risk" as const)
+              : ("decreases_risk" as const),
+            confidence: fi.stability_score,
+          })),
         recommendations: predictionResult.recommended_interventions
           .slice(0, 5)
           .map((ri) => ({
             action_type: ri.name.toLowerCase().includes("reminder")
               ? "reminder"
               : "intervention",
-            priority:
-              ri.estimated_effectiveness > 0.7
-                ? ("high" as const)
-                : ("medium" as const),
+            priority: ri.estimated_effectiveness > 0.7
+              ? ("high" as const)
+              : ("medium" as const),
             description: ri.description,
             estimated_impact: ri.estimated_effectiveness,
             success_probability: ri.success_metrics.conversion_rate,
@@ -293,8 +288,8 @@ enhancedPredictionRoutes.post(
       const predictionPromises = predictions.map(
         async (predRequest, _index) => {
           try {
-            const predictionResult =
-              await enhancedNoShowPredictionService.getEnhancedPredictionWithROI(
+            const predictionResult = await enhancedNoShowPredictionService
+              .getEnhancedPredictionWithROI(
                 predRequest.patient_profile,
                 predRequest.appointment_context,
                 predRequest.external_factors,
@@ -303,19 +298,16 @@ enhancedPredictionRoutes.post(
             return {
               appointment_id: predRequest.appointment_id,
               success: true,
-              no_show_probability:
-                predictionResult.prediction.calibrated_probability,
+              no_show_probability: predictionResult.prediction.calibrated_probability,
               risk_category: calculateRiskCategory(
                 predictionResult.prediction.calibrated_probability,
               ),
               confidence_score: predictionResult.prediction.confidence_score,
-              top_risk_factors:
-                predictionResult.prediction.feature_importance_aggregated
-                  .slice(0, 3)
-                  .map((fi) => fi.feature_name),
-              recommended_action:
-                predictionResult.recommended_interventions[0]?.name ||
-                "standard_reminder",
+              top_risk_factors: predictionResult.prediction.feature_importance_aggregated
+                .slice(0, 3)
+                .map((fi) => fi.feature_name),
+              recommended_action: predictionResult.recommended_interventions[0]?.name
+                || "standard_reminder",
               estimated_roi: predictionResult.roi_impact.net_savings,
             };
           } catch {
@@ -336,11 +328,10 @@ enhancedPredictionRoutes.post(
 
       // Calculate batch statistics
       const successCount = results.filter((r) => r.success).length;
-      const avgProbability =
-        results
-          .filter((r) => r.success)
-          .reduce((sum, r) => sum + r.no_show_probability, 0) /
-        Math.max(1, successCount);
+      const avgProbability = results
+        .filter((r) => r.success)
+        .reduce((sum, r) => sum + r.no_show_probability, 0)
+        / Math.max(1, successCount);
 
       const totalEstimatedROI = results
         .filter((r) => r.success && r.estimated_roi)
@@ -359,8 +350,7 @@ enhancedPredictionRoutes.post(
         batch_statistics: {
           avg_no_show_probability: Math.round(avgProbability * 1000) / 1000,
           high_risk_count: results.filter(
-            (r) =>
-              r.risk_category === "high" || r.risk_category === "very_high",
+            (r) => r.risk_category === "high" || r.risk_category === "very_high",
           ).length,
           total_estimated_roi: Math.round(totalEstimatedROI * 100) / 100,
           recommendations_generated: results.filter((r) => r.recommended_action)
@@ -411,8 +401,7 @@ enhancedPredictionRoutes.get(
   }),
   async (c) => {
     try {
-      const metrics =
-        await enhancedNoShowPredictionService.getAdvancedPredictionMetrics();
+      const metrics = await enhancedNoShowPredictionService.getAdvancedPredictionMetrics();
 
       return c.json({
         success: true,
@@ -425,10 +414,8 @@ enhancedPredictionRoutes.get(
           accuracy_achieved: metrics.model_performance.ensemble_accuracy,
           accuracy_met: metrics.model_performance.ensemble_accuracy >= 0.95,
           response_time_target: 200,
-          response_time_achieved:
-            metrics.system_performance.avg_prediction_time_ms,
-          response_time_met:
-            metrics.system_performance.avg_prediction_time_ms <= 200,
+          response_time_achieved: metrics.system_performance.avg_prediction_time_ms,
+          response_time_met: metrics.system_performance.avg_prediction_time_ms <= 200,
           roi_target_annual: 150_000,
           roi_projected_annual: metrics.roi_summary.yearly_projection,
           roi_target_met: metrics.roi_summary.yearly_projection >= 150_000,
@@ -500,24 +487,21 @@ enhancedPredictionRoutes.get(
         health_check_time_ms: Math.round(healthCheckTime),
         services: {
           ensemble_models: {
-            status:
-              healthChecks[0].status === "fulfilled"
-                ? "operational"
-                : "degraded",
+            status: healthChecks[0].status === "fulfilled"
+              ? "operational"
+              : "degraded",
             last_checked: new Date().toISOString(),
           },
           cache_service: {
-            status:
-              healthChecks[1].status === "fulfilled"
-                ? "operational"
-                : "degraded",
+            status: healthChecks[1].status === "fulfilled"
+              ? "operational"
+              : "degraded",
             hit_rate: 0.87,
           },
           database: {
-            status:
-              healthChecks[2].status === "fulfilled"
-                ? "connected"
-                : "disconnected",
+            status: healthChecks[2].status === "fulfilled"
+              ? "connected"
+              : "disconnected",
             response_time_ms: 45,
           },
         },

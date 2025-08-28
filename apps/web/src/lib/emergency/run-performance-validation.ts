@@ -23,8 +23,7 @@ export async function executePerformanceValidation(): Promise<void> {
 
   try {
     // Run the complete validation suite
-    const validationSuite =
-      await emergencyPerformanceValidator.runPerformanceValidation();
+    const validationSuite = await emergencyPerformanceValidator.runPerformanceValidation();
 
     // Generate and display detailed report
     emergencyPerformanceValidator.generateValidationReport(validationSuite);
@@ -113,8 +112,7 @@ export function quickPerformanceStatus(): void {
   ];
 
   capabilities.forEach((cap) => {
-    const icon =
-      cap.status === "optimized" ? "⚡" : cap.status === "active" ? "📊" : "⚠️";
+    const icon = cap.status === "optimized" ? "⚡" : cap.status === "active" ? "📊" : "⚠️";
     console.log(`${icon} ${cap.name}: ${cap.target} (${cap.status})`);
   });
 

@@ -2,13 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -149,8 +143,7 @@ const mockConsentRecords: ConsentRecord[] = [
     expiryDate: "2025-01-15T10:00:00Z",
     legalBasis: "consent",
     purpose: "Realização de procedimento estético de preenchimento facial",
-    description:
-      "Consentimento para procedimento de preenchimento facial com ácido hialurônico",
+    description: "Consentimento para procedimento de preenchimento facial com ácido hialurônico",
     version: "2.1",
     digitalSignature: "SHA256:a1b2c3d4...",
     ipAddress: "192.168.1.100",
@@ -167,8 +160,7 @@ const mockConsentRecords: ConsentRecord[] = [
     expiryDate: "2025-01-20T14:30:00Z",
     legalBasis: "consent",
     purpose: "Documentação fotográfica para fins clínicos e educacionais",
-    description:
-      "Autorização para captação e uso de imagens antes/depois do tratamento",
+    description: "Autorização para captação e uso de imagens antes/depois do tratamento",
     version: "1.8",
     digitalSignature: "SHA256:e5f6g7h8...",
     isMinor: false,
@@ -232,8 +224,7 @@ const mockRightsRequests: PatientRightsRequest[] = [
     status: "pending",
     submittedDate: "2024-02-20T14:00:00Z",
     legalDeadline: "2024-03-05T23:59:59Z",
-    description:
-      "Solicitação de acesso a todos os dados pessoais processados pela clínica",
+    description: "Solicitação de acesso a todos os dados pessoais processados pela clínica",
   },
   {
     id: "request-002",
@@ -257,8 +248,7 @@ const mockRightsRequests: PatientRightsRequest[] = [
     legalDeadline: "2024-02-25T23:59:59Z",
     completedDate: "2024-02-22T11:20:00Z",
     description: "Solicitação de portabilidade de dados para nova clínica",
-    response:
-      "Dados exportados e enviados conforme solicitado. Processo concluído.",
+    response: "Dados exportados e enviados conforme solicitado. Processo concluído.",
   },
 ];
 
@@ -312,33 +302,27 @@ export default function ConsentManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterType, setFilterType] = useState("all");
-  const [selectedConsent, setSelectedConsent] =
-    useState<ConsentRecord | null>();
+  const [selectedConsent, setSelectedConsent] = useState<ConsentRecord | null>();
   // const [isLoading, setIsLoading] = useState(false); // TODO: Implement loading state
 
   // Filter functions
   const filteredConsents = mockConsentRecords.filter((consent) => {
-    const matchesSearch =
-      consent.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      consent.purpose.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus =
-      filterStatus === "all" || consent.status === filterStatus;
-    const matchesType =
-      filterType === "all" || consent.consentType === filterType;
+    const matchesSearch = consent.patientName.toLowerCase().includes(searchQuery.toLowerCase())
+      || consent.purpose.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = filterStatus === "all" || consent.status === filterStatus;
+    const matchesType = filterType === "all" || consent.consentType === filterType;
     return matchesSearch && matchesStatus && matchesType;
   });
 
   const filteredRightsRequests = mockRightsRequests.filter((request) => {
-    const matchesSearch =
-      request.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      request.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = request.patientName.toLowerCase().includes(searchQuery.toLowerCase())
+      || request.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
   });
 
   const filteredAuditTrail = mockAuditTrail.filter((entry) => {
-    const matchesSearch =
-      entry.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      entry.details.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = entry.patientName.toLowerCase().includes(searchQuery.toLowerCase())
+      || entry.details.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
   });
 
@@ -454,8 +438,7 @@ export default function ConsentManagementPage() {
                 Gestão de Consentimentos
               </h1>
               <p className="text-gray-600" id="page-description">
-                Sistema completo de gestão de consentimentos LGPD e direitos dos
-                pacientes
+                Sistema completo de gestão de consentimentos LGPD e direitos dos pacientes
               </p>
             </div>
           </div>
@@ -745,9 +728,9 @@ export default function ConsentManagementPage() {
                             c.expiryDate,
                           );
                           return (
-                            c.status === "active" &&
-                            daysToExpiry <= 30 &&
-                            daysToExpiry > 0
+                            c.status === "active"
+                            && daysToExpiry <= 30
+                            && daysToExpiry > 0
                           );
                         })
                         .slice(0, 5)
@@ -865,8 +848,8 @@ export default function ConsentManagementPage() {
                             value={searchQuery}
                           />
                           <div className="sr-only" id="search-help">
-                            Digite o nome do paciente ou descrição do
-                            procedimento para filtrar os consentimentos
+                            Digite o nome do paciente ou descrição do procedimento para filtrar os
+                            consentimentos
                           </div>
                         </div>
                       </div>
@@ -1010,8 +993,7 @@ export default function ConsentManagementPage() {
                                 </p>
                                 {consent.status === "active" && (
                                   <p className="text-gray-600 text-sm">
-                                    {calculateDaysToExpiry(consent.expiryDate)}{" "}
-                                    dias restantes
+                                    {calculateDaysToExpiry(consent.expiryDate)} dias restantes
                                   </p>
                                 )}
                               </div>
@@ -1172,14 +1154,12 @@ export default function ConsentManagementPage() {
                             </p>
                             <div className="flex items-center justify-between text-gray-600 text-sm">
                               <span>
-                                Submetido:{" "}
-                                {new Date(
+                                Submetido: {new Date(
                                   request.submittedDate,
                                 ).toLocaleDateString("pt-BR")}
                               </span>
                               <span>
-                                Prazo:{" "}
-                                {new Date(
+                                Prazo: {new Date(
                                   request.legalDeadline,
                                 ).toLocaleDateString("pt-BR")}
                               </span>
@@ -1215,8 +1195,7 @@ export default function ConsentManagementPage() {
                     Trilha de Auditoria
                   </CardTitle>
                   <CardDescription>
-                    Registro completo de todas as ações relacionadas a
-                    consentimentos
+                    Registro completo de todas as ações relacionadas a consentimentos
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -1269,30 +1248,29 @@ export default function ConsentManagementPage() {
                                   <strong>IP:</strong> {entry.ipAddress}
                                 </p>
                                 <p>
-                                  <strong>Base Legal:</strong>{" "}
-                                  {entry.legalBasis}
+                                  <strong>Base Legal:</strong> {entry.legalBasis}
                                 </p>
                               </div>
                             </div>
-                            {entry.dataCategories &&
-                              entry.dataCategories.length > 0 && (
-                                <div className="mt-2">
-                                  <p className="mb-1 text-gray-600 text-sm">
-                                    <strong>Categorias de Dados:</strong>
-                                  </p>
-                                  <div className="flex flex-wrap gap-1">
-                                    {entry.dataCategories.map((category) => (
-                                      <Badge
-                                        className="text-xs"
-                                        key={category}
-                                        variant="outline"
-                                      >
-                                        {category}
-                                      </Badge>
-                                    ))}
-                                  </div>
+                            {entry.dataCategories
+                              && entry.dataCategories.length > 0 && (
+                              <div className="mt-2">
+                                <p className="mb-1 text-gray-600 text-sm">
+                                  <strong>Categorias de Dados:</strong>
+                                </p>
+                                <div className="flex flex-wrap gap-1">
+                                  {entry.dataCategories.map((category) => (
+                                    <Badge
+                                      className="text-xs"
+                                      key={category}
+                                      variant="outline"
+                                    >
+                                      {category}
+                                    </Badge>
+                                  ))}
                                 </div>
-                              )}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1652,31 +1630,31 @@ export default function ConsentManagementPage() {
                       </div>
                     </div>
 
-                    {selectedConsent.isMinor &&
-                      selectedConsent.guardianInfo && (
-                        <>
-                          <Separator />
-                          <div>
-                            <Label>Informações do Responsável Legal</Label>
-                            <div className="mt-2 rounded-lg bg-blue-50 p-4">
-                              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                <div>
-                                  <Label>Nome do Responsável</Label>
-                                  <p className="font-medium">
-                                    {selectedConsent.guardianInfo.name}
-                                  </p>
-                                </div>
-                                <div>
-                                  <Label>Relacionamento</Label>
-                                  <p className="font-medium">
-                                    {selectedConsent.guardianInfo.relationship}
-                                  </p>
-                                </div>
+                    {selectedConsent.isMinor
+                      && selectedConsent.guardianInfo && (
+                      <>
+                        <Separator />
+                        <div>
+                          <Label>Informações do Responsável Legal</Label>
+                          <div className="mt-2 rounded-lg bg-blue-50 p-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                              <div>
+                                <Label>Nome do Responsável</Label>
+                                <p className="font-medium">
+                                  {selectedConsent.guardianInfo.name}
+                                </p>
+                              </div>
+                              <div>
+                                <Label>Relacionamento</Label>
+                                <p className="font-medium">
+                                  {selectedConsent.guardianInfo.relationship}
+                                </p>
                               </div>
                             </div>
                           </div>
-                        </>
-                      )}
+                        </div>
+                      </>
+                    )}
 
                     <div className="flex justify-end gap-2">
                       <Button variant="outline">

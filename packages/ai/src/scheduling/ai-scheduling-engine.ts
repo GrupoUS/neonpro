@@ -100,8 +100,7 @@ export class AISchedulingEngine {
       );
 
       // Step 9: Apply final optimizations
-      const optimizedAppointment =
-        await this.applyFinalOptimizations(appointment);
+      const optimizedAppointment = await this.applyFinalOptimizations(appointment);
 
       const processingTime = performance.now() - startTime;
       this.updatePerformanceMetrics(processingTime, true);

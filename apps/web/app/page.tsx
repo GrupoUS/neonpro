@@ -43,8 +43,7 @@ const MetricsSection = ({
         Performance em Tempo Real
       </h2>
       <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-        Acompanhe o crescimento da sua clínica com métricas atualizadas
-        automaticamente
+        Acompanhe o crescimento da sua clínica com métricas atualizadas automaticamente
       </p>
     </div>
 

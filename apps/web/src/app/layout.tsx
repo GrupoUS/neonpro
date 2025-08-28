@@ -11,8 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "NeonPro - Plataforma Healthcare AI",
-  description:
-    "Plataforma de gestão para clínicas de estética com IA integrada e compliance LGPD",
+  description: "Plataforma de gestão para clínicas de estética com IA integrada e compliance LGPD",
   keywords: [
     "healthcare",
     "estética",

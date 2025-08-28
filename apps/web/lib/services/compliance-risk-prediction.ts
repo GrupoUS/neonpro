@@ -33,7 +33,7 @@ export class ComplianceRiskPredictionService {
    */
   async analyzeComplianceRisks(
     tenantId: string,
-  ): Promise<{ metrics?: ComplianceMetrics; error?: string }> {
+  ): Promise<{ metrics?: ComplianceMetrics; error?: string; }> {
     try {
       // Collect real-time data for risk assessment
       const [
@@ -100,10 +100,9 @@ export class ComplianceRiskPredictionService {
       return { metrics };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to analyze compliance risks",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to analyze compliance risks",
       };
     }
   }
@@ -120,8 +119,7 @@ export class ComplianceRiskPredictionService {
     const riskFactors = [];
 
     // Consent compliance analysis
-    const consentRate =
-      consentData.total > 0 ? consentData.granted / consentData.total : 1;
+    const consentRate = consentData.total > 0 ? consentData.granted / consentData.total : 1;
     if (consentRate < 0.8) {
       const impact = Math.round((0.8 - consentRate) * 50);
       score -= impact;
@@ -133,9 +131,8 @@ export class ComplianceRiskPredictionService {
     }
 
     // Data retention violations
-    const retentionViolations = activity.filter((a) =>
-      a.action?.includes("data_retention_exceeded"),
-    ).length;
+    const retentionViolations =
+      activity.filter((a) => a.action?.includes("data_retention_exceeded")).length;
     if (retentionViolations > 0) {
       score -= retentionViolations * 15;
       riskFactors.push({
@@ -161,8 +158,8 @@ export class ComplianceRiskPredictionService {
     // Data subject request response time
     const slowResponses = activity.filter(
       (a) =>
-        a.action?.includes("data_subject_request") &&
-        a.response_time_hours > 72, // LGPD requires response within 72 hours
+        a.action?.includes("data_subject_request")
+        && a.response_time_hours > 72, // LGPD requires response within 72 hours
     ).length;
     if (slowResponses > 0) {
       score -= slowResponses * 10;
@@ -232,9 +229,7 @@ export class ComplianceRiskPredictionService {
     }
 
     // Adverse events
-    const adverseEvents = activity.filter((a) =>
-      a.action?.includes("adverse_event"),
-    ).length;
+    const adverseEvents = activity.filter((a) => a.action?.includes("adverse_event")).length;
     if (adverseEvents > 0) {
       score -= adverseEvents * 20;
       riskFactors.push({
@@ -303,9 +298,8 @@ export class ComplianceRiskPredictionService {
     }
 
     // Ethical violations
-    const ethicalViolations = activity.filter((a) =>
-      a.action?.includes("ethical_violation"),
-    ).length;
+    const ethicalViolations =
+      activity.filter((a) => a.action?.includes("ethical_violation")).length;
     if (ethicalViolations > 0) {
       score -= ethicalViolations * 25;
       riskFactors.push({
@@ -578,8 +572,7 @@ export class ComplianceRiskPredictionService {
     }
 
     const recentTrend = historicalTrends.slice(-3);
-    const avgRecent =
-      recentTrend.reduce((sum, t) => sum + t.overall_score, 0) / 3;
+    const avgRecent = recentTrend.reduce((sum, t) => sum + t.overall_score, 0) / 3;
 
     if (currentScore > avgRecent + 2) {
       return "improving";
@@ -610,7 +603,8 @@ export class ComplianceRiskPredictionService {
           tenant_id: tenantId,
           alert_type: `${risk.predicted_violation_type}_violation` as unknown,
           severity: risk.risk_level === "critical" ? "critical" : "high",
-          description: `Predicted ${risk.predicted_violation_type.toUpperCase()} violation in ${risk.estimated_days_to_violation} days`,
+          description:
+            `Predicted ${risk.predicted_violation_type.toUpperCase()} violation in ${risk.estimated_days_to_violation} days`,
           action_required: risk.prevention_actions.join("; "),
           status: "open",
         });
@@ -619,5 +613,4 @@ export class ComplianceRiskPredictionService {
   }
 }
 
-export const complianceRiskPredictionService =
-  new ComplianceRiskPredictionService();
+export const complianceRiskPredictionService = new ComplianceRiskPredictionService();

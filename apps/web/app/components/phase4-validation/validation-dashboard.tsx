@@ -3,18 +3,17 @@
 // Phase 4 Validation Dashboard
 // Dashboard abrangente para sistema de validação de saúde
 
-import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+import { usePhase4Validation } from "@/app/hooks/use-phase4-validation";
+import type {
+  ValidationRule,
+  ValidationSession,
+  ValidationStatus,
+  ValidationType,
+} from "@/app/types/phase4-validation";
+import { ValidationLabels, ValidationLevel } from "@/app/types/phase4-validation";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -40,51 +41,41 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Activity,
+  AlertCircle,
   AlertTriangle,
+  BarChart3,
+  Calendar,
   CheckCircle2,
   Clock,
-  Settings,
-  Activity,
-  Shield,
-  Download,
-  RefreshCw,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  BarChart3,
-  Users,
-  FileText,
   Database,
-  Stethoscope,
-  Calendar,
   DollarSign,
+  Download,
+  Edit,
+  Eye,
+  FileText,
+  Filter,
+  Heart,
+  Info,
+  PauseCircle,
+  PlayCircle,
+  Plus,
+  RefreshCw,
+  Search,
+  Settings,
   Settings2,
+  Shield,
+  Stethoscope,
+  Trash2,
+  TrendingUp,
+  Users,
   Wifi,
   WifiOff,
-  Heart,
-  TrendingUp,
-  AlertCircle,
-  Info,
-  PlayCircle,
-  PauseCircle,
-  Filter,
-  Search,
 } from "lucide-react";
-import { usePhase4Validation } from "@/app/hooks/use-phase4-validation";
-import type {
-  ValidationRule,
-  ValidationSession,
-  ValidationType,
-  ValidationStatus,
-} from "@/app/types/phase4-validation";
-import {
-  ValidationLevel,
-  ValidationLabels,
-} from "@/app/types/phase4-validation";
+import React, { useEffect, useState } from "react";
 
 interface ValidationDashboardProps {
   clinic_id: string;
@@ -100,8 +91,7 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
   });
 
   const [selectedTab, setSelectedTab] = useState("dashboard");
-  const [selectedSession, setSelectedSession] =
-    useState<ValidationSession | null>(null);
+  const [selectedSession, setSelectedSession] = useState<ValidationSession | null>(null);
   const [selectedRule, setSelectedRule] = useState<ValidationRule | null>(null);
   const [isCreateRuleOpen, setIsCreateRuleOpen] = useState(false);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
@@ -153,15 +143,12 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
 
   // Filter sessions based on search and filters
   const filteredSessions = validation.sessions.filter((session) => {
-    const matchesSearch =
-      searchTerm === "" ||
-      session.entity_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      session.entity_type.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = searchTerm === ""
+      || session.entity_id.toLowerCase().includes(searchTerm.toLowerCase())
+      || session.entity_type.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus =
-      statusFilter === "all" || session.status === statusFilter;
-    const matchesType =
-      typeFilter === "all" || session.entity_type === typeFilter;
+    const matchesStatus = statusFilter === "all" || session.status === statusFilter;
+    const matchesType = typeFilter === "all" || session.entity_type === typeFilter;
 
     return matchesSearch && matchesStatus && matchesType;
   });
@@ -210,23 +197,24 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            {validation.connected ? (
-              <>
-                <Wifi className="h-4 w-4 text-green-500" />
-                <span className="text-sm text-green-600">Conectado</span>
-              </>
-            ) : (
-              <>
-                <WifiOff className="h-4 w-4 text-red-500" />
-                <span className="text-sm text-red-600">Desconectado</span>
-              </>
-            )}
+            {validation.connected
+              ? (
+                <>
+                  <Wifi className="h-4 w-4 text-green-500" />
+                  <span className="text-sm text-green-600">Conectado</span>
+                </>
+              )
+              : (
+                <>
+                  <WifiOff className="h-4 w-4 text-red-500" />
+                  <span className="text-sm text-red-600">Desconectado</span>
+                </>
+              )}
           </div>
 
           {validation.lastUpdate && (
             <span className="text-sm text-gray-500">
-              Última atualização:{" "}
-              {new Date(validation.lastUpdate).toLocaleTimeString("pt-BR")}
+              Última atualização: {new Date(validation.lastUpdate).toLocaleTimeString("pt-BR")}
             </span>
           )}
 
@@ -322,17 +310,13 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Badge
-                  variant={
-                    validation.systemHealth.status === "healthy"
-                      ? "default"
-                      : "destructive"
-                  }
+                  variant={validation.systemHealth.status === "healthy"
+                    ? "default"
+                    : "destructive"}
                 >
-                  {
-                    ValidationLabels.system_health[
-                      validation.systemHealth.status
-                    ]
-                  }
+                  {ValidationLabels.system_health[
+                    validation.systemHealth.status
+                  ]}
                 </Badge>
                 <span className="text-sm text-gray-600">
                   Uptime: {Math.round(validation.systemHealth.uptime / 3600)}h
@@ -428,20 +412,18 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           <Badge variant="outline" className="text-xs">
-                            Impacto:{" "}
-                            {rec.impact === "high"
+                            Impacto: {rec.impact === "high"
                               ? "Alto"
                               : rec.impact === "medium"
-                                ? "Médio"
-                                : "Baixo"}
+                              ? "Médio"
+                              : "Baixo"}
                           </Badge>
                           <Badge variant="outline" className="text-xs">
-                            Esforço:{" "}
-                            {rec.effort === "high"
+                            Esforço: {rec.effort === "high"
                               ? "Alto"
                               : rec.effort === "medium"
-                                ? "Médio"
-                                : "Baixo"}
+                              ? "Médio"
+                              : "Baixo"}
                           </Badge>
                         </div>
                       </div>
@@ -555,11 +537,9 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             {getTypeIcon(session.entity_type)}
-                            {
-                              ValidationLabels.validation_types[
-                                session.entity_type
-                              ]
-                            }
+                            {ValidationLabels.validation_types[
+                              session.entity_type
+                            ]}
                           </div>
                         </TableCell>
                         <TableCell>
@@ -598,9 +578,7 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={() =>
-                                  validation.retryValidation(session.id)
-                                }
+                                onClick={() => validation.retryValidation(session.id)}
                               >
                                 <RefreshCw className="h-4 w-4" />
                               </Button>
@@ -637,8 +615,7 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
                         <Switch
                           checked={rule.enabled}
                           onCheckedChange={(enabled) =>
-                            validation.toggleRule(rule.id, enabled)
-                          }
+                            validation.toggleRule(rule.id, enabled)}
                         />
                         <div>
                           <h4 className="font-medium">{rule.name}</h4>
@@ -660,7 +637,8 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => validation.deleteRule(rule.id)}
+                          onClick={() =>
+                            validation.deleteRule(rule.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -765,9 +743,7 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() =>
-                              validation.acknowledgeAlert(alert.id)
-                            }
+                            onClick={() => validation.acknowledgeAlert(alert.id)}
                           >
                             Reconhecer
                           </Button>
@@ -786,9 +762,7 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
                     </p>
                     <div className="flex items-center gap-2">
                       <Badge
-                        variant={
-                          alert.type === "error" ? "destructive" : "secondary"
-                        }
+                        variant={alert.type === "error" ? "destructive" : "secondary"}
                       >
                         {ValidationLabels.alert_types[alert.type]}
                       </Badge>
@@ -824,11 +798,9 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
                 <div>
                   <Label>Tipo de Entidade</Label>
                   <p className="font-medium">
-                    {
-                      ValidationLabels.validation_types[
-                        selectedSession.entity_type
-                      ]
-                    }
+                    {ValidationLabels.validation_types[
+                      selectedSession.entity_type
+                    ]}
                   </p>
                 </div>
                 <div>
@@ -836,11 +808,9 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
                   <div className="flex items-center gap-2">
                     {getStatusIcon(selectedSession.status)}
                     <span>
-                      {
-                        ValidationLabels.validation_status[
-                          selectedSession.status
-                        ]
-                      }
+                      {ValidationLabels.validation_status[
+                        selectedSession.status
+                      ]}
                     </span>
                   </div>
                 </div>

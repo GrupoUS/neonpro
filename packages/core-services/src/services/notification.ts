@@ -642,8 +642,8 @@ export class NotificationService {
 
       // Check if notification is valid for sending
       if (
-        notification.status !== NotificationStatus.PENDING &&
-        notification.status !== NotificationStatus.SCHEDULED
+        notification.status !== NotificationStatus.PENDING
+        && notification.status !== NotificationStatus.SCHEDULED
       ) {
         return false;
       }
@@ -831,7 +831,7 @@ export class NotificationService {
   async searchNotifications(
     filters: NotificationFilters,
     userId: string,
-  ): Promise<{ notifications: Notification[]; total: number }> {
+  ): Promise<{ notifications: Notification[]; total: number; }> {
     try {
       monitoring.debug("Searching notifications", "notification-service", {
         filters,
@@ -1079,8 +1079,8 @@ export class NotificationService {
       const totalSent = notifications.filter((n) => n.sent_at).length;
       const totalDelivered = notifications.filter(
         (n) =>
-          n.status === NotificationStatus.DELIVERED ||
-          n.status === NotificationStatus.READ,
+          n.status === NotificationStatus.DELIVERED
+          || n.status === NotificationStatus.READ,
       ).length;
       const totalFailed = notifications.filter(
         (n) => n.status === NotificationStatus.FAILED,
@@ -1091,8 +1091,7 @@ export class NotificationService {
       const readRate = totalDelivered > 0 ? totalRead / totalDelivered : 0;
 
       // Group by channel
-      const byChannel: Record<NotificationChannel, ChannelStats> =
-        {} as unknown;
+      const byChannel: Record<NotificationChannel, ChannelStats> = {} as unknown;
       Object.values(NotificationChannel).forEach((channel) => {
         const channelNotifications = notifications.filter(
           (n) => n.channel === channel,
@@ -1102,8 +1101,8 @@ export class NotificationService {
         ).length;
         const channelDelivered = channelNotifications.filter(
           (n) =>
-            n.status === NotificationStatus.DELIVERED ||
-            n.status === NotificationStatus.READ,
+            n.status === NotificationStatus.DELIVERED
+            || n.status === NotificationStatus.READ,
         ).length;
         const channelFailed = channelNotifications.filter(
           (n) => n.status === NotificationStatus.FAILED,
@@ -1129,8 +1128,8 @@ export class NotificationService {
         const typeSent = typeNotifications.filter((n) => n.sent_at).length;
         const typeDelivered = typeNotifications.filter(
           (n) =>
-            n.status === NotificationStatus.DELIVERED ||
-            n.status === NotificationStatus.READ,
+            n.status === NotificationStatus.DELIVERED
+            || n.status === NotificationStatus.READ,
         ).length;
         const typeFailed = typeNotifications.filter(
           (n) => n.status === NotificationStatus.FAILED,
@@ -1148,8 +1147,7 @@ export class NotificationService {
       });
 
       // Group by priority
-      const byPriority: Record<NotificationPriority, PriorityStats> =
-        {} as unknown;
+      const byPriority: Record<NotificationPriority, PriorityStats> = {} as unknown;
       Object.values(NotificationPriority).forEach((priority) => {
         const priorityNotifications = notifications.filter(
           (n) => n.priority === priority,
@@ -1159,8 +1157,8 @@ export class NotificationService {
         ).length;
         const priorityDelivered = priorityNotifications.filter(
           (n) =>
-            n.status === NotificationStatus.DELIVERED ||
-            n.status === NotificationStatus.READ,
+            n.status === NotificationStatus.DELIVERED
+            || n.status === NotificationStatus.READ,
         ).length;
         const priorityFailed = priorityNotifications.filter(
           (n) => n.status === NotificationStatus.FAILED,
@@ -1169,22 +1167,21 @@ export class NotificationService {
         // Calculate average delivery time
         const deliveredNotifications = priorityNotifications.filter(
           (n) =>
-            n.sent_at &&
-            (n.status === NotificationStatus.DELIVERED ||
-              n.status === NotificationStatus.READ),
+            n.sent_at
+            && (n.status === NotificationStatus.DELIVERED
+              || n.status === NotificationStatus.READ),
         );
-        const avgDeliveryTime =
-          deliveredNotifications.length > 0
-            ? deliveredNotifications.reduce((sum, n) => {
-                const sentTime = new Date(n.sent_at!).getTime();
-                const deliveredTime = new Date(
-                  n.read_at || n.sent_at!,
-                ).getTime();
-                return sum + (deliveredTime - sentTime);
-              }, 0) /
-              deliveredNotifications.length /
-              1000 // Convert to seconds
-            : 0;
+        const avgDeliveryTime = deliveredNotifications.length > 0
+          ? deliveredNotifications.reduce((sum, n) => {
+            const sentTime = new Date(n.sent_at!).getTime();
+            const deliveredTime = new Date(
+              n.read_at || n.sent_at!,
+            ).getTime();
+            return sum + (deliveredTime - sentTime);
+          }, 0)
+            / deliveredNotifications.length
+            / 1000 // Convert to seconds
+          : 0;
 
         byPriority[priority] = {
           sent: prioritySent,
@@ -1279,8 +1276,8 @@ export class NotificationService {
         });
 
         if (
-          currentTime >= data.quiet_hours_start &&
-          currentTime <= data.quiet_hours_end
+          currentTime >= data.quiet_hours_start
+          && currentTime <= data.quiet_hours_end
         ) {
           return false;
         }
@@ -1429,8 +1426,7 @@ export class NotificationService {
     if (data && data.retry_count < data.max_retries) {
       // Schedule retry
       const retryCount = data.retry_count + 1;
-      const retryDelay =
-        this.retryDelays[Math.min(retryCount - 1, this.retryDelays.length - 1)];
+      const retryDelay = this.retryDelays[Math.min(retryCount - 1, this.retryDelays.length - 1)];
       const scheduledAt = new Date(Date.now() + retryDelay);
 
       await this.supabase

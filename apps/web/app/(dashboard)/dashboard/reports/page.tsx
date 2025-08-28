@@ -97,8 +97,7 @@ const CosmicGlowButton = ({
   disabled = false,
 }: CosmicGlowButtonProps) => {
   const variants = {
-    primary:
-      "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
+    primary: "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
     secondary:
       "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800",
     success:
@@ -165,8 +164,7 @@ const reportTemplates: ReportTemplate[] = [
   {
     id: "lgpd-compliance",
     name: "Relatório de Conformidade LGPD",
-    description:
-      "Análise completa de conformidade com a Lei Geral de Proteção de Dados",
+    description: "Análise completa de conformidade com a Lei Geral de Proteção de Dados",
     category: "regulatory",
     compliance: ["LGPD", "ANPD"],
     lastGenerated: "2024-01-20",
@@ -178,8 +176,7 @@ const reportTemplates: ReportTemplate[] = [
   {
     id: "anvisa-inspection",
     name: "Relatório de Inspeção ANVISA",
-    description:
-      "Preparação para inspeções da Agência Nacional de Vigilância Sanitária",
+    description: "Preparação para inspeções da Agência Nacional de Vigilância Sanitária",
     category: "regulatory",
     compliance: ["ANVISA", "RDC"],
     lastGenerated: "2024-01-18",
@@ -191,8 +188,7 @@ const reportTemplates: ReportTemplate[] = [
   {
     id: "cfm-professional",
     name: "Relatório de Atividade Profissional CFM",
-    description:
-      "Registro de atividades profissionais para o Conselho Federal de Medicina",
+    description: "Registro de atividades profissionais para o Conselho Federal de Medicina",
     category: "regulatory",
     compliance: ["CFM", "CRM"],
     lastGenerated: "2024-01-15",
@@ -204,8 +200,7 @@ const reportTemplates: ReportTemplate[] = [
   {
     id: "ans-performance",
     name: "Métricas de Performance ANS",
-    description:
-      "Indicadores de qualidade para a Agência Nacional de Saúde Suplementar",
+    description: "Indicadores de qualidade para a Agência Nacional de Saúde Suplementar",
     category: "regulatory",
     compliance: ["ANS", "QUALISS"],
     frequency: "quarterly",
@@ -218,8 +213,7 @@ const reportTemplates: ReportTemplate[] = [
   {
     id: "revenue-analysis",
     name: "Análise de Receita",
-    description:
-      "Análise detalhada de receitas por período, serviço e profissional",
+    description: "Análise detalhada de receitas por período, serviço e profissional",
     category: "financial",
     compliance: ["Receita Federal", "CNPJ"],
     lastGenerated: "2024-01-21",
@@ -591,17 +585,19 @@ function ReportTemplateCard({
           size="sm"
           variant="primary"
         >
-          {report.status === "generating" ? (
-            <>
-              <RefreshCw className="mr-1 h-3 w-3 animate-spin" />
-              Gerando...
-            </>
-          ) : (
-            <>
-              <Zap className="mr-1 h-3 w-3" />
-              Gerar
-            </>
-          )}
+          {report.status === "generating"
+            ? (
+              <>
+                <RefreshCw className="mr-1 h-3 w-3 animate-spin" />
+                Gerando...
+              </>
+            )
+            : (
+              <>
+                <Zap className="mr-1 h-3 w-3" />
+                Gerar
+              </>
+            )}
         </CosmicGlowButton>
 
         <Button
@@ -653,8 +649,7 @@ function RecentReportsSection() {
               <div>
                 <p className="font-medium text-sm text-white">{report.name}</p>
                 <p className="text-slate-400 text-xs">
-                  {new Date(report.generatedAt).toLocaleString("pt-BR")} •{" "}
-                  {report.size}
+                  {new Date(report.generatedAt).toLocaleString("pt-BR")} • {report.size}
                 </p>
               </div>
             </div>
@@ -785,8 +780,7 @@ function ExportOptionsModal({
         </div>
 
         <p className="mb-6 text-slate-400 text-sm">
-          Selecione o formato para exportar:{" "}
-          <strong className="text-white">{reportName}</strong>
+          Selecione o formato para exportar: <strong className="text-white">{reportName}</strong>
         </p>
 
         <div className="space-y-3">
@@ -868,8 +862,7 @@ const handleScheduleClick = (_reportId: string) => {
 };
 
 export default function ReportsPage() {
-  const [selectedCategory, setSelectedCategory] =
-    useState<ReportCategory | null>();
+  const [selectedCategory, setSelectedCategory] = useState<ReportCategory | null>();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
@@ -914,14 +907,11 @@ export default function ReportsPage() {
 
   // Filter reports based on selected category and search
   const filteredReports = reportTemplates.filter((report) => {
-    const matchesCategory =
-      !selectedCategory || report.category === selectedCategory;
-    const matchesSearch =
-      !searchTerm ||
-      report.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      filterStatus === "all" || report.status === filterStatus;
+    const matchesCategory = !selectedCategory || report.category === selectedCategory;
+    const matchesSearch = !searchTerm
+      || report.name.toLowerCase().includes(searchTerm.toLowerCase())
+      || report.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === "all" || report.status === filterStatus;
 
     return matchesCategory && matchesSearch && matchesStatus;
   });
@@ -989,8 +979,7 @@ export default function ReportsPage() {
               Central de Relatórios
             </h1>
             <p className="text-slate-400">
-              Sistema completo de relatórios para conformidade regulatória e
-              gestão clínica
+              Sistema completo de relatórios para conformidade regulatória e gestão clínica
             </p>
           </div>
 
@@ -1131,16 +1120,12 @@ export default function ReportsPage() {
                 </Button>
                 <div>
                   <h2 className="font-bold text-2xl text-white">
-                    {
-                      reportCategories.find((c) => c.id === selectedCategory)
-                        ?.name
-                    }
+                    {reportCategories.find((c) => c.id === selectedCategory)
+                      ?.name}
                   </h2>
                   <p className="text-slate-400">
-                    {
-                      reportCategories.find((c) => c.id === selectedCategory)
-                        ?.description
-                    }
+                    {reportCategories.find((c) => c.id === selectedCategory)
+                      ?.description}
                   </p>
                 </div>
               </div>
@@ -1188,9 +1173,7 @@ export default function ReportsPage() {
         {/* Scheduling Modal */}
         <SchedulingModal
           isOpen={schedulingModal.isOpen}
-          onClose={() =>
-            setSchedulingModal({ ...schedulingModal, isOpen: false })
-          }
+          onClose={() => setSchedulingModal({ ...schedulingModal, isOpen: false })}
           onScheduleCreated={handleScheduleCreated}
           reportId={schedulingModal.reportId}
           reportName={schedulingModal.reportName}
@@ -1200,8 +1183,7 @@ export default function ReportsPage() {
         <div className="border-slate-800 border-t pt-8 text-center text-slate-500 text-sm">
           <p>NeonPro Healthcare Reports Center</p>
           <p>
-            Conformidade LGPD, ANVISA, CFM e ANS • Exportação segura • Auditoria
-            completa
+            Conformidade LGPD, ANVISA, CFM e ANS • Exportação segura • Auditoria completa
           </p>
         </div>
       </div>

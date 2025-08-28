@@ -9,7 +9,7 @@ import type { NextRequest } from "next/server";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -50,7 +50,7 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -82,7 +82,7 @@ export async function PATCH(
 
     return NextResponse.json(tracking);
   } catch (error: unknown) {
-    const errorObj = error as { name?: string; errors?: unknown };
+    const errorObj = error as { name?: string; errors?: unknown; };
     if (errorObj.name === "ZodError") {
       return NextResponse.json(
         { error: "Invalid request data", details: errorObj.errors },
@@ -101,7 +101,7 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const resolvedParams = await params;

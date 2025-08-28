@@ -1,13 +1,13 @@
 import type {
-  EmergencyProtocol,
-  EmergencyResponse,
-  EmergencyContact,
   EmergencyCategory,
-  EmergencyPriority,
-  EmergencyStatus,
+  EmergencyContact,
   EmergencyEscalationLevel,
   EmergencyNotification,
+  EmergencyPriority,
+  EmergencyProtocol,
+  EmergencyResponse,
   EmergencyResponseTeam,
+  EmergencyStatus,
   ValidationResponse,
 } from "@/types/compliance";
 
@@ -58,8 +58,7 @@ export class EmergencyMedicalProtocolsService {
 
   public static getInstance(): EmergencyMedicalProtocolsService {
     if (!EmergencyMedicalProtocolsService.instance) {
-      EmergencyMedicalProtocolsService.instance =
-        new EmergencyMedicalProtocolsService();
+      EmergencyMedicalProtocolsService.instance = new EmergencyMedicalProtocolsService();
     }
     return EmergencyMedicalProtocolsService.instance;
   }
@@ -74,8 +73,7 @@ export class EmergencyMedicalProtocolsService {
         name: "Emergência Cardíaca",
         category: "cardiovascular",
         priority: "critical",
-        description:
-          "Protocolo para emergências cardíacas - parada cardiorrespiratória, infarto",
+        description: "Protocolo para emergências cardíacas - parada cardiorrespiratória, infarto",
         triggerCriteria: [
           "Dor torácica intensa",
           "Perda de consciência súbita",
@@ -135,8 +133,7 @@ export class EmergencyMedicalProtocolsService {
         name: "Emergência Respiratória",
         category: "respiratory",
         priority: "high",
-        description:
-          "Protocolo para insuficiência respiratória aguda, anafilaxia, asma severa",
+        description: "Protocolo para insuficiência respiratória aguda, anafilaxia, asma severa",
         triggerCriteria: [
           "Dispneia severa",
           "Saturação O2 < 90%",
@@ -315,8 +312,7 @@ export class EmergencyMedicalProtocolsService {
         name: "Emergência Obstétrica",
         category: "obstetric",
         priority: "critical",
-        description:
-          "Protocolo para emergências obstétricas - eclâmpsia, hemorragia pós-parto",
+        description: "Protocolo para emergências obstétricas - eclâmpsia, hemorragia pós-parto",
         triggerCriteria: [
           "Convulsões em gestante",
           "Hemorragia vaginal intensa",
@@ -613,9 +609,8 @@ export class EmergencyMedicalProtocolsService {
         actionsPerformed: [],
         medicationsAdministered: [],
         followUpRequired: protocol.followUpRequired,
-        samuCalled:
-          protocol.samuIntegration &&
-          (priority === "critical" || priority === "high"),
+        samuCalled: protocol.samuIntegration
+          && (priority === "critical" || priority === "high"),
         cfmCompliant: protocol.cfmCompliant,
         auditTrail: [
           {
@@ -684,15 +679,15 @@ export class EmergencyMedicalProtocolsService {
       const matchingCriteria = protocol.triggerCriteria.filter((criteria) =>
         symptomLower.some(
           (symptom) =>
-            symptom.includes(criteria.toLowerCase()) ||
-            criteria.toLowerCase().includes(symptom),
-        ),
+            symptom.includes(criteria.toLowerCase())
+            || criteria.toLowerCase().includes(symptom),
+        )
       );
 
       // If 50% or more criteria match, use this protocol
       if (
-        matchingCriteria.length >=
-        Math.ceil(protocol.triggerCriteria.length * 0.5)
+        matchingCriteria.length
+          >= Math.ceil(protocol.triggerCriteria.length * 0.5)
       ) {
         return {
           isValid: true,
@@ -748,7 +743,8 @@ export class EmergencyMedicalProtocolsService {
         recipientPhone: member.phoneNumber,
         type: "emergency-alert",
         priority: emergency.priority,
-        message: `EMERGÊNCIA: ${protocol.name} - Paciente: ${emergency.patientName} - Local: ${emergency.location}`,
+        message:
+          `EMERGÊNCIA: ${protocol.name} - Paciente: ${emergency.patientName} - Local: ${emergency.location}`,
         sentAt: new Date(),
         status: "sent",
         method: "sms",
@@ -921,12 +917,11 @@ export class EmergencyMedicalProtocolsService {
 
       // Update emergency
       emergency.escalationLevel = nextLevel;
-      emergency.priority =
-        emergency.priority === "low"
-          ? "medium"
-          : emergency.priority === "medium"
-            ? "high"
-            : "critical";
+      emergency.priority = emergency.priority === "low"
+        ? "medium"
+        : emergency.priority === "medium"
+        ? "high"
+        : "critical";
 
       // Add to audit trail
       emergency.auditTrail.push({
@@ -1053,7 +1048,7 @@ export class EmergencyMedicalProtocolsService {
     startDate: Date,
     endDate: Date,
   ): ValidationResponse<{
-    period: { start: Date; end: Date };
+    period: { start: Date; end: Date; };
     totalEmergencies: number;
     emergenciesByCategory: Record<EmergencyCategory, number>;
     emergenciesByPriority: Record<EmergencyPriority, number>;
@@ -1061,7 +1056,7 @@ export class EmergencyMedicalProtocolsService {
     samuCallsCount: number;
     escalationRate: number;
     resolutionRate: number;
-    topProtocols: { protocolId: string; count: number; name: string }[];
+    topProtocols: { protocolId: string; count: number; name: string; }[];
   }> {
     try {
       const emergencies = Array.from(this.activeResponses.values()).filter(
@@ -1085,18 +1080,17 @@ export class EmergencyMedicalProtocolsService {
       );
 
       const resolvedEmergencies = emergencies.filter((e) => e.endTime);
-      const averageResponseTime =
-        resolvedEmergencies.length > 0
-          ? resolvedEmergencies.reduce((sum, e) => {
-              if (e.endTime) {
-                return (
-                  sum +
-                  (e.endTime.getTime() - e.startTime.getTime()) / (1000 * 60)
-                ); // minutes
-              }
-              return sum;
-            }, 0) / resolvedEmergencies.length
-          : 0;
+      const averageResponseTime = resolvedEmergencies.length > 0
+        ? resolvedEmergencies.reduce((sum, e) => {
+          if (e.endTime) {
+            return (
+              sum
+              + (e.endTime.getTime() - e.startTime.getTime()) / (1000 * 60)
+            ); // minutes
+          }
+          return sum;
+        }, 0) / resolvedEmergencies.length
+        : 0;
 
       const escalatedEmergencies = emergencies.filter(
         (e) => e.escalationLevel !== "initial",
@@ -1129,14 +1123,12 @@ export class EmergencyMedicalProtocolsService {
           emergenciesByPriority,
           averageResponseTime,
           samuCallsCount: samuCalls.length,
-          escalationRate:
-            emergencies.length > 0
-              ? (escalatedEmergencies.length / emergencies.length) * 100
-              : 0,
-          resolutionRate:
-            emergencies.length > 0
-              ? (resolvedEmergencies.length / emergencies.length) * 100
-              : 0,
+          escalationRate: emergencies.length > 0
+            ? (escalatedEmergencies.length / emergencies.length) * 100
+            : 0,
+          resolutionRate: emergencies.length > 0
+            ? (resolvedEmergencies.length / emergencies.length) * 100
+            : 0,
           topProtocols,
         },
       };

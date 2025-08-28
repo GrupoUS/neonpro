@@ -152,7 +152,7 @@ export class DigitalSignatureService {
     documentType: DigitalSignature["document_type"],
     tenantId: string,
     userId: string,
-  ): Promise<{ success: boolean; data?: DigitalSignature; error?: string }> {
+  ): Promise<{ success: boolean; data?: DigitalSignature; error?: string; }> {
     try {
       // Constitutional validation of CFM number
       const cfmValidation = await this.validateCfmNumber(params.cfm_number);
@@ -263,15 +263,13 @@ export class DigitalSignatureService {
         cfm_validation: {
           registration_valid: cfmValidation.valid,
           license_active: cfmValidation.license_active ?? false,
-          specialization_verified:
-            cfmValidation.specialization_verified ?? false,
+          specialization_verified: cfmValidation.specialization_verified ?? false,
           constitutional_compliance: cfmValidation.valid,
         },
         certificate_validation: {
           certificate_valid: certificateValidation.valid,
           expiry_date: certificateValidation.expiry_date || new Date(),
-          issuing_authority:
-            certificateValidation.issuing_authority || "Unknown",
+          issuing_authority: certificateValidation.issuing_authority || "Unknown",
           chain_valid: certificateValidation.valid,
         },
         error_details: cfmValidation.valid
@@ -398,7 +396,7 @@ export class DigitalSignatureService {
    */
   private async generateSignature(
     params: SignatureValidationParams,
-  ): Promise<{ success: boolean; signature?: string; error?: string }> {
+  ): Promise<{ success: boolean; signature?: string; error?: string; }> {
     try {
       // Validate document hash
       if (!params.document_hash || params.document_hash.length < 32) {
@@ -466,7 +464,7 @@ export class DigitalSignatureService {
       validation_status?: DigitalSignature["cfm_validation_status"];
       created_after?: Date;
     },
-  ): Promise<{ success: boolean; data?: DigitalSignature[]; error?: string }> {
+  ): Promise<{ success: boolean; data?: DigitalSignature[]; error?: string; }> {
     try {
       let query = this.supabase
         .from("cfm_digital_signatures")
@@ -515,7 +513,7 @@ export class DigitalSignatureService {
     signatureId: string,
     userId: string,
     reason: string,
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; error?: string; }> {
     try {
       // Get current signature for audit trail
       const { data: currentSignature, error: fetchError } = await this.supabase

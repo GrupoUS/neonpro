@@ -3,18 +3,18 @@
  * Tests critical healthcare workflows for patient safety and regulatory compliance
  */
 
-import { test, expect } from "@playwright/test";
-import { PerformanceMonitor } from "../../utils/performance-metrics";
-import { PerformanceReporter } from "../../utils/performance-metrics";
+import { expect, test } from "@playwright/test";
 import {
   getHealthcarePerformanceBudget,
-  validateHealthcareMetrics,
   HEALTHCARE_PERFORMANCE_ASSERTIONS,
   isCriticalHealthcarePage,
+  validateHealthcareMetrics,
 } from "../../config/healthcare-metrics.config";
-import { PatientDashboardPage } from "../../pages/patient-dashboard.page";
 import { EmergencyPage } from "../../pages/emergency.page";
+import { PatientDashboardPage } from "../../pages/patient-dashboard.page";
 import { PrescriptionPage } from "../../pages/prescription.page";
+import { PerformanceMonitor } from "../../utils/performance-metrics";
+import { PerformanceReporter } from "../../utils/performance-metrics";
 
 test.describe("Healthcare Critical Performance Tests", () => {
   let performanceMonitor: PerformanceMonitor;
@@ -44,9 +44,7 @@ test.describe("Healthcare Critical Performance Tests", () => {
   });
 
   test.describe("Emergency Scenarios - Critical Patient Safety", () => {
-    test("Emergency patient data load - Life critical performance", async ({
-      page,
-    }) => {
+    test("Emergency patient data load - Life critical performance", async ({ page }) => {
       const emergencyPage = new EmergencyPage(page);
       const budget = getHealthcarePerformanceBudget("emergency");
 
@@ -114,9 +112,7 @@ test.describe("Healthcare Critical Performance Tests", () => {
       ).toBe(true);
     });
 
-    test("Emergency diagnostic image load - Critical imaging performance", async ({
-      page,
-    }) => {
+    test("Emergency diagnostic image load - Critical imaging performance", async ({ page }) => {
       const emergencyPage = new EmergencyPage(page);
       const budget = getHealthcarePerformanceBudget("emergency");
 
@@ -145,18 +141,14 @@ test.describe("Healthcare Critical Performance Tests", () => {
       await expect(emergencyPage.ctScanImage).toBeVisible();
 
       // Validate image quality indicators
-      const xrayLoaded =
-        await emergencyPage.xrayImage.getAttribute("data-loaded");
-      const ctLoaded =
-        await emergencyPage.ctScanImage.getAttribute("data-loaded");
+      const xrayLoaded = await emergencyPage.xrayImage.getAttribute("data-loaded");
+      const ctLoaded = await emergencyPage.ctScanImage.getAttribute("data-loaded");
 
       expect(xrayLoaded).toBe("true");
       expect(ctLoaded).toBe("true");
     });
 
-    test("Emergency form submission - Critical data entry performance", async ({
-      page,
-    }) => {
+    test("Emergency form submission - Critical data entry performance", async ({ page }) => {
       const emergencyPage = new EmergencyPage(page);
       const budget = getHealthcarePerformanceBudget("emergency");
 
@@ -204,9 +196,7 @@ test.describe("Healthcare Critical Performance Tests", () => {
   });
 
   test.describe("Clinical Workflows - Standard Patient Care", () => {
-    test("Patient dashboard load - Standard clinical performance", async ({
-      page,
-    }) => {
+    test("Patient dashboard load - Standard clinical performance", async ({ page }) => {
       const patientPage = new PatientDashboardPage(page);
       const budget = getHealthcarePerformanceBudget("clinical");
 
@@ -242,9 +232,7 @@ test.describe("Healthcare Critical Performance Tests", () => {
       expect(resultCount).toBeGreaterThan(0);
     });
 
-    test("Medical record access - Clinical workflow performance", async ({
-      page,
-    }) => {
+    test("Medical record access - Clinical workflow performance", async ({ page }) => {
       const patientPage = new PatientDashboardPage(page);
       const budget = getHealthcarePerformanceBudget("clinical");
 
@@ -281,9 +269,7 @@ test.describe("Healthcare Critical Performance Tests", () => {
       expect(navigationTime).toBeLessThanOrEqual(budget.navigationTime);
     });
 
-    test("Prescription management - Medication safety performance", async ({
-      page,
-    }) => {
+    test("Prescription management - Medication safety performance", async ({ page }) => {
       const prescriptionPage = new PrescriptionPage(page);
       const budget = getHealthcarePerformanceBudget("clinical");
 
@@ -335,9 +321,7 @@ test.describe("Healthcare Critical Performance Tests", () => {
   });
 
   test.describe("Compliance and Security - Regulatory Requirements", () => {
-    test("Authentication performance - Security compliance", async ({
-      page,
-    }) => {
+    test("Authentication performance - Security compliance", async ({ page }) => {
       const budget = getHealthcarePerformanceBudget("clinical");
 
       await page.goto("/login");
@@ -415,9 +399,7 @@ test.describe("Healthcare Critical Performance Tests", () => {
       ).toBe(true);
     });
 
-    test("Data encryption performance - Security compliance", async ({
-      page,
-    }) => {
+    test("Data encryption performance - Security compliance", async ({ page }) => {
       await page.goto("/patients/12345/sensitive-data");
 
       // Measure data encryption/decryption time
@@ -456,9 +438,7 @@ test.describe("Healthcare Critical Performance Tests", () => {
   });
 
   test.describe("Performance Regression Detection", () => {
-    test("Core Web Vitals regression - Healthcare standards", async ({
-      page,
-    }) => {
+    test("Core Web Vitals regression - Healthcare standards", async ({ page }) => {
       const budget = getHealthcarePerformanceBudget("clinical");
 
       await page.goto("/patients/dashboard");
@@ -495,9 +475,7 @@ test.describe("Healthcare Critical Performance Tests", () => {
       }
     });
 
-    test("Memory usage monitoring - Resource optimization", async ({
-      page,
-    }) => {
+    test("Memory usage monitoring - Resource optimization", async ({ page }) => {
       const budget = getHealthcarePerformanceBudget("clinical");
 
       await page.goto("/patients/dashboard");

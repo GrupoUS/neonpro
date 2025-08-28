@@ -96,25 +96,22 @@ export function CacheMetrics({
 
         {/* Overall Performance */}
         <MetricWidget
-          color={
-            overallStats.hitRate >= 85
-              ? "green"
-              : overallStats.hitRate >= 70
-                ? "yellow"
-                : "red"
-          }
+          color={overallStats.hitRate >= 85
+            ? "green"
+            : overallStats.hitRate >= 70
+            ? "yellow"
+            : "red"}
           description="Target: 85% hit rate across all cache layers"
           title="Overall Cache Hit Rate"
           value={{
             current: overallStats.hitRate,
             target: 85, // 85% target
             unit: "%",
-            trend:
-              overallStats.hitRate >= 85
-                ? "up"
-                : overallStats.hitRate >= 70
-                  ? "stable"
-                  : "down",
+            trend: overallStats.hitRate >= 85
+              ? "up"
+              : overallStats.hitRate >= 70
+              ? "stable"
+              : "down",
           }}
         />
       </div>

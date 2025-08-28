@@ -330,8 +330,7 @@ export class MonitoringService {
 
       // Memory usage check
       const memoryUsage = process.memoryUsage();
-      const memoryUsagePercent =
-        (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
+      const memoryUsagePercent = (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
 
       checks.memory = {
         status: memoryUsagePercent > 90 ? "fail" : "pass",
@@ -479,7 +478,7 @@ export class MonitoringService {
 
   async getPerformanceMetrics(
     service: string,
-    timeRange: { start: Date; end: Date },
+    timeRange: { start: Date; end: Date; },
   ): Promise<PerformanceMetrics> {
     try {
       const { data, error } = await this.supabase
@@ -578,8 +577,8 @@ export class MonitoringService {
 
   private flushBufferIfNeeded(): void {
     if (
-      this.metricsBuffer.length >= this.maxBufferSize ||
-      this.logsBuffer.length >= this.maxBufferSize
+      this.metricsBuffer.length >= this.maxBufferSize
+      || this.logsBuffer.length >= this.maxBufferSize
     ) {
       this.flushBuffers();
     }
@@ -775,8 +774,7 @@ export function Monitor(metricName?: string) {
     descriptor: PropertyDescriptor,
   ) => {
     const { value: originalMethod } = descriptor;
-    const finalMetricName =
-      metricName || `${target.constructor.name}.${propertyKey}`;
+    const finalMetricName = metricName || `${target.constructor.name}.${propertyKey}`;
 
     descriptor.value = async function value(...args: unknown[]) {
       return monitoring.measureOperation(

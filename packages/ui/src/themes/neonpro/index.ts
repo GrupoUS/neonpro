@@ -4,8 +4,8 @@
  * Optimized for Brazilian aesthetic clinics
  */
 
-import { HealthcareMetricCard } from "./components/healthcare-metric-card";
 import { AppointmentCalendar } from "./components/appointment-calendar";
+import { HealthcareMetricCard } from "./components/healthcare-metric-card";
 import { PaymentStatusTable } from "./components/payment-status-table";
 import { TeamMembersList } from "./components/team-members-list";
 
@@ -107,10 +107,8 @@ export const neonproTheme = {
     // Healthcare-specific shadows
     healthcare: {
       card: "0 2px 8px rgb(0 0 0 / 0.06), 0 1px 3px rgb(0 0 0 / 0.08)",
-      emergency:
-        "0 8px 25px rgb(220 38 38 / 0.15), 0 4px 12px rgb(220 38 38 / 0.1)",
-      success:
-        "0 4px 14px rgb(16 185 129 / 0.12), 0 2px 6px rgb(16 185 129 / 0.08)",
+      emergency: "0 8px 25px rgb(220 38 38 / 0.15), 0 4px 12px rgb(220 38 38 / 0.1)",
+      success: "0 4px 14px rgb(16 185 129 / 0.12), 0 2px 6px rgb(16 185 129 / 0.08)",
     },
   },
 

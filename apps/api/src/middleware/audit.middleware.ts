@@ -1,14 +1,8 @@
-import { Context, Next } from 'hono';
-import { getCookie } from 'hono/cookie';
-import { verify } from 'hono/jwt';
-import { auditService } from '../services/audit.service';
-import {
-  AuditAction,
-  ResourceType,
-  AuditSeverity,
-  AuditContext,
-  AuditEvent
-} from '../types/audit';
+import { Context, Next } from "hono";
+import { getCookie } from "hono/cookie";
+import { verify } from "hono/jwt";
+import { auditService } from "../services/audit.service";
+import { AuditAction, AuditContext, AuditEvent, AuditSeverity, ResourceType } from "../types/audit";
 
 /**
  * Middleware de auditoria para capturar automaticamente eventos HTTP
@@ -17,13 +11,13 @@ export const auditMiddleware = () => {
   return async (c: Context, next: Next) => {
     const startTime = Date.now();
     const requestId = crypto.randomUUID();
-    
+
     // Extrair informações do contexto
     const auditContext: AuditContext = {
       ip_address: getClientIP(c),
-      user_agent: c.req.header('User-Agent'),
+      user_agent: c.req.header("User-Agent"),
       start_time: startTime,
-      request_id: requestId
+      request_id: requestId,
     };
 
     // Tentar extrair informações do usuário do JWT
@@ -39,7 +33,7 @@ export const auditMiddleware = () => {
     }
 
     // Adicionar contexto ao request para uso posterior
-    c.set('auditContext', auditContext);
+    c.set("auditContext", auditContext);
 
     // Verificar se deve pular auditoria para esta rota
     if (shouldSkipAudit(c.req.path, c.req.method)) {
@@ -54,9 +48,9 @@ export const auditMiddleware = () => {
     try {
       // Executar próximo middleware/handler
       await next();
-      
+
       statusCode = c.res.status;
-      
+
       // Capturar corpo da resposta se necessário
       if (shouldCaptureResponseBody(c.req.path, c.req.method)) {
         try {
@@ -70,7 +64,7 @@ export const auditMiddleware = () => {
       }
     } catch (error) {
       statusCode = 500;
-      errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
       throw error; // Re-throw para não interferir no fluxo de erro
     } finally {
       // Registrar evento de auditoria de forma assíncrona
@@ -79,9 +73,9 @@ export const auditMiddleware = () => {
           status_code: statusCode,
           duration_ms: Date.now() - startTime,
           error_message: errorMessage,
-          response_body: responseBody
+          response_body: responseBody,
         }).catch(error => {
-          console.error('Erro ao registrar evento de auditoria:', error);
+          console.error("Erro ao registrar evento de auditoria:", error);
         });
       });
     }
@@ -99,24 +93,28 @@ async function logAuditEvent(
     duration_ms: number;
     error_message?: string;
     response_body?: any;
-  }
+  },
 ): Promise<void> {
   try {
     const method = c.req.method;
     const path = c.req.path;
     const query = c.req.query();
-    
+
     // Determinar ação baseada no método HTTP e rota
     const action = determineAction(method, path);
-    
+
     // Determinar tipo de recurso baseado na rota
     const resourceType = determineResourceType(path);
-    
+
     // Extrair ID do recurso da URL
     const resourceId = extractResourceId(path);
-    
+
     // Determinar severidade baseada no status code e ação
-    const severity = determineSeverity(responseInfo.status_code, action, responseInfo.error_message);
+    const severity = determineSeverity(
+      responseInfo.status_code,
+      action,
+      responseInfo.error_message,
+    );
 
     // Capturar dados da requisição se necessário
     let requestBody: any;
@@ -149,15 +147,15 @@ async function logAuditEvent(
         query_params: Object.keys(query).length > 0 ? query : undefined,
         request_body: requestBody,
         response_body: responseInfo.response_body,
-        user_agent_parsed: parseUserAgent(auditContext.user_agent)
+        user_agent_parsed: parseUserAgent(auditContext.user_agent),
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     // Registrar evento
     await auditService.logEvent(auditEvent);
   } catch (error) {
-    console.error('Erro interno no logging de auditoria:', error);
+    console.error("Erro interno no logging de auditoria:", error);
   }
 }
 
@@ -166,13 +164,13 @@ async function logAuditEvent(
  */
 function extractToken(c: Context): string | null {
   // Tentar header Authorization
-  const authHeader = c.req.header('Authorization');
-  if (authHeader && authHeader.startsWith('Bearer ')) {
+  const authHeader = c.req.header("Authorization");
+  if (authHeader && authHeader.startsWith("Bearer ")) {
     return authHeader.substring(7);
   }
 
   // Tentar cookie
-  const tokenCookie = getCookie(c, 'auth_token');
+  const tokenCookie = getCookie(c, "auth_token");
   if (tokenCookie) {
     return tokenCookie;
   }
@@ -185,18 +183,18 @@ function extractToken(c: Context): string | null {
  */
 function getClientIP(c: Context): string {
   // Verificar headers de proxy
-  const xForwardedFor = c.req.header('X-Forwarded-For');
+  const xForwardedFor = c.req.header("X-Forwarded-For");
   if (xForwardedFor) {
-    return xForwardedFor.split(',')[0].trim();
+    return xForwardedFor.split(",")[0].trim();
   }
 
-  const xRealIP = c.req.header('X-Real-IP');
+  const xRealIP = c.req.header("X-Real-IP");
   if (xRealIP) {
     return xRealIP;
   }
 
   // Fallback para IP direto (pode não estar disponível em alguns ambientes)
-  return c.req.header('CF-Connecting-IP') || 'unknown';
+  return c.req.header("CF-Connecting-IP") || "unknown";
 }
 
 /**
@@ -204,20 +202,20 @@ function getClientIP(c: Context): string {
  */
 function shouldSkipAudit(path: string, method: string): boolean {
   const skipPaths = [
-    '/health',
-    '/metrics',
-    '/favicon.ico',
-    '/robots.txt',
-    '/sitemap.xml',
-    '/api/audit/logs', // Evitar loop infinito
-    '/api/audit/stats',
-    '/api/audit/export'
+    "/health",
+    "/metrics",
+    "/favicon.ico",
+    "/robots.txt",
+    "/sitemap.xml",
+    "/api/audit/logs", // Evitar loop infinito
+    "/api/audit/stats",
+    "/api/audit/export",
   ];
 
-  const skipMethods = ['OPTIONS'];
+  const skipMethods = ["OPTIONS"];
 
-  return skipPaths.some(skipPath => path.startsWith(skipPath)) || 
-         skipMethods.includes(method);
+  return skipPaths.some(skipPath => path.startsWith(skipPath))
+    || skipMethods.includes(method);
 }
 
 /**
@@ -225,25 +223,30 @@ function shouldSkipAudit(path: string, method: string): boolean {
  */
 function determineAction(method: string, path: string): AuditAction {
   // Ações específicas baseadas na rota
-  if (path.includes('/login')) return AuditAction.LOGIN;
-  if (path.includes('/logout')) return AuditAction.LOGOUT;
-  if (path.includes('/export')) return AuditAction.EXPORT;
-  if (path.includes('/import')) return AuditAction.IMPORT;
-  if (path.includes('/backup')) return AuditAction.BACKUP;
-  if (path.includes('/restore')) return AuditAction.RESTORE;
-  if (path.includes('/reports')) return AuditAction.REPORT_GENERATE;
-  if (path.includes('/password')) return AuditAction.PASSWORD_CHANGE;
-  if (path.includes('/permissions')) return AuditAction.PERMISSION_CHANGE;
-  if (path.includes('/config')) return AuditAction.SYSTEM_CONFIG;
+  if (path.includes("/login")) return AuditAction.LOGIN;
+  if (path.includes("/logout")) return AuditAction.LOGOUT;
+  if (path.includes("/export")) return AuditAction.EXPORT;
+  if (path.includes("/import")) return AuditAction.IMPORT;
+  if (path.includes("/backup")) return AuditAction.BACKUP;
+  if (path.includes("/restore")) return AuditAction.RESTORE;
+  if (path.includes("/reports")) return AuditAction.REPORT_GENERATE;
+  if (path.includes("/password")) return AuditAction.PASSWORD_CHANGE;
+  if (path.includes("/permissions")) return AuditAction.PERMISSION_CHANGE;
+  if (path.includes("/config")) return AuditAction.SYSTEM_CONFIG;
 
   // Ações baseadas no método HTTP
   switch (method) {
-    case 'POST': return AuditAction.CREATE;
-    case 'GET': return AuditAction.READ;
-    case 'PUT':
-    case 'PATCH': return AuditAction.UPDATE;
-    case 'DELETE': return AuditAction.DELETE;
-    default: return AuditAction.DATA_ACCESS;
+    case "POST":
+      return AuditAction.CREATE;
+    case "GET":
+      return AuditAction.READ;
+    case "PUT":
+    case "PATCH":
+      return AuditAction.UPDATE;
+    case "DELETE":
+      return AuditAction.DELETE;
+    default:
+      return AuditAction.DATA_ACCESS;
   }
 }
 
@@ -251,20 +254,20 @@ function determineAction(method: string, path: string): AuditAction {
  * Determina tipo de recurso baseado na rota
  */
 function determineResourceType(path: string): ResourceType {
-  if (path.includes('/patients')) return ResourceType.PATIENT;
-  if (path.includes('/appointments')) return ResourceType.APPOINTMENT;
-  if (path.includes('/professionals')) return ResourceType.PROFESSIONAL;
-  if (path.includes('/payments')) return ResourceType.PAYMENT;
-  if (path.includes('/treatments')) return ResourceType.TREATMENT;
-  if (path.includes('/medical-records')) return ResourceType.MEDICAL_RECORD;
-  if (path.includes('/users')) return ResourceType.USER;
-  if (path.includes('/roles')) return ResourceType.ROLE;
-  if (path.includes('/permissions')) return ResourceType.PERMISSION;
-  if (path.includes('/reports')) return ResourceType.REPORT;
-  if (path.includes('/backup')) return ResourceType.BACKUP;
-  if (path.includes('/config')) return ResourceType.CONFIGURATION;
-  if (path.includes('/audit')) return ResourceType.AUDIT_LOG;
-  
+  if (path.includes("/patients")) return ResourceType.PATIENT;
+  if (path.includes("/appointments")) return ResourceType.APPOINTMENT;
+  if (path.includes("/professionals")) return ResourceType.PROFESSIONAL;
+  if (path.includes("/payments")) return ResourceType.PAYMENT;
+  if (path.includes("/treatments")) return ResourceType.TREATMENT;
+  if (path.includes("/medical-records")) return ResourceType.MEDICAL_RECORD;
+  if (path.includes("/users")) return ResourceType.USER;
+  if (path.includes("/roles")) return ResourceType.ROLE;
+  if (path.includes("/permissions")) return ResourceType.PERMISSION;
+  if (path.includes("/reports")) return ResourceType.REPORT;
+  if (path.includes("/backup")) return ResourceType.BACKUP;
+  if (path.includes("/config")) return ResourceType.CONFIGURATION;
+  if (path.includes("/audit")) return ResourceType.AUDIT_LOG;
+
   return ResourceType.SYSTEM;
 }
 
@@ -284,16 +287,20 @@ function extractResourceName(path: string, requestBody?: any): string | undefine
   if (requestBody) {
     return requestBody.name || requestBody.title || requestBody.description;
   }
-  
+
   // Extrair da URL se possível
-  const segments = path.split('/').filter(Boolean);
+  const segments = path.split("/").filter(Boolean);
   return segments[segments.length - 1];
 }
 
 /**
  * Determina severidade baseada no status code e contexto
  */
-function determineSeverity(statusCode: number, action: AuditAction, errorMessage?: string): AuditSeverity {
+function determineSeverity(
+  statusCode: number,
+  action: AuditAction,
+  errorMessage?: string,
+): AuditSeverity {
   // Eventos críticos
   if (statusCode === 401 || statusCode === 403) return AuditSeverity.CRITICAL;
   if (action === AuditAction.LOGIN && statusCode !== 200) return AuditSeverity.HIGH;
@@ -301,11 +308,11 @@ function determineSeverity(statusCode: number, action: AuditAction, errorMessage
   if (action === AuditAction.PASSWORD_CHANGE) return AuditSeverity.HIGH;
   if (action === AuditAction.DELETE) return AuditSeverity.MEDIUM;
   if (errorMessage) return AuditSeverity.MEDIUM;
-  
+
   // Eventos de alta severidade
   if (statusCode >= 500) return AuditSeverity.HIGH;
   if (statusCode >= 400) return AuditSeverity.MEDIUM;
-  
+
   return AuditSeverity.LOW;
 }
 
@@ -314,15 +321,15 @@ function determineSeverity(statusCode: number, action: AuditAction, errorMessage
  */
 function shouldCaptureRequestBody(method: string, path: string): boolean {
   // Não capturar para métodos GET
-  if (method === 'GET') return false;
-  
+  if (method === "GET") return false;
+
   // Não capturar para rotas de upload de arquivo
-  if (path.includes('/upload')) return false;
-  
+  if (path.includes("/upload")) return false;
+
   // Não capturar para rotas sensíveis
-  if (path.includes('/password') || path.includes('/login')) return false;
-  
-  return ['POST', 'PUT', 'PATCH'].includes(method);
+  if (path.includes("/password") || path.includes("/login")) return false;
+
+  return ["POST", "PUT", "PATCH"].includes(method);
 }
 
 /**
@@ -330,14 +337,14 @@ function shouldCaptureRequestBody(method: string, path: string): boolean {
  */
 function shouldCaptureResponseBody(path: string, method: string): boolean {
   // Capturar apenas para operações de criação e atualização
-  if (!['POST', 'PUT', 'PATCH'].includes(method)) return false;
-  
+  if (!["POST", "PUT", "PATCH"].includes(method)) return false;
+
   // Não capturar para rotas de upload
-  if (path.includes('/upload')) return false;
-  
+  if (path.includes("/upload")) return false;
+
   // Não capturar para rotas de export (podem ser muito grandes)
-  if (path.includes('/export')) return false;
-  
+  if (path.includes("/export")) return false;
+
   return true;
 }
 
@@ -346,31 +353,31 @@ function shouldCaptureResponseBody(path: string, method: string): boolean {
  */
 function parseUserAgent(userAgent?: string): any {
   if (!userAgent) return undefined;
-  
+
   return {
     raw: userAgent,
     is_mobile: /Mobile|Android|iPhone|iPad/.test(userAgent),
     is_bot: /bot|crawler|spider/i.test(userAgent),
     browser: extractBrowser(userAgent),
-    os: extractOS(userAgent)
+    os: extractOS(userAgent),
   };
 }
 
 function extractBrowser(userAgent: string): string {
-  if (userAgent.includes('Chrome')) return 'Chrome';
-  if (userAgent.includes('Firefox')) return 'Firefox';
-  if (userAgent.includes('Safari')) return 'Safari';
-  if (userAgent.includes('Edge')) return 'Edge';
-  return 'Unknown';
+  if (userAgent.includes("Chrome")) return "Chrome";
+  if (userAgent.includes("Firefox")) return "Firefox";
+  if (userAgent.includes("Safari")) return "Safari";
+  if (userAgent.includes("Edge")) return "Edge";
+  return "Unknown";
 }
 
 function extractOS(userAgent: string): string {
-  if (userAgent.includes('Windows')) return 'Windows';
-  if (userAgent.includes('Mac OS')) return 'macOS';
-  if (userAgent.includes('Linux')) return 'Linux';
-  if (userAgent.includes('Android')) return 'Android';
-  if (userAgent.includes('iOS')) return 'iOS';
-  return 'Unknown';
+  if (userAgent.includes("Windows")) return "Windows";
+  if (userAgent.includes("Mac OS")) return "macOS";
+  if (userAgent.includes("Linux")) return "Linux";
+  if (userAgent.includes("Android")) return "Android";
+  if (userAgent.includes("iOS")) return "iOS";
+  return "Unknown";
 }
 
 /**
@@ -380,23 +387,23 @@ export const auditAuthMiddleware = () => {
   return async (c: Context, next: Next) => {
     const path = c.req.path;
     const method = c.req.method;
-    
-    if (path.includes('/login') || path.includes('/logout')) {
+
+    if (path.includes("/login") || path.includes("/logout")) {
       const startTime = Date.now();
       const auditContext: AuditContext = {
         ip_address: getClientIP(c),
-        user_agent: c.req.header('User-Agent'),
+        user_agent: c.req.header("User-Agent"),
         start_time: startTime,
-        request_id: crypto.randomUUID()
+        request_id: crypto.randomUUID(),
       };
 
       try {
         await next();
-        
+
         // Log evento de autenticação
-        const action = path.includes('/login') ? AuditAction.LOGIN : AuditAction.LOGOUT;
+        const action = path.includes("/login") ? AuditAction.LOGIN : AuditAction.LOGOUT;
         const severity = c.res.status === 200 ? AuditSeverity.LOW : AuditSeverity.HIGH;
-        
+
         const auditEvent: AuditEvent = {
           action,
           resource_type: ResourceType.USER,
@@ -409,9 +416,9 @@ export const auditAuthMiddleware = () => {
           duration_ms: Date.now() - startTime,
           details: {
             request_id: auditContext.request_id,
-            auth_attempt: true
+            auth_attempt: true,
           },
-          timestamp: new Date()
+          timestamp: new Date(),
         };
 
         // Tentar extrair user_id da resposta de login bem-sucedido
@@ -431,7 +438,7 @@ export const auditAuthMiddleware = () => {
       } catch (error) {
         // Log tentativa de autenticação falhada
         const auditEvent: AuditEvent = {
-          action: path.includes('/login') ? AuditAction.LOGIN : AuditAction.LOGOUT,
+          action: path.includes("/login") ? AuditAction.LOGIN : AuditAction.LOGOUT,
           resource_type: ResourceType.USER,
           ip_address: auditContext.ip_address,
           user_agent: auditContext.user_agent,
@@ -440,13 +447,13 @@ export const auditAuthMiddleware = () => {
           status_code: 500,
           severity: AuditSeverity.CRITICAL,
           duration_ms: Date.now() - startTime,
-          error_message: error instanceof Error ? error.message : 'Erro de autenticação',
+          error_message: error instanceof Error ? error.message : "Erro de autenticação",
           details: {
             request_id: auditContext.request_id,
             auth_attempt: true,
-            failed: true
+            failed: true,
           },
-          timestamp: new Date()
+          timestamp: new Date(),
         };
 
         await auditService.logEvent(auditEvent);

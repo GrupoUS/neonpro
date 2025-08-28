@@ -225,8 +225,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
           AI-Powered Scheduling System
         </h1>
         <p className="mb-4 text-blue-100">
-          Intelligent scheduling for NeonPro aesthetic clinics with 60% time
-          reduction
+          Intelligent scheduling for NeonPro aesthetic clinics with 60% time reduction
         </p>
 
         {/* Key Metrics Display */}
@@ -268,8 +267,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
               onClick={() =>
                 setActiveTab(
                   tab.id as "analytics" | "schedule" | "optimization",
-                )
-              }
+                )}
             >
               <span className="mr-2">{tab.icon}</span>
               {tab.label}
@@ -357,9 +355,8 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
                 📈 Analytics & Performance Tracking
               </h3>
               <p className="text-purple-800 text-sm">
-                Comprehensive analytics showing achievement of target metrics:
-                60% scheduling time reduction, 25% no-show reduction, and 95%+
-                scheduling efficiency.
+                Comprehensive analytics showing achievement of target metrics: 60% scheduling time
+                reduction, 25% no-show reduction, and 95%+ scheduling efficiency.
               </p>
             </div>
 
@@ -378,8 +375,8 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
                 ⚡ Real-time Optimization Engine
               </h3>
               <p className="text-sm text-yellow-800">
-                Live monitoring and optimization of scheduling decisions with
-                automatic adjustments for maximum efficiency.
+                Live monitoring and optimization of scheduling decisions with automatic adjustments
+                for maximum efficiency.
               </p>
             </div>
 
@@ -506,10 +503,9 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 
       {/* System Status Footer */}
       <div className="rounded-lg bg-gray-50 p-4 text-center text-gray-600 text-sm">
-        AI Scheduling System v2.0 - Production Ready | Processing Time:{" "}
-        {processingTime.toFixed(0)}
-        ms | Optimization Score: {(optimizationScore * 100).toFixed(1)}% |
-        Status: {isLoading ? "Processing" : "Ready"}
+        AI Scheduling System v2.0 - Production Ready | Processing Time: {processingTime.toFixed(0)}
+        ms | Optimization Score: {(optimizationScore * 100).toFixed(1)}% | Status:{" "}
+        {isLoading ? "Processing" : "Ready"}
       </div>
     </div>
   );

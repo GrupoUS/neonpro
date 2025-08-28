@@ -1,18 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,31 +11,38 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Play,
-  BookOpen,
-  Video,
-  CheckCircle,
-  Clock,
-  Award,
-  Download,
-  Smartphone,
-  Users,
-  Target,
-  Brain,
-  FileText,
-  Star,
-  TrendingUp,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useStaffTraining } from "@/hooks/use-staff-training";
+import { cn } from "@/lib/utils";
 import type { TrainingModule } from "@/types/staff-training";
 import {
-  TRAINING_CATEGORY_LABELS_PT,
   DIFFICULTY_LABELS_PT,
-  SECTION_TYPE_LABELS_PT,
   ROLE_LABELS_PT,
+  SECTION_TYPE_LABELS_PT,
+  TRAINING_CATEGORY_LABELS_PT,
 } from "@/types/staff-training";
+import {
+  Award,
+  BookOpen,
+  Brain,
+  CheckCircle,
+  Clock,
+  Download,
+  FileText,
+  Play,
+  Smartphone,
+  Star,
+  Target,
+  TrendingUp,
+  Users,
+  Video,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface StaffTrainingInterfaceProps {
   userId?: string;
@@ -178,8 +172,8 @@ export function StaffTrainingInterface({
           </p>
           {userProfile && (
             <Badge variant="outline" className="mt-2">
-              {ROLE_LABELS_PT[userProfile.role as keyof typeof ROLE_LABELS_PT]}{" "}
-              - {userProfile.department}
+              {ROLE_LABELS_PT[userProfile.role as keyof typeof ROLE_LABELS_PT]} -{" "}
+              {userProfile.department}
             </Badge>
           )}
         </div>
@@ -297,12 +291,12 @@ export function StaffTrainingInterface({
                               trainingModule.category === "basics"
                                 ? "bg-blue-100"
                                 : trainingModule.category === "prediction"
-                                  ? "bg-purple-100"
-                                  : trainingModule.category === "intervention"
-                                    ? "bg-green-100"
-                                    : trainingModule.category === "workflow"
-                                      ? "bg-orange-100"
-                                      : "bg-gray-100",
+                                ? "bg-purple-100"
+                                : trainingModule.category === "intervention"
+                                ? "bg-green-100"
+                                : trainingModule.category === "workflow"
+                                ? "bg-orange-100"
+                                : "bg-gray-100",
                             )}
                           >
                             {getCategoryIcon(trainingModule.category)}
@@ -348,9 +342,8 @@ export function StaffTrainingInterface({
             <CardHeader>
               <CardTitle>Recomendados para Você</CardTitle>
               <CardDescription>
-                Baseado no seu papel como{" "}
-                {userProfile?.role &&
-                  ROLE_LABELS_PT[
+                Baseado no seu papel como {userProfile?.role
+                  && ROLE_LABELS_PT[
                     userProfile.role as keyof typeof ROLE_LABELS_PT
                   ]}
               </CardDescription>
@@ -360,8 +353,8 @@ export function StaffTrainingInterface({
                 {trainingModules
                   .filter(
                     (module) =>
-                      requiredModules.includes(module.id) &&
-                      !completedModules.includes(module.id),
+                      requiredModules.includes(module.id)
+                      && !completedModules.includes(module.id),
                   )
                   .slice(0, 6)
                   .map((module) => (
@@ -375,13 +368,11 @@ export function StaffTrainingInterface({
                             {TRAINING_CATEGORY_LABELS_PT[module.category]}
                           </Badge>
                           <Badge
-                            variant={
-                              module.difficulty === "beginner"
-                                ? "secondary"
-                                : module.difficulty === "intermediate"
-                                  ? "default"
-                                  : "destructive"
-                            }
+                            variant={module.difficulty === "beginner"
+                              ? "secondary"
+                              : module.difficulty === "intermediate"
+                              ? "default"
+                              : "destructive"}
                           >
                             {DIFFICULTY_LABELS_PT[module.difficulty]}
                           </Badge>
@@ -448,15 +439,9 @@ export function StaffTrainingInterface({
                       </div>
 
                       <div className="flex items-center gap-1">
-                        {isCompleted && (
-                          <CheckCircle className="h-4 w-4 text-green-600" />
-                        )}
-                        {isInProgress && (
-                          <Clock className="h-4 w-4 text-blue-600" />
-                        )}
-                        {module.isRequired && (
-                          <Star className="h-4 w-4 text-yellow-600" />
-                        )}
+                        {isCompleted && <CheckCircle className="h-4 w-4 text-green-600" />}
+                        {isInProgress && <Clock className="h-4 w-4 text-blue-600" />}
+                        {module.isRequired && <Star className="h-4 w-4 text-yellow-600" />}
                       </div>
                     </div>
 
@@ -502,11 +487,9 @@ export function StaffTrainingInterface({
                           >
                             {getSectionIcon(section.type)}
                             <span className="ml-1">
-                              {
-                                SECTION_TYPE_LABELS_PT[
-                                  section.type as keyof typeof SECTION_TYPE_LABELS_PT
-                                ]
-                              }
+                              {SECTION_TYPE_LABELS_PT[
+                                section.type as keyof typeof SECTION_TYPE_LABELS_PT
+                              ]}
                             </span>
                           </Badge>
                         ))}
@@ -579,125 +562,125 @@ export function StaffTrainingInterface({
         </TabsContent>
 
         <TabsContent value="learning" className="space-y-6">
-          {currentModule ? (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>{currentModule.title}</CardTitle>
-                    <CardDescription>
-                      {currentModule.description}
-                    </CardDescription>
-                  </div>
-                  <Badge variant="outline">
-                    {TRAINING_CATEGORY_LABELS_PT[currentModule.category]}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {currentSection ? (
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold">
-                        {currentSection.title}
-                      </h3>
-                      <Badge variant="secondary">
-                        {
-                          SECTION_TYPE_LABELS_PT[
-                            currentSection.type as keyof typeof SECTION_TYPE_LABELS_PT
-                          ]
-                        }
-                      </Badge>
+          {currentModule
+            ? (
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle>{currentModule.title}</CardTitle>
+                      <CardDescription>
+                        {currentModule.description}
+                      </CardDescription>
                     </div>
-
-                    {/* Section Content */}
-                    <div className="prose max-w-none">
-                      {currentSection.content.text && (
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: currentSection.content.text,
-                          }}
-                        />
-                      )}
-
-                      {currentSection.content.videoUrl && (
-                        <video controls className="w-full rounded-lg">
-                          <source
-                            src={currentSection.content.videoUrl}
-                            type="video/mp4"
-                          />
-                        </video>
-                      )}
-
-                      {currentSection.content.checklist && (
-                        <div className="space-y-2">
-                          <h4 className="font-semibold">
-                            Lista de Verificação:
-                          </h4>
-                          {currentSection.content.checklist.map((item) => (
-                            <div
-                              key={item.id}
-                              className="flex items-start gap-2"
-                            >
-                              <CheckCircle className="h-4 w-4 mt-0.5 text-green-600" />
-                              <div>
-                                <p className="font-medium">{item.text}</p>
-                                {item.description && (
-                                  <p className="text-sm text-muted-foreground">
-                                    {item.description}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          ))}
+                    <Badge variant="outline">
+                      {TRAINING_CATEGORY_LABELS_PT[currentModule.category]}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {currentSection
+                    ? (
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-semibold">
+                            {currentSection.title}
+                          </h3>
+                          <Badge variant="secondary">
+                            {SECTION_TYPE_LABELS_PT[
+                              currentSection.type as keyof typeof SECTION_TYPE_LABELS_PT
+                            ]}
+                          </Badge>
                         </div>
-                      )}
-                    </div>
 
-                    <div className="flex justify-between pt-4 border-t">
-                      <Button variant="outline">Anterior</Button>
-                      <Button
-                        onClick={() => completeSection(currentSection.id)}
-                      >
-                        Próximo
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">
-                      Módulo Concluído!
-                    </h3>
-                    <p className="text-muted-foreground mb-4">
-                      Você completou todas as seções deste módulo.
-                    </p>
-                    <Button
-                      onClick={() =>
-                        handleGenerateCertificate(currentModule.id)
-                      }
-                    >
-                      <Award className="h-4 w-4 mr-2" />
-                      Gerar Certificado
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="text-center py-12">
-              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                Selecione um Módulo
-              </h3>
-              <p className="text-muted-foreground mb-4">
-                Escolha um módulo da lista para começar seu treinamento.
-              </p>
-              <Button onClick={() => setActiveTab("modules")}>
-                Ver Módulos
-              </Button>
-            </div>
-          )}
+                        {/* Section Content */}
+                        <div className="prose max-w-none">
+                          {currentSection.content.text && (
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: currentSection.content.text,
+                              }}
+                            />
+                          )}
+
+                          {currentSection.content.videoUrl && (
+                            <video controls className="w-full rounded-lg">
+                              <source
+                                src={currentSection.content.videoUrl}
+                                type="video/mp4"
+                              />
+                            </video>
+                          )}
+
+                          {currentSection.content.checklist && (
+                            <div className="space-y-2">
+                              <h4 className="font-semibold">
+                                Lista de Verificação:
+                              </h4>
+                              {currentSection.content.checklist.map((item) => (
+                                <div
+                                  key={item.id}
+                                  className="flex items-start gap-2"
+                                >
+                                  <CheckCircle className="h-4 w-4 mt-0.5 text-green-600" />
+                                  <div>
+                                    <p className="font-medium">{item.text}</p>
+                                    {item.description && (
+                                      <p className="text-sm text-muted-foreground">
+                                        {item.description}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex justify-between pt-4 border-t">
+                          <Button variant="outline">Anterior</Button>
+                          <Button
+                            onClick={() => completeSection(currentSection.id)}
+                          >
+                            Próximo
+                          </Button>
+                        </div>
+                      </div>
+                    )
+                    : (
+                      <div className="text-center py-8">
+                        <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">
+                          Módulo Concluído!
+                        </h3>
+                        <p className="text-muted-foreground mb-4">
+                          Você completou todas as seções deste módulo.
+                        </p>
+                        <Button
+                          onClick={() => handleGenerateCertificate(currentModule.id)}
+                        >
+                          <Award className="h-4 w-4 mr-2" />
+                          Gerar Certificado
+                        </Button>
+                      </div>
+                    )}
+                </CardContent>
+              </Card>
+            )
+            : (
+              <div className="text-center py-12">
+                <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">
+                  Selecione um Módulo
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Escolha um módulo da lista para começar seu treinamento.
+                </p>
+                <Button onClick={() => setActiveTab("modules")}>
+                  Ver Módulos
+                </Button>
+              </div>
+            )}
         </TabsContent>
 
         <TabsContent value="certificates" className="space-y-6">
@@ -709,61 +692,61 @@ export function StaffTrainingInterface({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {userProfile?.certificationsEarned.length ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {userProfile.certificationsEarned.map((cert) => (
-                    <Card key={cert.id}>
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <Award className="h-6 w-6 text-yellow-600" />
-                          <Badge variant="secondary">
-                            {cert.earnedAt.toLocaleDateString("pt-BR")}
-                          </Badge>
-                        </div>
-                        <CardTitle className="text-lg">{cert.name}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="text-sm">Módulos:</span>
-                            <span className="text-sm font-medium">
-                              {cert.moduleIds.length}
-                            </span>
+              {userProfile?.certificationsEarned.length
+                ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {userProfile.certificationsEarned.map((cert) => (
+                      <Card key={cert.id}>
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center justify-between">
+                            <Award className="h-6 w-6 text-yellow-600" />
+                            <Badge variant="secondary">
+                              {cert.earnedAt.toLocaleDateString("pt-BR")}
+                            </Badge>
                           </div>
-                          {cert.expiresAt && (
+                          <CardTitle className="text-lg">{cert.name}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2">
                             <div className="flex justify-between">
-                              <span className="text-sm">Validade:</span>
+                              <span className="text-sm">Módulos:</span>
                               <span className="text-sm font-medium">
-                                {cert.expiresAt.toLocaleDateString("pt-BR")}
+                                {cert.moduleIds.length}
                               </span>
                             </div>
-                          )}
-                          <Button
-                            variant="outline"
-                            className="w-full mt-3"
-                            onClick={() =>
-                              window.open(cert.certificateUrl, "_blank")
-                            }
-                          >
-                            <Download className="h-3 w-3 mr-2" />
-                            Baixar Certificado
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <Award className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">
-                    Nenhum Certificado Ainda
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Complete os módulos de treinamento para ganhar certificados.
-                  </p>
-                </div>
-              )}
+                            {cert.expiresAt && (
+                              <div className="flex justify-between">
+                                <span className="text-sm">Validade:</span>
+                                <span className="text-sm font-medium">
+                                  {cert.expiresAt.toLocaleDateString("pt-BR")}
+                                </span>
+                              </div>
+                            )}
+                            <Button
+                              variant="outline"
+                              className="w-full mt-3"
+                              onClick={() => window.open(cert.certificateUrl, "_blank")}
+                            >
+                              <Download className="h-3 w-3 mr-2" />
+                              Baixar Certificado
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )
+                : (
+                  <div className="text-center py-8">
+                    <Award className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">
+                      Nenhum Certificado Ainda
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Complete os módulos de treinamento para ganhar certificados.
+                    </p>
+                  </div>
+                )}
             </CardContent>
           </Card>
         </TabsContent>

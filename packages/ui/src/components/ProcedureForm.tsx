@@ -7,13 +7,7 @@ import { Checkbox } from "./Checkbox";
 import { DatePicker } from "./DatePicker";
 import { FormField } from "./FormField";
 import { Input } from "./Input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./Select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./Select";
 import { Textarea } from "./Textarea";
 import { TimePicker } from "./TimePicker";
 
@@ -250,9 +244,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
             <FormField error={errors.scheduledDate} label="Data" required>
               <DatePicker
                 date={formData.scheduledDate}
-                onDateChange={(date) =>
-                  handleInputChange("scheduledDate", date)
-                }
+                onDateChange={(date) => handleInputChange("scheduledDate", date)}
                 placeholder="Selecione a data"
               />
             </FormField>
@@ -276,8 +268,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
                   handleInputChange(
                     "estimatedDuration",
                     Number.parseInt(e.target.value, 10) || 0,
-                  )
-                }
+                  )}
                 step="15"
                 type="number"
                 value={formData.estimatedDuration}
@@ -291,9 +282,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
               required
             >
               <Select
-                onValueChange={(value) =>
-                  handleInputChange("practitionerId", value)
-                }
+                onValueChange={(value) => handleInputChange("practitionerId", value)}
                 value={formData.practitionerId}
               >
                 <SelectTrigger>
@@ -328,9 +317,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
               label="Tratamento Relacionado"
             >
               <Select
-                onValueChange={(value) =>
-                  handleInputChange("treatmentId", value || undefined)
-                }
+                onValueChange={(value) => handleInputChange("treatmentId", value || undefined)}
                 value={formData.treatmentId || ""}
               >
                 <SelectTrigger>
@@ -397,17 +384,14 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
             <div className="flex items-start gap-3">
               <Checkbox
                 checked={formData.consentRequired}
-                onCheckedChange={(checked) =>
-                  handleInputChange("consentRequired", checked)
-                }
+                onCheckedChange={(checked) => handleInputChange("consentRequired", checked)}
               />
               <div className="space-y-1">
                 <label className="font-medium text-sm">
                   Termo de Consentimento do Procedimento
                 </label>
                 <p className="text-muted-foreground text-xs">
-                  O paciente deve assinar o termo específico para este
-                  procedimento
+                  O paciente deve assinar o termo específico para este procedimento
                 </p>
               </div>
             </div>
@@ -415,9 +399,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
             <div className="flex items-start gap-3">
               <Checkbox
                 checked={formData.lgpdConsent}
-                onCheckedChange={(checked) =>
-                  handleInputChange("lgpdConsent", checked)
-                }
+                onCheckedChange={(checked) => handleInputChange("lgpdConsent", checked)}
               />
               <div className="space-y-1">
                 <label className="font-medium text-sm">
@@ -429,9 +411,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
               </div>
             </div>
 
-            {errors.lgpdConsent && (
-              <p className="text-red-600 text-sm">{errors.lgpdConsent}</p>
-            )}
+            {errors.lgpdConsent && <p className="text-red-600 text-sm">{errors.lgpdConsent}</p>}
           </div>
         </div>{" "}
         {/* Actions */}
@@ -451,8 +431,8 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
             {loading
               ? "Salvando..."
               : mode === "create"
-                ? "Criar Procedimento"
-                : "Salvar Alterações"}
+              ? "Criar Procedimento"
+              : "Salvar Alterações"}
           </Button>
         </div>
       </form>

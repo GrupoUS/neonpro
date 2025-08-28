@@ -3,17 +3,14 @@
  * Tests Core Web Vitals and healthcare-specific performance metrics
  */
 
-import { test, expect } from "@playwright/test";
-import {
-  PerformanceMonitor,
-  PerformanceReporter,
-} from "../../utils/performance-metrics";
+import { expect, test } from "@playwright/test";
 import {
   getPerformanceBudget,
   getTestConfig,
-  PERFORMANCE_SELECTORS,
   HEALTHCARE_PERFORMANCE_ASSERTIONS,
+  PERFORMANCE_SELECTORS,
 } from "../../config/performance.config";
+import { PerformanceMonitor, PerformanceReporter } from "../../utils/performance-metrics";
 
 // Global performance reporter
 let performanceReporter: PerformanceReporter;
@@ -43,10 +40,7 @@ test.describe("Patient Dashboard Performance", () => {
     }
   });
 
-  test("should load patient dashboard within performance budget", async ({
-    page,
-    context,
-  }) => {
+  test("should load patient dashboard within performance budget", async ({ page, context }) => {
     const testName = "Patient Dashboard Load";
     const monitor = new PerformanceMonitor(page, context, testName);
     const testUrl = "/patients/dashboard";
@@ -135,21 +129,20 @@ test.describe("Patient Dashboard Performance", () => {
     // Fail test if critical budget violations exist and strict mode is enabled
     if (config.thresholds.failOnBudgetViolation && !validation.passed) {
       const criticalViolations = validation.violations.filter((v) =>
-        config.thresholds.criticalMetrics.includes(v.metric),
+        config.thresholds.criticalMetrics.includes(v.metric)
       );
 
       if (criticalViolations.length > 0) {
         throw new Error(
-          `Critical performance budget violations: ${criticalViolations.map((v) => v.metric).join(", ")}`,
+          `Critical performance budget violations: ${
+            criticalViolations.map((v) => v.metric).join(", ")
+          }`,
         );
       }
     }
   });
 
-  test("should handle patient form submission performance", async ({
-    page,
-    context,
-  }) => {
+  test("should handle patient form submission performance", async ({ page, context }) => {
     const testName = "Patient Form Submission";
     const monitor = new PerformanceMonitor(page, context, testName);
     const budget = getPerformanceBudget("/patients/new");
@@ -191,10 +184,7 @@ test.describe("Patient Dashboard Performance", () => {
     expect(submissionTime).toBeLessThan(budget.formSubmissionTime);
   });
 
-  test("should maintain performance during patient search", async ({
-    page,
-    context,
-  }) => {
+  test("should maintain performance during patient search", async ({ page, context }) => {
     const testName = "Patient Search Performance";
     const monitor = new PerformanceMonitor(page, context, testName);
     const budget = getPerformanceBudget("/patients");
@@ -239,8 +229,7 @@ test.describe("Patient Dashboard Performance", () => {
     }
 
     // Calculate average search time
-    const avgSearchTime =
-      searchTimes.reduce((sum, time) => sum + time, 0) / searchTimes.length;
+    const avgSearchTime = searchTimes.reduce((sum, time) => sum + time, 0) / searchTimes.length;
     console.log(`📊 Average Search Time: ${avgSearchTime.toFixed(0)}ms`);
 
     // Collect final metrics
@@ -254,10 +243,7 @@ test.describe("Patient Dashboard Performance", () => {
     );
   });
 
-  test("should handle emergency page performance", async ({
-    page,
-    context,
-  }) => {
+  test("should handle emergency page performance", async ({ page, context }) => {
     const testName = "Emergency Page Performance";
     const monitor = new PerformanceMonitor(page, context, testName);
     const budget = getPerformanceBudget("/emergency");
@@ -302,10 +288,7 @@ test.describe("Patient Dashboard Performance", () => {
     console.log("✅ Emergency page performance meets critical requirements");
   });
 
-  test("should monitor memory usage during extended session", async ({
-    page,
-    context,
-  }) => {
+  test("should monitor memory usage during extended session", async ({ page, context }) => {
     const testName = "Extended Session Memory Performance";
     const monitor = new PerformanceMonitor(page, context, testName);
 

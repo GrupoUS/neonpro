@@ -4,16 +4,9 @@
  * Optimized for Brazilian healthcare appointment scheduling
  */
 
-import React, { useState, useMemo } from "react";
 import { cn } from "@neonpro/utils";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-  Clock,
-  User,
-  MapPin,
-} from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Clock, MapPin, User } from "lucide-react";
+import React, { useMemo, useState } from "react";
 
 // Brazilian healthcare appointment types
 export type AppointmentType =
@@ -53,7 +46,7 @@ export interface AppointmentCalendarProps {
   showWeekNumbers?: boolean;
   firstDayOfWeek?: 0 | 1; // 0 = Sunday, 1 = Monday
   workingDays?: number[]; // [1,2,3,4,5] = Mon-Fri
-  workingHours?: { start: number; end: number }; // 8-18 = 8am-6pm
+  workingHours?: { start: number; end: number; }; // 8-18 = 8am-6pm
 
   // Density indicators (NEONPRO style)
   showDensityIndicators?: boolean;
@@ -164,7 +157,7 @@ const DayCell: React.FC<{
   isSelected: boolean;
   isHoliday: boolean;
   holidayName?: string;
-  workingHours: { start: number; end: number };
+  workingHours: { start: number; end: number; };
   showDensityIndicators: boolean;
   maxAppointmentsPerDay: number;
   onSelect: (date: Date) => void;
@@ -313,7 +306,7 @@ export const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
   // Group appointments by date
   const appointmentsByDate = useMemo(() => {
-    const grouped: { [key: string]: Appointment[] } = {};
+    const grouped: { [key: string]: Appointment[]; } = {};
 
     appointments.forEach((appointment) => {
       const dateKey = appointment.startTime.toISOString().split("T")[0];
@@ -413,8 +406,7 @@ export const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
           const dayAppointments = appointmentsByDate[dateKey] || [];
           const isToday = date.toDateString() === new Date().toDateString();
           const isCurrentMonth = date.getMonth() === viewDate.getMonth();
-          const isSelected =
-            selectedDate?.toDateString() === date.toDateString();
+          const isSelected = selectedDate?.toDateString() === date.toDateString();
 
           return (
             <DayCell

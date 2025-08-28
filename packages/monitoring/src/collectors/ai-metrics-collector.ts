@@ -66,8 +66,7 @@ export class AIMetricsCollector implements MetricCollector {
     });
 
     // Error rate
-    const errorRate =
-      totalAPICalls > 0 ? (failedCalls / totalAPICalls) * 100 : 0;
+    const errorRate = totalAPICalls > 0 ? (failedCalls / totalAPICalls) * 100 : 0;
     metrics.push({
       id: `ai_error_rate_${timestamp}`,
       timestamp,

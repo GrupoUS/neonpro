@@ -144,7 +144,7 @@ export interface WorkflowAction {
   conditions?: WorkflowCondition[];
 
   // Output handling
-  outputMapping?: { [key: string]: string }; // map action outputs to workflow variables
+  outputMapping?: { [key: string]: string; }; // map action outputs to workflow variables
   errorHandling: "ignore" | "retry" | "escalate" | "stop_workflow";
 }
 
@@ -153,7 +153,7 @@ export interface ActionConfig {
   notificationType?: "email" | "sms" | "whatsapp" | "push" | "slack" | "teams";
   recipients?: string[]; // user IDs, emails, or phone numbers
   template?: string; // message template ID or content
-  variables?: { [key: string]: any }; // template variables
+  variables?: { [key: string]: any; }; // template variables
 
   // Intervention actions
   interventionType?: "call" | "message" | "email" | "reschedule" | "reminder";
@@ -163,18 +163,18 @@ export interface ActionConfig {
   // Data update actions
   entityType?: "appointment" | "patient" | "prediction";
   entityId?: string; // dynamic field path or static ID
-  updateFields?: { [fieldName: string]: any };
+  updateFields?: { [fieldName: string]: any; };
 
   // External API actions
   apiUrl?: string;
   httpMethod?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-  headers?: { [key: string]: string };
+  headers?: { [key: string]: string; };
   body?: any;
   authentication?: ApiAuthentication;
 
   // Workflow actions (trigger other workflows)
   workflowId?: string;
-  workflowVariables?: { [key: string]: any };
+  workflowVariables?: { [key: string]: any; };
 
   // Scheduling actions
   scheduleType?: "appointment" | "task" | "reminder";
@@ -232,11 +232,11 @@ export interface WorkflowExecution {
 
   // Input data
   triggerData: any; // data that triggered the workflow
-  inputVariables: { [key: string]: any };
+  inputVariables: { [key: string]: any; };
 
   // Execution results
   actionResults: ActionResult[];
-  outputVariables: { [key: string]: any };
+  outputVariables: { [key: string]: any; };
 
   // Error handling
   error?: WorkflowError;
@@ -367,7 +367,7 @@ export interface ConfigurableField {
   required: boolean;
   defaultValue?: any;
   validation?: ValidationRule;
-  options?: { label: string; value: any }[]; // for dropdowns
+  options?: { label: string; value: any; }[]; // for dropdowns
 }
 
 export interface ValidationRule {
@@ -382,7 +382,7 @@ export interface ValidationRule {
 export interface UsageExample {
   title: string;
   description: string;
-  configuration: { [fieldPath: string]: any };
+  configuration: { [fieldPath: string]: any; };
   expectedOutcome: string;
 }
 
@@ -443,8 +443,7 @@ export const EXECUTION_STATUS_LABELS_PT = {
 export const HEALTHCARE_WORKFLOW_TEMPLATES = [
   {
     name: "Alerta de Alto Risco No-Show",
-    description:
-      "Notifica equipe quando predição indica risco crítico de falta",
+    description: "Notifica equipe quando predição indica risco crítico de falta",
     category: "prediction",
     triggers: ["ml_prediction"],
     conditions: ["riskScore >= 75", "confidence >= 0.8"],

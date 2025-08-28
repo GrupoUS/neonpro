@@ -7,7 +7,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { z } from "zod";
 // TODO: Import from @neonpro/utils when implementing
 // import { Logger } from '@neonpro/utils';
@@ -120,13 +120,12 @@ const Alert: React.FC<AlertProps> = ({ children, className, ...props }) => (
   </div>
 );
 
-const AlertDescription: React.FC<{ children: ReactNode }> = ({ children }) => (
-  <div>{children}</div>
-);
+const AlertDescription: React.FC<{ children: ReactNode; }> = ({ children }) => <div>{children}
+</div>;
 
 // Placeholder hooks for template compilation
 const useHealthcareAuth = () => ({
-  user: { professionalLicense: "123456" } as { professionalLicense: string },
+  user: { professionalLicense: "123456" } as { professionalLicense: string; },
   isAuthenticated: true,
 });
 
@@ -348,8 +347,7 @@ export abstract class HealthcareComponentTemplate<
                     onClick={() =>
                       this.handleEmergencyAccess(
                         "User requested emergency access",
-                      )
-                    }
+                      )}
                     className="ml-2 underline"
                   >
                     Acesso de Emergência
@@ -391,8 +389,7 @@ export function createHealthcareComponent<T>(
 
     const logger = useMemo(() => Logger, []);
     const { user, isAuthenticated } = useHealthcareAuth();
-    const { hasConsent, requestConsent, checkConsent, grantConsent } =
-      useLGPDConsent();
+    const { hasConsent, requestConsent, checkConsent, grantConsent } = useLGPDConsent();
 
     // Load initial data
     useEffect(() => {
@@ -412,8 +409,8 @@ export function createHealthcareComponent<T>(
           }
 
           if (
-            config.requiresProfessionalLicense &&
-            !user?.professionalLicense
+            config.requiresProfessionalLicense
+            && !user?.professionalLicense
           ) {
             throw new Error(
               "Professional license required to access this component",
@@ -423,8 +420,8 @@ export function createHealthcareComponent<T>(
           const data = await implementation.loadData();
 
           if (
-            implementation.validateData &&
-            !implementation.validateData(data)
+            implementation.validateData
+            && !implementation.validateData(data)
           ) {
             throw new Error("Data validation failed");
           }
@@ -548,8 +545,7 @@ export function createHealthcareComponent<T>(
                     onClick={() =>
                       actions.handleEmergencyAccess(
                         "User requested emergency access",
-                      )
-                    }
+                      )}
                     className="ml-2 underline text-white hover:text-gray-200"
                     aria-label="Solicitar acesso de emergência"
                   >
@@ -561,22 +557,21 @@ export function createHealthcareComponent<T>(
           )}
 
           {/* Professional License Warning */}
-          {config.requiresProfessionalLicense &&
-            !state.professionalVerified && (
-              <Alert className="mb-4">
-                <AlertDescription>
-                  Este componente requer licença profissional válida (CRM, CRF,
-                  CREFITO).
-                </AlertDescription>
-              </Alert>
-            )}
+          {config.requiresProfessionalLicense
+            && !state.professionalVerified && (
+            <Alert className="mb-4">
+              <AlertDescription>
+                Este componente requer licença profissional válida (CRM, CRF, CREFITO).
+              </AlertDescription>
+            </Alert>
+          )}
 
           {/* Main Content */}
-          {!state.loading &&
-            !state.error &&
-            state.data &&
-            state.lgpdConsent !== false &&
-            implementation.renderContent(state.data, actions)}
+          {!state.loading
+            && !state.error
+            && state.data
+            && state.lgpdConsent !== false
+            && implementation.renderContent(state.data, actions)}
         </AccessibilityWrapper>
       </HealthcareErrorBoundary>
     );

@@ -73,8 +73,7 @@ export function useNotifications({
   realtime = true,
 }: UseNotificationsOptions): UseNotificationsReturn {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [preferences, setPreferences] =
-    useState<NotificationPreferences | null>();
+  const [preferences, setPreferences] = useState<NotificationPreferences | null>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>();
   const [subscription, setSubscription] = useState<RealtimeChannel | null>();
@@ -108,8 +107,7 @@ export function useNotifications({
         `expires_at.is.null,expires_at.gt.${new Date().toISOString()}`,
       );
 
-      const { data: notificationsData, error: notificationsError } =
-        await query;
+      const { data: notificationsData, error: notificationsError } = await query;
 
       if (notificationsError) {
         throw notificationsError;
@@ -169,8 +167,8 @@ export function useNotifications({
         prev.map((notif) =>
           notif.id === notificationId
             ? { ...notif, read_at: new Date().toISOString() }
-            : notif,
-        ),
+            : notif
+        )
       );
     },
     [userId, supabase],
@@ -214,14 +212,12 @@ export function useNotifications({
               prev.map((notif) =>
                 notif.id === updatedNotification.id
                   ? updatedNotification
-                  : notif,
-              ),
+                  : notif
+              )
             );
           } else if (payload.eventType === "DELETE") {
             const deletedId = payload.old.id;
-            setNotifications((prev) =>
-              prev.filter((notif) => notif.id !== deletedId),
-            );
+            setNotifications((prev) => prev.filter((notif) => notif.id !== deletedId));
           }
         },
       )
@@ -261,9 +257,7 @@ export function useNotifications({
     // Update local state
     const now = new Date().toISOString();
     setNotifications((prev) =>
-      prev.map((notif) =>
-        unreadIds.includes(notif.id) ? { ...notif, read_at: now } : notif,
-      ),
+      prev.map((notif) => unreadIds.includes(notif.id) ? { ...notif, read_at: now } : notif)
     );
   }, [notifications, userId, supabase]);
 
@@ -281,9 +275,7 @@ export function useNotifications({
       }
 
       // Update local state
-      setNotifications((prev) =>
-        prev.filter((notif) => notif.id !== notificationId),
-      );
+      setNotifications((prev) => prev.filter((notif) => notif.id !== notificationId));
     },
     [userId, supabase],
   );

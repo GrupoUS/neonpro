@@ -6,17 +6,13 @@
 
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
 import { cn } from "@/lib/utils";
-import type {
-  ChatConversation,
-  PresenceStatus,
-  ConversationType,
-} from "@/types/chat";
+import type { ChatConversation, ConversationType, PresenceStatus } from "@/types/chat";
 import { SenderType } from "@/types/chat";
+import React, { useCallback, useMemo, useState } from "react";
 
 // Icons (would be imported from lucide-react or similar)
-const SearchIcon = ({ className }: { className?: string }) => (
+const SearchIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -40,7 +36,7 @@ const SearchIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const PlusIcon = ({ className }: { className?: string }) => (
+const PlusIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -68,7 +64,7 @@ const PlusIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const FilterIcon = ({ className }: { className?: string }) => (
+const FilterIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -84,7 +80,7 @@ const FilterIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const BotIcon = ({ className }: { className?: string }) => (
+const BotIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -119,7 +115,7 @@ const BotIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const StethoscopeIcon = ({ className }: { className?: string }) => (
+const StethoscopeIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -135,7 +131,7 @@ const StethoscopeIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const UserIcon = ({ className }: { className?: string }) => (
+const UserIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -159,7 +155,7 @@ const UserIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const AlertTriangleIcon = ({ className }: { className?: string }) => (
+const AlertTriangleIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -193,7 +189,7 @@ const AlertTriangleIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const ChevronLeftIcon = ({ className }: { className?: string }) => (
+const ChevronLeftIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -209,7 +205,7 @@ const ChevronLeftIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const ChevronRightIcon = ({ className }: { className?: string }) => (
+const ChevronRightIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -333,8 +329,8 @@ function ConversationItem({
   // Get online participants
   const onlineParticipants = conversation.participants.filter(
     (p) =>
-      presenceStatus?.[p.user_id] === "online" ||
-      p.user_type === "ai_assistant",
+      presenceStatus?.[p.user_id] === "online"
+      || p.user_type === "ai_assistant",
   ).length;
 
   if (collapsed) {
@@ -347,9 +343,9 @@ function ConversationItem({
             ? "bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400"
             : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400",
           isEmergency && "animate-pulse",
-          emergencyMode &&
-            isActive &&
-            "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400",
+          emergencyMode
+            && isActive
+            && "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400",
         )}
         title={conversation.title || conversation.type}
       >
@@ -375,9 +371,9 @@ function ConversationItem({
           ? "bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800"
           : "hover:bg-gray-50 dark:hover:bg-gray-800/50",
         isEmergency && "animate-pulse",
-        emergencyMode &&
-          isActive &&
-          "bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800",
+        emergencyMode
+          && isActive
+          && "bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800",
       )}
     >
       <div className="flex items-start gap-3">
@@ -430,20 +426,16 @@ function ConversationItem({
 
             <div className="flex items-center gap-1 flex-shrink-0">
               {/* Emergency Indicator */}
-              {isEmergency && (
-                <AlertTriangleIcon className="w-3 h-3 text-red-500" />
-              )}
+              {isEmergency && <AlertTriangleIcon className="w-3 h-3 text-red-500" />}
 
               {/* AI Indicator */}
-              {conversation.ai_enabled &&
-                conversation.type !== "ai_assistant" && (
-                  <BotIcon className="w-3 h-3 text-blue-500" />
-                )}
+              {conversation.ai_enabled
+                && conversation.type !== "ai_assistant" && (
+                <BotIcon className="w-3 h-3 text-blue-500" />
+              )}
 
               {/* Unread Count */}
-              {hasUnreadMessages && (
-                <div className="w-2 h-2 bg-red-500 rounded-full" />
-              )}
+              {hasUnreadMessages && <div className="w-2 h-2 bg-red-500 rounded-full" />}
             </div>
           </div>
 
@@ -509,11 +501,9 @@ export default function ChatSidebar({
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (conv) =>
-          conv.title?.toLowerCase().includes(query) ||
-          conv.last_message?.content.text?.toLowerCase().includes(query) ||
-          conv.participants.some((p) =>
-            p.display_name.toLowerCase().includes(query),
-          ),
+          conv.title?.toLowerCase().includes(query)
+          || conv.last_message?.content.text?.toLowerCase().includes(query)
+          || conv.participants.some((p) => p.display_name.toLowerCase().includes(query)),
       );
     }
 
@@ -539,8 +529,8 @@ export default function ChatSidebar({
     // Sort by last activity (most recent first)
     return filtered.sort(
       (a, b) =>
-        new Date(b.last_activity).getTime() -
-        new Date(a.last_activity).getTime(),
+        new Date(b.last_activity).getTime()
+        - new Date(a.last_activity).getTime(),
     );
   }, [conversations, searchQuery, activeFilter]);
 
@@ -682,34 +672,34 @@ export default function ChatSidebar({
         >
           {filteredConversations.length === 0
             ? !collapsed && (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                  <div className="mb-2">💬</div>
-                  <p className="text-sm">
-                    {searchQuery
-                      ? "Nenhuma conversa encontrada"
-                      : "Nenhuma conversa ainda"}
-                  </p>
-                  {onNewConversation && (
-                    <button
-                      onClick={() => handleNewConversation("ai_assistant")}
-                      className="mt-3 text-sm text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
-                    >
-                      Iniciar chat com IA
-                    </button>
-                  )}
-                </div>
-              )
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <div className="mb-2">💬</div>
+                <p className="text-sm">
+                  {searchQuery
+                    ? "Nenhuma conversa encontrada"
+                    : "Nenhuma conversa ainda"}
+                </p>
+                {onNewConversation && (
+                  <button
+                    onClick={() => handleNewConversation("ai_assistant")}
+                    className="mt-3 text-sm text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                  >
+                    Iniciar chat com IA
+                  </button>
+                )}
+              </div>
+            )
             : filteredConversations.map((conversation) => (
-                <ConversationItem
-                  key={conversation.id}
-                  conversation={conversation}
-                  isActive={activeConversation?.id === conversation.id}
-                  onClick={() => onConversationSelect(conversation)}
-                  collapsed={collapsed}
-                  presenceStatus={presenceStatus}
-                  emergencyMode={emergencyMode}
-                />
-              ))}
+              <ConversationItem
+                key={conversation.id}
+                conversation={conversation}
+                isActive={activeConversation?.id === conversation.id}
+                onClick={() => onConversationSelect(conversation)}
+                collapsed={collapsed}
+                presenceStatus={presenceStatus}
+                emergencyMode={emergencyMode}
+              />
+            ))}
         </div>
       </div>
 
@@ -721,23 +711,25 @@ export default function ChatSidebar({
             collapsed && "p-2",
           )}
         >
-          {collapsed ? (
-            <button
-              onClick={() => handleNewConversation("ai_assistant")}
-              className="w-12 h-12 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center justify-center transition-colors"
-              title="Nova conversa"
-            >
-              <PlusIcon />
-            </button>
-          ) : (
-            <button
-              onClick={() => handleNewConversation("ai_assistant")}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium"
-            >
-              <PlusIcon />
-              Nova Conversa
-            </button>
-          )}
+          {collapsed
+            ? (
+              <button
+                onClick={() => handleNewConversation("ai_assistant")}
+                className="w-12 h-12 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center justify-center transition-colors"
+                title="Nova conversa"
+              >
+                <PlusIcon />
+              </button>
+            )
+            : (
+              <button
+                onClick={() => handleNewConversation("ai_assistant")}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium"
+              >
+                <PlusIcon />
+                Nova Conversa
+              </button>
+            )}
         </div>
       )}
     </div>

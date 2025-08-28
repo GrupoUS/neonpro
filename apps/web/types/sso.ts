@@ -176,8 +176,7 @@ export const SSO_PROVIDERS = {
   LDAP: "ldap",
 } as const;
 
-export type SSOProviderType =
-  (typeof SSO_PROVIDERS)[keyof typeof SSO_PROVIDERS];
+export type SSOProviderType = (typeof SSO_PROVIDERS)[keyof typeof SSO_PROVIDERS];
 
 // SAML specific types
 export interface SAMLAssertion {

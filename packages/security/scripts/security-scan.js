@@ -63,11 +63,11 @@ function scanFile(filePath) {
         matches.forEach((match) => {
           // Ignorar placeholders óbvios
           if (
-            match.includes("your_") ||
-            match.includes("INSERT_") ||
-            match.includes("REPLACE_") ||
-            match.includes("example") ||
-            match.length < 8
+            match.includes("your_")
+            || match.includes("INSERT_")
+            || match.includes("REPLACE_")
+            || match.includes("example")
+            || match.length < 8
           ) {
             return;
           }

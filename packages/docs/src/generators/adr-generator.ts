@@ -168,9 +168,8 @@ export class ADRGenerator {
           title: String(answers.title || "Untitled"),
           status: (answers.status || "Proposed") as ADRMetadata["status"],
           author: String(answers.author || "Unknown"),
-          date:
-            new Date().toISOString().split("T")[0] ||
-            new Date().toISOString().slice(0, 10),
+          date: new Date().toISOString().split("T")[0]
+            || new Date().toISOString().slice(0, 10),
         },
         context: (answers.context || "") as string,
         decision: (answers.decision || "") as string,
@@ -270,9 +269,11 @@ export class ADRGenerator {
       indexContent += "|--------|-------|--------|------|--------|\n";
 
       adrs.forEach((adr) => {
-        const link = `[ADR-${adr.number.toString().padStart(3, "0")}](${this.getADRFilename(
-          adr.number,
-        )})`;
+        const link = `[ADR-${adr.number.toString().padStart(3, "0")}](${
+          this.getADRFilename(
+            adr.number,
+          )
+        })`;
         const status = adr.supersededBy
           ? `Superseded by ADR-${adr.supersededBy}`
           : adr.status;
@@ -340,13 +341,11 @@ export class ADRGenerator {
 
       // Extract metadata from content
       const extractedTitle = this.extractTitle(content);
-      const title =
-        extractedTitle ??
-        (safeTitleSlug
+      const title = extractedTitle
+        ?? (safeTitleSlug
           ? String(safeTitleSlug).replaceAll("-", " ")
           : "Untitled");
-      const status =
-        (this.extractStatus(content) as ADRMetadata["status"]) || "Proposed";
+      const status = (this.extractStatus(content) as ADRMetadata["status"]) || "Proposed";
       const date = this.extractDate(content) ?? "1970-01-01";
       const author = this.extractAuthor(content) ?? "Unknown";
       const supersededBy = this.extractSupersededBy(content);

@@ -5,6 +5,7 @@
 ### **PNPM Version Mismatch Error** ✅ **FIXED**
 
 **Error from GitHub Actions Run**: [17309527657](https://github.com/GrupoUS/neonpro/actions/runs/17309527657)
+
 ```
 Error: Multiple versions of pnpm specified: 
 - version 8 in the GitHub Action config with the key "version" 
@@ -15,24 +16,28 @@ Remove one of these versions to avoid version mismatch errors
 **Root Cause**: Version mismatch between GitHub Actions (`version: 8`) and package.json (`"packageManager": "pnpm@8.15.6"`)
 
 **Solution Applied**:
+
 - Updated all GitHub Actions workflows to use exact version `8.15.6`
 - Ensures perfect match with package.json specification
 
 ## 🔧 **Files Fixed**
 
 ### **1. healthcare-deployment.yml** ✅
+
 ```yaml
 # BEFORE
 env:
-  PNPM_VERSION: '8'
+  PNPM_VERSION: "8"
 
-# AFTER  
+# AFTER
 env:
-  PNPM_VERSION: '8.15.6'
+  PNPM_VERSION: "8.15.6"
 ```
+
 - **Additional Fix**: CodeQL languages syntax corrected
 
 ### **2. performance-tests.yml** ✅
+
 ```yaml
 # BEFORE
 env:
@@ -44,17 +49,19 @@ env:
 ```
 
 ### **3. rollback-strategy.yml** ✅
+
 ```yaml
 # BEFORE
 env:
-  PNPM_VERSION: '8'
+  PNPM_VERSION: "8"
 
 # AFTER
 env:
-  PNPM_VERSION: '8.15.6'
+  PNPM_VERSION: "8.15.6"
 ```
 
 ### **4. ci.yml** ✅
+
 ```yaml
 # BEFORE (6 occurrences)
 - name: 📦 Install pnpm
@@ -70,6 +77,7 @@ env:
 ```
 
 ### **5. pr-validation.yml** ✅
+
 ```yaml
 # BEFORE (4 occurrences)
 - name: 📦 Install pnpm
@@ -113,15 +121,17 @@ env:
 ## 📊 **What to Expect**
 
 ### **✅ Fixed Issues:**
+
 - ✅ **Dependency Setup job will now pass** - No more pnpm version mismatch
 - ✅ **All downstream jobs will execute** - CI/CD pipeline fully operational
 - ✅ **CodeQL security scanning fixed** - Proper languages configuration
 - ✅ **Healthcare compliance checks active** - LGPD and security validation
 
 ### **🔄 Next Workflow Run Will:**
+
 1. **🚀 CI Initialization** - ✅ Pass
 2. **📦 Dependency Setup** - ✅ Pass (was failing before)
-3. **✨ Code Quality Enforcement** - ✅ Execute  
+3. **✨ Code Quality Enforcement** - ✅ Execute
 4. **🔒 Security Scanning** - ✅ Execute
 5. **🏗️ Build & Test** - ✅ Execute
 6. **🎭 E2E Testing** - ✅ Execute
@@ -131,6 +141,7 @@ env:
 ## ⚠️ **Remaining Warnings (Non-Critical)**
 
 The remaining warnings are **cosmetic only** and **do not affect workflow execution**:
+
 - Context access warnings for variables (normal GitHub Actions behavior)
 - Style suggestions for expressions
 - References to optional secrets/variables
@@ -138,9 +149,10 @@ The remaining warnings are **cosmetic only** and **do not affect workflow execut
 ## 🏥 **Healthcare Platform Ready**
 
 All workflows now maintain healthcare-specific features:
+
 - ✅ **LGPD compliance validation**
 - ✅ **Security scanning and audit trails**
-- ✅ **Emergency rollback capabilities** 
+- ✅ **Emergency rollback capabilities**
 - ✅ **Performance monitoring**
 - ✅ **Healthcare workflow validation**
 

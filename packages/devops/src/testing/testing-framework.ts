@@ -552,49 +552,42 @@ export class HealthcareTestFramework {
   }
 
   private getLGPDComplianceStatus(): ComplianceStatus {
-    const lgpdResults = [...this.testResults.entries()].filter(([key]) =>
-      key.startsWith("lgpd_"),
-    );
+    const lgpdResults = [...this.testResults.entries()].filter(([key]) => key.startsWith("lgpd_"));
 
     return {
       status: lgpdResults.every(([, result]) => result.status === "passed")
         ? "compliant"
         : "non-compliant",
-      score:
-        lgpdResults.reduce((sum, [, result]) => sum + result.score, 0) /
-        lgpdResults.length,
+      score: lgpdResults.reduce((sum, [, result]) => sum + result.score, 0)
+        / lgpdResults.length,
       details: lgpdResults.map(([key, result]) => ({ test: key, ...result })),
     };
   }
 
   private getANVISAComplianceStatus(): ComplianceStatus {
     const anvisaResults = [...this.testResults.entries()].filter(([key]) =>
-      key.startsWith("anvisa_"),
+      key.startsWith("anvisa_")
     );
 
     return {
       status: anvisaResults.every(([, result]) => result.status === "passed")
         ? "compliant"
         : "non-compliant",
-      score:
-        anvisaResults.reduce((sum, [, result]) => sum + result.score, 0) /
-        anvisaResults.length,
+      score: anvisaResults.reduce((sum, [, result]) => sum + result.score, 0)
+        / anvisaResults.length,
       details: anvisaResults.map(([key, result]) => ({ test: key, ...result })),
     };
   }
 
   private getCFMComplianceStatus(): ComplianceStatus {
-    const cfmResults = [...this.testResults.entries()].filter(([key]) =>
-      key.startsWith("cfm_"),
-    );
+    const cfmResults = [...this.testResults.entries()].filter(([key]) => key.startsWith("cfm_"));
 
     return {
       status: cfmResults.every(([, result]) => result.status === "passed")
         ? "compliant"
         : "non-compliant",
-      score:
-        cfmResults.reduce((sum, [, result]) => sum + result.score, 0) /
-        cfmResults.length,
+      score: cfmResults.reduce((sum, [, result]) => sum + result.score, 0)
+        / cfmResults.length,
       details: cfmResults.map(([key, result]) => ({ test: key, ...result })),
     };
   }
@@ -676,16 +669,15 @@ export const healthcareTestFramework = new HealthcareTestFramework();
 export const createLGPDTest = healthcareTestFramework.createLGPDTestSuite.bind(
   healthcareTestFramework,
 );
-export const createANVISATest =
-  healthcareTestFramework.createANVISATestSuite.bind(healthcareTestFramework);
+export const createANVISATest = healthcareTestFramework.createANVISATestSuite.bind(
+  healthcareTestFramework,
+);
 export const createCFMTest = healthcareTestFramework.createCFMTestSuite.bind(
   healthcareTestFramework,
 );
-export const createQualityGatesTest =
-  healthcareTestFramework.createQualityGatesTestSuite.bind(
-    healthcareTestFramework,
-  );
-export const createHealthcareE2ETest =
-  healthcareTestFramework.createHealthcareE2ETestSuite.bind(
-    healthcareTestFramework,
-  );
+export const createQualityGatesTest = healthcareTestFramework.createQualityGatesTestSuite.bind(
+  healthcareTestFramework,
+);
+export const createHealthcareE2ETest = healthcareTestFramework.createHealthcareE2ETestSuite.bind(
+  healthcareTestFramework,
+);

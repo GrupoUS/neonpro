@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
 import type {
-  WorkflowRule,
   WorkflowExecution,
   WorkflowQueue,
+  WorkflowRule,
   WorkflowTemplate,
 } from "@/types/workflow-automation";
 import { ActionResult } from "@/types/workflow-automation";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseWorkflowAutomationOptions {
   clinicId?: string;
@@ -55,7 +55,7 @@ interface UseWorkflowAutomationReturn {
   testRule: (rule: Partial<WorkflowRule>, testData: any) => Promise<any>;
   validateRule: (
     rule: Partial<WorkflowRule>,
-  ) => Promise<{ isValid: boolean; errors: string[] }>;
+  ) => Promise<{ isValid: boolean; errors: string[]; }>;
 
   // Bulk operations
   bulkToggleRules: (ruleIds: string[], active: boolean) => Promise<void>;
@@ -226,8 +226,8 @@ export function useWorkflowAutomation({
             prev.map((rule) =>
               rule.id === ruleId
                 ? { ...rule, ...updates, updatedAt: new Date() }
-                : rule,
-            ),
+                : rule
+            )
           );
         } else {
           throw new Error(data.message || "Failed to update workflow rule");
@@ -335,9 +335,7 @@ export function useWorkflowAutomation({
 
       if (data.success) {
         setExecutions((prev) =>
-          prev.map((exec) =>
-            exec.id === executionId ? { ...exec, status: "cancelled" } : exec,
-          ),
+          prev.map((exec) => exec.id === executionId ? { ...exec, status: "cancelled" } : exec)
         );
       } else {
         throw new Error(data.message || "Failed to cancel execution");
@@ -584,9 +582,7 @@ export function useWorkflowAutomation({
 
         if (data.success) {
           setRules((prev) =>
-            prev.map((rule) =>
-              ruleIds.includes(rule.id) ? { ...rule, isActive: active } : rule,
-            ),
+            prev.map((rule) => ruleIds.includes(rule.id) ? { ...rule, isActive: active } : rule)
           );
         } else {
           throw new Error(data.message || "Failed to bulk toggle rules");

@@ -99,7 +99,7 @@ export class EnterpriseSecurityService {
   private cleanupInterval: NodeJS.Timeout | null = null;
   private readonly rateLimitStore: Map<
     string,
-    { count: number; resetTime: number }
+    { count: number; resetTime: number; }
   > = new Map();
 
   constructor(_config?: Partial<SecurityConfig>) {
@@ -323,9 +323,8 @@ export class EnterpriseSecurityService {
       encrypted += cipher.final("hex");
 
       // For GCM mode, get the authentication tag
-      const tag =
-        (cipher as unknown as { getAuthTag(): Buffer }).getAuthTag?.() ??
-        Buffer.alloc(0);
+      const tag = (cipher as unknown as { getAuthTag(): Buffer; }).getAuthTag?.()
+        ?? Buffer.alloc(0);
 
       // Combine salt, iv, tag, and encrypted data
       const result = Buffer.concat([
@@ -363,20 +362,20 @@ export class EnterpriseSecurityService {
       );
       const iv = combined.subarray(
         this.encryptionConfig.keyDerivation.saltSize,
-        this.encryptionConfig.keyDerivation.saltSize +
-          this.encryptionConfig.ivSize,
+        this.encryptionConfig.keyDerivation.saltSize
+          + this.encryptionConfig.ivSize,
       );
       const tag = combined.subarray(
-        this.encryptionConfig.keyDerivation.saltSize +
-          this.encryptionConfig.ivSize,
-        this.encryptionConfig.keyDerivation.saltSize +
-          this.encryptionConfig.ivSize +
-          this.encryptionConfig.tagSize,
+        this.encryptionConfig.keyDerivation.saltSize
+          + this.encryptionConfig.ivSize,
+        this.encryptionConfig.keyDerivation.saltSize
+          + this.encryptionConfig.ivSize
+          + this.encryptionConfig.tagSize,
       );
       const encrypted = combined.subarray(
-        this.encryptionConfig.keyDerivation.saltSize +
-          this.encryptionConfig.ivSize +
-          this.encryptionConfig.tagSize,
+        this.encryptionConfig.keyDerivation.saltSize
+          + this.encryptionConfig.ivSize
+          + this.encryptionConfig.tagSize,
       );
 
       // Derive key
@@ -397,7 +396,7 @@ export class EnterpriseSecurityService {
 
       // Set auth tag for GCM mode
       if (tag.length > 0) {
-        (decipher as unknown as { setAuthTag(tag: Buffer): void }).setAuthTag(
+        (decipher as unknown as { setAuthTag(tag: Buffer): void; }).setAuthTag(
           tag,
         );
       }
@@ -471,9 +470,7 @@ export class EnterpriseSecurityService {
 
     // Check roles
     if (conditions.roles && conditions.roles.length > 0) {
-      const hasRole = conditions.roles.some((role) =>
-        session.roles.includes(role),
-      );
+      const hasRole = conditions.roles.some((role) => session.roles.includes(role));
       if (!hasRole) {
         return false;
       }
@@ -482,7 +479,7 @@ export class EnterpriseSecurityService {
     // Check permissions
     if (conditions.permissions && conditions.permissions.length > 0) {
       const hasPermission = conditions.permissions.some((perm) =>
-        session.permissions.includes(perm),
+        session.permissions.includes(perm)
       );
       if (!hasPermission) {
         return false;
@@ -496,11 +493,11 @@ export class EnterpriseSecurityService {
 
     // Check IP restrictions
     if (
-      conditions.ipRestrictions &&
-      conditions.ipRestrictions.length > 0 &&
-      !(
-        session.ipAddress &&
-        conditions.ipRestrictions.includes(session.ipAddress)
+      conditions.ipRestrictions
+      && conditions.ipRestrictions.length > 0
+      && !(
+        session.ipAddress
+        && conditions.ipRestrictions.includes(session.ipAddress)
       )
     ) {
       return false;
@@ -666,8 +663,8 @@ export class EnterpriseSecurityService {
   ): "low" | "medium" | "high" | "critical" {
     switch (type) {
       case "multiple_failed_logins": {
-        return (details as { attemptCount?: number }).attemptCount &&
-          (details as { attemptCount: number }).attemptCount > 10
+        return (details as { attemptCount?: number; }).attemptCount
+            && (details as { attemptCount: number; }).attemptCount > 10
           ? "high"
           : "medium";
       }

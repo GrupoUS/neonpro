@@ -4,11 +4,7 @@
  * Helper functions and utilities for performance monitoring.
  */
 
-import type {
-  CustomMetric,
-  HealthcareMetricName,
-  PerformanceThresholds,
-} from "../types";
+import type { CustomMetric, HealthcareMetricName, PerformanceThresholds } from "../types";
 
 /**
  * Performance thresholds for healthcare applications
@@ -153,8 +149,7 @@ export function getPerformanceInsights(metrics: CustomMetric[]): {
       return;
     }
 
-    const avgValue =
-      values.reduce((sum, m) => sum + m.value, 0) / values.length;
+    const avgValue = values.reduce((sum, m) => sum + m.value, 0) / values.length;
     const poorCount = values.filter((m) => m.rating === "poor").length;
     const poorPercentage = (poorCount / values.length) * 100;
 
@@ -224,9 +219,9 @@ export function getPerformanceInsights(metrics: CustomMetric[]): {
     }
 
     if (
-      avgValue >
-      HEALTHCARE_THRESHOLDS.healthcare[name as HealthcareMetricName]
-        ?.needsImprovement
+      avgValue
+        > HEALTHCARE_THRESHOLDS.healthcare[name as HealthcareMetricName]
+          ?.needsImprovement
     ) {
       insights.push(
         `${name}: Average performance (${formatDuration(avgValue)}) exceeds acceptable thresholds`,
@@ -236,12 +231,10 @@ export function getPerformanceInsights(metrics: CustomMetric[]): {
 
   // General recommendations based on patterns
   if (metricGroups.database_query_time && metricGroups.form_submission_time) {
-    const dbSlow =
-      metricGroups.database_query_time.some((m) => m.rating === "poor").length >
-      0;
-    const formSlow =
-      metricGroups.form_submission_time.some((m) => m.rating === "poor")
-        .length > 0;
+    const dbSlow = metricGroups.database_query_time.some((m) => m.rating === "poor").length
+      > 0;
+    const formSlow = metricGroups.form_submission_time.some((m) => m.rating === "poor")
+      .length > 0;
 
     if (dbSlow && formSlow) {
       recommendations.push(
@@ -274,7 +267,8 @@ export function createAlertMessage(
   const formattedValue = formatDuration(value);
   const formattedThreshold = formatDuration(threshold);
 
-  let baseMessage = `${metricName} performance alert: ${formattedValue} (threshold: ${formattedThreshold})`;
+  let baseMessage =
+    `${metricName} performance alert: ${formattedValue} (threshold: ${formattedThreshold})`;
 
   if (context?.feature) {
     baseMessage += ` in ${context.feature}`;
@@ -314,8 +308,7 @@ export function calculateStandardDeviation(values: number[]): number {
 
   const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
   const squaredDiffs = values.map((val) => (val - mean) ** 2);
-  const avgSquaredDiff =
-    squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
+  const avgSquaredDiff = squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
 
   return Math.sqrt(avgSquaredDiff);
 }
@@ -405,12 +398,11 @@ export function formatMetricForDisplay(metric: CustomMetric): {
     .replaceAll("_", " ")
     .replaceAll(/\b\w/g, (l) => l.toUpperCase());
   const formattedValue = formatDuration(metric.value);
-  const ratingColor =
-    metric.rating === "good"
-      ? "green"
-      : metric.rating === "needs-improvement"
-        ? "yellow"
-        : "red";
+  const ratingColor = metric.rating === "good"
+    ? "green"
+    : metric.rating === "needs-improvement"
+    ? "yellow"
+    : "red";
 
   let context = "";
   if (metric.context?.feature) {

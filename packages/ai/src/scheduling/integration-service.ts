@@ -84,7 +84,7 @@ export class SchedulingIntegrationService {
   private cacheEnabled = true;
   private readonly cache: Map<
     string,
-    { data: unknown; timestamp: number; ttl: number }
+    { data: unknown; timestamp: number; ttl: number; }
   > = new Map();
 
   constructor(services: ServiceDependencies) {
@@ -180,7 +180,7 @@ export class SchedulingIntegrationService {
    * Get comprehensive resource availability
    */
   async getResourceAvailability(
-    timeSlot: { start: Date; end: Date },
+    timeSlot: { start: Date; end: Date; },
     requirements: {
       staffSkills: string[];
       roomType: string;
@@ -193,20 +193,19 @@ export class SchedulingIntegrationService {
     conflicts: unknown[];
   }> {
     try {
-      const [availableStaff, availableRooms, equipmentAvailable] =
-        await Promise.all([
-          this.services.staffService.getAvailableStaff(
-            timeSlot.start,
-            requirements.staffSkills,
-          ),
-          this.services.roomService.getAvailableRooms(timeSlot, {
-            type: requirements.roomType,
-          }),
-          this.services.inventoryService.checkEquipmentAvailability(
-            requirements.equipment,
-            timeSlot,
-          ),
-        ]);
+      const [availableStaff, availableRooms, equipmentAvailable] = await Promise.all([
+        this.services.staffService.getAvailableStaff(
+          timeSlot.start,
+          requirements.staffSkills,
+        ),
+        this.services.roomService.getAvailableRooms(timeSlot, {
+          type: requirements.roomType,
+        }),
+        this.services.inventoryService.checkEquipmentAvailability(
+          requirements.equipment,
+          timeSlot,
+        ),
+      ]);
 
       // Cross-check for potential conflicts
       const conflicts = await this.identifyResourceConflicts(
@@ -253,8 +252,7 @@ export class SchedulingIntegrationService {
           message: "Staff reserved",
         });
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         errors.push({ service: "staff", error: errorMessage });
         success = false;
       }
@@ -271,8 +269,7 @@ export class SchedulingIntegrationService {
           message: "Room reserved",
         });
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         errors.push({ service: "room", error: errorMessage });
         success = false;
       }
@@ -289,8 +286,7 @@ export class SchedulingIntegrationService {
           message: "Equipment reserved",
         });
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         errors.push({ service: "inventory", error: errorMessage });
         success = false;
       }
@@ -307,8 +303,7 @@ export class SchedulingIntegrationService {
           message: "Patient history updated",
         });
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         errors.push({ service: "patient", error: errorMessage });
         // Not critical - don't fail the whole operation
       }
@@ -325,8 +320,7 @@ export class SchedulingIntegrationService {
           message: "Treatment stats updated",
         });
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         errors.push({ service: "treatment", error: errorMessage });
         // Not critical - don't fail the whole operation
       }
@@ -342,8 +336,7 @@ export class SchedulingIntegrationService {
           message: "Confirmation sent",
         });
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         errors.push({ service: "notification", error: errorMessage });
         // Not critical - don't fail the whole operation
       }
@@ -372,8 +365,7 @@ export class SchedulingIntegrationService {
         await this.rollbackAppointment(appointment, integrationResults);
       }
 
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
 
       return {
         success: false,
@@ -402,8 +394,7 @@ export class SchedulingIntegrationService {
 
     try {
       // Get current appointment
-      const currentAppointment =
-        await this.getCurrentAppointment(appointmentId);
+      const currentAppointment = await this.getCurrentAppointment(appointmentId);
       if (!currentAppointment) {
         throw new Error("Appointment not found");
       }
@@ -473,8 +464,7 @@ export class SchedulingIntegrationService {
         integrationResults,
       };
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
       return {
         success: false,
         conflicts,
@@ -490,11 +480,11 @@ export class SchedulingIntegrationService {
    */
   async processBatchScheduling(requests: SchedulingRequest[]): Promise<{
     successful: SchedulingResponse[];
-    failed: { request: SchedulingRequest; error: string }[];
+    failed: { request: SchedulingRequest; error: string; }[];
     batchMetrics: unknown;
   }> {
     const successful: SchedulingResponse[] = [];
-    const failed: { request: SchedulingRequest; error: string }[] = [];
+    const failed: { request: SchedulingRequest; error: string; }[] = [];
     const startTime = Date.now();
 
     // Process in parallel with concurrency limit
@@ -508,8 +498,7 @@ export class SchedulingIntegrationService {
           const response = await this.processIndividualScheduling(request);
           successful.push(response);
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
+          const errorMessage = error instanceof Error ? error.message : String(error);
           failed.push({ request, error: errorMessage });
         }
       });
@@ -538,7 +527,7 @@ export class SchedulingIntegrationService {
    * Real-time availability checking
    */
   async checkRealTimeAvailability(
-    timeSlot: { start: Date; end: Date },
+    timeSlot: { start: Date; end: Date; },
     requirements: unknown,
   ): Promise<{
     available: boolean;
@@ -552,10 +541,9 @@ export class SchedulingIntegrationService {
         requirements,
       );
 
-      const available =
-        resources.availableStaff.length > 0 &&
-        resources.availableRooms.length > 0 &&
-        resources.equipmentAvailable;
+      const available = resources.availableStaff.length > 0
+        && resources.availableRooms.length > 0
+        && resources.equipmentAvailable;
 
       let alternatives: unknown[] = [];
       if (!available) {
@@ -690,10 +678,10 @@ export class SchedulingIntegrationService {
     updates: Partial<AIAppointment>,
   ): boolean {
     return Boolean(
-      updates.scheduledStart ||
-        updates.scheduledEnd ||
-        updates.staffId ||
-        updates.roomId,
+      updates.scheduledStart
+        || updates.scheduledEnd
+        || updates.staffId
+        || updates.roomId,
     );
   }
 

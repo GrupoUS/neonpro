@@ -36,8 +36,8 @@ async function cleanupTestDatabase() {
   console.log("🗄️ Limpando dados de teste do banco...");
 
   if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.SUPABASE_SERVICE_ROLE_KEY
+    !process.env.NEXT_PUBLIC_SUPABASE_URL
+    || !process.env.SUPABASE_SERVICE_ROLE_KEY
   ) {
     console.warn(
       "⚠️ Variáveis de ambiente do Supabase não encontradas, pulando limpeza do banco",
@@ -90,8 +90,8 @@ async function removeTestUsers() {
   console.log("👥 Removendo usuários de teste...");
 
   if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.SUPABASE_SERVICE_ROLE_KEY
+    !process.env.NEXT_PUBLIC_SUPABASE_URL
+    || !process.env.SUPABASE_SERVICE_ROLE_KEY
   ) {
     console.warn(
       "⚠️ Variáveis de ambiente do Supabase não encontradas, pulando remoção de usuários",
@@ -131,8 +131,7 @@ async function removeTestUsers() {
     for (const email of testUserEmails) {
       try {
         // Buscar usuário por email
-        const { data: users, error: listError } =
-          await supabase.auth.admin.listUsers();
+        const { data: users, error: listError } = await supabase.auth.admin.listUsers();
 
         if (listError) {
           console.warn(`Erro ao listar usuários:`, listError.message);
@@ -256,8 +255,8 @@ async function verifySystemIntegrity() {
   try {
     // Verificar se não há dados de teste residuais
     if (
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.SUPABASE_SERVICE_ROLE_KEY
+      process.env.NEXT_PUBLIC_SUPABASE_URL
+      && process.env.SUPABASE_SERVICE_ROLE_KEY
     ) {
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL,

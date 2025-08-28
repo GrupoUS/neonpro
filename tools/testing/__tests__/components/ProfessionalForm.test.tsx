@@ -1,8 +1,5 @@
 import ProfessionalForm from "@/components/dashboard/ProfessionalForm";
-import {
-  createProfessional,
-  updateProfessional,
-} from "@/lib/supabase/professionals";
+import { createProfessional, updateProfessional } from "@/lib/supabase/professionals";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
 import { vi } from "vitest";

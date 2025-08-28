@@ -27,11 +27,9 @@ import { CacheLayer } from "./types";
 // Healthcare-optimized default configuration for MultiLayerCacheManager
 const defaultMultiLayerConfig: MultiLayerCacheConfig = {
   supabase: {
-    projectId:
-      process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID || "ownkoxryswokcdanrdgj",
-    apiUrl:
-      process.env.NEXT_PUBLIC_SUPABASE_URL ||
-      "https://ownkoxryswokcdanrdgj.supabase.co",
+    projectId: process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID || "ownkoxryswokcdanrdgj",
+    apiUrl: process.env.NEXT_PUBLIC_SUPABASE_URL
+      || "https://ownkoxryswokcdanrdgj.supabase.co",
     serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
     tableName: "cache_entries",
     defaultTTL: 60 * 60 * 1000, // 1 hour
@@ -117,8 +115,7 @@ export const cacheKeys = {
 
   // Appointment cache keys
   appointment: (id: string) => `appointment_${id}`,
-  appointmentSlots: (providerId: string, date: string) =>
-    `slots_${providerId}_${date}`,
+  appointmentSlots: (providerId: string, date: string) => `slots_${providerId}_${date}`,
 
   // Compliance cache keys
   compliance: (type: string) => `compliance_${type}`,
@@ -126,8 +123,7 @@ export const cacheKeys = {
   lgpdConsent: (patientId: string) => `lgpd_consent_${patientId}`,
 
   // AI context cache keys
-  aiConversation: (userId: string, sessionId: string) =>
-    `ai_conv_${userId}_${sessionId}`,
+  aiConversation: (userId: string, sessionId: string) => `ai_conv_${userId}_${sessionId}`,
   aiKnowledge: (topic: string) => `ai_knowledge_${topic}`,
 
   // General cache keys

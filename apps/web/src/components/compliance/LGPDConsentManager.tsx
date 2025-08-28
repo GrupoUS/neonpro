@@ -1,25 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +13,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -37,67 +33,60 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Progress } from "@/components/ui/progress";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Switch } from "@/components/ui/switch";
-import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
-  Shield,
-  FileText,
-  Calendar,
-  User,
-  UserCheck,
+  Activity,
+  AlertCircle,
   AlertTriangle,
+  Calendar,
   CheckCircle,
   Clock,
-  Search,
-  Plus,
-  Download,
-  RefreshCw,
-  Eye,
-  Edit,
-  Trash2,
-  Filter,
-  AlertCircle,
-  Activity,
-  Package,
-  Scale,
-  Lock,
-  Unlock,
   Database,
-  Settings,
-  History,
-  Mail,
-  Phone,
-  Globe,
-  FileCheck,
-  UserX,
+  Download,
+  Edit,
   ExternalLink,
+  Eye,
+  FileCheck,
+  FileText,
+  Filter,
+  Globe,
+  History,
+  Lock,
+  Mail,
+  Package,
+  Phone,
+  Plus,
+  RefreshCw,
+  Scale,
+  Search,
+  Settings,
+  Shield,
+  Trash2,
+  Unlock,
+  User,
+  UserCheck,
+  UserX,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import type {
   LGPDConsentRecord,
-  LGPDDataProcessingActivity,
-  LGPDConsentType,
   LGPDConsentStatus,
+  LGPDConsentType,
   LGPDDataCategory,
+  LGPDDataProcessingActivity,
   LGPDProcessingPurpose,
 } from "@/lib/compliance/lgpd-consent-management";
 import {
-  LGPDLegalBasis,
-  LGPDConsentWithdrawalRequest,
-  LGPDDataPortabilityRequest,
-  LGPDDataDeletionRequest,
-  LGPDDataRectificationRequest,
   LGPDConsentManagementService,
+  LGPDConsentWithdrawalRequest,
+  LGPDDataDeletionRequest,
+  LGPDDataPortabilityRequest,
+  LGPDDataRectificationRequest,
+  LGPDLegalBasis,
 } from "@/lib/compliance/lgpd-consent-management";
 
 // Initialize LGPD service
@@ -116,7 +105,7 @@ interface ConsentFormData {
   consentType: LGPDConsentType;
   purposes: LGPDProcessingPurpose[];
   dataCategories: LGPDDataCategory[];
-  optionalConsents: { purpose: string; granted: boolean }[];
+  optionalConsents: { purpose: string; granted: boolean; }[];
   communicationChannel: "web" | "mobile" | "email" | "sms" | "in-person";
 }
 
@@ -249,8 +238,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
   const [activityFilter, setActivityFilter] = useState<string>("all");
   const [isConsentDialogOpen, setIsConsentDialogOpen] = useState(false);
   const [isWithdrawalDialogOpen, setIsWithdrawalDialogOpen] = useState(false);
-  const [selectedConsent, setSelectedConsent] =
-    useState<LGPDConsentRecord | null>(null);
+  const [selectedConsent, setSelectedConsent] = useState<LGPDConsentRecord | null>(null);
   const [withdrawalReason, setWithdrawalReason] = useState("");
   const [complianceScore, setComplianceScore] = useState(0);
 
@@ -370,8 +358,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
           prev.map((consent) =>
             consent.id === selectedConsent.id
               ? { ...consent, status: "withdrawn" as LGPDConsentStatus }
-              : consent,
-          ),
+              : consent
+          )
         );
 
         setIsWithdrawalDialogOpen(false);
@@ -384,7 +372,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
         const updatedConsents = consentRecords.map((c) =>
           c.id === selectedConsent.id
             ? { ...c, status: "withdrawn" as LGPDConsentStatus }
-            : c,
+            : c
         );
         calculateComplianceScore(updatedConsents, activities);
       } else {
@@ -409,7 +397,15 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
 
       if (result.isValid) {
         toast.success(
-          `Solicitação de ${type === "access" ? "acesso" : type === "portability" ? "portabilidade" : type === "deletion" ? "exclusão" : "retificação"} processada com sucesso`,
+          `Solicitação de ${
+            type === "access"
+              ? "acesso"
+              : type === "portability"
+              ? "portabilidade"
+              : type === "deletion"
+              ? "exclusão"
+              : "retificação"
+          } processada com sucesso`,
         );
       } else {
         toast.error(result.errors?.[0] || "Erro ao processar solicitação");
@@ -439,11 +435,9 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
     const matchesSearch = consent.dataSubjectId
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || consent.status === statusFilter;
-    const matchesActivity =
-      activityFilter === "all" ||
-      consent.processingActivityId === activityFilter;
+    const matchesStatus = statusFilter === "all" || consent.status === statusFilter;
+    const matchesActivity = activityFilter === "all"
+      || consent.processingActivityId === activityFilter;
     return matchesSearch && matchesStatus && matchesActivity;
   });
 
@@ -523,8 +517,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                           setFormData((prev) => ({
                             ...prev,
                             dataSubjectName: e.target.value,
-                          }))
-                        }
+                          }))}
                         placeholder="Nome completo do titular"
                       />
                     </div>
@@ -537,8 +530,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                           setFormData((prev) => ({
                             ...prev,
                             dataSubjectId: e.target.value,
-                          }))
-                        }
+                          }))}
                         placeholder="000.000.000-00"
                       />
                     </div>
@@ -554,8 +546,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                           setFormData((prev) => ({
                             ...prev,
                             dataSubjectEmail: e.target.value,
-                          }))
-                        }
+                          }))}
                         placeholder="email@exemplo.com"
                       />
                     </div>
@@ -568,8 +559,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                           setFormData((prev) => ({
                             ...prev,
                             dataSubjectPhone: e.target.value,
-                          }))
-                        }
+                          }))}
                         placeholder="(11) 99999-9999"
                       />
                     </div>
@@ -588,8 +578,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                           setFormData((prev) => ({
                             ...prev,
                             processingActivityId: value,
-                          }))
-                        }
+                          }))}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione a atividade" />
@@ -616,8 +605,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                           setFormData((prev) => ({
                             ...prev,
                             consentType: value,
-                          }))
-                        }
+                          }))}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Tipo de consentimento" />
@@ -661,7 +649,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                               setFormData((prev) => ({
                                 ...prev,
                                 dataCategories: prev.dataCategories.filter(
-                                  (cat) => cat !== key,
+                                  (cat) =>
+                                    cat !== key,
                                 ),
                               }));
                             }
@@ -694,7 +683,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                               setFormData((prev) => ({
                                 ...prev,
                                 purposes: prev.purposes.filter(
-                                  (purpose) => purpose !== key,
+                                  (purpose) =>
+                                    purpose !== key,
                                 ),
                               }));
                             }
@@ -717,8 +707,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                       setFormData((prev) => ({
                         ...prev,
                         communicationChannel: value,
-                      }))
-                    }
+                      }))}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -743,11 +732,9 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                 </Button>
                 <Button
                   onClick={handleCreateConsent}
-                  disabled={
-                    !formData.dataSubjectId ||
-                    !formData.processingActivityId ||
-                    formData.dataCategories.length === 0
-                  }
+                  disabled={!formData.dataSubjectId
+                    || !formData.processingActivityId
+                    || formData.dataCategories.length === 0}
                 >
                   Registrar Consentimento
                 </Button>
@@ -770,9 +757,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
         </div>
         <Select
           value={statusFilter}
-          onValueChange={(value: LGPDConsentStatus | "all") =>
-            setStatusFilter(value)
-          }
+          onValueChange={(value: LGPDConsentStatus | "all") => setStatusFilter(value)}
         >
           <SelectTrigger className="w-48">
             <SelectValue />
@@ -840,8 +825,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                       (a) => a.id === consent.processingActivityId,
                     );
                     const statusConfig = STATUS_CONFIG[consent.status];
-                    const consentTypeConfig =
-                      CONSENT_TYPE_CONFIG[consent.consentType];
+                    const consentTypeConfig = CONSENT_TYPE_CONFIG[consent.consentType];
                     const StatusIcon = statusConfig.icon;
                     const ConsentIcon = consentTypeConfig.icon;
 
@@ -903,8 +887,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                           <div className="text-sm">
                             {consent.expirationDate
                               ? consent.expirationDate.toLocaleDateString(
-                                  "pt-BR",
-                                )
+                                "pt-BR",
+                              )
                               : "Indefinida"}
                           </div>
                         </TableCell>
@@ -947,8 +931,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
               const LegalIcon = legalBasisConfig.icon;
               const activeConsents = consentRecords.filter(
                 (c) =>
-                  c.processingActivityId === activity.id &&
-                  c.status === "given",
+                  c.processingActivityId === activity.id
+                  && c.status === "given",
               ).length;
 
               return (
@@ -965,9 +949,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                       </div>
                       <Badge
                         variant="outline"
-                        className={
-                          activity.isActive ? "bg-green-50" : "bg-red-50"
-                        }
+                        className={activity.isActive ? "bg-green-50" : "bg-red-50"}
                       >
                         {activity.isActive ? "Ativo" : "Inativo"}
                       </Badge>
@@ -1068,10 +1050,9 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Direitos dos Titulares</AlertTitle>
             <AlertDescription>
-              Os titulares de dados têm direito ao acesso, correção,
-              portabilidade e eliminação de seus dados pessoais, conforme
-              previsto na LGPD. As solicitações devem ser atendidas em até 15
-              dias.
+              Os titulares de dados têm direito ao acesso, correção, portabilidade e eliminação de
+              seus dados pessoais, conforme previsto na LGPD. As solicitações devem ser atendidas em
+              até 15 dias.
             </AlertDescription>
           </Alert>
         </TabsContent>
@@ -1105,10 +1086,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
-                      {
-                        consentRecords.filter((c) => c.status === "given")
-                          .length
-                      }
+                      {consentRecords.filter((c) => c.status === "given")
+                        .length}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Consentimentos Ativos
@@ -1126,10 +1105,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
-                      {
-                        consentRecords.filter((c) => c.status === "withdrawn")
-                          .length
-                      }
+                      {consentRecords.filter((c) => c.status === "withdrawn")
+                        .length}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Consentimentos Retirados
@@ -1147,10 +1124,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
-                      {
-                        consentRecords.filter((c) => c.status === "expired")
-                          .length
-                      }
+                      {consentRecords.filter((c) => c.status === "expired")
+                        .length}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Consentimentos Expirados
@@ -1195,13 +1170,11 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                   </span>
                   {complianceScore < 90 && (
                     <span className="block mt-2 text-sm">
-                      •{" "}
-                      {consentRecords.filter((c) => c.status === "expired")
-                        .length > 0 && "Renovar consentimentos expirados"}
-                      •{" "}
-                      {consentRecords.filter((c) => c.status === "given")
-                        .length === 0 &&
-                        "Coletar consentimentos para atividades obrigatórias"}
+                      • {consentRecords.filter((c) => c.status === "expired")
+                            .length > 0 && "Renovar consentimentos expirados"}
+                      • {consentRecords.filter((c) => c.status === "given")
+                            .length === 0
+                        && "Coletar consentimentos para atividades obrigatórias"}
                     </span>
                   )}
                 </AlertDescription>
@@ -1241,8 +1214,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                A retirada do consentimento será efetiva imediatamente e pode
-                impactar a prestação de alguns serviços.
+                A retirada do consentimento será efetiva imediatamente e pode impactar a prestação
+                de alguns serviços.
               </AlertDescription>
             </Alert>
           </div>

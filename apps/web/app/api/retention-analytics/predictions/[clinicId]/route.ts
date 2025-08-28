@@ -5,10 +5,7 @@
 // =====================================================================================
 
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
-import {
-  ChurnModelType,
-  ChurnRiskLevel,
-} from "@/app/types/retention-analytics";
+import { ChurnModelType, ChurnRiskLevel } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
 import { safeParseNumber } from "@/src/types/analytics";
 import type { DatabaseRow, RetentionPrediction } from "@/src/types/analytics";
@@ -32,16 +29,16 @@ interface ChurnPredictionData {
 // Type guard for churn prediction data
 function isChurnPredictionData(obj: unknown): obj is ChurnPredictionData {
   return (
-    typeof obj === "object" &&
-    obj !== null &&
-    typeof (obj as ChurnPredictionData).patient_id === "string" &&
-    typeof (obj as ChurnPredictionData).churn_probability === "number" &&
-    ["low", "medium", "high", "critical"].includes(
+    typeof obj === "object"
+    && obj !== null
+    && typeof (obj as ChurnPredictionData).patient_id === "string"
+    && typeof (obj as ChurnPredictionData).churn_probability === "number"
+    && ["low", "medium", "high", "critical"].includes(
       (obj as ChurnPredictionData).risk_level,
-    ) &&
-    typeof (obj as ChurnPredictionData).days_since_last_visit === "number" &&
-    typeof (obj as ChurnPredictionData).predicted_churn_date === "string" &&
-    typeof (obj as ChurnPredictionData).prediction_date === "string"
+    )
+    && typeof (obj as ChurnPredictionData).days_since_last_visit === "number"
+    && typeof (obj as ChurnPredictionData).predicted_churn_date === "string"
+    && typeof (obj as ChurnPredictionData).prediction_date === "string"
   );
 }
 
@@ -81,7 +78,7 @@ const GeneratePredictionSchema = z
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -271,16 +268,14 @@ export async function GET(
           (p: ChurnPredictionData) => p.risk_level === ChurnRiskLevel.CRITICAL,
         ).length,
       },
-      average_churn_probability:
-        filteredPredictions.length > 0
-          ? filteredPredictions.reduce(
-              (sum: number, p: ChurnPredictionData) =>
-                sum + safeParseNumber(p.churn_probability),
-              0,
-            ) / filteredPredictions.length
-          : 0,
+      average_churn_probability: filteredPredictions.length > 0
+        ? filteredPredictions.reduce(
+          (sum: number, p: ChurnPredictionData) => sum + safeParseNumber(p.churn_probability),
+          0,
+        ) / filteredPredictions.length
+        : 0,
       high_risk_patients: filteredPredictions.filter((p: ChurnPredictionData) =>
-        ["high", "critical"].includes(p.risk_level),
+        ["high", "critical"].includes(p.risk_level)
       ).length,
       recent_predictions: filteredPredictions.filter(
         (p: ChurnPredictionData) => {
@@ -329,7 +324,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -427,7 +422,7 @@ export async function POST(
 
     if (validPatients.length !== targetPatientIds.length) {
       const invalidIds = targetPatientIds.filter(
-        (id) => !validPatients.some((p: { id: string }) => p.id === id),
+        (id) => !validPatients.some((p: { id: string; }) => p.id === id),
       );
       return NextResponse.json(
         {
@@ -494,9 +489,9 @@ export async function POST(
       model_type: modelType,
       high_risk_detected: results.filter((r: DatabaseRow) =>
         ["high", "critical"].includes(
-          (r as unknown as { prediction: { risk_level: string } }).prediction
+          (r as unknown as { prediction: { risk_level: string; }; }).prediction
             .risk_level || "unknown",
-        ),
+        )
       ).length,
     };
 
@@ -504,8 +499,7 @@ export async function POST(
       success: true,
       data: {
         predictions: results.map(
-          (r: DatabaseRow) =>
-            (r as unknown as { prediction: unknown }).prediction,
+          (r: DatabaseRow) => (r as unknown as { prediction: unknown; }).prediction,
         ),
         summary,
         errors: errors.length > 0 ? errors : undefined,

@@ -42,7 +42,7 @@ interface ApiContextType {
 
 const ApiContext = createContext<ApiContextType | undefined>(undefined);
 
-export function ApiProvider({ children }: { children: React.ReactNode }) {
+export function ApiProvider({ children }: { children: React.ReactNode; }) {
   const invalidateQueries = async (queryKey: string[]) => {
     await queryClient.invalidateQueries({ queryKey });
   };
@@ -85,11 +85,9 @@ export const QueryKeys = {
 
   // Patients queries
   patients: ["patients"] as const,
-  patientsList: (filters?: Record<string, unknown>) =>
-    ["patients", "list", filters] as const,
+  patientsList: (filters?: Record<string, unknown>) => ["patients", "list", filters] as const,
   patient: (id: string) => ["patients", id] as const,
-  patientAppointments: (id: string) =>
-    ["patients", id, "appointments"] as const,
+  patientAppointments: (id: string) => ["patients", id, "appointments"] as const,
 
   // Appointments queries
   appointments: ["appointments"] as const,
@@ -107,8 +105,7 @@ export const QueryKeys = {
   // Analytics queries
   analytics: ["analytics"] as const,
   dashboardStats: ["analytics", "dashboard"] as const,
-  appointmentStats: (period: string) =>
-    ["analytics", "appointments", period] as const,
+  appointmentStats: (period: string) => ["analytics", "appointments", period] as const,
 
   // System queries
   health: ["health"] as const,

@@ -4,9 +4,9 @@
  * Otimizado para ambiente healthcare com LGPD compliance
  */
 
-import type { Database } from "../../types/database.types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
+import type { Database } from "../../types/database.types";
 import { getRealtimeManager } from "../connection-manager";
 
 // Explicitly use database patient type (snake_case) not entities type (camelCase)
@@ -85,9 +85,7 @@ export function useRealtimePatients(
 
             case "UPDATE": {
               if (newData) {
-                return oldCache.map((patient) =>
-                  patient.id === newData.id ? newData : patient,
-                );
+                return oldCache.map((patient) => patient.id === newData.id ? newData : patient);
               }
               return oldCache;
             }
@@ -243,7 +241,7 @@ export function useOptimisticPatients(tenantId: string) {
             return oldCache;
           }
           return oldCache.map((patient) =>
-            patient.id === patientId ? { ...patient, ...updates } : patient,
+            patient.id === patientId ? { ...patient, ...updates } : patient
           );
         },
       );

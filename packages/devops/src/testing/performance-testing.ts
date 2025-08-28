@@ -29,8 +29,7 @@ export class PerformanceTester {
       workflows.map((workflow) => this.measureWorkflowPerformance(workflow)),
     );
 
-    const averageScore =
-      results.reduce((sum, r) => sum + r.score, 0) / results.length;
+    const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
 
     return {
       workflows: Object.fromEntries(workflows.map((w, i) => [w, results[i]])),
@@ -85,8 +84,7 @@ export class PerformanceTester {
     await this.simulateWorkflow(workflow);
     const duration = Date.now() - startTime;
 
-    const score =
-      duration < 2000 ? 9.9 : Math.max(0, 9.9 - (duration - 2000) / 100);
+    const score = duration < 2000 ? 9.9 : Math.max(0, 9.9 - (duration - 2000) / 100);
 
     return {
       duration,

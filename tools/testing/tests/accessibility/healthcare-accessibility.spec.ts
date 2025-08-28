@@ -220,9 +220,7 @@ test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", () => {
   });
 
   test.describe("Patients Portal Accessibility", () => {
-    test("should pass WCAG 2.1 AA compliance for patients page", async ({
-      page,
-    }) => {
+    test("should pass WCAG 2.1 AA compliance for patients page", async ({ page }) => {
       await page.goto("/dashboard/patients");
 
       // Run automated accessibility scan
@@ -233,9 +231,7 @@ test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", () => {
       expect(accessibilityScanResults.violations).toEqual([]);
     });
 
-    test("should support keyboard navigation in patients table", async ({
-      page,
-    }) => {
+    test("should support keyboard navigation in patients table", async ({ page }) => {
       await page.goto("/dashboard/patients");
 
       // Test skip links
@@ -302,9 +298,7 @@ test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", () => {
   });
 
   test.describe("Healthcare Forms Accessibility", () => {
-    test("should support Brazilian healthcare form patterns", async ({
-      page,
-    }) => {
+    test("should support Brazilian healthcare form patterns", async ({ page }) => {
       await page.goto("/dashboard/patients/new");
 
       await formTester.testBrazilianHealthcareForms();
@@ -318,9 +312,7 @@ test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", () => {
       await page.keyboard.type("(11) 99999-9999");
     });
 
-    test("should handle healthcare form errors accessibly", async ({
-      page,
-    }) => {
+    test("should handle healthcare form errors accessibly", async ({ page }) => {
       await page.goto("/dashboard/patients/new");
 
       // Trigger form validation errors
@@ -361,9 +353,7 @@ test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", () => {
   });
 
   test.describe("Portuguese Localization Accessibility", () => {
-    test("should provide proper Portuguese language declarations", async ({
-      page,
-    }) => {
+    test("should provide proper Portuguese language declarations", async ({ page }) => {
       await page.goto("/dashboard/patients");
 
       // Check HTML lang attribute
@@ -380,9 +370,7 @@ test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", () => {
       }
     });
 
-    test("should format Brazilian data correctly for screen readers", async ({
-      page,
-    }) => {
+    test("should format Brazilian data correctly for screen readers", async ({ page }) => {
       await page.goto("/dashboard/patients");
 
       // Test CPF formatting announcement
@@ -404,9 +392,7 @@ test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", () => {
   });
 
   test.describe("Healthcare-Specific Accessibility Patterns", () => {
-    test("should announce patient status changes appropriately", async ({
-      page,
-    }) => {
+    test("should announce patient status changes appropriately", async ({ page }) => {
       await page.goto("/dashboard/patients");
 
       // Test status badge accessibility
@@ -417,9 +403,7 @@ test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", () => {
       }
     });
 
-    test("should provide appropriate healthcare data context", async ({
-      page,
-    }) => {
+    test("should provide appropriate healthcare data context", async ({ page }) => {
       await page.goto("/dashboard/patients");
 
       // Test patient data table headers

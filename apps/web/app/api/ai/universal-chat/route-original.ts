@@ -78,10 +78,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Select system prompt based on interface
-    const systemPrompt =
-      interface_type === "external"
-        ? EXTERNAL_SYSTEM_PROMPT
-        : INTERNAL_SYSTEM_PROMPT;
+    const systemPrompt = interface_type === "external"
+      ? EXTERNAL_SYSTEM_PROMPT
+      : INTERNAL_SYSTEM_PROMPT;
 
     // Initialize AI engine for analysis
     const aiEngine = new HealthcareAIEngine(interface_type);
@@ -154,8 +153,7 @@ DADOS DISPONÍVEIS:
     return NextResponse.json(
       {
         error: "Erro interno do servidor",
-        message:
-          "Desculpe, ocorreu um erro. Tente novamente em alguns momentos.",
+        message: "Desculpe, ocorreu um erro. Tente novamente em alguns momentos.",
       },
       { status: 500 },
     );

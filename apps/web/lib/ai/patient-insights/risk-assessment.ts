@@ -97,7 +97,7 @@ export class RiskAssessmentIntegration {
    * Evaluate specific treatment against patient risk profile
    */
   private static analyzeTreatmentRisk(
-    treatment: { name: string; complexity: string; estimatedOutcome: number },
+    treatment: { name: string; complexity: string; estimatedOutcome: number; },
     riskAssessment: RiskAssessmentResult,
   ): {
     adjustedOutcome: number;
@@ -154,14 +154,14 @@ export class RiskAssessmentIntegration {
     for (const factor of criticalFactors) {
       // Cardiovascular risks
       if (
-        factor.factor.toLowerCase().includes("cardíac") ||
-        factor.factor.toLowerCase().includes("pressão")
+        factor.factor.toLowerCase().includes("cardíac")
+        || factor.factor.toLowerCase().includes("pressão")
       ) {
         riskFactors.push(`Risco cardiovascular: ${factor.factor}`);
 
         if (
-          treatment.name.toLowerCase().includes("anestesia") ||
-          treatment.complexity === "HIGH"
+          treatment.name.toLowerCase().includes("anestesia")
+          || treatment.complexity === "HIGH"
         ) {
           riskMultiplier *= 0.7;
           recommendations.push("Avaliação cardiológica pré-procedimento");
@@ -170,8 +170,8 @@ export class RiskAssessmentIntegration {
 
       // Respiratory risks
       if (
-        factor.factor.toLowerCase().includes("respirat") ||
-        factor.factor.toLowerCase().includes("oxigen")
+        factor.factor.toLowerCase().includes("respirat")
+        || factor.factor.toLowerCase().includes("oxigen")
       ) {
         riskFactors.push(`Risco respiratório: ${factor.factor}`);
 
@@ -183,8 +183,8 @@ export class RiskAssessmentIntegration {
 
       // Metabolic risks
       if (
-        factor.factor.toLowerCase().includes("diabet") ||
-        factor.factor.toLowerCase().includes("metab")
+        factor.factor.toLowerCase().includes("diabet")
+        || factor.factor.toLowerCase().includes("metab")
       ) {
         riskFactors.push(`Risco metabólico: ${factor.factor}`);
         recommendations.push("Controle glicêmico otimizado");
@@ -220,15 +220,13 @@ export class RiskAssessmentIntegration {
       COMPLEX: 0.5,
     };
 
-    riskMultiplier *=
-      complexityMultipliers[
-        treatment.complexity as keyof typeof complexityMultipliers
-      ] || 0.8;
+    riskMultiplier *= complexityMultipliers[
+      treatment.complexity as keyof typeof complexityMultipliers
+    ] || 0.8;
 
     // Determine treatment-specific risk level
     let treatmentRiskLevel: RiskLevel;
-    const adjustedScore =
-      riskAssessment.scoreBreakdown.overallScore * (2 - riskMultiplier);
+    const adjustedScore = riskAssessment.scoreBreakdown.overallScore * (2 - riskMultiplier);
 
     if (adjustedScore >= 86) {
       treatmentRiskLevel = RiskLevel.CRITICAL;
@@ -242,8 +240,8 @@ export class RiskAssessmentIntegration {
 
     // Final contraindication check
     if (
-      treatmentRiskLevel === RiskLevel.CRITICAL &&
-      treatment.complexity !== "LOW"
+      treatmentRiskLevel === RiskLevel.CRITICAL
+      && treatment.complexity !== "LOW"
     ) {
       contraindications.push(
         "Risco crítico impede realização de tratamento complexo",
@@ -271,7 +269,7 @@ export class RiskAssessmentIntegration {
     patientId: string,
     tenantId: string,
     vitalSigns: {
-      bloodPressure: { systolic: number; diastolic: number };
+      bloodPressure: { systolic: number; diastolic: number; };
       heartRate: number;
       temperature: number;
       respiratoryRate: number;
@@ -310,8 +308,8 @@ export class RiskAssessmentIntegration {
 
       // Blood pressure assessment
       if (
-        vitalSigns.bloodPressure.systolic > 180 ||
-        vitalSigns.bloodPressure.diastolic > 110
+        vitalSigns.bloodPressure.systolic > 180
+        || vitalSigns.bloodPressure.diastolic > 110
       ) {
         alerts.push("Crise hipertensiva detectada");
         recommendations.push("Intervenção médica imediata necessária");

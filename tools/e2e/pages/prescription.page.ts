@@ -3,7 +3,7 @@
  * Handles prescription management, drug interactions, and medication safety workflows
  */
 
-import { Page, Locator } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 import { BasePage } from "./base.page";
 
 export interface PrescriptionFormData {
@@ -215,11 +215,9 @@ export class PrescriptionPage extends BasePage {
           | "major"
           | "contraindicated";
         const drugs = JSON.parse(element.getAttribute("data-drugs") || "[]");
-        const description =
-          element.querySelector(".interaction-description")?.textContent || "";
-        const recommendation =
-          element.querySelector(".interaction-recommendation")?.textContent ||
-          "";
+        const description = element.querySelector(".interaction-description")?.textContent || "";
+        const recommendation = element.querySelector(".interaction-recommendation")?.textContent
+          || "";
 
         results.push({
           severity,
@@ -255,7 +253,9 @@ export class PrescriptionPage extends BasePage {
         timeout: 2000,
       });
       await this.page.click(
-        `[data-testid="medication-suggestion-${formData.medication.toLowerCase().replace(/\s+/g, "-")}"]`,
+        `[data-testid="medication-suggestion-${
+          formData.medication.toLowerCase().replace(/\s+/g, "-")
+        }"]`,
       );
     } catch {
       // Continue if no suggestions appear
@@ -335,7 +335,7 @@ export class PrescriptionPage extends BasePage {
    */
   async filterPrescriptions(filters: {
     status?: "active" | "completed" | "discontinued";
-    dateRange?: { start: string; end: string };
+    dateRange?: { start: string; end: string; };
     prescriber?: string;
     medication?: string;
   }): Promise<void> {
@@ -521,8 +521,7 @@ export class PrescriptionPage extends BasePage {
       }
 
       return {
-        isControlledSubstance:
-          complianceData.getAttribute("data-controlled") === "true",
+        isControlledSubstance: complianceData.getAttribute("data-controlled") === "true",
         schedule: complianceData.getAttribute("data-schedule") || "",
         complianceStatus: complianceData.getAttribute("data-status") as
           | "compliant"

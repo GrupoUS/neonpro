@@ -105,7 +105,7 @@ export const servicesRoutes = new Hono()
     try {
       // Build query with filters
       let query = supabase
-        .from('services')
+        .from("services")
         .select(`
           id,
           name,
@@ -131,34 +131,34 @@ export const servicesRoutes = new Hono()
         query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
       }
       if (category) {
-        query = query.eq('category', category);
+        query = query.eq("category", category);
       }
       if (isActive !== undefined) {
-        query = query.eq('is_active', isActive);
+        query = query.eq("is_active", isActive);
       }
       if (profession) {
-        query = query.contains('required_professions', [profession]);
+        query = query.contains("required_professions", [profession]);
       }
       if (priceMin !== undefined) {
-        query = query.gte('price', priceMin);
+        query = query.gte("price", priceMin);
       }
       if (priceMax !== undefined) {
-        query = query.lte('price', priceMax);
+        query = query.lte("price", priceMax);
       }
 
       // Apply pagination
       const offset = (page - 1) * limit;
-      query = query.range(offset, offset + limit - 1).order('created_at', { ascending: false });
+      query = query.range(offset, offset + limit - 1).order("created_at", { ascending: false });
 
       const { data: services, error, count } = await query;
 
       if (error) {
-        console.error('Error fetching services:', error);
+        console.error("Error fetching services:", error);
         return c.json(
           {
             success: false,
-            error: 'DATABASE_ERROR',
-            message: 'Erro ao buscar serviços',
+            error: "DATABASE_ERROR",
+            message: "Erro ao buscar serviços",
           },
           HTTP_STATUS.INTERNAL_SERVER_ERROR,
         );
@@ -185,15 +185,17 @@ export const servicesRoutes = new Hono()
         updatedAt: service.updated_at,
       })) || [];
 
-      return c.json<ApiResponse<{
-        services: typeof transformedServices;
-        pagination: {
-          page: number;
-          limit: number;
-          total: number;
-          totalPages: number;
-        };
-      }>>({
+      return c.json<
+        ApiResponse<{
+          services: typeof transformedServices;
+          pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+          };
+        }>
+      >({
         success: true,
         data: {
           services: transformedServices,
@@ -206,16 +208,16 @@ export const servicesRoutes = new Hono()
         },
       });
     } catch (error) {
-      console.error('Error fetching services:', error);
+      console.error("Error fetching services:", error);
       return c.json<ApiResponse<null>>(
         {
           success: false,
           error: {
-            code: 'SERVICES_FETCH_ERROR',
-            message: 'Erro ao buscar serviços',
+            code: "SERVICES_FETCH_ERROR",
+            message: "Erro ao buscar serviços",
           },
         },
-        HTTP_STATUS.INTERNAL_SERVER_ERROR
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
       );
     }
   })
@@ -225,7 +227,7 @@ export const servicesRoutes = new Hono()
 
     try {
       const { data: service, error } = await supabase
-        .from('services')
+        .from("services")
         .select(`
           id,
           name,
@@ -245,7 +247,7 @@ export const servicesRoutes = new Hono()
           created_at,
           updated_at
         `)
-        .eq('id', id)
+        .eq("id", id)
         .single();
 
       if (error || !service) {
@@ -253,11 +255,11 @@ export const servicesRoutes = new Hono()
           {
             success: false,
             error: {
-              code: 'SERVICE_NOT_FOUND',
-              message: 'Serviço não encontrado',
+              code: "SERVICE_NOT_FOUND",
+              message: "Serviço não encontrado",
             },
           },
-          HTTP_STATUS.NOT_FOUND
+          HTTP_STATUS.NOT_FOUND,
         );
       }
 
@@ -302,7 +304,7 @@ export const servicesRoutes = new Hono()
 
     try {
       const { data: service, error } = await supabase
-        .from('services')
+        .from("services")
         .insert({
           name: serviceData.name,
           description: serviceData.description,
@@ -327,12 +329,12 @@ export const servicesRoutes = new Hono()
           {
             success: false,
             error: {
-              code: 'SERVICE_CREATION_FAILED',
-              message: 'Erro ao criar serviço',
+              code: "SERVICE_CREATION_FAILED",
+              message: "Erro ao criar serviço",
               details: error.message,
             },
           },
-          HTTP_STATUS.BAD_REQUEST
+          HTTP_STATUS.BAD_REQUEST,
         );
       }
 
@@ -380,26 +382,42 @@ export const servicesRoutes = new Hono()
     try {
       // Build update object with only provided fields
       const updateFields: Record<string, any> = {};
-      
+
       if (updateData.name !== undefined) updateFields.name = updateData.name;
       if (updateData.description !== undefined) updateFields.description = updateData.description;
       if (updateData.category !== undefined) updateFields.category = updateData.category;
       if (updateData.duration !== undefined) updateFields.duration = updateData.duration;
       if (updateData.price !== undefined) updateFields.price = updateData.price;
       if (updateData.isActive !== undefined) updateFields.is_active = updateData.isActive;
-      if (updateData.anvisaCategory !== undefined) updateFields.anvisa_category = updateData.anvisaCategory;
-      if (updateData.anvisaRegistration !== undefined) updateFields.anvisa_registration = updateData.anvisaRegistration;
-      if (updateData.requiresLicense !== undefined) updateFields.requires_license = updateData.requiresLicense;
-      if (updateData.requiredProfessions !== undefined) updateFields.required_professions = updateData.requiredProfessions;
-      if (updateData.maxBookingAdvance !== undefined) updateFields.max_booking_advance = updateData.maxBookingAdvance;
-      if (updateData.cancellationPolicy !== undefined) updateFields.cancellation_policy = updateData.cancellationPolicy;
-      if (updateData.contraindications !== undefined) updateFields.contraindications = updateData.contraindications;
-      if (updateData.aftercareInstructions !== undefined) updateFields.aftercare_instructions = updateData.aftercareInstructions;
+      if (updateData.anvisaCategory !== undefined) {
+        updateFields.anvisa_category = updateData.anvisaCategory;
+      }
+      if (updateData.anvisaRegistration !== undefined) {
+        updateFields.anvisa_registration = updateData.anvisaRegistration;
+      }
+      if (updateData.requiresLicense !== undefined) {
+        updateFields.requires_license = updateData.requiresLicense;
+      }
+      if (updateData.requiredProfessions !== undefined) {
+        updateFields.required_professions = updateData.requiredProfessions;
+      }
+      if (updateData.maxBookingAdvance !== undefined) {
+        updateFields.max_booking_advance = updateData.maxBookingAdvance;
+      }
+      if (updateData.cancellationPolicy !== undefined) {
+        updateFields.cancellation_policy = updateData.cancellationPolicy;
+      }
+      if (updateData.contraindications !== undefined) {
+        updateFields.contraindications = updateData.contraindications;
+      }
+      if (updateData.aftercareInstructions !== undefined) {
+        updateFields.aftercare_instructions = updateData.aftercareInstructions;
+      }
 
       const { data: service, error } = await supabase
-        .from('services')
+        .from("services")
         .update(updateFields)
-        .eq('id', id)
+        .eq("id", id)
         .select()
         .single();
 
@@ -408,11 +426,11 @@ export const servicesRoutes = new Hono()
           {
             success: false,
             error: {
-              code: 'SERVICE_NOT_FOUND',
-              message: 'Serviço não encontrado',
+              code: "SERVICE_NOT_FOUND",
+              message: "Serviço não encontrado",
             },
           },
-          HTTP_STATUS.NOT_FOUND
+          HTTP_STATUS.NOT_FOUND,
         );
       }
 
@@ -458,11 +476,11 @@ export const servicesRoutes = new Hono()
 
     try {
       const { data: service, error } = await supabase
-        .from('services')
+        .from("services")
         .update({ is_active: false, deleted_at: new Date().toISOString() })
-        .eq('id', id)
-        .eq('is_active', true) // Only delete active services
-        .select('id')
+        .eq("id", id)
+        .eq("is_active", true) // Only delete active services
+        .select("id")
         .single();
 
       if (error || !service) {
@@ -470,15 +488,15 @@ export const servicesRoutes = new Hono()
           {
             success: false,
             error: {
-              code: 'SERVICE_NOT_FOUND',
-              message: 'Serviço não encontrado ou já foi removido',
+              code: "SERVICE_NOT_FOUND",
+              message: "Serviço não encontrado ou já foi removido",
             },
           },
-          HTTP_STATUS.NOT_FOUND
+          HTTP_STATUS.NOT_FOUND,
         );
       }
 
-      return c.json<ApiResponse<{ id: string }>>({
+      return c.json<ApiResponse<{ id: string; }>>({
         success: true,
         data: { id: service.id },
         message: "Serviço removido com sucesso",
@@ -506,31 +524,31 @@ export const servicesRoutes = new Hono()
           {
             success: false,
             error: {
-              code: 'INVALID_CATEGORY',
-              message: 'Categoria inválida',
+              code: "INVALID_CATEGORY",
+              message: "Categoria inválida",
             },
           },
-          HTTP_STATUS.BAD_REQUEST
+          HTTP_STATUS.BAD_REQUEST,
         );
       }
 
       const { data: services, error } = await supabase
-        .from('services')
-        .select('id, name, description, category, duration, price, is_active, created_at')
-        .eq('category', category)
-        .eq('is_active', true)
-        .order('name');
+        .from("services")
+        .select("id, name, description, category, duration, price, is_active, created_at")
+        .eq("category", category)
+        .eq("is_active", true)
+        .order("name");
 
       if (error) {
         return c.json<ApiResponse<null>>(
           {
             success: false,
             error: {
-              code: 'DATABASE_ERROR',
-              message: 'Erro ao buscar serviços',
+              code: "DATABASE_ERROR",
+              message: "Erro ao buscar serviços",
             },
           },
-          HTTP_STATUS.INTERNAL_SERVER_ERROR
+          HTTP_STATUS.INTERNAL_SERVER_ERROR,
         );
       }
 
@@ -545,11 +563,13 @@ export const servicesRoutes = new Hono()
         createdAt: service.created_at,
       }));
 
-      return c.json<ApiResponse<{
-        category: string;
-        services: typeof transformedServices;
-        count: number;
-      }>>({
+      return c.json<
+        ApiResponse<{
+          category: string;
+          services: typeof transformedServices;
+          count: number;
+        }>
+      >({
         success: true,
         data: {
           category,
@@ -575,7 +595,7 @@ export const servicesRoutes = new Hono()
 
     try {
       const { data: service, error } = await supabase
-        .from('services')
+        .from("services")
         .select(`
           id,
           name,
@@ -592,8 +612,8 @@ export const servicesRoutes = new Hono()
             certifications
           )
         `)
-        .eq('id', id)
-        .eq('is_active', true)
+        .eq("id", id)
+        .eq("is_active", true)
         .single();
 
       if (error || !service) {
@@ -601,20 +621,20 @@ export const servicesRoutes = new Hono()
           {
             success: false,
             error: {
-              code: 'SERVICE_NOT_FOUND',
-              message: 'Serviço não encontrado',
+              code: "SERVICE_NOT_FOUND",
+              message: "Serviço não encontrado",
             },
           },
-          HTTP_STATUS.NOT_FOUND
+          HTTP_STATUS.NOT_FOUND,
         );
       }
 
       // Calculate compliance status based on service data
       const compliance = service.service_compliance?.[0] || {};
-      const isAnvisaCompliant = service.anvisa_category !== 'none' && 
-                               service.anvisa_registration && 
-                               compliance.registration_valid !== false;
-      
+      const isAnvisaCompliant = service.anvisa_category !== "none"
+        && service.anvisa_registration
+        && compliance.registration_valid !== false;
+
       const complianceData = {
         serviceId: service.id,
         serviceName: service.name,

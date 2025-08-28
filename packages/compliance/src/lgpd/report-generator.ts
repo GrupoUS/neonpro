@@ -88,8 +88,7 @@ export class LGPDReportGenerator {
     const reportId = `lgpd_report_${Date.now()}`;
 
     // Validate constitutional compliance
-    const constitutionalValidation =
-      await this.validateConstitutionalCompliance();
+    const constitutionalValidation = await this.validateConstitutionalCompliance();
 
     // Generate report summary
     const summary = await this.generateSummary();
@@ -151,8 +150,7 @@ export class LGPDReportGenerator {
     return [
       {
         category: "Data Protection",
-        description:
-          "All personal data processing activities comply with LGPD requirements",
+        description: "All personal data processing activities comply with LGPD requirements",
         severity: "low" as const,
         recommendation: "Continue current practices",
         constitutional_impact: false,

@@ -35,9 +35,8 @@ export default function LoginPage() {
         <div className="relative z-20 mt-auto space-y-8">
           <blockquote className="space-y-4">
             <p className="font-medium text-foreground text-lg leading-relaxed">
-              &ldquo;Tecnologia de ponta para clínicas estéticas brasileiras.
-              Gestão completa, segura e em total conformidade com LGPD, ANVISA e
-              CFM.&rdquo;
+              &ldquo;Tecnologia de ponta para clínicas estéticas brasileiras. Gestão completa,
+              segura e em total conformidade com LGPD, ANVISA e CFM.&rdquo;
             </p>
             <footer className="font-medium text-muted-foreground">
               Dr. Ana Carolina Silva, Clínica Estética Premium - São Paulo
@@ -96,8 +95,8 @@ export default function LoginPage() {
               Bem-vindo de Volta
             </h1>
             <p className="text-muted-foreground leading-relaxed">
-              Acesse sua conta NeonPro Healthcare para gerenciar sua clínica com
-              segurança e eficiência
+              Acesse sua conta NeonPro Healthcare para gerenciar sua clínica com segurança e
+              eficiência
             </p>
           </div>
 
@@ -134,8 +133,8 @@ export default function LoginPage() {
             {/* Security Notice */}
             <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 text-center">
               <p className="text-foreground/80 text-xs">
-                🔒 Conexão segura com criptografia de nível bancário • Dados
-                protegidos conforme LGPD • Auditoria contínua de segurança
+                🔒 Conexão segura com criptografia de nível bancário • Dados protegidos conforme
+                LGPD • Auditoria contínua de segurança
               </p>
             </div>
           </div>

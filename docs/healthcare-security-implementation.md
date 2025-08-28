@@ -32,7 +32,11 @@ This document provides a comprehensive guide to the healthcare security infrastr
 ### 1. Basic Implementation
 
 ```typescript
-import { createHealthcareAPISecurityStack, SecurityEnvironment, EndpointSecurityLevel } from "@/middleware/security";
+import {
+  createHealthcareAPISecurityStack,
+  EndpointSecurityLevel,
+  SecurityEnvironment,
+} from "@/middleware/security";
 
 // Create security stack
 const { middlewares, orchestrator, validationMiddlewares } = createHealthcareAPISecurityStack(
@@ -42,7 +46,7 @@ const { middlewares, orchestrator, validationMiddlewares } = createHealthcareAPI
     jwtSecret: process.env.JWT_SECRET,
     redisClient: redisClient,
     auditLogger: auditLogger,
-  }
+  },
 );
 
 // Apply to your Hono app
@@ -58,16 +62,16 @@ middlewares.forEach((middleware) => {
 app.use("/api/v1/patients/*", validationMiddlewares.patientRegistration);
 app.post("/api/v1/patients", async (c) => {
   // Validated data is available in context
-  const validatedData = c.get('validatedData');
-  const warnings = c.get('validationWarnings');
-  
+  const validatedData = c.get("validatedData");
+  const warnings = c.get("validationWarnings");
+
   // Process patient registration...
 });
 
 // Healthcare provider registration
 app.use("/api/v1/professionals/*", validationMiddlewares.providerRegistration);
 app.post("/api/v1/professionals", async (c) => {
-  const validatedData = c.get('validatedData');
+  const validatedData = c.get("validatedData");
   // validatedData includes validated CPF, professional licenses, etc.
 });
 ```
@@ -78,19 +82,19 @@ app.post("/api/v1/professionals", async (c) => {
 // Emergency access with enhanced audit
 app.post("/api/emergency/v1/patients/:id/access", async (c) => {
   // Check emergency headers
-  const emergencyType = c.req.header('X-Emergency-Access-Type');
-  const justification = c.req.header('X-Emergency-Justification');
-  
+  const emergencyType = c.req.header("X-Emergency-Access-Type");
+  const justification = c.req.header("X-Emergency-Justification");
+
   if (!emergencyType || !justification) {
     return c.json({
       error: "EMERGENCY_HEADERS_REQUIRED",
       requiredHeaders: [
         "X-Emergency-Access-Type: medical|life_threatening|urgent_care",
-        "X-Emergency-Justification: detailed justification"
-      ]
+        "X-Emergency-Justification: detailed justification",
+      ],
     }, 400);
   }
-  
+
   // Emergency access is automatically logged and audited
   // Access patient data with emergency context
 });
@@ -128,20 +132,24 @@ const formattedCNS = CNSValidator.format("123456789012345"); // Returns: 123 456
 ### Professional License Validation
 
 ```typescript
-import { HealthcareLicenseValidator, BrazilianHealthcareLicense, BrazilianState } from "@/middleware/security";
+import {
+  BrazilianHealthcareLicense,
+  BrazilianState,
+  HealthcareLicenseValidator,
+} from "@/middleware/security";
 
 // Validate professional license
 const isValidLicense = HealthcareLicenseValidator.validate(
-  "123456",                           // License number
-  BrazilianHealthcareLicense.CRM,     // License type
-  BrazilianState.SP                   // State
+  "123456", // License number
+  BrazilianHealthcareLicense.CRM, // License type
+  BrazilianState.SP, // State
 );
 
 // Format license for display
 const formattedLicense = HealthcareLicenseValidator.formatLicense(
   "123456",
   BrazilianHealthcareLicense.CRM,
-  BrazilianState.SP
+  BrazilianState.SP,
 ); // Returns: "CRM/SP 123456"
 ```
 
@@ -175,15 +183,15 @@ interface HealthcareJWTPayload {
 const emergencyBypassHeader = JSON.stringify({
   type: "medical",
   justification: "Patient in critical condition - requires immediate access to medical records",
-  patientId: "patient-123"
+  patientId: "patient-123",
 });
 
 // Set emergency access header
 fetch("/api/v1/patients/123/medical-records", {
   headers: {
     "Authorization": `Bearer ${token}`,
-    "X-Emergency-Access": emergencyBypassHeader
-  }
+    "X-Emergency-Access": emergencyBypassHeader,
+  },
 });
 ```
 
@@ -192,8 +200,8 @@ fetch("/api/v1/patients/123/medical-records", {
 ```typescript
 // LGPD consent header
 app.use("/api/v1/patients/*", async (c, next) => {
-  const lgpdConsent = c.req.header('X-LGPD-Consent');
-  
+  const lgpdConsent = c.req.header("X-LGPD-Consent");
+
   if (!lgpdConsent) {
     return c.json({
       error: "LGPD_CONSENT_REQUIRED",
@@ -202,11 +210,11 @@ app.use("/api/v1/patients/*", async (c, next) => {
         dataAccess: "https://neonpro.health/lgpd/data-access",
         dataCorrection: "https://neonpro.health/lgpd/data-correction",
         dataPortability: "https://neonpro.health/lgpd/data-portability",
-        dataErasure: "https://neonpro.health/lgpd/data-erasure"
-      }
+        dataErasure: "https://neonpro.health/lgpd/data-erasure",
+      },
     }, 400);
   }
-  
+
   await next();
 });
 ```
@@ -290,21 +298,21 @@ const customSecurityConfig = createHealthcareAPISecurityStack(
       log: async (entry) => {
         // Send to your audit system
         await auditSystem.log(entry);
-      }
+      },
     },
     monitoringSystem: {
       sendMetric: async (metric) => {
         // Send to monitoring system (Prometheus, CloudWatch, etc.)
         await monitoring.send(metric);
-      }
+      },
     },
     emergencyNotificationSystem: {
       sendAlert: async (alert) => {
         // Send emergency alerts (PagerDuty, Slack, etc.)
         await emergencyAlerts.send(alert);
-      }
-    }
-  }
+      },
+    },
+  },
 );
 ```
 
@@ -350,9 +358,9 @@ const emergencyResponse = await fetch("/api/emergency/v1/patients/123", {
     "X-Emergency-Access": JSON.stringify({
       type: "medical",
       justification: "Patient critical condition test",
-      patientId: "123"
-    })
-  }
+      patientId: "123",
+    }),
+  },
 });
 
 // Test rate limiting
@@ -368,8 +376,8 @@ const patientResponse = await fetch("/api/v1/patients", {
   body: JSON.stringify({
     cpf: "123.456.789-09", // Valid CPF format
     fullName: "João Silva",
-    dateOfBirth: "1990-01-15"
-  })
+    dateOfBirth: "1990-01-15",
+  }),
 });
 ```
 
@@ -378,6 +386,7 @@ const patientResponse = await fetch("/api/v1/patients", {
 ### From Legacy Security
 
 1. **Remove old middleware**:
+
 ```typescript
 // Remove these lines:
 // app.use("*", auditMiddleware());
@@ -386,6 +395,7 @@ const patientResponse = await fetch("/api/v1/patients", {
 ```
 
 2. **Add healthcare security stack**:
+
 ```typescript
 // Add this:
 const { middlewares } = createHealthcareAPISecurityStack(/* config */);
@@ -393,6 +403,7 @@ middlewares.forEach(middleware => app.use("*", middleware));
 ```
 
 3. **Update route validation**:
+
 ```typescript
 // Old way:
 app.post("/patients", validatePatient, handler);

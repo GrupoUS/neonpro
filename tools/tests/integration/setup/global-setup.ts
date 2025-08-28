@@ -3,8 +3,8 @@
  * Handles database setup, external services, and global test environment
  */
 
-import { execSync } from "node:child_process";
 import { createClient } from "@supabase/supabase-js";
+import { execSync } from "node:child_process";
 
 // Global setup function
 export default async function globalSetup() {

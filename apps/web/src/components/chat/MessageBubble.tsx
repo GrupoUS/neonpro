@@ -6,13 +6,13 @@
 
 "use client";
 
-import React, { useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/types/chat";
-import { SenderType, MessageType, AIResponseData } from "@/types/chat";
+import { AIResponseData, MessageType, SenderType } from "@/types/chat";
+import React, { useCallback, useState } from "react";
 
 // Icons (would be imported from lucide-react or similar)
-const CheckIcon = ({ className }: { className?: string }) => (
+const CheckIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-3 h-3", className)}
     fill="none"
@@ -28,7 +28,7 @@ const CheckIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const CheckCheckIcon = ({ className }: { className?: string }) => (
+const CheckCheckIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-3 h-3", className)}
     fill="none"
@@ -50,7 +50,7 @@ const CheckCheckIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const ClockIcon = ({ className }: { className?: string }) => (
+const ClockIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-3 h-3", className)}
     fill="none"
@@ -74,7 +74,7 @@ const ClockIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const AlertTriangleIcon = ({ className }: { className?: string }) => (
+const AlertTriangleIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-3 h-3", className)}
     fill="none"
@@ -108,7 +108,7 @@ const AlertTriangleIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const BotIcon = ({ className }: { className?: string }) => (
+const BotIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -161,7 +161,7 @@ const BotIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const UserIcon = ({ className }: { className?: string }) => (
+const UserIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -185,7 +185,7 @@ const UserIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const StethoscopeIcon = ({ className }: { className?: string }) => (
+const StethoscopeIcon = ({ className }: { className?: string; }) => (
   <svg
     className={cn("w-4 h-4", className)}
     fill="none"
@@ -226,9 +226,8 @@ export default function MessageBubble({
   const isOwnMessage = message.sender_id === currentUserId;
   const isAIMessage = message.sender_type === "ai_assistant";
   const isSystemMessage = message.sender_type === "system";
-  const isEmergencyMessage =
-    message.metadata?.priority === "critical" ||
-    message.content.emergency_data?.severity_level === "red";
+  const isEmergencyMessage = message.metadata?.priority === "critical"
+    || message.content.emergency_data?.severity_level === "red";
 
   // Get sender info and styling
   const getSenderInfo = useCallback(() => {
@@ -415,16 +414,16 @@ export default function MessageBubble({
         <div
           className={cn(
             "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm",
-            isAIMessage &&
-              "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400",
-            message.sender_type === "doctor" &&
-              "bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400",
-            message.sender_type === "nurse" &&
-              "bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-400",
-            message.sender_type === "staff" &&
-              "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400",
-            message.sender_type === "patient" &&
-              "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
+            isAIMessage
+              && "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400",
+            message.sender_type === "doctor"
+              && "bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400",
+            message.sender_type === "nurse"
+              && "bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-400",
+            message.sender_type === "staff"
+              && "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400",
+            message.sender_type === "patient"
+              && "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
           )}
         >
           {React.createElement(senderInfo.icon, { className: "w-4 h-4" })}
@@ -484,10 +483,9 @@ export default function MessageBubble({
                   <div className="flex items-center gap-2 text-xs text-blue-700 dark:text-blue-300">
                     <BotIcon className="w-3 h-3" />
                     <span>
-                      IA • Confiança:{" "}
-                      {Math.round(
-                        (message.content.ai_response.confidence_score || 0) *
-                          100,
+                      IA • Confiança: {Math.round(
+                        (message.content.ai_response.confidence_score || 0)
+                          * 100,
                       )}
                       %
                     </span>
@@ -501,48 +499,45 @@ export default function MessageBubble({
                 </div>
 
                 {/* AI Suggested Actions */}
-                {message.content.ai_response.suggested_actions &&
-                  message.content.ai_response.suggested_actions.length > 0 && (
-                    <div className="space-y-1">
-                      <div className="text-xs font-medium text-blue-800 dark:text-blue-200">
-                        Ações sugeridas:
-                      </div>
-                      {message.content.ai_response.suggested_actions.map(
-                        (action, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => handleAction(action.action_type)}
-                            className="block w-full text-left text-xs p-2 bg-blue-100 dark:bg-blue-800 rounded hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
-                          >
-                            <div className="font-medium">
-                              {action.description}
-                            </div>
-                            {action.priority !== "low" && (
-                              <div className="text-blue-600 dark:text-blue-300">
-                                Prioridade:{" "}
-                                {action.priority === "urgent"
-                                  ? "Urgente"
-                                  : action.priority === "high"
-                                    ? "Alta"
-                                    : "Média"}
-                              </div>
-                            )}
-                          </button>
-                        ),
-                      )}
+                {message.content.ai_response.suggested_actions
+                  && message.content.ai_response.suggested_actions.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="text-xs font-medium text-blue-800 dark:text-blue-200">
+                      Ações sugeridas:
                     </div>
-                  )}
+                    {message.content.ai_response.suggested_actions.map(
+                      (action, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => handleAction(action.action_type)}
+                          className="block w-full text-left text-xs p-2 bg-blue-100 dark:bg-blue-800 rounded hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
+                        >
+                          <div className="font-medium">
+                            {action.description}
+                          </div>
+                          {action.priority !== "low" && (
+                            <div className="text-blue-600 dark:text-blue-300">
+                              Prioridade: {action.priority === "urgent"
+                                ? "Urgente"
+                                : action.priority === "high"
+                                ? "Alta"
+                                : "Média"}
+                            </div>
+                          )}
+                        </button>
+                      ),
+                    )}
+                  </div>
+                )}
 
                 {/* Expanded AI Details */}
                 {expandedAI && (
                   <div className="text-xs space-y-2 pt-2 border-t border-blue-200 dark:border-blue-700">
                     <div>
-                      <strong>Modelo:</strong>{" "}
-                      {message.content.ai_response.ai_model}
+                      <strong>Modelo:</strong> {message.content.ai_response.ai_model}
                     </div>
                     <div>
-                      <strong>Tipo de Resposta:</strong>{" "}
-                      {message.content.ai_response.response_type}
+                      <strong>Tipo de Resposta:</strong> {message.content.ai_response.response_type}
                     </div>
                     <div>
                       <strong>Validação Médica:</strong>{" "}
@@ -554,10 +549,8 @@ export default function MessageBubble({
                       ?.should_escalate && (
                       <div className="p-2 bg-orange-100 dark:bg-orange-900 rounded border border-orange-300 dark:border-orange-700">
                         <strong>Recomendação:</strong>{" "}
-                        {
-                          message.content.ai_response.escalation_recommendation
-                            .reasoning
-                        }
+                        {message.content.ai_response.escalation_recommendation
+                          .reasoning}
                       </div>
                     )}
                   </div>

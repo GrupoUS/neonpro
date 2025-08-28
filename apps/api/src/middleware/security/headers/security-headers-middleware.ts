@@ -4,7 +4,7 @@
  *
  * Production-ready security headers for healthcare applications:
  * - HSTS (HTTP Strict Transport Security)
- * - CSP (Content Security Policy) 
+ * - CSP (Content Security Policy)
  * - Brazilian healthcare compliance headers
  * - LGPD privacy headers
  * - Anti-clickjacking protection
@@ -18,7 +18,7 @@ import type { Context, MiddlewareHandler } from "hono";
 export enum SecurityLevel {
   DEVELOPMENT = "development",
   TESTING = "testing",
-  STAGING = "staging", 
+  STAGING = "staging",
   PRODUCTION = "production",
   HIGH_SECURITY = "high_security", // For critical healthcare data
 }
@@ -38,7 +38,7 @@ export enum HealthcareEndpointType {
 interface SecurityHeadersConfig {
   level: SecurityLevel;
   endpointType: HealthcareEndpointType;
-  
+
   // HSTS Configuration
   hsts: {
     enabled: boolean;
@@ -46,7 +46,7 @@ interface SecurityHeadersConfig {
     includeSubDomains: boolean;
     preload: boolean;
   };
-  
+
   // Content Security Policy
   csp: {
     enabled: boolean;
@@ -69,40 +69,44 @@ interface SecurityHeadersConfig {
     };
     reportUri?: string;
   };
-  
+
   // Frame Protection
   frameProtection: {
     enabled: boolean;
     policy: "DENY" | "SAMEORIGIN" | "ALLOW-FROM";
     allowFrom?: string[];
   };
-  
+
   // XSS Protection
   xssProtection: {
     enabled: boolean;
     mode: "block" | "report";
     reportUri?: string;
   };
-  
+
   // Content Type Options
   noSniff: boolean;
-  
+
   // Referrer Policy
-  referrerPolicy: "no-referrer" | "same-origin" | "strict-origin" | "strict-origin-when-cross-origin";
-  
+  referrerPolicy:
+    | "no-referrer"
+    | "same-origin"
+    | "strict-origin"
+    | "strict-origin-when-cross-origin";
+
   // Permissions Policy
   permissionsPolicy: {
     enabled: boolean;
     policies: Record<string, string[]>;
   };
-  
+
   // Brazilian Healthcare Specific Headers
   lgpdCompliance: {
     enabled: boolean;
     privacyPolicyUrl?: string;
     dataControllerInfo?: string;
   };
-  
+
   // Healthcare Emergency Context
   emergencyAccess: {
     enabled: boolean;
@@ -176,7 +180,7 @@ const SECURITY_CONFIGURATIONS: Record<string, SecurityHeadersConfig> = {
       auditRequired: true,
     },
   },
-  
+
   // Moderate security for patient portal
   patient_portal_production: {
     level: SecurityLevel.PRODUCTION,
@@ -239,7 +243,7 @@ const SECURITY_CONFIGURATIONS: Record<string, SecurityHeadersConfig> = {
       auditRequired: false,
     },
   },
-  
+
   // Emergency access configuration
   emergency_access_production: {
     level: SecurityLevel.PRODUCTION,
@@ -258,7 +262,11 @@ const SECURITY_CONFIGURATIONS: Record<string, SecurityHeadersConfig> = {
         scriptSrc: ["'self'", "'unsafe-inline'"], // More relaxed for emergency
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'", "https://api.neonpro.health", "https://emergency-api.neonpro.health"],
+        connectSrc: [
+          "'self'",
+          "https://api.neonpro.health",
+          "https://emergency-api.neonpro.health",
+        ],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
@@ -300,7 +308,7 @@ const SECURITY_CONFIGURATIONS: Record<string, SecurityHeadersConfig> = {
       auditRequired: true,
     },
   },
-  
+
   // Development configuration
   development: {
     level: SecurityLevel.DEVELOPMENT,
@@ -360,7 +368,7 @@ const SECURITY_CONFIGURATIONS: Record<string, SecurityHeadersConfig> = {
  */
 export class SecurityHeadersManager {
   private config: SecurityHeadersConfig;
-  
+
   constructor(configName: string = "development") {
     this.config = SECURITY_CONFIGURATIONS[configName] || SECURITY_CONFIGURATIONS.development;
   }
@@ -371,164 +379,169 @@ export class SecurityHeadersManager {
   applySecurityHeaders(c: Context): void {
     // HSTS (HTTP Strict Transport Security)
     this.applyHSTS(c);
-    
+
     // Content Security Policy
     this.applyCSP(c);
-    
+
     // Frame Protection (X-Frame-Options)
     this.applyFrameProtection(c);
-    
+
     // XSS Protection
     this.applyXSSProtection(c);
-    
+
     // Content Type Options
     this.applyContentTypeOptions(c);
-    
+
     // Referrer Policy
     this.applyReferrerPolicy(c);
-    
+
     // Permissions Policy
     this.applyPermissionsPolicy(c);
-    
+
     // LGPD Compliance Headers
     this.applyLGPDHeaders(c);
-    
+
     // Healthcare Emergency Access Headers
     this.applyEmergencyAccessHeaders(c);
-    
+
     // Additional security headers
     this.applyAdditionalSecurityHeaders(c);
   }
 
   private applyHSTS(c: Context): void {
-    if (this.config.hsts.enabled && c.req.url.startsWith('https://')) {
+    if (this.config.hsts.enabled && c.req.url.startsWith("https://")) {
       let hstsValue = `max-age=${this.config.hsts.maxAge}`;
-      if (this.config.hsts.includeSubDomains) hstsValue += '; includeSubDomains';
-      if (this.config.hsts.preload) hstsValue += '; preload';
-      
-      c.header('Strict-Transport-Security', hstsValue);
+      if (this.config.hsts.includeSubDomains) hstsValue += "; includeSubDomains";
+      if (this.config.hsts.preload) hstsValue += "; preload";
+
+      c.header("Strict-Transport-Security", hstsValue);
     }
   }
 
   private applyCSP(c: Context): void {
     if (!this.config.csp.enabled) return;
-    
+
     const directives: string[] = [];
-    
+
     for (const [directive, sources] of Object.entries(this.config.csp.directives)) {
       const kebabDirective = this.camelToKebab(directive);
-      directives.push(`${kebabDirective} ${sources.join(' ')}`);
+      directives.push(`${kebabDirective} ${sources.join(" ")}`);
     }
-    
+
     if (this.config.csp.reportUri) {
       directives.push(`report-uri ${this.config.csp.reportUri}`);
     }
-    
-    const cspValue = directives.join('; ');
-    const headerName = this.config.csp.reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
-    
+
+    const cspValue = directives.join("; ");
+    const headerName = this.config.csp.reportOnly
+      ? "Content-Security-Policy-Report-Only"
+      : "Content-Security-Policy";
+
     c.header(headerName, cspValue);
   }
 
   private applyFrameProtection(c: Context): void {
     if (!this.config.frameProtection.enabled) return;
-    
+
     let value = this.config.frameProtection.policy;
-    if (this.config.frameProtection.policy === 'ALLOW-FROM' && this.config.frameProtection.allowFrom?.length) {
+    if (
+      this.config.frameProtection.policy === "ALLOW-FROM"
+      && this.config.frameProtection.allowFrom?.length
+    ) {
       value = `ALLOW-FROM ${this.config.frameProtection.allowFrom[0]}`;
     }
-    
-    c.header('X-Frame-Options', value);
+
+    c.header("X-Frame-Options", value);
   }
 
   private applyXSSProtection(c: Context): void {
     if (!this.config.xssProtection.enabled) return;
-    
-    let value = '1';
-    if (this.config.xssProtection.mode === 'block') {
-      value += '; mode=block';
+
+    let value = "1";
+    if (this.config.xssProtection.mode === "block") {
+      value += "; mode=block";
     } else if (this.config.xssProtection.reportUri) {
       value += `; report=${this.config.xssProtection.reportUri}`;
     }
-    
-    c.header('X-XSS-Protection', value);
+
+    c.header("X-XSS-Protection", value);
   }
 
   private applyContentTypeOptions(c: Context): void {
     if (this.config.noSniff) {
-      c.header('X-Content-Type-Options', 'nosniff');
+      c.header("X-Content-Type-Options", "nosniff");
     }
   }
 
   private applyReferrerPolicy(c: Context): void {
-    c.header('Referrer-Policy', this.config.referrerPolicy);
+    c.header("Referrer-Policy", this.config.referrerPolicy);
   }
 
   private applyPermissionsPolicy(c: Context): void {
     if (!this.config.permissionsPolicy.enabled) return;
-    
+
     const policies: string[] = [];
     for (const [feature, allowlist] of Object.entries(this.config.permissionsPolicy.policies)) {
-      policies.push(`${feature}=(${allowlist.join(' ')})`);
+      policies.push(`${feature}=(${allowlist.join(" ")})`);
     }
-    
+
     if (policies.length > 0) {
-      c.header('Permissions-Policy', policies.join(', '));
+      c.header("Permissions-Policy", policies.join(", "));
     }
   }
 
   private applyLGPDHeaders(c: Context): void {
     if (!this.config.lgpdCompliance.enabled) return;
-    
+
     // Custom LGPD compliance headers
-    c.header('X-LGPD-Compliant', 'true');
-    
+    c.header("X-LGPD-Compliant", "true");
+
     if (this.config.lgpdCompliance.privacyPolicyUrl) {
-      c.header('X-Privacy-Policy', this.config.lgpdCompliance.privacyPolicyUrl);
+      c.header("X-Privacy-Policy", this.config.lgpdCompliance.privacyPolicyUrl);
     }
-    
+
     if (this.config.lgpdCompliance.dataControllerInfo) {
-      c.header('X-Data-Controller', this.config.lgpdCompliance.dataControllerInfo);
+      c.header("X-Data-Controller", this.config.lgpdCompliance.dataControllerInfo);
     }
-    
+
     // Data processing transparency
-    c.header('X-Data-Processing', 'healthcare-operations');
-    c.header('X-Data-Retention', 'as-per-medical-regulations');
+    c.header("X-Data-Processing", "healthcare-operations");
+    c.header("X-Data-Retention", "as-per-medical-regulations");
   }
 
   private applyEmergencyAccessHeaders(c: Context): void {
     if (!this.config.emergencyAccess.enabled) return;
-    
+
     // Emergency access context headers
-    const emergencyContext = c.req.header('X-Emergency-Access');
+    const emergencyContext = c.req.header("X-Emergency-Access");
     if (emergencyContext) {
-      c.header('X-Emergency-Access-Granted', 'true');
-      c.header('X-Emergency-Audit-Required', this.config.emergencyAccess.auditRequired.toString());
-      c.header('X-Emergency-Justification-Required', 'true');
+      c.header("X-Emergency-Access-Granted", "true");
+      c.header("X-Emergency-Audit-Required", this.config.emergencyAccess.auditRequired.toString());
+      c.header("X-Emergency-Justification-Required", "true");
     }
   }
 
   private applyAdditionalSecurityHeaders(c: Context): void {
     // Additional security headers for healthcare applications
-    c.header('X-Powered-By', 'NeonPro Healthcare Platform'); // Custom server signature
-    c.header('X-Healthcare-Compliance', 'ANVISA,CFM,LGPD');
-    c.header('X-Security-Level', this.config.level);
-    
+    c.header("X-Powered-By", "NeonPro Healthcare Platform"); // Custom server signature
+    c.header("X-Healthcare-Compliance", "ANVISA,CFM,LGPD");
+    c.header("X-Security-Level", this.config.level);
+
     // Cache control for sensitive endpoints
     if (this.config.endpointType === HealthcareEndpointType.MEDICAL_RECORDS) {
-      c.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-      c.header('Pragma', 'no-cache');
-      c.header('Expires', '0');
+      c.header("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+      c.header("Pragma", "no-cache");
+      c.header("Expires", "0");
     }
-    
+
     // Cross-Origin policies for healthcare APIs
-    c.header('Cross-Origin-Embedder-Policy', 'require-corp');
-    c.header('Cross-Origin-Opener-Policy', 'same-origin');
-    c.header('Cross-Origin-Resource-Policy', 'cross-origin');
+    c.header("Cross-Origin-Embedder-Policy", "require-corp");
+    c.header("Cross-Origin-Opener-Policy", "same-origin");
+    c.header("Cross-Origin-Resource-Policy", "cross-origin");
   }
 
   private camelToKebab(str: string): string {
-    return str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
+    return str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, "$1-$2").toLowerCase();
   }
 }
 
@@ -540,32 +553,31 @@ export function createSecurityHeadersMiddleware(
   options: {
     customConfig?: Partial<SecurityHeadersConfig>;
     skipPaths?: string[];
-  } = {}
+  } = {},
 ): MiddlewareHandler {
   const manager = new SecurityHeadersManager(configName);
-  
+
   return async (c: Context, next) => {
     // Skip security headers for certain paths if specified
     if (options.skipPaths?.some(path => c.req.path.startsWith(path))) {
       await next();
       return;
     }
-    
+
     try {
       // Apply security headers before processing request
       manager.applySecurityHeaders(c);
-      
+
       // Add timing header for monitoring
       const startTime = Date.now();
-      
+
       await next();
-      
+
       // Add response time header
       const responseTime = Date.now() - startTime;
-      c.header('X-Response-Time', `${responseTime}ms`);
-      
+      c.header("X-Response-Time", `${responseTime}ms`);
     } catch (error) {
-      console.error('Security headers middleware error:', error);
+      console.error("Security headers middleware error:", error);
       // Continue processing even if security headers fail (fail open for healthcare)
       await next();
     }
@@ -577,14 +589,15 @@ export function createSecurityHeadersMiddleware(
  */
 export const securityHeadersMiddlewares = {
   development: () => createSecurityHeadersMiddleware("development"),
-  
+
   patientPortalProduction: () => createSecurityHeadersMiddleware("patient_portal_production"),
-  
+
   medicalRecordsProduction: () => createSecurityHeadersMiddleware("medical_records_production"),
-  
+
   emergencyAccessProduction: () => createSecurityHeadersMiddleware("emergency_access_production"),
-  
-  custom: (configName: string, options?: any) => createSecurityHeadersMiddleware(configName, options),
+
+  custom: (configName: string, options?: any) =>
+    createSecurityHeadersMiddleware(configName, options),
 };
 
 /**
@@ -594,25 +607,25 @@ export function createCSPReportHandler(): MiddlewareHandler {
   return async (c: Context) => {
     try {
       const report = await c.req.json();
-      
+
       const logEntry = {
         timestamp: new Date().toISOString(),
-        type: 'CSP_VIOLATION',
+        type: "CSP_VIOLATION",
         report,
-        userAgent: c.req.header('User-Agent'),
-        referer: c.req.header('Referer'),
-        ip: c.req.header('X-Forwarded-For') || 'unknown',
+        userAgent: c.req.header("User-Agent"),
+        referer: c.req.header("Referer"),
+        ip: c.req.header("X-Forwarded-For") || "unknown",
       };
-      
-      console.warn('🚨 CSP Violation Report:', JSON.stringify(logEntry, null, 2));
-      
+
+      console.warn("🚨 CSP Violation Report:", JSON.stringify(logEntry, null, 2));
+
       // TODO: Send to monitoring system
       // await monitoringSystem.reportCSPViolation(logEntry);
-      
-      return c.json({ success: true, message: 'CSP report received' });
+
+      return c.json({ success: true, message: "CSP report received" });
     } catch (error) {
-      console.error('CSP report handler error:', error);
-      return c.json({ success: false, error: 'Failed to process CSP report' }, 500);
+      console.error("CSP report handler error:", error);
+      return c.json({ success: false, error: "Failed to process CSP report" }, 500);
     }
   };
 }

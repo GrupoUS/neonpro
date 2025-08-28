@@ -59,8 +59,8 @@ export class HealthcareWorkspaceOptimizer {
       // Extract workspace packages
       if (this.results.packageJson.workspaces) {
         this.results.workspacePackages = Array.isArray(
-          this.results.packageJson.workspaces,
-        )
+            this.results.packageJson.workspaces,
+          )
           ? this.results.packageJson.workspaces
           : this.results.packageJson.workspaces.packages || [];
       }
@@ -95,8 +95,7 @@ export class HealthcareWorkspaceOptimizer {
       typecheck: "turbo typecheck",
       clean: "turbo clean",
       "healthcare:cleanup": "turbo healthcare:cleanup",
-      "healthcare:test:load":
-        "artillery run tools/testing/configs/artillery-healthcare.yml",
+      "healthcare:test:load": "artillery run tools/testing/configs/artillery-healthcare.yml",
       "healthcare:validate":
         "npm run typecheck && npm run lint:healthcare && npm run test:healthcare",
     };
@@ -266,8 +265,7 @@ export class HealthcareWorkspaceOptimizer {
         const healthcareAppScripts = {
           "test:healthcare":
             "vitest run --config ../../tools/testing/configs/healthcare-test.config.ts",
-          "test:load":
-            "artillery run ../../tools/testing/configs/artillery-healthcare.yml",
+          "test:load": "artillery run ../../tools/testing/configs/artillery-healthcare.yml",
         };
 
         packageJson.scripts = {

@@ -71,16 +71,15 @@ export class RegulatoryReportingService {
     tenantId: string,
     periodStart: string,
     periodEnd: string,
-  ): Promise<{ report?: RegulatoryReport; error?: string }> {
+  ): Promise<{ report?: RegulatoryReport; error?: string; }> {
     try {
       // Collect ANVISA compliance data
-      const [equipmentData, adverseEvents, qualityData, professionalsData] =
-        await Promise.all([
-          this.getEquipmentRegistrations(tenantId, periodStart, periodEnd),
-          this.getAdverseEvents(tenantId, periodStart, periodEnd),
-          this.getQualityIncidents(tenantId, periodStart, periodEnd),
-          this.getProfessionalCertifications(tenantId),
-        ]);
+      const [equipmentData, adverseEvents, qualityData, professionalsData] = await Promise.all([
+        this.getEquipmentRegistrations(tenantId, periodStart, periodEnd),
+        this.getAdverseEvents(tenantId, periodStart, periodEnd),
+        this.getQualityIncidents(tenantId, periodStart, periodEnd),
+        this.getProfessionalCertifications(tenantId),
+      ]);
 
       const reportData: ANVISAReport = {
         equipment_registrations: equipmentData.length,
@@ -91,10 +90,9 @@ export class RegulatoryReportingService {
           product_name: eq.equipment_name,
           registration_number: eq.anvisa_registration,
           expiry_date: eq.certification_expiry,
-          status:
-            new Date(eq.certification_expiry) > new Date()
-              ? "active"
-              : "expired",
+          status: new Date(eq.certification_expiry) > new Date()
+            ? "active"
+            : "expired",
         })),
         compliance_score: this.calculateANVISAScore(
           equipmentData,
@@ -130,10 +128,9 @@ export class RegulatoryReportingService {
       return { report: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate ANVISA report",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to generate ANVISA report",
       };
     }
   }
@@ -145,7 +142,7 @@ export class RegulatoryReportingService {
     tenantId: string,
     periodStart: string,
     periodEnd: string,
-  ): Promise<{ report?: RegulatoryReport; error?: string }> {
+  ): Promise<{ report?: RegulatoryReport; error?: string; }> {
     try {
       const [
         proceduresData,
@@ -209,10 +206,9 @@ export class RegulatoryReportingService {
       return { report: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate CFM report",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to generate CFM report",
       };
     }
   }
@@ -224,7 +220,7 @@ export class RegulatoryReportingService {
     tenantId: string,
     periodStart: string,
     periodEnd: string,
-  ): Promise<{ report?: RegulatoryReport; error?: string }> {
+  ): Promise<{ report?: RegulatoryReport; error?: string; }> {
     try {
       const [
         consentData,
@@ -277,10 +273,9 @@ export class RegulatoryReportingService {
       return { report: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate LGPD report",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to generate LGPD report",
       };
     }
   }
@@ -290,7 +285,7 @@ export class RegulatoryReportingService {
    */
   async scheduleAutomaticReports(
     tenantId: string,
-  ): Promise<{ success?: boolean; error?: string }> {
+  ): Promise<{ success?: boolean; error?: string; }> {
     try {
       const currentDate = new Date();
       const quarterStart = new Date(
@@ -343,10 +338,9 @@ export class RegulatoryReportingService {
       return { success: true };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to schedule automatic reports",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to schedule automatic reports",
       };
     }
   }
@@ -588,10 +582,9 @@ export class RegulatoryReportingService {
     score -= highSeverity * 20;
 
     // Deduct for poor consent management
-    const consentRate =
-      consent.total_activities > 0
-        ? consent.granted / consent.total_activities
-        : 1;
+    const consentRate = consent.total_activities > 0
+      ? consent.granted / consent.total_activities
+      : 1;
     if (consentRate < 0.8) {
       score -= (0.8 - consentRate) * 100;
     }

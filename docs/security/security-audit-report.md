@@ -1,6 +1,7 @@
 # Security Audit Report
 
 ## Summary
+
 - **Total Issues Found**: 23
 - **Critical**: 4 | **High**: 7 | **Medium**: 8 | **Low**: 4
 - **Overall Risk Level**: High
@@ -11,10 +12,12 @@
 ## Critical Vulnerabilities
 
 ### 🔴 CRITICAL #1: Weak JWT Implementation (OWASP API2:2023 - Broken Authentication)
+
 - **Location**: `healthcare-security.ts:341-365`
 - **Risk**: Mock authentication allows bypass of all security controls, potential patient data exposure
 - **CVSS Score**: 9.8 (Critical)
-- **Fix**: 
+- **Fix**:
+
 ```typescript
 import { jwtVerify, SignJWT } from 'jose';
 
@@ -46,13 +49,16 @@ static async validateJWT(token: string): Promise<HealthcareUser> {
   }
 }
 ```
+
 - **Test**: Verify JWT token validation with invalid/expired tokens, missing claims, and tampered signatures
 
 ### 🔴 CRITICAL #2: Insecure Encryption Implementation (Custom Vulnerability)
+
 - **Location**: `healthcare-encryption.ts:109-130`
 - **Risk**: createCipher is deprecated and vulnerable, incorrect GCM implementation
-- **CVSS Score**: 9.1 (Critical)  
+- **CVSS Score**: 9.1 (Critical)
 - **Fix**:
+
 ```typescript
 static async encryptPatientData(
   data: string,
@@ -89,15 +95,18 @@ static async encryptPatientData(
   };
 }
 ```
+
 - **Test**: Validate encryption/decryption round-trip with various data sizes and verify authentication tags
 
 ### 🔴 CRITICAL #3: Missing Rate Limiting Implementation (OWASP API4:2023 - Unrestricted Resource Consumption)
+
 - **Location**: `healthcare-security.ts:276-295`
 - **Risk**: No actual rate limiting enforcement allows DoS attacks on patient data endpoints
 - **CVSS Score**: 8.6 (High → Critical for healthcare)
 - **Fix**:
+
 ```typescript
-import Redis from 'ioredis';
+import Redis from "ioredis";
 
 const redis = new Redis(process.env.REDIS_URL);
 
@@ -105,15 +114,17 @@ export const createHealthcareRateLimiter = (
   config: HealthcareRateLimitConfig,
 ): MiddlewareHandler => {
   return async (c, next) => {
-    const user = c.get('user') as HealthcareUser;
-    const clientKey = user?.id || c.req.header('CF-Connecting-IP') || 'unknown';
-    const windowKey = `rate_limit:${config.endpoint}:${clientKey}:${Math.floor(Date.now() / 60000)}`;
-    
+    const user = c.get("user") as HealthcareUser;
+    const clientKey = user?.id || c.req.header("CF-Connecting-IP") || "unknown";
+    const windowKey = `rate_limit:${config.endpoint}:${clientKey}:${
+      Math.floor(Date.now() / 60000)
+    }`;
+
     // Get appropriate limit
-    const limit = user?.role === HealthcareRole.EMERGENCY_PHYSICIAN && 
-                 c.req.header('X-Emergency-Access') === 'true'
-                 ? config.limits.emergency 
-                 : config.limits.authenticated;
+    const limit = user?.role === HealthcareRole.EMERGENCY_PHYSICIAN
+        && c.req.header("X-Emergency-Access") === "true"
+      ? config.limits.emergency
+      : config.limits.authenticated;
 
     // Check current count
     const current = await redis.incr(windowKey);
@@ -123,31 +134,34 @@ export const createHealthcareRateLimiter = (
 
     if (current > limit.requests) {
       return c.json({
-        error: 'Rate limit exceeded',
-        code: 'RATE_LIMIT_EXCEEDED',
-        retryAfter: 60 - (Date.now() % 60000) / 1000
+        error: "Rate limit exceeded",
+        code: "RATE_LIMIT_EXCEEDED",
+        retryAfter: 60 - (Date.now() % 60000) / 1000,
       }, 429);
     }
 
     // Set rate limit headers
-    c.res.headers.set('X-Rate-Limit-Limit', limit.requests.toString());
-    c.res.headers.set('X-Rate-Limit-Remaining', (limit.requests - current).toString());
-    
+    c.res.headers.set("X-Rate-Limit-Limit", limit.requests.toString());
+    c.res.headers.set("X-Rate-Limit-Remaining", (limit.requests - current).toString());
+
     return next();
   };
 };
 ```
+
 - **Test**: Verify rate limiting enforcement with automated requests exceeding limits
 
 ### 🔴 CRITICAL #4: Professional License Validation Bypass (OWASP API5:2023 - Broken Function Level Authorization)
+
 - **Location**: `healthcare-security.ts:187-205`
 - **Risk**: Mock license validator always returns true, allows unauthorized medical data access
 - **CVSS Score**: 8.9 (High → Critical for healthcare)
 - **Fix**:
+
 ```typescript
 class ProfessionalLicenseValidator {
-  private static cache = new Map<string, { valid: boolean; expiry: number }>();
-  
+  private static cache = new Map<string, { valid: boolean; expiry: number; }>();
+
   static async validateLicense(licenseNumber: string): Promise<boolean> {
     // Check cache first
     const cached = this.cache.get(licenseNumber);
@@ -158,10 +172,10 @@ class ProfessionalLicenseValidator {
     try {
       // Integrate with Brazilian medical councils APIs
       const response = await fetch(`${process.env.CFM_API_URL}/validate`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${process.env.CFM_API_KEY}`,
-          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${process.env.CFM_API_KEY}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ license: licenseNumber }),
       });
@@ -171,52 +185,58 @@ class ProfessionalLicenseValidator {
       }
 
       const result = await response.json();
-      const isValid = result.status === 'active' && new Date(result.expiry) > new Date();
-      
+      const isValid = result.status === "active" && new Date(result.expiry) > new Date();
+
       // Cache result for 1 hour
-      this.cache.set(licenseNumber, { 
-        valid: isValid, 
-        expiry: Date.now() + 3600000 
+      this.cache.set(licenseNumber, {
+        valid: isValid,
+        expiry: Date.now() + 3600000,
       });
-      
+
       return isValid;
     } catch (error) {
-      console.error('License validation failed:', error);
+      console.error("License validation failed:", error);
       // Fail secure - deny access on validation error
       return false;
     }
   }
 }
 ```
+
 - **Test**: Validate with real license numbers and verify proper error handling for API failures
 
 ## High Priority Issues
 
 ### 🟠 HIGH #1: Information Disclosure in Error Messages (OWASP API8:2023 - Security Misconfiguration)
+
 - **Location**: `healthcare-validation.ts:657-676`
 - **Risk**: Detailed validation errors may leak sensitive data structure information
 - **Fix**: Sanitize error messages in production
+
 ```typescript
 return c.json({
   success: false,
   error: "VALIDATION_FAILED",
   message: "Invalid data provided",
-  details: process.env.NODE_ENV === 'production' 
+  details: process.env.NODE_ENV === "production"
     ? [{ message: "Please check your input and try again" }]
     : error.errors.map((err) => ({
-        field: err.path.join("."),
-        message: err.message,
-        code: err.code,
-      })),
+      field: err.path.join("."),
+      message: err.message,
+      code: err.code,
+    })),
   requestId: crypto.randomUUID(), // For support tracking
 }, 400);
 ```
+
 - **Test**: Verify production error responses don't expose internal structure
 
 ### 🟠 HIGH #2: Weak Key Derivation (Custom Vulnerability)
+
 - **Location**: `healthcare-encryption.ts:67-77`
 - **Risk**: Master key concatenation is predictable and weak for key derivation
 - **Fix**: Use proper HKDF key derivation
+
 ```typescript
 import { hkdf } from 'crypto';
 
@@ -239,19 +259,22 @@ private generateKey(category: EncryptionCategory): EncryptionKey {
   };
 }
 ```
+
 - **Test**: Verify key derivation produces cryptographically secure keys
 
 ### 🟠 HIGH #3: Missing Input Sanitization (OWASP API3:2023 - Broken Object Property Level Authorization)
+
 - **Location**: `healthcare-validation.ts:145-160`
 - **Risk**: CPF/RG validation accepts formatted input that could contain malicious content
 - **Fix**: Add comprehensive input sanitization
+
 ```typescript
 const sanitizeNumericInput = (input: string): string => {
   // Remove all non-numeric characters
-  const cleaned = input.replace(/\D/g, '');
+  const cleaned = input.replace(/\D/g, "");
   // Validate length to prevent buffer overflow
   if (cleaned.length > 20) {
-    throw new Error('Input too long');
+    throw new Error("Input too long");
   }
   return cleaned;
 };
@@ -265,31 +288,34 @@ const validateBrazilianCPF = (cpf: string): boolean => {
   }
 };
 ```
+
 - **Test**: Test with malicious inputs including XSS payloads and buffer overflow attempts
 
 ### 🟠 HIGH #4: Insufficient Audit Logging (OWASP API9:2023 - Improper Inventory Management)
+
 - **Location**: Multiple files, console.log usage
 - **Risk**: Critical security events only logged to console, no persistent audit trail
 - **Fix**: Implement structured audit logging
+
 ```typescript
-import winston from 'winston';
+import winston from "winston";
 
 const auditLogger = winston.createLogger({
-  level: 'info',
+  level: "info",
   format: winston.format.combine(
     winston.format.timestamp(),
-    winston.format.json()
+    winston.format.json(),
   ),
   transports: [
-    new winston.transports.File({ filename: 'audit.log' }),
-    new winston.transports.Console({ level: 'error' })
+    new winston.transports.File({ filename: "audit.log" }),
+    new winston.transports.Console({ level: "error" }),
   ],
 });
 
 class HealthcareSecurityLogger {
   static logEmergencyAccess(context: EmergencyAccessContext): void {
-    auditLogger.info('EMERGENCY_ACCESS_GRANTED', {
-      event: 'emergency_access_granted',
+    auditLogger.info("EMERGENCY_ACCESS_GRANTED", {
+      event: "emergency_access_granted",
       userId: context.userId,
       patientId: context.patientId,
       justification: context.justification,
@@ -297,17 +323,20 @@ class HealthcareSecurityLogger {
       timestamp: context.timestamp,
       ipAddress: context.ipAddress,
       userAgent: context.userAgent,
-      severity: 'HIGH'
+      severity: "HIGH",
     });
   }
 }
 ```
+
 - **Test**: Verify all security events are properly logged and retrievable
 
 ### 🟠 HIGH #5: Weak Session Management (OWASP API2:2023 - Broken Authentication)
+
 - **Location**: `healthcare-security.ts:341` (JWT validation)
 - **Risk**: No JWT expiration checking, no session invalidation capability
 - **Fix**: Implement proper session management
+
 ```typescript
 static async validateJWT(token: string): Promise<HealthcareUser> {
   const { payload } = await jwtVerify(token, secret, {
@@ -331,105 +360,123 @@ static async validateJWT(token: string): Promise<HealthcareUser> {
   return payload as HealthcareUser;
 }
 ```
+
 - **Test**: Verify token expiration and revocation functionality
 
 ### 🟠 HIGH #6: Missing CORS Security (OWASP API8:2023 - Security Misconfiguration)
+
 - **Location**: TLS middleware incomplete
 - **Risk**: No CORS configuration may allow unauthorized cross-origin requests
 - **Fix**: Implement strict CORS policy
+
 ```typescript
 export const healthcareCORSMiddleware = (): MiddlewareHandler => {
   return async (c, next) => {
-    const origin = c.req.header('Origin');
-    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
-    
+    const origin = c.req.header("Origin");
+    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
+
     if (origin && allowedOrigins.includes(origin)) {
-      c.res.headers.set('Access-Control-Allow-Origin', origin);
+      c.res.headers.set("Access-Control-Allow-Origin", origin);
     }
-    
-    c.res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    c.res.headers.set('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Emergency-Access');
-    c.res.headers.set('Access-Control-Allow-Credentials', 'true');
-    c.res.headers.set('Access-Control-Max-Age', '86400');
-    
-    if (c.req.method === 'OPTIONS') {
-      return c.text('', 200);
+
+    c.res.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    c.res.headers.set(
+      "Access-Control-Allow-Headers",
+      "Authorization, Content-Type, X-Emergency-Access",
+    );
+    c.res.headers.set("Access-Control-Allow-Credentials", "true");
+    c.res.headers.set("Access-Control-Max-Age", "86400");
+
+    if (c.req.method === "OPTIONS") {
+      return c.text("", 200);
     }
-    
+
     return next();
   };
 };
 ```
+
 - **Test**: Verify CORS policy blocks unauthorized origins
 
 ### 🟠 HIGH #7: Encryption Key Storage Vulnerability (Custom Vulnerability)
+
 - **Location**: `healthcare-encryption.ts:45-50`
 - **Risk**: Master key stored in environment variable without proper protection
 - **Fix**: Use dedicated key management service
+
 ```typescript
-import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
+import { GetSecretValueCommand, SecretsManagerClient } from "@aws-sdk/client-secrets-manager";
 
 class HealthcareKeyManager {
   private async getMasterKey(): Promise<string> {
-    if (process.env.NODE_ENV === 'development') {
-      return process.env.HEALTHCARE_MASTER_KEY || 'dev-key-not-secure';
+    if (process.env.NODE_ENV === "development") {
+      return process.env.HEALTHCARE_MASTER_KEY || "dev-key-not-secure";
     }
-    
+
     try {
       const client = new SecretsManagerClient({ region: process.env.AWS_REGION });
       const command = new GetSecretValueCommand({
         SecretId: process.env.MASTER_KEY_SECRET_ID,
       });
-      
+
       const response = await client.send(command);
-      return response.SecretString || '';
+      return response.SecretString || "";
     } catch (error) {
-      console.error('Failed to retrieve master key:', error);
-      throw new Error('Master key retrieval failed');
+      console.error("Failed to retrieve master key:", error);
+      throw new Error("Master key retrieval failed");
     }
   }
 }
 ```
+
 - **Test**: Verify key retrieval from secure storage and proper error handling
 
 ## Medium Priority Issues
 
 ### 🟡 MEDIUM #1: Weak Password Policy (OWASP API2:2023 - Broken Authentication)
+
 - **Location**: No password validation in middleware
 - **Risk**: No password strength requirements for healthcare users
 - **Fix**: Implement password policy validation
 
 ### 🟡 MEDIUM #2: Missing Request Size Limits (OWASP API4:2023 - Unrestricted Resource Consumption)
+
 - **Location**: No request size validation
 - **Risk**: Large payloads could cause DoS
 - **Fix**: Add request size limits
 
 ### 🟡 MEDIUM #3: Insufficient Data Validation (OWASP API3:2023 - Broken Object Property Level Authorization)
+
 - **Location**: `healthcare-validation.ts:200-220`
 - **Risk**: Array size limits may be insufficient for DoS protection
 - **Fix**: Reduce array size limits and add processing timeouts
 
 ### 🟡 MEDIUM #4: Missing API Versioning Security (OWASP API9:2023 - Improper Inventory Management)
+
 - **Location**: No API versioning strategy
 - **Risk**: Deprecated API versions may remain accessible
 - **Fix**: Implement API versioning with sunset policies
 
 ### 🟡 MEDIUM #5: Incomplete TLS Validation (OWASP API8:2023 - Security Misconfiguration)
+
 - **Location**: `healthcare-encryption.ts:551-561`
 - **Risk**: No minimum TLS version enforcement
 - **Fix**: Add TLS version and cipher suite validation
 
 ### 🟡 MEDIUM #6: Missing Geolocation Validation (Custom Vulnerability)
+
 - **Location**: No geographic access controls
 - **Risk**: Access from unexpected locations
 - **Fix**: Implement IP geolocation validation for Brazil
 
 ### 🟡 MEDIUM #7: Insufficient Backup Security (Custom Vulnerability)
+
 - **Location**: `healthcare-encryption.ts:600-615`
 - **Risk**: Backup encryption uses same keys as production data
 - **Fix**: Use separate key hierarchy for backups
 
 ### 🟡 MEDIUM #8: Missing Content-Type Validation (OWASP API8:2023 - Security Misconfiguration)
+
 - **Location**: No content-type validation
 - **Risk**: Content-type confusion attacks
 - **Fix**: Strict content-type validation for all endpoints
@@ -437,26 +484,31 @@ class HealthcareKeyManager {
 ## Low Priority Issues
 
 ### 🟢 LOW #1: Verbose Logging in Production
+
 - **Location**: Multiple console.log statements
 - **Risk**: Information disclosure in logs
 - **Fix**: Use appropriate log levels
 
 ### 🟢 LOW #2: Missing Security Headers
+
 - **Location**: Incomplete security headers
 - **Risk**: Missing defense-in-depth headers
 - **Fix**: Add additional security headers (Feature-Policy, etc.)
 
 ### 🟢 LOW #3: Weak Random Number Generation
+
 - **Location**: Some random ID generation
 - **Risk**: Predictable identifiers
 - **Fix**: Use crypto.randomUUID() for all identifiers
 
 ### 🟢 LOW #4: Missing Dependency Validation
+
 - **Location**: Package dependencies
 - **Risk**: Vulnerable dependencies
 - **Fix**: Implement automated dependency scanning
 
 ## Quick Wins (Easy fixes with good security impact)
+
 - [ ] Replace deprecated `createCipher` with `createCipherGCM` (30 minutes, fixes CRITICAL #2)
 - [ ] Implement proper JWT validation with jose library (2 hours, fixes CRITICAL #1)
 - [ ] Add request size limits to prevent DoS (1 hour, fixes MEDIUM #2)
@@ -468,12 +520,14 @@ class HealthcareKeyManager {
 ## Action Plan
 
 ### 1. Immediate (Fix within 24 hours):
+
 - **CRITICAL #1**: Implement proper JWT validation
 - **CRITICAL #2**: Fix encryption implementation with proper GCM usage
 - **CRITICAL #3**: Add Redis-based rate limiting
 - **CRITICAL #4**: Implement real professional license validation
 
 ### 2. Short-term (Fix within 1 week):
+
 - **HIGH #1-7**: All high-priority vulnerabilities
 - Implement comprehensive audit logging system
 - Add proper session management and token revocation
@@ -481,6 +535,7 @@ class HealthcareKeyManager {
 - Set up monitoring and alerting for security events
 
 ### 3. Medium-term (Fix within 1 month):
+
 - All medium-priority issues
 - Comprehensive security testing automation
 - Implement API versioning strategy
@@ -490,6 +545,7 @@ class HealthcareKeyManager {
 ## Healthcare Compliance Status
 
 ### ✅ LGPD Compliance Validation:
+
 - **Patient PII Encryption**: ✅ Implemented with field-level encryption
 - **Access Logging**: ⚠️ Partial - needs persistent audit system
 - **Consent Management**: ✅ Comprehensive consent validation
@@ -498,26 +554,30 @@ class HealthcareKeyManager {
 - **Breach Notification**: ❌ No automated breach detection
 
 ### ✅ Brazilian Healthcare Regulations:
+
 - **Professional License Validation**: ❌ CRITICAL - Mock implementation only
 - **Medical Data Access Controls**: ⚠️ Structure exists but needs real enforcement
 - **Emergency Access Procedures**: ✅ Well-documented with audit trails
 - **Regulatory Reporting**: ⚠️ Audit structure exists but needs compliance integration
 
 ### ✅ Security Grade Assessment:
+
 - **Current Grade**: C- (58/100)
 - **Target Grade**: A+ (95+/100)
 - **Improvement Path**: Fix 4 critical + 7 high priority issues = B+ (88/100)
 
 ### Implementation Priority Matrix:
-| Issue | Business Impact | Technical Effort | Healthcare Risk | Priority Score |
-|-------|----------------|------------------|-----------------|----------------|
-| JWT Implementation | High | Medium | Critical | 1 |
-| Encryption Fix | High | Low | Critical | 2 |
-| Rate Limiting | Medium | Medium | High | 3 |
-| License Validation | High | High | Critical | 4 |
-| Audit Logging | Medium | Medium | High | 5 |
+
+| Issue              | Business Impact | Technical Effort | Healthcare Risk | Priority Score |
+| ------------------ | --------------- | ---------------- | --------------- | -------------- |
+| JWT Implementation | High            | Medium           | Critical        | 1              |
+| Encryption Fix     | High            | Low              | Critical        | 2              |
+| Rate Limiting      | Medium          | Medium           | High            | 3              |
+| License Validation | High            | High             | Critical        | 4              |
+| Audit Logging      | Medium          | Medium           | High            | 5              |
 
 ## Security Checklist for Future Development
+
 - [ ] Review authentication on new endpoints
 - [ ] Validate all user inputs with Zod schemas
 - [ ] Use parameterized queries for database operations
@@ -539,6 +599,7 @@ class HealthcareKeyManager {
 The NeonPro healthcare middleware implementation shows good architectural design for healthcare compliance but contains several critical security vulnerabilities that must be addressed immediately. The most concerning issues are the mock authentication system, weak encryption implementation, and missing rate limiting - all of which could lead to unauthorized patient data access.
 
 **Immediate actions required:**
+
 1. Replace mock JWT validation with real implementation
 2. Fix encryption using proper GCM mode
 3. Implement Redis-based rate limiting

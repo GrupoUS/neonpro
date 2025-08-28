@@ -1,6 +1,6 @@
-import type { HealthcareError, ErrorContext } from "./healthcare-error-types";
-import { ErrorCategory, ErrorSeverity } from "./healthcare-error-types";
 import { errorHandlingStrategies } from "./error-strategies";
+import type { ErrorContext, HealthcareError } from "./healthcare-error-types";
+import { ErrorCategory, ErrorSeverity } from "./healthcare-error-types";
 
 /**
  * Generates a unique error ID for tracking
@@ -21,78 +21,78 @@ export function categorizeError(
 
   // Authentication errors
   if (
-    message.includes("unauthorized") ||
-    message.includes("invalid token") ||
-    message.includes("authentication failed")
+    message.includes("unauthorized")
+    || message.includes("invalid token")
+    || message.includes("authentication failed")
   ) {
     return ErrorCategory.AUTHENTICATION;
   }
 
   // Authorization errors
   if (
-    message.includes("forbidden") ||
-    message.includes("permission denied") ||
-    message.includes("access denied")
+    message.includes("forbidden")
+    || message.includes("permission denied")
+    || message.includes("access denied")
   ) {
     return ErrorCategory.AUTHORIZATION;
   }
 
   // Database errors
   if (
-    message.includes("connection") ||
-    message.includes("database") ||
-    message.includes("query") ||
-    stack.includes("supabase")
+    message.includes("connection")
+    || message.includes("database")
+    || message.includes("query")
+    || stack.includes("supabase")
   ) {
     return ErrorCategory.DATABASE;
   }
 
   // Validation errors
   if (
-    message.includes("validation") ||
-    message.includes("invalid") ||
-    message.includes("required") ||
-    stack.includes("zod")
+    message.includes("validation")
+    || message.includes("invalid")
+    || message.includes("required")
+    || stack.includes("zod")
   ) {
     return ErrorCategory.VALIDATION;
   }
 
   // Patient data errors (high priority for healthcare)
   if (
-    context?.patientId ||
-    message.includes("patient") ||
-    message.includes("medical") ||
-    message.includes("clinical")
+    context?.patientId
+    || message.includes("patient")
+    || message.includes("medical")
+    || message.includes("clinical")
   ) {
     return ErrorCategory.PATIENT_DATA;
   }
 
   // LGPD compliance errors
   if (
-    message.includes("lgpd") ||
-    message.includes("consent") ||
-    message.includes("gdpr") ||
-    message.includes("privacy")
+    message.includes("lgpd")
+    || message.includes("consent")
+    || message.includes("gdpr")
+    || message.includes("privacy")
   ) {
     return ErrorCategory.COMPLIANCE;
   }
 
   // External API errors
   if (
-    message.includes("network") ||
-    message.includes("fetch") ||
-    message.includes("timeout") ||
-    message.includes("api")
+    message.includes("network")
+    || message.includes("fetch")
+    || message.includes("timeout")
+    || message.includes("api")
   ) {
     return ErrorCategory.EXTERNAL_API;
   }
 
   // System errors
   if (
-    message.includes("memory") ||
-    message.includes("cpu") ||
-    message.includes("disk") ||
-    message.includes("system")
+    message.includes("memory")
+    || message.includes("cpu")
+    || message.includes("disk")
+    || message.includes("system")
   ) {
     return ErrorCategory.SYSTEM;
   }
@@ -102,6 +102,7 @@ export function categorizeError(
 } /**
  * Assesses the severity of an error based on category and context
  */
+
 export function assessSeverity(
   error: Error,
   category: ErrorCategory,
@@ -109,26 +110,26 @@ export function assessSeverity(
 ): ErrorSeverity {
   // Critical severity for certain categories
   if (
-    category === ErrorCategory.COMPLIANCE ||
-    category === ErrorCategory.PATIENT_DATA ||
-    category === ErrorCategory.AUDIT_LOG
+    category === ErrorCategory.COMPLIANCE
+    || category === ErrorCategory.PATIENT_DATA
+    || category === ErrorCategory.AUDIT_LOG
   ) {
     return ErrorSeverity.CRITICAL;
   }
 
   // High severity for system and authentication issues
   if (
-    category === ErrorCategory.SYSTEM ||
-    category === ErrorCategory.AUTHENTICATION ||
-    category === ErrorCategory.AUTHORIZATION
+    category === ErrorCategory.SYSTEM
+    || category === ErrorCategory.AUTHENTICATION
+    || category === ErrorCategory.AUTHORIZATION
   ) {
     return ErrorSeverity.HIGH;
   }
 
   // Medium severity for database and external API
   if (
-    category === ErrorCategory.DATABASE ||
-    category === ErrorCategory.EXTERNAL_API
+    category === ErrorCategory.DATABASE
+    || category === ErrorCategory.EXTERNAL_API
   ) {
     return ErrorSeverity.MEDIUM;
   }
@@ -153,12 +154,12 @@ export function checkPatientDataInvolvement(
   const stack = error.stack?.toLowerCase() || "";
 
   return !!(
-    context?.patientId ||
-    message.includes("patient") ||
-    message.includes("medical") ||
-    message.includes("clinical") ||
-    stack.includes("patient") ||
-    context?.endpoint?.includes("patient")
+    context?.patientId
+    || message.includes("patient")
+    || message.includes("medical")
+    || message.includes("clinical")
+    || stack.includes("patient")
+    || context?.endpoint?.includes("patient")
   );
 }
 
@@ -172,10 +173,9 @@ export function createHealthcareError(
   const category = categorizeError(error, context);
   const severity = assessSeverity(error, category, context);
   const patientImpact = checkPatientDataInvolvement(error, context);
-  const complianceRisk =
-    category === ErrorCategory.COMPLIANCE ||
-    category === ErrorCategory.PATIENT_DATA ||
-    patientImpact;
+  const complianceRisk = category === ErrorCategory.COMPLIANCE
+    || category === ErrorCategory.PATIENT_DATA
+    || patientImpact;
 
   const healthcareError: HealthcareError = {
     id: generateErrorId(),

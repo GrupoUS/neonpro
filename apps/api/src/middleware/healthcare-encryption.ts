@@ -10,8 +10,8 @@
  * - Emergency access controls
  */
 
-import * as crypto from "node:crypto";
 import type { Context, MiddlewareHandler } from "hono";
+import * as crypto from "node:crypto";
 import { HealthcareSecurityLogger } from "./healthcare-security";
 
 // Encryption configuration
@@ -73,10 +73,9 @@ class HealthcareKeyManager {
   private masterKey: string;
 
   constructor(masterKey?: string) {
-    this.masterKey =
-      masterKey ||
-      process.env.HEALTHCARE_MASTER_KEY ||
-      "default-dev-key-not-secure";
+    this.masterKey = masterKey
+      || process.env.HEALTHCARE_MASTER_KEY
+      || "default-dev-key-not-secure";
     this.initializeDefaultKeys();
   }
 
@@ -119,8 +118,7 @@ class HealthcareKeyManager {
     // Find the most recent active key for the category
     const categoryKeys = Array.from(this.keys.values())
       .filter(
-        (k) =>
-          k.category === category && k.isActive && k.expiresAt > new Date(),
+        (k) => k.category === category && k.isActive && k.expiresAt > new Date(),
       )
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
@@ -330,17 +328,16 @@ export class HealthcareEncryption {
    */
   static async encryptFields<T extends Record<string, unknown>>(
     data: T,
-    fieldsToEncrypt: { [K in keyof T]?: EncryptionCategory },
+    fieldsToEncrypt: { [K in keyof T]?: EncryptionCategory; },
     patientId?: string,
   ): Promise<T> {
     const result = { ...data };
 
     for (const [field, category] of Object.entries(fieldsToEncrypt)) {
       if (field in data && data[field] != null) {
-        const stringValue =
-          typeof data[field] === "string"
-            ? data[field]
-            : JSON.stringify(data[field]);
+        const stringValue = typeof data[field] === "string"
+          ? data[field]
+          : JSON.stringify(data[field]);
         const encrypted = await this.encryptPatientData(
           stringValue,
           category,
@@ -418,11 +415,11 @@ export const databaseEncryptionMiddleware = (): MiddlewareHandler => {
 
     // Apply encryption for write operations on patient data
     if (
-      ["POST", "PUT", "PATCH"].includes(method) &&
-      path.includes("/patients")
+      ["POST", "PUT", "PATCH"].includes(method)
+      && path.includes("/patients")
     ) {
       const originalJson = c.req.json;
-      c.req.json = async function () {
+      c.req.json = async function() {
         const body = await originalJson.call(this);
 
         // Encrypt sensitive fields before processing
@@ -474,7 +471,7 @@ export const responseDecryptionMiddleware = (): MiddlewareHandler => {
     if (method === "GET" && path.includes("/patients") && user) {
       const originalJson = c.res.json;
 
-      c.res.json = function (data: unknown, status?: number) {
+      c.res.json = function(data: unknown, status?: number) {
         // Decrypt patient data fields
         if (data && (Array.isArray(data) || data.id)) {
           const accessContext: DataAccessContext = {
@@ -505,7 +502,7 @@ export const responseDecryptionMiddleware = (): MiddlewareHandler => {
                   fieldsToDecrypt,
                   accessContext,
                   patient.id,
-                ),
+                )
               ),
             ).then((decryptedData) => {
               return originalJson.call(this, decryptedData, status);
@@ -535,8 +532,7 @@ export const responseDecryptionMiddleware = (): MiddlewareHandler => {
 export const healthcareTLSMiddleware = (): MiddlewareHandler => {
   return async (c, next) => {
     // Verify HTTPS is being used
-    const protocol =
-      c.req.header("x-forwarded-proto") || c.req.header("x-forwarded-protocol");
+    const protocol = c.req.header("x-forwarded-proto") || c.req.header("x-forwarded-protocol");
 
     if (!protocol?.includes("https")) {
       HealthcareSecurityLogger.logWeakTLS({
@@ -548,8 +544,7 @@ export const healthcareTLSMiddleware = (): MiddlewareHandler => {
         {
           error: "HTTPS required for healthcare data",
           code: "HTTPS_REQUIRED",
-          message:
-            "All healthcare data must be transmitted over secure connections",
+          message: "All healthcare data must be transmitted over secure connections",
         },
         400,
       );
@@ -557,8 +552,7 @@ export const healthcareTLSMiddleware = (): MiddlewareHandler => {
 
     // Set security headers for healthcare compliance
     const securityHeaders = {
-      "Strict-Transport-Security":
-        "max-age=31536000; includeSubDomains; preload",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
       "X-Content-Type-Options": "nosniff",
       "X-Frame-Options": "DENY",
       "X-XSS-Protection": "1; mode=block",
@@ -607,10 +601,10 @@ export const decryptBackupData = async (
 
 // Export utilities and types
 export {
+  type DataAccessContext,
+  type EncryptedData,
+  EncryptionCategory,
+  type EncryptionKey,
   HealthcareEncryption,
   keyManager,
-  EncryptionCategory,
-  type EncryptedData,
-  type DataAccessContext,
-  type EncryptionKey,
 };

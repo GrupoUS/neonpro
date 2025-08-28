@@ -57,36 +57,36 @@ export class SecurityTester {
   private async validateAuthentication(): Promise<boolean> {
     // Check authentication mechanisms
     return (
-      this.checkMultiFactorAuth() &&
-      this.checkPasswordPolicies() &&
-      this.checkSessionManagement()
+      this.checkMultiFactorAuth()
+      && this.checkPasswordPolicies()
+      && this.checkSessionManagement()
     );
   }
 
   private async validateAuthorization(): Promise<boolean> {
     // Check role-based access control
     return (
-      this.checkRoleBasedAccess() &&
-      this.checkPermissionGranularity() &&
-      this.checkPrivilegeEscalation()
+      this.checkRoleBasedAccess()
+      && this.checkPermissionGranularity()
+      && this.checkPrivilegeEscalation()
     );
   }
 
   private async validateDataIntegrity(): Promise<boolean> {
     // Check data integrity mechanisms
     return (
-      this.checkDataValidation() &&
-      this.checkIntegrityChecking() &&
-      this.checkBackupIntegrity()
+      this.checkDataValidation()
+      && this.checkIntegrityChecking()
+      && this.checkBackupIntegrity()
     );
   }
 
   private async validateAuditLogging(): Promise<boolean> {
     // Check comprehensive audit logging
     return (
-      this.checkAuditCoverage() &&
-      this.checkLogIntegrity() &&
-      this.checkLogRetention()
+      this.checkAuditCoverage()
+      && this.checkLogIntegrity()
+      && this.checkLogRetention()
     );
   }
 
@@ -99,9 +99,9 @@ export class SecurityTester {
   private async validateLGPDSecurity(): Promise<boolean> {
     // LGPD-specific security requirements
     return (
-      this.checkDataProtectionByDesign() &&
-      this.checkDataProtectionByDefault() &&
-      this.checkBreachNotificationCapability()
+      this.checkDataProtectionByDesign()
+      && this.checkDataProtectionByDefault()
+      && this.checkBreachNotificationCapability()
     );
   }
 

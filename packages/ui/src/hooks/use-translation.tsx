@@ -14,11 +14,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import {
-  createTranslator,
-  defaultLocale,
-  getDictionary,
-} from "../lib/i18n/i18n";
+import { createTranslator, defaultLocale, getDictionary } from "../lib/i18n/i18n";
 import type { Dictionary, Locale } from "../lib/i18n/i18n";
 
 interface TranslationContextType {
@@ -182,7 +178,7 @@ export function Translation({
  */
 export function withTranslation<P extends object>(
   Component: React.ComponentType<
-    P & { t: (key: string, params?: Record<string, string | number>) => string }
+    P & { t: (key: string, params?: Record<string, string | number>) => string; }
   >,
 ) {
   return function TranslatedComponent(props: P) {
@@ -275,10 +271,8 @@ export function useFormTranslations() {
     date: () => t("errors.invalidDate"),
     dateInPast: () => t("errors.dateInPast"),
     dateInFuture: () => t("errors.dateInFuture"),
-    minLength: (field: string, min: number) =>
-      t("errors.minLength", { field, min }),
-    maxLength: (field: string, max: number) =>
-      t("errors.maxLength", { field, max }),
+    minLength: (field: string, min: number) => t("errors.minLength", { field, min }),
+    maxLength: (field: string, max: number) => t("errors.maxLength", { field, max }),
     confirmation: (field: string) => t("errors.confirmation", { field }),
   };
 }
@@ -293,16 +287,13 @@ export function useA11yTranslations() {
   return {
     skipToContent: () => t("accessibility.skipToContent"),
     skipToNavigation: () => t("accessibility.skipToNavigation"),
-    loading: (item?: string) =>
-      item ? `${t("common.loading")} ${item}` : t("common.loading"),
-    saving: (item?: string) =>
-      item ? `${t("common.saving")} ${item}` : t("common.saving"),
+    loading: (item?: string) => item ? `${t("common.loading")} ${item}` : t("common.loading"),
+    saving: (item?: string) => item ? `${t("common.saving")} ${item}` : t("common.saving"),
     buttonPressed: (button: string, pressed: boolean) =>
       pressed ? `${button} pressionado` : `${button} não pressionado`,
     expandedState: (item: string, expanded: boolean) =>
       expanded ? `${item} expandido` : `${item} recolhido`,
-    menuItemOf: (current: number, total: number) =>
-      `Item ${current} de ${total}`,
+    menuItemOf: (current: number, total: number) => `Item ${current} de ${total}`,
     pageOf: (current: number, total: number) => `Página ${current} de ${total}`,
     required: () => t("common.required"),
     optional: () => t("common.optional"),

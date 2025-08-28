@@ -18,10 +18,7 @@
  */
 
 // Core Risk Scoring Components
-export {
-  type AppointmentData,
-  default as AppointmentRiskList,
-} from "./AppointmentRiskList";
+export { type AppointmentData, default as AppointmentRiskList } from "./AppointmentRiskList";
 export {
   default as RiskScoreIndicator,
   type RiskFactor,

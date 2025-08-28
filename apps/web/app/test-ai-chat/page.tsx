@@ -11,18 +11,12 @@ import { ChatInterface } from "@neonpro/ui";
 import { Badge } from "@neonpro/ui/components/Badge";
 import { Button } from "@neonpro/ui/components/Button";
 import { Card } from "@neonpro/ui/components/Card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@neonpro/ui/components/Tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@neonpro/ui/components/Tabs";
 import { Bot, Globe, Lock, UserCheck, Users, Zap } from "lucide-react";
 import { useState } from "react";
 
 export default function UniversalChatTestPage() {
-  const [activeInterface, setActiveInterface] =
-    useState<ChatInterfaceType>("external");
+  const [activeInterface, setActiveInterface] = useState<ChatInterfaceType>("external");
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -33,8 +27,8 @@ export default function UniversalChatTestPage() {
             Universal AI Chat System
           </h1>
           <p className="text-gray-600">
-            Sistema de chat com IA dual: Interface Externa para Pacientes e
-            Interface Interna para Equipe
+            Sistema de chat com IA dual: Interface Externa para Pacientes e Interface Interna para
+            Equipe
           </p>
         </div>
 
@@ -132,11 +126,9 @@ export default function UniversalChatTestPage() {
                 className="h-[600px]"
                 interface_type={activeInterface}
                 maxHeight="600px"
-                placeholder={
-                  activeInterface === "external"
-                    ? "Digite sua mensagem... (ex: 'Gostaria de agendar uma consulta')"
-                    : "Faça uma pergunta... (ex: 'Como está o estoque hoje?')"
-                }
+                placeholder={activeInterface === "external"
+                  ? "Digite sua mensagem... (ex: 'Gostaria de agendar uma consulta')"
+                  : "Faça uma pergunta... (ex: 'Como está o estoque hoje?')"}
               />
             </ChatProvider>
           </div>
@@ -155,8 +147,7 @@ export default function UniversalChatTestPage() {
                 <TabsContent className="space-y-2" value="external">
                   <div className="space-y-2 text-sm">
                     <div className="rounded bg-gray-100 p-2 text-gray-700">
-                      &quot;Gostaria de agendar uma consulta com
-                      cardiologista&quot;
+                      &quot;Gostaria de agendar uma consulta com cardiologista&quot;
                     </div>
                     <div className="rounded bg-gray-100 p-2 text-gray-700">
                       &quot;Quais são os horários de funcionamento?&quot;
@@ -236,8 +227,8 @@ export default function UniversalChatTestPage() {
         {/* Footer */}
         <div className="mt-8 rounded-lg border bg-white p-4 text-center text-gray-600 text-sm">
           <p>
-            🚀 Sistema Universal de Chat com IA • NeonPro Healthcare Platform •
-            Compliance LGPD/ANVISA/CFM • Português Brasileiro
+            🚀 Sistema Universal de Chat com IA • NeonPro Healthcare Platform • Compliance
+            LGPD/ANVISA/CFM • Português Brasileiro
           </p>
         </div>
       </div>

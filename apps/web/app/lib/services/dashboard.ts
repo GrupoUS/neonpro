@@ -95,7 +95,7 @@ export interface DashboardNotification {
 }
 
 export interface DashboardFilter {
-  dateRange?: { start: Date; end: Date };
+  dateRange?: { start: Date; end: Date; };
   status?: string[];
   priority?: string[];
   department?: string[];
@@ -268,10 +268,9 @@ export class NeonProDashboardService {
           context.clinicId,
         );
 
-        const change =
-          previousValue > 0
-            ? ((metric.current_value - previousValue) / previousValue) * 100
-            : 0;
+        const change = previousValue > 0
+          ? ((metric.current_value - previousValue) / previousValue) * 100
+          : 0;
 
         return {
           id: metric.id,
@@ -657,7 +656,7 @@ export class NeonProDashboardService {
 
   private async getProjectStatistics(
     clinicId: string,
-    dateRange: { start: Date; end: Date },
+    dateRange: { start: Date; end: Date; },
   ) {
     const { data } = await this.supabase
       .from("dashboard_projects")
@@ -681,7 +680,7 @@ export class NeonProDashboardService {
 
   private async getTaskStatistics(
     clinicId: string,
-    _dateRange: { start: Date; end: Date },
+    _dateRange: { start: Date; end: Date; },
   ) {
     const { data } = await this.supabase
       .from("dashboard_tasks")
@@ -717,7 +716,7 @@ export class NeonProDashboardService {
 
   private async getBudgetStatistics(
     clinicId: string,
-    _dateRange: { start: Date; end: Date },
+    _dateRange: { start: Date; end: Date; },
   ) {
     const { data } = await this.supabase
       .from("dashboard_projects")
@@ -741,7 +740,7 @@ export class NeonProDashboardService {
 
   private async getPerformanceMetrics(
     _clinicId: string,
-    _dateRange: { start: Date; end: Date },
+    _dateRange: { start: Date; end: Date; },
   ) {
     // Complex performance calculations would go here
     return {
@@ -775,10 +774,9 @@ export class NeonProDashboardService {
     project: unknown,
   ): "healthy" | "at-risk" | "critical" {
     const budgetHealth = (project.spent || 0) / (project.budget || 1);
-    const timeHealth =
-      (Date.now() - new Date(project.start_date).getTime()) /
-      (new Date(project.end_date).getTime() -
-        new Date(project.start_date).getTime());
+    const timeHealth = (Date.now() - new Date(project.start_date).getTime())
+      / (new Date(project.end_date).getTime()
+        - new Date(project.start_date).getTime());
 
     if (budgetHealth > 1.2 || timeHealth > 1.2) {
       return "critical";

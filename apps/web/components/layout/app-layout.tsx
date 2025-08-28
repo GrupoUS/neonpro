@@ -34,7 +34,7 @@ interface LayoutProps {
 interface NavItem {
   title: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; }>;
   description?: string;
 }
 
@@ -108,8 +108,7 @@ function AppSidebar() {
       <SidebarContent>
         <SidebarMenu>
           {mainNavItems.map((item) => {
-            const isActive =
-              pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton asChild isActive={isActive}>
@@ -131,8 +130,7 @@ function AppSidebar() {
           </div>
           <SidebarMenu>
             {settingsNavItems.map((item) => {
-              const isActive =
-                pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton asChild isActive={isActive}>

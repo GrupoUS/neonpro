@@ -165,9 +165,10 @@ export class NotificationTemplates {
     total: number,
     successful: number,
     failed: number,
-  ): { html: string; subject: string; text: string } {
+  ): { html: string; subject: string; text: string; } {
     const subject = `Bulk Operation Summary: ${bulkOperationId}`;
-    const text = `Bulk operation ${bulkOperationId} completed. ${successful}/${total} jobs successful, ${failed} failed.`;
+    const text =
+      `Bulk operation ${bulkOperationId} completed. ${successful}/${total} jobs successful, ${failed} failed.`;
     const html = `
       <h2>Bulk Operation Summary</h2>
       <p>Bulk operation <strong>${bulkOperationId}</strong> has completed.</p>

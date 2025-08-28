@@ -48,7 +48,7 @@ export interface EmergencyPatientCache {
   location?: {
     lastKnown: {
       address: string;
-      coordinates: { lat: number; lng: number };
+      coordinates: { lat: number; lng: number; };
       timestamp: number;
     };
   };
@@ -84,6 +84,7 @@ class EmergencyCache {
   } /**
    * Initialize IndexedDB for persistent offline storage
    */
+
   private async initIndexedDB(): Promise<void> {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
@@ -148,6 +149,7 @@ class EmergencyCache {
   } /**
    * Store critical data with <100ms access guarantee
    */
+
   async set(
     key: string,
     data: any,
@@ -236,6 +238,7 @@ class EmergencyCache {
   } /**
    * Cache complete patient emergency profile
    */
+
   async cacheEmergencyPatient(
     patientId: string,
     patientData: EmergencyPatientCache,
@@ -323,6 +326,7 @@ class EmergencyCache {
   } /**
    * Get all critical patients for emergency scenarios
    */
+
   getCriticalPatients(): EmergencyCacheEntry[] {
     const criticalEntries: EmergencyCacheEntry[] = [];
 

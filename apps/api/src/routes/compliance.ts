@@ -11,6 +11,8 @@ import type { ApiResponse } from "@neonpro/shared/types";
 import { Hono } from "hono";
 import { z } from "zod";
 import { HTTP_STATUS } from "../lib/constants.js";
+import { AuditService } from "../services/audit.service.js";
+import { AuditAction, AuditResourceType } from "../types/audit.js";
 
 // Zod schemas for compliance
 const AuditLogQuerySchema = z.object({
@@ -78,16 +80,33 @@ export const complianceRoutes = new Hono()
     }
     await next();
   })
-  // 📋 LGPD Overview
+  // 📋 LGPD Overview with Audit Integration
   .get("/lgpd/overview", async (c) => {
     try {
+      const auditService = new AuditService();
+      
+      // Get recent LGPD-related audit events
+      const recentEvents = await auditService.getAuditLogs({
+        actions: [AuditAction.DATA_ACCESS, AuditAction.DATA_EXPORT, AuditAction.CONSENT_UPDATE],
+        startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
+        limit: 100
+      });
+      
       const mockOverview = {
         complianceScore: 94.2, // percentage
         totalPatients: 89,
         activeConsents: 89,
         pendingRequests: 3,
         completedRequests: 127,
-        lastAudit: "2024-01-15T10:00:00Z",
+        lastAudit: new Date().toISOString(),
+        
+        // Audit-based metrics
+        auditMetrics: {
+          dataAccessEvents: recentEvents.data.filter(e => e.action === AuditAction.DATA_ACCESS).length,
+          consentUpdates: recentEvents.data.filter(e => e.action === AuditAction.CONSENT_UPDATE).length,
+          dataExports: recentEvents.data.filter(e => e.action === AuditAction.DATA_EXPORT).length,
+          totalAuditEvents: recentEvents.data.length
+        },
 
         consentBreakdown: {
           dataProcessing: { granted: 89, denied: 0 },
@@ -773,5 +792,65 @@ export const complianceRoutes = new Hono()
         },
         500,
       );
+    }
+  })
+  
+  // 🔍 Advanced Audit Endpoints
+  .get("/audit/statistics", async (c) => {
+    try {
+      const auditService = new AuditService();
+      const stats = await auditService.getAuditStatistics({
+        startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        endDate: new Date()
+      });
+      
+      return c.json({ success: true, data: stats });
+    } catch (error) {
+      console.error('Audit statistics error:', error);
+      return c.json({ success: false, error: 'Failed to fetch audit statistics' }, 500);
+    }
+  })
+  
+  .post("/audit/export", zValidator("json", z.object({
+    format: z.enum(["csv", "json", "pdf"]).default("csv"),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+    filters: z.object({
+      actions: z.array(z.string()).optional(),
+      resourceTypes: z.array(z.string()).optional(),
+      userIds: z.array(z.string()).optional()
+    }).optional()
+  })), async (c) => {
+    try {
+      const { format, startDate, endDate, filters } = c.req.valid("json");
+      const auditService = new AuditService();
+      
+      const exportResult = await auditService.exportAuditLogs({
+        format,
+        startDate: startDate ? new Date(startDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        endDate: endDate ? new Date(endDate) : new Date(),
+        ...filters
+      });
+      
+      return c.json({ success: true, data: exportResult });
+    } catch (error) {
+      console.error('Audit export error:', error);
+      return c.json({ success: false, error: 'Failed to export audit logs' }, 500);
+    }
+  })
+  
+  .get("/audit/compliance-report", async (c) => {
+    try {
+      const auditService = new AuditService();
+      const report = await auditService.generateComplianceReport({
+        startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        endDate: new Date(),
+        includeRecommendations: true
+      });
+      
+      return c.json({ success: true, data: report });
+    } catch (error) {
+      console.error('Compliance report error:', error);
+      return c.json({ success: false, error: 'Failed to generate compliance report' }, 500);
     }
   });

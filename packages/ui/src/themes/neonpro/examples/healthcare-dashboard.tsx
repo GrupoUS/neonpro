@@ -6,14 +6,14 @@
 
 import React, { useState } from "react";
 import {
-  HealthcareMetricCard,
   AppointmentCalendar,
+  HealthcareMetricCard,
   PaymentStatusTable,
   TeamMembersList,
 } from "../components";
 import type {
-  HealthcareMetricCardProps,
   Appointment,
+  HealthcareMetricCardProps,
   PaymentRecord,
   TeamMember,
 } from "../components";
@@ -368,8 +368,7 @@ export const HealthcareDashboardExample: React.FC = () => {
             🎨 Powered by <strong>TweakCN NEONPRO Healthcare Theme</strong>
           </p>
           <p className="text-sm">
-            Designed for Brazilian aesthetic clinics • LGPD Compliant • CFM
-            Validated
+            Designed for Brazilian aesthetic clinics • LGPD Compliant • CFM Validated
           </p>
           <div className="flex justify-center gap-4 mt-4 text-sm">
             <span className="flex items-center gap-1">

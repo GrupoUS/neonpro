@@ -10,10 +10,10 @@
  * - Audit logging integration
  */
 
-import { z } from "zod";
 import type { Context, MiddlewareHandler } from "hono";
-import { HealthcareSecurityLogger } from "./healthcare-security";
+import { z } from "zod";
 import { createError } from "./error-handler";
+import { HealthcareSecurityLogger } from "./healthcare-security";
 
 // Brazilian CPF validation utility
 const validateBrazilianCPF = (cpf: string): boolean => {
@@ -49,8 +49,8 @@ const validateBrazilianCPF = (cpf: string): boolean => {
   }
 
   return (
-    checkDigit1 === parseInt(cleanCPF.charAt(9)) &&
-    checkDigit2 === parseInt(cleanCPF.charAt(10))
+    checkDigit1 === parseInt(cleanCPF.charAt(9))
+    && checkDigit2 === parseInt(cleanCPF.charAt(10))
   );
 };
 
@@ -164,11 +164,10 @@ export const PatientDataSchemas = {
       const now = new Date();
       const age = now.getFullYear() - parsedDate.getFullYear();
       const monthDiff = now.getMonth() - parsedDate.getMonth();
-      const actualAge =
-        monthDiff < 0 ||
-        (monthDiff === 0 && now.getDate() < parsedDate.getDate())
-          ? age - 1
-          : age;
+      const actualAge = monthDiff < 0
+          || (monthDiff === 0 && now.getDate() < parsedDate.getDate())
+        ? age - 1
+        : age;
       return actualAge >= 0 && actualAge <= 150;
     }, "Data de nascimento inválida"),
 
@@ -222,8 +221,7 @@ export const PatientDataSchemas = {
     gender: z
       .enum(["masculino", "feminino", "outro", "nao_informar"], {
         errorMap: () => ({
-          message:
-            "Gênero deve ser: masculino, feminino, outro, ou nao_informar",
+          message: "Gênero deve ser: masculino, feminino, outro, ou nao_informar",
         }),
       })
       .optional(),
@@ -395,8 +393,7 @@ export const PatientDataSchemas = {
     // Essential consents (required)
     dataProcessing: z.literal(true, {
       errorMap: () => ({
-        message:
-          "Consentimento para processamento de dados obrigatório (LGPD Art. 7º)",
+        message: "Consentimento para processamento de dados obrigatório (LGPD Art. 7º)",
       }),
     }),
     medicalTreatment: z.literal(true, {
@@ -441,9 +438,7 @@ export const PatientDataSchemas = {
       .max(20, "Número da licença muito longo")
       .refine((license) => {
         // Validate against known license formats
-        return Object.values(licenseRegexes).some((regex) =>
-          regex.test(license),
-        );
+        return Object.values(licenseRegexes).some((regex) => regex.test(license));
       }, "Formato de licença profissional inválido"),
 
     licenseType: z.enum(
@@ -480,9 +475,9 @@ export const AppointmentDataSchemas = {
       const now = new Date();
       // Must be in the future and within 1 year
       return (
-        scheduledDate > now &&
-        scheduledDate <
-          new Date(now.getFullYear() + 1, now.getMonth(), now.getDate())
+        scheduledDate > now
+        && scheduledDate
+          < new Date(now.getFullYear() + 1, now.getMonth(), now.getDate())
       );
     }, "Data de agendamento deve estar no futuro e dentro de 1 ano"),
 
@@ -569,8 +564,7 @@ export function validateHealthcareInput(
               message: err.message,
               code: err.code,
             })),
-            lgpdCompliance:
-              "Data validation protects patient information quality",
+            lgpdCompliance: "Data validation protects patient information quality",
           },
           400,
         );
@@ -679,9 +673,4 @@ export const healthcareValidationUtils = {
   },
 };
 
-export {
-  validateBrazilianCPF,
-  validateBrazilianRG,
-  brazilianPhoneRegex,
-  cepRegex,
-};
+export { brazilianPhoneRegex, cepRegex, validateBrazilianCPF, validateBrazilianRG };

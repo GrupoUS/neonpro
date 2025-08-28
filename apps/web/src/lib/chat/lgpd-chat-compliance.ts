@@ -16,11 +16,7 @@
  * - Third-party data sharing controls
  */
 
-import type {
-  ChatMessage,
-  MessageContent,
-  HealthcareContext,
-} from "@/types/chat";
+import type { ChatMessage, HealthcareContext, MessageContent } from "@/types/chat";
 
 export interface LGPDConfig {
   enable_data_classification?: boolean;
@@ -257,12 +253,9 @@ export class LGPDChatCompliance {
 
     // Healthcare data patterns
     const healthcarePatterns = {
-      medical_conditions:
-        /diabetes|hipertensão|câncer|hiv|aids|tuberculose|depressão|ansiedade/gi,
-      medications:
-        /medicamento|remédio|antibiótico|insulina|morfina|antidepressivo/gi,
-      procedures:
-        /cirurgia|exame|biopsia|quimioterapia|radioterapia|transplante/gi,
+      medical_conditions: /diabetes|hipertensão|câncer|hiv|aids|tuberculose|depressão|ansiedade/gi,
+      medications: /medicamento|remédio|antibiótico|insulina|morfina|antidepressivo/gi,
+      procedures: /cirurgia|exame|biopsia|quimioterapia|radioterapia|transplante/gi,
       personal_health: /cpf|rg|cartão sus|plano de saúde|cnpj/gi,
       biometric: /digital|íris|face|voz|dna/gi,
       symptoms: /dor|febre|tosse|sangramento|desmaio|convulsão/gi,
@@ -328,10 +321,8 @@ export class LGPDChatCompliance {
       sensitivity_level: sensitivityLevel,
       requires_consent: category === "sensitive" || category === "healthcare",
       retention_period_days: retentionPeriod,
-      anonymization_required:
-        category === "healthcare" || sensitivityLevel === "critical",
-      encryption_required:
-        sensitivityLevel === "high" || sensitivityLevel === "critical",
+      anonymization_required: category === "healthcare" || sensitivityLevel === "critical",
+      encryption_required: sensitivityLevel === "high" || sensitivityLevel === "critical",
       access_restrictions: this.getAccessRestrictions(
         category,
         sensitivityLevel,
@@ -356,13 +347,13 @@ export class LGPDChatCompliance {
     // Check for valid consent
     const validConsent = userConsents.find(
       (consent) =>
-        consent.granted &&
-        !consent.revocation_date &&
-        (!consent.expires_at || consent.expires_at > now) &&
-        (consent.consent_type === "healthcare_communication" ||
-          consent.consent_type === "data_processing") &&
-        consent.data_categories.some((category) =>
-          classification.sub_categories.includes(category),
+        consent.granted
+        && !consent.revocation_date
+        && (!consent.expires_at || consent.expires_at > now)
+        && (consent.consent_type === "healthcare_communication"
+          || consent.consent_type === "data_processing")
+        && consent.data_categories.some((category) =>
+          classification.sub_categories.includes(category)
         ),
     );
 
@@ -377,8 +368,8 @@ export class LGPDChatCompliance {
     classification: DataClassification,
   ): Promise<boolean> {
     if (
-      !this.config.enable_anonymization ||
-      !classification.anonymization_required
+      !this.config.enable_anonymization
+      || !classification.anonymization_required
     ) {
       return false;
     }
@@ -418,8 +409,8 @@ export class LGPDChatCompliance {
 
     // Personal data anonymization
     if (
-      classification.category === "sensitive" ||
-      classification.category === "personal"
+      classification.category === "sensitive"
+      || classification.category === "personal"
     ) {
       anonymizedText = this.anonymizePersonalData(anonymizedText);
     }
@@ -536,8 +527,8 @@ export class LGPDChatCompliance {
 
     // Check for sensitive data without proper classification
     if (
-      classification.category === "personal" &&
-      /diabetes|hiv|câncer|depressão/i.test(text)
+      classification.category === "personal"
+      && /diabetes|hiv|câncer|depressão/i.test(text)
     ) {
       violations.push(
         "Dados sensíveis de saúde não classificados adequadamente",
@@ -565,8 +556,8 @@ export class LGPDChatCompliance {
 
     // Check for automated decision making
     if (
-      message.sender_type === "ai_assistant" &&
-      classification.category === "healthcare"
+      message.sender_type === "ai_assistant"
+      && classification.category === "healthcare"
     ) {
       violations.push("Decisão automatizada em dados de saúde");
       recommendations.push("Garantir supervisão humana em decisões de saúde");
@@ -693,14 +684,12 @@ export class LGPDChatCompliance {
     const retentionConflicts: string[] = [];
 
     // Check for legal retention requirements
-    const legalRetentionData =
-      await this.checkLegalRetentionRequirements(userId);
+    const legalRetentionData = await this.checkLegalRetentionRequirements(userId);
 
     if (legalRetentionData.length > 0) {
       retentionConflicts.push(
         ...legalRetentionData.map(
-          (item) =>
-            `${item.data_type}: Retenção legal até ${item.retention_until}`,
+          (item) => `${item.data_type}: Retenção legal até ${item.retention_until}`,
         ),
       );
     }

@@ -103,12 +103,11 @@ const AIServicesDashboard: React.FC = () => {
     try {
       setIsLoading(true);
 
-      const [servicesResponse, metricsResponse, alertsResponse] =
-        await Promise.all([
-          fetch("/api/ai/monitoring/services-health"),
-          fetch(`/api/ai/monitoring/metrics?time_range=${selectedTimeRange}`),
-          fetch("/api/ai/compliance/alerts?active=true"),
-        ]);
+      const [servicesResponse, metricsResponse, alertsResponse] = await Promise.all([
+        fetch("/api/ai/monitoring/services-health"),
+        fetch(`/api/ai/monitoring/metrics?time_range=${selectedTimeRange}`),
+        fetch("/api/ai/compliance/alerts?active=true"),
+      ]);
 
       const [servicesData, metricsData, alertsData] = await Promise.all([
         servicesResponse.json(),
@@ -119,25 +118,21 @@ const AIServicesDashboard: React.FC = () => {
       if (servicesData.success && metricsData.success) {
         const systemOverview = {
           total_requests_last_hour: metricsData.data.reduce(
-            (sum: number, m: ServiceMetrics) =>
-              sum + m.requests_per_minute * 60,
+            (sum: number, m: ServiceMetrics) => sum + m.requests_per_minute * 60,
             0,
           ),
-          avg_response_time:
-            metricsData.data.reduce(
-              (sum: number, m: ServiceMetrics) => sum + m.avg_response_time,
-              0,
-            ) / metricsData.data.length || 0,
-          overall_error_rate:
-            metricsData.data.reduce(
-              (sum: number, m: ServiceMetrics) =>
-                sum + (m.error_count / (m.error_count + m.success_count)) * 100,
-              0,
-            ) / metricsData.data.length || 0,
-          active_sessions:
-            servicesData.data.find(
-              (s: ServiceHealth) => s.service === "universal-chat",
-            )?.details?.active_sessions || 0,
+          avg_response_time: metricsData.data.reduce(
+                (sum: number, m: ServiceMetrics) => sum + m.avg_response_time,
+                0,
+              ) / metricsData.data.length || 0,
+          overall_error_rate: metricsData.data.reduce(
+                (sum: number, m: ServiceMetrics) =>
+                  sum + (m.error_count / (m.error_count + m.success_count)) * 100,
+                0,
+              ) / metricsData.data.length || 0,
+          active_sessions: servicesData.data.find(
+            (s: ServiceHealth) => s.service === "universal-chat",
+          )?.details?.active_sessions || 0,
           compliance_score: alertsData.success
             ? Math.max(0, 100 - alertsData.data.length * 5)
             : 100,
@@ -273,9 +268,7 @@ const AIServicesDashboard: React.FC = () => {
               size="sm"
               variant="outline"
             >
-              {isLoading ? (
-                <RefreshCw className="h-4 w-4 animate-spin" />
-              ) : (
+              {isLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : (
                 "Refresh Now"
               )}
             </Button>
@@ -397,16 +390,13 @@ const AIServicesDashboard: React.FC = () => {
                     <div>
                       <strong>{alert.service}</strong> - {alert.message}
                       <div className="mt-1 text-gray-500 text-xs">
-                        {alert.compliance_type.toUpperCase()} •{" "}
-                        {formatTime(alert.timestamp)}
+                        {alert.compliance_type.toUpperCase()} • {formatTime(alert.timestamp)}
                       </div>
                     </div>
                     <Badge
-                      variant={
-                        alert.severity === "critical"
-                          ? "destructive"
-                          : "secondary"
-                      }
+                      variant={alert.severity === "critical"
+                        ? "destructive"
+                        : "secondary"}
                     >
                       {alert.severity}
                     </Badge>
@@ -619,31 +609,25 @@ const AIServicesDashboard: React.FC = () => {
               <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
                 <div className="rounded-lg bg-green-50 p-4 text-center">
                   <div className="font-bold text-2xl text-green-600">
-                    {
-                      dashboardData.alerts.filter(
-                        (a) => a.compliance_type === "lgpd",
-                      ).length
-                    }
+                    {dashboardData.alerts.filter(
+                      (a) => a.compliance_type === "lgpd",
+                    ).length}
                   </div>
                   <div className="text-gray-600 text-sm">LGPD Alerts</div>
                 </div>
                 <div className="rounded-lg bg-blue-50 p-4 text-center">
                   <div className="font-bold text-2xl text-blue-600">
-                    {
-                      dashboardData.alerts.filter(
-                        (a) => a.compliance_type === "anvisa",
-                      ).length
-                    }
+                    {dashboardData.alerts.filter(
+                      (a) => a.compliance_type === "anvisa",
+                    ).length}
                   </div>
                   <div className="text-gray-600 text-sm">ANVISA Alerts</div>
                 </div>
                 <div className="rounded-lg bg-purple-50 p-4 text-center">
                   <div className="font-bold text-2xl text-purple-600">
-                    {
-                      dashboardData.alerts.filter(
-                        (a) => a.compliance_type === "cfm",
-                      ).length
-                    }
+                    {dashboardData.alerts.filter(
+                      (a) => a.compliance_type === "cfm",
+                    ).length}
                   </div>
                   <div className="text-gray-600 text-sm">CFM Alerts</div>
                 </div>
@@ -662,11 +646,9 @@ const AIServicesDashboard: React.FC = () => {
                             {alert.compliance_type.toUpperCase()}
                           </Badge>
                           <Badge
-                            variant={
-                              alert.severity === "critical"
-                                ? "destructive"
-                                : "secondary"
-                            }
+                            variant={alert.severity === "critical"
+                              ? "destructive"
+                              : "secondary"}
                           >
                             {alert.severity}
                           </Badge>

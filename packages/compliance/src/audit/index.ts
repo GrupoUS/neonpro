@@ -52,15 +52,13 @@ export async function validateAuditCompliance(
     const complianceAuditService = new ComplianceAuditService(supabaseClient);
 
     // Validate audit trail completeness
-    const auditTrailCompliance =
-      await auditService.validateAuditTrail(tenantId);
+    const auditTrailCompliance = await auditService.validateAuditTrail(tenantId);
 
     // Validate compliance audit requirements
-    const complianceAuditReport =
-      await complianceAuditService.generateComplianceReport(
-        tenantId,
-        "system-auditor",
-      );
+    const complianceAuditReport = await complianceAuditService.generateComplianceReport(
+      tenantId,
+      "system-auditor",
+    );
 
     const violations: string[] = [];
     const recommendations: string[] = [];
@@ -77,9 +75,9 @@ export async function validateAuditCompliance(
 
     // Check compliance audit frequency
     if (
-      complianceAuditReport.report?.lastAuditDate &&
-      Date.now() - complianceAuditReport.report.lastAuditDate.getTime() >
-        30 * 24 * 60 * 60 * 1000
+      complianceAuditReport.report?.lastAuditDate
+      && Date.now() - complianceAuditReport.report.lastAuditDate.getTime()
+        > 30 * 24 * 60 * 60 * 1000
     ) {
       violations.push("Compliance audit overdue (>30 days)");
       recommendations.push("Schedule regular compliance audits");

@@ -633,16 +633,13 @@ export function PaymentBilling() {
           <CardHeader>
             <CardTitle>Escolha o Método de Pagamento</CardTitle>
             <CardDescription>
-              Pagamento: {selectedPayment.description} - R${" "}
-              {selectedPayment.amount.toFixed(2)}
+              Pagamento: {selectedPayment.description} - R$ {selectedPayment.amount.toFixed(2)}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
               {mockPaymentData.paymentMethods
-                .filter((method) =>
-                  selectedPayment.paymentMethods.includes(method.type),
-                )
+                .filter((method) => selectedPayment.paymentMethods.includes(method.type))
                 .map((method) => (
                   <PaymentMethodCard
                     isSelected={selectedPaymentMethod?.id === method.id}
@@ -702,8 +699,7 @@ export function PaymentBilling() {
                   R$ {mockPaymentData.summary.pendingAmount.toFixed(2)}
                 </p>
                 <p className="text-muted-foreground text-xs">
-                  Vence em{" "}
-                  {new Date(
+                  Vence em {new Date(
                     mockPaymentData.summary.nextPaymentDate,
                   ).toLocaleDateString("pt-BR")}
                 </p>
@@ -777,75 +773,78 @@ export function PaymentBilling() {
         </TabsList>
 
         <TabsContent className="space-y-6" value="pending">
-          {mockPaymentData.upcomingPayments.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <CheckCircle className="mb-4 h-12 w-12 text-green-500" />
-                <h3 className="mb-2 font-medium text-lg">
-                  Nenhum pagamento pendente
-                </h3>
-                <p className="text-center text-muted-foreground">
-                  Todos os seus pagamentos estão em dia!
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-4">
-              {mockPaymentData.upcomingPayments.map((payment) => (
-                <Card
-                  className="border-l-4 border-l-yellow-500"
-                  key={payment.id}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">{payment.description}</h3>
-                        <p className="text-muted-foreground text-sm">
-                          {payment.treatment}
-                        </p>
-                        <div className="flex items-center space-x-4 text-muted-foreground text-sm">
-                          <div className="flex items-center space-x-1">
-                            <Calendar className="h-4 w-4" />
-                            <span>
-                              Vence em{" "}
-                              {new Date(payment.dueDate).toLocaleDateString(
-                                "pt-BR",
-                              )}
-                            </span>
+          {mockPaymentData.upcomingPayments.length === 0
+            ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <CheckCircle className="mb-4 h-12 w-12 text-green-500" />
+                  <h3 className="mb-2 font-medium text-lg">
+                    Nenhum pagamento pendente
+                  </h3>
+                  <p className="text-center text-muted-foreground">
+                    Todos os seus pagamentos estão em dia!
+                  </p>
+                </CardContent>
+              </Card>
+            )
+            : (
+              <div className="space-y-4">
+                {mockPaymentData.upcomingPayments.map((payment) => (
+                  <Card
+                    className="border-l-4 border-l-yellow-500"
+                    key={payment.id}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-2">
+                          <h3 className="font-semibold">{payment.description}</h3>
+                          <p className="text-muted-foreground text-sm">
+                            {payment.treatment}
+                          </p>
+                          <div className="flex items-center space-x-4 text-muted-foreground text-sm">
+                            <div className="flex items-center space-x-1">
+                              <Calendar className="h-4 w-4" />
+                              <span>
+                                Vence em {new Date(payment.dueDate).toLocaleDateString(
+                                  "pt-BR",
+                                )}
+                              </span>
+                            </div>
+                            <Badge variant="outline">{payment.installment}</Badge>
                           </div>
-                          <Badge variant="outline">{payment.installment}</Badge>
                         </div>
-                      </div>
 
-                      <div className="space-y-3 text-right">
-                        <p className="font-bold text-2xl">
-                          R$ {payment.amount.toFixed(2)}
-                        </p>
-                        <div className="flex space-x-2">
-                          {payment.canPay ? (
-                            <Button
-                              className="bg-pink-600 hover:bg-pink-700"
-                              onClick={() => handlePayNow(payment)}
-                            >
-                              <CreditCard className="h-4 w-4" />
-                              Pagar Agora
+                        <div className="space-y-3 text-right">
+                          <p className="font-bold text-2xl">
+                            R$ {payment.amount.toFixed(2)}
+                          </p>
+                          <div className="flex space-x-2">
+                            {payment.canPay
+                              ? (
+                                <Button
+                                  className="bg-pink-600 hover:bg-pink-700"
+                                  onClick={() => handlePayNow(payment)}
+                                >
+                                  <CreditCard className="h-4 w-4" />
+                                  Pagar Agora
+                                </Button>
+                              )
+                              : (
+                                <Badge variant="secondary">
+                                  Aguardando consulta
+                                </Badge>
+                              )}
+                            <Button size="sm" variant="outline">
+                              <Eye className="h-4 w-4" />
                             </Button>
-                          ) : (
-                            <Badge variant="secondary">
-                              Aguardando consulta
-                            </Badge>
-                          )}
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
         </TabsContent>
 
         <TabsContent className="space-y-6" value="history">
@@ -906,8 +905,7 @@ export function PaymentBilling() {
                   </div>
                   <Progress className="h-3" value={pkg.progress} />
                   <p className="text-muted-foreground text-xs">
-                    {pkg.installments.paid} de {pkg.installments.total} parcelas
-                    pagas
+                    {pkg.installments.paid} de {pkg.installments.total} parcelas pagas
                   </p>
                 </div>
 

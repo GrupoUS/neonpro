@@ -166,10 +166,9 @@ export class SupabaseCacheLayer implements CacheOperation {
   }
 
   async getStats(): Promise<CacheStats> {
-    this.stats.hitRate =
-      this.stats.totalRequests > 0
-        ? (this.stats.hits / this.stats.totalRequests) * 100
-        : 0;
+    this.stats.hitRate = this.stats.totalRequests > 0
+      ? (this.stats.hits / this.stats.totalRequests) * 100
+      : 0;
     return { ...this.stats };
   }
 
@@ -315,9 +314,8 @@ export class SupabaseCacheLayer implements CacheOperation {
       this.responseTimeBuffer.shift();
     }
 
-    this.stats.averageResponseTime =
-      this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
-      this.responseTimeBuffer.length;
+    this.stats.averageResponseTime = this.responseTimeBuffer.reduce((a, b) => a + b, 0)
+      / this.responseTimeBuffer.length;
   }
 
   private resetStats(): void {

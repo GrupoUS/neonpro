@@ -131,7 +131,7 @@ export const clearCacheByPattern = (pattern: string): void => {
  * Executa query com retry automático
  */
 export const executeWithRetry = async <T>(
-  queryFn: () => Promise<{ data: T; error: unknown }>,
+  queryFn: () => Promise<{ data: T; error: unknown; }>,
   maxRetries = 3,
   retryDelayMs = 1000,
 ): Promise<T> => {
@@ -146,9 +146,7 @@ export const executeWithRetry = async <T>(
 
         // Se não for o último retry, aguarda e tenta novamente
         if (attempt < maxRetries) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)),
-          );
+          await new Promise((resolve) => setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)));
           continue;
         }
 
@@ -160,9 +158,7 @@ export const executeWithRetry = async <T>(
       lastError = error;
 
       if (attempt < maxRetries) {
-        await new Promise((resolve) =>
-          setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)),
-        );
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)));
         continue;
       }
 
@@ -341,9 +337,11 @@ export const generateTimeSlots = (
       const intervalsPerHour = 60 / intervalMinutes;
       for (let i = 1; i < intervalsPerHour; i++) {
         const minutes = i * intervalMinutes;
-        const intervalTime = `${hour.toString().padStart(2, "0")}:${minutes
-          .toString()
-          .padStart(2, "0")}`;
+        const intervalTime = `${hour.toString().padStart(2, "0")}:${
+          minutes
+            .toString()
+            .padStart(2, "0")
+        }`;
         slots.push(intervalTime);
       }
     }

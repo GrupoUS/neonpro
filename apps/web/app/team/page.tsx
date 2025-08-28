@@ -3,13 +3,7 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Activity,
@@ -85,11 +79,9 @@ export default function TeamCoordinationPage() {
         {/* Emergency Controls */}
         <div className="flex items-center space-x-3">
           <Button
-            aria-label={
-              emergencyMode
-                ? "Desativar modo de emergência"
-                : "Ativar modo de emergência"
-            }
+            aria-label={emergencyMode
+              ? "Desativar modo de emergência"
+              : "Ativar modo de emergência"}
             className="transition-all duration-200"
             onClick={() => setEmergencyMode(!emergencyMode)}
             size="sm"
@@ -110,8 +102,8 @@ export default function TeamCoordinationPage() {
         <Alert className="border-red-500 bg-red-50 dark:bg-red-900/20">
           <AlertTriangle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-700 dark:text-red-300">
-            <strong>Modo de Emergência Ativo:</strong> Protocolos de emergência
-            em vigor. Acesso prioritário a recursos e comunicação de alta
+            <strong>Modo de Emergência Ativo:</strong>{" "}
+            Protocolos de emergência em vigor. Acesso prioritário a recursos e comunicação de alta
             prioridade habilitada.
           </AlertDescription>
         </Alert>
@@ -223,20 +215,16 @@ export default function TeamCoordinationPage() {
                   }`}
                 />
                 <AlertDescription
-                  className={
-                    alert.severity === "critical"
-                      ? "text-red-700 dark:text-red-300"
-                      : "text-accent dark:text-accent"
-                  }
+                  className={alert.severity === "critical"
+                    ? "text-red-700 dark:text-red-300"
+                    : "text-accent dark:text-accent"}
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-sm">{alert.message}</span>
                     <Badge
-                      variant={
-                        alert.severity === "critical"
-                          ? "destructive"
-                          : "secondary"
-                      }
+                      variant={alert.severity === "critical"
+                        ? "destructive"
+                        : "secondary"}
                     >
                       {alert.type}
                     </Badge>
@@ -246,8 +234,7 @@ export default function TeamCoordinationPage() {
             ))}
           </div>
         </div>
-      )}{" "}
-      {/* Main Dashboard Tabs */}
+      )} {/* Main Dashboard Tabs */}
       <Tabs
         className="space-y-6"
         onValueChange={setActiveTab}
@@ -287,8 +274,7 @@ export default function TeamCoordinationPage() {
               <CardHeader>
                 <CardTitle>Status da Equipe em Tempo Real</CardTitle>
                 <CardDescription>
-                  Monitoramento contínuo da disponibilidade e localização da
-                  equipe
+                  Monitoramento contínuo da disponibilidade e localização da equipe
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -297,8 +283,7 @@ export default function TeamCoordinationPage() {
                     📊 Mapa de calor da equipe será implementado aqui
                     <br />
                     <span className="text-sm">
-                      Visualização em tempo real da disponibilidade por
-                      departamento
+                      Visualização em tempo real da disponibilidade por departamento
                     </span>
                   </div>
                 </div>

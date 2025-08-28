@@ -10,9 +10,7 @@ test.describe("Regulatory Documents Dashboard Integration", () => {
     await expect(page).toHaveURL(/.*\/dashboard/);
   });
 
-  test("should navigate to regulatory documents from dashboard", async ({
-    page,
-  }) => {
+  test("should navigate to regulatory documents from dashboard", async ({ page }) => {
     // Test dashboard navigation
     await page.getByTestId("nav-regulatory-documents").click();
     await expect(page).toHaveURL(/.*\/dashboard\/regulatory-documents/);

@@ -40,8 +40,7 @@ export const HEALTHCARE_ANNOUNCEMENTS = {
   SCHEDULE_CREATED: "Agendamento criado com sucesso.",
   LGPD_COMPLIANCE_ACTIVE: "Modo de conformidade LGPD ativo.",
   ERROR_OCCURRED: "Erro ocorrido. Verifique os detalhes.",
-  SEARCH_RESULTS_UPDATED: (count: number) =>
-    `${count} relatórios encontrados para sua busca.`,
+  SEARCH_RESULTS_UPDATED: (count: number) => `${count} relatórios encontrados para sua busca.`,
   CATEGORY_SELECTED: (category: string) => `Categoria ${category} selecionada.`,
 } as const;
 
@@ -161,8 +160,8 @@ export class ScreenReaderAnnouncer {
 export class HighContrastManager {
   static isHighContrastMode(): boolean {
     return (
-      window.matchMedia("(prefers-contrast: high)").matches ||
-      window.matchMedia("(forced-colors: active)").matches
+      window.matchMedia("(prefers-contrast: high)").matches
+      || window.matchMedia("(forced-colors: active)").matches
     );
   }
 
@@ -238,26 +237,23 @@ export class ContrastChecker {
     const gsRGB = rgb.g / 255;
     const bsRGB = rgb.b / 255;
 
-    const r =
-      rsRGB <= 0.039_28 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4;
-    const g =
-      gsRGB <= 0.039_28 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4;
-    const b =
-      bsRGB <= 0.039_28 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4;
+    const r = rsRGB <= 0.039_28 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4;
+    const g = gsRGB <= 0.039_28 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4;
+    const b = bsRGB <= 0.039_28 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4;
 
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
 
   private static hexToRgb(
     hex: string,
-  ): { r: number; g: number; b: number } | null {
+  ): { r: number; g: number; b: number; } | null {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result
       ? {
-          r: Number.parseInt(result[1], 16),
-          g: Number.parseInt(result[2], 16),
-          b: Number.parseInt(result[3], 16),
-        }
+        r: Number.parseInt(result[1], 16),
+        g: Number.parseInt(result[2], 16),
+        b: Number.parseInt(result[3], 16),
+      }
       : null;
   }
 }
@@ -492,10 +488,9 @@ export class HealthcareAccessibilityValidator {
       'button, [// role="button" - consider using actual button element]',
     );
     buttons.forEach((button, index) => {
-      const accessibleName =
-        button.getAttribute("aria-label") ||
-        button.getAttribute("aria-labelledby") ||
-        button.textContent?.trim();
+      const accessibleName = button.getAttribute("aria-label")
+        || button.getAttribute("aria-labelledby")
+        || button.textContent?.trim();
 
       if (!accessibleName) {
         issues.push(`Botão ${index + 1} precisa de nome acessível`);

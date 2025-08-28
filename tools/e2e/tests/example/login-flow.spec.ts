@@ -1,7 +1,7 @@
-import { test, expect } from "@playwright/test";
-import { LoginPage } from "../../pages/LoginPage";
+import { expect, test } from "@playwright/test";
 import { DashboardPage } from "../../pages/DashboardPage";
-import { TestUtils, TEST_CONSTANTS } from "../../utils/test-utils";
+import { LoginPage } from "../../pages/LoginPage";
+import { TEST_CONSTANTS, TestUtils } from "../../utils/test-utils";
 
 /**
  * Testes E2E para fluxo de login
@@ -83,9 +83,7 @@ test.describe("Login Flow", () => {
     expect(successMessage).toContain("instruções enviadas");
   });
 
-  test("should redirect to dashboard after successful login", async ({
-    page,
-  }) => {
+  test("should redirect to dashboard after successful login", async ({ page }) => {
     // Arrange
     const credentials = TestUtils.getValidCredentials();
 
@@ -125,8 +123,7 @@ test.describe("Login Flow", () => {
 
   test("should logout successfully", async ({ page }) => {
     // Arrange - Login primeiro
-    const { dashboardPage: dashboard } =
-      await TestUtils.loginAndNavigateToDashboard(page);
+    const { dashboardPage: dashboard } = await TestUtils.loginAndNavigateToDashboard(page);
 
     // Act
     await dashboard.logout();

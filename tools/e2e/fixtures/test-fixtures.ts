@@ -1,10 +1,10 @@
-import { test as base, expect } from "@playwright/test";
-import { LoginPage } from "../pages/LoginPage";
-import { DashboardPage } from "../pages/DashboardPage";
-import { PatientsPage } from "../pages/PatientsPage";
-import { AppointmentsPage } from "../pages/AppointmentsPage";
-import { createClient } from "@supabase/supabase-js";
+import { expect, test as base } from "@playwright/test";
 import type { Page } from "@playwright/test";
+import { createClient } from "@supabase/supabase-js";
+import { AppointmentsPage } from "../pages/AppointmentsPage";
+import { DashboardPage } from "../pages/DashboardPage";
+import { LoginPage } from "../pages/LoginPage";
+import { PatientsPage } from "../pages/PatientsPage";
 
 /**
  * Tipos para fixtures customizadas
@@ -105,7 +105,7 @@ export const TEST_APPOINTMENTS = {
  * Fixture para página de login
  */
 const loginPageFixture = async (
-  { page }: { page: Page },
+  { page }: { page: Page; },
   use: (fixture: LoginPage) => Promise<void>,
 ) => {
   const loginPage = new LoginPage(page);
@@ -116,7 +116,7 @@ const loginPageFixture = async (
  * Fixture para página do dashboard
  */
 const dashboardPageFixture = async (
-  { page }: { page: Page },
+  { page }: { page: Page; },
   use: (fixture: DashboardPage) => Promise<void>,
 ) => {
   const dashboardPage = new DashboardPage(page);
@@ -127,7 +127,7 @@ const dashboardPageFixture = async (
  * Fixture para página de pacientes
  */
 const patientsPageFixture = async (
-  { page }: { page: Page },
+  { page }: { page: Page; },
   use: (fixture: PatientsPage) => Promise<void>,
 ) => {
   const patientsPage = new PatientsPage(page);
@@ -138,7 +138,7 @@ const patientsPageFixture = async (
  * Fixture para página de consultas
  */
 const appointmentsPageFixture = async (
-  { page }: { page: Page },
+  { page }: { page: Page; },
   use: (fixture: AppointmentsPage) => Promise<void>,
 ) => {
   const appointmentsPage = new AppointmentsPage(page);
@@ -150,7 +150,7 @@ const appointmentsPageFixture = async (
  * Automaticamente faz login com usuário admin
  */
 const authenticatedPageFixture = async (
-  { page }: { page: Page },
+  { page }: { page: Page; },
   use: (fixture: Page) => Promise<void>,
 ) => {
   const loginPage = new LoginPage(page);
@@ -282,7 +282,7 @@ export class TestHelpers {
   static async waitForElement(
     page: Page,
     selector: string,
-    options: { timeout?: number; retries?: number } = {},
+    options: { timeout?: number; retries?: number; } = {},
   ) {
     const { timeout = 5000, retries = 3 } = options;
 
@@ -305,7 +305,7 @@ export class TestHelpers {
   static async takeScreenshot(
     page: Page,
     name: string,
-    options: { fullPage?: boolean } = {},
+    options: { fullPage?: boolean; } = {},
   ) {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `${name}-${timestamp}.png`;

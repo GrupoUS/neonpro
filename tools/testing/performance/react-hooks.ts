@@ -5,14 +5,7 @@
  * Based on 2025 performance best practices
  */
 
-import {
-  startTransition,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DependencyList } from "react";
 
 // Performance thresholds for monitoring
@@ -51,8 +44,8 @@ export function useOptimizedCallback<T extends (...args: unknown[]) => any>(
 
     // Warn about slow callbacks in development
     if (
-      process.env.NODE_ENV === "development" &&
-      duration > PERFORMANCE_THRESHOLDS.INTERACTION_TIME_WARNING
+      process.env.NODE_ENV === "development"
+      && duration > PERFORMANCE_THRESHOLDS.INTERACTION_TIME_WARNING
     ) {
     }
 
@@ -88,8 +81,8 @@ export function useOptimizedMemo<T>(
 
     // Warn about expensive computations in development
     if (
-      process.env.NODE_ENV === "development" &&
-      duration > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING
+      process.env.NODE_ENV === "development"
+      && duration > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING
     ) {
     }
 
@@ -344,7 +337,7 @@ export function usePerformanceProfiler(
   name: string,
   enabled: boolean = process.env.NODE_ENV === "development",
 ) {
-  const marksRef = useRef<{ [key: string]: number }>({});
+  const marksRef = useRef<{ [key: string]: number; }>({});
 
   const mark = useCallback(
     (markName: string) => {
@@ -375,8 +368,7 @@ export function usePerformanceProfiler(
           endName,
         );
 
-        const duration =
-          marksRef.current[endMark] - marksRef.current[startMark];
+        const duration = marksRef.current[endMark] - marksRef.current[startMark];
 
         return duration;
       } catch {}

@@ -1,22 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import {
+  Activity,
   AlertTriangle,
+  Clock,
+  FileText,
   Heart,
+  MapPin,
   Phone,
   Shield,
   User,
-  Clock,
-  MapPin,
-  FileText,
   Zap,
-  Activity,
 } from "lucide-react";
+import React, { useState } from "react";
 
 // Emergency Patient Data Types
 export interface EmergencyPatientData {
@@ -166,13 +166,13 @@ export function EmergencyPatientCard({
             </Button>
             {patient.emergencyContacts.length > 0 && (
               <Button
-                onClick={() =>
-                  onCallEmergencyContact(patient.emergencyContacts[0])
-                }
+                onClick={() => onCallEmergencyContact(patient.emergencyContacts[0])}
                 variant="outline"
                 size="sm"
                 className="border-orange-500 text-orange-600 hover:bg-orange-50"
-                aria-label={`Ligar para ${patient.emergencyContacts[0].name} - Contato de emergência`}
+                aria-label={`Ligar para ${
+                  patient.emergencyContacts[0].name
+                } - Contato de emergência`}
               >
                 <User className="h-4 w-4 mr-1" aria-hidden="true" />
                 Contato
@@ -351,8 +351,7 @@ export function EmergencyPatientCard({
                   ))}
                   {patient.medicalHistory.length > 3 && (
                     <div className="text-xs text-muted-foreground italic">
-                      +{patient.medicalHistory.length - 3} mais itens no
-                      histórico completo
+                      +{patient.medicalHistory.length - 3} mais itens no histórico completo
                     </div>
                   )}
                 </div>
@@ -364,9 +363,7 @@ export function EmergencyPatientCard({
               <div className="text-xs text-muted-foreground flex items-center gap-1">
                 <Shield className="h-3 w-3" aria-hidden="true" />
                 Dados acessados conforme consentimento LGPD
-                {patient.cfmNumber && (
-                  <span className="ml-2">CFM: {patient.cfmNumber}</span>
-                )}
+                {patient.cfmNumber && <span className="ml-2">CFM: {patient.cfmNumber}</span>}
               </div>
             )}
           </div>

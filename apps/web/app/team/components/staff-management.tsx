@@ -2,13 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -290,12 +284,11 @@ export function StaffManagement({
       // Search filter
       if (searchQuery) {
         const searchLower = searchQuery.toLowerCase();
-        const matchesSearch =
-          staff.fullName.toLowerCase().includes(searchLower) ||
-          staff.displayName.toLowerCase().includes(searchLower) ||
-          staff.email.toLowerCase().includes(searchLower) ||
-          staff.department.toLowerCase().includes(searchLower) ||
-          staff.cfmLicense?.cfmNumber.toLowerCase().includes(searchLower);
+        const matchesSearch = staff.fullName.toLowerCase().includes(searchLower)
+          || staff.displayName.toLowerCase().includes(searchLower)
+          || staff.email.toLowerCase().includes(searchLower)
+          || staff.department.toLowerCase().includes(searchLower)
+          || staff.cfmLicense?.cfmNumber.toLowerCase().includes(searchLower);
 
         if (!matchesSearch) {
           return false;
@@ -319,10 +312,9 @@ export function StaffManagement({
 
       // Compliance filter
       if (showComplianceOnly) {
-        const hasComplianceIssues =
-          (staff.cfmLicense && staff.cfmLicense.status !== "active") ||
-          staff.currentWeekHours > staff.weeklyHoursLimit ||
-          staff.cmeCompletedHours < staff.cmeRequiredHours;
+        const hasComplianceIssues = (staff.cfmLicense && staff.cfmLicense.status !== "active")
+          || staff.currentWeekHours > staff.weeklyHoursLimit
+          || staff.cmeCompletedHours < staff.cmeRequiredHours;
 
         if (!hasComplianceIssues) {
           return false;
@@ -396,9 +388,7 @@ export function StaffManagement({
             </div>{" "}
             {/* Role Filter */}
             <Select
-              onValueChange={(value) =>
-                setRoleFilter(value as ProfessionalRole | "all")
-              }
+              onValueChange={(value) => setRoleFilter(value as ProfessionalRole | "all")}
               value={roleFilter}
             >
               <SelectTrigger aria-label="Filtrar por função">
@@ -415,9 +405,7 @@ export function StaffManagement({
             </Select>
             {/* Status Filter */}
             <Select
-              onValueChange={(value) =>
-                setStatusFilter(value as AvailabilityStatus | "all")
-              }
+              onValueChange={(value) => setStatusFilter(value as AvailabilityStatus | "all")}
               value={statusFilter}
             >
               <SelectTrigger aria-label="Filtrar por status">
@@ -494,12 +482,9 @@ export function StaffManagement({
                   const { icon: StatusIcon } = statusInfo;
 
                   // Check for compliance issues
-                  const cfmIssue =
-                    staff.cfmLicense && staff.cfmLicense.status !== "active";
-                  const cltIssue =
-                    staff.currentWeekHours > staff.weeklyHoursLimit;
-                  const cmeIssue =
-                    staff.cmeCompletedHours < staff.cmeRequiredHours;
+                  const cfmIssue = staff.cfmLicense && staff.cfmLicense.status !== "active";
+                  const cltIssue = staff.currentWeekHours > staff.weeklyHoursLimit;
+                  const cmeIssue = staff.cmeCompletedHours < staff.cmeRequiredHours;
 
                   return (
                     <TableRow className="hover:bg-muted/50" key={staff.id}>
@@ -552,50 +537,50 @@ export function StaffManagement({
                             />
                           </div>
                           <span className="font-medium text-xs capitalize">
-                            {staff.availabilityStatus === "available" &&
-                              "Disponível"}
+                            {staff.availabilityStatus === "available"
+                              && "Disponível"}
                             {staff.availabilityStatus === "busy" && "Ocupado"}
-                            {staff.availabilityStatus === "emergency" &&
-                              "Emergência"}
+                            {staff.availabilityStatus === "emergency"
+                              && "Emergência"}
                             {staff.availabilityStatus === "break" && "Pausa"}
-                            {staff.availabilityStatus === "off_duty" &&
-                              "Fora de Serviço"}
-                            {staff.availabilityStatus === "on_call" &&
-                              "Sobreaviso"}
+                            {staff.availabilityStatus === "off_duty"
+                              && "Fora de Serviço"}
+                            {staff.availabilityStatus === "on_call"
+                              && "Sobreaviso"}
                           </span>
                         </div>
                       </TableCell>
                       {/* CFM/License Status */}
                       <TableCell>
-                        {staff.cfmLicense ? (
-                          <div className="space-y-1">
-                            <div className="flex items-center space-x-1">
-                              <span className="font-mono text-xs">
-                                {staff.cfmLicense.cfmNumber}
-                              </span>
-                              {cfmIssue ? (
-                                <XCircle className="h-3 w-3 text-red-500" />
-                              ) : (
-                                <CheckCircle className="h-3 w-3 text-green-500" />
+                        {staff.cfmLicense
+                          ? (
+                            <div className="space-y-1">
+                              <div className="flex items-center space-x-1">
+                                <span className="font-mono text-xs">
+                                  {staff.cfmLicense.cfmNumber}
+                                </span>
+                                {cfmIssue
+                                  ? <XCircle className="h-3 w-3 text-red-500" />
+                                  : <CheckCircle className="h-3 w-3 text-green-500" />}
+                              </div>
+                              {staff.cfmLicense.status === "pending_renewal" && (
+                                <Badge
+                                  className="border-yellow-500 text-xs text-yellow-700"
+                                  variant="outline"
+                                >
+                                  Renovar CFM
+                                </Badge>
                               )}
                             </div>
-                            {staff.cfmLicense.status === "pending_renewal" && (
-                              <Badge
-                                className="border-yellow-500 text-xs text-yellow-700"
-                                variant="outline"
-                              >
-                                Renovar CFM
-                              </Badge>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="flex items-center space-x-1">
-                            <span className="text-muted-foreground text-xs">
-                              {staff.professionalLicenses[0] || "N/A"}
-                            </span>
-                            <CheckCircle className="h-3 w-3 text-green-500" />
-                          </div>
-                        )}
+                          )
+                          : (
+                            <div className="flex items-center space-x-1">
+                              <span className="text-muted-foreground text-xs">
+                                {staff.professionalLicenses[0] || "N/A"}
+                              </span>
+                              <CheckCircle className="h-3 w-3 text-green-500" />
+                            </div>
+                          )}
                       </TableCell>{" "}
                       {/* Performance Score */}
                       <TableCell>
@@ -616,22 +601,17 @@ export function StaffManagement({
                         <div className="space-y-1">
                           <div className="flex items-center space-x-1">
                             <span className="text-xs">
-                              {staff.currentWeekHours}h /{" "}
-                              {staff.weeklyHoursLimit}h
+                              {staff.currentWeekHours}h / {staff.weeklyHoursLimit}h
                             </span>
-                            {cltIssue ? (
-                              <XCircle className="h-3 w-3 text-red-500" />
-                            ) : (
-                              <CheckCircle className="h-3 w-3 text-green-500" />
-                            )}
+                            {cltIssue
+                              ? <XCircle className="h-3 w-3 text-red-500" />
+                              : <CheckCircle className="h-3 w-3 text-green-500" />}
                           </div>
                           <Progress
                             className="h-1"
-                            value={
-                              (staff.currentWeekHours /
-                                staff.weeklyHoursLimit) *
-                              100
-                            }
+                            value={(staff.currentWeekHours
+                              / staff.weeklyHoursLimit)
+                              * 100}
                           />
                           {staff.overtimeHours > 0 && (
                             <Badge
@@ -649,22 +629,17 @@ export function StaffManagement({
                           <div className="flex items-center space-x-1">
                             <GraduationCap className="h-3 w-3 text-blue-500" />
                             <span className="text-xs">
-                              {staff.cmeCompletedHours}h /{" "}
-                              {staff.cmeRequiredHours}h
+                              {staff.cmeCompletedHours}h / {staff.cmeRequiredHours}h
                             </span>
-                            {cmeIssue ? (
-                              <XCircle className="h-3 w-3 text-red-500" />
-                            ) : (
-                              <CheckCircle className="h-3 w-3 text-green-500" />
-                            )}
+                            {cmeIssue
+                              ? <XCircle className="h-3 w-3 text-red-500" />
+                              : <CheckCircle className="h-3 w-3 text-green-500" />}
                           </div>
                           <Progress
                             className="h-1"
-                            value={
-                              (staff.cmeCompletedHours /
-                                staff.cmeRequiredHours) *
-                              100
-                            }
+                            value={(staff.cmeCompletedHours
+                              / staff.cmeRequiredHours)
+                              * 100}
                           />
                         </div>
                       </TableCell>{" "}
@@ -724,8 +699,7 @@ export function StaffManagement({
                 Nenhum profissional encontrado
               </p>
               <p className="mb-4 text-muted-foreground">
-                Tente ajustar os filtros ou adicionar novos profissionais à
-                equipe
+                Tente ajustar os filtros ou adicionar novos profissionais à equipe
               </p>
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />

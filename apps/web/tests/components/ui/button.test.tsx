@@ -17,7 +17,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock theme provider if needed
-const ThemeWrapper = ({ children }: { children: React.ReactNode }) => (
+const ThemeWrapper = ({ children }: { children: React.ReactNode; }) => (
   <div className="neonprov1-theme">{children}</div>
 );
 

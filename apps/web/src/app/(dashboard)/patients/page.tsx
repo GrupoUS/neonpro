@@ -2,13 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,15 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-  Filter,
-  Mail,
-  MoreHorizontal,
-  Phone,
-  Plus,
-  Search,
-  User,
-} from "lucide-react";
+import { Filter, Mail, MoreHorizontal, Phone, Plus, Search, User } from "lucide-react";
 import Link from "next/link";
 
 const patients = [
@@ -144,9 +130,7 @@ export default function PatientsPage() {
                   </div>
 
                   <Badge
-                    variant={
-                      patient.status === "ativo" ? "default" : "secondary"
-                    }
+                    variant={patient.status === "ativo" ? "default" : "secondary"}
                   >
                     {patient.status}
                   </Badge>

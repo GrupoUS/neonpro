@@ -3,7 +3,7 @@
  * Handles patients page interactions and validations
  */
 
-import type { Page, Locator } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import { BasePage } from "./BasePage";
 
 export class PatientsPage extends BasePage {
@@ -303,26 +303,21 @@ export class PatientsPage extends BasePage {
     await this.waitForElementToBeVisible(row);
 
     return {
-      name:
-        (await row
-          .locator('.name-cell, [data-testid="name-cell"]')
-          .textContent()) || "",
-      email:
-        (await row
-          .locator('.email-cell, [data-testid="email-cell"]')
-          .textContent()) || "",
-      phone:
-        (await row
-          .locator('.phone-cell, [data-testid="phone-cell"]')
-          .textContent()) || "",
-      age:
-        (await row
-          .locator('.age-cell, [data-testid="age-cell"]')
-          .textContent()) || "",
-      status:
-        (await row
-          .locator('.status-cell, [data-testid="status-cell"]')
-          .textContent()) || "",
+      name: (await row
+        .locator('.name-cell, [data-testid="name-cell"]')
+        .textContent()) || "",
+      email: (await row
+        .locator('.email-cell, [data-testid="email-cell"]')
+        .textContent()) || "",
+      phone: (await row
+        .locator('.phone-cell, [data-testid="phone-cell"]')
+        .textContent()) || "",
+      age: (await row
+        .locator('.age-cell, [data-testid="age-cell"]')
+        .textContent()) || "",
+      status: (await row
+        .locator('.status-cell, [data-testid="status-cell"]')
+        .textContent()) || "",
     };
   }
 

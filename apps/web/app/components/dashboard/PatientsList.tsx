@@ -3,13 +3,7 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -80,9 +74,7 @@ export function PatientsList({
                 <p className="font-medium text-sm">{patient.name}</p>
                 <Badge
                   className="text-xs"
-                  variant={
-                    patient.status === "active" ? "default" : "secondary"
-                  }
+                  variant={patient.status === "active" ? "default" : "secondary"}
                 >
                   {patient.status}
                 </Badge>
@@ -114,8 +106,8 @@ export function PatientsList({
 
   const shouldShowViewAllButton = () => {
     return (
-      !patientsLoading &&
-      recentPatients.length > DASHBOARD_CONSTANTS.RECENT_PATIENTS_LIMIT
+      !patientsLoading
+      && recentPatients.length > DASHBOARD_CONSTANTS.RECENT_PATIENTS_LIMIT
     );
   };
 

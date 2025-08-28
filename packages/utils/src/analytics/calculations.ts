@@ -79,12 +79,10 @@ const calculateMRR = (
       if (typeof price !== "number" || Number.isNaN(price)) {
         return sum;
       }
-      const dollarPrice =
-        price > CENTS_THRESHOLD ? price / DECIMAL_PRECISION : price;
-      const monthlyPrice =
-        sub?.interval === "yearly"
-          ? dollarPrice / MONTHS_PER_YEAR
-          : dollarPrice;
+      const dollarPrice = price > CENTS_THRESHOLD ? price / DECIMAL_PRECISION : price;
+      const monthlyPrice = sub?.interval === "yearly"
+        ? dollarPrice / MONTHS_PER_YEAR
+        : dollarPrice;
       return sum + monthlyPrice;
     }, ZERO);
   return Math.round(mrr * DECIMAL_PRECISION) / DECIMAL_PRECISION;

@@ -317,9 +317,7 @@ export const corsUtils = {
   // Validate request headers
   validateHeaders: (headers: string[]): boolean => {
     const corsPolicy = getCorsPolicyByEnvironment();
-    return headers.every((header) =>
-      corsPolicy.allowedHeaders.includes(header),
-    );
+    return headers.every((header) => corsPolicy.allowedHeaders.includes(header));
   },
 
   // Set custom CORS headers for specific routes

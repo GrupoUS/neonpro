@@ -7,11 +7,7 @@
  */
 
 import { z } from "zod";
-import type {
-  ComplianceScore,
-  Consent,
-  ConstitutionalResponse,
-} from "../types";
+import type { ComplianceScore, Consent, ConstitutionalResponse } from "../types";
 import { LGPDLegalBasis, PatientDataClassification } from "../types";
 
 /**
@@ -84,15 +80,18 @@ export class ConsentService {
       const validatedRequest = ConsentRequestSchema.parse(request);
 
       // Step 2: Constitutional healthcare validation
-      const constitutionalValidation =
-        await this.validateConstitutionalRequirements(validatedRequest);
+      const constitutionalValidation = await this.validateConstitutionalRequirements(
+        validatedRequest,
+      );
 
       if (!constitutionalValidation.valid) {
         return {
           success: false,
-          error: `Constitutional validation failed: ${constitutionalValidation.violations.join(
-            ", ",
-          )}`,
+          error: `Constitutional validation failed: ${
+            constitutionalValidation.violations.join(
+              ", ",
+            )
+          }`,
           complianceScore: constitutionalValidation.score,
           regulatoryValidation: { lgpd: false, anvisa: true, cfm: true },
           auditTrail: await this.createAuditEvent(
@@ -174,10 +173,9 @@ export class ConsentService {
 
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown consent request error",
+        error: error instanceof Error
+          ? error.message
+          : "Unknown consent request error",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -283,8 +281,7 @@ export class ConsentService {
 
       return {
         success: false,
-        error:
-          error instanceof Error ? error.message : "Failed to grant consent",
+        error: error instanceof Error ? error.message : "Failed to grant consent",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -310,8 +307,8 @@ export class ConsentService {
       );
 
       if (
-        !consentRecord ||
-        consentRecord.patientId !== validatedWithdrawal.patientId
+        !consentRecord
+        || consentRecord.patientId !== validatedWithdrawal.patientId
       ) {
         throw new Error("Invalid consent record or unauthorized withdrawal");
       }
@@ -321,8 +318,7 @@ export class ConsentService {
       }
 
       // Step 3: Constitutional validation of withdrawal
-      const withdrawalValidation =
-        await this.validateConsentWithdrawal(validatedWithdrawal);
+      const withdrawalValidation = await this.validateConsentWithdrawal(validatedWithdrawal);
 
       // Step 4: Withdraw consent with constitutional compliance
       const withdrawnConsent: Consent = {
@@ -380,8 +376,7 @@ export class ConsentService {
 
       return {
         success: false,
-        error:
-          error instanceof Error ? error.message : "Failed to withdraw consent",
+        error: error instanceof Error ? error.message : "Failed to withdraw consent",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -420,10 +415,9 @@ export class ConsentService {
 
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to retrieve consent status",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to retrieve consent status",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -451,11 +445,11 @@ export class ConsentService {
 
     // Healthcare-specific validations
     if (
-      (request.consentType === "HEALTH" ||
-        request.consentType === "SENSITIVE") &&
-      !(
-        request.legalBasis.includes("HEALTH_PROTECTION") ||
-        request.legalBasis.includes("HEALTH_PROCEDURES")
+      (request.consentType === "HEALTH"
+        || request.consentType === "SENSITIVE")
+      && !(
+        request.legalBasis.includes("HEALTH_PROTECTION")
+        || request.legalBasis.includes("HEALTH_PROCEDURES")
       )
     ) {
       violations.push(
@@ -480,8 +474,8 @@ export class ConsentService {
 
     // Automated decision-making disclosure
     if (
-      request.automatedDecisionMaking &&
-      !request.purpose.includes("automated")
+      request.automatedDecisionMaking
+      && !request.purpose.includes("automated")
     ) {
       violations.push("Automated decision-making must be explicitly disclosed");
       score -= 1;
@@ -556,7 +550,7 @@ Categorias de Dados: ${request.dataCategories.join(", ")}
   private async validateConsentGrant(
     consent: Consent,
     confirmationMethod: string,
-  ): Promise<{ valid: boolean; score: ComplianceScore; violations: string[] }> {
+  ): Promise<{ valid: boolean; score: ComplianceScore; violations: string[]; }> {
     const violations: string[] = [];
     let score = 10;
 
@@ -638,7 +632,7 @@ Categorias de Dados: ${request.dataCategories.join(", ")}
 
   private async validateConsentWithdrawal(
     _withdrawal: ConsentWithdrawal,
-  ): Promise<{ score: ComplianceScore }> {
+  ): Promise<{ score: ComplianceScore; }> {
     return { score: 9.9 };
   }
 

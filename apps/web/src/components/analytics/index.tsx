@@ -11,73 +11,64 @@
 
 // ====== MAIN ANALYTICS COMPONENTS ======
 export { default as AnalyticsDashboard } from "./AnalyticsDashboard";
+export { default as BrazilianComplianceTracker } from "./BrazilianComplianceTracker";
 export { default as PatientOutcomePrediction } from "./PatientOutcomePrediction";
 export { default as RealTimeMonitoringDashboard } from "./RealTimeMonitoringDashboard";
-export { default as BrazilianComplianceTracker } from "./BrazilianComplianceTracker";
 
 // ====== ANALYTICS TYPES ======
 export type {
-  // Core Analytics Types
-  HealthcareAnalytics,
-  AnalyticsDashboardProps,
-  PatientOutcomePredictionProps,
-
-  // Predictive Intelligence Types
-  PredictiveIntelligence,
-  OutcomePrediction,
-  ComplicationPrediction,
-  RecoveryMilestone,
-  AlternativeTreatment,
-
-  // Real-time Monitoring Types
-  HealthcareMonitoring,
-  CriticalAlert,
-  WarningAlert,
-  EmergencyTrigger,
-  VitalSignsMonitoring,
-  AutomatedAction,
-
-  // Brazilian Healthcare Intelligence Types
-  BrazilianHealthcareIntelligence,
-  CFMComplianceScore,
-  ANVISAComplianceScore,
-  LGPDComplianceScore,
-  ComplianceViolation,
-  BrazilianRegion,
-  BrazilianState,
-
-  // AI and ML Types
-  MLModel,
-  PredictionResult,
-  FeatureImportance,
-  FeatureContribution,
   AIInsight,
   AIRecommendation,
-
+  AlternativeTreatment,
+  AnalyticsDashboardProps,
+  ANVISAComplianceScore,
+  AuditTrail,
+  AutomatedAction,
+  // Brazilian Healthcare Intelligence Types
+  BrazilianHealthcareIntelligence,
+  BrazilianRegion,
+  BrazilianState,
+  CFMComplianceScore,
   // Chart and Visualization Types
   ChartData,
   ChartDataset,
-  MetricCard,
+  ComplianceViolation,
+  ComplicationPrediction,
+  CriticalAlert,
   Dashboard,
   DashboardWidget,
-
+  EmergencyTrigger,
+  FeatureContribution,
+  FeatureImportance,
+  // Core Analytics Types
+  HealthcareAnalytics,
+  // Real-time Monitoring Types
+  HealthcareMonitoring,
+  LGPDComplianceScore,
+  MetricCard,
+  // AI and ML Types
+  MLModel,
+  OptimizationSuggestion,
+  OutcomePrediction,
+  PatientOutcomePredictionProps,
   // Performance and Audit Types
   PerformanceMetrics,
-  AuditTrail,
-  OptimizationSuggestion,
+  PredictionResult,
+  // Predictive Intelligence Types
+  PredictiveIntelligence,
+  RecoveryMilestone,
   ReportConfiguration,
+  VitalSignsMonitoring,
+  WarningAlert,
 } from "@/types/analytics";
 
 // ====== ANALYTICS SERVICES ======
-export {
-  PredictiveModelsService,
-  predictiveModels,
-} from "@/lib/analytics/predictive-models";
+export { predictiveModels, PredictiveModelsService } from "@/lib/analytics/predictive-models";
 
 // ====== ANALYTICS CONSTANTS ======
 export {
-  DEFAULT_ANALYTICS_CONFIG,
   BRAZILIAN_HEALTHCARE_COLORS,
+  DEFAULT_ANALYTICS_CONFIG,
   PERFORMANCE_THRESHOLDS,
 } from "@/types/analytics";
 
@@ -173,7 +164,9 @@ export const formatBrazilianPhone = (phone: string): string => {
 export const formatCPF = (cpf: string): string => {
   const cleaned = cpf.replace(/\D/g, "");
   if (cleaned.length === 11) {
-    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9)}`;
+    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${
+      cleaned.slice(9)
+    }`;
   }
   return cpf;
 };
@@ -187,8 +180,8 @@ export const calculateAge = (birthdate: Date): number => {
   const monthDiff = today.getMonth() - birthdate.getMonth();
 
   if (
-    monthDiff < 0 ||
-    (monthDiff === 0 && today.getDate() < birthdate.getDate())
+    monthDiff < 0
+    || (monthDiff === 0 && today.getDate() < birthdate.getDate())
   ) {
     return age - 1;
   }
@@ -279,7 +272,7 @@ export const validateCRM = (crm: string, state: string): boolean => {
   const cleaned = crm.replace(/\D/g, "");
 
   // CRM format: state-specific number ranges
-  const ranges: Record<string, { min: number; max: number }> = {
+  const ranges: Record<string, { min: number; max: number; }> = {
     SP: { min: 1, max: 999_999 },
     RJ: { min: 1, max: 999_999 },
     MG: { min: 1, max: 999_999 },

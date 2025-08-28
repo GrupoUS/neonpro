@@ -42,8 +42,8 @@ Sistema de chat inteligente integrado com WhatsApp Business API que oferece aten
 
 ### US-001: Atendimento Automatizado Básico
 
-**Como** paciente  
-**Quero** conversar via WhatsApp com a clínica  
+**Como** paciente\
+**Quero** conversar via WhatsApp com a clínica\
 **Para** tirar dúvidas sobre procedimentos e horários
 
 **Critérios de Aceitação:**
@@ -55,8 +55,8 @@ Sistema de chat inteligente integrado com WhatsApp Business API que oferece aten
 
 ### US-002: Agendamento via Chat
 
-**Como** paciente  
-**Quero** agendar consulta pelo WhatsApp  
+**Como** paciente\
+**Quero** agendar consulta pelo WhatsApp\
 **Para** não precisar ligar ou ir presencialmente
 
 **Critérios de Aceitação:**
@@ -68,8 +68,8 @@ Sistema de chat inteligente integrado com WhatsApp Business API que oferece aten
 
 ### US-003: Escalação Inteligente
 
-**Como** atendente da clínica  
-**Quero** receber conversas complexas automaticamente  
+**Como** atendente da clínica\
+**Quero** receber conversas complexas automaticamente\
 **Para** resolver casos que o bot não consegue
 
 **Critérios de Aceitação:**
@@ -81,8 +81,8 @@ Sistema de chat inteligente integrado com WhatsApp Business API que oferece aten
 
 ### US-004: Dashboard de Métricas
 
-**Como** gestor da clínica  
-**Quero** ver métricas do chat IA  
+**Como** gestor da clínica\
+**Quero** ver métricas do chat IA\
 **Para** acompanhar performance e ROI
 
 **Critérios de Aceitação:**

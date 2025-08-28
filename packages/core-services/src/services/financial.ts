@@ -490,7 +490,7 @@ export class FinancialService {
   async searchTransactions(
     filters: FinancialFilters,
     userId: string,
-  ): Promise<{ transactions: FinancialTransaction[]; total: number }> {
+  ): Promise<{ transactions: FinancialTransaction[]; total: number; }> {
     try {
       monitoring.debug("Searching transactions", "financial-service", {
         filters,
@@ -597,8 +597,7 @@ export class FinancialService {
       await this.validateTenantAccess(userId, request.tenantId);
 
       // Calculate installment amount
-      const installmentAmount =
-        request.totalAmount / request.numberOfInstallments;
+      const installmentAmount = request.totalAmount / request.numberOfInstallments;
 
       // Create payment plan
       const paymentPlanData = {
@@ -661,11 +660,10 @@ export class FinancialService {
         status: installment.status,
       }));
 
-      const { data: installmentRows, error: installmentError } =
-        await this.supabase
-          .from("payment_installments")
-          .insert(installmentData)
-          .select();
+      const { data: installmentRows, error: installmentError } = await this.supabase
+        .from("payment_installments")
+        .insert(installmentData)
+        .select();
 
       if (installmentError) {
         throw new Error(installmentError.message);
@@ -715,12 +713,11 @@ export class FinancialService {
       // Validate tenant access
       await this.validateTenantAccess(userId, planData.tenant_id);
 
-      const { data: installmentData, error: installmentError } =
-        await this.supabase
-          .from("payment_installments")
-          .select("*")
-          .eq("payment_plan_id", paymentPlanId)
-          .order("installment_number");
+      const { data: installmentData, error: installmentError } = await this.supabase
+        .from("payment_installments")
+        .select("*")
+        .eq("payment_plan_id", paymentPlanId)
+        .order("installment_number");
 
       if (installmentError) {
         throw new Error(installmentError.message);
@@ -753,17 +750,16 @@ export class FinancialService {
       });
 
       // Get installment
-      const { data: installmentData, error: installmentError } =
-        await this.supabase
-          .from("payment_installments")
-          .select(
-            `
+      const { data: installmentData, error: installmentError } = await this.supabase
+        .from("payment_installments")
+        .select(
+          `
           *,
           payment_plans!inner(tenant_id, paid_amount, total_amount)
         `,
-          )
-          .eq("id", installmentId)
-          .single();
+        )
+        .eq("id", installmentId)
+        .single();
 
       if (installmentError || !installmentData) {
         throw new Error("Installment not found");
@@ -777,32 +773,28 @@ export class FinancialService {
 
       // Update installment
       const paymentDate = paidDate || new Date();
-      const { data: updatedInstallment, error: updateError } =
-        await this.supabase
-          .from("payment_installments")
-          .update({
-            status: InstallmentStatus.PAID,
-            paid_date: paymentDate.toISOString(),
-            payment_method: paymentMethod,
-          })
-          .eq("id", installmentId)
-          .select()
-          .single();
+      const { data: updatedInstallment, error: updateError } = await this.supabase
+        .from("payment_installments")
+        .update({
+          status: InstallmentStatus.PAID,
+          paid_date: paymentDate.toISOString(),
+          payment_method: paymentMethod,
+        })
+        .eq("id", installmentId)
+        .select()
+        .single();
 
       if (updateError) {
         throw new Error(updateError.message);
       }
 
       // Update payment plan totals
-      const newPaidAmount =
-        installmentData.payment_plans.paid_amount + installmentData.amount;
-      const newRemainingAmount =
-        installmentData.payment_plans.total_amount - newPaidAmount;
+      const newPaidAmount = installmentData.payment_plans.paid_amount + installmentData.amount;
+      const newRemainingAmount = installmentData.payment_plans.total_amount - newPaidAmount;
 
-      const planStatus =
-        newRemainingAmount <= 0
-          ? PaymentPlanStatus.COMPLETED
-          : PaymentPlanStatus.ACTIVE;
+      const planStatus = newRemainingAmount <= 0
+        ? PaymentPlanStatus.COMPLETED
+        : PaymentPlanStatus.ACTIVE;
 
       await this.supabase
         .from("payment_plans")

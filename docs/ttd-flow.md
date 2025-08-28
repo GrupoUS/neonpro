@@ -215,8 +215,8 @@ ruler --agents apex-dev
 ## Test Structure Template
 
 ```typescript
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { functionToTest } from "@/path/to/module";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock dependencies with Vitest
 vi.mock("@/lib/external-service", () => ({
@@ -331,7 +331,7 @@ vi.mock("next/navigation", () => ({
 ### Playwright E2E Test Patterns
 
 ```typescript
-import { test, expect, Page } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 
 // Page Object Model
 class PatientPage {
@@ -538,8 +538,8 @@ export default defineConfig({
 
 ```typescript
 // vitest.config.ts
-import { defineConfig } from "vitest/config";
 import path from "path";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
@@ -706,11 +706,11 @@ export default defineConfig({
     // Only run mobile tests when needed
     ...(process.env.MOBILE_TESTS
       ? [
-          {
-            name: "mobile-android",
-            use: { ...devices["Pixel 5"] },
-          },
-        ]
+        {
+          name: "mobile-android",
+          use: { ...devices["Pixel 5"] },
+        },
+      ]
       : []),
   ],
 });

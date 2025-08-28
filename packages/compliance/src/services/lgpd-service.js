@@ -152,8 +152,7 @@ export class LgpdService {
       if (!consent.canWithdraw) {
         return {
           success: false,
-          message:
-            "Este consentimento não pode ser retirado devido a obrigações legais",
+          message: "Este consentimento não pode ser retirado devido a obrigações legais",
         };
       }
       // Update consent record
@@ -263,11 +262,10 @@ export class LgpdService {
         if (legalObligations.includes(category)) {
           // Cannot delete due to legal obligation
           result.retained.push(category);
-          result.reasons[category] =
-            "Legal obligation (healthcare records retention)";
+          result.reasons[category] = "Legal obligation (healthcare records retention)";
         } else if (
-          consent.lawfulBasis === LgpdLawfulBasis.CONSENT &&
-          !consent.isActive
+          consent.lawfulBasis === LgpdLawfulBasis.CONSENT
+          && !consent.isActive
         ) {
           // Can delete - consent withdrawn and no legal basis
           await LgpdService.deleteUserDataByCategory(request.userId, category);
@@ -286,8 +284,7 @@ export class LgpdService {
             result.deleted.push(category);
           } else {
             result.retained.push(category);
-            result.reasons[category] =
-              "Legitimate interests or contract performance";
+            result.reasons[category] = "Legitimate interests or contract performance";
           }
         }
       }
@@ -351,18 +348,15 @@ export class LgpdService {
         break;
       }
       case "medium": {
-        recommendation =
-          "Additional safeguards recommended. Regular monitoring required.";
+        recommendation = "Additional safeguards recommended. Regular monitoring required.";
         break;
       }
       case "high": {
-        recommendation =
-          "Enhanced security measures mandatory. DPO consultation required.";
+        recommendation = "Enhanced security measures mandatory. DPO consultation required.";
         break;
       }
       case "very_high": {
-        recommendation =
-          "Prior consultation with ANPD required. Comprehensive DPIA mandatory.";
+        recommendation = "Prior consultation with ANPD required. Comprehensive DPIA mandatory.";
         break;
       }
     }
@@ -387,11 +381,10 @@ export class LgpdService {
     // ANPD notification requirements (LGPD Art. 48)
     const anpdNotificationRequired = isHighRisk || severity === "critical";
     // User notification requirements
-    const userNotificationRequired =
-      isHighRisk &&
-      (dataCategories.includes(DataCategory.HEALTH) ||
-        dataCategories.includes(DataCategory.SENSITIVE) ||
-        dataCategories.includes(DataCategory.BIOMETRIC));
+    const userNotificationRequired = isHighRisk
+      && (dataCategories.includes(DataCategory.HEALTH)
+        || dataCategories.includes(DataCategory.SENSITIVE)
+        || dataCategories.includes(DataCategory.BIOMETRIC));
     // Calculate notification deadline (72 hours from discovery)
     const notificationDeadline = anpdNotificationRequired
       ? addDays(incident.discoveredAt, 3)
@@ -461,9 +454,9 @@ export class LgpdService {
   static async deleteUserDataByCategory(_userId, _category) {}
   static assessBreachRisk(dataCategories, affectedCount, severity) {
     return (
-      dataCategories.includes(DataCategory.HEALTH) ||
-      affectedCount > 100 ||
-      severity === "critical"
+      dataCategories.includes(DataCategory.HEALTH)
+      || affectedCount > 100
+      || severity === "critical"
     );
   }
   static generateBreachRiskAssessment(incident) {

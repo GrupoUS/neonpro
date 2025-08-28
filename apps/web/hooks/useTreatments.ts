@@ -102,8 +102,7 @@ export function useTreatments(): TreatmentsHook {
 
   // Filter States
   const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] =
-    useState<AestheticTreatmentCategory | null>();
+  const [categoryFilter, setCategoryFilter] = useState<AestheticTreatmentCategory | null>();
   const [statusFilter, setStatusFilter] = useState<TreatmentStatus | null>();
   const [patientFilter, setPatientFilter] = useState<string | null>();
 
@@ -197,7 +196,7 @@ export function useTreatments(): TreatmentsHook {
   // Computed Values
   const activeTreatments = useMemo(() => {
     return treatmentPlans.filter((plan) =>
-      ["planned", "consent_pending", "active"].includes(plan.status),
+      ["planned", "consent_pending", "active"].includes(plan.status)
     );
   }, [treatmentPlans]);
 
@@ -221,8 +220,8 @@ export function useTreatments(): TreatmentsHook {
     return treatmentSessions
       .filter(
         (session) =>
-          session.status === "scheduled" &&
-          new Date(session.scheduled_date) > now,
+          session.status === "scheduled"
+          && new Date(session.scheduled_date) > now,
       )
       .slice(0, 10);
   }, [treatmentSessions]);
@@ -232,8 +231,8 @@ export function useTreatments(): TreatmentsHook {
       .filter((session) => session.status === "completed")
       .sort(
         (a, b) =>
-          new Date(b.actual_date || b.scheduled_date).getTime() -
-          new Date(a.actual_date || a.scheduled_date).getTime(),
+          new Date(b.actual_date || b.scheduled_date).getTime()
+          - new Date(a.actual_date || a.scheduled_date).getTime(),
       )
       .slice(0, 10);
   }, [treatmentSessions]);
@@ -253,8 +252,7 @@ export function useTreatments(): TreatmentsHook {
     return treatmentProtocols
       .filter((protocol) => protocol.success_rate >= 80)
       .sort(
-        (a, b) =>
-          b.patient_satisfaction_average - a.patient_satisfaction_average,
+        (a, b) => b.patient_satisfaction_average - a.patient_satisfaction_average,
       )
       .slice(0, 5);
   }, [treatmentProtocols]);
@@ -262,10 +260,9 @@ export function useTreatments(): TreatmentsHook {
   // Statistics
   const { length: totalTreatments } = treatmentPlans;
   const { length: activeSessionsCount } = upcomingSessions;
-  const completionRate =
-    totalTreatments > 0
-      ? (completedTreatments.length / totalTreatments) * 100
-      : 0;
+  const completionRate = totalTreatments > 0
+    ? (completedTreatments.length / totalTreatments) * 100
+    : 0;
   const averageSatisfactionScore = useMemo(() => {
     const sessionsWithScores = treatmentSessions.filter(
       (s) => s.patient_satisfaction_score,
@@ -502,13 +499,11 @@ export function useTreatments(): TreatmentsHook {
               prev.map((plan) =>
                 plan.id === payload.new.id
                   ? (payload.new as TreatmentPlan)
-                  : plan,
-              ),
+                  : plan
+              )
             );
           } else if (payload.eventType === "DELETE") {
-            setTreatmentPlans((prev) =>
-              prev.filter((plan) => plan.id !== payload.old.id),
-            );
+            setTreatmentPlans((prev) => prev.filter((plan) => plan.id !== payload.old.id));
           }
         },
       )
@@ -534,13 +529,11 @@ export function useTreatments(): TreatmentsHook {
               prev.map((session) =>
                 session.id === payload.new.id
                   ? (payload.new as TreatmentSession)
-                  : session,
-              ),
+                  : session
+              )
             );
           } else if (payload.eventType === "DELETE") {
-            setTreatmentSessions((prev) =>
-              prev.filter((session) => session.id !== payload.old.id),
-            );
+            setTreatmentSessions((prev) => prev.filter((session) => session.id !== payload.old.id));
           }
         },
       )

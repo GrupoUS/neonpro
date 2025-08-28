@@ -353,10 +353,9 @@ export const lgpdMiddleware = (): MiddlewareHandler => {
       c.set("lgpdContext", {
         config: routeConfig,
         patientId,
-        consentValidated:
-          routeConfig.requiresConsent.length === 0 ||
-          (patientId &&
-            consentStore.hasValidConsent(
+        consentValidated: routeConfig.requiresConsent.length === 0
+          || (patientId
+            && consentStore.hasValidConsent(
               patientId,
               routeConfig.requiresConsent,
             )),
@@ -452,9 +451,11 @@ export const lgpdUtils = {
 
     // Generate anonymous ID for analytics correlation
     if (data.id) {
-      anonymized.anonymousId = `anon_${btoa(data.id.toString())
-        .replaceAll(/[^a-zA-Z0-9]/g, "")
-        .slice(0, 8)}`;
+      anonymized.anonymousId = `anon_${
+        btoa(data.id.toString())
+          .replaceAll(/[^a-zA-Z0-9]/g, "")
+          .slice(0, 8)
+      }`;
     }
 
     return anonymized;

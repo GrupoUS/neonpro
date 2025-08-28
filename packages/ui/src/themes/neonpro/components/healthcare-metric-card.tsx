@@ -4,16 +4,9 @@
  * Optimized for Brazilian healthcare metrics display
  */
 
-import React from "react";
 import { cn } from "@neonpro/utils";
-import {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Users,
-  Activity,
-  Calendar,
-} from "lucide-react";
+import { Activity, Calendar, DollarSign, TrendingDown, TrendingUp, Users } from "lucide-react";
+import React from "react";
 
 // Brazilian healthcare metric types
 export type HealthcareMetricType =
@@ -139,13 +132,13 @@ const formatValue = (
     case "currency":
       return currency === "BRL"
         ? new Intl.NumberFormat("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }).format(value)
+          style: "currency",
+          currency: "BRL",
+        }).format(value)
         : new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-          }).format(value);
+          style: "currency",
+          currency: "USD",
+        }).format(value);
     case "percentage":
       return `${value}%`;
     case "number":
@@ -217,9 +210,8 @@ export const HealthcareMetricCard: React.FC<HealthcareMetricCardProps> = ({
   ...props
 }) => {
   // Auto-detect format based on type
-  const autoFormat =
-    format ||
-    (() => {
+  const autoFormat = format
+    || (() => {
       switch (type) {
         case "revenue":
           return "currency";
@@ -234,8 +226,7 @@ export const HealthcareMetricCard: React.FC<HealthcareMetricCardProps> = ({
     })();
 
   // Get colors based on variant or type
-  const colors =
-    variant === "default" ? METRIC_COLORS[type] : METRIC_COLORS[type]; // Could extend for custom variants
+  const colors = variant === "default" ? METRIC_COLORS[type] : METRIC_COLORS[type]; // Could extend for custom variants
 
   // Get icon for metric type
   const Icon = showIcon ? METRIC_ICONS[type] : null;
@@ -266,14 +257,11 @@ export const HealthcareMetricCard: React.FC<HealthcareMetricCardProps> = ({
   const cardClasses = cn(
     // Base layout
     "relative overflow-hidden rounded-xl border transition-all duration-200",
-
     // NEONPRO theme colors
     colors.bg,
     colors.border,
-
     // Size variant
     sizeClasses[size],
-
     // Interactive states
     (onClick || href) && [
       "cursor-pointer",
@@ -281,7 +269,6 @@ export const HealthcareMetricCard: React.FC<HealthcareMetricCardProps> = ({
       "hover:border-gray-300",
       "active:scale-[0.98]",
     ],
-
     // Custom classes
     className,
   );
@@ -309,9 +296,7 @@ export const HealthcareMetricCard: React.FC<HealthcareMetricCardProps> = ({
           </h3>
         </div>
 
-        {complianceIndicator && (
-          <ComplianceIndicator compliance={complianceIndicator} />
-        )}
+        {complianceIndicator && <ComplianceIndicator compliance={complianceIndicator} />}
       </div>
 
       {/* Main value (NEONPRO style) */}
@@ -325,9 +310,7 @@ export const HealthcareMetricCard: React.FC<HealthcareMetricCardProps> = ({
       </div>
 
       {/* Additional content */}
-      {children && (
-        <div className="mt-4 pt-4 border-t border-gray-100">{children}</div>
-      )}
+      {children && <div className="mt-4 pt-4 border-t border-gray-100">{children}</div>}
     </>
   );
 

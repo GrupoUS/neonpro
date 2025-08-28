@@ -954,8 +954,7 @@ export class HealthcareAI {
       messages: [
         {
           role: "system",
-          content:
-            "You are a healthcare AI assistant. Never store or log patient data.",
+          content: "You are a healthcare AI assistant. Never store or log patient data.",
         },
         { role: "user", content: sanitized },
       ],

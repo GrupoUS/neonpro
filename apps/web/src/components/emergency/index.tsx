@@ -4,11 +4,11 @@
 
 // Core Emergency Components
 export {
+  type EmergencyContact,
+  type EmergencyMedication,
   EmergencyPatientCard,
   type EmergencyPatientCardProps,
   type EmergencyPatientData,
-  type EmergencyContact,
-  type EmergencyMedication,
 } from "./EmergencyPatientCard";
 
 export {
@@ -17,11 +17,7 @@ export {
   type CriticalAllergy,
 } from "./CriticalAllergiesPanel";
 
-export {
-  SAMUDialButton,
-  type SAMUDialButtonProps,
-  type SAMUCallData,
-} from "./SAMUDialButton";
+export { type SAMUCallData, SAMUDialButton, type SAMUDialButtonProps } from "./SAMUDialButton";
 
 // Emergency Services & Performance
 export { emergencyCache } from "../lib/emergency/emergency-cache";
@@ -189,8 +185,7 @@ export const performEmergencyPerformanceTest = () => {
     setTimeout(() => {
       measureEmergencyOperation(
         operation,
-        () =>
-          new Promise((resolve) => setTimeout(resolve, Math.random() * 150)),
+        () => new Promise((resolve) => setTimeout(resolve, Math.random() * 150)),
         {
           componentName: "EmergencyInterface",
           emergencyLevel: index === 0 ? "life-threatening" : "urgent",

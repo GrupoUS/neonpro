@@ -6,11 +6,8 @@
  * with healthcare-specific events and LGPD compliance
  */
 
+import type { RealtimeChannel, RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import type { Database } from "./database.types";
-import type {
-  RealtimeChannel,
-  RealtimePostgresChangesPayload,
-} from "@supabase/supabase-js";
 
 // Healthcare database tables for real-time subscriptions
 export type Tables = Database["public"]["Tables"];
@@ -83,8 +80,7 @@ export interface PatientSubscriptionConfig extends RealtimeSubscriptionConfig {
   lgpdConfig?: LGPDRealtimeConfig;
 }
 
-export interface AppointmentSubscriptionConfig
-  extends RealtimeSubscriptionConfig {
+export interface AppointmentSubscriptionConfig extends RealtimeSubscriptionConfig {
   table: "appointments";
   appointmentId?: string;
   patientId?: string;
@@ -96,8 +92,7 @@ export interface AppointmentSubscriptionConfig
   };
 }
 
-export interface ProfessionalSubscriptionConfig
-  extends RealtimeSubscriptionConfig {
+export interface ProfessionalSubscriptionConfig extends RealtimeSubscriptionConfig {
   table: "professionals";
   professionalId?: string;
   clinicId?: string;

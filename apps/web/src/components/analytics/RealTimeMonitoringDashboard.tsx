@@ -10,13 +10,12 @@
  * @author NeonPro Healthcare AI Team
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -24,54 +23,55 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Activity,
-  AlertTriangle,
-  AlertCircle,
-  Bell,
-  BellRing,
-  Heart,
-  Thermometer,
-  Droplet,
-  Zap,
-  Clock,
-  Eye,
-  RefreshCw,
-  Pause,
-  Play,
-  Volume2,
-  VolumeX,
-  Phone,
-  MessageSquare,
-  Shield,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  Monitor,
-  Wifi,
-  WifiOff,
-  CheckCircle,
-  XCircle,
-  Info,
-  Settings,
-  Filter,
-  Search,
-  Calendar,
-  MapPin,
-  Stethoscope,
-  UserCheck,
-  Radio,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 import type {
-  HealthcareMonitoring,
-  CriticalAlert,
-  WarningAlert,
-  EmergencyTrigger,
-  VitalSignsMonitoring,
-  AutomatedAction,
   AlertSeverity,
+  AutomatedAction,
+  CriticalAlert,
+  EmergencyTrigger,
+  HealthcareMonitoring,
+  VitalSignsMonitoring,
+  WarningAlert,
 } from "@/types/analytics";
+import {
+  Activity,
+  AlertCircle,
+  AlertTriangle,
+  Bell,
+  BellRing,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Droplet,
+  Eye,
+  Filter,
+  Heart,
+  Info,
+  MapPin,
+  MessageSquare,
+  Monitor,
+  Pause,
+  Phone,
+  Play,
+  Radio,
+  RefreshCw,
+  Search,
+  Settings,
+  Shield,
+  Stethoscope,
+  Thermometer,
+  TrendingDown,
+  TrendingUp,
+  UserCheck,
+  Users,
+  Volume2,
+  VolumeX,
+  Wifi,
+  WifiOff,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 // ====== MOCK MONITORING DATA ======
 const mockMonitoringData: HealthcareMonitoring = {
@@ -215,8 +215,7 @@ const mockMonitoringData: HealthcareMonitoring = {
         type: "medical",
         severity: "warning",
         title: "Pressão Arterial Elevada",
-        message:
-          "Pressão arterial de 145/92 mmHg detectada, acima do limite recomendado de 140/90",
+        message: "Pressão arterial de 145/92 mmHg detectada, acima do limite recomendado de 140/90",
         patientId: "patient-monitoring-123",
         clinicId: "clinic-001",
         triggeredAt: new Date(Date.now() - 60 * 60 * 1000),
@@ -313,8 +312,7 @@ export default function RealTimeMonitoringDashboard({
   // ====== STATE MANAGEMENT ======
   const [isMonitoring, setIsMonitoring] = useState(true);
   const [selectedPatient, setSelectedPatient] = useState<string>("patient-002");
-  const [monitoringData, setMonitoringData] =
-    useState<HealthcareMonitoring>(mockMonitoringData);
+  const [monitoringData, setMonitoringData] = useState<HealthcareMonitoring>(mockMonitoringData);
   const [soundEnabled, setSoundEnabled] = useState(soundAlertsEnabled);
   const [alertFilter, setAlertFilter] = useState<
     "all" | "critical" | "warning" | "info"
@@ -403,9 +401,9 @@ export default function RealTimeMonitoringDashboard({
 
   const totalAlerts = useMemo(
     () =>
-      monitoringData.alerts.criticalAlerts.length +
-      monitoringData.alerts.warningAlerts.length +
-      monitoringData.alerts.complianceAlerts.length,
+      monitoringData.alerts.criticalAlerts.length
+      + monitoringData.alerts.warningAlerts.length
+      + monitoringData.alerts.complianceAlerts.length,
     [monitoringData.alerts],
   );
 
@@ -455,8 +453,8 @@ export default function RealTimeMonitoringDashboard({
         patient.status === "critical"
           ? "border-l-4 border-l-red-500"
           : patient.status === "attention"
-            ? "border-l-4 border-l-yellow-500"
-            : "border-l-4 border-l-green-500",
+          ? "border-l-4 border-l-yellow-500"
+          : "border-l-4 border-l-green-500",
       )}
       onClick={() => handlePatientSelect(patient.id)}
     >
@@ -482,23 +480,21 @@ export default function RealTimeMonitoringDashboard({
           </div>
           <div className="flex items-center space-x-2">
             <Badge
-              variant={
-                patient.riskLevel === "critical"
-                  ? "destructive"
-                  : patient.riskLevel === "high"
-                    ? "destructive"
-                    : patient.riskLevel === "medium"
-                      ? "secondary"
-                      : "outline"
-              }
+              variant={patient.riskLevel === "critical"
+                ? "destructive"
+                : patient.riskLevel === "high"
+                ? "destructive"
+                : patient.riskLevel === "medium"
+                ? "secondary"
+                : "outline"}
             >
               {patient.riskLevel === "critical"
                 ? "Crítico"
                 : patient.riskLevel === "high"
-                  ? "Alto"
-                  : patient.riskLevel === "medium"
-                    ? "Médio"
-                    : "Baixo"}
+                ? "Alto"
+                : patient.riskLevel === "medium"
+                ? "Médio"
+                : "Baixo"}
             </Badge>
             {patient.alerts > 0 && (
               <Badge variant="destructive" className="text-xs">
@@ -521,8 +517,8 @@ export default function RealTimeMonitoringDashboard({
                 patient.vitals.hr > 100
                   ? "text-red-600"
                   : patient.vitals.hr > 90
-                    ? "text-yellow-600"
-                    : "text-green-600",
+                  ? "text-yellow-600"
+                  : "text-green-600",
               )}
             >
               {patient.vitals.hr} bpm
@@ -540,8 +536,8 @@ export default function RealTimeMonitoringDashboard({
                 patient.vitals.temp > 37.5
                   ? "text-red-600"
                   : patient.vitals.temp > 37
-                    ? "text-yellow-600"
-                    : "text-green-600",
+                  ? "text-yellow-600"
+                  : "text-green-600",
               )}
             >
               {patient.vitals.temp}°C
@@ -555,8 +551,8 @@ export default function RealTimeMonitoringDashboard({
                 patient.vitals.spo2 < 95
                   ? "text-red-600"
                   : patient.vitals.spo2 < 97
-                    ? "text-yellow-600"
-                    : "text-green-600",
+                  ? "text-yellow-600"
+                  : "text-green-600",
               )}
             >
               {patient.vitals.spo2}%
@@ -571,8 +567,8 @@ export default function RealTimeMonitoringDashboard({
               patient.status === "critical"
                 ? "text-red-600"
                 : patient.status === "attention"
-                  ? "text-yellow-600"
-                  : "text-green-600",
+                ? "text-yellow-600"
+                : "text-green-600",
             )}
           >
             <Activity className="h-3 w-3" />
@@ -580,8 +576,8 @@ export default function RealTimeMonitoringDashboard({
               {patient.status === "critical"
                 ? "Crítico"
                 : patient.status === "attention"
-                  ? "Atenção"
-                  : "Estável"}
+                ? "Atenção"
+                : "Estável"}
             </span>
           </div>
           <div className="text-xs text-muted-foreground">
@@ -613,17 +609,15 @@ export default function RealTimeMonitoringDashboard({
               trend === "up"
                 ? "text-red-500"
                 : trend === "down"
-                  ? "text-green-500"
-                  : "text-gray-500",
+                ? "text-green-500"
+                : "text-gray-500",
             )}
           >
-            {trend === "up" ? (
-              <TrendingUp className="h-3 w-3" />
-            ) : trend === "down" ? (
-              <TrendingDown className="h-3 w-3" />
-            ) : (
-              <Activity className="h-3 w-3" />
-            )}
+            {trend === "up"
+              ? <TrendingUp className="h-3 w-3" />
+              : trend === "down"
+              ? <TrendingDown className="h-3 w-3" />
+              : <Activity className="h-3 w-3" />}
           </div>
         </div>
         <div className="space-y-2">
@@ -633,8 +627,8 @@ export default function RealTimeMonitoringDashboard({
               status === "critical"
                 ? "text-red-600"
                 : status === "warning"
-                  ? "text-yellow-600"
-                  : "text-green-600",
+                ? "text-yellow-600"
+                : "text-green-600",
             )}
           >
             {current}
@@ -645,20 +639,18 @@ export default function RealTimeMonitoringDashboard({
             {unit}
           </div>
           <Badge
-            variant={
-              status === "critical"
-                ? "destructive"
-                : status === "warning"
-                  ? "secondary"
-                  : "outline"
-            }
+            variant={status === "critical"
+              ? "destructive"
+              : status === "warning"
+              ? "secondary"
+              : "outline"}
             className="text-xs"
           >
             {status === "critical"
               ? "Crítico"
               : status === "warning"
-                ? "Atenção"
-                : "Normal"}
+              ? "Atenção"
+              : "Normal"}
           </Badge>
         </div>
       </CardContent>
@@ -673,48 +665,44 @@ export default function RealTimeMonitoringDashboard({
         alert.severity === "critical"
           ? "border-l-red-500 bg-red-50"
           : alert.severity === "error"
-            ? "border-l-red-500 bg-red-50"
-            : alert.severity === "warning"
-              ? "border-l-yellow-500 bg-yellow-50"
-              : "border-l-blue-500 bg-blue-50",
+          ? "border-l-red-500 bg-red-50"
+          : alert.severity === "warning"
+          ? "border-l-yellow-500 bg-yellow-50"
+          : "border-l-blue-500 bg-blue-50",
       )}
     >
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            {alert.severity === "critical" || alert.severity === "error" ? (
-              <AlertTriangle className="h-4 w-4 text-red-600" />
-            ) : alert.severity === "warning" ? (
-              <AlertCircle className="h-4 w-4 text-yellow-600" />
-            ) : (
-              <Info className="h-4 w-4 text-blue-600" />
-            )}
+            {alert.severity === "critical" || alert.severity === "error"
+              ? <AlertTriangle className="h-4 w-4 text-red-600" />
+              : alert.severity === "warning"
+              ? <AlertCircle className="h-4 w-4 text-yellow-600" />
+              : <Info className="h-4 w-4 text-blue-600" />}
             <CardTitle className="text-base">{alert.title}</CardTitle>
           </div>
           <div className="flex items-center space-x-2">
             <Badge
-              variant={
-                alert.severity === "critical" || alert.severity === "error"
-                  ? "destructive"
-                  : alert.severity === "warning"
-                    ? "secondary"
-                    : "outline"
-              }
+              variant={alert.severity === "critical" || alert.severity === "error"
+                ? "destructive"
+                : alert.severity === "warning"
+                ? "secondary"
+                : "outline"}
             >
               {alert.severity === "critical"
                 ? "Crítico"
                 : alert.severity === "error"
-                  ? "Erro"
-                  : alert.severity === "warning"
-                    ? "Aviso"
-                    : "Info"}
+                ? "Erro"
+                : alert.severity === "warning"
+                ? "Aviso"
+                : "Info"}
             </Badge>
             <span className="text-xs text-muted-foreground">
               {alert.triggeredAt
                 ? new Date(alert.triggeredAt).toLocaleTimeString("pt-BR", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
                 : "Agora"}
             </span>
           </div>
@@ -767,8 +755,7 @@ export default function RealTimeMonitoringDashboard({
             <span>Monitoramento em Tempo Real</span>
           </h1>
           <p className="text-muted-foreground">
-            Sistema avançado de monitoramento com detecção de anomalias e
-            alertas automáticos
+            Sistema avançado de monitoramento com detecção de anomalias e alertas automáticos
           </p>
         </div>
         <div className="flex items-center space-x-3">
@@ -779,16 +766,16 @@ export default function RealTimeMonitoringDashboard({
                 connectionStatus === "connected"
                   ? "bg-green-500 animate-pulse"
                   : connectionStatus === "reconnecting"
-                    ? "bg-yellow-500 animate-pulse"
-                    : "bg-red-500",
+                  ? "bg-yellow-500 animate-pulse"
+                  : "bg-red-500",
               )}
             />
             <span className="text-sm font-medium">
               {connectionStatus === "connected"
                 ? "Conectado"
                 : connectionStatus === "reconnecting"
-                  ? "Reconectando..."
-                  : "Desconectado"}
+                ? "Reconectando..."
+                : "Desconectado"}
             </span>
           </div>
 
@@ -797,11 +784,7 @@ export default function RealTimeMonitoringDashboard({
             size="sm"
             onClick={() => setSoundEnabled(!soundEnabled)}
           >
-            {soundEnabled ? (
-              <Volume2 className="h-4 w-4" />
-            ) : (
-              <VolumeX className="h-4 w-4" />
-            )}
+            {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
           </Button>
 
           <Button
@@ -809,17 +792,19 @@ export default function RealTimeMonitoringDashboard({
             size="sm"
             onClick={toggleMonitoring}
           >
-            {isMonitoring ? (
-              <>
-                <Pause className="h-4 w-4 mr-2" />
-                Pausar
-              </>
-            ) : (
-              <>
-                <Play className="h-4 w-4 mr-2" />
-                Iniciar
-              </>
-            )}
+            {isMonitoring
+              ? (
+                <>
+                  <Pause className="h-4 w-4 mr-2" />
+                  Pausar
+                </>
+              )
+              : (
+                <>
+                  <Play className="h-4 w-4 mr-2" />
+                  Iniciar
+                </>
+              )}
           </Button>
         </div>
       </div>
@@ -841,11 +826,9 @@ export default function RealTimeMonitoringDashboard({
               </span>
             </div>
             <div className="flex items-center space-x-2">
-              {connectionStatus === "connected" ? (
-                <Wifi className="h-5 w-5 text-green-600" />
-              ) : (
-                <WifiOff className="h-5 w-5 text-red-600" />
-              )}
+              {connectionStatus === "connected"
+                ? <Wifi className="h-5 w-5 text-green-600" />
+                : <WifiOff className="h-5 w-5 text-red-600" />}
               <span className="font-medium">
                 Uptime: {systemHealth.uptime}%
               </span>
@@ -915,20 +898,18 @@ export default function RealTimeMonitoringDashboard({
                   </div>
                   <div className="flex items-center space-x-3">
                     <Badge
-                      variant={
-                        currentPatient.status === "critical"
-                          ? "destructive"
-                          : currentPatient.status === "attention"
-                            ? "secondary"
-                            : "outline"
-                      }
+                      variant={currentPatient.status === "critical"
+                        ? "destructive"
+                        : currentPatient.status === "attention"
+                        ? "secondary"
+                        : "outline"}
                       className="text-base px-3 py-1"
                     >
                       {currentPatient.status === "critical"
                         ? "Estado Crítico"
                         : currentPatient.status === "attention"
-                          ? "Requer Atenção"
-                          : "Estável"}
+                        ? "Requer Atenção"
+                        : "Estável"}
                     </Badge>
                     <Button size="sm">
                       <Stethoscope className="h-4 w-4 mr-2" />
@@ -951,8 +932,8 @@ export default function RealTimeMonitoringDashboard({
               (currentPatient?.vitals.hr || 0) > 100
                 ? "critical"
                 : (currentPatient?.vitals.hr || 0) > 90
-                  ? "warning"
-                  : "normal",
+                ? "warning"
+                : "normal",
             )}
             {renderVitalSignCard(
               "Pressão Arterial",
@@ -963,8 +944,8 @@ export default function RealTimeMonitoringDashboard({
               currentPatient?.vitals.bp.includes("160")
                 ? "critical"
                 : currentPatient?.vitals.bp.includes("145")
-                  ? "warning"
-                  : "normal",
+                ? "warning"
+                : "normal",
             )}
             {renderVitalSignCard(
               "Temperatura",
@@ -975,8 +956,8 @@ export default function RealTimeMonitoringDashboard({
               (currentPatient?.vitals.temp || 0) > 37.5
                 ? "critical"
                 : (currentPatient?.vitals.temp || 0) > 37
-                  ? "warning"
-                  : "normal",
+                ? "warning"
+                : "normal",
             )}
             {renderVitalSignCard(
               "Saturação O₂",
@@ -987,8 +968,8 @@ export default function RealTimeMonitoringDashboard({
               (currentPatient?.vitals.spo2 || 0) < 95
                 ? "critical"
                 : (currentPatient?.vitals.spo2 || 0) < 97
-                  ? "warning"
-                  : "normal",
+                ? "warning"
+                : "normal",
             )}
           </div>
 
@@ -1042,19 +1023,21 @@ export default function RealTimeMonitoringDashboard({
               </div>
             </CardHeader>
             <CardContent>
-              {filteredAlerts.length > 0 ? (
-                <div className="space-y-4">
-                  {filteredAlerts.map(renderAlertCard)}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <CheckCircle className="h-12 w-12 mx-auto mb-2 text-green-500" />
-                  <p>Nenhum alerta ativo no momento</p>
-                  <p className="text-sm">
-                    Todos os pacientes estão dentro dos parâmetros normais
-                  </p>
-                </div>
-              )}
+              {filteredAlerts.length > 0
+                ? (
+                  <div className="space-y-4">
+                    {filteredAlerts.map(renderAlertCard)}
+                  </div>
+                )
+                : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <CheckCircle className="h-12 w-12 mx-auto mb-2 text-green-500" />
+                    <p>Nenhum alerta ativo no momento</p>
+                    <p className="text-sm">
+                      Todos os pacientes estão dentro dos parâmetros normais
+                    </p>
+                  </div>
+                )}
             </CardContent>
           </Card>
         </div>

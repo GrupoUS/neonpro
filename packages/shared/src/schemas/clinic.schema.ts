@@ -52,14 +52,14 @@ export const BusinessHoursSchema = z
     const closeMin = closeTimeParts[1];
 
     if (
-      typeof openHour !== "number" ||
-      typeof openMin !== "number" ||
-      typeof closeHour !== "number" ||
-      typeof closeMin !== "number" ||
-      Number.isNaN(openHour) ||
-      Number.isNaN(openMin) ||
-      Number.isNaN(closeHour) ||
-      Number.isNaN(closeMin)
+      typeof openHour !== "number"
+      || typeof openMin !== "number"
+      || typeof closeHour !== "number"
+      || typeof closeMin !== "number"
+      || Number.isNaN(openHour)
+      || Number.isNaN(openMin)
+      || Number.isNaN(closeHour)
+      || Number.isNaN(closeMin)
     ) {
       return false;
     }

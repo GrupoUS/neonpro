@@ -43,12 +43,9 @@
   --medical-spacing-critical: 3rem; /* Life-critical alerts */
 
   /* Healthcare Shadows */
-  --healthcare-card-shadow:
-    0 2px 8px rgb(0 0 0 / 0.06), 0 1px 3px rgb(0 0 0 / 0.08);
-  --healthcare-emergency-shadow:
-    0 8px 25px rgb(220 38 38 / 0.15), 0 4px 12px rgb(220 38 38 / 0.1);
-  --healthcare-success-shadow:
-    0 4px 14px rgb(16 185 129 / 0.12), 0 2px 6px rgb(16 185 129 / 0.08);
+  --healthcare-card-shadow: 0 2px 8px rgb(0 0 0 / 0.06), 0 1px 3px rgb(0 0 0 / 0.08);
+  --healthcare-emergency-shadow: 0 8px 25px rgb(220 38 38 / 0.15), 0 4px 12px rgb(220 38 38 / 0.1);
+  --healthcare-success-shadow: 0 4px 14px rgb(16 185 129 / 0.12), 0 2px 6px rgb(16 185 129 / 0.08);
 
   /* Healthcare Border Radius */
   --healthcare-card-radius: 0.5rem; /* Standard cards */
@@ -176,7 +173,8 @@
 }
 
 .neonpro-payment-method {
-  @apply inline-flex items-center gap-1.5 px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-sm font-medium;
+  @apply inline-flex items-center gap-1.5 px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-sm
+    font-medium;
 }
 
 /* Team Members List Utilities */

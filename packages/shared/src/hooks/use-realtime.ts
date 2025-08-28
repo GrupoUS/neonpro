@@ -26,7 +26,7 @@ export type { UseRealtimeConfig } from "../types/realtime.types";
 
 // Define missing RealtimePayload type
 export type RealtimePayload<
-  T extends { [key: string]: any } = { [key: string]: any },
+  T extends { [key: string]: any; } = { [key: string]: any; },
 > = RealtimePostgresChangesPayload<T>;
 
 // LGPD compliance utilities
@@ -98,8 +98,7 @@ export function useRealtime<
         // Clear any previous errors
         setError(undefined);
       } catch (error) {
-        const errorInstance =
-          error instanceof Error ? error : new Error("Realtime event error");
+        const errorInstance = error instanceof Error ? error : new Error("Realtime event error");
         setError(errorInstance);
         config.onError?.(errorInstance);
       }
@@ -204,13 +203,12 @@ export function useRealtimeQuery<
 
   const invalidateQueries = useCallback(
     (eventType: string) => {
-      const shouldInvalidate =
-        (eventType === "INSERT" &&
-          config.queryOptions?.invalidateOnInsert !== false) ||
-        (eventType === "UPDATE" &&
-          config.queryOptions?.invalidateOnUpdate !== false) ||
-        (eventType === "DELETE" &&
-          config.queryOptions?.invalidateOnDelete !== false);
+      const shouldInvalidate = (eventType === "INSERT"
+        && config.queryOptions?.invalidateOnInsert !== false)
+        || (eventType === "UPDATE"
+          && config.queryOptions?.invalidateOnUpdate !== false)
+        || (eventType === "DELETE"
+          && config.queryOptions?.invalidateOnDelete !== false);
 
       if (shouldInvalidate) {
         queryClient.invalidateQueries({ queryKey: config.queryKey });

@@ -103,13 +103,11 @@ const mockDataRequest: DataSubjectRequest = {
 };
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
   // Use the global mock QueryClient instead of creating a new one
   const { queryClient: queryClient } = globalThis;
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 describe("lGPD Compliance Flow Integration Tests", () => {
   let queryClient: QueryClient;
@@ -179,8 +177,7 @@ describe("lGPD Compliance Flow Integration Tests", () => {
         requested_purpose: "marketing",
       });
 
-      const result =
-        await mockLGPDService.validatePurposeLimitation(processingRequest);
+      const result = await mockLGPDService.validatePurposeLimitation(processingRequest);
 
       expect(result.valid).toBeFalsy();
       expect(result.violation).toBe("PURPOSE_NOT_CONSENTED");
@@ -284,8 +281,7 @@ describe("lGPD Compliance Flow Integration Tests", () => {
         })),
       });
 
-      const result =
-        await mockLGPDService.processDataSubjectRequest(accessRequest);
+      const result = await mockLGPDService.processDataSubjectRequest(accessRequest);
 
       expect(result.success).toBeTruthy();
       expect(result.exported_data.patient_data).toStrictEqual(mockPatientData);
@@ -313,8 +309,7 @@ describe("lGPD Compliance Flow Integration Tests", () => {
         audit_trail_id: "audit-rectification-123",
       });
 
-      const result =
-        await mockLGPDService.processDataSubjectRequest(rectificationRequest);
+      const result = await mockLGPDService.processDataSubjectRequest(rectificationRequest);
 
       expect(result.success).toBeTruthy();
       expect(result.changes_applied).toBeTruthy();
@@ -337,13 +332,11 @@ describe("lGPD Compliance Flow Integration Tests", () => {
         anonymization_applied: true,
         data_anonymized: true,
         medical_records_retained: true, // Due to legal medical record retention
-        retention_justification:
-          "Brazilian medical record retention law (10 years)",
+        retention_justification: "Brazilian medical record retention law (10 years)",
         audit_trail_id: "audit-erasure-123",
       });
 
-      const result =
-        await mockLGPDService.processDataSubjectRequest(erasureRequest);
+      const result = await mockLGPDService.processDataSubjectRequest(erasureRequest);
 
       expect(result.success).toBeTruthy();
       expect(result.anonymization_applied).toBeTruthy();
@@ -394,8 +387,7 @@ describe("lGPD Compliance Flow Integration Tests", () => {
         machine_readable: true,
       });
 
-      const result =
-        await mockLGPDService.processDataSubjectRequest(portabilityRequest);
+      const result = await mockLGPDService.processDataSubjectRequest(portabilityRequest);
 
       expect(result.success).toBeTruthy();
       expect(result.portable_data.export_format).toBe("HL7_FHIR");

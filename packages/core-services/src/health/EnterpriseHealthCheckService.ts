@@ -197,8 +197,8 @@ export class EnterpriseHealthCheckService {
       if (result.details.errors.length > 0) {
         result.status = "unhealthy";
       } else if (
-        result.details.warnings.length > 0 ||
-        result.details.performance === "slow"
+        result.details.warnings.length > 0
+        || result.details.performance === "slow"
       ) {
         result.status = "degraded";
       } else {
@@ -222,9 +222,7 @@ export class EnterpriseHealthCheckService {
    */
   async performFullHealthCheck(): Promise<SystemHealthReport> {
     const serviceChecks = await Promise.all(
-      [...this.services.keys()].map((serviceName) =>
-        this.checkServiceHealth(serviceName),
-      ),
+      [...this.services.keys()].map((serviceName) => this.checkServiceHealth(serviceName)),
     );
 
     const healthyServices = serviceChecks.filter(
@@ -237,9 +235,8 @@ export class EnterpriseHealthCheckService {
       (check) => check.status === "unhealthy",
     ).length;
 
-    const averageResponseTime =
-      serviceChecks.reduce((sum, check) => sum + check.responseTime, 0) /
-      serviceChecks.length;
+    const averageResponseTime = serviceChecks.reduce((sum, check) => sum + check.responseTime, 0)
+      / serviceChecks.length;
 
     let overall: "healthy" | "degraded" | "unhealthy" = "healthy";
     if (unhealthyServices >= this.alertThresholds.unhealthyThreshold) {
@@ -340,18 +337,17 @@ export class EnterpriseHealthCheckService {
     });
 
     // Get health metrics
-    result.details.metrics =
-      (await analyticsService.getHealthMetrics()) as unknown as Record<
-        string,
-        unknown
-      >;
+    result.details.metrics = (await analyticsService.getHealthMetrics()) as unknown as Record<
+      string,
+      unknown
+    >;
     result.details.connectivity = true;
 
     // Check for data processing lag
     const metrics = result.details.metrics as Record<string, unknown>;
     if (
-      (metrics.processingLag as number) &&
-      (metrics.processingLag as number) > 10_000
+      (metrics.processingLag as number)
+      && (metrics.processingLag as number) > 10_000
     ) {
       result.details.warnings.push("High processing lag detected");
     }
@@ -382,8 +378,8 @@ export class EnterpriseHealthCheckService {
     // Check session counts
     const metrics = result.details.metrics as Record<string, unknown>;
     if (
-      (metrics.activeSessions as number) &&
-      (metrics.activeSessions as number) > 10_000
+      (metrics.activeSessions as number)
+      && (metrics.activeSessions as number) > 10_000
     ) {
       result.details.warnings.push("High number of active sessions");
     }
@@ -538,9 +534,8 @@ export class EnterpriseHealthCheckService {
     ).length;
     const availability = (healthyChecks / recentHistory.length) * 100;
 
-    const avgResponseTime =
-      recentHistory.reduce((sum, r) => sum + r.responseTime, 0) /
-      recentHistory.length;
+    const avgResponseTime = recentHistory.reduce((sum, r) => sum + r.responseTime, 0)
+      / recentHistory.length;
 
     const errorsCount = recentHistory.filter(
       (r) => r.details.errors.length > 0,

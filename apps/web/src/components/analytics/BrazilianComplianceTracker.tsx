@@ -10,13 +10,11 @@
  * @author NeonPro Healthcare AI Team
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -24,52 +22,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Shield,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  FileText,
-  Users,
-  Building,
-  Gavel,
-  Eye,
-  Download,
-  RefreshCw,
-  Calendar,
-  MapPin,
-  Flag,
-  Scale,
-  Lock,
-  UserCheck,
-  Heart,
-  Pill,
-  Stethoscope,
-  FileCheck,
-  AlertCircle,
-  TrendingUp,
-  TrendingDown,
-  Info,
-  Settings,
-  Bell,
-  Search,
-  Filter,
-  ExternalLink,
-  BookOpen,
-  Award,
-  Target,
-  Zap,
-} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import type {
-  BrazilianHealthcareIntelligence,
-  CFMComplianceScore,
   ANVISAComplianceScore,
-  LGPDComplianceScore,
-  ComplianceViolation,
+  BrazilianHealthcareIntelligence,
   BrazilianRegion,
   BrazilianState,
+  CFMComplianceScore,
+  ComplianceViolation,
+  LGPDComplianceScore,
 } from "@/types/analytics";
+import {
+  AlertCircle,
+  AlertTriangle,
+  Award,
+  Bell,
+  BookOpen,
+  Building,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Download,
+  ExternalLink,
+  Eye,
+  FileCheck,
+  FileText,
+  Filter,
+  Flag,
+  Gavel,
+  Heart,
+  Info,
+  Lock,
+  MapPin,
+  Pill,
+  RefreshCw,
+  Scale,
+  Search,
+  Settings,
+  Shield,
+  Stethoscope,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  UserCheck,
+  Users,
+  Zap,
+} from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 // ====== MOCK COMPLIANCE DATA ======
 const mockComplianceData: BrazilianHealthcareIntelligence = {
@@ -90,8 +90,7 @@ const mockComplianceData: BrazilianHealthcareIntelligence = {
           id: "cfm-001",
           type: "professional_ethics",
           severity: "minor",
-          description:
-            "Atualização de educação continuada em atraso para 1 profissional",
+          description: "Atualização de educação continuada em atraso para 1 profissional",
           regulatoryFramework: "CFM",
           detectedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
           responsiblePerson: "Dr. João Silva",
@@ -339,8 +338,9 @@ export default function BrazilianComplianceTracker({
   refreshInterval = 300, // 5 minutes
 }: BrazilianComplianceTrackerProps) {
   // ====== STATE MANAGEMENT ======
-  const [complianceData, setComplianceData] =
-    useState<BrazilianHealthcareIntelligence>(mockComplianceData);
+  const [complianceData, setComplianceData] = useState<BrazilianHealthcareIntelligence>(
+    mockComplianceData,
+  );
   const [selectedRegulation, setSelectedRegulation] = useState<string>("all");
   const [activeTab, setActiveTab] = useState("overview");
   const [isLoading, setIsLoading] = useState(false);
@@ -439,9 +439,9 @@ export default function BrazilianComplianceTracker({
 
   const totalViolations = useMemo(
     () =>
-      complianceData.compliance.cfmCompliance.violations.length +
-      complianceData.compliance.anvisaCompliance.violations.length +
-      complianceData.compliance.lgpdCompliance.violations.length,
+      complianceData.compliance.cfmCompliance.violations.length
+      + complianceData.compliance.anvisaCompliance.violations.length
+      + complianceData.compliance.lgpdCompliance.violations.length,
     [complianceData.compliance],
   );
 
@@ -450,12 +450,11 @@ export default function BrazilianComplianceTracker({
       complianceData.regulations.complianceRequirements
         .filter(
           (req) =>
-            new Date(req.dueDate).getTime() - Date.now() <
-            30 * 24 * 60 * 60 * 1000,
+            new Date(req.dueDate).getTime() - Date.now()
+              < 30 * 24 * 60 * 60 * 1000,
         ) // Next 30 days
         .sort(
-          (a, b) =>
-            new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
+          (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
         ),
     [complianceData.regulations.complianceRequirements],
   );
@@ -478,7 +477,7 @@ export default function BrazilianComplianceTracker({
     score: number,
     icon: React.ElementType,
     color: string,
-    details: { label: string; value: number }[],
+    details: { label: string; value: number; }[],
     violations: ComplianceViolation[],
   ) => (
     <Card className="relative overflow-hidden">
@@ -496,23 +495,21 @@ export default function BrazilianComplianceTracker({
             <CardTitle className="text-lg">{title}</CardTitle>
           </div>
           <Badge
-            variant={
-              score >= 95
-                ? "default"
-                : score >= 90
-                  ? "secondary"
-                  : score >= 80
-                    ? "outline"
-                    : "destructive"
-            }
+            variant={score >= 95
+              ? "default"
+              : score >= 90
+              ? "secondary"
+              : score >= 80
+              ? "outline"
+              : "destructive"}
           >
             {score >= 95
               ? "Excelente"
               : score >= 90
-                ? "Muito Bom"
-                : score >= 80
-                  ? "Bom"
-                  : "Crítico"}
+              ? "Muito Bom"
+              : score >= 80
+              ? "Bom"
+              : "Crítico"}
           </Badge>
         </div>
       </CardHeader>
@@ -571,8 +568,8 @@ export default function BrazilianComplianceTracker({
         violation.severity === "critical"
           ? "border-l-red-500 bg-red-50"
           : violation.severity === "major"
-            ? "border-l-orange-500 bg-orange-50"
-            : "border-l-yellow-500 bg-yellow-50",
+          ? "border-l-orange-500 bg-orange-50"
+          : "border-l-yellow-500 bg-yellow-50",
       )}
     >
       <CardHeader className="pb-2">
@@ -584,18 +581,16 @@ export default function BrazilianComplianceTracker({
                 violation.severity === "critical"
                   ? "text-red-600"
                   : violation.severity === "major"
-                    ? "text-orange-600"
-                    : "text-yellow-600",
+                  ? "text-orange-600"
+                  : "text-yellow-600",
               )}
             />
             <Badge
-              variant={
-                violation.severity === "critical"
-                  ? "destructive"
-                  : violation.severity === "major"
-                    ? "secondary"
-                    : "outline"
-              }
+              variant={violation.severity === "critical"
+                ? "destructive"
+                : violation.severity === "major"
+                ? "secondary"
+                : "outline"}
             >
               {violation.regulatoryFramework}
             </Badge>
@@ -607,8 +602,8 @@ export default function BrazilianComplianceTracker({
                 violation.penaltyRisk > 70
                   ? "text-red-600"
                   : violation.penaltyRisk > 40
-                    ? "text-yellow-600"
-                    : "text-green-600",
+                  ? "text-yellow-600"
+                  : "text-green-600",
               )}
             >
               Risco: {violation.penaltyRisk}%
@@ -708,8 +703,7 @@ export default function BrazilianComplianceTracker({
             <span>Compliance Brasileiro</span>
           </h1>
           <p className="text-muted-foreground">
-            Sistema inteligente de compliance para regulamentações brasileiras
-            de saúde
+            Sistema inteligente de compliance para regulamentações brasileiras de saúde
           </p>
         </div>
         <div className="flex items-center space-x-3">
@@ -821,8 +815,7 @@ export default function BrazilianComplianceTracker({
             <div className="flex justify-between items-center">
               <span>
                 <strong>
-                  {totalViolations} violação{totalViolations > 1 ? "ões" : ""}{" "}
-                  de compliance
+                  {totalViolations} violação{totalViolations > 1 ? "ões" : ""} de compliance
                 </strong>{" "}
                 requer{totalViolations === 1 ? "" : "em"} atenção imediata
               </span>
@@ -873,18 +866,15 @@ export default function BrazilianComplianceTracker({
               [
                 {
                   label: "Validação CRM",
-                  value:
-                    complianceData.compliance.cfmCompliance.licenseValidation,
+                  value: complianceData.compliance.cfmCompliance.licenseValidation,
                 },
                 {
                   label: "Ética Profissional",
-                  value:
-                    complianceData.compliance.cfmCompliance.professionalEthics,
+                  value: complianceData.compliance.cfmCompliance.professionalEthics,
                 },
                 {
                   label: "Educação Continuada",
-                  value:
-                    complianceData.compliance.cfmCompliance.continuingEducation,
+                  value: complianceData.compliance.cfmCompliance.continuingEducation,
                 },
                 {
                   label: "Segurança do Paciente",
@@ -902,26 +892,22 @@ export default function BrazilianComplianceTracker({
               [
                 {
                   label: "Substâncias Controladas",
-                  value:
-                    complianceData.compliance.anvisaCompliance
-                      .controlledSubstances,
+                  value: complianceData.compliance.anvisaCompliance
+                    .controlledSubstances,
                 },
                 {
                   label: "Licença Sanitária",
-                  value:
-                    complianceData.compliance.anvisaCompliance.sanitaryLicense,
+                  value: complianceData.compliance.anvisaCompliance.sanitaryLicense,
                 },
                 {
                   label: "Validação Equipamentos",
-                  value:
-                    complianceData.compliance.anvisaCompliance
-                      .equipmentValidation,
+                  value: complianceData.compliance.anvisaCompliance
+                    .equipmentValidation,
                 },
                 {
                   label: "Relatório Eventos Adversos",
-                  value:
-                    complianceData.compliance.anvisaCompliance
-                      .adverseEventReporting,
+                  value: complianceData.compliance.anvisaCompliance
+                    .adverseEventReporting,
                 },
               ],
               complianceData.compliance.anvisaCompliance.violations,
@@ -935,23 +921,19 @@ export default function BrazilianComplianceTracker({
               [
                 {
                   label: "Processamento Dados",
-                  value:
-                    complianceData.compliance.lgpdCompliance.dataProcessing,
+                  value: complianceData.compliance.lgpdCompliance.dataProcessing,
                 },
                 {
                   label: "Gestão Consentimento",
-                  value:
-                    complianceData.compliance.lgpdCompliance.consentManagement,
+                  value: complianceData.compliance.lgpdCompliance.consentManagement,
                 },
                 {
                   label: "Direitos do Titular",
-                  value:
-                    complianceData.compliance.lgpdCompliance.dataSubjectRights,
+                  value: complianceData.compliance.lgpdCompliance.dataSubjectRights,
                 },
                 {
                   label: "Medidas Segurança",
-                  value:
-                    complianceData.compliance.lgpdCompliance.securityMeasures,
+                  value: complianceData.compliance.lgpdCompliance.securityMeasures,
                 },
               ],
               complianceData.compliance.lgpdCompliance.violations,
@@ -972,11 +954,9 @@ export default function BrazilianComplianceTracker({
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Status da Conexão</span>
                     <Badge
-                      variant={
-                        complianceData.compliance.susIntegration.connected
-                          ? "default"
-                          : "destructive"
-                      }
+                      variant={complianceData.compliance.susIntegration.connected
+                        ? "default"
+                        : "destructive"}
                     >
                       {complianceData.compliance.susIntegration.connected
                         ? "Conectado"
@@ -986,26 +966,20 @@ export default function BrazilianComplianceTracker({
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Health Score</span>
                     <span className="font-medium">
-                      {
-                        complianceData.compliance.susIntegration
-                          .integrationHealth
-                      }
+                      {complianceData.compliance.susIntegration
+                        .integrationHealth}
                       %
                     </span>
                   </div>
                   <Progress
-                    value={
-                      complianceData.compliance.susIntegration.integrationHealth
-                    }
+                    value={complianceData.compliance.susIntegration.integrationHealth}
                     className="h-2"
                   />
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div className="text-center">
                       <div className="font-medium">
-                        {
-                          complianceData.compliance.susIntegration
-                            .pendingUpdates
-                        }
+                        {complianceData.compliance.susIntegration
+                          .pendingUpdates}
                       </div>
                       <div className="text-muted-foreground">Pendências</div>
                     </div>
@@ -1033,7 +1007,7 @@ export default function BrazilianComplianceTracker({
                     <span className="text-sm">Status da Rede</span>
                     <Badge variant="default">
                       {complianceData.compliance.ansConnectivity
-                        .networkStatus === "active"
+                          .networkStatus === "active"
                         ? "Ativa"
                         : "Inativa"}
                     </Badge>
@@ -1042,30 +1016,24 @@ export default function BrazilianComplianceTracker({
                     <div className="flex justify-between">
                       <span className="text-sm">Validação Beneficiário</span>
                       <span className="font-medium">
-                        {
-                          complianceData.compliance.ansConnectivity
-                            .beneficiaryValidation
-                        }
+                        {complianceData.compliance.ansConnectivity
+                          .beneficiaryValidation}
                         %
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm">Verificação Cobertura</span>
                       <span className="font-medium">
-                        {
-                          complianceData.compliance.ansConnectivity
-                            .coverageVerification
-                        }
+                        {complianceData.compliance.ansConnectivity
+                          .coverageVerification}
                         %
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm">Processamento Autorização</span>
                       <span className="font-medium">
-                        {
-                          complianceData.compliance.ansConnectivity
-                            .authorizationProcessing
-                        }
+                        {complianceData.compliance.ansConnectivity
+                          .authorizationProcessing}
                         %
                       </span>
                     </div>
@@ -1104,26 +1072,23 @@ export default function BrazilianComplianceTracker({
                       </div>
                       <div className="text-right">
                         <Badge
-                          variant={
-                            req.priority === "high"
-                              ? "destructive"
-                              : req.priority === "medium"
-                                ? "secondary"
-                                : "outline"
-                          }
+                          variant={req.priority === "high"
+                            ? "destructive"
+                            : req.priority === "medium"
+                            ? "secondary"
+                            : "outline"}
                         >
                           {req.priority === "high"
                             ? "Alta"
                             : req.priority === "medium"
-                              ? "Média"
-                              : "Baixa"}
+                            ? "Média"
+                            : "Baixa"}
                         </Badge>
                         <div className="text-sm text-muted-foreground mt-1">
                           {Math.ceil(
-                            (new Date(req.dueDate).getTime() - Date.now()) /
-                              (24 * 60 * 60 * 1000),
-                          )}{" "}
-                          dias
+                            (new Date(req.dueDate).getTime() - Date.now())
+                              / (24 * 60 * 60 * 1000),
+                          )} dias
                         </div>
                       </div>
                     </div>
@@ -1141,8 +1106,7 @@ export default function BrazilianComplianceTracker({
               Detalhes CFM em Desenvolvimento
             </h3>
             <p className="text-muted-foreground">
-              Detalhamento específico de compliance CFM será implementado na
-              próxima fase
+              Detalhamento específico de compliance CFM será implementado na próxima fase
             </p>
           </div>
         </TabsContent>
@@ -1154,8 +1118,7 @@ export default function BrazilianComplianceTracker({
               Detalhes ANVISA em Desenvolvimento
             </h3>
             <p className="text-muted-foreground">
-              Detalhamento específico de compliance ANVISA será implementado na
-              próxima fase
+              Detalhamento específico de compliance ANVISA será implementado na próxima fase
             </p>
           </div>
         </TabsContent>
@@ -1167,8 +1130,7 @@ export default function BrazilianComplianceTracker({
               Detalhes LGPD em Desenvolvimento
             </h3>
             <p className="text-muted-foreground">
-              Detalhamento específico de compliance LGPD será implementado na
-              próxima fase
+              Detalhamento específico de compliance LGPD será implementado na próxima fase
             </p>
           </div>
         </TabsContent>
@@ -1209,10 +1171,8 @@ export default function BrazilianComplianceTracker({
                 <div className="text-center">
                   <div className="text-3xl font-bold text-blue-600">
                     #
-                    {
-                      complianceData.benchmarking.performanceRanking
-                        .regionalRanking
-                    }
+                    {complianceData.benchmarking.performanceRanking
+                      .regionalRanking}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     Ranking Regional

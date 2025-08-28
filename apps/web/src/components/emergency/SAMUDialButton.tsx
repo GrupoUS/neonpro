@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
-  Phone,
-  MapPin,
-  Clock,
   AlertTriangle,
-  Zap,
-  Shield,
   CheckCircle,
+  Clock,
   Loader2,
+  MapPin,
+  Phone,
+  Shield,
+  Zap,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 // SAMU Integration Types
 export interface SAMUCallData {
@@ -69,8 +69,7 @@ const getEmergencyConfig = (level: SAMUCallData["emergencyType"]) => {
       };
     case "urgent":
       return {
-        color:
-          "bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 border-orange-500",
+        color: "bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 border-orange-500",
         text: "SAMU 192 - URGENTE",
         icon: AlertTriangle,
         priority: "URGENTE",
@@ -80,8 +79,7 @@ const getEmergencyConfig = (level: SAMUCallData["emergencyType"]) => {
       };
     case "non-urgent":
       return {
-        color:
-          "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 border-blue-500",
+        color: "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 border-blue-500",
         text: "SAMU 192 - SUPORTE",
         icon: Shield,
         priority: "SUPORTE",
@@ -177,9 +175,9 @@ export function SAMUDialButton({
         address: emergencyData?.location?.address || "Endereço não disponível",
         coordinates: location
           ? {
-              lat: location.coords.latitude,
-              lng: location.coords.longitude,
-            }
+            lat: location.coords.latitude,
+            lng: location.coords.longitude,
+          }
           : emergencyData?.location?.coordinates,
         landmarks: emergencyData?.location?.landmarks || "",
         accessInstructions: emergencyData?.location?.accessInstructions || "",
@@ -325,8 +323,8 @@ export function SAMUDialButton({
         <Badge
           className={cn(
             "text-xs",
-            emergencyLevel === "life-threatening" &&
-              "bg-red-600 text-white animate-pulse",
+            emergencyLevel === "life-threatening"
+              && "bg-red-600 text-white animate-pulse",
             emergencyLevel === "urgent" && "bg-orange-600 text-white",
             emergencyLevel === "non-urgent" && "bg-blue-600 text-white",
           )}
@@ -342,13 +340,11 @@ export function SAMUDialButton({
         {emergencyLevel === "life-threatening" && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <MapPin className="h-3 w-3" aria-hidden="true" />
-            {location ? (
-              <span className="text-green-600">Localização obtida</span>
-            ) : locationError ? (
-              <span className="text-orange-600">Localização indisponível</span>
-            ) : (
-              <span>Obtendo localização...</span>
-            )}
+            {location
+              ? <span className="text-green-600">Localização obtida</span>
+              : locationError
+              ? <span className="text-orange-600">Localização indisponível</span>
+              : <span>Obtendo localização...</span>}
           </div>
         )}
 

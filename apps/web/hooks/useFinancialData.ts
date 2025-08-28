@@ -4,8 +4,7 @@ import { createClient } from "@/app/utils/supabase/client";
 import type { Database } from "@/types/supabase";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-type FinancialTransaction =
-  Database["public"]["Tables"]["financial_transactions"]["Row"];
+type FinancialTransaction = Database["public"]["Tables"]["financial_transactions"]["Row"];
 
 interface DailyRevenue {
   date: string;
@@ -77,8 +76,8 @@ export function useFinancialData(): FinancialHook {
     return transactions
       .filter(
         (transaction) =>
-          transaction.type === "income" &&
-          new Date(transaction.date) >= startOfMonth,
+          transaction.type === "income"
+          && new Date(transaction.date) >= startOfMonth,
       )
       .reduce((sum, transaction) => sum + (transaction.amount || 0), 0);
   }, [transactions]);
@@ -93,8 +92,8 @@ export function useFinancialData(): FinancialHook {
     transactions
       .filter(
         (transaction) =>
-          transaction.type === "income" &&
-          new Date(transaction.date) >= thirtyDaysAgo,
+          transaction.type === "income"
+          && new Date(transaction.date) >= thirtyDaysAgo,
       )
       .forEach((transaction) => {
         const dateKey = new Date(transaction.date).toISOString().split("T")[0];
@@ -116,13 +115,12 @@ export function useFinancialData(): FinancialHook {
   const revenueByService = useMemo(() => {
     const serviceMap = new Map<
       string,
-      { totalRevenue: number; transactionCount: number }
+      { totalRevenue: number; transactionCount: number; }
     >();
 
     transactions
       .filter(
-        (transaction) =>
-          transaction.type === "income" && transaction.service_id,
+        (transaction) => transaction.type === "income" && transaction.service_id,
       )
       .forEach((transaction) => {
         const serviceId = transaction.service_id!;
@@ -195,12 +193,12 @@ export function useFinancialData(): FinancialHook {
               prev.map((transaction) =>
                 transaction.id === payload.new.id
                   ? (payload.new as FinancialTransaction)
-                  : transaction,
-              ),
+                  : transaction
+              )
             );
           } else if (payload.eventType === "DELETE") {
             setTransactions((prev) =>
-              prev.filter((transaction) => transaction.id !== payload.old.id),
+              prev.filter((transaction) => transaction.id !== payload.old.id)
             );
           }
         },

@@ -311,9 +311,7 @@ export const AccessibilityControls = React.forwardRef<
                   aria-describedby={highContrastDescId}
                   checked={preferences.highContrast}
                   id={highContrastId}
-                  onCheckedChange={(checked) =>
-                    updatePreference("highContrast", Boolean(checked))
-                  }
+                  onCheckedChange={(checked) => updatePreference("highContrast", Boolean(checked))}
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Alto Contraste</span>
@@ -335,8 +333,7 @@ export const AccessibilityControls = React.forwardRef<
                   checked={preferences.colorBlindFriendly}
                   id={colorBlindId}
                   onCheckedChange={(checked) =>
-                    updatePreference("colorBlindFriendly", Boolean(checked))
-                  }
+                    updatePreference("colorBlindFriendly", Boolean(checked))}
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Cores Acessíveis</span>
@@ -357,9 +354,7 @@ export const AccessibilityControls = React.forwardRef<
                   aria-describedby={dyslexiaFontDescId}
                   checked={preferences.dyslexiaFont}
                   id={dyslexiaFontId}
-                  onCheckedChange={(checked) =>
-                    updatePreference("dyslexiaFont", Boolean(checked))
-                  }
+                  onCheckedChange={(checked) => updatePreference("dyslexiaFont", Boolean(checked))}
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">
@@ -391,9 +386,7 @@ export const AccessibilityControls = React.forwardRef<
                   aria-describedby={reducedMotionDescId}
                   checked={preferences.reducedMotion}
                   id={reducedMotionId}
-                  onCheckedChange={(checked) =>
-                    updatePreference("reducedMotion", Boolean(checked))
-                  }
+                  onCheckedChange={(checked) => updatePreference("reducedMotion", Boolean(checked))}
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Reduzir Animações</span>
@@ -415,8 +408,7 @@ export const AccessibilityControls = React.forwardRef<
                   checked={preferences.simplifiedInterface}
                   id={simplifiedInterfaceId}
                   onCheckedChange={(checked) =>
-                    updatePreference("simplifiedInterface", Boolean(checked))
-                  }
+                    updatePreference("simplifiedInterface", Boolean(checked))}
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">
@@ -440,8 +432,7 @@ export const AccessibilityControls = React.forwardRef<
                   checked={preferences.enhancedTooltips}
                   id={enhancedTooltipsId}
                   onCheckedChange={(checked) =>
-                    updatePreference("enhancedTooltips", Boolean(checked))
-                  }
+                    updatePreference("enhancedTooltips", Boolean(checked))}
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Dicas Detalhadas</span>
@@ -471,9 +462,7 @@ export const AccessibilityControls = React.forwardRef<
                   aria-describedby={screenReaderDescId}
                   checked={preferences.screenReader}
                   id={screenReaderId}
-                  onCheckedChange={(checked) =>
-                    updatePreference("screenReader", Boolean(checked))
-                  }
+                  onCheckedChange={(checked) => updatePreference("screenReader", Boolean(checked))}
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">
@@ -496,9 +485,7 @@ export const AccessibilityControls = React.forwardRef<
                   aria-describedby={audioFeedbackDescId}
                   checked={preferences.audioFeedback}
                   id={audioFeedbackId}
-                  onCheckedChange={(checked) =>
-                    updatePreference("audioFeedback", Boolean(checked))
-                  }
+                  onCheckedChange={(checked) => updatePreference("audioFeedback", Boolean(checked))}
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Feedback Sonoro</span>
@@ -520,8 +507,7 @@ export const AccessibilityControls = React.forwardRef<
                   checked={preferences.focusIndicators}
                   id={focusIndicatorsId}
                   onCheckedChange={(checked) =>
-                    updatePreference("focusIndicators", Boolean(checked))
-                  }
+                    updatePreference("focusIndicators", Boolean(checked))}
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">
@@ -542,8 +528,7 @@ export const AccessibilityControls = React.forwardRef<
           <div className="space-y-3 border-t pt-4">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">
-                {activeFeatures} de {Object.keys(preferences).length} recursos
-                ativos
+                {activeFeatures} de {Object.keys(preferences).length} recursos ativos
               </span>
               <Badge size="sm" variant="outline">
                 WCAG {complianceLevel}

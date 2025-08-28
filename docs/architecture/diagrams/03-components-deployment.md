@@ -392,6 +392,7 @@ flowchart TB
 ## 🔧 Component Dependencies & Data Flow
 
 ### 📦 Package Dependency Graph
+
 ```
 ┌─ apps/web (Next.js Frontend)
 │  ├─ @neonpro/ui (Shared Components)
@@ -416,6 +417,7 @@ flowchart TB
 ```
 
 ### 🏥 Healthcare Component Interactions
+
 ```
 Patient Request → Rate Limiter → JWT Auth → License Validation → 
 LGPD Consent → Input Validation → Business Logic → Database (RLS) → 
@@ -423,9 +425,10 @@ Audit Logger → Response Encryption → Client
 ```
 
 ### 🔐 Security Component Stack
+
 1. **Network Layer**: TLS 1.3, DDoS protection, WAF
 2. **Authentication Layer**: JWT with professional licenses
-3. **Authorization Layer**: RBAC with clinic isolation  
+3. **Authorization Layer**: RBAC with clinic isolation
 4. **Application Layer**: Input validation, output encoding
 5. **Data Layer**: Field encryption, RLS, audit trails
 6. **Monitoring Layer**: Security events, anomaly detection

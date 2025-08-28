@@ -2,13 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -52,10 +46,10 @@ interface ConsentRecord {
 }
 
 interface DataSubjectRights {
-  access: { available: boolean; lastRequested?: Date; status?: string };
-  rectification: { available: boolean; lastRequested?: Date; status?: string };
-  erasure: { available: boolean; lastRequested?: Date; status?: string };
-  portability: { available: boolean; lastRequested?: Date; status?: string };
+  access: { available: boolean; lastRequested?: Date; status?: string; };
+  rectification: { available: boolean; lastRequested?: Date; status?: string; };
+  erasure: { available: boolean; lastRequested?: Date; status?: string; };
+  portability: { available: boolean; lastRequested?: Date; status?: string; };
 }
 
 export default function LGPDComplianceDashboard() {
@@ -116,8 +110,7 @@ export default function LGPDComplianceDashboard() {
         type: "data_processing",
         status: "granted",
         grantedAt: new Date(),
-        description:
-          "Processamento de dados para prestação de serviços médicos",
+        description: "Processamento de dados para prestação de serviços médicos",
       },
       {
         id: "2",
@@ -224,8 +217,7 @@ export default function LGPDComplianceDashboard() {
         <div>
           <h1 className="font-bold text-2xl">Painel de Conformidade LGPD</h1>
           <p className="text-gray-600">
-            Gerencie seus direitos e dados pessoais conforme a Lei Geral de
-            Proteção de Dados
+            Gerencie seus direitos e dados pessoais conforme a Lei Geral de Proteção de Dados
           </p>
         </div>
       </div>
@@ -346,8 +338,8 @@ export default function LGPDComplianceDashboard() {
                     {record.status === "active"
                       ? "Ativo"
                       : record.status === "deleted"
-                        ? "Excluído"
-                        : "Anonimizado"}
+                      ? "Excluído"
+                      : "Anonimizado"}
                   </Badge>
                 </div>
               </CardHeader>
@@ -358,9 +350,7 @@ export default function LGPDComplianceDashboard() {
                       Dados Coletados
                     </h4>
                     <ul className="space-y-1 text-gray-600 text-sm">
-                      {record.dataCollected.map((data, idx) => (
-                        <li key={idx}>• {data}</li>
-                      ))}
+                      {record.dataCollected.map((data, idx) => <li key={idx}>• {data}</li>)}
                     </ul>
                   </div>
                   <div>
@@ -382,8 +372,7 @@ export default function LGPDComplianceDashboard() {
             </Card>
           ))}
         </div>
-      )}{" "}
-      {/* Consent Management Tab */}
+      )} {/* Consent Management Tab */}
       {activeTab === "consent" && (
         <div className="space-y-4">
           {consents.map((consent) => (
@@ -395,10 +384,10 @@ export default function LGPDComplianceDashboard() {
                       {consent.type === "data_processing"
                         ? "Processamento de Dados"
                         : consent.type === "marketing"
-                          ? "Marketing"
-                          : consent.type === "analytics"
-                            ? "Analytics"
-                            : "Pesquisa"}
+                        ? "Marketing"
+                        : consent.type === "analytics"
+                        ? "Analytics"
+                        : "Pesquisa"}
                     </CardTitle>
                     <CardDescription>{consent.description}</CardDescription>
                   </div>
@@ -406,8 +395,8 @@ export default function LGPDComplianceDashboard() {
                     {consent.status === "granted"
                       ? "Concedido"
                       : consent.status === "withdrawn"
-                        ? "Retirado"
-                        : "Pendente"}
+                      ? "Retirado"
+                      : "Pendente"}
                   </Badge>
                 </div>
               </CardHeader>
@@ -416,40 +405,37 @@ export default function LGPDComplianceDashboard() {
                   <div className="text-gray-600 text-sm">
                     {consent.grantedAt && (
                       <p>
-                        Concedido em:{" "}
-                        {consent.grantedAt.toLocaleDateString("pt-BR")}
+                        Concedido em: {consent.grantedAt.toLocaleDateString("pt-BR")}
                       </p>
                     )}
                     {consent.withdrawnAt && (
                       <p>
-                        Retirado em:{" "}
-                        {consent.withdrawnAt.toLocaleDateString("pt-BR")}
+                        Retirado em: {consent.withdrawnAt.toLocaleDateString("pt-BR")}
                       </p>
                     )}
                   </div>
                   <Button
                     onClick={() => {
                       // Handle consent withdrawal/grant
-                      const newStatus =
-                        consent.status === "granted" ? "withdrawn" : "granted";
+                      const newStatus = consent.status === "granted" ? "withdrawn" : "granted";
                       setConsents((prev) =>
                         prev.map((c) =>
                           c.id === consent.id
                             ? {
-                                ...c,
-                                status: newStatus,
-                                [newStatus === "withdrawn"
+                              ...c,
+                              status: newStatus,
+                              [
+                                newStatus === "withdrawn"
                                   ? "withdrawnAt"
-                                  : "grantedAt"]: new Date(),
-                              }
-                            : c,
-                        ),
+                                  : "grantedAt"
+                              ]: new Date(),
+                            }
+                            : c
+                        )
                       );
                     }}
                     size="sm"
-                    variant={
-                      consent.status === "granted" ? "destructive" : "default"
-                    }
+                    variant={consent.status === "granted" ? "destructive" : "default"}
                   >
                     {consent.status === "granted"
                       ? "Retirar Consentimento"
@@ -471,15 +457,13 @@ export default function LGPDComplianceDashboard() {
                 <span>Direito de Acesso (Art. 15)</span>
               </CardTitle>
               <CardDescription>
-                Solicite uma cópia de todos os seus dados pessoais que
-                processamos.
+                Solicite uma cópia de todos os seus dados pessoais que processamos.
               </CardDescription>
             </CardHeader>
             <CardContent>
               {rights.access.lastRequested && (
                 <p className="mb-3 text-gray-600 text-sm">
-                  Última solicitação:{" "}
-                  {rights.access.lastRequested.toLocaleDateString("pt-BR")}
+                  Última solicitação: {rights.access.lastRequested.toLocaleDateString("pt-BR")}
                 </p>
               )}
               <Button
@@ -505,8 +489,7 @@ export default function LGPDComplianceDashboard() {
             <CardContent>
               {rights.rectification.lastRequested && (
                 <p className="mb-3 text-gray-600 text-sm">
-                  Última solicitação:{" "}
-                  {rights.rectification.lastRequested.toLocaleDateString(
+                  Última solicitação: {rights.rectification.lastRequested.toLocaleDateString(
                     "pt-BR",
                   )}
                 </p>
@@ -529,8 +512,7 @@ export default function LGPDComplianceDashboard() {
                 <span>Direito ao Apagamento (Art. 16)</span>
               </CardTitle>
               <CardDescription>
-                Solicite a exclusão dos seus dados pessoais (sujeito a
-                obrigações legais).
+                Solicite a exclusão dos seus dados pessoais (sujeito a obrigações legais).
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -542,8 +524,7 @@ export default function LGPDComplianceDashboard() {
               </div>
               {rights.erasure.lastRequested && (
                 <p className="mb-3 text-gray-600 text-sm">
-                  Última solicitação:{" "}
-                  {rights.erasure.lastRequested.toLocaleDateString("pt-BR")}
+                  Última solicitação: {rights.erasure.lastRequested.toLocaleDateString("pt-BR")}
                 </p>
               )}
               <Button
@@ -570,8 +551,7 @@ export default function LGPDComplianceDashboard() {
             <CardContent>
               {rights.portability.lastRequested && (
                 <p className="mb-3 text-gray-600 text-sm">
-                  Última solicitação:{" "}
-                  {rights.portability.lastRequested.toLocaleDateString("pt-BR")}
+                  Última solicitação: {rights.portability.lastRequested.toLocaleDateString("pt-BR")}
                 </p>
               )}
               <Button

@@ -4,8 +4,7 @@ import { useRegulatoryDocuments } from "@/hooks/use-regulatory-documents";
 import { useState } from "react";
 
 export function RegulatoryDocumentsList() {
-  const { documents, loading, error, deleteDocument } =
-    useRegulatoryDocuments();
+  const { documents, loading, error, deleteDocument } = useRegulatoryDocuments();
   const [filter, setFilter] = useState("");
   const [sortBy, setSortBy] = useState("expiration_date");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -43,17 +42,15 @@ export function RegulatoryDocumentsList() {
 
   // Filter documents by category
   const filteredDocuments = filter
-    ? documents.filter((doc) =>
-        doc.category.toLowerCase().includes(filter.toLowerCase()),
-      )
+    ? documents.filter((doc) => doc.category.toLowerCase().includes(filter.toLowerCase()))
     : documents;
 
   // Sort documents
   const sortedDocuments = [...filteredDocuments].sort((a, b) => {
     if (sortBy === "expiration_date") {
       return (
-        new Date(a.expiration_date).getTime() -
-        new Date(b.expiration_date).getTime()
+        new Date(a.expiration_date).getTime()
+        - new Date(b.expiration_date).getTime()
       );
     }
     return a.title.localeCompare(b.title);
@@ -143,8 +140,7 @@ export function RegulatoryDocumentsList() {
           <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
             <h3 className="mb-4 font-semibold text-lg">Confirm Deletion</h3>
             <p className="mb-6 text-gray-600">
-              Are you sure you want to delete this document? This action cannot
-              be undone.
+              Are you sure you want to delete this document? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
               <button

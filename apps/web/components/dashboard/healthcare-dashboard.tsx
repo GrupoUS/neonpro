@@ -38,14 +38,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
 // ✅ Icons - only what we need
-import {
-  Activity,
-  AlertCircle,
-  Calendar,
-  Download,
-  TrendingUp,
-  Users,
-} from "lucide-react";
+import { Activity, AlertCircle, Calendar, Download, TrendingUp, Users } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
 interface HealthcareDashboardProps {
@@ -68,8 +61,7 @@ export function HealthcareDashboard({
   const [isLoading, setIsLoading] = useState(false);
 
   // ✅ Healthcare permissions validation
-  const { canViewDashboard, canExportData, canViewFinancials } =
-    useHealthcarePermissions();
+  const { canViewDashboard, canExportData, canViewFinancials } = useHealthcarePermissions();
 
   // ✅ Memoized calculations for performance
   const dashboardMetrics = useMemo(() => {
@@ -79,12 +71,11 @@ export function HealthcareDashboard({
 
     return {
       totalPatients: dashboardData.patients?.length ?? 0,
-      todayAppointments:
-        dashboardData.appointments?.filter(
-          (apt) =>
-            format(new Date(apt.date), "yyyy-MM-dd") ===
-            format(new Date(), "yyyy-MM-dd"),
-        ).length ?? 0,
+      todayAppointments: dashboardData.appointments?.filter(
+        (apt) =>
+          format(new Date(apt.date), "yyyy-MM-dd")
+            === format(new Date(), "yyyy-MM-dd"),
+      ).length ?? 0,
       monthlyRevenue: dashboardData.financials?.monthlyRevenue ?? 0,
       complianceScore: dashboardData.compliance?.overallScore ?? 0,
     };
@@ -247,9 +238,7 @@ export function HealthcareDashboard({
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="appointments">Agendamentos</TabsTrigger>
           <TabsTrigger value="patients">Pacientes</TabsTrigger>
-          {canViewFinancials && (
-            <TabsTrigger value="financials">Financeiro</TabsTrigger>
-          )}
+          {canViewFinancials && <TabsTrigger value="financials">Financeiro</TabsTrigger>}
         </TabsList>
 
         <TabsContent className="space-y-4" value="overview">
@@ -343,7 +332,7 @@ function ComplianceCard({ score, className }: ComplianceCardProps) {
 /**
  * Section Components - Dashboard content areas
  */
-function OverviewSection({ data }: { data?: HealthcareDashboardData }) {
+function OverviewSection({ data }: { data?: HealthcareDashboardData; }) {
   if (!data) {
     return (
       <Card>
@@ -404,7 +393,7 @@ function OverviewSection({ data }: { data?: HealthcareDashboardData }) {
   );
 }
 
-function AppointmentsSection({ data: _data }: { data?: unknown[] }) {
+function AppointmentsSection({ data: _data }: { data?: unknown[]; }) {
   // ✅ Implementation for appointments section
   return (
     <Card>
@@ -420,7 +409,7 @@ function AppointmentsSection({ data: _data }: { data?: unknown[] }) {
   );
 }
 
-function PatientsSection({ data: _data }: { data?: unknown[] }) {
+function PatientsSection({ data: _data }: { data?: unknown[]; }) {
   // ✅ Implementation for patients section
   return (
     <Card>
@@ -436,7 +425,7 @@ function PatientsSection({ data: _data }: { data?: unknown[] }) {
   );
 }
 
-function FinancialsSection({ data: _data }: { data?: unknown }) {
+function FinancialsSection({ data: _data }: { data?: unknown; }) {
   // ✅ Implementation for financials section
   return (
     <Card>

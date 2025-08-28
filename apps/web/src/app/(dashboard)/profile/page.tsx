@@ -1,30 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";
-import {
-  Bell,
-  Camera,
-  Eye,
-  Mail,
-  MapPin,
-  Phone,
-  Save,
-  Shield,
-  User,
-} from "lucide-react";
+import { Bell, Camera, Eye, Mail, MapPin, Phone, Save, Shield, User } from "lucide-react";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -84,9 +68,7 @@ export default function ProfilePage() {
                   <Label htmlFor="lastName">Sobrenome</Label>
                   <Input
                     id="lastName"
-                    defaultValue={
-                      user?.name?.split(" ").slice(1).join(" ") || ""
-                    }
+                    defaultValue={user?.name?.split(" ").slice(1).join(" ") || ""}
                     placeholder="Seu sobrenome"
                   />
                 </div>

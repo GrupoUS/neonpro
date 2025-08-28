@@ -1,15 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -18,55 +13,54 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Progress } from "@/components/ui/progress";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
-  Shield,
-  FileText,
-  Calendar,
-  User,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  TrendingUp,
-  TrendingDown,
-  BarChart3,
-  Download,
-  RefreshCw,
-  Eye,
-  Settings,
   Activity,
-  Bell,
-  Target,
-  Zap,
-  Users,
-  Database,
-  Lock,
-  Stethoscope,
-  Pill,
-  UserCheck,
-  Phone,
   AlertCircle,
-  ChevronUp,
-  ChevronDown,
-  Minus,
-  ExternalLink,
+  AlertTriangle,
+  BarChart3,
+  Bell,
   BookOpen,
-  Scale,
-  Heart,
   Brain,
+  Calendar,
+  CheckCircle,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Database,
+  Download,
+  ExternalLink,
+  Eye,
+  FileText,
+  Heart,
+  Lock,
   Lungs,
+  Minus,
+  Phone,
+  Pill,
+  RefreshCw,
+  Scale,
+  Settings,
+  Shield,
+  Stethoscope,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  User,
+  UserCheck,
+  Users,
+  Zap,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import type { ComplianceDashboardData } from "@/lib/compliance/compliance-dashboard";
 import {
-  ComplianceScore,
   ComplianceAlert,
+  ComplianceDashboardService,
   ComplianceMetrics,
   ComplianceRiskLevel,
-  ComplianceDashboardService,
+  ComplianceScore,
 } from "@/lib/compliance/compliance-dashboard";
 
 // Initialize Compliance Dashboard service
@@ -174,8 +168,7 @@ const CATEGORY_CONFIG = {
 export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
   className,
 }) => {
-  const [dashboardData, setDashboardData] =
-    useState<ComplianceDashboardData | null>(null);
+  const [dashboardData, setDashboardData] = useState<ComplianceDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
@@ -308,16 +301,14 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
             Painel de Conformidade Regulatória
           </h2>
           <p className="text-muted-foreground">
-            Monitoramento integrado de conformidade para estabelecimentos de
-            saúde brasileiros
+            Monitoramento integrado de conformidade para estabelecimentos de saúde brasileiros
           </p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Clock className="h-4 w-4" />
             <span>
-              Última atualização:{" "}
-              {lastRefresh ? lastRefresh.toLocaleTimeString("pt-BR") : "Nunca"}
+              Última atualização: {lastRefresh ? lastRefresh.toLocaleTimeString("pt-BR") : "Nunca"}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -374,11 +365,8 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
               </div>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 {getTrendIcon(dashboardData.overallScore.trends.direction)}
-                Risco:{" "}
-                {
-                  RISK_LEVEL_CONFIG[dashboardData.riskAssessment.overallRisk]
-                    ?.label
-                }
+                Risco: {RISK_LEVEL_CONFIG[dashboardData.riskAssessment.overallRisk]
+                  ?.label}
               </div>
             </div>
           </div>
@@ -417,11 +405,9 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
-                  {
-                    Object.values(dashboardData.systemStatus).filter(
-                      (status) => status === "active",
-                    ).length
-                  }
+                  {Object.values(dashboardData.systemStatus).filter(
+                    (status) => status === "active",
+                  ).length}
                   /4
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -448,8 +434,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
           {/* Compliance System Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Object.entries(dashboardData.scores).map(([category, score]) => {
-              const config =
-                CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG];
+              const config = CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG];
               const Icon = config?.icon || Shield;
               const isExpanded = expandedCards.has(category);
 
@@ -459,9 +444,9 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
                   className={cn(
                     "transition-all duration-200 hover:shadow-md",
                     score.score < 70 && "border-red-200 bg-red-50/50",
-                    score.score >= 70 &&
-                      score.score < 85 &&
-                      "border-yellow-200 bg-yellow-50/50",
+                    score.score >= 70
+                      && score.score < 85
+                      && "border-yellow-200 bg-yellow-50/50",
                     score.score >= 85 && "border-green-200 bg-green-50/50",
                   )}
                 >
@@ -602,9 +587,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
                               <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1">
                                 {alert.actions
                                   .slice(0, 2)
-                                  .map((action, index) => (
-                                    <li key={index}>{action}</li>
-                                  ))}
+                                  .map((action, index) => <li key={index}>{action}</li>)}
                               </ul>
                             </div>
                           )}
@@ -640,8 +623,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {Object.entries(dashboardData.systemStatus).map(
                   ([system, status]) => {
-                    const config =
-                      CATEGORY_CONFIG[system as keyof typeof CATEGORY_CONFIG];
+                    const config = CATEGORY_CONFIG[system as keyof typeof CATEGORY_CONFIG];
                     const Icon = config?.icon || Database;
                     const isActive = status === "active";
 
@@ -686,8 +668,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
         <TabsContent value="compliance-scores" className="space-y-4">
           <div className="grid gap-4">
             {Object.entries(dashboardData.scores).map(([category, score]) => {
-              const config =
-                CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG];
+              const config = CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG];
               const Icon = config?.icon || Shield;
 
               return (
@@ -732,18 +713,16 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
 
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">
-                          Última atualização:{" "}
-                          {score.lastUpdated.toLocaleString("pt-BR")}
+                          Última atualização: {score.lastUpdated.toLocaleString("pt-BR")}
                         </span>
                         <div className="flex items-center gap-1">
                           {getTrendIcon(score.trends.direction)}
                           <span className="text-muted-foreground">
-                            Tendência:{" "}
-                            {score.trends.direction === "up"
+                            Tendência: {score.trends.direction === "up"
                               ? "Melhorando"
                               : score.trends.direction === "down"
-                                ? "Declinando"
-                                : "Estável"}
+                              ? "Declinando"
+                              : "Estável"}
                           </span>
                         </div>
                       </div>
@@ -845,9 +824,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
                           Ações Recomendadas:
                         </div>
                         <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                          {alert.actions.map((action, index) => (
-                            <li key={index}>{action}</li>
-                          ))}
+                          {alert.actions.map((action, index) => <li key={index}>{action}</li>)}
                         </ul>
                         <div className="flex gap-2 mt-4">
                           <Button size="sm" variant="outline">
@@ -1010,11 +987,10 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
                         </div>
                         <div className="text-xs text-muted-foreground">
                           {Math.ceil(
-                            (deadline.dueDate.getTime() -
-                              new Date().getTime()) /
-                              (1000 * 60 * 60 * 24),
-                          )}{" "}
-                          dias
+                            (deadline.dueDate.getTime()
+                              - new Date().getTime())
+                              / (1000 * 60 * 60 * 24),
+                          )} dias
                         </div>
                       </div>
                     </div>

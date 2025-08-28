@@ -1,10 +1,5 @@
 import { z } from "zod";
-import {
-  DateSchema,
-  NonNegativeNumberSchema,
-  PositiveNumberSchema,
-  UUIDSchema,
-} from "../types";
+import { DateSchema, NonNegativeNumberSchema, PositiveNumberSchema, UUIDSchema } from "../types";
 import type { BaseEntity, InventoryStatus } from "../types";
 
 // Product and inventory interfaces for aesthetic clinic

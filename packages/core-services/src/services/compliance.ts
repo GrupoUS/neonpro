@@ -787,7 +787,7 @@ export class ComplianceService {
   async searchPolicies(
     filters: ComplianceFilters,
     userId: string,
-  ): Promise<{ policies: CompliancePolicy[]; total: number }> {
+  ): Promise<{ policies: CompliancePolicy[]; total: number; }> {
     try {
       monitoring.debug("Searching compliance policies", "compliance-service", {
         filters,
@@ -913,8 +913,8 @@ export class ComplianceService {
 
       // Auto-assign based on severity
       if (
-        incident.severity === SeverityLevel.CRITICAL ||
-        incident.severity === SeverityLevel.HIGH
+        incident.severity === SeverityLevel.CRITICAL
+        || incident.severity === SeverityLevel.HIGH
       ) {
         await this.autoAssignIncident(incident.id, request.tenantId);
       }
@@ -1310,8 +1310,7 @@ export class ComplianceService {
       );
 
       // Create compliance by framework
-      const complianceByFramework =
-        await this.createComplianceByFramework(tenantId);
+      const complianceByFramework = await this.createComplianceByFramework(tenantId);
 
       return {
         policyCompliance,
@@ -1396,15 +1395,13 @@ export class ComplianceService {
     >,
   ): Promise<DataImpactAssessment> {
     // Assess notification and regulatory reporting requirements
-    const notificationRequired =
-      affectedData.recordsAffected > 100 ||
-      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED;
+    const notificationRequired = affectedData.recordsAffected > 100
+      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED;
 
-    const regulatoryReportingRequired =
-      affectedData.recordsAffected > 500 ||
-      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED ||
-      affectedData.estimatedImpact === ImpactLevel.MAJOR ||
-      affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
+    const regulatoryReportingRequired = affectedData.recordsAffected > 500
+      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED
+      || affectedData.estimatedImpact === ImpactLevel.MAJOR
+      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
 
     return {
       ...affectedData,
@@ -1593,8 +1590,7 @@ export class ComplianceService {
     _tenantId: string,
   ): Promise<Record<ComplianceFramework, FrameworkCompliance>> {
     // Create compliance breakdown by framework (simplified)
-    const frameworks: Record<ComplianceFramework, FrameworkCompliance> =
-      {} as unknown;
+    const frameworks: Record<ComplianceFramework, FrameworkCompliance> = {} as unknown;
 
     Object.values(ComplianceFramework).forEach((framework) => {
       frameworks[framework] = {

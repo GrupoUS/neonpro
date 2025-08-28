@@ -4,7 +4,7 @@
  *
  * Production-ready input validation with Brazilian healthcare compliance:
  * - CPF (Cadastro de Pessoas Físicas) validation
- * - RG (Registro Geral) validation  
+ * - RG (Registro Geral) validation
  * - Healthcare professional IDs (CRM, CRF, CRN, etc.)
  * - Brazilian health insurance validation
  * - Patient data sanitization and validation
@@ -18,7 +18,7 @@ import { z } from "zod";
 // Brazilian document types
 export enum BrazilianDocumentType {
   CPF = "cpf",
-  RG = "rg", 
+  RG = "rg",
   CNS = "cns", // Cartão Nacional de Saúde
   PASSPORT = "passport",
 }
@@ -38,11 +38,33 @@ export enum BrazilianHealthcareLicense {
 
 // Brazilian states for license validation
 export enum BrazilianState {
-  AC = "AC", AL = "AL", AP = "AP", AM = "AM", BA = "BA", CE = "CE",
-  DF = "DF", ES = "ES", GO = "GO", MA = "MA", MT = "MT", MS = "MS",
-  MG = "MG", PA = "PA", PB = "PB", PR = "PR", PE = "PE", PI = "PI",
-  RJ = "RJ", RN = "RN", RS = "RS", RO = "RO", RR = "RR", SC = "SC",
-  SP = "SP", SE = "SE", TO = "TO"
+  AC = "AC",
+  AL = "AL",
+  AP = "AP",
+  AM = "AM",
+  BA = "BA",
+  CE = "CE",
+  DF = "DF",
+  ES = "ES",
+  GO = "GO",
+  MA = "MA",
+  MT = "MT",
+  MS = "MS",
+  MG = "MG",
+  PA = "PA",
+  PB = "PB",
+  PR = "PR",
+  PE = "PE",
+  PI = "PI",
+  RJ = "RJ",
+  RN = "RN",
+  RS = "RS",
+  RO = "RO",
+  RR = "RR",
+  SC = "SC",
+  SP = "SP",
+  SE = "SE",
+  TO = "TO",
 }
 
 // Healthcare insurance types in Brazil
@@ -61,16 +83,16 @@ export enum BrazilianHealthInsurance {
 export class CPFValidator {
   static validate(cpf: string): boolean {
     if (!cpf) return false;
-    
+
     // Remove non-numeric characters
-    const cleanCpf = cpf.replace(/[^\d]/g, '');
-    
+    const cleanCpf = cpf.replace(/[^\d]/g, "");
+
     // Check length
     if (cleanCpf.length !== 11) return false;
-    
+
     // Check for known invalid CPFs (all same digits)
     if (/^(\d)\1{10}$/.test(cleanCpf)) return false;
-    
+
     // Validate check digits
     return this.validateCheckDigits(cleanCpf);
   }
@@ -96,12 +118,12 @@ export class CPFValidator {
   }
 
   static format(cpf: string): string {
-    const cleanCpf = cpf.replace(/[^\d]/g, '');
-    return cleanCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    const cleanCpf = cpf.replace(/[^\d]/g, "");
+    return cleanCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
   }
 
   static sanitize(cpf: string): string {
-    return cpf.replace(/[^\d]/g, '');
+    return cpf.replace(/[^\d]/g, "");
   }
 }
 
@@ -112,19 +134,19 @@ export class CPFValidator {
 export class CNSValidator {
   static validate(cns: string): boolean {
     if (!cns) return false;
-    
-    const cleanCns = cns.replace(/[^\d]/g, '');
+
+    const cleanCns = cns.replace(/[^\d]/g, "");
     if (cleanCns.length !== 15) return false;
-    
+
     // CNS starting with 1 or 2 uses different validation
     const firstDigit = parseInt(cleanCns.charAt(0));
-    
+
     if (firstDigit === 1 || firstDigit === 2) {
       return this.validateType1or2(cleanCns);
     } else if (firstDigit === 7 || firstDigit === 8 || firstDigit === 9) {
       return this.validateType789(cleanCns);
     }
-    
+
     return false;
   }
 
@@ -133,14 +155,14 @@ export class CNSValidator {
     for (let i = 0; i < 11; i++) {
       sum += parseInt(cns.charAt(i)) * (15 - i);
     }
-    
+
     const remainder = sum % 11;
     let dv = 11 - remainder;
-    
+
     if (dv === 11) dv = 0;
     if (dv === 10) return false;
-    
-    const calculatedCns = cns.substring(0, 11) + dv.toString().padStart(4, '0');
+
+    const calculatedCns = cns.substring(0, 11) + dv.toString().padStart(4, "0");
     return calculatedCns === cns;
   }
 
@@ -153,8 +175,8 @@ export class CNSValidator {
   }
 
   static format(cns: string): string {
-    const cleanCns = cns.replace(/[^\d]/g, '');
-    return cleanCns.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
+    const cleanCns = cns.replace(/[^\d]/g, "");
+    return cleanCns.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, "$1 $2 $3 $4");
   }
 }
 
@@ -163,14 +185,14 @@ export class CNSValidator {
  */
 export class HealthcareLicenseValidator {
   static validate(
-    license: string, 
-    type: BrazilianHealthcareLicense, 
-    state: BrazilianState
+    license: string,
+    type: BrazilianHealthcareLicense,
+    state: BrazilianState,
   ): boolean {
     if (!license || !type || !state) return false;
-    
-    const cleanLicense = license.replace(/[^\d]/g, '');
-    
+
+    const cleanLicense = license.replace(/[^\d]/g, "");
+
     switch (type) {
       case BrazilianHealthcareLicense.CRM:
         return this.validateCRM(cleanLicense, state);
@@ -189,8 +211,8 @@ export class HealthcareLicenseValidator {
 
   private static validateCRM(license: string, state: BrazilianState): boolean {
     // CRM format: 4-6 digits + state code
-    return license.length >= 4 && license.length <= 6 && 
-           Object.values(BrazilianState).includes(state);
+    return license.length >= 4 && license.length <= 6
+      && Object.values(BrazilianState).includes(state);
   }
 
   private static validateCRF(license: string, state: BrazilianState): boolean {
@@ -199,7 +221,7 @@ export class HealthcareLicenseValidator {
   }
 
   private static validateCRN(license: string, state: BrazilianState): boolean {
-    // CRN format: 4-5 digits + state code  
+    // CRN format: 4-5 digits + state code
     return license.length >= 4 && license.length <= 5;
   }
 
@@ -214,11 +236,11 @@ export class HealthcareLicenseValidator {
   }
 
   static formatLicense(
-    license: string, 
-    type: BrazilianHealthcareLicense, 
-    state: BrazilianState
+    license: string,
+    type: BrazilianHealthcareLicense,
+    state: BrazilianState,
   ): string {
-    const cleanLicense = license.replace(/[^\d]/g, '');
+    const cleanLicense = license.replace(/[^\d]/g, "");
     return `${type.toUpperCase()}/${state} ${cleanLicense}`;
   }
 }
@@ -271,7 +293,7 @@ export const healthcareLicenseSchema = z.object({
   {
     message: "Invalid healthcare license format",
     path: ["number"],
-  }
+  },
 );
 
 /**
@@ -282,23 +304,23 @@ export const patientPersonalDataSchema = z.object({
   cpf: brazilianCPFSchema,
   rg: brazilianRGSchema.optional(),
   cns: brazilianCNSSchema.optional(),
-  
+
   // Personal information
   fullName: z
     .string()
     .min(2, "Name too short")
     .max(100, "Name too long")
     .regex(/^[a-zA-ZÀ-ÿ\s\-\']+$/, "Name contains invalid characters")
-    .transform(val => val.trim().replace(/\s+/g, ' ')),
-  
+    .transform(val => val.trim().replace(/\s+/g, " ")),
+
   socialName: z
     .string()
     .min(2, "Social name too short")
     .max(100, "Social name too long")
     .regex(/^[a-zA-ZÀ-ÿ\s\-\']+$/, "Social name contains invalid characters")
     .optional()
-    .transform(val => val ? val.trim().replace(/\s+/g, ' ') : undefined),
-  
+    .transform(val => val ? val.trim().replace(/\s+/g, " ") : undefined),
+
   dateOfBirth: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
@@ -309,13 +331,15 @@ export const patientPersonalDataSchema = z.object({
         const age = today.getFullYear() - birthDate.getFullYear();
         return age >= 0 && age <= 150;
       },
-      { message: "Invalid birth date" }
+      { message: "Invalid birth date" },
     ),
-  
-  gender: z.enum(['M', 'F', 'O', 'NI'], {
-    errorMap: () => ({ message: "Gender must be M (Masculino), F (Feminino), O (Outro), or NI (Não Informado)" })
+
+  gender: z.enum(["M", "F", "O", "NI"], {
+    errorMap: () => ({
+      message: "Gender must be M (Masculino), F (Feminino), O (Outro), or NI (Não Informado)",
+    }),
   }),
-  
+
   // Contact information
   email: z
     .string()
@@ -323,19 +347,19 @@ export const patientPersonalDataSchema = z.object({
     .max(100, "Email too long")
     .toLowerCase()
     .optional(),
-  
+
   phoneNumber: z
     .string()
     .regex(/^\+?55\s?\(?[1-9]{2}\)?\s?9?[0-9]{4}\-?[0-9]{4}$/, "Invalid Brazilian phone number")
-    .transform(val => val.replace(/[^\d]/g, ''))
+    .transform(val => val.replace(/[^\d]/g, ""))
     .optional(),
-  
+
   // Address (Brazilian format)
   address: z.object({
     zipCode: z
       .string()
       .regex(/^\d{5}\-?\d{3}$/, "Invalid Brazilian ZIP code (CEP)")
-      .transform(val => val.replace(/[^\d]/g, '')),
+      .transform(val => val.replace(/[^\d]/g, "")),
     street: z.string().min(5, "Street address too short").max(200, "Street address too long"),
     number: z.string().max(10, "Number too long"),
     complement: z.string().max(50, "Complement too long").optional(),
@@ -343,7 +367,7 @@ export const patientPersonalDataSchema = z.object({
     city: z.string().min(2, "City too short").max(100, "City too long"),
     state: z.nativeEnum(BrazilianState),
   }).optional(),
-  
+
   // Healthcare information
   healthInsurance: z.object({
     type: z.nativeEnum(BrazilianHealthInsurance),
@@ -351,7 +375,7 @@ export const patientPersonalDataSchema = z.object({
     planNumber: z.string().max(50, "Plan number too long").optional(),
     expirationDate: z.string().datetime().optional(),
   }).optional(),
-  
+
   // Emergency contact
   emergencyContact: z.object({
     name: z
@@ -369,38 +393,38 @@ export const patientPersonalDataSchema = z.object({
  * Healthcare Provider Data Schema
  */
 export const healthcareProviderSchema = z.object({
-  // Personal identification  
+  // Personal identification
   cpf: brazilianCPFSchema,
   fullName: z
     .string()
     .min(2, "Name too short")
     .max(100, "Name too long")
     .regex(/^[a-zA-ZÀ-ÿ\s\-\']+$/, "Name contains invalid characters"),
-  
+
   // Professional information
   licenses: z
     .array(healthcareLicenseSchema)
     .min(1, "At least one professional license is required"),
-  
+
   specialties: z
     .array(z.string().max(100, "Specialty name too long"))
     .max(10, "Too many specialties")
     .optional(),
-  
+
   // Contact information
   email: z.string().email("Invalid email format").toLowerCase(),
   phoneNumber: z
     .string()
     .regex(/^\+?55\s?\(?[1-9]{2}\)?\s?9?[0-9]{4}\-?[0-9]{4}$/, "Invalid Brazilian phone number")
-    .transform(val => val.replace(/[^\d]/g, '')),
-  
+    .transform(val => val.replace(/[^\d]/g, "")),
+
   // Professional address
   workAddress: z.object({
     facilityName: z.string().min(2, "Facility name too short").max(200, "Facility name too long"),
     zipCode: z
       .string()
       .regex(/^\d{5}\-?\d{3}$/, "Invalid Brazilian ZIP code (CEP)")
-      .transform(val => val.replace(/[^\d]/g, '')),
+      .transform(val => val.replace(/[^\d]/g, "")),
     street: z.string().min(5, "Street address too short").max(200, "Street address too long"),
     number: z.string().max(10, "Number too long"),
     complement: z.string().max(50, "Complement too long").optional(),
@@ -418,39 +442,39 @@ export class BrazilianHealthcareSanitizer {
    * Sanitize patient data according to LGPD requirements
    */
   static sanitizePatientData(data: any): any {
-    if (!data || typeof data !== 'object') return data;
-    
+    if (!data || typeof data !== "object") return data;
+
     const sanitized = { ...data };
-    
+
     // Sanitize CPF
     if (sanitized.cpf) {
       sanitized.cpf = CPFValidator.sanitize(sanitized.cpf);
     }
-    
+
     // Sanitize CNS
     if (sanitized.cns) {
-      sanitized.cns = sanitized.cns.replace(/[^\d]/g, '');
+      sanitized.cns = sanitized.cns.replace(/[^\d]/g, "");
     }
-    
+
     // Sanitize names (remove extra spaces, normalize case)
     if (sanitized.fullName) {
-      sanitized.fullName = sanitized.fullName.trim().replace(/\s+/g, ' ');
+      sanitized.fullName = sanitized.fullName.trim().replace(/\s+/g, " ");
     }
-    
+
     if (sanitized.socialName) {
-      sanitized.socialName = sanitized.socialName.trim().replace(/\s+/g, ' ');
+      sanitized.socialName = sanitized.socialName.trim().replace(/\s+/g, " ");
     }
-    
+
     // Sanitize phone numbers
     if (sanitized.phoneNumber) {
-      sanitized.phoneNumber = sanitized.phoneNumber.replace(/[^\d]/g, '');
+      sanitized.phoneNumber = sanitized.phoneNumber.replace(/[^\d]/g, "");
     }
-    
+
     // Sanitize address ZIP code
     if (sanitized.address?.zipCode) {
-      sanitized.address.zipCode = sanitized.address.zipCode.replace(/[^\d]/g, '');
+      sanitized.address.zipCode = sanitized.address.zipCode.replace(/[^\d]/g, "");
     }
-    
+
     return sanitized;
   }
 
@@ -458,28 +482,28 @@ export class BrazilianHealthcareSanitizer {
    * Remove sensitive data for logging (LGPD compliance)
    */
   static removeSensitiveDataForLogging(data: any): any {
-    if (!data || typeof data !== 'object') return data;
-    
+    if (!data || typeof data !== "object") return data;
+
     const sanitized = { ...data };
-    
+
     // Remove or mask sensitive fields
     if (sanitized.cpf) {
       sanitized.cpf = `***.***.***-${sanitized.cpf.slice(-2)}`;
     }
-    
+
     if (sanitized.rg) {
       sanitized.rg = `***${sanitized.rg.slice(-3)}`;
     }
-    
+
     if (sanitized.email) {
-      const [localPart, domain] = sanitized.email.split('@');
+      const [localPart, domain] = sanitized.email.split("@");
       sanitized.email = `${localPart.substring(0, 2)}***@${domain}`;
     }
-    
+
     if (sanitized.phoneNumber) {
       sanitized.phoneNumber = `(**) ****-${sanitized.phoneNumber.slice(-4)}`;
     }
-    
+
     return sanitized;
   }
 }

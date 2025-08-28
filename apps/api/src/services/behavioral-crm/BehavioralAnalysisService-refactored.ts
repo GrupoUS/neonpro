@@ -1,6 +1,6 @@
 /**
  * Behavioral Analysis Service - Refactored
- * 
+ *
  * IMPROVEMENTS:
  * ✅ Single Responsibility - Focus on orchestration and data access
  * ✅ Composition over complex inheritance
@@ -12,19 +12,19 @@
 
 import { supabase } from "@/lib/supabase";
 import {
+  type BehavioralEvent,
+  type BehavioralPatterns,
+  type BehavioralScores,
+  calculateComplianceScore,
   calculateEngagementScore,
   calculateLoyaltyScore,
-  calculateSatisfactionScore,
   calculateRiskScore,
-  calculateComplianceScore,
-  determineCommunicationStyle,
+  calculateSatisfactionScore,
   categorizeResponseTime,
-  type BehavioralEvent,
+  determineCommunicationStyle,
   type PatientInteraction,
-  type BehavioralScores,
-  type BehavioralPatterns,
-  type PersonalityType,
   type PatientSegment,
+  type PersonalityType,
 } from "./behavioral-utils";
 
 // =============================================================================
@@ -103,10 +103,13 @@ export class BehavioralAnalysisService {
         lifetimeValue,
         lastAnalyzed: new Date(),
       };
-
     } catch (error) {
       console.error(`Behavioral analysis failed for patient ${patientId}:`, error);
-      throw new Error(`Failed to analyze patient behavior: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to analyze patient behavior: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      );
     }
   }
 
@@ -116,10 +119,10 @@ export class BehavioralAnalysisService {
 
   private async collectBehavioralEvents(patientId: string): Promise<BehavioralEvent[]> {
     const { data, error } = await supabase
-      .from('behavioral_events')
-      .select('*')
-      .eq('patient_id', patientId)
-      .order('timestamp', { ascending: false })
+      .from("behavioral_events")
+      .select("*")
+      .eq("patient_id", patientId)
+      .order("timestamp", { ascending: false })
       .limit(500); // Reasonable limit
 
     if (error) {
@@ -131,10 +134,10 @@ export class BehavioralAnalysisService {
 
   private async getPatientInteractions(patientId: string): Promise<PatientInteraction[]> {
     const { data, error } = await supabase
-      .from('patient_interactions')
-      .select('*')
-      .eq('patient_id', patientId)
-      .order('timestamp', { ascending: false })
+      .from("patient_interactions")
+      .select("*")
+      .eq("patient_id", patientId)
+      .order("timestamp", { ascending: false })
       .limit(200);
 
     if (error) {
@@ -146,9 +149,9 @@ export class BehavioralAnalysisService {
 
   private async getPatientRegistrationDate(patientId: string): Promise<Date> {
     const { data, error } = await supabase
-      .from('patients')
-      .select('created_at')
-      .eq('id', patientId)
+      .from("patients")
+      .select("created_at")
+      .eq("id", patientId)
       .single();
 
     if (error) {
@@ -164,30 +167,34 @@ export class BehavioralAnalysisService {
 
   private calculateAverageResponseTime(interactions: PatientInteraction[]): number {
     if (interactions.length === 0) return 24;
-    
+
     const totalTime = interactions.reduce((sum, interaction) => sum + interaction.responseTime, 0);
     return totalTime / interactions.length;
   }
 
-  private determinePreferredChannel(interactions: PatientInteraction[]): "whatsapp" | "email" | "phone" | "sms" {
+  private determinePreferredChannel(
+    interactions: PatientInteraction[],
+  ): "whatsapp" | "email" | "phone" | "sms" {
     if (interactions.length === 0) return "whatsapp";
-    
+
     const channelCounts = interactions.reduce((counts, interaction) => {
       counts[interaction.channel] = (counts[interaction.channel] || 0) + 1;
       return counts;
     }, {} as Record<string, number>);
 
     const mostUsedChannel = Object.entries(channelCounts)
-      .sort(([,a], [,b]) => b - a)[0]?.[0];
+      .sort(([, a], [, b]) => b - a)[0]?.[0];
 
     return (mostUsedChannel as any) || "whatsapp";
   }
 
-  private analyzeAppointmentBehavior(events: BehavioralEvent[]): "punctual" | "early" | "late" | "reschedules" {
+  private analyzeAppointmentBehavior(
+    events: BehavioralEvent[],
+  ): "punctual" | "early" | "late" | "reschedules" {
     const appointmentEvents = events.filter(e => e.eventType === "appointment");
-    
+
     // Simplified logic - would be enhanced based on metadata
-    const positiveRate = appointmentEvents.length > 0 
+    const positiveRate = appointmentEvents.length > 0
       ? appointmentEvents.filter(e => e.outcome === "positive").length / appointmentEvents.length
       : 0.5;
 
@@ -203,7 +210,7 @@ export class BehavioralAnalysisService {
     }, {} as Record<number, number>);
 
     const peakMonths = Object.entries(monthCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 2)
       .map(([month]) => this.getSeasonFromMonth(parseInt(month)));
 
@@ -212,12 +219,15 @@ export class BehavioralAnalysisService {
 
   private getSeasonFromMonth(month: number): string {
     if (month >= 2 && month <= 4) return "Autumn";
-    if (month >= 5 && month <= 7) return "Winter"; 
+    if (month >= 5 && month <= 7) return "Winter";
     if (month >= 8 && month <= 10) return "Spring";
     return "Summer";
   }
 
-  private determinePersonalityType(scores: BehavioralScores, patterns: BehavioralPatterns): PersonalityType {
+  private determinePersonalityType(
+    scores: BehavioralScores,
+    patterns: BehavioralPatterns,
+  ): PersonalityType {
     // Simplified personality analysis based on patterns
     if (patterns.responseTime === "immediate" && patterns.communicationStyle === "direct") {
       return "driver";
@@ -239,7 +249,10 @@ export class BehavioralAnalysisService {
     return "inactive";
   }
 
-  private async calculateLifetimeValue(patientId: string, segment: PatientSegment): Promise<number> {
+  private async calculateLifetimeValue(
+    patientId: string,
+    segment: PatientSegment,
+  ): Promise<number> {
     // Simplified LTV calculation
     const segmentMultipliers = {
       vip: 5000,

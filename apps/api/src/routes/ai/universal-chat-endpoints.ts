@@ -275,8 +275,7 @@ universalChat.put("/", async (c) => {
   } catch (error) {
     return c.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to create session",
+        error: error instanceof Error ? error.message : "Failed to create session",
       },
       500,
     );
@@ -347,9 +346,7 @@ async function analyzeResponse(
   }
 
   // Detect emergency
-  const emergencyDetected = emergencyPatterns.some((pattern) =>
-    pattern.test(content),
-  );
+  const emergencyDetected = emergencyPatterns.some((pattern) => pattern.test(content));
 
   // Escalation logic
   const escalationTriggered = emergencyDetected || complianceFlags.length > 2;

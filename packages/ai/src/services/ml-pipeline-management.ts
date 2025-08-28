@@ -20,11 +20,7 @@ import type {
   MLPipelineStatus,
   ModelVersion,
 } from "@neonpro/types";
-import type {
-  AIServiceConfig,
-  AIServiceMetrics,
-  CacheService,
-} from "./enhanced-service-base";
+import type { AIServiceConfig, AIServiceMetrics, CacheService } from "./enhanced-service-base";
 import { EnhancedAIService } from "./enhanced-service-base";
 
 // Supabase MCP Integration
@@ -413,9 +409,12 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 
     try {
       // Get counts from different tables
-      const activeModelsQuery = `SELECT COUNT(*) as count FROM ai_models WHERE clinic_id = '${clinicId}' AND status = 'active'`;
-      const runningTestsQuery = `SELECT COUNT(*) as count FROM ab_tests WHERE clinic_id = '${clinicId}' AND status = 'running'`;
-      const driftDetectionsQuery = `SELECT COUNT(*) as count FROM drift_detections WHERE clinic_id = '${clinicId}' AND status = 'detected'`;
+      const activeModelsQuery =
+        `SELECT COUNT(*) as count FROM ai_models WHERE clinic_id = '${clinicId}' AND status = 'active'`;
+      const runningTestsQuery =
+        `SELECT COUNT(*) as count FROM ab_tests WHERE clinic_id = '${clinicId}' AND status = 'running'`;
+      const driftDetectionsQuery =
+        `SELECT COUNT(*) as count FROM drift_detections WHERE clinic_id = '${clinicId}' AND status = 'detected'`;
 
       const [activeModels, runningTests, driftDetections] = await Promise.all([
         mcp__supabase_mcp__execute_sql(
@@ -438,8 +437,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
         detected_drifts: driftDetections.data[0].count,
         models_needing_retrain: 0, // Would be calculated based on performance metrics
         last_evaluation_date: new Date().toISOString(),
-        overall_health:
-          driftDetections.data[0].count > 0 ? "warning" : "healthy",
+        overall_health: driftDetections.data[0].count > 0 ? "warning" : "healthy",
       };
 
       if (this.config.enableCaching) {

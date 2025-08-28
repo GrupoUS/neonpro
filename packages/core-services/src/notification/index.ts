@@ -1,9 +1,6 @@
 // Notification module exports
 
-export type {
-  ExternalNotificationProvider,
-  NotificationRepository,
-} from "./service";
+export type { ExternalNotificationProvider, NotificationRepository } from "./service";
 export * from "./service";
 export { NotificationService } from "./service";
 // Re-export commonly used types

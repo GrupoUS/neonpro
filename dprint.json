@@ -51,7 +51,8 @@
     "**/logs/**",
     "**/.env*",
     "**/sentry.*.config.*",
-    "**/instrumentation*.ts"
+    "**/instrumentation*.ts",
+    "**/*.chatmode.md"
   ],
 
   "typescript": {

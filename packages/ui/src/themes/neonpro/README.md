@@ -26,9 +26,9 @@ npm install @neonpro/ui
 
 ```typescript
 import {
-  neonproTheme,
-  HealthcareMetricCard,
   AppointmentCalendar,
+  HealthcareMetricCard,
+  neonproTheme,
   PaymentStatusTable,
   TeamMembersList,
 } from "@neonpro/ui/themes/neonpro";
@@ -59,7 +59,7 @@ Display key healthcare metrics with growth indicators (NEONPRO style):
     type: "LGPD",
     status: "compliant",
   }}
-/>
+/>;
 ```
 
 **Props:**
@@ -84,7 +84,7 @@ Brazilian healthcare appointment scheduling with density indicators:
   firstDayOfWeek={1} // Monday first (Brazilian standard)
   onDateSelect={(date) => console.log("Selected:", date)}
   onAppointmentClick={(appointment) => console.log("Clicked:", appointment)}
-/>
+/>;
 ```
 
 **Features:**
@@ -107,7 +107,7 @@ Professional payment tracking with Brazilian payment methods:
   showExport={true}
   onPaymentView={(payment) => console.log("View:", payment)}
   onExportData={() => exportPayments()}
-/>
+/>;
 ```
 
 **Features:**
@@ -129,7 +129,7 @@ Healthcare team management with Brazilian professional validation:
   showActions={true}
   onMemberClick={(member) => console.log("Selected:", member)}
   onAddMember={() => openAddMemberModal()}
-/>
+/>;
 ```
 
 **Features:**
@@ -219,7 +219,7 @@ const spacing = {
     type: "LGPD",
     status: "compliant",
   }}
-/>
+/>;
 ```
 
 ### CFM Professional Validation
@@ -236,7 +236,7 @@ const spacing = {
       status: "active",
     },
   ]}
-/>
+/>;
 ```
 
 ### Brazilian Holidays
@@ -250,7 +250,7 @@ const spacing = {
       type: "national",
     },
   ]}
-/>
+/>;
 ```
 
 ## 📱 Responsive Design

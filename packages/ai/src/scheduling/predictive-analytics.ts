@@ -171,7 +171,7 @@ export class PredictiveAnalytics {
    */
   async generateOptimizationRecommendations(
     currentSchedule: AIAppointment[],
-    _timeRange: { start: Date; end: Date },
+    _timeRange: { start: Date; end: Date; },
     targetMetrics: SchedulingMetrics,
   ): Promise<OptimizationRecommendation[]> {
     const recommendations: OptimizationRecommendation[] = [];
@@ -202,12 +202,11 @@ export class PredictiveAnalytics {
       );
       recommendations.push(...roomOptimizations);
 
-      const sequenceOptimizations =
-        await this.analyzeTreatmentSequenceOptimizations(
-          currentSchedule,
-          currentMetrics,
-          targetMetrics,
-        );
+      const sequenceOptimizations = await this.analyzeTreatmentSequenceOptimizations(
+        currentSchedule,
+        currentMetrics,
+        targetMetrics,
+      );
       recommendations.push(...sequenceOptimizations);
 
       // Sort by expected impact
@@ -224,7 +223,7 @@ export class PredictiveAnalytics {
    */
   async analyzeSchedulingPatterns(
     appointments: AIAppointment[],
-    _timeRange: { start: Date; end: Date },
+    _timeRange: { start: Date; end: Date; },
   ): Promise<SchedulingPattern[]> {
     const patterns: SchedulingPattern[] = [];
 
@@ -262,7 +261,7 @@ export class PredictiveAnalytics {
   async calculateSchedulingOptimization(
     currentSchedule: AIAppointment[],
     proposedChanges: Partial<AIAppointment>[],
-    _timeRange: { start: Date; end: Date },
+    _timeRange: { start: Date; end: Date; },
   ): Promise<SchedulingOptimization> {
     try {
       const originalMetrics = this.calculateCurrentMetrics(currentSchedule);
@@ -276,8 +275,7 @@ export class PredictiveAnalytics {
         optimizedMetrics,
       );
       const timeToImplement = this.estimateImplementationTime(proposedChanges);
-      const confidenceLevel =
-        this.calculateOptimizationConfidence(improvements);
+      const confidenceLevel = this.calculateOptimizationConfidence(improvements);
 
       return {
         originalMetrics,
@@ -303,9 +301,8 @@ export class PredictiveAnalytics {
     const factors: NoShowFactor[] = [];
 
     // Historical no-show rate
-    const historicalRate =
-      patientHistory.noShowCount /
-      Math.max(patientHistory.totalAppointments, 1);
+    const historicalRate = patientHistory.noShowCount
+      / Math.max(patientHistory.totalAppointments, 1);
     factors.push({
       factor: "historical_no_show_rate",
       weight: 0.3,
@@ -332,9 +329,8 @@ export class PredictiveAnalytics {
     }
 
     // Booking advance time
-    const advanceTime =
-      (appointmentSlot.slot.start.getTime() - Date.now()) /
-      (1000 * 60 * 60 * 24);
+    const advanceTime = (appointmentSlot.slot.start.getTime() - Date.now())
+      / (1000 * 60 * 60 * 24);
     factors.push({
       factor: "booking_advance_days",
       weight: 0.15,
@@ -361,12 +357,11 @@ export class PredictiveAnalytics {
     let totalWeight = 0;
 
     for (const factor of factors) {
-      const impactMultiplier =
-        factor.impact === "negative"
-          ? 1
-          : factor.impact === "positive"
-            ? -0.5
-            : 0;
+      const impactMultiplier = factor.impact === "negative"
+        ? 1
+        : factor.impact === "positive"
+        ? -0.5
+        : 0;
       weightedSum += factor.weight * factor.value * impactMultiplier;
       totalWeight += factor.weight;
     }
@@ -402,8 +397,7 @@ export class PredictiveAnalytics {
 
     // Average duration history
     if (patientHistory.averageTreatmentDuration > 0) {
-      const historyRatio =
-        patientHistory.averageTreatmentDuration / baseDuration.estimatedMinutes;
+      const historyRatio = patientHistory.averageTreatmentDuration / baseDuration.estimatedMinutes;
       factors.push({
         factor: "historical_duration",
         impact: historyRatio - 1, // Deviation from base duration
@@ -556,8 +550,7 @@ export class PredictiveAnalytics {
 
     const metrics = Object.keys(original) as (keyof SchedulingMetrics)[];
     for (const metric of metrics) {
-      const improvement =
-        ((optimized[metric] - original[metric]) / original[metric]) * 100;
+      const improvement = ((optimized[metric] - original[metric]) / original[metric]) * 100;
       if (Math.abs(improvement) > 1) {
         // Only include significant improvements
         improvements.push({
@@ -650,8 +643,7 @@ export class PredictiveAnalytics {
   }
 
   private calculatePredictionConfidence(factors: NoShowFactor[]): number {
-    const avgWeight =
-      factors.reduce((sum, f) => sum + f.weight, 0) / factors.length;
+    const avgWeight = factors.reduce((sum, f) => sum + f.weight, 0) / factors.length;
     return Math.min(avgWeight * 1.2, 0.95);
   }
 
@@ -738,9 +730,11 @@ export class PredictiveAnalytics {
     improvement: number,
   ): string {
     const direction = improvement > 0 ? "increase" : "decrease";
-    return `${Math.abs(improvement).toFixed(1)}% ${direction} in ${metric
-      .replaceAll(/([A-Z])/g, " $1")
-      .toLowerCase()}`;
+    return `${Math.abs(improvement).toFixed(1)}% ${direction} in ${
+      metric
+        .replaceAll(/([A-Z])/g, " $1")
+        .toLowerCase()
+    }`;
   }
 
   private getImplementationSteps(_metric: keyof SchedulingMetrics): string[] {

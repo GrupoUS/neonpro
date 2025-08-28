@@ -380,8 +380,7 @@ describe("🔐 NeonPro Security Audit Tests", () => {
         supabase
           .from("financial_transactions")
           .select("count(*)")
-          .eq("clinic_id", testClinicId),
-      );
+          .eq("clinic_id", testClinicId));
 
       const startTime = Date.now();
       const results = await Promise.allSettled(rapidRequests);

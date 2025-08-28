@@ -211,8 +211,7 @@ export const requireTenant = createMiddleware(async (c, next) => {
   }
 
   const { user: user } = authContext;
-  const requestedTenantId =
-    c.req.header("x-tenant-id") || c.req.param("tenantId");
+  const requestedTenantId = c.req.header("x-tenant-id") || c.req.param("tenantId");
 
   if (!user.tenantId) {
     throw new HTTPException(403, {

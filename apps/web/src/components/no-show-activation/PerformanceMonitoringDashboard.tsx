@@ -145,28 +145,23 @@ export function PerformanceMonitoringDashboard({
   // Calculate performance indicators
   const performanceIndicators = useMemo(() => {
     return {
-      accuracyStatus:
-        metrics.predictions.accuracy >= PERFORMANCE_TARGETS.accuracy
-          ? "success"
-          : "warning",
-      reductionStatus:
-        metrics.appointments.reductionPercentage >=
-        PERFORMANCE_TARGETS.noShowReduction
-          ? "success"
-          : "warning",
-      responseStatus:
-        metrics.interventions.responseRate >= PERFORMANCE_TARGETS.responseRate
-          ? "success"
-          : "warning",
-      roiStatus:
-        metrics.financial.projectedAnnualROI >= PERFORMANCE_TARGETS.annualROI
-          ? "success"
-          : "warning",
-      staffStatus:
-        metrics.staff.averageResponseTime <=
-        PERFORMANCE_TARGETS.staffResponseTime
-          ? "success"
-          : "warning",
+      accuracyStatus: metrics.predictions.accuracy >= PERFORMANCE_TARGETS.accuracy
+        ? "success"
+        : "warning",
+      reductionStatus: metrics.appointments.reductionPercentage
+          >= PERFORMANCE_TARGETS.noShowReduction
+        ? "success"
+        : "warning",
+      responseStatus: metrics.interventions.responseRate >= PERFORMANCE_TARGETS.responseRate
+        ? "success"
+        : "warning",
+      roiStatus: metrics.financial.projectedAnnualROI >= PERFORMANCE_TARGETS.annualROI
+        ? "success"
+        : "warning",
+      staffStatus: metrics.staff.averageResponseTime
+          <= PERFORMANCE_TARGETS.staffResponseTime
+        ? "success"
+        : "warning",
     };
   }, [metrics]);
 
@@ -344,8 +339,7 @@ export function PerformanceMonitoringDashboard({
                     className="h-2"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Meta:{" "}
-                    {formatPercentage(PERFORMANCE_TARGETS.noShowReduction)}
+                    Meta: {formatPercentage(PERFORMANCE_TARGETS.noShowReduction)}
                   </p>
                 </div>
               </CardContent>
@@ -407,9 +401,9 @@ export function PerformanceMonitoringDashboard({
                   <Progress
                     value={Math.min(
                       100,
-                      (metrics.financial.projectedAnnualROI /
-                        PERFORMANCE_TARGETS.annualROI) *
-                        100,
+                      (metrics.financial.projectedAnnualROI
+                        / PERFORMANCE_TARGETS.annualROI)
+                        * 100,
                     )}
                     className="h-2"
                   />
@@ -444,16 +438,15 @@ export function PerformanceMonitoringDashboard({
                   <Progress
                     value={Math.max(
                       0,
-                      100 -
-                        (metrics.staff.averageResponseTime /
-                          PERFORMANCE_TARGETS.staffResponseTime) *
-                          100,
+                      100
+                        - (metrics.staff.averageResponseTime
+                            / PERFORMANCE_TARGETS.staffResponseTime)
+                          * 100,
                     )}
                     className="h-2"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Meta:{" "}
-                    {Math.round(PERFORMANCE_TARGETS.staffResponseTime / 60)}min
+                    Meta: {Math.round(PERFORMANCE_TARGETS.staffResponseTime / 60)}min
                   </p>
                 </div>
               </CardContent>
@@ -648,8 +641,7 @@ export function PerformanceMonitoringDashboard({
                   <div className="flex items-center gap-2">
                     <TrendingDown className="h-5 w-5 text-green-600" />
                     <span className="font-medium text-green-800">
-                      Redução de{" "}
-                      {formatPercentage(
+                      Redução de {formatPercentage(
                         metrics.appointments.reductionPercentage,
                       )}
                     </span>
@@ -790,9 +782,9 @@ export function PerformanceMonitoringDashboard({
                     <span>Progresso para Meta Anual</span>
                     <span className="font-medium">
                       {Math.round(
-                        (metrics.financial.projectedAnnualROI /
-                          PERFORMANCE_TARGETS.annualROI) *
-                          100,
+                        (metrics.financial.projectedAnnualROI
+                          / PERFORMANCE_TARGETS.annualROI)
+                          * 100,
                       )}
                       %
                     </span>
@@ -800,9 +792,9 @@ export function PerformanceMonitoringDashboard({
                   <Progress
                     value={Math.min(
                       100,
-                      (metrics.financial.projectedAnnualROI /
-                        PERFORMANCE_TARGETS.annualROI) *
-                        100,
+                      (metrics.financial.projectedAnnualROI
+                        / PERFORMANCE_TARGETS.annualROI)
+                        * 100,
                     )}
                     className="h-3"
                   />
@@ -811,8 +803,8 @@ export function PerformanceMonitoringDashboard({
                   </p>
                 </div>
 
-                {metrics.financial.projectedAnnualROI >=
-                  PERFORMANCE_TARGETS.annualROI && (
+                {metrics.financial.projectedAnnualROI
+                    >= PERFORMANCE_TARGETS.annualROI && (
                   <div className="p-3 bg-green-50 rounded-lg border border-green-200">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-600" />

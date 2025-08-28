@@ -95,8 +95,9 @@ export async function validateCfmCompliance(
 
   try {
     // Check professional licenses
-    const { data: licenses } =
-      await services.professionalLicensing.getProfessionalLicenses(tenantId);
+    const { data: licenses } = await services.professionalLicensing.getProfessionalLicenses(
+      tenantId,
+    );
     if (!licenses || licenses.length === 0) {
       issues.push("No CFM professional licenses found");
       totalScore -= 2;
@@ -106,8 +107,10 @@ export async function validateCfmCompliance(
     }
 
     // Check for expiring licenses
-    const { data: expiringLicenses } =
-      await services.professionalLicensing.getExpiringLicenses(tenantId, 90);
+    const { data: expiringLicenses } = await services.professionalLicensing.getExpiringLicenses(
+      tenantId,
+      90,
+    );
     if (expiringLicenses && expiringLicenses.length > 0) {
       issues.push(
         `${expiringLicenses.length} professional licenses expiring within 90 days`,
@@ -117,8 +120,8 @@ export async function validateCfmCompliance(
     }
 
     // Check telemedicine compliance if applicable
-    const { data: telemedicineConsultations } =
-      await services.telemedicineCompliance.getTelemedicineConsultations(
+    const { data: telemedicineConsultations } = await services.telemedicineCompliance
+      .getTelemedicineConsultations(
         tenantId,
       );
     if (telemedicineConsultations && telemedicineConsultations.length > 0) {
@@ -137,8 +140,7 @@ export async function validateCfmCompliance(
     }
 
     // Check medical ethics assessments
-    const { data: ethicsAssessments } =
-      await services.medicalEthics.getEthicsAssessments(tenantId);
+    const { data: ethicsAssessments } = await services.medicalEthics.getEthicsAssessments(tenantId);
     if (ethicsAssessments && ethicsAssessments.length > 0) {
       const lowScoreAssessments = ethicsAssessments.filter(
         (a: unknown) => a.assessment_results.compliance_score < 9,
@@ -159,12 +161,10 @@ export async function validateCfmCompliance(
       totalScore,
       CONSTITUTIONAL_CFM_COMPLIANCE_MINIMUM,
     );
-    const compliant =
-      finalScore >= CONSTITUTIONAL_CFM_COMPLIANCE_MINIMUM &&
-      issues.length === 0;
-    const professionalStandardsMet =
-      finalScore >= 9.5 &&
-      issues.filter((i) => i.includes("license")).length === 0;
+    const compliant = finalScore >= CONSTITUTIONAL_CFM_COMPLIANCE_MINIMUM
+      && issues.length === 0;
+    const professionalStandardsMet = finalScore >= 9.5
+      && issues.filter((i) => i.includes("license")).length === 0;
 
     return {
       compliant,
@@ -212,29 +212,27 @@ export async function validateCfmResolutions(
   try {
     // Check Resolution 2.314/2022, 2.315/2022, 2.316/2022 (Telemedicine)
     if (
-      resolutions.includes("2.314/2022") ||
-      resolutions.includes("2.315/2022") ||
-      resolutions.includes("2.316/2022")
+      resolutions.includes("2.314/2022")
+      || resolutions.includes("2.315/2022")
+      || resolutions.includes("2.316/2022")
     ) {
-      const { data: telemedicineConsultations } =
-        await services.telemedicineCompliance.getTelemedicineConsultations(
+      const { data: telemedicineConsultations } = await services.telemedicineCompliance
+        .getTelemedicineConsultations(
           tenantId,
         );
 
       for (const resolution of ["2.314/2022", "2.315/2022", "2.316/2022"]) {
         if (resolutions.includes(resolution)) {
-          const compliantConsultations =
-            telemedicineConsultations?.filter(
-              (c: unknown) =>
-                c.cfm_resolution_compliance?.[
-                  `resolution_${resolution.replaceAll(/[/.]/g, "_")}`
-                ],
-            ) || [];
+          const compliantConsultations = telemedicineConsultations?.filter(
+            (c: unknown) =>
+              c.cfm_resolution_compliance?.[
+                `resolution_${resolution.replaceAll(/[/.]/g, "_")}`
+              ],
+          ) || [];
 
           const totalConsultations = telemedicineConsultations?.length || 0;
-          const isCompliant =
-            totalConsultations === 0 ||
-            compliantConsultations.length === totalConsultations;
+          const isCompliant = totalConsultations === 0
+            || compliantConsultations.length === totalConsultations;
 
           resolutionCompliance[resolution] = isCompliant;
 
@@ -252,16 +250,15 @@ export async function validateCfmResolutions(
 
     // Check Resolution 2.227/2018 (Medical Records)
     if (resolutions.includes("2.227/2018")) {
-      const { data: recordValidations } =
-        await services.medicalRecords.getMedicalRecordValidations(tenantId);
-      const compliantRecords =
-        recordValidations?.filter(
-          (r: unknown) => r.validation_results.cfm_resolution_2227_compliant,
-        ) || [];
+      const { data: recordValidations } = await services.medicalRecords.getMedicalRecordValidations(
+        tenantId,
+      );
+      const compliantRecords = recordValidations?.filter(
+        (r: unknown) => r.validation_results.cfm_resolution_2227_compliant,
+      ) || [];
       const totalRecords = recordValidations?.length || 0;
 
-      const isCompliant =
-        totalRecords === 0 || compliantRecords.length === totalRecords;
+      const isCompliant = totalRecords === 0 || compliantRecords.length === totalRecords;
       resolutionCompliance["2.227/2018"] = isCompliant;
 
       if (!isCompliant && totalRecords > 0) {

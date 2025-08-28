@@ -266,8 +266,8 @@ export class MonitoringService extends EnhancedAIService<
     input: MonitoringInput,
   ): Promise<MonitoringOutput> {
     if (
-      !(input.service && input.metric_name) ||
-      input.metric_value === undefined
+      !(input.service && input.metric_name)
+      || input.metric_value === undefined
     ) {
       throw new Error("service, metric_name, and metric_value are required");
     }
@@ -320,8 +320,8 @@ export class MonitoringService extends EnhancedAIService<
     for (const metricData of input.bulk_metrics) {
       try {
         if (
-          !(metricData.service && metricData.metric_name) ||
-          metricData.metric_value === undefined
+          !(metricData.service && metricData.metric_name)
+          || metricData.metric_value === undefined
         ) {
           results.push({
             success: false,
@@ -732,12 +732,11 @@ export class MonitoringService extends EnhancedAIService<
     );
 
     // Determine overall health
-    let overallHealth: "healthy" | "degraded" | "unhealthy" | "unknown" =
-      "unknown";
+    let overallHealth: "healthy" | "degraded" | "unhealthy" | "unknown" = "unknown";
     if (
-      responseTimeStats.avg_value > 0 ||
-      errorRateStats.avg_value >= 0 ||
-      throughputStats.avg_value > 0
+      responseTimeStats.avg_value > 0
+      || errorRateStats.avg_value >= 0
+      || throughputStats.avg_value > 0
     ) {
       if ((alerts?.length || 0) === 0 && errorRateStats.avg_value < 5) {
         overallHealth = "healthy";
@@ -878,9 +877,9 @@ export class MonitoringService extends EnhancedAIService<
   ): Promise<void> {
     const relevantRules = [...this.alertRules.values()].filter(
       (rule) =>
-        rule.enabled &&
-        rule.metric_name === metric.metric_name &&
-        (!rule.service || rule.service === metric.service),
+        rule.enabled
+        && rule.metric_name === metric.metric_name
+        && (!rule.service || rule.service === metric.service),
     );
 
     for (const rule of relevantRules) {
@@ -927,10 +926,10 @@ export class MonitoringService extends EnhancedAIService<
   private isInCooldown(rule: AlertRule): boolean {
     const existingAlert = [...this.activeAlerts.values()].find(
       (alert) =>
-        alert.rule_id === rule.id &&
-        alert.status === "active" &&
-        Date.now() - new Date(alert.triggered_at).getTime() <
-          rule.cooldown_minutes * 60 * 1000,
+        alert.rule_id === rule.id
+        && alert.status === "active"
+        && Date.now() - new Date(alert.triggered_at).getTime()
+          < rule.cooldown_minutes * 60 * 1000,
     );
 
     return Boolean(existingAlert);
@@ -950,7 +949,8 @@ export class MonitoringService extends EnhancedAIService<
       severity: rule.severity,
       status: "active",
       triggered_at: new Date().toISOString(),
-      message: `${rule.name}: ${metric.metric_name} is ${metric.metric_value} (threshold: ${rule.threshold_value})`,
+      message:
+        `${rule.name}: ${metric.metric_name} is ${metric.metric_value} (threshold: ${rule.threshold_value})`,
       context: {
         metric_tags: metric.tags,
         rule_condition: rule.condition,

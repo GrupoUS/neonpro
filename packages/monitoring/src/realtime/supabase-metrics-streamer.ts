@@ -50,8 +50,8 @@ export class SupabaseMetricsStreamer {
         .limit(1);
 
       if (
-        error &&
-        !error.message?.includes(
+        error
+        && !error.message?.includes(
           'relation "performance_metrics" does not exist',
         )
       ) {
@@ -253,8 +253,7 @@ export class SupabaseMetricsStreamer {
         category: metric.category,
         timestamp: metric.timestamp,
         metadata: metric.metadata || {},
-        clinic_id:
-          this.config.clinicId || this.healthcareContext.clinicId || null,
+        clinic_id: this.config.clinicId || this.healthcareContext.clinicId || null,
         user_id: this.healthcareContext.userId || null,
         workflow_type: this.healthcareContext.workflowType || null,
         device_type: this.healthcareContext.deviceType || null,
@@ -317,8 +316,8 @@ export class SupabaseMetricsStreamer {
     ];
 
     return (
-      criticalMetrics.includes(metric.name) ||
-      metric.metadata?.severity === "critical"
+      criticalMetrics.includes(metric.name)
+      || metric.metadata?.severity === "critical"
     );
   }
 

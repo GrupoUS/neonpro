@@ -50,7 +50,7 @@ interface ClinicRetentionMetric {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -91,8 +91,7 @@ export async function GET(
       );
     }
 
-    const { limit, offset, startDate, endDate, riskLevel } =
-      queryValidation.data;
+    const { limit, offset, startDate, endDate, riskLevel } = queryValidation.data;
 
     // Verify authentication
     const supabase = await createClient();
@@ -153,14 +152,14 @@ export async function GET(
         (metric: ClinicRetentionMetric) => {
           // Filter by date range
           if (
-            startDate &&
-            new Date(metric.last_appointment_date) < new Date(startDate)
+            startDate
+            && new Date(metric.last_appointment_date) < new Date(startDate)
           ) {
             return false;
           }
           if (
-            endDate &&
-            new Date(metric.last_appointment_date) > new Date(endDate)
+            endDate
+            && new Date(metric.last_appointment_date) > new Date(endDate)
           ) {
             return false;
           }
@@ -178,22 +177,18 @@ export async function GET(
     // Calculate summary statistics
     const summary = {
       total_patients: filteredMetrics.length,
-      average_retention_rate:
-        filteredMetrics.length > 0
-          ? filteredMetrics.reduce(
-              (sum: number, m: ClinicRetentionMetric) =>
-                sum + safeParseNumber(m.retention_rate),
-              0,
-            ) / filteredMetrics.length
-          : 0,
-      average_churn_risk:
-        filteredMetrics.length > 0
-          ? filteredMetrics.reduce(
-              (sum: number, m: ClinicRetentionMetric) =>
-                sum + safeParseNumber(m.churn_risk_score),
-              0,
-            ) / filteredMetrics.length
-          : 0,
+      average_retention_rate: filteredMetrics.length > 0
+        ? filteredMetrics.reduce(
+          (sum: number, m: ClinicRetentionMetric) => sum + safeParseNumber(m.retention_rate),
+          0,
+        ) / filteredMetrics.length
+        : 0,
+      average_churn_risk: filteredMetrics.length > 0
+        ? filteredMetrics.reduce(
+          (sum: number, m: ClinicRetentionMetric) => sum + safeParseNumber(m.churn_risk_score),
+          0,
+        ) / filteredMetrics.length
+        : 0,
       risk_distribution: {
         low: filteredMetrics.filter(
           (m: ClinicRetentionMetric) => m.churn_risk_level === "low",
@@ -209,12 +204,11 @@ export async function GET(
         ).length,
       },
       total_lifetime_value: filteredMetrics.reduce(
-        (sum: number, m: ClinicRetentionMetric) =>
-          sum + safeParseNumber(m.lifetime_value),
+        (sum: number, m: ClinicRetentionMetric) => sum + safeParseNumber(m.lifetime_value),
         0,
       ),
       patients_at_risk: filteredMetrics.filter((m: ClinicRetentionMetric) =>
-        ["high", "critical"].includes(m.churn_risk_level),
+        ["high", "critical"].includes(m.churn_risk_level)
       ).length,
     };
 
@@ -254,7 +248,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -368,11 +362,10 @@ export async function POST(
 
       const batchPromises = batch.map(async (patientId: string) => {
         try {
-          const metrics =
-            await retentionService.calculatePatientRetentionMetrics(
-              patientId,
-              clinicId,
-            );
+          const metrics = await retentionService.calculatePatientRetentionMetrics(
+            patientId,
+            clinicId,
+          );
           return { patientId, metrics, success: true };
         } catch (error) {
           return {
@@ -414,7 +407,7 @@ export async function POST(
       success: true,
       data: {
         results: results.map(
-          (r: DatabaseRow) => (r as unknown as { metrics: unknown }).metrics,
+          (r: DatabaseRow) => (r as unknown as { metrics: unknown; }).metrics,
         ),
         summary,
         errors: errors.length > 0 ? errors : undefined,

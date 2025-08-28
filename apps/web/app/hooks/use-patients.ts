@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface Patient {
   id: string;
@@ -119,10 +119,10 @@ export function usePatients(clinicId?: string): UsePatientReturn {
           const searchLower = filters.searchTerm.toLowerCase();
           filteredPatients = filteredPatients.filter(
             (patient) =>
-              patient.first_name.toLowerCase().includes(searchLower) ||
-              patient.last_name.toLowerCase().includes(searchLower) ||
-              patient.email?.toLowerCase().includes(searchLower) ||
-              patient.phone?.includes(searchLower),
+              patient.first_name.toLowerCase().includes(searchLower)
+              || patient.last_name.toLowerCase().includes(searchLower)
+              || patient.email?.toLowerCase().includes(searchLower)
+              || patient.phone?.includes(searchLower),
           );
         }
 
@@ -163,8 +163,7 @@ export function usePatients(clinicId?: string): UsePatientReturn {
 
         return newPatient;
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to create patient";
+        const errorMessage = err instanceof Error ? err.message : "Failed to create patient";
         setError(errorMessage);
         throw new Error(errorMessage);
       } finally {
@@ -188,8 +187,8 @@ export function usePatients(clinicId?: string): UsePatientReturn {
           prev.map((patient) =>
             patient.id === id
               ? { ...patient, ...updates, updated_at: new Date().toISOString() }
-              : patient,
-          ),
+              : patient
+          )
         );
 
         const updatedPatient = patients.find((p) => p.id === id);
@@ -203,8 +202,7 @@ export function usePatients(clinicId?: string): UsePatientReturn {
           updated_at: new Date().toISOString(),
         };
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to update patient";
+        const errorMessage = err instanceof Error ? err.message : "Failed to update patient";
         setError(errorMessage);
         throw new Error(errorMessage);
       } finally {
@@ -226,8 +224,7 @@ export function usePatients(clinicId?: string): UsePatientReturn {
       setPatients((prev) => prev.filter((patient) => patient.id !== id));
       setTotalCount((prev) => prev - 1);
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to delete patient";
+      const errorMessage = err instanceof Error ? err.message : "Failed to delete patient";
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {

@@ -322,7 +322,6 @@ CREATE TRIGGER update_user_timestamp
 ````
 
 ```
-
 ## NeonPro Supabase Extensions & Features
 
 ### Enabled Extensions

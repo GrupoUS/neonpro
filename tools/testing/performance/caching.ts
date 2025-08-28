@@ -87,7 +87,7 @@ export class CacheKeyGenerator {
 export class CacheManager {
   private readonly memoryCache = new Map<
     string,
-    { data: unknown; expires: number; tags: string[] }
+    { data: unknown; expires: number; tags: string[]; }
   >();
   private readonly DEFAULT_TTL = 300_000; // 5 minutes
 
@@ -215,8 +215,7 @@ export class CacheHeaders {
     const headers = new Headers();
 
     // Check if user is authenticated
-    const isAuthenticated =
-      request.headers.get("authorization") || request.cookies.get("session");
+    const isAuthenticated = request.headers.get("authorization") || request.cookies.get("session");
 
     if (isAuthenticated) {
       // Private cache for authenticated users
@@ -342,9 +341,9 @@ export function withCache(
     const cacheKey = keyGenerator
       ? keyGenerator(req)
       : CacheKeyGenerator.apiResponse(
-          req.url,
-          Object.fromEntries(req.nextUrl.searchParams),
-        );
+        req.url,
+        Object.fromEntries(req.nextUrl.searchParams),
+      );
 
     // Try to get from cache
     const cached = cacheManager.get(cacheKey);
@@ -384,8 +383,7 @@ export class CachePerformanceMonitor {
 
   static getStats() {
     const total = CachePerformanceMonitor.hits + CachePerformanceMonitor.misses;
-    const hitRate =
-      total > 0 ? (CachePerformanceMonitor.hits / total) * 100 : 0;
+    const hitRate = total > 0 ? (CachePerformanceMonitor.hits / total) * 100 : 0;
     const uptime = Date.now() - CachePerformanceMonitor.startTime;
 
     return {

@@ -277,15 +277,15 @@ export class ImmutableAuditLogger {
     let severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" = "MEDIUM";
 
     if (
-      event.operationType === "DELETE" ||
-      event.medicalContext?.aiPredictionId
+      event.operationType === "DELETE"
+      || event.medicalContext?.aiPredictionId
     ) {
       severity = "HIGH";
     }
 
     if (
-      event.medicalContext?.procedureType &&
-      ["EXECUTE", "UPDATE"].includes(event.operationType)
+      event.medicalContext?.procedureType
+      && ["EXECUTE", "UPDATE"].includes(event.operationType)
     ) {
       severity = "CRITICAL";
     }
@@ -296,9 +296,8 @@ export class ImmutableAuditLogger {
       severity,
       category: "MEDICAL_PROCEDURE",
       metadata: {
-        environment:
-          (process.env.NODE_ENV as "development" | "staging" | "production") ||
-          "development",
+        environment: (process.env.NODE_ENV as "development" | "staging" | "production")
+          || "development",
         correlationId: event.payload?.correlationId as string,
         ...event.medicalContext,
       },
@@ -596,26 +595,26 @@ export class ImmutableAuditLogger {
       (m) => Date.now() - m.timestamp < 300_000, // Last 5 minutes
     );
 
-    const averageProcessingTime =
-      this.totalEvents > 0 ? this.totalProcessingTime / this.totalEvents : 0;
+    const averageProcessingTime = this.totalEvents > 0
+      ? this.totalProcessingTime / this.totalEvents
+      : 0;
 
-    const eventsPerSecond =
-      recentMetrics.length > 0 ? recentMetrics.length / 300 : 0;
+    const eventsPerSecond = recentMetrics.length > 0 ? recentMetrics.length / 300 : 0;
 
-    const errorRate =
-      this.totalEvents > 0 ? this.errorCount / this.totalEvents : 0;
+    const errorRate = this.totalEvents > 0 ? this.errorCount / this.totalEvents : 0;
 
-    const blockchainVerificationRate =
-      this.totalEvents > 0 ? this.verificationCount / this.totalEvents : 0;
+    const blockchainVerificationRate = this.totalEvents > 0
+      ? this.verificationCount / this.totalEvents
+      : 0;
 
     const bufferUtilization = this.eventBuffer.length / this.config.batchSize;
 
     // Calculate compliance score based on verification and error rates
     const complianceScore = Math.max(
       0,
-      100 -
-        errorRate * 100 -
-        Math.max(0, averageProcessingTime - this.config.performanceTarget) * 2,
+      100
+        - errorRate * 100
+        - Math.max(0, averageProcessingTime - this.config.performanceTarget) * 2,
     );
 
     return {
@@ -741,7 +740,7 @@ export class ImmutableAuditLogger {
         previousHash: record.previous_hash,
         blockchainTxId: record.blockchain_tx_id,
         verified: record.verified,
-      }),
+      })
     );
 
     // Calculate compliance status
@@ -769,13 +768,12 @@ export class ImmutableAuditLogger {
 
     return frameworks.map((framework) => {
       const frameworkEvents = events.filter((e) =>
-        e.complianceFrameworks.includes(framework as unknown),
+        e.complianceFrameworks.includes(framework as unknown)
       );
 
       const compliantEvents = frameworkEvents.filter((e) => e.verified).length;
       const { length: totalEvents } = frameworkEvents;
-      const complianceRate =
-        totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 100;
+      const complianceRate = totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 100;
 
       return {
         framework,

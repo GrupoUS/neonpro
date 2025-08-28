@@ -30,8 +30,7 @@ describe("subscription System Performance", () => {
 
       // Simulate subscription validation
       const subscription = createMockSubscription({ status: "active" });
-      const isValid =
-        subscription.status === "active" && subscription.endDate > new Date();
+      const isValid = subscription.status === "active" && subscription.endDate > new Date();
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
@@ -89,8 +88,9 @@ describe("subscription System Performance", () => {
     });
 
     it("should efficiently handle large subscription datasets", () => {
-      const largeDataset = Array.from({ length: 10_000 }, (_, index) =>
-        createMockSubscription({ id: `large-dataset-${index}` }),
+      const largeDataset = Array.from(
+        { length: 10_000 },
+        (_, index) => createMockSubscription({ id: `large-dataset-${index}` }),
       );
 
       const startTime = performance.now();
@@ -160,8 +160,9 @@ describe("subscription System Performance", () => {
       for (let i = 0; i < iterations; i++) {
         const startTime = performance.now();
 
-        const promises = Array.from({ length: requestsPerIteration }, () =>
-          Promise.resolve(createMockSubscription()),
+        const promises = Array.from(
+          { length: requestsPerIteration },
+          () => Promise.resolve(createMockSubscription()),
         );
 
         await Promise.all(promises);
@@ -171,11 +172,9 @@ describe("subscription System Performance", () => {
       }
 
       // Performance should remain consistent (standard deviation < 50% of mean)
-      const mean =
-        performanceResults.reduce((a, b) => a + b) / performanceResults.length;
-      const variance =
-        performanceResults.reduce((acc, time) => acc + (time - mean) ** 2, 0) /
-        performanceResults.length;
+      const mean = performanceResults.reduce((a, b) => a + b) / performanceResults.length;
+      const variance = performanceResults.reduce((acc, time) => acc + (time - mean) ** 2, 0)
+        / performanceResults.length;
       const standardDeviation = Math.sqrt(variance);
 
       expect(standardDeviation).toBeLessThan(mean * 0.5);

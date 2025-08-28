@@ -355,11 +355,10 @@ export class EnterpriseCacheService {
           await this.populateUpperLayers(key, value, layer);
 
           this.extendedMetrics.cacheHits++;
-          this.metrics.cacheHitRate =
-            this.extendedMetrics.totalRequests > 0
-              ? this.extendedMetrics.cacheHits /
-                this.extendedMetrics.totalRequests
-              : 0;
+          this.metrics.cacheHitRate = this.extendedMetrics.totalRequests > 0
+            ? this.extendedMetrics.cacheHits
+              / this.extendedMetrics.totalRequests
+            : 0;
           this.updateResponseTime(startTime);
 
           if (this.config.compliance.auditAccess) {
@@ -474,16 +473,14 @@ export class EnterpriseCacheService {
     return {
       enterprise: {
         totalRequests: this.extendedMetrics.totalRequests,
-        cacheHitRate:
-          this.extendedMetrics.totalRequests > 0
-            ? this.extendedMetrics.cacheHits /
-              this.extendedMetrics.totalRequests
-            : 0,
+        cacheHitRate: this.extendedMetrics.totalRequests > 0
+          ? this.extendedMetrics.cacheHits
+            / this.extendedMetrics.totalRequests
+          : 0,
         avgResponseTime: this.extendedMetrics.avgResponseTime,
-        errorRate:
-          this.extendedMetrics.totalRequests > 0
-            ? this.metrics.errorRate / this.extendedMetrics.totalRequests
-            : 0,
+        errorRate: this.extendedMetrics.totalRequests > 0
+          ? this.metrics.errorRate / this.extendedMetrics.totalRequests
+          : 0,
       },
       layers: stats,
       config: {
@@ -529,13 +526,11 @@ export class EnterpriseCacheService {
 
     return {
       overall: health.every(
-        (h) => h.status === "fulfilled" && h.value.status === "healthy",
-      )
+          (h) => h.status === "fulfilled" && h.value.status === "healthy",
+        )
         ? "healthy"
         : "degraded",
-      layers: health.map((h) =>
-        h.status === "fulfilled" ? h.value : h.reason,
-      ),
+      layers: health.map((h) => h.status === "fulfilled" ? h.value : h.reason),
       timestamp: new Date().toISOString(),
     };
   }
@@ -573,11 +568,10 @@ export class EnterpriseCacheService {
    */
   private updateResponseTime(startTime: number): void {
     const duration = performance.now() - startTime;
-    this.extendedMetrics.avgResponseTime =
-      (this.extendedMetrics.avgResponseTime *
-        (this.extendedMetrics.totalRequests - 1) +
-        duration) /
-      this.extendedMetrics.totalRequests;
+    this.extendedMetrics.avgResponseTime = (this.extendedMetrics.avgResponseTime
+        * (this.extendedMetrics.totalRequests - 1)
+      + duration)
+      / this.extendedMetrics.totalRequests;
     this.metrics.averageResponseTime = this.extendedMetrics.avgResponseTime;
   }
 
@@ -607,10 +601,9 @@ export class EnterpriseCacheService {
       // Override with extended metrics for health reporting
       totalOperations: this.extendedMetrics.totalRequests,
       averageResponseTime: this.extendedMetrics.avgResponseTime,
-      cacheHitRate:
-        this.extendedMetrics.totalRequests > 0
-          ? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests
-          : 0,
+      cacheHitRate: this.extendedMetrics.totalRequests > 0
+        ? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests
+        : 0,
     };
   }
 

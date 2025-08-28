@@ -146,13 +146,12 @@ class UniversalChatHealthService {
     const startTime = Date.now();
 
     try {
-      const [dbConnectivity, aiModelAvailability, sessionManagement, metrics] =
-        await Promise.all([
-          UniversalChatHealthService.checkDatabaseConnectivity(),
-          UniversalChatHealthService.checkAIModelAvailability(),
-          UniversalChatHealthService.checkSessionManagement(),
-          UniversalChatHealthService.getServiceMetrics(),
-        ]);
+      const [dbConnectivity, aiModelAvailability, sessionManagement, metrics] = await Promise.all([
+        UniversalChatHealthService.checkDatabaseConnectivity(),
+        UniversalChatHealthService.checkAIModelAvailability(),
+        UniversalChatHealthService.checkSessionManagement(),
+        UniversalChatHealthService.getServiceMetrics(),
+      ]);
 
       const details = {
         database_connectivity: dbConnectivity,

@@ -1,27 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Phone,
-  MessageSquare,
-  Calendar,
-  TrendingUp,
-  TrendingDown,
-  Clock,
-  User,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PatientRiskContextProps } from "@/types/no-show-prediction";
+import { INTERVENTION_ACTIONS_PT, RiskFactor } from "@/types/no-show-prediction";
 import {
-  RiskFactor,
-  INTERVENTION_ACTIONS_PT,
-} from "@/types/no-show-prediction";
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  MessageSquare,
+  Phone,
+  TrendingDown,
+  TrendingUp,
+  User,
+} from "lucide-react";
+import { useState } from "react";
 import { RiskIndicatorWithTooltip } from "./risk-indicator";
 
 /**
@@ -56,8 +53,7 @@ export function PatientRiskContext({
   const positiveFactors = sortedFactors.filter((f) => f.impact > 0);
   const negativeFactors = sortedFactors.filter((f) => f.impact < 0);
 
-  const interventionActions =
-    INTERVENTION_ACTIONS_PT[prediction.riskLevel] || [];
+  const interventionActions = INTERVENTION_ACTIONS_PT[prediction.riskLevel] || [];
 
   return (
     <Card className="w-full max-w-md">
@@ -108,11 +104,7 @@ export function PatientRiskContext({
               onClick={() => setIsExpanded(!isExpanded)}
               className="h-6 px-2"
             >
-              {isExpanded ? (
-                <ChevronUp className="h-3 w-3" />
-              ) : (
-                <ChevronDown className="h-3 w-3" />
-              )}
+              {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
             </Button>
           </div>
 
@@ -165,15 +157,9 @@ export function PatientRiskContext({
                     size="sm"
                     className="justify-start h-8 text-xs"
                   >
-                    {action.includes("WhatsApp") && (
-                      <MessageSquare className="mr-1 h-3 w-3" />
-                    )}
-                    {action.includes("telefônica") && (
-                      <Phone className="mr-1 h-3 w-3" />
-                    )}
-                    {action.includes("reagendamento") && (
-                      <Calendar className="mr-1 h-3 w-3" />
-                    )}
+                    {action.includes("WhatsApp") && <MessageSquare className="mr-1 h-3 w-3" />}
+                    {action.includes("telefônica") && <Phone className="mr-1 h-3 w-3" />}
+                    {action.includes("reagendamento") && <Calendar className="mr-1 h-3 w-3" />}
                     {action}
                   </Button>
                 ))}
@@ -184,8 +170,7 @@ export function PatientRiskContext({
 
         {/* Timestamp */}
         <div className="text-xs text-muted-foreground text-center">
-          Predição realizada em{" "}
-          {new Date(prediction.predictedAt).toLocaleString("pt-BR")}
+          Predição realizada em {new Date(prediction.predictedAt).toLocaleString("pt-BR")}
         </div>
       </CardContent>
     </Card>

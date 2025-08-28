@@ -5,26 +5,25 @@
  */
 
 import type {
-  CFMValidationResult,
-  CFMProfessional,
+  AuditTrailEntry,
   CFMLicenseStatus,
+  CFMProfessional,
   CFMState,
+  CFMValidationResult,
+  ComplianceAPIResponse,
   MedicalSpecialty,
   ValidationResponse,
-  AuditTrailEntry,
-  ComplianceAPIResponse,
 } from "../../types/compliance";
 
 // CFM API configuration
-const CFM_API_BASE_URL =
-  process.env.CFM_API_URL || "https://portal.cfm.org.br/api/v1";
+const CFM_API_BASE_URL = process.env.CFM_API_URL || "https://portal.cfm.org.br/api/v1";
 const CFM_API_TIMEOUT = 5000; // 5 seconds
 
 // Cache configuration for CFM validations
 const CFM_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 const cfmValidationCache = new Map<
   string,
-  { data: CFMValidationResult; timestamp: number }
+  { data: CFMValidationResult; timestamp: number; }
 >();
 
 // CFM State Council URLs mapping
@@ -101,7 +100,7 @@ export class CFMValidationService {
    */
   private parseCRMNumber(
     crmNumber: string,
-  ): { state: CFMState; number: string } | null {
+  ): { state: CFMState; number: string; } | null {
     const crmRegex = /^CRM[-\s]?([A-Z]{2})\s*(\d{4,6})$/i;
     const match = crmNumber.trim().toUpperCase().match(crmRegex);
 
@@ -165,9 +164,7 @@ export class CFMValidationService {
     // For now, we simulate the response based on known patterns
 
     // Simulate API delay
-    await new Promise((resolve) =>
-      setTimeout(resolve, 1000 + Math.random() * 2000),
-    );
+    await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 2000));
 
     // Generate mock data for demonstration
     const mockProfessionals: Partial<CFMProfessional>[] = [
@@ -307,18 +304,16 @@ export class CFMValidationService {
         isValid: result.isValid,
         data: result,
         errors: result.isValid ? [] : ["Licença médica inválida ou suspensa"],
-        warnings:
-          result.restrictions.length > 0
-            ? ["Profissional possui restrições"]
-            : [],
+        warnings: result.restrictions.length > 0
+          ? ["Profissional possui restrições"]
+          : [],
         timestamp: new Date(),
         source: "cfm-api",
       };
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Erro desconhecido na validação";
+      const errorMessage = error instanceof Error
+        ? error.message
+        : "Erro desconhecido na validação";
 
       return {
         isValid: false,
@@ -350,7 +345,9 @@ export class CFMValidationService {
         warnings.push(...validation.warnings);
       } catch (error) {
         errors.push(
-          `Erro ao validar ${crmNumber}: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
+          `Erro ao validar ${crmNumber}: ${
+            error instanceof Error ? error.message : "Erro desconhecido"
+          }`,
         );
       }
     }
@@ -378,9 +375,8 @@ export class CFMValidationService {
     const auditEntries = this.auditTrail.filter(
       (entry) => entry.action === "license-validated",
     );
-    const validLicenses = auditEntries.filter((entry) =>
-      entry.description.includes("VALID"),
-    ).length;
+    const validLicenses =
+      auditEntries.filter((entry) => entry.description.includes("VALID")).length;
     const invalidLicenses = auditEntries.length - validLicenses;
 
     return {

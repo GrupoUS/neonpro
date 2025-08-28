@@ -270,22 +270,22 @@ export const INTERVENTION_ACTIONS_PT = {
 // Type guards
 export function isNoShowPrediction(obj: any): obj is NoShowPrediction {
   return (
-    typeof obj === "object" &&
-    obj !== null &&
-    typeof obj.id === "string" &&
-    typeof obj.appointmentId === "string" &&
-    typeof obj.riskScore === "number" &&
-    ["low", "medium", "high", "critical"].includes(obj.riskLevel)
+    typeof obj === "object"
+    && obj !== null
+    && typeof obj.id === "string"
+    && typeof obj.appointmentId === "string"
+    && typeof obj.riskScore === "number"
+    && ["low", "medium", "high", "critical"].includes(obj.riskLevel)
   );
 }
 
 export function isRiskFactor(obj: any): obj is RiskFactor {
   return (
-    typeof obj === "object" &&
-    obj !== null &&
-    typeof obj.id === "string" &&
-    typeof obj.name === "string" &&
-    typeof obj.weight === "number"
+    typeof obj === "object"
+    && obj !== null
+    && typeof obj.id === "string"
+    && typeof obj.name === "string"
+    && typeof obj.weight === "number"
   );
 }
 

@@ -162,8 +162,8 @@ export function HealthcareSidebar() {
                             ? "bg-destructive text-destructive-foreground shadow-md"
                             : "border border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground"
                           : isActive
-                            ? "bg-primary text-primary-foreground shadow-md"
-                            : "text-foreground hover:bg-muted hover:text-foreground"
+                          ? "bg-primary text-primary-foreground shadow-md"
+                          : "text-foreground hover:bg-muted hover:text-foreground"
                       }`}
                       isActive={isActive}
                       tooltip={item.description}
@@ -179,14 +179,12 @@ export function HealthcareSidebar() {
                                 ? "text-destructive-foreground"
                                 : "text-destructive"
                               : isActive
-                                ? "text-primary-foreground"
-                                : "text-muted-foreground"
+                              ? "text-primary-foreground"
+                              : "text-muted-foreground"
                           }`}
                         />
                         <span className="font-medium">{item.title}</span>
-                        {isEmergency && (
-                          <span className="ml-auto font-bold text-xs">🚨</span>
-                        )}
+                        {isEmergency && <span className="ml-auto font-bold text-xs">🚨</span>}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

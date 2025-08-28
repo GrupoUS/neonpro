@@ -78,8 +78,9 @@ import { PostgrestError } from "@supabase/supabase-js";
 
 async function createEvent(eventData: any) {
   const supabase = await createServerSupabaseClient(); // Or appropriate client
-  if (!supabase)
+  if (!supabase) {
     throw new Error("Unauthorized or Supabase client unavailable.");
+  }
 
   try {
     const { data, error } = await supabase

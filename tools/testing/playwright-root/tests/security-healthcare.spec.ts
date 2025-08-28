@@ -25,9 +25,7 @@ test.describe("🔐 Healthcare Security Testing - Patient Data Protection", () =
     });
   });
 
-  test("should validate patient data encryption throughout healthcare workflows", async ({
-    page,
-  }) => {
+  test("should validate patient data encryption throughout healthcare workflows", async ({ page }) => {
     // Comprehensive healthcare data encryption validation
     await HealthcareSecurityHelper.validateDataEncryption(page);
 
@@ -56,8 +54,7 @@ test.describe("🔐 Healthcare Security Testing - Patient Data Protection", () =
     // Test 4: Secure Cookie Configuration
     const cookies = await page.context().cookies();
     const sessionCookies = cookies.filter(
-      (cookie) =>
-        cookie.name.includes("session") || cookie.name.includes("auth"),
+      (cookie) => cookie.name.includes("session") || cookie.name.includes("auth"),
     );
 
     sessionCookies.forEach((cookie) => {
@@ -90,9 +87,7 @@ test.describe("🔐 Healthcare Security Testing - Patient Data Protection", () =
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test("should validate LGPD compliance with automated testing", async ({
-    page,
-  }) => {
+  test("should validate LGPD compliance with automated testing", async ({ page }) => {
     // Comprehensive LGPD compliance validation
     await LGPDComplianceHelper.validateConsentManagement(page);
 
@@ -163,9 +158,7 @@ test.describe("🔐 Healthcare Security Testing - Patient Data Protection", () =
     expect(notificationTime).toContain("72 hours");
   });
 
-  test("should perform penetration testing for healthcare vulnerabilities", async ({
-    page,
-  }) => {
+  test("should perform penetration testing for healthcare vulnerabilities", async ({ page }) => {
     // Test 1: SQL Injection Prevention
     await page.goto("/dashboard/patients");
 
@@ -287,9 +280,7 @@ test.describe("🔐 Healthcare Security Testing - Patient Data Protection", () =
     await expect(page.getByTestId("file-type-error")).not.toBeVisible();
   });
 
-  test("should validate healthcare audit trail without PHI exposure", async ({
-    page,
-  }) => {
+  test("should validate healthcare audit trail without PHI exposure", async ({ page }) => {
     // Navigate to audit trail with healthcare authentication
     await page.goto("/admin/audit-trail");
 
@@ -367,9 +358,7 @@ test.describe("🔐 Healthcare Security Testing - Patient Data Protection", () =
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test("should validate session security and timeout for healthcare users", async ({
-    page,
-  }) => {
+  test("should validate session security and timeout for healthcare users", async ({ page }) => {
     // Test 1: Session Timeout Configuration
     await page.goto("/dashboard");
 
@@ -425,9 +414,9 @@ test.describe("🔐 Healthcare Security Testing - Patient Data Protection", () =
     const sessionData = await page.evaluate(() => {
       const sessionKeys = Object.keys(localStorage).filter(
         (key) =>
-          key.includes("session") ||
-          key.includes("auth") ||
-          key.includes("token"),
+          key.includes("session")
+          || key.includes("auth")
+          || key.includes("token"),
       );
       return sessionKeys;
     });

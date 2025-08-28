@@ -29,21 +29,8 @@ import {
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Progress } from "../../ui/progress";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
 
 interface ComplianceAudit {
   id: string;
@@ -249,14 +236,12 @@ export function ComplianceAuditsTable() {
   };
 
   const filteredAudits = audits.filter((audit) => {
-    const matchesSearch =
-      audit.audit_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      audit.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      audit.audit_type.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = audit.audit_name.toLowerCase().includes(searchTerm.toLowerCase())
+      || audit.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      || audit.audit_type.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesType = typeFilter === "all" || audit.audit_type === typeFilter;
-    const matchesStatus =
-      statusFilter === "all" || audit.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || audit.status === statusFilter;
 
     return matchesSearch && matchesType && matchesStatus;
   });
@@ -430,303 +415,309 @@ export function ComplianceAuditsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAudits.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  className="py-8 text-center text-muted-foreground"
-                  colSpan={8}
-                >
-                  Nenhuma auditoria de compliance encontrada
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredAudits.map((audit) => (
-                <TableRow key={audit.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{audit.audit_name}</div>
-                      {audit.description && (
-                        <div className="text-muted-foreground text-sm">
-                          {audit.description.length > 50
-                            ? `${audit.description.slice(0, 50)}...`
-                            : audit.description}
-                        </div>
-                      )}
-                    </div>
+            {filteredAudits.length === 0
+              ? (
+                <TableRow>
+                  <TableCell
+                    className="py-8 text-center text-muted-foreground"
+                    colSpan={8}
+                  >
+                    Nenhuma auditoria de compliance encontrada
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      {getTypeIcon(audit.audit_type)}
-                      <Badge variant="outline">
-                        {audit.audit_type.toUpperCase()}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      {getStatusIcon(audit.status)}
-                      <Badge variant={getStatusColor(audit.status)}>
-                        {audit.status === "pending" && "Pendente"}
-                        {audit.status === "in_progress" && "Em Progresso"}
-                        {audit.status === "completed" && "Concluída"}
-                        {audit.status === "failed" && "Falhada"}
-                        {audit.status === "cancelled" && "Cancelada"}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {audit.compliance_score !== undefined ? (
+                </TableRow>
+              )
+              : (
+                filteredAudits.map((audit) => (
+                  <TableRow key={audit.id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{audit.audit_name}</div>
+                        {audit.description && (
+                          <div className="text-muted-foreground text-sm">
+                            {audit.description.length > 50
+                              ? `${audit.description.slice(0, 50)}...`
+                              : audit.description}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
                       <div className="flex items-center space-x-2">
-                        <div className="w-16">
-                          <Progress
-                            className="h-2"
-                            value={audit.compliance_score}
-                          />
+                        {getTypeIcon(audit.audit_type)}
+                        <Badge variant="outline">
+                          {audit.audit_type.toUpperCase()}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        {getStatusIcon(audit.status)}
+                        <Badge variant={getStatusColor(audit.status)}>
+                          {audit.status === "pending" && "Pendente"}
+                          {audit.status === "in_progress" && "Em Progresso"}
+                          {audit.status === "completed" && "Concluída"}
+                          {audit.status === "failed" && "Falhada"}
+                          {audit.status === "cancelled" && "Cancelada"}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {audit.compliance_score !== undefined
+                        ? (
+                          <div className="flex items-center space-x-2">
+                            <div className="w-16">
+                              <Progress
+                                className="h-2"
+                                value={audit.compliance_score}
+                              />
+                            </div>
+                            <span
+                              className={`font-medium text-sm ${
+                                getComplianceScoreColor(
+                                  audit.compliance_score,
+                                )
+                              }`}
+                            >
+                              {audit.compliance_score}%
+                            </span>
+                          </div>
+                        )
+                        : <span className="text-muted-foreground">N/A</span>}
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <div className="flex items-center space-x-1">
+                          <CheckCircle2 className="h-3 w-3 text-green-500" />
+                          <span>{audit.passed_checks}</span>
+                          <XCircle className="h-3 w-3 text-red-500" />
+                          <span>{audit.failed_checks}</span>
+                          <AlertTriangle className="h-3 w-3 text-yellow-500" />
+                          <span>{audit.warning_checks}</span>
                         </div>
-                        <span
-                          className={`font-medium text-sm ${getComplianceScoreColor(
-                            audit.compliance_score,
-                          )}`}
-                        >
-                          {audit.compliance_score}%
-                        </span>
+                        <div className="text-muted-foreground text-xs">
+                          Total: {audit.total_checks}
+                        </div>
                       </div>
-                    ) : (
-                      <span className="text-muted-foreground">N/A</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div className="flex items-center space-x-1">
-                        <CheckCircle2 className="h-3 w-3 text-green-500" />
-                        <span>{audit.passed_checks}</span>
-                        <XCircle className="h-3 w-3 text-red-500" />
-                        <span>{audit.failed_checks}</span>
-                        <AlertTriangle className="h-3 w-3 text-yellow-500" />
-                        <span>{audit.warning_checks}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-1">
+                        {audit.critical_issues > 0 && (
+                          <Badge className="text-xs" variant="destructive">
+                            {audit.critical_issues} críticos
+                          </Badge>
+                        )}
+                        {audit.high_issues > 0 && (
+                          <Badge className="text-xs" variant="secondary">
+                            {audit.high_issues} altos
+                          </Badge>
+                        )}
                       </div>
-                      <div className="text-muted-foreground text-xs">
-                        Total: {audit.total_checks}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-1">
-                      {audit.critical_issues > 0 && (
-                        <Badge className="text-xs" variant="destructive">
-                          {audit.critical_issues} críticos
-                        </Badge>
-                      )}
-                      {audit.high_issues > 0 && (
-                        <Badge className="text-xs" variant="secondary">
-                          {audit.high_issues} altos
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      {audit.completed_at
-                        ? format(new Date(audit.completed_at), "dd/MM/yyyy", {
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        {audit.completed_at
+                          ? format(new Date(audit.completed_at), "dd/MM/yyyy", {
                             locale: ptBR,
                           })
-                        : audit.started_at
+                          : audit.started_at
                           ? format(new Date(audit.started_at), "dd/MM/yyyy", {
-                              locale: ptBR,
-                            })
+                            locale: ptBR,
+                          })
                           : format(new Date(audit.created_at), "dd/MM/yyyy", {
-                              locale: ptBR,
-                            })}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end space-x-2">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            onClick={() => setSelectedAudit(audit)}
-                            size="sm"
-                            variant="ghost"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl">
-                          <DialogHeader>
-                            <DialogTitle className="flex items-center space-x-2">
-                              {getTypeIcon(audit.audit_type)}
-                              <span>{audit.audit_name}</span>
-                              <Badge variant={getStatusColor(audit.status)}>
-                                {audit.status === "pending" && "Pendente"}
-                                {audit.status === "in_progress" &&
-                                  "Em Progresso"}
-                                {audit.status === "completed" && "Concluída"}
-                                {audit.status === "failed" && "Falhada"}
-                                {audit.status === "cancelled" && "Cancelada"}
-                              </Badge>
-                            </DialogTitle>
-                            <DialogDescription>
-                              Detalhes da auditoria de compliance #{audit.id}
-                            </DialogDescription>
-                          </DialogHeader>
-                          {selectedAudit && (
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                  <Label>Tipo de Auditoria</Label>
-                                  <div className="mt-1">
-                                    <Badge variant="outline">
-                                      {selectedAudit.audit_type.toUpperCase()}
-                                    </Badge>
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Status</Label>
-                                  <div className="mt-1 flex items-center space-x-2">
-                                    {getStatusIcon(selectedAudit.status)}
-                                    <Badge
-                                      variant={getStatusColor(
-                                        selectedAudit.status,
-                                      )}
-                                    >
-                                      {selectedAudit.status === "pending" &&
-                                        "Pendente"}
-                                      {selectedAudit.status === "in_progress" &&
-                                        "Em Progresso"}
-                                      {selectedAudit.status === "completed" &&
-                                        "Concluída"}
-                                      {selectedAudit.status === "failed" &&
-                                        "Falhada"}
-                                      {selectedAudit.status === "cancelled" &&
-                                        "Cancelada"}
-                                    </Badge>
-                                  </div>
-                                </div>
-                                {selectedAudit.compliance_score !==
-                                  undefined && (
+                            locale: ptBR,
+                          })}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end space-x-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              onClick={() => setSelectedAudit(audit)}
+                              size="sm"
+                              variant="ghost"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-4xl">
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center space-x-2">
+                                {getTypeIcon(audit.audit_type)}
+                                <span>{audit.audit_name}</span>
+                                <Badge variant={getStatusColor(audit.status)}>
+                                  {audit.status === "pending" && "Pendente"}
+                                  {audit.status === "in_progress"
+                                    && "Em Progresso"}
+                                  {audit.status === "completed" && "Concluída"}
+                                  {audit.status === "failed" && "Falhada"}
+                                  {audit.status === "cancelled" && "Cancelada"}
+                                </Badge>
+                              </DialogTitle>
+                              <DialogDescription>
+                                Detalhes da auditoria de compliance #{audit.id}
+                              </DialogDescription>
+                            </DialogHeader>
+                            {selectedAudit && (
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
                                   <div>
-                                    <Label>Pontuação de Compliance</Label>
+                                    <Label>Tipo de Auditoria</Label>
+                                    <div className="mt-1">
+                                      <Badge variant="outline">
+                                        {selectedAudit.audit_type.toUpperCase()}
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <Label>Status</Label>
                                     <div className="mt-1 flex items-center space-x-2">
-                                      <div className="w-24">
-                                        <Progress
-                                          className="h-2"
-                                          value={selectedAudit.compliance_score}
-                                        />
-                                      </div>
-                                      <span
-                                        className={`font-medium text-sm ${getComplianceScoreColor(
-                                          selectedAudit.compliance_score,
-                                        )}`}
+                                      {getStatusIcon(selectedAudit.status)}
+                                      <Badge
+                                        variant={getStatusColor(
+                                          selectedAudit.status,
+                                        )}
                                       >
-                                        {selectedAudit.compliance_score}%
-                                      </span>
+                                        {selectedAudit.status === "pending"
+                                          && "Pendente"}
+                                        {selectedAudit.status === "in_progress"
+                                          && "Em Progresso"}
+                                        {selectedAudit.status === "completed"
+                                          && "Concluída"}
+                                        {selectedAudit.status === "failed"
+                                          && "Falhada"}
+                                        {selectedAudit.status === "cancelled"
+                                          && "Cancelada"}
+                                      </Badge>
                                     </div>
                                   </div>
-                                )}
-                                <div>
-                                  <Label>Total de Verificações</Label>
-                                  <div className="mt-1 text-sm">
-                                    {selectedAudit.total_checks}
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Verificações Aprovadas</Label>
-                                  <div className="mt-1 flex items-center space-x-1">
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                    <span>{selectedAudit.passed_checks}</span>
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Verificações Falhadas</Label>
-                                  <div className="mt-1 flex items-center space-x-1">
-                                    <XCircle className="h-4 w-4 text-red-500" />
-                                    <span>{selectedAudit.failed_checks}</span>
-                                  </div>
-                                </div>
-                                <div>
-                                  <Label>Avisos</Label>
-                                  <div className="mt-1 flex items-center space-x-1">
-                                    <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                                    <span>{selectedAudit.warning_checks}</span>
-                                  </div>
-                                </div>
-                                {selectedAudit.started_at && (
+                                  {selectedAudit.compliance_score
+                                      !== undefined && (
+                                    <div>
+                                      <Label>Pontuação de Compliance</Label>
+                                      <div className="mt-1 flex items-center space-x-2">
+                                        <div className="w-24">
+                                          <Progress
+                                            className="h-2"
+                                            value={selectedAudit.compliance_score}
+                                          />
+                                        </div>
+                                        <span
+                                          className={`font-medium text-sm ${
+                                            getComplianceScoreColor(
+                                              selectedAudit.compliance_score,
+                                            )
+                                          }`}
+                                        >
+                                          {selectedAudit.compliance_score}%
+                                        </span>
+                                      </div>
+                                    </div>
+                                  )}
                                   <div>
-                                    <Label>Iniciada em</Label>
+                                    <Label>Total de Verificações</Label>
                                     <div className="mt-1 text-sm">
-                                      {format(
-                                        new Date(selectedAudit.started_at),
-                                        "dd/MM/yyyy HH:mm:ss",
-                                        {
-                                          locale: ptBR,
-                                        },
-                                      )}
+                                      {selectedAudit.total_checks}
                                     </div>
                                   </div>
-                                )}
-                                {selectedAudit.completed_at && (
                                   <div>
-                                    <Label>Concluída em</Label>
-                                    <div className="mt-1 text-sm">
-                                      {format(
-                                        new Date(selectedAudit.completed_at),
-                                        "dd/MM/yyyy HH:mm:ss",
-                                        {
-                                          locale: ptBR,
-                                        },
-                                      )}
+                                    <Label>Verificações Aprovadas</Label>
+                                    <div className="mt-1 flex items-center space-x-1">
+                                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                      <span>{selectedAudit.passed_checks}</span>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <Label>Verificações Falhadas</Label>
+                                    <div className="mt-1 flex items-center space-x-1">
+                                      <XCircle className="h-4 w-4 text-red-500" />
+                                      <span>{selectedAudit.failed_checks}</span>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <Label>Avisos</Label>
+                                    <div className="mt-1 flex items-center space-x-1">
+                                      <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                                      <span>{selectedAudit.warning_checks}</span>
+                                    </div>
+                                  </div>
+                                  {selectedAudit.started_at && (
+                                    <div>
+                                      <Label>Iniciada em</Label>
+                                      <div className="mt-1 text-sm">
+                                        {format(
+                                          new Date(selectedAudit.started_at),
+                                          "dd/MM/yyyy HH:mm:ss",
+                                          {
+                                            locale: ptBR,
+                                          },
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {selectedAudit.completed_at && (
+                                    <div>
+                                      <Label>Concluída em</Label>
+                                      <div className="mt-1 text-sm">
+                                        {format(
+                                          new Date(selectedAudit.completed_at),
+                                          "dd/MM/yyyy HH:mm:ss",
+                                          {
+                                            locale: ptBR,
+                                          },
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {selectedAudit.description && (
+                                  <div>
+                                    <Label>Descrição</Label>
+                                    <div className="mt-1 rounded bg-muted p-3 text-sm">
+                                      {selectedAudit.description}
                                     </div>
                                   </div>
                                 )}
-                              </div>
 
-                              {selectedAudit.description && (
-                                <div>
-                                  <Label>Descrição</Label>
-                                  <div className="mt-1 rounded bg-muted p-3 text-sm">
-                                    {selectedAudit.description}
+                                {/* Issues Summary */}
+                                <div className="grid grid-cols-4 gap-4">
+                                  <div className="rounded-lg bg-red-50 p-3">
+                                    <div className="font-semibold text-red-600">
+                                      {selectedAudit.critical_issues}
+                                    </div>
+                                    <div className="text-red-600 text-sm">
+                                      Issues Críticos
+                                    </div>
+                                  </div>
+                                  <div className="rounded-lg bg-orange-50 p-3">
+                                    <div className="font-semibold text-orange-600">
+                                      {selectedAudit.high_issues}
+                                    </div>
+                                    <div className="text-orange-600 text-sm">
+                                      Issues Altos
+                                    </div>
+                                  </div>
+                                  <div className="rounded-lg bg-yellow-50 p-3">
+                                    <div className="font-semibold text-yellow-600">
+                                      {selectedAudit.medium_issues}
+                                    </div>
+                                    <div className="text-sm text-yellow-600">
+                                      Issues Médios
+                                    </div>
+                                  </div>
+                                  <div className="rounded-lg bg-blue-50 p-3">
+                                    <div className="font-semibold text-blue-600">
+                                      {selectedAudit.low_issues}
+                                    </div>
+                                    <div className="text-blue-600 text-sm">
+                                      Issues Baixos
+                                    </div>
                                   </div>
                                 </div>
-                              )}
 
-                              {/* Issues Summary */}
-                              <div className="grid grid-cols-4 gap-4">
-                                <div className="rounded-lg bg-red-50 p-3">
-                                  <div className="font-semibold text-red-600">
-                                    {selectedAudit.critical_issues}
-                                  </div>
-                                  <div className="text-red-600 text-sm">
-                                    Issues Críticos
-                                  </div>
-                                </div>
-                                <div className="rounded-lg bg-orange-50 p-3">
-                                  <div className="font-semibold text-orange-600">
-                                    {selectedAudit.high_issues}
-                                  </div>
-                                  <div className="text-orange-600 text-sm">
-                                    Issues Altos
-                                  </div>
-                                </div>
-                                <div className="rounded-lg bg-yellow-50 p-3">
-                                  <div className="font-semibold text-yellow-600">
-                                    {selectedAudit.medium_issues}
-                                  </div>
-                                  <div className="text-sm text-yellow-600">
-                                    Issues Médios
-                                  </div>
-                                </div>
-                                <div className="rounded-lg bg-blue-50 p-3">
-                                  <div className="font-semibold text-blue-600">
-                                    {selectedAudit.low_issues}
-                                  </div>
-                                  <div className="text-blue-600 text-sm">
-                                    Issues Baixos
-                                  </div>
-                                </div>
-                              </div>
-
-                              {selectedAudit.findings &&
-                                selectedAudit.findings.length > 0 && (
+                                {selectedAudit.findings
+                                  && selectedAudit.findings.length > 0 && (
                                   <div>
                                     <Label>Achados da Auditoria</Label>
                                     <div className="mt-1 max-h-60 space-y-3 overflow-auto">
@@ -742,18 +733,16 @@ export function ComplianceAuditsTable() {
                                                 {finding.category}
                                               </Badge>
                                               <Badge
-                                                variant={
-                                                  finding.severity ===
-                                                  "critical"
-                                                    ? "destructive"
-                                                    : finding.severity ===
-                                                        "high"
-                                                      ? "destructive"
-                                                      : finding.severity ===
-                                                          "medium"
-                                                        ? "secondary"
-                                                        : "outline"
-                                                }
+                                                variant={finding.severity
+                                                    === "critical"
+                                                  ? "destructive"
+                                                  : finding.severity
+                                                      === "high"
+                                                  ? "destructive"
+                                                  : finding.severity
+                                                      === "medium"
+                                                  ? "secondary"
+                                                  : "outline"}
                                               >
                                                 {finding.severity.toUpperCase()}
                                               </Badge>
@@ -770,17 +759,15 @@ export function ComplianceAuditsTable() {
                                         ))}
                                       {selectedAudit.findings.length > 5 && (
                                         <div className="text-center text-muted-foreground text-sm">
-                                          E mais{" "}
-                                          {selectedAudit.findings.length - 5}{" "}
-                                          achados...
+                                          E mais {selectedAudit.findings.length - 5} achados...
                                         </div>
                                       )}
                                     </div>
                                   </div>
                                 )}
 
-                              {selectedAudit.recommendations &&
-                                selectedAudit.recommendations.length > 0 && (
+                                {selectedAudit.recommendations
+                                  && selectedAudit.recommendations.length > 0 && (
                                   <div>
                                     <Label>Recomendações</Label>
                                     <div className="mt-1 space-y-2">
@@ -798,47 +785,46 @@ export function ComplianceAuditsTable() {
                                   </div>
                                 )}
 
-                              {selectedAudit.next_audit_date && (
-                                <div>
-                                  <Label>Próxima Auditoria</Label>
-                                  <div className="mt-1 text-sm">
-                                    {format(
-                                      new Date(selectedAudit.next_audit_date),
-                                      "dd/MM/yyyy",
-                                      {
-                                        locale: ptBR,
-                                      },
-                                    )}
+                                {selectedAudit.next_audit_date && (
+                                  <div>
+                                    <Label>Próxima Auditoria</Label>
+                                    <div className="mt-1 text-sm">
+                                      {format(
+                                        new Date(selectedAudit.next_audit_date),
+                                        "dd/MM/yyyy",
+                                        {
+                                          locale: ptBR,
+                                        },
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </DialogContent>
-                      </Dialog>
+                                )}
+                              </div>
+                            )}
+                          </DialogContent>
+                        </Dialog>
 
-                      {audit.status === "completed" && (
-                        <Button
-                          onClick={() => handleDownloadReport(audit.id)}
-                          size="sm"
-                          variant="outline"
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+                        {audit.status === "completed" && (
+                          <Button
+                            onClick={() => handleDownloadReport(audit.id)}
+                            size="sm"
+                            variant="outline"
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
           </TableBody>
         </Table>
       </div>
 
       {/* Summary */}
       <div className="text-muted-foreground text-sm">
-        Mostrando {filteredAudits.length} de {audits.length} auditorias de
-        compliance
+        Mostrando {filteredAudits.length} de {audits.length} auditorias de compliance
       </div>
     </div>
   );

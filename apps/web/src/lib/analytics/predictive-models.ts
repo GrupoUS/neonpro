@@ -9,16 +9,16 @@
  */
 
 import type {
-  PredictiveIntelligence,
-  OutcomePrediction,
-  ComplicationPrediction,
-  PredictionResult,
-  MLModel,
-  PredictiveFactor,
-  TreatmentTimeline,
   AlternativeTreatment,
-  FeatureImportance,
+  ComplicationPrediction,
   FeatureContribution,
+  FeatureImportance,
+  MLModel,
+  OutcomePrediction,
+  PredictionResult,
+  PredictiveFactor,
+  PredictiveIntelligence,
+  TreatmentTimeline,
 } from "@/types/analytics";
 
 // ====== PREDICTION MODEL CONFIGURATION ======
@@ -143,8 +143,7 @@ const BRAZILIAN_HEALTH_FACTORS: PredictiveFactor[] = [
     impact: 0.25,
     confidence: 0.82,
     category: "demographic",
-    description:
-      "Economic factors affecting treatment accessibility and outcomes",
+    description: "Economic factors affecting treatment accessibility and outcomes",
     evidence: ["Socioeconomic outcome correlations", "Payment method analysis"],
   },
   {
@@ -169,8 +168,7 @@ const FEATURE_IMPORTANCE: Record<string, FeatureImportance> = {
   skin_type: {
     feature: "skin_type",
     importance: 0.92,
-    description:
-      "Skin type determines treatment response and complication risk",
+    description: "Skin type determines treatment response and complication risk",
     category: "medical",
   },
   treatment_history: {
@@ -227,7 +225,7 @@ export class PredictiveModelsService {
         deploymentDate: new Date("2024-12-15"),
         lastRetraining: new Date("2024-12-20"),
         featureImportance: Object.values(FEATURE_IMPORTANCE).filter((f) =>
-          config.features.includes(f.feature),
+          config.features.includes(f.feature)
         ),
         hyperparameters: {
           learning_rate: 0.001,
@@ -285,8 +283,7 @@ export class PredictiveModelsService {
       );
 
       // Calculate no-show probability
-      const noShowProbability =
-        await this.predictNoShowProbability(patientData);
+      const noShowProbability = await this.predictNoShowProbability(patientData);
 
       // Generate recommendations
       const recommendations = this.generateRecommendations(
@@ -379,8 +376,7 @@ export class PredictiveModelsService {
     let adjustedScore = baseScore;
 
     // Age factor
-    const ageFactor =
-      features.patient_age < 30 ? 1.05 : features.patient_age > 60 ? 0.95 : 1;
+    const ageFactor = features.patient_age < 30 ? 1.05 : features.patient_age > 60 ? 0.95 : 1;
     adjustedScore *= ageFactor;
 
     // Medical conditions impact
@@ -394,11 +390,10 @@ export class PredictiveModelsService {
     adjustedScore *= features.compliance_history;
 
     // Brazilian factors impact
-    const brazilianImpact =
-      Object.values(features.brazilian_factors).reduce(
-        (sum: number, value: any) => sum + value * 0.1,
-        0,
-      ) / Object.keys(features.brazilian_factors).length;
+    const brazilianImpact = Object.values(features.brazilian_factors).reduce(
+      (sum: number, value: any) => sum + value * 0.1,
+      0,
+    ) / Object.keys(features.brazilian_factors).length;
     adjustedScore += brazilianImpact;
 
     // Clamp to valid range
@@ -596,9 +591,9 @@ export class PredictiveModelsService {
   ): "low" | "medium" | "high" | "critical" {
     const highRiskComplications = complications.filter(
       (c) =>
-        c.severity === "severe" ||
-        c.severity === "critical" ||
-        c.probability > 0.3,
+        c.severity === "severe"
+        || c.severity === "critical"
+        || c.probability > 0.3,
     );
 
     if (outcomeScore < 60 || highRiskComplications.length > 2) {
@@ -669,14 +664,13 @@ export class PredictiveModelsService {
 
   private getSeasonalFactors(): Record<string, number> {
     const month = new Date().getMonth();
-    const season =
-      month >= 2 && month <= 4
-        ? "fall"
-        : month >= 5 && month <= 7
-          ? "winter"
-          : month >= 8 && month <= 10
-            ? "spring"
-            : "summer";
+    const season = month >= 2 && month <= 4
+      ? "fall"
+      : month >= 5 && month <= 7
+      ? "winter"
+      : month >= 8 && month <= 10
+      ? "spring"
+      : "summer";
 
     return {
       season_impact: season === "winter" ? 1.1 : season === "summer" ? 0.9 : 1,
@@ -959,12 +953,11 @@ export class PredictiveModelsService {
         measures.push({
           id: `${comp.type.toLowerCase()}-prev-${index}`,
           action: strategy,
-          priority:
-            comp.severity === "severe"
-              ? ("critical" as const)
-              : comp.severity === "moderate"
-                ? ("high" as const)
-                : ("medium" as const),
+          priority: comp.severity === "severe"
+            ? ("critical" as const)
+            : comp.severity === "moderate"
+            ? ("high" as const)
+            : ("medium" as const),
           timeframe: `${comp.timeframe} dias`,
           importance: comp.probability * 0.9,
         });
@@ -1010,14 +1003,13 @@ export class PredictiveModelsService {
       risk: comp.type,
       strategy: comp.preventionStrategies[0] || "Monitoramento regular",
       probability: Math.min(0.95, 0.8 + comp.probability * 0.3), // Effectiveness probability
-      impact:
-        comp.severity === "critical"
-          ? ("high" as const)
-          : comp.severity === "severe"
-            ? ("high" as const)
-            : comp.severity === "moderate"
-              ? ("medium" as const)
-              : ("low" as const),
+      impact: comp.severity === "critical"
+        ? ("high" as const)
+        : comp.severity === "severe"
+        ? ("high" as const)
+        : comp.severity === "moderate"
+        ? ("medium" as const)
+        : ("low" as const),
     }));
   }
 
@@ -1028,8 +1020,7 @@ export class PredictiveModelsService {
     recommendations.push({
       resource: "Tempo de consulta",
       recommended: "45 minutos",
-      rationale:
-        "Paciente requer explicações detalhadas sobre cuidados pós-procedimento",
+      rationale: "Paciente requer explicações detalhadas sobre cuidados pós-procedimento",
     });
 
     // Age-based recommendations
@@ -1067,12 +1058,12 @@ export class PredictiveModelsService {
     const model = this.models.get(modelId);
     return model
       ? {
-          accuracy: model.accuracy,
-          precision: model.precision,
-          recall: model.recall,
-          f1Score: model.f1Score,
-          lastUpdated: model.lastRetraining,
-        }
+        accuracy: model.accuracy,
+        precision: model.precision,
+        recall: model.recall,
+        f1Score: model.f1Score,
+        lastUpdated: model.lastRetraining,
+      }
       : null;
   }
 

@@ -1,4 +1,4 @@
-import type { Page, Locator } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import { expect } from "@playwright/test";
 import { BasePage } from "./BasePage";
 
@@ -267,26 +267,21 @@ export class AppointmentsPage extends BasePage {
     );
 
     return {
-      patient:
-        (await appointmentCard
-          .locator('[data-testid="patient-name"]')
-          .textContent()) || "",
-      doctor:
-        (await appointmentCard
-          .locator('[data-testid="doctor-name"]')
-          .textContent()) || "",
-      date:
-        (await appointmentCard
-          .locator('[data-testid="appointment-date"]')
-          .textContent()) || "",
-      time:
-        (await appointmentCard
-          .locator('[data-testid="appointment-time"]')
-          .textContent()) || "",
-      status:
-        (await appointmentCard
-          .locator('[data-testid="appointment-status"]')
-          .textContent()) || "",
+      patient: (await appointmentCard
+        .locator('[data-testid="patient-name"]')
+        .textContent()) || "",
+      doctor: (await appointmentCard
+        .locator('[data-testid="doctor-name"]')
+        .textContent()) || "",
+      date: (await appointmentCard
+        .locator('[data-testid="appointment-date"]')
+        .textContent()) || "",
+      time: (await appointmentCard
+        .locator('[data-testid="appointment-time"]')
+        .textContent()) || "",
+      status: (await appointmentCard
+        .locator('[data-testid="appointment-status"]')
+        .textContent()) || "",
     };
   }
 

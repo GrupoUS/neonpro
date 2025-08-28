@@ -281,8 +281,10 @@ describe("analytics Utils", () => {
     ];
 
     it("should aggregate by month", () => {
-      const result = aggregateMetricsByPeriod(sampleData, "month", (items) =>
-        items.reduce((sum, item) => sum + item.value, 0),
+      const result = aggregateMetricsByPeriod(
+        sampleData,
+        "month",
+        (items) => items.reduce((sum, item) => sum + item.value, 0),
       );
 
       expect(result).toStrictEqual([
@@ -292,8 +294,10 @@ describe("analytics Utils", () => {
     });
 
     it("should aggregate by day", () => {
-      const result = aggregateMetricsByPeriod(sampleData, "day", (items) =>
-        items.reduce((sum, item) => sum + item.value, 0),
+      const result = aggregateMetricsByPeriod(
+        sampleData,
+        "day",
+        (items) => items.reduce((sum, item) => sum + item.value, 0),
       );
 
       expect(result).toHaveLength(4);
@@ -301,16 +305,20 @@ describe("analytics Utils", () => {
     });
 
     it("should handle empty data", () => {
-      const result = aggregateMetricsByPeriod([], "month", (items) =>
-        items.reduce((sum, item) => sum + item.value, 0),
+      const result = aggregateMetricsByPeriod(
+        [],
+        "month",
+        (items) => items.reduce((sum, item) => sum + item.value, 0),
       );
 
       expect(result).toStrictEqual([]);
     });
 
     it("should handle custom aggregation functions", () => {
-      const result = aggregateMetricsByPeriod(sampleData, "month", (items) =>
-        Math.max(...items.map((item) => item.value)),
+      const result = aggregateMetricsByPeriod(
+        sampleData,
+        "month",
+        (items) => Math.max(...items.map((item) => item.value)),
       );
 
       expect(result).toStrictEqual([

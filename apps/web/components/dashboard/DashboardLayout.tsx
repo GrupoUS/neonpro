@@ -93,8 +93,7 @@ export function DashboardLayout({
   const [viewMode, setViewMode] = useState<"grid" | "tabs" | "single">(
     defaultView,
   );
-  const [selectedDashboard, setSelectedDashboard] =
-    useState<DashboardType>(defaultDashboard);
+  const [selectedDashboard, setSelectedDashboard] = useState<DashboardType>(defaultDashboard);
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = async () => {
@@ -212,9 +211,7 @@ export function DashboardLayout({
         <div className="flex items-center gap-4">
           <Select
             value={selectedDashboard}
-            onValueChange={(value) =>
-              setSelectedDashboard(value as DashboardType)
-            }
+            onValueChange={(value) => setSelectedDashboard(value as DashboardType)}
           >
             <SelectTrigger className="w-64">
               <SelectValue />

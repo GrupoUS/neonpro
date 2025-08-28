@@ -15,16 +15,16 @@
  * - Connection resilience and offline support
  */
 
-import type { SupabaseClient, RealtimeChannel } from "@supabase/supabase-js";
-import { createClient } from "@supabase/supabase-js";
 import type {
-  ChatMessage,
   ChatConversation,
-  SenderType,
-  MessageStatus,
+  ChatMessage,
   HealthcareContext,
+  MessageStatus,
+  SenderType,
   TypingUser,
 } from "@/types/chat";
+import type { RealtimeChannel, SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
 export interface SupabaseRealtimeConfig {
   supabaseUrl: string;
@@ -40,7 +40,7 @@ export interface MessageSubscriptionCallback {
   onMessage: (message: ChatMessage) => void;
   onTyping?: (users: TypingUser[]) => void;
   onPresence?: (
-    users: { id: string; status: "online" | "offline" | "away" }[],
+    users: { id: string; status: "online" | "offline" | "away"; }[],
   ) => void;
   onError?: (error: Error) => void;
 }

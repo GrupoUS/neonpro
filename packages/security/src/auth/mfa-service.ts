@@ -145,9 +145,11 @@ export function generateTotpQrCodeUrl(
     period: TOTP_PERIOD.toString(),
   });
 
-  return `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(
-    accountName,
-  )}?${params}`;
+  return `otpauth://totp/${encodeURIComponent(issuer)}:${
+    encodeURIComponent(
+      accountName,
+    )
+  }?${params}`;
 }
 
 /**
@@ -207,11 +209,10 @@ function generateHotp(secret: string, counter: number): string {
   const offset = digest.at(-1) & 0x0f;
   // HOTP dynamic truncation algorithm (RFC 4226) requires bitwise operations
   // oxlint-disable-next-line no-bitwise
-  const code =
-    ((digest[offset] & HOTP_MASK) << 24) |
-    ((digest[offset + 1] & BYTE_MASK) << 16) |
-    ((digest[offset + 2] & BYTE_MASK) << 8) |
-    (digest[offset + 3] & BYTE_MASK);
+  const code = ((digest[offset] & HOTP_MASK) << 24)
+    | ((digest[offset + 1] & BYTE_MASK) << 16)
+    | ((digest[offset + 2] & BYTE_MASK) << 8)
+    | (digest[offset + 3] & BYTE_MASK);
 
   return (code % 10 ** TOTP_DIGITS).toString().padStart(TOTP_DIGITS, "0");
 }
@@ -234,8 +235,7 @@ function base32Decode(encoded: string): Buffer {
 
   for (let i = 0; i < cleanEncoded.length; i++) {
     // oxlint-disable-next-line no-bitwise
-    value =
-      (value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
+    value = (value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
     bits += BASE32_BITS_PER_CHAR;
 
     if (bits >= BYTE_SIZE) {
@@ -492,8 +492,7 @@ export async function verifyMfa(
         success: false,
         method,
         lockoutUntil: lockoutResult.lockoutUntil,
-        message:
-          "Conta temporariamente bloqueada devido a tentativas excessivas",
+        message: "Conta temporariamente bloqueada devido a tentativas excessivas",
       };
     }
 
@@ -550,8 +549,7 @@ export async function verifyMfa(
         method,
         remainingAttempts: 0,
         lockoutUntil: newLockoutStatus.lockoutUntil,
-        message:
-          "Muitas tentativas incorretas. Conta bloqueada temporariamente.",
+        message: "Muitas tentativas incorretas. Conta bloqueada temporariamente.",
       };
     }
 

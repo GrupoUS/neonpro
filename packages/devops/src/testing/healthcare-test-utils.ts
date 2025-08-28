@@ -76,7 +76,7 @@ export const generateTestPatient = () => ({
 export function renderWithHealthcareContext(
   ui: ReactElement,
   options: HealthcareRenderOptions = {},
-): ReturnType<typeof render> & { user: ReturnType<typeof userEvent.setup> } {
+): ReturnType<typeof render> & { user: ReturnType<typeof userEvent.setup>; } {
   const {
     user = generateTestUser("doctor"),
     tenantId = "test-tenant",
@@ -86,7 +86,7 @@ export function renderWithHealthcareContext(
   } = options;
 
   // Mock healthcare context providers
-  const HealthcareWrapper = ({ children }: { children: React.ReactNode }) => {
+  const HealthcareWrapper = ({ children }: { children: React.ReactNode; }) => {
     return React.createElement(
       "div",
       { "data-testid": "healthcare-context" },

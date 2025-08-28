@@ -145,7 +145,7 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 
   // Wrapper component for testing hooks
   const createWrapper = () => {
-    return ({ children }: { children: React.ReactNode }) => (
+    return ({ children }: { children: React.ReactNode; }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
   };

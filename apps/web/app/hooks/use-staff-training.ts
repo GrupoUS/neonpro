@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
 import type {
-  TrainingModule,
-  TrainingSection,
-  TrainingProgress,
-  UserTrainingProfile,
-  QuizAttempt,
   Quiz,
   QuizAnswer,
+  QuizAttempt,
+  TrainingModule,
+  TrainingProgress,
+  TrainingSection,
+  UserTrainingProfile,
 } from "@/types/staff-training";
 import { PracticalExerciseResult } from "@/types/staff-training";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseStaffTrainingOptions {
   userId?: string;
@@ -336,8 +336,7 @@ export function useStaffTraining({
         console.error("Error saving progress:", err);
         // Store in localStorage for offline sync
         if (offlineMode) {
-          const offlineData =
-            localStorage.getItem("training_offline_data") || "{}";
+          const offlineData = localStorage.getItem("training_offline_data") || "{}";
           const parsed = JSON.parse(offlineData);
           parsed[`${userId}_${moduleId}`] = data;
           localStorage.setItem("training_offline_data", JSON.stringify(parsed));
@@ -378,8 +377,8 @@ export function useStaffTraining({
       }
 
       const isCorrect = Array.isArray(answer)
-        ? JSON.stringify(answer.sort()) ===
-          JSON.stringify((question.correctAnswer as string[]).sort())
+        ? JSON.stringify(answer.sort())
+          === JSON.stringify((question.correctAnswer as string[]).sort())
         : answer === question.correctAnswer;
 
       const quizAnswer: QuizAnswer = {
@@ -613,9 +612,9 @@ export function useStaffTraining({
       // Check if module has only offline-compatible content
       return module.sections.every(
         (section) =>
-          section.type === "text" ||
-          section.type === "checklist" ||
-          section.type === "case_study",
+          section.type === "text"
+          || section.type === "checklist"
+          || section.type === "case_study",
       );
     },
     [trainingModules],

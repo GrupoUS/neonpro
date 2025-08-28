@@ -62,7 +62,7 @@ export function validateLGPDConsent(consent: {
   granted_at: Date;
   data_types: string[];
   retention_period: number;
-}): { valid: boolean; errors: string[] } {
+}): { valid: boolean; errors: string[]; } {
   const errors: string[] = [];
 
   if (!consent.purpose || consent.purpose.trim().length < 10) {
@@ -95,7 +95,7 @@ export function validateLGPDConsent(consent: {
 export function validateHealthcareProfessionalAccess(
   user: unknown,
   requiredRole: string[],
-): { authorized: boolean; reason?: string } {
+): { authorized: boolean; reason?: string; } {
   if (!user) {
     return { authorized: false, reason: "User not authenticated" };
   }
@@ -157,7 +157,7 @@ export function validateDataRetention(
   dataType: string,
   createdAt: Date,
   retentionPolicy: Record<string, number>,
-): { expired: boolean; expiryDate: Date; daysRemaining: number } {
+): { expired: boolean; expiryDate: Date; daysRemaining: number; } {
   const retentionDays = retentionPolicy[dataType] || 365 * 5; // Default 5 years
   const expiryDate = new Date(createdAt);
   expiryDate.setDate(expiryDate.getDate() + retentionDays);
@@ -250,9 +250,9 @@ export const PatientConsentValidationSchema = z
 export function validateBatch<T>(
   items: unknown[],
   schema: z.ZodSchema<T>,
-): { valid: T[]; invalid: { item: unknown; errors: string[] }[] } {
+): { valid: T[]; invalid: { item: unknown; errors: string[]; }[]; } {
   const valid: T[] = [];
-  const invalid: { item: unknown; errors: string[] }[] = [];
+  const invalid: { item: unknown; errors: string[]; }[] = [];
 
   for (const item of items) {
     const result = schema.safeParse(item);
@@ -284,8 +284,7 @@ export function generateComplianceSummary(validationResults: {
   anvisa_violations: string[];
   cfm_violations: string[];
 }): ComplianceSummary {
-  const { lgpd_violations, anvisa_violations, cfm_violations } =
-    validationResults;
+  const { lgpd_violations, anvisa_violations, cfm_violations } = validationResults;
 
   const lgpd_score = Math.max(0, 100 - lgpd_violations.length * 10);
   const anvisa_score = Math.max(0, 100 - anvisa_violations.length * 15);

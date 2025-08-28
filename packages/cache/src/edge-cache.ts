@@ -13,8 +13,7 @@ export class EdgeCacheLayer implements CacheOperation {
 
   constructor(
     private readonly config = {
-      endpoint:
-        process.env.SUPABASE_EDGE_ENDPOINT || "https://edge-cache.supabase.co",
+      endpoint: process.env.SUPABASE_EDGE_ENDPOINT || "https://edge-cache.supabase.co",
       region: "sa-east-1", // São Paulo region
       defaultTTL: 10 * 60, // 10 minutes in seconds
       maxTTL: 60 * 60, // 1 hour in seconds
@@ -97,10 +96,9 @@ export class EdgeCacheLayer implements CacheOperation {
   }
 
   async getStats(): Promise<CacheStats> {
-    this.stats.hitRate =
-      this.stats.totalRequests > 0
-        ? (this.stats.hits / this.stats.totalRequests) * 100
-        : 0;
+    this.stats.hitRate = this.stats.totalRequests > 0
+      ? (this.stats.hits / this.stats.totalRequests) * 100
+      : 0;
     return { ...this.stats };
   }
 
@@ -161,10 +159,9 @@ export class EdgeCacheLayer implements CacheOperation {
     region: string;
   }> {
     const stats = await this.getStats();
-    const errorRate =
-      stats.totalRequests > 0
-        ? ((stats.totalRequests - stats.hits) / stats.totalRequests) * 100
-        : 0;
+    const errorRate = stats.totalRequests > 0
+      ? ((stats.totalRequests - stats.hits) / stats.totalRequests) * 100
+      : 0;
 
     let status: "healthy" | "degraded" | "unhealthy" = "healthy";
     if (stats.averageResponseTime > 100 || errorRate > 10) {
@@ -227,9 +224,8 @@ export class EdgeCacheLayer implements CacheOperation {
       this.responseTimeBuffer.shift();
     }
 
-    this.stats.averageResponseTime =
-      this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
-      this.responseTimeBuffer.length;
+    this.stats.averageResponseTime = this.responseTimeBuffer.reduce((a, b) => a + b, 0)
+      / this.responseTimeBuffer.length;
   }
 
   private resetStats(): void {

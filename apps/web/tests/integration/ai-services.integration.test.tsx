@@ -215,8 +215,7 @@ describe("universal AI Chat Integration", () => {
   });
 
   it("should detect and handle emergency situations appropriately", async () => {
-    const emergencyMessage =
-      "SOCORRO! Estou tendo um infarto! Preciso de ajuda urgente!";
+    const emergencyMessage = "SOCORRO! Estou tendo um infarto! Preciso de ajuda urgente!";
 
     const response = await fetch(
       `${TEST_CONFIG.api.test_api_base_url}/api/ai/universal-chat/message`,
@@ -526,8 +525,7 @@ describe("conversation Management Integration", () => {
       AITestDataFactory.createMockChatMessage({
         session_id: testConversationId,
         role: "assistant",
-        content:
-          "Entendo sua preocupação. Pode me contar mais sobre os sintomas?",
+        content: "Entendo sua preocupação. Pode me contar mais sobre os sintomas?",
       }),
       AITestDataFactory.createMockChatMessage({
         session_id: testConversationId,
@@ -865,8 +863,7 @@ describe("aI Services End-to-End Integration", () => {
         },
         body: JSON.stringify({
           session_id: sessionId,
-          message:
-            "Tenho sentido muita fadiga e perdi peso sem motivo aparente",
+          message: "Tenho sentido muita fadiga e perdi peso sem motivo aparente",
         }),
       },
     );

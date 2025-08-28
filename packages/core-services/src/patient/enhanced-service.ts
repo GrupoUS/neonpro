@@ -343,9 +343,9 @@ export class EnhancedPatientService extends EnhancedServiceBase {
         const consentForms = await this.repository.getConsentForms(patientId);
         return consentForms.some(
           (form) =>
-            form.treatmentType === treatmentType &&
-            form.isActive &&
-            form.signedDate,
+            form.treatmentType === treatmentType
+            && form.isActive
+            && form.signedDate,
         );
       },
       context,
@@ -394,8 +394,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     const baseHealth = (await super.getHealthMetrics()) as Record<string, any>;
 
     // Add patient-specific metrics
-    const patientStats =
-      (await this.repository.getPatientStats()) as PatientStats;
+    const patientStats = (await this.repository.getPatientStats()) as PatientStats;
 
     return {
       ...baseHealth,

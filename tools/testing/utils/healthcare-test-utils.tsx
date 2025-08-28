@@ -40,7 +40,7 @@ export function renderWithHealthcareProvider(
     ...renderOptions
   } = options;
 
-  function Wrapper({ children }: { children: React.ReactNode }) {
+  function Wrapper({ children }: { children: React.ReactNode; }) {
     return (
       <HealthcareTestProvider
         initialClinicSettings={initialClinicSettings}

@@ -1,22 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import {
   AlertTriangle,
-  Shield,
-  Zap,
-  Eye,
-  EyeOff,
-  Clock,
-  FileText,
-  Phone,
   ChevronDown,
   ChevronUp,
+  Clock,
+  Eye,
+  EyeOff,
+  FileText,
+  Phone,
+  Shield,
+  Zap,
 } from "lucide-react";
+import React, { useState } from "react";
 
 // Critical Allergies Types
 export interface CriticalAllergy {
@@ -131,8 +131,8 @@ export function CriticalAllergiesPanel({
     <Card
       className={cn(
         "w-full transition-all duration-200",
-        hasLifeThreatening &&
-          "border-2 border-red-500 shadow-red-500/50 shadow-lg",
+        hasLifeThreatening
+          && "border-2 border-red-500 shadow-red-500/50 shadow-lg",
         emergencyMode && "shadow-2xl scale-[1.01]",
         className,
       )}
@@ -219,8 +219,9 @@ export function CriticalAllergiesPanel({
             <div className="text-sm text-red-700 dark:text-red-300">
               {lifeThreatening.length} alergia
               {lifeThreatening.length > 1 ? "s" : ""}
-              pode{lifeThreatening.length === 1 ? "" : "m"} causar reação fatal.
-              Verificar medicações e tratamentos antes de qualquer procedimento.
+              pode{lifeThreatening.length === 1 ? "" : "m"}{" "}
+              causar reação fatal. Verificar medicações e tratamentos antes de qualquer
+              procedimento.
             </div>
           </div>
         )}
@@ -243,9 +244,7 @@ export function CriticalAllergiesPanel({
                 {/* Allergy Header */}
                 <div
                   className="p-3 cursor-pointer"
-                  onClick={() =>
-                    setExpandedAllergy(isExpanded ? null : allergy.id)
-                  }
+                  onClick={() => setExpandedAllergy(isExpanded ? null : allergy.id)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
@@ -290,11 +289,9 @@ export function CriticalAllergiesPanel({
                           {allergy.reactions.length > 1 ? "ões" : ""}
                         </div>
                       )}
-                      {isExpanded ? (
-                        <ChevronUp className="h-4 w-4" aria-hidden="true" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4" aria-hidden="true" />
-                      )}
+                      {isExpanded
+                        ? <ChevronUp className="h-4 w-4" aria-hidden="true" />
+                        : <ChevronDown className="h-4 w-4" aria-hidden="true" />}
                     </div>
                   </div>
                 </div>{" "}
@@ -342,47 +339,46 @@ export function CriticalAllergiesPanel({
                       </div>
                     )}
                     {/* Medications to Avoid */}
-                    {showMedications &&
-                      allergy.medications &&
-                      allergy.medications.length > 0 && (
-                        <div>
-                          <span className="font-semibold text-sm text-red-700 dark:text-red-300 mb-2 block">
-                            Medicações a Evitar:
-                          </span>
-                          <div className="flex flex-wrap gap-1">
-                            {allergy.medications.map((medication, index) => (
-                              <Badge
-                                key={index}
-                                variant="destructive"
-                                className="text-xs bg-red-100 text-red-800 border border-red-300"
-                              >
-                                {medication}
-                              </Badge>
-                            ))}
-                          </div>
+                    {showMedications
+                      && allergy.medications
+                      && allergy.medications.length > 0 && (
+                      <div>
+                        <span className="font-semibold text-sm text-red-700 dark:text-red-300 mb-2 block">
+                          Medicações a Evitar:
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {allergy.medications.map((medication, index) => (
+                            <Badge
+                              key={index}
+                              variant="destructive"
+                              className="text-xs bg-red-100 text-red-800 border border-red-300"
+                            >
+                              {medication}
+                            </Badge>
+                          ))}
                         </div>
-                      )}
+                      </div>
+                    )}
                     {/* Cross-reactivities */}
-                    {allergy.crossReactivities &&
-                      allergy.crossReactivities.length > 0 && (
-                        <div>
-                          <span className="font-semibold text-sm text-orange-700 dark:text-orange-300 mb-2 block">
-                            Reatividade Cruzada:
-                          </span>
-                          <div className="flex flex-wrap gap-1">
-                            {allergy.crossReactivities.map((item, index) => (
-                              <Badge
-                                key={index}
-                                variant="outline"
-                                className="text-xs border-orange-300 text-orange-700"
-                              >
-                                {item}
-                              </Badge>
-                            ))}
-                          </div>
+                    {allergy.crossReactivities
+                      && allergy.crossReactivities.length > 0 && (
+                      <div>
+                        <span className="font-semibold text-sm text-orange-700 dark:text-orange-300 mb-2 block">
+                          Reatividade Cruzada:
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {allergy.crossReactivities.map((item, index) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className="text-xs border-orange-300 text-orange-700"
+                            >
+                              {item}
+                            </Badge>
+                          ))}
                         </div>
-                      )}{" "}
-                    {/* Last Known Reaction */}
+                      </div>
+                    )} {/* Last Known Reaction */}
                     {allergy.lastReaction && (
                       <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded">
                         <div className="flex items-center gap-2 mb-2">
@@ -396,12 +392,10 @@ export function CriticalAllergiesPanel({
                         </div>
                         <div className="text-sm space-y-1">
                           <div>
-                            <strong>Descrição:</strong>{" "}
-                            {allergy.lastReaction.description}
+                            <strong>Descrição:</strong> {allergy.lastReaction.description}
                           </div>
                           <div>
-                            <strong>Tratamento:</strong>{" "}
-                            {allergy.lastReaction.treatment}
+                            <strong>Tratamento:</strong> {allergy.lastReaction.treatment}
                           </div>
                         </div>
                       </div>
@@ -444,15 +438,11 @@ export function CriticalAllergiesPanel({
         <div className="text-xs text-muted-foreground pt-2 border-t border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
             <span>
-              {
-                allergies.filter((a) => a.severity === "life-threatening")
-                  .length
-              }{" "}
-              risco de vida •
+              {allergies.filter((a) => a.severity === "life-threatening")
+                .length} risco de vida •
               {allergies.filter((a) => a.severity === "severe").length} graves •
               {allergies.filter((a) => a.severity === "moderate").length}{" "}
-              moderadas •{allergies.filter((a) => a.severity === "mild").length}{" "}
-              leves
+              moderadas •{allergies.filter((a) => a.severity === "mild").length} leves
             </span>
             <span>LGPD: Dados médicos críticos</span>
           </div>

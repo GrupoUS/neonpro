@@ -121,10 +121,9 @@ export class SupabaseCacheService implements CacheService {
     try {
       const fullKey = `${this.config.supabase.keyPrefix}${key}`;
       const serializedValue = this.serializeValue(value);
-      const expiresAt =
-        effectiveTTL > 0
-          ? new Date(Date.now() + effectiveTTL * 1000)
-          : undefined;
+      const expiresAt = effectiveTTL > 0
+        ? new Date(Date.now() + effectiveTTL * 1000)
+        : undefined;
 
       const { error } = await this.supabase
         .from(this.config.supabase.tableName)
@@ -205,7 +204,7 @@ export class SupabaseCacheService implements CacheService {
     return value !== null;
   }
 
-  async clear(pattern?: string): Promise<{ deletedKeys: string[] }> {
+  async clear(pattern?: string): Promise<{ deletedKeys: string[]; }> {
     const startTime = Date.now();
     let deletedKeys: string[] = [];
 
@@ -341,18 +340,15 @@ export class SupabaseCacheService implements CacheService {
       this.responseTimes.shift();
     }
 
-    this.operationMetrics.avgResponseTime =
-      this.responseTimes.reduce((sum, time) => sum + time, 0) /
-      this.responseTimes.length;
+    this.operationMetrics.avgResponseTime = this.responseTimes.reduce((sum, time) => sum + time, 0)
+      / this.responseTimes.length;
   }
 
   private updateHitRate(): void {
-    const totalHitsAndMisses =
-      this.operationMetrics.hits + this.operationMetrics.misses;
-    this.operationMetrics.hitRate =
-      totalHitsAndMisses > 0
-        ? (this.operationMetrics.hits / totalHitsAndMisses) * 100
-        : 0;
+    const totalHitsAndMisses = this.operationMetrics.hits + this.operationMetrics.misses;
+    this.operationMetrics.hitRate = totalHitsAndMisses > 0
+      ? (this.operationMetrics.hits / totalHitsAndMisses) * 100
+      : 0;
   }
 
   // Cleanup method

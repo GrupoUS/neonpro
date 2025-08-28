@@ -25,7 +25,7 @@ export enum HealthcareRole {
   EMERGENCY_PHYSICIAN = "emergency_physician", // Special emergency access
   HEALTHCARE_PROVIDER = "healthcare_provider", // Licensed professionals
   CLINIC_MANAGER = "clinic_manager",
-  CLINIC_STAFF = "clinic_staff", 
+  CLINIC_STAFF = "clinic_staff",
   PATIENT = "patient",
 }
 
@@ -110,19 +110,19 @@ export interface RoleDefinition {
 
 ```typescript
 // Professional types in Brazilian healthcare
-export type ProfessionType = 
-  | "dermatologist" 
-  | "plastic_surgeon" 
-  | "esthetician" 
-  | "nurse" 
+export type ProfessionType =
+  | "dermatologist"
+  | "plastic_surgeon"
+  | "esthetician"
+  | "nurse"
   | "administrator"
   | "physiotherapist"
   | "nutritionist";
 
 // Brazilian professional license types
-export type LicenseType = 
+export type LicenseType =
   | "CRM" // Conselho Regional de Medicina
-  | "CRF" // Conselho Regional de Farmácia  
+  | "CRF" // Conselho Regional de Farmácia
   | "CRN" // Conselho Regional de Nutrição
   | "CREFITO" // Conselho Regional de Fisioterapia
   | "COFEN"; // Conselho Federal de Enfermagem
@@ -655,10 +655,12 @@ export interface PaginationInfo {
 }
 
 // Paginated response interface
-export interface PaginatedResponse<T> extends ApiResponse<{
-  readonly items: readonly T[];
-  readonly pagination: PaginationInfo;
-}> {}
+export interface PaginatedResponse<T> extends
+  ApiResponse<{
+    readonly items: readonly T[];
+    readonly pagination: PaginationInfo;
+  }>
+{}
 
 // Error response interface
 export interface ErrorResponse extends ApiResponse<never> {

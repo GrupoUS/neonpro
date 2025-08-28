@@ -9,7 +9,7 @@ import React from "react";
 import { AuthProvider, ProtectedRoute, useAuth, withAuth } from "./index";
 
 // === 1. CONFIGURAÇÃO DO PROVIDER NO ROOT LAYOUT ===
-export function RootLayout({ children }: { children: React.ReactNode }) {
+export function RootLayout({ children }: { children: React.ReactNode; }) {
   return (
     <html lang="pt-BR">
       <body>
@@ -168,23 +168,25 @@ function DashboardPage() {
 
         <div className="overflow-hidden rounded-lg bg-white shadow">
           <div className="px-4 py-5 sm:p-6">
-            {loading ? (
-              <div className="text-center">
-                <div className="mx-auto h-6 w-6 animate-spin rounded-full border-indigo-600 border-b-2" />
-                <p className="mt-2 text-gray-500 text-sm">
-                  Carregando dados...
-                </p>
-              </div>
-            ) : (
-              <div>
-                <h3 className="mb-4 font-medium text-gray-900 text-lg">
-                  Dados Protegidos
-                </h3>
-                <pre className="rounded bg-gray-100 p-4 text-sm">
+            {loading
+              ? (
+                <div className="text-center">
+                  <div className="mx-auto h-6 w-6 animate-spin rounded-full border-indigo-600 border-b-2" />
+                  <p className="mt-2 text-gray-500 text-sm">
+                    Carregando dados...
+                  </p>
+                </div>
+              )
+              : (
+                <div>
+                  <h3 className="mb-4 font-medium text-gray-900 text-lg">
+                    Dados Protegidos
+                  </h3>
+                  <pre className="rounded bg-gray-100 p-4 text-sm">
                   {JSON.stringify(data, undefined, 2)}
-                </pre>
-              </div>
-            )}
+                  </pre>
+                </div>
+              )}
           </div>
         </div>
       </div>

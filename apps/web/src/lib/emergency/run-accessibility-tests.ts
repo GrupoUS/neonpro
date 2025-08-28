@@ -19,8 +19,7 @@ export async function executeEmergencyAccessibilityTests(): Promise<void> {
 
   try {
     // Run the complete test suite
-    const testExecution =
-      await emergencyAccessibilityTestRunner.runEmergencyAccessibilityTests();
+    const testExecution = await emergencyAccessibilityTestRunner.runEmergencyAccessibilityTests();
 
     // Generate detailed report
     const detailedReport = emergencyAccessibility.generateAccessibilityReport();

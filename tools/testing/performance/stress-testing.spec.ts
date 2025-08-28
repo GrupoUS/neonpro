@@ -123,9 +123,8 @@ test.describe("🔥 Stress Testing Suite", () => {
       const successRate = successfulRequests.length / results.length;
 
       // Calculate response time trends
-      const avgResponseTime =
-        successfulRequests.reduce((sum, r) => sum + r.responseTime, 0) /
-        successfulRequests.length;
+      const avgResponseTime = successfulRequests.reduce((sum, r) => sum + r.responseTime, 0)
+        / successfulRequests.length;
       // Check for performance degradation over time
       const firstHalf = successfulRequests.slice(
         0,
@@ -135,14 +134,11 @@ test.describe("🔥 Stress Testing Suite", () => {
         Math.floor(successfulRequests.length / 2),
       );
 
-      const firstHalfAvg =
-        firstHalf.reduce((sum, r) => sum + r.responseTime, 0) /
-        firstHalf.length;
-      const secondHalfAvg =
-        secondHalf.reduce((sum, r) => sum + r.responseTime, 0) /
-        secondHalf.length;
-      const performanceDegradation =
-        (secondHalfAvg - firstHalfAvg) / firstHalfAvg;
+      const firstHalfAvg = firstHalf.reduce((sum, r) => sum + r.responseTime, 0)
+        / firstHalf.length;
+      const secondHalfAvg = secondHalf.reduce((sum, r) => sum + r.responseTime, 0)
+        / secondHalf.length;
+      const performanceDegradation = (secondHalfAvg - firstHalfAvg) / firstHalfAvg;
 
       // Assertions for sustained load
       expect(
@@ -190,8 +186,7 @@ test.describe("🔥 Stress Testing Suite", () => {
           return {
             usedJSMemory: (performance as unknown).memory?.usedJSMemory || 0,
             totalJSMemory: (performance as unknown).memory?.totalJSMemory || 0,
-            jsHeapSizeLimit:
-              (performance as unknown).memory?.jsHeapSizeLimit || 0,
+            jsHeapSizeLimit: (performance as unknown).memory?.jsHeapSizeLimit || 0,
           };
         });
 
@@ -273,9 +268,8 @@ test.describe("🔥 Stress Testing Suite", () => {
       const successfulConnections = results.filter((r) => r.success);
       const failedConnections = results.filter((r) => !r.success);
       const successRate = successfulConnections.length / results.length;
-      const avgResponseTime =
-        successfulConnections.reduce((sum, r) => sum + r.responseTime, 0) /
-        successfulConnections.length;
+      const avgResponseTime = successfulConnections.reduce((sum, r) => sum + r.responseTime, 0)
+        / successfulConnections.length;
       // Database connection pool should handle reasonable concurrent load
       expect(
         successRate,
@@ -287,9 +281,7 @@ test.describe("🔥 Stress Testing Suite", () => {
       ).toBeLessThan(1000);
 
       // Check for connection timeout errors
-      const timeoutErrors = failedConnections.filter((r) =>
-        r.error?.includes("timeout"),
-      );
+      const timeoutErrors = failedConnections.filter((r) => r.error?.includes("timeout"));
       expect(
         timeoutErrors.length,
         "Should not have excessive connection timeouts",
@@ -303,15 +295,14 @@ test.describe("🔥 Stress Testing Suite", () => {
     await test.step("Test system recovery after overload", async () => {
       const { HIGH_LOAD_REQUESTS: overloadRequests } = STRESS_TEST_CONFIG;
       const endpoint = "/api/v1/health";
-      const overloadPromises = Array.from({ length: overloadRequests }, () =>
-        page.request.get(endpoint).catch(() => ({ status: () => 0 })),
+      const overloadPromises = Array.from(
+        { length: overloadRequests },
+        () => page.request.get(endpoint).catch(() => ({ status: () => 0 })),
       );
       const overloadResults = await Promise.all(overloadPromises);
-      await new Promise((resolve) =>
-        setTimeout(resolve, STRESS_TEST_CONFIG.RECOVERY_TIME_MS),
-      );
+      await new Promise((resolve) => setTimeout(resolve, STRESS_TEST_CONFIG.RECOVERY_TIME_MS));
       const recoveryTests = 10;
-      const recoveryResults: { status: number; responseTime: number }[] = [];
+      const recoveryResults: { status: number; responseTime: number; }[] = [];
 
       for (let i = 0; i < recoveryTests; i++) {
         const requestStart = performance.now();
@@ -327,12 +318,10 @@ test.describe("🔥 Stress Testing Suite", () => {
       }
 
       // Analyze recovery
-      const recoverySuccessRate =
-        recoveryResults.filter((r) => r.status >= 200 && r.status < 300)
-          .length / recoveryResults.length;
-      const avgRecoveryResponseTime =
-        recoveryResults.reduce((sum, r) => sum + r.responseTime, 0) /
-        recoveryResults.length;
+      const recoverySuccessRate = recoveryResults.filter((r) => r.status >= 200 && r.status < 300)
+        .length / recoveryResults.length;
+      const avgRecoveryResponseTime = recoveryResults.reduce((sum, r) => sum + r.responseTime, 0)
+        / recoveryResults.length;
 
       // Recovery assertions
       expect(
@@ -401,8 +390,7 @@ test.describe("🔥 Stress Testing Suite", () => {
         const networkErrors = responses.filter((r) => r.status === 0).length;
 
         const successRate = successfulRequests / totalRequests;
-        const errorRate =
-          (clientErrors + serverErrors + networkErrors) / totalRequests;
+        const errorRate = (clientErrors + serverErrors + networkErrors) / totalRequests;
         const serverErrorRate = serverErrors / totalRequests;
 
         const scenarioResult = {
@@ -426,8 +414,8 @@ test.describe("🔥 Stress Testing Suite", () => {
       scenarioResults.forEach((result) => {
         // Error rate assertions based on load level
         if (
-          result.scenario === "Light Load" ||
-          result.scenario === "Medium Load"
+          result.scenario === "Light Load"
+          || result.scenario === "Medium Load"
         ) {
           expect(
             result.errorRate,

@@ -109,10 +109,10 @@ interface ChatResponse {
   id: string;
   object: "chat.completion.chunk";
   choices: Array<{
-    delta: { content?: string };
+    delta: { content?: string; };
     finish_reason?: "stop" | "length";
   }>;
-  usage?: { prompt_tokens: number; completion_tokens: number };
+  usage?: { prompt_tokens: number; completion_tokens: number; };
 }
 ```
 
@@ -206,8 +206,7 @@ export async function POST(req: Request) {
     appointment_id,
     no_show_probability: probability[0],
     confidence_score: calculateConfidence(appointmentFeatures),
-    risk_level:
-      probability[0] > 0.7 ? "high" : probability[0] > 0.4 ? "medium" : "low",
+    risk_level: probability[0] > 0.7 ? "high" : probability[0] > 0.4 ? "medium" : "low",
     contributing_factors: calculateRiskFactors(
       appointmentFeatures,
       probability[0],
@@ -279,9 +278,9 @@ interface PatientResponse {
   created_at: string;
   updated_at: string;
   consent_status: {
-    medical_treatment: { granted: boolean; date: string };
-    appointment_scheduling: { granted: boolean; date: string };
-    marketing_communications: { granted: boolean; date: string };
+    medical_treatment: { granted: boolean; date: string; };
+    appointment_scheduling: { granted: boolean; date: string; };
+    marketing_communications: { granted: boolean; date: string; };
   };
   access_log: Array<{
     accessed_by: string;
@@ -423,9 +422,9 @@ interface HealthResponse {
   status: "healthy" | "degraded" | "unhealthy";
   timestamp: string;
   services: {
-    database: { status: string; response_time_ms: number };
-    ai_service: { status: string; response_time_ms: number };
-    ml_model: { status: string; model_version: string };
+    database: { status: string; response_time_ms: number; };
+    ai_service: { status: string; response_time_ms: number; };
+    ml_model: { status: string; model_version: string; };
   };
   metrics: {
     active_sessions: number;

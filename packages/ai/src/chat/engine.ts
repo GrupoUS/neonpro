@@ -131,10 +131,9 @@ export class HealthcareAIEngine {
     messages: ChatMessage[],
     sessionContext: unknown,
   ): Promise<unknown> {
-    const systemPrompt =
-      this.interfaceType === "external"
-        ? HEALTHCARE_SYSTEM_PROMPT
-        : INTERNAL_SYSTEM_PROMPT;
+    const systemPrompt = this.interfaceType === "external"
+      ? HEALTHCARE_SYSTEM_PROMPT
+      : INTERNAL_SYSTEM_PROMPT;
 
     const contextualPrompt = this.buildContextualPrompt(sessionContext);
 
@@ -165,10 +164,9 @@ export class HealthcareAIEngine {
     messages: ChatMessage[],
     sessionContext: unknown,
   ): Promise<string> {
-    const systemPrompt =
-      this.interfaceType === "external"
-        ? HEALTHCARE_SYSTEM_PROMPT
-        : INTERNAL_SYSTEM_PROMPT;
+    const systemPrompt = this.interfaceType === "external"
+      ? HEALTHCARE_SYSTEM_PROMPT
+      : INTERNAL_SYSTEM_PROMPT;
 
     const contextualPrompt = this.buildContextualPrompt(sessionContext);
 
@@ -247,7 +245,7 @@ export class HealthcareAIEngine {
     ];
 
     const hasmedicalContent = medicalKeywords.some((keyword) =>
-      message.toLowerCase().includes(keyword),
+      message.toLowerCase().includes(keyword)
     );
 
     if (!hasmedicalContent) {
@@ -291,7 +289,7 @@ export class HealthcareAIEngine {
     ];
 
     const hasAppointmentContent = appointmentKeywords.some((keyword) =>
-      message.toLowerCase().includes(keyword),
+      message.toLowerCase().includes(keyword)
     );
 
     if (!hasAppointmentContent) {
@@ -355,8 +353,7 @@ export class HealthcareAIEngine {
         next_actions: [
           {
             action: "schedule_appointment",
-            priority:
-              intentAnalysis.intent_category === "appointment" ? "high" : "low",
+            priority: intentAnalysis.intent_category === "appointment" ? "high" : "low",
           },
         ],
       },
@@ -380,8 +377,8 @@ export class HealthcareAIEngine {
           sessionContext.patient_context.age_group || "não informado"
         }\n`;
         prompt += `- Histórico: ${
-          sessionContext.patient_context.medical_history_summary ||
-          "não disponível"
+          sessionContext.patient_context.medical_history_summary
+          || "não disponível"
         }\n`;
       }
     } else {
@@ -415,15 +412,9 @@ export class HealthcareAIEngine {
     const negativeWords = ["mal", "dor", "ruim", "preocupado", "ansioso"];
     const positiveWords = ["obrigado", "ajuda", "melhor", "ótimo", "bom"];
 
-    const hasUrgent = urgentWords.some((word) =>
-      message.toLowerCase().includes(word),
-    );
-    const hasNegative = negativeWords.some((word) =>
-      message.toLowerCase().includes(word),
-    );
-    const hasPositive = positiveWords.some((word) =>
-      message.toLowerCase().includes(word),
-    );
+    const hasUrgent = urgentWords.some((word) => message.toLowerCase().includes(word));
+    const hasNegative = negativeWords.some((word) => message.toLowerCase().includes(word));
+    const hasPositive = positiveWords.some((word) => message.toLowerCase().includes(word));
 
     let sentiment: "positive" | "neutral" | "negative" | "urgent" = "neutral";
     let confidence = 0.6;
@@ -467,9 +458,7 @@ export class HealthcareAIEngine {
       "acidente",
     ];
 
-    return emergencyKeywords.some((keyword) =>
-      message.toLowerCase().includes(keyword),
-    );
+    return emergencyKeywords.some((keyword) => message.toLowerCase().includes(keyword));
   }
 
   /**
@@ -477,10 +466,10 @@ export class HealthcareAIEngine {
    */
   requiresHumanEscalation(insights: ChatAIInsights): boolean {
     return (
-      insights.intent_analysis.requires_human ||
-      insights.medical_analysis?.requires_immediate_attention ||
-      insights.sentiment_analysis.sentiment === "urgent" ||
-      insights.intent_analysis.intent_category === "emergency"
+      insights.intent_analysis.requires_human
+      || insights.medical_analysis?.requires_immediate_attention
+      || insights.sentiment_analysis.sentiment === "urgent"
+      || insights.intent_analysis.intent_category === "emergency"
     );
   }
 }

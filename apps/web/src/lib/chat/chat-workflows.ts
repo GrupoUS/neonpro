@@ -18,12 +18,12 @@
  */
 
 import type {
-  ChatMessage,
   ChatConversation,
-  MessageContent,
+  ChatMessage,
   HealthcareContext,
+  MessageContent,
 } from "@/types/chat";
-import { SenderType, ConversationType } from "@/types/chat";
+import { ConversationType, SenderType } from "@/types/chat";
 
 export interface WorkflowConfig {
   enable_automated_workflows?: boolean;
@@ -215,7 +215,8 @@ export class ChatWorkflowSystem {
 
       // Fallback response
       responses.push({
-        text: "Desculpe, houve um problema no processamento da sua mensagem. Um profissional será notificado para ajudá-lo.",
+        text:
+          "Desculpe, houve um problema no processamento da sua mensagem. Um profissional será notificado para ajudá-lo.",
         metadata: {
           workflow_error: true,
           error_timestamp: new Date().toISOString(),
@@ -247,8 +248,8 @@ export class ChatWorkflowSystem {
         if (messageText.includes(trigger.toLowerCase())) {
           // Additional context checks
           if (
-            workflow.healthcare_context_required &&
-            !conversation.healthcare_context
+            workflow.healthcare_context_required
+            && !conversation.healthcare_context
           ) {
             continue;
           }
@@ -496,7 +497,7 @@ export class ChatWorkflowSystem {
   private async scheduleAppointment(
     execution: WorkflowExecution,
     step: WorkflowStep,
-  ): Promise<{ response?: MessageContent; escalation_required: boolean }> {
+  ): Promise<{ response?: MessageContent; escalation_required: boolean; }> {
     const collectedData = execution.collected_data;
 
     // Extract scheduling preferences
@@ -525,7 +526,8 @@ export class ChatWorkflowSystem {
 
       return {
         response: {
-          text: `✅ Consulta agendada com sucesso!\n\n📅 Data: ${scheduledSlot.date}\n🕐 Horário: ${scheduledSlot.time}\n🏥 Especialidade: ${specialty}\n\nVocê receberá um lembrete 24 horas antes da consulta.`,
+          text:
+            `✅ Consulta agendada com sucesso!\n\n📅 Data: ${scheduledSlot.date}\n🕐 Horário: ${scheduledSlot.time}\n🏥 Especialidade: ${specialty}\n\nVocê receberá um lembrete 24 horas antes da consulta.`,
           metadata: {
             appointment_scheduled: true,
             appointment_id: appointment.id,
@@ -536,7 +538,8 @@ export class ChatWorkflowSystem {
     } else {
       return {
         response: {
-          text: `Não há horários disponíveis para a data solicitada. Vou conectar você com nossa equipe para encontrar uma alternativa.`,
+          text:
+            `Não há horários disponíveis para a data solicitada. Vou conectar você com nossa equipe para encontrar uma alternativa.`,
           metadata: {
             appointment_scheduling_failed: true,
             reason: "no_availability",
@@ -553,7 +556,7 @@ export class ChatWorkflowSystem {
   private async assessSymptoms(
     execution: WorkflowExecution,
     triggerMessage: ChatMessage,
-  ): Promise<{ response?: MessageContent; escalation_required: boolean }> {
+  ): Promise<{ response?: MessageContent; escalation_required: boolean; }> {
     const collectedData = execution.collected_data;
     const messageText = this.extractTextFromContent(triggerMessage.content);
 
@@ -575,8 +578,8 @@ export class ChatWorkflowSystem {
 
     // Determine recommended actions based on assessment
     assessment.recommended_actions = this.getRecommendedActions(assessment);
-    assessment.requires_immediate_attention =
-      assessment.risk_level === "critical" || assessment.risk_level === "high";
+    assessment.requires_immediate_attention = assessment.risk_level === "critical"
+      || assessment.risk_level === "high";
 
     if (assessment.requires_immediate_attention) {
       assessment.recommended_actions.unshift(
@@ -647,13 +650,14 @@ export class ChatWorkflowSystem {
   private async triggerEmergencyWorkflow(
     message: ChatMessage,
     conversation: ChatConversation,
-  ): Promise<{ responses: MessageContent[] }> {
+  ): Promise<{ responses: MessageContent[]; }> {
     const emergencyWorkflow = this.workflows.get("emergency_protocol");
     if (!emergencyWorkflow) {
       return {
         responses: [
           {
-            text: "🚨 EMERGÊNCIA DETECTADA 🚨\n\nLigue imediatamente para o SAMU: 192\nOu dirija-se ao pronto-socorro mais próximo.",
+            text:
+              "🚨 EMERGÊNCIA DETECTADA 🚨\n\nLigue imediatamente para o SAMU: 192\nOu dirija-se ao pronto-socorro mais próximo.",
             metadata: { emergency_detected: true },
           },
         ],
@@ -673,7 +677,8 @@ export class ChatWorkflowSystem {
     // Immediate emergency response
     const responses: MessageContent[] = [
       {
-        text: "🚨 **EMERGÊNCIA DETECTADA** 🚨\n\n**AÇÃO IMEDIATA:**\n• Ligue AGORA para o SAMU: **192**\n• Mantenha a calma\n• Permaneça na linha\n\nUm profissional foi notificado e entrará em contato.",
+        text:
+          "🚨 **EMERGÊNCIA DETECTADA** 🚨\n\n**AÇÃO IMEDIATA:**\n• Ligue AGORA para o SAMU: **192**\n• Mantenha a calma\n• Permaneça na linha\n\nUm profissional foi notificado e entrará em contato.",
         metadata: {
           emergency_protocol_triggered: true,
           samu_number: "192",
@@ -755,8 +760,7 @@ export class ChatWorkflowSystem {
         {
           id: "completion",
           type: "message",
-          content:
-            "Agendamento concluído! Você receberá uma confirmação em breve.",
+          content: "Agendamento concluído! Você receberá uma confirmação em breve.",
           next_steps: {},
         },
       ],
@@ -839,8 +843,7 @@ export class ChatWorkflowSystem {
         {
           id: "emergency_assessment",
           type: "question",
-          content:
-            "🚨 EMERGÊNCIA DETECTADA 🚨\n\nVocê está consciente e pode responder?",
+          content: "🚨 EMERGÊNCIA DETECTADA 🚨\n\nVocê está consciente e pode responder?",
           options: ["Sim, posso responder", "Respondendo por outra pessoa"],
           next_steps: {
             "Sim, posso responder": "location_inquiry",
@@ -897,8 +900,8 @@ export class ChatWorkflowSystem {
     // Check for exact option matches
     if (currentStep.options && currentStep.options.includes(userResponse)) {
       return (
-        currentStep.next_steps[userResponse] ||
-        currentStep.next_steps["default"]
+        currentStep.next_steps[userResponse]
+        || currentStep.next_steps["default"]
       );
     }
 
@@ -981,9 +984,9 @@ export class ChatWorkflowSystem {
     const duration = data["symptom_duration"] || "";
 
     if (
-      severity >= 9 ||
-      symptoms.includes("dor no peito") ||
-      symptoms.includes("dificuldade respirar")
+      severity >= 9
+      || symptoms.includes("dor no peito")
+      || symptoms.includes("dificuldade respirar")
     ) {
       return "critical";
     } else if (severity >= 7 || duration.includes("semana")) {
@@ -1016,13 +1019,13 @@ export class ChatWorkflowSystem {
     if (symptoms.includes("dor no peito") || symptoms.includes("palpitação")) {
       return "Cardiologia";
     } else if (
-      symptoms.includes("dor de cabeça") ||
-      symptoms.includes("tontura")
+      symptoms.includes("dor de cabeça")
+      || symptoms.includes("tontura")
     ) {
       return "Neurologia";
     } else if (
-      symptoms.includes("dor abdominal") ||
-      symptoms.includes("náusea")
+      symptoms.includes("dor abdominal")
+      || symptoms.includes("náusea")
     ) {
       return "Gastroenterologia";
     }
@@ -1042,10 +1045,11 @@ export class ChatWorkflowSystem {
 
   private async collectVitalSigns(
     execution: WorkflowExecution,
-  ): Promise<{ response?: MessageContent; escalation_required: boolean }> {
+  ): Promise<{ response?: MessageContent; escalation_required: boolean; }> {
     return {
       response: {
-        text: "Por favor, informe seus sinais vitais se disponível:\n• Pressão arterial\n• Temperatura\n• Frequência cardíaca",
+        text:
+          "Por favor, informe seus sinais vitais se disponível:\n• Pressão arterial\n• Temperatura\n• Frequência cardíaca",
         metadata: { action: "collect_vital_signs" },
       },
       escalation_required: false,
@@ -1054,7 +1058,7 @@ export class ChatWorkflowSystem {
 
   private async sendTreatmentReminder(
     execution: WorkflowExecution,
-  ): Promise<{ response?: MessageContent; escalation_required: boolean }> {
+  ): Promise<{ response?: MessageContent; escalation_required: boolean; }> {
     return {
       response: {
         text: "⏰ Lembrete: Não esqueça de tomar sua medicação conforme prescrito.",
@@ -1066,7 +1070,7 @@ export class ChatWorkflowSystem {
 
   private async updateMedicalRecord(
     execution: WorkflowExecution,
-  ): Promise<{ response?: MessageContent; escalation_required: boolean }> {
+  ): Promise<{ response?: MessageContent; escalation_required: boolean; }> {
     return {
       response: {
         text: "📋 Suas informações foram atualizadas no prontuário médico.",
@@ -1078,12 +1082,14 @@ export class ChatWorkflowSystem {
 
   private async calculateRiskScore(
     execution: WorkflowExecution,
-  ): Promise<{ response?: MessageContent; escalation_required: boolean }> {
+  ): Promise<{ response?: MessageContent; escalation_required: boolean; }> {
     const riskScore = Math.floor(Math.random() * 100) + 1; // Mock calculation
 
     return {
       response: {
-        text: `📊 Seu score de risco calculado: ${riskScore}/100\n${riskScore > 70 ? "Recomenda-se acompanhamento médico." : "Score dentro do esperado."}`,
+        text: `📊 Seu score de risco calculado: ${riskScore}/100\n${
+          riskScore > 70 ? "Recomenda-se acompanhamento médico." : "Score dentro do esperado."
+        }`,
         metadata: {
           action: "risk_score_calculated",
           risk_score: riskScore,

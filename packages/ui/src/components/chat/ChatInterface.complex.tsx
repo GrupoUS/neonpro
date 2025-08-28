@@ -194,10 +194,10 @@ export function ChatInterface({
               term === "agendar"
                 ? "agendar uma consulta"
                 : term === "dor"
-                  ? "relatar sintomas de dor"
-                  : term === "exame"
-                    ? "solicitar informações sobre exames"
-                    : `obter informações sobre ${term}`
+                ? "relatar sintomas de dor"
+                : term === "exame"
+                ? "solicitar informações sobre exames"
+                : `obter informações sobre ${term}`
             }?`,
             type: data.context as unknown,
             confidence: lowerInput === term ? 0.9 : 0.7,
@@ -314,9 +314,7 @@ export function ChatInterface({
       switch (e.key) {
         case "ArrowDown": {
           e.preventDefault();
-          setSelectedSuggestionIndex((prev) =>
-            prev < smartSuggestions.length - 1 ? prev + 1 : 0,
-          );
+          setSelectedSuggestionIndex((prev) => prev < smartSuggestions.length - 1 ? prev + 1 : 0);
           announceToScreenReader(
             `Sugestão ${selectedSuggestionIndex + 1}: ${
               smartSuggestions[selectedSuggestionIndex]?.text
@@ -326,9 +324,7 @@ export function ChatInterface({
         }
         case "ArrowUp": {
           e.preventDefault();
-          setSelectedSuggestionIndex((prev) =>
-            prev > 0 ? prev - 1 : smartSuggestions.length - 1,
-          );
+          setSelectedSuggestionIndex((prev) => prev > 0 ? prev - 1 : smartSuggestions.length - 1);
           announceToScreenReader(
             `Sugestão ${selectedSuggestionIndex + 1}: ${
               smartSuggestions[selectedSuggestionIndex]?.text
@@ -577,29 +573,31 @@ export function ChatInterface({
 
       {/* Messages */}
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
-        {messages.length === 0 ? (
-          <div className="py-8 text-center text-muted-foreground">
-            <Bot className="mx-auto mb-4 h-12 w-12 opacity-50" />
-            <p className="mb-2 font-medium text-lg">
-              {interface_type === "external"
-                ? "Olá! Como posso ajudá-lo hoje?"
-                : "Sistema pronto. Como posso auxiliar?"}
-            </p>
-            <p className="text-sm">
-              {interface_type === "external"
-                ? "Posso ajudar com agendamentos, informações sobre a clínica e orientações gerais."
-                : "Consulte dados, gere relatórios ou faça perguntas sobre operações."}
-            </p>
-          </div>
-        ) : (
-          messages.map((message: ChatMessage) => (
-            <MessageBubble
-              interface_type={interface_type}
-              key={message.id}
-              message={message}
-            />
-          ))
-        )}
+        {messages.length === 0
+          ? (
+            <div className="py-8 text-center text-muted-foreground">
+              <Bot className="mx-auto mb-4 h-12 w-12 opacity-50" />
+              <p className="mb-2 font-medium text-lg">
+                {interface_type === "external"
+                  ? "Olá! Como posso ajudá-lo hoje?"
+                  : "Sistema pronto. Como posso auxiliar?"}
+              </p>
+              <p className="text-sm">
+                {interface_type === "external"
+                  ? "Posso ajudar com agendamentos, informações sobre a clínica e orientações gerais."
+                  : "Consulte dados, gere relatórios ou faça perguntas sobre operações."}
+              </p>
+            </div>
+          )
+          : (
+            messages.map((message: ChatMessage) => (
+              <MessageBubble
+                interface_type={interface_type}
+                key={message.id}
+                message={message}
+              />
+            ))
+          )}
 
         {state.is_loading && showTypingIndicator && <TypingIndicator />}
 
@@ -629,14 +627,16 @@ export function ChatInterface({
             <div className="space-y-1">
               {smartSuggestions.map((suggestion, index) => (
                 <button
-                  aria-label={`Sugestão ${index + 1}: ${suggestion.text}. Confiança: ${Math.round(
-                    suggestion.confidence * 100,
-                  )}%`}
+                  aria-label={`Sugestão ${index + 1}: ${suggestion.text}. Confiança: ${
+                    Math.round(
+                      suggestion.confidence * 100,
+                    )
+                  }%`}
                   className={cn(
                     "w-full rounded-md p-2 text-left text-sm transition-colors",
                     "hover:bg-muted focus:bg-muted focus:outline-none",
-                    selectedSuggestionIndex === index &&
-                      "border border-primary/20 bg-primary/10",
+                    selectedSuggestionIndex === index
+                      && "border border-primary/20 bg-primary/10",
                   )}
                   key={suggestion.id}
                   onClick={() => {
@@ -664,8 +664,8 @@ export function ChatInterface({
                           suggestion.confidence > 0.8
                             ? "bg-green-100 text-green-700"
                             : suggestion.confidence > 0.6
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-gray-100 text-gray-700",
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-gray-100 text-gray-700",
                         )}
                         variant="secondary"
                       >
@@ -682,9 +682,7 @@ export function ChatInterface({
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <Input
-              aria-describedby={
-                showSuggestions ? "smart-suggestions" : undefined
-              }
+              aria-describedby={showSuggestions ? "smart-suggestions" : undefined}
               aria-label={`Campo de mensagem do chat ${
                 interface_type === "external"
                   ? "do paciente"
@@ -696,25 +694,19 @@ export function ChatInterface({
                 voiceRecording.isRecording && "border-red-300 bg-red-50",
                 fileUpload.isUploading && "border-blue-300 bg-blue-50",
               )}
-              disabled={
-                state.is_loading ||
-                !isConnected() ||
-                voiceRecording.isProcessing
-              }
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setInputValue(e.target.value)
-              }
+              disabled={state.is_loading
+                || !isConnected()
+                || voiceRecording.isProcessing}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
               onKeyDown={handleKeyPress}
-              placeholder={
-                voiceRecording.isProcessing
-                  ? "Processando áudio..."
-                  : fileUpload.isUploading
-                    ? `Enviando ${fileUpload.fileName}...`
-                    : placeholder ||
-                      (interface_type === "external"
-                        ? "Digite sua mensagem ou use os comandos de voz..."
-                        : "Faça uma pergunta, solicite um relatório ou envie documentos...")
-              }
+              placeholder={voiceRecording.isProcessing
+                ? "Processando áudio..."
+                : fileUpload.isUploading
+                ? `Enviando ${fileUpload.fileName}...`
+                : placeholder
+                  || (interface_type === "external"
+                    ? "Digite sua mensagem ou use os comandos de voz..."
+                    : "Faça uma pergunta, solicite um relatório ou envie documentos...")}
               ref={inputRef}
               value={inputValue}
             />
@@ -726,8 +718,8 @@ export function ChatInterface({
                   aria-label="Enviar arquivo médico (PDF, imagens, documentos)"
                   className={cn(
                     "h-8 w-8",
-                    fileUpload.isUploading &&
-                      "animate-pulse bg-blue-50 text-blue-500",
+                    fileUpload.isUploading
+                      && "animate-pulse bg-blue-50 text-blue-500",
                   )}
                   disabled={state.is_loading || fileUpload.isUploading}
                   onClick={handleFileUpload}
@@ -735,30 +727,26 @@ export function ChatInterface({
                   type="button"
                   variant="ghost"
                 >
-                  {fileUpload.isUploading ? (
-                    <FileUp className="h-4 w-4 animate-bounce" />
-                  ) : (
-                    <Paperclip className="h-4 w-4" />
-                  )}
+                  {fileUpload.isUploading
+                    ? <FileUp className="h-4 w-4 animate-bounce" />
+                    : <Paperclip className="h-4 w-4" />}
                 </Button>
               )}
 
               {/* FASE 3: Enhanced Voice Recording */}
               {enableVoiceInput && (
                 <Button
-                  aria-label={
-                    voiceRecording.isRecording
-                      ? "Parar gravação de voz"
-                      : voiceRecording.isProcessing
-                        ? "Processando áudio..."
-                        : "Iniciar gravação de voz para ditado médico"
-                  }
+                  aria-label={voiceRecording.isRecording
+                    ? "Parar gravação de voz"
+                    : voiceRecording.isProcessing
+                    ? "Processando áudio..."
+                    : "Iniciar gravação de voz para ditado médico"}
                   className={cn(
                     "h-8 w-8 transition-all duration-200",
-                    voiceRecording.isRecording &&
-                      "scale-110 animate-pulse bg-red-50 text-red-500",
-                    voiceRecording.isProcessing &&
-                      "animate-spin bg-blue-50 text-blue-500",
+                    voiceRecording.isRecording
+                      && "scale-110 animate-pulse bg-red-50 text-red-500",
+                    voiceRecording.isProcessing
+                      && "animate-spin bg-blue-50 text-blue-500",
                   )}
                   disabled={state.is_loading || voiceRecording.isProcessing}
                   onClick={toggleRecording}
@@ -766,13 +754,11 @@ export function ChatInterface({
                   type="button"
                   variant="ghost"
                 >
-                  {voiceRecording.isProcessing ? (
-                    <Volume2 className="h-4 w-4" />
-                  ) : voiceRecording.isRecording ? (
-                    <MicOff className="h-4 w-4" />
-                  ) : (
-                    <Mic className="h-4 w-4" />
-                  )}
+                  {voiceRecording.isProcessing
+                    ? <Volume2 className="h-4 w-4" />
+                    : voiceRecording.isRecording
+                    ? <MicOff className="h-4 w-4" />
+                    : <Mic className="h-4 w-4" />}
                 </Button>
               )}
             </div>

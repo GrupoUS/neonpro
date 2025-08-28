@@ -50,7 +50,7 @@ export class StockNotificationsService {
   private async sendNotificationByChannel(
     alert: StockAlert,
     channel: NotificationChannel,
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; error?: string; }> {
     switch (channel) {
       case "in_app": {
         return await this.sendInAppNotification(alert);
@@ -81,7 +81,7 @@ export class StockNotificationsService {
    */
   private async sendInAppNotification(
     alert: StockAlert,
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; error?: string; }> {
     try {
       // Get users who should receive notifications for this clinic
       const { data: recipients, error: recipientsError } = await this.supabase
@@ -135,7 +135,7 @@ export class StockNotificationsService {
    */
   private async sendEmailNotification(
     alert: StockAlert,
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; error?: string; }> {
     try {
       // Get clinic email settings and recipients
       const { data: clinicSettings, error: settingsError } = await this.supabase
@@ -194,7 +194,7 @@ export class StockNotificationsService {
    */
   private async sendSMSNotification(
     alert: StockAlert,
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; error?: string; }> {
     try {
       // Get clinic SMS settings
       const { data: clinicSettings, error: settingsError } = await this.supabase
@@ -251,7 +251,7 @@ export class StockNotificationsService {
    */
   private async sendWhatsAppNotification(
     alert: StockAlert,
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; error?: string; }> {
     // Implementation would depend on WhatsApp Business API integration
     // For now, return success for demonstration
     try {
@@ -260,10 +260,9 @@ export class StockNotificationsService {
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "WhatsApp service unavailable",
+        error: error instanceof Error
+          ? error.message
+          : "WhatsApp service unavailable",
       };
     }
   }
@@ -273,7 +272,7 @@ export class StockNotificationsService {
    */
   private async sendPushNotification(
     alert: StockAlert,
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; error?: string; }> {
     try {
       // Get push tokens for clinic users
       const { data: tokens, error: tokensError } = await this.supabase
@@ -322,7 +321,7 @@ export class StockNotificationsService {
    */
   private async sendSlackNotification(
     alert: StockAlert,
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; error?: string; }> {
     try {
       // Get Slack webhook URL for clinic
       const { data: clinicSettings, error: settingsError } = await this.supabase
@@ -332,9 +331,9 @@ export class StockNotificationsService {
         .single();
 
       if (
-        settingsError ||
-        !clinicSettings?.slack_enabled ||
-        !clinicSettings.slack_webhook_url
+        settingsError
+        || !clinicSettings?.slack_enabled
+        || !clinicSettings.slack_webhook_url
       ) {
         return {
           success: false,
@@ -397,9 +396,11 @@ export class StockNotificationsService {
       critical: "🚨",
     };
 
-    return `${severityEmoji[alert.severityLevel]} Stock Alert - ${alert.alertType
-      .replace("_", " ")
-      .toUpperCase()}`;
+    return `${severityEmoji[alert.severityLevel]} Stock Alert - ${
+      alert.alertType
+        .replace("_", " ")
+        .toUpperCase()
+    }`;
   }
 
   /**
@@ -430,10 +431,12 @@ export class StockNotificationsService {
    * Format SMS content (limited to 160 characters)
    */
   private formatSMSContent(alert: StockAlert): string {
-    const shortMessage = `🚨 ${alert.alertType.replace("_", " ").toUpperCase()}: ${alert.message.slice(
-      0,
-      100,
-    )}...`;
+    const shortMessage = `🚨 ${alert.alertType.replace("_", " ").toUpperCase()}: ${
+      alert.message.slice(
+        0,
+        100,
+      )
+    }...`;
     return shortMessage.length > 160
       ? `${shortMessage.slice(0, 157)}...`
       : shortMessage;
@@ -545,8 +548,7 @@ export class StockNotificationsService {
     return {
       total: stats.total,
       byChannel: stats.byChannel,
-      success_rate:
-        stats.total > 0 ? (stats.successful / stats.total) * 100 : 0,
+      success_rate: stats.total > 0 ? (stats.successful / stats.total) * 100 : 0,
     };
   }
 }

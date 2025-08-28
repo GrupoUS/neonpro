@@ -121,12 +121,11 @@ export async function GET(request: NextRequest) {
       monitoring: {
         targetDetectionTime: "<24 hours",
         currentFrequency: "Every 6 hours",
-        systemHealth:
-          alerts.length < 5
-            ? "good"
-            : alerts.length < 10
-              ? "warning"
-              : "critical",
+        systemHealth: alerts.length < 5
+          ? "good"
+          : alerts.length < 10
+          ? "warning"
+          : "critical",
       },
     });
   } catch (error) {

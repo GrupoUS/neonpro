@@ -36,7 +36,7 @@ export interface AppointmentInstance {
 export interface UseRecurringAppointmentsOptions {
   professionalId?: string;
   patientId?: string;
-  dateRange?: { start: Date; end: Date };
+  dateRange?: { start: Date; end: Date; };
 }
 
 export interface UseRecurringAppointmentsReturn {
@@ -59,7 +59,7 @@ export interface UseRecurringAppointmentsReturn {
   ) => Promise<string | null>;
   generateInstances: (
     recurringId: string,
-    dateRange: { start: Date; end: Date },
+    dateRange: { start: Date; end: Date; },
   ) => Promise<AppointmentInstance[]>;
   refreshData: () => Promise<void>;
 }
@@ -114,8 +114,7 @@ export function useRecurringAppointments(
       setRecurringAppointments(mockRecurring);
       setInstances(mockInstances);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to refresh data";
+      const errorMessage = error instanceof Error ? error.message : "Failed to refresh data";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -141,10 +140,9 @@ export function useRecurringAppointments(
         setRecurringAppointments((prev) => [...prev, newAppointment]);
         return newId;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to create recurring appointment";
+        const errorMessage = error instanceof Error
+          ? error.message
+          : "Failed to create recurring appointment";
         setError(errorMessage);
         return;
       }
@@ -162,16 +160,15 @@ export function useRecurringAppointments(
           prev.map((appointment) =>
             appointment.id === id
               ? { ...appointment, ...updates }
-              : appointment,
-          ),
+              : appointment
+          )
         );
 
         return true;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to update recurring appointment";
+        const errorMessage = error instanceof Error
+          ? error.message
+          : "Failed to update recurring appointment";
         setError(errorMessage);
         return false;
       }
@@ -185,16 +182,15 @@ export function useRecurringAppointments(
         prev.map((appointment) =>
           appointment.id === id
             ? { ...appointment, is_active: false }
-            : appointment,
-        ),
+            : appointment
+        )
       );
 
       return true;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to cancel recurring appointment";
+      const errorMessage = error instanceof Error
+        ? error.message
+        : "Failed to cancel recurring appointment";
       setError(errorMessage);
       return false;
     }
@@ -222,8 +218,7 @@ export function useRecurringAppointments(
         setInstances((prev) => [...prev, exception]);
         return newId;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to create exception";
+        const errorMessage = error instanceof Error ? error.message : "Failed to create exception";
         setError(errorMessage);
         return;
       }
@@ -234,7 +229,7 @@ export function useRecurringAppointments(
   const generateInstances = useCallback(
     async (
       recurringId: string,
-      dateRange: { start: Date; end: Date },
+      dateRange: { start: Date; end: Date; },
     ): Promise<AppointmentInstance[]> => {
       try {
         // Placeholder implementation
@@ -252,10 +247,9 @@ export function useRecurringAppointments(
 
         return mockInstances;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to generate instances";
+        const errorMessage = error instanceof Error
+          ? error.message
+          : "Failed to generate instances";
         setError(errorMessage);
         return [];
       }

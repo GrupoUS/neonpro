@@ -268,7 +268,13 @@ export interface LGPDDataProcessingRecord {
   readonly id: string;
   readonly dataSubjectId: string; // Patient/User ID
   readonly processingPurpose: string;
-  readonly legalBasis: "consent" | "contract" | "legal_obligation" | "vital_interests" | "public_task" | "legitimate_interests";
+  readonly legalBasis:
+    | "consent"
+    | "contract"
+    | "legal_obligation"
+    | "vital_interests"
+    | "public_task"
+    | "legitimate_interests";
   readonly dataCategories: readonly string[];
   readonly recipients?: readonly string[]; // Third parties
   readonly dataRetentionPeriod: string;
@@ -488,7 +494,12 @@ export interface AppointmentWorkflow {
   readonly appointmentId: string;
   readonly steps: readonly {
     readonly stepId: string;
-    readonly stepType: "validation" | "notification" | "calendar_update" | "payment" | "confirmation";
+    readonly stepType:
+      | "validation"
+      | "notification"
+      | "calendar_update"
+      | "payment"
+      | "confirmation";
     readonly status: "pending" | "processing" | "completed" | "failed";
     readonly executedAt?: string;
     readonly retryCount: number;
@@ -542,7 +553,11 @@ graph TD
 ```typescript
 export interface AIAnalysisRequest {
   readonly requestId: string;
-  readonly analysisType: "risk_assessment" | "appointment_optimization" | "patient_insights" | "compliance_check";
+  readonly analysisType:
+    | "risk_assessment"
+    | "appointment_optimization"
+    | "patient_insights"
+    | "compliance_check";
   readonly inputData: {
     readonly patientId?: string;
     readonly professionalId?: string;

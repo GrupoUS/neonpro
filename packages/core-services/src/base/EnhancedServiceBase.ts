@@ -16,12 +16,7 @@ import {
   EnterpriseSecurityService,
 } from "../enterprise";
 import { EnterpriseHealthCheckService } from "../health";
-import type {
-  AuditEvent,
-  PerformanceMetrics,
-  SecurityConfig,
-  ServiceContext,
-} from "../types";
+import type { AuditEvent, PerformanceMetrics, SecurityConfig, ServiceContext } from "../types";
 
 // Core service interfaces
 interface ICacheService {
@@ -606,12 +601,11 @@ export abstract class EnhancedServiceBase {
       errors.push(`Audit service error: ${(error as Error).message}`);
     }
 
-    const status =
-      errors.length === 0
-        ? "healthy"
-        : errors.length <= 2
-          ? "degraded"
-          : "unhealthy";
+    const status = errors.length === 0
+      ? "healthy"
+      : errors.length <= 2
+      ? "degraded"
+      : "unhealthy";
 
     return { status, services: results, errors };
   }

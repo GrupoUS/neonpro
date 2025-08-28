@@ -376,7 +376,7 @@ export interface NavItem {
   id: string;
   label: string;
   href: string;
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<{ className?: string; }>;
   isActive?: boolean;
   children?: NavItem[];
 }
@@ -403,7 +403,7 @@ export interface FormFieldConfig {
     | "textarea"
     | "checkbox";
   validation?: FormValidation;
-  options?: { value: string; label: string }[];
+  options?: { value: string; label: string; }[];
   placeholder?: string;
   description?: string;
 }

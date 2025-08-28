@@ -69,11 +69,13 @@ const useOnlineStatus = () => {
 const useTouchGestures = (
   onSwipe?: (direction: "left" | "right" | "up" | "down") => void,
 ) => {
-  const [touchStart, setTouchStart] = useState<{
-    x: number;
-    y: number;
-    time: number;
-  } | null>();
+  const [touchStart, setTouchStart] = useState<
+    {
+      x: number;
+      y: number;
+      time: number;
+    } | null
+  >();
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0];
@@ -108,8 +110,8 @@ const useTouchGestures = (
       }
 
       if (
-        Math.abs(deltaX) > Math.abs(deltaY) &&
-        Math.abs(deltaX) > minDistance
+        Math.abs(deltaX) > Math.abs(deltaY)
+        && Math.abs(deltaX) > minDistance
       ) {
         onSwipe(deltaX > 0 ? "right" : "left");
       } else if (Math.abs(deltaY) > minDistance) {
@@ -128,7 +130,7 @@ interface MobileDashboardCardProps extends OfflineCapable {
   title: string;
   value: string | number;
   description?: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; }>;
   trend?: {
     value: number;
     label: string;
@@ -145,8 +147,8 @@ interface MobileDashboardCardProps extends OfflineCapable {
   criticalData?: boolean; // For emergency healthcare data
   touchFeedback?: boolean;
   swipeActions?: {
-    left?: { action: () => void; label: string };
-    right?: { action: () => void; label: string };
+    left?: { action: () => void; label: string; };
+    right?: { action: () => void; label: string; };
   };
   // Accessibility enhancements
   ariaLabel?: string;
@@ -249,18 +251,17 @@ export function MobileDashboardCard({
 
   // FASE 3: Enhanced accessibility and PWA status
   const getCardAriaLabel = () => {
-    const baseLabel =
-      ariaLabel || `${title}: ${value}${description ? `. ${description}` : ""}`;
+    const baseLabel = ariaLabel || `${title}: ${value}${description ? `. ${description}` : ""}`;
     const offlineStatus = !onlineStatus ? ". Dados offline" : "";
     const criticalStatus = criticalData ? ". Dados críticos de saúde" : "";
     const trendStatus = trend
       ? `. Tendência: ${
-          trend.direction === "up"
-            ? "subindo"
-            : trend.direction === "down"
-              ? "descendo"
-              : "estável"
-        } ${trend.value}%`
+        trend.direction === "up"
+          ? "subindo"
+          : trend.direction === "down"
+          ? "descendo"
+          : "estável"
+      } ${trend.value}%`
       : "";
 
     return `${baseLabel}${offlineStatus}${criticalStatus}${trendStatus}`;
@@ -287,8 +288,8 @@ export function MobileDashboardCard({
     <Card
       className={cn(
         "neonpro-card group transition-all duration-200",
-        onClick &&
-          "cursor-pointer hover:shadow-lg focus:shadow-lg focus:ring-2 focus:ring-primary focus:ring-offset-2",
+        onClick
+          && "cursor-pointer hover:shadow-lg focus:shadow-lg focus:ring-2 focus:ring-primary focus:ring-offset-2",
         isPressed && touchFeedback && "scale-95 shadow-sm",
         !onlineStatus && !hasCachedData && "opacity-60 border-dashed",
         criticalData && "border-l-4 border-l-red-500",
@@ -300,16 +301,14 @@ export function MobileDashboardCard({
       aria-label={getCardAriaLabel()}
       aria-describedby={ariaDescribedBy}
       aria-live={criticalData ? "polite" : undefined}
-      onKeyDown={
-        onClick
-          ? (e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                onClick();
-              }
-            }
-          : undefined
-      }
+      onKeyDown={onClick
+        ? (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClick();
+          }
+        }
+        : undefined}
       onTouchStart={handleTouchStartFeedback}
       onTouchEnd={handleTouchEndFeedback}
     >
@@ -329,22 +328,26 @@ export function MobileDashboardCard({
             {/* FASE 3: PWA Status Indicators */}
             {isOfflineCapable && (
               <div className="flex items-center gap-1">
-                {onlineStatus ? (
-                  <Wifi
-                    className="h-3 w-3 text-green-500"
-                    aria-label="Online"
-                  />
-                ) : hasCachedData ? (
-                  <Download
-                    className="h-3 w-3 text-blue-500"
-                    aria-label="Dados em cache disponíveis"
-                  />
-                ) : (
-                  <WifiOff
-                    className="h-3 w-3 text-red-500"
-                    aria-label="Offline - dados indisponíveis"
-                  />
-                )}
+                {onlineStatus
+                  ? (
+                    <Wifi
+                      className="h-3 w-3 text-green-500"
+                      aria-label="Online"
+                    />
+                  )
+                  : hasCachedData
+                  ? (
+                    <Download
+                      className="h-3 w-3 text-blue-500"
+                      aria-label="Dados em cache disponíveis"
+                    />
+                  )
+                  : (
+                    <WifiOff
+                      className="h-3 w-3 text-red-500"
+                      aria-label="Offline - dados indisponíveis"
+                    />
+                  )}
               </div>
             )}
 
@@ -420,13 +423,11 @@ export function MobileDashboardCard({
             <div className="flex items-center space-x-1 text-xs">
               {getTrendIcon()}
               <span
-                className={
-                  trend.direction === "up"
-                    ? "text-green-600"
-                    : trend.direction === "down"
-                      ? "text-red-600"
-                      : "text-muted-foreground"
-                }
+                className={trend.direction === "up"
+                  ? "text-green-600"
+                  : trend.direction === "down"
+                  ? "text-red-600"
+                  : "text-muted-foreground"}
               >
                 {trend.value > 0 ? "+" : ""}
                 {trend.value}%
@@ -435,13 +436,9 @@ export function MobileDashboardCard({
           )}
         </div>
 
-        {description && (
-          <p className="text-xs text-muted-foreground">{description}</p>
-        )}
+        {description && <p className="text-xs text-muted-foreground">{description}</p>}
 
-        {trend?.label && (
-          <p className="text-xs text-muted-foreground">{trend.label}</p>
-        )}
+        {trend?.label && <p className="text-xs text-muted-foreground">{trend.label}</p>}
 
         {progress !== undefined && (
           <div className="space-y-1">
@@ -481,7 +478,7 @@ export function MobileMetricCard({
   target?: number;
   unit?: string;
   status?: "success" | "warning" | "error";
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; }>;
 }) {
   const percentage = target ? Math.round((current / target) * 100) : undefined;
 
@@ -560,9 +557,7 @@ export function MobileDashboardGrid({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">{children}</div>
-  );
+  return <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">{children}</div>;
 }
 
 export function MobileDashboardSection({
@@ -578,9 +573,7 @@ export function MobileDashboardSection({
     <div className="space-y-4">
       <div className="px-4">
         <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-        {description && (
-          <p className="text-sm text-muted-foreground">{description}</p>
-        )}
+        {description && <p className="text-sm text-muted-foreground">{description}</p>}
       </div>
       <div className="px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>

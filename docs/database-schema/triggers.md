@@ -23,7 +23,7 @@ CREATE TRIGGER patients_audit_trigger
 
 ### appointments_audit_trigger
 
-**Table**: appointments  
+**Table**: appointments\
 **Event**: INSERT, UPDATE, DELETE
 **Timing**: AFTER
 **Function**: create_audit_log()

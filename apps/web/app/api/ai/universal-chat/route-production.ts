@@ -90,8 +90,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const actualClinicId =
-      clinicId || (await getClinicIdFromUser(actualUserId));
+    const actualClinicId = clinicId || (await getClinicIdFromUser(actualUserId));
 
     // Check feature flags - simplified for now
     const chatEnabled = { enabled: true };
@@ -186,9 +185,7 @@ export async function POST(request: NextRequest) {
             controller.enqueue(encoder.encode(`data: ${chunkData}\n\n`));
 
             // Realistic streaming delay
-            await new Promise((resolve) =>
-              setTimeout(resolve, 30 + Math.random() * 70),
-            );
+            await new Promise((resolve) => setTimeout(resolve, 30 + Math.random() * 70));
           }
 
           // Send completion with metadata

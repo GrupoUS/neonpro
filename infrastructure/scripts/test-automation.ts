@@ -27,8 +27,8 @@ async function testEmailAutomation() {
 
     // Teste apenas em desenvolvimento ou com flag especial
     if (
-      process.env.NODE_ENV === "development" &&
-      process.env.ENABLE_TEST_JOBS === "true"
+      process.env.NODE_ENV === "development"
+      && process.env.ENABLE_TEST_JOBS === "true"
     ) {
     } else {
     }

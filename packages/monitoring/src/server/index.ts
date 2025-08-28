@@ -133,8 +133,8 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 
     const vitals = this.vitals.filter(
       (v) =>
-        v.timestamp >= period.start.getTime() &&
-        v.timestamp <= period.end.getTime(),
+        v.timestamp >= period.start.getTime()
+        && v.timestamp <= period.end.getTime(),
     );
 
     const errors = this.errors.filter(
@@ -257,8 +257,7 @@ export class InMemoryMetricsStorage implements MetricsStorage {
   private getTopIssues(errors: ErrorEvent[]): string[] {
     const errorCounts: Record<string, number> = {};
     errors.forEach((error) => {
-      errorCounts[error.fingerprint] =
-        (errorCounts[error.fingerprint] || 0) + 1;
+      errorCounts[error.fingerprint] = (errorCounts[error.fingerprint] || 0) + 1;
     });
 
     return Object.entries(errorCounts)
@@ -308,8 +307,8 @@ export class InMemoryMetricsStorage implements MetricsStorage {
     // Slow healthcare operations alert
     const slowOperations = metrics.filter(
       (m) =>
-        m.rating === "poor" &&
-        [
+        m.rating === "poor"
+        && [
           "patient_search_time",
           "form_submission_time",
           "database_query_time",
@@ -320,7 +319,8 @@ export class InMemoryMetricsStorage implements MetricsStorage {
       alerts.push({
         type: "performance",
         severity: "medium",
-        message: `Multiple slow healthcare operations detected: ${slowOperations.length} operations`,
+        message:
+          `Multiple slow healthcare operations detected: ${slowOperations.length} operations`,
         timestamp: new Date(),
         resolved: false,
       });
@@ -463,12 +463,11 @@ export class PerformanceMonitoringServer {
       ? new Date(startParam)
       : new Date(Date.now() - 24 * 60 * 60 * 1000);
     const end = endParam ? new Date(endParam) : new Date();
-    const granularity =
-      granularityParam === "day" ||
-      granularityParam === "week" ||
-      granularityParam === "month"
-        ? granularityParam
-        : ("hour" as const);
+    const granularity = granularityParam === "day"
+        || granularityParam === "week"
+        || granularityParam === "month"
+      ? granularityParam
+      : ("hour" as const);
 
     return { start, end, granularity };
   }

@@ -87,8 +87,7 @@ class MonitoringService {
             response_time_ms: healthData.response_time_ms || 0,
             last_updated: new Date().toISOString(),
             error_rate: healthData.metrics?.error_rate_percent || 0,
-            uptime_percentage:
-              MonitoringService.calculateUptimePercentage(service),
+            uptime_percentage: MonitoringService.calculateUptimePercentage(service),
             details: healthData.details || {},
           });
         } else {
@@ -156,7 +155,7 @@ class MonitoringService {
     timeRange = "1h",
   ): Promise<ServiceMetricsData[]> {
     try {
-      const timeRangeMap: { [key: string]: number } = {
+      const timeRangeMap: { [key: string]: number; } = {
         "1h": 60,
         "6h": 360,
         "24h": 1440,
@@ -184,8 +183,10 @@ class MonitoringService {
       }
 
       // Group and aggregate metrics by service and time intervals
-      const aggregatedMetrics =
-        MonitoringService.aggregateMetricsByTimeInterval(metricsData, minutes);
+      const aggregatedMetrics = MonitoringService.aggregateMetricsByTimeInterval(
+        metricsData,
+        minutes,
+      );
 
       return aggregatedMetrics;
     } catch {
@@ -199,13 +200,13 @@ class MonitoringService {
   ): ServiceMetricsData[] {
     // Group metrics by 5-minute intervals for better visualization
     const intervalMinutes = Math.max(5, Math.floor(totalMinutes / 50));
-    const intervals: { [key: string]: unknown[] } = {};
+    const intervals: { [key: string]: unknown[]; } = {};
 
     metricsData.forEach((metric) => {
       const timestamp = new Date(metric.timestamp);
       const intervalKey = new Date(
-        Math.floor(timestamp.getTime() / (intervalMinutes * 60 * 1000)) *
-          (intervalMinutes * 60 * 1000),
+        Math.floor(timestamp.getTime() / (intervalMinutes * 60 * 1000))
+          * (intervalMinutes * 60 * 1000),
       ).toISOString();
 
       if (!intervals[intervalKey]) {
@@ -251,16 +252,14 @@ class MonitoringService {
       return {
         service: primaryService,
         timestamp,
-        requests_per_minute:
-          serviceData.request_counts.reduce(
-            (a: number, b: number) => a + b,
-            0,
-          ) / intervalMinutes,
-        avg_response_time:
-          serviceData.response_times.reduce(
-            (a: number, b: number) => a + b,
-            0,
-          ) / serviceData.response_times.length,
+        requests_per_minute: serviceData.request_counts.reduce(
+          (a: number, b: number) => a + b,
+          0,
+        ) / intervalMinutes,
+        avg_response_time: serviceData.response_times.reduce(
+          (a: number, b: number) => a + b,
+          0,
+        ) / serviceData.response_times.length,
         error_count: serviceData.error_counts.reduce(
           (a: number, b: number) => a + b,
           0,
@@ -325,15 +324,12 @@ class MonitoringService {
         (sum, m) => sum + m.requests_per_minute * 60,
         0,
       );
-      const avgResponseTime =
-        metrics.reduce((sum, m) => sum + m.avg_response_time, 0) /
-          metrics.length || 0;
-      const errorRate =
-        metrics.reduce(
-          (sum, m) =>
-            sum + (m.error_count / (m.error_count + m.success_count)) * 100,
-          0,
-        ) / metrics.length || 0;
+      const avgResponseTime = metrics.reduce((sum, m) => sum + m.avg_response_time, 0)
+          / metrics.length || 0;
+      const errorRate = metrics.reduce(
+            (sum, m) => sum + (m.error_count / (m.error_count + m.success_count)) * 100,
+            0,
+          ) / metrics.length || 0;
 
       const supabase = MonitoringService.getSupabase();
       if (!supabase) {
@@ -517,12 +513,10 @@ monitoring.post("/service-metrics", async (c) => {
       .reduce((sum, m) => sum + m.metric_value, 0);
 
     const aggregatedMetrics = {
-      avg_response_time:
-        responseTimeCount > 0 ? responseTimeSum / responseTimeCount : 0,
-      error_rate:
-        errorCount + successCount > 0
-          ? (errorCount / (errorCount + successCount)) * 100
-          : 0,
+      avg_response_time: responseTimeCount > 0 ? responseTimeSum / responseTimeCount : 0,
+      error_rate: errorCount + successCount > 0
+        ? (errorCount / (errorCount + successCount)) * 100
+        : 0,
       total_requests: errorCount + successCount,
       error_count: errorCount,
       success_count: successCount,

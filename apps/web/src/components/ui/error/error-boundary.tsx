@@ -2,7 +2,7 @@ import * as React from "react";
 import { DefaultErrorFallback } from "./default-error-fallback";
 
 interface ErrorBoundaryProps {
-  fallback?: React.ComponentType<{ error: Error; resetError: () => void }>;
+  fallback?: React.ComponentType<{ error: Error; resetError: () => void; }>;
   children: React.ReactNode;
 }
 

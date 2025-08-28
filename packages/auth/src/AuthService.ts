@@ -312,8 +312,9 @@ export class AuthService extends EnhancedServiceBase {
         : "";
 
       // Generate backup codes
-      const backupCodes = Array.from({ length: 10 }, () =>
-        Math.random().toString(36).slice(2, 10).toUpperCase(),
+      const backupCodes = Array.from(
+        { length: 10 },
+        () => Math.random().toString(36).slice(2, 10).toUpperCase(),
       );
 
       // Store MFA secret temporarily (user must verify to activate)
@@ -427,8 +428,7 @@ export class AuthService extends EnhancedServiceBase {
       }
 
       return (userPermissions as Permission[]).some(
-        (perm: Permission) =>
-          perm.resource === resource && perm.action === action,
+        (perm: Permission) => perm.resource === resource && perm.action === action,
       );
     } catch {
       return false;
@@ -478,9 +478,8 @@ export class AuthService extends EnhancedServiceBase {
       permissions: this.rolePermissions[user.role] || [],
       sessionId,
       iat: Math.floor(Date.now() / 1000),
-      exp:
-        Math.floor(Date.now() / 1000) +
-        this.parseTimeToSeconds(this.config.jwtExpiresIn),
+      exp: Math.floor(Date.now() / 1000)
+        + this.parseTimeToSeconds(this.config.jwtExpiresIn),
     };
 
     return jwt.sign(payload, this.config.jwtSecret);
@@ -492,9 +491,8 @@ export class AuthService extends EnhancedServiceBase {
       sessionId,
       type: "refresh",
       iat: Math.floor(Date.now() / 1000),
-      exp:
-        Math.floor(Date.now() / 1000) +
-        this.parseTimeToSeconds(this.config.refreshTokenExpiresIn),
+      exp: Math.floor(Date.now() / 1000)
+        + this.parseTimeToSeconds(this.config.refreshTokenExpiresIn),
     };
 
     return jwt.sign(payload, this.config.jwtSecret);

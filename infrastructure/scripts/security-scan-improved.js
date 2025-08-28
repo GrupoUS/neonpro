@@ -121,8 +121,8 @@ function scanDirectory(dirPath) {
       if (item.isDirectory()) {
         violations.push(...scanDirectory(fullPath));
       } else if (
-        item.isFile() &&
-        CHECK_EXTENSIONS.some((ext) => item.name.endsWith(ext))
+        item.isFile()
+        && CHECK_EXTENSIONS.some((ext) => item.name.endsWith(ext))
       ) {
         violations.push(...scanFile(fullPath));
       }

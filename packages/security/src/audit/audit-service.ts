@@ -63,8 +63,7 @@ export const AuditEventType = {
   BACKUP_CREATED: "admin.backup.created",
   BACKUP_RESTORED: "admin.backup.restored",
 } as const;
-export type AuditEventType =
-  (typeof AuditEventType)[keyof typeof AuditEventType];
+export type AuditEventType = (typeof AuditEventType)[keyof typeof AuditEventType];
 
 /**
  * Audit event severity levels
@@ -96,57 +95,63 @@ const MAX_DESCRIPTION_LENGTH = 1000;
  * Base audit event schema
  */
 export const auditEventSchema = z.object({
-  eventType: z.enum([
-    AuditEventType.LOGIN_SUCCESS,
-    AuditEventType.LOGIN_FAILURE,
-    AuditEventType.LOGOUT,
-    AuditEventType.MFA_SETUP,
-    AuditEventType.MFA_VERIFICATION,
-    AuditEventType.PASSWORD_CHANGE,
-    AuditEventType.ACCOUNT_LOCKOUT,
-    AuditEventType.PATIENT_CREATE,
-    AuditEventType.PATIENT_READ,
-    AuditEventType.PATIENT_UPDATE,
-    AuditEventType.PATIENT_DELETE,
-    AuditEventType.PATIENT_EXPORT,
-    AuditEventType.MEDICAL_RECORD_CREATE,
-    AuditEventType.MEDICAL_RECORD_READ,
-    AuditEventType.MEDICAL_RECORD_UPDATE,
-    AuditEventType.MEDICAL_RECORD_DELETE,
-    AuditEventType.MEDICAL_RECORD_SIGN,
-    AuditEventType.CONSENT_GIVEN,
-    AuditEventType.CONSENT_WITHDRAWN,
-    AuditEventType.DATA_EXPORT_REQUEST,
-    AuditEventType.DATA_DELETION_REQUEST,
-    AuditEventType.DATA_RECTIFICATION,
-    AuditEventType.PRIVACY_ASSESSMENT,
-    AuditEventType.BREACH_DETECTED,
-    AuditEventType.BREACH_NOTIFICATION,
-    AuditEventType.PERMISSION_GRANTED,
-    AuditEventType.PERMISSION_DENIED,
-    AuditEventType.RATE_LIMIT_EXCEEDED,
-    AuditEventType.SUSPICIOUS_ACTIVITY,
-    AuditEventType.ENCRYPTION_KEY_ROTATION,
-    AuditEventType.FILE_UPLOAD,
-    AuditEventType.FILE_DOWNLOAD,
-    AuditEventType.FILE_DELETE,
-    AuditEventType.FILE_VIRUS_DETECTED,
-    AuditEventType.USER_ROLE_CHANGE,
-    AuditEventType.SYSTEM_CONFIG_CHANGE,
-    AuditEventType.BACKUP_CREATED,
-    AuditEventType.BACKUP_RESTORED,
-  ] as const),
-  severity: z.enum([
-    AuditSeverity.INFO,
-    AuditSeverity.WARNING,
-    AuditSeverity.ERROR,
-    AuditSeverity.CRITICAL,
-  ] as const),
-  outcome: z.enum([
-    AuditOutcome.SUCCESS,
-    AuditOutcome.FAILURE,
-    AuditOutcome.PARTIAL,
-  ] as const),
+  eventType: z.enum(
+    [
+      AuditEventType.LOGIN_SUCCESS,
+      AuditEventType.LOGIN_FAILURE,
+      AuditEventType.LOGOUT,
+      AuditEventType.MFA_SETUP,
+      AuditEventType.MFA_VERIFICATION,
+      AuditEventType.PASSWORD_CHANGE,
+      AuditEventType.ACCOUNT_LOCKOUT,
+      AuditEventType.PATIENT_CREATE,
+      AuditEventType.PATIENT_READ,
+      AuditEventType.PATIENT_UPDATE,
+      AuditEventType.PATIENT_DELETE,
+      AuditEventType.PATIENT_EXPORT,
+      AuditEventType.MEDICAL_RECORD_CREATE,
+      AuditEventType.MEDICAL_RECORD_READ,
+      AuditEventType.MEDICAL_RECORD_UPDATE,
+      AuditEventType.MEDICAL_RECORD_DELETE,
+      AuditEventType.MEDICAL_RECORD_SIGN,
+      AuditEventType.CONSENT_GIVEN,
+      AuditEventType.CONSENT_WITHDRAWN,
+      AuditEventType.DATA_EXPORT_REQUEST,
+      AuditEventType.DATA_DELETION_REQUEST,
+      AuditEventType.DATA_RECTIFICATION,
+      AuditEventType.PRIVACY_ASSESSMENT,
+      AuditEventType.BREACH_DETECTED,
+      AuditEventType.BREACH_NOTIFICATION,
+      AuditEventType.PERMISSION_GRANTED,
+      AuditEventType.PERMISSION_DENIED,
+      AuditEventType.RATE_LIMIT_EXCEEDED,
+      AuditEventType.SUSPICIOUS_ACTIVITY,
+      AuditEventType.ENCRYPTION_KEY_ROTATION,
+      AuditEventType.FILE_UPLOAD,
+      AuditEventType.FILE_DOWNLOAD,
+      AuditEventType.FILE_DELETE,
+      AuditEventType.FILE_VIRUS_DETECTED,
+      AuditEventType.USER_ROLE_CHANGE,
+      AuditEventType.SYSTEM_CONFIG_CHANGE,
+      AuditEventType.BACKUP_CREATED,
+      AuditEventType.BACKUP_RESTORED,
+    ] as const,
+  ),
+  severity: z.enum(
+    [
+      AuditSeverity.INFO,
+      AuditSeverity.WARNING,
+      AuditSeverity.ERROR,
+      AuditSeverity.CRITICAL,
+    ] as const,
+  ),
+  outcome: z.enum(
+    [
+      AuditOutcome.SUCCESS,
+      AuditOutcome.FAILURE,
+      AuditOutcome.PARTIAL,
+    ] as const,
+  ),
   userId: z.string().uuid().optional(),
   sessionId: z.string().uuid().optional(),
   ipAddress: z.string().ip(),
@@ -319,8 +324,8 @@ export class AuditService {
 
     // Check minimum severity
     if (
-      this.getSeverityLevel(eventData.severity) <
-      this.getSeverityLevel(this.config.minSeverity)
+      this.getSeverityLevel(eventData.severity)
+        < this.getSeverityLevel(this.config.minSeverity)
     ) {
       return null;
     }
@@ -411,8 +416,7 @@ export class AuditService {
 
     return this.logEvent({
       eventType: eventTypeMap[action],
-      severity:
-        action === "delete" ? AuditSeverity.WARNING : AuditSeverity.INFO,
+      severity: action === "delete" ? AuditSeverity.WARNING : AuditSeverity.INFO,
       outcome: AuditOutcome.SUCCESS,
       userId,
       resourceId: patientId,
@@ -436,10 +440,9 @@ export class AuditService {
     ipAddress: string;
   }): Promise<string | null> {
     const { userId, patientId, action, purpose, ipAddress } = options;
-    const eventType =
-      action === "given"
-        ? AuditEventType.CONSENT_GIVEN
-        : AuditEventType.CONSENT_WITHDRAWN;
+    const eventType = action === "given"
+      ? AuditEventType.CONSENT_GIVEN
+      : AuditEventType.CONSENT_WITHDRAWN;
 
     return this.logEvent({
       eventType,
@@ -467,8 +470,7 @@ export class AuditService {
     userId?: string;
     details?: Record<string, unknown>;
   }): Promise<string | null> {
-    const { eventType, severity, description, ipAddress, userId, details } =
-      options;
+    const { eventType, severity, description, ipAddress, userId, details } = options;
     return this.logEvent({
       eventType,
       severity,
@@ -550,7 +552,7 @@ export class AuditService {
   async verifyIntegrity(
     startDate?: Date,
     endDate?: Date,
-  ): Promise<{ valid: boolean; brokenAt?: number }> {
+  ): Promise<{ valid: boolean; brokenAt?: number; }> {
     const events = await this.getEvents({
       startDate,
       endDate,
@@ -579,7 +581,7 @@ export class AuditService {
  * For production, use database-backed store
  */
 export class MemoryAuditStore implements AuditStore {
-  private events: (AuditEvent & { id: string })[] = [];
+  private events: (AuditEvent & { id: string; })[] = [];
   private nextId = 1;
 
   store(event: AuditEvent): Promise<string> {

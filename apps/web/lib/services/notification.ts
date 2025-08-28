@@ -62,7 +62,7 @@ export interface NotificationPreferences {
 export class NotificationService {
   async sendNotification(
     notification: Omit<Notification, "id" | "created_at" | "sent_at">,
-  ): Promise<{ notification?: Notification; error?: string }> {
+  ): Promise<{ notification?: Notification; error?: string; }> {
     try {
       // Check user preferences first
       const preferences = await this.getUserPreferences(
@@ -100,10 +100,9 @@ export class NotificationService {
       return { notification: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to send notification",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to send notification",
       };
     }
   }
@@ -114,7 +113,7 @@ export class NotificationService {
     patientId: string,
     appointmentDate: string,
     professionalName: string,
-  ): Promise<{ success?: boolean; error?: string }> {
+  ): Promise<{ success?: boolean; error?: string; }> {
     try {
       const template = await this.getTemplate(
         tenantId,
@@ -132,29 +131,27 @@ export class NotificationService {
         appointment_id: appointmentId,
       });
 
-      const notification: Omit<Notification, "id" | "created_at" | "sent_at"> =
-        {
-          tenant_id: tenantId,
-          recipient_id: patientId,
-          recipient_type: "patient",
-          type: "email",
-          category: "appointment",
-          title: template.template.subject || "Lembrete de Consulta",
-          content,
-          status: "pending",
-          metadata: {
-            appointment_id: appointmentId,
-            template_id: template.template.id,
-          },
-        };
+      const notification: Omit<Notification, "id" | "created_at" | "sent_at"> = {
+        tenant_id: tenantId,
+        recipient_id: patientId,
+        recipient_type: "patient",
+        type: "email",
+        category: "appointment",
+        title: template.template.subject || "Lembrete de Consulta",
+        content,
+        status: "pending",
+        metadata: {
+          appointment_id: appointmentId,
+          template_id: template.template.id,
+        },
+      };
 
       return this.sendNotification(notification);
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to send appointment reminder",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to send appointment reminder",
       };
     }
   }
@@ -164,31 +161,29 @@ export class NotificationService {
     patientId: string,
     treatmentName: string,
     updateContent: string,
-  ): Promise<{ success?: boolean; error?: string }> {
+  ): Promise<{ success?: boolean; error?: string; }> {
     try {
-      const notification: Omit<Notification, "id" | "created_at" | "sent_at"> =
-        {
-          tenant_id: tenantId,
-          recipient_id: patientId,
-          recipient_type: "patient",
-          type: "in_app",
-          category: "treatment",
-          title: `Atualização do Tratamento: ${treatmentName}`,
-          content: updateContent,
-          status: "pending",
-          metadata: {
-            treatment_name: treatmentName,
-          },
-        };
+      const notification: Omit<Notification, "id" | "created_at" | "sent_at"> = {
+        tenant_id: tenantId,
+        recipient_id: patientId,
+        recipient_type: "patient",
+        type: "in_app",
+        category: "treatment",
+        title: `Atualização do Tratamento: ${treatmentName}`,
+        content: updateContent,
+        status: "pending",
+        metadata: {
+          treatment_name: treatmentName,
+        },
+      };
 
       const result = await this.sendNotification(notification);
       return { success: Boolean(result.notification) };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to send treatment update",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to send treatment update",
       };
     }
   }
@@ -199,35 +194,35 @@ export class NotificationService {
     amount: number,
     dueDate: string,
     description: string,
-  ): Promise<{ success?: boolean; error?: string }> {
+  ): Promise<{ success?: boolean; error?: string; }> {
     try {
-      const notification: Omit<Notification, "id" | "created_at" | "sent_at"> =
-        {
-          tenant_id: tenantId,
-          recipient_id: patientId,
-          recipient_type: "patient",
-          type: "email",
-          category: "payment",
-          title: "Cobrança Pendente",
-          content: `Você possui uma cobrança pendente de R$ ${amount.toFixed(2)} com vencimento em ${new Date(
+      const notification: Omit<Notification, "id" | "created_at" | "sent_at"> = {
+        tenant_id: tenantId,
+        recipient_id: patientId,
+        recipient_type: "patient",
+        type: "email",
+        category: "payment",
+        title: "Cobrança Pendente",
+        content: `Você possui uma cobrança pendente de R$ ${amount.toFixed(2)} com vencimento em ${
+          new Date(
             dueDate,
-          ).toLocaleDateString("pt-BR")}. Descrição: ${description}`,
-          status: "pending",
-          metadata: {
-            amount,
-            due_date: dueDate,
-            description,
-          },
-        };
+          ).toLocaleDateString("pt-BR")
+        }. Descrição: ${description}`,
+        status: "pending",
+        metadata: {
+          amount,
+          due_date: dueDate,
+          description,
+        },
+      };
 
       const result = await this.sendNotification(notification);
       return { success: Boolean(result.notification) };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to send payment notification",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to send payment notification",
       };
     }
   }
@@ -243,7 +238,7 @@ export class NotificationService {
       endDate?: string;
       limit?: number;
     },
-  ): Promise<{ notifications?: Notification[]; error?: string }> {
+  ): Promise<{ notifications?: Notification[]; error?: string; }> {
     try {
       let query = supabase
         .from("notifications")
@@ -288,10 +283,9 @@ export class NotificationService {
       return { notifications: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to get notifications",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to get notifications",
       };
     }
   }
@@ -299,7 +293,7 @@ export class NotificationService {
   async markAsRead(
     id: string,
     tenantId: string,
-  ): Promise<{ success?: boolean; error?: string }> {
+  ): Promise<{ success?: boolean; error?: string; }> {
     try {
       const { error } = await supabase
         .from("notifications")
@@ -317,17 +311,16 @@ export class NotificationService {
       return { success: true };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to mark notification as read",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to mark notification as read",
       };
     }
   }
 
   async createTemplate(
     template: Omit<NotificationTemplate, "id" | "created_at" | "updated_at">,
-  ): Promise<{ template?: NotificationTemplate; error?: string }> {
+  ): Promise<{ template?: NotificationTemplate; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("notification_templates")
@@ -346,8 +339,7 @@ export class NotificationService {
       return { template: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error ? error.message : "Failed to create template",
+        error: error instanceof Error ? error.message : "Failed to create template",
       };
     }
   }
@@ -356,7 +348,7 @@ export class NotificationService {
     tenantId: string,
     category: NotificationTemplate["category"],
     name: string,
-  ): Promise<{ template?: NotificationTemplate; error?: string }> {
+  ): Promise<{ template?: NotificationTemplate; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("notification_templates")
@@ -377,8 +369,7 @@ export class NotificationService {
       return { template: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error ? error.message : "Failed to get template",
+        error: error instanceof Error ? error.message : "Failed to get template",
       };
     }
   }
@@ -386,7 +377,7 @@ export class NotificationService {
   async getUserPreferences(
     tenantId: string,
     userId: string,
-  ): Promise<{ preferences?: NotificationPreferences; error?: string }> {
+  ): Promise<{ preferences?: NotificationPreferences; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("notification_preferences")
@@ -435,10 +426,9 @@ export class NotificationService {
       return { preferences: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to get user preferences",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to get user preferences",
       };
     }
   }
@@ -447,7 +437,7 @@ export class NotificationService {
     tenantId: string,
     userId: string,
     updates: Partial<NotificationPreferences>,
-  ): Promise<{ preferences?: NotificationPreferences; error?: string }> {
+  ): Promise<{ preferences?: NotificationPreferences; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("notification_preferences")
@@ -467,10 +457,9 @@ export class NotificationService {
       return { preferences: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to update user preferences",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to update user preferences",
       };
     }
   }
@@ -496,32 +485,32 @@ export class NotificationService {
 
     // Check category preferences
     if (
-      notification.category === "appointment" &&
-      !preferences.appointment_reminders
+      notification.category === "appointment"
+      && !preferences.appointment_reminders
     ) {
       return false;
     }
     if (
-      notification.category === "treatment" &&
-      !preferences.treatment_updates
+      notification.category === "treatment"
+      && !preferences.treatment_updates
     ) {
       return false;
     }
     if (
-      notification.category === "payment" &&
-      !preferences.payment_notifications
+      notification.category === "payment"
+      && !preferences.payment_notifications
     ) {
       return false;
     }
     if (
-      notification.category === "marketing" &&
-      !preferences.marketing_communications
+      notification.category === "marketing"
+      && !preferences.marketing_communications
     ) {
       return false;
     }
     if (
-      notification.category === "system" &&
-      !preferences.system_notifications
+      notification.category === "system"
+      && !preferences.system_notifications
     ) {
       return false;
     }

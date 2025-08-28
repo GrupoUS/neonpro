@@ -1,9 +1,9 @@
 /**
  * AI Healthcare Integration System
- * 
+ *
  * Advanced AI-powered healthcare conversation analysis and response system
  * Specialized for Brazilian healthcare context with LGPD compliance
- * 
+ *
  * Features:
  * - Medical terminology recognition and validation
  * - Emergency detection and escalation
@@ -15,7 +15,13 @@
  * - Automated medical documentation
  */
 
-import { ChatMessage, MessageContent, HealthcareContext, AIResponse, EmergencyContext } from '@/types/chat';
+import {
+  AIResponse,
+  ChatMessage,
+  EmergencyContext,
+  HealthcareContext,
+  MessageContent,
+} from "@/types/chat";
 
 export interface AIHealthcareConfig {
   openaiApiKey?: string;
@@ -36,7 +42,7 @@ export interface MedicalTermAnalysis {
   categories: string[];
   confidence_scores: Record<string, number>;
   medical_specialties: string[];
-  risk_level: 'low' | 'medium' | 'high' | 'critical';
+  risk_level: "low" | "medium" | "high" | "critical";
   requires_professional_review: boolean;
   potential_conditions: string[];
   recommended_actions: string[];
@@ -93,29 +99,29 @@ export class AIHealthcareIntegration {
   async analyzeAndRespond(
     message: ChatMessage,
     conversationHistory: ChatMessage[],
-    healthcareContext?: HealthcareContext
+    healthcareContext?: HealthcareContext,
   ): Promise<AIHealthcareResponse> {
     const startTime = Date.now();
 
     try {
       // Extract and analyze medical terms
       const medicalAnalysis = await this.analyzeMedicalTerms(message.content);
-      
+
       // Detect emergency conditions
       const emergencyAnalysis = await this.detectEmergency(message.content);
-      
+
       // Generate AI response based on context
       const aiResponse = await this.generateHealthcareResponse(
         message,
         conversationHistory,
         healthcareContext,
         medicalAnalysis,
-        emergencyAnalysis
+        emergencyAnalysis,
       );
-      
+
       // Validate compliance
       const complianceFlags = await this.validateCompliance(aiResponse, medicalAnalysis);
-      
+
       // Handle emergency escalation if needed
       if (emergencyAnalysis.escalation_required) {
         await this.handleEmergencyEscalation(message, emergencyAnalysis, healthcareContext);
@@ -133,23 +139,23 @@ export class AIHealthcareIntegration {
         compliance_flags: complianceFlags,
         metadata: {
           processing_time_ms: Date.now() - startTime,
-          model_used: 'neonpro-healthcare-ai-v2',
-          medical_context: healthcareContext?.medical_specialty || 'general',
-          brazilian_context: this.config.brazilianMedicalContext || true
-        }
+          model_used: "neonpro-healthcare-ai-v2",
+          medical_context: healthcareContext?.medical_specialty || "general",
+          brazilian_context: this.config.brazilianMedicalContext || true,
+        },
       };
 
       return response;
-
     } catch (error) {
-      console.error('AI Healthcare Analysis failed:', error);
-      
+      console.error("AI Healthcare Analysis failed:", error);
+
       return {
-        response_text: 'Desculpe, não foi possível processar sua mensagem no momento. Por favor, consulte diretamente um profissional de saúde se for urgente.',
+        response_text:
+          "Desculpe, não foi possível processar sua mensagem no momento. Por favor, consulte diretamente um profissional de saúde se for urgente.",
         confidence_score: 0.0,
-        medical_disclaimer: this.getMedicalDisclaimer('high'),
+        medical_disclaimer: this.getMedicalDisclaimer("high"),
         sources: [],
-        follow_up_questions: ['Gostaria de falar com um profissional de saúde?'],
+        follow_up_questions: ["Gostaria de falar com um profissional de saúde?"],
         professional_escalation_recommended: true,
         emergency_detected: false,
         medical_terms_analysis: {
@@ -157,22 +163,22 @@ export class AIHealthcareIntegration {
           categories: [],
           confidence_scores: {},
           medical_specialties: [],
-          risk_level: 'medium',
+          risk_level: "medium",
           requires_professional_review: true,
           potential_conditions: [],
-          recommended_actions: ['Consultar profissional de saúde']
+          recommended_actions: ["Consultar profissional de saúde"],
         },
         compliance_flags: {
           cfm_compliant: true,
           anvisa_compliant: true,
-          lgpd_compliant: true
+          lgpd_compliant: true,
         },
         metadata: {
           processing_time_ms: Date.now() - startTime,
-          model_used: 'fallback',
-          medical_context: 'error',
-          brazilian_context: true
-        }
+          model_used: "fallback",
+          medical_context: "error",
+          brazilian_context: true,
+        },
       };
     }
   }
@@ -183,7 +189,7 @@ export class AIHealthcareIntegration {
   private async analyzeMedicalTerms(content: MessageContent): Promise<MedicalTermAnalysis> {
     const text = this.extractTextFromContent(content);
     const words = text.toLowerCase().split(/\s+/);
-    
+
     const detectedTerms: string[] = [];
     const categories: Set<string> = new Set();
     const confidenceScores: Record<string, number> = {};
@@ -194,23 +200,51 @@ export class AIHealthcareIntegration {
     // Brazilian medical terms database
     const brazilianMedicalTerms = {
       symptoms: {
-        'dor': 0.9, 'febre': 0.95, 'tosse': 0.8, 'cansaço': 0.7, 'falta de ar': 0.95,
-        'náusea': 0.85, 'vômito': 0.9, 'diarreia': 0.85, 'constipação': 0.8,
-        'tontura': 0.75, 'cefaleia': 0.9, 'dor de cabeça': 0.9
+        "dor": 0.9,
+        "febre": 0.95,
+        "tosse": 0.8,
+        "cansaço": 0.7,
+        "falta de ar": 0.95,
+        "náusea": 0.85,
+        "vômito": 0.9,
+        "diarreia": 0.85,
+        "constipação": 0.8,
+        "tontura": 0.75,
+        "cefaleia": 0.9,
+        "dor de cabeça": 0.9,
       },
       emergency: {
-        'emergência': 0.98, 'socorro': 0.95, 'urgente': 0.9, 'grave': 0.85,
-        'infarto': 0.98, 'derrame': 0.98, 'avc': 0.98, 'convulsão': 0.95,
-        'sangramento': 0.92, 'desmaio': 0.88, 'parada cardíaca': 0.98
+        "emergência": 0.98,
+        "socorro": 0.95,
+        "urgente": 0.9,
+        "grave": 0.85,
+        "infarto": 0.98,
+        "derrame": 0.98,
+        "avc": 0.98,
+        "convulsão": 0.95,
+        "sangramento": 0.92,
+        "desmaio": 0.88,
+        "parada cardíaca": 0.98,
       },
       medications: {
-        'medicamento': 0.8, 'remédio': 0.8, 'receita': 0.85, 'dose': 0.9,
-        'antibiótico': 0.9, 'analgésico': 0.85, 'anti-inflamatório': 0.88
+        "medicamento": 0.8,
+        "remédio": 0.8,
+        "receita": 0.85,
+        "dose": 0.9,
+        "antibiótico": 0.9,
+        "analgésico": 0.85,
+        "anti-inflamatório": 0.88,
       },
       procedures: {
-        'exame': 0.85, 'cirurgia': 0.95, 'consulta': 0.8, 'tratamento': 0.85,
-        'diagnóstico': 0.9, 'biopsia': 0.95, 'ultrassom': 0.9, 'raio-x': 0.9
-      }
+        "exame": 0.85,
+        "cirurgia": 0.95,
+        "consulta": 0.8,
+        "tratamento": 0.85,
+        "diagnóstico": 0.9,
+        "biopsia": 0.95,
+        "ultrassom": 0.9,
+        "raio-x": 0.9,
+      },
     };
 
     // Analyze terms
@@ -222,10 +256,10 @@ export class AIHealthcareIntegration {
           confidenceScores[term] = confidence;
 
           // Map to medical specialties
-          if (category === 'emergency') {
-            specialties.add('medicina de emergência');
-            recommendedActions.push('Avaliação médica imediata');
-          } else if (category === 'symptoms') {
+          if (category === "emergency") {
+            specialties.add("medicina de emergência");
+            recommendedActions.push("Avaliação médica imediata");
+          } else if (category === "symptoms") {
             this.mapSymptomsToSpecialties(term, specialties, potentialConditions);
           }
         }
@@ -233,13 +267,13 @@ export class AIHealthcareIntegration {
     }
 
     // Determine risk level
-    let riskLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
-    if (categories.has('emergency')) {
-      riskLevel = 'critical';
-    } else if (detectedTerms.length > 5 || categories.has('procedures')) {
-      riskLevel = 'high';
+    let riskLevel: "low" | "medium" | "high" | "critical" = "low";
+    if (categories.has("emergency")) {
+      riskLevel = "critical";
+    } else if (detectedTerms.length > 5 || categories.has("procedures")) {
+      riskLevel = "high";
     } else if (detectedTerms.length > 2) {
-      riskLevel = 'medium';
+      riskLevel = "medium";
     }
 
     return {
@@ -248,9 +282,11 @@ export class AIHealthcareIntegration {
       confidence_scores: confidenceScores,
       medical_specialties: Array.from(specialties),
       risk_level: riskLevel,
-      requires_professional_review: riskLevel === 'critical' || riskLevel === 'high',
+      requires_professional_review: riskLevel === "critical" || riskLevel === "high",
       potential_conditions: potentialConditions,
-      recommended_actions: recommendedActions.length > 0 ? recommendedActions : ['Consultar profissional de saúde se persistir']
+      recommended_actions: recommendedActions.length > 0
+        ? recommendedActions
+        : ["Consultar profissional de saúde se persistir"],
     };
   }
 
@@ -259,37 +295,59 @@ export class AIHealthcareIntegration {
    */
   private async detectEmergency(content: MessageContent): Promise<EmergencyAnalysis> {
     const text = this.extractTextFromContent(content);
-    
+
     const emergencyKeywords = [
-      'emergência', 'socorro', 'urgente', 'grave', 'crítico',
-      'infarto', 'ataque cardíaco', 'derrame', 'avc', 'convulsão',
-      'sangramento', 'hemorragia', 'não consegue respirar', 'falta de ar severa',
-      'dor no peito forte', 'desmaio', 'inconsciência', 'parada cardíaca',
-      'queimadura grave', 'trauma', 'acidente', 'overdose', 'envenenamento'
+      "emergência",
+      "socorro",
+      "urgente",
+      "grave",
+      "crítico",
+      "infarto",
+      "ataque cardíaco",
+      "derrame",
+      "avc",
+      "convulsão",
+      "sangramento",
+      "hemorragia",
+      "não consegue respirar",
+      "falta de ar severa",
+      "dor no peito forte",
+      "desmaio",
+      "inconsciência",
+      "parada cardíaca",
+      "queimadura grave",
+      "trauma",
+      "acidente",
+      "overdose",
+      "envenenamento",
     ];
 
-    const detectedKeywords = emergencyKeywords.filter(keyword => 
+    const detectedKeywords = emergencyKeywords.filter(keyword =>
       text.toLowerCase().includes(keyword)
     );
 
     const isEmergency = detectedKeywords.length > 0;
     let urgencyLevel = 0;
-    let emergencyType = '';
+    let emergencyType = "";
 
     if (isEmergency) {
       // Calculate urgency level based on keywords
-      if (detectedKeywords.some(k => ['infarto', 'parada cardíaca', 'avc', 'derrame'].includes(k))) {
+      if (
+        detectedKeywords.some(k => ["infarto", "parada cardíaca", "avc", "derrame"].includes(k))
+      ) {
         urgencyLevel = 10;
-        emergencyType = 'cardiac_neurological';
-      } else if (detectedKeywords.some(k => ['sangramento', 'hemorragia', 'trauma'].includes(k))) {
+        emergencyType = "cardiac_neurological";
+      } else if (detectedKeywords.some(k => ["sangramento", "hemorragia", "trauma"].includes(k))) {
         urgencyLevel = 9;
-        emergencyType = 'hemorrhagic_trauma';
-      } else if (detectedKeywords.some(k => ['não consegue respirar', 'falta de ar severa'].includes(k))) {
+        emergencyType = "hemorrhagic_trauma";
+      } else if (
+        detectedKeywords.some(k => ["não consegue respirar", "falta de ar severa"].includes(k))
+      ) {
         urgencyLevel = 8;
-        emergencyType = 'respiratory';
+        emergencyType = "respiratory";
       } else {
         urgencyLevel = Math.min(7, detectedKeywords.length * 2);
-        emergencyType = 'general_emergency';
+        emergencyType = "general_emergency";
       }
     }
 
@@ -298,14 +356,16 @@ export class AIHealthcareIntegration {
       emergency_type: emergencyType,
       urgency_level: urgencyLevel,
       keywords_detected: detectedKeywords,
-      recommended_actions: isEmergency ? [
-        'Ligue para o SAMU (192) imediatamente',
-        'Vá ao pronto-socorro mais próximo',
-        'Mantenha a calma e siga as instruções médicas'
-      ] : [],
+      recommended_actions: isEmergency
+        ? [
+          "Ligue para o SAMU (192) imediatamente",
+          "Vá ao pronto-socorro mais próximo",
+          "Mantenha a calma e siga as instruções médicas",
+        ]
+        : [],
       samu_protocol_applicable: urgencyLevel >= 8,
       estimated_response_time: isEmergency ? Math.max(5, 15 - urgencyLevel) : 0,
-      escalation_required: urgencyLevel >= 7
+      escalation_required: urgencyLevel >= 7,
     };
   }
 
@@ -317,20 +377,19 @@ export class AIHealthcareIntegration {
     conversationHistory: ChatMessage[],
     healthcareContext?: HealthcareContext,
     medicalAnalysis?: MedicalTermAnalysis,
-    emergencyAnalysis?: EmergencyAnalysis
+    emergencyAnalysis?: EmergencyAnalysis,
   ): Promise<any> {
-    
     // Handle emergency responses first
     if (emergencyAnalysis?.is_emergency) {
       return {
         text: this.generateEmergencyResponse(emergencyAnalysis),
         confidence: 0.95,
-        sources: ['SAMU Brasil', 'Protocolo de Emergências CFM'],
+        sources: ["SAMU Brasil", "Protocolo de Emergências CFM"],
         follow_up_questions: [
-          'Você está em local seguro?',
-          'Já contactou o SAMU (192)?',
-          'Há alguém que possa ajudá-lo no momento?'
-        ]
+          "Você está em local seguro?",
+          "Já contactou o SAMU (192)?",
+          "Há alguém que possa ajudá-lo no momento?",
+        ],
       };
     }
 
@@ -339,17 +398,18 @@ export class AIHealthcareIntegration {
       message,
       conversationHistory,
       healthcareContext,
-      medicalAnalysis
+      medicalAnalysis,
     );
 
     // Use AI service (OpenAI, Anthropic, or local model)
     const aiResponse = await this.callAIService(prompt);
 
     return {
-      text: aiResponse.text + '\n\n' + this.getMedicalDisclaimer(medicalAnalysis?.risk_level || 'medium'),
+      text: aiResponse.text + "\n\n"
+        + this.getMedicalDisclaimer(medicalAnalysis?.risk_level || "medium"),
       confidence: aiResponse.confidence || 0.8,
-      sources: aiResponse.sources || ['Conhecimento Médico Geral'],
-      follow_up_questions: this.generateFollowUpQuestions(medicalAnalysis)
+      sources: aiResponse.sources || ["Conhecimento Médico Geral"],
+      follow_up_questions: this.generateFollowUpQuestions(medicalAnalysis),
     };
   }
 
@@ -357,34 +417,36 @@ export class AIHealthcareIntegration {
    * Generate emergency response text
    */
   private generateEmergencyResponse(emergencyAnalysis: EmergencyAnalysis): string {
-    const baseResponse = '🚨 SITUAÇÃO DE EMERGÊNCIA DETECTADA 🚨\n\n';
-    
+    const baseResponse = "🚨 SITUAÇÃO DE EMERGÊNCIA DETECTADA 🚨\n\n";
+
     let response = baseResponse;
-    
+
     if (emergencyAnalysis.urgency_level >= 9) {
-      response += '**AÇÃO IMEDIATA NECESSÁRIA:**\n';
-      response += '• Ligue AGORA para o SAMU: **192**\n';
-      response += '• Vá imediatamente ao pronto-socorro mais próximo\n';
-      response += '• Não dirija sozinho - peça ajuda ou chame ambulância\n\n';
+      response += "**AÇÃO IMEDIATA NECESSÁRIA:**\n";
+      response += "• Ligue AGORA para o SAMU: **192**\n";
+      response += "• Vá imediatamente ao pronto-socorro mais próximo\n";
+      response += "• Não dirija sozinho - peça ajuda ou chame ambulância\n\n";
     } else if (emergencyAnalysis.urgency_level >= 7) {
-      response += '**BUSQUE ATENDIMENTO MÉDICO URGENTE:**\n';
-      response += '• Considere ligar para o SAMU: **192**\n';
-      response += '• Dirija-se ao pronto-socorro\n';
-      response += '• Mantenha-se calmo e monitorize os sintomas\n\n';
+      response += "**BUSQUE ATENDIMENTO MÉDICO URGENTE:**\n";
+      response += "• Considere ligar para o SAMU: **192**\n";
+      response += "• Dirija-se ao pronto-socorro\n";
+      response += "• Mantenha-se calmo e monitorize os sintomas\n\n";
     }
 
-    response += '**INFORMAÇÕES IMPORTANTES:**\n';
-    response += `• Tipo de emergência: ${this.translateEmergencyType(emergencyAnalysis.emergency_type)}\n`;
+    response += "**INFORMAÇÕES IMPORTANTES:**\n";
+    response += `• Tipo de emergência: ${
+      this.translateEmergencyType(emergencyAnalysis.emergency_type)
+    }\n`;
     response += `• Nível de urgência: ${emergencyAnalysis.urgency_level}/10\n`;
-    
+
     if (emergencyAnalysis.samu_protocol_applicable) {
-      response += '• Protocolo SAMU aplicável\n';
+      response += "• Protocolo SAMU aplicável\n";
     }
-    
-    response += '\n**LEMBRE-SE:**\n';
-    response += '• Mantenha a calma\n';
-    response += '• Tenha documentos em mãos\n';
-    response += '• Informe sintomas claramente aos profissionais\n';
+
+    response += "\n**LEMBRE-SE:**\n";
+    response += "• Mantenha a calma\n";
+    response += "• Tenha documentos em mãos\n";
+    response += "• Informe sintomas claramente aos profissionais\n";
 
     return response;
   }
@@ -396,9 +458,10 @@ export class AIHealthcareIntegration {
     message: ChatMessage,
     conversationHistory: ChatMessage[],
     healthcareContext?: HealthcareContext,
-    medicalAnalysis?: MedicalTermAnalysis
+    medicalAnalysis?: MedicalTermAnalysis,
   ): string {
-    let prompt = `Você é um assistente de IA especializado em saúde no contexto brasileiro, seguindo as normas do CFM e ANVISA. `;
+    let prompt =
+      `Você é um assistente de IA especializado em saúde no contexto brasileiro, seguindo as normas do CFM e ANVISA. `;
     prompt += `IMPORTANTE: Você NÃO pode fazer diagnósticos médicos ou prescrever medicamentos. `;
     prompt += `Sempre oriente a consultar um profissional de saúde qualificado.\n\n`;
 
@@ -407,7 +470,7 @@ export class AIHealthcareIntegration {
     }
 
     if (medicalAnalysis) {
-      prompt += `Termos médicos identificados: ${medicalAnalysis.terms.join(', ')}\n`;
+      prompt += `Termos médicos identificados: ${medicalAnalysis.terms.join(", ")}\n`;
       prompt += `Nível de risco: ${medicalAnalysis.risk_level}\n`;
     }
 
@@ -418,7 +481,8 @@ export class AIHealthcareIntegration {
     });
 
     prompt += `\nMensagem atual: ${this.extractTextFromContent(message.content)}\n\n`;
-    prompt += `Responda em português brasileiro, seja empático e informativo, mas sempre inclua disclaimer médico apropriado.`;
+    prompt +=
+      `Responda em português brasileiro, seja empático e informativo, mas sempre inclua disclaimer médico apropriado.`;
 
     return prompt;
   }
@@ -430,7 +494,7 @@ export class AIHealthcareIntegration {
     try {
       // This is a placeholder - implement actual AI service calls
       // Options: OpenAI GPT, Anthropic Claude, local healthcare models
-      
+
       if (this.config.openaiApiKey) {
         return await this.callOpenAI(prompt);
       } else if (this.config.anthropicApiKey) {
@@ -439,12 +503,13 @@ export class AIHealthcareIntegration {
         return await this.callLocalModel(prompt);
       }
     } catch (error) {
-      console.error('AI service call failed:', error);
-      
+      console.error("AI service call failed:", error);
+
       return {
-        text: 'Não foi possível gerar uma resposta no momento. Recomendo consultar diretamente um profissional de saúde.',
+        text:
+          "Não foi possível gerar uma resposta no momento. Recomendo consultar diretamente um profissional de saúde.",
         confidence: 0.5,
-        sources: []
+        sources: [],
       };
     }
   }
@@ -455,9 +520,9 @@ export class AIHealthcareIntegration {
   private async callOpenAI(prompt: string): Promise<any> {
     // Implement OpenAI API call
     return {
-      text: 'Resposta gerada pelo OpenAI (placeholder)',
+      text: "Resposta gerada pelo OpenAI (placeholder)",
       confidence: 0.8,
-      sources: ['OpenAI Healthcare Model']
+      sources: ["OpenAI Healthcare Model"],
     };
   }
 
@@ -467,9 +532,9 @@ export class AIHealthcareIntegration {
   private async callAnthropic(prompt: string): Promise<any> {
     // Implement Anthropic Claude API call
     return {
-      text: 'Resposta gerada pelo Anthropic Claude (placeholder)',
+      text: "Resposta gerada pelo Anthropic Claude (placeholder)",
       confidence: 0.85,
-      sources: ['Anthropic Healthcare Model']
+      sources: ["Anthropic Healthcare Model"],
     };
   }
 
@@ -479,9 +544,10 @@ export class AIHealthcareIntegration {
   private async callLocalModel(prompt: string): Promise<any> {
     // Implement local healthcare model call
     return {
-      text: 'Entendo sua preocupação. Para uma avaliação adequada, recomendo consultar um profissional de saúde que possa examinar você pessoalmente e fornecer orientações específicas para sua situação.',
+      text:
+        "Entendo sua preocupação. Para uma avaliação adequada, recomendo consultar um profissional de saúde que possa examinar você pessoalmente e fornecer orientações específicas para sua situação.",
       confidence: 0.7,
-      sources: ['Modelo Local de Saúde']
+      sources: ["Modelo Local de Saúde"],
     };
   }
 
@@ -490,31 +556,31 @@ export class AIHealthcareIntegration {
    */
   private async validateCompliance(
     aiResponse: any,
-    medicalAnalysis: MedicalTermAnalysis
-  ): Promise<{ cfm_compliant: boolean; anvisa_compliant: boolean; lgpd_compliant: boolean }> {
-    
+    medicalAnalysis: MedicalTermAnalysis,
+  ): Promise<{ cfm_compliant: boolean; anvisa_compliant: boolean; lgpd_compliant: boolean; }> {
     const text = aiResponse.text.toLowerCase();
-    
+
     // CFM Compliance - No diagnosis or prescription
-    const cfmCompliant = !text.includes('diagnóstico:') && 
-                         !text.includes('prescrevo') && 
-                         !text.includes('tome o medicamento') &&
-                         text.includes('consulte um profissional');
+    const cfmCompliant = !text.includes("diagnóstico:")
+      && !text.includes("prescrevo")
+      && !text.includes("tome o medicamento")
+      && text.includes("consulte um profissional");
 
     // ANVISA Compliance - No medication recommendations without prescription
-    const anvisaCompliant = !text.includes('compre o medicamento') &&
-                            !text.includes('sem receita') &&
-                            (medicalAnalysis.categories.includes('medications') ? 
-                             text.includes('receita médica') : true);
+    const anvisaCompliant = !text.includes("compre o medicamento")
+      && !text.includes("sem receita")
+      && (medicalAnalysis.categories.includes("medications")
+        ? text.includes("receita médica")
+        : true);
 
     // LGPD Compliance - No personal data exposure
-    const lgpdCompliant = !text.includes('compartilhar dados') &&
-                          !text.includes('enviar informações para');
+    const lgpdCompliant = !text.includes("compartilhar dados")
+      && !text.includes("enviar informações para");
 
     return {
       cfm_compliant: cfmCompliant,
       anvisa_compliant: anvisaCompliant,
-      lgpd_compliant: lgpdCompliant
+      lgpd_compliant: lgpdCompliant,
     };
   }
 
@@ -524,7 +590,7 @@ export class AIHealthcareIntegration {
   private async handleEmergencyEscalation(
     message: ChatMessage,
     emergencyAnalysis: EmergencyAnalysis,
-    healthcareContext?: HealthcareContext
+    healthcareContext?: HealthcareContext,
   ): Promise<void> {
     if (!this.config.emergencyEscalationEndpoint) return;
 
@@ -537,21 +603,21 @@ export class AIHealthcareIntegration {
         keywords: emergencyAnalysis.keywords_detected,
         healthcare_context: healthcareContext,
         timestamp: new Date().toISOString(),
-        location: 'Brasil' // Could be enhanced with actual location
+        location: "Brasil", // Could be enhanced with actual location
       };
 
       await fetch(this.config.emergencyEscalationEndpoint, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.config.openaiApiKey || 'emergency_token'}`
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.config.openaiApiKey || "emergency_token"}`,
         },
-        body: JSON.stringify(escalationData)
+        body: JSON.stringify(escalationData),
       });
 
-      console.log('🚨 Emergency escalation triggered for message:', message.id);
+      console.log("🚨 Emergency escalation triggered for message:", message.id);
     } catch (error) {
-      console.error('Failed to escalate emergency:', error);
+      console.error("Failed to escalate emergency:", error);
     }
   }
 
@@ -559,41 +625,49 @@ export class AIHealthcareIntegration {
 
   private initializeMedicalDatabase(): void {
     // Initialize Brazilian medical knowledge base
-    this.medicalKnowledgeBase.set('emergency_protocols', {
+    this.medicalKnowledgeBase.set("emergency_protocols", {
       samu: 192,
       fire: 193,
       police: 190,
-      poison_control: 0800722001
+      poison_control: 0800722001,
     });
   }
 
   private initializeEmergencyKeywords(): void {
     const keywords = [
-      'emergência', 'socorro', 'urgente', 'grave', 'crítico',
-      'infarto', 'derrame', 'avc', 'convulsão', 'sangramento'
+      "emergência",
+      "socorro",
+      "urgente",
+      "grave",
+      "crítico",
+      "infarto",
+      "derrame",
+      "avc",
+      "convulsão",
+      "sangramento",
     ];
-    
+
     keywords.forEach(keyword => this.emergencyKeywords.add(keyword));
   }
 
   private extractTextFromContent(content: MessageContent): string {
-    if (typeof content === 'string') return content;
-    if (content && typeof content === 'object' && 'text' in content) {
-      return content.text || '';
+    if (typeof content === "string") return content;
+    if (content && typeof content === "object" && "text" in content) {
+      return content.text || "";
     }
-    return '';
+    return "";
   }
 
   private mapSymptomsToSpecialties(
-    symptom: string, 
-    specialties: Set<string>, 
-    conditions: string[]
+    symptom: string,
+    specialties: Set<string>,
+    conditions: string[],
   ): void {
-    const mapping: Record<string, { specialty: string; conditions: string[] }> = {
-      'dor de cabeça': { specialty: 'neurologia', conditions: ['cefaleia', 'enxaqueca'] },
-      'dor no peito': { specialty: 'cardiologia', conditions: ['angina', 'infarto'] },
-      'falta de ar': { specialty: 'pneumologia', conditions: ['asma', 'bronquite'] },
-      'dor abdominal': { specialty: 'gastroenterologia', conditions: ['gastrite', 'úlcera'] }
+    const mapping: Record<string, { specialty: string; conditions: string[]; }> = {
+      "dor de cabeça": { specialty: "neurologia", conditions: ["cefaleia", "enxaqueca"] },
+      "dor no peito": { specialty: "cardiologia", conditions: ["angina", "infarto"] },
+      "falta de ar": { specialty: "pneumologia", conditions: ["asma", "bronquite"] },
+      "dor abdominal": { specialty: "gastroenterologia", conditions: ["gastrite", "úlcera"] },
     };
 
     const match = mapping[symptom];
@@ -605,48 +679,49 @@ export class AIHealthcareIntegration {
 
   private translateEmergencyType(type: string): string {
     const translations: Record<string, string> = {
-      'cardiac_neurological': 'Cardíaca/Neurológica',
-      'hemorrhagic_trauma': 'Hemorrágica/Trauma',
-      'respiratory': 'Respiratória',
-      'general_emergency': 'Emergência Geral'
+      "cardiac_neurological": "Cardíaca/Neurológica",
+      "hemorrhagic_trauma": "Hemorrágica/Trauma",
+      "respiratory": "Respiratória",
+      "general_emergency": "Emergência Geral",
     };
-    
+
     return translations[type] || type;
   }
 
   private getMedicalDisclaimer(riskLevel: string): string {
-    const baseDisclaimer = '\n\n⚠️ **Importante:** Esta é apenas uma orientação informativa. ';
-    
-    if (riskLevel === 'critical') {
-      return baseDisclaimer + 'BUSQUE ATENDIMENTO MÉDICO IMEDIATAMENTE. Ligue 192 (SAMU).';
-    } else if (riskLevel === 'high') {
-      return baseDisclaimer + 'Consulte um profissional de saúde o mais breve possível.';
+    const baseDisclaimer = "\n\n⚠️ **Importante:** Esta é apenas uma orientação informativa. ";
+
+    if (riskLevel === "critical") {
+      return baseDisclaimer + "BUSQUE ATENDIMENTO MÉDICO IMEDIATAMENTE. Ligue 192 (SAMU).";
+    } else if (riskLevel === "high") {
+      return baseDisclaimer + "Consulte um profissional de saúde o mais breve possível.";
     } else {
-      return baseDisclaimer + 'Sempre consulte um profissional de saúde qualificado para diagnóstico e tratamento.';
+      return baseDisclaimer
+        + "Sempre consulte um profissional de saúde qualificado para diagnóstico e tratamento.";
     }
   }
 
   private generateFollowUpQuestions(medicalAnalysis?: MedicalTermAnalysis): string[] {
     if (!medicalAnalysis) {
-      return ['Como posso ajudá-lo mais?', 'Tem alguma dúvida específica sobre saúde?'];
+      return ["Como posso ajudá-lo mais?", "Tem alguma dúvida específica sobre saúde?"];
     }
 
     const questions = [];
-    
-    if (medicalAnalysis.categories.includes('symptoms')) {
-      questions.push('Há quanto tempo você está sentindo isso?');
-      questions.push('Os sintomas estão melhorando ou piorando?');
+
+    if (medicalAnalysis.categories.includes("symptoms")) {
+      questions.push("Há quanto tempo você está sentindo isso?");
+      questions.push("Os sintomas estão melhorando ou piorando?");
     }
-    
-    if (medicalAnalysis.categories.includes('medications')) {
-      questions.push('Você tem receita médica para este medicamento?');
-      questions.push('Já consultou um médico sobre isso?');
+
+    if (medicalAnalysis.categories.includes("medications")) {
+      questions.push("Você tem receita médica para este medicamento?");
+      questions.push("Já consultou um médico sobre isso?");
     }
-    
+
     if (questions.length === 0) {
-      questions.push('Gostaria de mais informações sobre algum tópico específico?');
+      questions.push("Gostaria de mais informações sobre algum tópico específico?");
     }
-    
+
     return questions.slice(0, 3); // Limit to 3 questions
   }
 }
@@ -658,11 +733,11 @@ export function getAIHealthcareIntegration(config?: AIHealthcareConfig): AIHealt
   if (!aiHealthcareInstance && config) {
     aiHealthcareInstance = new AIHealthcareIntegration(config);
   }
-  
+
   if (!aiHealthcareInstance) {
-    throw new Error('AI Healthcare Integration not initialized. Please provide config.');
+    throw new Error("AI Healthcare Integration not initialized. Please provide config.");
   }
-  
+
   return aiHealthcareInstance;
 }
 

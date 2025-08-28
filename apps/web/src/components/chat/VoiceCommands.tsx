@@ -1,33 +1,29 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import type { HealthcareContext, MessageContent, SenderType } from "@/types/chat";
 import {
-  Mic,
-  MicOff,
-  Square,
-  Play,
-  Pause,
-  Volume2,
-  VolumeX,
-  Trash2,
-  Send,
-  Waveform,
   AlertTriangle,
   Bot,
   Languages,
+  Mic,
+  MicOff,
+  Pause,
+  Play,
+  Send,
+  Square,
+  Trash2,
+  Volume2,
+  VolumeX,
+  Waveform,
 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import type {
-  HealthcareContext,
-  MessageContent,
-  SenderType,
-} from "@/types/chat";
 
 /**
  * VoiceCommands.tsx
@@ -92,8 +88,7 @@ export function VoiceCommands({
   // Recording state
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [currentRecording, setCurrentRecording] =
-    useState<VoiceRecording | null>(null);
+  const [currentRecording, setCurrentRecording] = useState<VoiceRecording | null>(null);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [audioLevel, setAudioLevel] = useState(0);
 
@@ -321,8 +316,7 @@ export function VoiceCommands({
       }
 
       analyserRef.current.getByteFrequencyData(dataArray);
-      const average =
-        dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
+      const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
       setAudioLevel(Math.min(100, (average / 128) * 100));
 
       animationFrameRef.current = requestAnimationFrame(updateLevel);
@@ -409,9 +403,7 @@ export function VoiceCommands({
    */
   const detectEmergencyKeywords = (text: string): boolean => {
     const lowercaseText = text.toLowerCase();
-    return EMERGENCY_KEYWORDS.some((keyword) =>
-      lowercaseText.includes(keyword),
-    );
+    return EMERGENCY_KEYWORDS.some((keyword) => lowercaseText.includes(keyword));
   };
 
   /**
@@ -584,11 +576,7 @@ export function VoiceCommands({
             disabled={disabled}
             className={cn(emergencyMode && "bg-red-600 hover:bg-red-700")}
           >
-            {isRecording ? (
-              <Square className="w-4 h-4" />
-            ) : (
-              <Mic className="w-4 h-4" />
-            )}
+            {isRecording ? <Square className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
             {isRecording ? "Parar" : "Gravar"}
           </Button>
 
@@ -641,11 +629,7 @@ export function VoiceCommands({
                 size="sm"
                 onClick={isPlaying ? stopPlayback : playRecording}
               >
-                {isPlaying ? (
-                  <Pause className="w-4 h-4" />
-                ) : (
-                  <Play className="w-4 h-4" />
-                )}
+                {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
               </Button>
 
               <span className="text-sm text-muted-foreground">
@@ -680,36 +664,38 @@ export function VoiceCommands({
           {/* Transcription */}
           {enableTranscription && (
             <div className="space-y-2">
-              {isTranscribing ? (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Bot className="w-4 h-4 animate-spin" />
-                  Transcrevendo áudio...
-                </div>
-              ) : currentRecording.transcription ? (
-                <div className="space-y-2">
-                  <div className="p-3 bg-muted rounded-lg">
-                    <div className="flex items-start gap-2">
-                      <Languages className="w-4 h-4 mt-0.5 text-muted-foreground" />
-                      <div className="flex-1">
-                        <p className="text-sm">
-                          {currentRecording.transcription}
-                        </p>
-                        {currentRecording.confidence_score && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Confiança:{" "}
-                            {Math.round(
-                              currentRecording.confidence_score * 100,
-                            )}
-                            %
+              {isTranscribing
+                ? (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Bot className="w-4 h-4 animate-spin" />
+                    Transcrevendo áudio...
+                  </div>
+                )
+                : currentRecording.transcription
+                ? (
+                  <div className="space-y-2">
+                    <div className="p-3 bg-muted rounded-lg">
+                      <div className="flex items-start gap-2">
+                        <Languages className="w-4 h-4 mt-0.5 text-muted-foreground" />
+                        <div className="flex-1">
+                          <p className="text-sm">
+                            {currentRecording.transcription}
                           </p>
-                        )}
+                          {currentRecording.confidence_score && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Confiança: {Math.round(
+                                currentRecording.confidence_score * 100,
+                              )}
+                              %
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Medical Terms */}
-                  {currentRecording.medical_terms &&
-                    currentRecording.medical_terms.length > 0 && (
+                    {/* Medical Terms */}
+                    {currentRecording.medical_terms
+                      && currentRecording.medical_terms.length > 0 && (
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-xs text-muted-foreground">
                           Termos médicos:
@@ -725,12 +711,15 @@ export function VoiceCommands({
                         ))}
                       </div>
                     )}
-                </div>
-              ) : transcriptionError ? (
-                <div className="text-sm text-red-600 dark:text-red-400">
-                  {transcriptionError}
-                </div>
-              ) : null}
+                  </div>
+                )
+                : transcriptionError
+                ? (
+                  <div className="text-sm text-red-600 dark:text-red-400">
+                    {transcriptionError}
+                  </div>
+                )
+                : null}
             </div>
           )}
         </div>
