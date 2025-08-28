@@ -148,6 +148,9 @@ export default function ClinicDashboard() {
   const [doctors] = useState<DoctorStats[]>(MOCK_DOCTORS);
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
