@@ -357,7 +357,7 @@ function _calculateAggregatedStats(metrics: DbMetricRecord[]): Record<string, Me
 
     // Remove raw values to reduce response size
     const { values: _, ...statWithoutValues } = statsByMetric[metricName];
-    statsByMetric[metricName] = statWithoutValues as any;
+    statsByMetric[metricName] = statWithoutValues as Record<string, unknown>;
   }
 
   return statsByMetric;

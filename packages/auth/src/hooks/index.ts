@@ -4,7 +4,7 @@
  */
 
 import type { ReactNode } from "react";
-import type { AuthService, User } from "../types";
+import type { User } from "../types";
 
 // Auth context types
 export interface AuthContextValue {
@@ -23,7 +23,7 @@ export interface AuthContextValue {
 
 export interface AuthProviderProps {
   children: ReactNode;
-  authService?: AuthService;
+  authService?: unknown; // TODO: Define AuthService interface/type
 }
 
 // Hook return types
@@ -105,10 +105,10 @@ export const createInitialAuthState = (): Omit<
   AuthContextValue,
   "login" | "logout" | "register"
 > => ({
-  user: undefined,
+  user: null,
   loading: false,
   isAuthenticated: false,
-  error: undefined,
+  error: null,
 });
 
 // Session management types

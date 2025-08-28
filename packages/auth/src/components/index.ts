@@ -51,10 +51,10 @@ export interface AuthComponentFactory {
 
 // Default component registry (to be implemented in frontend)
 export const AuthComponents = {
-  LoginForm: undefined as LoginForm | null,
-  RegisterForm: undefined as RegisterForm | null,
-  AuthButton: undefined as AuthButton | null,
-  ProtectedRoute: undefined as ProtectedRoute | null,
+  LoginForm: null as LoginForm | null,
+  RegisterForm: null as RegisterForm | null,
+  AuthButton: null as AuthButton | null,
+  ProtectedRoute: null as ProtectedRoute | null,
 };
 
 // Component registration utility

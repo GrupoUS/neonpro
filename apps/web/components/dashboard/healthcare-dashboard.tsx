@@ -393,7 +393,7 @@ function OverviewSection({ data }: { data?: HealthcareDashboardData; }) {
   );
 }
 
-function AppointmentsSection({ data }: { data?: unknown[]; }) {
+function AppointmentsSection({ data: _data }: { data?: unknown[]; }) {
   // ✅ Implementation for appointments section
   return (
     <Card>
@@ -409,7 +409,7 @@ function AppointmentsSection({ data }: { data?: unknown[]; }) {
   );
 }
 
-function PatientsSection({ data }: { data?: unknown[]; }) {
+function PatientsSection({ data: _data }: { data?: unknown[]; }) {
   // ✅ Implementation for patients section
   return (
     <Card>
@@ -425,7 +425,7 @@ function PatientsSection({ data }: { data?: unknown[]; }) {
   );
 }
 
-function FinancialsSection({ data }: { data?: unknown; }) {
+function FinancialsSection({ data: _data }: { data?: unknown; }) {
   // ✅ Implementation for financials section
   return (
     <Card>

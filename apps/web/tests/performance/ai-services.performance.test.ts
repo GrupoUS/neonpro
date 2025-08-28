@@ -159,7 +159,7 @@ class PerformanceTestUtils {
           try {
             await testFunction();
             stopTimer();
-          } catch (error) {
+          } catch (_error) {
             stopTimer();
             PerformanceTestUtils.recordError(testName, error as Error);
           }
@@ -304,7 +304,7 @@ describe("aI Services Performance Tests", () => {
         console.log(
           `Single chat request completed in ${duration.toFixed(2)}ms`,
         );
-      } catch (error) {
+      } catch (_error) {
         PerformanceTestUtils.recordError("single_chat_request", error as Error);
         throw error;
       }
@@ -447,7 +447,7 @@ describe("aI Services Performance Tests", () => {
         // console.log(
         //   `Single compliance check completed in ${duration.toFixed(2)}ms`,
         // );
-      } catch (error) {
+      } catch (_error) {
         PerformanceTestUtils.recordError(
           "single_compliance_check",
           error as Error,
@@ -533,7 +533,7 @@ describe("aI Services Performance Tests", () => {
         // console.log(
         //   `Conversation analysis completed in ${duration.toFixed(2)}ms`,
         // );
-      } catch (error) {
+      } catch (_error) {
         PerformanceTestUtils.recordError(
           "single_conversation_analysis",
           error as Error,
@@ -659,7 +659,7 @@ describe("aI Services Performance Tests", () => {
 
         // E2E workflow should complete in reasonable time
         expect(duration).toBeLessThan(5000); // 5 seconds max for complete workflow
-      } catch (error) {
+      } catch (_error) {
         PerformanceTestUtils.recordError("e2e_workflow", error as Error);
         throw error;
       }

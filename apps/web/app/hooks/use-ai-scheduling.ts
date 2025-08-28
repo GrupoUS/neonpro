@@ -97,8 +97,14 @@ export const useAIScheduling = (
   const wsConnectionRef = useRef<WebSocket | null>(null);
 
   // Handle real-time updates from WebSocket
+<<<<<<< Updated upstream
   const handleRealtimeUpdate = useCallback((data: any) => {
     switch (data.type) {
+=======
+  const handleRealtimeUpdate = useCallback((data: unknown) => {
+    const updateData = data as { type?: string; affectedSlots?: unknown; };
+    switch (updateData.type) {
+>>>>>>> Stashed changes
       case "schedule_change": {
         // Refresh available slots
         if (data.affectedSlots) {

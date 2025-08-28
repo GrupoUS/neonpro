@@ -3,18 +3,7 @@
  * Healthcare-compliant authentication interfaces
  */
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: UserRole;
-  healthcareProvider?: HealthcareProvider;
-  permissions: Permission[];
-  mfaEnabled: boolean;
-  lastLogin?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
+// User interface moved to line 137 to avoid duplication
 
 export interface HealthcareProvider {
   id: string;
@@ -112,7 +101,6 @@ export interface TokenPayload {
   sessionId: string;
   iat: number;
   exp: number;
-  exp: number;
 }
 
 export interface SecurityEvent {
@@ -149,7 +137,7 @@ export interface User {
   mfaSecret?: string;
 }
 
-export interface AuthService {
+export interface IAuthService {
   login: (credentials: {
     email: string;
     password: string;

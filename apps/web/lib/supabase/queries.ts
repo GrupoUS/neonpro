@@ -421,7 +421,7 @@ export const executeWithRetry = async <T>(
       }
 
       return data;
-    } catch (error) {
+    } catch (_error) {
       lastError = error;
       if (attempt < maxRetries) {
         await new Promise((resolve) => setTimeout(resolve, 2 ** attempt * 1000));

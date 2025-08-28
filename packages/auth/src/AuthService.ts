@@ -14,6 +14,7 @@ import type {
   AuthConfig,
   AuthSession,
   DeviceInfo,
+  HealthcareProvider,
   LoginCredentials,
   LoginResult,
   MfaSetupResult,
@@ -22,6 +23,7 @@ import type {
   SecurityEvent,
   TokenPayload,
   User,
+  UserRole,
 } from "./types";
 
 /**
@@ -319,7 +321,7 @@ export class AuthService extends EnhancedServiceBase {
    */
   async verifyMfaSetup(userId: string, code: string): Promise<boolean> {
     try {
-      const setup = await this.cache.get(`mfa_setup_${userId}`);
+      const setup = await this.cache.get(`mfa_setup_${userId}`) as { secret: string; backupCodes: string[] } | null;
       if (!setup) {
         return false;
       }
@@ -353,7 +355,7 @@ export class AuthService extends EnhancedServiceBase {
         // Clear setup cache
         await this.cache.delete(`mfa_setup_${userId}`);
 
-        await this.audit.logOperation("mfa_enabled", {
+        await this.audit.log("mfa_enabled", {
           userId,
           timestamp: new Date(),
         });
@@ -400,7 +402,7 @@ export class AuthService extends EnhancedServiceBase {
         await this.cache.set(cacheKey, userPermissions, 300_000);
       }
 
-      return userPermissions.some(
+      return (userPermissions as Permission[]).some(
         (perm: Permission) => perm.resource === resource && perm.action === action,
       );
     } catch {
@@ -478,7 +480,7 @@ export class AuthService extends EnhancedServiceBase {
     const session = {
       id: `session_${Date.now()}_${Math.random().toString(36).slice(2)}`,
       user_id: user.id,
-      device_info: deviceInfo || {},
+      device_info: (deviceInfo || {}) as DeviceInfo,
       expires_at: new Date(Date.now() + this.config.sessionTimeout),
       last_activity: new Date(),
       is_active: true,
@@ -520,10 +522,10 @@ export class AuthService extends EnhancedServiceBase {
         .single();
 
       if (session) {
-        const authSession = {
+        const authSession: AuthSession = {
           id: session.id,
           userId: session.user_id,
-          deviceInfo: session.device_info,
+          deviceInfo: session.device_info as DeviceInfo,
           expiresAt: new Date(session.expires_at),
           lastActivity: new Date(session.last_activity),
           isActive: session.is_active,
@@ -534,9 +536,9 @@ export class AuthService extends EnhancedServiceBase {
         return authSession;
       }
 
-      return;
+      return null;
     } catch {
-      return;
+      return null;
     }
   }
 
@@ -546,7 +548,7 @@ export class AuthService extends EnhancedServiceBase {
 
       // High-risk events need immediate audit
       if (event.riskScore >= 7) {
-        await this.audit.logOperation("high_risk_security_event", event);
+        await this.audit.log("high_risk_security_event", event);
       }
     } catch {
       // Continue execution even if logging fails
@@ -555,21 +557,28 @@ export class AuthService extends EnhancedServiceBase {
 
   private async incrementLoginAttempts(email: string): Promise<void> {
     const key = `login_attempts_${email}`;
-    await this.security.incrementRateLimit(key, 3600); // 1 hour window
+    await this.security.auditOperation({
+      id: crypto.randomUUID(),
+      timestamp: new Date(),
+      userId: email,
+      action: 'failed_login_attempt',
+      resource: 'authentication',
+      outcome: 'failure'
+    });
   }
 
   private mapToUserInterface(dbUser: Record<string, unknown>): User {
     return {
-      id: dbUser.id,
-      email: dbUser.email,
-      name: dbUser.name,
-      role: dbUser.role,
-      healthcareProvider: dbUser.healthcare_provider,
-      permissions: dbUser.permissions || [],
-      mfaEnabled: dbUser.mfa_enabled,
-      lastLogin: dbUser.last_login ? new Date(dbUser.last_login) : undefined,
-      createdAt: new Date(dbUser.created_at),
-      updatedAt: new Date(dbUser.updated_at),
+      id: dbUser.id as string,
+      email: dbUser.email as string,
+      name: dbUser.name as string,
+      role: dbUser.role as UserRole,
+      permissions: (dbUser.permissions as Permission[]) || [],
+      isActive: dbUser.is_active as boolean ?? true,
+      mfaEnabled: dbUser.mfa_enabled as boolean,
+      lastLogin: dbUser.last_login ? new Date(dbUser.last_login as string | number | Date) : undefined,
+      createdAt: new Date(dbUser.created_at as string | number | Date),
+      updatedAt: new Date(dbUser.updated_at as string | number | Date),
     };
   }
 

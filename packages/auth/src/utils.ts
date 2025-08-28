@@ -21,7 +21,7 @@ export function verifyToken(
   try {
     return jwt.verify(token, secret) as TokenPayload;
   } catch {
-    return;
+    return null;
   }
 }
 
@@ -48,12 +48,12 @@ export function getTokenExpiration(token: string): Date | null {
   try {
     const decoded = jwt.decode(token) as TokenPayload;
     if (!decoded || !decoded.exp) {
-      return;
+      return null;
     }
 
     return new Date(decoded.exp * 1000);
   } catch {
-    return;
+    return null;
   }
 }
 
@@ -63,9 +63,9 @@ export function getTokenExpiration(token: string): Date | null {
 export function getUserIdFromToken(token: string): string | null {
   try {
     const decoded = jwt.decode(token) as TokenPayload;
-    return decoded?.userId || undefined;
+    return decoded?.userId || null;
   } catch {
-    return;
+    return null;
   }
 }
 

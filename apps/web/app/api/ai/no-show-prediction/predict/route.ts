@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(prediction);
-  } catch (error) {
+  } catch (_error) {
     // console.error("Error creating prediction:", error);
     return NextResponse.json(
       { error: "Failed to create prediction" },

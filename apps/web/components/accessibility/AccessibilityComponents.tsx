@@ -444,12 +444,13 @@ export function AccessibilityPanel() {
                 {/* Font Size */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">
+                    <label htmlFor="font-size-slider" className="text-sm font-medium">
                       Tamanho da Fonte
                     </label>
                     <Badge variant="outline">{preferences.fontSize}px</Badge>
                   </div>
                   <Slider
+                    id="font-size-slider"
                     value={[preferences.fontSize]}
                     onValueChange={([value]) => updatePreference("fontSize", value)}
                     min={12}
@@ -463,11 +464,12 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Contrast className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label htmlFor="high-contrast-switch" className="text-sm font-medium">
                       Alto Contraste
                     </label>
                   </div>
                   <Switch
+                    id="high-contrast-switch"
                     checked={preferences.highContrast}
                     onCheckedChange={(checked) => updatePreference("highContrast", checked)}
                   />
@@ -477,11 +479,12 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <MousePointer className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label htmlFor="reduceMotion" className="text-sm font-medium">
                       Reduzir Movimento
                     </label>
                   </div>
                   <Switch
+                    id="reduceMotion"
                     checked={preferences.reducedMotion}
                     onCheckedChange={(checked) => updatePreference("reducedMotion", checked)}
                   />

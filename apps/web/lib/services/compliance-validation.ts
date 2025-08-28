@@ -105,7 +105,7 @@ export class ComplianceValidationService {
           : "AI content filtering not implemented",
         details: contentFilterTest,
       });
-    } catch (error) {
+    } catch (_error) {
       results.push({
         test_name: "AI Compliance Integration",
         status: "failed",
@@ -163,7 +163,7 @@ export class ComplianceValidationService {
         message: `Alert system operational - ${recentAlerts?.length || 0} alerts in last 24h`,
         details: { recent_alerts_count: recentAlerts?.length || 0 },
       });
-    } catch (error) {
+    } catch (_error) {
       results.push({
         test_name: "Real-time Monitoring",
         status: "failed",
@@ -256,7 +256,7 @@ export class ComplianceValidationService {
           : `LGPD report failed: ${lgpdReport.error}`,
         details: lgpdReport,
       });
-    } catch (error) {
+    } catch (_error) {
       results.push({
         test_name: "Automated Regulatory Reporting",
         status: "failed",
@@ -308,7 +308,7 @@ export class ComplianceValidationService {
           message: `LGPD score calculation failed: ${scoreResult.error}`,
         });
       }
-    } catch (error) {
+    } catch (_error) {
       results.push({
         test_name: "LGPD Compliance Score",
         status: "failed",
@@ -378,7 +378,7 @@ export class ComplianceValidationService {
           total_logs: auditLogs?.length || 0,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       results.push({
         test_name: "Audit Trail Completeness",
         status: "failed",
@@ -421,7 +421,7 @@ export class ComplianceValidationService {
         message: `Compliance report generated: ${reportTest.overallScore}% overall score`,
         details: reportTest,
       });
-    } catch (error) {
+    } catch (_error) {
       results.push({
         test_name: "Compliance Automation",
         status: "failed",

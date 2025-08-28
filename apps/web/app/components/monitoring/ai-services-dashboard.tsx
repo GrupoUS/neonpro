@@ -147,7 +147,7 @@ const AIServicesDashboard: React.FC = () => {
       }
 
       setLastRefresh(new Date());
-    } catch (error) {
+    } catch (_error) {
       // console.error("Failed to fetch dashboard data:", error);
     } finally {
       setIsLoading(false);

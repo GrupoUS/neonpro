@@ -7,7 +7,7 @@
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { createClient } from "@/app/utils/supabase/server";
 import { safeParseNumber } from "@/src/types/analytics";
-import type { DatabaseRow, RetentionMetric } from "@/src/types/analytics";
+import type { DatabaseRow } from "@/src/types/analytics";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
@@ -42,25 +42,6 @@ interface ClinicRetentionMetric {
   churn_risk_score: number;
   total_visits: number;
   lifetime_value: number;
-}
-
-// Type guard for clinic retention metrics
-function isClinicRetentionMetric(obj: unknown): obj is ClinicRetentionMetric {
-  return (
-    typeof obj === "object"
-    && obj !== null
-    && typeof (obj as ClinicRetentionMetric).patient_id === "string"
-    && typeof (obj as ClinicRetentionMetric).last_appointment_date === "string"
-    && typeof (obj as ClinicRetentionMetric).retention_score === "number"
-    && typeof (obj as ClinicRetentionMetric).retention_rate === "number"
-    && typeof (obj as ClinicRetentionMetric).churn_risk === "string"
-    && ["low", "medium", "high", "critical"].includes(
-      (obj as ClinicRetentionMetric).churn_risk_level,
-    )
-    && typeof (obj as ClinicRetentionMetric).churn_risk_score === "number"
-    && typeof (obj as ClinicRetentionMetric).total_visits === "number"
-    && typeof (obj as ClinicRetentionMetric).lifetime_value === "number"
-  );
 }
 
 // =====================================================================================
@@ -426,7 +407,7 @@ export async function POST(
     return NextResponse.json({
       success: true,
       data: {
-        results: results.map((r: DatabaseRow) => (r as any).metrics),
+        results: results.map((r: DatabaseRow) => (r as unknown as { metrics: unknown; }).metrics),
         summary,
         errors: errors.length > 0 ? errors : undefined,
       },

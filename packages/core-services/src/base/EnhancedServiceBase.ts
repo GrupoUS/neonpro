@@ -22,6 +22,7 @@ import type { AuditEvent, PerformanceMetrics, SecurityConfig, ServiceContext } f
 interface ICacheService {
   get<T>(key: string): Promise<T | null>;
   set<T>(key: string, value: T, ttl?: number): Promise<void>;
+  delete(key: string): Promise<void>;
   invalidate(pattern: string): Promise<void>;
   getStats(): Promise<unknown>;
 }
@@ -403,6 +404,9 @@ export abstract class EnhancedServiceBase {
       },
       async set<T>(key: string, value: T, ttl?: number): Promise<void> {
         await self.enterpriseCache.set(key, value, ttl);
+      },
+      async delete(key: string): Promise<void> {
+        await self.enterpriseCache.delete(key);
       },
       async invalidate(pattern: string): Promise<void> {
         // Use invalidatePatientData for now as a pattern-based invalidation

@@ -80,7 +80,7 @@ export async function POST(
     // Generate comprehensive treatment recommendations
     const treatmentRecommendations = await patientInsights.getTreatmentRecommendations(patientId);
 
-    const response: any = { treatmentRecommendations };
+    const response: { treatmentRecommendations: unknown; } = { treatmentRecommendations };
 
     if (includeRiskAssessment) {
       const riskAssessment = await patientInsights.getRiskAssessment(patientId);

@@ -93,6 +93,7 @@ interface User {
   lastSeen: Date;
 }
 
+<<<<<<< Updated upstream
 interface Activity {
   id: string;
   user: User;
@@ -102,6 +103,8 @@ interface Activity {
   metadata?: Record<string, string | number | boolean>;
 }
 
+=======
+>>>>>>> Stashed changes
 interface Metric {
   id: string;
   label: string;
@@ -113,6 +116,7 @@ interface Metric {
   icon: React.ComponentType<{ className?: string; }>;
 }
 
+<<<<<<< Updated upstream
 interface Task {
   id: string;
   title: string;
@@ -152,6 +156,8 @@ interface Notification {
   };
 }
 
+=======
+>>>>>>> Stashed changes
 // AI Enhancement Types
 interface AIInsight {
   id: string;
@@ -374,8 +380,8 @@ const MOCK_METRICS: Metric[] = [
 ];
 
 export default function NeonProHealthcareDashboard({
-  userId,
-  tenantId,
+  userId: _userId,
+  tenantId: _tenantId,
 }: NeonProDashboardProps) {
   // Removed unused state - selectedDate functionality not implemented yet
   const [activeTab, setActiveTab] = useState("overview");
