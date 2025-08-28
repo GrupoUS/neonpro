@@ -400,6 +400,7 @@ export abstract class EnhancedServiceBase {
    */
   private initializeCacheService(): ICacheService {
     const self = this;
+    // Remove self=this assignment and use arrow functions instead
     return {
       async get<T>(key: string): Promise<T | null> {
         return self.enterpriseCache.get<T>(key);

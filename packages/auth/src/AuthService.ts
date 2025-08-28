@@ -14,7 +14,6 @@ import type {
   AuthConfig,
   AuthSession,
   DeviceInfo,
-  HealthcareProvider,
   LoginCredentials,
   LoginResult,
   MfaSetupResult,
@@ -540,7 +539,7 @@ export class AuthService extends EnhancedServiceBase {
       // Try cache first
       const cached = await this.cache.get(`session_${sessionId}`);
       if (cached) {
-        return cached;
+        return cached as AuthSession;
       }
 
       // Fallback to database

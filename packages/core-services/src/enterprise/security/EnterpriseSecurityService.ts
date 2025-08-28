@@ -50,13 +50,13 @@ interface UserSession {
   userId: string;
   roles: string[];
   permissions: string[];
-  clinicId?: string;
-  patientAccess?: string[];
+  clinicId?: string | undefined;
+  patientAccess?: string[] | undefined;
   createdAt: number;
   expiresAt: number;
   lastActivity: number;
-  ipAddress?: string;
-  userAgent?: string;
+  ipAddress?: string | undefined;
+  userAgent?: string | undefined;
   mfaVerified: boolean;
   securityFlags: {
     suspiciousActivity: boolean;
@@ -82,9 +82,9 @@ interface SecurityThreat {
   type: string;
   severity: "low" | "medium" | "high" | "critical";
   description: string;
-  userId?: string;
-  sessionId?: string;
-  ipAddress?: string;
+  userId?: string | undefined;
+  sessionId?: string | undefined;
+  ipAddress?: string | undefined;
   timestamp: number;
   details: Record<string, unknown>;
   resolved: boolean;
@@ -316,7 +316,7 @@ export class EnterpriseSecurityService {
       encrypted += cipher.final("hex");
 
       // For GCM mode, get the authentication tag
-      const tag = (cipher as any).getAuthTag ? (cipher as any).getAuthTag() : Buffer.alloc(0);
+      const tag = (cipher as unknown as { getAuthTag(): Buffer }).getAuthTag?.() ?? Buffer.alloc(0);
 
       // Combine salt, iv, tag, and encrypted data
       const result = Buffer.concat([
@@ -385,7 +385,7 @@ export class EnterpriseSecurityService {
 
       // Set auth tag for GCM mode
       if (tag.length > 0) {
-        (decipher as any).setAuthTag(tag);
+        (decipher as unknown as { setAuthTag(tag: Buffer): void }).setAuthTag(tag);
       }
 
       let decrypted = decipher.update(encrypted, undefined, "utf8");
@@ -450,7 +450,7 @@ export class EnterpriseSecurityService {
     session: UserSession,
     _context: ServiceContext,
   ): Promise<boolean> {
-    const { conditions: conditions } = rule;
+    const { conditions } = rule;
     if (!conditions) {
       return true;
     }
