@@ -157,10 +157,103 @@ export const analyticsRoutes = new Hono()
   )
   // ðŸ’° Revenue analytics
   .get("/revenue", zValidator("query", RevenueQuerySchema), async (context) => {
-    // const { period, serviceCategory, professionalId } = context.req.valid("query"); // TODO: Use query parameters
+    const { period, serviceCategory, professionalId, startDate, endDate } = context.req.valid("query");
 
     try {
-      // TODO: Implement actual revenue query
+      // Build date range based on period
+      let dateRange = { start: '', end: '' };
+      const now = new Date();
+      
+      switch (period) {
+        case 'today':
+          dateRange.start = now.toISOString().split('T')[0];
+          dateRange.end = now.toISOString().split('T')[0];
+          break;
+        case 'week':
+          const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
+          dateRange.start = weekStart.toISOString().split('T')[0];
+          dateRange.end = new Date().toISOString().split('T')[0];
+          break;
+        case 'month':
+          dateRange.start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+          dateRange.end = new Date().toISOString().split('T')[0];
+          break;
+        case 'quarter':
+          const quarterStart = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 1);
+          dateRange.start = quarterStart.toISOString().split('T')[0];
+          dateRange.end = new Date().toISOString().split('T')[0];
+          break;
+        case 'year':
+          dateRange.start = new Date(now.getFullYear(), 0, 1).toISOString().split('T')[0];
+          dateRange.end = new Date().toISOString().split('T')[0];
+          break;
+        case 'custom':
+          dateRange.start = startDate || new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+          dateRange.end = endDate || new Date().toISOString().split('T')[0];
+          break;
+      }
+
+      // Revenue query with filters
+      const revenueQuery = `
+        SELECT 
+          COALESCE(SUM(a.total_amount), 0) as total_revenue,
+          COUNT(DISTINCT a.id) as total_appointments,
+          AVG(a.total_amount) as average_ticket
+        FROM appointments a
+        INNER JOIN services s ON a.service_id = s.id
+        WHERE a.status = 'completed'
+          AND a.appointment_date >= $1
+          AND a.appointment_date <= $2
+          ${serviceCategory ? 'AND s.category = $3' : ''}
+          ${professionalId ? `AND a.professional_id = $${serviceCategory ? '4' : '3'}` : ''}
+      `;
+
+      // Daily revenue breakdown query
+      const dailyRevenueQuery = `
+        SELECT 
+          DATE(a.appointment_date) as date,
+          COALESCE(SUM(a.total_amount), 0) as revenue,
+          COUNT(a.id) as appointments
+        FROM appointments a
+        INNER JOIN services s ON a.service_id = s.id
+        WHERE a.status = 'completed'
+          AND a.appointment_date >= $1
+          AND a.appointment_date <= $2
+          ${serviceCategory ? 'AND s.category = $3' : ''}
+          ${professionalId ? `AND a.professional_id = $${serviceCategory ? '4' : '3'}` : ''}
+        GROUP BY DATE(a.appointment_date)
+        ORDER BY date DESC
+      `;
+
+      // Revenue by category query
+      const categoryRevenueQuery = `
+        SELECT 
+          s.category,
+          COALESCE(SUM(a.total_amount), 0) as revenue,
+          COUNT(a.id) as appointments,
+          ROUND(AVG(a.total_amount), 2) as average_ticket
+        FROM appointments a
+        INNER JOIN services s ON a.service_id = s.id
+        WHERE a.status = 'completed'
+          AND a.appointment_date >= $1
+          AND a.appointment_date <= $2
+          ${professionalId ? 'AND a.professional_id = $3' : ''}
+        GROUP BY s.category
+        ORDER BY revenue DESC
+      `;
+
+      // TODO: Replace with actual database client (Supabase, Prisma, or pg)
+      // const params = [dateRange.start, dateRange.end];
+      // if (serviceCategory) params.push(serviceCategory);
+      // if (professionalId) params.push(professionalId);
+      // 
+      // const [totalRevenue, dailyRevenue, categoryRevenue] = await Promise.all([
+      //   supabase.rpc('execute_sql', { query: revenueQuery, params }),
+      //   supabase.rpc('execute_sql', { query: dailyRevenueQuery, params }),
+      //   supabase.rpc('execute_sql', { query: categoryRevenueQuery, params: professionalId ? [dateRange.start, dateRange.end, professionalId] : [dateRange.start, dateRange.end] })
+      // ]);
+
+      // Mock implementation for now - replace with actual database calls
       const mockRevenue = {
         total: 45_780.5,
         previousPeriod: 40_850.25,

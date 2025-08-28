@@ -4,7 +4,7 @@
  */
 
 import type { ReactNode } from "react";
-import type { User } from "../types";
+import type { User, IAuthService } from "../types";
 
 // Auth context types
 export interface AuthContextValue {
@@ -23,7 +23,7 @@ export interface AuthContextValue {
 
 export interface AuthProviderProps {
   children: ReactNode;
-  authService?: unknown; // TODO: Define AuthService interface/type
+  authService?: IAuthService;
 }
 
 // Hook return types

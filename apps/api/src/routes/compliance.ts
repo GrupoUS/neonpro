@@ -158,15 +158,121 @@ export const complianceRoutes = new Hono()
     } = c.req.valid("query");
 
     try {
-      // TODO: Implement actual audit log query
-      const mockLogs = Array.from({ length: 25 }, (_, i) => ({
+      // Build audit log query with filters
+      const offset = (page - 1) * limit;
+      
+      // Base query for audit logs
+      let query = `
+        SELECT 
+          al.id,
+          al.timestamp,
+          al.user_id,
+          u.name as user_name,
+          al.action,
+          al.resource_type,
+          al.resource_id,
+          al.details,
+          al.ip_address,
+          al.user_agent,
+          al.session_id
+        FROM audit_logs al
+        LEFT JOIN users u ON al.user_id = u.id
+        WHERE 1=1
+      `;
+      
+      const queryParams: any[] = [];
+      let paramIndex = 1;
+      
+      // Apply filters
+      if (startDate) {
+        query += ` AND al.timestamp >= $${paramIndex}`;
+        queryParams.push(new Date(startDate));
+        paramIndex++;
+      }
+      
+      if (endDate) {
+        query += ` AND al.timestamp <= $${paramIndex}`;
+        queryParams.push(new Date(endDate));
+        paramIndex++;
+      }
+      
+      if (userId) {
+        query += ` AND al.user_id = $${paramIndex}`;
+        queryParams.push(userId);
+        paramIndex++;
+      }
+      
+      if (action) {
+        query += ` AND al.action = $${paramIndex}`;
+        queryParams.push(action);
+        paramIndex++;
+      }
+      
+      if (resourceType) {
+        query += ` AND al.resource_type = $${paramIndex}`;
+        queryParams.push(resourceType);
+        paramIndex++;
+      }
+      
+      // Add ordering and pagination
+      query += ` ORDER BY al.timestamp DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+      queryParams.push(limit, offset);
+      
+      // Count query for total records
+      let countQuery = `
+        SELECT COUNT(*) as total
+        FROM audit_logs al
+        WHERE 1=1
+      `;
+      
+      const countParams: any[] = [];
+      let countParamIndex = 1;
+      
+      // Apply same filters to count query
+      if (startDate) {
+        countQuery += ` AND al.timestamp >= $${countParamIndex}`;
+        countParams.push(new Date(startDate));
+        countParamIndex++;
+      }
+      
+      if (endDate) {
+        countQuery += ` AND al.timestamp <= $${countParamIndex}`;
+        countParams.push(new Date(endDate));
+        countParamIndex++;
+      }
+      
+      if (userId) {
+        countQuery += ` AND al.user_id = $${countParamIndex}`;
+        countParams.push(userId);
+        countParamIndex++;
+      }
+      
+      if (action) {
+        countQuery += ` AND al.action = $${countParamIndex}`;
+        countParams.push(action);
+        countParamIndex++;
+      }
+      
+      if (resourceType) {
+        countQuery += ` AND al.resource_type = $${countParamIndex}`;
+        countParams.push(resourceType);
+        countParamIndex++;
+      }
+      
+      // Execute queries
+      // TODO: Replace with actual database client (Supabase, Prisma, or pg)
+      // const { data: logs, error: logsError } = await supabase.rpc('execute_sql', { query, params: queryParams });
+      // const { data: countResult, error: countError } = await supabase.rpc('execute_sql', { query: countQuery, params: countParams });
+      
+      // Mock implementation for now - replace with actual database calls
+      const mockLogs = Array.from({ length: Math.min(limit, 25) }, (_, i) => ({
         id: `log_${i + 1}`,
         timestamp: new Date(Date.now() - i * 3_600_000).toISOString(),
-        userId: `user_${Math.floor(Math.random() * 5) + 1}`,
-        userName: ["Ana Silva", "João Santos", "Maria Costa"][
+        user_id: `user_${Math.floor(Math.random() * 5) + 1}`,
+        user_name: ["Ana Silva", "João Santos", "Maria Costa"][
           Math.floor(Math.random() * 3)
         ],
-        action: ["create", "read", "update", "delete"][
+        action: action || ["create", "read", "update", "delete"][
           Math.floor(Math.random() * 4)
         ],
         resourceType: ["patient", "appointment", "professional"][
@@ -227,7 +333,42 @@ export const complianceRoutes = new Hono()
   // ✉️ LGPD requests management
   .get("/lgpd/requests", async (c) => {
     try {
-      // TODO: Implement actual LGPD requests query
+      // Query LGPD requests from database
+      const query = `
+        SELECT 
+          lr.id,
+          lr.type,
+          lr.patient_id,
+          p.name as patient_name,
+          lr.requester_name,
+          lr.requester_email,
+          lr.status,
+          lr.priority,
+          lr.justification,
+          lr.created_at,
+          lr.due_date,
+          lr.processed_at,
+          lr.processor_id,
+          u.name as processor_name,
+          lr.response_data,
+          lr.notes
+        FROM lgpd_requests lr
+        LEFT JOIN patients p ON lr.patient_id = p.id
+        LEFT JOIN users u ON lr.processor_id = u.id
+        ORDER BY 
+          CASE lr.priority 
+            WHEN 'high' THEN 1
+            WHEN 'medium' THEN 2
+            WHEN 'low' THEN 3
+          END,
+          lr.created_at DESC
+      `;
+      
+      // TODO: Replace with actual database client (Supabase, Prisma, or pg)
+      // const { data: requests, error } = await supabase.rpc('execute_sql', { query });
+      // if (error) throw error;
+      
+      // Mock implementation for now - replace with actual database calls
       const mockRequests = [
         {
           id: "req_1",

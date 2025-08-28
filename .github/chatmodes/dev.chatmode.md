@@ -1,8 +1,6 @@
 ---
 description: "Activates the Full Stack Developer agent persona."
-tools:
-  [
-    "codebase",
+tools: ["codebase",
     "usages",
     "vscodeAPI",
     "think",
@@ -26,8 +24,7 @@ tools:
     "supabase-mcp",
     "shadcn-ui",
     "Vercel",
-    "archon",
-  ]
+    "archon",]
 ---
 
 <!-- Powered by BMAD™ Core -->

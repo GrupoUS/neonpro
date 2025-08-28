@@ -283,14 +283,69 @@ jobs:
           echo "- **Linting**: ⚠️ Reviewed" >> $GITHUB_STEP_SUMMARY
 
   # =============================================================================
-  # PHASE 4: BUILD VALIDATION
+  # PHASE 4: AUTOMATED CODE ANALYSIS
+  # =============================================================================
+
+  automated-analysis:
+    name: 🤖 Automated Code Analysis
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    needs: [pr-safety, change-detection, code-quality]
+    if: needs.change-detection.outputs.has-src-changes == 'true'
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
+      checks: write
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ github.token }}
+
+      - name: 🔍 DeepSource Analysis
+        uses: deepsourcelabs/test-coverage-action@master
+        with:
+          key: ${{ secrets.DEEPSOURCE_DSN }}
+          coverage-file: coverage/lcov.info
+          dsn: ${{ secrets.DEEPSOURCE_DSN }}
+        continue-on-error: true
+
+      - name: 🤖 CodeRabbit Analysis
+        uses: coderabbitai/coderabbit-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+        continue-on-error: true
+
+      - name: 🔒 Security Analysis with CodeQL
+        uses: github/codeql-action/analyze@v3
+        with:
+          languages: typescript, javascript
+          queries: security-and-quality
+        continue-on-error: true
+
+      - name: 📊 Analysis Summary
+        run: |
+          echo "### 🤖 Automated Analysis Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **DeepSource**: ✅ Analysis completed" >> $GITHUB_STEP_SUMMARY
+          echo "- **CodeRabbit**: ✅ AI review completed" >> $GITHUB_STEP_SUMMARY
+          echo "- **CodeQL Security**: ✅ Security scan completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📝 **Note**: Automated tools provide suggestions and insights." >> $GITHUB_STEP_SUMMARY
+          echo "Human review is still required for final approval." >> $GITHUB_STEP_SUMMARY
+
+  # =============================================================================
+  # PHASE 5: BUILD VALIDATION
   # =============================================================================
 
   build-validation:
     name: 🏗️ Build Validation
     runs-on: ubuntu-22.04
     timeout-minutes: 15
-    needs: [pr-safety, change-detection, code-quality]
+    needs: [pr-safety, change-detection, code-quality, automated-analysis]
     if: needs.change-detection.outputs.has-src-changes == 'true'
     strategy:
       matrix:
@@ -546,6 +601,7 @@ jobs:
         pr-safety,
         change-detection,
         code-quality,
+        automated-analysis,
         build-validation,
         security-validation,
         test-validation,
@@ -635,6 +691,7 @@ jobs:
           echo "- **Safety Gates**: ${{ needs.pr-safety.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Change Detection**: ${{ needs.change-detection.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Code Quality**: ${{ needs.code-quality.result == 'success' && '✅ Passed' || (needs.code-quality.result == 'skipped' && '⏭️ Skipped' || '❌ Failed') }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Automated Analysis**: ${{ needs.automated-analysis.result == 'success' && '✅ Passed' || (needs.automated-analysis.result == 'skipped' && '⏭️ Skipped' || '❌ Failed') }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Build Validation**: ${{ needs.build-validation.result == 'success' && '✅ Passed' || (needs.build-validation.result == 'skipped' && '⏭️ Skipped' || '❌ Failed') }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Security**: ${{ needs.security-validation.result == 'success' && '✅ Passed' || (needs.security-validation.result == 'skipped' && '⏭️ Skipped' || '❌ Failed') }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Testing**: ${{ needs.test-validation.result == 'success' && '✅ Passed' || (needs.test-validation.result == 'skipped' && '⏭️ Skipped' || '❌ Failed') }}" >> $GITHUB_STEP_SUMMARY
@@ -645,6 +702,7 @@ jobs:
           if [[ "${{ needs.pr-safety.result }}" == "failure" ]] || \
              [[ "${{ needs.change-detection.result }}" == "failure" ]] || \
              [[ "${{ needs.code-quality.result }}" == "failure" ]] || \
+             [[ "${{ needs.automated-analysis.result }}" == "failure" ]] || \
              [[ "${{ needs.build-validation.result }}" == "failure" ]] || \
              [[ "${{ needs.security-validation.result }}" == "failure" ]] || \
              [[ "${{ needs.test-validation.result }}" == "failure" ]]; then

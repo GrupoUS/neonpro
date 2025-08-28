@@ -1,35 +1,77 @@
-import { z } from "zod";
-import { COMPLIANCE_AREAS } from "./compliance-automation-constants";
+/**
+ * Type definitions for compliance automation system
+ * Provides type safety for compliance data structures
+ */
 
-// Zod schemas
-export const complianceAutomationSchema = z.object({
-  anvisa_automation: z.boolean().default(true),
-  cfm_automation: z.boolean().default(true),
-  compliance_areas: z.array(z.enum(COMPLIANCE_AREAS)).default(["all"]),
-  immediate_execution: z.boolean().default(true),
-  lgpd_automation: z.boolean().default(true),
-  tenant_id: z.string(),
-  user_id: z.string(),
-});
+export interface ComplianceHistoryEntry {
+  readonly overall_score: number;
+  readonly assessment_date: Date;
+  readonly areas: readonly string[];
+  readonly severity_counts: SeverityCount;
+  readonly tenant_id: string;
+}
 
-export const complianceReportSchema = z.object({
-  end_date: z.string().optional(),
-  period_days: z.number().default(30),
-  report_type: z.enum(["detailed", "summary", "executive"]).default("detailed"),
-  start_date: z.string().optional(),
-  tenant_id: z.string(),
-});
+export interface ComplianceTrends {
+  readonly areas_declining: readonly string[];
+  readonly areas_improving: readonly string[];
+  readonly average_score: number;
+  readonly compliance_consistency: number;
+  readonly score_trend: "improving" | "stable" | "declining";
+}
 
-export const complianceMonitoringSchema = z.object({
-  monitoring_active: z.boolean(),
-  tenant_id: z.string(),
-});
+export interface SeverityCount {
+  readonly critical: number;
+  readonly warning: number;
+  readonly info: number;
+  readonly total: number;
+}
 
-// Types
-export type ComplianceAutomationRequest = z.infer<
-  typeof complianceAutomationSchema
->;
-export type ComplianceReportRequest = z.infer<typeof complianceReportSchema>;
-export type ComplianceMonitoringRequest = z.infer<
-  typeof complianceMonitoringSchema
->;
+export interface ComplianceAlert {
+  readonly severity: "critical" | "constitutional_violation" | "warning" | "info";
+  readonly message: string;
+  readonly area: string;
+  readonly timestamp: Date;
+  readonly resolved: boolean;
+}
+
+export interface ComplianceReportData {
+  readonly reportData: readonly ComplianceHistoryEntry[];
+  readonly startDate: string | Date;
+  readonly endDate: string | Date;
+  readonly periodDays: number;
+  readonly reportType: string;
+  readonly tenantId: string;
+}
+
+export interface ComplianceOverview {
+  readonly areas_analyzed: readonly string[];
+  readonly average_score: number;
+  readonly constitutional_compliance_rate: number;
+  readonly total_assessments: number;
+}
+
+export interface ComplianceReportSummary {
+  readonly compliance_overview: ComplianceOverview;
+  readonly download_url: string;
+  readonly generated_at: string;
+  readonly period: {
+    readonly days: number;
+    readonly end: string;
+    readonly start: string;
+  };
+  readonly report_id: string;
+  readonly report_type: string;
+}
+
+export interface ComplianceValidationResult {
+  readonly isValid: boolean;
+  readonly errors: readonly string[];
+  readonly warnings: readonly string[];
+}
+
+export interface ComplianceAutomationResult<T = unknown> {
+  readonly success: boolean;
+  readonly data: T;
+  readonly timestamp: string;
+  readonly compliance_score: number;
+}

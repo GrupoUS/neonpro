@@ -7,10 +7,19 @@ import type { Database } from "@neonpro/types";
 import { createClient } from "@supabase/supabase-js";
 
 // Supabase configuration
-const SUPABASE_URL =
-  process.env.SUPABASE_URL || "https://ownkoxryswokcdanrdgj.supabase.co";
-const SUPABASE_SERVICE_ROLE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || "";
+// apps/api/src/lib/supabase.ts
+
+// ... (previous imports/context)
+
+const SUPABASE_URL = process.env.SUPABASE_URL ?? "";
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+
+// Barreira server-only: nunca permita uso de Service Role no browser
+if (typeof window !== "undefined") {
+  throw new Error("Este módulo é apenas para ambiente de servidor (service role).");
+}
+
+// ... (rest of file, e.g. client initialization)
 
 /**
  * Create Supabase client with service role key

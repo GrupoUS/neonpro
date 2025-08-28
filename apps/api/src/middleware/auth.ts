@@ -226,11 +226,158 @@ const verifyToken = async (token: string): Promise<JWTPayload> => {
 };
 
 /**
+ * Token blacklist store interface
+ */
+interface TokenBlacklistStore {
+  isBlacklisted(jti: string): Promise<boolean>;
+  addToBlacklist(jti: string, expiresAt: Date): Promise<void>;
+  cleanup(): Promise<void>;
+}
+
+/**
+ * In-memory token blacklist implementation
+ * In production, use Redis or database for distributed systems
+ */
+class InMemoryTokenBlacklist implements TokenBlacklistStore {
+  private blacklistedTokens = new Map<string, Date>();
+  private cleanupInterval: NodeJS.Timeout;
+
+  constructor() {
+    // Clean up expired tokens every hour
+    this.cleanupInterval = setInterval(() => {
+      this.cleanup();
+    }, 60 * 60 * 1000);
+  }
+
+  async isBlacklisted(jti: string): Promise<boolean> {
+    const expiresAt = this.blacklistedTokens.get(jti);
+    if (!expiresAt) {
+      return false;
+    }
+
+    // If token has expired, remove it from blacklist
+    if (new Date() > expiresAt) {
+      this.blacklistedTokens.delete(jti);
+      return false;
+    }
+
+    return true;
+  }
+
+  async addToBlacklist(jti: string, expiresAt: Date): Promise<void> {
+    this.blacklistedTokens.set(jti, expiresAt);
+    
+    // Log blacklist event for security monitoring
+    console.warn('[TOKEN_BLACKLISTED]', {
+      jti: jti.substring(0, 8) + '***', // Mask JTI for privacy
+      expiresAt: expiresAt.toISOString(),
+      timestamp: new Date().toISOString(),
+      reason: 'MANUAL_REVOCATION'
+    });
+  }
+
+  async cleanup(): Promise<void> {
+    const now = new Date();
+    let cleanedCount = 0;
+    
+    for (const [jti, expiresAt] of this.blacklistedTokens.entries()) {
+      if (now > expiresAt) {
+        this.blacklistedTokens.delete(jti);
+        cleanedCount++;
+      }
+    }
+    
+    if (cleanedCount > 0) {
+      console.info('[TOKEN_BLACKLIST_CLEANUP]', {
+        cleanedTokens: cleanedCount,
+        remainingTokens: this.blacklistedTokens.size,
+        timestamp: now.toISOString()
+      });
+    }
+  }
+
+  // Graceful shutdown
+  destroy(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+    }
+  }
+}
+
+/**
+ * Redis-based token blacklist implementation (for production)
+ * Uncomment and configure when Redis is available
+ */
+/*
+class RedisTokenBlacklist implements TokenBlacklistStore {
+  private redis: any; // Redis client
+  
+  constructor(redisClient: any) {
+    this.redis = redisClient;
+  }
+  
+  async isBlacklisted(jti: string): Promise<boolean> {
+    const result = await this.redis.get(`blacklist:${jti}`);
+    return result !== null;
+  }
+  
+  async addToBlacklist(jti: string, expiresAt: Date): Promise<void> {
+    const ttl = Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
+    if (ttl > 0) {
+      await this.redis.setex(`blacklist:${jti}`, ttl, '1');
+    }
+  }
+  
+  async cleanup(): Promise<void> {
+    // Redis handles TTL automatically, no manual cleanup needed
+  }
+}
+*/
+
+// Global blacklist store instance
+const tokenBlacklist: TokenBlacklistStore = new InMemoryTokenBlacklist();
+
+/**
  * Check if token is blacklisted (for logout/revocation)
  */
-const isTokenBlacklisted = async (_jti: string): Promise<boolean> => {
-  // TODO: Implement token blacklist check (Redis/Database)
-  return false;
+const isTokenBlacklisted = async (jti: string): Promise<boolean> => {
+  try {
+    return await tokenBlacklist.isBlacklisted(jti);
+  } catch (error) {
+    // Log error but don't block authentication on blacklist check failure
+    console.error('[TOKEN_BLACKLIST_CHECK_ERROR]', {
+      jti: jti.substring(0, 8) + '***',
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString()
+    });
+    
+    // In case of error, assume token is not blacklisted to avoid blocking valid users
+    // But this should be monitored and investigated
+    return false;
+  }
+};
+
+/**
+ * Add token to blacklist (for logout/revocation)
+ */
+export const blacklistToken = async (jti: string, expiresAt: Date): Promise<void> => {
+  try {
+    await tokenBlacklist.addToBlacklist(jti, expiresAt);
+  } catch (error) {
+    console.error('[TOKEN_BLACKLIST_ADD_ERROR]', {
+      jti: jti.substring(0, 8) + '***',
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString()
+    });
+    throw error; // Re-throw to ensure logout/revocation fails if blacklisting fails
+  }
+};
+
+/**
+ * Cleanup expired tokens from blacklist
+ */
+export const cleanupTokenBlacklist = async (): Promise<void> => {
+  await tokenBlacklist.cleanup();
 };
 
 /**
@@ -289,8 +436,8 @@ export const authMiddleware = (): MiddlewareHandler => {
       await next();
     } catch (error) {
       if (
-        error.message.includes("Invalid token") ||
-        error.message.includes("jwt")
+        error.message.includes("Invalid token")
+        || error.message.includes("jwt")
       ) {
         throw createError.authentication("Token inválido");
       }
@@ -334,7 +481,7 @@ export const requirePermission = (
     }
 
     const hasAllPermissions = requiredPermissions.every((permission) =>
-      userPermissions.includes(permission),
+      userPermissions.includes(permission)
     );
 
     if (!hasAllPermissions) {
@@ -402,10 +549,14 @@ export const requireClinicAccess = (): MiddlewareHandler => {
     }
 
     // Extract clinic ID from request (URL parameter, query, or body)
-    const requestClinicId =
-      c.req.param("clinicId") ||
-      c.req.query("clinicId") ||
-      (await c.req.json().catch(() => ({})))?.clinicId;
+    const bodyClinicId = c.req.method !== "GET"
+        && c.req.header("content-type")?.includes("application/json")
+      ? (await c.req.raw.clone().json().catch(() => ({} as Record<string, unknown>)))?.clinicId
+      : undefined;
+
+    const requestClinicId = c.req.param("clinicId")
+      ?? c.req.query("clinicId")
+      ?? (bodyClinicId as string | undefined);
 
     // If clinic ID is specified in request, verify access
     if (requestClinicId && requestClinicId !== userClinicId) {

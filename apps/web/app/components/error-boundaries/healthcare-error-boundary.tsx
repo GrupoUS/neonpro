@@ -69,42 +69,160 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
     // Call custom error handler if provided
     this.props.onError?.(healthcareError);
   }
-  private logToComplianceSystem(error: HealthcareError, errorInfo: ErrorInfo) {
-    // TODO: Implement actual compliance logging
-    console.error("[COMPLIANCE LOG]", {
-      errorId: error.id,
-      category: error.category,
-      severity: error.severity,
-      patientImpact: error.patientImpact,
-      complianceRisk: error.complianceRisk,
-      context: error.context,
-      timestamp: error.timestamp,
-      componentStack: errorInfo.componentStack,
-    });
+  private async logToComplianceSystem(error: HealthcareError, errorInfo: ErrorInfo) {
+    try {
+      const complianceLog = {
+        errorId: error.id,
+        category: error.category,
+        severity: error.severity,
+        patientImpact: error.patientImpact,
+        complianceRisk: error.complianceRisk,
+        context: {
+          ...error.context,
+          // Sanitize sensitive data for LGPD compliance
+          patientId: error.context.patientId ? '[REDACTED]' : undefined,
+          userId: error.context.userId ? '[REDACTED]' : undefined,
+        },
+        timestamp: error.timestamp,
+        componentStack: errorInfo.componentStack,
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+      };
+
+      // Send to compliance API endpoint
+      await fetch('/api/compliance/error-logs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Compliance-Log': 'true',
+        },
+        body: JSON.stringify(complianceLog),
+      }).catch(err => {
+        // Fallback to console if API fails
+        console.error('[COMPLIANCE LOG FALLBACK]', complianceLog, err);
+      });
+
+      // Also log to local storage for offline scenarios
+      const existingLogs = JSON.parse(localStorage.getItem('compliance-error-logs') || '[]');
+      existingLogs.push(complianceLog);
+      // Keep only last 50 logs to prevent storage overflow
+      if (existingLogs.length > 50) {
+        existingLogs.splice(0, existingLogs.length - 50);
+      }
+      localStorage.setItem('compliance-error-logs', JSON.stringify(existingLogs));
+    } catch (logError) {
+      console.error('[COMPLIANCE LOG ERROR]', logError);
+    }
   }
 
-  private triggerDataSecurityAlert(error: HealthcareError) {
-    // TODO: Implement actual security alert system
-    console.error("[SECURITY ALERT] Patient data involved in error", {
-      errorId: error.id,
-      patientId: error.context.patientId,
-      severity: error.severity,
-      timestamp: error.timestamp,
-    });
+  private async triggerDataSecurityAlert(error: HealthcareError) {
+    try {
+      const securityAlert = {
+        alertId: `SEC_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+        errorId: error.id,
+        alertType: 'PATIENT_DATA_ERROR',
+        severity: error.severity,
+        patientDataInvolved: !!error.context.patientId,
+        medicalRecordsInvolved: error.context.endpoint?.includes('medical-records') || false,
+        complianceRisk: error.complianceRisk,
+        timestamp: error.timestamp,
+        context: {
+          endpoint: error.context.endpoint,
+          sessionId: error.context.sessionId,
+          // Do not include actual patient ID for security
+          hasPatientId: !!error.context.patientId,
+        },
+      };
+
+      // Send immediate security alert
+      await fetch('/api/security/alerts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Security-Alert': 'true',
+          'X-Priority': error.severity === 'critical' ? 'IMMEDIATE' : 'HIGH',
+        },
+        body: JSON.stringify(securityAlert),
+      }).catch(err => {
+        console.error('[SECURITY ALERT FALLBACK]', securityAlert, err);
+      });
+
+      // If critical, also trigger browser notification (if permitted)
+      if (error.severity === 'critical' && 'Notification' in window) {
+        if (Notification.permission === 'granted') {
+          new Notification('Alerta de Segurança Crítico', {
+            body: 'Erro crítico detectado envolvendo dados de paciente. Equipe de segurança notificada.',
+            icon: '/icons/security-alert.png',
+            tag: 'security-alert',
+          });
+        }
+      }
+    } catch (alertError) {
+      console.error('[SECURITY ALERT ERROR]', alertError);
+    }
   }
 
-  private logToPerformanceMonitoring(
+  private async logToPerformanceMonitoring(
     error: HealthcareError,
     errorInfo: ErrorInfo,
   ) {
-    // TODO: Implement performance monitoring integration
-    console.error("[PERFORMANCE MONITOR]", {
-      errorId: error.id,
-      category: error.category,
-      severity: error.severity,
-      endpoint: error.context.endpoint,
-      timestamp: error.timestamp,
-    });
+    try {
+      const performanceData = {
+        errorId: error.id,
+        category: error.category,
+        severity: error.severity,
+        endpoint: error.context.endpoint,
+        timestamp: error.timestamp,
+        performanceMetrics: {
+          // Collect performance timing data
+          navigationTiming: performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming,
+          memoryUsage: (performance as any).memory ? {
+            usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
+            totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
+            jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit,
+          } : undefined,
+          connectionType: (navigator as any).connection?.effectiveType,
+          userAgent: navigator.userAgent,
+          viewport: {
+            width: window.innerWidth,
+            height: window.innerHeight,
+          },
+        },
+        componentStack: errorInfo.componentStack,
+        renderingContext: {
+          url: window.location.href,
+          referrer: document.referrer,
+          timestamp: Date.now(),
+        },
+      };
+
+      // Send to performance monitoring service
+      await fetch('/api/monitoring/performance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Performance-Log': 'true',
+        },
+        body: JSON.stringify(performanceData),
+      }).catch(err => {
+        console.error('[PERFORMANCE MONITOR FALLBACK]', performanceData, err);
+      });
+
+      // Also send to external monitoring service (e.g., Sentry, DataDog)
+      if (window.gtag) {
+        window.gtag('event', 'exception', {
+          description: `Healthcare Error: ${error.category}`,
+          fatal: error.severity === 'critical',
+          custom_map: {
+            error_id: error.id,
+            category: error.category,
+            patient_impact: error.patientImpact,
+          },
+        });
+      }
+    } catch (monitorError) {
+      console.error('[PERFORMANCE MONITOR ERROR]', monitorError);
+    }
   }
 
   private handleRetry = () => {
@@ -112,12 +230,75 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
     window.location.reload();
   };
 
-  private handleEscalation = () => {
-    // TODO: Implement escalation mechanism
-    console.log(
-      "[ESCALATION] Error escalated:",
-      this.state.healthcareError?.id,
-    );
+  private handleEscalation = async () => {
+    const error = this.state.healthcareError;
+    if (!error) return;
+
+    try {
+      const escalationData = {
+        escalationId: `ESC_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+        errorId: error.id,
+        escalationType: 'USER_INITIATED',
+        severity: error.severity,
+        category: error.category,
+        patientImpact: error.patientImpact,
+        complianceRisk: error.complianceRisk,
+        userContext: {
+          sessionId: error.context.sessionId,
+          endpoint: error.context.endpoint,
+          timestamp: new Date().toISOString(),
+        },
+        escalationReason: 'User requested technical support',
+      };
+
+      // Send escalation to support system
+      const response = await fetch('/api/support/escalate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Escalation': 'true',
+          'X-Priority': error.severity === 'critical' ? 'URGENT' : 'HIGH',
+        },
+        body: JSON.stringify(escalationData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Show success message to user
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification('Suporte Técnico Acionado', {
+            body: `Ticket #${result.ticketId} criado. Nossa equipe entrará em contato em breve.`,
+            icon: '/icons/support.png',
+            tag: 'support-escalation',
+          });
+        }
+
+        // Update UI to show escalation success
+        this.setState({ 
+          escalationStatus: 'success',
+          supportTicketId: result.ticketId 
+        });
+      } else {
+        throw new Error('Escalation API failed');
+      }
+    } catch (escalationError) {
+      console.error('[ESCALATION ERROR]', escalationError);
+      
+      // Fallback: Open email client with pre-filled support email
+      const subject = encodeURIComponent(`Erro Crítico do Sistema - ID: ${error.id}`);
+      const body = encodeURIComponent(
+        `Detalhes do Erro:\n\n` +
+        `ID do Erro: ${error.id}\n` +
+        `Categoria: ${error.category}\n` +
+        `Severidade: ${error.severity}\n` +
+        `Timestamp: ${error.timestamp}\n` +
+        `Endpoint: ${error.context.endpoint || 'N/A'}\n\n` +
+        `Por favor, investiguem este erro com urgência.`
+      );
+      
+      window.location.href = `mailto:suporte@neonpro.com.br?subject=${subject}&body=${body}`;
+    }
     alert(
       "Erro reportado para a equipe técnica. Aguarde resolução ou entre em contato com o suporte.",
     );

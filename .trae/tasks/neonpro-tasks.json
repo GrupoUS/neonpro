@@ -1,0 +1,137 @@
+{
+	"version": "2.0.0",
+	"_metadata": {
+		"project": "NeonPro AI Healthcare Platform",
+		"description": "Enhanced task configurations for AI-first healthcare development",
+		"compliance": ["LGPD", "ANVISA Class IIa", "CFM Ethics"],
+		"created": "2025-01-28",
+		"archon_integration": true
+	},
+	"tasks": [
+		{
+			"label": "🚀 NeonPro Dev Server",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["dev"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "Start NeonPro development server with AI streaming",
+			"isBackground": true,
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"problemMatcher": "$tsc-watch"
+		},
+		{
+			"label": "🤖 AI Model Tests",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["test:ai"],
+			"group": "test",
+			"detail": "Run AI model validation and performance tests",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "⚡ Performance Benchmark",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["benchmark"],
+			"group": "test",
+			"detail": "Emergency response <200ms, Healthcare ops <2s, AI <500ms",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🔒 Security Audit",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["security:audit"],
+			"group": "build",
+			"detail": "Healthcare data security and vulnerability assessment",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "📊 Code Quality Gate",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["quality:gate"],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"detail": "≥9.8/10 quality standard with healthcare compliance",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🧬 Database Migration",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["db:migrate"],
+			"group": "build",
+			"detail": "Run Supabase database migrations with audit trail",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🎭 E2E Healthcare Flows",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["e2e:healthcare"],
+			"group": "test",
+			"detail": "End-to-end testing of critical healthcare workflows",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "📋 Archon Task Sync",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["archon:sync"],
+			"group": "build",
+			"detail": "Synchronize tasks with Archon MCP server",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🚨 Emergency Response Test",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["test:emergency"],
+			"group": "test",
+			"detail": "Test critical patient data access <200ms requirement",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		}
+	]
+}

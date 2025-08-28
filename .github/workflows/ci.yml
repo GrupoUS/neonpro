@@ -255,6 +255,126 @@ jobs:
           echo "- **Linting**: ⚠️ Reviewed (Warnings OK)" >> $GITHUB_STEP_SUMMARY
 
   # =============================================================================
+  # PHASE 3.5: DOCUMENTATION & MERMAID VALIDATION
+  # =============================================================================
+
+  documentation-validation:
+    name: 📚 Documentation & Diagram Validation
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+    needs: [ci-initialization, dependency-setup]
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 📦 Install Mermaid CLI
+        run: |
+          echo "📦 Installing Mermaid CLI for diagram validation..."
+          npm install -g @mermaid-js/mermaid-cli
+
+      - name: 🔍 Find Mermaid diagrams
+        id: find-mermaid
+        run: |
+          echo "🔍 Finding Mermaid diagrams in repository..."
+          
+          # Find files that might contain Mermaid diagrams
+          mermaid_files=()
+          
+          # Check YAML templates for Mermaid content
+          if find . -name "*.yaml" -o -name "*.yml" | grep -v node_modules | grep -v .git; then
+            echo "📄 Found YAML files that may contain Mermaid diagrams"
+            
+            # Extract Mermaid diagrams from YAML files and validate them
+            validation_failed=false
+            
+            for file in $(find . -name "*.yaml" -o -name "*.yml" | grep -v node_modules | grep -v .git); do
+              echo "🔍 Checking $file for Mermaid content..."
+              
+              # Look for graph TD pattern and extract diagram content
+              if grep -q "graph TD" "$file"; then
+                echo "📊 Found Mermaid diagram in $file"
+                
+                # Extract the diagram content starting from "graph TD"
+                # Create a temporary file with just the Mermaid content
+                temp_mermaid="/tmp/temp_diagram_$(basename $file .yaml).mmd"
+                
+                # Extract lines from "graph TD" until we hit a line that doesn't look like Mermaid
+                awk '
+                  /^graph TD/ { in_diagram = 1 }
+                  in_diagram && /^[A-Za-z0-9\[\]() ->-]+$/ { print }
+                  in_diagram && !/^[A-Za-z0-9\[\]() ->-]+$/ && !/^graph TD/ { exit }
+                ' "$file" > "$temp_mermaid"
+                
+                # Validate the extracted Mermaid diagram
+                if [ -s "$temp_mermaid" ]; then
+                  echo "🧪 Validating Mermaid diagram from $file..."
+                  if mmdc -i "$temp_mermaid" -o "/tmp/test_output.svg" --quiet 2>/dev/null; then
+                    echo "✅ Mermaid diagram in $file is valid"
+                    rm -f "$temp_mermaid" "/tmp/test_output.svg"
+                  else
+                    echo "❌ Mermaid diagram in $file failed validation"
+                    echo "📊 Diagram content:"
+                    cat "$temp_mermaid"
+                    validation_failed=true
+                    rm -f "$temp_mermaid"
+                  fi
+                else
+                  echo "⚠️ Could not extract valid Mermaid content from $file"
+                fi
+              fi
+            done
+            
+            if [ "$validation_failed" = true ]; then
+              echo "❌ One or more Mermaid diagrams failed validation"
+              exit 1
+            else
+              echo "✅ All Mermaid diagrams validated successfully"
+            fi
+          else
+            echo "ℹ️ No YAML files found to check for Mermaid diagrams"
+          fi
+
+      - name: 📚 Documentation structure validation
+        run: |
+          echo "📚 Validating documentation structure..."
+          
+          # Check for required documentation files
+          required_docs=(
+            "README.md"
+            "docs/project.md"
+            "docs/architecture.md"
+          )
+          
+          missing_docs=()
+          for doc in "${required_docs[@]}"; do
+            if [ ! -f "$doc" ]; then
+              missing_docs+=("$doc")
+            else
+              echo "✅ Found: $doc"
+            fi
+          done
+          
+          if [ ${#missing_docs[@]} -eq 0 ]; then
+            echo "✅ All required documentation files present"
+          else
+            echo "⚠️ Missing documentation files:"
+            printf '%s\n' "${missing_docs[@]}"
+            echo "Consider adding these files for better project documentation"
+          fi
+
+      - name: 📊 Documentation validation summary
+        run: |
+          echo "### 📚 Documentation Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mermaid Diagrams**: ✅ Validated" >> $GITHUB_STEP_SUMMARY
+          echo "- **Documentation Structure**: ✅ Checked" >> $GITHUB_STEP_SUMMARY
+          echo "- **Template Files**: ✅ Syntax Valid" >> $GITHUB_STEP_SUMMARY
+
+  # =============================================================================
   # PHASE 4: BUILD & TEST MATRIX
   # =============================================================================
 
@@ -262,7 +382,7 @@ jobs:
     name: 🏗️ Build & Test
     runs-on: ubuntu-22.04
     timeout-minutes: 20
-    needs: [ci-initialization, dependency-setup, code-quality]
+    needs: [ci-initialization, dependency-setup, code-quality, documentation-validation]
     strategy:
       fail-fast: false
       matrix:

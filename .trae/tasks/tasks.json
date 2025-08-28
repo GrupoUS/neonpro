@@ -1,0 +1,123 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "✨ Format Code",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"format"
+			],
+			"group": "build",
+			"detail": "Format all code using dprint",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🔍 Lint Code",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"lint:oxlint"
+			],
+			"group": "build",
+			"detail": "Run oxlint to check for linting issues",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🔧 Fix Lint Issues",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"oxlint:fix"
+			],
+			"group": "build",
+			"detail": "Automatically fix linting issues with oxlint",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "✅ Full Code Check",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"ci:check"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "Run complete code validation (format check + lint + type check)",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🧪 Run Tests",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"vitest",
+				"run",
+				"--reporter=verbose"
+			],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"detail": "Run all tests using Vitest with verbose output",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🧪 Watch Tests",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"vitest",
+				"--watch",
+				"--reporter=verbose"
+			],
+			"group": "test",
+			"detail": "Watch and run tests using Vitest",
+			"isBackground": true,
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "dedicated"
+			}
+		},
+		{
+			"label": "🎭 E2E Tests (Debug)",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"playwright",
+				"test",
+				"--debug"
+			],
+			"group": "test",
+			"detail": "Run E2E tests in debug mode",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		}
+	]
+}

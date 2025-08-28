@@ -10,6 +10,22 @@ import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "../lib/logger";
 import { createRouteRegex, extractResourceIds } from "../lib/regex-constants";
 
+// Safe regex for request ID validation - only alphanumeric, hyphens, underscores
+const SAFE_REQUEST_ID_REGEX = /^[a-zA-Z0-9\-_]{1,64}$/;
+
+/**
+ * Sanitize X-Request-ID header to prevent header/log forgery
+ * @param requestId - The request ID from the header
+ * @returns Sanitized request ID or a locally generated one
+ */
+function sanitizeRequestId(requestId: string | undefined): string {
+  if (!requestId || !SAFE_REQUEST_ID_REGEX.test(requestId)) {
+    // Generate a safe local ID if the header is missing or unsafe
+    return `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  }
+  return requestId;
+}
+
 // Audit log levels
 export enum AuditLevel {
   INFO = "info",
@@ -199,16 +215,44 @@ const auditStore = new AuditStore();
  * Extract user context from request
  */
 const extractUserContext = (c: Context) => {
-  // TODO: Extract from JWT token or session
   const authHeader = c.req.header("Authorization");
 
-  // Mock user extraction - implement actual JWT parsing
   if (authHeader?.startsWith("Bearer ")) {
-    return {
-      userId: "user_123", // Extract from JWT
-      userEmail: "user@neonpro.com", // Extract from JWT
-      userRole: "admin", // Extract from JWT
-    };
+    try {
+      const token = authHeader.slice(7); // Remove "Bearer " prefix
+      
+      // Check if user context is already available from auth middleware
+      const user = c.get('user');
+      if (user) {
+        return {
+          userId: user.id || user.userId,
+          userEmail: user.email,
+          userRole: user.role,
+        };
+      }
+
+      // Fallback: decode JWT manually if user context not available
+      // Note: This is a basic decode without verification for audit purposes only
+      // The actual verification should be done in the auth middleware
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      
+      return {
+        userId: payload.sub || payload.userId || payload.id,
+        userEmail: payload.email,
+        userRole: payload.role || payload.user_role,
+      };
+    } catch (error) {
+      logger.warn('Failed to extract user context from JWT for audit', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        hasAuthHeader: !!authHeader,
+      });
+      
+      return {
+        userId: undefined,
+        userEmail: undefined,
+        userRole: undefined,
+      };
+    }
   }
 
   return {
@@ -223,11 +267,10 @@ const extractUserContext = (c: Context) => {
  */
 const extractClientContext = (c: Context) => {
   return {
-    clientIP:
-      c.req.header("CF-Connecting-IP") ||
-      c.req.header("X-Forwarded-For") ||
-      c.req.header("X-Real-IP") ||
-      "unknown",
+    clientIP: c.req.header("CF-Connecting-IP")
+      || c.req.header("X-Forwarded-For")?.split(",")[0].trim()
+      || c.req.header("X-Real-IP")
+      || "unknown",
     userAgent: c.req.header("User-Agent") || "unknown",
     country: c.req.header("CF-IPCountry") || "unknown",
     region: c.req.header("CF-Region") || "unknown",
@@ -268,10 +311,8 @@ export const auditMiddleware = (): MiddlewareHandler => {
     // Generate audit ID
     const auditId = `audit_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
-    // Generate request ID if not exists
-    const requestId =
-      c.req.header("X-Request-ID") ||
-      `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    // Generate request ID if not exists (sanitized for security)
+    const requestId = sanitizeRequestId(c.req.header("X-Request-ID"));
 
     // Set audit headers
     c.res.headers.set("X-Audit-ID", auditId);
@@ -289,9 +330,11 @@ export const auditMiddleware = (): MiddlewareHandler => {
       let operationConfig = LGPD_SENSITIVE_OPERATIONS[operationKey];
       if (!operationConfig) {
         // Find by pattern matching
-        for (const [pattern, config] of Object.entries(
-          LGPD_SENSITIVE_OPERATIONS,
-        )) {
+        for (
+          const [pattern, config] of Object.entries(
+            LGPD_SENSITIVE_OPERATIONS,
+          )
+        ) {
           const regex = createRouteRegex(pattern);
           if (regex.test(operationKey)) {
             operationConfig = config;
@@ -313,8 +356,7 @@ export const auditMiddleware = (): MiddlewareHandler => {
         level: operationConfig?.level || AuditLevel.INFO,
         category: operationConfig?.category || "general",
         operation: operationKey,
-        description:
-          operationConfig?.description || `${method} operation on ${path}`,
+        description: operationConfig?.description || `${method} operation on ${path}`,
 
         // User context
         ...userContext,

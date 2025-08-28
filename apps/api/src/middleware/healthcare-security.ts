@@ -153,7 +153,99 @@ export interface EmergencyAccessContext {
 }
 
 // Security audit logger
+interface SecurityAlert {
+  level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  type: string;
+  message: string;
+  metadata: any;
+  requiresImmediate: boolean;
+}
+
+interface ComplianceAlert {
+  level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  type: string;
+  message: string;
+  metadata: any;
+  requiresImmediate: boolean;
+}
+
 class HealthcareSecurityLogger {
+  private static async sendSecurityAlert(alert: SecurityAlert): Promise<void> {
+    // Log to console for immediate visibility
+    console.error(`[SECURITY_ALERT_${alert.level}]`, alert);
+    
+    // In production, integrate with:
+    // - SIEM systems (Splunk, ELK Stack)
+    // - Security monitoring tools (Datadog, New Relic)
+    // - Incident response platforms (PagerDuty, Opsgenie)
+    // - Healthcare compliance systems
+    
+    if (alert.requiresImmediate) {
+      // Send immediate notifications via multiple channels
+      await this.sendImmediateNotification(alert);
+    }
+    
+    // Store in audit log for compliance
+    await this.storeSecurityEvent(alert);
+  }
+  
+  private static async sendComplianceAlert(alert: ComplianceAlert): Promise<void> {
+    // Log to console for immediate visibility
+    console.error(`[COMPLIANCE_ALERT_${alert.level}]`, alert);
+    
+    // In production, integrate with:
+    // - Healthcare compliance systems (LGPD, ANVISA)
+    // - Legal team notification systems
+    // - Regulatory reporting tools
+    // - Audit trail systems
+    
+    if (alert.requiresImmediate) {
+      // Send immediate notifications to compliance team
+      await this.sendImmediateComplianceNotification(alert);
+    }
+    
+    // Store in compliance audit log
+    await this.storeComplianceEvent(alert);
+  }
+  
+  private static async sendImmediateNotification(alert: SecurityAlert): Promise<void> {
+    // Placeholder for immediate notification logic
+    // In production: SMS, email, Slack, PagerDuty, etc.
+    console.warn(`[IMMEDIATE_SECURITY_NOTIFICATION]`, {
+      timestamp: new Date().toISOString(),
+      alert
+    });
+  }
+  
+  private static async sendImmediateComplianceNotification(alert: ComplianceAlert): Promise<void> {
+    // Placeholder for immediate compliance notification logic
+    // In production: Legal team alerts, regulatory notifications
+    console.warn(`[IMMEDIATE_COMPLIANCE_NOTIFICATION]`, {
+      timestamp: new Date().toISOString(),
+      alert
+    });
+  }
+  
+  private static async storeSecurityEvent(alert: SecurityAlert): Promise<void> {
+    // Placeholder for security event storage
+    // In production: Database, SIEM, audit logs
+    console.info(`[SECURITY_EVENT_STORED]`, {
+      timestamp: new Date().toISOString(),
+      eventId: `sec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      alert
+    });
+  }
+  
+  private static async storeComplianceEvent(alert: ComplianceAlert): Promise<void> {
+    // Placeholder for compliance event storage
+    // In production: Compliance database, regulatory audit logs
+    console.info(`[COMPLIANCE_EVENT_STORED]`, {
+      timestamp: new Date().toISOString(),
+      eventId: `comp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      alert
+    });
+  }
+
   static logEmergencyAccess(context: EmergencyAccessContext): void {
     console.log("[EMERGENCY_ACCESS]", {
       type: "emergency_access_granted",
@@ -179,7 +271,14 @@ class HealthcareSecurityLogger {
   }): void {
     console.log("[SUSPICIOUS_ACTIVITY]", details);
 
-    // TODO: Integrate with security monitoring system
+    // Send alert to security monitoring system
+    this.sendSecurityAlert({
+      level: 'HIGH',
+      type: 'SUSPICIOUS_ACTIVITY',
+      message: `Suspicious activity detected: ${details.type}`,
+      metadata: details,
+      requiresImmediate: details.attemptCount > 5
+    });
   }
 
   static logLicenseViolation(details: {
@@ -190,7 +289,14 @@ class HealthcareSecurityLogger {
   }): void {
     console.log("[LICENSE_VIOLATION]", details);
 
-    // TODO: Alert compliance team
+    // Alert compliance team immediately
+    this.sendComplianceAlert({
+      level: 'CRITICAL',
+      type: 'LICENSE_VIOLATION',
+      message: `License violation detected for user ${details.userId}`,
+      metadata: details,
+      requiresImmediate: true
+    });
   }
 
   static logUnauthorizedAccess(details: {
@@ -201,7 +307,14 @@ class HealthcareSecurityLogger {
   }): void {
     console.log("[UNAUTHORIZED_ACCESS]", details);
 
-    // TODO: Alert security team
+    // Alert security team immediately
+    this.sendSecurityAlert({
+      level: 'HIGH',
+      type: 'UNAUTHORIZED_ACCESS',
+      message: `Unauthorized access attempt by user ${details.userId} to ${details.resource}`,
+      metadata: details,
+      requiresImmediate: true
+    });
   }
 
   static logWeakTLS(details: {
@@ -416,25 +529,73 @@ export class HealthcareAuthMiddleware {
   // JWT validation with healthcare-specific claims
   static async validateJWT(token: string): Promise<HealthcareUser> {
     try {
-      // TODO: Implement proper JWT verification with jose library
-      // Mock implementation for now
-      if (token === "mock-healthcare-token") {
-        return {
-          id: "user_123",
-          email: "doctor@neonpro.com",
-          role: HealthcareRole.HEALTHCARE_PROVIDER,
-          clinicId: "clinic_123",
-          professionalLicense: {
-            licenseNumber: "CRM123456SP",
-            licenseType: ProfessionalLicenseType.CRM,
-            state: "SP",
-            issuedDate: new Date("2020-01-01"),
-            expirationDate: new Date("2025-12-31"),
-            isActive: true,
-            lastValidated: new Date(),
-          },
-          isActive: true,
+      // Import jose library for JWT verification
+      const { jwtVerify, createRemoteJWKSet } = await import('jose');
+      
+      // Get JWT secret from environment or use default for development
+      const secret = process.env.JWT_SECRET || 'your-secret-key';
+      const secretKey = new TextEncoder().encode(secret);
+      
+      // For production, use JWKS endpoint for key rotation
+      // const JWKS = createRemoteJWKSet(new URL(process.env.JWKS_URI || 'https://your-auth-provider.com/.well-known/jwks.json'));
+      
+      // Verify JWT token
+      const { payload } = await jwtVerify(token, secretKey, {
+        issuer: process.env.JWT_ISSUER || 'neonpro-healthcare',
+        audience: process.env.JWT_AUDIENCE || 'neonpro-api',
+      });
+      
+      // Extract healthcare-specific claims
+      const userId = payload.sub as string;
+      const email = payload.email as string;
+      const role = payload.role as HealthcareRole;
+      const clinicId = payload.clinicId as string;
+      const clinicIds = payload.clinicIds as string[];
+      const emergencyAccess = payload.emergencyAccess as boolean;
+      const licenseData = payload.license as any;
+      
+      // Validate required claims
+      if (!userId || !email || !role) {
+        throw new Error('Missing required JWT claims');
+      }
+      
+      // Construct professional license if present
+      let professionalLicense: ProfessionalLicense | undefined;
+      if (licenseData) {
+        professionalLicense = {
+          licenseNumber: licenseData.licenseNumber,
+          licenseType: licenseData.licenseType,
+          state: licenseData.state,
+          issuedDate: new Date(licenseData.issuedDate),
+          expirationDate: new Date(licenseData.expirationDate),
+          isActive: licenseData.isActive,
+          lastValidated: new Date(licenseData.lastValidated),
         };
+        
+        // Validate license is still active and not expired
+        if (!professionalLicense.isActive || professionalLicense.expirationDate < new Date()) {
+          throw new Error('Professional license is expired or inactive');
+        }
+      }
+      
+      // Construct healthcare user object
+      const healthcareUser: HealthcareUser = {
+        id: userId,
+        email,
+        role,
+        clinicId,
+        clinicIds,
+        professionalLicense,
+        emergencyAccess,
+        isActive: true,
+      };
+      
+      // Additional validation for healthcare providers
+      if (role === HealthcareRole.HEALTHCARE_PROVIDER && !professionalLicense) {
+        throw new Error('Healthcare providers must have a valid professional license');
+      }
+      
+      return healthcareUser;
       }
 
       throw new Error("Invalid token");

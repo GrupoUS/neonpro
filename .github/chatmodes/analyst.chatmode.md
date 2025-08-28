@@ -1,8 +1,6 @@
 ---
 description: "Activates the Business Analyst agent persona."
-tools:
-  [
-    "codebase",
+tools: ["codebase",
     "usages",
     "vscodeAPI",
     "think",
@@ -26,13 +24,8 @@ tools:
     "supabase-mcp",
     "shadcn-ui",
     "Vercel",
-    "archon",
-  ]
+    "archon",]
 ---
-
-<!-- Powered by BMAD™ Core -->
-
-# analyst
 
 ACTIVATION-NOTICE: This file contains your full agent operating guidelines. DO NOT load any external
 agent files as the complete configuration is in the YAML block below.

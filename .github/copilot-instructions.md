@@ -135,21 +135,21 @@ COMPLEXITY_DETECTION:
 
 ```yaml
 MCP_COORDINATION:
-  research_pipeline: "archon → context7 → tavily → exa"
-  execution_engine: "desktop-commander (file operations + system management)"
-  reasoning_engine: "sequential-thinking (complex problem decomposition) + think native tool"
-  coordination_protocol:
-    research_first: "ALWAYS research before critical implementations"
-    result_synthesis: "Combine findings → validate consistency → apply insights"
-    quality_gate: "Validate research quality before implementation (≥9.5/10)"
-    If_stuck_inloop: "trying to fix an error or a bug, use the research-first protocol to get oficial docs and best practices"
-  strategic_selection:
+  research-pipeline: "archon → context7 → tavily → exa"
+  execution-engine: "desktop-commander (file operations + system management)"
+  reasoning-engine: "sequential-thinking (complex problem decomposition) + think native tool"
+  coordination-protocol:
+    research-first: "ALWAYS research before critical implementations"
+    result-synthesis: "Combine findings → validate consistency → apply insights"
+    quality-gate: "Validate research quality before implementation (≥9.5/10)"
+    if-stuck-in-loop: "trying to fix an error or a bug, use the research-first protocol to get official docs and best practices"
+  strategic-selection:
     archon: "Task management, project organization, knowledge base"
-    desktop_commander: "File operations, system management, data analysis, scaffolding"
+    desktop-commander: "File operations, system management, data analysis, scaffolding"
     context7: "Documentation research, framework lookup, best practices validation"
     tavily: "Real-time information, current trends, technology updates"
     exa: "Technical documentation, code examples, implementation patterns"
-    sequential_thinking: "Complex problem decomposition, systematic analysis"
+    sequential-thinking: "Complex problem decomposition, systematic analysis"
 ```
 
 ## 📋 MANDATORY EXECUTION WORKFLOW
@@ -171,14 +171,13 @@ quality_gate: "Requirements clarity ≥9/10"
 ### Phase 2: Research First
 
 ```yaml
-trigger: "ALWAYS DURING PLAN MODE or before planing or insufficient knowledge"
+trigger: "ALWAYS during planning mode or when knowledge is insufficient"
 process:
   investigation: "Define 3-5 key questions"
   documentation: "archon + context7 → Official docs and best practices"
   validation: "tavily → Current patterns and security updates"
   advanced: "exa → Real-world implementations (if complexity ≥5)"
   synthesis: "Cross-reference multiple sources"
-```
 
 ### Phase 3: Context Engineering & Planning
 
@@ -218,7 +217,7 @@ DEVELOPMENT_FLOW:
 
 ```yaml
 ENFORCEMENT_GATES:
-  arquiteture_analisys: "Always check architecture docs for best practices"
+  architecture_analysis: "Always check architecture docs for best practices"
   technology_excellence: "Framework best practices, performance optimization"
 QA_MANDATORY:
   post_modification_checks:
