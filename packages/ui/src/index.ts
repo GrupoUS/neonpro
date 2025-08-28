@@ -35,3 +35,7 @@ export * from "./layouts";
 export * from "./lib/utils";
 // Type exports
 export * from "./types";
+
+// Theme exports - TweakCN NEONPRO Healthcare Theme System
+export * from "./themes/neonpro";
+export * from "./themes/neonpro/components";

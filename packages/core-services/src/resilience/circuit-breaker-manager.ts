@@ -1,0 +1,129 @@
+import { 
+  HealthcareCircuitBreaker, 
+  CircuitBreakerConfig, 
+  CircuitBreakerState 
+} from './healthcare-circuit-breaker';
+import { 
+  ServiceDegradationConfig, 
+  healthcareServiceDegradations 
+} from './service-degradation';
+
+/**
+ * Circuit Breaker Manager for Healthcare Services
+ * Manages multiple circuit breakers and service degradation strategies
+ */
+export class CircuitBreakerManager {
+  private circuitBreakers = new Map<string, HealthcareCircuitBreaker>();
+  private degradationStrategies = new Map<string, ServiceDegradationConfig>();
+
+  constructor() {
+    // Initialize with healthcare service configurations
+    this.initializeHealthcareServices();
+  }
+
+  /**
+   * Initialize circuit breakers for common healthcare services
+   */
+  private initializeHealthcareServices(): void {
+    // Payment service circuit breaker
+    this.createCircuitBreaker('payment-api', {
+      serviceName: 'payment-api',
+      failureThreshold: 3,
+      timeoutDuration: 30000, // 30 seconds
+      halfOpenMaxCalls: 2,
+      healthcareCritical: false
+    });
+
+    // SMS service circuit breaker
+    this.createCircuitBreaker('sms-service', {
+      serviceName: 'sms-service',
+      failureThreshold: 5,
+      timeoutDuration: 60000, // 1 minute
+      halfOpenMaxCalls: 3,
+      healthcareCritical: false
+    });
+
+    // Email service circuit breaker
+    this.createCircuitBreaker('email-service', {
+      serviceName: 'email-service',
+      failureThreshold: 5,
+      timeoutDuration: 60000,
+      halfOpenMaxCalls: 3,
+      healthcareCritical: false
+    });
+
+    // Patient data service (critical)
+    this.createCircuitBreaker('patient-data-api', {
+      serviceName: 'patient-data-api',
+      failureThreshold: 2, // Lower threshold for critical service
+      timeoutDuration: 15000, // Shorter timeout
+      halfOpenMaxCalls: 1,
+      healthcareCritical: true
+    });
+
+    // Load degradation strategies
+    Object.values(healthcareServiceDegradations).forEach(config => {
+      this.degradationStrategies.set(config.serviceName, config);
+    });
+  }  /**
+   * Create a new circuit breaker for a service
+   */
+  createCircuitBreaker(serviceName: string, config: CircuitBreakerConfig): HealthcareCircuitBreaker {
+    const circuitBreaker = new HealthcareCircuitBreaker(config);
+    this.circuitBreakers.set(serviceName, circuitBreaker);
+    return circuitBreaker;
+  }
+
+  /**
+   * Get circuit breaker for a service
+   */
+  getCircuitBreaker(serviceName: string): HealthcareCircuitBreaker | undefined {
+    return this.circuitBreakers.get(serviceName);
+  }
+
+  /**
+   * Execute operation with circuit breaker protection
+   */
+  async execute<T>(serviceName: string, operation: () => Promise<T>): Promise<T> {
+    const circuitBreaker = this.getCircuitBreaker(serviceName);
+    
+    if (!circuitBreaker) {
+      throw new Error(`No circuit breaker configured for service: ${serviceName}`);
+    }
+
+    return circuitBreaker.call(operation);
+  }
+
+  /**
+   * Execute with fallback strategy
+   */
+  async executeWithFallback<T>(
+    serviceName: string, 
+    operation: () => Promise<T>,
+    fallback: () => Promise<T>
+  ): Promise<T> {
+    try {
+      return await this.execute(serviceName, operation);
+    } catch (error) {
+      console.warn(`Service ${serviceName} failed, executing fallback:`, error);
+      return fallback();
+    }
+  }
+
+  /**
+   * Get all circuit breaker statuses
+   */
+  getSystemHealth(): Record<string, any> {
+    const health: Record<string, any> = {};
+    
+    for (const [serviceName, circuitBreaker] of this.circuitBreakers) {
+      health[serviceName] = {
+        state: circuitBreaker.currentState,
+        healthy: circuitBreaker.isHealthy,
+        metrics: circuitBreaker.getMetrics,
+        config: circuitBreaker.getConfig
+      };
+    }
+    
+    return health;
+  }

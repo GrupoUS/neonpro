@@ -4,7 +4,7 @@
 
 ## 📋 **Arquitetura Atual Confirmada**
 
-O NeonPro utiliza uma arquitetura **Turborepo com 3 apps + 23 packages**, focada em funcionalidade essencial, performance e compliance LGPD/ANVISA para clínicas de estética multiprofissionais brasileiras.
+O NeonPro utiliza uma arquitetura **Turborepo com 3 apps + 24 packages**, focada em funcionalidade essencial, performance e compliance LGPD/ANVISA para clínicas de estética multiprofissionais brasileiras.
 
 ### **Estrutura Real Implementada**
 
@@ -15,7 +15,7 @@ neonpro/
 │   ├── api/              # Hono.dev Backend API
 │   └── docs/             # Documentation Site
 │
-├── 📦 packages/ (23 packages implementados)
+├── 📦 packages/ (24 packages implementados)
 │   ├── 🎨 UI & Components (4 packages)
 │   │   ├── ui/                    # shadcn/ui + healthcare components
 │   │   ├── brazilian-healthcare-ui/ # Brazilian healthcare UI library
@@ -182,7 +182,7 @@ apps/
 └── docs/         # Documentação Nextra
 ```
 
-### Packages (23)
+### Packages (24)
 
 #### UI & Components (4)
 
@@ -361,7 +361,7 @@ packages/db/
 └── types/                         # Legacy type definitions
 ```
 
-> **Note**: The `packages/db/` package is scheduled for consolidation into `packages/database/` to reduce redundancy and improve maintainability.
+> **⚠️ Consolidation Notice**: The `packages/db/` package is being consolidated into `packages/database/` to reduce redundancy and improve maintainability. This accounts for the current count of 24 packages (including both legacy db and new database packages). Upon completion of migration, the final count will be 23 packages as originally planned.
 
 #### **packages/ui/** (shadcn/ui Integration)
 
@@ -654,7 +654,7 @@ SENTRY_DSN=
 ### **Completed Features - Validated August 2025**
 
 - ✅ Modern architecture (Next.js 15 + Hono.dev)
-- ✅ Package structure (23 packages organized and functional)
+- ✅ Package structure (24 packages organized and functional, including legacy db package pending consolidation)
 - ✅ Healthcare compliance (LGPD + ANVISA middleware active)
 - ✅ Type safety (100% TypeScript across all packages)
 - ✅ Frontend implementation (authentication, dashboard, patient management)
@@ -694,4 +694,4 @@ SENTRY_DSN=
 
 > **Backend API Confirmed**: ✅ **OPERATIONAL** - API server responding correctly, Supabase integration functional, all core routes validated.
 
-> **Última Atualização**: 28 de Agosto de 2025 - Estrutura real confirmada e contagem de packages corrigida (23 packages implementados).
+> **Última Atualização**: 28 de Agosto de 2025 - Estrutura real confirmada e contagem de packages corrigida (24 packages implementados, incluindo package legacy db/ pendente de consolidação).

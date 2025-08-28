@@ -116,35 +116,310 @@ _Current Brownfield Enhancement Focus_
 
 #### **🤖 Universal AI Chat System**
 
+**Enhanced Technical Architecture:**
+
+```mermaid
+flowchart TD
+    A[User Input] --> B{Interface Type}
+    B -->|Patient| C[External AI Agent]
+    B -->|Staff| D[Internal AI Agent]
+    
+    C --> E[Intent Classification]
+    D --> E
+    
+    E --> F{Intent Type}
+    F -->|Booking| G[Appointment Engine]
+    F -->|Information| H[Knowledge Base]
+    F -->|Support| I[FAQ System]
+    F -->|Analysis| J[Patient Analytics]
+    
+    G --> K[Calendar Integration]
+    H --> L[Treatment Database]
+    I --> M[Clinic Policies]
+    J --> N[ML Insights Engine]
+    
+    K --> O[Response Generation]
+    L --> O
+    M --> O
+    N --> O
+    
+    O --> P[Context-Aware Response]
+    P --> Q[Multi-channel Delivery]
+```
+
 **External Patient Interface:**
 
-- 24/7 multilingual support (Portuguese-optimized)
-- Intelligent appointment scheduling and rescheduling
-- FAQ automation with 90%+ accuracy rate
-- Proactive communication for treatment reminders and follow-ups
+- **Smart Booking**: Natural language appointment scheduling with availability optimization
+- **Treatment Guidance**: Personalized preparation and aftercare instructions
+- **Proactive Support**: Automated follow-ups and care reminders
+- **Multilingual Support**: Portuguese, English, and Spanish capabilities
 
 **Internal Staff Interface:**
 
-- Natural language database queries and reporting
-- Operational intelligence and workflow optimization
-- Digital anamnesis and patient data collection
-- Automated documentation and compliance reporting
+- **Patient Intelligence**: AI-powered patient history analysis and insights
+- **Clinical Decision Support**: Treatment recommendations based on patient data
+- **Administrative Automation**: Automated documentation and task management
+- **Real-time Analytics**: Live performance metrics and patient sentiment analysis
 
-**Technical Specifications:**
+**API Specifications:**
 
-- Built on existing Next.js 15 + Supabase foundation
-- Real-time WebSocket integration with current infrastructure
-- LGPD-compliant data processing with encrypted storage
-- Feature flag-controlled rollout for risk mitigation
+```yaml
+# OpenAPI 3.0 Specification for Universal AI Chat
+
+/api/v1/chat/external:
+  post:
+    summary: Process patient chat message
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Patient's message"
+              patient_id:
+                type: string
+                format: uuid
+                description: "Patient identifier (optional for anonymous)"
+              session_id:
+                type: string
+                description: "Chat session identifier"
+              context:
+                type: object
+                properties:
+                  current_page: { type: string }
+                  user_agent: { type: string }
+                  preferred_language: { type: string, enum: ["pt", "en", "es"] }
+    responses:
+      200:
+        description: AI response generated
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                response:
+                  type: string
+                  description: "AI-generated response"
+                intent:
+                  type: string
+                  enum: ["booking", "information", "support", "emergency"]
+                confidence:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                suggested_actions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      action: { type: string }
+                      label: { type: string }
+                      url: { type: string }
+                follow_up_questions:
+                  type: array
+                  items:
+                    type: string
+                requires_human_handoff:
+                  type: boolean
+
+/api/v1/chat/internal:
+  post:
+    summary: Process staff chat message with enhanced context
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              staff_id:
+                type: string
+                format: uuid
+              patient_context:
+                type: object
+                properties:
+                  patient_id: { type: string, format: uuid }
+                  current_appointment_id: { type: string, format: uuid }
+                  treatment_history: { type: array }
+              request_type:
+                type: string
+                enum: ["analysis", "recommendation", "documentation", "scheduling"]
+    responses:
+      200:
+        description: Enhanced AI response for staff
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                response:
+                  type: string
+                analysis:
+                  type: object
+                  properties:
+                    patient_insights: { type: array }
+                    risk_factors: { type: array }
+                    recommendations: { type: array }
+                    confidence_score: { type: number }
+                suggested_treatments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      treatment_name: { type: string }
+                      suitability_score: { type: number }
+                      reasoning: { type: string }
+                      estimated_cost: { type: number }
+                documentation_draft:
+                  type: string
+                  description: "Auto-generated documentation based on context"
+```
+
+**Enhanced Technical Specifications:**
+
+- **AI Model**: GPT-4 Turbo with custom fine-tuning on aesthetic medicine data
+- **Context Window**: 128k tokens for comprehensive patient history analysis
+- **Response Time**: <1.5 seconds for standard queries, <3 seconds for complex analysis
+- **Accuracy**: 97%+ for appointment-related queries, 94%+ for treatment recommendations
+- **Multilingual**: Native support for Portuguese, English, and Spanish
+- **Integration**: Real-time connection with ERP, patient database, and scheduling system
+- **Security**: End-to-end encryption, LGPD-compliant data handling
+- **Scalability**: Auto-scaling infrastructure supporting 1000+ concurrent conversations
 
 #### **🧠 Engine Anti-No-Show System**
 
+**Enhanced Technical Architecture:**
+
+```mermaid
+flowchart TD
+    A[Patient Books Appointment] --> B[Risk Assessment Engine]
+    B --> C{Risk Score > 0.7?}
+    C -->|Yes| D[Trigger Intervention Pipeline]
+    C -->|No| E[Standard Reminder Flow]
+    
+    D --> F[Select Optimal Intervention]
+    F --> G[Personalized SMS/Email]
+    F --> H[Rescheduling Offer]
+    F --> I[Incentive Program]
+    
+    G --> J[Track Response]
+    H --> J
+    I --> J
+    
+    J --> K[Update ML Model]
+    K --> L[Performance Analytics]
+    
+    E --> M[24h Before Reminder]
+    M --> N[2h Before Reminder]
+```
+
 **ML-Powered Risk Assessment:**
 
+- Advanced risk assessment with multi-factor ML model (90%+ accuracy)
 - Real-time appointment risk scoring (0-100 scale)
 - Multi-factor analysis: weather, patient history, behavioral patterns
 - Proactive intervention workflows and automation
 - ROI tracking with quantified business impact measurement
+
+**API Specifications:**
+
+```yaml
+# OpenAPI 3.0 Specification for Engine Anti-No-Show
+
+/api/v1/no-show/risk-assessment:
+  post:
+    summary: Calculate no-show risk for appointment
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              appointment_id:
+                type: string
+                format: uuid
+              patient_id:
+                type: string
+                format: uuid
+              appointment_datetime:
+                type: string
+                format: date-time
+              weather_forecast:
+                type: object
+                properties:
+                  temperature: { type: number }
+                  precipitation_chance: { type: number }
+                  conditions: { type: string }
+    responses:
+      200:
+        description: Risk assessment completed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                risk_score:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                  description: "Probability of no-show (0-1)"
+                risk_factors:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      factor: { type: string }
+                      impact: { type: number }
+                      confidence: { type: number }
+                recommended_interventions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type: { type: string }
+                      timing: { type: string }
+                      message_template: { type: string }
+                      expected_effectiveness: { type: number }
+
+/api/v1/no-show/interventions:
+  post:
+    summary: Execute intervention strategy
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              appointment_id: { type: string, format: uuid }
+              intervention_type:
+                type: string
+                enum: ["sms_reminder", "email_reminder", "rescheduling_offer", "incentive_offer"]
+              personalization_data:
+                type: object
+                properties:
+                  patient_name: { type: string }
+                  preferred_time: { type: string }
+                  treatment_type: { type: string }
+    responses:
+      200:
+        description: Intervention executed successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                intervention_id: { type: string, format: uuid }
+                status: { type: string }
+                sent_at: { type: string, format: date-time }
+                tracking_url: { type: string }
+```
 
 **Dashboard Integration:**
 
@@ -152,6 +427,113 @@ _Current Brownfield Enhancement Focus_
 - Alert system for high-risk appointments (>70% risk score)
 - Staff intervention tools and automated reminder systems
 - Performance analytics with revenue impact tracking
+
+**Enhanced SQL Schema:**
+
+```sql
+-- Advanced patient behavior tracking with ML features
+CREATE TABLE patient_behavior_analysis (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id UUID REFERENCES patients(id),
+  
+  -- Historical patterns
+  appointment_history JSONB, -- Previous appointment patterns
+  attendance_rate DECIMAL(3,2), -- Historical attendance percentage
+  avg_reschedule_notice INTEGER, -- Average hours of notice for rescheduling
+  
+  -- Communication preferences
+  communication_preferences JSONB, -- Preferred contact methods and timing
+  response_rate_sms DECIMAL(3,2), -- SMS response rate
+  response_rate_email DECIMAL(3,2), -- Email response rate
+  optimal_reminder_timing INTEGER, -- Hours before appointment for best response
+  
+  -- Risk factors
+  weather_sensitivity BOOLEAN DEFAULT FALSE,
+  time_preference_morning BOOLEAN DEFAULT TRUE,
+  time_preference_afternoon BOOLEAN DEFAULT TRUE,
+  time_preference_evening BOOLEAN DEFAULT FALSE,
+  seasonal_patterns JSONB, -- Attendance patterns by season/month
+  
+  -- ML model outputs
+  no_show_probability DECIMAL(3,2), -- Current ML model prediction (0.00-1.00)
+  risk_category VARCHAR(20) CHECK (risk_category IN ('low', 'medium', 'high', 'critical')),
+  model_confidence DECIMAL(3,2), -- Model confidence in prediction
+  last_model_update TIMESTAMP DEFAULT NOW(),
+  
+  -- Metadata
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Enhanced intervention tracking with effectiveness metrics
+CREATE TABLE no_show_interventions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  appointment_id UUID REFERENCES appointments(id),
+  patient_id UUID REFERENCES patients(id),
+  
+  -- Intervention details
+  intervention_type VARCHAR(50) NOT NULL, -- 'sms_reminder', 'email_reminder', 'rescheduling_offer', 'incentive_offer'
+  intervention_subtype VARCHAR(50), -- 'weather_alert', 'time_optimization', 'loyalty_reward'
+  message_template_id UUID,
+  personalized_message TEXT,
+  
+  -- Timing and delivery
+  scheduled_for TIMESTAMP,
+  sent_at TIMESTAMP,
+  delivery_status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'sent', 'delivered', 'failed'
+  
+  -- Patient response tracking
+  patient_response VARCHAR(30), -- 'confirmed', 'rescheduled', 'cancelled', 'no_response'
+  response_timestamp TIMESTAMP,
+  response_channel VARCHAR(20), -- 'sms', 'email', 'phone', 'app'
+  
+  -- Effectiveness measurement
+  effectiveness_score DECIMAL(3,2), -- Measured impact on attendance (0.00-1.00)
+  cost_per_intervention DECIMAL(8,2), -- Cost of sending intervention
+  roi_calculation DECIMAL(10,2), -- ROI if appointment attended
+  
+  -- A/B testing support
+  experiment_group VARCHAR(50), -- For testing different intervention strategies
+  control_group BOOLEAN DEFAULT FALSE,
+  
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ML model performance tracking
+CREATE TABLE ml_model_performance (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  model_version VARCHAR(20) NOT NULL,
+  evaluation_date DATE NOT NULL,
+  
+  -- Performance metrics
+  accuracy DECIMAL(4,3), -- Overall accuracy
+  precision_score DECIMAL(4,3), -- Precision for no-show prediction
+  recall_score DECIMAL(4,3), -- Recall for no-show prediction
+  f1_score DECIMAL(4,3), -- F1 score
+  auc_roc DECIMAL(4,3), -- Area under ROC curve
+  
+  -- Business metrics
+  no_show_reduction_percentage DECIMAL(4,2), -- Actual reduction in no-shows
+  revenue_protected DECIMAL(12,2), -- Revenue protected through interventions
+  intervention_cost DECIMAL(10,2), -- Total cost of interventions
+  net_roi DECIMAL(10,2), -- Net ROI of the system
+  
+  -- Data quality metrics
+  training_data_size INTEGER,
+  feature_importance JSONB, -- Importance scores for each feature
+  model_drift_score DECIMAL(4,3), -- Measure of model drift over time
+  
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for performance
+CREATE INDEX idx_patient_behavior_patient_id ON patient_behavior_analysis(patient_id);
+CREATE INDEX idx_patient_behavior_risk_category ON patient_behavior_analysis(risk_category);
+CREATE INDEX idx_interventions_appointment_id ON no_show_interventions(appointment_id);
+CREATE INDEX idx_interventions_sent_at ON no_show_interventions(sent_at);
+CREATE INDEX idx_interventions_effectiveness ON no_show_interventions(effectiveness_score DESC);
+```
 
 **Business Impact:**
 
@@ -168,19 +550,255 @@ _Current Brownfield Enhancement Focus_
 
 #### **⚖️ Compliance-First Architecture**
 
-**Automated LGPD Compliance:**
+**Enhanced LGPD Implementation:**
 
-- Real-time data protection monitoring and enforcement
-- Automated consent management and patient right fulfillment
-- Audit trail generation with immutable logging
-- Privacy impact assessments with automated documentation
+```mermaid
+flowchart TD
+    A[Data Collection] --> B[Consent Verification]
+    B --> C{Valid Consent?}
+    C -->|Yes| D[Data Processing]
+    C -->|No| E[Request Consent]
+    
+    D --> F[Purpose Limitation Check]
+    F --> G{Within Purpose?}
+    G -->|Yes| H[Process Data]
+    G -->|No| I[Block Processing]
+    
+    H --> J[Data Retention Check]
+    J --> K{Retention Valid?}
+    K -->|Yes| L[Continue Processing]
+    K -->|No| M[Auto-Delete]
+    
+    E --> N[Consent Management UI]
+    N --> O[Log Consent Decision]
+    
+    L --> P[Audit Trail]
+    M --> P
+    I --> P
+```
 
-**ANVISA Integration:**
+**Technical LGPD Implementation:**
 
-- Automated regulatory reporting for medical procedures
-- Real-time compliance monitoring for medical device usage
-- Adverse event tracking and automatic notification systems
-- Quality management system integration with existing workflows
+```typescript
+// LGPD Consent Management System
+interface ConsentRecord {
+  id: string;
+  patient_id: string;
+  purpose: 'treatment' | 'marketing' | 'analytics' | 'research';
+  granted: boolean;
+  timestamp: Date;
+  ip_address: string;
+  user_agent: string;
+  expiry_date?: Date;
+  withdrawal_date?: Date;
+}
+
+// Automated Data Subject Rights Handler
+class LGPDRightsManager {
+  async handleDataPortabilityRequest(patientId: string): Promise<PatientDataExport> {
+    // Collect all patient data across systems
+    const patientData = await this.collectPatientData(patientId);
+    
+    // Anonymize sensitive fields
+    const exportData = await this.anonymizeSensitiveData(patientData);
+    
+    // Generate structured export (JSON/XML)
+    return {
+      patient_id: patientId,
+      export_date: new Date(),
+      data: exportData,
+      format: 'JSON',
+      digital_signature: await this.generateSignature(exportData)
+    };
+  }
+
+  async handleErasureRequest(patientId: string): Promise<ErasureReport> {
+    // Check legal basis for retention
+    const retentionCheck = await this.checkRetentionRequirements(patientId);
+    
+    if (retentionCheck.canErase) {
+      // Perform cascading deletion
+      await this.cascadeDelete(patientId);
+      
+      // Log erasure for audit
+      return {
+        patient_id: patientId,
+        erasure_date: new Date(),
+        status: 'completed',
+        retained_data: retentionCheck.mustRetain
+      };
+    }
+    
+    return {
+      patient_id: patientId,
+      status: 'partial',
+      reason: 'Legal retention requirements',
+      retained_data: retentionCheck.mustRetain
+    };
+  }
+}
+
+// Privacy by Design Data Processing
+class PrivacyFirstProcessor {
+  async processPatientData(data: PatientData, purpose: ProcessingPurpose): Promise<ProcessingResult> {
+    // 1. Consent verification
+    const consentValid = await this.verifyConsent(data.patient_id, purpose);
+    if (!consentValid) {
+      throw new ConsentError('Invalid or missing consent for purpose: ' + purpose);
+    }
+    
+    // 2. Data minimization
+    const minimizedData = this.applyDataMinimization(data, purpose);
+    
+    // 3. Purpose limitation
+    if (!this.isPurposeCompatible(purpose, minimizedData)) {
+      throw new PurposeLimitationError('Data processing exceeds stated purpose');
+    }
+    
+    // 4. Process with audit trail
+    const result = await this.processWithAudit(minimizedData, purpose);
+    
+    // 5. Automatic retention management
+    await this.scheduleRetentionCheck(data.patient_id, purpose);
+    
+    return result;
+  }
+}
+```
+
+**ANVISA Compliance Framework:**
+
+```typescript
+// Medical Device Classification System
+interface ANVISAClassification {
+  device_type: 'software' | 'hardware' | 'hybrid';
+  risk_class: 'I' | 'II' | 'III' | 'IV';
+  regulatory_pathway: 'notification' | 'registration' | 'certification';
+  clinical_evidence_required: boolean;
+  post_market_surveillance: boolean;
+}
+
+// Clinical Evidence Management
+class ClinicalEvidenceManager {
+  async generateEvidenceReport(): Promise<ClinicalEvidenceReport> {
+    return {
+      study_design: 'retrospective_analysis',
+      patient_population: await this.getPatientDemographics(),
+      primary_endpoints: [
+        'no_show_reduction_rate',
+        'patient_satisfaction_score',
+        'clinical_workflow_efficiency'
+      ],
+      safety_profile: await this.generateSafetyProfile(),
+      effectiveness_data: await this.calculateEffectiveness(),
+      statistical_analysis: await this.performStatisticalAnalysis(),
+      regulatory_compliance: {
+        gcp_compliance: true,
+        ethics_approval: 'pending',
+        data_integrity: 'validated'
+      }
+    };
+  }
+}
+
+// Quality Management System Integration
+class QMSIntegration {
+  async trackQualityMetrics(): Promise<QualityMetrics> {
+    return {
+      system_availability: await this.calculateUptime(),
+      data_accuracy: await this.validateDataIntegrity(),
+      user_satisfaction: await this.collectUserFeedback(),
+      adverse_events: await this.monitorAdverseEvents(),
+      corrective_actions: await this.trackCorrectiveActions(),
+      risk_management: await this.assessRisks()
+    };
+  }
+
+  async handleAdverseEvent(event: AdverseEvent): Promise<void> {
+    // Immediate notification to ANVISA if required
+    if (event.severity === 'serious') {
+      await this.notifyANVISA(event);
+    }
+    
+    // Internal investigation
+    await this.initiateInvestigation(event);
+    
+    // Risk assessment update
+    await this.updateRiskAssessment(event);
+    
+    // Corrective action if needed
+    if (event.requires_action) {
+      await this.implementCorrectiveAction(event);
+    }
+  }
+}
+```
+
+**Automated Compliance Monitoring:**
+
+```sql
+-- LGPD Compliance Monitoring Tables
+CREATE TABLE lgpd_consent_log (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id UUID REFERENCES patients(id),
+  consent_type VARCHAR(50) NOT NULL,
+  purpose VARCHAR(100) NOT NULL,
+  granted BOOLEAN NOT NULL,
+  timestamp TIMESTAMP DEFAULT NOW(),
+  ip_address INET,
+  user_agent TEXT,
+  expiry_date TIMESTAMP,
+  withdrawal_date TIMESTAMP,
+  legal_basis VARCHAR(50) -- Art. 7º LGPD basis
+);
+
+CREATE TABLE data_processing_audit (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id UUID REFERENCES patients(id),
+  processing_purpose VARCHAR(100) NOT NULL,
+  data_categories TEXT[], -- Types of data processed
+  legal_basis VARCHAR(50) NOT NULL,
+  processor_id UUID, -- Staff member or system
+  processing_timestamp TIMESTAMP DEFAULT NOW(),
+  retention_period INTERVAL,
+  automated_decision BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE anvisa_quality_metrics (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  metric_type VARCHAR(50) NOT NULL,
+  metric_value DECIMAL(10,4),
+  measurement_date DATE DEFAULT CURRENT_DATE,
+  compliance_status VARCHAR(20) CHECK (compliance_status IN ('compliant', 'non_compliant', 'under_review')),
+  corrective_action_required BOOLEAN DEFAULT FALSE,
+  notes TEXT
+);
+
+-- Automated compliance checks
+CREATE OR REPLACE FUNCTION check_consent_validity(p_patient_id UUID, p_purpose VARCHAR)
+RETURNS BOOLEAN AS $$
+DECLARE
+  consent_valid BOOLEAN := FALSE;
+BEGIN
+  SELECT granted AND (expiry_date IS NULL OR expiry_date > NOW()) AND withdrawal_date IS NULL
+  INTO consent_valid
+  FROM lgpd_consent_log
+  WHERE patient_id = p_patient_id 
+    AND purpose = p_purpose
+    AND granted = TRUE
+  ORDER BY timestamp DESC
+  LIMIT 1;
+  
+  RETURN COALESCE(consent_valid, FALSE);
+END;
+$$ LANGUAGE plpgsql;
+```
+
+**Compliance Dashboard Integration:**
+- **Real-time LGPD Status**: Live consent status, data processing compliance, retention monitoring
+- **ANVISA Quality Metrics**: System performance, adverse event tracking, clinical evidence status
+- **Automated Alerts**: Non-compliance detection, consent expiration warnings, quality threshold breaches
+- **Audit Trail**: Complete processing history, consent management logs, regulatory submission tracking
 
 **Professional Standards:**
 
@@ -209,7 +827,7 @@ _Future Roadmap - Advanced AI Integration_
 #### **🎯 Personalized Patient Journeys**
 
 - **Treatment Path Optimization**: AI-recommended treatment sequences for optimal outcomes
-- **Outcome Prediction**: AR-enhanced visualization of expected treatment results
+- **Outcome Prediction**: Advanced visualization of expected treatment results
 - **Engagement Automation**: Personalized communication and follow-up sequences
 - **Retention Intelligence**: Churn prediction and proactive retention strategies
 
@@ -302,33 +920,7 @@ CREATE TABLE intervention_strategies (
 - **Personalized Communication**: Adapts messaging tone and frequency per patient profile
 - **Lifecycle Prediction**: Forecasts patient retention and lifetime value
 
-### **Simulador de Resultados AR (AR Results Simulator)**
 
-**Augmented reality integration for showing expected aesthetic treatment results**
-
-**Technical Architecture**:
-
-```typescript
-// AR Integration Component
-interface ARSimulatorProps {
-  patientId: string;
-  treatmentType: "botox" | "filler" | "laser" | "surgical";
-  beforeImage: File;
-}
-
-interface ARSimulationResult {
-  beforeImageUrl: string;
-  simulatedResults: {
-    conservative: string;
-    expected: string;
-    optimal: string;
-  };
-  confidenceScore: number;
-  treatmentPlan: TreatmentStep[];
-}
-```
-
-**Market Differentiation**: First Brazilian platform with integrated AR aesthetic simulation
 
 ### **Gestor de Estoque Preditivo (Predictive Inventory Manager)**
 
@@ -350,7 +942,7 @@ interface ARSimulationResult {
 | **🤖 Universal AI Chat**     | **Exceptional (10/10)** | **High (8/10)**       | **High (9/10)**            | **95/100**         | **Phase 3 (Immediate)**   |
 | **🎯 Engine Anti-No-Show**   | **Exceptional (10/10)** | **High (9/10)**       | **Exceptional (10/10)**    | **97/100**         | **Phase 3 (Strategic)**   |
 | **🧠 CRM Comportamental**    | **High (9/10)**         | **High (8/10)**       | **High (9/10)**            | **87/100**         | **Tier 2 (Future)**       |
-| **📱 AR Results Simulator**  | **High (9/10)**         | **Very High (10/10)** | **Exceptional (10/10)**    | **90/100**         | **Tier 2 (Future)**       |
+
 | **📊 Predictive Inventory**  | **High (8/10)**         | **Medium (7/10)**     | **High (8/10)**            | **77/100**         | **Phase 3 (Enhancement)** |
 | **Performance Optimization** | **High (8/10)**         | **Medium (6/10)**     | **Medium (6/10)**          | **67/100**         | **Phase 1 (Foundation)**  |
 
@@ -392,7 +984,6 @@ _Intelligent System Foundation_
 - Chat_logs table with behavioral pattern tracking
 - Patient preference analytics schema
 - Appointment pattern recognition data structures
-- AR simulation metadata storage preparation
 
 ### **Phase 3: Revolutionary AI Integration (8-12 weeks)**
 
@@ -496,6 +1087,68 @@ _Market-Changing Features_
 
 ---## 🛠 Technical Architecture & Implementation
 
+### **System Architecture Overview**
+
+```mermaid
+C4Context
+    title System Context Diagram - NeonPro AI Platform
+    
+    Person(patient, "Patient", "Aesthetic clinic patient")
+    Person(staff, "Clinic Staff", "Doctors, nurses, administrators")
+    Person(admin, "System Admin", "Platform administrators")
+    
+    System(neonpro, "NeonPro Platform", "AI-powered aesthetic clinic management")
+    
+    System_Ext(openai, "OpenAI GPT-4", "AI chat and language processing")
+    System_Ext(supabase, "Supabase", "Database and authentication")
+    System_Ext(sms, "SMS Gateway", "Patient notifications")
+    System_Ext(email, "Email Service", "Communication system")
+    System_Ext(payment, "Payment Gateway", "Financial transactions")
+    
+    Rel(patient, neonpro, "Books appointments, receives notifications")
+    Rel(staff, neonpro, "Manages patients, schedules, inventory")
+    Rel(admin, neonpro, "System configuration and monitoring")
+    
+    Rel(neonpro, openai, "AI chat, predictions, analysis")
+    Rel(neonpro, supabase, "Data storage, real-time updates")
+    Rel(neonpro, sms, "Automated patient reminders")
+    Rel(neonpro, email, "Notifications and reports")
+    Rel(neonpro, payment, "Payment processing")
+```
+
+### **Container Architecture**
+
+```mermaid
+C4Container
+    title Container Diagram - NeonPro Platform
+    
+    Person(user, "Users", "Patients and clinic staff")
+    
+    Container(webapp, "Web Application", "Next.js 15, React 19", "Main user interface")
+    Container(api, "API Gateway", "tRPC, Next.js API Routes", "API orchestration")
+    Container(aiservice, "AI Service", "Python, FastAPI", "ML models and AI processing")
+    Container(chatbot, "AI Chat Service", "Node.js, OpenAI SDK", "Conversational AI")
+    Container(scheduler, "Scheduler Service", "Node.js, Cron", "Background tasks")
+    
+    ContainerDb(database, "Database", "PostgreSQL, Supabase", "Primary data store")
+    ContainerDb(redis, "Cache", "Redis", "Session and data caching")
+    ContainerDb(vector, "Vector DB", "Pinecone/Weaviate", "AI embeddings and search")
+    
+    Container_Ext(openai, "OpenAI API", "GPT-4, Embeddings")
+    Container_Ext(monitoring, "Monitoring", "Sentry, Analytics")
+    
+    Rel(user, webapp, "HTTPS")
+    Rel(webapp, api, "tRPC calls")
+    Rel(api, aiservice, "HTTP/REST")
+    Rel(api, chatbot, "WebSocket/HTTP")
+    Rel(api, database, "SQL queries")
+    Rel(api, redis, "Cache operations")
+    Rel(aiservice, vector, "Vector operations")
+    Rel(chatbot, openai, "API calls")
+    Rel(scheduler, database, "Batch operations")
+    Rel_Back(monitoring, webapp, "Telemetry")
+```
+
 ### **Brownfield Enhancement Strategy**
 
 **Zero Breaking Changes Philosophy:**
@@ -505,21 +1158,53 @@ _Market-Changing Features_
 - Backward-compatible API extensions with existing authentication
 - Gradual migration path with rollback capability at every stage
 
-### **Core Technology Stack**
+### **Enhanced Core Technology Stack**
 
-**Foundation (Preserved):**
+**Foundation Layer (Preserved & Enhanced):**
 
-- Next.js 15 with React 19 and enhanced performance patterns
-- Supabase with PostgreSQL and real-time subscriptions
-- Turborepo monorepo architecture with enhanced service layer
-- shadcn/ui component library with accessibility compliance
+```yaml
+Frontend:
+  framework: "Next.js 15 with App Router"
+  ui_library: "React 19 with Concurrent Features"
+  styling: "Tailwind CSS + shadcn/ui components"
+  state_management: "Zustand + React Query (TanStack)"
+  performance: "PWA with offline capabilities"
+  
+Backend:
+  runtime: "Node.js 20+ with TypeScript"
+  api_layer: "tRPC v11 with type-safe procedures"
+  database: "PostgreSQL 15+ via Supabase"
+  auth: "Clerk with custom JWT validation"
+  real_time: "Supabase Realtime subscriptions"
+  
+Infrastructure:
+  deployment: "Vercel with Edge Functions"
+  monitoring: "Sentry + Custom analytics"
+  caching: "Redis Cloud + Vercel Edge Cache"
+  cdn: "Vercel Edge Network"
+```
 
 **AI Enhancement Layer (New):**
 
-- OpenAI GPT-4 integration with Portuguese language optimization
-- Custom ML models for no-show prediction and risk assessment
-- Vector database integration for semantic search and RAG
-- Real-time analytics pipeline with performance monitoring
+```yaml
+AI_Services:
+  language_model: "OpenAI GPT-4 Turbo with Portuguese fine-tuning"
+  embeddings: "OpenAI text-embedding-3-large"
+  vector_database: "Pinecone with aesthetic-specific indexes"
+  ml_pipeline: "Python FastAPI microservices"
+  
+Predictive_Analytics:
+  no_show_prediction: "Custom XGBoost model with 90%+ accuracy"
+  patient_behavior: "Clustering algorithms for segmentation"
+  inventory_forecasting: "Time series analysis with Prophet"
+  revenue_optimization: "Multi-armed bandit for pricing"
+  
+Real_Time_Processing:
+  message_queue: "Redis Pub/Sub for event streaming"
+  background_jobs: "BullMQ with Redis"
+  webhooks: "Svix for reliable event delivery"
+  rate_limiting: "Upstash Redis with sliding window"
+```
 
 ---
 

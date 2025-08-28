@@ -2,6 +2,7 @@
 
 export * from "./ai-chat";
 export * from "./appointment";
+export * from "./cfm-compliance";
 export * from "./common";
 export * from "./constants/healthcare-constants";
 export * from "./database";

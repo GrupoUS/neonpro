@@ -16,7 +16,18 @@
       "import": "./dist/src/button-only.js",
       "require": "./dist/src/button-only.js"
     },
-    "./styles": "./dist/src/styles.css"
+    "./styles": "./dist/src/styles.css",
+    "./themes/neonpro": {
+      "types": "./dist/src/themes/neonpro/index.d.ts",
+      "import": "./dist/src/themes/neonpro/index.js",
+      "require": "./dist/src/themes/neonpro/index.js"
+    },
+    "./themes/neonpro/components": {
+      "types": "./dist/src/themes/neonpro/components/index.d.ts",
+      "import": "./dist/src/themes/neonpro/components/index.js",
+      "require": "./dist/src/themes/neonpro/components/index.js"
+    },
+    "./themes/neonpro/styles": "./dist/src/themes/neonpro/styles.css"
   },
   "files": [
     "dist"

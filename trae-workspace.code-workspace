@@ -9,7 +9,7 @@
     "editor.fontSize": 16,
     "files.autoSave": "afterDelay",
     "editor.defaultFormatter": "GitHub.copilot",
-    "workbench.colorTheme": "Atom One Dark",
+    "workbench.colorTheme": "One Hunter Flexoki Dark",
     "github.copilot.enable": {
       "*": true,
       "plaintext": true,
