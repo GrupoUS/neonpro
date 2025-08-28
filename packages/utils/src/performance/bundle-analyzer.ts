@@ -114,8 +114,8 @@ export class BundleAnalyzer {
     const mockChunks: BundleChunk[] = [
       {
         name: "main",
-        size: 280000, // 280KB
-        gzipSize: 95000, // ~95KB gzipped
+        size: 280_000, // 280KB
+        gzipSize: 95_000, // ~95KB gzipped
         modules: ["@neonpro/core", "@neonpro/auth", "@neonpro/ui"],
         isEntry: true,
         isAsync: false,
@@ -123,8 +123,8 @@ export class BundleAnalyzer {
       },
       {
         name: "emergency-protocols",
-        size: 75000, // 75KB
-        gzipSize: 25000, // ~25KB gzipped
+        size: 75_000, // 75KB
+        gzipSize: 25_000, // ~25KB gzipped
         modules: ["@neonpro/emergency", "@neonpro/samu-integration"],
         isEntry: false,
         isAsync: true,
@@ -132,8 +132,8 @@ export class BundleAnalyzer {
       },
       {
         name: "patient-management",
-        size: 120000, // 120KB
-        gzipSize: 40000, // ~40KB gzipped
+        size: 120_000, // 120KB
+        gzipSize: 40_000, // ~40KB gzipped
         modules: ["@neonpro/patient", "@neonpro/lgpd", "@neonpro/cfm"],
         isEntry: false,
         isAsync: true,
@@ -141,8 +141,8 @@ export class BundleAnalyzer {
       },
       {
         name: "ai-features",
-        size: 450000, // 450KB - Large AI bundle
-        gzipSize: 150000, // ~150KB gzipped
+        size: 450_000, // 450KB - Large AI bundle
+        gzipSize: 150_000, // ~150KB gzipped
         modules: ["@neonpro/ai", "@neonpro/ml", "@neonpro/chat"],
         isEntry: false,
         isAsync: true,
@@ -150,8 +150,8 @@ export class BundleAnalyzer {
       },
       {
         name: "analytics",
-        size: 200000, // 200KB
-        gzipSize: 65000, // ~65KB gzipped
+        size: 200_000, // 200KB
+        gzipSize: 65_000, // ~65KB gzipped
         modules: ["@neonpro/analytics", "@neonpro/reporting", "@neonpro/charts"],
         isEntry: false,
         isAsync: true,
@@ -168,7 +168,7 @@ export class BundleAnalyzer {
       {
         name: "react",
         version: "18.3.1",
-        size: 45000,
+        size: 45_000,
         treeshakeable: false,
         isDevDependency: false,
         unusedExports: []
@@ -176,7 +176,7 @@ export class BundleAnalyzer {
       {
         name: "lodash",
         version: "4.17.21",
-        size: 72000,
+        size: 72_000,
         treeshakeable: true,
         isDevDependency: false,
         unusedExports: ["debounce", "throttle", "merge"],
@@ -185,7 +185,7 @@ export class BundleAnalyzer {
       {
         name: "moment",
         version: "2.29.4",
-        size: 67000,
+        size: 67_000,
         treeshakeable: false,
         isDevDependency: false,
         unusedExports: [],
@@ -194,7 +194,7 @@ export class BundleAnalyzer {
       {
         name: "@supabase/supabase-js",
         version: "2.45.4",
-        size: 125000,
+        size: 125_000,
         treeshakeable: true,
         isDevDependency: false,
         unusedExports: []
@@ -202,7 +202,7 @@ export class BundleAnalyzer {
       {
         name: "chart.js",
         version: "4.4.0",
-        size: 180000,
+        size: 180_000,
         treeshakeable: true,
         isDevDependency: false,
         unusedExports: ["ScatterController", "BubbleController"]
@@ -220,7 +220,7 @@ export class BundleAnalyzer {
 
     // Analyze oversized chunks
     chunks.forEach(chunk => {
-      if (chunk.size > 300000 && !chunk.isEntry) {
+      if (chunk.size > 300_000 && !chunk.isEntry) {
         recommendations.push({
           type: "code-splitting",
           severity: "high",
@@ -235,10 +235,10 @@ export class BundleAnalyzer {
     dependencies.forEach(dep => {
       if (dep.alternatives && dep.alternatives.length > 0) {
         const potentialSavings = Math.floor(dep.size * 0.4);
-        if (potentialSavings > 10000) { // Only recommend if >10KB savings
+        if (potentialSavings > 10_000) { // Only recommend if >10KB savings
           recommendations.push({
             type: "dependency-optimization",
-            severity: dep.size > 50000 ? "high" : "medium",
+            severity: dep.size > 50_000 ? "high" : "medium",
             description: `Replace '${dep.name}' with lighter alternative`,
             impact: potentialSavings,
             action: `Consider using ${dep.alternatives[0]} instead of ${dep.name}`
@@ -418,7 +418,7 @@ export class BundleAnalyzer {
         formats: ["image/webp", "image/avif"],
         deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-        minimumCacheTTL: 31536000, // 1 year
+        minimumCacheTTL: 31_536_000, // 1 year
         dangerouslyAllowSVG: false
       },
       compress: true,

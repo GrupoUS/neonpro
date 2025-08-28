@@ -832,7 +832,7 @@ export const ApiHelpers = {
     }
 
     if (typeof error === "object" && error && "message" in error) {
-      return String((error as unknown).message);
+      return String((error as { message: any }).message);
     }
 
     if (typeof error === "object" && error && "error" in error) {

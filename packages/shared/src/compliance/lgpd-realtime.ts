@@ -130,7 +130,7 @@ export class LGPDDataProcessor {
       anonymized.old = LGPDDataProcessor.anonymizeFields(
         anonymized.old,
         config.sensitiveFields,
-      );
+      ) as any;
     }
 
     return anonymized;
@@ -160,7 +160,7 @@ export class LGPDDataProcessor {
       pseudonymized.old = LGPDDataProcessor.pseudonymizeFields(
         pseudonymized.old,
         config.sensitiveFields,
-      );
+      ) as any;
     }
 
     return pseudonymized;
@@ -186,7 +186,7 @@ export class LGPDDataProcessor {
       minimized.old = LGPDDataProcessor.extractFields(
         minimized.old,
         allowedFields,
-      );
+      ) as any;
     }
 
     return minimized;
@@ -210,9 +210,9 @@ export class LGPDDataProcessor {
 
     fieldsToAnonymize.forEach((field) => {
       if (field in anonymized) {
-        anonymized[field] = LGPDDataProcessor.generateAnonymousValue(
+        (anonymized as any)[field] = LGPDDataProcessor.generateAnonymousValue(
           field,
-          anonymized[field],
+          (anonymized as any)[field],
         );
       }
     });
@@ -229,9 +229,9 @@ export class LGPDDataProcessor {
 
     sensitiveFields.forEach((field) => {
       if (field in pseudonymized) {
-        pseudonymized[field] = LGPDDataProcessor.generatePseudonym(
+        (pseudonymized as any)[field] = LGPDDataProcessor.generatePseudonym(
           field,
-          pseudonymized[field],
+          (pseudonymized as any)[field],
         );
       }
     });
@@ -248,7 +248,7 @@ export class LGPDDataProcessor {
 
     allowedFields.forEach((field) => {
       if (field in data) {
-        extracted[field] = data[field];
+        (extracted as any)[field] = (data as any)[field];
       }
     });
 

@@ -276,14 +276,14 @@ export function ComplianceDashboard({
   onViewDetails,
 }: ComplianceDashboardProps) {
   const getScoreColor = (score: number) => {
-    if (score >= 90) return "text-green-600";
-    if (score >= 70) return "text-amber-600";
+    if (score >= 90) {return "text-green-600";}
+    if (score >= 70) {return "text-amber-600";}
     return "text-red-600";
   };
 
   const getScoreBg = (score: number) => {
-    if (score >= 90) return "bg-green-50 border-green-200";
-    if (score >= 70) return "bg-amber-50 border-amber-200";
+    if (score >= 90) {return "bg-green-50 border-green-200";}
+    if (score >= 70) {return "bg-amber-50 border-amber-200";}
     return "bg-red-50 border-red-200";
   };
 

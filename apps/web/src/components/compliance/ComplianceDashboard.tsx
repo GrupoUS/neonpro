@@ -48,8 +48,9 @@ import {
   Lungs
 } from 'lucide-react';
 
+import type {
+  ComplianceDashboardData} from '@/lib/compliance/compliance-dashboard';
 import {
-  ComplianceDashboardData,
   ComplianceScore,
   ComplianceAlert,
   ComplianceMetrics,
@@ -170,7 +171,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({ classN
     loadDashboardData();
     
     if (autoRefresh) {
-      const interval = setInterval(loadDashboardData, 60000); // Refresh every minute
+      const interval = setInterval(loadDashboardData, 60_000); // Refresh every minute
       return () => clearInterval(interval);
     }
   }, [autoRefresh]);
@@ -195,16 +196,16 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({ classN
   };
 
   const getScoreColor = (score: number): string => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 80) return 'text-yellow-600';
-    if (score >= 70) return 'text-orange-600';
+    if (score >= 90) {return 'text-green-600';}
+    if (score >= 80) {return 'text-yellow-600';}
+    if (score >= 70) {return 'text-orange-600';}
     return 'text-red-600';
   };
 
   const getScoreGradient = (score: number): string => {
-    if (score >= 90) return 'from-green-500 to-green-600';
-    if (score >= 80) return 'from-yellow-500 to-yellow-600';
-    if (score >= 70) return 'from-orange-500 to-orange-600';
+    if (score >= 90) {return 'from-green-500 to-green-600';}
+    if (score >= 80) {return 'from-yellow-500 to-yellow-600';}
+    if (score >= 70) {return 'from-orange-500 to-orange-600';}
     return 'from-red-500 to-red-600';
   };
 

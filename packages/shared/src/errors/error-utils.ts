@@ -1,11 +1,12 @@
-import { ErrorCategory, ErrorSeverity, HealthcareError, ErrorContext } from './healthcare-error-types';
+import type { HealthcareError, ErrorContext } from './healthcare-error-types';
+import { ErrorCategory, ErrorSeverity } from './healthcare-error-types';
 import { errorHandlingStrategies } from './error-strategies';
 
 /**
  * Generates a unique error ID for tracking
  */
 export function generateErrorId(): string {
-  return `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `err_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 }
 
 /**

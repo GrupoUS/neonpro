@@ -1,16 +1,12 @@
-import { Context, Hono } from 'hono';
+import type { Context, Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { 
   createHealthcareError, 
   categorizeError, 
   generateErrorId 
 } from '@neonpro/shared/errors/error-utils';
-import { 
-  ErrorCategory, 
-  ErrorSeverity, 
-  type HealthcareError,
-  type ErrorContext 
-} from '@neonpro/shared/errors/healthcare-error-types';
+import { ErrorCategory, ErrorSeverity } from '@neonpro/shared/errors/healthcare-error-types';
+import type { HealthcareError, ErrorContext } from '@neonpro/shared/errors/healthcare-error-types';
 import { logger } from '../../lib/logger';
 import { auditLogger } from '../../lib/audit-logger';
 
@@ -70,11 +66,11 @@ async function handleHealthcareError(error: unknown, c: Context): Promise<Health
 function extractPatientId(c: Context): string | undefined {
   // Try to extract from URL parameters
   const patientIdFromParam = c.req.param('patientId') || c.req.param('patient_id');
-  if (patientIdFromParam) return patientIdFromParam;
+  if (patientIdFromParam) {return patientIdFromParam;}
   
   // Try to extract from query parameters
   const patientIdFromQuery = c.req.query('patient_id') || c.req.query('patientId');
-  if (patientIdFromQuery) return patientIdFromQuery;
+  if (patientIdFromQuery) {return patientIdFromQuery;}
   
   // Try to extract from request body (if available)
   try {
@@ -123,7 +119,7 @@ async function logHealthcareError(error: HealthcareError, c: Context): Promise<v
  * Logs LGPD compliance errors for patient data access failures
  */
 async function logLGPDComplianceError(error: HealthcareError): Promise<void> {
-  if (!error.context.patientId) return;
+  if (!error.context.patientId) {return;}
   
   try {
     await auditLogger.logDataAccessError({

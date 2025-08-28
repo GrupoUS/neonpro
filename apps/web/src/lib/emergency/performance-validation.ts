@@ -181,7 +181,7 @@ export class EmergencyPerformanceValidator {
             <div>Blood Type: O+</div>
           </div>
         `;
-        document.body.appendChild(container);
+        document.body.append(container);
         document.body.removeChild(container);
         
         const renderTime = performance.now() - startRender;
@@ -219,7 +219,7 @@ export class EmergencyPerformanceValidator {
             <div class="allergy-item">Latex - SEVERE</div>
           </div>
         `;
-        document.body.appendChild(container);
+        document.body.append(container);
         document.body.removeChild(container);
         
         const renderTime = performance.now() - startRender;
@@ -254,7 +254,7 @@ export class EmergencyPerformanceValidator {
           <button class="samu-call-btn">🚨 CALL SAMU 192 NOW</button>
           <div class="location-info">📍 Av. Paulista, 1000</div>
         `;
-        document.body.appendChild(container);
+        document.body.append(container);
         document.body.removeChild(container);
         
         const renderTime = performance.now() - startRender;

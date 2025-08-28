@@ -4,7 +4,7 @@
  * Integra com toast system e audio alerts para urgências médicas
  */
 
-import type { Notification } from "@neonpro/database";
+import type { Notification } from "../../types/database.types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getRealtimeManager } from "../connection-manager";
@@ -79,9 +79,9 @@ export function useRealtimeNotifications(
   const [isConnected, setIsConnected] = useState(false);
   const [connectionHealth, setConnectionHealth] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [lastNotification, setLastNotification] = useState<NotificationRow | null>();
+  const [lastNotification, setLastNotification] = useState<NotificationRow | null>(null);
   const [emergencyCount, setEmergencyCount] = useState(0);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   /**
@@ -207,10 +207,11 @@ export function useRealtimeNotifications(
   const handleNotificationChange = useCallback(
     (payload: unknown) => {
       try {
+        const typedPayload = payload as any;
         const realtimePayload: RealtimeNotificationPayload = {
-          eventType: payload.eventType,
-          new: payload.new as ExtendedNotification,
-          old: payload.old as ExtendedNotification,
+          eventType: typedPayload.eventType,
+          new: typedPayload.new as ExtendedNotification,
+          old: typedPayload.old as ExtendedNotification,
         };
 
         // Update state metrics
@@ -309,7 +310,7 @@ export function useRealtimeNotifications(
   const unsubscribe = useCallback(() => {
     if (unsubscribeFn) {
       unsubscribeFn();
-      setUnsubscribeFn(undefined);
+      setUnsubscribeFn(null);
       setIsConnected(false);
       setConnectionHealth(0);
     }

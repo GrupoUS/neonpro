@@ -8,7 +8,7 @@ This `.ruler` folder provides simple configuration for AI assistants working on 
 
 ### 🔗 **Primary References**
 
-- **🌟 MAIN WORKFLOW**: See [`core-workflow.md`](core-workflow.md) for complete execution framework
+- **🌟 MAIN WORKFLOW**: See [`dev-workflow.md`](dev-workflow.md) for complete execution framework
 - **⚙️ TECH STACK**: See [`docs/architecture/tech-stack.md`](../docs/architecture/tech-stack.md)
 - **📁 PROJECT STRUCTURE**: See [`docs/architecture/source-tree.md`](../docs/architecture/source-tree.md)
 - **🎨 CODING STANDARDS**: See [`docs/architecture/coding-standards.md`](../docs/architecture/coding-standards.md)

@@ -81,16 +81,17 @@ export function useRealtimeCompliance(
   const [connectionHealth, setConnectionHealth] = useState(0);
   const [totalEvents, setTotalEvents] = useState(0);
   const [criticalEvents, setCriticalEvents] = useState(0);
-  const [lastEvent, setLastEvent] = useState<ComplianceLog | null>();
+  const [lastEvent, setLastEvent] = useState<ComplianceLog | null>(null);
   const [complianceScore, setComplianceScore] = useState(100);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
 
   /**
    * Determine compliance type based on payload
    */
   const determineComplianceType = useCallback(
     (payload: unknown): keyof ComplianceEventType => {
-      const eventData = payload.new || payload.old;
+      const typedPayload = payload as any;
+      const eventData = typedPayload.new || typedPayload.old;
 
       if (!eventData) {
         return "LGPD_DATA_ACCESS";
@@ -142,8 +143,9 @@ export function useRealtimeCompliance(
    */
   const determineSeverity = useCallback(
     (payload: unknown): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" => {
-      const eventData = payload.new || payload.old;
-      const { eventType: eventType } = payload;
+      const typedPayload = payload as any;
+      const eventData = typedPayload.new || typedPayload.old;
+      const { eventType: eventType } = typedPayload;
 
       // Critical severity scenarios
       if (
@@ -189,7 +191,7 @@ export function useRealtimeCompliance(
         action: `${payload.complianceType}_${payload.eventType}`,
         user_id: "system",
         resource_type: "compliance_audit",
-        resource_id: payload.new?.id || payload.old?.id || undefined,
+        resource_id: payload.new?.id || payload.old?.id || null,
         metadata: {
           compliance_type: payload.complianceType,
           severity: payload.severity,
@@ -211,7 +213,7 @@ export function useRealtimeCompliance(
       // Update compliance logs cache
       queryClient.setQueryData(
         ["compliance-logs", tenantId],
-        (oldCache: ComplianceLog[] | undefined) => {
+        (oldCache: ComplianceLog[] | null) => {
           if (!oldCache) {
             return oldCache;
           }
@@ -317,18 +319,19 @@ export function useRealtimeCompliance(
         const severity = determineSeverity(payload);
         const requiresAction = severity === "HIGH" || severity === "CRITICAL";
 
+        const typedPayload = payload as any;
         const realtimePayload: RealtimeCompliancePayload = {
-          eventType: payload.eventType,
+          eventType: typedPayload.eventType,
           complianceType,
-          new: payload.new as ComplianceLog,
-          old: payload.old as ComplianceLog,
+          new: typedPayload.new as ComplianceLog,
+          old: typedPayload.old as ComplianceLog,
           severity,
           requiresAction,
         };
 
         // Update metrics
         setTotalEvents((prev) => prev + 1);
-        setLastEvent(realtimePayload.new || realtimePayload.old || undefined);
+        setLastEvent(realtimePayload.new || realtimePayload.old || null);
 
         if (severity === "CRITICAL" || severity === "HIGH") {
           setCriticalEvents((prev) => prev + 1);
@@ -412,7 +415,7 @@ export function useRealtimeCompliance(
   const unsubscribe = useCallback(() => {
     if (unsubscribeFn) {
       unsubscribeFn();
-      setUnsubscribeFn(undefined);
+      setUnsubscribeFn(null);
       setIsConnected(false);
       setConnectionHealth(0);
     }

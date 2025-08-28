@@ -68,14 +68,14 @@ export interface AuditMetadata {
 
 // Template for healthcare feature implementation
 export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
-  protected readonly logger: Logger;
-  protected readonly audit: AuditService;
+  protected readonly logger: typeof Logger;
+  protected readonly audit: typeof AuditService;
   protected readonly config: HealthcareFeatureConfig;
 
   constructor(config: HealthcareFeatureConfig) {
     this.config = config;
-    this.logger = new Logger(`healthcare-${config.featureName}`);
-    this.audit = new AuditService();
+    this.logger = Logger;
+    this.audit = AuditService;
   }
 
   // Abstract methods to be implemented by specific features
@@ -131,25 +131,23 @@ export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
       ...additionalData
     };
 
-    await this.audit.log(auditData, this.config.auditLevel);
+    await this.audit.log(operation, auditData);
   }
 
   // Data encryption helper
   protected async encryptSensitiveData(data: string, patientId?: string): Promise<string> {
-    const encrypted = await HealthcareEncryption.encryptPatientData(
+    const encrypted = await HealthcareEncryption.encrypt(
       data,
-      this.config.encryptionCategory,
-      patientId
+      this.config.encryptionCategory
     );
-    return encrypted.encryptedData;
+    return encrypted;
   }
 
   // Data decryption helper
   protected async decryptSensitiveData(encryptedData: string, patientId?: string): Promise<string> {
-    return await HealthcareEncryption.decryptPatientData(
+    return await HealthcareEncryption.decrypt(
       encryptedData,
-      this.config.encryptionCategory,
-      patientId
+      this.config.encryptionCategory
     );
   }
 
@@ -174,7 +172,7 @@ export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
       return result;
     } catch (error) {
       this.logger.error(`Failed to create ${this.config.featureName}`, { error, context });
-      await this.logAuditEvent('CREATE', context, { error: error.message, inputData: input });
+      await this.logAuditEvent('CREATE', context, { error: (error as Error).message, inputData: input });
       throw error;
     }
   }
@@ -195,7 +193,7 @@ export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
       return result;
     } catch (error) {
       this.logger.error(`Failed to read ${this.config.featureName}`, { error, context, recordId: id });
-      await this.logAuditEvent('READ', context, { error: error.message, recordId: id });
+      await this.logAuditEvent('READ', context, { error: (error as Error).message, recordId: id });
       throw error;
     }
   }
@@ -221,7 +219,7 @@ export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
       return result;
     } catch (error) {
       this.logger.error(`Failed to update ${this.config.featureName}`, { error, context, recordId: id });
-      await this.logAuditEvent('UPDATE', context, { error: error.message, recordId: id, inputData: input });
+      await this.logAuditEvent('UPDATE', context, { error: (error as Error).message, recordId: id, inputData: input });
       throw error;
     }
   }
@@ -242,7 +240,7 @@ export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
       return result;
     } catch (error) {
       this.logger.error(`Failed to delete ${this.config.featureName}`, { error, context, recordId: id });
-      await this.logAuditEvent('DELETE', context, { error: error.message, recordId: id });
+      await this.logAuditEvent('DELETE', context, { error: (error as Error).message, recordId: id });
       throw error;
     }
   }
@@ -250,14 +248,17 @@ export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
   // Batch operations with Brazilian healthcare compliance
   async batchCreate(inputs: CreateInput[], context: HealthcareContext): Promise<T[]> {
     const results: T[] = [];
-    const errors: Array<{ index: number; error: string }> = [];
+    const errors: { index: number; error: string }[] = [];
 
     for (let i = 0; i < inputs.length; i++) {
+      const input = inputs[i];
+      if (!input) {continue;}
+      
       try {
-        const result = await this.create(inputs[i], context);
+        const result = await this.create(input, context);
         results.push(result);
       } catch (error) {
-        errors.push({ index: i, error: error.message });
+        errors.push({ index: i, error: (error as Error).message });
       }
     }
 

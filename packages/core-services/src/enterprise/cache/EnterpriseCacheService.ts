@@ -146,7 +146,7 @@ class RedisCacheLayer implements CacheLayer {
 
   async get<T>(key: string): Promise<T | null> {
     try {
-      if (!this.redis) return null;
+      if (!this.redis) {return null;}
       this.accessCount++;
       const value = await this.redis.get(this.getKey(key));
       if (value) {
@@ -161,7 +161,7 @@ class RedisCacheLayer implements CacheLayer {
 
   async set<T>(key: string, value: T, ttl?: number): Promise<void> {
     try {
-      if (!this.redis) return;
+      if (!this.redis) {return;}
       const redisKey = this.getKey(key);
       const serialized = JSON.stringify(value);
 
@@ -175,14 +175,14 @@ class RedisCacheLayer implements CacheLayer {
 
   async delete(key: string): Promise<void> {
     try {
-      if (!this.redis) return;
+      if (!this.redis) {return;}
       await this.redis.del(this.getKey(key));
     } catch {}
   }
 
   async clear(): Promise<void> {
     try {
-      if (!this.redis) return;
+      if (!this.redis) {return;}
       const keys = await this.redis.keys(`${this.keyPrefix}*`);
       if (keys.length > 0) {
         await this.redis.del(...keys);

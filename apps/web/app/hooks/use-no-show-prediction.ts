@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { 
+import type { 
   NoShowPrediction, 
-  AppointmentWithRisk,
+  AppointmentWithRisk} from '@/types/no-show-prediction';
+import {
   RISK_THRESHOLDS 
 } from '@/types/no-show-prediction';
 
@@ -31,7 +32,7 @@ interface UseNoShowPredictionReturn {
 export function useNoShowPrediction({ 
   appointmentIds = [],
   realTimeUpdates = false,
-  refreshInterval = 30000 
+  refreshInterval = 30_000 
 }: UseNoShowPredictionOptions = {}): UseNoShowPredictionReturn {
   
   const [predictions, setPredictions] = useState<Record<string, NoShowPrediction>>({});
@@ -39,9 +40,9 @@ export function useNoShowPrediction({
   const [error, setError] = useState<string | null>(null);
 
   const getRiskLevel = useCallback((riskScore: number): 'low' | 'medium' | 'high' | 'critical' => {
-    if (riskScore >= RISK_THRESHOLDS.CRITICAL) return 'critical';
-    if (riskScore >= RISK_THRESHOLDS.HIGH) return 'high';
-    if (riskScore >= RISK_THRESHOLDS.MEDIUM) return 'medium';
+    if (riskScore >= RISK_THRESHOLDS.CRITICAL) {return 'critical';}
+    if (riskScore >= RISK_THRESHOLDS.HIGH) {return 'high';}
+    if (riskScore >= RISK_THRESHOLDS.MEDIUM) {return 'medium';}
     return 'low';
   }, []);
 
@@ -79,7 +80,7 @@ export function useNoShowPrediction({
   }, [getRiskLevel]);
 
   const fetchMultiplePredictions = useCallback(async (appointmentIds: string[]) => {
-    if (appointmentIds.length === 0) return;
+    if (appointmentIds.length === 0) {return;}
 
     setIsLoading(true);
     try {
@@ -123,7 +124,7 @@ export function useNoShowPrediction({
 
   // Set up real-time updates if enabled
   useEffect(() => {
-    if (!realTimeUpdates || refreshInterval <= 0) return;
+    if (!realTimeUpdates || refreshInterval <= 0) {return;}
 
     const interval = setInterval(() => {
       refreshPredictions();
@@ -157,7 +158,7 @@ export function useEnhancedAppointments(appointments: any[]) {
   } = useNoShowPrediction({ 
     appointmentIds,
     realTimeUpdates: true,
-    refreshInterval: 60000 // 1 minute
+    refreshInterval: 60_000 // 1 minute
   });
 
   const enhancedAppointments: AppointmentWithRisk[] = appointments.map(appointment => ({

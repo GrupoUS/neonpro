@@ -257,7 +257,7 @@ class EmergencyAccessibilityValidator {
     const checkedElements = new Set<Element>();
 
     textElements.forEach((el, index) => {
-      if (checkedElements.has(el)) return;
+      if (checkedElements.has(el)) {return;}
       
       const style = window.getComputedStyle(el);
       const hasText = el.textContent && el.textContent.trim().length > 0;
@@ -473,7 +473,7 @@ class EmergencyAccessibilityValidator {
     // Simplified color parsing - in production use a proper color library
     const div = document.createElement('div');
     div.style.color = color;
-    document.body.appendChild(div);
+    document.body.append(div);
     const rgbString = window.getComputedStyle(div).color;
     document.body.removeChild(div);
     
@@ -490,7 +490,7 @@ class EmergencyAccessibilityValidator {
   private relativeLuminance([r, g, b]: [number, number, number]): number {
     const [rs, gs, bs] = [r, g, b].map(c => {
       c = c / 255;
-      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      return c <= 0.039_28 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
     
     return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
@@ -501,12 +501,12 @@ class EmergencyAccessibilityValidator {
    */
   private getAccessibleName(element: HTMLElement): string {
     const ariaLabel = element.getAttribute('aria-label');
-    if (ariaLabel) return ariaLabel;
+    if (ariaLabel) {return ariaLabel;}
     
     const ariaLabelledBy = element.getAttribute('aria-labelledby');
     if (ariaLabelledBy) {
       const labelElement = document.getElementById(ariaLabelledBy);
-      if (labelElement) return labelElement.textContent || '';
+      if (labelElement) {return labelElement.textContent || '';}
     }
     
     return element.textContent || '';

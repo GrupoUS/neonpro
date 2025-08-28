@@ -24,12 +24,12 @@ export interface CircuitBreakerMetrics {
   timeouts: number;
   lastFailureTime: Date | null;
   lastSuccessTime: Date | null;
-  stateChanges: Array<{
+  stateChanges: {
     from: CircuitBreakerState;
     to: CircuitBreakerState;
     timestamp: Date;
     reason: string;
-  }>;
+  }[];
 }
 
 export class CircuitBreakerOpenError extends Error {
@@ -145,7 +145,7 @@ export class HealthcareCircuitBreaker {
    * Check if circuit breaker should attempt to reset from OPEN to HALF_OPEN
    */
   private shouldAttemptReset(): boolean {
-    if (!this.lastFailureTime) return false;
+    if (!this.lastFailureTime) {return false;}
     
     const timeSinceLastFailure = Date.now() - this.lastFailureTime.getTime();
     return timeSinceLastFailure >= this.config.timeoutDuration;
@@ -238,10 +238,10 @@ export class HealthcareCircuitBreaker {
    * Get health status of the circuit breaker
    */
   get isHealthy(): boolean {
-    if (this.state === CircuitBreakerState.OPEN) return false;
+    if (this.state === CircuitBreakerState.OPEN) {return false;}
     
     const totalCalls = this.metrics.totalCalls;
-    if (totalCalls === 0) return true;
+    if (totalCalls === 0) {return true;}
     
     const successRate = this.metrics.successCalls / totalCalls;
     return successRate >= 0.8; // 80% success rate threshold

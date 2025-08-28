@@ -3,15 +3,16 @@
  * Comprehensive WCAG 2.1 AAA+ testing for emergency healthcare components
  */
 
-import { emergencyAccessibility, testEmergencyComponentAccessibility, AccessibilityTestResult } from './emergency-accessibility';
+import type { AccessibilityTestResult } from './emergency-accessibility';
+import { emergencyAccessibility, testEmergencyComponentAccessibility } from './emergency-accessibility';
 
 export interface EmergencyAccessibilityTestSuite {
   suiteName: string;
-  components: Array<{
+  components: {
     name: string;
     createElement: () => HTMLElement;
     expectedLevel: "A" | "AA" | "AAA";
-  }>;
+  }[];
 }
 
 export class EmergencyAccessibilityTestRunner {
@@ -35,7 +36,7 @@ export class EmergencyAccessibilityTestRunner {
       height: 800px;
       visibility: hidden;
     `;
-    document.body.appendChild(this.testContainer);
+    document.body.append(this.testContainer);
   }
 
   /**
@@ -472,17 +473,17 @@ export class EmergencyAccessibilityTestRunner {
     for (const component of testSuite.components) {
       console.log(`\n🔍 Testing ${component.name}...`);
       
-      if (!this.testContainer) continue;
+      if (!this.testContainer) {continue;}
       
       const element = component.createElement();
-      this.testContainer.appendChild(element);
+      this.testContainer.append(element);
       
       try {
         const result = await testEmergencyComponentAccessibility(component.name, element);
         testResults.push(result);
         
         const passed = result.passed && result.level === component.expectedLevel;
-        if (!passed) overallResult = false;
+        if (!passed) {overallResult = false;}
         
         console.log(`${passed ? '✅' : '❌'} ${component.name}: ${result.score}% (${result.issues.length} issues)`);
         

@@ -17,26 +17,11 @@
 			}
 		},
 		{
-			"label": "🔍 Check Format",
-			"type": "shell",
-			"command": "pnpm",
-			"args": [
-				"format:check"
-			],
-			"group": "build",
-			"detail": "Check code formatting without making changes",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
 			"label": "🔍 Lint Code",
 			"type": "shell",
 			"command": "pnpm",
 			"args": [
-				"lint"
+				"lint:oxlint"
 			],
 			"group": "build",
 			"detail": "Run oxlint to check for linting issues",
@@ -51,25 +36,10 @@
 			"type": "shell",
 			"command": "pnpm",
 			"args": [
-				"lint:fix"
+				"oxlint:fix"
 			],
 			"group": "build",
 			"detail": "Automatically fix linting issues with oxlint",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "📝 Type Check",
-			"type": "shell",
-			"command": "pnpm",
-			"args": [
-				"type-check"
-			],
-			"group": "build",
-			"detail": "Run TypeScript type checking",
 			"presentation": {
 				"echo": true,
 				"reveal": "always",
@@ -130,75 +100,6 @@
 				"echo": true,
 				"reveal": "always",
 				"panel": "dedicated"
-			}
-		},
-		{
-			"label": "🧪 Test Current File",
-			"type": "shell",
-			"command": "npx",
-			"args": [
-				"vitest",
-				"run",
-				"${relativeFile}",
-				"--reporter=verbose"
-			],
-			"group": "test",
-			"detail": "Run tests in the currently active file",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "📊 Test Coverage",
-			"type": "shell",
-			"command": "npx",
-			"args": [
-				"vitest",
-				"run",
-				"--coverage"
-			],
-			"group": "test",
-			"detail": "Run tests with coverage report",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "🎭 E2E Tests",
-			"type": "shell",
-			"command": "npx",
-			"args": [
-				"playwright",
-				"test",
-				"--reporter=html"
-			],
-			"group": "test",
-			"detail": "Run all E2E tests using Playwright with HTML report",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "🎭 E2E Tests (Headed)",
-			"type": "shell",
-			"command": "npx",
-			"args": [
-				"playwright",
-				"test",
-				"--headed"
-			],
-			"group": "test",
-			"detail": "Run E2E tests in headed mode (visible browser)",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
 			}
 		},
 		{

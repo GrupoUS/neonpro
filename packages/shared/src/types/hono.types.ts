@@ -471,7 +471,7 @@ export const isRpcError = (response: unknown): response is RpcError => {
     typeof response === "object"
     && response !== null
     && "success" in response
-    && (response as unknown).success === false
+    && (response as { success: boolean }).success === false
   );
 };
 

@@ -173,7 +173,7 @@ const mockPredictionData: PredictiveIntelligence = {
       {
         risk: "Inchaço prolongado",
         strategy: "Compressas frias regulares e elevação da área tratada",
-        probability: 0.90,
+        probability: 0.9,
         impact: "medium"
       }
     ],
@@ -272,9 +272,9 @@ export default function PatientOutcomePrediction({
   // ====== COMPUTED VALUES ======
   const outcomeCategory = useMemo(() => {
     const score = prediction.predictions.outcomeScore;
-    if (score >= 85) return { label: 'Excelente', color: 'text-green-600', bgColor: 'bg-green-50' };
-    if (score >= 75) return { label: 'Bom', color: 'text-blue-600', bgColor: 'bg-blue-50' };
-    if (score >= 60) return { label: 'Moderado', color: 'text-yellow-600', bgColor: 'bg-yellow-50' };
+    if (score >= 85) {return { label: 'Excelente', color: 'text-green-600', bgColor: 'bg-green-50' };}
+    if (score >= 75) {return { label: 'Bom', color: 'text-blue-600', bgColor: 'bg-blue-50' };}
+    if (score >= 60) {return { label: 'Moderado', color: 'text-yellow-600', bgColor: 'bg-yellow-50' };}
     return { label: 'Baixo', color: 'text-red-600', bgColor: 'bg-red-50' };
   }, [prediction.predictions.outcomeScore]);
 
@@ -303,9 +303,9 @@ export default function PatientOutcomePrediction({
 
   const confidenceLevel = useMemo(() => {
     const conf = prediction.confidence;
-    if (conf >= 0.9) return { label: 'Muito Alta', color: 'text-green-600' };
-    if (conf >= 0.8) return { label: 'Alta', color: 'text-blue-600' };
-    if (conf >= 0.7) return { label: 'Moderada', color: 'text-yellow-600' };
+    if (conf >= 0.9) {return { label: 'Muito Alta', color: 'text-green-600' };}
+    if (conf >= 0.8) {return { label: 'Alta', color: 'text-blue-600' };}
+    if (conf >= 0.7) {return { label: 'Moderada', color: 'text-yellow-600' };}
     return { label: 'Baixa', color: 'text-red-600' };
   }, [prediction.confidence]);
 

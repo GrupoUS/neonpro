@@ -122,7 +122,7 @@ export const RealTimePerformanceDashboard: React.FC<RealTimePerformanceDashboard
 
     const { data, error } = await query;
 
-    if (error) throw error;
+    if (error) {throw error;}
     return data || [];
   };
 
@@ -144,7 +144,7 @@ export const RealTimePerformanceDashboard: React.FC<RealTimePerformanceDashboard
 
     const { data, error } = await query;
 
-    if (error) throw error;
+    if (error) {throw error;}
     return data || [];
   };
 
@@ -216,7 +216,7 @@ export const RealTimePerformanceDashboard: React.FC<RealTimePerformanceDashboard
    */
   const updateDashboardWithNewMetric = (newMetric: PerformanceMetric) => {
     setDashboardData(prev => {
-      if (!prev) return prev;
+      if (!prev) {return prev;}
 
       const updated = { ...prev };
 
@@ -262,7 +262,7 @@ export const RealTimePerformanceDashboard: React.FC<RealTimePerformanceDashboard
         .update({ acknowledged: true, acknowledged_at: new Date().toISOString() })
         .eq("id", alertId);
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       setAlerts(prev => prev.filter(alert => alert.id !== alertId));
     } catch (err) {
@@ -507,7 +507,7 @@ const aggregateResourceUsage = (metrics: PerformanceMetric[]) => {
 const calculateSystemHealth = (
   metrics: PerformanceMetric[],
 ): "healthy" | "warning" | "critical" => {
-  if (metrics.length === 0) return "warning";
+  if (metrics.length === 0) {return "warning";}
 
   const criticalMetrics = metrics.filter(m =>
     (m.name === "cpu-usage" && m.value > 90)
@@ -515,7 +515,7 @@ const calculateSystemHealth = (
     || (m.name === "error-rate" && m.value > 5)
   );
 
-  if (criticalMetrics.length > 0) return "critical";
+  if (criticalMetrics.length > 0) {return "critical";}
 
   const warningMetrics = metrics.filter(m =>
     (m.name === "cpu-usage" && m.value > 70)

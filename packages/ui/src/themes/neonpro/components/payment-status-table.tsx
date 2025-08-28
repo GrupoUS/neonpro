@@ -187,7 +187,7 @@ const formatDate = (date: Date) => {
 // Email masking for privacy (NEONPRO style)
 const maskEmail = (email: string) => {
   const [local, domain] = email.split('@');
-  if (local.length <= 2) return email;
+  if (local.length <= 2) {return email;}
   
   const masked = local.charAt(0) + '*'.repeat(local.length - 2) + local.charAt(local.length - 1);
   return `${masked}@${domain}`;

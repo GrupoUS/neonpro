@@ -10,7 +10,7 @@
  * - Emergency access controls
  */
 
-import * as crypto from 'crypto';
+import * as crypto from 'node:crypto';
 import type { Context, MiddlewareHandler } from 'hono';
 import { HealthcareSecurityLogger } from './healthcare-security';
 
@@ -22,7 +22,7 @@ const ENCRYPTION_CONFIG = {
   TAG_LENGTH: 16, // 128 bits
   SALT_LENGTH: 32, // 256 bits
   KEY_DERIVATION: 'pbkdf2',
-  PBKDF2_ITERATIONS: 100000,
+  PBKDF2_ITERATIONS: 100_000,
   KEY_ROTATION_INTERVAL: 90 * 24 * 60 * 60 * 1000, // 90 days in milliseconds
 } as const;
 
@@ -354,7 +354,7 @@ export class HealthcareEncryption {
    */
   static hashSensitiveData(data: string, salt?: string): string {
     const actualSalt = salt || crypto.randomBytes(16).toString('hex');
-    const hash = crypto.pbkdf2Sync(data, actualSalt, 10000, 64, 'sha256');
+    const hash = crypto.pbkdf2Sync(data, actualSalt, 10_000, 64, 'sha256');
     return actualSalt + ':' + hash.toString('hex');
   }
 
@@ -363,9 +363,9 @@ export class HealthcareEncryption {
    */
   static verifyHashedData(data: string, hash: string): boolean {
     const [salt, originalHash] = hash.split(':');
-    if (!salt || !originalHash) return false;
+    if (!salt || !originalHash) {return false;}
     
-    const newHash = crypto.pbkdf2Sync(data, salt, 10000, 64, 'sha256');
+    const newHash = crypto.pbkdf2Sync(data, salt, 10_000, 64, 'sha256');
     return originalHash === newHash.toString('hex');
   }
 }

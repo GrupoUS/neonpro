@@ -17,11 +17,12 @@
  * - Integration with healthcare professionals
  */
 
-import { 
+import type { 
   ChatMessage, 
   ChatConversation, 
   MessageContent, 
-  HealthcareContext, 
+  HealthcareContext} from '@/types/chat';
+import { 
   SenderType,
   ConversationType 
 } from '@/types/chat';
@@ -831,7 +832,7 @@ export class ChatWorkflowSystem {
     currentStep?: WorkflowStep
   ): string | null {
     
-    if (!currentStep) return null;
+    if (!currentStep) {return null;}
     
     const userResponse = this.extractTextFromContent(message.content);
     
@@ -867,7 +868,7 @@ export class ChatWorkflowSystem {
   }
 
   private extractTextFromContent(content: MessageContent): string {
-    if (typeof content === 'string') return content;
+    if (typeof content === 'string') {return content;}
     if (content && typeof content === 'object' && 'text' in content) {
       return content.text || '';
     }

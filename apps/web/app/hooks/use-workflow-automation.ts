@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import {
+import type {
   WorkflowRule,
   WorkflowExecution,
   WorkflowQueue,
-  WorkflowTemplate,
+  WorkflowTemplate} from '@/types/workflow-automation';
+import {
   ActionResult
 } from '@/types/workflow-automation';
 
@@ -63,7 +64,7 @@ export function useWorkflowAutomation({
   clinicId,
   realTimeUpdates = true,
   autoRefresh = true,
-  refreshInterval = 30000, // 30 seconds
+  refreshInterval = 30_000, // 30 seconds
 }: UseWorkflowAutomationOptions = {}): UseWorkflowAutomationReturn {
 
   const [rules, setRules] = useState<WorkflowRule[]>([]);
@@ -83,7 +84,7 @@ export function useWorkflowAutomation({
       setError(null);
       
       const params = new URLSearchParams();
-      if (clinicId) params.append('clinicId', clinicId);
+      if (clinicId) {params.append('clinicId', clinicId);}
       
       const response = await fetch(`/api/workflow-automation/rules?${params}`);
       
@@ -109,7 +110,7 @@ export function useWorkflowAutomation({
   const fetchExecutions = useCallback(async () => {
     try {
       const params = new URLSearchParams();
-      if (clinicId) params.append('clinicId', clinicId);
+      if (clinicId) {params.append('clinicId', clinicId);}
       params.append('limit', '50'); // Get last 50 executions
       
       const response = await fetch(`/api/workflow-automation/executions?${params}`);
@@ -360,7 +361,7 @@ export function useWorkflowAutomation({
   const getTemplates = useCallback(async (category?: string): Promise<WorkflowTemplate[]> => {
     try {
       const params = new URLSearchParams();
-      if (category) params.append('category', category);
+      if (category) {params.append('category', category);}
       
       const response = await fetch(`/api/workflow-automation/templates?${params}`);
       

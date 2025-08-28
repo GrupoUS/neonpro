@@ -15,8 +15,9 @@
  * - Connection resilience and offline support
  */
 
-import { createClient, SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
-import { 
+import type { SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
+import type { 
   ChatMessage, 
   ChatConversation, 
   SenderType, 
@@ -57,7 +58,7 @@ export class SupabaseRealtimeChat {
       realtime: {
         params: {
           eventsPerSecond: 10,
-          heartbeatIntervalMs: 30000,
+          heartbeatIntervalMs: 30_000,
           reconnectDelayMs: 1000,
         }
       },
@@ -305,11 +306,11 @@ export class SupabaseRealtimeChat {
     conversationId: string,
     isTyping: boolean
   ): Promise<void> {
-    if (!this.config.enableTypingIndicators) return;
+    if (!this.config.enableTypingIndicators) {return;}
 
     try {
       const channel = this.channels.get(conversationId);
-      if (!channel) return;
+      if (!channel) {return;}
 
       const typingUser: TypingUser = {
         id: this.currentUserId!,
@@ -564,7 +565,7 @@ export class SupabaseRealtimeChat {
   }
 
   private isEmergencyMessage(content: any): boolean {
-    if (typeof content !== 'object' || !content.text) return false;
+    if (typeof content !== 'object' || !content.text) {return false;}
     
     const emergencyKeywords = [
       'emergência', 'urgente', 'socorro', 'dor forte', 'sangramento',
@@ -618,7 +619,7 @@ export class SupabaseRealtimeChat {
   }
 
   private validateLGPDCompliance(message: ChatMessage): void {
-    if (!this.config.lgpdCompliance) return;
+    if (!this.config.lgpdCompliance) {return;}
     
     // Implement LGPD validation logic
     if (!message.lgpd_compliant) {

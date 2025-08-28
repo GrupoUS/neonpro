@@ -110,17 +110,17 @@ export function RiskIndicator({ risk, className, showTooltip = true, compact = f
 }
 
 export function RiskIndicatorWithTooltip(props: RiskIndicatorProps) {
-  return <RiskIndicator {...props} showTooltip={true} />;
+  return <RiskIndicator {...props} showTooltip />;
 }
 
 // Componente para lista de indicadores
 export interface RiskIndicatorListProps {
-  risks: Array<{
+  risks: {
     id: string;
     patientName: string;
     appointmentDate: string;
     risk: RiskLevel;
-  }>;
+  }[];
   onRiskClick?: (riskId: string) => void;
 }
 

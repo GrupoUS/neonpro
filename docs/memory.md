@@ -65,10 +65,10 @@ This rule outlines the **critical protocol** for consulting and maintaining pers
 
 - **Error Documentation:** `mistakes/[error-category].md` (distributed error documentation)
 - **Feature Documentation:** `features/[feature-name].md` (feature-specific documentation)
-- **Test Coverage:** `src/__tests__/[feature-category]/[feature-name].test.ts` (comprehensive test files)
-- **Project Context & Standards:** `rules/project.md`
-- **User Coding Preferences:** `rules/code-preferences.md`
-- **Database Schema:** `docs/database-schema.md` and `docs/database-schema/` directory
+- **Test Coverage:** `tools/__tests__/[feature-category]/[feature-name].test.ts` (comprehensive test files)
+- **Project Context & Standards:** `docs/project.md`
+- **User Coding Preferences:** `.ruler/code-preferences.md`
+- **Database Schema:** `docs/database-schema/database-schema.md` and `docs/database-schema/` directory
 - **API Documentation:** `docs/apis/` directory
 - **Testing Standards & Workflow:** `docs/ttd-flow.md`
 

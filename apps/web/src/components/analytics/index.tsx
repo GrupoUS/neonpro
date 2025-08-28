@@ -94,7 +94,7 @@ export const formatMetricValue = (
       return `${Number(value).toFixed(1)}%`;
     case 'duration':
       const hours = Number(value);
-      if (hours < 24) return `${hours}h`;
+      if (hours < 24) {return `${hours}h`;}
       const days = Math.floor(hours / 24);
       return `${days} dia${days > 1 ? 's' : ''}`;
     case 'number':
@@ -107,7 +107,7 @@ export const formatMetricValue = (
  * Calculate metric change percentage
  */
 export const calculateMetricChange = (current: number, previous: number): number => {
-  if (previous === 0) return current > 0 ? 100 : 0;
+  if (previous === 0) {return current > 0 ? 100 : 0;}
   return ((current - previous) / previous) * 100;
 };
 
@@ -121,14 +121,14 @@ export const getMetricStatus = (
 ): 'good' | 'warning' | 'critical' => {
   if (target) {
     const percentage = (value / target) * 100;
-    if (percentage >= 100) return 'good';
-    if (percentage >= 80) return 'warning';
+    if (percentage >= 100) {return 'good';}
+    if (percentage >= 80) {return 'warning';}
     return 'critical';
   }
   
   if (benchmark) {
-    if (value >= benchmark * 1.1) return 'good';
-    if (value >= benchmark * 0.9) return 'warning';
+    if (value >= benchmark * 1.1) {return 'good';}
+    if (value >= benchmark * 0.9) {return 'warning';}
     return 'critical';
   }
   
@@ -238,14 +238,14 @@ export const validateCRM = (crm: string, state: string): boolean => {
   
   // CRM format: state-specific number ranges
   const ranges: Record<string, { min: number; max: number }> = {
-    'SP': { min: 1, max: 999999 },
-    'RJ': { min: 1, max: 999999 },
-    'MG': { min: 1, max: 999999 },
+    'SP': { min: 1, max: 999_999 },
+    'RJ': { min: 1, max: 999_999 },
+    'MG': { min: 1, max: 999_999 },
     // Add more state-specific ranges as needed
   };
   
   const range = ranges[state.toUpperCase()];
-  if (!range) return cleaned.length >= 4 && cleaned.length <= 6;
+  if (!range) {return cleaned.length >= 4 && cleaned.length <= 6;}
   
   const number = parseInt(cleaned);
   return number >= range.min && number <= range.max;
@@ -255,10 +255,10 @@ export const validateCRM = (crm: string, state: string): boolean => {
  * Generate compliance score color
  */
 export const getComplianceScoreColor = (score: number): string => {
-  if (score >= 95) return 'text-green-600';
-  if (score >= 90) return 'text-blue-600';
-  if (score >= 85) return 'text-yellow-600';
-  if (score >= 70) return 'text-orange-600';
+  if (score >= 95) {return 'text-green-600';}
+  if (score >= 90) {return 'text-blue-600';}
+  if (score >= 85) {return 'text-yellow-600';}
+  if (score >= 70) {return 'text-orange-600';}
   return 'text-red-600';
 };
 
@@ -266,7 +266,7 @@ export const getComplianceScoreColor = (score: number): string => {
  * Format time duration in Portuguese
  */
 export const formatDurationPT = (minutes: number): string => {
-  if (minutes < 60) return `${minutes}min`;
+  if (minutes < 60) {return `${minutes}min`;}
   
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;

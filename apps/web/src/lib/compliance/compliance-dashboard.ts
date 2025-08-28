@@ -1,21 +1,29 @@
-import {
-  CFMValidationService,
+import type {
   CFMValidationResult
 } from './cfm-professional-validation';
 import {
-  ANVISAControlledSubstancesService,
+  CFMValidationService
+} from './cfm-professional-validation';
+import type {
   ControlledPrescription
 } from './anvisa-controlled-substances';
 import {
-  LGPDConsentManagementService,
+  ANVISAControlledSubstancesService
+} from './anvisa-controlled-substances';
+import type {
   LGPDConsentRecord
 } from './lgpd-consent-management';
 import {
-  EmergencyMedicalProtocolsService,
+  LGPDConsentManagementService
+} from './lgpd-consent-management';
+import type {
   EmergencyResponse,
   EmergencyProtocol
 } from './emergency-medical-protocols';
 import {
+  EmergencyMedicalProtocolsService
+} from './emergency-medical-protocols';
+import type {
   ComplianceDashboardData,
   ComplianceScore,
   ComplianceAlert,
@@ -234,7 +242,7 @@ export class ComplianceDashboardService {
 
     const validProfessionals = validations.filter(v => v.isValid).length;
     const expiringSoon = validations.filter(v => {
-      if (!v.validUntil) return false;
+      if (!v.validUntil) {return false;}
       const daysUntilExpiry = (v.validUntil.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
       return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
     }).length;
@@ -506,7 +514,7 @@ export class ComplianceDashboardService {
 
     // CFM Alerts
     const expiringSoonCFM = data.cfmValidations.filter(v => {
-      if (!v.validUntil) return false;
+      if (!v.validUntil) {return false;}
       const daysUntilExpiry = (v.validUntil.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
       return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
     });
@@ -692,26 +700,26 @@ export class ComplianceDashboardService {
 
   // Helper methods for report generation
   private determineRiskLevel(score: number): ComplianceRiskLevel {
-    if (score >= 90) return 'low';
-    if (score >= 80) return 'medium';
-    if (score >= 60) return 'high';
+    if (score >= 90) {return 'low';}
+    if (score >= 80) {return 'medium';}
+    if (score >= 60) {return 'high';}
     return 'critical';
   }
 
   private getComplianceDescription(score: number, riskLevel: ComplianceRiskLevel): string {
-    if (score >= 95) return 'Excelente conformidade regulatória - todos os sistemas operando dentro dos padrões';
-    if (score >= 90) return 'Boa conformidade - pequenos ajustes podem ser necessários';
-    if (score >= 80) return 'Conformidade adequada - algumas áreas requerem atenção';
-    if (score >= 70) return 'Conformidade limitada - ação corretiva necessária';
-    if (score >= 60) return 'Conformidade deficiente - ação imediata requerida';
+    if (score >= 95) {return 'Excelente conformidade regulatória - todos os sistemas operando dentro dos padrões';}
+    if (score >= 90) {return 'Boa conformidade - pequenos ajustes podem ser necessários';}
+    if (score >= 80) {return 'Conformidade adequada - algumas áreas requerem atenção';}
+    if (score >= 70) {return 'Conformidade limitada - ação corretiva necessária';}
+    if (score >= 60) {return 'Conformidade deficiente - ação imediata requerida';}
     return 'Não conformidade crítica - intervenção urgente necessária';
   }
 
   private determineOverallHealth(score: number): 'excellent' | 'good' | 'fair' | 'poor' | 'critical' {
-    if (score >= 90) return 'excellent';
-    if (score >= 80) return 'good';
-    if (score >= 70) return 'fair';
-    if (score >= 60) return 'poor';
+    if (score >= 90) {return 'excellent';}
+    if (score >= 80) {return 'good';}
+    if (score >= 70) {return 'fair';}
+    if (score >= 60) {return 'poor';}
     return 'critical';
   }
 
@@ -878,7 +886,7 @@ export class ComplianceDashboardService {
 
   private getCertificationsExpiringSoon(data: any): number {
     return data.cfmValidations?.filter((v: any) => {
-      if (!v.validUntil) return false;
+      if (!v.validUntil) {return false;}
       const daysUntilExpiry = (v.validUntil.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
       return daysUntilExpiry <= 60 && daysUntilExpiry > 0;
     }).length || 0;

@@ -62,7 +62,7 @@ export function usePatients(clinicId?: string): UsePatientReturn {  const [patie
   const [totalCount, setTotalCount] = useState(0);
 
   const fetchPatients = useCallback(async (filters?: PatientFilters) => {
-    if (!clinicId) return;
+    if (!clinicId) {return;}
 
     try {
       setIsLoading(true);

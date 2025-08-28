@@ -8,14 +8,16 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { 
+import type { 
   ChatConversation, 
   ChatMessage, 
   PresenceStatus,
-  ConversationType,
   SenderType,
   MessageType,
   HealthcareContext
+} from '@/types/chat';
+import {
+  ConversationType
 } from '@/types/chat';
 import MessageBubble from './MessageBubble';
 import ChatInput from './ChatInput';
@@ -249,8 +251,8 @@ export default function ChatInterface({
             status: 'delivered',
             ai_processed: true,
             ai_confidence: 0.95,
-            created_at: new Date(Date.now() - 300000).toISOString(),
-            updated_at: new Date(Date.now() - 300000).toISOString(),
+            created_at: new Date(Date.now() - 300_000).toISOString(),
+            updated_at: new Date(Date.now() - 300_000).toISOString(),
             lgpd_compliant: true
           }
         ]
@@ -287,7 +289,7 @@ export default function ChatInterface({
 
   // Handle message sending
   const handleMessageSend = useCallback(async (messageContent: string, messageType: MessageType = 'text') => {
-    if (!state.activeConversation || !messageContent.trim()) return;
+    if (!state.activeConversation || !messageContent.trim()) {return;}
 
     const newMessage: ChatMessage = {
       id: `msg-${Date.now()}`,
@@ -425,7 +427,7 @@ export default function ChatInterface({
         currentTheme.text,
         className
       )}>
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600" />
         <span className="ml-3">Carregando conversas...</span>
       </div>
     );
@@ -502,8 +504,8 @@ export default function ChatInterface({
                   key={message.id}
                   message={message}
                   currentUserId={currentUserId}
-                  showAvatar={true}
-                  showTimestamp={true}
+                  showAvatar
+                  showTimestamp
                   emergencyMode={emergencyMode}
                   className="animate-in slide-in-from-bottom-2 duration-300"
                 />

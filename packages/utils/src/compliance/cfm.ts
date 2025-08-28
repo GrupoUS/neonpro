@@ -4,7 +4,8 @@
  * digital signatures, and telemedicine compliance
  */
 
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 import { createHash } from "node:crypto";
 import type { 
   Database,

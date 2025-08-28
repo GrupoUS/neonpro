@@ -8,9 +8,10 @@
 
 import React, { useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { 
+import type { 
   ChatConversation, 
-  PresenceStatus, 
+  PresenceStatus} from '@/types/chat';
+import { 
   ConversationType,
   SenderType 
 } from '@/types/chat';
@@ -172,7 +173,7 @@ export default function ChatHeader({
 
   // Get healthcare context info
   const getHealthcareContextInfo = useCallback(() => {
-    if (!conversation.healthcare_context) return null;
+    if (!conversation.healthcare_context) {return null;}
 
     const context = conversation.healthcare_context;
     const specialtyMap: Record<string, string> = {

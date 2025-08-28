@@ -25,7 +25,8 @@
       ".github/copilot-instructions.md",
       ".github/instructions/intelligent-orchestrator.instructions.md",
       ".github/instructions/master-rules.instructions.md",
-      ".github/prompts/promptsgeral.prompt.md"
+      ".github/prompts/promptsgeral.prompt.md",
+      ".trae/rules/user_rules.md"
     ],
     "github.copilot.chat.modeFilesLocations": {
       ".github/chatmodes": true

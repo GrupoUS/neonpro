@@ -16,7 +16,7 @@
  * - Third-party data sharing controls
  */
 
-import { ChatMessage, MessageContent, HealthcareContext } from '@/types/chat';
+import type { ChatMessage, MessageContent, HealthcareContext } from '@/types/chat';
 
 export interface LGPDConfig {
   enable_data_classification?: boolean;
@@ -700,7 +700,7 @@ export class LGPDChatCompliance {
   }
 
   private extractTextFromContent(content: MessageContent): string {
-    if (typeof content === 'string') return content;
+    if (typeof content === 'string') {return content;}
     if (content && typeof content === 'object' && 'text' in content) {
       return content.text || '';
     }

@@ -6,9 +6,10 @@
 
 'use client';
 
-import React, { useState, useRef, useCallback, useEffect, KeyboardEvent } from 'react';
+import type { KeyboardEvent } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { MessageType, HealthcareContext } from '@/types/chat';
+import type { MessageType, HealthcareContext } from '@/types/chat';
 
 // Icons (would be imported from lucide-react or similar)
 const SendIcon = ({ className }: { className?: string }) => (
@@ -190,7 +191,7 @@ export default function ChatInput({
     e?.preventDefault();
     
     const trimmedMessage = message.trim();
-    if (!trimmedMessage || disabled) return;
+    if (!trimmedMessage || disabled) {return;}
 
     onSendMessage(trimmedMessage);
     setMessage('');

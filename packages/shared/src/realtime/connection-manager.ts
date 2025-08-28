@@ -4,7 +4,8 @@
  * Otimizado para ambiente healthcare com alta disponibilidade
  */
 
-import type { Database } from "@neonpro/database";
+// Temporary: Use relative path until module resolution is fixed
+import type { Database } from "../types/database.types";
 import { createClient } from "@supabase/supabase-js";
 import type { RealtimeChannel, SupabaseClient } from "@supabase/supabase-js";
 
@@ -64,7 +65,7 @@ export class SupabaseRealtimeManager {
     this.connectionStatus = {
       isConnected: false,
       connectionId: null,
-      lastConnected: undefined,
+      lastConnected: null,
       totalRetries: 0,
       activeChannels: 0,
       healthScore: 0,
@@ -254,9 +255,9 @@ export class SupabaseRealtimeManager {
       this.subscriptions.set(channelName, subscription);
     }
 
-    // Add callback
+    // Add callback (cast to match Map signature)
     const callbackId = this.generateCallbackId();
-    subscription.callbacks.set(callbackId, callback);
+    subscription.callbacks.set(callbackId, callback as (payload: unknown) => void);
 
     // Setup channel if not active
     if (!subscription.isActive) {
@@ -286,7 +287,7 @@ export class SupabaseRealtimeManager {
     // Setup postgres changes listener with configuration
     if (config?.table) {
       channel.on(
-        "postgres_changes" as unknown,
+        "postgres_changes" as "system",
         {
           event: config.event || "*",
           schema: config.schema || "public",
@@ -296,7 +297,7 @@ export class SupabaseRealtimeManager {
         (payload: unknown) => {
           callbacks.forEach((callback) => {
             try {
-              callback(payload);
+              callback(payload as any);
             } catch {}
           });
         },
@@ -304,12 +305,12 @@ export class SupabaseRealtimeManager {
     } else {
       // Setup generic postgres changes listener for backwards compatibility
       channel.on(
-        "postgres_changes" as unknown,
+        "postgres_changes" as "system",
         { event: "*", schema: "public" },
         (payload: unknown) => {
           callbacks.forEach((callback) => {
             try {
-              callback(payload);
+              callback(payload as any);
             } catch {}
           });
         },
@@ -583,6 +584,6 @@ export function getRealtimeManager(
 export function destroyRealtimeManager(): void {
   if (globalRealtimeManager) {
     globalRealtimeManager.destroy();
-    globalRealtimeManager = undefined;
+    globalRealtimeManager = null;
   }
 }

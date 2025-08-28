@@ -113,7 +113,7 @@ export class InfrastructureMonitoringService {
   private healthChecks: Map<string, boolean> = new Map();
 
   private readonly DEFAULT_CONFIG: PerformanceDashboardConfig = {
-    refreshInterval: 30000, // 30 seconds
+    refreshInterval: 30_000, // 30 seconds
     metricsRetention: 24, // 24 hours
     alertThresholds: {
       emergencyResponseTime: 100, // 100ms
@@ -468,7 +468,7 @@ export class InfrastructureMonitoringService {
    */
   private createAlert(alertData: Omit<Alert, 'id' | 'timestamp' | 'resolved'>): Alert {
     const alert: Alert = {
-      id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `alert_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       timestamp: new Date().toISOString(),
       resolved: false,
       ...alertData
@@ -659,7 +659,7 @@ export class InfrastructureMonitoringService {
 
 // Export singleton instance optimized for Brazilian healthcare
 export const brazilianInfrastructureMonitoring = InfrastructureMonitoringService.getInstance({
-  refreshInterval: 30000, // 30 seconds for healthcare systems
+  refreshInterval: 30_000, // 30 seconds for healthcare systems
   alertThresholds: {
     emergencyResponseTime: 100, // Critical for Brazilian emergency care
     patientLookupTime: 200,     // Fast patient access

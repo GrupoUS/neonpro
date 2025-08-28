@@ -71,7 +71,7 @@ pnpm compliance:lgpd   # LGPD compliance validation
 pnpm test:healthcare   # Healthcare scenario testing
 
 # Code quality
-npx ultracite format   # Format and fix code
+npx format   # Format and fix code
 pnpm type-check        # TypeScript validation
 ```
 

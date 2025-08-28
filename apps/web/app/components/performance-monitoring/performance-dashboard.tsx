@@ -40,11 +40,13 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePerformanceMonitoring } from '@/hooks/use-performance-monitoring';
-import {
+import type {
   DashboardKPI,
-  KPI_LABELS_PT,
-  CHART_COLORS,
   ExportOptions
+} from '@/types/performance-monitoring';
+import {
+  KPI_LABELS_PT,
+  CHART_COLORS
 } from '@/types/performance-monitoring';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -84,7 +86,7 @@ export function PerformanceDashboard({
     departmentIds,
     realTimeUpdates: true,
     autoRefresh: true,
-    refreshInterval: 300000 // 5 minutes
+    refreshInterval: 300_000 // 5 minutes
   });
 
   const [selectedPeriod, setSelectedPeriod] = useState('last30days');

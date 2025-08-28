@@ -55,7 +55,7 @@ Before creating any rule, conduct comprehensive analysis:
 
 5. **Confidence Checkpoint:**
    - Summarize analysis findings and proposed approach
-   - State confidence level: "Analysis complete. Confidence: **[85-100]%**"
+   - State confidence level: "Analysis complete. Confidence: `[85-100]%`
    - If confidence ≥90%: Proceed to Phase 2
    - If confidence <90%: Ask targeted clarifying questions and wait for confirmation
 
@@ -160,15 +160,15 @@ function exampleBadPattern() {
 ```
 
 ### Edge Cases & Exceptions
-[Handling of special scenarios and justified exceptions]
+`[Handling of special scenarios and justified exceptions]`
 
 ### Validation Criteria
-- [Specific, measurable compliance criteria]
+- `[Specific, measurable compliance criteria]`
 
 ## Dependencies & Relationships
-- **Requires**: [Rules that must be implemented first]
-- **Enhances**: [Rules that work better when combined]
-- **Conflicts**: [Rules that cannot coexist]
+- **Requires**: `[Rules that must be implemented first]`
+- **Enhances**: `[Rules that work better when combined]`
+- **Conflicts**: `[Rules that cannot coexist]`
 ```
 
 ### Behavioral Rule Template

@@ -201,7 +201,7 @@ const dashboardMetrics: MetricCard[] = [
     title: "Receita Mensal",
     value: "R$ 245.690",
     previousValue: "R$ 221.340",
-    change: 11.0,
+    change: 11,
     changeDirection: "up",
     trend: [180, 190, 195, 210, 205, 220, 235, 240, 238, 245],
     unit: "BRL",
@@ -209,8 +209,8 @@ const dashboardMetrics: MetricCard[] = [
     status: "good",
     icon: TrendingUp,
     color: "#16a34a",
-    target: 250000,
-    benchmark: 230000
+    target: 250_000,
+    benchmark: 230_000
   },
   {
     id: "compliance-score",
@@ -251,7 +251,7 @@ export default function AnalyticsDashboard({
 
   // ====== REAL-TIME DATA SUBSCRIPTION ======
   useEffect(() => {
-    if (!realTimeData || !refreshInterval) return;
+    if (!realTimeData || !refreshInterval) {return;}
 
     const interval = setInterval(() => {
       // Simulate real-time data updates
@@ -316,9 +316,9 @@ export default function AnalyticsDashboard({
 
   const complianceStatus = useMemo(() => {
     const score = analytics.analytics.complianceMetrics.overallScore;
-    if (score >= 95) return { status: 'excellent', color: '#059669' };
-    if (score >= 85) return { status: 'good', color: '#16a34a' };
-    if (score >= 70) return { status: 'warning', color: '#f59e0b' };
+    if (score >= 95) {return { status: 'excellent', color: '#059669' };}
+    if (score >= 85) {return { status: 'good', color: '#16a34a' };}
+    if (score >= 70) {return { status: 'warning', color: '#f59e0b' };}
     return { status: 'critical', color: '#dc2626' };
   }, [analytics.analytics.complianceMetrics.overallScore]);
 
@@ -589,7 +589,7 @@ export default function AnalyticsDashboard({
           <CardContent className="flex items-center justify-between py-3">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 <span className="text-sm font-medium">Sistema Ativo</span>
               </div>
               <div className="text-sm text-muted-foreground">

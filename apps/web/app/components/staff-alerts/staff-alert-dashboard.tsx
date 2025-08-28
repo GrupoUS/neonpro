@@ -46,8 +46,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStaffAlerts } from '@/hooks/use-staff-alerts';
-import { 
-  StaffAlert,
+import type { 
+  StaffAlert} from '@/types/staff-alerts';
+import {
   ALERT_STATUS_LABELS_PT,
   ALERT_PRIORITY_LABELS_PT,
   ALERT_PRIORITY_COLORS,
@@ -94,7 +95,7 @@ export function StaffAlertDashboard({
     department,
     realTimeUpdates: true,
     autoRefresh: true,
-    refreshInterval: 15000 // 15 seconds for high responsiveness
+    refreshInterval: 15_000 // 15 seconds for high responsiveness
   });
 
   const [selectedAlert, setSelectedAlert] = useState<StaffAlert | null>(null);

@@ -124,7 +124,7 @@ RESEARCH_EXECUTION_FRAMEWORK:
 - Mark tasks as in_progress when starting, completed when finished
 - Use the `apex-dev` agent for development context and task management: [`.ruler/agents/apex-dev.md`](../.ruler/agents/apex-dev.md)
 - Use the `apex-ui-ux-designer` agent for UI/UX design tasks: [`.ruler/agents/apex-ui-ux-designer.md`](../.ruler/agents/apex-ui-ux-designer.md)
-- **Follow the Project Context Guide:** [`docs/project.md`](docs/project.md)
+- **Follow the Project Context Guide:** [`docs/project.md`](../docs/project.md)
 - Follow the Planning & Design Framework below
 
 ```yaml

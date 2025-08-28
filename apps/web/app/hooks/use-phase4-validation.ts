@@ -4,19 +4,20 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import {
+import type {
   ValidationRule,
-  ValidationRequest,
-  ValidationResult,
   ValidationSession,
   ValidationConfig,
   ValidationStats,
   ValidationDashboard,
   ValidationStatus,
   ValidationType,
-  ValidationLevel,
   ValidationAlert,
-  SystemHealth,
+  SystemHealth} from '@/app/types/phase4-validation';
+import {
+  ValidationRequest,
+  ValidationResult,
+  ValidationLevel,
   ValidationLabels,
   BrazilianHealthcareValidationPresets
 } from '@/app/types/phase4-validation';
@@ -125,7 +126,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
 
   // WebSocket connection for real-time updates
   useEffect(() => {
-    if (!options.real_time_updates) return;
+    if (!options.real_time_updates) {return;}
 
     const connectWebSocket = () => {
       const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}/validation`);
@@ -275,7 +276,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       });
 
       const response = await fetch(`/api/validation/rules?${queryParams}`);
-      if (!response.ok) throw new Error('Failed to load rules');
+      if (!response.ok) {throw new Error('Failed to load rules');}
       
       const rulesData: ValidationRule[] = await response.json();
       setRules(rulesData);
@@ -296,7 +297,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       body: JSON.stringify({ ...rule, clinic_id: options.clinic_id }),
     });
 
-    if (!response.ok) throw new Error('Failed to create rule');
+    if (!response.ok) {throw new Error('Failed to create rule');}
     
     const newRule: ValidationRule = await response.json();
     setRules(prev => [newRule, ...prev]);
@@ -314,7 +315,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       body: JSON.stringify(updates),
     });
 
-    if (!response.ok) throw new Error('Failed to update rule');
+    if (!response.ok) {throw new Error('Failed to update rule');}
     
     const updatedRule: ValidationRule = await response.json();
     setRules(prev => prev.map(rule => rule.id === id ? updatedRule : rule));
@@ -327,7 +328,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       method: 'DELETE',
     });
 
-    if (!response.ok) throw new Error('Failed to delete rule');
+    if (!response.ok) {throw new Error('Failed to delete rule');}
     
     setRules(prev => prev.filter(rule => rule.id !== id));
   }, []);
@@ -341,7 +342,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
   const loadConfig = useCallback(async () => {
     try {
       const response = await fetch(`/api/validation/config?clinic_id=${options.clinic_id}`);
-      if (!response.ok) throw new Error('Failed to load config');
+      if (!response.ok) {throw new Error('Failed to load config');}
       
       const configData: ValidationConfig = await response.json();
       setConfig(configData);
@@ -360,7 +361,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       body: JSON.stringify({ ...updates, clinic_id: options.clinic_id }),
     });
 
-    if (!response.ok) throw new Error('Failed to update config');
+    if (!response.ok) {throw new Error('Failed to update config');}
     
     const updatedConfig: ValidationConfig = await response.json();
     setConfig(updatedConfig);
@@ -375,7 +376,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       body: JSON.stringify({ clinic_id: options.clinic_id }),
     });
 
-    if (!response.ok) throw new Error('Failed to reset config');
+    if (!response.ok) {throw new Error('Failed to reset config');}
     
     await loadConfig();
   }, [options.clinic_id, loadConfig]);
@@ -386,7 +387,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       const response = await fetch(
         `/api/validation/stats?clinic_id=${options.clinic_id}&period=${period}`
       );
-      if (!response.ok) throw new Error('Failed to load stats');
+      if (!response.ok) {throw new Error('Failed to load stats');}
       
       const statsData: ValidationStats = await response.json();
       setStats(statsData);
@@ -399,7 +400,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
   const loadDashboard = useCallback(async () => {
     try {
       const response = await fetch(`/api/validation/dashboard?clinic_id=${options.clinic_id}`);
-      if (!response.ok) throw new Error('Failed to load dashboard');
+      if (!response.ok) {throw new Error('Failed to load dashboard');}
       
       const dashboardData: ValidationDashboard = await response.json();
       setDashboard(dashboardData);
@@ -412,7 +413,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
   const loadSessions = useCallback(async () => {
     try {
       const response = await fetch(`/api/validation/sessions?clinic_id=${options.clinic_id}`);
-      if (!response.ok) throw new Error('Failed to load sessions');
+      if (!response.ok) {throw new Error('Failed to load sessions');}
       
       const sessionsData: ValidationSession[] = await response.json();
       setSessions(sessionsData);
@@ -427,7 +428,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       method: 'POST',
     });
 
-    if (!response.ok) throw new Error('Failed to cancel session');
+    if (!response.ok) {throw new Error('Failed to cancel session');}
     
     // Update session status in state
     setSessions(prev => prev.map(session => 
@@ -443,7 +444,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       method: 'POST',
     });
 
-    if (!response.ok) throw new Error('Failed to acknowledge alert');
+    if (!response.ok) {throw new Error('Failed to acknowledge alert');}
     
     setAlerts(prev => prev.map(alert => 
       alert.id === alertId ? { ...alert, acknowledged: true } : alert
@@ -456,7 +457,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       method: 'DELETE',
     });
 
-    if (!response.ok) throw new Error('Failed to dismiss alert');
+    if (!response.ok) {throw new Error('Failed to dismiss alert');}
     
     setAlerts(prev => prev.filter(alert => alert.id !== alertId));
   }, []);
@@ -464,7 +465,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
   // Check system health
   const checkSystemHealth = useCallback(async (): Promise<SystemHealth> => {
     const response = await fetch('/api/validation/health');
-    if (!response.ok) throw new Error('Failed to check system health');
+    if (!response.ok) {throw new Error('Failed to check system health');}
     
     const health: SystemHealth = await response.json();
     setSystemHealth(health);
@@ -490,9 +491,9 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
 
   // Utility functions
   const formatValidationScore = useCallback((score: number): string => {
-    if (score >= 90) return 'Excelente';
-    if (score >= 70) return 'Bom';
-    if (score >= 50) return 'Regular';
+    if (score >= 90) {return 'Excelente';}
+    if (score >= 70) {return 'Bom';}
+    if (score >= 50) {return 'Regular';}
     return 'Inadequado';
   }, []);
 
@@ -517,7 +518,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       body: JSON.stringify({ session_ids: sessionIds, format }),
     });
 
-    if (!response.ok) throw new Error('Failed to export results');
+    if (!response.ok) {throw new Error('Failed to export results');}
     
     return await response.blob();
   }, []);
@@ -532,7 +533,7 @@ export function usePhase4Validation(options: UsePhase4ValidationOptions): UsePha
       body: JSON.stringify({ type, filters, clinic_id: options.clinic_id }),
     });
 
-    if (!response.ok) throw new Error('Failed to generate report');
+    if (!response.ok) {throw new Error('Failed to generate report');}
     
     return await response.blob();
   }, [options.clinic_id]);

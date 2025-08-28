@@ -61,7 +61,7 @@ const RISK_CONFIG = {
     description: "Probabilidade baixa de falta",
   },
   medium: {
-    threshold: 0.50,
+    threshold: 0.5,
     color: "text-yellow-600 border-yellow-200 bg-yellow-50",
     badgeColor: "bg-yellow-100 text-yellow-800",
     icon: AlertCircle,
@@ -77,7 +77,7 @@ const RISK_CONFIG = {
     description: "Intervenção recomendada",
   },
   critical: {
-    threshold: 1.0,
+    threshold: 1,
     color: "text-red-600 border-red-200 bg-red-50",
     badgeColor: "bg-red-100 text-red-800",
     icon: XCircle,

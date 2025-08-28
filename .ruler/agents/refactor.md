@@ -76,7 +76,7 @@ YAGNI_PRINCIPLE:
    **Risk Level:** *Low/Medium/High*
    **Estimated Impact:** *Number of files/functions affected*
    **Proposed Approach:** *High-level strategy*
-   **Confidence to proceed:** *[85-100]%*"
+   **Confidence to proceed:** `[85-100]%`
 
 ### Phase 2: Refactoring Strategy (Planning)
 

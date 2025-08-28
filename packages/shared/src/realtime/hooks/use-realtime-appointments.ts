@@ -4,7 +4,7 @@
  * Crítico para ambiente healthcare com notificações urgentes
  */
 
-import type { Database } from "@neonpro/database";
+import type { Database } from "../../types/database.types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { getRealtimeManager } from "../connection-manager";
@@ -61,10 +61,10 @@ export function useRealtimeAppointments(
   const queryClient = useQueryClient();
   const [isConnected, setIsConnected] = useState(false);
   const [connectionHealth, setConnectionHealth] = useState(0);
-  const [lastUpdate, setLastUpdate] = useState<Date | null>();
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [totalUpdates, setTotalUpdates] = useState(0);
   const [urgentUpdates, setUrgentUpdates] = useState(0);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
 
   /**
    * Detect urgent appointment changes
@@ -216,10 +216,11 @@ export function useRealtimeAppointments(
   const handleAppointmentChange = useCallback(
     (payload: unknown) => {
       try {
+        const typedPayload = payload as any;
         const realtimePayload: RealtimeAppointmentPayload = {
-          eventType: payload.eventType,
-          new: payload.new as AppointmentRow,
-          old: payload.old as AppointmentRow,
+          eventType: typedPayload.eventType,
+          new: typedPayload.new as AppointmentRow,
+          old: typedPayload.old as AppointmentRow,
         };
 
         // Update metrics
@@ -300,7 +301,7 @@ export function useRealtimeAppointments(
   const unsubscribe = useCallback(() => {
     if (unsubscribeFn) {
       unsubscribeFn();
-      setUnsubscribeFn(undefined);
+      setUnsubscribeFn(null);
     }
   }, [unsubscribeFn]);
 

@@ -4,7 +4,7 @@
  * Supports all CFM state councils and specialties
  */
 
-import { 
+import type { 
   CFMValidationResult, 
   CFMProfessional, 
   CFMLicenseStatus, 

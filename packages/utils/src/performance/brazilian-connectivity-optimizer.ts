@@ -5,13 +5,13 @@
 
 export type ConnectivityTier = "tier1_premium" | "tier2_standard" | "tier3_limited";
 
-export type BrazilianRegion = {
+export interface BrazilianRegion {
   id: string;
   name: string;
   cdnNodes: string[];
   tier: ConnectivityTier;
   expectedLatency: number; // in ms
-};
+}
 
 export interface PerformanceMetrics {
   connectionType: string;

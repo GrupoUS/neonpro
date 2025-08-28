@@ -58,16 +58,17 @@ import {
   Target
 } from 'lucide-react';
 
-import {
+import type {
   EmergencyProtocol,
   EmergencyResponse,
   EmergencyContact,
   EmergencyCategory,
   EmergencyPriority,
+  EmergencyResponseTeam} from '@/lib/compliance/emergency-medical-protocols';
+import {
   EmergencyStatus,
   EmergencyEscalationLevel,
   EmergencyNotification,
-  EmergencyResponseTeam,
   EmergencyMedicalProtocolsService
 } from '@/lib/compliance/emergency-medical-protocols';
 
@@ -314,7 +315,7 @@ export const EmergencyProtocolsManager: React.FC<EmergencyProtocolsManagerProps>
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 30000); // Refresh every 30 seconds
+    const interval = setInterval(loadData, 30_000); // Refresh every 30 seconds
     return () => clearInterval(interval);
   }, []);
 
@@ -383,7 +384,7 @@ export const EmergencyProtocolsManager: React.FC<EmergencyProtocolsManagerProps>
   };
 
   const handleEmergencyAction = async () => {
-    if (!selectedEmergency) return;
+    if (!selectedEmergency) {return;}
 
     try {
       let result;
@@ -500,7 +501,7 @@ export const EmergencyProtocolsManager: React.FC<EmergencyProtocolsManagerProps>
   const getElapsedTime = (startTime: Date): string => {
     const now = new Date();
     const elapsed = Math.floor((now.getTime() - startTime.getTime()) / (1000 * 60));
-    if (elapsed < 60) return `${elapsed}m`;
+    if (elapsed < 60) {return `${elapsed}m`;}
     const hours = Math.floor(elapsed / 60);
     const minutes = elapsed % 60;
     return `${hours}h ${minutes}m`;
@@ -508,8 +509,8 @@ export const EmergencyProtocolsManager: React.FC<EmergencyProtocolsManagerProps>
 
   const getResponseTimeColor = (startTime: Date, maxResponseTime: number): string => {
     const elapsed = (new Date().getTime() - startTime.getTime()) / (1000 * 60);
-    if (elapsed <= maxResponseTime) return 'text-green-600';
-    if (elapsed <= maxResponseTime * 1.5) return 'text-yellow-600';
+    if (elapsed <= maxResponseTime) {return 'text-green-600';}
+    if (elapsed <= maxResponseTime * 1.5) {return 'text-yellow-600';}
     return 'text-red-600';
   };
 

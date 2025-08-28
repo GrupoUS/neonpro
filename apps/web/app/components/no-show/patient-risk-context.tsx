@@ -17,8 +17,9 @@ import {
   ChevronUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { 
-  PatientRiskContextProps,
+import type { 
+  PatientRiskContextProps} from '@/types/no-show-prediction';
+import {
   RiskFactor,
   INTERVENTION_ACTIONS_PT 
 } from '@/types/no-show-prediction';

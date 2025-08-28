@@ -401,21 +401,109 @@
       "files": ["**/test/**", "**/*.test.*", "**/*.spec.*", "**/__tests__/**"],
       "plugins": ["vitest"],
       "env": {
-        "vitest": true
+        "vitest": true,
+        "jest": true
+      },
+      "globals": {
+        "vi": "readonly",
+        "vitest": "readonly",
+        "jest": "readonly",
+        "mock": "readonly",
+        "spy": "readonly"
       },
       "rules": {
         // Relax rules for tests
         "no-console": "off",
-        "typescript/no-explicit-any": "warn",
+        "typescript/no-explicit-any": "off", // Allow any in test mocks
         "typescript/no-non-null-assertion": "off",
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-call": "off",
         "import/no-extraneous-dependencies": "off",
+        "no-magic-numbers": "off", // Allow test data constants
+        "max-lines-per-function": "off", // Allow long test functions
+        "max-statements": "off", // Allow complex test scenarios
+        "complexity": "off", // Allow complex test logic
+        "no-duplicate-string": "off", // Allow repeated test strings
+        "unicorn/consistent-function-scoping": "off", // Allow helper functions in tests
+        "unicorn/no-useless-undefined": "off", // Allow explicit undefined in tests
 
         // Vitest specific rules
         "vitest/expect-expect": "error",
         "vitest/no-conditional-tests": "error",
         "vitest/valid-expect": "error",
         "vitest/no-disabled-tests": "warn",
-        "vitest/no-focused-tests": "error"
+        "vitest/no-focused-tests": "error",
+        "vitest/prefer-to-be": "warn",
+        "vitest/prefer-to-have-length": "warn",
+        "vitest/prefer-strict-equal": "warn",
+        "vitest/no-identical-title": "error",
+        "vitest/valid-title": "error"
+      }
+    },
+    {
+      "files": ["tools/e2e/**", "**/e2e/**", "**/*.e2e.*", "**/playwright/**"],
+      "plugins": ["vitest"],
+      "env": {
+        "browser": true,
+        "node": true
+      },
+      "globals": {
+        "page": "readonly",
+        "browser": "readonly",
+        "context": "readonly",
+        "playwright": "readonly",
+        "test": "readonly",
+        "expect": "readonly"
+      },
+      "rules": {
+        // Very relaxed rules for E2E tests
+        "no-console": "off",
+        "typescript/no-explicit-any": "off",
+        "typescript/no-non-null-assertion": "off",
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-call": "off",
+        "import/no-extraneous-dependencies": "off",
+        "no-magic-numbers": "off",
+        "max-lines-per-function": "off",
+        "max-statements": "off",
+        "complexity": "off",
+        "max-depth": "off",
+        "max-params": "off",
+        "no-duplicate-string": "off",
+        "unicorn/consistent-function-scoping": "off",
+        "unicorn/no-useless-undefined": "off",
+        "unicorn/prefer-query-selector": "off", // Allow Playwright locators
+        "unicorn/prefer-dom-node-text-content": "off", // Allow Playwright text methods
+        "no-await-in-loop": "off", // E2E tests often need sequential operations
+        "eslint/no-await-in-loop": "off",
+        "promise/prefer-await-to-then": "off", // Allow .then() in E2E contexts
+        "no-empty-function": "off", // Allow empty test placeholders
+        "class-methods-use-this": "off", // Allow Page Object methods without this
+        "typescript/class-methods-use-this": "off"
+      }
+    },
+    {
+      "files": ["**/integration/**", "**/*.integration.*", "**/api/**/*.test.*"],
+      "plugins": ["vitest"],
+      "env": {
+        "node": true,
+        "vitest": true
+      },
+      "rules": {
+        // Moderate relaxation for integration tests
+        "no-console": "off",
+        "typescript/no-explicit-any": "warn",
+        "typescript/no-non-null-assertion": "off",
+        "import/no-extraneous-dependencies": "off",
+        "no-magic-numbers": "off",
+        "max-lines-per-function": "off",
+        "complexity": "off",
+        "no-await-in-loop": "off", // Integration tests may need sequential API calls
+        "eslint/no-await-in-loop": "off",
+        "promise/prefer-await-to-then": "warn",
+        "unicorn/consistent-function-scoping": "off"
       }
     },
     {

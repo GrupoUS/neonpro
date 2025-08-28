@@ -164,7 +164,7 @@ export class HealthcareAlertManager {
    */
   private parseDuration(duration: string): number {
     const match = duration.match(/^(\d+)([smh])$/);
-    if (!match) return 0;
+    if (!match) {return 0;}
     
     const value = parseInt(match[1]);
     const unit = match[2];

@@ -4,7 +4,7 @@
  * Otimizado para ambiente healthcare com LGPD compliance
  */
 
-import type { Database } from "@neonpro/database";
+import type { Database } from "../../types/database.types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { getRealtimeManager } from "../connection-manager";
@@ -56,9 +56,9 @@ export function useRealtimePatients(
   const queryClient = useQueryClient();
   const [isConnected, setIsConnected] = useState(false);
   const [connectionHealth, setConnectionHealth] = useState(0);
-  const [lastUpdate, setLastUpdate] = useState<Date | null>();
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [totalUpdates, setTotalUpdates] = useState(0);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
 
   /**
    * Update TanStack Query cache based on realtime changes
@@ -125,10 +125,11 @@ export function useRealtimePatients(
   const handlePatientChange = useCallback(
     (payload: unknown) => {
       try {
+        const typedPayload = payload as any;
         const realtimePayload: RealtimePatientPayload = {
-          eventType: payload.eventType,
-          new: payload.new as PatientRow,
-          old: payload.old as PatientRow,
+          eventType: typedPayload.eventType,
+          new: typedPayload.new as PatientRow,
+          old: typedPayload.old as PatientRow,
         };
 
         // Update metrics
@@ -182,7 +183,7 @@ export function useRealtimePatients(
   const unsubscribe = useCallback(() => {
     if (unsubscribeFn) {
       unsubscribeFn();
-      setUnsubscribeFn(undefined);
+      setUnsubscribeFn(null);
     }
   }, [unsubscribeFn]);
 

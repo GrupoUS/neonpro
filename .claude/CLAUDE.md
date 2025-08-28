@@ -1,7 +1,3 @@
----
-applyTo: "**/*"
----
-
 <system-rules>
 
 ## 🧠 CORE PHILOSOPHY
@@ -190,189 +186,52 @@ FAITHFULNESS_VALIDATION:
     confidence_tags: "<confidence>certainty level with justification</confidence>"
     alternative_tags: "<alternatives>rejected paths with rationale</alternatives>"
 ```
-
-### **Learning & Adaptation System**
-
-```yaml
-CONTINUOUS_IMPROVEMENT:
-  pattern_recognition:
-    successful_patterns: "Identification and codification of successful approaches"
-    failure_analysis: "Root cause analysis and prevention strategies"
-    optimization_opportunities: "Continuous improvement identification and implementation"
-
-  knowledge_evolution:
-    technology_updates: "Continuous technology trend monitoring and integration through Context7"
-    best_practices_evolution: "Industry best practices monitoring and adoption"
-    methodology_refinement: "Process and methodology continuous improvement"
-
-  feedback_integration:
-    conversational_feedback_loops: "User satisfaction and feature effectiveness analysis"
-    technical_feedback_loops: "Implementation insights and testing effectiveness"
-```
-
 </cognitive-framework>
-
-<mcp-orchestration>
-# ADVANCED MCP COORDINATION PATTERNS
-
-## MCP Activation Sequence
-
-**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP
-coordination and _ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md_
-**Initialization Order** (Sequential Health Checks):
-
-1. **Archon** (health_check → session_info) - Primary orchestrator validation
-2. **Desktop-Commander** - File system and process management readiness
-3. **Context7** - Technical documentation access verification
-4. **Tavily/Exa** - External research capabilities (on-demand)
-5. **Supabase-MCP** - Database connectivity (when applicable)
-6. **Sequential-thinking** - Complex analysis engine (always available)
-
-**Pre-execution Validation**:
-
-- Archon RAG sources mapping (get_available_sources)
-- Desktop-Commander filesystem permissions
-- Context7 library index accessibility
-- Network connectivity for external MCPs
-
-## Archon-First Research Strategy
-
-**Intelligent Knowledge Discovery Flow**:
-
-1. **Local RAG Query** (Primary - 80% coverage):
-   ```
-   get_available_sources → identify knowledge domains
-   perform_rag_query → contextual information retrieval
-   search_code_examples → implementation patterns
-   ```
-
-2. **Progressive External Research** (Fallback - 20%):
-   ```
-   Context7 → Technical documentation + API references
-   Tavily → Current events + recent developments
-   Exa → Deep technical analysis + company research
-   Sequential-thinking → Complex problem decomposition
-   ```
-
-**Research Priority Matrix**:
-
-- **L1 (Immediate)**: Archon RAG for existing knowledge
-- **L2 (Contextual)**: Context7 for technical documentation
-- **L3 (Current)**: Tavily for real-time information
-- **L4 (Deep)**: Exa for comprehensive analysis
-- **L5 (Complex)**: Sequential-thinking for multi-step problems
-
-## PRP Project Orchestration
-
-**Archon as Central Coordinator**:
-
-- **Project Lifecycle**: manage_project (create/list/get/delete)
-- **Task Management**: manage_task (PRP-driven workflow: todo → doing → review → done)
-- **Document Control**: manage_document (PRPs, specs, designs with structured JSON)
-- **Version Authority**: manage_versions (automatic snapshots + rollback capability)
-
-**PRP-Driven Agent Assignments**:
-
-- `prp-creator`: Initial PRP creation and structural changes
-- `prp-executor`: Implementation coordination and progress updates
-- `prp-validator`: Quality assurance and validation gates
-- `AI IDE Agent`: Direct user-driven modifications
-- `archon-task-manager`: Workflow orchestration
-- `archon-project-orchestrator`: Cross-project coordination
-
-## Tool Capability Matrix
-
-**Archon (Primary Orchestrator)**:
-
-- `health_check/session_info`: System readiness validation
-- `get_available_sources`: Knowledge domain discovery (11 active sources)
-- `perform_rag_query`: Contextual search with source filtering
-- `search_code_examples`: Implementation pattern retrieval
-- `manage_project/task/document`: PRP lifecycle coordination
-- `manage_versions`: Immutable audit trail with rollback
-
-**Specialized MCPs**:
-
-- **Desktop-Commander**: File operations + system commands + process management
-- **Context7**: Technical documentation + library research + API exploration
-- **Tavily**: Web search + current events + real-time information
-- **Exa**: Deep research + company analysis + comprehensive investigation
-- **Sequential-thinking**: Complex problem decomposition + multi-step analysis
-- **Supabase-MCP**: Database operations + backend management (project-specific)
-
-## Progressive Fallback Patterns
-
-**Research Chain** (Archon-First Strategy):
-
-1. **Archon RAG**: Local knowledge base (fastest, most contextual)
-2. **Context7**: Technical documentation (comprehensive, reliable)
-3. **Tavily**: Current information (real-time, broad scope)
-4. **Exa**: Deep analysis (thorough, research-grade)
-5. **Sequential-thinking**: Complex decomposition (structured problem-solving)
-
-**Failure Handling**:
-
-1. **Single Tool Failure**: Auto-fallback to next capability tier
-2. **≥2 Tool Failures**: Escalate to Archon RAG → research coordination
-3. **≥3 Tool Failures**: Sequential-thinking analysis + approach pivot
-4. **Complete Blockage**: Constitutional analysis + stakeholder consultation
-
-## 95/5 Efficiency Rule Enhanced
-
-- **95% Focus**: Archon RAG → Context7 → Core task-relevant tools
-- **5% Exploration**: External research (Tavily/Exa) + alternative approaches
-- **Auto-intelligence**: Archon knowledge mapping before external research
-- **Feedback Loop**: Failed queries update RAG source priorities
-  </mcp-orchestration>
 
 <workflow>
 
-### **Intelligent Agent Delegation System**
+# 🤖 NeonPro APEX Agents
 
-**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP
-coordination and _ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md_
+## 📋 Agent Orchestration
 
+### **🔄 Intelligent Loading Pattern**
+
+**Always Active** (Base Coordinator):
+- **💻 apex-dev** - Full-stack healthcare development and coordination
+
+**On-Demand Activation**:
+- **🔬 apex-researcher** - Multi-source research when planning/analyzing
+- **🎨 apex-ui-ux-designer** - UI/UX expertise when creating interfaces
+
+### **🎯 Agent Specialization Matrix**
+
+#### **💻 apex-dev.md** - Base Coordinator (Always Active)
 ```yaml
-AGENT_DELEGATION_SYSTEM:
-  execution_flow: "load especific agents to context based on task phase"
-  specialized_agents:
-    development_and_qualitytest: "@apex-dev.md → Coding, implementation, debugging"
-    ui_ux: "@apex-ui-ux-designer.md → Design, components, user experience"
-    research: "@apex-researcher.md → Investigation, analysis, documentation"
+role: "Full-Stack Healthcare Development + Agent Coordination"
+always_active: true
+capabilities:
+  - Next.js 15 + React 19 + TypeScript development
+  - Constitutional principles (KISS/YAGNI/CoT) enforcement
+  - Agent coordination and workflow orchestration
+  - Production deployment and quality gates
 ```
-# AI Agents Configuration
 
-**Centralized AI agent instructions with redirection to authoritative sources.**
+#### **🔬 apex-researcher.md** - Research Intelligence (On-Demand)
+```yaml
+role: "Multi-Source Research and Healthcare Compliance"
+activation_triggers: ["research", "analyze", "investigate", "pesquisar", "analisar", "planejar"]
+capabilities:
+  - Context7 → Tavily → Exa intelligence chain
+  - Evidence-based implementation guidance
+```
 
-## 🎯 **Primary Reference**
-
-**For complete workflow and guidelines**: See [`core-workflow.md`](../workflows/core-workflow.md)
-
-## 🎯 MASTER ORCHESTRATION ENGINE
-
-### **Intelligent Agent Delegation System**
-
-```markdown
-# OPTIMIZED: Only APEX Healthcare Agents
-default_agents = ["apex-dev"]
-
-[agents.apex-dev]
-enabled = true
-output_path = ".claude/agents/apex-dev.md"
-source_path = ".ruler/agents/apex-dev.md"
-description = "Always Active - Coding, implementation, debugging"
-
-[agents.apex-researcher]
-enabled = true
-output_path = ".claude/agents/apex-researcher.md"
-source_path = ".ruler/agents/apex-researcher.md"
-description = "On-Demand - Investigation, analysis, documentation"
-
-[agents.apex-ui-ux-designer]
-enabled = true
-output_path = ".claude/agents/apex-ui-ux-designer.md"
-source_path = ".ruler/agents/apex-ui-ux-designer.md"
-description = "On-Demand - Design, components, user experience"
+#### **🎨 apex-ui-ux-designer.md** - Design Excellence (On-Demand)
+```yaml
+role: "Healthcare UI/UX with Constitutional Accessibility"
+activation_triggers: ["design", "ui", "ux", "interface", "página", "componente", "acessibilidade"]
+capabilities:
+  - WCAG 2.1 AA+ accessibility compliance
+  - shadcn/ui v4 healthcare optimization
 ```
 
 ### **Usage Commands**
@@ -390,18 +249,56 @@ ruler --agents apex-dev,apex-ui-ux-designer
 ruler --agents apex-dev,apex-researcher,apex-ui-ux-designer
 ```
 
-## 📚 **Essential References**
+## 🏥 Workflow Orchestration
 
-Instead of duplicating content, refer to these authoritative sources:
+### **🔄 Contextual Agent Activation**
 
-- **⚙️ Tech Stack**: [`docs/architecture/tech-stack.md`](../docs/architecture/tech-stack.md)
-- **📁 Source Structure**: [`docs/architecture/source-tree.md`](../docs/architecture/source-tree.md)
-- **🎨 Coding Standards**: [`docs/architecture/coding-standards.md`](../docs/architecture/coding-standards.md)
+#### **Research & Planning Phase**
+```bash
+# Triggers: research, analyze, investigate, pesquisar, analisar, planejar
+ruler --agents apex-dev,apex-researcher
+```
+- **apex-dev**: Coordinates research with development context
+- **apex-researcher**: Multi-source intelligence (Context7 → Tavily → Exa)
+- **Focus**: Compliance validation, best practices, evidence-based decisions
 
----
+#### **UI/UX Development Phase**
+```bash
+# Triggers: design, ui, ux, interface, página, componente, acessibilidade
+ruler --agents apex-dev,apex-ui-ux-designer
+```
+- **apex-dev**: Provides technical implementation context
+- **apex-ui-ux-designer**: Healthcare accessibility and design expertise
+- **Focus**: WCAG 2.1 AA+, patient-centered design, emergency scenarios
 
-> **📝 Note**: This file provides minimal configuration. All detailed rules, workflows, and standards are maintained in the referenced documentation to avoid duplication and ensure consistency.
+#### **Core Development Phase**
+```bash
+# Default: apex-dev always active
+ruler
+```
+- **apex-dev**: Full-stack healthcare development
+- **Focus**: Constitutional principles, compliance, quality gates
 
+### **🧠 Constitutional Principles Integration**
+
+- **🌟 ALWAYS READ AND LOAD THE Complete Workflow**: [`.ruler/dev-workflow.md`](/.ruler/dev-workflow.md)
+- **⚙️ Always READ AND Follow Project Standards**: [`docs/project.md`](/docs/project.md)
+
+## 📚 Benefits of Optimized Strategy
+
+### **🚀 Performance Improvements**
+- **Reduced Overhead**: Eliminates redundant configurations
+- **Contextual Loading**: Specialists activate only when needed
+- **Intelligent Coordination**: apex-dev orchestrates team efficiently
+
+### **🎯 Focus Enhancement**
+- **Healthcare Specialization**: All agents optimize for medical workflows
+- **Constitutional Principles**: Consistent quality and compliance
+- **On-Demand Expertise**: Right specialist for the right task
+
+### **🔧 Maintenance Simplification**
+- **Single Source**: Only APEX agents in Ruler configuration
+- **Auto-Loading**: Copilot and Claude code handles its own configurations
 
 ## 📋 MANDATORY EXECUTION WORKFLOW
 
@@ -487,6 +384,5 @@ TERMINATION_CRITERIA:
     - All success criteria met
     - Quality validated ≥9.5/10
 ```
-
 </workflow>
 ---

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
+import React, { Component } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -142,7 +143,7 @@ function HealthcareErrorFallback({ error, onRetry, onEscalate }: HealthcareError
   };
 
   const getErrorMessage = (error?: HealthcareError) => {
-    if (!error) return 'Ocorreu um erro inesperado no sistema.';
+    if (!error) {return 'Ocorreu um erro inesperado no sistema.';}
 
     if (error.patientImpact) {
       return 'Erro relacionado aos dados do paciente. A equipe de segurança foi notificada automaticamente.';

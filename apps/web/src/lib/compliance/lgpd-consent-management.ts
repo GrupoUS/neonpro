@@ -1,17 +1,19 @@
-import { 
+import type { 
   LGPDConsentRecord,
-  LGPDDataSubjectRights,
   LGPDDataProcessingActivity,
   LGPDConsentType,
-  LGPDConsentStatus,
   LGPDDataCategory,
   LGPDProcessingPurpose,
-  LGPDLegalBasis,
   LGPDConsentWithdrawalRequest,
   LGPDDataPortabilityRequest,
   LGPDDataDeletionRequest,
   LGPDDataRectificationRequest,
   ValidationResponse
+} from '@/types/compliance';
+import {
+  LGPDDataSubjectRights,
+  LGPDConsentStatus,
+  LGPDLegalBasis
 } from '@/types/compliance';
 
 /**
@@ -40,12 +42,12 @@ export class LGPDConsentManagementService {
   private consentRecords: Map<string, LGPDConsentRecord> = new Map();
   private processingActivities: Map<string, LGPDDataProcessingActivity> = new Map();
   private withdrawalRequests: Map<string, LGPDConsentWithdrawalRequest> = new Map();
-  private auditLog: Array<{
+  private auditLog: {
     timestamp: Date;
     action: string;
     userId?: string;
     details: Record<string, any>;
-  }> = [];
+  }[] = [];
 
   private constructor() {
     this.initializeDefaultActivities();
@@ -713,15 +715,15 @@ export class LGPDConsentManagementService {
 
   // Utility methods
   private generateConsentId(): string {
-    return `consent-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `consent-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
   }
 
   private generateWithdrawalId(): string {
-    return `withdrawal-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `withdrawal-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
   }
 
   private generateRequestId(): string {
-    return `request-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `request-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
   }
 
   private logActivity(action: string, userId?: string, details: Record<string, any> = {}): void {
@@ -734,12 +736,12 @@ export class LGPDConsentManagementService {
   }
 
   // Public getters for testing and monitoring
-  public getAuditLog(): Array<{
+  public getAuditLog(): {
     timestamp: Date;
     action: string;
     userId?: string;
     details: Record<string, any>;
-  }> {
+  }[] {
     return [...this.auditLog];
   }
 

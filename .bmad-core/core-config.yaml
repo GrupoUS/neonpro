@@ -17,7 +17,7 @@ devLoadAlwaysFiles:
   - docs/architecture/coding-standards.md
   - docs/architecture/tech-stack.md
   - docs/architecture/source-tree.md
-  - .github/chatmodes/vibecoder.chatmode.md
-devDebugLog: .ai/debug-log.md
-devStoryLocation: docs/stories
+  - docs/project.md
+devDebugLog: docs/qa/debug-log.md
+devStoryLocation: docs/features
 slashPrefix: BMad

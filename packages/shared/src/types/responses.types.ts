@@ -6,7 +6,7 @@
  * com estruturas padronizadas para cada endpoint.
  */
 
-import type { Notification } from "@neonpro/database";
+import type { Notification } from "./database.types";
 import type { TimeSlot } from "../schemas/appointment.schema";
 import type { AuthToken, AuthUser } from "../schemas/auth.schema";
 import type { ApiMeta, ApiResponse, PaginationMeta } from "./api.types";
@@ -477,7 +477,7 @@ export const isErrorResponse = (
     typeof response === "object"
     && response !== null
     && "success" in response
-    && (response as unknown).success === false
+    && (response as { success: boolean }).success === false
   );
 };
 
@@ -489,6 +489,6 @@ export const isPaginatedResponse = <T>(
     && response !== null
     && "success" in response
     && "meta" in response
-    && "pagination" in (response as unknown).meta
+    && "pagination" in (response as { meta: any }).meta
   );
 };

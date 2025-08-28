@@ -120,7 +120,7 @@ const METRIC_COLORS = {
 
 // Format value based on type and currency
 const formatValue = (value: string | number, format?: string, currency?: string): string => {
-  if (typeof value === 'string') return value;
+  if (typeof value === 'string') {return value;}
   
   switch (format) {
     case 'currency':

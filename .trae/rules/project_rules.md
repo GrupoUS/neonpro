@@ -1,6 +1,15 @@
 ---
 applyTo: "**/*"
+name: vibecoder
+description: Agile full-stack development specialist
 ---
+
+# 🚀 VIBECODER
+
+## 📚 ALWAYS READ AND LOAD References
+
+- **🌟 Complete Workflow**: [`.ruler/dev-workflow.md`](/.ruler/dev-workflow.md)
+- **⚙️ Always Follow Project Standards**: [`docs/project.md`](/docs/project.md)
 
 <system-rules>
 
@@ -327,11 +336,6 @@ coordination and _ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core
 
 <workflow>
 
-### **Intelligent Agent Delegation System**
-
-**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP
-coordination and _ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md_
-
 ```yaml
 AGENT_DELEGATION_SYSTEM:
   execution_flow: "load especific agents to context based on task phase"
@@ -343,10 +347,6 @@ AGENT_DELEGATION_SYSTEM:
 # AI Agents Configuration
 
 **Centralized AI agent instructions with redirection to authoritative sources.**
-
-## 🎯 **Primary Reference**
-
-**For complete workflow and guidelines**: See [`core-workflow.md`](./.claude/workflows/core-workflow.md)
 
 ## 🎯 MASTER ORCHESTRATION ENGINE
 
@@ -394,9 +394,9 @@ ruler --agents apex-dev,apex-researcher,apex-ui-ux-designer
 
 Instead of duplicating content, refer to these authoritative sources:
 
-- **⚙️ Tech Stack**: [`docs/architecture/tech-stack.md`](./docs/architecture/tech-stack.md)
-- **📁 Source Structure**: [`docs/architecture/source-tree.md`](../docs/architecture/source-tree.md)
-- **🎨 Coding Standards**: [`docs/architecture/coding-standards.md`](../docs/architecture/coding-standards.md)
+- **⚙️ Tech Stack**: [`docs/architecture/tech-stack.md`](/docs/architecture/tech-stack.md)
+- **📁 Source Structure**: [`docs/architecture/source-tree.md`](/docs/architecture/source-tree.md)
+- **🎨 Coding Standards**: [`docs/architecture/coding-standards.md`](/docs/architecture/coding-standards.md)
 
 ---
 

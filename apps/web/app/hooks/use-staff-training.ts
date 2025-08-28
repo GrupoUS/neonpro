@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import {
+import type {
   TrainingModule,
   TrainingProgress,
   UserTrainingProfile,
   QuizAttempt,
-  PracticalExerciseResult,
   Quiz,
   QuizAnswer
+} from '@/types/staff-training';
+import {
+  PracticalExerciseResult
 } from '@/types/staff-training';
 
 interface UseStaffTrainingOptions {
@@ -82,7 +84,7 @@ export function useStaffTraining({
   const [quizStartTime, setQuizStartTime] = useState<Date | null>(null);
 
   const fetchUserProfile = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {return;}
     
     try {
       setIsLoading(true);
@@ -115,8 +117,8 @@ export function useStaffTraining({
       setError(null);
       
       const params = new URLSearchParams();
-      if (role) params.append('role', role);
-      if (userId) params.append('userId', userId);
+      if (role) {params.append('role', role);}
+      if (userId) {params.append('userId', userId);}
       
       const response = await fetch(`/api/staff-training/modules?${params}`);
       
@@ -140,7 +142,7 @@ export function useStaffTraining({
   }, [role, userId]);
 
   const fetchUserProgress = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {return;}
     
     try {
       const response = await fetch(`/api/staff-training/progress/${userId}`);
@@ -165,7 +167,7 @@ export function useStaffTraining({
   }, [userId]);
 
   const startModule = useCallback(async (moduleId: string) => {
-    if (!userId) return;
+    if (!userId) {return;}
     
     try {
       setIsLoading(true);
@@ -220,7 +222,7 @@ export function useStaffTraining({
   }, [userId, trainingModules, userProgress]);
 
   const completeSection = useCallback(async (sectionId: string) => {
-    if (!userId || !currentModule) return;
+    if (!userId || !currentModule) {return;}
     
     try {
       const response = await fetch('/api/staff-training/complete-section', {
@@ -264,7 +266,7 @@ export function useStaffTraining({
   }, [userId, currentModule]);
 
   const saveProgress = useCallback(async (moduleId: string, data: Partial<TrainingProgress>) => {
-    if (!userId || !autoSave) return;
+    if (!userId || !autoSave) {return;}
     
     try {
       const response = await fetch('/api/staff-training/save-progress', {
@@ -304,7 +306,7 @@ export function useStaffTraining({
   }, [userId, autoSave, offlineMode]);
 
   const startQuiz = useCallback(async (quizId: string) => {
-    if (!userId || !currentModule) return;
+    if (!userId || !currentModule) {return;}
     
     const quiz = currentModule.quiz;
     if (!quiz || quiz.id !== quizId) {
@@ -318,10 +320,10 @@ export function useStaffTraining({
   }, [userId, currentModule]);
 
   const submitQuizAnswer = useCallback((questionId: string, answer: string | string[]) => {
-    if (!currentQuiz) return;
+    if (!currentQuiz) {return;}
     
     const question = currentQuiz.questions.find(q => q.id === questionId);
-    if (!question) return;
+    if (!question) {return;}
     
     const isCorrect = Array.isArray(answer) 
       ? JSON.stringify(answer.sort()) === JSON.stringify((question.correctAnswer as string[]).sort())
@@ -402,10 +404,10 @@ export function useStaffTraining({
 
   const getModuleProgress = useCallback((moduleId: string): number => {
     const progress = userProgress[moduleId];
-    if (!progress) return 0;
+    if (!progress) {return 0;}
     
     const module = trainingModules.find(m => m.id === moduleId);
-    if (!module) return 0;
+    if (!module) {return 0;}
     
     const totalSections = module.sections.length;
     const completedSections = progress.sectionsCompleted.length;
@@ -414,7 +416,7 @@ export function useStaffTraining({
   }, [userProgress, trainingModules]);
 
   const getOverallProgress = useCallback((): number => {
-    if (!userProfile) return 0;
+    if (!userProfile) {return 0;}
     
     const requiredModules = userProfile.requiredModules;
     const completedCount = requiredModules.filter(moduleId => 
@@ -435,7 +437,7 @@ export function useStaffTraining({
   }, [userProfile]);
 
   const generateCertificate = useCallback(async (moduleId: string): Promise<string> => {
-    if (!userId) throw new Error('User not identified');
+    if (!userId) {throw new Error('User not identified');}
     
     const response = await fetch('/api/staff-training/generate-certificate', {
       method: 'POST',
@@ -452,7 +454,7 @@ export function useStaffTraining({
   }, [userId]);
 
   const checkCertificationEligibility = useCallback(async (): Promise<string[]> => {
-    if (!userId) return [];
+    if (!userId) {return [];}
     
     const response = await fetch(`/api/staff-training/certification-eligibility/${userId}`);
     
@@ -465,10 +467,10 @@ export function useStaffTraining({
   }, [userId]);
 
   const syncOfflineData = useCallback(async () => {
-    if (!offlineMode) return;
+    if (!offlineMode) {return;}
     
     const offlineData = localStorage.getItem('training_offline_data');
-    if (!offlineData) return;
+    if (!offlineData) {return;}
     
     try {
       const parsed = JSON.parse(offlineData);
@@ -513,7 +515,7 @@ export function useStaffTraining({
 
   const isOfflineCapable = useCallback((moduleId: string): boolean => {
     const module = trainingModules.find(m => m.id === moduleId);
-    if (!module) return false;
+    if (!module) {return false;}
     
     // Check if module has only offline-compatible content
     return module.sections.every(section => 
@@ -534,7 +536,7 @@ export function useStaffTraining({
 
   // Auto-save progress periodically
   useEffect(() => {
-    if (!autoSave || !currentModule || !userId) return;
+    if (!autoSave || !currentModule || !userId) {return;}
     
     const interval = setInterval(() => {
       const moduleProgress = userProgress[currentModule.id];
@@ -544,7 +546,7 @@ export function useStaffTraining({
           lastAccessedAt: new Date(),
         });
       }
-    }, 60000); // Save every minute
+    }, 60_000); // Save every minute
     
     return () => clearInterval(interval);
   }, [autoSave, currentModule, userId, userProgress, saveProgress]);

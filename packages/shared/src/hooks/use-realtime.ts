@@ -24,6 +24,9 @@ import type {
 // Re-export types for other hooks
 export type { UseRealtimeConfig } from "../types/realtime.types";
 
+// Define missing RealtimePayload type
+export type RealtimePayload<T extends { [key: string]: any } = { [key: string]: any }> = RealtimePostgresChangesPayload<T>;
+
 // LGPD compliance utilities
 const sanitizeRealtimeData = (data: unknown, sensitiveFields: string[] = []) => {
   if (!data || typeof data !== "object") {
@@ -33,7 +36,7 @@ const sanitizeRealtimeData = (data: unknown, sensitiveFields: string[] = []) => 
   const sanitized = { ...data };
   sensitiveFields.forEach((field) => {
     if (field in sanitized) {
-      sanitized[field] = "***PROTECTED***";
+      (sanitized as any)[field] = "***PROTECTED***";
     }
   });
 
@@ -83,7 +86,7 @@ export function useRealtime<
 
         // Call event handler
         if (handler) {
-          handler(payload);
+          handler(payload as RealtimePayload<T>);
         }
 
         // Clear any previous errors
@@ -106,7 +109,7 @@ export function useRealtime<
     const channel = supabaseClient
       .channel(`realtime:${config.table}`)
       .on(
-        "postgres_changes" as unknown,
+        "postgres_changes" as "system",
         {
           event: config.event || "*",
           schema: "public",
@@ -149,7 +152,7 @@ export function useRealtime<
     return () => {
       if (channelRef.current) {
         supabaseClient.removeChannel(channelRef.current);
-        channelRef.current = undefined;
+        channelRef.current = null;
         setIsConnected(false);
       }
     };

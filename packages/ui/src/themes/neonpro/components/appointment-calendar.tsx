@@ -36,11 +36,11 @@ export interface AppointmentCalendarProps {
   currentDate?: Date;
   
   // Brazilian holidays integration
-  brazilianHolidays?: Array<{
+  brazilianHolidays?: {
     date: Date;
     name: string;
     type: 'national' | 'regional' | 'clinic';
-  }>;
+  }[];
   
   // Calendar configuration
   showWeekNumbers?: boolean;
@@ -94,9 +94,9 @@ const STATUS_COLORS = {
 // Get density level based on appointments per day
 const getDensityLevel = (appointmentCount: number, maxAppointments: number) => {
   const ratio = appointmentCount / maxAppointments;
-  if (ratio >= 1) return 'high';
-  if (ratio >= 0.7) return 'medium';
-  if (ratio >= 0.4) return 'low';
+  if (ratio >= 1) {return 'high';}
+  if (ratio >= 0.7) {return 'medium';}
+  if (ratio >= 0.4) {return 'low';}
   return 'none';
 };
 
@@ -105,7 +105,7 @@ const DensityIndicator: React.FC<{
   level: 'none' | 'low' | 'medium' | 'high';
   size?: 'sm' | 'md' | 'lg';
 }> = ({ level, size = 'sm' }) => {
-  if (level === 'none') return null;
+  if (level === 'none') {return null;}
   
   const colors = {
     low: 'bg-green-400',
@@ -285,7 +285,7 @@ export const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     
     appointments.forEach(appointment => {
       const dateKey = appointment.startTime.toISOString().split('T')[0];
-      if (!grouped[dateKey]) grouped[dateKey] = [];
+      if (!grouped[dateKey]) {grouped[dateKey] = [];}
       grouped[dateKey].push(appointment);
     });
     
@@ -404,15 +404,15 @@ export const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
       <div className="p-4 border-t border-gray-100 bg-gray-50">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-blue-100 border border-blue-300 rounded"></div>
+            <div className="w-3 h-3 bg-blue-100 border border-blue-300 rounded" />
             <span>Consulta</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-100 border border-green-300 rounded"></div>
+            <div className="w-3 h-3 bg-green-100 border border-green-300 rounded" />
             <span>Retorno</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-red-100 border border-red-300 rounded"></div>
+            <div className="w-3 h-3 bg-red-100 border border-red-300 rounded" />
             <span>Emergência</span>
           </div>
         </div>

@@ -280,7 +280,7 @@ const mockComplianceData: BrazilianHealthcareIntelligence = {
         category: 'LGPD',
         riskLevel: 'medium',
         probability: 0.25,
-        potentialPenalty: 50000,
+        potentialPenalty: 50_000,
         mitigationActions: ['Atualizar política de dados', 'Treinar equipe', 'Implementar novos controles']
       }
     ]
@@ -354,7 +354,7 @@ export default function BrazilianComplianceTracker({
 
   // ====== AUTO REFRESH ======
   useEffect(() => {
-    if (!autoRefresh || !refreshInterval) return;
+    if (!autoRefresh || !refreshInterval) {return;}
 
     const interval = setInterval(() => {
       handleRefreshCompliance();
@@ -374,9 +374,9 @@ export default function BrazilianComplianceTracker({
   }, [complianceData.compliance]);
 
   const complianceStatus = useMemo(() => {
-    if (overallComplianceScore >= 95) return { label: 'Excelente', color: 'text-green-600', bgColor: 'bg-green-50' };
-    if (overallComplianceScore >= 90) return { label: 'Muito Bom', color: 'text-blue-600', bgColor: 'bg-blue-50' };
-    if (overallComplianceScore >= 80) return { label: 'Bom', color: 'text-yellow-600', bgColor: 'bg-yellow-50' };
+    if (overallComplianceScore >= 95) {return { label: 'Excelente', color: 'text-green-600', bgColor: 'bg-green-50' };}
+    if (overallComplianceScore >= 90) {return { label: 'Muito Bom', color: 'text-blue-600', bgColor: 'bg-blue-50' };}
+    if (overallComplianceScore >= 80) {return { label: 'Bom', color: 'text-yellow-600', bgColor: 'bg-yellow-50' };}
     return { label: 'Requer Atenção', color: 'text-red-600', bgColor: 'bg-red-50' };
   }, [overallComplianceScore]);
 

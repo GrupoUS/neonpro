@@ -27,24 +27,24 @@ export interface EmergencyPatientCache {
     photo?: string;
   };
   criticalData: {
-    allergies: Array<{
+    allergies: {
       name: string;
       severity: "life-threatening" | "severe" | "moderate" | "mild";
       reactions: string[];
-    }>;
-    medications: Array<{
+    }[];
+    medications: {
       name: string;
       dosage: string;
       isCritical: boolean;
-    }>;
+    }[];
     conditions: string[];
   };
-  emergencyContacts: Array<{
+  emergencyContacts: {
     name: string;
     phone: string;
     relationship: string;
     isPrimary: boolean;
-  }>;
+  }[];
   location?: {
     lastKnown: {
       address: string;
@@ -55,11 +55,11 @@ export interface EmergencyPatientCache {
   lgpd: {
     consentLevel: "full" | "emergency-only" | "restricted";
     consentDate: string;
-    accessLog: Array<{
+    accessLog: {
       timestamp: number;
       accessor: string;
       reason: string;
-    }>;
+    }[];
   };
 }
 
@@ -117,7 +117,7 @@ class EmergencyCache {
    * Load existing cache data from IndexedDB on initialization
    */
   private async loadFromIndexedDB(): Promise<void> {
-    if (!this.indexedDB) return;
+    if (!this.indexedDB) {return;}
 
     const transaction = this.indexedDB.transaction([this.STORE_NAME], "readonly");
     const store = transaction.objectStore(this.STORE_NAME);
@@ -270,7 +270,7 @@ class EmergencyCache {
     const contacts = this.get(`contacts:${patientId}`, emergencyAccess);
     const location = this.get(`location:${patientId}`, emergencyAccess);
 
-    if (!patient) return null;
+    if (!patient) {return null;}
 
     return {
       personalInfo: patient.data,
@@ -344,7 +344,7 @@ class EmergencyCache {
    * Save entry to IndexedDB for persistence
    */
   private async saveToIndexedDB(entry: EmergencyCacheEntry): Promise<void> {
-    if (!this.indexedDB) return;
+    if (!this.indexedDB) {return;}
 
     const transaction = this.indexedDB.transaction([this.STORE_NAME], "readwrite");
     const store = transaction.objectStore(this.STORE_NAME);
@@ -355,7 +355,7 @@ class EmergencyCache {
    * Remove entry from IndexedDB
    */
   private async removeFromIndexedDB(key: string): Promise<void> {
-    if (!this.indexedDB) return;
+    if (!this.indexedDB) {return;}
 
     const transaction = this.indexedDB.transaction([this.STORE_NAME], "readwrite");
     const store = transaction.objectStore(this.STORE_NAME);

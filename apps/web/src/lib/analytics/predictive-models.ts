@@ -63,7 +63,7 @@ const PREDICTION_MODELS: Record<string, ModelConfig> = {
     ],
     supportedTreatments: ['all'],
     minDataPoints: 500,
-    confidenceThreshold: 0.80
+    confidenceThreshold: 0.8
   },
   'neonpro-no-show-predictor-v1.5': {
     name: 'NeonPro No-Show Predictor',
@@ -77,7 +77,7 @@ const PREDICTION_MODELS: Record<string, ModelConfig> = {
     ],
     supportedTreatments: ['all'],
     minDataPoints: 200,
-    confidenceThreshold: 0.70
+    confidenceThreshold: 0.7
   }
 };
 
@@ -87,7 +87,7 @@ const BRAZILIAN_HEALTH_FACTORS: PredictiveFactor[] = [
   {
     name: 'sus_integration',
     impact: 0.15,
-    confidence: 0.90,
+    confidence: 0.9,
     category: 'demographic',
     description: 'Integration with SUS (Brazilian Public Health System)',
     evidence: ['Historical treatment data', 'Public health records']
@@ -118,7 +118,7 @@ const BRAZILIAN_HEALTH_FACTORS: PredictiveFactor[] = [
   },
   {
     name: 'anvisa_compliance',
-    impact: 0.30,
+    impact: 0.3,
     confidence: 0.95,
     category: 'medical',
     description: 'ANVISA-approved treatments and safety protocols',
@@ -203,7 +203,7 @@ export class PredictiveModelsService {
           epochs: 100,
           regularization: 0.01
         },
-        trainingDataSize: 10000,
+        trainingDataSize: 10_000,
         validationMetrics: {
           auc: config.accuracy,
           precision: config.accuracy * 0.95,
@@ -322,18 +322,18 @@ export class PredictiveModelsService {
     model: MLModel
   ): Promise<OutcomePrediction> {
     // Simulate ML model prediction
-    const baseScore = 0.75 + Math.random() * 0.20; // Base 75-95% success rate
+    const baseScore = 0.75 + Math.random() * 0.2; // Base 75-95% success rate
     
     // Adjust based on features
     let adjustedScore = baseScore;
     
     // Age factor
     const ageFactor = features.patient_age < 30 ? 1.05 : 
-                      features.patient_age > 60 ? 0.95 : 1.0;
+                      features.patient_age > 60 ? 0.95 : 1;
     adjustedScore *= ageFactor;
     
     // Medical conditions impact
-    const conditionsFactor = Math.max(0.85, 1.0 - (features.medical_conditions * 0.05));
+    const conditionsFactor = Math.max(0.85, 1 - (features.medical_conditions * 0.05));
     adjustedScore *= conditionsFactor;
     
     // Compliance history impact
@@ -485,7 +485,7 @@ export class PredictiveModelsService {
    */
   private async predictNoShowProbability(patientData: any): Promise<number> {
     const model = this.models.get('neonpro-no-show-predictor-v1.5');
-    if (!model) return 0.12; // Default fallback
+    if (!model) {return 0.12;} // Default fallback
 
     let baseProb = 0.12; // 12% base no-show rate
 
@@ -499,8 +499,8 @@ export class PredictiveModelsService {
     };
 
     // Age factor (younger patients more likely to no-show)
-    if (factors.age < 25) baseProb *= 1.3;
-    else if (factors.age > 50) baseProb *= 0.8;
+    if (factors.age < 25) {baseProb *= 1.3;}
+    else if (factors.age > 50) {baseProb *= 0.8;}
 
     // History factor
     const noShowHistory = factors.appointmentHistory.filter((apt: any) => apt.status === 'no_show').length;
@@ -511,7 +511,7 @@ export class PredictiveModelsService {
     }
 
     // Distance factor
-    if (factors.distance > 20) baseProb *= 1.2;
+    if (factors.distance > 20) {baseProb *= 1.2;}
 
     return Math.min(0.6, Math.max(0.02, baseProb));
   }
@@ -527,9 +527,9 @@ export class PredictiveModelsService {
       c.severity === 'severe' || c.severity === 'critical' || c.probability > 0.3
     );
 
-    if (outcomeScore < 60 || highRiskComplications.length > 2) return 'critical';
-    if (outcomeScore < 75 || highRiskComplications.length > 1) return 'high';
-    if (outcomeScore < 85 || highRiskComplications.length > 0) return 'medium';
+    if (outcomeScore < 60 || highRiskComplications.length > 2) {return 'critical';}
+    if (outcomeScore < 75 || highRiskComplications.length > 1) {return 'high';}
+    if (outcomeScore < 85 || highRiskComplications.length > 0) {return 'medium';}
     return 'low';
   }
 
@@ -562,8 +562,8 @@ export class PredictiveModelsService {
 
   private determineTreatmentArea(treatmentId: string): string {
     // Determine treatment area based on treatment ID
-    if (treatmentId.includes('facial')) return 'face';
-    if (treatmentId.includes('body')) return 'body';
+    if (treatmentId.includes('facial')) {return 'face';}
+    if (treatmentId.includes('body')) {return 'body';}
     return 'face'; // default
   }
 
@@ -587,7 +587,7 @@ export class PredictiveModelsService {
                   month >= 8 && month <= 10 ? 'spring' : 'summer';
     
     return {
-      season_impact: season === 'winter' ? 1.1 : season === 'summer' ? 0.9 : 1.0,
+      season_impact: season === 'winter' ? 1.1 : season === 'summer' ? 0.9 : 1,
       humidity: month >= 11 || month <= 3 ? 0.8 : 1.2, // Brazilian seasons
       uv_exposure: month >= 11 || month <= 3 ? 1.3 : 0.7
     };
@@ -595,15 +595,15 @@ export class PredictiveModelsService {
 
   private calculateAgeFactor(age: number): number {
     // Age impact on healing (0.5-1.2 scale)
-    if (age < 25) return 1.2;
-    if (age < 35) return 1.1;
-    if (age < 50) return 1.0;
-    if (age < 65) return 0.9;
+    if (age < 25) {return 1.2;}
+    if (age < 35) {return 1.1;}
+    if (age < 50) {return 1;}
+    if (age < 65) {return 0.9;}
     return 0.7;
   }
 
   private calculateHealthFactor(patientData: any): number {
-    let healthScore = 1.0;
+    let healthScore = 1;
     
     // Reduce based on medical conditions
     const conditions = patientData.medicalConditions || [];
@@ -617,14 +617,14 @@ export class PredictiveModelsService {
   }
 
   private calculateLifestyleFactor(lifestyle: any): number {
-    if (!lifestyle) return 1.0;
+    if (!lifestyle) {return 1;}
     
-    let factor = 1.0;
+    let factor = 1;
     
-    if (lifestyle.smoking) factor *= 0.8;
-    if (lifestyle.alcohol === 'heavy') factor *= 0.9;
-    if (lifestyle.exercise === 'none') factor *= 0.9;
-    if (lifestyle.stressLevel === 'high') factor *= 0.9;
+    if (lifestyle.smoking) {factor *= 0.8;}
+    if (lifestyle.alcohol === 'heavy') {factor *= 0.9;}
+    if (lifestyle.exercise === 'none') {factor *= 0.9;}
+    if (lifestyle.stressLevel === 'high') {factor *= 0.9;}
     
     return Math.max(0.6, factor);
   }
@@ -656,8 +656,8 @@ export class PredictiveModelsService {
 
   private generateTreatmentTimeline(features: Record<string, any>): TreatmentTimeline {
     const baseDuration = 21; // 21 days base recovery
-    const ageFactor = features.recovery_factors?.age_factor || 1.0;
-    const healthFactor = features.recovery_factors?.health_factor || 1.0;
+    const ageFactor = features.recovery_factors?.age_factor || 1;
+    const healthFactor = features.recovery_factors?.health_factor || 1;
     
     const adjustedDuration = Math.round(baseDuration * (2 - ageFactor) * (2 - healthFactor));
     
@@ -706,11 +706,11 @@ export class PredictiveModelsService {
   private identifyRiskFactors(features: Record<string, any>): string[] {
     const riskFactors: string[] = [];
     
-    if (features.patient_age > 60) riskFactors.push("Idade avançada");
-    if (features.medical_conditions > 2) riskFactors.push("Múltiplas condições médicas");
-    if (features.compliance_history < 0.7) riskFactors.push("Histórico de baixa aderência");
-    if (features.lifestyle_factors?.smoking) riskFactors.push("Tabagismo");
-    if (features.contraindications > 0) riskFactors.push("Contraindicações presentes");
+    if (features.patient_age > 60) {riskFactors.push("Idade avançada");}
+    if (features.medical_conditions > 2) {riskFactors.push("Múltiplas condições médicas");}
+    if (features.compliance_history < 0.7) {riskFactors.push("Histórico de baixa aderência");}
+    if (features.lifestyle_factors?.smoking) {riskFactors.push("Tabagismo");}
+    if (features.contraindications > 0) {riskFactors.push("Contraindicações presentes");}
     
     return riskFactors;
   }
@@ -858,7 +858,7 @@ export class PredictiveModelsService {
   async retrainModel(modelId: string, trainingData: any[]): Promise<boolean> {
     try {
       const model = this.models.get(modelId);
-      if (!model) return false;
+      if (!model) {return false;}
 
       // Simulate model retraining
       model.lastRetraining = new Date();

@@ -1,4 +1,4 @@
-import {
+import type {
   EmergencyProtocol,
   EmergencyResponse,
   EmergencyContact,
@@ -41,14 +41,14 @@ export class EmergencyMedicalProtocolsService {
   private activeResponses: Map<string, EmergencyResponse> = new Map();
   private responseTeams: Map<string, EmergencyResponseTeam> = new Map();
   private emergencyContacts: Map<string, EmergencyContact> = new Map();
-  private notifications: Array<EmergencyNotification> = [];
-  private auditLog: Array<{
+  private notifications: EmergencyNotification[] = [];
+  private auditLog: {
     timestamp: Date;
     action: string;
     emergencyId?: string;
     userId?: string;
     details: Record<string, any>;
-  }> = [];
+  }[] = [];
 
   private constructor() {
     this.initializeDefaultProtocols();
@@ -683,7 +683,7 @@ export class EmergencyMedicalProtocolsService {
     protocol: EmergencyProtocol
   ): Promise<void> {
     const team = this.responseTeams.get('primary-emergency-team');
-    if (!team) return;
+    if (!team) {return;}
 
     const notifications: EmergencyNotification[] = team.members
       .filter(member => member.isOnCall)
@@ -713,7 +713,7 @@ export class EmergencyMedicalProtocolsService {
    */
   private async contactSAMU(emergency: EmergencyResponse): Promise<void> {
     const samuContact = this.emergencyContacts.get('samu-192');
-    if (!samuContact) return;
+    if (!samuContact) {return;}
 
     const notification: EmergencyNotification = {
       id: this.generateNotificationId(),
@@ -1001,7 +1001,7 @@ export class EmergencyMedicalProtocolsService {
     samuCallsCount: number;
     escalationRate: number;
     resolutionRate: number;
-    topProtocols: Array<{ protocolId: string; count: number; name: string }>;
+    topProtocols: { protocolId: string; count: number; name: string }[];
   }> {
     try {
       const emergencies = Array.from(this.activeResponses.values())
@@ -1070,11 +1070,11 @@ export class EmergencyMedicalProtocolsService {
 
   // Utility methods
   private generateEmergencyId(): string {
-    return `emrg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `emrg-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
   }
 
   private generateNotificationId(): string {
-    return `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `notif-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
   }
 
   private logActivity(
@@ -1093,13 +1093,13 @@ export class EmergencyMedicalProtocolsService {
   }
 
   // Public getters for monitoring and testing
-  public getAuditLog(): Array<{
+  public getAuditLog(): {
     timestamp: Date;
     action: string;
     emergencyId?: string;
     userId?: string;
     details: Record<string, any>;
-  }> {
+  }[] {
     return [...this.auditLog];
   }
 

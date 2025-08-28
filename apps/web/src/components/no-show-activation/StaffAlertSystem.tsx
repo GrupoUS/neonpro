@@ -167,7 +167,7 @@ export function StaffAlertSystem({
 
   // Play alert sound for new critical/high priority alerts
   useEffect(() => {
-    if (!soundEnabled || soundPlaying) return;
+    if (!soundEnabled || soundPlaying) {return;}
 
     const newCriticalAlerts = alerts.filter(alert =>
       alert.priority === "critical"
@@ -189,9 +189,9 @@ export function StaffAlertSystem({
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / (1000 * 60));
 
-    if (diffMins < 1) return "Agora mesmo";
-    if (diffMins < 60) return `${diffMins}min atrás`;
-    if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h atrás`;
+    if (diffMins < 1) {return "Agora mesmo";}
+    if (diffMins < 60) {return `${diffMins}min atrás`;}
+    if (diffMins < 1440) {return `${Math.floor(diffMins / 60)}h atrás`;}
     return new Intl.DateTimeFormat("pt-BR", {
       day: "2-digit",
       month: "2-digit",

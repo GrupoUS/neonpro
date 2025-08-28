@@ -6,7 +6,7 @@
  * with healthcare-specific events and LGPD compliance
  */
 
-import type { Database } from "@neonpro/database";
+import type { Database } from "./database.types";
 import type { RealtimeChannel, RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 // Healthcare database tables for real-time subscriptions

@@ -7,40 +7,49 @@
 // Core templates
 export { 
   HealthcareFeatureTemplate,
+  HealthcareFeaturePresets,
+  createHealthcareFeature
+} from './healthcare-feature-template';
+
+export type { 
   HealthcareFeatureConfig,
   HealthcareContext,
   AuditMetadata,
   HealthcarePatient,
   HealthcarePatientSchema,
-  HealthcareFeaturePresets,
-  createHealthcareFeature,
-  type FeaturePresetKey,
-  type FeatureConfigType
+  FeaturePresetKey,
+  FeatureConfigType
 } from './healthcare-feature-template';
 
 export {
   HealthcareApiTemplate,
+  createHealthcareApi,
+  BrazilianHealthcareSchemas
+} from './healthcare-api-template';
+
+export type {
   HealthcareApiResponse,
   PaginationParams,
   PaginatedResponse,
   HealthcareErrorCodes,
-  createHealthcareApi,
-  BrazilianHealthcareSchemas,
-  type HealthcareErrorCode
+  HealthcareErrorCode
 } from './healthcare-api-template';
 
 export {
   HealthcareComponentTemplate,
+  createHealthcareComponent,
+  createHealthcareComponentWithPreset,
+  BrazilianHealthcareFields,
+  HealthcareComponentPresets
+} from './healthcare-component-template';
+
+export type {
   HealthcareComponentProps,
   HealthcareComponentState,
   HealthcareComponentConfig,
   HealthcareComponentActions,
   ValidationState,
-  createHealthcareComponent,
-  createHealthcareComponentWithPreset,
-  BrazilianHealthcareFields,
-  HealthcareComponentPresets,
-  type ComponentPresetKey
+  ComponentPresetKey
 } from './healthcare-component-template';
 
 // Template usage patterns for AI agents

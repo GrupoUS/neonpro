@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { HealthcareContext, SenderType } from '@/types/chat';
+import type { HealthcareContext, SenderType } from '@/types/chat';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Bot, Stethoscope, User } from 'lucide-react';
@@ -55,7 +55,7 @@ export function TypingIndicator({
   healthcareContext,
   isEmergency = false,
   maxDisplayUsers = 3,
-  autoHideTimeout = 10000,
+  autoHideTimeout = 10_000,
   className,
   ariaLabel
 }: TypingIndicatorProps) {
@@ -74,7 +74,7 @@ export function TypingIndicator({
 
   // Memoized typing indicator content
   const typingContent = useMemo(() => {
-    if (visibleUsers.length === 0) return null;
+    if (visibleUsers.length === 0) {return null;}
 
     const hasMoreUsers = typingUsers.length > maxDisplayUsers;
     const extraCount = typingUsers.length - maxDisplayUsers;
@@ -222,7 +222,7 @@ export function TypingIndicator({
   }, [visibleUsers, typingUsers.length, maxDisplayUsers, isEmergency, healthcareContext, className]);
 
   // Don't render if no visible users
-  if (visibleUsers.length === 0) return null;
+  if (visibleUsers.length === 0) {return null;}
 
   return (
     <div
@@ -240,7 +240,7 @@ export function TypingIndicator({
  * Generate typing text based on users and context
  */
 function getTypingText(users: TypingUser[], isEmergency: boolean): string {
-  if (users.length === 0) return '';
+  if (users.length === 0) {return '';}
   
   const emergencyPrefix = isEmergency ? '[EMERGÊNCIA] ' : '';
   

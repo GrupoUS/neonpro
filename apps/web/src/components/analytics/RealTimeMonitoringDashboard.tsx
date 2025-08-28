@@ -299,7 +299,7 @@ export default function RealTimeMonitoringDashboard({
 
   // ====== REAL-TIME DATA SIMULATION ======
   useEffect(() => {
-    if (!isMonitoring || !autoRefresh) return;
+    if (!isMonitoring || !autoRefresh) {return;}
 
     const interval = setInterval(() => {
       // Simulate real-time data updates
@@ -374,7 +374,7 @@ export default function RealTimeMonitoringDashboard({
       ...monitoringData.alerts.complianceAlerts.map(a => ({ ...a, category: 'compliance' as const }))
     ];
 
-    if (alertFilter === 'all') return allAlerts;
+    if (alertFilter === 'all') {return allAlerts;}
     return allAlerts.filter(alert => alert.severity === alertFilter);
   }, [monitoringData.alerts, alertFilter]);
 
@@ -411,7 +411,7 @@ export default function RealTimeMonitoringDashboard({
             <Avatar className="h-10 w-10">
               <AvatarImage src={`/avatars/${patient.id}.jpg`} />
               <AvatarFallback>
-                {patient.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                {patient.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
               </AvatarFallback>
             </Avatar>
             <div>
@@ -461,7 +461,7 @@ export default function RealTimeMonitoringDashboard({
             <span className={cn(
               "font-medium",
               patient.vitals.temp > 37.5 ? "text-red-600" :
-              patient.vitals.temp > 37.0 ? "text-yellow-600" : "text-green-600"
+              patient.vitals.temp > 37 ? "text-yellow-600" : "text-green-600"
             )}>
               {patient.vitals.temp}°C
             </span>
@@ -491,7 +491,7 @@ export default function RealTimeMonitoringDashboard({
             </span>
           </div>
           <div className="text-xs text-muted-foreground">
-            {Math.round((Date.now() - patient.lastReading.getTime()) / 60000)}min atrás
+            {Math.round((Date.now() - patient.lastReading.getTime()) / 60_000)}min atrás
           </div>
         </div>
       </CardContent>
@@ -619,7 +619,7 @@ export default function RealTimeMonitoringDashboard({
               connectionStatus === 'connected' ? "bg-green-500 animate-pulse" :
               connectionStatus === 'reconnecting' ? "bg-yellow-500 animate-pulse" :
               "bg-red-500"
-            )}></div>
+            )} />
             <span className="text-sm font-medium">
               {connectionStatus === 'connected' ? 'Conectado' :
                connectionStatus === 'reconnecting' ? 'Reconectando...' : 'Desconectado'}
@@ -716,7 +716,7 @@ export default function RealTimeMonitoringDashboard({
                     <Avatar className="h-12 w-12">
                       <AvatarImage src={`/avatars/${currentPatient.id}.jpg`} />
                       <AvatarFallback className="text-lg">
-                        {currentPatient.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                        {currentPatient.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                       </AvatarFallback>
                     </Avatar>
                     <div>
@@ -768,7 +768,7 @@ export default function RealTimeMonitoringDashboard({
               36.2, 
               "°C", 
               "up", 
-              (currentPatient?.vitals.temp || 0) > 37.5 ? "critical" : (currentPatient?.vitals.temp || 0) > 37.0 ? "warning" : "normal"
+              (currentPatient?.vitals.temp || 0) > 37.5 ? "critical" : (currentPatient?.vitals.temp || 0) > 37 ? "warning" : "normal"
             )}
             {renderVitalSignCard(
               "Saturação O₂", 

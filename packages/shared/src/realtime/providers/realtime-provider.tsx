@@ -18,7 +18,7 @@ interface RealtimeContextValue {
   disconnect: () => void;
 }
 
-const RealtimeContext = createContext<RealtimeContextValue | null>(undefined);
+const RealtimeContext = createContext<RealtimeContextValue | null>(null);
 
 interface RealtimeProviderProps {
   children: ReactNode;
@@ -36,7 +36,7 @@ export function RealtimeProvider({
   enableHealthcareMode = true,
   customConfig,
 }: RealtimeProviderProps) {
-  const [manager, setManager] = useState<SupabaseRealtimeManager | null>();
+  const [manager, setManager] = useState<SupabaseRealtimeManager | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>({
     isConnected: false,
     connectionId: null,
@@ -98,7 +98,7 @@ export function RealtimeProvider({
   const disconnect = useCallback(() => {
     if (manager) {
       manager.destroy();
-      setManager(undefined);
+      setManager(null);
       setIsReady(false);
     }
   }, [manager]);

@@ -99,7 +99,7 @@ export class HealthcarePerformanceMonitor {
    * Start comprehensive monitoring with real-time streaming
    */
   async startMonitoring(): Promise<void> {
-    if (!this.config.enabled) return;
+    if (!this.config.enabled) {return;}
 
     try {
       // Start Web Vitals monitoring

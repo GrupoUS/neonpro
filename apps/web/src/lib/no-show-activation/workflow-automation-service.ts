@@ -131,7 +131,7 @@ class WorkflowAutomationService {
 
   // Rule Management
   public addRule(rule: Omit<WorkflowRule, "id" | "createdAt" | "updatedAt">): string {
-    const ruleId = `rule_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const ruleId = `rule_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     const fullRule: WorkflowRule = {
       ...rule,
       id: ruleId,
@@ -146,7 +146,7 @@ class WorkflowAutomationService {
 
   public updateRule(ruleId: string, updates: Partial<WorkflowRule>): boolean {
     const rule = this.rules.get(ruleId);
-    if (!rule) return false;
+    if (!rule) {return false;}
 
     const updatedRule = {
       ...rule,
@@ -188,7 +188,7 @@ class WorkflowAutomationService {
     const executionIds: string[] = [];
 
     for (const rule of applicableRules) {
-      if (!rule.enabled) continue;
+      if (!rule.enabled) {continue;}
 
       const executionId = await this.executeWorkflow(
         rule,
@@ -212,7 +212,7 @@ class WorkflowAutomationService {
     riskData: RiskScoreData,
     staffMembers: StaffMember[],
   ): Promise<string | null> {
-    const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const executionId = `exec_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
     const execution: WorkflowExecution = {
       id: executionId,
@@ -334,7 +334,7 @@ class WorkflowAutomationService {
 
     for (const staff of targetStaff) {
       const alert: StaffAlert = {
-        id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: `alert_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         type: alertType,
         priority: riskData.riskCategory === "critical"
           ? "critical"
@@ -382,7 +382,7 @@ class WorkflowAutomationService {
     return {
       scheduled: true,
       interventionType,
-      scheduledFor: new Date(Date.now() + delayMinutes * 60000).toISOString(),
+      scheduledFor: new Date(Date.now() + delayMinutes * 60_000).toISOString(),
       appointmentId,
       patientId,
     };
@@ -599,7 +599,7 @@ class WorkflowAutomationService {
     // Run periodic checks every minute
     setInterval(() => {
       this.runPeriodicTasks();
-    }, 60000);
+    }, 60_000);
   }
 
   private runPeriodicTasks(): void {

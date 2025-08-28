@@ -1,4 +1,5 @@
-import { ErrorCategory, ErrorHandlingStrategy } from './healthcare-error-types';
+import type { ErrorHandlingStrategy } from './healthcare-error-types';
+import { ErrorCategory } from './healthcare-error-types';
 
 /**
  * Error handling strategies for each error category

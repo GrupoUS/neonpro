@@ -5,22 +5,14 @@
  */
 
 import React, { useState } from 'react';
-import { 
-  HealthcareMetricCard,
-  AppointmentCalendar,
-  PaymentStatusTable,
-  TeamMembersList,
-  type HealthcareMetricCardProps,
-  type Appointment,
-  type PaymentRecord,
-  type TeamMember,
-} from '../components';
+import { HealthcareMetricCard, AppointmentCalendar, PaymentStatusTable, TeamMembersList } from '../components';
+import type { HealthcareMetricCardProps, Appointment, PaymentRecord, TeamMember } from '../components';
 
 // Mock data for demonstration
 const mockMetrics = [
   {
     title: "Receita Mensal",
-    value: 15231.89,
+    value: 15_231.89,
     type: "revenue" as const,
     format: "currency" as const,
     currency: "BRL" as const,
@@ -125,7 +117,7 @@ const mockPayments: PaymentRecord[] = [
     id: "pay-1",
     patientName: "Sofia Davis",
     patientEmail: "sofia.davis@example.com",
-    amount: 1250.00,
+    amount: 1250,
     currency: "BRL",
     method: "pix",
     status: "success",
@@ -138,7 +130,7 @@ const mockPayments: PaymentRecord[] = [
     id: "pay-2", 
     patientName: "Jackson Lee",
     patientEmail: "jackson.lee@example.com",
-    amount: 850.00,
+    amount: 850,
     currency: "BRL",
     method: "cartao-credito",
     status: "processing",
@@ -154,7 +146,7 @@ const mockPayments: PaymentRecord[] = [
     id: "pay-3",
     patientName: "Isabella Nguyen",
     patientEmail: "isabella.nguyen@example.com", 
-    amount: 2100.00,
+    amount: 2100,
     currency: "BRL",
     method: "boleto",
     status: "pending",
@@ -166,7 +158,7 @@ const mockPayments: PaymentRecord[] = [
     id: "pay-4",
     patientName: "Carlos Silva",
     patientEmail: "carlos.silva@example.com",
-    amount: 480.00,
+    amount: 480,
     currency: "BRL", 
     method: "convenio",
     status: "failed",
@@ -310,7 +302,7 @@ export const HealthcareDashboardExample: React.FC = () => {
             appointments={mockAppointments}
             currentDate={new Date()}
             brazilianHolidays={brazilianHolidays}
-            showDensityIndicators={true}
+            showDensityIndicators
             maxAppointmentsPerDay={12}
             firstDayOfWeek={1}
             onDateSelect={setSelectedDate}
@@ -335,8 +327,8 @@ export const HealthcareDashboardExample: React.FC = () => {
           <TeamMembersList
             members={mockTeamMembers}
             variant="card"
-            showActions={true}
-            showFilters={true}
+            showActions
+            showFilters
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onMemberClick={handleTeamMemberClick}
@@ -353,8 +345,8 @@ export const HealthcareDashboardExample: React.FC = () => {
         <PaymentStatusTable
           payments={mockPayments}
           variant="detailed"
-          showFilters={true}
-          showExport={true}
+          showFilters
+          showExport
           onPaymentView={handlePaymentView}
           onPaymentRefund={(payment) => console.log("Refund:", payment)}
           onExportData={() => console.log("Export payments")}
@@ -372,15 +364,15 @@ export const HealthcareDashboardExample: React.FC = () => {
           </p>
           <div className="flex justify-center gap-4 mt-4 text-sm">
             <span className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full" />
               LGPD Compliant
             </span>
             <span className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full" />
               CFM Validated
             </span>
             <span className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-yellow-500 rounded-full" />
               ANVISA Ready
             </span>
           </div>

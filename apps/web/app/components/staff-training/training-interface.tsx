@@ -36,8 +36,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStaffTraining } from '@/hooks/use-staff-training';
+import type {
+  TrainingModule} from '@/types/staff-training';
 import {
-  TrainingModule,
   TRAINING_CATEGORY_LABELS_PT,
   DIFFICULTY_LABELS_PT,
   SECTION_TYPE_LABELS_PT,
@@ -247,7 +248,7 @@ export function StaffTrainingInterface({
                   .slice(0, 3)
                   .map(([moduleId, progress]) => {
                     const module = trainingModules.find(m => m.id === moduleId);
-                    if (!module) return null;
+                    if (!module) {return null;}
                     
                     const moduleProgress = getModuleProgress(moduleId);
                     

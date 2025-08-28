@@ -99,7 +99,7 @@ export const BRAZILIAN_PERFORMANCE_TARGETS = {
   APPOINTMENT_BOOKING_TIME: 500, // ms
   AI_CHAT_RESPONSE_TIME: 1500,  // ms
   BUNDLE_SIZE_TARGET: 500 * 1024, // 500KB
-  CDN_CACHE_TTL: 31536000,      // 1 year
+  CDN_CACHE_TTL: 31_536_000,      // 1 year
   CONNECTIVITY_TIERS: {
     TIER1_PREMIUM: ["São Paulo", "Rio de Janeiro", "Brasília"],
     TIER2_STANDARD: ["Regional Capitals"],

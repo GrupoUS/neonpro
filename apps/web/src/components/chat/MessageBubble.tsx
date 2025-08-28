@@ -8,8 +8,9 @@
 
 import React, { useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import type { 
+  ChatMessage} from '@/types/chat';
 import { 
-  ChatMessage, 
   SenderType, 
   MessageType,
   AIResponseData 
@@ -189,7 +190,7 @@ export default function MessageBubble({
 
   // Message status icon
   const getStatusIcon = useCallback(() => {
-    if (!isOwnMessage || isSystemMessage) return null;
+    if (!isOwnMessage || isSystemMessage) {return null;}
 
     switch (message.status) {
       case 'sending':

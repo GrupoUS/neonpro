@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import { RiskLevel } from '@/components/no-show/risk-indicator';
+import type { RiskLevel } from '@/components/no-show/risk-indicator';
 
 export interface NoShowPrediction {
   appointmentId: string;
@@ -68,7 +68,7 @@ const mockPredictions: NoShowPrediction[] = [
 export function useNoShowPrediction(options: UseNoShowPredictionOptions = {}): UseNoShowPredictionReturn {
   const {
     autoRefresh = false,
-    refreshInterval = 300000, // 5 minutos
+    refreshInterval = 300_000, // 5 minutos
     enableRealTime = false
   } = options;
 
@@ -133,7 +133,7 @@ export function useNoShowPrediction(options: UseNoShowPredictionOptions = {}): U
 
   // Auto-refresh
   useEffect(() => {
-    if (!autoRefresh) return;
+    if (!autoRefresh) {return;}
 
     const interval = setInterval(() => {
       fetchPredictions();
@@ -144,7 +144,7 @@ export function useNoShowPrediction(options: UseNoShowPredictionOptions = {}): U
 
   // Real-time updates (WebSocket simulation)
   useEffect(() => {
-    if (!enableRealTime) return;
+    if (!enableRealTime) {return;}
 
     // Simular atualizações em tempo real
     const interval = setInterval(() => {
@@ -154,7 +154,7 @@ export function useNoShowPrediction(options: UseNoShowPredictionOptions = {}): U
         // Pequena variação no score para simular atualizações
         riskScore: Math.max(0, Math.min(100, p.riskScore + (Math.random() - 0.5) * 5))
       })));
-    }, 30000); // Atualizar a cada 30 segundos
+    }, 30_000); // Atualizar a cada 30 segundos
 
     return () => clearInterval(interval);
   }, [enableRealTime]);

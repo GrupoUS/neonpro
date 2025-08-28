@@ -9,7 +9,8 @@ import { z } from 'zod';
 import { HTTPException } from 'hono/http-exception';
 // TODO: Import from @neonpro/utils when implementing
 // import { Logger } from '@neonpro/utils';
-import { HealthcareFeatureTemplate, HealthcareContext, HealthcareFeatureConfig } from './healthcare-feature-template';
+import type { HealthcareFeatureTemplate, HealthcareContext} from './healthcare-feature-template';
+import { HealthcareFeatureConfig } from './healthcare-feature-template';
 // TODO: Import from @neonpro/api/middleware when implementing  
 // import { healthcareSecurityMiddleware, healthcareValidationMiddleware } from '@neonpro/api/middleware';
 
@@ -22,8 +23,8 @@ const Logger = {
 };
 
 // Placeholder middleware for template compilation
-const healthcareSecurityMiddleware = () => async (c: any, next: any) => await next();
-const healthcareValidationMiddleware = (schema: z.ZodSchema) => async (c: any, next: any) => await next();
+const healthcareSecurityMiddleware = async (c: any, next: any) => await next();
+const healthcareValidationMiddleware = async (c: any, next: any) => await next();
 
 // Standard API response types
 export interface HealthcareApiResponse<T> {
@@ -99,7 +100,7 @@ export type HealthcareErrorCode = typeof HealthcareErrorCodes[keyof typeof Healt
 export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   protected readonly app: Hono;
   protected readonly feature: HealthcareFeatureTemplate<T, CreateInput, UpdateInput>;
-  protected readonly logger: Logger;
+  protected readonly logger: typeof Logger;
   private readonly basePath: string;
 
   constructor(
@@ -109,7 +110,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   ) {
     this.basePath = basePath;
     this.feature = feature;
-    this.logger = new Logger(`api-${basePath.replace('/', '')}`);
+    this.logger = Logger;
     this.app = new Hono();
 
     // Apply healthcare-specific middleware
@@ -327,7 +328,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
       error: {
         code: errorCode,
         message,
-        details: error instanceof z.ZodError ? error.errors : undefined
+        ...(error instanceof z.ZodError ? { details: error.errors } : {}),
       },
       metadata: {
         timestamp: new Date().toISOString(),

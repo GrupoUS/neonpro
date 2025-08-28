@@ -60,7 +60,7 @@ class EmergencyPerformanceMonitor {
    * Start performance tracking for an operation
    */
   startOperation(operationId: string, context: PerformanceMetric["context"]): void {
-    if (!this.config.enableProfiling) return;
+    if (!this.config.enableProfiling) {return;}
     
     const startTime = performance.now();
     this.activeOperations.set(operationId, startTime);

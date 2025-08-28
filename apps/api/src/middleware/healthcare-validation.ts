@@ -20,10 +20,10 @@ const validateBrazilianCPF = (cpf: string): boolean => {
   // Remove formatting
   const cleanCPF = cpf.replace(/\D/g, '');
   
-  if (cleanCPF.length !== 11) return false;
+  if (cleanCPF.length !== 11) {return false;}
   
   // Check for repeated digits
-  if (/^(\d)\1{10}$/.test(cleanCPF)) return false;
+  if (/^(\d)\1{10}$/.test(cleanCPF)) {return false;}
   
   // Validate check digits
   let sum = 0;
@@ -31,14 +31,14 @@ const validateBrazilianCPF = (cpf: string): boolean => {
     sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
   }
   let checkDigit1 = 11 - (sum % 11);
-  if (checkDigit1 >= 10) checkDigit1 = 0;
+  if (checkDigit1 >= 10) {checkDigit1 = 0;}
   
   sum = 0;
   for (let i = 0; i < 10; i++) {
     sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
   }
   let checkDigit2 = 11 - (sum % 11);
-  if (checkDigit2 >= 10) checkDigit2 = 0;
+  if (checkDigit2 >= 10) {checkDigit2 = 0;}
   
   return checkDigit1 === parseInt(cleanCPF.charAt(9)) && 
          checkDigit2 === parseInt(cleanCPF.charAt(10));
@@ -434,12 +434,12 @@ async function validatePatientDataCompliance(data: any, c: Context): Promise<voi
 // Get schema type for logging
 function getSchemaType(schema: z.ZodSchema): string {
   // Simple way to identify schema type
-  if (schema === PatientDataSchemas.personalInfo) return 'patient_personal_info';
-  if (schema === PatientDataSchemas.medicalInfo) return 'patient_medical_info';
-  if (schema === PatientDataSchemas.lgpdConsent) return 'lgpd_consent';
-  if (schema === PatientDataSchemas.professionalInfo) return 'professional_info';
-  if (schema === AppointmentDataSchemas.booking) return 'appointment_booking';
-  if (schema === AppointmentDataSchemas.update) return 'appointment_update';
+  if (schema === PatientDataSchemas.personalInfo) {return 'patient_personal_info';}
+  if (schema === PatientDataSchemas.medicalInfo) {return 'patient_medical_info';}
+  if (schema === PatientDataSchemas.lgpdConsent) {return 'lgpd_consent';}
+  if (schema === PatientDataSchemas.professionalInfo) {return 'professional_info';}
+  if (schema === AppointmentDataSchemas.booking) {return 'appointment_booking';}
+  if (schema === AppointmentDataSchemas.update) {return 'appointment_update';}
   return 'unknown';
 }
 

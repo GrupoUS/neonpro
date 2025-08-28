@@ -29,7 +29,8 @@ import {
   User,
 } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import RiskScoreIndicator, { RiskScoreData } from "./RiskScoreIndicator";
+import type { RiskScoreData } from "./RiskScoreIndicator";
+import RiskScoreIndicator from "./RiskScoreIndicator";
 
 // Types
 export interface AppointmentData {
@@ -329,8 +330,8 @@ export function AppointmentRiskList({
                           riskData={appointment.riskScore}
                           size="md"
                           showDetails={false}
-                          showTooltip={true}
-                          interactive={true}
+                          showTooltip
+                          interactive
                           onInterventionTrigger={onInterventionTrigger}
                         />
 
@@ -407,9 +408,9 @@ export function AppointmentRiskList({
                           <RiskScoreIndicator
                             riskData={appointment.riskScore}
                             size="md"
-                            showDetails={true}
+                            showDetails
                             showTooltip={false}
-                            interactive={true}
+                            interactive
                             onInterventionTrigger={onInterventionTrigger}
                           />
 

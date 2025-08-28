@@ -95,12 +95,12 @@ export function HealthcareMetricCard({
     return (
       <Card className={cn("animate-pulse", className)}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <div className="h-4 bg-gray-200 rounded w-24"></div>
-          <div className="h-4 w-4 bg-gray-200 rounded"></div>
+          <div className="h-4 bg-gray-200 rounded w-24" />
+          <div className="h-4 w-4 bg-gray-200 rounded" />
         </CardHeader>
         <CardContent>
-          <div className="h-8 bg-gray-200 rounded w-16 mb-2"></div>
-          <div className="h-3 bg-gray-200 rounded w-32"></div>
+          <div className="h-8 bg-gray-200 rounded w-16 mb-2" />
+          <div className="h-3 bg-gray-200 rounded w-32" />
         </CardContent>
       </Card>
     );

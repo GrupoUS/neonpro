@@ -125,10 +125,10 @@ export interface PerformanceMonitoringDashboardProps {
 const PERFORMANCE_TARGETS = {
   accuracy: 0.87, // Target ML accuracy
   noShowReduction: 0.25, // Target 25% reduction
-  responseRate: 0.60, // Target 60% patient response rate
+  responseRate: 0.6, // Target 60% patient response rate
   staffResponseTime: 300, // Target 5 minutes in seconds
-  annualROI: 150000, // Target R$ 150,000 annual savings
-  interventionCost: 2.50, // Target R$ 2.50 per intervention
+  annualROI: 150_000, // Target R$ 150,000 annual savings
+  interventionCost: 2.5, // Target R$ 2.50 per intervention
 };
 
 export function PerformanceMonitoringDashboard({

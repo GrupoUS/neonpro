@@ -20,12 +20,14 @@ import {
   FileText
 } from 'lucide-react';
 
-import { 
+import type { 
   CFMValidationBadgeProps,
   CFMValidationResult,
-  CFMLicenseStatus,
-  MedicalSpecialty,
   ValidationResponse
+} from '../../types/compliance';
+import {
+  CFMLicenseStatus,
+  MedicalSpecialty
 } from '../../types/compliance';
 
 import { cfmValidationService, cfmUtils } from '../../lib/compliance/cfm-professional-validation';
@@ -197,7 +199,7 @@ export const CFMValidationInput: React.FC<CFMValidationInputProps> = ({
               specialty={validationResult.data.specialty}
               validUntil={validationResult.data.validUntil}
               status={validationResult.data.status}
-              showTooltip={true}
+              showTooltip
             />
           )}
 
@@ -415,7 +417,7 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
             specialty={professional.specialty}
             validUntil={professional.validUntil}
             status={professional.status}
-            showTooltip={true}
+            showTooltip
           />
         </div>
       )}

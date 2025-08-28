@@ -122,8 +122,8 @@ export function SAMUDialButton({
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 300000, // 5 minutes
+          timeout: 10_000,
+          maximumAge: 300_000, // 5 minutes
         }
       );
     }
@@ -142,7 +142,7 @@ export function SAMUDialButton({
   }, [callState, countdown]);
 
   const handleCallClick = async () => {
-    if (disabled || callState !== "idle") return;
+    if (disabled || callState !== "idle") {return;}
 
     // For life-threatening emergencies, call immediately
     if (emergencyLevel === "life-threatening") {

@@ -67,7 +67,7 @@ export const healthcareUtils = {
 
   validateCPF: (cpf: string): boolean => {
     const cleaned = cpf.replace(/\D/g, "");
-    if (cleaned.length !== 11) return false;
+    if (cleaned.length !== 11) {return false;}
 
     // CPF validation algorithm
     let sum = 0;
@@ -75,16 +75,16 @@ export const healthcareUtils = {
       sum += parseInt(cleaned[i] || "0") * (10 - i);
     }
     let digit1 = (sum * 10) % 11;
-    if (digit1 === 10) digit1 = 0;
+    if (digit1 === 10) {digit1 = 0;}
 
-    if (parseInt(cleaned[9] || "0") !== digit1) return false;
+    if (parseInt(cleaned[9] || "0") !== digit1) {return false;}
 
     sum = 0;
     for (let i = 0; i < 10; i++) {
       sum += parseInt(cleaned[i] || "0") * (11 - i);
     }
     let digit2 = (sum * 10) % 11;
-    if (digit2 === 10) digit2 = 0;
+    if (digit2 === 10) {digit2 = 0;}
 
     return parseInt(cleaned[10] || "0") === digit2;
   },
@@ -98,7 +98,7 @@ export const healthcareUtils = {
   // CNPJ validation for clinics
   validateCNPJ: (cnpj: string): boolean => {
     const cleaned = cnpj.replace(/\D/g, "");
-    if (cleaned.length !== 14) return false;
+    if (cleaned.length !== 14) {return false;}
 
     // CNPJ validation algorithm
     let sum = 0;
@@ -111,7 +111,7 @@ export const healthcareUtils = {
     let digit1 = sum % 11;
     digit1 = digit1 < 2 ? 0 : 11 - digit1;
 
-    if (parseInt(cleaned[12] || "0") !== digit1) return false;
+    if (parseInt(cleaned[12] || "0") !== digit1) {return false;}
 
     sum = 0;
     const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];

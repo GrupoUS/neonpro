@@ -4,8 +4,9 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AlertTriangle, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import type { 
+  RiskIndicatorProps} from '@/types/no-show-prediction';
 import { 
-  RiskIndicatorProps, 
   RISK_THRESHOLDS, 
   RISK_LABELS_PT, 
   RISK_COLORS 
@@ -42,9 +43,9 @@ export function RiskIndicator({
   };
 
   const getRiskPercentageColor = () => {
-    if (riskScore <= RISK_THRESHOLDS.LOW) return 'text-green-600';
-    if (riskScore <= RISK_THRESHOLDS.MEDIUM) return 'text-yellow-600';
-    if (riskScore <= RISK_THRESHOLDS.HIGH) return 'text-orange-600';
+    if (riskScore <= RISK_THRESHOLDS.LOW) {return 'text-green-600';}
+    if (riskScore <= RISK_THRESHOLDS.MEDIUM) {return 'text-yellow-600';}
+    if (riskScore <= RISK_THRESHOLDS.HIGH) {return 'text-orange-600';}
     return 'text-red-600';
   };
 
@@ -91,7 +92,7 @@ export function RiskIndicatorWithTooltip({
   tooltipContent
 }: RiskIndicatorProps & { tooltipContent?: {
   confidence: number;
-  topFactors: Array<{ factor: string; impact: number; description: string }>;
+  topFactors: { factor: string; impact: number; description: string }[];
   recommendedActions: string[];
 }}) {
   

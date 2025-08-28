@@ -23,7 +23,7 @@ import {
   Languages
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { HealthcareContext, MessageContent, SenderType } from '@/types/chat';
+import type { HealthcareContext, MessageContent, SenderType } from '@/types/chat';
 
 /**
  * VoiceCommands.tsx
@@ -132,7 +132,7 @@ export function VoiceCommands({
           echoCancellation: true,
           noiseSuppression: true,
           autoGainControl: true,
-          sampleRate: 44100
+          sampleRate: 44_100
         } 
       });
       
@@ -190,10 +190,10 @@ export function VoiceCommands({
    * Start recording
    */
   const startRecording = useCallback(async () => {
-    if (disabled) return;
+    if (disabled) {return;}
     
     const initialized = await initializeRecording();
-    if (!initialized || !mediaRecorderRef.current) return;
+    if (!initialized || !mediaRecorderRef.current) {return;}
     
     try {
       setIsRecording(true);
@@ -232,7 +232,7 @@ export function VoiceCommands({
    * Stop recording
    */
   const stopRecording = useCallback(() => {
-    if (!isRecording || !mediaRecorderRef.current) return;
+    if (!isRecording || !mediaRecorderRef.current) {return;}
     
     try {
       setIsRecording(false);
@@ -275,12 +275,12 @@ export function VoiceCommands({
    * Monitor audio input level
    */
   const monitorAudioLevel = useCallback(() => {
-    if (!analyserRef.current || !isRecording) return;
+    if (!analyserRef.current || !isRecording) {return;}
     
     const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
     
     const updateLevel = () => {
-      if (!analyserRef.current || !isRecording) return;
+      if (!analyserRef.current || !isRecording) {return;}
       
       analyserRef.current.getByteFrequencyData(dataArray);
       const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
@@ -296,7 +296,7 @@ export function VoiceCommands({
    * Transcribe audio using speech-to-text
    */
   const transcribeAudio = useCallback(async (recording: VoiceRecording) => {
-    if (!enableTranscription) return;
+    if (!enableTranscription) {return;}
     
     setIsTranscribing(true);
     setTranscriptionError(null);
@@ -383,7 +383,7 @@ export function VoiceCommands({
    * Play recorded audio
    */
   const playRecording = useCallback(() => {
-    if (!currentRecording || isPlaying) return;
+    if (!currentRecording || isPlaying) {return;}
     
     try {
       const audioUrl = URL.createObjectURL(currentRecording.blob);
@@ -457,7 +457,7 @@ export function VoiceCommands({
    * Send voice message
    */
   const sendVoiceMessage = useCallback(() => {
-    if (!currentRecording) return;
+    if (!currentRecording) {return;}
     
     const messageContent: MessageContent = {
       text: currentRecording.transcription || '',

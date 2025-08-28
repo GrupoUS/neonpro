@@ -4,7 +4,7 @@
  * Handles classes A1, A2, A3, B1, B2, C1, C2 according to ANVISA regulations
  */
 
-import {
+import type {
   ANVISASubstance,
   ANVISAControlledClass,
   PrescriptionType,
@@ -247,7 +247,7 @@ export class ANVISAControlledSubstancesService {
       }
 
       // Generate prescription ID and dates
-      const prescriptionId = `ANV-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const prescriptionId = `ANV-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
       const prescriptionDate = new Date();
       const validUntil = new Date(prescriptionDate.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days validity
 
@@ -630,8 +630,8 @@ export const anvisaUtils = {
     const mediumRisk: ANVISAControlledClass[] = ['B1', 'B2'];
     const lowRisk: ANVISAControlledClass[] = ['C1', 'C2'];
 
-    if (highRisk.includes(controlledClass)) return 'high';
-    if (mediumRisk.includes(controlledClass)) return 'medium';
+    if (highRisk.includes(controlledClass)) {return 'high';}
+    if (mediumRisk.includes(controlledClass)) {return 'medium';}
     return 'low';
   }
 };

@@ -451,7 +451,7 @@ export class MultiLayerCacheManager {
     layers: CacheLayer[],
   ): Promise<void> {
     const sourceIndex = layers.indexOf(sourceLayer);
-    if (sourceIndex <= 0) return; // Already at the top layer or not found
+    if (sourceIndex <= 0) {return;} // Already at the top layer or not found
 
     const upstreamLayers = layers.slice(0, sourceIndex);
     const promises = upstreamLayers.map(async (layer) => {

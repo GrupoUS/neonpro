@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import {
+import type {
   PerformanceMetrics,
   DashboardKPI,
   PerformanceDashboard,
@@ -55,7 +55,7 @@ interface UsePerformanceMonitoringReturn {
 export function usePerformanceMonitoring({
   clinicId,
   departmentIds = [],
-  refreshInterval = 300000, // 5 minutes
+  refreshInterval = 300_000, // 5 minutes
   realTimeUpdates = true,
   autoRefresh = true,
 }: UsePerformanceMonitoringOptions = {}): UsePerformanceMonitoringReturn {
@@ -241,7 +241,7 @@ export function usePerformanceMonitoring({
       const a = document.createElement('a');
       a.href = url;
       a.download = `performance-report-${Date.now()}.${options.format}`;
-      document.body.appendChild(a);
+      document.body.append(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
@@ -349,7 +349,7 @@ export function usePerformanceMonitoring({
           if (realTimeUpdates) {
             subscribeToUpdates();
           }
-        }, 10000);
+        }, 10_000);
       };
 
     } catch (err) {

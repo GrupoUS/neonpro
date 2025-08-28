@@ -91,7 +91,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       mockJWT.sign.mockReturnValue(mockTokens.accessToken);
 
       // Mock request context
-      const _mockContext = {
+      const mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             email: "doctor@neonpro.com.br",
@@ -104,7 +104,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       } as unknown as Context;
 
       // Simulate login endpoint
-      const _loginHandler = async (c: Context) => {
+      const loginHandler = async (c: Context) => {
         const { email, password, tenantId } = await c.req.json();
 
         // Validate healthcare professional
@@ -163,7 +163,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       } as unknown as Context;
 
       const loginHandler = async (c: Context) => {
-        const { email, password: _password, tenantId } = await c.req.json();
+        const { email, tenantId } = await c.req.json();
 
         const user = await mockPrisma.user.findUnique({
           where: { email, tenantId, isActive: true },

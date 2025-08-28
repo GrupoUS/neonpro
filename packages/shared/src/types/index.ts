@@ -6,8 +6,8 @@
  * do sistema NeonPro Healthcare.
  */
 
-// Import Notification from database package
-import type { Notification } from "@neonpro/database";
+// Import Notification from local database types (temporary workaround)
+import type { Notification } from "./database.types";
 import type { ApiResponse, PaginatedResponse, PaginationParams } from "./api.types";
 
 // Re-export commonly used types for convenience

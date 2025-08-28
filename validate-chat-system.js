@@ -5,8 +5,8 @@
  * Quick validation of Phase 3.2 Universal AI Chat System implementation
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 // Configuration
 const CHAT_SYSTEM_FILES = [

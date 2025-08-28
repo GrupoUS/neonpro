@@ -144,48 +144,6 @@ MCP_COORDINATION:
     sequential_thinking: "Complex problem decomposition, systematic analysis"
 ```
 
-## 🎯 MASTER ORCHESTRATION ENGINE
-
-### **Intelligent Agent Delegation System**
-
-```markdown
-# OPTIMIZED: Only APEX Healthcare Agents
-default_agents = ["apex-dev"]
-
-[agents.apex-dev]
-enabled = true
-output_path = ".claude/agents/apex-dev.md"
-source_path = ".ruler/agents/apex-dev.md"
-description = "Always Active - Coding, implementation, debugging"
-
-[agents.apex-researcher]
-enabled = true
-output_path = ".claude/agents/apex-researcher.md"
-source_path = ".ruler/agents/apex-researcher.md"
-description = "On-Demand - Investigation, analysis, documentation"
-
-[agents.apex-ui-ux-designer]
-enabled = true
-output_path = ".claude/agents/apex-ui-ux-designer.md"
-source_path = ".ruler/agents/apex-ui-ux-designer.md"
-description = "On-Demand - Design, components, user experience"
-```
-
-### **Usage Commands**
-```bash
-# Generate base coordinator (apex-dev always active)
-ruler
-
-# Activate researcher for planning/analysis tasks
-ruler --agents apex-dev,apex-researcher
-
-# Activate UI/UX designer for interface work
-ruler --agents apex-dev,apex-ui-ux-designer
-
-# Full healthcare team activation
-ruler --agents apex-dev,apex-researcher,apex-ui-ux-designer
-```
-
 ### **Communication Framework**
 
 ```yaml

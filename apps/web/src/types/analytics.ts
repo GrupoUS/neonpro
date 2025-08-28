@@ -766,13 +766,13 @@ export type Analytics = {
   [K in keyof HealthcareAnalytics]: HealthcareAnalytics[K];
 };
 
-export type AnalyticsEvent = {
+export interface AnalyticsEvent {
   type: string;
   data: any;
   timestamp: Date;
   userId?: string;
   sessionId?: string;
-};
+}
 
 // ====== DEFAULT CONFIGURATIONS ======
 

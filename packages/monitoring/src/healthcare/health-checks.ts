@@ -1,4 +1,4 @@
-import { HealthCheckResult } from './healthcare-metrics';
+import type { HealthCheckResult } from './healthcare-metrics';
 
 /**
  * Healthcare-specific health checks for critical workflows

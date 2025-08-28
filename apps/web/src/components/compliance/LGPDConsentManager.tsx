@@ -52,13 +52,14 @@ import {
   ExternalLink
 } from 'lucide-react';
 
-import {
+import type {
   LGPDConsentRecord,
   LGPDDataProcessingActivity,
   LGPDConsentType,
   LGPDConsentStatus,
   LGPDDataCategory,
-  LGPDProcessingPurpose,
+  LGPDProcessingPurpose} from '@/lib/compliance/lgpd-consent-management';
+import {
   LGPDLegalBasis,
   LGPDConsentWithdrawalRequest,
   LGPDDataPortabilityRequest,
@@ -311,7 +312,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({ classNam
   };
 
   const handleWithdrawConsent = async () => {
-    if (!selectedConsent) return;
+    if (!selectedConsent) {return;}
 
     try {
       const result = await lgpdService.withdrawConsent(
@@ -392,8 +393,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({ classNam
   });
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 70) return 'text-yellow-600';
+    if (score >= 90) {return 'text-green-600';}
+    if (score >= 70) {return 'text-yellow-600';}
     return 'text-red-600';
   };
 

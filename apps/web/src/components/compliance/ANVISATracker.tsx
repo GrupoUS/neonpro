@@ -37,12 +37,13 @@ import {
   Package
 } from 'lucide-react';
 
-import {
+import type {
   ControlledSubstance,
   ControlledPrescription,
   ControlledSubstanceClass,
   PrescriptionType,
-  ControlledPrescriptionStatus,
+  ControlledPrescriptionStatus} from '@/lib/compliance/anvisa-controlled-substances';
+import {
   ANVISAValidationResult,
   ANVISAControlledSubstancesService
 } from '@/lib/compliance/anvisa-controlled-substances';

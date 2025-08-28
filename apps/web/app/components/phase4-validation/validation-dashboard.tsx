@@ -80,11 +80,12 @@ import {
   Search
 } from 'lucide-react';
 import { usePhase4Validation } from '@/app/hooks/use-phase4-validation';
-import {
+import type {
   ValidationRule,
   ValidationSession,
   ValidationType,
-  ValidationStatus,
+  ValidationStatus} from '@/app/types/phase4-validation';
+import {
   ValidationLevel,
   ValidationLabels
 } from '@/app/types/phase4-validation';
@@ -159,7 +160,7 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
       const a = document.createElement('a');
       a.href = url;
       a.download = `validation-results.${format}`;
-      document.body.appendChild(a);
+      document.body.append(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);

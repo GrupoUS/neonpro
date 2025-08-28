@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { 
+import type { 
   StaffAlert, 
   AlertDashboardStats, 
   AlertFilters,
+  Intervention} from '@/types/staff-alerts';
+import {
   StaffMember,
-  Intervention,
   EscalationRule
 } from '@/types/staff-alerts';
 
@@ -48,7 +49,7 @@ interface UseStaffAlertsReturn {
 export function useStaffAlerts({
   realTimeUpdates = true,
   autoRefresh = true,
-  refreshInterval = 30000, // 30 seconds
+  refreshInterval = 30_000, // 30 seconds
   staffMemberId,
   department,
 }: UseStaffAlertsOptions = {}): UseStaffAlertsReturn {

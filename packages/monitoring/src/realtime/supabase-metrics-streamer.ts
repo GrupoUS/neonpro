@@ -136,7 +136,7 @@ export class SupabaseMetricsStreamer {
    * Send real-time alert/event
    */
   async sendRealtimeEvent(event: RealtimeMetricEvent): Promise<void> {
-    if (!this.isConnected) return;
+    if (!this.isConnected) {return;}
 
     try {
       // Insert event into alerts table for real-time dashboard updates
@@ -198,7 +198,7 @@ export class SupabaseMetricsStreamer {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       return data || [];
     } catch (error) {
@@ -222,7 +222,7 @@ export class SupabaseMetricsStreamer {
    * Flush buffered metrics to Supabase
    */
   private async flushMetrics(): Promise<void> {
-    if (this.metricBuffer.length === 0) return;
+    if (this.metricBuffer.length === 0) {return;}
 
     const metricsToFlush = [...this.metricBuffer];
     this.metricBuffer = [];
@@ -312,7 +312,7 @@ export class SupabaseMetricsStreamer {
     };
 
     const match = timeframe.match(/(\d+)\s*(minute|hour|day|week)s?/);
-    if (!match) return units.hour; // default 1 hour
+    if (!match) {return units.hour;} // default 1 hour
 
     const [, num, unit] = match;
     return parseInt(num) * (units[unit as keyof typeof units] || units.hour);

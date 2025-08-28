@@ -5,8 +5,8 @@
  * Phase 3.3 validation for CFM, ANVISA, and LGPD compliance components
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 // Configuration
 const COMPLIANCE_SYSTEM_FILES = [
