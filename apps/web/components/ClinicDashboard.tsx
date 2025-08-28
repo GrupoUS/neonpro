@@ -147,6 +147,9 @@ export default function ClinicDashboard() {
   const [activities] = useState<RecentActivity[]>(MOCK_ACTIVITIES);
   const [doctors] = useState<DoctorStats[]>(MOCK_DOCTORS);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

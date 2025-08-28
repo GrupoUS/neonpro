@@ -95,6 +95,7 @@ interface User {
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 interface Activity {
   id: string;
   user: User;
@@ -104,6 +105,8 @@ interface Activity {
   metadata?: Record<string, string | number | boolean>;
 }
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -119,6 +122,7 @@ interface Metric {
   icon: React.ComponentType<{ className?: string; }>;
 }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 interface Task {
@@ -160,6 +164,8 @@ interface Notification {
   };
 }
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
