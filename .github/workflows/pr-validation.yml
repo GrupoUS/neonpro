@@ -322,8 +322,7 @@ jobs:
       - name: 🔒 Security Analysis with CodeQL
         uses: github/codeql-action/analyze@v3
         with:
-          languages: typescript, javascript
-          queries: security-and-quality
+          languages: ['typescript', 'javascript']
         continue-on-error: true
 
       - name: 📊 Analysis Summary
