@@ -94,6 +94,7 @@ interface User {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 interface Activity {
   id: string;
   user: User;
@@ -103,6 +104,8 @@ interface Activity {
   metadata?: Record<string, string | number | boolean>;
 }
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 interface Metric {
@@ -116,6 +119,7 @@ interface Metric {
   icon: React.ComponentType<{ className?: string; }>;
 }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 interface Task {
   id: string;
@@ -156,6 +160,8 @@ interface Notification {
   };
 }
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 // AI Enhancement Types
