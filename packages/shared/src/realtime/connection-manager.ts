@@ -63,7 +63,7 @@ export class SupabaseRealtimeManager {
     this.config = config;
     this.connectionStatus = {
       isConnected: false,
-      connectionId: undefined,
+      connectionId: null,
       lastConnected: undefined,
       totalRetries: 0,
       activeChannels: 0,
@@ -140,7 +140,7 @@ export class SupabaseRealtimeManager {
     // Clear reconnect timer
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
-      this.reconnectTimer = undefined;
+      this.reconnectTimer = null;
     }
   } /**
    * Handle connection close
@@ -150,7 +150,7 @@ export class SupabaseRealtimeManager {
     this.connectionStatus = {
       ...this.connectionStatus,
       isConnected: false,
-      connectionId: undefined,
+      connectionId: null,
       healthScore: 0,
     };
 
@@ -194,7 +194,7 @@ export class SupabaseRealtimeManager {
     );
 
     this.reconnectTimer = setTimeout(() => {
-      this.reconnectTimer = undefined;
+      this.reconnectTimer = null;
       this.initializeConnection();
     }, delay);
 

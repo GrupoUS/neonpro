@@ -29,15 +29,15 @@ export interface AuthUser {
  */
 function extractTokenFromHeader(authHeader: string | undefined): string | null {
   if (!authHeader) {
-    return;
+    return null;
   }
 
   const parts = authHeader.split(" ");
   if (parts.length !== 2 || parts[0] !== "Bearer") {
-    return;
+    return null;
   }
 
-  return parts[1] || undefined;
+  return parts[1] || null;
 }
 
 /**
@@ -52,23 +52,25 @@ async function validateJWTToken(token: string): Promise<AuthUser | null> {
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as unknown;
 
     if (!decoded || typeof decoded !== "object") {
-      return;
+      return null;
     }
 
+    const payload = decoded as Record<string, unknown>;
+
     // Validar estrutura do token
-    if (!(decoded.sub && decoded.email)) {
-      return;
+    if (!(payload.sub && payload.email)) {
+      return null;
     }
 
     return {
-      id: decoded.sub,
-      email: decoded.email,
-      name: decoded.name,
-      role: decoded.role,
-      tenantId: decoded.tenant_id,
+      id: payload.sub as string,
+      email: payload.email as string,
+      name: payload.name as string,
+      role: payload.role as string,
+      tenantId: payload.tenant_id as string,
     };
   } catch {
-    return;
+    return null;
   }
 }
 
@@ -229,20 +231,20 @@ export const requireTenant = createMiddleware(async (c, next) => {
 /**
  * Utility para obter dados de autenticação do contexto
  */
-export function getAuthContext(c: unknown): AuthContext | null {
+export function getAuthContext(c: { get: (key: string) => unknown }): AuthContext | null {
   try {
-    return c.get("auth") || undefined;
+    return c.get("auth") as AuthContext || null;
   } catch {
-    return;
+    return null;
   }
 }
 
 /**
  * Utility para obter usuário atual
  */
-export function getCurrentUser(c: unknown): AuthUser | null {
+export function getCurrentUser(c: { get: (key: string) => unknown }): AuthUser | null {
   const authContext = getAuthContext(c);
-  return authContext?.user || undefined;
+  return authContext?.user || null;
 }
 
 /**

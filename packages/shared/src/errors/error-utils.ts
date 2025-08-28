@@ -129,7 +129,7 @@ export function createHealthcareError(
                         category === ErrorCategory.PATIENT_DATA ||
                         patientImpact;
   
-  return {
+  const healthcareError: HealthcareError = {
     id: generateErrorId(),
     category,
     severity,
@@ -140,6 +140,11 @@ export function createHealthcareError(
     recoverable: errorHandlingStrategies[category].retry,
     timestamp: new Date(),
     originalError: error,
-    stack: error.stack
   };
+
+  if (error.stack) {
+    healthcareError.stack = error.stack;
+  }
+
+  return healthcareError;
 }

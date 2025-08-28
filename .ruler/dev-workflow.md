@@ -51,7 +51,7 @@ COGNITIVE_ARCHITECTURE:
   meta_cognition: "Think about the thinking process, identify biases, apply constitutional analysis"
   multi_perspective_analysis:
     - "user_perspective: Understanding user intent and constraints"
-    - "developer_perspective: Technical implementation and architecture considerations"  
+    - "developer_perspective: Technical implementation and architecture considerations"
     - "business_perspective: Cost, timeline, and stakeholder impact analysis"
     - "security_perspective: Risk assessment and compliance requirements"
     - "quality_perspective: Standards enforcement and continuous improvement"
@@ -82,16 +82,75 @@ CONSTITUTIONAL_PRINCIPLES:
 
 ## Mandatory Development Steps
 
-### 1. **Planning & Task List**
+### 1. **Research & Decomposition**
+
+- Conduct thorough research on the feature requirements and constraints
+- Decompose the feature into smaller, manageable tasks
+- Identify potential complexities and dependencies
+- Use the `apex-researcher` agent for multi-source intelligence gathering: [`.ruler/agents/apex-researcher.md`](../.ruler/agents/apex-researcher.md)
+- Follow the Research Execution Framework below
+
+```bash
+# Triggers: research, analyze, investigate, pesquisar, analisar, planejar
+ruler --agents apex-researcher
+```
+
+```yaml
+RESEARCH_EXECUTION_FRAMEWORK:
+    vibecoder_integration: "Think & Analyze - ALWAYS before any action - NO EXCEPTIONS"
+    primary_tool: "sequential-thinking + native think tool (MANDATORY FIRST STEP)"
+    purpose: "Comprehensive requirement analysis with context understanding and complexity assessment"
+    intelligence: "Dynamic complexity scoring (L1-L10) with automatic cognitive and agent routing"
+    thinking_activation: "Auto-scaled based on complexity detection and domain triggers"
+    routing: "Intelligent MCP selection based on complexity, domain, and requirements analysis"
+    agent_coordination: "Sequential thinking primary, potential apex_researcher_agent for complex analysis"
+    process:
+      - "Understand requirements completely with constitutional analysis"
+      - "Identify constraints and dependencies with multi-perspective evaluation"
+      - "Assess complexity level (1-10) with domain-specific triggers"
+      - "Define strategic approach with agent coordination planning"
+      - "Break down into manageable components with quality gate definition"
+    deliverables: "Complete requirements with execution plan, cognitive activation, and agent assignments"
+    purpose: "Knowledge acquisition and validation for informed implementation with multi-source validation"
+    intelligence: "Multi-source research orchestration with authority validation and cross-referencing"
+    routing: "Context7 → Tavily → Archon → Exa chain for complexity, with sequential thinking integration"
+    quality_gate: "100% requirement clarity with multi-source validation and constitutional compliance"
+```
+
+### 3. **Planning & Task List**
 
 - Create a detailed task list using the todo tool to implement the feature
 - Break down complex features into manageable subtasks
 - Mark tasks as in_progress when starting, completed when finished
+- Use the `apex-dev` agent for development context and task management: [`.ruler/agents/apex-dev.md`](../.ruler/agents/apex-dev.md)
+- Use the `apex-ui-ux-designer` agent for UI/UX design tasks: [`.ruler/agents/apex-ui-ux-designer.md`](../.ruler/agents/apex-ui-ux-designer.md)
+- **Follow the Project Context Guide:** [`docs/project.md`](docs/project.md)
+- Follow the Planning & Design Framework below
 
-### 2. **Branch Creation**
-
-- Create a specific branch for the feature following naming conventions
-- Use descriptive branch names (e.g., `feature/user-authentication`, `fix/payment-validation`)
+```yaml
+  phase_3_planning_design:
+    vibecoder_integration: "Context Engineering & Planning with ONE-SHOT template methodology"
+    contextual_loading: "UI/UX agent loaded automatically when design tasks detected"
+    purpose: "Solution architecture and strategic implementation planning with systematic design approach"
+    intelligence: "Risk assessment with comprehensive mitigation strategies and architectural validation"
+    routing: "Sequential Thinking integration with architectural pattern analysis and validation"
+    one_shot_template:
+      role: "[Specific: Frontend Developer | Backend Engineer | Full-Stack | UI/UX Designer]"
+      context: "#workspace + #codebase + [archon knowledge base + relevant files]"
+      task: "[Specific, measurable, actionable requirement]"
+      constraints: "[Technical limitations, performance requirements]"
+      output: "[Code | Documentation | Architecture | Analysis | Design]"
+      success_criteria: "[Measurable outcomes, quality thresholds]"
+    task_planning:
+      structure:
+        - "Break down into atomic executable tasks with agent assignment"
+        - "Assign optimal tools and agents for each task with specialization matching"
+        - "Define validation checkpoints with quality gates"
+        - "Create dependency mapping with agent coordination requirements"
+        - "Set measurable success criteria with progressive quality standards"
+    deliverables: "Detailed execution plan with quality gates, agent coordination, and architectural specifications"
+    quality_gate: "Architecture review ≥9.5/10 with scalability validation and security compliance"
+```
 
 ### 3. **TDD Implementation (Red-Green-Refactor)**
 
@@ -108,7 +167,7 @@ CONSTITUTIONAL_PRINCIPLES:
   - ✅ **USEFUL**: UI components with logic, helpers
 
 - **Implementation Guidelines:**
-  - **MANDATORY**: Execute following ALL guidelines from `/rules` and `/docs` directories
+  - **MANDATORY**: Execute following ALL guidelines from `/.ruler` and `/docs` directories
   - **ALWAYS**: Consult documentation when uncertain about patterns, conventions, or approaches
   - Follow established code patterns, naming conventions, and project standards
   - Implement comprehensive error handling following project patterns
@@ -117,10 +176,10 @@ CONSTITUTIONAL_PRINCIPLES:
 
 ### 4. **Test Execution & Validation**
 
-- Run `npm test` to execute all unit tests
+- Run `pnpm test` and all task tests to execute all unit tests
 - **Correction Loop**: If tests fail:
   - Fix the issues following TDD principles
-  - Run `npm test` again
+  - Run `pnpm test` and tasks tests again
   - Repeat until ALL tests pass
 - **Coverage Requirements** (from ttd-flow.md):
   - Critical business logic: 100%
@@ -131,41 +190,39 @@ CONSTITUTIONAL_PRINCIPLES:
 
 ### 5. **Code Quality Check**
 
-- Run `npx next lint` to check for linting issues
-- Run `npx tsc --noEmit` to verify TypeScript compilation
+- Run `pnpx next lint` to check for linting issues
+- Run `pnpx tsc --noEmit` to verify TypeScript compilation
 - Fix any errors or warnings before proceeding
-
-### 6. **External Code Review**
-
-- Ask user to run CodeRabbit for automated code review
-- **Optional**: Run SonarQube analysis for additional quality checks
-- Wait for user confirmation before proceeding
 - **Correction Loop**: If issues are found:
   - Fix the reported issues
   - Return to **Step 4** (Unit Testing) and repeat the entire cycle
   - Continue until ALL quality checks pass
+  - Only proceed when linting and type checks are clean
 
-### 7. **Pull Request & Code Review**
+```yaml
+  validation:
+    vibecoder_integration: "Quality Validation & Testing with constitutional enforcement gates"
+    architecture_analysis: "Always check architecture docs for best practices validation"
+    technology_excellence: "Framework best practices compliance and performance optimization"
+    qa_mandatory:
+      post_modification_checks:
+        - "Syntax errors verification with zero tolerance policy"
+        - "Duplicates/orphans detection with cleanup protocols"
+        - "Feature validation against requirements with completeness verification"
+        - "Requirements compliance with constitutional principles validation"
+        - "Security vulnerabilities assessment with compliance verification"
+        - "Test coverage ≥90% with comprehensive testing protocols"
+    verification_rule: "Never assume changes complete without explicit verification"
+```
 
-- Create PR with clear description of changes
-- Include testing instructions and any breaking changes
-- **Automatic Quality Checks**: SonarQube and CodeRabbit run automatically on PR
-- Request evaluation by another developer
+### 6. **Memory Documentation Protocol**
 
-### 8. **Merge to Main**
-
-- **Conflict Check**: Verify if there are any merge conflicts with main branch
-- Resolve any conflicts before merging
-- Complete the merge to main branch
-
-### 9. **Memory Documentation Protocol**
-
-- **MANDATORY**: Follow the Proactive Update Protocol from `rules/memory.md`:
+- **MANDATORY**: Follow the Proactive Update Protocol from `docs/memory.md`:
   - Create `mistakes/[error-category].md` if any mistake was made and corrected
   - Create `features/[feature-name].md` for new features or modified behavior
   - **TDD Documentation**: Include test coverage metrics, test patterns used, and any TDD-specific decisions
-  - Update `@project.md` if new project standards were established
-  - Update `@code-preferences.md` if coding preferences were clarified
+  - Update `docs\project.md` if new project standards were established
+  - Update `.ruler\code-preferences.md` if coding preferences were clarified
 - Update relevant README files if needed
 - **Test Documentation**: Document any new test patterns, mocks, or testing utilities created during TDD process
 
@@ -181,7 +238,7 @@ CONSTITUTIONAL_PRINCIPLES:
 ### 11. **Out-of-Scope Documentation**
 
 - **Documentation Agent**: For new documentation not covered by existing folders or protocols
-- Use the documentation agent (`agents/documentation.md`) to create comprehensive documentation for:
+- Use the documentation agent (`.ruler\agents\documentation.md`) to create comprehensive documentation for:
   - New concepts or patterns introduced
   - Complex architectural decisions
   - Integration guides or tutorials

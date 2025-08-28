@@ -4,8 +4,6 @@
 
 This directory contains **specialized APEX healthcare agents** for the NeonPro AI Healthcare Platform, designed to work with [Ruler](https://github.com/intellectronica/ruler) for intelligent agent orchestration.
 
-> **🎯 OPTIMIZATION**: GitHub Copilot automatically loads `claude`, `copilot`, and `trae` configurations. This setup focuses only on **specialized healthcare agents** with contextual loading.
-
 ## 🤖 APEX Healthcare Agent Strategy
 
 ### **🔄 Intelligent Loading Pattern**
@@ -159,12 +157,7 @@ CONSTITUTIONAL_FRAMEWORK:
 
 ## 📚 References
 
-- **🌟 Complete Workflow**: [`core-workflow.md`](core-workflow.md)
-- **⚙️ Tech Stack**: [`docs/architecture/tech-stack.md`](../../docs/architecture/tech-stack.md)
-- **📁 Source Structure**: [`docs/architecture/source-tree.md`](../../docs/architecture/source-tree.md)
-- **🎨 Coding Standards**: [`docs/architecture/coding-standards.md`](../../docs/architecture/coding-standards.md)
-- **Ruler Documentation**: https://ai.intellectronica.net/ruler
+- **🌟 Complete Workflow**: [`.ruler/dev-workflow.md`](.ruler/dev-workflow.md)
+- **⚙️ Always Follow Project Standards**: [`docs/project.md`](docs/project.md)
 
 ---
-
-> **🏥 Constitutional Healthcare Excellence**: Optimized APEX agent orchestration for NeonPro AI Healthcare Platform with intelligent contextual loading, constitutional development principles, and healthcare compliance validation.

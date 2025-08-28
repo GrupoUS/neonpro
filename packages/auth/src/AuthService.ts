@@ -29,7 +29,7 @@ import type {
  * Healthcare-compliant authentication service with enterprise features
  */
 export class AuthService extends EnhancedServiceBase {
-  protected readonly config: AuthConfig;
+  protected override readonly config: AuthConfig;
   private readonly supabase: SupabaseClient;
   private readonly rolePermissions: RolePermissions;
 
@@ -585,7 +585,6 @@ export class AuthService extends EnhancedServiceBase {
   }
 
   private async incrementLoginAttempts(email: string): Promise<void> {
-    const key = `login_attempts_${email}`;
     await this.security.auditOperation({
       id: crypto.randomUUID(),
       service: "auth",
@@ -603,7 +602,7 @@ export class AuthService extends EnhancedServiceBase {
   }
 
   private mapToUserInterface(dbUser: Record<string, unknown>): User {
-    return {
+    const user: User = {
       id: dbUser.id as string,
       email: dbUser.email as string,
       name: dbUser.name as string,
@@ -611,12 +610,19 @@ export class AuthService extends EnhancedServiceBase {
       permissions: (dbUser.permissions as Permission[]) || [],
       isActive: dbUser.is_active as boolean ?? true,
       mfaEnabled: dbUser.mfa_enabled as boolean,
-      lastLogin: dbUser.last_login
-        ? new Date(dbUser.last_login as string | number | Date)
-        : undefined,
       createdAt: new Date(dbUser.created_at as string | number | Date),
       updatedAt: new Date(dbUser.updated_at as string | number | Date),
     };
+    
+    if (dbUser.last_login) {
+      user.lastLogin = new Date(dbUser.last_login as string | number | Date);
+    }
+    
+    if (dbUser.mfa_secret) {
+      user.mfaSecret = dbUser.mfa_secret as string;
+    }
+    
+    return user;
   }
 
   private parseTimeToSeconds(timeString: string): number {

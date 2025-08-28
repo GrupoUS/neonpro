@@ -5,7 +5,7 @@
  */
 
 import type { MultiLayerCacheManager } from "./cache-manager";
-import type { CacheLayer, CacheStats } from "./types";
+import type { CacheLayer } from "./types";
 
 /**
  * Enhanced cache service with enterprise features
@@ -63,7 +63,8 @@ export class EnterpriseCacheService {
     let success = false;
 
     try {
-      await this.cacheManager.set(key, value, layers, { ttl });
+      const options = ttl !== undefined ? { ttl } : undefined;
+      await this.cacheManager.set(key, value, layers, options);
       success = true;
     } catch (error) {
       this.logError("SET", key, error);

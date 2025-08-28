@@ -20,6 +20,26 @@ import {
 import type { AuditActionSchema, UserBaseSchema } from "./schemas";
 import type { RpcClient } from "./types";
 
+// API Error types
+interface ApiValidationError {
+  field: string;
+  message: string;
+}
+
+interface ApiErrorResponse {
+  error?: {
+    code?: string;
+    message?: string;
+    validation_errors?: ApiValidationError[];
+  };
+  message?: string;
+}
+
+interface ApiErrorObject {
+  message?: string;
+  error?: ApiErrorResponse;
+}
+
 // Enhanced API Client configuration
 export interface ApiClientConfig {
   baseUrl: string;
@@ -116,12 +136,12 @@ const DEFAULT_CONFIG: Required<
 
 // Enhanced Auth Token Manager with session tracking
 class AuthTokenManager {
-  private accessToken: string | null = undefined;
-  private refreshToken: string | null = undefined;
-  private sessionId: string | null = undefined;
-  private user: z.infer<typeof UserBaseSchema> | null = undefined;
-  private refreshPromise: Promise<string> | null = undefined;
-  private tokenExpiry: Date | null = undefined;
+  private accessToken: string | null = null;
+  private refreshToken: string | null = null;
+  private sessionId: string | null = null;
+  private user: z.infer<typeof UserBaseSchema> | null = null;
+  private refreshPromise: Promise<string> | null = null;
+  private tokenExpiry: Date | null = null;
 
   setTokens(
     accessToken: string,
@@ -131,7 +151,7 @@ class AuthTokenManager {
   ) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
-    this.user = user || undefined;
+    this.user = user || null;
 
     // Calculate expiry time
     if (expiresIn) {
@@ -178,7 +198,7 @@ class AuthTokenManager {
       }
     }
 
-    return;
+    return null;
   }
 
   getRefreshToken(): string | null {
@@ -225,7 +245,7 @@ class AuthTokenManager {
       }
     }
 
-    return;
+    return null;
   }
 
   isTokenValid(): boolean {
@@ -243,12 +263,12 @@ class AuthTokenManager {
   }
 
   clearTokens() {
-    this.accessToken = undefined;
-    this.refreshToken = undefined;
-    this.sessionId = undefined;
-    this.user = undefined;
-    this.tokenExpiry = undefined;
-    this.refreshPromise = undefined;
+    this.accessToken = null;
+    this.refreshToken = null;
+    this.sessionId = null;
+    this.user = null;
+    this.tokenExpiry = null;
+    this.refreshPromise = null;
 
     // Clear from localStorage (browser)
     if (typeof localStorage !== "undefined") {
@@ -260,7 +280,7 @@ class AuthTokenManager {
     }
   }
 
-  async refreshAccessToken(apiClient: unknown): Promise<string> {
+  async refreshAccessToken(config: { baseUrl: string }): Promise<string> {
     // Prevent multiple simultaneous refresh attempts
     if (this.refreshPromise) {
       return this.refreshPromise;
@@ -278,8 +298,12 @@ class AuthTokenManager {
           refresh_token: refreshToken,
         });
 
-        const response = await apiClient.api.v1.auth.refresh.$post({
-          json: request,
+        const response = await fetch(`${config.baseUrl}/api/v1/auth/refresh`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(request),
         });
 
         if (!response.ok) {
@@ -305,7 +329,7 @@ class AuthTokenManager {
         this.clearTokens();
         throw error;
       } finally {
-        this.refreshPromise = undefined;
+        this.refreshPromise = null;
       }
     })();
 
@@ -456,7 +480,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
       // Check if we should refresh the token proactively
       if (tokenManager.shouldRefresh()) {
         try {
-          await tokenManager.refreshAccessToken(client);
+          await tokenManager.refreshAccessToken(finalConfig);
         } catch {}
       }
 
@@ -494,7 +518,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
       };
 
       let response: Response;
-      let lastError: Error | null;
+      let lastError: Error | null = null;
       const url = typeof input === "string" ? input : input.toString();
 
       // Extract resource info for audit logging
@@ -520,7 +544,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
           // Handle 401 (token expired) - try to refresh
           if (response.status === 401 && attempt === 0) {
             try {
-              const newToken = await tokenManager.refreshAccessToken(client);
+              const newToken = await tokenManager.refreshAccessToken(finalConfig);
 
               // Retry with new token
               const newInit = {
@@ -664,7 +688,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 
       shouldRefresh: () => tokenManager.shouldRefresh(),
 
-      refreshToken: () => tokenManager.refreshAccessToken(client),
+      refreshToken: () => tokenManager.refreshAccessToken(finalConfig),
     },
 
     // Audit and compliance methods
@@ -812,13 +836,13 @@ export const ApiHelpers = {
     }
 
     if (typeof error === "object" && error && "error" in error) {
-      const apiError = error as unknown;
-      if (apiError.error?.validation_errors?.length > 0) {
-        return apiError.error.validation_errors
-          .map((ve: unknown) => `${ve.field}: ${ve.message}`)
+      const apiError = error as ApiErrorObject;
+      if (apiError.error?.error?.validation_errors?.length && apiError.error.error.validation_errors.length > 0) {
+        return apiError.error.error.validation_errors
+          .map((ve) => `${ve.field}: ${ve.message}`)
           .join(", ");
       }
-      return apiError.message || "API error occurred";
+      return apiError.message || apiError.error?.message || "API error occurred";
     }
 
     return "An unexpected error occurred";
@@ -841,14 +865,15 @@ export const ApiHelpers = {
   // Check if error is authentication issue
   isAuthError: (error: unknown): boolean => {
     if (typeof error === "object" && error && "error" in error) {
-      const errorCode = (error as unknown).error?.code;
-      return [
+      const apiError = error as ApiErrorObject;
+      const errorCode = apiError.error?.error?.code;
+      return errorCode ? [
         "UNAUTHORIZED",
         "FORBIDDEN",
         "TOKEN_EXPIRED",
         "INVALID_CREDENTIALS",
         "SESSION_EXPIRED",
-      ].includes(errorCode);
+      ].includes(errorCode) : false;
     }
     return false;
   },
@@ -856,10 +881,10 @@ export const ApiHelpers = {
   // Check if error is validation issue
   isValidationError: (error: unknown): boolean => {
     if (typeof error === "object" && error && "error" in error) {
-      const apiError = error as unknown;
+      const apiError = error as ApiErrorObject;
       return (
-        apiError.error?.code === "VALIDATION_ERROR"
-        || apiError.error?.validation_errors?.length > 0
+        apiError.error?.error?.code === "VALIDATION_ERROR"
+        || (apiError.error?.error?.validation_errors?.length && apiError.error.error.validation_errors.length > 0) || false
       );
     }
     return false;
@@ -868,7 +893,8 @@ export const ApiHelpers = {
   // Check if error is rate limit issue
   isRateLimitError: (error: unknown): boolean => {
     if (typeof error === "object" && error && "error" in error) {
-      const errorCode = (error as unknown).error?.code;
+      const apiError = error as ApiErrorObject;
+      const errorCode = apiError.error?.error?.code;
       return errorCode === "RATE_LIMIT_EXCEEDED";
     }
     return false;

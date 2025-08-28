@@ -24,12 +24,12 @@ export interface AuthTokenData {
 
 export class AuthTokenManager {
   private static instance: AuthTokenManager;
-  private accessToken: string | null = undefined;
-  private refreshToken: string | null = undefined;
-  private expiresAt: number | null = undefined;
+  private accessToken: string | null = null;
+  private refreshToken: string | null = null;
+  private expiresAt: number | null = null;
   private tokenType = "Bearer";
   private isRefreshing = false;
-  private refreshPromise: Promise<boolean> | null = undefined;
+  private refreshPromise: Promise<boolean> | null = null;
   private readonly refreshCallbacks: ((success: boolean) => void)[] = [];
 
   // Storage keys
@@ -154,12 +154,12 @@ export class AuthTokenManager {
    */
   getAccessToken(): string | null {
     if (!(this.accessToken && this.expiresAt)) {
-      return;
+      return null;
     }
 
     // Check if token is expired
     if (this.isTokenExpired()) {
-      return;
+      return null;
     }
 
     return this.accessToken;
@@ -185,7 +185,7 @@ export class AuthTokenManager {
   getAuthorizationHeader(): string | null {
     const token = this.getAccessToken();
     if (!token) {
-      return;
+      return null;
     }
     return `${this.tokenType} ${token}`;
   } /**
@@ -254,7 +254,7 @@ export class AuthTokenManager {
       return result;
     } finally {
       this.isRefreshing = false;
-      this.refreshPromise = undefined;
+      this.refreshPromise = null;
     }
   }
 
@@ -313,9 +313,9 @@ export class AuthTokenManager {
    * Clear all tokens and storage (logout)
    */
   clearTokens(): void {
-    this.accessToken = undefined;
-    this.refreshToken = undefined;
-    this.expiresAt = undefined;
+    this.accessToken = null;
+    this.refreshToken = null;
+    this.expiresAt = null;
     this.tokenType = "Bearer";
     this.clearStorage();
   }
@@ -340,7 +340,7 @@ export class AuthTokenManager {
     }
 
     // No valid token available
-    return;
+    return null;
   } /**
    * Get authorization header for API requests with automatic refresh
    */
@@ -348,7 +348,7 @@ export class AuthTokenManager {
   async getAuthorizationHeaderWithRefresh(): Promise<string | null> {
     const token = await this.getValidToken();
     if (!token) {
-      return;
+      return null;
     }
     return `${this.tokenType} ${token}`;
   }
@@ -358,7 +358,7 @@ export class AuthTokenManager {
    */
   getTokenData(): AuthTokenData | null {
     if (!(this.accessToken && this.refreshToken && this.expiresAt)) {
-      return;
+      return null;
     }
 
     return {

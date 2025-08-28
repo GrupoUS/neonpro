@@ -63,7 +63,7 @@ const defaultMultiLayerConfig: MultiLayerCacheConfig = {
 };
 
 // Legacy CacheConfig for backward compatibility
-const defaultConfig: CacheConfig = {
+export const defaultConfig: CacheConfig = {
   layers: [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.SUPABASE, CacheLayer.AI_CONTEXT],
   ttl: {
     [CacheLayer.BROWSER]: 5 * 60 * 1000, // 5 minutes

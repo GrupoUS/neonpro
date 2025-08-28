@@ -43,12 +43,12 @@ export class MultiLayerCacheManager {
   };
 
   // Hit rate targets for each layer
-  private readonly hitRateTargets = {
-    [CacheLayer.BROWSER]: 90, // >90% hit rate
-    [CacheLayer.EDGE]: 85, // >85% hit rate
-    [CacheLayer.SUPABASE]: 80, // >80% hit rate
-    [CacheLayer.AI_CONTEXT]: 95, // >95% hit rate
-  };
+  // private readonly hitRateTargets = {
+  //   [CacheLayer.BROWSER]: 90, // >90% hit rate
+  //   [CacheLayer.EDGE]: 85, // >85% hit rate
+  //   [CacheLayer.SUPABASE]: 80, // >80% hit rate
+  //   [CacheLayer.AI_CONTEXT]: 95, // >95% hit rate
+  // };
 
   constructor(config: MultiLayerCacheConfig) {
     const defaultBrowserConfig: BrowserCacheConfig = {
@@ -107,6 +107,11 @@ export class MultiLayerCacheManager {
       tags?: string[];
     },
   ): Promise<T | null> {
+    // Log healthcare data access if needed
+    if (options?.healthcareData) {
+      console.debug('Healthcare data cache access for key:', key);
+    }
+    
     // Try each layer in order
     for (const layer of layers) {
       try {
@@ -380,16 +385,21 @@ export class MultiLayerCacheManager {
     },
   ): Promise<void> {
     const key = `ai:conversation:${userId}:${sessionId}`;
+    const aiMetadata: any = {
+      contextType: "conversation",
+      importance: metadata?.importance || "medium",
+      userId,
+      sessionId,
+      lastUsed: metadata?.lastUsed || new Date(),
+      accessFrequency: 1,
+    };
+    
+    if (metadata?.topic) {
+      aiMetadata.topic = metadata.topic;
+    }
+    
     await this.set(key, conversation, [CacheLayer.AI_CONTEXT], {
-      aiContextMetadata: {
-        contextType: "conversation",
-        importance: metadata?.importance || "medium",
-        userId,
-        sessionId,
-        topic: metadata?.topic,
-        lastUsed: metadata?.lastUsed || new Date(),
-        accessFrequency: 1,
-      },
+      aiContextMetadata: aiMetadata,
     });
   }
 
@@ -406,7 +416,10 @@ export class MultiLayerCacheManager {
     entries: { key: string; value: T; ttl?: number; }[],
     layers?: CacheLayer[],
   ): Promise<void> {
-    const promises = entries.map(({ key, value, ttl }) => this.set(key, value, layers, { ttl }));
+    const promises = entries.map(({ key, value, ttl }) => {
+      const options = ttl !== undefined ? { ttl } : undefined;
+      return this.set(key, value, layers, options);
+    });
     await Promise.allSettled(promises);
   }
 

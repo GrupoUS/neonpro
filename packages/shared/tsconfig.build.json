@@ -13,8 +13,18 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "react"
+    "jsxImportSource": "react",
+    "composite": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "useUnknownInCatchVariables": true,
+    "allowUnreachableCode": false,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "references": [{ "path": "../database" }, { "path": "../types" }],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]
 }

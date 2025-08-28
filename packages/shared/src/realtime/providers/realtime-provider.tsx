@@ -39,8 +39,8 @@ export function RealtimeProvider({
   const [manager, setManager] = useState<SupabaseRealtimeManager | null>();
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>({
     isConnected: false,
-    connectionId: undefined,
-    lastConnected: undefined,
+    connectionId: null,
+    lastConnected: null,
     totalRetries: 0,
     activeChannels: 0,
     healthScore: 0,

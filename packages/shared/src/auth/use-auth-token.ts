@@ -42,10 +42,10 @@ export interface AuthState {
  */
 export function useAuthToken() {
   const [authState, setAuthState] = useState<AuthState>({
-    user: undefined,
+    user: null,
     isAuthenticated: false,
     isLoading: true,
-    error: undefined,
+    error: null,
   });
 
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -68,7 +68,7 @@ export function useAuthToken() {
       const token = await authTokenManager.getValidToken();
 
       if (!token) {
-        return;
+        return null;
       }
 
       const response = await fetch("/api/v1/auth/me", {
@@ -82,7 +82,7 @@ export function useAuthToken() {
         if (response.status === 401) {
           // Token inválido, limpar
           authTokenManager.clearTokens();
-          return;
+          return null;
         }
         throw new Error(`Failed to load user: ${response.status}`);
       }
@@ -93,9 +93,9 @@ export function useAuthToken() {
         return data.data as AuthUser;
       }
 
-      return;
+      return null;
     } catch {
-      return;
+      return null;
     }
   }, []);
 
@@ -127,7 +127,7 @@ export function useAuthToken() {
             } else {
               // Refresh falhou, fazer logout
               updateAuthState({
-                user: undefined,
+                user: null,
                 isAuthenticated: false,
                 error: "Sessão expirada. Faça login novamente.",
               });
@@ -142,7 +142,7 @@ export function useAuthToken() {
    * Inicializa estado de autenticação
    */
   const initializeAuth = useCallback(async () => {
-    updateAuthState({ isLoading: true, error: undefined });
+    updateAuthState({ isLoading: true, error: null });
 
     try {
       // Verifica se há tokens válidos
@@ -165,13 +165,13 @@ export function useAuthToken() {
       // Não há tokens válidos ou usuário não encontrado
       authTokenManager.clearTokens();
       updateAuthState({
-        user: undefined,
+        user: null,
         isAuthenticated: false,
         isLoading: false,
       });
     } catch {
       updateAuthState({
-        user: undefined,
+        user: null,
         isAuthenticated: false,
         isLoading: false,
         error: "Erro ao carregar autenticação",
@@ -186,7 +186,7 @@ export function useAuthToken() {
     async (
       credentials: LoginCredentials,
     ): Promise<{ success: boolean; error?: string; }> => {
-      updateAuthState({ isLoading: true, error: undefined });
+      updateAuthState({ isLoading: true, error: null });
 
       try {
         const response = await fetch("/api/v1/auth/login", {
@@ -217,7 +217,7 @@ export function useAuthToken() {
             user: data.data.user,
             isAuthenticated: true,
             isLoading: false,
-            error: undefined,
+            error: null,
           });
 
           // Agendar refresh automático
@@ -249,7 +249,7 @@ export function useAuthToken() {
       // Limpar timeout de refresh
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
-        refreshTimeoutRef.current = undefined;
+        refreshTimeoutRef.current = null;
       }
 
       // Tentar fazer logout no servidor
@@ -275,19 +275,19 @@ export function useAuthToken() {
 
       // Atualizar estado
       updateAuthState({
-        user: undefined,
+        user: null,
         isAuthenticated: false,
         isLoading: false,
-        error: undefined,
+        error: null,
       });
     } catch {
       // Sempre limpar estado local mesmo se houver erro
       authTokenManager.clearTokens();
       updateAuthState({
-        user: undefined,
+        user: null,
         isAuthenticated: false,
         isLoading: false,
-        error: undefined,
+        error: null,
       });
     }
   }, [updateAuthState]);

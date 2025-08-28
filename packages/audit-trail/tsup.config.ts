@@ -8,7 +8,7 @@ export default defineConfig({
     compliance: "src/compliance/index.ts",
   },
   format: ["cjs", "esm"],
-  dts: true,
+  dts: false, // Disable DTS generation to resolve project file issues
   splitting: false,
   sourcemap: true,
   clean: true,

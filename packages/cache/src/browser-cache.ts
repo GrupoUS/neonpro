@@ -229,10 +229,10 @@ export class BrowserCacheLayer implements CacheOperation {
     return value;
   }
 
-  private decompress<T>(value: T): T {
-    // Decompression placeholder
-    return value;
-  }
+  // private decompress<T>(value: T): T {
+  //   // Decompression placeholder
+  //   return value;
+  // }
 
   private evictLRU(): void {
     let oldestKey = "";

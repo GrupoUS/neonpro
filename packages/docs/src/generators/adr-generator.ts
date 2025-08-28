@@ -3,7 +3,7 @@
  * Automated generation and management of Architecture Decision Records for NeonPro
  */
 
-import chalk from "chalk";
+
 import inquirer from "inquirer";
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -351,14 +351,19 @@ export class ADRGenerator {
       const author = this.extractAuthor(content) ?? "Unknown";
       const supersededBy = this.extractSupersededBy(content);
 
-      return {
+      const metadata: ADRMetadata = {
         number,
         title,
         status,
         author: author || "Unknown",
         date,
-        supersededBy: supersededBy || undefined,
       };
+      
+      if (supersededBy) {
+        metadata.supersededBy = supersededBy;
+      }
+      
+      return metadata;
     } catch {
       return null;
     }
@@ -500,31 +505,7 @@ export class ADRGenerator {
     return filename;
   }
 
-  /**
-   * Get color for status display
-   */
-  private getStatusColor(status: string): (text: string) => string {
-    switch (status) {
-      case "Accepted": {
-        return chalk.green;
-      }
-      case "Proposed": {
-        return chalk.yellow;
-      }
-      case "Rejected": {
-        return chalk.red;
-      }
-      case "Deprecated": {
-        return chalk.gray;
-      }
-      case "Superseded": {
-        return chalk.magenta;
-      }
-      default: {
-        return chalk.white;
-      }
-    }
-  }
+
 
   /**
    * Default template if template.md doesn't exist

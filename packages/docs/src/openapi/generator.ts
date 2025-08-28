@@ -66,7 +66,7 @@ export class OpenAPIGenerator {
       await this.writeOutputFiles(spec);
 
       this.spinner.succeed("OpenAPI documentation generated successfully!");
-      this.logSummary(spec);
+      this.logSummary();
     } catch (error) {
       this.spinner.fail(`Failed to generate OpenAPI documentation: ${error}`);
       throw error;
@@ -368,7 +368,7 @@ export class OpenAPIGenerator {
   /**
    * Log generation summary
    */
-  private logSummary(spec: unknown): void {
+  private logSummary(): void {
     if (this.config.healthcare) {
     }
   }
