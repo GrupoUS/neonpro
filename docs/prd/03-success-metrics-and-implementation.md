@@ -192,13 +192,22 @@
 
 ## 10. Implementation Roadmap
 
-### 10.1 Project Timeline
+### 10.1 Prioritization Matrix (MVP Focus)
+
+| Feature | Impact | Complexity | ROI | Priority |
+|---------|--------|------------|-----|----------|
+| Engine Anti-No-Show | 🔥 Critical | Medium | $50k/month | P0 |
+| Universal AI Chat | 🔥 Critical | High | $30k/month | P0 |
+| Dashboard Unificado | 🔥 Critical | Low | $25k/month | P0 |
+| Sistema Agendamento | High | Medium | $20k/month | P1 |
+
+### 10.2 Project Timeline
 
 - **Total duration**: 12 meses (3 fases de 4 meses cada)
 - **Key milestones**: MVP (Mês 3), Beta Launch (Mês 6), Public Launch (Mês 8), 100+ Clientes (Mês 12)
 - **Critical path**: Infraestrutura → IA Core → Integrações → Lançamento → Escala
 
-### 10.2 Development Phases
+### 10.3 Development Phases
 
 **Phase 1: Foundation** (Meses 1-3)
 

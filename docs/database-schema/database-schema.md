@@ -1,6 +1,51 @@
-# Database Schema Documentation Guide - Version: 1.0.0
+# NeonPro Database Schema Documentation - Version: 2.0.0
 
-This file contains instructions for organizing and maintaining database schema documentation in a clear and concise way.
+## Overview
+
+This documentation covers the NeonPro AI Healthcare Platform database schema, built on **Supabase PostgreSQL 17** with advanced healthcare compliance features. The database supports over 200 tables organized around core business domains: patient management, AI-powered features, compliance tracking, and financial operations.
+
+### Key Features
+- **LGPD/ANVISA/CFM Compliance**: Built-in regulatory compliance for Brazilian healthcare
+- **Row Level Security (RLS)**: Constitutional security patterns for healthcare data
+- **AI Integration**: Native support for Vercel AI SDK and healthcare AI features  
+- **Audit Trail**: Immutable logging for all medical data operations
+- **Multi-tenant Architecture**: Secure clinic isolation and data segregation
+
+### Database Architecture
+- **Engine**: PostgreSQL 17.4.1.057 on Supabase
+- **Region**: South America East (sa-east-1) 
+- **Extensions**: pgvector for AI embeddings, various healthcare-specific extensions
+- **Performance**: Optimized for <200ms critical healthcare operations
+
+## Supabase Integration Guidelines
+
+### Client Configuration (Following .ruler/supabase.md)
+
+- **Centralized Setup**: All Supabase clients in `lib/supabase/` (client, server-rls, admin)
+- **Environment Variables**: Store credentials securely in `.env.local`
+- **RLS First**: Use Row Level Security for all healthcare data access
+- **Service Role Caution**: Admin client usage requires explicit validation
+- **MCP Integration**: Use Supabase MCP tools for database operations
+
+### Healthcare Security Patterns
+
+```typescript
+// Client factory for RLS-enabled operations
+const supabase = createClient(); // Uses anon key + RLS
+
+// Service role for admin operations (use carefully)
+const adminClient = createAdminClient(); // Bypasses RLS
+
+// Example healthcare RLS policy
+CREATE POLICY "professionals_access_own_patients" ON patients
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM professional_patient_access 
+      WHERE patient_id = patients.id 
+      AND professional_id = auth.uid()
+    )
+  );
+```
 
 ## Database Schema Instructions
 
@@ -19,13 +64,36 @@ docs/database-schema/
 └── enums.md
 ```
 
+### Table Organization by Domain
+
+The NeonPro database contains **200+ tables** organized into logical domains:
+
+#### Core Business Tables (Priority 1)
+- **patients** - Patient records and demographics
+- **appointments** - Appointment scheduling and management  
+- **professionals** - Healthcare professionals and staff
+- **clinics** - Clinic information and settings
+- **services** - Medical services and procedures
+
+#### AI & Intelligence Tables (Priority 2)  
+- **ai_chat_sessions** - AI chat conversation sessions
+- **ai_chat_messages** - Individual AI chat messages
+- **ai_no_show_predictions** - No-show prediction analytics
+- **ai_performance_metrics** - AI system performance tracking
+
+#### Compliance & Audit Tables (Priority 3)
+- **compliance_tracking** - LGPD/ANVISA compliance monitoring
+- **audit_logs** - System audit trail
+- **medical_records** - Protected medical information
+- **consent_records** - Patient consent management
+
 ### Required Files
 
 #### 1. Tables Folder (`tables/`)
 
-- **Purpose**: Each table gets its own file
-- **Naming**: Use table name as filename (e.g., `users.md`, `events.md`)
-- **Content**: Schema, relationships, and RLS policies for that specific table
+- **Purpose**: Each core table gets its own file (YAGNI approach - only document essential tables)
+- **Naming**: Use exact table name as filename (e.g., `patients.md`, `appointments.md`)
+- **Content**: Schema, relationships, RLS policies, and healthcare compliance notes
 
 #### 2. Functions (`functions.md`)
 
@@ -49,40 +117,57 @@ docs/database-schema/
 
 ### How to Document Each Component
 
-#### Table Documentation Template
+#### Healthcare Table Documentation Template
 
 ````markdown
 # Table Name
 
 ## Schema
 
-| Column | Type | Constraints | Default | Description        |
-| ------ | ---- | ----------- | ------- | ------------------ |
-| id     | uuid | PRIMARY KEY | -       | Primary identifier |
-| name   | text | NOT NULL    | -       | Display name       |
+| Column | Type | Constraints | Default | Description | LGPD Classification |
+| ------ | ---- | ----------- | ------- | ----------- | ------------------ |
+| id     | uuid | PRIMARY KEY | gen_random_uuid() | Primary identifier | Public |
+| patient_id | uuid | FK, NOT NULL | - | Patient reference | Personal Data |
+| created_at | timestamptz | NOT NULL | NOW() | Record creation | Metadata |
+
+## Healthcare Compliance
+
+**LGPD Status**: ✅ **Compliant** - Contains personal/sensitive data
+**ANVISA Requirements**: Medical device software compliance (Class IIa)
+**Data Retention**: 7 years (Brazilian medical records law)
 
 ## Relationships
 
-- `other_table.table_id` → `table_name.id`
+- `patients.id` ← `table_name.patient_id` (CASCADE DELETE for LGPD Right to Erasure)
+- `professionals.id` ← `table_name.professional_id` (RESTRICT - preserve audit trail)
 
 ## Row Level Security (RLS)
 
-**Status**: ✅/❌ **Enabled/Disabled** (Risk level if disabled)
+**Status**: ✅ **Enabled** - Healthcare data protection mandatory
 
 ### Current Policies
 
-- Policy name and description (if RLS is enabled)
-
-### Required Policies (if RLS is disabled)
-
 ```sql
--- Enable RLS
-ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;
+-- Professionals access only their patients
+CREATE POLICY "professionals_own_patients" ON table_name
+  FOR ALL USING (
+    professional_id = auth.uid() OR
+    EXISTS (SELECT 1 FROM professional_patient_access 
+            WHERE patient_id = table_name.patient_id 
+            AND professional_id = auth.uid())
+  );
 
--- Create policies
-CREATE POLICY "policy_name" ON table_name
-  FOR operation USING (condition);
+-- Patients access own data only  
+CREATE POLICY "patients_own_data" ON table_name
+  FOR SELECT USING (patient_id = auth.uid());
 ```
+
+### Audit Requirements
+
+**Triggers**: ✅ Audit trail enabled for all CUD operations
+**Encryption**: ✅ AES-256 for sensitive fields
+**Anonymization**: ✅ LGPD compliance functions available
+
 ````
 
 ````
@@ -123,54 +208,74 @@ CREATE TRIGGER trigger_name
 ````
 
 ````
-### Documentation Rules
+### Healthcare Documentation Rules
 
-1. **Keep it Simple**: Only document what currently exists
-2. **No Speculation**: Don't include recommendations or future plans
-3. **Current State**: Focus on the actual database state
-4. **Concise Format**: Use tables and lists, avoid long paragraphs
-5. **Consistent Structure**: Follow the templates exactly
+1. **LGPD Compliance First**: Always classify data types (Public, Personal, Sensitive, Medical)
+2. **RLS Mandatory**: All healthcare tables MUST have RLS enabled and documented
+3. **Audit Trail Required**: Document audit triggers and compliance logging
+4. **Current State Only**: Document actual database implementation, no speculation
+5. **Security Focus**: Emphasize data protection, encryption, and access controls
+6. **Consistent Templates**: Follow healthcare-specific templates exactly
+7. **Professional Access**: Document how healthcare professionals access patient data
+8. **Data Retention**: Specify Brazilian healthcare data retention requirements
 
-### Best Practices
+### NeonPro Healthcare Best Practices
 
-1. **Update Documentation First**: Before making database changes, update the relevant documentation file
-2. **Test Changes**: Always test schema changes in development before applying to production
-3. **Version Control**: Commit documentation changes with database migrations
-4. **Review Security**: Check RLS policies when adding new tables or modifying existing ones
-5. **Keep Current**: Remove documentation for deleted tables/functions immediately
+1. **Compliance First**: Ensure all changes meet LGPD/ANVISA/CFM requirements before implementation
+2. **RLS by Design**: Every new table with healthcare data MUST have RLS policies from creation
+3. **Audit Everything**: All patient data operations require audit trail triggers
+4. **Test in Staging**: Healthcare changes must be tested in staging environment first  
+5. **Document Security**: Always document encryption, access patterns, and data classification
+6. **Migration Safety**: Use Supabase migrations for all schema changes with rollback plans
+7. **Professional Validation**: Healthcare professionals must validate data access patterns
+8. **Performance Monitoring**: Healthcare operations must maintain <200ms response times
+9. **Backup Verification**: Verify backup integrity for critical healthcare data
+10. **Incident Response**: Document procedures for healthcare data security incidents
 
 ### Example Documentation
 
-#### Example Table File (`tables/users.md`)
+#### Example Healthcare Table File (`tables/patients.md`)
 ```markdown
-# Users Table
+# Patients Table
 
 ## Schema
-| Column | Type | Constraints | Default | Description |
-|--------|------|-------------|---------|-------------|
-| id | text | PRIMARY KEY, NOT NULL | - | Unique user identifier |
-| email | text | NOT NULL, UNIQUE | - | User email address |
-| name | text | NULL | - | User display name |
-| created_at | timestamp | NOT NULL | CURRENT_TIMESTAMP | Record creation time |
+| Column | Type | Constraints | Default | Description | LGPD Classification |
+|--------|------|-------------|---------|-------------|-------------------|
+| id | uuid | PRIMARY KEY, NOT NULL | gen_random_uuid() | Unique patient identifier | Public |
+| cpf | text | UNIQUE, ENCRYPTED | - | Brazilian CPF (encrypted) | Sensitive Personal Data |
+| name | text | NOT NULL, ENCRYPTED | - | Patient full name (encrypted) | Personal Data |
+| birth_date | date | ENCRYPTED | - | Date of birth (encrypted) | Personal Data |
+| created_at | timestamptz | NOT NULL | NOW() | Record creation time | Metadata |
+| clinic_id | uuid | FK, NOT NULL | - | Clinic reference | Organizational Data |
+
+## Healthcare Compliance
+**LGPD Status**: ✅ **Compliant** - Contains sensitive personal and health data
+**ANVISA Requirements**: Patient data for medical device software (Class IIa)
+**Data Retention**: 7 years minimum (Brazilian medical records law)
 
 ## Relationships
-- `accounts.user_id` → `users.id` (CASCADE DELETE)
-- `events.organizer_id` → `users.id`
+- `clinics.id` ← `patients.clinic_id` (RESTRICT - preserve records)
+- `appointments.patient_id` → `patients.id` (CASCADE DELETE for LGPD erasure)
 
 ## Row Level Security (RLS)
-**Status**: ✅ **Enabled** (overly permissive - allows all operations)
+**Status**: ✅ **Enabled** - Healthcare data protection mandatory
 
 ### Current Policies
-- "Allow all access to users" - Allows all operations for public role
-
-### Recommended Policies
 ```sql
--- Drop overly permissive policy
-DROP POLICY "Allow all access to users" ON users;
+-- Professionals access patients in their clinics only
+CREATE POLICY "professionals_clinic_patients" ON patients
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM professionals p 
+      WHERE p.user_id = auth.uid() 
+      AND p.clinic_id = patients.clinic_id
+      AND p.active = true
+    )
+  );
 
--- Users can only access their own profile
-CREATE POLICY "Users manage own profile" ON users
-  FOR ALL USING (auth.uid()::text = id);
+-- Patients access own data only
+CREATE POLICY "patients_own_data" ON patients
+  FOR SELECT USING (auth.uid()::text = id);
 ````
 
 ````
@@ -213,5 +318,30 @@ CREATE TRIGGER update_user_timestamp
 ````
 
 ```
-This structure keeps documentation simple, current, and easy to maintain.
-```
+
+## NeonPro Supabase Extensions & Features
+
+### Enabled Extensions
+- **pgvector**: Vector similarity search for AI embeddings
+- **uuid-ossp**: UUID generation for primary keys
+- **pgcrypto**: Encryption functions for sensitive healthcare data
+- **pg_audit**: Audit logging for compliance requirements
+
+### Supabase Features in Use
+- **Row Level Security**: Constitutional security for all healthcare data
+- **Real-time Subscriptions**: Live updates for appointment scheduling
+- **Edge Functions**: AI processing with healthcare compliance
+- **Database Triggers**: Automated audit trail and compliance logging
+- **Auth Integration**: Professional authentication with CFM validation
+
+### Performance Optimizations
+- **Connection Pooling**: PgBouncer for high-concurrency healthcare operations
+- **Read Replicas**: Geographic distribution for Brazilian healthcare market
+- **Prepared Statements**: Optimized queries for healthcare workflows
+- **Index Strategy**: Healthcare-specific indexing for <200ms response times
+
+---
+
+> **Healthcare Compliance Note**: This documentation is maintained according to Brazilian healthcare regulations (LGPD, ANVISA, CFM). All schema changes must preserve audit trails and comply with medical data protection requirements.
+
+> **Last Updated**: August 28, 2025 - NeonPro Database Schema v2.0.0

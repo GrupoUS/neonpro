@@ -17,28 +17,28 @@ following the BMAD methodology.
 - **Gate Decision Files**: `{epic}.{story}-{slug}.yml`
 - **Historical Gate Records**: Immutable audit trail of all quality decisions
 
-## 🏥 Healthcare-Specific QA Standards
+## 🏥 Advanced Aesthetic-Specific QA Standards
 
 ### Mandatory Validations
 
-- **Patient Data Integrity**: All AI features must preserve existing healthcare data
+- **Patient Data Integrity**: All AI features must preserve existing advanced aesthetic data
 - **LGPD Compliance**: Privacy protection for AI processing of patient information
-- **ANVISA Standards**: Medical device compliance for AI assistance features
-- **CFM Ethics**: Professional medical practice guidelines for AI integration
+- **ANVISA Standards**: Advanced aesthetic device compliance for AI assistance features
+- **CFM Ethics**: Professional advanced aesthetic practice guidelines for AI integration
 
 ### Performance Requirements
 
-- **Dashboard Load Time**: <2s maintained for healthcare professional workflows
+- **Dashboard Load Time**: <2s maintained for advanced aesthetic professional workflows
 - **AI Response Time**: <500ms for chat, <200ms for predictions
-- **Real-time Updates**: <100ms latency for critical healthcare notifications
-- **Mobile Access**: <3s for mobile healthcare professional workflows
+- **Real-time Updates**: <100ms latency for critical advanced aesthetic notifications
+- **Mobile Access**: <3s for mobile advanced aesthetic professional workflows
 
 ## 🎯 BMAD Brownfield QA Workflow
 
 ### Stage 1: Pre-Development Risk Assessment
 
 ```bash
-@qa *risk "{epic}.{story-name}"    # Risk analysis with healthcare context
+@qa *risk "{epic}.{story-name}"    # Risk analysis with advanced aesthetic context
 @qa *design "{epic}.{story-name}"  # Test strategy for brownfield integration
 ```
 
@@ -60,7 +60,7 @@ following the BMAD methodology.
 
 ### PASS (Risk Score ≤3)
 
-- All healthcare workflows tested and passing
+- All advanced aesthetic workflows tested and passing
 - Performance baseline maintained (<2s dashboard load)
 - Compliance requirements validated (LGPD/ANVISA/CFM)
 - Rollback procedures tested and documented
@@ -74,7 +74,7 @@ following the BMAD methodology.
 
 ### FAIL (Risk Score 7-9)
 
-- Healthcare workflow regression detected
+- Advanced aesthetic workflow regression detected
 - Critical performance degradation below requirements
 - Compliance violation introduced
 - Missing essential rollback capabilities
@@ -86,25 +86,25 @@ following the BMAD methodology.
 - Monitoring and mitigation plans established
 - Temporary technical debt with clear remediation timeline
 
-## 🚨 Critical Healthcare Safeguards
+## 🚨 Critical Advanced Aesthetic Safeguards
 
 ### Before Any AI Implementation
 
-1. **Baseline Documentation**: Current healthcare system performance metrics
+1. **Baseline Documentation**: Current advanced aesthetic system performance metrics
 2. **Rollback Preparation**: Emergency procedures to restore existing functionality
 3. **Data Protection**: Patient data safety validation during AI integration
 4. **Compliance Verification**: Regulatory requirements confirmation
 
 ### During AI Development
 
-1. **Continuous Monitoring**: Real-time healthcare system health validation
+1. **Continuous Monitoring**: Real-time advanced aesthetic system health validation
 2. **Incremental Testing**: Each AI component integration tested individually
-3. **Performance Tracking**: Healthcare workflow speed and reliability monitoring
+3. **Performance Tracking**: Advanced aesthetic workflow speed and reliability monitoring
 4. **Compliance Checking**: Ongoing LGPD/ANVISA/CFM requirement validation
 
 ### Post-Implementation Validation
 
-1. **Healthcare Workflow Verification**: Complete end-to-end testing
+1. **Advanced Aesthetic Workflow Verification**: Complete end-to-end testing
 2. **Performance Confirmation**: Baseline requirements still met
 3. **Compliance Certification**: Final regulatory validation
 4. **Rollback Testing**: Emergency procedures verified functional
@@ -114,32 +114,32 @@ following the BMAD methodology.
 ### Assessment Creation
 
 1. Use appropriate template from `.github/commands/BMad/agents/qa/templates/`
-2. Fill in healthcare-specific context and risk factors
-3. Apply healthcare criticality multipliers for accurate risk scoring
+2. Fill in advanced aesthetic-specific context and risk factors
+3. Apply advanced aesthetic criticality multipliers for accurate risk scoring
 4. Document all LGPD/ANVISA/CFM compliance considerations
 
 ### Gate Decision Process
 
 1. Complete all required assessments for the story complexity level
-2. Document comprehensive review findings with healthcare focus
-3. Apply healthcare-specific quality gate criteria
+2. Document comprehensive review findings with advanced aesthetic focus
+3. Apply advanced aesthetic-specific quality gate criteria
 4. Ensure rollback procedures are tested and documented
 
 ### Documentation Standards
 
-- **Accuracy**: All healthcare business rules correctly understood
+- **Accuracy**: All advanced aesthetic business rules correctly understood
 - **Compliance**: LGPD/ANVISA/CFM requirements precisely interpreted
-- **Risk Calibration**: Scoring reflects true healthcare operational criticality
+- **Risk Calibration**: Scoring reflects true advanced aesthetic operational criticality
 - **Actionability**: Clear next steps for issue resolution provided
 
 ## 🔄 Quality Gate Evolution
 
 ### Continuous Improvement
 
-- Track which assessments prevent the most healthcare workflow issues
-- Incorporate medical professional feedback into quality criteria
+- Track which assessments prevent the most advanced aesthetic workflow issues
+- Incorporate advanced aesthetic medical professional feedback into quality criteria
 - Update templates with regulatory requirement changes
-- Refine scoring based on actual healthcare impact data
+- Refine scoring based on actual advanced aesthetic impact data
 
 ### Template Management
 
@@ -151,5 +151,5 @@ following the BMAD methodology.
 ---
 
 **Key Principle**: This QA documentation structure ensures NeonPro's AI transformation never
-compromises existing healthcare functionality while enabling revolutionary improvements in patient
-care and medical practice efficiency.
+compromises existing advanced aesthetic functionality while enabling revolutionary improvements in patient
+care and advanced aesthetic medical practice efficiency.

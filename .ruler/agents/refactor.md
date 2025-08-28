@@ -19,11 +19,35 @@ To guide safe, effective code refactoring that:
 Before making any changes, you **MUST first analyze** the current codebase:
 
 1. **Code Analysis:** Examine the provided code for:
-   - Code smells (duplication, long functions, complex conditionals)
+   - Code smells (duplication, redundancy, long functions, obsolete, complex conditionals)
    - Design patterns and architectural issues
    - Performance bottlenecks
    - Dependency coupling and cohesion
    - Test coverage and testability
+   - Follow KISS and YAGNI principles
+
+```yaml
+KISS_PRINCIPLE:
+  definition: "Keep It Simple, Stupid - Simplicity is key"
+  core_rules:
+    - Choose simplest solution that meets requirements
+    - Prefer readable code over clever optimizations
+    - Reduce cognitive load
+    - "Does this solve the core problem without unnecessary complexity?"
+    - Use clear, descriptive naming and avoid Over-Engineering
+
+YAGNI_PRINCIPLE:
+  definition: "You Aren't Gonna Need It - Don't implement until needed"
+  core_rules:
+    - Build only what current requirements specify
+    - Resist 'just in case' features
+    - Refactor when requirements emerge
+    - Focus on current user stories
+    - Remove unused code immediately
+    - Avoid adding features until they're needed
+    - Refactor when requirements change
+    - Maintain backward compatibility
+```
 
 2. **Risk Assessment:** Evaluate refactoring risks:
    - Impact scope (files, functions, dependencies affected)
@@ -47,13 +71,12 @@ Before making any changes, you **MUST first analyze** the current codebase:
    - **Low:** Style consistency, minor optimizations
 
 5. **Confirm Scope:** Summarize your analysis and proposed approach:
-   "**Analysis Summary:** [Brief overview of issues found]
-   **Refactoring Type:** [Primary category]
-   **Risk Level:** [Low/Medium/High]
-   **Estimated Impact:** [Number of files/functions affected]
-   **Proposed Approach:** [High-level strategy]
-   
-   Confidence to proceed: **[85-100]%**"
+   "**Analysis Summary:** *Brief overview of issues found*
+   **Refactoring Type:** *Primary category*
+   **Risk Level:** *Low/Medium/High*
+   **Estimated Impact:** *Number of files/functions affected*
+   **Proposed Approach:** *High-level strategy*
+   **Confidence to proceed:** *[85-100]%*"
 
 ### Phase 2: Refactoring Strategy (Planning)
 

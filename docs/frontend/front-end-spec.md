@@ -90,9 +90,9 @@ interface AIPatientChatProps {
 
 - **Accessibility**: WCAG 2.1 AA+ compliant, screen reader optimized
 - **Mobile-First**: Touch-friendly 48px minimum targets, swipe gestures
-- **Language**: Portuguese-optimized with Brazilian healthcare terminology
+- **Language**: Portuguese-optimized with Brazilian advanced aesthetic terminology
 - **Privacy**: Clear LGPD consent flows, data usage transparency
-- **Emergency Mode**: Red alert styling for urgent medical questions
+- **Emergency Mode**: Red alert styling for urgent aesthetic medical questions
 
 **Key UI States:**
 
@@ -226,7 +226,7 @@ graph TD
 
 ### Enhanced Navigation Structure
 
-**Primary Navigation** (AI-Enhanced Healthcare):
+**Primary Navigation** (AI-Enhanced Advanced Aesthetic):
 
 ```
 [🚨 Emergency] | [👤 Patient Hub] | [🏥 Practice] | [📊 AI Analytics] | [🤖 AI Assistant] | [🔒 Status] | [🔍 Search]
@@ -381,7 +381,7 @@ graph TD
     U --> V[Schedule Treatment]
 ```
 
-**Critical Healthcare Flow Notes**:
+**Critical Advanced Aesthetic Flow Notes**:
 
 - **LGPD Compliance**: Every flow includes automated privacy compliance validation
 - **ANVISA Requirements**: Audit trails maintained for all clinical decisions
@@ -571,23 +571,23 @@ graph TD
 - **Response Time**: <2s for AI chat, <30s for complex queries
 - **Accuracy**: >90% for chat responses, >85% for no-show predictions
 - **Availability**: 99.9% uptime for AI services
-- **Language**: Portuguese-optimized with Brazilian healthcare terminology
+- **Language**: Portuguese-optimized with Brazilian advanced aesthetic terminology
 - **Privacy**: All AI interactions logged with LGPD compliance
 
 ---
 
-## Section 4: Wireframes & Mockups (Healthcare-Optimized)
+## Section 4: Wireframes & Mockups (Advanced Aesthetic-Optimized)
 
-### Primary Design Files (Enhanced Healthcare Structure)
+### Primary Design Files (Enhanced Advanced Aesthetic Structure)
 
-**Figma Workspace**: "NeonPro Healthcare UI/UX Specifications - Medical Grade"
+**Figma Workspace**: "NeonPro Advanced Aesthetic UI/UX Specifications - Medical Grade"
 
 ```
-NeonPro Healthcare UI/UX - Figma Workspace
-├── 00_Healthcare_Design_System
-│   ├── Medical_Color_Psychology
-│   ├── Typography_for_Clinical_Settings
-│   ├── Icon_Library_Medical_Universal
+NeonPro Advanced Aesthetic UI/UX - Figma Workspace
+├── 00_Advanced_Aesthetic_Design_System
+│   ├── Aesthetic_Medical_Color_Psychology
+│   ├── Typography_Aesthetic_Medical_Hierarchy
+│   ├── Icon_Library_Aesthetic_Medical_Universal
 │   └── Accessibility_Standards_WCAG_AA+
 ├── 01_Emergency_Critical_Path
 │   ├── Mobile_Emergency_Interface
@@ -611,7 +611,7 @@ NeonPro Healthcare UI/UX - Figma Workspace
     └── Screen_Reader_Optimized
 ```
 
-### Key Screen Layouts (Healthcare-Specific)
+### Key Screen Layouts (Advanced Aesthetic-Specific)
 
 #### 1. Mobile Emergency Interface (LIFE-CRITICAL PRIORITY)
 
@@ -619,7 +619,7 @@ NeonPro Healthcare UI/UX - Figma Workspace
 Elements**:
 
 - **Full-screen critical info display** with zero navigation distractions
-- **Color-coded medical alerts**: 🔴 Red (life-threatening), 🟠 Orange (medications), 🟡 Yellow
+- **Color-coded aesthetic medical alerts**: 🔴 Red (emergency), 🟠 Orange (medications), 🟡 Yellow
   (cautions)
 - **One-thumb operation**: All critical actions within thumb reach zone
 - **Emergency contact auto-dial**: Large call buttons integrated with emergency services
@@ -656,12 +656,12 @@ Elements**:
 
 ### Design System Approach: Brazilian Aesthetic Medicine Specialized Framework
 
-Building on shadcn/ui foundation with aesthetic medicine and Brazilian healthcare regulatory
+Building on shadcn/ui foundation with aesthetic medicine and Brazilian advanced aesthetic regulatory
 enhancements.
 
 ### Core Components (Aesthetic Medicine Specialized)
 
-#### Brazilian Aesthetic Medical Components
+#### Brazilian Advanced Aesthetic Medical Components
 
 **`AestheticTreatmentPlan`**
 
@@ -689,11 +689,11 @@ enhancements.
 - **Usage Guidelines**: Automatic face blurring, watermarking, biometric security, time-limited
   access
 
-#### Brazilian Healthcare Integration Components
+#### Brazilian Advanced Aesthetic Integration Components
 
 **`CFMValidationBadge`**
 
-- **Purpose**: Real-time Brazilian medical license (CFM) validation display
+- **Purpose**: Real-time Brazilian aesthetic medical license (CFM) validation display
 - **Variants**: Active-license, Renewal-pending, Specialization-verified, Ethics-compliant
 - **States**: Validated, Pending-verification, Expired, Suspended, Error
 - **Usage Guidelines**: Prominent credential display, automatic renewal alerts, patient
@@ -701,7 +701,7 @@ enhancements.
 
 **`ANSInsuranceProcessor`**
 
-- **Purpose**: Brazilian health insurance (ANS) system integration for aesthetic procedure coverage
+- **Purpose**: Brazilian health insurance (ANS) system integration for advanced aesthetic procedure coverage
 - **Variants**: Coverage-checker, Pre-authorization, Reimbursement-tracker, Out-of-network
 - **States**: Checking-coverage, Covered, Not-covered, Pre-auth-required, Processing-claim
 - **Usage Guidelines**: Clear coverage communication, alternative payment options, transparent
@@ -715,9 +715,9 @@ enhancements.
   /* Professional Trust & Sophistication */
   --aesthetic-primary: #2563eb; /* Professional trust blue */
   --aesthetic-secondary: #7c3aed; /* Aesthetic sophistication purple */
-  --aesthetic-accent: #06b6d4; /* Modern medical cyan */
+  --aesthetic-accent: #06b6d4; /* Modern aesthetic medical cyan */
 
-  /* Brazilian Healthcare Compliance */
+  /* Brazilian Advanced Aesthetic Compliance */
   --cfm-validated: #16a34a; /* CFM license valid */
   --cfm-pending: #d97706; /* CFM validation pending */
   --ans-covered: #2563eb; /* ANS insurance covered */
@@ -731,9 +731,9 @@ enhancements.
 
   /* Portuguese Typography Optimization */
   --font-portuguese-primary: "Inter", "Roboto", sans-serif;
-  --font-medical-data: "JetBrains Mono", monospace;
+  --font-aesthetic-medical-data: "JetBrains Mono", monospace;
   --text-patient-name-pt: 20px; /* Portuguese patient names */
-  --text-medical-pt: 18px; /* Portuguese medical content */
+  --text-aesthetic-medical-pt: 18px; /* Portuguese aesthetic medical content */
   --line-height-portuguese: 1.6; /* Optimal Portuguese readability */
 }
 ```
@@ -743,7 +743,7 @@ enhancements.
 ### Visual Identity: "Beleza Inteligente Brasileira" (Brazilian Intelligent Beauty)
 
 **Brand Philosophy**: Combining Brazilian natural beauty philosophy with AI-powered precision
-medicine, celebrating Brazilian aesthetic values while delivering world-class technology and medical
+medicine, celebrating Brazilian aesthetic values while delivering world-class technology and aesthetic medical
 excellence.
 
 ### Core Brand Pillars
@@ -774,8 +774,8 @@ excellence.
 | **Primary**   | #16a085  | Verde Brasilidade | Nature, growth, Brazilian heritage | Primary CTAs, brand elements, success states |
 | **Secondary** | #8e44ad  | Roxo Sofisticação | Luxury, transformation, premium    | Premium services, sophisticated features     |
 | **Accent**    | #f39c12  | Dourado Tropical  | Warmth, success, celebration       | Achievements, highlights, positive outcomes  |
-| **Trust**     | #2980b9  | Azul Confiança    | Security, professionalism, medical | Clinical information, trust indicators       |
-| **Wellness**  | #27ae60  | Verde Bem-Estar   | Health, balance, natural beauty    | Wellness features, holistic health           |
+| **Trust**     | #2980b9  | Azul Confiança    | Security, professionalism, aesthetic medical | Clinical information, trust indicators       |
+| **Wellness**  | #27ae60  | Verde Bem-Estar   | Health, balance, natural beauty    | Wellness features, holistic advanced aesthetic           |
 
 ### Typography (Portuguese-Optimized)
 
@@ -783,7 +783,7 @@ excellence.
 /* Brand Typography System */
 --font-brand-primary: "Montserrat", sans-serif; /* Brazilian-designed warmth */
 --font-brand-secondary: "Source Sans Pro", sans-serif; /* International readability */
---font-medical-data: "IBM Plex Mono", monospace; /* Technical precision with personality */
+--font-aesthetic-medical-data: "IBM Plex Mono", monospace; /* Technical precision with personality */
 
 /* Portuguese Language Optimization */
 --portuguese-text-scaling: 1.1; /* Account for longer Portuguese words */
@@ -813,38 +813,38 @@ excellence.
 
 ---
 
-## Section 7: Accessibility Requirements (Brazilian Healthcare Specialized)
+## Section 7: Accessibility Requirements (Brazilian Advanced Aesthetic Specialized)
 
 ### Compliance Target
 
-**Standard**: WCAG 2.1 AA+ with Brazilian healthcare-specific enhancements and aesthetic medicine
+**Standard**: WCAG 2.1 AA+ with Brazilian advanced aesthetic-specific enhancements and aesthetic medicine
 patient accommodations
 
-### Multi-Tier Brazilian Healthcare Accessibility Framework
+### Multi-Tier Brazilian Advanced Aesthetic Accessibility Framework
 
 #### Enhanced Key Requirements
 
 **Visual Accessibility (Aesthetic Medicine Context)**:
 
-- **Color contrast ratios**: 7:1 for critical medical information, 8:1 for post-procedure recovery
+- **Color contrast ratios**: 7:1 for critical aesthetic medical information, 8:1 for post-procedure recovery
   mode
-- **Text sizing**: 18px minimum for medical data, 24px for post-procedure impaired vision
+- **Text sizing**: 18px minimum for aesthetic medical data, 24px for post-procedure impaired vision
 - **Focus indicators**: High-contrast Verde Brasilidade (#16a085) outline
-- **Brazilian Portuguese optimization**: Screen reader pronunciation for aesthetic medical
+- **Brazilian Portuguese optimization**: Screen reader pronunciation for advanced aesthetic medical
   terminology
 
-**Motor Accessibility (Healthcare Professional + Patient)**:
+**Motor Accessibility (Advanced Aesthetic Professional + Patient)**:
 
-- **Touch targets**: 48px minimum (medical gloves), 56px for post-procedure swollen hands
-- **Keyboard navigation**: Complete system access with medical workflow-optimized tab order
+- **Touch targets**: 48px minimum (aesthetic medical gloves), 56px for post-procedure swollen hands
+- **Keyboard navigation**: Complete system access with advanced aesthetic workflow-optimized tab order
 - **Voice commands**: Portuguese voice navigation for hands-free sterile operation
 - **Post-procedure mode**: One-handed operation, gesture alternatives for bandaged patients
 
 **Cognitive Accessibility (Multi-Generational Brazilian)**:
 
-- **Simple Portuguese**: Plain language with medical term explanations
-- **Visual hierarchy**: Clear medical information prioritization for emergency scanning
-- **Error prevention**: Smart validation preventing impossible medical data entry
+- **Simple Portuguese**: Plain language with aesthetic medical term explanations
+- **Visual hierarchy**: Clear aesthetic medical information prioritization for emergency scanning
+- **Error prevention**: Smart validation preventing impossible aesthetic medical data entry
 - **Post-procedure support**: Simplified interface for medication-affected cognitive function
 
 **Regional Technology Accessibility (Socioeconomic Integration)**:
@@ -854,30 +854,30 @@ patient accommodations
 - **Tier 3 (Interior cities)**: Lightweight accessibility for limited connectivity
 - **Tier 4 (Rural/remote)**: SMS-based and voice-only accessibility options
 
-### Testing Strategy (Brazilian Healthcare Context)
+### Testing Strategy (Brazilian Advanced Aesthetic Context)
 
-- **Brazilian Portuguese screen reader testing**: NVDA, JAWS with BR-PT medical dictionary
+- **Brazilian Portuguese screen reader testing**: NVDA, JAWS with BR-PT aesthetic medical dictionary
 - **Regional user testing**: Each Brazilian region represented in accessibility testing
 - **Post-procedure simulation**: Testing with simulated visual/motor impairments
-- **Emergency scenario testing**: Medical emergency accessibility under stress conditions
+- **Emergency scenario testing**: Aesthetic medical emergency accessibility under stress conditions
 
 ---
 
-## Section 8: Responsiveness Strategy (Brazilian Healthcare Environment-Aware)
+## Section 8: Responsiveness Strategy (Brazilian Advanced Aesthetic Environment-Aware)
 
-### Enhanced Breakpoint Strategy (Medical Environment Context)
+### Enhanced Breakpoint Strategy (Advanced Aesthetic Medical Environment Context)
 
-| Breakpoint              | Min Width | Max Width | Target Devices              | Brazilian Healthcare Context             |
+| Breakpoint              | Min Width | Max Width | Target Devices              | Brazilian Advanced Aesthetic Context             |
 | ----------------------- | --------- | --------- | --------------------------- | ---------------------------------------- |
 | **Basic Mobile**        | 320px     | 480px     | Older Android, limited data | Rural/economic patients, offline-first   |
 | **Standard Mobile**     | 481px     | 767px     | Mid-range smartphones       | Urban patients, 4G coverage              |
-| **Clinical Tablet**     | 768px     | 1023px    | Medical tablets, bedside    | Healthcare professionals, voice-priority |
+| **Clinical Tablet**     | 768px     | 1023px    | Advanced aesthetic medical tablets, bedside    | Advanced aesthetic professionals, voice-priority |
 | **Desktop Workstation** | 1024px    | 1439px    | Clinic computers            | Administrative tasks, multi-patient      |
 | **Specialist Display**  | 1440px    | -         | Large monitors, imaging     | Premium clinics, advanced analytics      |
 
-### Enhanced Adaptation Patterns (Healthcare Workflow Optimized)
+### Enhanced Adaptation Patterns (Advanced Aesthetic Workflow Optimized)
 
-#### Layout Changes (Medical Priority):
+#### Layout Changes (Advanced Aesthetic Medical Priority):
 
 - **Mobile (Basic)**: Single-column, emergency access priority, offline patient lookup
 - **Mobile (Standard)**: Patient portal access, appointment booking, photo uploads
@@ -893,7 +893,7 @@ patient accommodations
 - **Desktop**: Full horizontal navigation, Portuguese keyboard shortcuts (Ctrl+P for Paciente)
 - **Emergency Mode**: Simplified emergency-only navigation on any device
 
-#### Content Priority (Brazilian Healthcare Needs):
+#### Content Priority (Brazilian Advanced Aesthetic Needs):
 
 - **Mobile Data Limited**: Emergency contacts, critical allergies, offline patient cache
 - **Mobile WiFi**: Full patient portal, photo uploads, appointment scheduling, telemedicine
@@ -904,7 +904,7 @@ patient accommodations
 ### Clinical Environment Responsive Modes
 
 ```css
-/* Brazilian Healthcare Environment Adaptations */
+/* Brazilian Advanced Aesthetic Environment Adaptations */
 @media (clinical-environment: sterile) {
   --interaction-mode: voice-primary;
   --touch-backup: available;
@@ -929,17 +929,17 @@ patient accommodations
 
 ---
 
-## Section 9: Animation & Micro-interactions (Brazilian Healthcare Psychology)
+## Section 9: Animation & Micro-interactions (Brazilian Advanced Aesthetic Psychology)
 
-### Motion Principles (Medical Environment Appropriate)
+### Motion Principles (Advanced Aesthetic Medical Environment Appropriate)
 
 - **Calm & Reassuring**: Gentle animations that reduce patient anxiety
-- **Medically Professional**: Subtle, purposeful motion that conveys competence
+- **Advanced Aesthetic Medical Professional**: Subtle, purposeful motion that conveys competence
 - **Brazilian Warmth**: Slightly more expressive than sterile clinical interfaces
 - **Performance Conscious**: Lightweight animations for limited connectivity
 - **Accessibility First**: Respects prefers-reduced-motion settings
 
-### Key Healthcare Animations
+### Key Advanced Aesthetic Animations
 
 - **Patient Loading**: Gentle pulse animation with "Carregando informações do paciente..."
   (Duration: 1.2s, Easing: ease-out)

@@ -2,23 +2,10 @@
 
 ## Unified Cognitive Orchestration System with Intelligent Agent Coordination
 
-**Master Workflow Orchestrator v4.0** - Complete integration of VIBECODER philosophy with **APEX Enhanced Architecture** + **3-Tier Meta-Cognition** + **Universal Workflow Engine** + **Intelligent Agent Coordination** + **Constitutional Excellence** + **Bilingual Command Interface** + **Agent-Phase Specialization Matrix**.
-
 ```yaml
-UNIFIED_CORE_AUTHORITY:
-  system_scope: "Complete workflow orchestration with cognitive intelligence and agent specialization"
-  orchestrator_type: "Master Agentic Workflow with Meta-Cognitive Integration + VIBECODER Excellence"
-  enforcement_level: "ABSOLUTE - NO EXCEPTIONS EVER"
-  quality_framework: "Progressive L1-L10 standards with domain-specific overrides"
-  thinking_integration: "3-tier system (think/megathink/ultrathink) with workflow routing"
-  performance_optimization: "85%+ efficiency through intelligent coordination"
-  bilingual_support: "Complete Portuguese/English interface and interaction"
-  agent_coordination: "Specialized agent matrix with phase-specific routing and expertise matching"
 
 CORE_STANDARDS_REFERENCE:
-  agentic_excellence: "≥9.7/10 orchestration quality with cognitive integration"
-  research_excellence: "Context7 → Tavily → Exa → Sequential Thinking chain"
-  mcp_compliance: "100% mandatory usage with intelligent routing"
+  research_excellence: "Context7 → Tavily → Archon → Sequential Thinking chain"
   workflow_standard: "Unified 7-phase execution with cognitive optimization"
   agent_coordination: "Seamless handoffs with context preservation and quality validation"
   cognitive_authority: "Automated thinking activation with complexity-based routing"

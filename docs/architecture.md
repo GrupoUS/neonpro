@@ -1,15 +1,15 @@
-# 🏥 NeonPro - Arquitetura do Sistema
+# 🏗️ NeonPro AI Advanced Aesthetic Platform - System Architecture
 
-> **Sistema de gestão para clínicas de estética brasileiras**
+> **AI-First Advanced Aesthetic Platform for Brazilian aesthetic clinics with constitutional excellence and regulatory compliance**
 
 ## 📋 Visão Geral
 
-**NeonPro** é uma plataforma completa de gestão para clínicas de estética no Brasil, focada em:
+**NeonPro** é uma plataforma completa de gestão AI-First para clínicas de estética avançada no Brasil, focada em:
 
-- **Gestão de Pacientes**: Cadastro, histórico médico, agendamentos
-- **Compliance Automatizado**: LGPD e ANVISA integrados
-- **IA Integrada**: Chat inteligente e predição de no-show
-- **Experiência Otimizada**: Interface moderna e intuitiva
+- **Gestão de Pacientes**: Cadastro, histórico estético, agendamentos para procedimentos de estética avançada
+- **Compliance Automatizado**: LGPD, ANVISA e CFM integrados para estética avançada
+- **IA Integrada**: Chat inteligente e predição de no-show específico para estética
+- **Experiência Otimizada**: Interface moderna e intuitiva para profissionais da estética avançada
 
 ## 🎯 Objetivos Atuais (Tier 1)
 
@@ -17,14 +17,55 @@
 
 ```typescript
 const coreFeatures = {
-  patients: "CRUD completo + histórico médico",
-  appointments: "Agendamento + calendário + notificações",
-  professionals: "Gestão de profissionais + especialidades",
-  aiChat: "FAQ inteligente + suporte automatizado",
-  noShowPrediction: "ML para reduzir faltas em consultas",
-  lgpdCompliance: "Automatização de compliance LGPD",
+  patients: "CRUD completo + histórico estético avançado",
+  appointments: "Agendamento + calendário + notificações para procedimentos estéticos",
+  professionals: "Gestão de profissionais + especialidades em estética avançada",
+  aiChat: "FAQ inteligente + suporte automatizado para estética",
+  noShowPrediction: "ML para reduzir faltas em consultas estéticas",
+  lgpdCompliance: "Automatização de compliance LGPD para clínicas estéticas",
 };
 ```
+
+## 🔄 Application Flow Integration
+
+### **Workflow Documentation**
+A arquitetura do NeonPro é complementada por documentação detalhada de fluxos de aplicação que mostram como os componentes interagem em cenários reais:
+
+- **[📋 Main Flow](./app-flows/main-flow.md)**: Fluxo principal da aplicação - jornada completa do profissional
+- **[🔐 Auth Flow](./app-flows/auth-flow.md)**: Autenticação e autorização com validação CFM  
+- **[🏥 Patient Flow](./app-flows/healthcare-patient-flow.md)**: Gestão completa do ciclo de vida do paciente de estética avançada
+- **[🤖 AI Flow](./app-flows/ai-flow.md)**: Integração IA com proteção PHI e supervisão profissional
+- **[⚖️ LGPD Flow](./app-flows/compliance-lgpd-flow.md)**: Compliance LGPD e proteção de dados
+
+### **Architecture-Flow Mapping**
+```mermaid
+graph LR
+    subgraph "Architecture Layer"
+        A1[Apps: web, api, docs]
+        A2[Packages: 24 packages]
+        A3[Tech Stack: Next.js + Hono]
+    end
+    
+    subgraph "Flow Layer"
+        F1[Main Flow]
+        F2[Auth Flow]
+        F3[Patient Flow]
+        F4[AI Flow]
+        F5[LGPD Flow]
+    end
+    
+    A1 --> F1
+    A2 --> F2
+    A2 --> F3
+    A3 --> F4
+    A2 --> F5
+```
+
+### **Compliance Integration**
+Os fluxos documentados implementam os requisitos de compliance definidos na arquitetura:
+- **LGPD**: [`compliance-lgpd-flow.md`](./app-flows/compliance-lgpd-flow.md) detalha implementação completa
+- **ANVISA**: Workflows de segurança médica integrados nos fluxos de paciente
+- **CFM**: Supervisão profissional documentada no fluxo de autenticação
 
 ### Documentation References
 

@@ -49,7 +49,7 @@
 
 ## Development Rules
 
-Follow the development rules and guidelines found in the `/rules` directory:
+Follow the development rules and guidelines found in the `/.ruler` directory:
 
 - **Code Style:** Follow established patterns and conventions
 - **Testing:** Implement comprehensive test coverage
@@ -59,8 +59,16 @@ Follow the development rules and guidelines found in the `/rules` directory:
 - **Security:** Follow security best practices
 - **Accessibility:** Ensure WCAG compliance
 
+### Development Tools
+
+- **{Tool 1}:** {Description and setup instructions}
+- **{Tool 2}:** {Description and setup instructions}
+- **{Tool 3}:** {Description and setup instructions}
+
 ## References
 
-All development rules and guidelines can be found in the `/rules` directory.
+All development rules and guidelines can be found in the `/.ruler` directory.
 All technical documentation can be found in the `/docs` directory.
 **Architecture:** For architectural questions, decisions, and system overview, consult `docs/architecture.md`.
+**API:** For API documentation, refer to `docs/apis.md`.
+**Database:** For database schema and design, see `docs/database-schema.md`.

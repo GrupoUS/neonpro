@@ -1,42 +1,178 @@
 # Functional and Technical Specifications
 
-## 5. Functional Requirements
+## 4. Functional Requirements
 
-### 5.1 Core Features (Must Have)
+### 4.1 Essential Features (MVP)
 
-**Universal AI Chat System** (Priority: High | Critical)
+**Sistema Universal de Chat IA**
+- Assistente conversacional especializado em estética
+- Integração com WhatsApp Business API
+- Processamento de linguagem natural em português
+- Base de conhecimento sobre procedimentos estéticos
+- Agendamento automático via chat
+- Triagem inicial de pacientes
+- Suporte 24/7 automatizado
 
-- Chat inteligente bilíngue (português/inglês) para pacientes e equipe
-- Integração com WhatsApp, SMS e interface web/mobile
-- Respostas contextuais baseadas em histórico do paciente
-- Escalação automática para atendimento humano quando necessário
-- Tempo de resposta <2 segundos
+**Engine Anti-No-Show**
+- Análise comportamental preditiva de pacientes
+- Scoring de risco de falta em consultas (0.00 a 1.00)
+- Automação de lembretes personalizados
+- Otimização de timing de comunicação
+- Integração com múltiplos canais (WhatsApp, SMS, email)
+- Dashboard de métricas de prevenção
+- Redução de 78% em no-shows (meta)
 
-**Engine Anti-No-Show** (Priority: High | Critical)
+**Dashboard de Comando Unificado**
+- Visão consolidada de todas as operações
+- Métricas em tempo real
+- Alertas inteligentes
+- Gestão de agenda centralizada
+- Controle financeiro integrado
+- Relatórios executivos automatizados
+- Interface responsiva para mobile
 
-- Análise preditiva de risco de no-show por paciente
-- Sistema de pontuação baseado em ML (0-100)
-- Intervenções automatizadas escalonadas
-- Integração com dashboard de comando unificado
-- Relatórios de eficácia e ROI
-
-**Dashboard de Comando Unificado** (Priority: High | Critical)
-
-- Visão 360° da clínica em tempo real
-- Métricas de performance e KPIs
-- Alertas inteligentes e notificações
-- Interface mobile-first responsiva
-- Personalização por perfil de usuário
-
-**Sistema de Agendamento Inteligente** (Priority: High | Critical)
-
-- Agendamento online com disponibilidade em tempo real
+**Sistema de Agendamento Inteligente**
+- Calendário drag-and-drop
+- Sincronização em tempo real
 - Otimização automática de horários
-- Gestão de salas e recursos
+- Gestão de salas e equipamentos
 - Integração com calendários externos
-- Confirmações e lembretes automatizados
+- Notificações push inteligentes
+- Reagendamento automático
 
-### 5.2 Enhanced Features (Should Have)
+## 5. Technical Architecture
+
+### 5.1 Technology Stack
+
+**Frontend**
+- Next.js 15 (App Router)
+- React 19 (Server Components)
+- TypeScript 5.0+
+- Tailwind CSS 3.4+
+- shadcn/ui (Design System)
+- Framer Motion (Animations)
+
+**Backend & Database**
+- Supabase (PostgreSQL + Auth + Storage)
+- Redis (Caching & Sessions)
+- Prisma (ORM)
+- tRPC (Type-safe APIs)
+
+**Development & Deploy**
+- Turborepo (Monorepo)
+- Docker (Containerization)
+- Vercel (Deployment)
+- GitHub Actions (CI/CD)
+- ESLint + Prettier (Code Quality)
+
+**AI & ML Layer**
+- OpenAI GPT-4 (Conversational AI)
+- Custom ML Models (Anti-No-Show)
+- Vector Database (Knowledge Base)
+- TensorFlow.js (Client-side ML)
+- Hugging Face (NLP Models)
+
+**Communication & Integration**
+- WebSockets (Real-time)
+- Server-Sent Events (Live Updates)
+- WhatsApp Business API
+- Twilio (SMS)
+- Push Notifications
+
+### 5.2 Database Schema (Core Entities)
+
+```sql
+-- Clinics
+CREATE TABLE clinics (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    cnpj VARCHAR(18) UNIQUE,
+    address JSONB,
+    settings JSONB,
+    subscription_plan VARCHAR(50),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Patients
+CREATE TABLE patients (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    clinic_id UUID REFERENCES clinics(id) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    phone VARCHAR(20),
+    cpf VARCHAR(14) UNIQUE,
+    behavior_profile JSONB,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Anti-No-Show Analysis
+CREATE TABLE patient_behavior_analysis (
+    id UUID PRIMARY KEY,
+    patient_id UUID REFERENCES patients(id),
+    appointment_id UUID REFERENCES appointments(id),
+    behavior_score DECIMAL(3,2), -- 0.00 a 1.00
+    risk_factors JSONB,
+    prediction_confidence DECIMAL(3,2),
+    recommended_actions JSONB,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### 5.3 System Architecture
+
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        WEB[Web App]
+        MOBILE[Mobile App]
+        API_CLIENT[API Clients]
+    end
+    
+    subgraph "API Gateway"
+        GATEWAY[Next.js API Routes]
+        AUTH[Authentication]
+        RATE_LIMIT[Rate Limiting]
+    end
+    
+    subgraph "Core Services"
+        USER_SVC[User Service]
+        APPOINTMENT_SVC[Appointment Service]
+        PATIENT_SVC[Patient Service]
+        NOTIFICATION_SVC[Notification Service]
+    end
+    
+    subgraph "AI Services"
+        ANTI_NOSHOW[Anti-No-Show Engine]
+        AI_CHAT[Universal AI Chat]
+        PREDICTION[Prediction Service]
+    end
+    
+    subgraph "Data Layer"
+        POSTGRES[(PostgreSQL)]
+        REDIS[(Redis Cache)]
+        VECTOR_DB[(Vector Database)]
+    end
+    
+    WEB --> GATEWAY
+    MOBILE --> GATEWAY
+    API_CLIENT --> GATEWAY
+    
+    GATEWAY --> USER_SVC
+    GATEWAY --> APPOINTMENT_SVC
+    GATEWAY --> PATIENT_SVC
+    
+    USER_SVC --> POSTGRES
+    APPOINTMENT_SVC --> POSTGRES
+    PATIENT_SVC --> POSTGRES
+    
+    ANTI_NOSHOW --> VECTOR_DB
+    AI_CHAT --> VECTOR_DB
+    PREDICTION --> POSTGRES
+    
+    NOTIFICATION_SVC --> REDIS
+```
+
+### 5.4 Enhanced Features (Should Have)
 
 **CRM Comportamental** (Priority: Medium)
 

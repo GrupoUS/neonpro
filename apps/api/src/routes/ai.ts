@@ -5,7 +5,7 @@
  */
 
 import { Hono } from "hono";
-import arSimulatorRoutes from "./ai/ar-simulator-endpoints";
+// import arSimulatorRoutes from "./ai/_inactive_ar-simulator-endpoints";
 import { batchPredictionRoutes } from "./ai/batch-prediction-endpoints";
 import healthcareMonitoringRoutes from "./ai/healthcare-monitoring-endpoints";
 import mlPipelineRoutes from "./ai/ml-pipeline-endpoints";
@@ -31,9 +31,9 @@ ai.route("/universal-chat", chatEndpoints);
 // /api/v1/ai/chat/*
 ai.route("/chat", chatHealthRoutes);
 
-// AR Results Simulator endpoints
+// AR Simulator endpoints - INACTIVE
 // /api/v1/ai/ar-simulator/*
-ai.route("/ar-simulator", arSimulatorRoutes);
+// ai.route("/ar-simulator", arSimulatorRoutes);
 
 // Batch Prediction endpoints
 // /api/v1/ai/batch-predictions/*

@@ -1,11 +1,11 @@
 openapi: 3.0.3
 info:
-  title: NeonPro AI Healthcare Platform API
+  title: NeonPro AI Advanced Aesthetic Clinics Platform API
   description: |
-    **🏥 AI-First Healthcare API** for aesthetic clinics with constitutional compliance
+    **🏥 AI-First Advanced Aesthetic Clinics API** with constitutional compliance
     
     ## 🚀 Key Features
-    - **AI Streaming Chat** - Real-time healthcare assistance with Vercel AI SDK 5.0
+    - **AI Streaming Chat** - Real-time aesthetic consultation assistance with Vercel AI SDK 5.0
     - **No-Show Prediction** - TensorFlow.js powered appointment optimization  
     - **LGPD/ANVISA/CFM Compliance** - Built-in regulatory automation
     - **Emergency Response** - Sub-1s critical alert system
@@ -25,11 +25,11 @@ info:
     
   version: "2.0.0"
   contact:
-    name: NeonPro Healthcare API Support
+    name: NeonPro Advanced Aesthetic Clinics API Support
     url: https://neonpro.app/api/support
     email: api@neonpro.app
   license:
-    name: Proprietary Healthcare License
+    name: Proprietary Advanced Aesthetic Clinics License
     url: https://neonpro.app/license
 
 servers:
@@ -50,7 +50,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: Supabase JWT token with healthcare permissions
+      description: Supabase JWT token with aesthetic clinic permissions
     
     MFARequired:
       type: apiKey
@@ -66,7 +66,7 @@ components:
 
   schemas:
     # ========================================
-    # CORE HEALTHCARE ENTITIES
+    # CORE AESTHETIC CLINIC ENTITIES
     # ========================================
     Patient:
       type: object
@@ -111,7 +111,7 @@ components:
           type: array
           items:
             type: string
-          description: Known medical allergies
+          description: Known allergies relevant to aesthetic procedures
         created_at:
           type: string
           format: date-time
@@ -135,14 +135,14 @@ components:
         crm:
           type: string
           pattern: '^[0-9]{4,6}-[A-Z]{2}$'
-          description: Brazilian medical license (CRM)
+          description: Brazilian aesthetic professional license (CRM)
           example: "123456-SP"
         role:
           type: string
           enum: [doctor, nurse, physiotherapist, psychologist, nutritionist, admin]
         specialization:
           type: string
-          description: Medical specialization
+          description: Aesthetic specialization
           example: "Dermatologia Estética"
         cfm_validated:
           type: boolean
@@ -195,4 +195,1443 @@ components:
         
     # ========================================
     # AI & MACHINE LEARNING
+    # ========================================    AIMessage:
+      type: object
+      required: [id, role, content, timestamp]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique message identifier
+        role:
+          type: string
+          enum: [user, assistant, system, tool]
+          description: Message role in chat conversation
+        content:
+          type: string
+          description: Message content (supports markdown)
+        timestamp:
+          type: string
+          format: date-time
+          description: Message creation timestamp
+        tool_calls:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolCall'
+          description: AI tool invocations in this message
+        patient_context:
+          type: object
+          properties:
+            patient_id:
+              type: string
+              format: uuid
+            relevant_history:
+              type: array
+              items:
+      context:
+          type: string
+          description: Patient context for aesthetic consultation AI
+
+    ToolCall:
+      type: object
+      required: [id, name, arguments]
+      properties:
+        id:
+          type: string
+          description: Unique tool call identifier
+        name:
+          type: string
+          enum: [get_patient_history, schedule_appointment, check_drug_interactions, calculate_bmi, emergency_alert]
+          description: Tool function name
+        arguments:
+          type: object
+          description: Tool function arguments (JSON)
+        result:
+          type: object
+          description: Tool execution result
+
+    NoShowPrediction:
+      type: object
+      required: [probability, confidence, factors]
+      properties:
+        probability:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: No-show probability (0-1)
+          example: 0.23
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Model confidence score
+          example: 0.87
+        factors:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "weather_conditions"
+              impact:
+                type: number
+                minimum: -1
+                maximum: 1
+                example: -0.15
+              description:
+                type: string
+                example: "Rainy weather increases no-show risk"
+        model_version:
+          type: string
+          description: TensorFlow.js model version used
+          example: "v2.1.0-aesthetic"
+        calculated_at:
+          type: string
+          format: date-time
+
+    AIInsight:
+      type: object
+      required: [type, content, confidence, source]
+      properties:
+        type:
+          type: string
+          enum: [risk_assessment, treatment_recommendation, drug_interaction, scheduling_optimization]
+        content:
+          type: string
+          description: AI-generated insight content
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: AI confidence in the insight
+        source:
+          type: string
+          description: AI model or data source
+          example: "GPT-4-aesthetic-v2"
+        validated_by:
+          type: string
+          format: uuid
+          description: Professional who validated the insight
+        validation_timestamp:
+          type: string
+          format: date-time
+
     # ========================================
+    # COMPLIANCE & SECURITY
+    # ========================================
+    LGPDConsent:
+      type: object
+      required: [given, timestamp, purposes, version]
+      properties:
+        given:
+          type: boolean
+          description: Whether consent was explicitly given
+        timestamp:
+          type: string
+          format: date-time
+          description: When consent was given/withdrawn
+        purposes:
+          type: array
+          items:
+            type: string
+            enum: [medical_treatment, appointment_scheduling, health_analytics, emergency_contact, marketing]
+          description: Specific data processing purposes
+        version:
+          type: string
+          description: Privacy policy version when consent was given
+          example: "v2.1.0"
+        ip_address:
+          type: string
+          format: ipv4
+          description: IP address when consent was recorded
+        withdrawal_date:
+          type: string
+          format: date-time
+          description: If consent was withdrawn
+        legal_basis:
+          type: string
+          enum: [consent, vital_interests, legal_obligation, legitimate_interests]
+          description: LGPD legal basis for processing
+
+    EmergencyContact:
+      type: object
+      required: [name, phone, relationship]
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        phone:
+          type: string
+          pattern: '^\+?[1-9]\d{1,14}$'
+        relationship:
+          type: string
+          enum: [spouse, parent, child, sibling, friend, other]
+        secondary_phone:
+          type: string
+          pattern: '^\+?[1-9]\d{1,14}$'
+
+    AuditTrail:
+      type: object
+      required: [id, user_id, action, resource_type, resource_id, timestamp]
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+          description: User who performed the action
+        action:
+          type: string
+          enum: [create, read, update, delete, export, emergency_access]
+        resource_type:
+          type: string
+          enum: [patient, appointment, medical_record, prescription, payment]
+        resource_id:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+        ip_address:
+          type: string
+          format: ipv4
+        user_agent:
+          type: string
+          description: Browser/client information
+        justification:
+          type: string
+          description: Required for emergency access
+          maxLength: 500
+
+    ComplianceReport:
+      type: object
+      required: [id, type, period, status, generated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [lgpd_audit, anvisa_procedures, cfm_validation, security_assessment]
+        period:
+          type: object
+          properties:
+            start_date:
+              type: string
+              format: date
+            end_date:
+              type: string
+              format: date
+        status:
+          type: string
+          enum: [compliant, non_compliant, pending_review]
+        findings:
+          type: array
+          items:
+            type: object
+            properties:
+              severity:
+                type: string
+                enum: [low, medium, high, critical]
+              description:
+                type: string
+              recommendation:
+                type: string
+        generated_at:
+          type: string
+          format: date-time
+        generated_by:
+          type: string
+          format: uuid
+          description: Professional who generated the report    # ========================================
+    # PERFORMANCE & MONITORING
+    # ========================================
+    HealthCheck:
+      type: object
+      required: [status, timestamp, services]
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        services:
+          type: object
+          properties:
+            database:
+              $ref: '#/components/schemas/ServiceHealth'
+            ai_services:
+              $ref: '#/components/schemas/ServiceHealth'
+            compliance_validator:
+              $ref: '#/components/schemas/ServiceHealth'
+            emergency_alerts:
+              $ref: '#/components/schemas/ServiceHealth'
+        response_times:
+          type: object
+          properties:
+            emergency_alerts_ms:
+              type: integer
+              description: Emergency alert response time
+            patient_records_ms:
+              type: integer
+              description: Patient record access time
+            ai_first_token_ms:
+              type: integer
+              description: AI chat first token time
+            compliance_validation_ms:
+              type: integer
+              description: Compliance validation time
+
+    ServiceHealth:
+      type: object
+      required: [status, response_time_ms]
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        response_time_ms:
+          type: integer
+          description: Average response time in milliseconds
+        last_error:
+          type: string
+          description: Last error message if any
+        uptime_percentage:
+          type: number
+          minimum: 0
+          maximum: 100
+
+    PerformanceMetrics:
+      type: object
+      properties:
+        api_response_times:
+          type: object
+          properties:
+            p50:
+              type: integer
+              description: 50th percentile response time (ms)
+            p95:
+              type: integer
+              description: 95th percentile response time (ms)
+            p99:
+              type: integer
+              description: 99th percentile response time (ms)
+        ai_performance:
+          type: object
+          properties:
+            tokens_per_second:
+              type: number
+              description: AI tokens generated per second
+            model_latency_ms:
+              type: integer
+              description: AI model response latency
+            tool_call_success_rate:
+              type: number
+              minimum: 0
+              maximum: 1
+        compliance_metrics:
+          type: object
+          properties:
+            lgpd_validation_success_rate:
+              type: number
+              minimum: 0
+              maximum: 1
+            audit_trail_completeness:
+              type: number
+              minimum: 0
+              maximum: 1
+            consent_update_latency_ms:
+              type: integer
+
+    # ========================================
+    # ERROR HANDLING
+    # ========================================
+    Error:
+      type: object
+      required: [code, message, timestamp]
+      properties:
+        code:
+          type: string
+          enum: [
+            LGPD_CONSENT_REQUIRED,
+            ANVISA_VALIDATION_FAILED,
+            CFM_AUTHORIZATION_MISSING,
+            EMERGENCY_ACCESS_DENIED,
+            AI_SERVICE_UNAVAILABLE,
+            PATIENT_NOT_FOUND,
+            APPOINTMENT_CONFLICT,
+            COMPLIANCE_VIOLATION,
+            RATE_LIMIT_EXCEEDED,
+            VALIDATION_ERROR
+          ]
+        message:
+          type: string
+          description: Human-readable error message
+        timestamp:
+          type: string
+          format: date-time
+        request_id:
+          type: string
+          format: uuid
+          description: Unique request identifier for tracking
+        details:
+          type: object
+          description: Additional error context
+        consent_url:
+          type: string
+          format: uri
+          description: URL for LGPD consent (if applicable)
+        emergency_contact:
+          type: string
+          description: Emergency contact information
+
+    ValidationError:
+      type: object
+      required: [field, code, message]
+      properties:
+        field:
+          type: string
+          description: Field that failed validation
+        code:
+          type: string
+          enum: [required, invalid_format, out_of_range, duplicate, constraint_violation]
+        message:
+          type: string
+          description: Validation error message
+        expected_format:
+          type: string
+          description: Expected value format
+
+    # ========================================
+    # REQUEST/RESPONSE WRAPPERS
+    # ========================================
+    PaginatedResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items: {}
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              minimum: 1
+            per_page:
+              type: integer
+              minimum: 1
+              maximum: 100
+            total_pages:
+              type: integer
+            total_count:
+              type: integer
+            has_next:
+              type: boolean
+            has_previous:
+              type: boolean
+
+    StreamResponse:
+      type: object
+      required: [stream_id, event_type]
+      properties:
+        stream_id:
+          type: string
+          format: uuid
+          description: Unique stream identifier
+        event_type:
+          type: string
+          enum: [message, tool_call, error, complete]
+        data:
+          type: object
+          description: Stream event data
+        timestamp:
+          type: string
+          format: date-time
+
+paths:
+  # ========================================
+  # AI CHAT & STREAMING ENDPOINTS
+  # ========================================
+  /ai/chat:
+    post:
+      summary: Start AI aesthetic consultation chat session
+      description: |
+        Initiate a new AI chat session with aesthetic consultation context.
+        Supports streaming responses and tool calling for aesthetic workflows.
+        
+        **Performance Target**: <200ms for first token
+        **Compliance**: LGPD consent required, all interactions logged
+      operationId: startAIChat
+      security:
+        - BearerAuth: []
+        - MFARequired: []
+      tags: [AI Services]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [messages]
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AIMessage'
+                  description: Chat conversation history
+                patient_id:
+                  type: string
+                  format: uuid
+                  description: Patient context for aesthetic consultation AI
+                stream:
+                  type: boolean
+                  default: false
+                  description: Enable Server-Sent Events streaming
+                tools:
+                  type: array
+                  items:
+                    type: string
+                    enum: [get_patient_history, schedule_appointment, check_drug_interactions, calculate_bmi, emergency_alert]
+                  description: Available AI tools for this session
+                max_tokens:
+                  type: integer
+                  minimum: 1
+                  maximum: 4000
+                  default: 1000
+                temperature:
+                  type: number
+                  minimum: 0
+                  maximum: 2
+                  default: 0.7
+      responses:
+        '200':
+          description: AI chat response (non-streaming)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AIMessage'
+                  usage:
+                    type: object
+                    properties:
+                      prompt_tokens:
+                        type: integer
+                      completion_tokens:
+                        type: integer
+                      total_tokens:
+                        type: integer
+        '202':
+          description: Streaming response initiated
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/StreamResponse'
+        '403':
+          description: LGPD consent required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'  /ai/stream:
+    get:
+      summary: AI chat streaming endpoint
+      description: |
+        Server-Sent Events endpoint for real-time AI chat streaming.
+        Implements Vercel AI SDK 5.0 streaming patterns with aesthetic clinic compliance.
+      operationId: streamAIChat
+      security:
+        - BearerAuth: []
+      tags: [AI Services]
+      parameters:
+        - name: stream_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Stream session identifier
+        - name: patient_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Patient context for aesthetic consultation streaming
+      responses:
+        '200':
+          description: Server-Sent Events stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                example: |
+                  data: {"stream_id":"123","event_type":"message","data":{"content":"Olá! Como posso ajudar com sua consulta médica hoje?"},"timestamp":"2024-01-15T10:30:00Z"}
+                  
+                  data: {"stream_id":"123","event_type":"tool_call","data":{"name":"get_patient_history","arguments":{"patient_id":"456"}},"timestamp":"2024-01-15T10:30:01Z"}
+                  
+                  data: {"stream_id":"123","event_type":"complete","data":{},"timestamp":"2024-01-15T10:30:05Z"}
+
+  /ai/tools/{tool_name}/execute:
+    post:
+      summary: Execute AI tool for aesthetic workflows
+      description: |
+        Execute specific AI tools for aesthetic workflows like patient history retrieval,
+        drug interaction checks, and appointment scheduling.
+      operationId: executeAITool
+      security:
+        - BearerAuth: []
+        - MFARequired: []
+      tags: [AI Services]
+      parameters:
+        - name: tool_name
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [get_patient_history, schedule_appointment, check_drug_interactions, calculate_bmi, emergency_alert]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                arguments:
+                  type: object
+                  description: Tool-specific arguments
+                patient_id:
+                  type: string
+                  format: uuid
+                  description: Patient context for tool execution
+      responses:
+        '200':
+          description: Tool execution result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tool_call_id:
+                    type: string
+                    format: uuid
+                  result:
+                    type: object
+                    description: Tool execution result
+                  execution_time_ms:
+                    type: integer
+                  compliance_validated:
+                    type: boolean
+
+  # ========================================
+  # MACHINE LEARNING & PREDICTIONS
+  # ========================================
+  /ml/no-show-prediction:
+    post:
+      summary: Predict appointment no-show probability
+      description: |
+        Use TensorFlow.js models to predict appointment no-show probability
+        based on patient history, weather, and scheduling patterns.
+        
+        **Performance Target**: <100ms inference time
+      operationId: predictNoShow
+      security:
+        - BearerAuth: []
+      tags: [Machine Learning]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [appointment_id]
+              properties:
+                appointment_id:
+                  type: string
+                  format: uuid
+                include_factors:
+                  type: boolean
+                  default: true
+                  description: Include prediction factor analysis
+                model_version:
+                  type: string
+                  description: Specific model version to use
+      responses:
+        '200':
+          description: No-show prediction result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoShowPrediction'
+
+  /ml/patient-insights/{patient_id}:
+    get:
+      summary: Get AI-generated patient insights
+      description: |
+        Retrieve AI-powered insights for a specific patient including
+        risk assessments, treatment recommendations, and optimization suggestions.
+      operationId: getPatientInsights
+      security:
+        - BearerAuth: []
+        - MFARequired: []
+      tags: [Machine Learning]
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: insight_types
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [risk_assessment, treatment_recommendation, drug_interaction, scheduling_optimization]
+          description: Specific types of insights to generate
+      responses:
+        '200':
+          description: Patient AI insights
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  patient_id:
+                    type: string
+                    format: uuid
+                  insights:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AIInsight'
+                  generated_at:
+                    type: string
+                    format: date-time
+
+  # ========================================
+  # PATIENT MANAGEMENT
+  # ========================================
+  /patients:
+    get:
+      summary: List patients with aesthetic clinic compliance
+      description: |
+        Retrieve paginated list of patients with LGPD compliance validation.
+        All PHI access is logged and requires appropriate permissions.
+      operationId: listPatients
+      security:
+        - BearerAuth: []
+        - MFARequired: []
+      tags: [Patients]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: search
+          in: query
+          schema:
+            type: string
+            minLength: 3
+          description: Search by name or CPF (encrypted search)
+        - name: consent_status
+          in: query
+          schema:
+            type: string
+            enum: [active, withdrawn, expired]
+          description: Filter by LGPD consent status
+      responses:
+        '200':
+          description: Paginated patient list
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Patient'
+    
+    post:
+      summary: Create new patient with LGPD compliance
+      description: |
+        Create a new patient record with mandatory LGPD consent validation
+        and CFM professional oversight.
+      operationId: createPatient
+      security:
+        - BearerAuth: []
+        - MFARequired: []
+      tags: [Patients]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, cpf, birth_date, lgpd_consent]
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 100
+                cpf:
+                  type: string
+                  pattern: '^\d{11}$'
+                birth_date:
+                  type: string
+                  format: date
+                email:
+                  type: string
+                  format: email
+                phone:
+                  type: string
+                  pattern: '^\+?[1-9]\d{1,14}$'
+                lgpd_consent:
+                  $ref: '#/components/schemas/LGPDConsent'
+                emergency_contact:
+                  $ref: '#/components/schemas/EmergencyContact'
+                medical_allergies:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Patient created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '409':
+          description: Patient already exists (CPF conflict)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'  /patients/{patient_id}:
+    get:
+      summary: Get patient details with audit trail
+      operationId: getPatient
+      security:
+        - BearerAuth: []
+        - MFARequired: []
+      tags: [Patients]
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Patient details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '403':
+          description: LGPD consent required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    put:
+      summary: Update patient information with compliance validation
+      operationId: updatePatient
+      security:
+        - BearerAuth: []
+        - MFARequired: []
+      tags: [Patients]
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 100
+                email:
+                  type: string
+                  format: email
+                phone:
+                  type: string
+                  pattern: '^\+?[1-9]\d{1,14}$'
+                emergency_contact:
+                  $ref: '#/components/schemas/EmergencyContact'
+                medical_allergies:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Patient updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+
+  # ========================================
+  # APPOINTMENT MANAGEMENT
+  # ========================================
+  /appointments:
+    get:
+      summary: List appointments with no-show predictions
+      operationId: listAppointments
+      security:
+        - BearerAuth: []
+      tags: [Appointments]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [scheduled, confirmed, in_progress, completed, cancelled, no_show]
+        - name: professional_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: include_predictions
+          in: query
+          schema:
+            type: boolean
+            default: true
+          description: Include TensorFlow.js no-show predictions
+      responses:
+        '200':
+          description: Paginated appointment list with predictions
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Appointment'
+    
+    post:
+      summary: Create appointment with AI optimization
+      operationId: createAppointment
+      security:
+        - BearerAuth: []
+      tags: [Appointments]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patient_id, professional_id, scheduled_at, type]
+              properties:
+                patient_id:
+                  type: string
+                  format: uuid
+                professional_id:
+                  type: string
+                  format: uuid
+                scheduled_at:
+                  type: string
+                  format: date-time
+                type:
+                  type: string
+                  enum: [consultation, procedure, follow_up, emergency]
+                duration_minutes:
+                  type: integer
+                  minimum: 15
+                  maximum: 480
+                  default: 60
+                notes:
+                  type: string
+                  maxLength: 2000
+                auto_optimize:
+                  type: boolean
+                  default: true
+                  description: Use AI to optimize scheduling
+      responses:
+        '201':
+          description: Appointment created with AI optimization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+
+  # ========================================
+  # COMPLIANCE & AUDIT
+  # ========================================
+  /compliance/lgpd/consent:
+    post:
+      summary: Record LGPD consent
+      description: |
+        Record explicit LGPD consent with immutable audit trail.
+        Required for all patient data processing.
+      operationId: recordLGPDConsent
+      security:
+        - BearerAuth: []
+      tags: [Compliance]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patient_id, consent]
+              properties:
+                patient_id:
+                  type: string
+                  format: uuid
+                consent:
+                  $ref: '#/components/schemas/LGPDConsent'
+      responses:
+        '201':
+          description: LGPD consent recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  consent_id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum: [recorded, validated]
+                  audit_trail_id:
+                    type: string
+                    format: uuid
+
+  /compliance/lgpd/consent/{patient_id}/withdraw:
+    post:
+      summary: Withdraw LGPD consent
+      operationId: withdrawLGPDConsent
+      security:
+        - BearerAuth: []
+      tags: [Compliance]
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [justification]
+              properties:
+                justification:
+                  type: string
+                  maxLength: 500
+                  description: Reason for consent withdrawal
+      responses:
+        '200':
+          description: Consent withdrawn successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawal_id:
+                    type: string
+                    format: uuid
+                  effective_date:
+                    type: string
+                    format: date-time
+                  data_retention_period:
+                    type: integer
+                    description: Days until data deletion
+
+  /compliance/audit-trail:
+    get:
+      summary: Retrieve audit trail with LGPD compliance
+      operationId: getAuditTrail
+      security:
+        - BearerAuth: []
+        - MFARequired: []
+      tags: [Compliance]
+      parameters:
+        - name: resource_type
+          in: query
+          schema:
+            type: string
+            enum: [patient, appointment, medical_record, prescription, payment]
+        - name: resource_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: user_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: action
+          in: query
+          schema:
+            type: string
+            enum: [create, read, update, delete, export, emergency_access]
+      responses:
+        '200':
+          description: Audit trail entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entries:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditTrail'
+                  total_count:
+                    type: integer  /compliance/reports:
+    get:
+      summary: Generate compliance reports
+      operationId: getComplianceReports
+      security:
+        - BearerAuth: []
+        - MFARequired: []
+      tags: [Compliance]
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [lgpd_audit, anvisa_procedures, cfm_validation, security_assessment]
+        - name: period_start
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: period_end
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Compliance report generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplianceReport'
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+
+  # ========================================
+  # EMERGENCY ACCESS
+  # ========================================
+  /emergency/access:
+    post:
+      summary: Emergency access to patient data
+      description: |
+        Emergency access override for critical aesthetic procedure situations.
+        Requires strong justification and creates immutable audit trail.
+        
+        **Performance Target**: <1000ms for critical access
+      operationId: emergencyAccess
+      security:
+        - BearerAuth: []
+        - EmergencyOverride: []
+      tags: [Emergency]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patient_id, justification, emergency_type]
+              properties:
+                patient_id:
+                  type: string
+                  format: uuid
+                justification:
+                  type: string
+                  minLength: 20
+                  maxLength: 500
+                  description: Detailed aesthetic procedure justification
+                emergency_type:
+                  type: string
+                  enum: [cardiac_arrest, allergic_reaction, trauma, unconscious, other_critical]
+                professional_id:
+                  type: string
+                  format: uuid
+                  description: Professional requesting access
+                witness_professional_id:
+                  type: string
+                  format: uuid
+                  description: Witnessing professional (if available)
+      responses:
+        '200':
+          description: Emergency access granted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_granted:
+                    type: boolean
+                  patient:
+                    $ref: '#/components/schemas/Patient'
+                  emergency_access_id:
+                    type: string
+                    format: uuid
+                  expires_at:
+                    type: string
+                    format: date-time
+                    description: Access expiration (typically 24h)
+        '403':
+          description: Emergency access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /emergency/alerts:
+    post:
+      summary: Send emergency alert
+      description: |
+        Trigger emergency alerts to aesthetic clinic team.
+        Uses real-time notifications with <1s delivery guarantee.
+      operationId: sendEmergencyAlert
+      security:
+        - BearerAuth: []
+      tags: [Emergency]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, message, priority]
+              properties:
+                type:
+                  type: string
+                  enum: [medical_emergency, equipment_failure, security_breach, natural_disaster]
+                message:
+                  type: string
+                  maxLength: 200
+                  description: Emergency alert message
+                priority:
+                  type: string
+                  enum: [low, medium, high, critical]
+                location:
+                  type: string
+                  description: Emergency location
+                patient_id:
+                  type: string
+                  format: uuid
+                  description: Related patient (if applicable)
+                recipients:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: Specific recipients (default: all on-call)
+      responses:
+        '201':
+          description: Emergency alert sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  alert_id:
+                    type: string
+                    format: uuid
+                  sent_at:
+                    type: string
+                    format: date-time
+                  recipients_notified:
+                    type: integer
+                  delivery_time_ms:
+                    type: integer
+
+  # ========================================
+  # HEALTH & MONITORING
+  # ========================================
+  /health:
+    get:
+      summary: System health check
+      description: |
+        Comprehensive system health check including performance targets:
+        - Emergency alerts: <1000ms
+        - Patient records: <500ms  
+        - AI first token: <200ms
+        - Compliance validation: <50ms
+      operationId: healthCheck
+      security: []
+      tags: [Monitoring]
+      responses:
+        '200':
+          description: System health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheck'
+
+  /metrics:
+    get:
+      summary: Performance metrics dashboard
+      operationId: getMetrics
+      security:
+        - BearerAuth: []
+      tags: [Monitoring]
+      parameters:
+        - name: timeframe
+          in: query
+          schema:
+            type: string
+            enum: [1h, 6h, 24h, 7d, 30d]
+            default: 24h
+      responses:
+        '200':
+          description: Performance metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceMetrics'
+
+tags:
+  - name: AI Services
+    description: AI chat, streaming, and tool calling with aesthetic clinic compliance
+  - name: Machine Learning
+    description: TensorFlow.js predictions and patient insights
+  - name: Patients
+    description: Patient management with LGPD compliance
+  - name: Appointments
+    description: Appointment scheduling with AI optimization
+  - name: Compliance
+    description: LGPD, ANVISA, and CFM regulatory compliance
+  - name: Emergency
+    description: Emergency access and alert systems
+  - name: Monitoring
+    description: System health and performance monitoring
+
+# ========================================
+# WEBHOOKS & EVENTS
+# ========================================
+webhooks:
+  emergency_alert:
+    post:
+      summary: Emergency alert webhook
+      description: Real-time emergency notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                alert_id:
+                  type: string
+                  format: uuid
+                type:
+                  type: string
+                  enum: [medical_emergency, equipment_failure, security_breach, natural_disaster]
+                message:
+                  type: string
+                priority:
+                  type: string
+                  enum: [low, medium, high, critical]
+                timestamp:
+                  type: string
+                  format: date-time
+                location:
+                  type: string
+                patient_id:
+                  type: string
+                  format: uuid
+
+  lgpd_consent_change:
+    post:
+      summary: LGPD consent status change
+      description: Notifications for consent updates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                patient_id:
+                  type: string
+                  format: uuid
+                action:
+                  type: string
+                  enum: [granted, withdrawn, expired]
+                timestamp:
+                  type: string
+                  format: date-time
+                consent_version:
+                  type: string

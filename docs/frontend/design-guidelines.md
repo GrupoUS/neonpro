@@ -1,20 +1,20 @@
-# 🎨 NeonPro Healthcare Design Guidelines - Version: 2.0.0
+# 🎨 NeonPro Advanced Aesthetic Design Guidelines - Version: 2.0.0
 
 ## 📋 Purpose & Scope
 
-Standards for building consistent, maintainable, and visually appealing user interfaces for the **NeonPro AI Healthcare Platform**. This document covers component architecture, styling conventions, TweakCN NEONPRO color systems, typography, responsive design, healthcare accessibility, LGPD compliance, and performance using Shadcn UI, Tailwind CSS, and modern Next.js 15/React 19 best practices.
+Standards for building consistent, maintainable, and visually appealing user interfaces for the **NeonPro AI Advanced Aesthetic Platform**. This document covers component architecture, styling conventions, TweakCN NEONPRO color systems, typography, responsive design, advanced aesthetic accessibility, LGPD compliance, and performance using Shadcn UI, Tailwind CSS, and modern Next.js 15/React 19 best practices.
 
-**Platform Focus**: AI-First Healthcare Platform for Brazilian aesthetic clinics with constitutional excellence and regulatory compliance.
+**Platform Focus**: AI-First Advanced Aesthetic Platform for Brazilian aesthetic clinics with constitutional excellence and regulatory compliance.
 
 ## 🎯 Core Principles
 
-### **Healthcare-First Design Philosophy**
+### **Advanced Aesthetic-First Design Philosophy**
 
-- **TweakCN NEONPRO Theme**: Healthcare-optimized design system with medical clarity
+- **TweakCN NEONPRO Theme**: Advanced aesthetic-optimized design system with medical clarity
 - **LGPD Compliance**: Built-in privacy protection and data consent patterns
-- **ANVISA/CFM Standards**: Medical device interface compliance
+- **ANVISA/CFM Standards**: Advanced aesthetic medical device interface compliance
 - **Emergency Accessibility**: Life-critical interface patterns (<100ms response)
-- **Brazilian Localization**: PT-BR first with cultural healthcare considerations
+- **Brazilian Localization**: PT-BR first with cultural advanced aesthetic considerations
 
 ### **Technical Foundation**
 
