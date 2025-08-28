@@ -14,12 +14,12 @@
   "[javascriptreact]": { "editor.defaultFormatter": "dprint.dprint" },
   "[typescriptreact]": { "editor.defaultFormatter": "dprint.dprint" },
   "[json]": { "editor.defaultFormatter": "dprint.dprint" },
-  "[markdown]": { "editor.defaultFormatter": "dprint.dprint" },
-  "[yaml]": { "editor.defaultFormatter": "dprint.dprint" },
+  "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[yaml]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[css]": { "editor.defaultFormatter": "dprint.dprint" },
   "[scss]": { "editor.defaultFormatter": "dprint.dprint" },
   "[html]": { "editor.defaultFormatter": "dprint.dprint" },
-  "[jsonc]": { "editor.defaultFormatter": "dprint.dprint" },
+  "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
 
   // Prettier só onde faz sentido
   "[mdx]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },

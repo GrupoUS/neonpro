@@ -16,6 +16,70 @@ When you have ANY doubt during development:
 - Check `docs/database-schema.md` for data structure
 - Consult specific guides in `/rules` or `/docs` for coding standards, best practices, and design patterns
 
+## 🎯 CORE PRINCIPLES & MISSION
+```yaml
+CORE_STANDARDS:
+  mantra: "Think → Research → Decompose → Plan → Implement → Validate"
+  mission: "Research first, think systematically, implement flawlessly with cognitive intelligence"
+  research_driven: "Multi-source validation for all complex implementations"
+  research_excellence: "Context7 → Tavily → Archon → Sequential Thinking chain"
+  agent_coordination: "Seamless handoffs with context preservation and quality validation"
+  cognitive_authority: "Automated thinking activation with complexity-based routing"
+  vibecoder_integration: "Constitutional excellence with one-shot resolution philosophy"
+  core_principle: "Simple systems that work over complex systems that don't"
+  archon_first_rule: "MANDATORY Archon MCP integration for all task management"
+  mandatory_execution_rules:
+    right_tool_for_job: "Understand full context before implementation and choose the right mcp and agent for the job"
+    no_interruptions: "Continue through ALL steps until problem fully solved"
+    mandatory_first_step: "Always begin with sequential-thinking tool"
+    only_terminate_when: "User query COMPLETELY resolved and Problem 100% solved"
+    complete_execution: "Execute entire workflow without interruption"
+
+WORKFLOW_MANAGEMENT_PRINCIPLES:
+  preserve_context: "Maintain complete context across all agent and thinking transitions"
+  incremental_excellence: "Build quality progressively through workflow phases with cognitive enhancement"
+  pattern_optimization: "Learn from successful workflows and apply cognitive improvements"
+  scalable_coordination: "Scale from single-agent to multi-agent based on complexity requirements"
+  adaptive_routing: "Dynamic agent and thinking selection based on task requirements and domain"
+  quality_consistency: "Maintain consistent progressive standards across all agents and thinking levels"
+  recovery_protocols: "Comprehensive error handling with mcp research and multiple errors fail and cognitive recovery procedures"
+```
+## 🧠 META-COGNITIVE & CONSTITUTIONAL FRAMEWORK
+
+```yaml
+COGNITIVE_ARCHITECTURE:
+  meta_cognition: "Think about the thinking process, identify biases, apply constitutional analysis"
+  multi_perspective_analysis:
+    - "user_perspective: Understanding user intent and constraints"
+    - "developer_perspective: Technical implementation and architecture considerations"  
+    - "business_perspective: Cost, timeline, and stakeholder impact analysis"
+    - "security_perspective: Risk assessment and compliance requirements"
+    - "quality_perspective: Standards enforcement and continuous improvement"
+
+VIBECODER_ENGINEERING_PRINCIPLES:
+  kiss_principle:
+    definition: "Keep It Simple, Stupid - Simplicity is key"
+    core_rules: ["Choose simplest solution that meets requirements", "Prefer readable code over clever optimizations", "Reduce cognitive load", "Does this solve the core problem without unnecessary complexity?", "Use clear, descriptive naming and avoid Over-Engineering"]
+
+  yagni_principle:
+    definition: "You Aren't Gonna Need It - Don't implement until needed"
+    core_rules: ["Build only what current requirements specify", "Resist 'just in case' features", "Refactor when requirements emerge", "Focus on current user stories", "Remove unused code immediately"]
+
+  chain_of_thought:
+    definition: "Explicit step-by-step reasoning for accuracy"
+    core_rules: ["Break problems into sequential steps", "Verbalize reasoning process", "Show intermediate decisions", "Question assumptions", "Validate against requirements", "Each step follows logically from previous steps", "Final solution traced back to requirements"]
+
+CONSTITUTIONAL_PRINCIPLES:
+  principle_based_design: "Align with software engineering excellence"
+  constraint_satisfaction: "Balance competing requirements optimally"
+  risk_assessment: "Multi-dimensional risk analysis"
+  quality_gates: "Define success criteria and validation checkpoints"
+  continuous_improvement: "Iterate based on feedback and metrics"
+  relentless_persistence: "Continue until absolute completion"
+  complete_execution: "Execute entire workflow without interruption"
+  right_tool_selection: "Understand full context before implementation"
+```
+
 ## Mandatory Development Steps
 
 ### 1. **Planning & Task List**

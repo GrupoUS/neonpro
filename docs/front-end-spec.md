@@ -28,20 +28,20 @@ Este documento define os objetivos de experiência do usuário, arquitetura de i
 - **Critical Pain Points**: 30% treatments below expectation, 15h/week documentation burden, 70%
   decisions based on intuition
 - **Jobs-to-be-Done**: Treatment success 70% → 85%+, administrative time 40% → 15%, regulatory
-  confidence 85% → 99%+ (ANVISA, LGPD)
+  confidence 85% → 99%+ (Regulatory, LGPD)
 - **Architecture Requirements**: Zero business interruption, gradual change introduction,
   performance guarantee ≤5% impact
 
 #### **Persona 2: Carla Santos - Coordenadora Administrativa de Clínica Estética**
 
 - **Demographics**: 25-35 years, high tech comfort (8/10), **high adaptability to enhancements**
-- **Workflow Focus**: 8h/day operations, 20% scheduling conflicts, 15min/patient information search
+- **Workflow Focus**: 8h/day operations, 20% scheduling conflicts, 15min/client information search
 - **Jobs-to-be-Done**: 80% conflict reduction, 70% search time reduction, 60% communication
   automation
 - **Architecture Requirements**: Progressive enhancement, feature flag access, training integration,
   performance optimization
 
-#### **Persona 3: Pacientes de Estética (Usuários Secundários)**
+#### **Persona 3: Clientes de Estética (Usuários Secundários)**
 
 - **Demographics**: 18-80+ age range, diverse tech abilities, potential anxiety about procedures
 - **Primary Needs**: Clear information, easy booking, progress visibility, privacy assurance
@@ -52,15 +52,15 @@ Este documento define os objetivos de experiência do usuário, arquitetura de i
 
 1. **Zero-Disruption Operations**: ≤5% performance impact during system updates
 2. **Administrative Time Reduction**: 60% reduction in documentation time (15h → 6h/week)
-3. **Information Access Speed**: Patient data retrieval <2s, global search <1s
-4. **Compliance Confidence**: 100% transparency of LGPD/ANVISA compliance status
-5. **Communication Automation**: 80% automated patient communication
+3. **Information Access Speed**: Client data retrieval <2s, global search <1s
+4. **Compliance Confidence**: 100% transparency of LGPD/Regulatory compliance status
+5. **Communication Automation**: 80% automated client communication
 
 ### Core Design Principles
 
-1. **Workflow-First Design**: UI mirrors existing clinical workflows, preserves mental models
+1. **Workflow-First Design**: UI mirrors existing aesthetic workflows, preserves mental models
 2. **Progressive Disclosure**: Critical info first, details on-demand, ≤3 clicks to any information
-3. **Invisible Technology**: Zero cognitive load, focus on patients not interface
+3. **Invisible Technology**: Zero cognitive load, focus on clients not interface
 4. **Error Prevention > Error Handling**: Impossible states disabled, smart validation
 5. **Status Transparency**: Always show system, compliance, and process status
 6. **Contextual Intelligence**: UI adapts to user role and current context
@@ -73,15 +73,15 @@ Este documento define os objetivos de experiência do usuário, arquitetura de i
 
 ### **🤖 Universal AI Chat System UI**
 
-#### **External Patient Interface Components**
+#### **External Client Interface Components**
 
-**AI Chat Widget (Patient-Facing)**
+**AI Chat Widget (Client-Facing)**
 
 ```typescript
-interface AIPatientChatProps {
+interface AIClientChatProps {
   language: "pt-BR" | "en" | "es";
   practiceContext: PracticeInfo;
-  availableActions: ["schedule", "faq", "support", "emergency"];
+  availableActions: ["schedule", "faq", "support", "critical"];
   theme: "light" | "dark" | "high-contrast";
 }
 ```
@@ -92,7 +92,7 @@ interface AIPatientChatProps {
 - **Mobile-First**: Touch-friendly 48px minimum targets, swipe gestures
 - **Language**: Portuguese-optimized with Brazilian advanced aesthetic terminology
 - **Privacy**: Clear LGPD consent flows, data usage transparency
-- **Emergency Mode**: Red alert styling for urgent aesthetic medical questions
+- **Critical Mode**: Red alert styling for urgent aesthetic questions
 
 **Key UI States:**
 
@@ -107,9 +107,9 @@ interface AIPatientChatProps {
 
 ```typescript
 interface AIStaffAssistantProps {
-  staffRole: "admin" | "doctor" | "assistant" | "coordinator";
+  staffRole: "admin" | "professional" | "assistant" | "coordinator";
   permissions: StaffPermissions;
-  activePatientContext?: PatientContext;
+  activeClientContext?: ClientContext;
   enabledFeatures: ["nlQuery", "insights", "automation", "compliance"];
 }
 ```
@@ -119,7 +119,7 @@ interface AIStaffAssistantProps {
 - **Natural Language Query Bar**: Database queries in Portuguese ("Mostre os agendamentos de hoje")
 - **Contextual Suggestions**: AI-powered recommendations based on current workflow
 - **Performance Insights**: Real-time practice analytics and optimization suggestions
-- **Compliance Monitoring**: Live LGPD/ANVISA/CFM status indicators
+- **Compliance Monitoring**: Live LGPD/Regulatory status indicators
 
 ### **🧠 Engine Anti-No-Show UI Components**
 
@@ -155,13 +155,13 @@ interface NoShowRiskIndicatorProps {
 
 ### **📊 Behavioral CRM Interface Components**
 
-#### **Patient Preference Learning Display**
+#### **Client Preference Learning Display**
 
-**Patient Insights Panel**
+**Client Insights Panel**
 
 ```typescript
-interface PatientInsightsProps {
-  patientId: string;
+interface ClientInsightsProps {
+  clientId: string;
   communicationPreferences: CommunicationStyle;
   schedulingPatterns: SchedulingBehavior;
   treatmentHistory: TreatmentPreference[];
@@ -184,23 +184,23 @@ interface PatientInsightsProps {
 
 ```mermaid
 graph TD
-    A[NeonPro AI Dashboard] --> EMERGENCY[🚨 Emergency Access Layer]
-    A --> B[Patient-Centric Hub]
+    A[NeonPro AI Dashboard] --> CRITICAL[🚨 Critical Access Layer]
+    A --> B[Client-Centric Hub]
     A --> C[Practice Management]
     A --> D[AI Insights & Analytics]
     A --> AI[🤖 AI Assistant Layer]
 
-    EMERGENCY --> E1[Emergency Patient Lookup]
-    EMERGENCY --> E2[Crisis Scheduling]
-    EMERGENCY --> E3[Urgent Compliance Check]
+    CRITICAL --> E1[Critical Client Lookup]
+    CRITICAL --> E2[Crisis Scheduling]
+    CRITICAL --> E3[Urgent Compliance Check]
 
-    B --> B1[Patient Selection/Search]
-    B1 --> B2[Patient Context Bar]
-    B2 --> B3[Medical Information]
+    B --> B1[Client Selection/Search]
+    B1 --> B2[Client Context Bar]
+    B2 --> B3[Aesthetic Information]
     B2 --> B4[Scheduling & Appointments - with No-Show Risk]
     B2 --> B5[Financial & Treatment Plans]
     B2 --> B6[Compliance & Consent Status]
-    B2 --> B7[AI Patient Insights & Preferences]
+    B2 --> B7[AI Client Insights & Preferences]
 
     C --> C1[Daily Operations Dashboard]
     C --> C2[Resource Management]
@@ -219,7 +219,7 @@ graph TD
     AI --> AI4[AI Automation Settings]
 
     PERSISTENT[🔒 Persistent UI Elements] --> STATUS[Compliance Status Bar]
-    PERSISTENT --> SEARCH[Global Patient Search with AI]
+    PERSISTENT --> SEARCH[Global Client Search with AI]
     PERSISTENT --> ALERTS[Real-time Alerts + AI Recommendations]
     PERSISTENT --> AICHAT[🤖 AI Chat Widget]
 ```
@@ -229,7 +229,7 @@ graph TD
 **Primary Navigation** (AI-Enhanced Advanced Aesthetic):
 
 ```
-[🚨 Emergency] | [👤 Patient Hub] | [🏥 Practice] | [📊 AI Analytics] | [🤖 AI Assistant] | [🔒 Status] | [🔍 Search]
+[🚨 Critical] | [👤 Client Hub] | [🏥 Practice] | [📊 AI Analytics] | [🤖 AI Assistant] | [🔒 Status] | [🔍 Search]
 ```
 
 **AI-Specific Navigation Elements:**
@@ -239,19 +239,19 @@ graph TD
 - **🔮 AI Insights Badge**: Notification count for new AI recommendations
 - **⚡ Quick Actions**: AI-suggested context-aware action buttons
 
-**Patient Context Bar** (When Patient Selected):
+**Client Context Bar** (When Client Selected):
 
-```
-👤 [Patient Name] | 📅 [Next Apt] | 🏥 [Treatment Status] | ✅ [Compliance] | 💰 [Financial]
+
+👤 `Client Name` | 📅 `Next Apt` | 🏥 `Treatment Status` | ✅ `Compliance` | 💰 `Financial`
 ```
 
 **Responsive Navigation Strategy**:
 
 - **Desktop**: Full horizontal navigation with persistent elements
 - **Tablet**: Collapsed navigation with swipe gestures, context bar becomes drawer
-- **Mobile**: Bottom tab navigation with emergency quick-access button
+- **Mobile**: Bottom tab navigation with critical quick-access button
 
-**Breadcrumb Strategy**: Emergency Override → Current Module → Patient Context → Current Page
+**Breadcrumb Strategy**: Critical Override → Current Module → Client Context → Current Page
 
 ---
 
@@ -259,69 +259,69 @@ graph TD
 
 ### Flow 1: Acesso de Emergência a Paciente (Prioridade Crítica)
 
-**User Goal**: Access critical patient information during aesthetic procedure emergency
-**Entry Points**: Emergency button (always visible), voice command, barcode scan, emergency integration
-**Success Criteria**: Critical patient data accessible within 10 seconds, complete audit trail maintained
+**User Goal**: Access critical client information during aesthetic procedure crisis
+**Entry Points**: Critical button (always visible), voice command, barcode scan, critical integration
+**Success Criteria**: Critical client data accessible within 10 seconds, complete audit trail maintained
 
 #### Flow Diagram:
 
 ```mermaid
 graph TD
-    A[🚨 EMERGENCY] --> B[Immediate Search]
-    B --> C{Patient Found?}
+    A[🚨 CRITICAL] --> B[Immediate Search]
+    B --> C{Client Found?}
 
     C -->|Yes| D[🔴 CRITICAL INFO DISPLAY]
-    C -->|No| E[Create Emergency Record]
+    C -->|No| E[Create Critical Record]
 
     D --> F[⚠️ Allergies - RED ALERT]
     D --> G[💊 Current Medications]
     D --> H[🚫 Contraindications]
-    D --> I[📞 Emergency Contact]
+    D --> I[📞 Critical Contact]
 
     E --> J[Minimal Essential Form]
     J --> K[📋 Basic Aesthetic Info]
     K --> L[Save & Continue Care]
 
-    BACKGROUND[🔄 Background Process] --> M[Log Emergency Access]
+    BACKGROUND[🔄 Background Process] --> M[Log Critical Access]
     BACKGROUND --> N[Notify Supervisors]
     BACKGROUND --> O[Compliance Audit Trail]
 ```
 
 **Edge Cases & Error Handling**:
 
-- **Network failure**: Offline emergency cache (last 200 patients) with critical data
-- **System crash**: Paper backup protocol with QR code patient lookup
-- **Power outage**: Emergency battery backup with critical data display
-- **Privacy compliance**: Emergency access automatically logged, supervisor notification within 15 minutes
+- **Network failure**: Offline critical cache (last 200 clients) with critical data
+- **System crash**: Paper backup protocol with QR code client lookup
+- **Power outage**: Critical battery backup with critical data display
+- **Privacy compliance**: Critical access automatically logged, supervisor notification within 15 minutes
 
 ### Flow 2: Processamento Financeiro de Estética (Conformidade Regulatória)
 
-**User Goal**: Complete patient financial processing with insurance verification and compliance
-**Entry Points**: Patient checkout, treatment completion, payment request
+**User Goal**: Complete client financial processing with insurance verification and compliance
+**Entry Points**: Client checkout, treatment completion, payment request
 **Success Criteria**: Payment processed in <3 minutes, 100% insurance verification accuracy
 
 #### Flow Diagram:
 
 ```mermaid
 graph TD
-    A[Patient Ready for Checkout] --> B[Insurance Verification]
+    A[Client Ready for Checkout] --> B[Insurance Verification]
     B --> C{Insurance Active?}
 
     C -->|Yes| D[Real-time Eligibility Check]
     C -->|No| E[Self-Pay Options]
 
     D --> F{Coverage Confirmed?}
-    F -->|Yes| G[Calculate Patient Responsibility]
+    F -->|Yes| G[Calculate Client Responsibility]
     F -->|No| H[Pre-Authorization Required]
 
     G --> I[Co-pay + Deductible Display]
-    I --> J{Patient Accepts?}
+    I --> J{Client Accepts?}
 
     J -->|Yes| K[Process Co-pay]
     J -->|No| L[Payment Plan Options]
 
     H --> M[Submit Pre-Auth Request]
-    M --> N[Notify Patient of Delay]
+    M --> N[Notify Client of Delay]
     N --> O[Schedule Follow-up]
 
     E --> P[Cash Price Display]
@@ -339,9 +339,9 @@ graph TD
     U --> W[Schedule Follow-up if Needed]
 ```
 
-### Flow 3: Patient Consent & Treatment Planning (LGPD Compliant)
+### Flow 3: Client Consent & Treatment Planning (LGPD Compliant)
 
-**User Goal**: Obtain proper patient consent for treatment while maintaining LGPD compliance
+**User Goal**: Obtain proper client consent for treatment while maintaining LGPD compliance
 **Entry Points**: Treatment recommendation, procedure booking, data sharing request
 **Success Criteria**: Complete consent documentation in <5 minutes, 100% legal compliance
 
@@ -349,11 +349,11 @@ graph TD
 
 ```mermaid
 graph TD
-    A[Treatment Recommended] --> B[Patient Education Material]
+    A[Treatment Recommended] --> B[Client Education Material]
     B --> C[Risk Disclosure]
     C --> D[Alternative Options Presented]
 
-    D --> E{Patient Questions?}
+    D --> E{Client Questions?}
     E -->|Yes| F[Address Concerns]
     E -->|No| G[Consent Process]
 
@@ -373,7 +373,7 @@ graph TD
     O --> Q[Required vs Optional Explanation]
     Q --> N
 
-    P --> R[Patient Signature Capture]
+    P --> R[Client Signature Capture]
     R --> S[Witness Signature (if required)]
     S --> T[Consent Audit Trail Created]
 
@@ -384,26 +384,26 @@ graph TD
 **Critical Advanced Aesthetic Flow Notes**:
 
 - **LGPD Compliance**: Every flow includes automated privacy compliance validation
-- **ANVISA Requirements**: Audit trails maintained for all clinical decisions
-- **Emergency Protocols**: Life-saving care prioritized over standard security protocols
-- **Performance Requirements**: Emergency access <10s, financial processing <3min, consent capture <5min
+- **Regulatory Requirements**: Audit trails maintained for all aesthetic decisions
+- **Critical Protocols**: Critical care prioritized over standard security protocols
+- **Performance Requirements**: Critical access <10s, financial processing <3min, consent capture <5min
 
 ---
 
 ## Section 3.1: AI-Enhanced User Flows (Revolutionary Features)
 
-### **Flow A: Universal AI Chat - External Patient Interface**
+### **Flow A: Universal AI Chat - External Client Interface**
 
-**User Goal**: Patient receives 24/7 support and can schedule appointments through AI **Entry
-Points**: Website chat widget, WhatsApp integration, patient portal **Success Criteria**: 90%+
+**User Goal**: Client receives 24/7 support and can schedule appointments through AI **Entry
+Points**: Website chat widget, WhatsApp integration, client portal **Success Criteria**: 90%+
 accurate responses, <2s response time, seamless human handoff
 
 #### Flow Diagram:
 
 ```mermaid
 graph TD
-    A[Patient Opens Chat] --> B[AI Greeting in Portuguese]
-    B --> C[Patient Types Question]
+    A[Client Opens Chat] --> B[AI Greeting in Portuguese]
+    B --> C[Client Types Question]
     C --> D{AI Confidence Check}
 
     D -->|High Confidence >85%| E[AI Provides Answer]
@@ -449,7 +449,7 @@ graph TD
     D -->|Database Query| E[Execute SQL Query]
     D -->|Analytics Request| F[Generate Insights]
     D -->|Automation Task| G[Suggest Workflow]
-    D -->|Compliance Check| H[LGPD/ANVISA Status]
+    D -->|Compliance Check| H[LGPD/Regulatory Status]
 
     E --> I[Display Results with Context]
     F --> J[Show Visual Charts/Graphs]
@@ -472,7 +472,7 @@ graph TD
 
 - **Natural Language Input**: Large text area with smart suggestions
 - **Query History**: Previous requests with one-click repeat
-- **Context Awareness**: Shows current patient/practice context
+- **Context Awareness**: Shows current client/practice context
 - **Results Visualization**: Tables, charts, and export options
 - **Audit Logging**: All queries logged for compliance
 
@@ -523,17 +523,17 @@ graph TD
 - **Success Tracking**: ROI metrics showing revenue protected
 - **ML Model Performance**: Accuracy statistics and improvement trends
 
-### **Flow D: Behavioral CRM - Patient Preference Learning**
+### **Flow D: Behavioral CRM - Client Preference Learning**
 
-**User Goal**: Understand patient communication and treatment preferences for personalization
-**Entry Points**: Patient profile, appointment booking, treatment planning **Success Criteria**: 80%
-preference prediction accuracy, 30% improvement in patient satisfaction
+**User Goal**: Understand client communication and treatment preferences for personalization
+**Entry Points**: Client profile, appointment booking, treatment planning **Success Criteria**: 80%
+preference prediction accuracy, 30% improvement in client satisfaction
 
 #### Flow Diagram:
 
 ```mermaid
 graph TD
-    A[Patient Profile View] --> B[AI Analyzes Interaction History]
+    A[Client Profile View] --> B[AI Analyzes Interaction History]
     B --> C[Identify Behavioral Patterns]
     C --> D[Generate Preference Profile]
     D --> E[Display Insights Panel]
@@ -580,28 +580,28 @@ graph TD
 
 ### Primary Design Files (Enhanced Advanced Aesthetic Structure)
 
-**Figma Workspace**: "NeonPro Advanced Aesthetic UI/UX Specifications - Medical Grade"
+**Figma Workspace**: "NeonPro Advanced Aesthetic UI/UX Specifications - Professional Grade"
 
 ```
 NeonPro Advanced Aesthetic UI/UX - Figma Workspace
 ├── 00_Advanced_Aesthetic_Design_System
-│   ├── Aesthetic_Medical_Color_Psychology
-│   ├── Typography_Aesthetic_Medical_Hierarchy
-│   ├── Icon_Library_Aesthetic_Medical_Universal
+│   ├── Aesthetic_Professional_Color_Psychology
+│   ├── Typography_Aesthetic_Professional_Hierarchy
+│   ├── Icon_Library_Aesthetic_Professional_Universal
 │   └── Accessibility_Standards_WCAG_AA+
-├── 01_Emergency_Critical_Path
-│   ├── Mobile_Emergency_Interface
+├── 01_Critical_Path
+│   ├── Mobile_Critical_Interface
 │   ├── Tablet_Bedside_Access
-│   ├── Desktop_Emergency_Command
-│   └── Offline_Emergency_Cache
-├── 02_Patient_Context_Management
+│   ├── Desktop_Critical_Command
+│   └── Offline_Critical_Cache
+├── 02_Client_Context_Management
 │   ├── Context_Bar_Responsive
-│   ├── Patient_Privacy_States
+│   ├── Client_Privacy_States
 │   ├── Multi_Provider_Views
 │   └── Cross_Device_Continuity
 ├── 03_Compliance_Actionable_UI
 │   ├── LGPD_Status_Dashboard
-│   ├── ANVISA_Audit_Interface
+│   ├── Regulatory_Audit_Interface
 │   ├── Violation_Remediation_Steps
 │   └── Real_Time_Compliance_Alerts
 └── 04_Accessibility_Optimized
@@ -613,42 +613,42 @@ NeonPro Advanced Aesthetic UI/UX - Figma Workspace
 
 ### Key Screen Layouts (Advanced Aesthetic-Specific)
 
-#### 1. Mobile Emergency Interface (LIFE-CRITICAL PRIORITY)
+#### 1. Mobile Critical Interface (LIFE-CRITICAL PRIORITY)
 
-**Purpose**: Provide instant access to life-saving patient information on mobile devices **Key
+**Purpose**: Provide instant access to life-saving client information on mobile devices **Key
 Elements**:
 
 - **Full-screen critical info display** with zero navigation distractions
-- **Color-coded aesthetic medical alerts**: 🔴 Red (emergency), 🟠 Orange (medications), 🟡 Yellow
+- **Color-coded aesthetic alerts**: 🔴 Red (critical), 🟠 Orange (treatments), 🟡 Yellow
   (cautions)
 - **One-thumb operation**: All critical actions within thumb reach zone
-- **Emergency contact auto-dial**: Large call buttons integrated with emergency services
-- **Offline capability indicator**: Clear visual status of emergency cache availability
+- **Critical contact auto-dial**: Large call buttons integrated with critical services
+- **Offline capability indicator**: Clear visual status of critical cache availability
 
-**Design File Reference**: `Mobile_Emergency_Life_Critical.fig`
+**Design File Reference**: `Mobile_Critical_Life_Critical.fig`
 
 #### 2. Compliance Action Dashboard (REGULATORY MANAGEMENT)
 
 **Purpose**: Transform compliance monitoring into actionable workflow integration **Key Elements**:
 
-- **Compliance Score Dashboard**: Real-time progress toward 100% LGPD/ANVISA compliance
+- **Compliance Score Dashboard**: Real-time progress toward 100% LGPD/Regulatory compliance
 - **Action Priority Matrix**: 🔴 Critical → 🟠 Important → 🟢 Routine
 - **One-Click Remediation**: "Fix This Now" buttons with guided workflows
-- **Regulatory Calendar**: ANVISA inspections, LGPD deadlines, certifications
+- **Regulatory Calendar**: Regulatory inspections, LGPD deadlines, certifications
 
 **Design File Reference**: `Compliance_Actionable_Dashboard.fig`
 
-#### 3. Cross-Device Patient Context Continuity (WORKFLOW OPTIMIZATION)
+#### 3. Cross-Device Client Context Continuity (WORKFLOW OPTIMIZATION)
 
-**Purpose**: Seamless patient context preservation across clinical device ecosystem **Key
+**Purpose**: Seamless client context preservation across aesthetic device ecosystem **Key
 Elements**:
 
 - **Real-time sync indicators**: Visual confirmation of data synchronization
 - **QR code handoff system**: Instant session transfer between devices
-- **Context preservation**: Patient data, form progress, clinical notes maintained
+- **Context preservation**: Client data, form progress, aesthetic notes maintained
 - **Multi-device session management**: Dashboard showing current device access
 
-**Design File Reference**: `Cross_Device_Patient_Continuity.fig`
+**Design File Reference**: `Cross_Device_Client_Continuity.fig`
 
 ---
 
@@ -661,20 +661,20 @@ enhancements.
 
 ### Core Components (Aesthetic Medicine Specialized)
 
-#### Brazilian Advanced Aesthetic Medical Components
+#### Brazilian Advanced Aesthetic Professional Components
 
 **`AestheticTreatmentPlan`**
 
-- **Purpose**: Manage multi-session cosmetic treatments with realistic outcome expectations and CFM
+- **Purpose**: Manage multi-session cosmetic treatments with realistic outcome expectations and regulatory
   compliance
 - **Variants**: Single-session, Multi-session, Combination-therapy, Maintenance-protocol
 - **States**: Planning, Active, Recovery, Completed, Follow-up-required
 - **Usage Guidelines**: Always include realistic expectation management, before/after photo consent,
-  CFM ethical compliance
+  regulatory ethical compliance
 
 **`CosmeticConsentBrazilian`**
 
-- **Purpose**: LGPD and CFM compliant consent capture for aesthetic procedures
+- **Purpose**: LGPD and regulatory compliant consent capture for aesthetic procedures
 - **Variants**: Minor-procedure, Major-procedure, Experimental-treatment, Photo-consent
 - **States**: Pending, Partial, Complete, Expired, Withdrawn
 - **Usage Guidelines**: Comprehensive risk disclosure, recovery timeline, granular photo consent
@@ -682,7 +682,7 @@ enhancements.
 
 **`BeforeAfterSecureGallery`**
 
-- **Purpose**: LGPD-compliant patient photo management with enhanced privacy for aesthetic
+- **Purpose**: LGPD-compliant client photo management with enhanced privacy for aesthetic
   documentation
 - **Variants**: Timeline-view, Comparison-view, Progress-tracking, Secure-sharing
 - **States**: Upload-pending, Processing, Encrypted-stored, Consent-required, Shared, Archived
@@ -691,12 +691,12 @@ enhancements.
 
 #### Brazilian Advanced Aesthetic Integration Components
 
-**`CFMValidationBadge`**
+**`RegulatoryValidationBadge`**
 
-- **Purpose**: Real-time Brazilian aesthetic medical license (CFM) validation display
+- **Purpose**: Real-time Brazilian aesthetic professional license (Regulatory) validation display
 - **Variants**: Active-license, Renewal-pending, Specialization-verified, Ethics-compliant
 - **States**: Validated, Pending-verification, Expired, Suspended, Error
-- **Usage Guidelines**: Prominent credential display, automatic renewal alerts, patient
+- **Usage Guidelines**: Prominent credential display, automatic renewal alerts, client
   communication integration
 
 **`ANSInsuranceProcessor`**
@@ -715,11 +715,11 @@ enhancements.
   /* Professional Trust & Sophistication */
   --aesthetic-primary: #2563eb; /* Professional trust blue */
   --aesthetic-secondary: #7c3aed; /* Aesthetic sophistication purple */
-  --aesthetic-accent: #06b6d4; /* Modern aesthetic medical cyan */
+  --aesthetic-accent: #06b6d4; /* Modern aesthetic professional cyan */
 
   /* Brazilian Advanced Aesthetic Compliance */
-  --cfm-validated: #16a34a; /* CFM license valid */
-  --cfm-pending: #d97706; /* CFM validation pending */
+  --regulatory-validated: #16a34a; /* Regulatory license valid */
+--regulatory-pending: #d97706; /* Regulatory validation pending */
   --ans-covered: #2563eb; /* ANS insurance covered */
   --lgpd-compliant: #059669; /* LGPD fully compliant */
 
@@ -731,9 +731,9 @@ enhancements.
 
   /* Portuguese Typography Optimization */
   --font-portuguese-primary: "Inter", "Roboto", sans-serif;
-  --font-aesthetic-medical-data: "JetBrains Mono", monospace;
-  --text-patient-name-pt: 20px; /* Portuguese patient names */
-  --text-aesthetic-medical-pt: 18px; /* Portuguese aesthetic medical content */
+  --font-aesthetic-professional-data: "JetBrains Mono", monospace;
+  --text-client-name-pt: 20px; /* Portuguese client names */
+--text-aesthetic-professional-pt: 18px; /* Portuguese aesthetic professional content */
   --line-height-portuguese: 1.6; /* Optimal Portuguese readability */
 }
 ```
@@ -743,7 +743,7 @@ enhancements.
 ### Visual Identity: "Beleza Inteligente Brasileira" (Brazilian Intelligent Beauty)
 
 **Brand Philosophy**: Combining Brazilian natural beauty philosophy with AI-powered precision
-medicine, celebrating Brazilian aesthetic values while delivering world-class technology and aesthetic medical
+medicine, celebrating Brazilian aesthetic values while delivering world-class technology and aesthetic professional
 excellence.
 
 ### Core Brand Pillars
@@ -765,7 +765,7 @@ excellence.
 
 - **Promise**: "Resultados previsíveis com o carinho que você merece"
 - **Application**: Evidence-based medicine delivered with Brazilian warmth and personal care
-- **Visual Expression**: Clinical precision softened with warm, approachable design elements
+- **Visual Expression**: Professional precision softened with warm, approachable design elements
 
 ### Color Palette (Brazilian Beauty-Focused)
 
@@ -774,7 +774,7 @@ excellence.
 | **Primary**   | #16a085  | Verde Brasilidade | Nature, growth, Brazilian heritage | Primary CTAs, brand elements, success states |
 | **Secondary** | #8e44ad  | Roxo Sofisticação | Luxury, transformation, premium    | Premium services, sophisticated features     |
 | **Accent**    | #f39c12  | Dourado Tropical  | Warmth, success, celebration       | Achievements, highlights, positive outcomes  |
-| **Trust**     | #2980b9  | Azul Confiança    | Security, professionalism, aesthetic medical | Clinical information, trust indicators       |
+| **Trust**     | #2980b9  | Azul Confiança    | Security, professionalism, aesthetic professional | Professional information, trust indicators       |
 | **Wellness**  | #27ae60  | Verde Bem-Estar   | Health, balance, natural beauty    | Wellness features, holistic advanced aesthetic           |
 
 ### Typography (Portuguese-Optimized)
@@ -783,7 +783,7 @@ excellence.
 /* Brand Typography System */
 --font-brand-primary: "Montserrat", sans-serif; /* Brazilian-designed warmth */
 --font-brand-secondary: "Source Sans Pro", sans-serif; /* International readability */
---font-aesthetic-medical-data: "IBM Plex Mono", monospace; /* Technical precision with personality */
+--font-aesthetic-professional-data: "IBM Plex Mono", monospace; /* Technical precision with personality */
 
 /* Portuguese Language Optimization */
 --portuguese-text-scaling: 1.1; /* Account for longer Portuguese words */
@@ -806,7 +806,7 @@ excellence.
 
 **Icon Design Principles**:
 
-- **Rounded, organic edges**: Reflects Brazilian warmth vs clinical coldness
+- **Rounded, organic edges**: Reflects Brazilian warmth vs professional coldness
 - **Dual-tone approach**: Primary color + accent for depth and sophistication
 - **Cultural sensitivity**: Inclusive representation across Brazilian demographics
 - **Emotional integration**: Subtle happiness/confidence cues where appropriate
@@ -818,7 +818,7 @@ excellence.
 ### Compliance Target
 
 **Standard**: WCAG 2.1 AA+ with Brazilian advanced aesthetic-specific enhancements and aesthetic medicine
-patient accommodations
+client accommodations
 
 ### Multi-Tier Brazilian Advanced Aesthetic Accessibility Framework
 
@@ -826,25 +826,25 @@ patient accommodations
 
 **Visual Accessibility (Aesthetic Medicine Context)**:
 
-- **Color contrast ratios**: 7:1 for critical aesthetic medical information, 8:1 for post-procedure recovery
+- **Color contrast ratios**: 7:1 for critical aesthetic professional information, 8:1 for post-procedure recovery
   mode
-- **Text sizing**: 18px minimum for aesthetic medical data, 24px for post-procedure impaired vision
+- **Text sizing**: 18px minimum for aesthetic professional data, 24px for post-procedure impaired vision
 - **Focus indicators**: High-contrast Verde Brasilidade (#16a085) outline
-- **Brazilian Portuguese optimization**: Screen reader pronunciation for advanced aesthetic medical
+- **Brazilian Portuguese optimization**: Screen reader pronunciation for advanced aesthetic professional
   terminology
 
-**Motor Accessibility (Advanced Aesthetic Professional + Patient)**:
+**Motor Accessibility (Advanced Aesthetic Professional + Client)**:
 
-- **Touch targets**: 48px minimum (aesthetic medical gloves), 56px for post-procedure swollen hands
+- **Touch targets**: 48px minimum (aesthetic professional gloves), 56px for post-procedure swollen hands
 - **Keyboard navigation**: Complete system access with advanced aesthetic workflow-optimized tab order
 - **Voice commands**: Portuguese voice navigation for hands-free sterile operation
-- **Post-procedure mode**: One-handed operation, gesture alternatives for bandaged patients
+- **Post-procedure mode**: One-handed operation, gesture alternatives for bandaged clients
 
 **Cognitive Accessibility (Multi-Generational Brazilian)**:
 
-- **Simple Portuguese**: Plain language with aesthetic medical term explanations
-- **Visual hierarchy**: Clear aesthetic medical information prioritization for emergency scanning
-- **Error prevention**: Smart validation preventing impossible aesthetic medical data entry
+- **Simple Portuguese**: Plain language with aesthetic professional term explanations
+- **Visual hierarchy**: Clear aesthetic professional information prioritization for critical scanning
+- **Error prevention**: Smart validation preventing impossible aesthetic professional data entry
 - **Post-procedure support**: Simplified interface for medication-affected cognitive function
 
 **Regional Technology Accessibility (Socioeconomic Integration)**:
@@ -856,56 +856,56 @@ patient accommodations
 
 ### Testing Strategy (Brazilian Advanced Aesthetic Context)
 
-- **Brazilian Portuguese screen reader testing**: NVDA, JAWS with BR-PT aesthetic medical dictionary
+- **Brazilian Portuguese screen reader testing**: NVDA, JAWS with BR-PT aesthetic professional dictionary
 - **Regional user testing**: Each Brazilian region represented in accessibility testing
 - **Post-procedure simulation**: Testing with simulated visual/motor impairments
-- **Emergency scenario testing**: Aesthetic medical emergency accessibility under stress conditions
+- **Critical scenario testing**: Aesthetic professional critical accessibility under stress conditions
 
 ---
 
 ## Section 8: Responsiveness Strategy (Brazilian Advanced Aesthetic Environment-Aware)
 
-### Enhanced Breakpoint Strategy (Advanced Aesthetic Medical Environment Context)
+### Enhanced Breakpoint Strategy (Advanced Aesthetic Professional Environment Context)
 
 | Breakpoint              | Min Width | Max Width | Target Devices              | Brazilian Advanced Aesthetic Context             |
 | ----------------------- | --------- | --------- | --------------------------- | ---------------------------------------- |
-| **Basic Mobile**        | 320px     | 480px     | Older Android, limited data | Rural/economic patients, offline-first   |
-| **Standard Mobile**     | 481px     | 767px     | Mid-range smartphones       | Urban patients, 4G coverage              |
-| **Clinical Tablet**     | 768px     | 1023px    | Advanced aesthetic medical tablets, bedside    | Advanced aesthetic professionals, voice-priority |
-| **Desktop Workstation** | 1024px    | 1439px    | Clinic computers            | Administrative tasks, multi-patient      |
+| **Basic Mobile**        | 320px     | 480px     | Older Android, limited data | Rural/economic clients, offline-first   |
+| **Standard Mobile**     | 481px     | 767px     | Mid-range smartphones       | Urban clients, 4G coverage              |
+| **Professional Tablet** | 768px     | 1023px    | Advanced aesthetic professional tablets, bedside | Advanced aesthetic professionals, voice-priority |
+| **Desktop Workstation** | 1024px    | 1439px    | Clinic computers            | Administrative tasks, multi-client      |
 | **Specialist Display**  | 1440px    | -         | Large monitors, imaging     | Premium clinics, advanced analytics      |
 
 ### Enhanced Adaptation Patterns (Advanced Aesthetic Workflow Optimized)
 
-#### Layout Changes (Advanced Aesthetic Medical Priority):
+#### Layout Changes (Advanced Aesthetic Professional Priority):
 
-- **Mobile (Basic)**: Single-column, emergency access priority, offline patient lookup
-- **Mobile (Standard)**: Patient portal access, appointment booking, photo uploads
-- **Tablet (Clinical)**: Two-panel patient context + treatment details, voice navigation
-- **Desktop (Workstation)**: Multi-patient dashboard, administrative workflows, reporting
-- **Display (Specialist)**: Dual-monitor patient + analytics, advanced imaging, multi-provider
+- **Mobile (Basic)**: Single-column, critical access priority, offline client lookup
+- **Mobile (Standard)**: Client portal access, appointment booking, photo uploads
+- **Tablet (Professional)**: Two-panel client context + treatment details, voice navigation
+- **Desktop (Workstation)**: Multi-client dashboard, administrative workflows, reporting
+- **Display (Specialist)**: Dual-monitor client + analytics, advanced imaging, multi-provider
   coordination
 
 #### Navigation Changes (Brazilian User Patterns):
 
 - **Mobile**: Bottom tab navigation with Portuguese labels, hamburger secondary menu
 - **Tablet**: Collapsible side navigation, voice command integration, large touch targets
-- **Desktop**: Full horizontal navigation, Portuguese keyboard shortcuts (Ctrl+P for Paciente)
-- **Emergency Mode**: Simplified emergency-only navigation on any device
+- **Desktop**: Full horizontal navigation, Portuguese keyboard shortcuts (Ctrl+C for Cliente)
+- **Critical Mode**: Simplified critical-only navigation on any device
 
 #### Content Priority (Brazilian Advanced Aesthetic Needs):
 
-- **Mobile Data Limited**: Emergency contacts, critical allergies, offline patient cache
-- **Mobile WiFi**: Full patient portal, photo uploads, appointment scheduling, telemedicine
-- **Tablet Clinical**: Patient management, treatment planning, voice-controlled documentation
-- **Desktop Admin**: Financial management, compliance reporting, multi-patient oversight
-- **Emergency Any**: Life-critical information only, large fonts, high contrast
+- **Mobile Data Limited**: Critical contacts, important allergies, offline client cache
+- **Mobile WiFi**: Full client portal, photo uploads, appointment scheduling, telemedicine
+- **Tablet Professional**: Client management, treatment planning, voice-controlled documentation
+- **Desktop Admin**: Financial management, compliance reporting, multi-client oversight
+- **Critical Any**: Life-critical information only, large fonts, high contrast
 
-### Clinical Environment Responsive Modes
+### Professional Environment Responsive Modes
 
 ```css
 /* Brazilian Advanced Aesthetic Environment Adaptations */
-@media (clinical-environment: sterile) {
+@media (professional-environment: sterile) {
   --interaction-mode: voice-primary;
   --touch-backup: available;
   --visual-feedback: enhanced;
@@ -919,9 +919,9 @@ patient accommodations
   --sync-mode: wifi-only;
 }
 
-@media (emergency-mode: active) {
+@media (critical-mode: active) {
   --layout: crisis-simplified;
-  --font-size: emergency-large;
+  --font-size: critical-large;
   --contrast: maximum;
   --language: portuguese-simplified;
 }
@@ -931,23 +931,23 @@ patient accommodations
 
 ## Section 9: Animation & Micro-interactions (Brazilian Advanced Aesthetic Psychology)
 
-### Motion Principles (Advanced Aesthetic Medical Environment Appropriate)
+### Motion Principles (Advanced Aesthetic Professional Environment Appropriate)
 
-- **Calm & Reassuring**: Gentle animations that reduce patient anxiety
-- **Advanced Aesthetic Medical Professional**: Subtle, purposeful motion that conveys competence
-- **Brazilian Warmth**: Slightly more expressive than sterile clinical interfaces
+- **Calm & Reassuring**: Gentle animations that reduce client anxiety
+- **Advanced Aesthetic Professional**: Subtle, purposeful motion that conveys competence
+- **Brazilian Warmth**: Slightly more expressive than sterile professional interfaces
 - **Performance Conscious**: Lightweight animations for limited connectivity
 - **Accessibility First**: Respects prefers-reduced-motion settings
 
 ### Key Advanced Aesthetic Animations
 
-- **Patient Loading**: Gentle pulse animation with "Carregando informações do paciente..."
+- **Client Loading**: Gentle pulse animation with "Carregando informações do cliente..."
   (Duration: 1.2s, Easing: ease-out)
 - **Treatment Success**: Soft celebration animation with Verde Bem-Estar (#27ae60) (Duration: 0.8s,
   Easing: bounce-gentle)
 - **Compliance Status**: Smooth status transitions with color-coded feedback (Duration: 0.6s,
   Easing: ease-in-out)
-- **Emergency Alert**: Urgent but not jarring pulsing animation (Duration: 0.5s repeating, Easing:
+- **Critical Alert**: Urgent but not jarring pulsing animation (Duration: 0.5s repeating, Easing:
   ease-in-out)
 - **Photo Upload**: Progress indication with Brazilian cultural warmth (Duration: variable, Easing:
   linear)
@@ -960,19 +960,19 @@ patient accommodations
 
 ### Performance Goals (Brazilian Infrastructure Context)
 
-- **Mobile 4G Load**: <2.5 seconds for critical patient information
+- **Mobile 4G Load**: <2.5 seconds for critical client information
 - **3G Fallback Load**: <5 seconds for essential features
 - **Desktop Workstation**: <1.5 seconds for administrative workflows
-- **Emergency Access**: <1 second for life-critical information
-- **Offline Performance**: Instant access to cached patient data
+- **Critical Access**: <1 second for life-critical information
+- **Offline Performance**: Instant access to cached client data
 
 ### Design Strategies (Connectivity-Aware)
 
-- **Progressive loading**: Critical medical information first, aesthetic enhancements second
+- **Progressive loading**: Critical professional information first, aesthetic enhancements second
 - **Image optimization**: WebP format with fallbacks, progressive JPEG for photos
 - **Brazilian CDN**: Content delivery optimized for Brazilian internet infrastructure
-- **Offline-first architecture**: Essential patient data cached locally on all devices
-- **Data usage indicators**: Show patients their data consumption in real-time
+- **Offline-first architecture**: Essential client data cached locally on all devices
+- **Data usage indicators**: Show clients their data consumption in real-time
 
 ---
 
@@ -981,44 +981,44 @@ patient accommodations
 ### Immediate Actions (Implementation Priority)
 
 1. **Stakeholder Review**: Present specification to Dr. Marina, Carla, and technical team
-2. **Brazilian Compliance Validation**: Verify LGPD/ANVISA/CFM requirement coverage
+2. **Brazilian Compliance Validation**: Verify LGPD/Regulatory requirement coverage
 3. **Regional User Testing**: Test with Brazilian users across different regions and age groups
-4. **Medical Device Integration Planning**: Coordinate with aesthetic equipment vendors
+4. **Professional Device Integration Planning**: Coordinate with aesthetic equipment vendors
 5. **Portuguese Localization**: Complete Brazilian Portuguese terminology and cultural adaptation
 
 ### Design Handoff Checklist
 
-- [✅] All user flows documented with Brazilian healthcare context
-- [✅] Component inventory complete with aesthetic medicine specialization
-- [✅] Accessibility requirements defined with Portuguese optimization
-- [✅] Responsive strategy clear with Brazilian connectivity considerations
-- [✅] Brand guidelines incorporated with Brazilian cultural sensitivity
-- [✅] Performance goals established with regional infrastructure reality
+- [ ] All user flows documented with Brazilian aesthetic context
+- [ ] Component inventory complete with aesthetic medicine specialization
+- [ ] Accessibility requirements defined with Portuguese optimization
+- [ ] Responsive strategy clear with Brazilian connectivity considerations
+- [ ] Brand guidelines incorporated with Brazilian cultural sensitivity
+- [ ] Performance goals established with regional infrastructure reality
 
 ### Final Implementation Notes
 
 **Quality Standards Achieved**:
 
-- ✅ **9.8/10 UX Design**: User-centered design with Brazilian healthcare specialization
+- ✅ **9.8/10 UX Design**: User-centered design with Brazilian aesthetic specialization
 - ✅ **9.7/10 Cultural Integration**: Brazilian aesthetic medicine market alignment
-- ✅ **9.9/10 Regulatory Compliance**: LGPD/ANVISA/CFM comprehensive coverage
+- ✅ **9.9/10 Regulatory Compliance**: LGPD/Regulatory comprehensive coverage
 - ✅ **9.6/10 Accessibility**: Multi-generational, multi-regional accessibility support
 
 **Ready for Development Handoff**: This specification provides comprehensive guidance for frontend
-development team to implement NeonPro Healthcare with Brazilian aesthetic medicine specialization,
+development team to implement NeonPro with Brazilian aesthetic professional specialization,
 regulatory compliance, and user-centered design excellence.
 
 ---
 
 **Document Status**: **COMPREHENSIVE SPECIFICATION COMPLETE** ✅\
-**Brazilian Healthcare Specialization**: **FULLY INTEGRATED** ✅\
-**Regulatory Compliance**: **LGPD/ANVISA/CFM COVERED** ✅\
+**Brazilian Aesthetic Specialization**: **FULLY INTEGRATED** ✅\
+**Regulatory Compliance**: **LGPD/REGULATORY COVERED** ✅\
 **User Experience Quality**: **≥9.5/10 ACHIEVED** ✅\
 **Implementation Readiness**: **DEVELOPMENT-READY** 🚀
 
 ---
 
-_📋 Enhanced UI/UX Specification by Sally (UX Expert) | Quality: ≥9.5/10 | Brazilian Healthcare
+_📋 Enhanced UI/UX Specification by Sally (UX Expert) | Quality: ≥9.5/10 | Brazilian Aesthetic
 Specialized | Implementation: Ready for Development Handoff_---
 
 ## Section 10: AI-Specific Design Requirements
@@ -1050,7 +1050,7 @@ interface AIConversationDesign {
   };
   responseTypes: {
     quickReplies: "Suggested actions as pill-shaped buttons";
-    richContent: "Cards for scheduling, patient info, procedures";
+    richContent: "Cards for scheduling, client info, procedures";
     escalation: "Prominent human handoff button when confidence <85%";
   };
 }
@@ -1211,7 +1211,7 @@ interface AIOfflineStrategy {
 **4. Localization Support**
 
 - Portuguese-first design with easy internationalization
-- Cultural adaptation beyond translation (Brazilian healthcare context)
+- Cultural adaptation beyond translation (Brazilian aesthetic context)
 - Regional variations for different Brazilian states when relevant
 
 ---
@@ -1220,7 +1220,7 @@ interface AIOfflineStrategy {
 
 ### **Phase 1: Core AI Components (Weeks 1-6)**
 
-- ✅ Universal AI Chat widget (external patient interface)
+- ✅ Universal AI Chat widget (external client interface)
 - ✅ AI Staff Assistant panel (internal interface)
 - ✅ Basic risk score indicators in calendar
 - ✅ LGPD consent flows for AI interactions
@@ -1237,12 +1237,12 @@ interface AIOfflineStrategy {
 - ✅ Voice input/output for AI interactions (when available)
 - ✅ AR Results Simulator interface (future feature)
 - ✅ Advanced analytics dashboards for AI performance
-- ✅ Integration with external healthcare systems
+- ✅ Integration with external professional systems
 
 ### **Success Metrics for AI UI/UX**
 
 - **User Adoption**: >70% of staff actively use AI features within 30 days
-- **Patient Satisfaction**: >90% positive feedback on AI chat interactions
+- **Client Satisfaction**: >90% positive feedback on AI chat interactions
 - **Efficiency Gains**: >40% reduction in routine administrative tasks
 - **Accessibility**: 100% WCAG 2.1 AA+ compliance for all AI components
 - **Performance**: <2s average response time for AI interactions
@@ -1250,4 +1250,4 @@ interface AIOfflineStrategy {
 
 This AI-enhanced frontend specification ensures that NeonPro's revolutionary AI features are
 presented through an intuitive, accessible, and culturally appropriate interface that enhances
-rather than disrupts established healthcare workflows.
+rather than disrupts established professional workflows.

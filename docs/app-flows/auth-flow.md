@@ -280,4 +280,3 @@ sequenceDiagram
 
 - [`main-flow.md`](./main-flow.md) - Main application flow integration
 - [`compliance-lgpd-flow.md`](./compliance-lgpd-flow.md) - LGPD compliance for auth data
-- [`healthcare-emergency-flow.md`](./healthcare-emergency-flow.md) - Emergency access procedures

@@ -10,8 +10,8 @@ This rule outlines the **critical protocol** for consulting and maintaining pers
 
 1. **Initial Memory Scan (MANDATORY FIRST STEP):**
    - **MUST**: At the absolute beginning of every user request processing, read the content of:
-     - `rules/project.md` (for project-specific guidelines and overarching project context)
-     - `rules/code-preferences.md` (for user-specific, one-line coding preferences)
+     - `.ruler/project.md` (for project-specific guidelines and overarching project context)
+     - `.ruler/code-preferences.md` (for user-specific, one-line coding preferences)
    - This initial scan is crucial for context awareness and error prevention.
 
 2. **Targeted Memory Consultation (AS NEEDED):**
@@ -43,14 +43,14 @@ This rule outlines the **critical protocol** for consulting and maintaining pers
 
 ### Specific Memory File Management
 
-- mistakes/[error-category].md — Log each resolved error with problem, wrong approach, correct solution, root cause, prevention, and related files. See docs/memory-entries.md ## mistakes for the template.
-- features/[feature-name].md — Document new/changed features with overview, architecture, key components, APIs, DB schema, configuration, common issues, testing strategy, and last updated. See docs/memory-entries.md ## features for the template.
+- mistakes/`[error-category].md` — Log each resolved error with problem, wrong approach, correct solution, root cause, prevention, and related files. See docs/memory-entries.md ## mistakes for the template.
+- features/`[feature-name].md` — Document new/changed features with overview, architecture, key components, APIs, DB schema, configuration, common issues, testing strategy, and last updated. See docs/memory-entries.md ## features for the template.
 - @project.md — Record new project-wide standards or context not covered elsewhere.
 - @code-preferences.md — Add or modify one-line user coding preferences.
 - docs/database-schema.md — Update database documentation guidelines and structure.
 - docs/database-schema/ — Document DDL changes in appropriate files.
 - docs/apis/ — Document created/changed/removed endpoints in individual files (path, method, purpose, request/response, authentication).
-- src/**tests**/[feature-category]/[feature-name].test.ts — Create/update tests following docs/ttd-flow.md; include contract validation, success/error cases, business logic, authorization, rate limiting; use TypeScript + Jest + ts-jest; mock external dependencies; define Zod schemas.
+- src/**tests**/`[feature-category]/[feature-name].test.ts` — Create/update tests following docs/ttd-flow.md; include contract validation, success/error cases, business logic, authorization, rate limiting; use TypeScript + Jest + ts-jest; mock external dependencies; define Zod schemas.
 
 ### General Memory Hygiene:
 

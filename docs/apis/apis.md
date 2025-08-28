@@ -535,4 +535,5 @@ export function withTenantContext(handler: APIHandler): APIHandler {
 
 - [Database Schema](/docs/database-schema/README.md) - Aesthetic clinic database design
 - [Architecture Decision Records](/docs/architecture/) - Aesthetic platform architecture decisions
-- [API Strategy](/docs/apis/) - Aesthetic clinic API 
+- [ai-sdk](/docs/apis/ai-sdk-v5.0.md/) - Aesthetic clinic AI SDK
+- [api-specification](/docs/apis/api-specification.yaml) - Aesthetic clinic API specification

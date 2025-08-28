@@ -10,22 +10,22 @@ Standards for building consistent, maintainable, and visually appealing user int
 
 ### **Advanced Aesthetic-First Design Philosophy**
 
-- **TweakCN NEONPRO Theme**: Advanced aesthetic-optimized design system with medical clarity
+- **TweakCN NEONPRO Theme**: Advanced aesthetic-optimized design system with professional clarity
 - **LGPD Compliance**: Built-in privacy protection and data consent patterns
-- **ANVISA/CFM Standards**: Advanced aesthetic medical device interface compliance
-- **Emergency Accessibility**: Life-critical interface patterns (<100ms response)
+- **Regulatory Standards**: Advanced aesthetic device interface compliance
+- **Critical Accessibility**: Life-critical interface patterns (<100ms response)
 - **Brazilian Localization**: PT-BR first with cultural advanced aesthetic considerations
 
 ### **Technical Foundation**
 
-- **UI Framework:** Shadcn UI components enhanced with healthcare-specific variants
+- **UI Framework:** Shadcn UI components enhanced with advanced aesthetic-specific variants
 - **Styling:** Tailwind CSS with TweakCN NEONPRO theme in `globals.css`
-- **Responsiveness:** Mobile-first with emergency interface optimization
-- **Images:** Next.js 15 `<Image>` component with medical image optimization
-- **Icons:** Lucide React icons with healthcare-specific icon set
+- **Responsiveness:** Mobile-first with critical interface optimization
+- **Images:** Next.js 15 `<Image>` component with advanced aesthetic image optimization
+- **Icons:** Lucide React icons with advanced aesthetic-specific icon set
 - **Components:** Server Components by default, Client Components for AI interactions
-- **TypeScript:** Strict typing with healthcare data models
-- **Accessibility:** WCAG AAA compliance for medical interfaces
+- **TypeScript:** Strict typing with advanced aesthetic data models
+- **Accessibility:** WCAG AAA compliance for advanced aesthetic interfaces
 - **Colors & Fonts:** TweakCN NEONPRO variables defined in `globals.css`
 - **AI Integration:** Native AI chat components and predictive interfaces
 
@@ -38,25 +38,25 @@ apps/web/
 ├── app/                     # Next.js 15 App Router
 │   ├── layout.tsx           # Root layout with TweakCN theme
 │   ├── globals.css          # TweakCN NEONPRO color system
-│   ├── dashboard/           # Healthcare dashboard
-│   ├── patients/            # Patient management
+│   ├── dashboard/           # Advanced aesthetic dashboard
+│   ├── clients/             # Advanced aesthetic client management
 │   ├── appointments/        # Scheduling system
-│   └── emergency/           # Emergency interface
-├── components/              # Healthcare-specific components
+│   └── critical/            # Critical interface
+├── components/              # Advanced aesthetic-specific components
 │   ├── ui/                  # Enhanced Shadcn UI components
-│   ├── healthcare/          # Medical interface components
+│   ├── aesthetic/           # Advanced aesthetic interface components
 │   ├── ai/                  # AI interaction components
-│   ├── emergency/           # Emergency interface components
+│   ├── critical/            # Critical interface components
 │   ├── forms/               # LGPD-compliant form components
 │   └── layout/              # Navigation and layout
 ├── lib/
-│   ├── medical/             # Medical records system
+│   ├── aesthetic/           # Advanced aesthetic records system
 │   ├── ai/                  # AI integration utilities
-│   ├── compliance/          # LGPD/ANVISA compliance
+│   ├── compliance/          # LGPD/Regulatory compliance
 │   └── utils/               # General utilities
 packages/ui/                 # @neonpro/ui component library
 ├── src/components/ui/       # Base UI components
-├── src/hooks/               # Healthcare-specific hooks
+├── src/hooks/               # Advanced aesthetic-specific hooks
 └── src/constants/           # Theme and compliance constants
 ```
 
@@ -64,21 +64,21 @@ packages/ui/                 # @neonpro/ui component library
 
 #### **Component Hierarchy**
 
-- **@neonpro/ui Package:** Base healthcare UI components with LGPD compliance
-- **Shadcn UI Enhanced:** Healthcare-optimized variants with TweakCN theme
-- **Healthcare Components:** Medical-specific interfaces (`/components/healthcare/`)
+- **@neonpro/ui Package:** Base advanced aesthetic UI components with LGPD compliance
+- **Shadcn UI Enhanced:** Advanced aesthetic-optimized variants with TweakCN theme
+- **Advanced Aesthetic Components:** Advanced aesthetic-specific interfaces (`/components/aesthetic/`)
 - **AI Components:** Universal chat, voice input, predictive analytics
-- **Emergency Components:** Life-critical interfaces with <100ms response
+- **Critical Components:** Time-sensitive interfaces with <100ms response
 
 #### **Development Rules**
 
 - **ARCHON-FIRST:** Always use Archon MCP for task management and knowledge base
 - **PNPM Only:** Use `pnpm dlx shadcn@latest add <component-name>`
 - **Server vs Client:**
-  - Server Components by default for medical data display
-  - Client Components for AI interactions, real-time updates, emergency interfaces
-- **Healthcare TypeScript:** Strict typing with medical data models and LGPD compliance
-- **Naming Convention:** `kebab-case` files, `PascalCase` exports, healthcare-specific prefixes
+  - Server Components by default for advanced aesthetic data display
+  - Client Components for AI interactions, real-time updates, critical interfaces
+- **Advanced Aesthetic TypeScript:** Strict typing with advanced aesthetic data models and LGPD compliance
+- **Naming Convention:** `kebab-case` files, `PascalCase` exports, advanced aesthetic-specific prefixes
 
 ### Examples
 
@@ -104,13 +104,13 @@ export function StaticCard() {/* ... */}
 
 ## 🎨 TweakCN NEONPRO Color System
 
-The **TweakCN NEONPRO** theme uses semantic CSS variables with oklch color format optimized for healthcare interfaces, WCAG AAA compliance, and Brazilian aesthetic clinic needs.
+The **TweakCN NEONPRO** theme uses semantic CSS variables with oklch color format optimized for advanced aesthetic interfaces, WCAG AAA compliance, and Brazilian aesthetic clinic needs.
 
 ### **Core Color Palette**
 
 ```css
-/* Primary Healthcare Colors */
---primary: oklch(0.5854 0.2041 277.1173); /* Medical Purple */
+/* Primary Advanced Aesthetic Colors */
+--primary: oklch(0.5854 0.2041 277.1173); /* Advanced Aesthetic Purple */
 --primary-foreground: oklch(1 0 0); /* Pure White */
 
 /* Secondary & Accent */
@@ -121,25 +121,25 @@ The **TweakCN NEONPRO** theme uses semantic CSS variables with oklch color forma
 --background: oklch(0.9232 0.0026 48.7171); /* Off White */
 --card: oklch(0.9699 0.0013 106.4238); /* Card Surface */
 
-/* Emergency & Critical States */
---destructive: oklch(0.6368 0.2078 25.3313); /* Emergency Red */
+/* Critical States */
+--destructive: oklch(0.6368 0.2078 25.3313); /* Critical Red */
 --chart-1: oklch(0.5854 0.2041 277.1173); /* Data Visualization */
 ```
 
-### **Healthcare-Specific Usage**
+### **Advanced Aesthetic-Specific Usage**
 
 ```typescript
-// ✅ Medical interface with proper contrast
+// ✅ Advanced aesthetic interface with proper contrast
 <div className="bg-background text-foreground border border-border">
   <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
     Agendar Consulta
   </Button>
 </div>
 
-// ✅ Emergency state styling
-<Alert className="border-destructive bg-destructive/10">
+// ✅ Critical state styling
+<Alert className="border-destructive bg-destructive/10 animate-pulse">
   <AlertTriangle className="h-4 w-4 text-destructive" />
-  <AlertTitle className="text-destructive">Situação de Emergência</AlertTitle>
+  <AlertTitle className="text-critical">Situação Crítica</AlertTitle>
 </Alert>
 
 // ✅ LGPD compliance indicator
@@ -147,7 +147,7 @@ The **TweakCN NEONPRO** theme uses semantic CSS variables with oklch color forma
   LGPD Compliant
 </Badge>
 
-// ❌ Never hardcode healthcare colors
+// ❌ Never hardcode advanced aesthetic colors
 <div className="bg-[#8b5cf6] text-[#ffffff]">...</div>
 ```
 
@@ -155,29 +155,29 @@ The **TweakCN NEONPRO** theme uses semantic CSS variables with oklch color forma
 
 - **WCAG AAA:** All color combinations meet 7:1 contrast ratio
 - **Daltonism Support:** Optimized for color blindness accessibility
-- **Medical Standards:** Colors tested for medical device interface compliance
+- **Advanced Aesthetic Standards:** Colors tested for advanced aesthetic device interface compliance
 
 ## 📝 Typography System
 
-The **NeonPro Healthcare Platform** uses carefully selected fonts optimized for medical interfaces and Brazilian Portuguese readability:
+The **NeonPro Advanced Aesthetic Platform** uses carefully selected fonts optimized for advanced aesthetic interfaces and Brazilian Portuguese readability:
 
 ### **Font Stack**
 
-- **Primary Font:** Inter - Medical-grade readability for patient data
-- **Serif Font:** Lora - Professional documentation and reports
-- **Monospace Font:** Libre Baskerville - Technical data and medical codes
-- **Font Loading:** Optimized with `display: "swap"` for emergency interface performance
+- **Primary Font:** Inter - Advanced aesthetic-grade readability for client data
+- **Serif Font:** Lora - Professional advanced aesthetic documentation and reports
+- **Monospace Font:** Libre Baskerville - Technical data and advanced aesthetic codes
+- **Font Loading:** Optimized with `display: "swap"` for critical interface performance
 
-### **Healthcare Typography Hierarchy**
+### **Advanced Aesthetic Typography Hierarchy**
 
 ```css
-/* Medical Interface Typography */
---font-sans: Inter, sans-serif; /* Patient data, UI text */
---font-serif: Lora, serif; /* Medical reports, documentation */
---font-mono: Libre Baskerville, serif; /* Medical codes, technical data */
+/* Advanced Aesthetic Interface Typography */
+--font-sans: Inter, sans-serif; /* Advanced aesthetic client data, UI text */
+--font-serif: Lora, serif; /* Advanced aesthetic reports, documentation */
+--font-mono: Libre Baskerville, serif; /* Advanced aesthetic codes, technical data */
 ```
 
-### **Healthcare Font Configuration**
+### **Advanced Aesthetic Font Configuration**
 
 ```typescript
 // apps/web/app/layout.tsx
@@ -187,7 +187,7 @@ const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
-  // Optimized for medical interface readability
+  // Optimized for advanced aesthetic interface readability
   preload: true,
 });
 
@@ -195,37 +195,37 @@ const lora = Lora({
   variable: "--font-serif",
   subsets: ["latin"],
   display: "swap",
-  // Professional medical documentation
+  // Professional advanced aesthetic documentation
   weight: ["400", "500", "600", "700"],
 });
 
-// Apply to body with healthcare-optimized settings
+// Apply to body with advanced aesthetic-optimized settings
 <body className={`${inter.variable} ${lora.variable} font-sans antialiased`}>
 ```
 
-### **Medical Typography Utilities**
+### **Advanced Aesthetic Typography Utilities**
 
 ```css
-/* Healthcare-specific typography in globals.css */
+/* Advanced aesthetic-specific typography in globals.css */
 @layer utilities {
-  /* Medical Headers */
-  .text-medical-title {
+  /* Advanced Aesthetic Headers */
+  .text-advanced-aesthetic-title {
     @apply text-3xl font-bold leading-tight text-primary font-serif;
   }
-  .text-patient-name {
+  .text-client-name {
     @apply text-xl font-semibold leading-tight text-foreground;
   }
 
-  /* Clinical Data */
-  .text-clinical-data {
+  /* Aesthetic Data */
+  .text-aesthetic-data {
     @apply text-base font-medium leading-relaxed font-mono;
   }
-  .text-vital-signs {
+  .text-treatment-data {
     @apply text-lg font-bold text-chart-1 font-mono;
   }
 
-  /* Emergency Text */
-  .text-emergency {
+  /* Critical Text */
+  .text-critical {
     @apply text-lg font-bold text-destructive uppercase tracking-wide;
   }
 
@@ -241,18 +241,18 @@ const lora = Lora({
 }
 ```
 
-### **Healthcare Typography Examples**
+### **Advanced Aesthetic Typography Examples**
 
 ```typescript
-// ✅ Medical interface typography
-<h1 className="text-medical-title">Clínica NeonPro</h1>
-<h2 className="text-patient-name">Dr. Ana Silva - Paciente: Maria Santos</h2>
-<p className="text-clinical-data">CPF: 123.456.789-00 | Prontuário: #NP2024001</p>
-<span className="text-vital-signs">PA: 120/80 mmHg</span>
+// ✅ Advanced aesthetic interface typography
+<h1 className="text-advanced-aesthetic-title">Clínica NeonPro</h1>
+<h2 className="text-client-name">Dra. Ana Silva - Cliente: Maria Santos</h2>
+<p className="text-aesthetic-data">CPF: 123.456.789-00 | Prontuário: #NP2024001</p>
+<span className="text-treatment-data">Tratamento: Harmonização Facial</span>
 
-// ✅ Emergency interface
-<div className="text-emergency">⚠️ Situação de Emergência</div>
-<p className="text-base font-medium text-destructive">Contatar SAMU: 192</p>
+// ✅ Critical interface
+<div className="text-critical">⚠️ Situação Crítica</div>
+<p className="text-base font-medium text-destructive">Contatar Suporte: 0800-123-4567</p>
 
 // ✅ AI Chat typography
 <div className="text-ai-response">
@@ -265,7 +265,7 @@ const lora = Lora({
   <a href="/privacy" className="underline hover:text-primary">Política de Privacidade</a>
 </p>
 
-// ✅ Medical documentation
+// ✅ Advanced aesthetic documentation
 <article className="font-serif space-y-4">
   <h3 className="text-xl font-semibold">Relatório de Procedimento</h3>
   <p className="text-base leading-relaxed">Procedimento realizado conforme protocolo...</p>
@@ -274,32 +274,32 @@ const lora = Lora({
 
 ## 🎨 Styling with Tailwind CSS + TweakCN NEONPRO
 
-### **Healthcare-First Utility Approach**
+### **Advanced Aesthetic-First Utility Approach**
 
-- **TweakCN Variables:** Always use semantic healthcare color variables
-- **Medical Spacing:** Consistent spacing for medical data readability
-- **Emergency States:** Dedicated utilities for critical interface elements
+- **TweakCN Variables:** Always use semantic advanced aesthetic color variables
+- **Advanced Aesthetic Spacing:** Consistent spacing for advanced aesthetic data readability
+- **Critical States:** Dedicated utilities for critical interface elements
 - **LGPD Compliance:** Built-in privacy-focused styling patterns
 - **No Config Modification:** TweakCN theme is pre-configured in `globals.css`
 
 ```typescript
-// ✅ Healthcare-optimized utility classes
+// ✅ Advanced aesthetic-optimized utility classes
 <div className="flex items-center justify-between p-6 bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
   <div className="space-y-1">
-    <h3 className="text-patient-name">Maria Santos</h3>
-    <p className="text-clinical-data">Prontuário: #NP2024001</p>
+    <h3 className="text-client-name">Maria Santos</h3>
+    <p className="text-aesthetic-data">Prontuário: #NP2024001</p>
   </div>
   <Badge variant="outline" className="border-chart-2 text-chart-2">
     LGPD Compliant
   </Badge>
 </div>
 
-// ✅ Emergency interface styling
+// ✅ Critical interface styling
 <Alert className="border-destructive bg-destructive/10 animate-pulse">
   <AlertTriangle className="h-5 w-5 text-destructive" />
-  <AlertTitle className="text-emergency">Emergência Médica</AlertTitle>
+  <AlertTitle className="text-critical">Situação Crítica</AlertTitle>
   <AlertDescription className="text-base font-medium">
-    Contatar SAMU: 192 | Tempo de resposta: <100ms
+    Contatar Suporte: 0800-123-4567 | Tempo de resposta: <100ms
   </AlertDescription>
 </Alert>
 
@@ -312,34 +312,34 @@ const lora = Lora({
   <p className="text-ai-response">Como posso ajudar com o agendamento hoje?</p>
 </div>
 
-// ❌ Never use inline styles in medical interfaces
+// ❌ Never use inline styles in advanced aesthetic interfaces
 <div style={{ padding: '16px', backgroundColor: '#ffffff' }}>...</div>
 ```
 
-## 📱 Healthcare Responsive Design
+## 📱 Advanced Aesthetic Responsive Design
 
-### **Medical Interface Breakpoints**
+### **Advanced Aesthetic Interface Breakpoints**
 
-Optimized for healthcare professionals and emergency scenarios:
+Optimized for advanced aesthetic professionals and critical scenarios:
 
-- **sm:** 640px+ (Mobile medical devices, tablets)
+- **sm:** 640px+ (Mobile advanced aesthetic devices, tablets)
 - **md:** 768px+ (Tablet workstations, portable devices)
 - **lg:** 1024px+ (Desktop workstations, clinic computers)
-- **xl:** 1280px+ (Large medical displays, multi-monitor setups)
-- **2xl:** 1536px+ (Hospital information systems, wall displays)
+- **xl:** 1280px+ (Large advanced aesthetic displays, multi-monitor setups)
+- **2xl:** 1536px+ (Advanced aesthetic information systems, wall displays)
 
-### **Healthcare Layout Patterns**
+### **Advanced Aesthetic Layout Patterns**
 
 ```typescript
-// ✅ Medical dashboard responsive grid
+// ✅ Advanced aesthetic dashboard responsive grid
 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
-  <HealthcareMetricCard
+  <AdvancedAestheticMetricCard
     title="Pacientes Hoje"
     value="24"
     trend="+12%"
     className="bg-card border border-border hover:shadow-lg transition-shadow"
   />
-  <HealthcareMetricCard
+  <AdvancedAestheticMetricCard
     title="Consultas Agendadas"
     value="18"
     trend="+5%"
@@ -347,25 +347,25 @@ Optimized for healthcare professionals and emergency scenarios:
   />
 </div>
 
-// ✅ Emergency interface - always visible
+// ✅ Critical advanced aesthetic interface - always visible
 <div className="fixed bottom-4 right-4 z-50">
   <Button
     size="lg"
     className="bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg animate-pulse"
   >
-    🚨 Emergência
+    🚨 Situação Crítica
   </Button>
 </div>
 
-// ✅ Patient data responsive typography
+// ✅ Client data responsive typography
 <div className="space-y-2">
   <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-primary">
     Clínica NeonPro
   </h1>
-  <h2 className="text-lg md:text-xl text-patient-name">
-    Dr. Ana Silva - Paciente: Maria Santos
+  <h2 className="text-lg md:text-xl text-client-name">
+    Dra. Ana Silva - Cliente: Maria Santos
   </h2>
-  <p className="text-sm md:text-base text-clinical-data">
+  <p className="text-sm md:text-base text-aesthetic-data">
     CPF: 123.456.789-00 | Prontuário: #NP2024001
   </p>
 </div>
@@ -381,24 +381,24 @@ Optimized for healthcare professionals and emergency scenarios:
 
 ## 🔧 Shadcn UI + TweakCN NEONPRO Integration
 
-### **Healthcare-Optimized Installation**
+### **Advanced Aesthetic-Optimized Installation**
 
 ```bash
 # NeonPro project setup with PNPM (ARCHON-FIRST rule)
 pnpm dlx shadcn@latest init
 
-# Add healthcare-essential components
+# Add advanced aesthetic-essential components
 pnpm dlx shadcn@latest add button card input label alert badge
 pnpm dlx shadcn@latest add dialog form select textarea
 pnpm dlx shadcn@latest add table tabs progress skeleton
 
-# Emergency and AI components
+# Critical and AI components
 pnpm dlx shadcn@latest add command popover tooltip
 ```
 
 ### **NeonPro Component Configuration**
 
-Pre-configured for healthcare compliance in `apps/web/components.json`:
+Pre-configured for advanced aesthetic compliance in `apps/web/components.json`:
 
 ```json
 {
@@ -421,37 +421,37 @@ Pre-configured for healthcare compliance in `apps/web/components.json`:
 }
 ```
 
-### **Healthcare Component Extensions**
+### **Advanced Aesthetic Component Extensions**
 
 ```typescript
-// Enhanced Button for medical interfaces
+// Enhanced Button for advanced aesthetic interfaces
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-interface HealthcareButtonProps extends ButtonProps {
-  emergency?: boolean;
+interface AdvancedAestheticButtonProps extends ButtonProps {
+  critical?: boolean;
   lgpdCompliant?: boolean;
 }
 
-export function HealthcareButton({
-  emergency,
+export function AdvancedAestheticButton({
+  critical,
   lgpdCompliant,
   className,
   children,
   ...props
-}: HealthcareButtonProps) {
+}: AdvancedAestheticButtonProps) {
   return (
     <Button
       className={cn(
         "transition-all duration-200",
-        emergency
+        critical
           && "bg-destructive text-destructive-foreground animate-pulse hover:bg-destructive/90",
         lgpdCompliant && "border-chart-2 text-chart-2",
         className,
       )}
       {...props}
     >
-      {emergency && "🚨 "}
+      {critical && "🚨 "}
       {children}
       {lgpdCompliant && " ✓"}
     </Button>
@@ -459,7 +459,7 @@ export function HealthcareButton({
 }
 ```
 
-### **LGPD-Compliant Healthcare Forms**
+### **LGPD-Compliant Advanced Aesthetic Forms**
 
 ```typescript
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -479,8 +479,8 @@ import { Lock, Shield } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-// Healthcare-specific validation with LGPD compliance
-const patientFormSchema = z.object({
+// Advanced aesthetic-specific validation with LGPD compliance
+const clientFormSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido"),
   email: z.string().email("Email inválido"),
@@ -488,27 +488,27 @@ const patientFormSchema = z.object({
   lgpdConsent: z.boolean().refine(val => val === true, {
     message: "Consentimento LGPD é obrigatório",
   }),
-  medicalDataConsent: z.boolean().refine(val => val === true, {
-    message: "Consentimento para dados médicos é obrigatório",
+  aestheticDataConsent: z.boolean().refine(val => val === true, {
+    message: "Consentimento para dados estéticos é obrigatório",
   }),
 });
 
-export function PatientRegistrationForm() {
-  const form = useForm<z.infer<typeof patientFormSchema>>({
-    resolver: zodResolver(patientFormSchema),
+export function ClientRegistrationForm() {
+  const form = useForm<z.infer<typeof clientFormSchema>>({
+    resolver: zodResolver(clientFormSchema),
     defaultValues: {
       name: "",
       cpf: "",
       email: "",
       phone: "",
       lgpdConsent: false,
-      medicalDataConsent: false,
+      aestheticDataConsent: false,
     },
   });
 
-  function onSubmit(values: z.infer<typeof patientFormSchema>) {
-    // Healthcare data submission with LGPD compliance
-    console.log("Patient data (LGPD compliant):", values);
+  function onSubmit(values: z.infer<typeof clientFormSchema>) {
+    // Advanced aesthetic data submission with LGPD compliance
+    console.log("Client data (LGPD compliant):", values);
   }
 
   return (
@@ -622,7 +622,7 @@ export function PatientRegistrationForm() {
                       Concordo com o tratamento dos meus dados pessoais
                     </FormLabel>
                     <p className="text-xs text-muted-foreground">
-                      Conforme LGPD, para prestação de serviços médicos
+                      Conforme LGPD, para prestação de serviços estéticos avançados
                     </p>
                   </div>
                   <FormMessage />
@@ -632,7 +632,7 @@ export function PatientRegistrationForm() {
 
             <FormField
               control={form.control}
-              name="medicalDataConsent"
+              name="aestheticDataConsent"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                   <FormControl>
@@ -643,10 +643,10 @@ export function PatientRegistrationForm() {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="text-sm font-medium">
-                      Autorizo o tratamento de dados sensíveis de saúde
+                      Autorizo o tratamento de dados sensíveis estéticos
                     </FormLabel>
                     <p className="text-xs text-muted-foreground">
-                      Para histórico médico, prontuário e procedimentos
+                      Para histórico estético, prontuário e procedimentos
                     </p>
                   </div>
                   <FormMessage />
@@ -660,7 +660,7 @@ export function PatientRegistrationForm() {
             className="w-full h-12 text-base font-medium"
             disabled={!form.formState.isValid}
           >
-            Cadastrar Paciente
+            Cadastrar Cliente
           </Button>
         </form>
       </Form>
@@ -782,43 +782,43 @@ export function PatientRegistrationForm() {
 
 ## 🏗️ Arquitetura de Componentes NeonPro
 
-### **Estrutura de Componentes Médicos**
+### **Estrutura de Componentes Estéticos Avançados**
 
 ```typescript
-// Healthcare Component Base Structure
-interface HealthcareComponentProps {
-  patientId?: string;
-  emergencyMode?: boolean;
+// Advanced Aesthetic Component Base Structure
+interface AdvancedAestheticComponentProps {
+  clientId?: string;
+  criticalMode?: boolean;
   lgpdCompliant?: boolean;
-  accessLevel?: 'doctor' | 'nurse' | 'admin' | 'patient';
+  accessLevel?: 'professional' | 'assistant' | 'admin' | 'client';
   auditLog?: boolean;
 }
 
-// Base Healthcare Component
-export function HealthcareComponent({
-  patientId,
-  emergencyMode = false,
+// Base Advanced Aesthetic Component
+export function AdvancedAestheticComponent({
+  clientId,
+  criticalMode = false,
   lgpdCompliant = true,
-  accessLevel = 'patient',
+  accessLevel = 'client',
   auditLog = true,
   children,
   ...props
-}: HealthcareComponentProps & React.PropsWithChildren) {
+}: AdvancedAestheticComponentProps & React.PropsWithChildren) {
   // LGPD compliance check
   useEffect(() => {
-    if (lgpdCompliant && patientId) {
-      logDataAccess(patientId, accessLevel);
+    if (lgpdCompliant && clientId) {
+      logDataAccess(clientId, accessLevel);
     }
-  }, [patientId, accessLevel, lgpdCompliant]);
+  }, [clientId, accessLevel, lgpdCompliant]);
 
   return (
     <div
       className={cn(
-        "healthcare-component",
-        emergencyMode && "emergency-mode border-destructive bg-destructive/10",
+        "advanced-aesthetic-component",
+        criticalMode && "critical-mode border-destructive bg-destructive/10",
         "transition-all duration-200"
       )}
-      data-patient-id={patientId}
+      data-client-id={clientId}
       data-access-level={accessLevel}
       {...props}
     >
@@ -831,25 +831,25 @@ export function HealthcareComponent({
 ### **Componentes Especializados**
 
 ```typescript
-// Patient Vital Signs Component
-export function VitalSignsCard({ patientId, realTime = false }: {
-  patientId: string;
+// Client Aesthetic Status Component
+export function AestheticStatusCard({ clientId, realTime = false }: {
+  clientId: string;
   realTime?: boolean;
 }) {
-  const { data: vitals, isLoading } = useQuery({
-    queryKey: ['vitals', patientId],
-    queryFn: () => fetchVitals(patientId),
+  const { data: treatmentData, isLoading } = useQuery({
+    queryKey: ['treatmentData', clientId],
+    queryFn: () => fetchTreatmentData(clientId),
     refetchInterval: realTime ? 5000 : undefined,
   });
 
   return (
-    <HealthcareComponent
-      patientId={patientId}
-      accessLevel="doctor"
+    <AdvancedAestheticComponent
+      clientId={clientId}
+      accessLevel="professional"
       className="bg-card border border-border rounded-lg p-6"
     >
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-primary">Sinais Vitais</h3>
+        <h3 className="text-lg font-semibold text-primary">Status Estético</h3>
         {realTime && (
           <Badge variant="outline" className="border-chart-1 text-chart-1">
             Tempo Real
@@ -865,26 +865,26 @@ export function VitalSignsCard({ patientId, realTime = false }: {
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4">
-          <VitalMetric
-            label="Pressão Arterial"
-            value={`${vitals?.bloodPressure?.systolic}/${vitals?.bloodPressure?.diastolic}`}
-            unit="mmHg"
-            status={getVitalStatus(vitals?.bloodPressure)}
+          <TreatmentMetric
+            label="Progresso do Tratamento"
+            value={`${treatmentData?.progress?.current}/${treatmentData?.progress?.total}`}
+            unit="%"
+            status={getTreatmentStatus(treatmentData?.progress)}
           />
-          <VitalMetric
-            label="Frequência Cardíaca"
-            value={vitals?.heartRate}
-            unit="bpm"
-            status={getVitalStatus(vitals?.heartRate)}
+          <TreatmentMetric
+            label="Satisfação do Cliente"
+            value={treatmentData?.satisfaction}
+            unit="/10"
+            status={getTreatmentStatus(treatmentData?.satisfaction)}
           />
         </div>
       )}
-    </HealthcareComponent>
+    </AdvancedAestheticComponent>
   );
 }
 
-// Emergency Alert Component
-export function EmergencyAlert({ 
+// Critical Alert Component
+export function CriticalAlert({ 
   message, 
   severity = 'high',
   onAcknowledge 
@@ -903,8 +903,8 @@ export function EmergencyAlert({
       aria-live="assertive"
     >
       <AlertTriangle className="h-5 w-5 text-destructive" />
-      <AlertTitle className="text-emergency">
-        🚨 Emergência Médica - {severity.toUpperCase()}
+      <AlertTitle className="text-critical">
+        🚨 Situação Crítica - {severity.toUpperCase()}
       </AlertTitle>
       <AlertDescription className="text-base font-medium mb-3">
         {message}
@@ -914,7 +914,7 @@ export function EmergencyAlert({
         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
         size="sm"
       >
-        Reconhecer Emergência
+        Reconhecer Situação
       </Button>
     </Alert>
   );
@@ -927,7 +927,7 @@ export function EmergencyAlert({
 
 ```typescript
 // LGPD Compliance Hook
-export function useLGPDCompliance(dataType: 'personal' | 'sensitive' | 'medical') {
+export function useLGPDCompliance(dataType: 'personal' | 'sensitive' | 'aesthetic') {
   const [hasConsent, setHasConsent] = useState(false);
   const [consentTimestamp, setConsentTimestamp] = useState<Date | null>(null);
 
@@ -969,7 +969,7 @@ export function DataProtectionWrapper({
   purpose 
 }: {
   children: React.ReactNode;
-  dataType: 'personal' | 'sensitive' | 'medical';
+  dataType: 'personal' | 'sensitive' | 'aesthetic';
   purpose: string;
 }) {
   const { hasConsent, requestConsent } = useLGPDCompliance(dataType);
@@ -986,7 +986,7 @@ export function DataProtectionWrapper({
             </DialogTitle>
             <DialogDescription>
               Para {purpose}, precisamos do seu consentimento para processar 
-              dados {dataType === 'medical' ? 'médicos sensíveis' : dataType}.
+              dados {dataType === 'aesthetic' ? 'estéticos sensíveis' : dataType}.
             </DialogDescription>
           </DialogHeader>
           
@@ -1039,16 +1039,16 @@ export function DataProtectionWrapper({
 ### **Auditoria e Monitoramento**
 
 ```typescript
-// Medical Data Access Logging
-export function logMedicalDataAccess({
-  patientId,
+// Aesthetic Data Access Logging
+export function logAestheticDataAccess({
+  clientId,
   userId,
   action,
   dataType,
   ipAddress,
   userAgent,
 }: {
-  patientId: string;
+  clientId: string;
   userId: string;
   action: 'view' | 'edit' | 'delete' | 'export';
   dataType: string;
@@ -1057,33 +1057,33 @@ export function logMedicalDataAccess({
 }) {
   const auditLog = {
     timestamp: new Date().toISOString(),
-    patientId,
+    clientId,
     userId,
     action,
     dataType,
     ipAddress,
     userAgent,
     compliance: 'LGPD',
-    retention: '5_years', // Conforme CFM
+    retention: '5_years', // Conforme regulamentação estética
   };
 
   // Send to secure audit system
-  return fetch('/api/audit/medical-access', {
+  return fetch('/api/audit/aesthetic-access', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(auditLog),
   });
 }
 
-// Performance Monitoring for Medical Systems
-export function useHealthcarePerformanceMonitoring() {
+// Performance Monitoring for Aesthetic Systems
+export function useAdvancedAestheticPerformanceMonitoring() {
   const trackCriticalAction = useCallback((action: string, startTime: number) => {
     const duration = performance.now() - startTime;
     const threshold = CRITICAL_THRESHOLDS[action] || 1000;
 
     if (duration > threshold) {
-      // Alert medical IT team
-      console.error(`Critical medical action '${action}' exceeded threshold: ${duration}ms`);
+      // Alert aesthetic IT team
+      console.error(`Critical aesthetic action '${action}' exceeded threshold: ${duration}ms`);
       
       // Send to monitoring system
       fetch('/api/monitoring/performance-alert', {
@@ -1107,23 +1107,23 @@ export function useHealthcarePerformanceMonitoring() {
 
 ## 📊 Monitoramento e Analytics
 
-### **Healthcare Analytics Dashboard**
+### **Advanced Aesthetic Analytics Dashboard**
 
 ```typescript
-// Medical Analytics Component
-export function HealthcareAnalyticsDashboard() {
+// Advanced Aesthetic Analytics Component
+export function AdvancedAestheticAnalyticsDashboard() {
   const { data: metrics } = useQuery({
-    queryKey: ['healthcare-metrics'],
-    queryFn: fetchHealthcareMetrics,
+    queryKey: ['aesthetic-metrics'],
+    queryFn: fetchAdvancedAestheticMetrics,
     refetchInterval: 30000, // 30 seconds
   });
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
       <MetricCard
-        title="Pacientes Ativos"
-        value={metrics?.activePatients || 0}
-        trend={metrics?.patientsTrend}
+        title="Clientes Ativos"
+        value={metrics?.activeClients || 0}
+        trend={metrics?.clientsTrend}
         icon={Users}
         className="bg-card border border-border"
       />
@@ -1167,7 +1167,7 @@ export function SystemHealthMonitor() {
         const response = await fetch('/api/health');
         const health = await response.json();
         
-        if (health.emergencySystemsOnline && health.responseTime < 100) {
+        if (health.criticalSystemsOnline && health.responseTime < 100) {
           setHealthStatus('healthy');
         } else if (health.responseTime < 500) {
           setHealthStatus('warning');
@@ -1201,25 +1201,25 @@ export function SystemHealthMonitor() {
 
 ### **Resumo das Diretrizes NeonPro**
 
-Este guia estabelece os padrões fundamentais para o desenvolvimento da **NeonPro AI Healthcare Platform**, garantindo:
+Este guia estabelece os padrões fundamentais para o desenvolvimento da **NeonPro AI Advanced Aesthetic Platform**, garantindo:
 
 **✅ Excelência Técnica:**
 - Arquitetura baseada em Next.js 15 e React 19
-- Componentes Shadcn UI otimizados para saúde
+- Componentes Shadcn UI otimizados para estética avançada
 - Sistema de cores TweakCN NEONPRO com conformidade WCAG AAA
-- Performance crítica com resposta <100ms para emergências
+- Performance crítica com resposta <100ms para situações críticas
 
 **✅ Conformidade Regulatória:**
 - Compliance total com LGPD (Lei 13.709/2018)
-- Padrões ANVISA e CFM para interfaces médicas
-- Auditoria completa de acesso a dados médicos
+- Padrões regulamentares para interfaces estéticas
+- Auditoria completa de acesso a dados estéticos
 - Privacidade por design em todos os componentes
 
 **✅ Experiência do Usuário:**
-- Interface otimizada para profissionais de saúde
-- Acessibilidade WCAG AAA para ambientes médicos
-- Suporte completo a emergências médicas
-- Integração nativa com IA para assistência médica
+- Interface otimizada para profissionais de estética
+- Acessibilidade WCAG AAA para ambientes estéticos
+- Suporte completo a situações críticas
+- Integração nativa com IA para assistência estética
 
 **✅ Escalabilidade e Manutenção:**
 - Arquitetura de componentes reutilizáveis
@@ -1229,24 +1229,24 @@ Este guia estabelece os padrões fundamentais para o desenvolvimento da **NeonPr
 
 ### **Próximos Passos**
 
-1. **Implementação Gradual:** Seguir as diretrizes por módulo (dashboard → pacientes → emergência)
+1. **Implementação Gradual:** Seguir as diretrizes por módulo (dashboard → clientes → situações críticas)
 2. **Testes de Conformidade:** Validar LGPD e acessibilidade em cada componente
-3. **Treinamento da Equipe:** Capacitar desenvolvedores nas práticas específicas de saúde
+3. **Treinamento da Equipe:** Capacitar desenvolvedores nas práticas específicas de estética
 4. **Monitoramento Contínuo:** Implementar alertas para performance e conformidade
-5. **Feedback Médico:** Coletar feedback de profissionais de saúde para refinamentos
+5. **Feedback Profissional:** Coletar feedback de profissionais de estética para refinamentos
 
 ### **Recursos de Apoio**
 
 - **Documentação Técnica:** `/docs/technical/`
-- **Componentes de Exemplo:** `/examples/healthcare/`
+- **Componentes de Exemplo:** `/examples/aesthetic/`
 - **Testes de Conformidade:** `/tests/compliance/`
 - **Guias de Acessibilidade:** `/docs/accessibility/`
 - **Templates LGPD:** `/templates/lgpd/`
 
 ---
 
-**NeonPro Healthcare Design Guidelines v2.0.0**  
-*Construindo o futuro da saúde digital no Brasil com excelência técnica e conformidade regulatória.*
+**NeonPro Advanced Aesthetic Design Guidelines v2.0.0**  
+*Construindo o futuro da estética digital no Brasil com excelência técnica e conformidade regulatória.*
 
 🏥 **Para clínicas estéticas brasileiras**  
 🤖 **Powered by AI**  
@@ -1255,37 +1255,37 @@ Este guia estabelece os padrões fundamentais para o desenvolvimento da **NeonPr
 
 ## Performance
 
-### Healthcare-Specific Accessibility (WCAG AAA)
+### Advanced Aesthetic-Specific Accessibility (WCAG AAA)
 
-**Critical Healthcare Requirements:**
+**Critical Advanced Aesthetic Requirements:**
 
 - **WCAG AAA Compliance:** Enhanced contrast ratios (7:1 for normal text, 4.5:1 for large text)
-- **Emergency Interface Accessibility:** Screen reader compatibility for critical alerts
-- **Medical Data Readability:** High contrast for vital signs and patient data
+- **Critical Interface Accessibility:** Screen reader compatibility for critical alerts
+- **Aesthetic Data Readability:** High contrast for status and client data
 - **Multi-language Support:** Portuguese and English accessibility labels
-- **Cognitive Load Reduction:** Clear information hierarchy for medical professionals
+- **Cognitive Load Reduction:** Clear information hierarchy for aesthetic professionals
 
-**Healthcare-Specific ARIA Patterns:**
+**Advanced Aesthetic-Specific ARIA Patterns:**
 
 ```tsx
-// Emergency Alert with proper ARIA
+// Critical Alert with proper ARIA
 <div
   role="alert"
   aria-live="assertive"
   className="bg-destructive text-destructive-foreground p-4 rounded-md"
 >
-  <span className="sr-only">Emergência médica:</span>
-  Paciente em estado crítico - Sala 302
+  <span className="sr-only">Situação crítica:</span>
+        Cliente em situação crítica - Sala 302
 </div>
 
-// Medical Data with Enhanced Labels
-<div className="medical-vitals" role="region" aria-labelledby="vitals-heading">
-  <h3 id="vitals-heading">Sinais Vitais</h3>
+// Aesthetic Data with Enhanced Labels
+<div className="aesthetic-status" role="region" aria-labelledby="status-heading">
+  <h3 id="status-heading">Status Estético</h3>
   <dl>
-    <dt>Pressão Arterial:</dt>
-    <dd aria-label="Pressão arterial 120 por 80 milímetros de mercúrio">120/80 mmHg</dd>
-    <dt>Frequência Cardíaca:</dt>
-    <dd aria-label="Frequência cardíaca 72 batimentos por minuto">72 bpm</dd>
+    <dt>Status do Tratamento:</dt>
+    <dd aria-label="Status do tratamento em andamento">Em Andamento</dd>
+    <dt>Progresso:</dt>
+    <dd aria-label="Progresso do tratamento em 85 por cento">85%</dd>
   </dl>
 </div>
 
@@ -1296,54 +1296,54 @@ Este guia estabelece os padrões fundamentais para o desenvolvimento da **NeonPr
 </div>
 ```
 
-**Enhanced Requirements for Healthcare:**
+**Enhanced Requirements for Advanced Aesthetics:**
 
-- **Emergency alerts must use `role="alert"` and `aria-live="assertive"`**
-- **Medical data must have descriptive aria-labels in Portuguese**
-- **Patient status indicators cannot rely on color alone**
+- **Critical alerts must use `role="alert"` and `aria-live="assertive"`**
+- **Aesthetic data must have descriptive aria-labels in Portuguese**
+- **Client status indicators cannot rely on color alone**
 - **Critical actions require confirmation dialogs with clear ARIA labels**
-- **Touch targets for mobile emergency interfaces: minimum 48×48px**
+- **Touch targets for mobile critical interfaces: minimum 48×48px**
 
 ## Performance
 
-### Healthcare-Specific Performance Requirements
+### Advanced Aesthetic-Specific Performance Requirements
 
 **Critical Response Times:**
 
-- **Emergency Actions:** < 100ms response time for critical medical alerts
-- **Patient Data Loading:** < 500ms for vital signs and basic patient info
-- **AI Response Time:** < 2 seconds for medical AI assistance
-- **Form Validation:** Real-time validation for medical data entry
-- **Image Loading:** Medical images must load progressively with placeholders
+- **Critical Actions:** < 100ms response time for critical aesthetic alerts
+- **Client Data Loading:** < 500ms for status and basic client info
+- **AI Response Time:** < 2 seconds for aesthetic AI assistance
+- **Form Validation:** Real-time validation for aesthetic data entry
+- **Image Loading:** Aesthetic images must load progressively with placeholders
 
-**Medical Data Optimization:**
+**Aesthetic Data Optimization:**
 
 ```tsx
-// Optimized Patient Data Loading
-const PatientDashboard = () => {
-  const { data: vitals, isLoading } = useQuery({
-    queryKey: ["patient-vitals", patientId],
-    queryFn: () => fetchVitals(patientId),
-    staleTime: 30000, // 30 seconds for vital signs
+// Optimized Client Data Loading
+const ClientDashboard = () => {
+  const { data: status, isLoading } = useQuery({
+    queryKey: ["client-status", clientId],
+    queryFn: () => fetchStatus(clientId),
+    staleTime: 30000, // 30 seconds for status
     refetchInterval: 60000, // Auto-refresh every minute
   });
 
   return (
-    <Suspense fallback={<VitalsLoadingSkeleton />}>
+    <Suspense fallback={<StatusLoadingSkeleton />}>
       {isLoading
         ? <div className="animate-pulse bg-muted h-32 rounded-md" />
-        : <VitalsDisplay data={vitals} />}
+        : <StatusDisplay data={status} />}
     </Suspense>
   );
 };
 
-// Emergency Data Preloading
-const EmergencyInterface = () => {
+// Critical Data Preloading
+const CriticalInterface = () => {
   useEffect(() => {
-    // Preload critical emergency data
+    // Preload critical aesthetic data
     queryClient.prefetchQuery({
-      queryKey: ["emergency-contacts"],
-      queryFn: fetchEmergencyContacts,
+      queryKey: ["critical-contacts"],
+      queryFn: fetchCriticalContacts,
     });
   }, []);
 };
@@ -1358,10 +1358,10 @@ const UniversalChat = () => {
     api: "/api/chat",
     streamMode: "text", // Enable streaming for faster perceived performance
     onResponse: (response) => {
-      // Track response time for medical queries
+      // Track response time for aesthetic queries
       analytics.track("ai_response_time", {
         duration: Date.now() - startTime,
-        query_type: "medical",
+        query_type: "aesthetic",
       });
     },
   });
@@ -1377,7 +1377,7 @@ const UniversalChat = () => {
         <div className="flex items-center gap-2">
           <Spinner className="h-4 w-4" />
           <span className="text-sm text-muted-foreground">
-            IA analisando dados médicos...
+            IA analisando dados estéticos...
           </span>
         </div>
       )}
@@ -1388,30 +1388,30 @@ const UniversalChat = () => {
 
 **Standard Performance Requirements:**
 
-- **Server Components:** Minimize client-side JavaScript for medical data
+- **Server Components:** Minimize client-side JavaScript for aesthetic data
 - **Font Loading:** Geist fonts with `display: "swap"` optimization
 - **Unused Styles:** Build process removes unused CSS
-- **Image Optimization:** Use `next/image` component with medical image priorities
-- **Code Splitting:** Lazy load non-critical medical modules
-- **Caching Strategy:** Aggressive caching for static medical references, careful caching for patient data
+- **Image Optimization:** Use `next/image` component with aesthetic image priorities
+- **Code Splitting:** Lazy load non-critical aesthetic modules
+- **Caching Strategy:** Aggressive caching for static aesthetic references, careful caching for client data
 
 **Performance Monitoring:**
 
 ```tsx
-// Performance tracking for medical interfaces
-const trackMedicalPerformance = (action: string, duration: number) => {
+// Performance tracking for aesthetic interfaces
+const trackAestheticPerformance = (action: string, duration: number) => {
   if (duration > CRITICAL_THRESHOLDS[action]) {
-    console.warn(`Medical action '${action}' exceeded critical threshold: ${duration}ms`);
-    // Alert medical IT team for critical performance issues
+    console.warn(`Aesthetic action '${action}' exceeded critical threshold: ${duration}ms`);
+    // Alert aesthetic IT team for critical performance issues
   }
 };
 
 // Usage
-const handleEmergencyAlert = async () => {
+const handleCriticalAlert = async () => {
   const startTime = performance.now();
-  await triggerEmergencyProtocol();
+  await triggerCriticalProtocol();
   const duration = performance.now() - startTime;
-  trackMedicalPerformance("emergency_alert", duration);
+  trackAestheticPerformance("critical_alert", duration);
 };
 ```
 
