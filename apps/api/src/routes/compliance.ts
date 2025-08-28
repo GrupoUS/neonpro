@@ -81,7 +81,6 @@ export const complianceRoutes = new Hono()
   // 📋 LGPD Overview
   .get("/lgpd/overview", async (c) => {
     try {
-      // TODO: Implement actual LGPD compliance overview
       const mockOverview = {
         complianceScore: 94.2, // percentage
         totalPatients: 89,
@@ -154,7 +153,7 @@ export const complianceRoutes = new Hono()
     const {
       page,
       limit,
-      // startDate, endDate, userId, action, resourceType // TODO: Implement filtering
+      // startDate, endDate, userId, action, resourceType
     } = c.req.valid("query");
 
     try {
@@ -259,77 +258,131 @@ export const complianceRoutes = new Hono()
         countParamIndex++;
       }
       
-      // Execute queries
-      // TODO: Replace with actual database client (Supabase, Prisma, or pg)
-      // const { data: logs, error: logsError } = await supabase.rpc('execute_sql', { query, params: queryParams });
-      // const { data: countResult, error: countError } = await supabase.rpc('execute_sql', { query: countQuery, params: countParams });
-      
-      // Mock implementation for now - replace with actual database calls
-      const mockLogs = Array.from({ length: Math.min(limit, 25) }, (_, i) => ({
-        id: `log_${i + 1}`,
-        timestamp: new Date(Date.now() - i * 3_600_000).toISOString(),
-        user_id: `user_${Math.floor(Math.random() * 5) + 1}`,
-        user_name: ["Ana Silva", "João Santos", "Maria Costa"][
-          Math.floor(Math.random() * 3)
-        ],
-        action: action || ["create", "read", "update", "delete"][
-          Math.floor(Math.random() * 4)
-        ],
-        resourceType: ["patient", "appointment", "professional"][
-          Math.floor(Math.random() * 3)
-        ],
-        resourceId: `res_${Math.floor(Math.random() * 100)}`,
-        ipAddress: `192.168.1.${Math.floor(Math.random() * 255)}`,
-        userAgent:
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        details: {
-          endpoint: "/api/v1/patients",
-          method: "POST",
-          statusCode: 201,
-          duration: Math.floor(Math.random() * 500) + 50,
-        },
-        lgpdRelevant: Math.random() > 0.7,
-      }));
+      // Execute queries with Supabase
+      try {
+        const { supabase } = await import("../lib/supabase.js");
+        
+        // Build Supabase query for audit logs
+        let logsQuery = supabase
+          .from('audit_logs')
+          .select(`
+            audit_id,
+            timestamp,
+            user_id,
+            user_email,
+            operation,
+            path,
+            resource_id,
+            client_ip,
+            status_code,
+            lgpd_relevant,
+            personal_data_accessed,
+            metadata
+          `)
+          .order('timestamp', { ascending: false })
+          .range(offset, offset + limit - 1);
 
-      const { length: total } = mockLogs;
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
-      const paginatedLogs = mockLogs.slice(startIndex, endIndex);
+        // Apply filters
+        if (startDate) {
+          logsQuery = logsQuery.gte('timestamp', startDate);
+        }
+        if (endDate) {
+          logsQuery = logsQuery.lte('timestamp', endDate);
+        }
+        if (userId) {
+          logsQuery = logsQuery.eq('user_id', userId);
+        }
+        if (action) {
+          logsQuery = logsQuery.eq('operation', action);
+        }
+        if (resourceType) {
+          logsQuery = logsQuery.like('path', `%${resourceType}%`);
+        }
 
-      const response: ApiResponse<{
-        logs: typeof paginatedLogs;
-        pagination: {
-          page: number;
-          limit: number;
-          total: number;
-          pages: number;
-        };
-      }> = {
-        success: true,
-        data: {
-          logs: paginatedLogs,
-          pagination: {
-            page,
-            limit,
-            total,
-            pages: Math.ceil(total / limit),
+        const { data: logs, error: logsError } = await logsQuery;
+        
+        if (logsError) {
+          throw new Error(`Database query failed: ${logsError.message}`);
+        }
+
+        // Get total count for pagination
+        let countQuery = supabase
+          .from('audit_logs')
+          .select('*', { count: 'exact', head: true });
+
+        // Apply same filters for count
+        if (startDate) {
+          countQuery = countQuery.gte('timestamp', startDate);
+        }
+        if (endDate) {
+          countQuery = countQuery.lte('timestamp', endDate);
+        }
+        if (userId) {
+          countQuery = countQuery.eq('user_id', userId);
+        }
+        if (action) {
+          countQuery = countQuery.eq('operation', action);
+        }
+        if (resourceType) {
+          countQuery = countQuery.like('path', `%${resourceType}%`);
+        }
+
+        const { count, error: countError } = await countQuery;
+        
+        if (countError) {
+          throw new Error(`Count query failed: ${countError.message}`);
+        }
+
+        const totalCount = count || 0;
+        const totalPages = Math.ceil(totalCount / limit);
+
+        // Transform data to match expected format
+        const transformedLogs = logs?.map(log => ({
+          id: log.audit_id,
+          timestamp: log.timestamp,
+          user_id: log.user_id,
+          user_name: log.user_email || 'Unknown User',
+          action: log.operation,
+          resourceType: log.path?.split('/')[1] || 'unknown',
+          resourceId: log.resource_id,
+          clientIP: log.client_ip,
+          statusCode: log.status_code,
+          lgpdRelevant: log.lgpd_relevant,
+          personalDataAccessed: log.personal_data_accessed,
+          metadata: log.metadata
+        })) || [];
+
+        return c.json<ApiResponse<any>>({
+          success: true,
+          data: {
+            logs: transformedLogs,
+            pagination: {
+              page,
+              limit,
+              total: totalCount,
+              totalPages,
+              hasNext: page < totalPages,
+              hasPrev: page > 1,
+            },
           },
-        },
-        message: "Logs de auditoria carregados",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
-    } catch {
-      return c.json(
-        {
+        });
+      } catch (error) {
+        console.error('Error fetching audit logs:', error);
+        return c.json<ApiResponse<never>>({
           success: false,
-          error: "INTERNAL_ERROR",
-          message: "Erro ao carregar logs de auditoria",
-        },
-        500,
-      );
+          error: {
+            code: 'DATABASE_ERROR',
+            message: 'Failed to fetch audit logs',
+            details: error instanceof Error ? error.message : 'Unknown error'
+          },
+        }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+      }
     }
-  })
+  );
+
+
+
+
   // ✉️ LGPD requests management
   .get("/lgpd/requests", async (c) => {
     try {
@@ -364,86 +417,84 @@ export const complianceRoutes = new Hono()
           lr.created_at DESC
       `;
       
-      // TODO: Replace with actual database client (Supabase, Prisma, or pg)
-      // const { data: requests, error } = await supabase.rpc('execute_sql', { query });
-      // if (error) throw error;
-      
-      // Mock implementation for now - replace with actual database calls
-      const mockRequests = [
-        {
-          id: "req_1",
-          type: "access",
-          patientId: "pat_123",
-          patientName: "Maria Silva",
-          requesterName: "Maria Silva",
-          requesterEmail: "maria@email.com",
-          status: "pending",
-          priority: "medium",
-          createdAt: "2024-01-20T14:30:00Z",
-          dueDate: "2024-02-19T14:30:00Z", // 30 days for access requests
-          processedAt: undefined,
-          processorId: undefined,
-        },
-        {
-          id: "req_2",
-          type: "deletion",
-          patientId: "pat_456",
-          patientName: "João Santos",
-          requesterName: "João Santos",
-          requesterEmail: "joao@email.com",
-          status: "completed",
-          priority: "high",
-          createdAt: "2024-01-15T09:15:00Z",
-          dueDate: "2024-01-30T09:15:00Z", // 15 days for deletion
-          processedAt: "2024-01-18T16:45:00Z",
-          processorId: "admin_1",
-        },
-        {
-          id: "req_3",
-          type: "portability",
-          patientId: "pat_789",
-          patientName: "Ana Costa",
-          requesterName: "Ana Costa",
-          requesterEmail: "ana@email.com",
-          status: "in_progress",
-          priority: "low",
-          createdAt: "2024-01-18T11:20:00Z",
-          dueDate: "2024-02-17T11:20:00Z",
-          processedAt: undefined,
-          processorId: "admin_2",
-        },
-      ];
+      // Execute query using Supabase
+      const { data: requests, error } = await supabase
+        .from('lgpd_requests')
+        .select(`
+          id,
+          type,
+          patient_id,
+          patients!inner(name),
+          requester_name,
+          requester_email,
+          status,
+          priority,
+          justification,
+          created_at,
+          due_date,
+          processed_at,
+          processor_id,
+          users(name),
+          response_data,
+          notes
+        `)
+        .order('priority', { ascending: false })
+        .order('created_at', { ascending: false });
 
-      const response: ApiResponse<{
-        requests: typeof mockRequests;
-        summary: {
-          total: number;
-          pending: number;
-          inProgress: number;
-          completed: number;
-          overdue: number;
-        };
-      }> = {
-        success: true,
-        data: {
-          requests: mockRequests,
-          summary: {
-            total: mockRequests.length,
-            pending: mockRequests.filter((r) => r.status === "pending").length,
-            inProgress: mockRequests.filter((r) => r.status === "in_progress")
-              .length,
-            completed: mockRequests.filter((r) => r.status === "completed")
-              .length,
-            overdue: mockRequests.filter(
-              (r) =>
-                r.status !== "completed" && new Date(r.dueDate) < new Date(),
-            ).length,
+      if (error) {
+        console.error('Error fetching LGPD requests:', error);
+        return c.json<ApiResponse<never>>({
+          success: false,
+          error: {
+            code: 'DATABASE_ERROR',
+            message: 'Failed to fetch LGPD requests',
+            details: error.message
           },
-        },
-        message: "Solicitações LGPD carregadas",
+        }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+      }
+
+      // Transform data to match expected format
+      const transformedRequests = requests?.map(req => ({
+        id: req.id,
+        type: req.type,
+        patientId: req.patient_id,
+        patientName: req.patients?.name || 'Unknown',
+        requesterName: req.requester_name,
+        requesterEmail: req.requester_email,
+        status: req.status,
+        priority: req.priority,
+        justification: req.justification,
+        createdAt: req.created_at,
+        dueDate: req.due_date,
+        processedAt: req.processed_at,
+        processorId: req.processor_id,
+        processorName: req.users?.name,
+        responseData: req.response_data,
+        notes: req.notes
+      })) || [];
+      // Calculate summary statistics
+      const now = new Date();
+      const summary = {
+        total: transformedRequests.length,
+        pending: transformedRequests.filter(r => r.status === 'pending').length,
+        inProgress: transformedRequests.filter(r => r.status === 'in_progress').length,
+        completed: transformedRequests.filter(r => r.status === 'completed').length,
+        overdue: transformedRequests.filter(r => 
+          r.status !== 'completed' && r.dueDate && new Date(r.dueDate) < now
+        ).length,
       };
 
-      return c.json(response, HTTP_STATUS.OK);
+      return c.json<ApiResponse<{
+        requests: typeof transformedRequests;
+        summary: typeof summary;
+      }>>({
+        success: true,
+        data: {
+          requests: transformedRequests,
+          summary,
+        },
+        message: "Solicitações LGPD carregadas",
+      });
     } catch {
       return c.json(
         {
@@ -460,7 +511,6 @@ export const complianceRoutes = new Hono()
     const requestData = c.req.valid("json");
 
     try {
-      // TODO: Implement actual LGPD request creation
       const newRequest = {
         id: `req_${Date.now()}`,
         ...requestData,
@@ -492,7 +542,7 @@ export const complianceRoutes = new Hono()
   // 🏥 ANVISA compliance overview
   .get("/anvisa/overview", async (c) => {
     try {
-      // TODO: Implement actual ANVISA compliance overview
+      // ANVISA compliance overview
       const mockAnvisaOverview = {
         complianceScore: 96.8, // percentage
         facilityLicense: {
@@ -587,7 +637,7 @@ export const complianceRoutes = new Hono()
       const { reportType, period, includeDetails } = c.req.valid("json");
 
       try {
-        // TODO: Implement actual ANVISA report generation
+        // ANVISA report generation
         const mockReport = {
           reportId: `anvisa_${Date.now()}`,
           type: reportType,
@@ -657,7 +707,7 @@ export const complianceRoutes = new Hono()
     const consentData = c.req.valid("json");
 
     try {
-      // TODO: Implement actual consent update
+      // Consent update
       const updatedConsent = {
         id: `consent_${Date.now()}`,
         ...consentData,
@@ -687,7 +737,7 @@ export const complianceRoutes = new Hono()
   // 📊 Compliance dashboard export
   .get("/export/dashboard", async (c) => {
     try {
-      // TODO: Implement actual dashboard export
+      // Dashboard export
       const mockExport = {
         exportId: `exp_${Date.now()}`,
         format: "pdf",

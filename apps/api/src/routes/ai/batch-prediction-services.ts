@@ -31,7 +31,7 @@ export class BatchPredictionError extends Error {
 }
 
 // Core Batch Prediction Service
-// TODO: Convert to standalone functions
+// Batch prediction services
 export class BatchPredictionService {
   static async createBatchJob(data: CreateBatchJobRequest) {
     try {

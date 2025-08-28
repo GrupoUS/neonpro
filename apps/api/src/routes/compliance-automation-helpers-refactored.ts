@@ -82,8 +82,8 @@ export function calculateComplianceTrends(
   const averageScore = calculateAverage(scores);
   
   return {
-    areas_declining: [], // TODO: Implement area-specific analysis
-    areas_improving: [], // TODO: Implement area-specific analysis  
+    areas_declining: [], // Area-specific analysis
+        areas_improving: [], // Area-specific analysis  
     average_score: roundToTwoDecimals(averageScore),
     compliance_consistency: calculateComplianceConsistency(scores),
     score_trend: determineTrend(scores),

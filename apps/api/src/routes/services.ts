@@ -103,108 +103,119 @@ export const servicesRoutes = new Hono()
     } = c.req.valid("query");
 
     try {
-      // TODO: Implement actual database query
-      const mockServices = [
-        {
-          id: "srv_1",
-          name: "Limpeza de Pele Profunda",
-          description:
-            "Tratamento completo de limpeza facial com extração e hidratação",
-          category: "facial_treatments",
-          duration: 60,
-          price: 120,
-          isActive: true,
-          anvisaCategory: "cosmetic",
-          requiredProfessions: ["esthetician"],
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: "srv_2",
-          name: "Peeling Químico",
-          description: "Renovação celular com ácidos para rejuvenescimento",
-          category: "facial_treatments",
-          duration: 45,
-          price: 200,
-          isActive: true,
-          anvisaCategory: "medical_device",
-          anvisaRegistration: "ANVISA-123456",
-          requiredProfessions: ["dermatologist"],
-          requiresLicense: true,
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: "srv_3",
-          name: "Massagem Relaxante",
-          description: "Massagem corporal para alívio de tensões",
-          category: "wellness",
-          duration: 90,
-          price: 150,
-          isActive: true,
-          anvisaCategory: "none",
-          requiredProfessions: ["therapist"],
-          createdAt: new Date().toISOString(),
-        },
-      ].filter((service) => {
-        if (
-          search &&
-          !service.name.toLowerCase().includes(search.toLowerCase())
-        ) {
-          return false;
-        }
-        if (category && service.category !== category) {
-          return false;
-        }
-        if (isActive !== undefined && service.isActive !== isActive) {
-          return false;
-        }
-        if (profession && !service.requiredProfessions.includes(profession)) {
-          return false;
-        }
-        if (priceMin !== undefined && service.price < priceMin) {
-          return false;
-        }
-        if (priceMax !== undefined && service.price > priceMax) {
-          return false;
-        }
-        return true;
-      });
+      // Build query with filters
+      let query = supabase
+        .from('services')
+        .select(`
+          id,
+          name,
+          description,
+          category,
+          duration,
+          price,
+          is_active,
+          anvisa_category,
+          anvisa_registration,
+          requires_license,
+          required_professions,
+          max_booking_advance,
+          cancellation_policy,
+          contraindications,
+          aftercare_instructions,
+          created_at,
+          updated_at
+        `);
 
-      const { length: total } = mockServices;
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
-      const paginatedServices = mockServices.slice(startIndex, endIndex);
+      // Apply filters
+      if (search) {
+        query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
+      }
+      if (category) {
+        query = query.eq('category', category);
+      }
+      if (isActive !== undefined) {
+        query = query.eq('is_active', isActive);
+      }
+      if (profession) {
+        query = query.contains('required_professions', [profession]);
+      }
+      if (priceMin !== undefined) {
+        query = query.gte('price', priceMin);
+      }
+      if (priceMax !== undefined) {
+        query = query.lte('price', priceMax);
+      }
 
-      const response: ApiResponse<{
-        services: typeof paginatedServices;
+      // Apply pagination
+      const offset = (page - 1) * limit;
+      query = query.range(offset, offset + limit - 1).order('created_at', { ascending: false });
+
+      const { data: services, error, count } = await query;
+
+      if (error) {
+        console.error('Error fetching services:', error);
+        return c.json(
+          {
+            success: false,
+            error: 'DATABASE_ERROR',
+            message: 'Erro ao buscar serviços',
+          },
+          HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      // Transform data to match expected format
+      const transformedServices = services?.map(service => ({
+        id: service.id,
+        name: service.name,
+        description: service.description,
+        category: service.category,
+        duration: service.duration,
+        price: service.price,
+        isActive: service.is_active,
+        anvisaCategory: service.anvisa_category,
+        anvisaRegistration: service.anvisa_registration,
+        requiresLicense: service.requires_license,
+        requiredProfessions: service.required_professions || [],
+        maxBookingAdvance: service.max_booking_advance,
+        cancellationPolicy: service.cancellation_policy,
+        contraindications: service.contraindications || [],
+        aftercareInstructions: service.aftercare_instructions,
+        createdAt: service.created_at,
+        updatedAt: service.updated_at,
+      })) || [];
+
+      return c.json<ApiResponse<{
+        services: typeof transformedServices;
         pagination: {
           page: number;
           limit: number;
           total: number;
-          pages: number;
+          totalPages: number;
         };
-      }> = {
+      }>>({
         success: true,
         data: {
-          services: paginatedServices,
+          services: transformedServices,
           pagination: {
             page,
             limit,
-            total,
-            pages: Math.ceil(total / limit),
+            total: count || 0,
+            totalPages: Math.ceil((count || 0) / limit),
           },
         },
-        message: "Serviços listados com sucesso",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
-    } catch {
-      return c.json(
+      });
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      return c.json<ApiResponse<null>>(
         {
           success: false,
-          error: "INTERNAL_ERROR",
-          message: "Erro ao listar serviços",
+          error: {
+            code: 'SERVICES_FETCH_ERROR',
+            message: 'Erro ao buscar serviços',
+          },
         },
-        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR
       );
     }
   })
@@ -213,38 +224,67 @@ export const servicesRoutes = new Hono()
     const id = c.req.param("id");
 
     try {
-      // TODO: Implement actual database query
-      const mockService = {
-        id,
-        name: "Limpeza de Pele Profunda",
-        description:
-          "Tratamento completo de limpeza facial com extração e hidratação",
-        category: "facial_treatments",
-        duration: 60,
-        price: 120,
-        isActive: true,
-        anvisaCategory: "cosmetic",
-        requiredProfessions: ["esthetician"],
-        maxBookingAdvance: 90,
-        cancellationPolicy: "Cancelamento até 24h antes sem taxa",
-        contraindications: [
-          "Gravidez",
-          "Tratamentos com ácido recentes",
-          "Pele com lesões ativas",
-        ],
-        aftercareInstructions:
-          "Evitar exposição solar por 24h. Usar protetor solar.",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+      const { data: service, error } = await supabase
+        .from('services')
+        .select(`
+          id,
+          name,
+          description,
+          category,
+          duration,
+          price,
+          is_active,
+          anvisa_category,
+          anvisa_registration,
+          requires_license,
+          required_professions,
+          max_booking_advance,
+          cancellation_policy,
+          contraindications,
+          aftercare_instructions,
+          created_at,
+          updated_at
+        `)
+        .eq('id', id)
+        .single();
+
+      if (error || !service) {
+        return c.json<ApiResponse<null>>(
+          {
+            success: false,
+            error: {
+              code: 'SERVICE_NOT_FOUND',
+              message: 'Serviço não encontrado',
+            },
+          },
+          HTTP_STATUS.NOT_FOUND
+        );
+      }
+
+      const transformedService = {
+        id: service.id,
+        name: service.name,
+        description: service.description,
+        category: service.category,
+        duration: service.duration,
+        price: service.price,
+        isActive: service.is_active,
+        anvisaCategory: service.anvisa_category,
+        anvisaRegistration: service.anvisa_registration,
+        requiresLicense: service.requires_license,
+        requiredProfessions: service.required_professions || [],
+        maxBookingAdvance: service.max_booking_advance,
+        cancellationPolicy: service.cancellation_policy,
+        contraindications: service.contraindications || [],
+        aftercareInstructions: service.aftercare_instructions,
+        createdAt: service.created_at,
+        updatedAt: service.updated_at,
       };
 
-      const response: ApiResponse<typeof mockService> = {
+      return c.json<ApiResponse<typeof transformedService>>({
         success: true,
-        data: mockService,
-        message: "Serviço encontrado",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
+        data: transformedService,
+      });
     } catch {
       return c.json(
         {
@@ -261,21 +301,66 @@ export const servicesRoutes = new Hono()
     const serviceData = c.req.valid("json");
 
     try {
-      // TODO: Implement actual database creation
-      const newService = {
-        id: `srv_${Date.now()}`,
-        ...serviceData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+      const { data: service, error } = await supabase
+        .from('services')
+        .insert({
+          name: serviceData.name,
+          description: serviceData.description,
+          category: serviceData.category,
+          duration: serviceData.duration,
+          price: serviceData.price,
+          is_active: serviceData.isActive,
+          anvisa_category: serviceData.anvisaCategory,
+          anvisa_registration: serviceData.anvisaRegistration,
+          requires_license: serviceData.requiresLicense,
+          required_professions: serviceData.requiredProfessions,
+          max_booking_advance: serviceData.maxBookingAdvance,
+          cancellation_policy: serviceData.cancellationPolicy,
+          contraindications: serviceData.contraindications,
+          aftercare_instructions: serviceData.aftercareInstructions,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return c.json<ApiResponse<null>>(
+          {
+            success: false,
+            error: {
+              code: 'SERVICE_CREATION_FAILED',
+              message: 'Erro ao criar serviço',
+              details: error.message,
+            },
+          },
+          HTTP_STATUS.BAD_REQUEST
+        );
+      }
+
+      const transformedService = {
+        id: service.id,
+        name: service.name,
+        description: service.description,
+        category: service.category,
+        duration: service.duration,
+        price: service.price,
+        isActive: service.is_active,
+        anvisaCategory: service.anvisa_category,
+        anvisaRegistration: service.anvisa_registration,
+        requiresLicense: service.requires_license,
+        requiredProfessions: service.required_professions || [],
+        maxBookingAdvance: service.max_booking_advance,
+        cancellationPolicy: service.cancellation_policy,
+        contraindications: service.contraindications || [],
+        aftercareInstructions: service.aftercare_instructions,
+        createdAt: service.created_at,
+        updatedAt: service.updated_at,
       };
 
-      const response: ApiResponse<typeof newService> = {
+      return c.json<ApiResponse<typeof transformedService>>({
         success: true,
-        data: newService,
+        data: transformedService,
         message: "Serviço criado com sucesso",
-      };
-
-      return c.json(response, HTTP_STATUS.CREATED);
+      }, HTTP_STATUS.CREATED);
     } catch {
       return c.json(
         {
@@ -293,26 +378,69 @@ export const servicesRoutes = new Hono()
     const updateData = c.req.valid("json");
 
     try {
-      // TODO: Implement actual database update
-      const updatedService = {
-        id,
-        name: "Limpeza de Pele Profunda",
-        description: "Tratamento completo de limpeza facial",
-        category: "facial_treatments",
-        duration: 60,
-        price: 120,
-        isActive: true,
-        ...updateData,
-        updatedAt: new Date().toISOString(),
+      // Build update object with only provided fields
+      const updateFields: Record<string, any> = {};
+      
+      if (updateData.name !== undefined) updateFields.name = updateData.name;
+      if (updateData.description !== undefined) updateFields.description = updateData.description;
+      if (updateData.category !== undefined) updateFields.category = updateData.category;
+      if (updateData.duration !== undefined) updateFields.duration = updateData.duration;
+      if (updateData.price !== undefined) updateFields.price = updateData.price;
+      if (updateData.isActive !== undefined) updateFields.is_active = updateData.isActive;
+      if (updateData.anvisaCategory !== undefined) updateFields.anvisa_category = updateData.anvisaCategory;
+      if (updateData.anvisaRegistration !== undefined) updateFields.anvisa_registration = updateData.anvisaRegistration;
+      if (updateData.requiresLicense !== undefined) updateFields.requires_license = updateData.requiresLicense;
+      if (updateData.requiredProfessions !== undefined) updateFields.required_professions = updateData.requiredProfessions;
+      if (updateData.maxBookingAdvance !== undefined) updateFields.max_booking_advance = updateData.maxBookingAdvance;
+      if (updateData.cancellationPolicy !== undefined) updateFields.cancellation_policy = updateData.cancellationPolicy;
+      if (updateData.contraindications !== undefined) updateFields.contraindications = updateData.contraindications;
+      if (updateData.aftercareInstructions !== undefined) updateFields.aftercare_instructions = updateData.aftercareInstructions;
+
+      const { data: service, error } = await supabase
+        .from('services')
+        .update(updateFields)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error || !service) {
+        return c.json<ApiResponse<null>>(
+          {
+            success: false,
+            error: {
+              code: 'SERVICE_NOT_FOUND',
+              message: 'Serviço não encontrado',
+            },
+          },
+          HTTP_STATUS.NOT_FOUND
+        );
+      }
+
+      const transformedService = {
+        id: service.id,
+        name: service.name,
+        description: service.description,
+        category: service.category,
+        duration: service.duration,
+        price: service.price,
+        isActive: service.is_active,
+        anvisaCategory: service.anvisa_category,
+        anvisaRegistration: service.anvisa_registration,
+        requiresLicense: service.requires_license,
+        requiredProfessions: service.required_professions || [],
+        maxBookingAdvance: service.max_booking_advance,
+        cancellationPolicy: service.cancellation_policy,
+        contraindications: service.contraindications || [],
+        aftercareInstructions: service.aftercare_instructions,
+        createdAt: service.created_at,
+        updatedAt: service.updated_at,
       };
 
-      const response: ApiResponse<typeof updatedService> = {
+      return c.json<ApiResponse<typeof transformedService>>({
         success: true,
-        data: updatedService,
+        data: transformedService,
         message: "Serviço atualizado com sucesso",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
+      });
     } catch {
       return c.json(
         {
@@ -329,14 +457,32 @@ export const servicesRoutes = new Hono()
     const id = c.req.param("id");
 
     try {
-      // TODO: Implement actual soft delete
-      const response: ApiResponse<{ id: string }> = {
-        success: true,
-        data: { id },
-        message: "Serviço removido com sucesso",
-      };
+      const { data: service, error } = await supabase
+        .from('services')
+        .update({ is_active: false, deleted_at: new Date().toISOString() })
+        .eq('id', id)
+        .eq('is_active', true) // Only delete active services
+        .select('id')
+        .single();
 
-      return c.json(response, HTTP_STATUS.OK);
+      if (error || !service) {
+        return c.json<ApiResponse<null>>(
+          {
+            success: false,
+            error: {
+              code: 'SERVICE_NOT_FOUND',
+              message: 'Serviço não encontrado ou já foi removido',
+            },
+          },
+          HTTP_STATUS.NOT_FOUND
+        );
+      }
+
+      return c.json<ApiResponse<{ id: string }>>({
+        success: true,
+        data: { id: service.id },
+        message: "Serviço removido com sucesso",
+      });
     } catch {
       return c.json(
         {
@@ -353,37 +499,65 @@ export const servicesRoutes = new Hono()
     const category = c.req.param("category");
 
     try {
-      // TODO: Implement actual category query
-      const mockServices = [
-        {
-          id: "srv_1",
-          name: "Limpeza de Pele Profunda",
-          price: 120,
-          duration: 60,
-        },
-        {
-          id: "srv_2",
-          name: "Hidratação Facial",
-          price: 80,
-          duration: 45,
-        },
-      ];
+      // Validate category parameter
+      const categoryValidation = ServiceCategorySchema.safeParse(category);
+      if (!categoryValidation.success) {
+        return c.json<ApiResponse<null>>(
+          {
+            success: false,
+            error: {
+              code: 'INVALID_CATEGORY',
+              message: 'Categoria inválida',
+            },
+          },
+          HTTP_STATUS.BAD_REQUEST
+        );
+      }
 
-      const response: ApiResponse<{
+      const { data: services, error } = await supabase
+        .from('services')
+        .select('id, name, description, category, duration, price, is_active, created_at')
+        .eq('category', category)
+        .eq('is_active', true)
+        .order('name');
+
+      if (error) {
+        return c.json<ApiResponse<null>>(
+          {
+            success: false,
+            error: {
+              code: 'DATABASE_ERROR',
+              message: 'Erro ao buscar serviços',
+            },
+          },
+          HTTP_STATUS.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      const transformedServices = services.map(service => ({
+        id: service.id,
+        name: service.name,
+        description: service.description,
+        category: service.category,
+        duration: service.duration,
+        price: service.price,
+        isActive: service.is_active,
+        createdAt: service.created_at,
+      }));
+
+      return c.json<ApiResponse<{
         category: string;
-        services: typeof mockServices;
+        services: typeof transformedServices;
         count: number;
-      }> = {
+      }>>({
         success: true,
         data: {
           category,
-          services: mockServices,
-          count: mockServices.length,
+          services: transformedServices,
+          count: transformedServices.length,
         },
         message: `Serviços da categoria ${category}`,
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
+      });
     } catch {
       return c.json(
         {
@@ -400,25 +574,66 @@ export const servicesRoutes = new Hono()
     const id = c.req.param("id");
 
     try {
-      // TODO: Implement actual compliance check
-      const mockCompliance = {
-        serviceId: id,
-        anvisaCompliant: true,
-        registrationValid: true,
-        licenseRequired: true,
-        lastInspection: "2024-01-15",
-        expirationDate: "2025-01-15",
-        warnings: [],
-        certifications: ["ANVISA-123456", "ISO-9001"],
+      const { data: service, error } = await supabase
+        .from('services')
+        .select(`
+          id,
+          name,
+          anvisa_category,
+          anvisa_registration,
+          requires_license,
+          is_active,
+          service_compliance (
+            anvisa_compliant,
+            registration_valid,
+            last_inspection,
+            expiration_date,
+            warnings,
+            certifications
+          )
+        `)
+        .eq('id', id)
+        .eq('is_active', true)
+        .single();
+
+      if (error || !service) {
+        return c.json<ApiResponse<null>>(
+          {
+            success: false,
+            error: {
+              code: 'SERVICE_NOT_FOUND',
+              message: 'Serviço não encontrado',
+            },
+          },
+          HTTP_STATUS.NOT_FOUND
+        );
+      }
+
+      // Calculate compliance status based on service data
+      const compliance = service.service_compliance?.[0] || {};
+      const isAnvisaCompliant = service.anvisa_category !== 'none' && 
+                               service.anvisa_registration && 
+                               compliance.registration_valid !== false;
+      
+      const complianceData = {
+        serviceId: service.id,
+        serviceName: service.name,
+        anvisaCategory: service.anvisa_category,
+        anvisaRegistration: service.anvisa_registration,
+        anvisaCompliant: isAnvisaCompliant,
+        registrationValid: compliance.registration_valid ?? true,
+        licenseRequired: service.requires_license,
+        lastInspection: compliance.last_inspection,
+        expirationDate: compliance.expiration_date,
+        warnings: compliance.warnings || [],
+        certifications: compliance.certifications || [],
       };
 
-      const response: ApiResponse<typeof mockCompliance> = {
+      return c.json<ApiResponse<typeof complianceData>>({
         success: true,
-        data: mockCompliance,
+        data: complianceData,
         message: "Status de compliance ANVISA",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
+      });
     } catch {
       return c.json(
         {

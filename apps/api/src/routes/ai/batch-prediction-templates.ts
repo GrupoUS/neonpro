@@ -32,7 +32,7 @@ interface ValidationErrorResponse extends ErrorResponse {
 }
 
 // Response Template Service
-// TODO: Convert to standalone functions
+// Batch prediction templates
 export class ResponseTemplates {
   static success<T>(data: T, message = "Operation successful"): ApiResponse<T> {
     return {
@@ -118,7 +118,7 @@ export class ResponseTemplates {
 }
 
 // Email and Notification Templates
-// TODO: Convert to standalone functions
+// Template functions
 export class NotificationTemplates {
   static batchJobCompleted(
     jobId: string,
@@ -183,7 +183,7 @@ export class NotificationTemplates {
 }
 
 // API Documentation Templates
-// TODO: Convert to standalone functions
+// Prediction templates
 export class ApiDocumentationTemplates {
   static getOpenApiSchema() {
     return {

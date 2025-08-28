@@ -169,18 +169,69 @@ class AuditStore {
       this.logs.shift();
     }
 
-    // In production, this would persist to database
-    this.persistLog(log);
+    // Persist to database asynchronously
+    this.persistLog(log).catch(error => {
+      logger.error("Failed to persist audit log", { error, auditId: log.auditId });
+    });
   }
 
-  private persistLog(log: AuditLog): void {
-    // TODO: Implement database persistence
+  private async persistLog(log: AuditLog): Promise<void> {
+    try {
+      // Import supabase client
+      const { supabase } = await import("../lib/supabase.js");
+      
+      // Insert audit log into database
+      const { error } = await supabase
+        .from('audit_logs')
+        .insert({
+          audit_id: log.auditId,
+          timestamp: log.timestamp,
+          level: log.level,
+          category: log.category,
+          operation: log.operation,
+          description: log.description,
+          user_id: log.userId,
+          user_email: log.userEmail,
+          user_role: log.userRole,
+          method: log.method,
+          path: log.path,
+          resource_id: log.resourceId,
+          client_ip: log.clientIP,
+          user_agent: log.userAgent,
+          status_code: log.statusCode,
+          response_time: log.responseTime,
+          lgpd_relevant: log.lgpdRelevant,
+          personal_data_accessed: log.personalDataAccessed,
+          consent_required: log.consentRequired,
+          metadata: log.metadata,
+          request_id: log.requestId,
+          session_id: log.sessionId,
+          country: log.country,
+          region: log.region
+        });
+
+      if (error) {
+        logger.error("Failed to persist audit log to database", {
+          error: error.message,
+          auditId: log.auditId,
+          userId: log.userId
+        });
+      }
+    } catch (error) {
+      logger.error("Error persisting audit log", {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        auditId: log.auditId,
+        userId: log.userId
+      });
+    }
+    
+    // Also log to console for immediate visibility
     logger.info("Audit log entry", {
       userId: log.userId,
-      action: log.action,
-      resource: log.resource,
+      operation: log.operation,
+      resource: log.path,
       timestamp: log.timestamp,
-      requestId: log.metadata?.requestId,
+      requestId: log.requestId,
     });
   }
 

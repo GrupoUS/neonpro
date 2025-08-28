@@ -70,66 +70,87 @@ export const professionalsRoutes = new Hono()
     const { page, limit, search, profession, isActive } = c.req.valid("query");
 
     try {
-      // TODO: Implement actual database query
-      const mockProfessionals = [
-        {
-          id: "1",
-          fullName: "Dra. Ana Silva",
-          email: "ana.silva@neonpro.com",
-          phone: "+5511999999999",
-          profession: "dermatologist",
-          specialization: "Dermatologia Estética",
-          registrationNumber: "CRM 12345",
-          isActive: true,
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: "2",
-          fullName: "Carla Santos",
-          email: "carla.santos@neonpro.com",
-          phone: "+5511888888888",
-          profession: "esthetician",
-          specialization: "Estética Facial",
-          registrationNumber: undefined,
-          isActive: true,
-          createdAt: new Date().toISOString(),
-        },
-      ].filter((prof) => {
-        if (
-          search &&
-          !prof.fullName.toLowerCase().includes(search.toLowerCase())
-        ) {
-          return false;
-        }
-        if (profession && prof.profession !== profession) {
-          return false;
-        }
-        if (isActive !== undefined && prof.isActive !== isActive) {
-          return false;
-        }
-        return true;
-      });
+      let query = supabase
+        .from('professionals')
+        .select(`
+          id,
+          full_name,
+          email,
+          phone,
+          profession,
+          specialization,
+          registration_number,
+          is_active,
+          working_hours,
+          permissions,
+          created_at
+        `);
 
-      const { length: total } = mockProfessionals;
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
-      const paginatedProfessionals = mockProfessionals.slice(
-        startIndex,
-        endIndex,
-      );
+      // Apply filters
+      if (search) {
+        query = query.ilike('full_name', `%${search}%`);
+      }
+      if (profession) {
+        query = query.eq('profession', profession);
+      }
+      if (isActive !== undefined) {
+        query = query.eq('is_active', isActive);
+      }
 
-      const response: ApiResponse<{
-        professionals: typeof paginatedProfessionals;
+      // Apply pagination
+      const offset = (page - 1) * limit;
+      query = query.range(offset, offset + limit - 1);
+
+      const { data: professionals, error, count } = await query;
+
+      if (error) {
+        return c.json<ApiResponse<null>>(
+          {
+            success: false,
+            error: {
+              code: 'DATABASE_ERROR',
+              message: 'Erro ao buscar profissionais',
+            },
+          },
+          HTTP_STATUS.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      // Transform data to match expected format
+      const transformedProfessionals = professionals?.map(prof => ({
+        id: prof.id,
+        fullName: prof.full_name,
+        email: prof.email,
+        phone: prof.phone,
+        profession: prof.profession,
+        specialization: prof.specialization,
+        registrationNumber: prof.registration_number,
+        isActive: prof.is_active,
+        workingHours: prof.working_hours,
+        permissions: prof.permissions,
+        createdAt: prof.created_at,
+      })) || [];
+
+      // Get total count for pagination
+      const { count: totalCount } = await supabase
+        .from('professionals')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_active', isActive ?? true);
+
+      const total = totalCount || 0;
+
+      return c.json<ApiResponse<{
+        professionals: typeof transformedProfessionals;
         pagination: {
           page: number;
           limit: number;
           total: number;
           pages: number;
         };
-      }> = {
+      }>>({
         success: true,
         data: {
-          professionals: paginatedProfessionals,
+          professionals: transformedProfessionals,
           pagination: {
             page,
             limit,
@@ -138,9 +159,7 @@ export const professionalsRoutes = new Hono()
           },
         },
         message: "Profissionais listados com sucesso",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
+      });
     } catch {
       return c.json(
         {
@@ -157,40 +176,55 @@ export const professionalsRoutes = new Hono()
     const id = c.req.param("id");
 
     try {
-      // TODO: Implement actual database query
-      const mockProfessional = {
-        id,
-        fullName: "Dra. Ana Silva",
-        email: "ana.silva@neonpro.com",
-        phone: "+5511999999999",
-        profession: "dermatologist",
-        specialization: "Dermatologia Estética",
-        registrationNumber: "CRM 12345",
-        isActive: true,
-        workingHours: {
-          monday: ["09:00", "18:00"],
-          tuesday: ["09:00", "18:00"],
-          wednesday: ["09:00", "18:00"],
-          thursday: ["09:00", "18:00"],
-          friday: ["09:00", "17:00"],
-        },
-        permissions: [
-          "read:patients",
-          "write:patients",
-          "read:appointments",
-          "write:appointments",
-        ],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+      const { data: professional, error } = await supabase
+        .from('professionals')
+        .select(`
+          id,
+          full_name,
+          email,
+          phone,
+          profession,
+          specialization,
+          registration_number,
+          is_active,
+          working_hours,
+          permissions,
+          created_at,
+          updated_at
+        `)
+        .eq('id', id)
+        .eq('is_active', true)
+        .single();
+
+      if (error || !professional) {
+        return c.json<ApiResponse<null>>({
+          success: false,
+          error: "NOT_FOUND",
+          message: "Profissional não encontrado",
+        }, HTTP_STATUS.NOT_FOUND);
+      }
+
+      // Transform database fields to API format
+      const transformedProfessional = {
+        id: professional.id,
+        fullName: professional.full_name,
+        email: professional.email,
+        phone: professional.phone,
+        profession: professional.profession,
+        specialization: professional.specialization,
+        registrationNumber: professional.registration_number,
+        isActive: professional.is_active,
+        workingHours: professional.working_hours,
+        permissions: professional.permissions || [],
+        createdAt: professional.created_at,
+        updatedAt: professional.updated_at,
       };
 
-      const response: ApiResponse<typeof mockProfessional> = {
+      return c.json<ApiResponse<typeof transformedProfessional>>({
         success: true,
-        data: mockProfessional,
+        data: transformedProfessional,
         message: "Profissional encontrado",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
+      }, HTTP_STATUS.OK);
     } catch {
       return c.json(
         {
@@ -207,21 +241,64 @@ export const professionalsRoutes = new Hono()
     const professionalData = c.req.valid("json");
 
     try {
-      // TODO: Implement actual database creation
-      const newProfessional = {
-        id: `prof_${Date.now()}`,
-        ...professionalData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+      const { data: professional, error } = await supabase
+        .from('professionals')
+        .insert({
+          full_name: professionalData.fullName,
+          email: professionalData.email,
+          phone: professionalData.phone,
+          profession: professionalData.profession,
+          specialization: professionalData.specialization,
+          registration_number: professionalData.registrationNumber,
+          is_active: professionalData.isActive,
+          working_hours: professionalData.workingHours,
+          permissions: professionalData.permissions,
+        })
+        .select(`
+          id,
+          full_name,
+          email,
+          phone,
+          profession,
+          specialization,
+          registration_number,
+          is_active,
+          working_hours,
+          permissions,
+          created_at,
+          updated_at
+        `)
+        .single();
+
+      if (error || !professional) {
+        return c.json<ApiResponse<null>>({
+          success: false,
+          error: "CREATION_ERROR",
+          message: "Erro ao criar profissional",
+        }, HTTP_STATUS.BAD_REQUEST);
+      }
+
+      // Transform database fields to API format
+      const transformedProfessional = {
+        id: professional.id,
+        fullName: professional.full_name,
+        email: professional.email,
+        phone: professional.phone,
+        profession: professional.profession,
+        specialization: professional.specialization,
+        registrationNumber: professional.registration_number,
+        isActive: professional.is_active,
+        workingHours: professional.working_hours,
+        permissions: professional.permissions || [],
+        createdAt: professional.created_at,
+        updatedAt: professional.updated_at,
       };
 
-      const response: ApiResponse<typeof newProfessional> = {
+      return c.json<ApiResponse<typeof transformedProfessional>>({
         success: true,
-        data: newProfessional,
+        data: transformedProfessional,
         message: "Profissional criado com sucesso",
-      };
-
-      return c.json(response, HTTP_STATUS.CREATED);
+      }, HTTP_STATUS.CREATED);
     } catch {
       return c.json(
         {
@@ -239,24 +316,69 @@ export const professionalsRoutes = new Hono()
     const updateData = c.req.valid("json");
 
     try {
-      // TODO: Implement actual database update
-      const updatedProfessional = {
-        id,
-        fullName: "Dra. Ana Silva",
-        email: "ana.silva@neonpro.com",
-        phone: "+5511999999999",
-        profession: "dermatologist",
-        ...updateData,
-        updatedAt: new Date().toISOString(),
+      // Build update object dynamically
+      const updateFields: Record<string, any> = {};
+      
+      if (updateData.fullName !== undefined) updateFields.full_name = updateData.fullName;
+      if (updateData.email !== undefined) updateFields.email = updateData.email;
+      if (updateData.phone !== undefined) updateFields.phone = updateData.phone;
+      if (updateData.profession !== undefined) updateFields.profession = updateData.profession;
+      if (updateData.specialization !== undefined) updateFields.specialization = updateData.specialization;
+      if (updateData.registrationNumber !== undefined) updateFields.registration_number = updateData.registrationNumber;
+      if (updateData.isActive !== undefined) updateFields.is_active = updateData.isActive;
+      if (updateData.workingHours !== undefined) updateFields.working_hours = updateData.workingHours;
+      if (updateData.permissions !== undefined) updateFields.permissions = updateData.permissions;
+
+      const { data: professional, error } = await supabase
+        .from('professionals')
+        .update(updateFields)
+        .eq('id', id)
+        .eq('is_active', true)
+        .select(`
+          id,
+          full_name,
+          email,
+          phone,
+          profession,
+          specialization,
+          registration_number,
+          is_active,
+          working_hours,
+          permissions,
+          created_at,
+          updated_at
+        `)
+        .single();
+
+      if (error || !professional) {
+        return c.json<ApiResponse<null>>({
+          success: false,
+          error: "NOT_FOUND",
+          message: "Profissional não encontrado",
+        }, HTTP_STATUS.NOT_FOUND);
+      }
+
+      // Transform database fields to API format
+      const transformedProfessional = {
+        id: professional.id,
+        fullName: professional.full_name,
+        email: professional.email,
+        phone: professional.phone,
+        profession: professional.profession,
+        specialization: professional.specialization,
+        registrationNumber: professional.registration_number,
+        isActive: professional.is_active,
+        workingHours: professional.working_hours,
+        permissions: professional.permissions || [],
+        createdAt: professional.created_at,
+        updatedAt: professional.updated_at,
       };
 
-      const response: ApiResponse<typeof updatedProfessional> = {
+      return c.json<ApiResponse<typeof transformedProfessional>>({
         success: true,
-        data: updatedProfessional,
+        data: transformedProfessional,
         message: "Profissional atualizado com sucesso",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
+      }, HTTP_STATUS.OK);
     } catch {
       return c.json(
         {
@@ -273,14 +395,30 @@ export const professionalsRoutes = new Hono()
     const id = c.req.param("id");
 
     try {
-      // TODO: Implement actual soft delete
-      const response: ApiResponse<{ id: string }> = {
-        success: true,
-        data: { id },
-        message: "Profissional removido com sucesso",
-      };
+      const { data: professional, error } = await supabase
+        .from('professionals')
+        .update({
+          is_active: false,
+          deleted_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .eq('is_active', true)
+        .select('id')
+        .single();
 
-      return c.json(response, HTTP_STATUS.OK);
+      if (error || !professional) {
+        return c.json<ApiResponse<null>>({
+          success: false,
+          error: "NOT_FOUND",
+          message: "Profissional não encontrado",
+        }, HTTP_STATUS.NOT_FOUND);
+      }
+
+      return c.json<ApiResponse<{ id: string }>>({
+        success: true,
+        data: { id: professional.id },
+        message: "Profissional removido com sucesso",
+      }, HTTP_STATUS.OK);
     } catch {
       return c.json(
         {
@@ -295,24 +433,74 @@ export const professionalsRoutes = new Hono()
   // 📊 Get professional stats
   .get("/:id/stats", async (c) => {
     try {
-      // TODO: Implement actual stats query
-      const mockStats = {
-        totalAppointments: 156,
-        completedAppointments: 142,
-        cancelledAppointments: 14,
-        totalPatients: 89,
-        averageRating: 4.8,
-        monthlyRevenue: 12_500.5,
-        upcomingAppointments: 8,
+      const id = c.req.param("id");
+
+      // Verify professional exists and is active
+      const { data: professional, error: professionalError } = await supabase
+        .from('professionals')
+        .select('id')
+        .eq('id', id)
+        .eq('is_active', true)
+        .single();
+
+      if (professionalError || !professional) {
+        return c.json<ApiResponse<null>>({
+          success: false,
+          error: "NOT_FOUND",
+          message: "Profissional não encontrado",
+        }, HTTP_STATUS.NOT_FOUND);
+      }
+
+      // Get appointment statistics
+      const { data: appointmentStats, error: statsError } = await supabase
+        .from('appointments')
+        .select('status, total_amount')
+        .eq('professional_id', id);
+
+      if (statsError) {
+        throw new Error('Erro ao buscar estatísticas');
+      }
+
+      // Calculate statistics
+      const totalAppointments = appointmentStats?.length || 0;
+      const completedAppointments = appointmentStats?.filter(a => a.status === 'completed').length || 0;
+      const cancelledAppointments = appointmentStats?.filter(a => a.status === 'cancelled').length || 0;
+      const upcomingAppointments = appointmentStats?.filter(a => a.status === 'scheduled').length || 0;
+      
+      // Calculate monthly revenue (completed appointments only)
+      const monthlyRevenue = appointmentStats
+        ?.filter(a => a.status === 'completed')
+        ?.reduce((sum, a) => sum + (a.total_amount || 0), 0) || 0;
+
+      // Get unique patients count
+      const { data: patientsData, error: patientsError } = await supabase
+        .from('appointments')
+        .select('patient_id')
+        .eq('professional_id', id)
+        .not('patient_id', 'is', null);
+
+      const totalPatients = patientsData 
+        ? new Set(patientsData.map(p => p.patient_id)).size 
+        : 0;
+
+      // Get average rating (mock for now as ratings table structure is not defined)
+      const averageRating = 4.8;
+
+      const stats = {
+        totalAppointments,
+        completedAppointments,
+        cancelledAppointments,
+        totalPatients,
+        averageRating,
+        monthlyRevenue,
+        upcomingAppointments,
       };
 
-      const response: ApiResponse<typeof mockStats> = {
+      return c.json<ApiResponse<typeof stats>>({
         success: true,
-        data: mockStats,
+        data: stats,
         message: "Estatísticas do profissional",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
+      }, HTTP_STATUS.OK);
     } catch {
       return c.json(
         {
@@ -329,21 +517,91 @@ export const professionalsRoutes = new Hono()
     const date = c.req.query("date"); // YYYY-MM-DD format
 
     try {
-      // TODO: Implement actual availability query
+      // Get professional's working hours and existing appointments
+      const targetDate = date || new Date().toISOString().split("T")[0];
+      
+      // First, verify professional exists and get working hours
+      const { data: professional, error: professionalError } = await supabase
+        .from('professionals')
+        .select('id, working_hours')
+        .eq('id', id)
+        .eq('is_active', true)
+        .single();
+
+      if (professionalError || !professional) {
+        return c.json(
+          {
+            success: false,
+            error: "NOT_FOUND",
+            message: "Profissional não encontrado",
+          },
+          404,
+        );
+      }
+
+      // Get existing appointments for the date
+      const { data: appointments, error: appointmentsError } = await supabase
+        .from('appointments')
+        .select('appointment_time, status')
+        .eq('professional_id', id)
+        .gte('appointment_time', `${targetDate}T00:00:00`)
+        .lt('appointment_time', `${targetDate}T23:59:59`)
+        .in('status', ['scheduled', 'confirmed']);
+
+      if (appointmentsError) {
+        console.error('Error fetching appointments:', appointmentsError);
+        return c.json(
+          {
+            success: false,
+            error: "INTERNAL_ERROR",
+            message: "Erro ao buscar agendamentos",
+          },
+          500,
+        );
+      }
+
+      // Generate time slots based on working hours (default 9-17 if not set)
+      const workingHours = professional.working_hours || {
+        monday: ['09:00', '17:00'],
+        tuesday: ['09:00', '17:00'],
+        wednesday: ['09:00', '17:00'],
+        thursday: ['09:00', '17:00'],
+        friday: ['09:00', '17:00'],
+        saturday: ['09:00', '13:00'],
+        sunday: []
+      };
+
+      const dayOfWeek = new Date(targetDate).toLocaleDateString('en-US', { weekday: 'lowercase' });
+      const dayHours = workingHours[dayOfWeek as keyof typeof workingHours] || [];
+      
+      // Generate 30-minute slots
+      const availableSlots: string[] = [];
+      if (dayHours.length >= 2) {
+        const startTime = dayHours[0];
+        const endTime = dayHours[1];
+        
+        const start = new Date(`${targetDate}T${startTime}:00`);
+        const end = new Date(`${targetDate}T${endTime}:00`);
+        
+        while (start < end) {
+          availableSlots.push(start.toTimeString().slice(0, 5));
+          start.setMinutes(start.getMinutes() + 30);
+        }
+      }
+
+      // Get booked slots from appointments
+      const bookedSlots = appointments?.map(apt => {
+        const time = new Date(apt.appointment_time);
+        return time.toTimeString().slice(0, 5);
+      }) || [];
+
+      // Filter out booked slots from available slots
+      const finalAvailableSlots = availableSlots.filter(slot => !bookedSlots.includes(slot));
+
       const mockAvailability = {
-        date: date || new Date().toISOString().split("T")[0],
-        availableSlots: [
-          "09:00",
-          "09:30",
-          "10:00",
-          "10:30",
-          "14:00",
-          "14:30",
-          "15:00",
-          "15:30",
-          "16:00",
-        ],
-        bookedSlots: ["11:00", "11:30", "16:30", "17:00"],
+        date: targetDate,
+        availableSlots: finalAvailableSlots,
+        bookedSlots,
       };
 
       const response: ApiResponse<typeof mockAvailability> = {
