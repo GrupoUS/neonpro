@@ -64,7 +64,8 @@
     },
     "[markdown]": {
       "editor.defaultFormatter": "dprint.dprint"
-    }
+    },
+    "oxc.enable": true
   },
   "extensions": {
     "recommendations": [

@@ -342,7 +342,7 @@ export function createAuditEntry(
     id: generateSecureRandom(16),
     action,
     userId,
-    timestamp: new Date(),
+    timestamp: new Date().toISOString(),
     details: details || {},
     ip: "", // Will be filled by server
     userAgent: navigator?.userAgent || "",

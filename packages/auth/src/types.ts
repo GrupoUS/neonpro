@@ -31,16 +31,33 @@ export interface Permission {
 }
 
 export interface AuthConfig {
+  serviceName: string;
+  version: string;
+  enableCache: boolean;
+  enableAnalytics: boolean;
+  enableSecurity: boolean;
   jwtSecret: string;
   jwtExpiresIn: string;
   refreshTokenExpiresIn: string;
   mfaRequired: boolean;
-  sessionTimeout: number;
+  sessionTimeout: number; // in milliseconds
   maxLoginAttempts: number;
   passwordPolicy: PasswordPolicy;
-  audit: {
-    enabled: boolean;
-    logLevel: "basic" | "detailed" | "forensic";
+  audit?: {
+    supabaseUrl: string;
+    supabaseServiceKey: string;
+    enableBlockchainVerification?: boolean;
+    enableRealTimeIndexing?: boolean;
+    batchSize?: number;
+    batchTimeout?: number;
+    retentionDays?: number;
+    performanceTarget?: number;
+    encryptionEnabled?: boolean;
+    compressEvents?: boolean;
+  };
+  cacheOptions?: {
+    defaultTTL: number;
+    maxItems: number;
   };
 }
 
@@ -114,7 +131,7 @@ export interface SecurityEvent {
   userId?: string;
   ip: string;
   userAgent: string;
-  timestamp: Date;
+  timestamp: string;
   details: Record<string, string | number | boolean>;
   riskScore: number;
 }

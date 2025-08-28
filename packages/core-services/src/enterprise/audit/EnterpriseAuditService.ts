@@ -112,11 +112,10 @@ export class EnterpriseAuditService {
     if (typeof eventOrType === "string") {
       event = {
         id: crypto.randomUUID(),
-        timestamp: new Date(),
-        userId: "system",
-        action: eventOrType,
-        resource: "unknown",
-        outcome: "success",
+        service: "enterprise-audit",
+        eventType: eventOrType,
+        timestamp: new Date().toISOString(),
+        version: "1.0.0",
         details: data,
       };
     } else {
@@ -124,6 +123,13 @@ export class EnterpriseAuditService {
     }
 
     return this._logEvent(event);
+  }
+
+  /**
+   * Log operation - alias for log method for AuthService compatibility
+   */
+  async logOperation(action: string, details: unknown): Promise<void> {
+    return this.log(action, details);
   }
 
   /**

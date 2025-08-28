@@ -115,11 +115,11 @@ export async function POST(request: NextRequest) {
 
           controller.close();
         } catch (_error) {
-          // console.error("Streaming error:", error);
+          // console.error("Streaming error:", _error);
           const errorData = JSON.stringify({
             type: "error",
-            error: error instanceof Error
-              ? error.message
+            error: _error instanceof Error
+              ? _error.message
               : "Erro interno do servidor",
           });
           controller.enqueue(encoder.encode(`data: ${errorData}\\n\\n`));

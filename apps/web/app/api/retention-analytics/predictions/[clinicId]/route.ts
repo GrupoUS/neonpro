@@ -184,7 +184,8 @@ export async function GET(
 
     // Sorting
     filteredPredictions.sort((a: ChurnPredictionData, b: ChurnPredictionData) => {
-      let valueA: unknown, valueB: unknown;
+      let valueA: Date | number | string;
+      let valueB: Date | number | string;
 
       switch (sortBy) {
         case "prediction_date": {
@@ -209,15 +210,35 @@ export async function GET(
           break;
         }
         default: {
-          valueA = a.prediction_date;
-          valueB = b.prediction_date;
+          valueA = new Date(a.prediction_date);
+          valueB = new Date(b.prediction_date);
         }
       }
 
-      if (sortOrder === "desc") {
-        return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+      // Type-safe comparison
+      if (valueA instanceof Date && valueB instanceof Date) {
+        const timeA = valueA.getTime();
+        const timeB = valueB.getTime();
+        if (sortOrder === "desc") {
+          return timeB - timeA;
+        }
+        return timeA - timeB;
       }
-      return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+      
+      if (typeof valueA === "number" && typeof valueB === "number") {
+        if (sortOrder === "desc") {
+          return valueB - valueA;
+        }
+        return valueA - valueB;
+      }
+      
+      // Fallback for string comparison
+      const strA = String(valueA);
+      const strB = String(valueB);
+      if (sortOrder === "desc") {
+        return strB.localeCompare(strA);
+      }
+      return strA.localeCompare(strB);
     });
 
     // Pagination
@@ -395,7 +416,7 @@ export async function POST(
 
     if (validPatients.length !== targetPatientIds.length) {
       const invalidIds = targetPatientIds.filter(
-        (id) => !validPatients.some((p) => p.id === id),
+        (id) => !validPatients.some((p: { id: string }) => p.id === id),
       );
       return NextResponse.json(
         {
@@ -462,7 +483,7 @@ export async function POST(
       model_type: modelType,
       high_risk_detected: results.filter((r: DatabaseRow) =>
         ["high", "critical"].includes(
-          (r as unknown as { prediction?: { risk_level: string; }; }).prediction?.risk_level,
+          (r as unknown as { prediction: { risk_level: string; }; }).prediction.risk_level || 'unknown',
         )
       ).length,
     };

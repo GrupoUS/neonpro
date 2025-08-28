@@ -61,6 +61,8 @@ interface MetricStats {
   p99?: number;
 }
 
+type MetricStatsResponse = Omit<MetricStats, 'values'>;
+
 // Supported metric types
 const SUPPORTED_METRICS = [
   "CLS", // Cumulative Layout Shift
@@ -173,7 +175,7 @@ export async function POST(request: NextRequest) {
       {
         success: true,
         stored: data?.length || 0,
-        metrics: data?.map((d) => ({
+        metrics: data?.map((d: DbMetricRecord) => ({
           id: (d as DbMetricRecord).id,
           name: (d as DbMetricRecord).name,
           grade: (d as DbMetricRecord).grade,
@@ -318,12 +320,13 @@ function _parseTimeRange(timeRange: string): number {
   return ranges[timeRange] || 0;
 }
 
-function _calculateAggregatedStats(metrics: DbMetricRecord[]): Record<string, MetricStats> {
+function _calculateAggregatedStats(metrics: DbMetricRecord[]): Record<string, MetricStatsResponse> {
   if (metrics.length === 0) {
     return {};
   }
 
   const statsByMetric: Record<string, MetricStats> = {};
+  const responseStats: Record<string, MetricStatsResponse> = {};
 
   for (const metric of metrics) {
     if (!statsByMetric[metric.name]) {
@@ -355,12 +358,12 @@ function _calculateAggregatedStats(metrics: DbMetricRecord[]): Record<string, Me
       p99: values[Math.floor(count * 0.99)],
     };
 
-    // Remove raw values to reduce response size
+    // Create response object without values
     const { values: _, ...statWithoutValues } = statsByMetric[metricName];
-    statsByMetric[metricName] = statWithoutValues as Record<string, unknown>;
+    responseStats[metricName] = statWithoutValues;
   }
 
-  return statsByMetric;
+  return responseStats;
 }
 
 async function checkPerformanceAlerts(

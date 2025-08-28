@@ -30,20 +30,20 @@ import type {
  * Healthcare-compliant authentication service with enterprise features
  */
 export class AuthService extends EnhancedServiceBase {
-  private readonly config: AuthConfig;
+  protected readonly config: AuthConfig;
   private readonly supabase: SupabaseClient;
   private readonly rolePermissions: RolePermissions;
 
   constructor(config: AuthConfig, supabaseUrl: string, supabaseKey: string) {
-    super("auth-service", {
+    super({
+      serviceName: "auth-service",
+      version: "1.0.0",
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
-      enableAudit: true,
-      healthCheck: {
-        enabled: true,
-        interval: 30_000, // 30 seconds
-        timeout: 5000,
+      cacheOptions: {
+        defaultTTL: 15 * 60 * 1000, // 15 minutes for auth tokens
+        maxItems: 1000,
       },
     });
 
@@ -53,25 +53,40 @@ export class AuthService extends EnhancedServiceBase {
   }
 
   /**
+   * Get service name (required by EnhancedServiceBase)
+   */
+  getServiceName(): string {
+    return this.config.serviceName;
+  }
+
+  /**
+   * Get service version (required by EnhancedServiceBase)
+   */
+  getServiceVersion(): string {
+    return this.config.version;
+  }
+
+  /**
    * Authenticate user with enterprise security features
    */
   async login(credentials: LoginCredentials): Promise<LoginResult> {
-    const startTime = this.startTiming("auth_login");
+    const startTime = performance.now();
 
     try {
       // Security: Rate limiting check
       const rateLimitKey = `login_attempts_${credentials.email}`;
-      const attempts = await this.security.checkRateLimit(
+      const isRateLimited = await this.security.checkRateLimit(
         rateLimitKey,
         this.config.maxLoginAttempts,
+        15 * 60 * 1000 // 15 minutes window
       );
 
-      if (attempts >= this.config.maxLoginAttempts) {
+      if (isRateLimited) {
         await this.logSecurityEvent({
           type: "failed_login",
           ip: credentials.deviceInfo?.ip || "",
           userAgent: credentials.deviceInfo?.userAgent || "",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           details: { email: credentials.email, reason: "rate_limited" },
           riskScore: 8,
         });
@@ -106,7 +121,7 @@ export class AuthService extends EnhancedServiceBase {
           userId: user.id,
           ip: credentials.deviceInfo?.ip || "",
           userAgent: credentials.deviceInfo?.userAgent || "",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           details: { email: credentials.email, reason: "invalid_password" },
           riskScore: 6,
         });
@@ -138,7 +153,7 @@ export class AuthService extends EnhancedServiceBase {
             userId: user.id,
             ip: credentials.deviceInfo?.ip || "",
             userAgent: credentials.deviceInfo?.userAgent || "",
-            timestamp: new Date(),
+            timestamp: new Date().toISOString(),
             details: { email: credentials.email },
             riskScore: 7,
           });
@@ -160,7 +175,7 @@ export class AuthService extends EnhancedServiceBase {
         userId: user.id,
         ip: credentials.deviceInfo?.ip || "",
         userAgent: credentials.deviceInfo?.userAgent || "",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         details: { email: credentials.email, sessionId: session.id },
         riskScore: 1,
       });
@@ -169,14 +184,15 @@ export class AuthService extends EnhancedServiceBase {
       await this.security.clearRateLimit(rateLimitKey);
 
       // Track analytics
-      await this.analytics.trackEvent("user_login", {
+      await this.analytics.track("user_login", {
         userId: user.id,
         role: user.role,
         mfaEnabled: user.mfa_enabled,
         deviceTrusted: credentials.deviceInfo?.trusted || false,
       });
 
-      this.endTiming("auth_login", startTime);
+      // Record successful login metrics
+      await this.analytics.recordPerformance("auth_login_success", Date.now() - startTime);
 
       return {
         success: true,
@@ -186,12 +202,13 @@ export class AuthService extends EnhancedServiceBase {
         sessionId: session.id,
       };
     } catch (error) {
-      this.endTiming("auth_login", startTime, { error: true });
+      // Record failed login metrics
+      await this.analytics.recordPerformance("auth_login_error", Date.now() - startTime);
 
       await this.audit.logOperation("login_error", {
         email: credentials.email,
-        error: error.message,
-        timestamp: new Date(),
+        error: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString(),
       });
 
       return {
@@ -220,7 +237,7 @@ export class AuthService extends EnhancedServiceBase {
           userId: session.userId,
           ip: "",
           userAgent: "",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           details: { sessionId },
           riskScore: 1,
         });
@@ -231,8 +248,8 @@ export class AuthService extends EnhancedServiceBase {
     } catch (error) {
       await this.audit.logOperation("logout_error", {
         sessionId,
-        error: error.message,
-        timestamp: new Date(),
+        error: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString(),
       });
     }
   } /**
@@ -360,7 +377,7 @@ export class AuthService extends EnhancedServiceBase {
 
         await this.audit.log("mfa_enabled", {
           userId,
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
         });
 
         return true;
@@ -483,9 +500,14 @@ export class AuthService extends EnhancedServiceBase {
     const session = {
       id: `session_${Date.now()}_${Math.random().toString(36).slice(2)}`,
       user_id: user.id,
-      device_info: (deviceInfo || {}) as DeviceInfo,
-      expires_at: new Date(Date.now() + this.config.sessionTimeout),
-      last_activity: new Date(),
+      device_info: deviceInfo || {
+        userAgent: "",
+        ip: "",
+        fingerprint: "",
+        trusted: false
+      },
+      expires_at: new Date(Date.now() + this.config.sessionTimeout).toISOString(),
+      last_activity: new Date().toISOString(),
       is_active: true,
     };
 
@@ -501,9 +523,14 @@ export class AuthService extends EnhancedServiceBase {
     return {
       id: session.id,
       userId: session.user_id,
-      deviceInfo: session.device_info,
-      expiresAt: session.expires_at,
-      lastActivity: session.last_activity,
+      deviceInfo: session.device_info || {
+        userAgent: "",
+        ip: "",
+        fingerprint: "",
+        trusted: false
+      },
+      expiresAt: new Date(session.expires_at),
+      lastActivity: new Date(session.last_activity),
       isActive: session.is_active,
     };
   }
@@ -562,11 +589,17 @@ export class AuthService extends EnhancedServiceBase {
     const key = `login_attempts_${email}`;
     await this.security.auditOperation({
       id: crypto.randomUUID(),
-      timestamp: new Date(),
+      service: "auth",
+      eventType: "failed_login_attempt",
+      timestamp: new Date().toISOString(),
+      details: {
+        resource: "authentication",
+        outcome: "failure"
+      },
+      version: "1.0",
       userId: email,
-      action: "failed_login_attempt",
-      resource: "authentication",
-      outcome: "failure",
+      severity: "MEDIUM",
+      dataClassification: "INTERNAL"
     });
   }
 
@@ -601,7 +634,9 @@ export class AuthService extends EnhancedServiceBase {
     } // default 1 hour
 
     const [, value, unit] = match;
-    return Number.parseInt(value, 10) * units[unit];
+    const numValue = value ? Number.parseInt(value, 10) : 0;
+    const unitMultiplier = unit ? (units[unit] || 3600) : 3600;
+    return numValue * unitMultiplier;
   }
 
   private initializeRolePermissions(): RolePermissions {

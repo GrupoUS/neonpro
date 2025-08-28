@@ -97,6 +97,7 @@ export class EnterpriseSecurityService {
   private readonly encryptionConfig: EncryptionConfig;
   private readonly masterKey: Buffer;
   private cleanupInterval: NodeJS.Timeout | null = null;
+  private readonly rateLimitStore: Map<string, { count: number; resetTime: number }> = new Map();
 
   constructor(_config?: Partial<SecurityConfig>) {
     this.encryptionConfig = {
@@ -846,6 +847,50 @@ export class EnterpriseSecurityService {
   }
 
   /**
+   * Check rate limit for a given key
+   */
+  async checkRateLimit(key: string, maxAttempts: number = 5, windowMs: number = 15 * 60 * 1000): Promise<boolean> {
+    const now = Date.now();
+    const rateLimitData = this.rateLimitStore.get(key);
+
+    // If no data exists or window has expired, reset
+    if (!rateLimitData || now > rateLimitData.resetTime) {
+      this.rateLimitStore.set(key, {
+        count: 1,
+        resetTime: now + windowMs
+      });
+      return true; // Allow the request
+    }
+
+    // Increment count
+    rateLimitData.count++;
+    this.rateLimitStore.set(key, rateLimitData);
+
+    // Check if limit exceeded
+    const limitExceeded = rateLimitData.count > maxAttempts;
+    
+    // Log if limit exceeded
+    if (limitExceeded) {
+      await this.logSecurityEvent("RATE_LIMIT_EXCEEDED", {
+        key,
+        attempts: rateLimitData.count,
+        maxAttempts,
+        windowMs
+      });
+    }
+
+    return !limitExceeded; // Return true if allowed, false if limit exceeded
+  }
+
+  /**
+   * Clear rate limit for a given key
+   */
+  async clearRateLimit(key: string): Promise<void> {
+    this.rateLimitStore.delete(key);
+    await this.logSecurityEvent("RATE_LIMIT_CLEARED", { key });
+  }
+
+  /**
    * Shutdown security service
    */
   async shutdown(): Promise<void> {
@@ -854,7 +899,8 @@ export class EnterpriseSecurityService {
       this.cleanupInterval = null;
     }
 
-    // Clear all sessions
+    // Clear all sessions and rate limits
     this.sessions.clear();
+    this.rateLimitStore.clear();
   }
 }

@@ -2196,7 +2196,6 @@ describe('HealthcareMetricCard', () => {
 
  - **LGPD**: [https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm)
  - **ANVISA**: [https://www.gov.br/anvisa/pt-br](https://www.gov.br/anvisa/pt-br)
- - **CFM**: [https://portal.cfm.org.br](https://portal.cfm.org.br)
  - **WCAG 2.1**: [https://www.w3.org/WAI/WCAG21/quickref/](https://www.w3.org/WAI/WCAG21/quickref/)
 
  ### **Padrões de Saúde**

@@ -39,6 +39,8 @@ interface ISecurityService {
   auditOperation(event: AuditEvent): Promise<void>;
   encryptSensitiveData<T>(data: T): Promise<string>;
   decryptSensitiveData<T>(encrypted: string): Promise<T>;
+  checkRateLimit(identifier: string, limit: number, windowMs: number): Promise<boolean>;
+  clearRateLimit(identifier: string): Promise<void>;
 }
 
 // Base service configuration
@@ -503,6 +505,12 @@ export abstract class EnhancedServiceBase {
       async decryptSensitiveData<T>(encrypted: string): Promise<T> {
         const decrypted = await self.enterpriseSecurity.decryptData(encrypted);
         return JSON.parse(decrypted);
+      },
+      async checkRateLimit(identifier: string, limit: number, windowMs: number): Promise<boolean> {
+        return self.enterpriseSecurity.checkRateLimit(identifier, limit, windowMs);
+      },
+      async clearRateLimit(identifier: string): Promise<void> {
+        return self.enterpriseSecurity.clearRateLimit(identifier);
       },
     };
   }
