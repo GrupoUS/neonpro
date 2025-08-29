@@ -652,14 +652,14 @@ jobs:
       - name: 🎭 Install Playwright browsers
         run: |
           echo "🎭 Installing Playwright browsers..."
-          npx playwright install --with-deps chromium
+          pnpm dlx playwright install --with-deps chromium
           echo "✅ Playwright browsers installed"
 
       - name: 🎭 Run E2E tests
         run: |
           echo "🎭 Running end-to-end tests..."
           e2e_exit_code=0
-          npx playwright test || e2e_exit_code=$?
+          pnpm dlx playwright test || e2e_exit_code=$?
 
           if [ $e2e_exit_code -eq 0 ]; then
             echo "✅ E2E tests passed successfully"

@@ -21,5 +21,5 @@ if ($Arguments.Length -eq 0) {
     Write-Host "  .\pnpm-clean.ps1 build" -ForegroundColor White
     Write-Host "  .\pnpm-clean.ps1 type-check" -ForegroundColor White
 } else {
-    npx pnpm@latest @Arguments
+    pnpm dlx pnpm@latest @Arguments
 }

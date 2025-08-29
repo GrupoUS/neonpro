@@ -91,41 +91,117 @@ export function validateLGPDConsent(consent: {
   };
 }
 
-// Healthcare professional access validation
-export function validateHealthcareProfessionalAccess(
-  user: unknown,
-  requiredRole: string[],
-): { authorized: boolean; reason?: string; } {
-  if (!user) {
-    return { authorized: false, reason: "User not authenticated" };
-  }
+import { HealthcareRole, HealthcareUser } from "../enterprise/security/healthcare-rbac";
+import { ComplianceError, HealthcareRegulation } from "../types";
 
-  if (!user.healthcare_professional) {
+export interface ValidationContext {
+  user: HealthcareUser;
+  clinicId?: string;
+  patientId?: string;
+  resourceType?: string;
+  action?: string;
+  timestamp?: Date;
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+  metadata?: Record<string, unknown>;
+}
+
+export interface HealthcareProfessionalInfo {
+  licenseNumber: string;
+  specialty: string;
+  isActive: boolean;
+  expirationDate?: Date;
+}
+
+export interface AccessValidationResult {
+  hasAccess: boolean;
+  reason?: string;
+  requiredRole?: HealthcareRole;
+  additionalPermissions?: string[];
+}
+
+/**
+ * Validates if a user has the required healthcare professional access
+ * @param user - The healthcare user object
+ * @param requiredRole - The required healthcare role
+ * @param clinicId - Optional clinic ID for context
+ * @returns Promise<AccessValidationResult>
+ */
+export async function validateHealthcareProfessionalAccess(
+  user: HealthcareUser,
+  requiredRole?: HealthcareRole,
+  clinicId?: string,
+): Promise<AccessValidationResult> {
+  // Check if user is authenticated
+  if (!user.user_id) {
     return {
-      authorized: false,
-      reason: "User is not a healthcare professional",
+      hasAccess: false,
+      reason: "User not authenticated",
     };
   }
 
-  if (!user.healthcare_professional.is_active) {
-    return { authorized: false, reason: "Healthcare professional is inactive" };
-  }
-
-  if (!user.healthcare_professional.license_valid) {
+  // Check if user is active
+  if (!user.active) {
     return {
-      authorized: false,
-      reason: "Professional license is invalid or expired",
+      hasAccess: false,
+      reason: "User account is inactive",
     };
   }
 
-  if (requiredRole.length > 0 && !requiredRole.includes(user.role)) {
+  // Check if user has professional credentials
+  if (!user.professional_credentials) {
     return {
-      authorized: false,
-      reason: `Required role: ${requiredRole.join(" or ")}`,
+      hasAccess: false,
+      reason: "User does not have professional credentials",
     };
   }
 
-  return { authorized: true };
+  // Check if license is valid (not expired)
+  const credentials = user.professional_credentials;
+  if (credentials.license_expiry_date && new Date(credentials.license_expiry_date) < new Date()) {
+    return {
+      hasAccess: false,
+      reason: "Professional license has expired",
+    };
+  }
+
+  // Check if user has completed required security clearance
+  if (!user.security_clearance.background_check_completed) {
+    return {
+      hasAccess: false,
+      reason: "Background check not completed",
+    };
+  }
+
+  if (!user.security_clearance.lgpd_training_completed) {
+    return {
+      hasAccess: false,
+      reason: "LGPD training not completed",
+    };
+  }
+
+  if (!user.security_clearance.cfm_ethics_training_completed) {
+    return {
+      hasAccess: false,
+      reason: "CFM ethics training not completed",
+    };
+  }
+
+  // Check clinic access if clinicId is provided
+  if (clinicId && !user.clinic_assignments.includes(clinicId)) {
+    return {
+      hasAccess: false,
+      reason: "User does not have access to this clinic",
+    };
+  }
+
+  return {
+    hasAccess: true,
+  };
 }
 
 // Validate Brazilian postal code (CEP)

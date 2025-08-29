@@ -6,6 +6,42 @@
 
 import { z } from "zod";
 
+// TypeScript Interfaces for Rate Limiting
+export interface RateLimitRequest {
+  ip_address: string;
+  endpoint: string;
+  method: string;
+  user_agent?: string;
+  client_id?: string;
+  user_id?: string;
+  authentication_token?: string;
+  emergency_bypass_token?: string;
+  patient_data_involved?: boolean;
+}
+
+export interface ApplicableLimits {
+  requests_per_minute: number;
+  requests_per_hour: number;
+  requests_per_day: number;
+  concurrent_requests: number;
+  burst_allowance: number;
+  priority_weight: number;
+}
+
+export interface UsageData {
+  requests_last_minute: number;
+  requests_last_hour: number;
+  requests_last_day: number;
+  concurrent_requests: number;
+  last_request_timestamp: number;
+}
+
+export interface LimitsConfig {
+  endpoint_limits?: EndpointRateLimit;
+  client_limits?: ClientRateLimit;
+  default_limits: RateLimitConfig;
+}
+
 // Constitutional API Rate Limiting Schemas
 const RateLimitConfigSchema = z.object({
   default_requests_per_minute: z.number().min(1).max(1000).default(60),
@@ -719,12 +755,7 @@ export class ApiRateLimitingService {
   private getCurrentUsage(
     requestKey: string,
     now: number,
-  ): {
-    requests_last_minute: number;
-    requests_last_hour: number;
-    requests_last_day: number;
-    concurrent_requests: number;
-  } {
+  ): UsageData {
     const counter = this.requestCounters.get(requestKey) || {
       requests: [],
       concurrent: 0,
@@ -747,12 +778,17 @@ export class ApiRateLimitingService {
         .length,
       requests_last_day: counter.requests.length,
       concurrent_requests: counter.concurrent || 0,
+      last_request_timestamp: now,
     };
   }
 
-  private async getApplicableLimits(request: unknown): Promise<unknown> {
+  private async getApplicableLimits(request: RateLimitRequest): Promise<{
+    limits: ApplicableLimits;
+    endpointConfig: EndpointRateLimit | null;
+    clientConfig: ClientRateLimit | undefined;
+  }> {
     // Find matching endpoint configuration
-    let endpointConfig: EndpointRateLimit | null;
+    let endpointConfig: EndpointRateLimit | null = null;
 
     for (const [pattern, config] of [...this.endpointLimits]) {
       if (this.matchesEndpointPattern(request.endpoint, pattern)) {
@@ -803,12 +839,17 @@ export class ApiRateLimitingService {
       );
     }
 
-    return { limits, endpointConfig, clientConfig };
+    const applicableLimits: ApplicableLimits = {
+      ...limits,
+      priority_weight: clientConfig?.custom_limits.priority_weight || 1,
+    };
+
+    return { limits: applicableLimits, endpointConfig, clientConfig };
   }
 
   private checkLimitsAgainstUsage(
-    limitsConfig: unknown,
-    usage: unknown,
+    limitsConfig: { limits: ApplicableLimits; },
+    usage: UsageData,
   ): { allowed: boolean; retry_after_seconds?: number; } {
     const { limits } = limitsConfig;
 
@@ -836,7 +877,7 @@ export class ApiRateLimitingService {
   }
 
   private async validateConstitutionalProtection(
-    request: unknown,
+    request: RateLimitRequest,
   ): Promise<{ allowed: boolean; reason?: string; }> {
     // Patient data protection validation
     if (
@@ -866,9 +907,9 @@ export class ApiRateLimitingService {
   }
 
   private async applyIntelligentThrottling(
-    _request: unknown,
-    usage: unknown,
-    limitsConfig: unknown,
+    _request: RateLimitRequest,
+    usage: UsageData,
+    limitsConfig: { limits: ApplicableLimits; },
   ): Promise<{ should_throttle: boolean; delay_ms?: number; }> {
     const { limits } = limitsConfig;
 

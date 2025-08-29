@@ -67,8 +67,9 @@
 		{
 			"label": "🧪 Run Tests",
 			"type": "shell",
-			"command": "npx",
+			"command": "pnpm",
 			"args": [
+				"dlx",
 				"vitest",
 				"run",
 				"--reporter=verbose"
@@ -87,8 +88,9 @@
 		{
 			"label": "🧪 Watch Tests",
 			"type": "shell",
-			"command": "npx",
+			"command": "pnpm",
 			"args": [
+				"dlx",
 				"vitest",
 				"--watch",
 				"--reporter=verbose"
@@ -105,8 +107,9 @@
 		{
 			"label": "🎭 E2E Tests (Debug)",
 			"type": "shell",
-			"command": "npx",
+			"command": "pnpm",
 			"args": [
+				"dlx",
 				"playwright",
 				"test",
 				"--debug"
@@ -122,10 +125,8 @@
 		{
 			"label": "🔧 Build Project",
 			"type": "shell",
-			"command": "npx",
+			"command": "pnpm",
 			"args": [
-				"--silent",
-				"pnpm@latest",
 				"build"
 			],
 			"group": "build",
@@ -139,10 +140,8 @@
 		{
 			"label": "🚀 Type Check",
 			"type": "shell",
-			"command": "npx",
+			"command": "pnpm",
 			"args": [
-				"--silent",
-				"pnpm@latest",
 				"type-check"
 			],
 			"group": "build",
@@ -156,10 +155,8 @@
 		{
 			"label": "🔧 PNPM Install",
 			"type": "shell",
-			"command": "npx",
+			"command": "pnpm",
 			"args": [
-				"--silent",
-				"pnpm@latest",
 				"install"
 			],
 			"group": "build",

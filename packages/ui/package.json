@@ -33,11 +33,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "npx tsc",
-    "dev": "tsup --watch",
+    "build": "tsc",
+    "dev": "tsc --watch",
     "lint": "oxlint src --fix",
     "format": "dprint fmt",
-    "type-check": "npx tsc --noEmit"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@neonpro/utils": "workspace:^",

@@ -88,7 +88,7 @@ async function applyMigration() {
 
   try {
     // Check if connected to Supabase
-    await execPromise("npx", ["supabase", "status"]);
+    await execPromise("pnpm", ["dlx", "supabase", "status"]);
     log("✅ Conectado ao Supabase", COLORS.GREEN);
   } catch {
     log("⚠️  Não conectado ao Supabase, tentando conectar...", COLORS.YELLOW);
@@ -98,7 +98,7 @@ async function applyMigration() {
     } catch {
       log("❌ Falha ao conectar com Supabase", COLORS.RED);
       log(
-        "💡 Execute manualmente: pnpx supabase login && pnpx supabase link",
+        "💡 Execute manualmente: pnpm dlx supabase login && pnpm dlx supabase link",
         COLORS.YELLOW,
       );
       return false;
@@ -107,7 +107,7 @@ async function applyMigration() {
 
   try {
     // Apply migrations
-    const result = await execPromise("pnpx", ["supabase", "db", "push"]);
+    const result = await execPromise("pnpm", ["dlx", "supabase", "db", "push"]);
     log("✅ Migration aplicada com sucesso!", COLORS.GREEN);
     log(result.stdout, COLORS.GREEN);
     return true;

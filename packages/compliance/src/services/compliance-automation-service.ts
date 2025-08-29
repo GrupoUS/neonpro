@@ -686,12 +686,27 @@ export class BrazilianComplianceAutomationService {
     assessment: ComplianceAutomationResponse,
   ): Promise<void> {
     try {
-      await this.supabase.from("compliance_assessments").insert({
-        tenant_id: this.config.tenant_id,
-        assessment_data: assessment,
-        overall_score: assessment.overall_score,
-        overall_status: assessment.overall_status,
-        assessed_at: assessment.assessed_at.toISOString(),
+      await this.supabase.from("lgpd_compliance_assessments").insert({
+        name: `Compliance Assessment - ${new Date().toISOString()}`,
+        description:
+          `Automated compliance assessment with overall score: ${assessment.overall_score}`,
+        status: assessment.overall_status === "compliant" ? "completed" : "in_progress",
+        score: assessment.overall_score,
+        compliance_percentage: assessment.overall_score,
+        findings: assessment.lgpd_results.violations.concat(
+          assessment.anvisa_results.issues,
+          assessment.cfm_results.issues,
+        ),
+        recommendations: assessment.lgpd_results.recommendations.concat(
+          assessment.anvisa_results.recommendations,
+          assessment.cfm_results.recommendations,
+        ),
+        completed_at: assessment.assessed_at.toISOString(),
+        metadata: {
+          tenant_id: this.config.tenant_id,
+          assessment_data: assessment,
+          overall_status: assessment.overall_status,
+        },
       });
     } catch {}
   }
@@ -700,11 +715,27 @@ export class BrazilianComplianceAutomationService {
     assessment: ComplianceAutomationResponse,
   ): Promise<void> {
     try {
+      const reportDate = new Date();
       await this.supabase.from("compliance_reports").insert({
-        tenant_id: this.config.tenant_id,
+        clinic_id: this.config.tenant_id,
         report_type: "daily_compliance",
+        title: `Daily Compliance Report - ${reportDate.toDateString()}`,
+        description: `Automated daily compliance assessment report`,
+        reporting_period_start: reportDate.toISOString().split("T")[0],
+        reporting_period_end: reportDate.toISOString().split("T")[0],
+        regulatory_body: "Brazilian Healthcare Compliance",
         report_data: assessment,
-        generated_at: new Date().toISOString(),
+        status: "approved",
+        compliance_score: assessment.overall_score,
+        findings: assessment.lgpd_results.violations.concat(
+          assessment.anvisa_results.issues,
+          assessment.cfm_results.issues,
+        ),
+        corrective_actions: assessment.lgpd_results.recommendations.concat(
+          assessment.anvisa_results.recommendations,
+          assessment.cfm_results.recommendations,
+        ),
+        created_by: this.config.tenant_id,
       });
     } catch {}
   }

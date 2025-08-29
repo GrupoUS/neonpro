@@ -14,7 +14,7 @@ process.env.NPM_CONFIG_UPDATE_NOTIFIER = "false";
 
 // Executar PNPM via NPX sem warnings
 const args = ["pnpm@latest", ...process.argv.slice(2)];
-const child = spawn("npx", args, {
+const child = spawn("pnpm", ["dlx", "pnpm@latest", ...args.slice(1)], {
   stdio: "inherit",
   env: process.env,
 });

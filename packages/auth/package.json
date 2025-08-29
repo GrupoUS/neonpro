@@ -19,10 +19,10 @@
     }
   },
   "scripts": {
-    "build": "npx tsc",
-    "dev": "npx tsc --watch",
+    "build": "tsc",
+    "dev": "tsc --watch",
     "lint": "oxlint",
-    "type-check": "npx tsc --noEmit"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@neonpro/types": "workspace:*",

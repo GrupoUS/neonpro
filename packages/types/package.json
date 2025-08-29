@@ -10,9 +10,9 @@
     "src"
   ],
   "scripts": {
-    "build": "npx tsc",
-    "dev": "npx tsc --watch",
-    "type-check": "npx tsc --noEmit"
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

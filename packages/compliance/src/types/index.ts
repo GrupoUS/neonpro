@@ -95,8 +95,8 @@ export const ConsentSchema = z.object({
   freely_given: z.boolean().default(true),
   withdrawable: z.boolean().default(true),
   grantedAt: z.date(),
-  withdrawnAt: z.date().nullable().default(),
-  expiresAt: z.date().nullable().default(),
+  withdrawnAt: z.date().nullable().default(null),
+  expiresAt: z.date().nullable().default(null),
   isActive: z.boolean().default(true),
   auditTrail: z.array(
     z.object({
@@ -157,7 +157,7 @@ export const RegulatoryEventSchema = z.object({
   reportedAt: z.date(),
   reportedBy: z.string().uuid(),
   anvisaNotified: z.boolean().default(false),
-  anvisaNotificationDate: z.date().nullable().default(),
+  anvisaNotificationDate: z.date().nullable().default(null),
   anvisaProtocol: z.string().optional(),
   followUpRequired: z.boolean().default(false),
   constitutionalValidation: z.object({
@@ -315,3 +315,58 @@ export const DPIAAssessmentSchema = z.object({
 });
 
 export type DPIAAssessment = z.infer<typeof DPIAAssessmentSchema>;
+
+// =============================================================================
+// COMPLIANCE ERROR TYPES
+// =============================================================================
+
+/**
+ * Compliance Error Class for Healthcare Validation
+ */
+export class ComplianceError extends Error {
+  public readonly code: string;
+  public readonly regulation: HealthcareRegulation;
+  public readonly complianceScore: number;
+  public readonly details: Record<string, unknown>;
+
+  constructor(
+    message: string,
+    code: string,
+    regulation: HealthcareRegulation,
+    complianceScore: number = 0,
+    details: Record<string, unknown> = {},
+  ) {
+    super(message);
+    this.name = "ComplianceError";
+    this.code = code;
+    this.regulation = regulation;
+    this.complianceScore = complianceScore;
+    this.details = details;
+
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ComplianceError);
+    }
+  }
+
+  /**
+   * Creates a formatted error message for logging
+   */
+  toLogFormat(): string {
+    return `[${this.regulation}:${this.code}] ${this.message} (Score: ${this.complianceScore}/10)`;
+  }
+
+  /**
+   * Converts error to JSON for API responses
+   */
+  toJSON(): Record<string, unknown> {
+    return {
+      name: this.name,
+      message: this.message,
+      code: this.code,
+      regulation: this.regulation,
+      complianceScore: this.complianceScore,
+      details: this.details,
+    };
+  }
+}

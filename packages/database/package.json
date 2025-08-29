@@ -19,10 +19,10 @@
     }
   },
   "scripts": {
-    "build": "npx tsc && prisma generate",
-    "dev": "npx tsc --watch",
+    "build": "tsc && prisma generate",
+    "dev": "tsc --watch",
     "clean": "if exist dist rmdir /s /q dist",
-    "type-check": "npx tsc --noEmit && prisma validate",
+    "type-check": "tsc --noEmit && prisma validate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",

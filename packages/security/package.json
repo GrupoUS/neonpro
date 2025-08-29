@@ -6,11 +6,11 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npx tsc --project tsconfig.build.json",
+    "build": "tsc --project tsconfig.build.json",
     "dev": "tsup --watch",
     "lint": "oxlint src/",
     "lint:fix": "oxlint src/ --fix",
-    "type-check": "npx tsc --noEmit",
+    "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "clean": "rm -rf dist coverage"

@@ -406,27 +406,27 @@ export abstract class EnhancedServiceBase {
    * Initialize cache service
    */
   private initializeCacheService(): ICacheService {
-    // Remove self=this assignment since we'll use arrow functions
-    // Remove self=this assignment and use arrow functions instead
+    const enterpriseCache = this.enterpriseCache;
+
     return {
       async get<T>(key: string): Promise<T | null> {
-        return this.enterpriseCache.get<T>(key);
+        return enterpriseCache.get<T>(key);
       },
       async set<T>(key: string, value: T, ttl?: number): Promise<void> {
-        await this.enterpriseCache.set(key, value, ttl);
+        await enterpriseCache.set(key, value, ttl);
       },
       async delete(key: string): Promise<void> {
-        await this.enterpriseCache.delete(key);
+        await enterpriseCache.delete(key);
       },
       async invalidate(pattern: string): Promise<void> {
         // Use invalidatePatientData for now as a pattern-based invalidation
         if (pattern.includes("patient_")) {
           const patientId = pattern.replace("patient_", "");
-          await this.enterpriseCache.invalidatePatientData(patientId);
+          await enterpriseCache.invalidatePatientData(patientId);
         }
       },
       async getStats(): Promise<unknown> {
-        return this.enterpriseCache.getStats();
+        return enterpriseCache.getStats();
       },
     };
   }
@@ -435,9 +435,12 @@ export abstract class EnhancedServiceBase {
    * Initialize analytics service
    */
   private initializeAnalyticsService(): IAnalyticsService {
+    const enterpriseAnalytics = this.enterpriseAnalytics;
+    const config = this.config;
+
     return {
       async track(event: string, properties: unknown): Promise<void> {
-        await this.enterpriseAnalytics.trackEvent({
+        await enterpriseAnalytics.trackEvent({
           id: `${Date.now()}-${Math.random()}`,
           type: event,
           category: "service",
@@ -445,8 +448,8 @@ export abstract class EnhancedServiceBase {
           properties: properties as Record<string, unknown>,
           timestamp: Date.now(),
           metadata: {
-            source: this.config.serviceName,
-            version: this.config.version,
+            source: config.serviceName,
+            version: config.version,
           },
         });
       },
@@ -454,14 +457,14 @@ export abstract class EnhancedServiceBase {
         operation: string,
         duration: number,
       ): Promise<void> {
-        await this.enterpriseAnalytics.recordMetric({
+        await enterpriseAnalytics.recordMetric({
           name: `${operation}_duration`,
           value: duration,
-          tags: { operation, service: this.config.serviceName },
+          tags: { operation, service: config.serviceName },
         });
       },
       async recordError(error: Error, context: unknown): Promise<void> {
-        await this.enterpriseAnalytics.trackEvent({
+        await enterpriseAnalytics.trackEvent({
           id: `${Date.now()}-${Math.random()}`,
           type: "error",
           category: "service",
@@ -473,13 +476,13 @@ export abstract class EnhancedServiceBase {
           },
           timestamp: Date.now(),
           metadata: {
-            source: this.config.serviceName,
-            version: this.config.version,
+            source: config.serviceName,
+            version: config.version,
           },
         });
       },
       async getMetrics(_period: string): Promise<PerformanceMetrics> {
-        return this.enterpriseAnalytics.getHealthMetrics();
+        return enterpriseAnalytics.getHealthMetrics();
       },
     };
   }
@@ -488,6 +491,9 @@ export abstract class EnhancedServiceBase {
    * Initialize security service
    */
   private initializeSecurityService(): ISecurityService {
+    const enterpriseSecurity = this.enterpriseSecurity;
+    const audit = this.audit;
+
     return {
       async validateAccess(
         operation: string,
@@ -497,19 +503,19 @@ export abstract class EnhancedServiceBase {
           return false;
         }
 
-        return this.enterpriseSecurity.validatePermission(
+        return enterpriseSecurity.validatePermission(
           context.userId,
           operation,
         );
       },
       async auditOperation(event: AuditEvent): Promise<void> {
-        await this.audit.logEvent(event);
+        await audit.logEvent(event);
       },
       async encryptSensitiveData<T>(data: T): Promise<string> {
-        return this.enterpriseSecurity.encryptData(JSON.stringify(data));
+        return enterpriseSecurity.encryptData(JSON.stringify(data));
       },
       async decryptSensitiveData<T>(encrypted: string): Promise<T> {
-        const decrypted = await this.enterpriseSecurity.decryptData(encrypted);
+        const decrypted = await enterpriseSecurity.decryptData(encrypted);
         return JSON.parse(decrypted);
       },
       async checkRateLimit(
@@ -517,14 +523,14 @@ export abstract class EnhancedServiceBase {
         limit: number,
         windowMs: number,
       ): Promise<boolean> {
-        return this.enterpriseSecurity.checkRateLimit(
+        return enterpriseSecurity.checkRateLimit(
           identifier,
           limit,
           windowMs,
         );
       },
       async clearRateLimit(identifier: string): Promise<void> {
-        return this.enterpriseSecurity.clearRateLimit(identifier);
+        return enterpriseSecurity.clearRateLimit(identifier);
       },
     };
   }

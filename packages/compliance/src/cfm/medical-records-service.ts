@@ -13,6 +13,113 @@ type Database = any;
 import type { createClient } from "@supabase/supabase-js";
 
 /**
+ * Interface for Medical Record data structure
+ * Based on CFM Resolution 2.227/2018 requirements
+ */
+export interface MedicalRecord {
+  // Patient identification
+  patient_name?: string;
+  patient_cpf?: string;
+  patient_birth_date?: string;
+  patient_id?: string;
+
+  // Medical documentation
+  medical_history?: string;
+  physical_examination?: string;
+  diagnosis?: string;
+  treatment_plan?: string;
+  medications?: Array<{
+    name: string;
+    dosage: string;
+    frequency: string;
+  }>;
+  followup_instructions?: string;
+
+  // Doctor information
+  doctor_cfm_number?: string;
+  doctor_signature?: string;
+
+  // Timestamps
+  consultation_date?: Date | string;
+  record_created_at?: Date | string;
+  record_creation_delay_hours?: number;
+
+  // Consent and compliance
+  informed_consent_obtained?: boolean;
+  cfm_resolution_compliant?: boolean;
+
+  // Quality indicators
+  legibility_issues_reported?: boolean;
+  completeness_score?: number;
+  accuracy_issues_identified?: boolean;
+
+  // Security and privacy
+  data_encrypted?: boolean;
+  encryption_verified?: boolean;
+  access_controls_verified?: boolean;
+  role_based_access?: boolean;
+  audit_trail_complete?: boolean;
+  access_logging_enabled?: boolean;
+  lgpd_privacy_compliant?: boolean;
+  data_minimization_applied?: boolean;
+  backup_verified?: boolean;
+  recovery_plan_tested?: boolean;
+  constitutional_privacy_protection?: boolean;
+
+  // Legal compliance
+  lgpd_requirements_met?: boolean;
+  retention_period_compliant?: boolean;
+  access_control_compliant?: boolean;
+  patient_consent_documented?: boolean;
+  constitutional_standards_met?: boolean;
+  data_retention_policy_applied?: boolean;
+  cross_border_transfer_compliant?: boolean;
+  patient_rights_respected?: boolean;
+  data_subject_rights_implemented?: boolean;
+  privacy_impact_assessment_completed?: boolean;
+  data_protection_officer_consulted?: boolean;
+
+  // LGPD compliance
+  lgpd_compliant?: boolean;
+  patient_consent_lgpd?: boolean;
+  retention_period_extended?: boolean;
+  access_controls_implemented?: boolean;
+  access_log_maintained?: boolean;
+  patient_consent_data_processing?: boolean;
+}
+
+/**
+ * Assessment result interfaces for better type safety
+ */
+export interface CompletenessAssessmentResult {
+  compliant: boolean;
+  score: number;
+  missing_elements: string[];
+  recommendations: string[];
+}
+
+export interface LegalComplianceAssessmentResult {
+  compliant: boolean;
+  score: number;
+  non_compliant_areas: string[];
+  corrective_actions: string[];
+}
+
+export interface DataQualityAssessmentResult {
+  compliant: boolean;
+  overall_quality_score: number;
+  quality_issues: string[];
+  improvement_recommendations: string[];
+}
+
+export interface SecurityPrivacyAssessmentResult {
+  compliant: boolean;
+  score: number;
+  security_issues: string[];
+  privacy_improvements: string[];
+}
+
+/**
  * CFM Medical Record Validation Interface
  * Constitutional validation for medical record standards
  */
@@ -390,14 +497,9 @@ export class MedicalRecordsService {
    * Constitutional completeness validation per CFM Resolution 2.227/2018
    */
   private async assessRecordCompleteness(
-    medicalRecord: unknown,
+    medicalRecord: MedicalRecord,
     _params: MedicalRecordValidationParams,
-  ): Promise<{
-    compliant: boolean;
-    score: number;
-    missing_elements: string[];
-    recommendations: string[];
-  }> {
+  ): Promise<CompletenessAssessmentResult> {
     const missingElements: string[] = [];
     const recommendations: string[] = [];
     let score = 10;
@@ -529,14 +631,9 @@ export class MedicalRecordsService {
    */
 
   private async assessLegalCompliance(
-    medicalRecord: unknown,
+    medicalRecord: MedicalRecord,
     _params: MedicalRecordValidationParams,
-  ): Promise<{
-    compliant: boolean;
-    score: number;
-    non_compliant_areas: string[];
-    corrective_actions: string[];
-  }> {
+  ): Promise<LegalComplianceAssessmentResult> {
     const nonCompliantAreas: string[] = [];
     const correctiveActions: string[] = [];
     let score = 10;
@@ -650,14 +747,9 @@ export class MedicalRecordsService {
    * Constitutional data quality validation for medical records
    */
   private async assessDataQuality(
-    medicalRecord: unknown,
+    medicalRecord: MedicalRecord,
     _params: MedicalRecordValidationParams,
-  ): Promise<{
-    compliant: boolean;
-    overall_quality_score: number;
-    quality_issues: string[];
-    improvement_recommendations: string[];
-  }> {
+  ): Promise<DataQualityAssessmentResult> {
     const qualityIssues: string[] = [];
     const improvementRecommendations: string[] = [];
 
@@ -730,14 +822,9 @@ export class MedicalRecordsService {
    */
 
   private async assessSecurityPrivacy(
-    medicalRecord: unknown,
+    medicalRecord: MedicalRecord,
     _params: MedicalRecordValidationParams,
-  ): Promise<{
-    compliant: boolean;
-    score: number;
-    security_issues: string[];
-    privacy_improvements: string[];
-  }> {
+  ): Promise<SecurityPrivacyAssessmentResult> {
     const securityIssues: string[] = [];
     const privacyImprovements: string[] = [];
     let score = 10;
@@ -836,10 +923,10 @@ export class MedicalRecordsService {
    * Constitutional scoring with CFM medical record standards ≥9.9/10
    */
   private calculateRecordComplianceScore(assessmentResults: {
-    completeness: unknown;
-    legal_compliance: unknown;
-    data_quality: unknown;
-    security_privacy: unknown;
+    completeness: CompletenessAssessmentResult;
+    legal_compliance: LegalComplianceAssessmentResult;
+    data_quality: DataQualityAssessmentResult;
+    security_privacy: SecurityPrivacyAssessmentResult;
   }): number {
     try {
       // Weighted scoring based on constitutional importance
@@ -1088,7 +1175,7 @@ export class MedicalRecordsService {
    */
   async generateMedicalRecordComplianceReport(
     tenantId: string,
-  ): Promise<{ success: boolean; data?: unknown; error?: string; }> {
+  ): Promise<{ success: boolean; data?: MedicalRecordComplianceReport; error?: string; }> {
     try {
       const { data: validations, error } = await this.supabase
         .from("cfm_medical_record_validations")

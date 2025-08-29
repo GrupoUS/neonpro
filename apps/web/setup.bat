@@ -14,7 +14,7 @@ if %errorlevel% neq 0 (
 
 echo.
 echo 🗄️ Executando migrações do Prisma...
-npx prisma migrate dev --name init
+pnpm dlx prisma migrate dev --name init
 if %errorlevel% neq 0 (
     echo ❌ Erro ao executar migrações
     pause
@@ -23,7 +23,7 @@ if %errorlevel% neq 0 (
 
 echo.
 echo 🔧 Gerando cliente Prisma...
-npx prisma generate
+pnpm dlx prisma generate
 if %errorlevel% neq 0 (
     echo ❌ Erro ao gerar cliente Prisma
     pause
@@ -32,7 +32,7 @@ if %errorlevel% neq 0 (
 
 echo.
 echo 🌱 Executando seed do banco de dados...
-npx prisma db seed
+pnpm dlx prisma db seed
 if %errorlevel% neq 0 (
     echo ⚠️ Aviso: Seed não executado (normal se não configurado)
 )

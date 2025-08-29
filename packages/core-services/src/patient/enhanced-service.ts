@@ -37,8 +37,6 @@ interface UpdatePatientData {
   [key: string]: unknown;
 }
 interface MedicalHistory {}
-interface AestheticHistory {}
-interface SkinAssessment {}
 interface ConsentForm {
   treatmentType: string;
   isActive: boolean;
@@ -49,11 +47,6 @@ interface PatientStats {
   active: number;
   newThisMonth: number;
   averageAge: number;
-}
-enum PatientStatus {
-  ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
-  BLOCKED = "BLOCKED",
 }
 
 // Simple date difference function
