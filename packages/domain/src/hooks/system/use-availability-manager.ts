@@ -75,7 +75,7 @@ export function useAvailabilityManager(
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Failed to create slot";
         setError(errorMessage);
-        return;
+        return null;
       }
     },
     [],

@@ -86,7 +86,7 @@ export interface CommunicationChannel {
 export interface TriggerCondition {
   type: "behavioral" | "temporal" | "event" | "score_change";
   condition: string; // Description of the trigger
-  parameters: Record<string, unknown>;
+  parameters: Record<string, any>;
   isActive: boolean;
 }
 
@@ -151,8 +151,8 @@ export class StrategyGeneratorService {
     patientProfile: PatientBehaviorProfile,
     context?: {
       segments?: PatientSegment[];
-      recentEvents?: unknown[];
-      campaignHistory?: unknown[];
+      recentEvents?: any[];
+      campaignHistory?: any[];
     },
   ): Promise<PersonalizedStrategy> {
     try {
@@ -298,7 +298,7 @@ export class StrategyGeneratorService {
 
   private async determineStrategyType(
     profile: PatientBehaviorProfile,
-    _context?: unknown,
+    _context?: any,
   ): Promise<PersonalizedStrategy["type"]> {
     // High-risk patients need recovery strategies
     if (profile.scores.risk > 70) {
@@ -336,7 +336,7 @@ export class StrategyGeneratorService {
   private async createStrategyForType(
     profile: PatientBehaviorProfile,
     type: PersonalizedStrategy["type"],
-    _context?: unknown,
+    _context?: any,
   ): Promise<PersonalizedStrategy["strategy"]> {
     const strategies = {
       retention: {
@@ -416,6 +416,7 @@ export class StrategyGeneratorService {
 
     for (let i = 0; i < baseActions.length; i++) {
       const baseAction = baseActions[i];
+      if (!baseAction) continue;
 
       // Personalize timing based on patient patterns
       const timing = await this.personalizeActionTiming(
@@ -425,7 +426,7 @@ export class StrategyGeneratorService {
 
       // Adapt content to personality type
       const content = await this.adaptContentToPersonality(
-        baseAction.content,
+        baseAction.content || '',
         profile.personalityType,
         profile.patterns,
       );
@@ -446,11 +447,11 @@ export class StrategyGeneratorService {
       personalizedActions.push({
         id: `action_${Date.now()}_${i}`,
         sequence: i + 1,
-        type: baseAction.type,
-        title: baseAction.title,
+        type: baseAction.type || "communication",
+        title: baseAction.title || "Ação Personalizada",
         content,
         timing,
-        conditions: baseAction.conditions,
+        conditions: baseAction.conditions || {},
         personalization,
       });
     }
@@ -571,7 +572,7 @@ export class StrategyGeneratorService {
   }
 
   private async personalizeActionTiming(
-    baseTiming: unknown,
+    baseTiming: any,
     profile: PatientBehaviorProfile,
   ): Promise<ActionPlan["timing"]> {
     // Adapt to patient's response time pattern
@@ -948,7 +949,7 @@ export class StrategyGeneratorService {
   private calculateConfidence(
     profile: PatientBehaviorProfile,
     strategyType: PersonalizedStrategy["type"],
-    _context?: unknown,
+    _context?: any,
   ): number {
     let baseConfidence = 70;
 
@@ -958,7 +959,7 @@ export class StrategyGeneratorService {
     }
 
     // Adjust based on data completeness (simulated)
-    const { 8: dataCompleteness } = 0; // Would calculate based on available data
+    const dataCompleteness = 0.8; // Would calculate based on available data
     baseConfidence *= dataCompleteness;
 
     // Adjust based on strategy type success rates
@@ -1034,7 +1035,7 @@ export class StrategyGeneratorService {
     const { revenueGenerated: revenue } = actualResults;
     const estimatedCost = 200; // Estimated cost per strategy execution
 
-    if (estimatedCost === 0) {
+    if (estimatedCost <= 0) {
       return 0;
     }
 
@@ -1081,7 +1082,7 @@ export class StrategyGeneratorService {
         throw error;
       }
       if (!data) {
-        return;
+        return null;
       }
 
       return {
@@ -1100,7 +1101,7 @@ export class StrategyGeneratorService {
         updatedAt: new Date(data.updated_at),
       };
     } catch {
-      return;
+      return null;
     }
   }
 

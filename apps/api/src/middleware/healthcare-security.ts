@@ -157,7 +157,7 @@ interface SecurityAlert {
   level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   type: string;
   message: string;
-  metadata: any;
+  metadata: unknown;
   requiresImmediate: boolean;
 }
 
@@ -165,7 +165,7 @@ interface ComplianceAlert {
   level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   type: string;
   message: string;
-  metadata: any;
+  metadata: unknown;
   requiresImmediate: boolean;
 }
 
@@ -554,7 +554,7 @@ export class HealthcareAuthMiddleware {
       const clinicId = payload.clinicId as string;
       const clinicIds = payload.clinicIds as string[];
       const emergencyAccess = payload.emergencyAccess as boolean;
-      const licenseData = payload.license as any;
+      const licenseData = payload.license as unknown;
 
       // Validate required claims
       if (!userId || !email || !role) {
@@ -565,13 +565,13 @@ export class HealthcareAuthMiddleware {
       let professionalLicense: ProfessionalLicense | undefined;
       if (licenseData) {
         professionalLicense = {
-          licenseNumber: licenseData.licenseNumber,
-          licenseType: licenseData.licenseType,
-          state: licenseData.state,
-          issuedDate: new Date(licenseData.issuedDate),
-          expirationDate: new Date(licenseData.expirationDate),
-          isActive: licenseData.isActive,
-          lastValidated: new Date(licenseData.lastValidated),
+          licenseNumber: (licenseData as { licenseNumber: string }).licenseNumber,
+          licenseType: (licenseData as { licenseType: ProfessionalLicenseType }).licenseType,
+          state: (licenseData as { state: string }).state,
+          issuedDate: new Date((licenseData as { issuedDate: string | number | Date }).issuedDate),
+          expirationDate: new Date((licenseData as { expirationDate: string | number | Date }).expirationDate),
+          isActive: (licenseData as { isActive: boolean }).isActive,
+          lastValidated: new Date((licenseData as { lastValidated: string | number | Date }).lastValidated),
         };
 
         // Validate license is still active and not expired
@@ -701,7 +701,7 @@ export class HealthcareAuthMiddleware {
       return false;
     }
 
-    return hasClinicAccess;
+    return hasClinicAccess === true;
   }
 }
 

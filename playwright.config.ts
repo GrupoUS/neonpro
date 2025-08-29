@@ -26,7 +26,7 @@ export default defineConfig({
     "**/.turbo/**",
     "**/coverage/**",
     "**/playwright-report/**",
-    "**/test-results/**",
+
     "**/logs/**",
     "**/temp-*",
     "**/*.log",
@@ -115,7 +115,7 @@ export default defineConfig({
   },
 
   // Organized output structure - CONSOLIDATED TO TOOLS STRUCTURE
-  outputDir: "tools/reports/test-results/e2e",
+  outputDir: "tools/testing/reports/e2e",
 
   // Global setup for performance optimization
   globalSetup: "./tools/e2e/global-setup.ts",

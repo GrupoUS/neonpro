@@ -114,7 +114,7 @@ interface CriticalSecurityAlert {
   level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   type: string;
   message: string;
-  metadata: any;
+  metadata: unknown;
   requiresImmediate: boolean;
   complianceRequired?: boolean;
 }

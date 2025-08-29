@@ -242,7 +242,7 @@ export class PatientSegmentationService {
     // Apply exclusion criteria if specified
     if (target.exclusionCriteria) {
       candidates = candidates.filter(
-        (patient) => !this.doesPatientMatchCriteria(patient, target.exclusionCriteria),
+        (patient) => !this.doesPatientMatchCriteria(patient, target.exclusionCriteria!),
       );
     }
 
@@ -662,7 +662,7 @@ export class PatientSegmentationService {
     }
   }
 
-  private convertToPatientProfile(dbProfile: unknown): PatientBehaviorProfile {
+  private convertToPatientProfile(dbProfile: any): PatientBehaviorProfile {
     return {
       patientId: dbProfile.patient_id,
       scores: dbProfile.scores,
@@ -709,7 +709,7 @@ export class PatientSegmentationService {
         throw error;
       }
       if (!data) {
-        return;
+        return null;
       }
 
       return {
@@ -725,7 +725,7 @@ export class PatientSegmentationService {
         updatedAt: new Date(data.updated_at),
       };
     } catch {
-      return;
+      return null;
     }
   }
 
@@ -819,7 +819,7 @@ export class PatientSegmentationService {
     }
   }
 
-  private async storeABTest(test: unknown): Promise<void> {
+  private async storeABTest(test: any): Promise<void> {
     const { error } = await supabase.from("segment_ab_tests").insert(test);
 
     if (error) {

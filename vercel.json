@@ -6,7 +6,6 @@
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "bash scripts/vercel-build.sh",
   "outputDirectory": "apps/web/.next",
-  "rootDirectory": ".",
   "ignoreCommand": "git diff --quiet HEAD^ HEAD",
   "env": {
     "NODE_ENV": "production",

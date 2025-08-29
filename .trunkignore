@@ -38,7 +38,6 @@ logs/
 .claude/
 
 # Test outputs
-test-results/
 playwright-report/
 performance-report.json
 load-test-report.json

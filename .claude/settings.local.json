@@ -89,7 +89,12 @@
       "mcp__vercel__get_project",
       "mcp__vercel__list_teams",
       "mcp__vercel__list_projects",
-      "mcp__archon__update_task"
+      "mcp__archon__update_task",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__get_anon_key",
+      "mcp__supabase__get_project",
+      "mcp__supabase__search_docs",
+      "mcp__supabase__execute_sql"
     ],
     "deny": [
       "Edit",
