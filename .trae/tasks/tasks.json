@@ -1,102 +1,23 @@
 {
-	"version": "2.0.0",
+	"version": "3.0.0",
+	"_metadata": {
+		"project": "NeonPro AI Healthcare Platform",
+		"description": "Essential tasks only - no over-engineering",
+		"philosophy": "KISS principle - Keep It Simple, Stupid",
+		"created": "2025-01-29",
+		"optimized_from": "consolidated-tasks.json (20 → 8 tasks)"
+	},
 	"tasks": [
 		{
-			"label": "✨ Format Code",
+			"label": "🚀 Dev Server",
 			"type": "shell",
 			"command": "pnpm",
-			"args": [
-				"format"
-			],
-			"group": "build",
-			"detail": "Format all code using dprint",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "🔍 Lint Code",
-			"type": "shell",
-			"command": "pnpm",
-			"args": [
-				"lint"
-			],
-			"group": "build",
-			"detail": "Run oxlint to check for linting issues",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "🔧 Fix Lint Issues",
-			"type": "shell",
-			"command": "pnpm",
-			"args": [
-				"oxlint:fix"
-			],
-			"group": "build",
-			"detail": "Automatically fix linting issues with oxlint",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "✅ Full Code Check",
-			"type": "shell",
-			"command": "pnpm",
-			"args": [
-				"ci:check"
-			],
+			"args": ["dev"],
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
-			"detail": "Run complete code validation (format check + lint + type check)",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "🧪 Run Tests",
-			"type": "shell",
-			"command": "pnpm",
-			"args": [
-				"dlx",
-				"vitest",
-				"run",
-				"--reporter=verbose"
-			],
-			"group": {
-				"kind": "test",
-				"isDefault": true
-			},
-			"detail": "Run all tests using Vitest with verbose output",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "🧪 Watch Tests",
-			"type": "shell",
-			"command": "pnpm",
-			"args": [
-				"dlx",
-				"vitest",
-				"--watch",
-				"--reporter=verbose"
-			],
-			"group": "test",
-			"detail": "Watch and run tests using Vitest",
+			"detail": "Start development server",
 			"isBackground": true,
 			"presentation": {
 				"echo": true,
@@ -105,67 +26,64 @@
 			}
 		},
 		{
-			"label": "🎭 E2E Tests (Debug)",
+			"label": "🔧 Build",
 			"type": "shell",
 			"command": "pnpm",
-			"args": [
-				"dlx",
-				"playwright",
-				"test",
-				"--debug"
-			],
+			"args": ["build"],
+			"group": "build",
+			"detail": "Build project for production"
+		},
+		{
+			"label": "✅ Quality Check",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["ci:check"],
+			"group": "build",
+			"detail": "Complete code validation (format + lint + types)"
+		},
+		{
+			"label": "🔧 Fix Code",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["ci:fix"],
+			"group": "build",
+			"detail": "Auto-fix formatting and linting issues"
+		},
+		{
+			"label": "🧪 Test",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["test:all"],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"detail": "Run all tests (unit + integration + e2e)"
+		},
+		{
+			"label": "🧪 Test Watch",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["dlx", "vitest", "--watch"],
 			"group": "test",
-			"detail": "Run E2E tests in debug mode",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
+			"detail": "Watch mode for development",
+			"isBackground": true
 		},
 		{
-			"label": "🔧 Build Project",
+			"label": "🔒 Security Audit",
 			"type": "shell",
 			"command": "pnpm",
-			"args": [
-				"build"
-			],
+			"args": ["security:audit"],
 			"group": "build",
-			"detail": "Build the entire project",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
+			"detail": "Healthcare security compliance check"
 		},
 		{
-			"label": "🚀 Type Check",
+			"label": "📦 Install",
 			"type": "shell",
 			"command": "pnpm",
-			"args": [
-				"type-check"
-			],
+			"args": ["install"],
 			"group": "build",
-			"detail": "Run TypeScript type checking",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "🔧 PNPM Install",
-			"type": "shell",
-			"command": "pnpm",
-			"args": [
-				"install"
-			],
-			"group": "build",
-			"detail": "Install dependencies via PNPM",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
+			"detail": "Install dependencies"
 		}
 	]
 }

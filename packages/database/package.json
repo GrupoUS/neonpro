@@ -6,12 +6,16 @@
   "types": "dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./client": {
-      "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.js"
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
+    },
+    "./supabase-generated": {
+      "types": "./dist/supabase-generated.d.ts",
+      "default": "./dist/supabase-generated.js"
     },
     "./prisma": {
       "types": "./node_modules/@prisma/client/index.d.ts",

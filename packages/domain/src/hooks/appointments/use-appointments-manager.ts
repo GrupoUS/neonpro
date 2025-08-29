@@ -1,6 +1,5 @@
 "use client";
 
-import { createClient } from "@supabase/supabase-js";
 import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import { pt } from "date-fns/locale";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -81,14 +80,17 @@ export interface AppointmentStats {
 export function useAppointmentsManager() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   const [filters, setFilters] = useState<AppointmentFilters>({
     dateRange: "week",
   });
 
-  // Placeholder Supabase client  const { toast } = useToast();
+  // Initialize toast
+  const { toast } = useToast();
+
+  // Placeholder Supabase client
 
   // Calculate date ranges based on filters
   const dateRange = useMemo(() => {
@@ -126,7 +128,7 @@ export function useAppointmentsManager() {
   const fetchAppointments = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       // Placeholder implementation
       const mockAppointments: Appointment[] = [];

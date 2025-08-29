@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface TimeSlot {
   id: string;
@@ -35,12 +35,12 @@ export function useRealtimeAvailability(
 ): UseRealtimeAvailabilityReturn {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const refreshSlots = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       // Placeholder implementation
       const mockSlots: TimeSlot[] = [

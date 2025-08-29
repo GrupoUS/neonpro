@@ -416,7 +416,7 @@ export class StrategyGeneratorService {
 
     for (let i = 0; i < baseActions.length; i++) {
       const baseAction = baseActions[i];
-      if (!baseAction) continue;
+      if (!baseAction) {continue;}
 
       // Personalize timing based on patient patterns
       const timing = await this.personalizeActionTiming(
