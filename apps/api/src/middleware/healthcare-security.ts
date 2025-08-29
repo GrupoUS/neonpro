@@ -565,13 +565,17 @@ export class HealthcareAuthMiddleware {
       let professionalLicense: ProfessionalLicense | undefined;
       if (licenseData) {
         professionalLicense = {
-          licenseNumber: (licenseData as { licenseNumber: string }).licenseNumber,
-          licenseType: (licenseData as { licenseType: ProfessionalLicenseType }).licenseType,
-          state: (licenseData as { state: string }).state,
-          issuedDate: new Date((licenseData as { issuedDate: string | number | Date }).issuedDate),
-          expirationDate: new Date((licenseData as { expirationDate: string | number | Date }).expirationDate),
-          isActive: (licenseData as { isActive: boolean }).isActive,
-          lastValidated: new Date((licenseData as { lastValidated: string | number | Date }).lastValidated),
+          licenseNumber: (licenseData as { licenseNumber: string; }).licenseNumber,
+          licenseType: (licenseData as { licenseType: ProfessionalLicenseType; }).licenseType,
+          state: (licenseData as { state: string; }).state,
+          issuedDate: new Date((licenseData as { issuedDate: string | number | Date; }).issuedDate),
+          expirationDate: new Date(
+            (licenseData as { expirationDate: string | number | Date; }).expirationDate,
+          ),
+          isActive: (licenseData as { isActive: boolean; }).isActive,
+          lastValidated: new Date(
+            (licenseData as { lastValidated: string | number | Date; }).lastValidated,
+          ),
         };
 
         // Validate license is still active and not expired

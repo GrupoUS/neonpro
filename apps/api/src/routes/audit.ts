@@ -1,13 +1,13 @@
-import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
+import type { ApiResponse } from "@neonpro/shared/types";
+import { Hono } from "hono";
 import { z } from "zod";
+import { HTTP_STATUS } from "../lib/constants";
 import { auditMiddleware } from "../middleware/auditMiddleware";
-import { AuditResourceType } from "../services/AuditService";
 import { authMiddleware } from "../middleware/auth";
+import { AuditResourceType } from "../services/AuditService";
 import type { AuditLogQuery } from "../services/AuditService";
 import { AuditService } from "../services/AuditService";
-import { HTTP_STATUS } from "../lib/constants";
-import type { ApiResponse } from "@neonpro/shared/types";
 
 const auditRoutes = new Hono();
 
@@ -58,10 +58,13 @@ const userAuditQuerySchema = z.object({
 
 // Apply middleware to all routes
 auditRoutes.use("*", authMiddleware());
-auditRoutes.use("*", auditMiddleware(AuditResourceType.SYSTEM, {
-  skipRoutes: ["/health"], // Skip health check
-  lgpdBasis: "Audit Management",
-}));
+auditRoutes.use(
+  "*",
+  auditMiddleware(AuditResourceType.SYSTEM, {
+    skipRoutes: ["/health"], // Skip health check
+    lgpdBasis: "Audit Management",
+  }),
+);
 
 /**
  * @route GET /api/audit/logs
@@ -203,7 +206,7 @@ auditRoutes.get("/export", zValidator("query", exportQuerySchema), async (c) => 
 
     // Set appropriate headers based on format
     const filename = `audit-logs-${new Date().toISOString().split("T")[0]}`;
-    
+
     if (format === "csv") {
       c.header("Content-Type", "text/csv");
       c.header("Content-Disposition", `attachment; filename="${filename}.csv"`);

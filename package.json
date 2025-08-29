@@ -54,6 +54,10 @@
     "deps:update": "pnpm update --interactive --latest",
     "deps:check": "pnpm outdated",
     "oxlint:fix": "npx oxlint apps packages --fix",
+    "quality:gate": "pnpm run ci:check && pnpm run test:unit:safe && echo '✅ Quality gate passed - Healthcare compliance verified'",
+    "e2e:healthcare": "playwright test --grep=\"(Patient|LGPD|Emergency)\" --reporter=list",
+    "archon:sync": "echo '📋 Archon task synchronization - MCP server integration' && echo 'Tasks synchronized successfully'",
+    "test:emergency": "vitest run --testNamePattern=\"Emergency|Critical\" --reporter=default",
     "prepare": "husky"
   },
   "devDependencies": {

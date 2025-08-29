@@ -172,9 +172,15 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
           )[0] as PerformanceNavigationTiming,
           memoryUsage: (performance as unknown).memory
             ? {
-              usedJSHeapSize: (performance as unknown as { memory: { usedJSHeapSize: number } }).memory.usedJSHeapSize,
-              totalJSHeapSize: (performance as unknown as { memory: { totalJSHeapSize: number } }).memory.totalJSHeapSize,
-              jsHeapSizeLimit: (performance as unknown as { memory: { jsHeapSizeLimit: number } }).memory.jsHeapSizeLimit,
+              usedJSHeapSize:
+                (performance as unknown as { memory: { usedJSHeapSize: number; }; }).memory
+                  .usedJSHeapSize,
+              totalJSHeapSize:
+                (performance as unknown as { memory: { totalJSHeapSize: number; }; }).memory
+                  .totalJSHeapSize,
+              jsHeapSizeLimit:
+                (performance as unknown as { memory: { jsHeapSizeLimit: number; }; }).memory
+                  .jsHeapSizeLimit,
             }
             : undefined,
           connectionType: (navigator as any).connection?.effectiveType,
@@ -228,7 +234,7 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
 
   private handleEscalation = async () => {
     const error = this.state.healthcareError;
-    if (!error) {return;}
+    if (!error) return;
 
     try {
       const escalationData = {

@@ -1,1 +1,1430 @@
-{"numTotalTestSuites":74,"numPassedTestSuites":60,"numFailedTestSuites":14,"numPendingTestSuites":0,"numTotalTests":129,"numPassedTests":1,"numFailedTests":9,"numPendingTests":119,"numTodoTests":0,"snapshot":{"added":0,"failure":false,"filesAdded":0,"filesRemoved":0,"filesRemovedList":[],"filesUnmatched":0,"filesUpdated":0,"matched":0,"total":0,"unchecked":0,"uncheckedKeysByFile":[],"unmatched":0,"updated":0,"didUpdate":false},"startTime":1756443757991,"success":false,"testResults":[{"assertionResults":[{"ancestorTitles":["aI Feature Flags Database"],"fullName":"aI Feature Flags Database should create feature flags with proper validation","status":"skipped","title":"should create feature flags with proper validation","failureMessages":[],"location":{"line":134,"column":3},"meta":{}},{"ancestorTitles":["aI Feature Flags Database"],"fullName":"aI Feature Flags Database should enforce unique constraint on feature flag names","status":"skipped","title":"should enforce unique constraint on feature flag names","failureMessages":[],"location":{"line":163,"column":3},"meta":{}},{"ancestorTitles":["aI Feature Flags Database"],"fullName":"aI Feature Flags Database should perform efficient queries with indexing","status":"skipped","title":"should perform efficient queries with indexing","failureMessages":[],"location":{"line":194,"column":3},"meta":{}},{"ancestorTitles":["aI Cache Management Database"],"fullName":"aI Cache Management Database should handle cache entries with TTL expiration","status":"skipped","title":"should handle cache entries with TTL expiration","failureMessages":[],"location":{"line":255,"column":3},"meta":{}},{"ancestorTitles":["aI Cache Management Database"],"fullName":"aI Cache Management Database should support cache entry tagging and filtering","status":"skipped","title":"should support cache entry tagging and filtering","failureMessages":[],"location":{"line":287,"column":3},"meta":{}},{"ancestorTitles":["aI Cache Management Database"],"fullName":"aI Cache Management Database should handle high-frequency cache operations","status":"skipped","title":"should handle high-frequency cache operations","failureMessages":[],"location":{"line":321,"column":3},"meta":{}},{"ancestorTitles":["aI Audit Logging Database"],"fullName":"aI Audit Logging Database should log AI service operations with complete details","status":"skipped","title":"should log AI service operations with complete details","failureMessages":[],"location":{"line":372,"column":3},"meta":{}},{"ancestorTitles":["aI Audit Logging Database"],"fullName":"aI Audit Logging Database should support complex audit trail queries","status":"skipped","title":"should support complex audit trail queries","failureMessages":[],"location":{"line":407,"column":3},"meta":{}},{"ancestorTitles":["aI Audit Logging Database"],"fullName":"aI Audit Logging Database should maintain audit log immutability","status":"skipped","title":"should maintain audit log immutability","failureMessages":[],"location":{"line":460,"column":3},"meta":{}},{"ancestorTitles":["aI Monitoring Database"],"fullName":"aI Monitoring Database should record performance metrics efficiently","status":"skipped","title":"should record performance metrics efficiently","failureMessages":[],"location":{"line":508,"column":3},"meta":{}},{"ancestorTitles":["aI Monitoring Database"],"fullName":"aI Monitoring Database should support aggregation queries for monitoring dashboards","status":"skipped","title":"should support aggregation queries for monitoring dashboards","failureMessages":[],"location":{"line":539,"column":3},"meta":{}},{"ancestorTitles":["aI Monitoring Database"],"fullName":"aI Monitoring Database should handle high-volume metric ingestion","status":"skipped","title":"should handle high-volume metric ingestion","failureMessages":[],"location":{"line":597,"column":3},"meta":{}},{"ancestorTitles":["aI Chat Database"],"fullName":"aI Chat Database should maintain referential integrity between sessions and messages","status":"skipped","title":"should maintain referential integrity between sessions and messages","failureMessages":[],"location":{"line":660,"column":3},"meta":{}},{"ancestorTitles":["aI Chat Database"],"fullName":"aI Chat Database should support efficient conversation history retrieval","status":"skipped","title":"should support efficient conversation history retrieval","failureMessages":[],"location":{"line":710,"column":3},"meta":{}},{"ancestorTitles":["aI Chat Database"],"fullName":"aI Chat Database should handle concurrent message insertions","status":"skipped","title":"should handle concurrent message insertions","failureMessages":[],"location":{"line":770,"column":3},"meta":{}},{"ancestorTitles":["aI Database Performance"],"fullName":"aI Database Performance should handle database connection pooling under load","status":"skipped","title":"should handle database connection pooling under load","failureMessages":[],"location":{"line":834,"column":3},"meta":{}},{"ancestorTitles":["aI Database Performance"],"fullName":"aI Database Performance should maintain performance under mixed read/write operations","status":"skipped","title":"should maintain performance under mixed read/write operations","failureMessages":[],"location":{"line":855,"column":3},"meta":{}}],"startTime":1756443757991,"endTime":1756443757991,"status":"passed","message":"","name":"D:/neonpro/apps/web/tests/integration/ai-database.integration.test.tsx"},{"assertionResults":[{"ancestorTitles":["aI Services Ecosystem Integration Tests","full AI Chat Workflow Integration"],"fullName":"aI Services Ecosystem Integration Tests full AI Chat Workflow Integration should handle complete AI chat workflow with all services","status":"skipped","title":"should handle complete AI chat workflow with all services","failureMessages":[],"location":{"line":836,"column":5},"meta":{}},{"ancestorTitles":["aI Services Ecosystem Integration Tests","cross-Service Integration"],"fullName":"aI Services Ecosystem Integration Tests cross-Service Integration should integrate no-show prediction with appointment optimization","status":"skipped","title":"should integrate no-show prediction with appointment optimization","failureMessages":[],"location":{"line":842,"column":5},"meta":{}},{"ancestorTitles":["aI Services Ecosystem Integration Tests","real-Time Metrics Integration"],"fullName":"aI Services Ecosystem Integration Tests real-Time Metrics Integration should collect and aggregate metrics across all services","status":"skipped","title":"should collect and aggregate metrics across all services","failureMessages":[],"location":{"line":848,"column":5},"meta":{}},{"ancestorTitles":["aI Services Ecosystem Integration Tests","compliance Automation Integration"],"fullName":"aI Services Ecosystem Integration Tests compliance Automation Integration should validate LGPD and ANVISA compliance across services","status":"failed","title":"should validate LGPD and ANVISA compliance across services","duration":6.541599999999562,"failureMessages":["NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3000/api/ai/compliance/validate-lgpd\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3000/api/ai/compliance/validate-lgpd\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3000/api/ai/compliance/validate-lgpd\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"],"location":{"line":854,"column":5},"meta":{}},{"ancestorTitles":["aI Services Ecosystem Integration Tests","service Resilience and Fallbacks"],"fullName":"aI Services Ecosystem Integration Tests service Resilience and Fallbacks should handle service failures gracefully with appropriate fallbacks","status":"skipped","title":"should handle service failures gracefully with appropriate fallbacks","failureMessages":[],"location":{"line":860,"column":5},"meta":{}},{"ancestorTitles":["aI Services Ecosystem Integration Tests","performance Under Load"],"fullName":"aI Services Ecosystem Integration Tests performance Under Load should maintain performance standards under concurrent load","status":"skipped","title":"should maintain performance standards under concurrent load","failureMessages":[],"location":{"line":866,"column":5},"meta":{}}],"startTime":1756443764164,"endTime":1756443764170.5415,"status":"failed","message":"","name":"D:/neonpro/apps/web/tests/integration/ai-services-ecosystem.integration.test.tsx"},{"assertionResults":[{"ancestorTitles":["universal AI Chat Integration"],"fullName":"universal AI Chat Integration should create new chat session with proper LGPD compliance","status":"skipped","title":"should create new chat session with proper LGPD compliance","failureMessages":[],"location":{"line":146,"column":3},"meta":{}},{"ancestorTitles":["universal AI Chat Integration"],"fullName":"universal AI Chat Integration should process healthcare chat messages with safety checks","status":"skipped","title":"should process healthcare chat messages with safety checks","failureMessages":[],"location":{"line":180,"column":3},"meta":{}},{"ancestorTitles":["universal AI Chat Integration"],"fullName":"universal AI Chat Integration should detect and handle emergency situations appropriately","status":"skipped","title":"should detect and handle emergency situations appropriately","failureMessages":[],"location":{"line":217,"column":3},"meta":{}},{"ancestorTitles":["universal AI Chat Integration"],"fullName":"universal AI Chat Integration should maintain conversation context across multiple messages","status":"skipped","title":"should maintain conversation context across multiple messages","failureMessages":[],"location":{"line":248,"column":3},"meta":{}},{"ancestorTitles":["compliance Automation Integration"],"fullName":"compliance Automation Integration should validate LGPD compliance for patient data operations","status":"failed","title":"should validate LGPD compliance for patient data operations","duration":11.096099999999751,"failureMessages":["NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"],"location":{"line":307,"column":3},"meta":{}},{"ancestorTitles":["compliance Automation Integration"],"fullName":"compliance Automation Integration should detect LGPD violations for non-compliant operations","status":"failed","title":"should detect LGPD violations for non-compliant operations","duration":6.759100000000217,"failureMessages":["NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"],"location":{"line":349,"column":3},"meta":{}},{"ancestorTitles":["compliance Automation Integration"],"fullName":"compliance Automation Integration should validate ANVISA compliance for medical device operations","status":"failed","title":"should validate ANVISA compliance for medical device operations","duration":7.098500000000058,"failureMessages":["NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"],"location":{"line":385,"column":3},"meta":{}},{"ancestorTitles":["compliance Automation Integration"],"fullName":"compliance Automation Integration should validate CFM compliance for telemedicine operations","status":"failed","title":"should validate CFM compliance for telemedicine operations","duration":4.23279999999977,"failureMessages":["NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"],"location":{"line":422,"column":3},"meta":{}},{"ancestorTitles":["compliance Automation Integration"],"fullName":"compliance Automation Integration should generate comprehensive compliance reports","status":"failed","title":"should generate comprehensive compliance reports","duration":3.7945999999992637,"failureMessages":["NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/report\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/report\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/report\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"],"location":{"line":460,"column":3},"meta":{}},{"ancestorTitles":["conversation Management Integration"],"fullName":"conversation Management Integration should analyze conversation sentiment and emotions","status":"skipped","title":"should analyze conversation sentiment and emotions","failureMessages":[],"location":{"line":540,"column":3},"meta":{}},{"ancestorTitles":["conversation Management Integration"],"fullName":"conversation Management Integration should extract medical topics and keywords","status":"skipped","title":"should extract medical topics and keywords","failureMessages":[],"location":{"line":576,"column":3},"meta":{}},{"ancestorTitles":["conversation Management Integration"],"fullName":"conversation Management Integration should perform comprehensive safety assessment","status":"skipped","title":"should perform comprehensive safety assessment","failureMessages":[],"location":{"line":604,"column":3},"meta":{}},{"ancestorTitles":["conversation Management Integration"],"fullName":"conversation Management Integration should generate conversation summary with key insights","status":"skipped","title":"should generate conversation summary with key insights","failureMessages":[],"location":{"line":631,"column":3},"meta":{}},{"ancestorTitles":["conversation Management Integration"],"fullName":"conversation Management Integration should validate conversation compliance across all regulations","status":"skipped","title":"should validate conversation compliance across all regulations","failureMessages":[],"location":{"line":658,"column":3},"meta":{}},{"ancestorTitles":["aI Database Integration"],"fullName":"aI Database Integration should handle concurrent AI chat sessions","status":"skipped","title":"should handle concurrent AI chat sessions","failureMessages":[],"location":{"line":710,"column":3},"meta":{}},{"ancestorTitles":["aI Database Integration"],"fullName":"aI Database Integration should enforce Row Level Security for AI data","status":"skipped","title":"should enforce Row Level Security for AI data","failureMessages":[],"location":{"line":751,"column":3},"meta":{}},{"ancestorTitles":["aI Database Integration"],"fullName":"aI Database Integration should maintain data integrity for AI services schema","status":"skipped","title":"should maintain data integrity for AI services schema","failureMessages":[],"location":{"line":768,"column":3},"meta":{}},{"ancestorTitles":["aI Database Integration"],"fullName":"aI Database Integration should perform efficient queries on AI data with proper indexing","status":"skipped","title":"should perform efficient queries on AI data with proper indexing","failureMessages":[],"location":{"line":786,"column":3},"meta":{}},{"ancestorTitles":["aI Services End-to-End Integration"],"fullName":"aI Services End-to-End Integration should complete full healthcare conversation flow with compliance","status":"failed","title":"should complete full healthcare conversation flow with compliance","duration":7.0461999999997715,"failureMessages":["NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/universal-chat/session\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/universal-chat/session\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/universal-chat/session\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"],"location":{"line":828,"column":3},"meta":{}}],"startTime":1756443764202,"endTime":1756443764248.0461,"status":"failed","message":"","name":"D:/neonpro/apps/web/tests/integration/ai-services.integration.test.tsx"},{"assertionResults":[{"ancestorTitles":["aPI Client Integration Tests","health Check and Connection"],"fullName":"aPI Client Integration Tests health Check and Connection should connect to Hono backend successfully","status":"skipped","title":"should connect to Hono backend successfully","failureMessages":[],"location":{"line":121,"column":5},"meta":{}},{"ancestorTitles":["aPI Client Integration Tests","health Check and Connection"],"fullName":"aPI Client Integration Tests health Check and Connection should handle backend connection failures","status":"skipped","title":"should handle backend connection failures","failureMessages":[],"location":{"line":149,"column":5},"meta":{}},{"ancestorTitles":["aPI Client Integration Tests","authentication API Integration"],"fullName":"aPI Client Integration Tests authentication API Integration should authenticate user with backend","status":"skipped","title":"should authenticate user with backend","failureMessages":[],"location":{"line":161,"column":5},"meta":{}},{"ancestorTitles":["aPI Client Integration Tests","authentication API Integration"],"fullName":"aPI Client Integration Tests authentication API Integration should handle authentication errors","status":"skipped","title":"should handle authentication errors","failureMessages":[],"location":{"line":206,"column":5},"meta":{}},{"ancestorTitles":["aPI Client Integration Tests","authentication API Integration"],"fullName":"aPI Client Integration Tests authentication API Integration should refresh expired tokens","status":"skipped","title":"should refresh expired tokens","failureMessages":[],"location":{"line":235,"column":5},"meta":{}},{"ancestorTitles":["aPI Client Integration Tests","patient API Integration"],"fullName":"aPI Client Integration Tests patient API Integration should create patient via API with validation","status":"skipped","title":"should create patient via API with validation","failureMessages":[],"location":{"line":268,"column":5},"meta":{}},{"ancestorTitles":["aPI Client Integration Tests","patient API Integration"],"fullName":"aPI Client Integration Tests patient API Integration should handle API validation errors","status":"skipped","title":"should handle API validation errors","failureMessages":[],"location":{"line":317,"column":5},"meta":{}},{"ancestorTitles":["aPI Client Integration Tests","patient API Integration"],"fullName":"aPI Client Integration Tests patient API Integration should fetch patients with pagination and filters","status":"skipped","title":"should fetch patients with pagination and filters","failureMessages":[],"location":{"line":350,"column":5},"meta":{}},{"ancestorTitles":["aPI Client Integration Tests","error Handling and Retry Logic"],"fullName":"aPI Client Integration Tests error Handling and Retry Logic should retry failed requests with exponential backoff","status":"skipped","title":"should retry failed requests with exponential backoff","failureMessages":[],"location":{"line":399,"column":5},"meta":{}},{"ancestorTitles":["aPI Client Integration Tests","error Handling and Retry Logic"],"fullName":"aPI Client Integration Tests error Handling and Retry Logic should handle timeout scenarios gracefully","status":"skipped","title":"should handle timeout scenarios gracefully","failureMessages":[],"location":{"line":444,"column":5},"meta":{}},{"ancestorTitles":["aPI Client Integration Tests","error Handling and Retry Logic"],"fullName":"aPI Client Integration Tests error Handling and Retry Logic should handle rate limiting with proper backoff","status":"skipped","title":"should handle rate limiting with proper backoff","failureMessages":[],"location":{"line":464,"column":5},"meta":{}},{"ancestorTitles":["aPI Client Integration Tests","performance Monitoring"],"fullName":"aPI Client Integration Tests performance Monitoring should measure API response times","status":"skipped","title":"should measure API response times","failureMessages":[],"location":{"line":520,"column":5},"meta":{}}],"startTime":1756443757991,"endTime":1756443757991,"status":"passed","message":"","name":"D:/neonpro/apps/web/tests/integration/api-client-integration.test.tsx"},{"assertionResults":[{"ancestorTitles":["authentication Flow Integration","login Flow"],"fullName":"authentication Flow Integration login Flow should complete full login flow successfully","status":"skipped","title":"should complete full login flow successfully","failureMessages":[],"location":{"line":156,"column":5},"meta":{}},{"ancestorTitles":["authentication Flow Integration","login Flow"],"fullName":"authentication Flow Integration login Flow should handle authentication errors properly","status":"skipped","title":"should handle authentication errors properly","failureMessages":[],"location":{"line":235,"column":5},"meta":{}},{"ancestorTitles":["authentication Flow Integration","session Management"],"fullName":"authentication Flow Integration session Management should refresh session when token expires","status":"skipped","title":"should refresh session when token expires","failureMessages":[],"location":{"line":272,"column":5},"meta":{}},{"ancestorTitles":["authentication Flow Integration","session Management"],"fullName":"authentication Flow Integration session Management should handle session persistence across page reloads","status":"skipped","title":"should handle session persistence across page reloads","failureMessages":[],"location":{"line":293,"column":5},"meta":{}},{"ancestorTitles":["authentication Flow Integration","role-based Access Control"],"fullName":"authentication Flow Integration role-based Access Control should enforce doctor role permissions","status":"skipped","title":"should enforce doctor role permissions","failureMessages":[],"location":{"line":317,"column":5},"meta":{}},{"ancestorTitles":["authentication Flow Integration","role-based Access Control"],"fullName":"authentication Flow Integration role-based Access Control should restrict access for unauthorized roles","status":"skipped","title":"should restrict access for unauthorized roles","failureMessages":[],"location":{"line":353,"column":5},"meta":{}},{"ancestorTitles":["authentication Flow Integration","role-based Access Control"],"fullName":"authentication Flow Integration role-based Access Control should handle multi-tenant isolation","status":"skipped","title":"should handle multi-tenant isolation","failureMessages":[],"location":{"line":388,"column":5},"meta":{}},{"ancestorTitles":["authentication Flow Integration","logout and Session Cleanup"],"fullName":"authentication Flow Integration logout and Session Cleanup should properly cleanup session on logout","status":"skipped","title":"should properly cleanup session on logout","failureMessages":[],"location":{"line":421,"column":5},"meta":{}}],"startTime":1756443757991,"endTime":1756443757991,"status":"passed","message":"","name":"D:/neonpro/apps/web/tests/integration/auth-flow.integration.test.tsx"},{"assertionResults":[{"ancestorTitles":["database Integration Tests","prisma CRUD Operations"],"fullName":"database Integration Tests prisma CRUD Operations should create patient with referential integrity","status":"skipped","title":"should create patient with referential integrity","failureMessages":[],"location":{"line":150,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","prisma CRUD Operations"],"fullName":"database Integration Tests prisma CRUD Operations should handle complex queries with relationships","status":"skipped","title":"should handle complex queries with relationships","failureMessages":[],"location":{"line":181,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","transaction Handling"],"fullName":"database Integration Tests transaction Handling should handle complex multi-table transactions atomically","status":"skipped","title":"should handle complex multi-table transactions atomically","failureMessages":[],"location":{"line":219,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","transaction Handling"],"fullName":"database Integration Tests transaction Handling should rollback transaction on failure to maintain data integrity","status":"skipped","title":"should rollback transaction on failure to maintain data integrity","failureMessages":[],"location":{"line":268,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","transaction Handling"],"fullName":"database Integration Tests transaction Handling should handle appointment scheduling with conflict detection","status":"skipped","title":"should handle appointment scheduling with conflict detection","failureMessages":[],"location":{"line":297,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","performance Optimization"],"fullName":"database Integration Tests performance Optimization should optimize queries for large datasets with proper indexing","status":"skipped","title":"should optimize queries for large datasets with proper indexing","failureMessages":[],"location":{"line":339,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","performance Optimization"],"fullName":"database Integration Tests performance Optimization should handle connection pooling efficiently","status":"skipped","title":"should handle connection pooling efficiently","failureMessages":[],"location":{"line":372,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","data Consistency and Integrity"],"fullName":"database Integration Tests data Consistency and Integrity should maintain referential integrity across related tables","status":"skipped","title":"should maintain referential integrity across related tables","failureMessages":[],"location":{"line":401,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","data Consistency and Integrity"],"fullName":"database Integration Tests data Consistency and Integrity should enforce unique constraints properly","status":"skipped","title":"should enforce unique constraints properly","failureMessages":[],"location":{"line":429,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","data Consistency and Integrity"],"fullName":"database Integration Tests data Consistency and Integrity should validate foreign key relationships","status":"skipped","title":"should validate foreign key relationships","failureMessages":[],"location":{"line":450,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","supabase Direct Operations"],"fullName":"database Integration Tests supabase Direct Operations should execute stored procedures for complex healthcare operations","status":"skipped","title":"should execute stored procedures for complex healthcare operations","failureMessages":[],"location":{"line":469,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","supabase Direct Operations"],"fullName":"database Integration Tests supabase Direct Operations should handle real-time triggers for audit logging","status":"skipped","title":"should handle real-time triggers for audit logging","failureMessages":[],"location":{"line":505,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","multi-tenant Data Isolation"],"fullName":"database Integration Tests multi-tenant Data Isolation should enforce row-level security for clinic isolation","status":"skipped","title":"should enforce row-level security for clinic isolation","failureMessages":[],"location":{"line":540,"column":5},"meta":{}},{"ancestorTitles":["database Integration Tests","multi-tenant Data Isolation"],"fullName":"database Integration Tests multi-tenant Data Isolation should prevent cross-tenant data access","status":"skipped","title":"should prevent cross-tenant data access","failureMessages":[],"location":{"line":583,"column":5},"meta":{}}],"startTime":1756443757991,"endTime":1756443757991,"status":"passed","message":"","name":"D:/neonpro/apps/web/tests/integration/database-integration.test.tsx"},{"assertionResults":[{"ancestorTitles":["emergency Access Protocol Integration Tests","emergency Access Request Flow"],"fullName":"emergency Access Protocol Integration Tests emergency Access Request Flow should handle critical emergency access request immediately","status":"skipped","title":"should handle critical emergency access request immediately","failureMessages":[],"location":{"line":224,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","emergency Access Request Flow"],"fullName":"emergency Access Protocol Integration Tests emergency Access Request Flow should validate emergency justification and user credentials","status":"skipped","title":"should validate emergency justification and user credentials","failureMessages":[],"location":{"line":265,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","emergency Access Request Flow"],"fullName":"emergency Access Protocol Integration Tests emergency Access Request Flow should handle non-critical emergencies with approval workflow","status":"skipped","title":"should handle non-critical emergencies with approval workflow","failureMessages":[],"location":{"line":299,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","emergency Access Grant and Management"],"fullName":"emergency Access Protocol Integration Tests emergency Access Grant and Management should grant appropriate emergency access with time limits","status":"skipped","title":"should grant appropriate emergency access with time limits","failureMessages":[],"location":{"line":333,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","emergency Access Grant and Management"],"fullName":"emergency Access Protocol Integration Tests emergency Access Grant and Management should automatically revoke expired emergency access","status":"skipped","title":"should automatically revoke expired emergency access","failureMessages":[],"location":{"line":366,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","emergency Access Grant and Management"],"fullName":"emergency Access Protocol Integration Tests emergency Access Grant and Management should handle emergency access extension for ongoing critical cases","status":"skipped","title":"should handle emergency access extension for ongoing critical cases","failureMessages":[],"location":{"line":392,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","lGPD Compliance in Emergency Scenarios"],"fullName":"emergency Access Protocol Integration Tests lGPD Compliance in Emergency Scenarios should ensure emergency access complies with vital interests legal basis","status":"skipped","title":"should ensure emergency access complies with vital interests legal basis","failureMessages":[],"location":{"line":417,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","lGPD Compliance in Emergency Scenarios"],"fullName":"emergency Access Protocol Integration Tests lGPD Compliance in Emergency Scenarios should create comprehensive audit trail for emergency access","status":"skipped","title":"should create comprehensive audit trail for emergency access","failureMessages":[],"location":{"line":449,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","emergency Notifications and Alerting"],"fullName":"emergency Access Protocol Integration Tests emergency Notifications and Alerting should immediately notify all relevant staff of emergency access","status":"skipped","title":"should immediately notify all relevant staff of emergency access","failureMessages":[],"location":{"line":487,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","emergency Notifications and Alerting"],"fullName":"emergency Access Protocol Integration Tests emergency Notifications and Alerting should log all emergency notifications for audit purposes","status":"skipped","title":"should log all emergency notifications for audit purposes","failureMessages":[],"location":{"line":546,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","performance and Response Time Requirements"],"fullName":"emergency Access Protocol Integration Tests performance and Response Time Requirements should process critical emergency requests within 10 seconds","status":"skipped","title":"should process critical emergency requests within 10 seconds","failureMessages":[],"location":{"line":573,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","performance and Response Time Requirements"],"fullName":"emergency Access Protocol Integration Tests performance and Response Time Requirements should handle multiple concurrent emergency requests efficiently","status":"skipped","title":"should handle multiple concurrent emergency requests efficiently","failureMessages":[],"location":{"line":605,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","integration with Hospital Systems"],"fullName":"emergency Access Protocol Integration Tests integration with Hospital Systems should integrate with hospital alert systems during emergencies","status":"skipped","title":"should integrate with hospital alert systems during emergencies","failureMessages":[],"location":{"line":640,"column":5},"meta":{}},{"ancestorTitles":["emergency Access Protocol Integration Tests","integration with Hospital Systems"],"fullName":"emergency Access Protocol Integration Tests integration with Hospital Systems should maintain emergency access logs for regulatory compliance","status":"failed","title":"should maintain emergency access logs for regulatory compliance","duration":1.9476000000004206,"failureMessages":["TypeError: Cannot read properties of undefined (reading 'sendEmergencyAlert')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\emergency-access-protocol.test.tsx:211:29\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)","TypeError: Cannot read properties of undefined (reading 'sendEmergencyAlert')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\emergency-access-protocol.test.tsx:211:29\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)","TypeError: Cannot read properties of undefined (reading 'sendEmergencyAlert')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\emergency-access-protocol.test.tsx:211:29\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)"],"location":{"line":674,"column":5},"meta":{}}],"startTime":1756443763396,"endTime":1756443763397.9475,"status":"failed","message":"","name":"D:/neonpro/apps/web/tests/integration/emergency-access-protocol.test.tsx"},{"assertionResults":[{"ancestorTitles":["lGPD Compliance Flow Integration Tests","consent Management"],"fullName":"lGPD Compliance Flow Integration Tests consent Management should record patient consent with all required details","status":"skipped","title":"should record patient consent with all required details","failureMessages":[],"location":{"line":132,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","consent Management"],"fullName":"lGPD Compliance Flow Integration Tests consent Management should validate purpose limitation for data processing","status":"skipped","title":"should validate purpose limitation for data processing","failureMessages":[],"location":{"line":165,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","consent Management"],"fullName":"lGPD Compliance Flow Integration Tests consent Management should handle consent revocation with immediate effect","status":"skipped","title":"should handle consent revocation with immediate effect","failureMessages":[],"location":{"line":187,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","data Subject Rights"],"fullName":"lGPD Compliance Flow Integration Tests data Subject Rights should process data access requests (Right to Access)","status":"skipped","title":"should process data access requests (Right to Access)","failureMessages":[],"location":{"line":230,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","data Subject Rights"],"fullName":"lGPD Compliance Flow Integration Tests data Subject Rights should handle data rectification requests (Right to Rectification)","status":"skipped","title":"should handle data rectification requests (Right to Rectification)","failureMessages":[],"location":{"line":292,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","data Subject Rights"],"fullName":"lGPD Compliance Flow Integration Tests data Subject Rights should handle data erasure requests (Right to Erasure)","status":"skipped","title":"should handle data erasure requests (Right to Erasure)","failureMessages":[],"location":{"line":320,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","data Subject Rights"],"fullName":"lGPD Compliance Flow Integration Tests data Subject Rights should process data portability requests (Right to Data Portability)","status":"skipped","title":"should process data portability requests (Right to Data Portability)","failureMessages":[],"location":{"line":349,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","audit Trail and Monitoring"],"fullName":"lGPD Compliance Flow Integration Tests audit Trail and Monitoring should create comprehensive audit entries for all data operations","status":"skipped","title":"should create comprehensive audit entries for all data operations","failureMessages":[],"location":{"line":400,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","audit Trail and Monitoring"],"fullName":"lGPD Compliance Flow Integration Tests audit Trail and Monitoring should provide comprehensive audit trail reports","status":"skipped","title":"should provide comprehensive audit trail reports","failureMessages":[],"location":{"line":452,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","data Retention and Lifecycle Management"],"fullName":"lGPD Compliance Flow Integration Tests data Retention and Lifecycle Management should enforce Brazilian healthcare data retention policies","status":"skipped","title":"should enforce Brazilian healthcare data retention policies","failureMessages":[],"location":{"line":502,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","data Retention and Lifecycle Management"],"fullName":"lGPD Compliance Flow Integration Tests data Retention and Lifecycle Management should handle automated data anonymization on retention expiry","status":"skipped","title":"should handle automated data anonymization on retention expiry","failureMessages":[],"location":{"line":539,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","brazilian Healthcare Specific Compliance"],"fullName":"lGPD Compliance Flow Integration Tests brazilian Healthcare Specific Compliance should validate CPF-based identity verification for data requests","status":"skipped","title":"should validate CPF-based identity verification for data requests","failureMessages":[],"location":{"line":572,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","brazilian Healthcare Specific Compliance"],"fullName":"lGPD Compliance Flow Integration Tests brazilian Healthcare Specific Compliance should enforce professional council registration validation","status":"skipped","title":"should enforce professional council registration validation","failureMessages":[],"location":{"line":607,"column":5},"meta":{}},{"ancestorTitles":["lGPD Compliance Flow Integration Tests","brazilian Healthcare Specific Compliance"],"fullName":"lGPD Compliance Flow Integration Tests brazilian Healthcare Specific Compliance should handle ANVISA reporting compliance for medication data","status":"passed","title":"should handle ANVISA reporting compliance for medication data","duration":1.714300000000037,"failureMessages":[],"location":{"line":625,"column":5},"meta":{}}],"startTime":1756443763904,"endTime":1756443763905.7144,"status":"passed","message":"","name":"D:/neonpro/apps/web/tests/integration/lgpd-compliance-flow.test.tsx"},{"assertionResults":[{"ancestorTitles":["patient CRUD Integration Tests","create Patient"],"fullName":"patient CRUD Integration Tests create Patient should create patient with valid Brazilian data","status":"skipped","title":"should create patient with valid Brazilian data","failureMessages":[],"location":{"line":184,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","create Patient"],"fullName":"patient CRUD Integration Tests create Patient should reject patient creation with invalid CPF","status":"skipped","title":"should reject patient creation with invalid CPF","failureMessages":[],"location":{"line":225,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","create Patient"],"fullName":"patient CRUD Integration Tests create Patient should enforce LGPD consent requirement","status":"skipped","title":"should enforce LGPD consent requirement","failureMessages":[],"location":{"line":257,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","create Patient"],"fullName":"patient CRUD Integration Tests create Patient should enforce multi-tenant isolation on creation","status":"skipped","title":"should enforce multi-tenant isolation on creation","failureMessages":[],"location":{"line":276,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","read Patient"],"fullName":"patient CRUD Integration Tests read Patient should fetch patient by ID with proper authorization","status":"skipped","title":"should fetch patient by ID with proper authorization","failureMessages":[],"location":{"line":296,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","read Patient"],"fullName":"patient CRUD Integration Tests read Patient should search patients with filters and pagination","status":"skipped","title":"should search patients with filters and pagination","failureMessages":[],"location":{"line":325,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","update Patient"],"fullName":"patient CRUD Integration Tests update Patient should update patient with validation and audit trail","status":"skipped","title":"should update patient with validation and audit trail","failureMessages":[],"location":{"line":368,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","update Patient"],"fullName":"patient CRUD Integration Tests update Patient should prevent updating sensitive data without proper authorization","status":"skipped","title":"should prevent updating sensitive data without proper authorization","failureMessages":[],"location":{"line":418,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","delete Patient"],"fullName":"patient CRUD Integration Tests delete Patient should perform soft delete with LGPD compliance","status":"failed","title":"should perform soft delete with LGPD compliance","duration":1.8751999999999498,"failureMessages":["TypeError: Cannot read properties of undefined (reading 'isValid')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\patient-crud.integration.test.tsx:134:22\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)","TypeError: Cannot read properties of undefined (reading 'isValid')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\patient-crud.integration.test.tsx:134:22\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)","TypeError: Cannot read properties of undefined (reading 'isValid')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\patient-crud.integration.test.tsx:134:22\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)"],"location":{"line":437,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","lGPD Compliance Integration"],"fullName":"patient CRUD Integration Tests lGPD Compliance Integration should validate data processing purposes","status":"skipped","title":"should validate data processing purposes","failureMessages":[],"location":{"line":478,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","lGPD Compliance Integration"],"fullName":"patient CRUD Integration Tests lGPD Compliance Integration should handle data subject access requests","status":"skipped","title":"should handle data subject access requests","failureMessages":[],"location":{"line":492,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","performance and Cache Integration"],"fullName":"patient CRUD Integration Tests performance and Cache Integration should optimize query performance for large datasets","status":"skipped","title":"should optimize query performance for large datasets","failureMessages":[],"location":{"line":518,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","performance and Cache Integration"],"fullName":"patient CRUD Integration Tests performance and Cache Integration should handle cache invalidation on updates","status":"skipped","title":"should handle cache invalidation on updates","failureMessages":[],"location":{"line":560,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","error Handling and Recovery"],"fullName":"patient CRUD Integration Tests error Handling and Recovery should handle network errors with retry logic","status":"skipped","title":"should handle network errors with retry logic","failureMessages":[],"location":{"line":588,"column":5},"meta":{}},{"ancestorTitles":["patient CRUD Integration Tests","error Handling and Recovery"],"fullName":"patient CRUD Integration Tests error Handling and Recovery should handle database constraint violations","status":"skipped","title":"should handle database constraint violations","failureMessages":[],"location":{"line":640,"column":5},"meta":{}}],"startTime":1756443764473,"endTime":1756443764474.8752,"status":"failed","message":"","name":"D:/neonpro/apps/web/tests/integration/patient-crud.integration.test.tsx"},{"assertionResults":[{"ancestorTitles":["real-time Updates Integration Tests","realtime Connection Management"],"fullName":"real-time Updates Integration Tests realtime Connection Management should establish realtime connection successfully","status":"skipped","title":"should establish realtime connection successfully","failureMessages":[],"location":{"line":135,"column":5},"meta":{}},{"ancestorTitles":["real-time Updates Integration Tests","realtime Connection Management"],"fullName":"real-time Updates Integration Tests realtime Connection Management should handle connection failures and reconnection","status":"skipped","title":"should handle connection failures and reconnection","failureMessages":[],"location":{"line":172,"column":5},"meta":{}},{"ancestorTitles":["real-time Updates Integration Tests","patient Data Real-time Updates"],"fullName":"real-time Updates Integration Tests patient Data Real-time Updates should receive patient updates and sync cache","status":"skipped","title":"should receive patient updates and sync cache","failureMessages":[],"location":{"line":207,"column":5},"meta":{}},{"ancestorTitles":["real-time Updates Integration Tests","patient Data Real-time Updates"],"fullName":"real-time Updates Integration Tests patient Data Real-time Updates should handle concurrent patient updates from multiple users","status":"skipped","title":"should handle concurrent patient updates from multiple users","failureMessages":[],"location":{"line":265,"column":5},"meta":{}},{"ancestorTitles":["real-time Updates Integration Tests","appointment Real-time Notifications"],"fullName":"real-time Updates Integration Tests appointment Real-time Notifications should notify all relevant users of appointment changes","status":"skipped","title":"should notify all relevant users of appointment changes","failureMessages":[],"location":{"line":297,"column":5},"meta":{}},{"ancestorTitles":["real-time Updates Integration Tests","appointment Real-time Notifications"],"fullName":"real-time Updates Integration Tests appointment Real-time Notifications should handle appointment scheduling conflicts in real-time","status":"skipped","title":"should handle appointment scheduling conflicts in real-time","failureMessages":[],"location":{"line":352,"column":5},"meta":{}},{"ancestorTitles":["real-time Updates Integration Tests","emergency Alerts Real-time Broadcasting"],"fullName":"real-time Updates Integration Tests emergency Alerts Real-time Broadcasting should broadcast emergency alerts to all clinic staff immediately","status":"skipped","title":"should broadcast emergency alerts to all clinic staff immediately","failureMessages":[],"location":{"line":416,"column":5},"meta":{}},{"ancestorTitles":["real-time Updates Integration Tests","performance and Scalability"],"fullName":"real-time Updates Integration Tests performance and Scalability should handle high-frequency updates without performance degradation","status":"skipped","title":"should handle high-frequency updates without performance degradation","failureMessages":[],"location":{"line":481,"column":5},"meta":{}},{"ancestorTitles":["real-time Updates Integration Tests","performance and Scalability"],"fullName":"real-time Updates Integration Tests performance and Scalability should handle connection drops gracefully with reconnection","status":"skipped","title":"should handle connection drops gracefully with reconnection","failureMessages":[],"location":{"line":539,"column":5},"meta":{}},{"ancestorTitles":["real-time Updates Integration Tests","multi-tenant Isolation in Real-time"],"fullName":"real-time Updates Integration Tests multi-tenant Isolation in Real-time should ensure clinic isolation in realtime subscriptions","status":"skipped","title":"should ensure clinic isolation in realtime subscriptions","failureMessages":[],"location":{"line":592,"column":5},"meta":{}}],"startTime":1756443757991,"endTime":1756443757991,"status":"passed","message":"","name":"D:/neonpro/apps/web/tests/integration/real-time-updates.test.tsx"}]}
+{
+  "numTotalTestSuites": 74,
+  "numPassedTestSuites": 60,
+  "numFailedTestSuites": 14,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 129,
+  "numPassedTests": 1,
+  "numFailedTests": 9,
+  "numPendingTests": 119,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1756443757991,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["aI Feature Flags Database"],
+          "fullName": "aI Feature Flags Database should create feature flags with proper validation",
+          "status": "skipped",
+          "title": "should create feature flags with proper validation",
+          "failureMessages": [],
+          "location": { "line": 134, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Feature Flags Database"],
+          "fullName": "aI Feature Flags Database should enforce unique constraint on feature flag names",
+          "status": "skipped",
+          "title": "should enforce unique constraint on feature flag names",
+          "failureMessages": [],
+          "location": { "line": 163, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Feature Flags Database"],
+          "fullName": "aI Feature Flags Database should perform efficient queries with indexing",
+          "status": "skipped",
+          "title": "should perform efficient queries with indexing",
+          "failureMessages": [],
+          "location": { "line": 194, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Cache Management Database"],
+          "fullName": "aI Cache Management Database should handle cache entries with TTL expiration",
+          "status": "skipped",
+          "title": "should handle cache entries with TTL expiration",
+          "failureMessages": [],
+          "location": { "line": 255, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Cache Management Database"],
+          "fullName": "aI Cache Management Database should support cache entry tagging and filtering",
+          "status": "skipped",
+          "title": "should support cache entry tagging and filtering",
+          "failureMessages": [],
+          "location": { "line": 287, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Cache Management Database"],
+          "fullName": "aI Cache Management Database should handle high-frequency cache operations",
+          "status": "skipped",
+          "title": "should handle high-frequency cache operations",
+          "failureMessages": [],
+          "location": { "line": 321, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Audit Logging Database"],
+          "fullName": "aI Audit Logging Database should log AI service operations with complete details",
+          "status": "skipped",
+          "title": "should log AI service operations with complete details",
+          "failureMessages": [],
+          "location": { "line": 372, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Audit Logging Database"],
+          "fullName": "aI Audit Logging Database should support complex audit trail queries",
+          "status": "skipped",
+          "title": "should support complex audit trail queries",
+          "failureMessages": [],
+          "location": { "line": 407, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Audit Logging Database"],
+          "fullName": "aI Audit Logging Database should maintain audit log immutability",
+          "status": "skipped",
+          "title": "should maintain audit log immutability",
+          "failureMessages": [],
+          "location": { "line": 460, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Monitoring Database"],
+          "fullName": "aI Monitoring Database should record performance metrics efficiently",
+          "status": "skipped",
+          "title": "should record performance metrics efficiently",
+          "failureMessages": [],
+          "location": { "line": 508, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Monitoring Database"],
+          "fullName": "aI Monitoring Database should support aggregation queries for monitoring dashboards",
+          "status": "skipped",
+          "title": "should support aggregation queries for monitoring dashboards",
+          "failureMessages": [],
+          "location": { "line": 539, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Monitoring Database"],
+          "fullName": "aI Monitoring Database should handle high-volume metric ingestion",
+          "status": "skipped",
+          "title": "should handle high-volume metric ingestion",
+          "failureMessages": [],
+          "location": { "line": 597, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Chat Database"],
+          "fullName": "aI Chat Database should maintain referential integrity between sessions and messages",
+          "status": "skipped",
+          "title": "should maintain referential integrity between sessions and messages",
+          "failureMessages": [],
+          "location": { "line": 660, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Chat Database"],
+          "fullName": "aI Chat Database should support efficient conversation history retrieval",
+          "status": "skipped",
+          "title": "should support efficient conversation history retrieval",
+          "failureMessages": [],
+          "location": { "line": 710, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Chat Database"],
+          "fullName": "aI Chat Database should handle concurrent message insertions",
+          "status": "skipped",
+          "title": "should handle concurrent message insertions",
+          "failureMessages": [],
+          "location": { "line": 770, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Database Performance"],
+          "fullName": "aI Database Performance should handle database connection pooling under load",
+          "status": "skipped",
+          "title": "should handle database connection pooling under load",
+          "failureMessages": [],
+          "location": { "line": 834, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Database Performance"],
+          "fullName": "aI Database Performance should maintain performance under mixed read/write operations",
+          "status": "skipped",
+          "title": "should maintain performance under mixed read/write operations",
+          "failureMessages": [],
+          "location": { "line": 855, "column": 3 },
+          "meta": {}
+        }
+      ],
+      "startTime": 1756443757991,
+      "endTime": 1756443757991,
+      "status": "passed",
+      "message": "",
+      "name": "D:/neonpro/apps/web/tests/integration/ai-database.integration.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "aI Services Ecosystem Integration Tests",
+            "full AI Chat Workflow Integration"
+          ],
+          "fullName": "aI Services Ecosystem Integration Tests full AI Chat Workflow Integration should handle complete AI chat workflow with all services",
+          "status": "skipped",
+          "title": "should handle complete AI chat workflow with all services",
+          "failureMessages": [],
+          "location": { "line": 836, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "aI Services Ecosystem Integration Tests",
+            "cross-Service Integration"
+          ],
+          "fullName": "aI Services Ecosystem Integration Tests cross-Service Integration should integrate no-show prediction with appointment optimization",
+          "status": "skipped",
+          "title": "should integrate no-show prediction with appointment optimization",
+          "failureMessages": [],
+          "location": { "line": 842, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "aI Services Ecosystem Integration Tests",
+            "real-Time Metrics Integration"
+          ],
+          "fullName": "aI Services Ecosystem Integration Tests real-Time Metrics Integration should collect and aggregate metrics across all services",
+          "status": "skipped",
+          "title": "should collect and aggregate metrics across all services",
+          "failureMessages": [],
+          "location": { "line": 848, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "aI Services Ecosystem Integration Tests",
+            "compliance Automation Integration"
+          ],
+          "fullName": "aI Services Ecosystem Integration Tests compliance Automation Integration should validate LGPD and ANVISA compliance across services",
+          "status": "failed",
+          "title": "should validate LGPD and ANVISA compliance across services",
+          "duration": 6.541599999999562,
+          "failureMessages": [
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3000/api/ai/compliance/validate-lgpd\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3000/api/ai/compliance/validate-lgpd\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3000/api/ai/compliance/validate-lgpd\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"
+          ],
+          "location": { "line": 854, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "aI Services Ecosystem Integration Tests",
+            "service Resilience and Fallbacks"
+          ],
+          "fullName": "aI Services Ecosystem Integration Tests service Resilience and Fallbacks should handle service failures gracefully with appropriate fallbacks",
+          "status": "skipped",
+          "title": "should handle service failures gracefully with appropriate fallbacks",
+          "failureMessages": [],
+          "location": { "line": 860, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Services Ecosystem Integration Tests", "performance Under Load"],
+          "fullName": "aI Services Ecosystem Integration Tests performance Under Load should maintain performance standards under concurrent load",
+          "status": "skipped",
+          "title": "should maintain performance standards under concurrent load",
+          "failureMessages": [],
+          "location": { "line": 866, "column": 5 },
+          "meta": {}
+        }
+      ],
+      "startTime": 1756443764164,
+      "endTime": 1756443764170.5415,
+      "status": "failed",
+      "message": "",
+      "name": "D:/neonpro/apps/web/tests/integration/ai-services-ecosystem.integration.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["universal AI Chat Integration"],
+          "fullName": "universal AI Chat Integration should create new chat session with proper LGPD compliance",
+          "status": "skipped",
+          "title": "should create new chat session with proper LGPD compliance",
+          "failureMessages": [],
+          "location": { "line": 146, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["universal AI Chat Integration"],
+          "fullName": "universal AI Chat Integration should process healthcare chat messages with safety checks",
+          "status": "skipped",
+          "title": "should process healthcare chat messages with safety checks",
+          "failureMessages": [],
+          "location": { "line": 180, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["universal AI Chat Integration"],
+          "fullName": "universal AI Chat Integration should detect and handle emergency situations appropriately",
+          "status": "skipped",
+          "title": "should detect and handle emergency situations appropriately",
+          "failureMessages": [],
+          "location": { "line": 217, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["universal AI Chat Integration"],
+          "fullName": "universal AI Chat Integration should maintain conversation context across multiple messages",
+          "status": "skipped",
+          "title": "should maintain conversation context across multiple messages",
+          "failureMessages": [],
+          "location": { "line": 248, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["compliance Automation Integration"],
+          "fullName": "compliance Automation Integration should validate LGPD compliance for patient data operations",
+          "status": "failed",
+          "title": "should validate LGPD compliance for patient data operations",
+          "duration": 11.096099999999751,
+          "failureMessages": [
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"
+          ],
+          "location": { "line": 307, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["compliance Automation Integration"],
+          "fullName": "compliance Automation Integration should detect LGPD violations for non-compliant operations",
+          "status": "failed",
+          "title": "should detect LGPD violations for non-compliant operations",
+          "duration": 6.759100000000217,
+          "failureMessages": [
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"
+          ],
+          "location": { "line": 349, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["compliance Automation Integration"],
+          "fullName": "compliance Automation Integration should validate ANVISA compliance for medical device operations",
+          "status": "failed",
+          "title": "should validate ANVISA compliance for medical device operations",
+          "duration": 7.098500000000058,
+          "failureMessages": [
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"
+          ],
+          "location": { "line": 385, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["compliance Automation Integration"],
+          "fullName": "compliance Automation Integration should validate CFM compliance for telemedicine operations",
+          "status": "failed",
+          "title": "should validate CFM compliance for telemedicine operations",
+          "duration": 4.23279999999977,
+          "failureMessages": [
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/validate\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"
+          ],
+          "location": { "line": 422, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["compliance Automation Integration"],
+          "fullName": "compliance Automation Integration should generate comprehensive compliance reports",
+          "status": "failed",
+          "title": "should generate comprehensive compliance reports",
+          "duration": 3.7945999999992637,
+          "failureMessages": [
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/report\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/report\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/compliance/report\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"
+          ],
+          "location": { "line": 460, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["conversation Management Integration"],
+          "fullName": "conversation Management Integration should analyze conversation sentiment and emotions",
+          "status": "skipped",
+          "title": "should analyze conversation sentiment and emotions",
+          "failureMessages": [],
+          "location": { "line": 540, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["conversation Management Integration"],
+          "fullName": "conversation Management Integration should extract medical topics and keywords",
+          "status": "skipped",
+          "title": "should extract medical topics and keywords",
+          "failureMessages": [],
+          "location": { "line": 576, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["conversation Management Integration"],
+          "fullName": "conversation Management Integration should perform comprehensive safety assessment",
+          "status": "skipped",
+          "title": "should perform comprehensive safety assessment",
+          "failureMessages": [],
+          "location": { "line": 604, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["conversation Management Integration"],
+          "fullName": "conversation Management Integration should generate conversation summary with key insights",
+          "status": "skipped",
+          "title": "should generate conversation summary with key insights",
+          "failureMessages": [],
+          "location": { "line": 631, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["conversation Management Integration"],
+          "fullName": "conversation Management Integration should validate conversation compliance across all regulations",
+          "status": "skipped",
+          "title": "should validate conversation compliance across all regulations",
+          "failureMessages": [],
+          "location": { "line": 658, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Database Integration"],
+          "fullName": "aI Database Integration should handle concurrent AI chat sessions",
+          "status": "skipped",
+          "title": "should handle concurrent AI chat sessions",
+          "failureMessages": [],
+          "location": { "line": 710, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Database Integration"],
+          "fullName": "aI Database Integration should enforce Row Level Security for AI data",
+          "status": "skipped",
+          "title": "should enforce Row Level Security for AI data",
+          "failureMessages": [],
+          "location": { "line": 751, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Database Integration"],
+          "fullName": "aI Database Integration should maintain data integrity for AI services schema",
+          "status": "skipped",
+          "title": "should maintain data integrity for AI services schema",
+          "failureMessages": [],
+          "location": { "line": 768, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Database Integration"],
+          "fullName": "aI Database Integration should perform efficient queries on AI data with proper indexing",
+          "status": "skipped",
+          "title": "should perform efficient queries on AI data with proper indexing",
+          "failureMessages": [],
+          "location": { "line": 786, "column": 3 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aI Services End-to-End Integration"],
+          "fullName": "aI Services End-to-End Integration should complete full healthcare conversation flow with compliance",
+          "status": "failed",
+          "title": "should complete full healthcare conversation flow with compliance",
+          "duration": 7.0461999999997715,
+          "failureMessages": [
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/universal-chat/session\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/universal-chat/session\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)",
+            "NetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://localhost:3001/api/ai/universal-chat/session\": \n    at Fetch.onError (file:///D:/neonpro/node_modules/.pnpm/happy-dom@18.0.1/node_modules/happy-dom/src/fetch/Fetch.ts:673:4)\n    at ClientRequest.emit (node:events:531:35)\n    at emitErrorEvent (node:_http_client:105:11)\n    at Socket.socketErrorListener (node:_http_client:518:5)\n    at Socket.emit (node:events:519:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)"
+          ],
+          "location": { "line": 828, "column": 3 },
+          "meta": {}
+        }
+      ],
+      "startTime": 1756443764202,
+      "endTime": 1756443764248.0461,
+      "status": "failed",
+      "message": "",
+      "name": "D:/neonpro/apps/web/tests/integration/ai-services.integration.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "health Check and Connection"],
+          "fullName": "aPI Client Integration Tests health Check and Connection should connect to Hono backend successfully",
+          "status": "skipped",
+          "title": "should connect to Hono backend successfully",
+          "failureMessages": [],
+          "location": { "line": 121, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "health Check and Connection"],
+          "fullName": "aPI Client Integration Tests health Check and Connection should handle backend connection failures",
+          "status": "skipped",
+          "title": "should handle backend connection failures",
+          "failureMessages": [],
+          "location": { "line": 149, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "authentication API Integration"],
+          "fullName": "aPI Client Integration Tests authentication API Integration should authenticate user with backend",
+          "status": "skipped",
+          "title": "should authenticate user with backend",
+          "failureMessages": [],
+          "location": { "line": 161, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "authentication API Integration"],
+          "fullName": "aPI Client Integration Tests authentication API Integration should handle authentication errors",
+          "status": "skipped",
+          "title": "should handle authentication errors",
+          "failureMessages": [],
+          "location": { "line": 206, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "authentication API Integration"],
+          "fullName": "aPI Client Integration Tests authentication API Integration should refresh expired tokens",
+          "status": "skipped",
+          "title": "should refresh expired tokens",
+          "failureMessages": [],
+          "location": { "line": 235, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "patient API Integration"],
+          "fullName": "aPI Client Integration Tests patient API Integration should create patient via API with validation",
+          "status": "skipped",
+          "title": "should create patient via API with validation",
+          "failureMessages": [],
+          "location": { "line": 268, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "patient API Integration"],
+          "fullName": "aPI Client Integration Tests patient API Integration should handle API validation errors",
+          "status": "skipped",
+          "title": "should handle API validation errors",
+          "failureMessages": [],
+          "location": { "line": 317, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "patient API Integration"],
+          "fullName": "aPI Client Integration Tests patient API Integration should fetch patients with pagination and filters",
+          "status": "skipped",
+          "title": "should fetch patients with pagination and filters",
+          "failureMessages": [],
+          "location": { "line": 350, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "error Handling and Retry Logic"],
+          "fullName": "aPI Client Integration Tests error Handling and Retry Logic should retry failed requests with exponential backoff",
+          "status": "skipped",
+          "title": "should retry failed requests with exponential backoff",
+          "failureMessages": [],
+          "location": { "line": 399, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "error Handling and Retry Logic"],
+          "fullName": "aPI Client Integration Tests error Handling and Retry Logic should handle timeout scenarios gracefully",
+          "status": "skipped",
+          "title": "should handle timeout scenarios gracefully",
+          "failureMessages": [],
+          "location": { "line": 444, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "error Handling and Retry Logic"],
+          "fullName": "aPI Client Integration Tests error Handling and Retry Logic should handle rate limiting with proper backoff",
+          "status": "skipped",
+          "title": "should handle rate limiting with proper backoff",
+          "failureMessages": [],
+          "location": { "line": 464, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["aPI Client Integration Tests", "performance Monitoring"],
+          "fullName": "aPI Client Integration Tests performance Monitoring should measure API response times",
+          "status": "skipped",
+          "title": "should measure API response times",
+          "failureMessages": [],
+          "location": { "line": 520, "column": 5 },
+          "meta": {}
+        }
+      ],
+      "startTime": 1756443757991,
+      "endTime": 1756443757991,
+      "status": "passed",
+      "message": "",
+      "name": "D:/neonpro/apps/web/tests/integration/api-client-integration.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["authentication Flow Integration", "login Flow"],
+          "fullName": "authentication Flow Integration login Flow should complete full login flow successfully",
+          "status": "skipped",
+          "title": "should complete full login flow successfully",
+          "failureMessages": [],
+          "location": { "line": 156, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["authentication Flow Integration", "login Flow"],
+          "fullName": "authentication Flow Integration login Flow should handle authentication errors properly",
+          "status": "skipped",
+          "title": "should handle authentication errors properly",
+          "failureMessages": [],
+          "location": { "line": 235, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["authentication Flow Integration", "session Management"],
+          "fullName": "authentication Flow Integration session Management should refresh session when token expires",
+          "status": "skipped",
+          "title": "should refresh session when token expires",
+          "failureMessages": [],
+          "location": { "line": 272, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["authentication Flow Integration", "session Management"],
+          "fullName": "authentication Flow Integration session Management should handle session persistence across page reloads",
+          "status": "skipped",
+          "title": "should handle session persistence across page reloads",
+          "failureMessages": [],
+          "location": { "line": 293, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["authentication Flow Integration", "role-based Access Control"],
+          "fullName": "authentication Flow Integration role-based Access Control should enforce doctor role permissions",
+          "status": "skipped",
+          "title": "should enforce doctor role permissions",
+          "failureMessages": [],
+          "location": { "line": 317, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["authentication Flow Integration", "role-based Access Control"],
+          "fullName": "authentication Flow Integration role-based Access Control should restrict access for unauthorized roles",
+          "status": "skipped",
+          "title": "should restrict access for unauthorized roles",
+          "failureMessages": [],
+          "location": { "line": 353, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["authentication Flow Integration", "role-based Access Control"],
+          "fullName": "authentication Flow Integration role-based Access Control should handle multi-tenant isolation",
+          "status": "skipped",
+          "title": "should handle multi-tenant isolation",
+          "failureMessages": [],
+          "location": { "line": 388, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["authentication Flow Integration", "logout and Session Cleanup"],
+          "fullName": "authentication Flow Integration logout and Session Cleanup should properly cleanup session on logout",
+          "status": "skipped",
+          "title": "should properly cleanup session on logout",
+          "failureMessages": [],
+          "location": { "line": 421, "column": 5 },
+          "meta": {}
+        }
+      ],
+      "startTime": 1756443757991,
+      "endTime": 1756443757991,
+      "status": "passed",
+      "message": "",
+      "name": "D:/neonpro/apps/web/tests/integration/auth-flow.integration.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["database Integration Tests", "prisma CRUD Operations"],
+          "fullName": "database Integration Tests prisma CRUD Operations should create patient with referential integrity",
+          "status": "skipped",
+          "title": "should create patient with referential integrity",
+          "failureMessages": [],
+          "location": { "line": 150, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "prisma CRUD Operations"],
+          "fullName": "database Integration Tests prisma CRUD Operations should handle complex queries with relationships",
+          "status": "skipped",
+          "title": "should handle complex queries with relationships",
+          "failureMessages": [],
+          "location": { "line": 181, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "transaction Handling"],
+          "fullName": "database Integration Tests transaction Handling should handle complex multi-table transactions atomically",
+          "status": "skipped",
+          "title": "should handle complex multi-table transactions atomically",
+          "failureMessages": [],
+          "location": { "line": 219, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "transaction Handling"],
+          "fullName": "database Integration Tests transaction Handling should rollback transaction on failure to maintain data integrity",
+          "status": "skipped",
+          "title": "should rollback transaction on failure to maintain data integrity",
+          "failureMessages": [],
+          "location": { "line": 268, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "transaction Handling"],
+          "fullName": "database Integration Tests transaction Handling should handle appointment scheduling with conflict detection",
+          "status": "skipped",
+          "title": "should handle appointment scheduling with conflict detection",
+          "failureMessages": [],
+          "location": { "line": 297, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "performance Optimization"],
+          "fullName": "database Integration Tests performance Optimization should optimize queries for large datasets with proper indexing",
+          "status": "skipped",
+          "title": "should optimize queries for large datasets with proper indexing",
+          "failureMessages": [],
+          "location": { "line": 339, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "performance Optimization"],
+          "fullName": "database Integration Tests performance Optimization should handle connection pooling efficiently",
+          "status": "skipped",
+          "title": "should handle connection pooling efficiently",
+          "failureMessages": [],
+          "location": { "line": 372, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "data Consistency and Integrity"],
+          "fullName": "database Integration Tests data Consistency and Integrity should maintain referential integrity across related tables",
+          "status": "skipped",
+          "title": "should maintain referential integrity across related tables",
+          "failureMessages": [],
+          "location": { "line": 401, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "data Consistency and Integrity"],
+          "fullName": "database Integration Tests data Consistency and Integrity should enforce unique constraints properly",
+          "status": "skipped",
+          "title": "should enforce unique constraints properly",
+          "failureMessages": [],
+          "location": { "line": 429, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "data Consistency and Integrity"],
+          "fullName": "database Integration Tests data Consistency and Integrity should validate foreign key relationships",
+          "status": "skipped",
+          "title": "should validate foreign key relationships",
+          "failureMessages": [],
+          "location": { "line": 450, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "supabase Direct Operations"],
+          "fullName": "database Integration Tests supabase Direct Operations should execute stored procedures for complex healthcare operations",
+          "status": "skipped",
+          "title": "should execute stored procedures for complex healthcare operations",
+          "failureMessages": [],
+          "location": { "line": 469, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "supabase Direct Operations"],
+          "fullName": "database Integration Tests supabase Direct Operations should handle real-time triggers for audit logging",
+          "status": "skipped",
+          "title": "should handle real-time triggers for audit logging",
+          "failureMessages": [],
+          "location": { "line": 505, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "multi-tenant Data Isolation"],
+          "fullName": "database Integration Tests multi-tenant Data Isolation should enforce row-level security for clinic isolation",
+          "status": "skipped",
+          "title": "should enforce row-level security for clinic isolation",
+          "failureMessages": [],
+          "location": { "line": 540, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["database Integration Tests", "multi-tenant Data Isolation"],
+          "fullName": "database Integration Tests multi-tenant Data Isolation should prevent cross-tenant data access",
+          "status": "skipped",
+          "title": "should prevent cross-tenant data access",
+          "failureMessages": [],
+          "location": { "line": 583, "column": 5 },
+          "meta": {}
+        }
+      ],
+      "startTime": 1756443757991,
+      "endTime": 1756443757991,
+      "status": "passed",
+      "message": "",
+      "name": "D:/neonpro/apps/web/tests/integration/database-integration.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "emergency Access Request Flow"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests emergency Access Request Flow should handle critical emergency access request immediately",
+          "status": "skipped",
+          "title": "should handle critical emergency access request immediately",
+          "failureMessages": [],
+          "location": { "line": 224, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "emergency Access Request Flow"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests emergency Access Request Flow should validate emergency justification and user credentials",
+          "status": "skipped",
+          "title": "should validate emergency justification and user credentials",
+          "failureMessages": [],
+          "location": { "line": 265, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "emergency Access Request Flow"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests emergency Access Request Flow should handle non-critical emergencies with approval workflow",
+          "status": "skipped",
+          "title": "should handle non-critical emergencies with approval workflow",
+          "failureMessages": [],
+          "location": { "line": 299, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "emergency Access Grant and Management"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests emergency Access Grant and Management should grant appropriate emergency access with time limits",
+          "status": "skipped",
+          "title": "should grant appropriate emergency access with time limits",
+          "failureMessages": [],
+          "location": { "line": 333, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "emergency Access Grant and Management"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests emergency Access Grant and Management should automatically revoke expired emergency access",
+          "status": "skipped",
+          "title": "should automatically revoke expired emergency access",
+          "failureMessages": [],
+          "location": { "line": 366, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "emergency Access Grant and Management"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests emergency Access Grant and Management should handle emergency access extension for ongoing critical cases",
+          "status": "skipped",
+          "title": "should handle emergency access extension for ongoing critical cases",
+          "failureMessages": [],
+          "location": { "line": 392, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "lGPD Compliance in Emergency Scenarios"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests lGPD Compliance in Emergency Scenarios should ensure emergency access complies with vital interests legal basis",
+          "status": "skipped",
+          "title": "should ensure emergency access complies with vital interests legal basis",
+          "failureMessages": [],
+          "location": { "line": 417, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "lGPD Compliance in Emergency Scenarios"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests lGPD Compliance in Emergency Scenarios should create comprehensive audit trail for emergency access",
+          "status": "skipped",
+          "title": "should create comprehensive audit trail for emergency access",
+          "failureMessages": [],
+          "location": { "line": 449, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "emergency Notifications and Alerting"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests emergency Notifications and Alerting should immediately notify all relevant staff of emergency access",
+          "status": "skipped",
+          "title": "should immediately notify all relevant staff of emergency access",
+          "failureMessages": [],
+          "location": { "line": 487, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "emergency Notifications and Alerting"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests emergency Notifications and Alerting should log all emergency notifications for audit purposes",
+          "status": "skipped",
+          "title": "should log all emergency notifications for audit purposes",
+          "failureMessages": [],
+          "location": { "line": 546, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "performance and Response Time Requirements"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests performance and Response Time Requirements should process critical emergency requests within 10 seconds",
+          "status": "skipped",
+          "title": "should process critical emergency requests within 10 seconds",
+          "failureMessages": [],
+          "location": { "line": 573, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "performance and Response Time Requirements"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests performance and Response Time Requirements should handle multiple concurrent emergency requests efficiently",
+          "status": "skipped",
+          "title": "should handle multiple concurrent emergency requests efficiently",
+          "failureMessages": [],
+          "location": { "line": 605, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "integration with Hospital Systems"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests integration with Hospital Systems should integrate with hospital alert systems during emergencies",
+          "status": "skipped",
+          "title": "should integrate with hospital alert systems during emergencies",
+          "failureMessages": [],
+          "location": { "line": 640, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "emergency Access Protocol Integration Tests",
+            "integration with Hospital Systems"
+          ],
+          "fullName": "emergency Access Protocol Integration Tests integration with Hospital Systems should maintain emergency access logs for regulatory compliance",
+          "status": "failed",
+          "title": "should maintain emergency access logs for regulatory compliance",
+          "duration": 1.9476000000004206,
+          "failureMessages": [
+            "TypeError: Cannot read properties of undefined (reading 'sendEmergencyAlert')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\emergency-access-protocol.test.tsx:211:29\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)",
+            "TypeError: Cannot read properties of undefined (reading 'sendEmergencyAlert')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\emergency-access-protocol.test.tsx:211:29\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)",
+            "TypeError: Cannot read properties of undefined (reading 'sendEmergencyAlert')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\emergency-access-protocol.test.tsx:211:29\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)"
+          ],
+          "location": { "line": 674, "column": 5 },
+          "meta": {}
+        }
+      ],
+      "startTime": 1756443763396,
+      "endTime": 1756443763397.9475,
+      "status": "failed",
+      "message": "",
+      "name": "D:/neonpro/apps/web/tests/integration/emergency-access-protocol.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["lGPD Compliance Flow Integration Tests", "consent Management"],
+          "fullName": "lGPD Compliance Flow Integration Tests consent Management should record patient consent with all required details",
+          "status": "skipped",
+          "title": "should record patient consent with all required details",
+          "failureMessages": [],
+          "location": { "line": 132, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["lGPD Compliance Flow Integration Tests", "consent Management"],
+          "fullName": "lGPD Compliance Flow Integration Tests consent Management should validate purpose limitation for data processing",
+          "status": "skipped",
+          "title": "should validate purpose limitation for data processing",
+          "failureMessages": [],
+          "location": { "line": 165, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["lGPD Compliance Flow Integration Tests", "consent Management"],
+          "fullName": "lGPD Compliance Flow Integration Tests consent Management should handle consent revocation with immediate effect",
+          "status": "skipped",
+          "title": "should handle consent revocation with immediate effect",
+          "failureMessages": [],
+          "location": { "line": 187, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["lGPD Compliance Flow Integration Tests", "data Subject Rights"],
+          "fullName": "lGPD Compliance Flow Integration Tests data Subject Rights should process data access requests (Right to Access)",
+          "status": "skipped",
+          "title": "should process data access requests (Right to Access)",
+          "failureMessages": [],
+          "location": { "line": 230, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["lGPD Compliance Flow Integration Tests", "data Subject Rights"],
+          "fullName": "lGPD Compliance Flow Integration Tests data Subject Rights should handle data rectification requests (Right to Rectification)",
+          "status": "skipped",
+          "title": "should handle data rectification requests (Right to Rectification)",
+          "failureMessages": [],
+          "location": { "line": 292, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["lGPD Compliance Flow Integration Tests", "data Subject Rights"],
+          "fullName": "lGPD Compliance Flow Integration Tests data Subject Rights should handle data erasure requests (Right to Erasure)",
+          "status": "skipped",
+          "title": "should handle data erasure requests (Right to Erasure)",
+          "failureMessages": [],
+          "location": { "line": 320, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["lGPD Compliance Flow Integration Tests", "data Subject Rights"],
+          "fullName": "lGPD Compliance Flow Integration Tests data Subject Rights should process data portability requests (Right to Data Portability)",
+          "status": "skipped",
+          "title": "should process data portability requests (Right to Data Portability)",
+          "failureMessages": [],
+          "location": { "line": 349, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "lGPD Compliance Flow Integration Tests",
+            "audit Trail and Monitoring"
+          ],
+          "fullName": "lGPD Compliance Flow Integration Tests audit Trail and Monitoring should create comprehensive audit entries for all data operations",
+          "status": "skipped",
+          "title": "should create comprehensive audit entries for all data operations",
+          "failureMessages": [],
+          "location": { "line": 400, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "lGPD Compliance Flow Integration Tests",
+            "audit Trail and Monitoring"
+          ],
+          "fullName": "lGPD Compliance Flow Integration Tests audit Trail and Monitoring should provide comprehensive audit trail reports",
+          "status": "skipped",
+          "title": "should provide comprehensive audit trail reports",
+          "failureMessages": [],
+          "location": { "line": 452, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "lGPD Compliance Flow Integration Tests",
+            "data Retention and Lifecycle Management"
+          ],
+          "fullName": "lGPD Compliance Flow Integration Tests data Retention and Lifecycle Management should enforce Brazilian healthcare data retention policies",
+          "status": "skipped",
+          "title": "should enforce Brazilian healthcare data retention policies",
+          "failureMessages": [],
+          "location": { "line": 502, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "lGPD Compliance Flow Integration Tests",
+            "data Retention and Lifecycle Management"
+          ],
+          "fullName": "lGPD Compliance Flow Integration Tests data Retention and Lifecycle Management should handle automated data anonymization on retention expiry",
+          "status": "skipped",
+          "title": "should handle automated data anonymization on retention expiry",
+          "failureMessages": [],
+          "location": { "line": 539, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "lGPD Compliance Flow Integration Tests",
+            "brazilian Healthcare Specific Compliance"
+          ],
+          "fullName": "lGPD Compliance Flow Integration Tests brazilian Healthcare Specific Compliance should validate CPF-based identity verification for data requests",
+          "status": "skipped",
+          "title": "should validate CPF-based identity verification for data requests",
+          "failureMessages": [],
+          "location": { "line": 572, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "lGPD Compliance Flow Integration Tests",
+            "brazilian Healthcare Specific Compliance"
+          ],
+          "fullName": "lGPD Compliance Flow Integration Tests brazilian Healthcare Specific Compliance should enforce professional council registration validation",
+          "status": "skipped",
+          "title": "should enforce professional council registration validation",
+          "failureMessages": [],
+          "location": { "line": 607, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "lGPD Compliance Flow Integration Tests",
+            "brazilian Healthcare Specific Compliance"
+          ],
+          "fullName": "lGPD Compliance Flow Integration Tests brazilian Healthcare Specific Compliance should handle ANVISA reporting compliance for medication data",
+          "status": "passed",
+          "title": "should handle ANVISA reporting compliance for medication data",
+          "duration": 1.714300000000037,
+          "failureMessages": [],
+          "location": { "line": 625, "column": 5 },
+          "meta": {}
+        }
+      ],
+      "startTime": 1756443763904,
+      "endTime": 1756443763905.7144,
+      "status": "passed",
+      "message": "",
+      "name": "D:/neonpro/apps/web/tests/integration/lgpd-compliance-flow.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "create Patient"],
+          "fullName": "patient CRUD Integration Tests create Patient should create patient with valid Brazilian data",
+          "status": "skipped",
+          "title": "should create patient with valid Brazilian data",
+          "failureMessages": [],
+          "location": { "line": 184, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "create Patient"],
+          "fullName": "patient CRUD Integration Tests create Patient should reject patient creation with invalid CPF",
+          "status": "skipped",
+          "title": "should reject patient creation with invalid CPF",
+          "failureMessages": [],
+          "location": { "line": 225, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "create Patient"],
+          "fullName": "patient CRUD Integration Tests create Patient should enforce LGPD consent requirement",
+          "status": "skipped",
+          "title": "should enforce LGPD consent requirement",
+          "failureMessages": [],
+          "location": { "line": 257, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "create Patient"],
+          "fullName": "patient CRUD Integration Tests create Patient should enforce multi-tenant isolation on creation",
+          "status": "skipped",
+          "title": "should enforce multi-tenant isolation on creation",
+          "failureMessages": [],
+          "location": { "line": 276, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "read Patient"],
+          "fullName": "patient CRUD Integration Tests read Patient should fetch patient by ID with proper authorization",
+          "status": "skipped",
+          "title": "should fetch patient by ID with proper authorization",
+          "failureMessages": [],
+          "location": { "line": 296, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "read Patient"],
+          "fullName": "patient CRUD Integration Tests read Patient should search patients with filters and pagination",
+          "status": "skipped",
+          "title": "should search patients with filters and pagination",
+          "failureMessages": [],
+          "location": { "line": 325, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "update Patient"],
+          "fullName": "patient CRUD Integration Tests update Patient should update patient with validation and audit trail",
+          "status": "skipped",
+          "title": "should update patient with validation and audit trail",
+          "failureMessages": [],
+          "location": { "line": 368, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "update Patient"],
+          "fullName": "patient CRUD Integration Tests update Patient should prevent updating sensitive data without proper authorization",
+          "status": "skipped",
+          "title": "should prevent updating sensitive data without proper authorization",
+          "failureMessages": [],
+          "location": { "line": 418, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "delete Patient"],
+          "fullName": "patient CRUD Integration Tests delete Patient should perform soft delete with LGPD compliance",
+          "status": "failed",
+          "title": "should perform soft delete with LGPD compliance",
+          "duration": 1.8751999999999498,
+          "failureMessages": [
+            "TypeError: Cannot read properties of undefined (reading 'isValid')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\patient-crud.integration.test.tsx:134:22\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)",
+            "TypeError: Cannot read properties of undefined (reading 'isValid')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\patient-crud.integration.test.tsx:134:22\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)",
+            "TypeError: Cannot read properties of undefined (reading 'isValid')\n    at D:\\neonpro\\apps\\web\\tests\\integration\\patient-crud.integration.test.tsx:134:22\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11\n    at file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)\n    at runHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1436:51)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1442:25)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at callSuiteHook (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1429:21)\n    at runTest (file:///D:/neonpro/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:1566:26)"
+          ],
+          "location": { "line": 437, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "lGPD Compliance Integration"],
+          "fullName": "patient CRUD Integration Tests lGPD Compliance Integration should validate data processing purposes",
+          "status": "skipped",
+          "title": "should validate data processing purposes",
+          "failureMessages": [],
+          "location": { "line": 478, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "lGPD Compliance Integration"],
+          "fullName": "patient CRUD Integration Tests lGPD Compliance Integration should handle data subject access requests",
+          "status": "skipped",
+          "title": "should handle data subject access requests",
+          "failureMessages": [],
+          "location": { "line": 492, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "performance and Cache Integration"],
+          "fullName": "patient CRUD Integration Tests performance and Cache Integration should optimize query performance for large datasets",
+          "status": "skipped",
+          "title": "should optimize query performance for large datasets",
+          "failureMessages": [],
+          "location": { "line": 518, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "performance and Cache Integration"],
+          "fullName": "patient CRUD Integration Tests performance and Cache Integration should handle cache invalidation on updates",
+          "status": "skipped",
+          "title": "should handle cache invalidation on updates",
+          "failureMessages": [],
+          "location": { "line": 560, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "error Handling and Recovery"],
+          "fullName": "patient CRUD Integration Tests error Handling and Recovery should handle network errors with retry logic",
+          "status": "skipped",
+          "title": "should handle network errors with retry logic",
+          "failureMessages": [],
+          "location": { "line": 588, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["patient CRUD Integration Tests", "error Handling and Recovery"],
+          "fullName": "patient CRUD Integration Tests error Handling and Recovery should handle database constraint violations",
+          "status": "skipped",
+          "title": "should handle database constraint violations",
+          "failureMessages": [],
+          "location": { "line": 640, "column": 5 },
+          "meta": {}
+        }
+      ],
+      "startTime": 1756443764473,
+      "endTime": 1756443764474.8752,
+      "status": "failed",
+      "message": "",
+      "name": "D:/neonpro/apps/web/tests/integration/patient-crud.integration.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "real-time Updates Integration Tests",
+            "realtime Connection Management"
+          ],
+          "fullName": "real-time Updates Integration Tests realtime Connection Management should establish realtime connection successfully",
+          "status": "skipped",
+          "title": "should establish realtime connection successfully",
+          "failureMessages": [],
+          "location": { "line": 135, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "real-time Updates Integration Tests",
+            "realtime Connection Management"
+          ],
+          "fullName": "real-time Updates Integration Tests realtime Connection Management should handle connection failures and reconnection",
+          "status": "skipped",
+          "title": "should handle connection failures and reconnection",
+          "failureMessages": [],
+          "location": { "line": 172, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "real-time Updates Integration Tests",
+            "patient Data Real-time Updates"
+          ],
+          "fullName": "real-time Updates Integration Tests patient Data Real-time Updates should receive patient updates and sync cache",
+          "status": "skipped",
+          "title": "should receive patient updates and sync cache",
+          "failureMessages": [],
+          "location": { "line": 207, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "real-time Updates Integration Tests",
+            "patient Data Real-time Updates"
+          ],
+          "fullName": "real-time Updates Integration Tests patient Data Real-time Updates should handle concurrent patient updates from multiple users",
+          "status": "skipped",
+          "title": "should handle concurrent patient updates from multiple users",
+          "failureMessages": [],
+          "location": { "line": 265, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "real-time Updates Integration Tests",
+            "appointment Real-time Notifications"
+          ],
+          "fullName": "real-time Updates Integration Tests appointment Real-time Notifications should notify all relevant users of appointment changes",
+          "status": "skipped",
+          "title": "should notify all relevant users of appointment changes",
+          "failureMessages": [],
+          "location": { "line": 297, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "real-time Updates Integration Tests",
+            "appointment Real-time Notifications"
+          ],
+          "fullName": "real-time Updates Integration Tests appointment Real-time Notifications should handle appointment scheduling conflicts in real-time",
+          "status": "skipped",
+          "title": "should handle appointment scheduling conflicts in real-time",
+          "failureMessages": [],
+          "location": { "line": 352, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "real-time Updates Integration Tests",
+            "emergency Alerts Real-time Broadcasting"
+          ],
+          "fullName": "real-time Updates Integration Tests emergency Alerts Real-time Broadcasting should broadcast emergency alerts to all clinic staff immediately",
+          "status": "skipped",
+          "title": "should broadcast emergency alerts to all clinic staff immediately",
+          "failureMessages": [],
+          "location": { "line": 416, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["real-time Updates Integration Tests", "performance and Scalability"],
+          "fullName": "real-time Updates Integration Tests performance and Scalability should handle high-frequency updates without performance degradation",
+          "status": "skipped",
+          "title": "should handle high-frequency updates without performance degradation",
+          "failureMessages": [],
+          "location": { "line": 481, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": ["real-time Updates Integration Tests", "performance and Scalability"],
+          "fullName": "real-time Updates Integration Tests performance and Scalability should handle connection drops gracefully with reconnection",
+          "status": "skipped",
+          "title": "should handle connection drops gracefully with reconnection",
+          "failureMessages": [],
+          "location": { "line": 539, "column": 5 },
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "real-time Updates Integration Tests",
+            "multi-tenant Isolation in Real-time"
+          ],
+          "fullName": "real-time Updates Integration Tests multi-tenant Isolation in Real-time should ensure clinic isolation in realtime subscriptions",
+          "status": "skipped",
+          "title": "should ensure clinic isolation in realtime subscriptions",
+          "failureMessages": [],
+          "location": { "line": 592, "column": 5 },
+          "meta": {}
+        }
+      ],
+      "startTime": 1756443757991,
+      "endTime": 1756443757991,
+      "status": "passed",
+      "message": "",
+      "name": "D:/neonpro/apps/web/tests/integration/real-time-updates.test.tsx"
+    }
+  ]
+}

@@ -1,5 +1,13 @@
 name: 🚀 Performance Tests
 
+# Permissions for GitHub Actions operations
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: write
+  actions: read
+
 on:
   # Execute on PRs to main branches
   pull_request:

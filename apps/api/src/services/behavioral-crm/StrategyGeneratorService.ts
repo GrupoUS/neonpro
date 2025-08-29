@@ -426,7 +426,7 @@ export class StrategyGeneratorService {
 
       // Adapt content to personality type
       const content = await this.adaptContentToPersonality(
-        baseAction.content || '',
+        baseAction.content || "",
         profile.personalityType,
         profile.patterns,
       );

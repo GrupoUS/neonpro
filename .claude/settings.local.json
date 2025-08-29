@@ -94,7 +94,18 @@
       "mcp__supabase__get_anon_key",
       "mcp__supabase__get_project",
       "mcp__supabase__search_docs",
-      "mcp__supabase__execute_sql"
+      "mcp__supabase__execute_sql",
+      "Read(//**)",
+      "mcp__Sequential_Thinking__sequentialthinking",
+      "Bash(source:*)",
+      "Bash(log_info \"TEST\" \"Testing commons.sh logging function\")",
+      "Bash(touch:*)",
+      "Bash(cleanup_temp_files)",
+      "Bash(rm:*)",
+      "Bash(./.claude/hooks/pre-tool.sh:*)",
+      "Bash(/mnt/d/neonpro/.claude/hooks/pre-tool.sh:*)",
+      "Bash(/mnt/d/neonpro/.claude/hooks/post-tool.sh:*)",
+      "Bash(/mnt/d/neonpro/.claude/hooks/session-stop.sh test_session:*)"
     ],
     "deny": [
       "Edit",
@@ -114,7 +125,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "D:\\neonpro\\.claude\\hooks\\pre-tool.bat",
+            "command": "/mnt/d/neonpro/.claude/hooks/pre-tool.sh",
             "timeout": 45
           }
         ]
@@ -126,7 +137,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "D:\\neonpro\\.claude\\hooks\\post-tool.bat",
+            "command": "/mnt/d/neonpro/.claude/hooks/post-tool.sh",
             "timeout": 60
           }
         ]
@@ -137,7 +148,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "D:\\neonpro\\.claude\\hooks\\session-stop.bat",
+            "command": "/mnt/d/neonpro/.claude/hooks/session-stop.sh",
             "timeout": 90
           }
         ]

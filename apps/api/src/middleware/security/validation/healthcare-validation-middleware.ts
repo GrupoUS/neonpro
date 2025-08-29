@@ -289,7 +289,10 @@ export class HealthcareInputValidator {
   /**
    * Validate data against Zod schema
    */
-  private async validateSchema(schema: z.ZodSchema<unknown>, data: unknown): Promise<ValidationResult> {
+  private async validateSchema(
+    schema: z.ZodSchema<unknown>,
+    data: unknown,
+  ): Promise<ValidationResult> {
     try {
       const validatedData = await schema.parseAsync(data);
       return {
@@ -326,8 +329,8 @@ export class HealthcareInputValidator {
     const warnings: ValidationErrorDetail[] = [];
 
     // Check for duplicate CPF in high-priority contexts
-    if (context === ValidationContext.PATIENT_REGISTRATION && (data as { cpf?: string }).cpf) {
-      const duplicateCheck = await this.checkCPFDuplication((data as { cpf: string }).cpf);
+    if (context === ValidationContext.PATIENT_REGISTRATION && (data as { cpf?: string; }).cpf) {
+      const duplicateCheck = await this.checkCPFDuplication((data as { cpf: string; }).cpf);
       if (duplicateCheck.isDuplicate) {
         return {
           success: false,
@@ -342,8 +345,19 @@ export class HealthcareInputValidator {
     }
 
     // Validate professional licenses for provider contexts
-    if (context === ValidationContext.PROVIDER_REGISTRATION && (data as { licenses?: unknown }).licenses) {
-      for (const license of (data as { licenses: { number: string; type: BrazilianHealthcareLicense; state: BrazilianState; }[] }).licenses) {
+    if (
+      context === ValidationContext.PROVIDER_REGISTRATION
+      && (data as { licenses?: unknown; }).licenses
+    ) {
+      for (
+        const license of (data as {
+          licenses: {
+            number: string;
+            type: BrazilianHealthcareLicense;
+            state: BrazilianState;
+          }[];
+        }).licenses
+      ) {
         const licenseValidation = await this.validateProfessionalLicense(license);
         if (!licenseValidation.valid) {
           return {
@@ -360,12 +374,15 @@ export class HealthcareInputValidator {
     }
 
     // Check age restrictions for certain contexts
-    if ((data as { dateOfBirth?: string }).dateOfBirth) {
-      const ageValidation = this.validateAgeRestrictions(context, (data as { dateOfBirth: string }).dateOfBirth);
+    if ((data as { dateOfBirth?: string; }).dateOfBirth) {
+      const ageValidation = this.validateAgeRestrictions(
+        context,
+        (data as { dateOfBirth: string; }).dateOfBirth,
+      );
       if (!ageValidation.valid) {
         warnings.push({
           field: "dateOfBirth",
-          message: ageValidation.message || 'Age validation failed',
+          message: ageValidation.message || "Age validation failed",
           code: "AGE_RESTRICTION_WARNING",
           severity: ValidationSeverity.MEDIUM,
         });
@@ -565,8 +582,10 @@ export class HealthcareInputValidator {
     console.log("🏥 Healthcare Validation Log:", JSON.stringify(logEntry, null, 2));
 
     if (this.auditLogger) {
-      if (typeof (this.auditLogger as unknown)?.log === 'function') {
-        await (this.auditLogger as unknown & { log: (entry: unknown) => Promise<void> }).log(logEntry);
+      if (typeof (this.auditLogger as unknown)?.log === "function") {
+        await (this.auditLogger as unknown & { log: (entry: unknown) => Promise<void>; }).log(
+          logEntry,
+        );
       }
     }
   }
@@ -584,8 +603,8 @@ export class HealthcareInputValidator {
       event: "EMERGENCY_VALIDATION_BYPASS",
       context,
       userId: userId || "anonymous",
-      justification: (data as { justification?: string })?.justification || "Not provided",
-      emergencyType: (data as { emergencyType?: string })?.emergencyType || "Not specified",
+      justification: (data as { justification?: string; })?.justification || "Not provided",
+      emergencyType: (data as { emergencyType?: string; })?.emergencyType || "Not specified",
       patientData: BrazilianHealthcareSanitizer.removeSensitiveDataForLogging(data),
     };
 

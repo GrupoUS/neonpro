@@ -22,7 +22,7 @@ export default defineConfig({
     environment: "happy-dom",
     setupFiles: [
       "apps/web/tests/setup/global-mocks.ts",
-      "apps/web/tests/integration/integration-test-setup.ts"
+      "apps/web/tests/integration/integration-test-setup.ts",
     ],
 
     // Performance and timeout settings

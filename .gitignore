@@ -19,6 +19,8 @@ dist/
 **/dist/
 out/
 **/out/
+.turbo/**
+**/.turbo/**
 
 # temporary upload files (Google Drive sync)
 .tmp.driveupload/
@@ -34,6 +36,9 @@ tmp.drivedownload/
 archon/
 /archon/
 *archon/*
+*serena/*
+*.serena
+*.serena/*
 
 
 # logs

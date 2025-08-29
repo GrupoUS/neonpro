@@ -3,7 +3,7 @@
   "source": "MCP Supabase list_tables result",
   "compliance_tables_found": [
     "compliance_alert_rules",
-    "compliance_alerts", 
+    "compliance_alerts",
     "compliance_alerts_v2",
     "compliance_checks",
     "compliance_dashboard_configs",

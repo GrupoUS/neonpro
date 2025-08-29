@@ -168,7 +168,7 @@ export class BehavioralAnalysisService {
   // =============================================================================
 
   private calculateAverageResponseTime(interactions: PatientInteraction[]): number {
-    if (interactions.length === 0) {return 24;}
+    if (interactions.length === 0) return 24;
 
     const totalTime = interactions.reduce((sum, interaction) => sum + interaction.responseTime, 0);
     return totalTime / interactions.length;
@@ -177,7 +177,7 @@ export class BehavioralAnalysisService {
   private determinePreferredChannel(
     interactions: PatientInteraction[],
   ): "whatsapp" | "email" | "phone" | "sms" {
-    if (interactions.length === 0) {return "whatsapp";}
+    if (interactions.length === 0) return "whatsapp";
 
     const channelCounts = interactions.reduce((counts, interaction) => {
       counts[interaction.channel] = (counts[interaction.channel] || 0) + 1;
@@ -220,9 +220,9 @@ export class BehavioralAnalysisService {
   }
 
   private getSeasonFromMonth(month: number): string {
-    if (month >= 2 && month <= 4) {return "Autumn";}
-    if (month >= 5 && month <= 7) {return "Winter";}
-    if (month >= 8 && month <= 10) {return "Spring";}
+    if (month >= 2 && month <= 4) return "Autumn";
+    if (month >= 5 && month <= 7) return "Winter";
+    if (month >= 8 && month <= 10) return "Spring";
     return "Summer";
   }
 
@@ -244,10 +244,10 @@ export class BehavioralAnalysisService {
   }
 
   private determinePatientSegment(scores: BehavioralScores): PatientSegment {
-    if (scores.loyalty > 90 && scores.satisfaction > 85) {return "vip";}
-    if (scores.loyalty > 70 && scores.risk < 30) {return "loyal";}
-    if (scores.risk > 70) {return "at-risk";}
-    if (scores.loyalty < 30) {return "new";}
+    if (scores.loyalty > 90 && scores.satisfaction > 85) return "vip";
+    if (scores.loyalty > 70 && scores.risk < 30) return "loyal";
+    if (scores.risk > 70) return "at-risk";
+    if (scores.loyalty < 30) return "new";
     return "inactive";
   }
 

@@ -356,7 +356,7 @@ export class BehavioralAnalysisService {
     if (channels.length === 0) {
       return "whatsapp";
     }
-    
+
     return channels.reduce((a, b) =>
       (channelCounts[a] || 0) > (channelCounts[b] || 0) ? a : b
     ) as PatientBehaviorProfile["patterns"]["preferredChannel"];
@@ -464,7 +464,9 @@ export class BehavioralAnalysisService {
 
     // Decision-making speed (Driver vs Amiable)
     const quickDecisions = events.filter(
-      (e) => e.metadata?.decisionTime && typeof e.metadata.decisionTime === 'number' && e.metadata.decisionTime < 24,
+      (e) =>
+        e.metadata?.decisionTime && typeof e.metadata.decisionTime === "number"
+        && e.metadata.decisionTime < 24,
     ).length;
     if (quickDecisions > events.length * 0.6) {
       driverScore += 2;

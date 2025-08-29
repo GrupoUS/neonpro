@@ -66,9 +66,9 @@ const mockComplianceService = {
 
 // Export for direct imports if needed
 export {
+  mockComplianceService,
   mockCpfValidator,
-  mockSupabaseClient,
   mockLgpdService,
   mockNotificationService,
-  mockComplianceService,
+  mockSupabaseClient,
 };
