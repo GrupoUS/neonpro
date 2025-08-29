@@ -101,7 +101,7 @@ export interface FilterOption {
   defaultValue?: unknown;
 }
 
-export interface TableColumn<T = any> {
+export interface TableColumn<T = Record<string, unknown>> {
   key: string;
   label: string;
   sortable?: boolean;
