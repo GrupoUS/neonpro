@@ -369,7 +369,7 @@ const SECURITY_CONFIGURATIONS: Record<string, SecurityHeadersConfig> = {
 export class SecurityHeadersManager {
   private config: SecurityHeadersConfig;
 
-  constructor(configName: string = "development") {
+  constructor(configName = "development") {
     this.config = SECURITY_CONFIGURATIONS[configName] || SECURITY_CONFIGURATIONS.development;
   }
 
@@ -549,7 +549,7 @@ export class SecurityHeadersManager {
  * Create Security Headers Middleware
  */
 export function createSecurityHeadersMiddleware(
-  configName: string = "development",
+  configName = "development",
   options: {
     customConfig?: Partial<SecurityHeadersConfig>;
     skipPaths?: string[];

@@ -179,7 +179,7 @@ export class AuditService {
   /**
    * Gera estatísticas de auditoria
    */
-  async getStats(days: number = 30): Promise<AuditResponse<AuditStats>> {
+  async getStats(days = 30): Promise<AuditResponse<AuditStats>> {
     try {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);

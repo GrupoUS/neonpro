@@ -164,7 +164,7 @@ export class PerformanceMonitor {
    * Measure patient data loading time
    */
   async measurePatientDataLoad(
-    selector: string = '[data-testid="patient-list"]',
+    selector = '[data-testid="patient-list"]',
   ): Promise<number> {
     this.startTiming("patientDataLoad");
     await this.page.waitForSelector(selector, { state: "visible" });
@@ -311,7 +311,7 @@ export class PerformanceReporter {
   private metricsHistory: PerformanceMetrics[] = [];
   private reportDir: string;
 
-  constructor(reportDir: string = "./test-results/performance") {
+  constructor(reportDir = "./test-results/performance") {
     this.reportDir = reportDir;
     this.ensureReportDirectory();
   }
