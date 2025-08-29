@@ -269,7 +269,7 @@ class InMemoryTokenBlacklist implements TokenBlacklistStore {
 
     // Log blacklist event for security monitoring
     console.warn("[TOKEN_BLACKLISTED]", {
-      jti: jti.substring(0, 8) + "***", // Mask JTI for privacy
+      jti: jti.slice(0, 8) + "***", // Mask JTI for privacy
       expiresAt: expiresAt.toISOString(),
       timestamp: new Date().toISOString(),
       reason: "MANUAL_REVOCATION",
@@ -346,7 +346,7 @@ const isTokenBlacklisted = async (jti: string): Promise<boolean> => {
   } catch (error) {
     // Log error but don't block authentication on blacklist check failure
     console.error("[TOKEN_BLACKLIST_CHECK_ERROR]", {
-      jti: jti.substring(0, 8) + "***",
+      jti: jti.slice(0, 8) + "***",
       error: error instanceof Error ? error.message : "Unknown error",
       timestamp: new Date().toISOString(),
     });
@@ -365,7 +365,7 @@ export const blacklistToken = async (jti: string, expiresAt: Date): Promise<void
     await tokenBlacklist.addToBlacklist(jti, expiresAt);
   } catch (error) {
     console.error("[TOKEN_BLACKLIST_ADD_ERROR]", {
-      jti: jti.substring(0, 8) + "***",
+      jti: jti.slice(0, 8) + "***",
       error: error instanceof Error ? error.message : "Unknown error",
       timestamp: new Date().toISOString(),
     });

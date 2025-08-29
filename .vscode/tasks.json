@@ -4,8 +4,10 @@
 		{
 			"label": "✨ Format Code",
 			"type": "shell",
-			"command": "pnpm",
+			"command": "npx",
 			"args": [
+				"--silent",
+				"pnpm@latest",
 				"format"
 			],
 			"group": "build",
@@ -19,8 +21,10 @@
 		{
 			"label": "🔍 Lint Code",
 			"type": "shell",
-			"command": "pnpm",
+			"command": "npx",
 			"args": [
+				"--silent",
+				"pnpm@latest",
 				"lint:oxlint"
 			],
 			"group": "build",
@@ -34,8 +38,10 @@
 		{
 			"label": "🔧 Fix Lint Issues",
 			"type": "shell",
-			"command": "pnpm",
+			"command": "npx",
 			"args": [
+				"--silent",
+				"pnpm@latest",
 				"oxlint:fix"
 			],
 			"group": "build",
@@ -49,8 +55,10 @@
 		{
 			"label": "✅ Full Code Check",
 			"type": "shell",
-			"command": "pnpm",
+			"command": "npx",
 			"args": [
+				"--silent",
+				"pnpm@latest",
 				"ci:check"
 			],
 			"group": {
@@ -113,6 +121,57 @@
 			],
 			"group": "test",
 			"detail": "Run E2E tests in debug mode",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🔧 Build Project",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"--silent",
+				"pnpm@latest",
+				"build"
+			],
+			"group": "build",
+			"detail": "Build the entire project",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🚀 Type Check",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"--silent",
+				"pnpm@latest",
+				"type-check"
+			],
+			"group": "build",
+			"detail": "Run TypeScript type checking",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🔧 PNPM Install",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"--silent",
+				"pnpm@latest",
+				"install"
+			],
+			"group": "build",
+			"detail": "Install dependencies via PNPM",
 			"presentation": {
 				"echo": true,
 				"reveal": "always",

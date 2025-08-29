@@ -21,7 +21,7 @@
 			"type": "shell",
 			"command": "pnpm",
 			"args": [
-				"lint:oxlint"
+				"lint"
 			],
 			"group": "build",
 			"detail": "Run oxlint to check for linting issues",
@@ -113,6 +113,57 @@
 			],
 			"group": "test",
 			"detail": "Run E2E tests in debug mode",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🔧 Build Project",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"--silent",
+				"pnpm@latest",
+				"build"
+			],
+			"group": "build",
+			"detail": "Build the entire project",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🚀 Type Check",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"--silent",
+				"pnpm@latest",
+				"type-check"
+			],
+			"group": "build",
+			"detail": "Run TypeScript type checking",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🔧 PNPM Install",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"--silent",
+				"pnpm@latest",
+				"install"
+			],
+			"group": "build",
+			"detail": "Install dependencies via PNPM",
 			"presentation": {
 				"echo": true,
 				"reveal": "always",

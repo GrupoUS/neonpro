@@ -7,6 +7,7 @@ export * from "./compliance";
 export * from "./components";
 export * from "./format";
 export * from "./performance";
+export * from "./validation";
 
 // Re-export common utilities for convenience
 export type { ComplianceReport } from "./compliance";

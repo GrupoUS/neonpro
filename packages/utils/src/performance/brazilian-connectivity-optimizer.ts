@@ -52,7 +52,7 @@ export interface BrazilianCDNConfig {
   };
 }
 
-export class BrazilianConnectivityOptimizer {
+class BrazilianConnectivityOptimizer {
   private static instance: BrazilianConnectivityOptimizer;
   private performanceObserver: PerformanceObserver | null = null;
   private metrics: PerformanceMetrics | null = null;
@@ -295,11 +295,8 @@ export class BrazilianConnectivityOptimizer {
   private async loadAllModules(): Promise<void> {
     // Load all application modules for premium experience
     const modules = [
-      import("../ai/chat-engine"),
-      import("../healthcare/emergency-protocols"),
-      import("../healthcare/patient-management"),
-      import("../compliance/cfm-compliance"),
-      import("../analytics/dashboard"),
+      import("../compliance/cfm"),
+      import("../analytics/index"),
     ];
 
     await Promise.allSettled(modules);
@@ -308,8 +305,8 @@ export class BrazilianConnectivityOptimizer {
   private async loadCoreModules(): Promise<void> {
     // Load core modules for standard experience
     const coreModules = [
-      import("../healthcare/patient-management"),
-      import("../healthcare/emergency-protocols"),
+      import("../compliance/cfm"),
+      import("../analytics/index"),
     ];
 
     await Promise.all(coreModules);
@@ -318,8 +315,8 @@ export class BrazilianConnectivityOptimizer {
   private async loadSecondaryModules(): Promise<void> {
     // Load secondary modules in background
     const secondaryModules = [
-      import("../ai/chat-engine"),
-      import("../analytics/dashboard"),
+      import("../compliance/lgpd"),
+      import("../analytics/calculations"),
     ];
 
     await Promise.allSettled(secondaryModules);
@@ -327,7 +324,7 @@ export class BrazilianConnectivityOptimizer {
 
   private async loadEssentialModules(): Promise<void> {
     // Load only essential modules for limited connections
-    await import("../healthcare/emergency-protocols");
+    await import("../compliance/cfm");
   }
 
   private async enableAdvancedFeatures(): Promise<void> {
@@ -531,8 +528,9 @@ export class BrazilianConnectivityOptimizer {
   }
 }
 
-// Export singleton instance
-export const brazilianConnectivityOptimizer = BrazilianConnectivityOptimizer.getInstance();
-
 // Export class for testing
 export { BrazilianConnectivityOptimizer };
+
+// Create and export singleton instance
+const _instance = BrazilianConnectivityOptimizer.getInstance();
+export { _instance as brazilianConnectivityOptimizer };

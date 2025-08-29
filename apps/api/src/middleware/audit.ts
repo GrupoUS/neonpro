@@ -9,6 +9,7 @@
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "../lib/logger";
 import { createRouteRegex, extractResourceIds } from "../lib/regex-constants";
+import { AuditService } from "../services/AuditService";
 
 // Safe regex for request ID validation - only alphanumeric, hyphens, underscores
 const SAFE_REQUEST_ID_REGEX = /^[a-zA-Z0-9\-_]{1,64}$/;
@@ -164,7 +165,7 @@ class AuditStore {
   add(log: AuditLog): void {
     this.logs.push(log);
 
-    // Rotate logs if needed
+    // Retention management - scheduled cleanup can be implemented later
     if (this.logs.length > this.maxLogs) {
       this.logs.shift();
     }
@@ -177,62 +178,65 @@ class AuditStore {
 
   private async persistLog(log: AuditLog): Promise<void> {
     try {
-      // Import supabase client
-      const { supabase } = await import("../lib/supabase.js");
-
-      // Insert audit log into database
-      const { error } = await supabase
-        .from("audit_logs")
-        .insert({
-          audit_id: log.auditId,
-          timestamp: log.timestamp,
-          level: log.level,
-          category: log.category,
-          operation: log.operation,
+      // Persist to database using AuditService
+      await auditService.log({
+        userId: log.userId || null,
+        sessionId: log.sessionId || null,
+        action: log.operation,
+        resourceType: log.category,
+        resourceId: log.resourceId || null,
+        ipAddress: log.clientIP,
+        userAgent: log.userAgent,
+        statusCode: log.statusCode || 200,
+        severity: this.mapLevelToSeverity(log.level),
+        requestMethod: log.method,
+        requestPath: log.path,
+        requestBody: log.metadata?.requestBody as Record<string, any> || null,
+        responseBody: log.metadata?.responseBody as Record<string, any> || null,
+        errorMessage: log.metadata?.error as string || null,
+        errorStack: log.metadata?.errorStack as string || null,
+        additionalData: {
+          auditId: log.auditId,
           description: log.description,
-          user_id: log.userId,
-          user_email: log.userEmail,
-          user_role: log.userRole,
-          method: log.method,
-          path: log.path,
-          resource_id: log.resourceId,
-          client_ip: log.clientIP,
-          user_agent: log.userAgent,
-          status_code: log.statusCode,
-          response_time: log.responseTime,
-          lgpd_relevant: log.lgpdRelevant,
-          personal_data_accessed: log.personalDataAccessed,
-          consent_required: log.consentRequired,
-          metadata: log.metadata,
-          request_id: log.requestId,
-          session_id: log.sessionId,
+          lgpdRelevant: log.lgpdRelevant,
+          personalDataAccessed: log.personalDataAccessed,
+          consentRequired: log.consentRequired,
           country: log.country,
           region: log.region,
-        });
+          responseTime: log.responseTime,
+          ...log.metadata,
+        },
+      });
 
-      if (error) {
-        logger.error("Failed to persist audit log to database", {
-          error: error.message,
-          auditId: log.auditId,
-          userId: log.userId,
-        });
-      }
+      // Also log to console for debugging
+      logger.info("Audit Log", {
+        auditId: log.auditId,
+        operation: log.operation,
+        userId: log.userId,
+        path: log.path,
+        level: log.level,
+      });
     } catch (error) {
-      logger.error("Error persisting audit log", {
+      logger.error("Failed to persist audit log", {
         error: error instanceof Error ? error.message : "Unknown error",
         auditId: log.auditId,
-        userId: log.userId,
       });
     }
+  }
 
-    // Also log to console for immediate visibility
-    logger.info("Audit log entry", {
-      userId: log.userId,
-      operation: log.operation,
-      resource: log.path,
-      timestamp: log.timestamp,
-      requestId: log.requestId,
-    });
+  private mapLevelToSeverity(level: AuditLevel): "low" | "medium" | "high" | "critical" {
+    switch (level) {
+      case AuditLevel.INFO:
+        return "low";
+      case AuditLevel.WARNING:
+        return "medium";
+      case AuditLevel.ERROR:
+        return "high";
+      case AuditLevel.CRITICAL:
+        return "critical";
+      default:
+        return "medium";
+    }
   }
 
   getLogs(filter?: Partial<AuditLog>): AuditLog[] {
@@ -261,6 +265,7 @@ class AuditStore {
 
 // Global audit store
 const auditStore = new AuditStore();
+const auditService = new AuditService();
 
 /**
  * Extract user context from request

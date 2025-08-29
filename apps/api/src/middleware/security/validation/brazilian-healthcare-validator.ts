@@ -162,7 +162,7 @@ export class CNSValidator {
     if (dv === 11) dv = 0;
     if (dv === 10) return false;
 
-    const calculatedCns = cns.substring(0, 11) + dv.toString().padStart(4, "0");
+    const calculatedCns = cns.slice(0, 11) + dv.toString().padStart(4, "0");
     return calculatedCns === cns;
   }
 
@@ -277,7 +277,7 @@ export const brazilianRGSchema = z
   .string()
   .min(5, "RG too short")
   .max(12, "RG too long")
-  .regex(/^[\d\w\-\.]+$/, "RG contains invalid characters");
+  .regex(/^[\d\w\-.]+$/, "RG contains invalid characters");
 
 /**
  * Healthcare Professional License Schema
@@ -310,14 +310,14 @@ export const patientPersonalDataSchema = z.object({
     .string()
     .min(2, "Name too short")
     .max(100, "Name too long")
-    .regex(/^[a-zA-ZÀ-ÿ\s\-\']+$/, "Name contains invalid characters")
+    .regex(/^[a-zA-ZÀ-ÿ\s\-']+$/, "Name contains invalid characters")
     .transform(val => val.trim().replace(/\s+/g, " ")),
 
   socialName: z
     .string()
     .min(2, "Social name too short")
     .max(100, "Social name too long")
-    .regex(/^[a-zA-ZÀ-ÿ\s\-\']+$/, "Social name contains invalid characters")
+    .regex(/^[a-zA-ZÀ-ÿ\s\-']+$/, "Social name contains invalid characters")
     .optional()
     .transform(val => val ? val.trim().replace(/\s+/g, " ") : undefined),
 
@@ -350,7 +350,7 @@ export const patientPersonalDataSchema = z.object({
 
   phoneNumber: z
     .string()
-    .regex(/^\+?55\s?\(?[1-9]{2}\)?\s?9?[0-9]{4}\-?[0-9]{4}$/, "Invalid Brazilian phone number")
+    .regex(/^\+?55\s?\(?[1-9]{2}\)?\s?9?[0-9]{4}-?[0-9]{4}$/, "Invalid Brazilian phone number")
     .transform(val => val.replace(/[^\d]/g, ""))
     .optional(),
 
@@ -358,7 +358,7 @@ export const patientPersonalDataSchema = z.object({
   address: z.object({
     zipCode: z
       .string()
-      .regex(/^\d{5}\-?\d{3}$/, "Invalid Brazilian ZIP code (CEP)")
+      .regex(/^\d{5}-?\d{3}$/, "Invalid Brazilian ZIP code (CEP)")
       .transform(val => val.replace(/[^\d]/g, "")),
     street: z.string().min(5, "Street address too short").max(200, "Street address too long"),
     number: z.string().max(10, "Number too long"),
@@ -385,7 +385,7 @@ export const patientPersonalDataSchema = z.object({
     relationship: z.string().max(50, "Relationship too long"),
     phoneNumber: z
       .string()
-      .regex(/^\+?55\s?\(?[1-9]{2}\)?\s?9?[0-9]{4}\-?[0-9]{4}$/, "Invalid Brazilian phone number"),
+      .regex(/^\+?55\s?\(?[1-9]{2}\)?\s?9?[0-9]{4}-?[0-9]{4}$/, "Invalid Brazilian phone number"),
   }).optional(),
 });
 
@@ -399,7 +399,7 @@ export const healthcareProviderSchema = z.object({
     .string()
     .min(2, "Name too short")
     .max(100, "Name too long")
-    .regex(/^[a-zA-ZÀ-ÿ\s\-\']+$/, "Name contains invalid characters"),
+    .regex(/^[a-zA-ZÀ-ÿ\s\-']+$/, "Name contains invalid characters"),
 
   // Professional information
   licenses: z
@@ -415,7 +415,7 @@ export const healthcareProviderSchema = z.object({
   email: z.string().email("Invalid email format").toLowerCase(),
   phoneNumber: z
     .string()
-    .regex(/^\+?55\s?\(?[1-9]{2}\)?\s?9?[0-9]{4}\-?[0-9]{4}$/, "Invalid Brazilian phone number")
+    .regex(/^\+?55\s?\(?[1-9]{2}\)?\s?9?[0-9]{4}-?[0-9]{4}$/, "Invalid Brazilian phone number")
     .transform(val => val.replace(/[^\d]/g, "")),
 
   // Professional address
@@ -423,7 +423,7 @@ export const healthcareProviderSchema = z.object({
     facilityName: z.string().min(2, "Facility name too short").max(200, "Facility name too long"),
     zipCode: z
       .string()
-      .regex(/^\d{5}\-?\d{3}$/, "Invalid Brazilian ZIP code (CEP)")
+      .regex(/^\d{5}-?\d{3}$/, "Invalid Brazilian ZIP code (CEP)")
       .transform(val => val.replace(/[^\d]/g, "")),
     street: z.string().min(5, "Street address too short").max(200, "Street address too long"),
     number: z.string().max(10, "Number too long"),
@@ -497,7 +497,7 @@ export class BrazilianHealthcareSanitizer {
 
     if (sanitized.email) {
       const [localPart, domain] = sanitized.email.split("@");
-      sanitized.email = `${localPart.substring(0, 2)}***@${domain}`;
+      sanitized.email = `${localPart.slice(0, 2)}***@${domain}`;
     }
 
     if (sanitized.phoneNumber) {

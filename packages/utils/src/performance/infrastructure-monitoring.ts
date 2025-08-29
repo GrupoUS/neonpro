@@ -813,4 +813,4 @@ export const brazilianInfrastructureMonitoring = InfrastructureMonitoringService
   },
 });
 
-export { InfrastructureMonitoringService };
+// InfrastructureMonitoringService is already exported as a class above

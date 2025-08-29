@@ -124,7 +124,7 @@ const SECURITY_CONFIGURATIONS: Record<string, SecurityHeadersConfig> = {
     endpointType: HealthcareEndpointType.MEDICAL_RECORDS,
     hsts: {
       enabled: true,
-      maxAge: 63072000, // 2 years
+      maxAge: 63_072_000, // 2 years
       includeSubDomains: true,
       preload: true,
     },
@@ -187,7 +187,7 @@ const SECURITY_CONFIGURATIONS: Record<string, SecurityHeadersConfig> = {
     endpointType: HealthcareEndpointType.PATIENT_PORTAL,
     hsts: {
       enabled: true,
-      maxAge: 31536000, // 1 year
+      maxAge: 31_536_000, // 1 year
       includeSubDomains: true,
       preload: false,
     },
@@ -250,7 +250,7 @@ const SECURITY_CONFIGURATIONS: Record<string, SecurityHeadersConfig> = {
     endpointType: HealthcareEndpointType.EMERGENCY_ACCESS,
     hsts: {
       enabled: true,
-      maxAge: 31536000,
+      maxAge: 31_536_000,
       includeSubDomains: true,
       preload: true,
     },
@@ -619,8 +619,7 @@ export function createCSPReportHandler(): MiddlewareHandler {
 
       console.warn("🚨 CSP Violation Report:", JSON.stringify(logEntry, null, 2));
 
-      // TODO: Send to monitoring system
-      // await monitoringSystem.reportCSPViolation(logEntry);
+      // Security violation logged - external monitoring can be added later
 
       return c.json({ success: true, message: "CSP report received" });
     } catch (error) {

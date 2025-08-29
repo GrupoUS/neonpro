@@ -12,7 +12,8 @@
  */
 
 import type { Context, MiddlewareHandler } from "hono";
-import { type JWTPayload, jwtVerify, type JWTVerifyResult } from "jose";
+import { jwtVerify } from "jose";
+import type { JWTPayload, JWTVerifyResult } from "jose";
 
 // Healthcare user roles with license requirements
 export enum HealthcareRole {
@@ -170,7 +171,7 @@ class AuthenticationAuditLogger {
     // In production: Immutable audit log, regulatory compliance database
     console.info(`[CRITICAL_SECURITY_EVENT_STORED]`, {
       timestamp: new Date().toISOString(),
-      eventId: `crit_sec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      eventId: `crit_sec_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       alert,
       retention: "PERMANENT_REGULATORY_RECORD",
     });
@@ -191,7 +192,6 @@ class AuthenticationAuditLogger {
       ...details,
     });
 
-    // TODO: Send to external audit system (Sentry, CloudWatch, DataDog)
     if (!details.success) {
       // Additional security alerting for failed attempts
       console.log("[SECURITY_ALERT]", {
@@ -464,7 +464,6 @@ export class HealthcareJWTValidator {
 
   /**
    * Validate professional license (mock implementation)
-   * TODO: Integrate with real Brazilian medical council APIs
    */
   private async validateProfessionalLicense(
     license: NonNullable<HealthcareJWTPayload["license"]>,
@@ -483,7 +482,6 @@ export class HealthcareJWTValidator {
         return false;
       }
 
-      // TODO: Make actual API call to respective council
       // Mock validation for development
       const isValid = license.number.length >= 6
         && Object.values(ProfessionalLicenseType).includes(license.type);

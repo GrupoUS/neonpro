@@ -59,8 +59,8 @@ const COUNTER_BUFFER_SIZE = 8;
 const HIGH_BITS_DIVISOR = 0x1_00_00_00_00;
 const BUFFER_OFFSET_HIGH_BITS = 4;
 // Bitwise operation constants for HOTP algorithm (RFC 4226)
-const BYTE_MASK = 0xff; // 255 - masks lower 8 bits
-const HOTP_MASK = 0x7f; // 127 - masks lower 7 bits for sign bit removal
+const BYTE_MASK = 0xFF; // 255 - masks lower 8 bits
+const HOTP_MASK = 0x7F; // 127 - masks lower 7 bits for sign bit removal
 
 export const mfaVerificationSchema = z.object({
   userId: z.string().uuid("User ID deve ser um UUID válido"),
@@ -196,7 +196,7 @@ function generateHotp(secret: string, counter: number): string {
   const counterBuffer = Buffer.alloc(COUNTER_BUFFER_SIZE);
   counterBuffer.writeUInt32BE(Math.floor(counter / HIGH_BITS_DIVISOR), 0);
   // oxlint-disable-next-line no-bitwise
-  counterBuffer.writeUInt32BE(counter & 0xff_ff_ff_ff, BUFFER_OFFSET_HIGH_BITS);
+  counterBuffer.writeUInt32BE(counter & 0xFF_FF_FF_FF, BUFFER_OFFSET_HIGH_BITS);
 
   // Generate HMAC
   const crypto = require("node:crypto");
@@ -206,7 +206,7 @@ function generateHotp(secret: string, counter: number): string {
 
   // Dynamic truncation
   // oxlint-disable-next-line no-bitwise
-  const offset = digest.at(-1) & 0x0f;
+  const offset = digest.at(-1) & 0x0F;
   // HOTP dynamic truncation algorithm (RFC 4226) requires bitwise operations
   // oxlint-disable-next-line no-bitwise
   const code = ((digest[offset] & HOTP_MASK) << 24)

@@ -32,7 +32,7 @@ import { createHash } from "node:crypto";
  * Enhanced CFM Compliance Service
  * Provides comprehensive medical compliance management for Brazilian healthcare
  */
-export class CFMComplianceService {
+class CFMComplianceService {
   private readonly supabase: SupabaseClient<Database>;
   private readonly CFM_LICENSE_PATTERN = /^CRM\/[A-Z]{2}\s?\d{4,6}$/;
   private readonly APPROVED_TELEMEDICINE_PLATFORMS = [

@@ -1,19 +1,21 @@
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import {
+import type {
   AuditAction,
   AuditConfig,
   AuditEvent,
-  AuditEventSchema,
   AuditExportOptions,
   AuditFilter,
-  AuditFilterSchema,
   AuditLogEntry,
   AuditResponse,
-  AuditSeverity,
   AuditStats,
-  CriticalAuditAlert,
   ResourceType,
+} from "../types/audit";
+import {
+  AuditEventSchema,
+  AuditFilterSchema,
+  AuditSeverity,
+  CriticalAuditAlert,
 } from "../types/audit";
 
 export class AuditService {
@@ -35,7 +37,7 @@ export class AuditService {
       excluded_actions: [],
       auto_archive: true,
       alert_on_critical: true,
-      max_details_size: 10000, // 10KB max para details JSON
+      max_details_size: 10_000, // 10KB max para details JSON
     };
   }
 
@@ -243,7 +245,7 @@ export class AuditService {
     try {
       const logsResponse = await this.getLogs({
         ...options.filters,
-        limit: 10000, // Limite para exportação
+        limit: 10_000, // Limite para exportação
       });
 
       if (!logsResponse.success) {
@@ -368,7 +370,7 @@ export class AuditService {
     }, {} as Record<string, number>);
   }
 
-  private getTopUsers(logs: AuditLogEntry[]): Array<{ user_id: string; count: number; }> {
+  private getTopUsers(logs: AuditLogEntry[]): { user_id: string; count: number; }[] {
     const userCounts = logs
       .filter(log => log.user_id)
       .reduce((acc, log) => {
@@ -386,7 +388,7 @@ export class AuditService {
   private getDailyActivity(
     logs: AuditLogEntry[],
     days: number,
-  ): Array<{ date: string; count: number; }> {
+  ): { date: string; count: number; }[] {
     const dailyCounts: Record<string, number> = {};
 
     // Inicializar todos os dias com 0

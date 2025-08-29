@@ -242,6 +242,10 @@ describe("button Component - NeonPro Healthcare UI", () => {
       const mockClick = vi.fn();
       const user = userEvent.setup();
 
+      // Mock window.confirm to return true
+      const mockConfirm = vi.fn(() => true);
+      vi.stubGlobal("confirm", mockConfirm);
+
       render(
         <ThemeWrapper>
           <Button
@@ -261,7 +265,11 @@ describe("button Component - NeonPro Healthcare UI", () => {
 
       // The component should call window.confirm before executing the action
       // Since we mocked window.confirm to return true, the action should be called
+      expect(mockConfirm).toHaveBeenCalledWith("Confirma exclusão do paciente?");
       expect(mockClick).toHaveBeenCalledTimes(1);
+
+      // Restore the original confirm function
+      vi.unstubAllGlobals();
     });
 
     it("should display LGPD compliance indicators", () => {

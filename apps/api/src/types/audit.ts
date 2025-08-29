@@ -102,9 +102,9 @@ export interface AuditStats {
   events_by_action: Record<AuditAction, number>;
   events_by_resource: Record<ResourceType, number>;
   events_by_severity: Record<AuditSeverity, number>;
-  top_users: Array<{ user_id: string; count: number; }>;
+  top_users: { user_id: string; count: number; }[];
   recent_critical_events: AuditLogEntry[];
-  daily_activity: Array<{ date: string; count: number; }>;
+  daily_activity: { date: string; count: number; }[];
 }
 
 // Interface para configuração de auditoria

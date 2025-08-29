@@ -12,9 +12,6 @@
 
 import { supabase } from "@/lib/supabase";
 import {
-  type BehavioralEvent,
-  type BehavioralPatterns,
-  type BehavioralScores,
   calculateComplianceScore,
   calculateEngagementScore,
   calculateLoyaltyScore,
@@ -22,9 +19,14 @@ import {
   calculateSatisfactionScore,
   categorizeResponseTime,
   determineCommunicationStyle,
-  type PatientInteraction,
-  type PatientSegment,
-  type PersonalityType,
+} from "./behavioral-utils";
+import type {
+  BehavioralEvent,
+  BehavioralPatterns,
+  BehavioralScores,
+  PatientInteraction,
+  PatientSegment,
+  PersonalityType,
 } from "./behavioral-utils";
 
 // =============================================================================

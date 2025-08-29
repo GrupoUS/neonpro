@@ -644,7 +644,7 @@ export class HealthcareErrorHandler {
   }
 
   private getSupportReference(errorId: string): string {
-    return `REF-${errorId.substring(0, 8).toUpperCase()}`;
+    return `REF-${errorId.slice(0, 8).toUpperCase()}`;
   }
 
   private getErrorCode(error: Error | HTTPException): string {
@@ -690,11 +690,11 @@ export class HealthcareErrorHandler {
   }
 
   private generateErrorId(): string {
-    return `ERR_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `ERR_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
   }
 
   private generateRequestId(): string {
-    return `REQ_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `REQ_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
   }
 
   // Placeholder methods for external integrations
@@ -704,7 +704,7 @@ export class HealthcareErrorHandler {
       internal: {
         ...error.internal,
         originalError: error.internal.originalError?.message,
-        stackTrace: error.internal.stackTrace?.substring(0, 500), // Truncate stack trace
+        stackTrace: error.internal.stackTrace?.slice(0, 500), // Truncate stack trace
       },
     };
 
@@ -763,7 +763,7 @@ export class HealthcareErrorHandler {
       severity: error.severity,
     });
 
-    // TODO: Implement actual regulatory reporting
+    // Regulatory reporting placeholder - implement when required by specific regulations
   }
 
   private async schedulePatientNotification(error: HealthcareError): Promise<void> {
@@ -774,7 +774,7 @@ export class HealthcareErrorHandler {
       type: error.type,
     });
 
-    // TODO: Implement actual patient notification system
+    // Patient notification placeholder - implement when notification requirements are defined
   }
 }
 

@@ -47,10 +47,16 @@ export type {
 
 // Performance optimization utilities
 export const PerformanceOptimization = {
-  // Quick access to main services
-  connectivity: brazilianConnectivityOptimizer,
-  bundleAnalyzer: brazilianBundleAnalyzer,
-  monitoring: brazilianInfrastructureMonitoring,
+  // Quick access to main services with lazy initialization
+  get connectivity() {
+    return BrazilianConnectivityOptimizer.getInstance();
+  },
+  get bundleAnalyzer() {
+    return brazilianBundleAnalyzer;
+  },
+  get monitoring() {
+    return brazilianInfrastructureMonitoring;
+  },
 
   // Utility functions for Brazilian healthcare performance
   async initializeForHealthcare() {

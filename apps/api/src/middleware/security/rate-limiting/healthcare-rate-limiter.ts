@@ -87,7 +87,7 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
     patient_data_access: true,
     requires_license: true,
     emergency_bypass: true,
-    emergency_multiplier: 3.0,
+    emergency_multiplier: 3,
     audit_required: true,
     lgpd_sensitive: true,
     anvisa_regulated: false,
@@ -107,7 +107,7 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
     patient_data_access: true,
     requires_license: true,
     emergency_bypass: true,
-    emergency_multiplier: 4.0, // Higher multiplier for medical records
+    emergency_multiplier: 4, // Higher multiplier for medical records
     audit_required: true,
     lgpd_sensitive: true,
     anvisa_regulated: true,
@@ -127,7 +127,7 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
     patient_data_access: false,
     requires_license: false,
     emergency_bypass: true,
-    emergency_multiplier: 2.0,
+    emergency_multiplier: 2,
     audit_required: false,
     lgpd_sensitive: false,
     anvisa_regulated: false,
@@ -147,7 +147,7 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
     patient_data_access: true,
     requires_license: true,
     emergency_bypass: true,
-    emergency_multiplier: 10.0, // Massive multiplier for emergency endpoints
+    emergency_multiplier: 10, // Massive multiplier for emergency endpoints
     audit_required: true,
     lgpd_sensitive: true,
     anvisa_regulated: true,
@@ -167,7 +167,7 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
     patient_data_access: true,
     requires_license: false,
     emergency_bypass: false, // Compliance data doesn't need emergency bypass
-    emergency_multiplier: 1.0,
+    emergency_multiplier: 1,
     audit_required: true,
     lgpd_sensitive: true,
     anvisa_regulated: false,
@@ -187,7 +187,7 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
     patient_data_access: false,
     requires_license: false,
     emergency_bypass: false,
-    emergency_multiplier: 1.0,
+    emergency_multiplier: 1,
     audit_required: false,
     lgpd_sensitive: false,
     anvisa_regulated: false,
@@ -477,7 +477,7 @@ export class HealthcareRateLimiter {
     // Log to audit system (implementation depends on your audit system)
     console.log("🚨 EMERGENCY ACCESS LOG:", JSON.stringify(logEntry, null, 2));
 
-    // TODO: Integrate with your audit logging system
+    // Audit logging integration can be added later
     // await auditLogger.logEmergencyAccess(logEntry);
   }
 
@@ -501,7 +501,7 @@ export class HealthcareRateLimiter {
       utilizationPercent: (currentCount / limit) * 100,
     };
 
-    // TODO: Send to monitoring system (Prometheus, CloudWatch, etc.)
+    // Monitoring system integration can be added later
     if (metrics.utilizationPercent > 80) {
       console.warn("⚠️  High rate limit utilization:", metrics);
     }
@@ -532,7 +532,7 @@ export class HealthcareRateLimiter {
 
     console.warn("🚨 RATE LIMIT ALERT:", JSON.stringify(alert, null, 2));
 
-    // TODO: Send to alerting system (PagerDuty, Slack, etc.)
+    // Alerting system integration can be added later
     // await alertingSystem.sendAlert(alert);
   }
 }

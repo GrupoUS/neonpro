@@ -3,26 +3,26 @@ info:
   title: NeonPro AI Advanced Aesthetic Clinics Platform API
   description: |
     **🏥 AI-First Advanced Aesthetic Clinics API** with constitutional compliance
-    
+
     ## 🚀 Key Features
     - **AI Streaming Chat** - Real-time aesthetic consultation assistance with Vercel AI SDK 5.0
-    - **No-Show Prediction** - TensorFlow.js powered appointment optimization  
+    - **No-Show Prediction** - TensorFlow.js powered appointment optimization
     - **LGPD/ANVISA/CFM Compliance** - Built-in regulatory automation
     - **Emergency Response** - Sub-1s critical alert system
     - **Type-Safe Validation** - Zod schemas with runtime validation
-    
+
     ## 🔒 Security & Compliance
     - Multi-factor authentication for PHI access
     - End-to-end encryption (AES-256-GCM)
     - Immutable audit trails for all operations
     - LGPD consent automation with real-time validation
-    
+
     ## ⚡ Performance Targets
     - Emergency alerts: <1000ms
-    - Patient record access: <500ms  
+    - Patient record access: <500ms
     - AI chat first token: <200ms
     - Compliance validation: <50ms
-    
+
   version: "2.0.0"
   contact:
     name: NeonPro Advanced Aesthetic Clinics API Support
@@ -51,16 +51,16 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: Supabase JWT token with aesthetic clinic permissions
-    
+
     MFARequired:
       type: apiKey
       in: header
       name: X-MFA-Token
       description: Multi-factor authentication token for PHI access
-    
+
     EmergencyOverride:
       type: apiKey
-      in: header  
+      in: header
       name: X-Emergency-Code
       description: Emergency access override for critical situations
 
@@ -104,9 +104,9 @@ components:
           description: Contact phone (E.164 format)
           example: "+5511999999999"
         lgpd_consent:
-          $ref: '#/components/schemas/LGPDConsent'
+          $ref: "#/components/schemas/LGPDConsent"
         emergency_contact:
-          $ref: '#/components/schemas/EmergencyContact'
+          $ref: "#/components/schemas/EmergencyContact"
         medical_allergies:
           type: array
           items:
@@ -134,7 +134,7 @@ components:
           maxLength: 100
         crm:
           type: string
-          pattern: '^[0-9]{4,6}-[A-Z]{2}$'
+          pattern: "^[0-9]{4,6}-[A-Z]{2}$"
           description: Brazilian aesthetic professional license (CRM)
           example: "123456-SP"
         role:
@@ -188,14 +188,14 @@ components:
           maxLength: 2000
           description: Appointment notes (encrypted)
         no_show_prediction:
-          $ref: '#/components/schemas/NoShowPrediction'
+          $ref: "#/components/schemas/NoShowPrediction"
         compliance_validated:
           type: boolean
           description: ANVISA compliance validation status
-        
-    # ========================================
-    # AI & MACHINE LEARNING
-    # ========================================    AIMessage:
+
+      # ========================================
+      # AI & MACHINE LEARNING
+      # ========================================    AIMessage:
       type: object
       required: [id, role, content, timestamp]
       properties:
@@ -217,7 +217,7 @@ components:
         tool_calls:
           type: array
           items:
-            $ref: '#/components/schemas/ToolCall'
+            $ref: "#/components/schemas/ToolCall"
           description: AI tool invocations in this message
         patient_context:
           type: object
@@ -229,8 +229,8 @@ components:
               type: array
               items:
       context:
-          type: string
-          description: Patient context for aesthetic consultation AI
+        type: string
+        description: Patient context for aesthetic consultation AI
 
     ToolCall:
       type: object
@@ -241,7 +241,13 @@ components:
           description: Unique tool call identifier
         name:
           type: string
-          enum: [get_patient_history, schedule_appointment, check_drug_interactions, calculate_bmi, emergency_alert]
+          enum: [
+            get_patient_history,
+            schedule_appointment,
+            check_drug_interactions,
+            calculate_bmi,
+            emergency_alert,
+          ]
           description: Tool function name
         arguments:
           type: object
@@ -296,7 +302,12 @@ components:
       properties:
         type:
           type: string
-          enum: [risk_assessment, treatment_recommendation, drug_interaction, scheduling_optimization]
+          enum: [
+            risk_assessment,
+            treatment_recommendation,
+            drug_interaction,
+            scheduling_optimization,
+          ]
         content:
           type: string
           description: AI-generated insight content
@@ -335,7 +346,13 @@ components:
           type: array
           items:
             type: string
-            enum: [medical_treatment, appointment_scheduling, health_analytics, emergency_contact, marketing]
+            enum: [
+              medical_treatment,
+              appointment_scheduling,
+              health_analytics,
+              emergency_contact,
+              marketing,
+            ]
           description: Specific data processing purposes
         version:
           type: string
@@ -446,7 +463,7 @@ components:
         generated_by:
           type: string
           format: uuid
-          description: Professional who generated the report    # ========================================
+          description: Professional who generated the report # ========================================
     # PERFORMANCE & MONITORING
     # ========================================
     HealthCheck:
@@ -463,13 +480,13 @@ components:
           type: object
           properties:
             database:
-              $ref: '#/components/schemas/ServiceHealth'
+              $ref: "#/components/schemas/ServiceHealth"
             ai_services:
-              $ref: '#/components/schemas/ServiceHealth'
+              $ref: "#/components/schemas/ServiceHealth"
             compliance_validator:
-              $ref: '#/components/schemas/ServiceHealth'
+              $ref: "#/components/schemas/ServiceHealth"
             emergency_alerts:
-              $ref: '#/components/schemas/ServiceHealth'
+              $ref: "#/components/schemas/ServiceHealth"
         response_times:
           type: object
           properties:
@@ -565,7 +582,7 @@ components:
             APPOINTMENT_CONFLICT,
             COMPLIANCE_VIOLATION,
             RATE_LIMIT_EXCEEDED,
-            VALIDATION_ERROR
+            VALIDATION_ERROR,
           ]
         message:
           type: string
@@ -662,7 +679,7 @@ paths:
       description: |
         Initiate a new AI chat session with aesthetic consultation context.
         Supports streaming responses and tool calling for aesthetic workflows.
-        
+
         **Performance Target**: <200ms for first token
         **Compliance**: LGPD consent required, all interactions logged
       operationId: startAIChat
@@ -681,7 +698,7 @@ paths:
                 messages:
                   type: array
                   items:
-                    $ref: '#/components/schemas/AIMessage'
+                    $ref: "#/components/schemas/AIMessage"
                   description: Chat conversation history
                 patient_id:
                   type: string
@@ -695,7 +712,13 @@ paths:
                   type: array
                   items:
                     type: string
-                    enum: [get_patient_history, schedule_appointment, check_drug_interactions, calculate_bmi, emergency_alert]
+                    enum: [
+                      get_patient_history,
+                      schedule_appointment,
+                      check_drug_interactions,
+                      calculate_bmi,
+                      emergency_alert,
+                    ]
                   description: Available AI tools for this session
                 max_tokens:
                   type: integer
@@ -708,7 +731,7 @@ paths:
                   maximum: 2
                   default: 0.7
       responses:
-        '200':
+        "200":
           description: AI chat response (non-streaming)
           content:
             application/json:
@@ -721,7 +744,7 @@ paths:
                   messages:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AIMessage'
+                      $ref: "#/components/schemas/AIMessage"
                   usage:
                     type: object
                     properties:
@@ -731,18 +754,19 @@ paths:
                         type: integer
                       total_tokens:
                         type: integer
-        '202':
+        "202":
           description: Streaming response initiated
           content:
             text/event-stream:
               schema:
-                $ref: '#/components/schemas/StreamResponse'
-        '403':
+                $ref: "#/components/schemas/StreamResponse"
+        "403":
           description: LGPD consent required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'  /ai/stream:
+                $ref: "#/components/schemas/Error"
+  /ai/stream:
     get:
       summary: AI chat streaming endpoint
       description: |
@@ -767,7 +791,7 @@ paths:
             format: uuid
           description: Patient context for aesthetic consultation streaming
       responses:
-        '200':
+        "200":
           description: Server-Sent Events stream
           content:
             text/event-stream:
@@ -775,9 +799,9 @@ paths:
                 type: string
                 example: |
                   data: {"stream_id":"123","event_type":"message","data":{"content":"Olá! Como posso ajudar com sua consulta médica hoje?"},"timestamp":"2024-01-15T10:30:00Z"}
-                  
+
                   data: {"stream_id":"123","event_type":"tool_call","data":{"name":"get_patient_history","arguments":{"patient_id":"456"}},"timestamp":"2024-01-15T10:30:01Z"}
-                  
+
                   data: {"stream_id":"123","event_type":"complete","data":{},"timestamp":"2024-01-15T10:30:05Z"}
 
   /ai/tools/{tool_name}/execute:
@@ -797,7 +821,13 @@ paths:
           required: true
           schema:
             type: string
-            enum: [get_patient_history, schedule_appointment, check_drug_interactions, calculate_bmi, emergency_alert]
+            enum: [
+              get_patient_history,
+              schedule_appointment,
+              check_drug_interactions,
+              calculate_bmi,
+              emergency_alert,
+            ]
       requestBody:
         required: true
         content:
@@ -813,7 +843,7 @@ paths:
                   format: uuid
                   description: Patient context for tool execution
       responses:
-        '200':
+        "200":
           description: Tool execution result
           content:
             application/json:
@@ -840,7 +870,7 @@ paths:
       description: |
         Use TensorFlow.js models to predict appointment no-show probability
         based on patient history, weather, and scheduling patterns.
-        
+
         **Performance Target**: <100ms inference time
       operationId: predictNoShow
       security:
@@ -865,12 +895,12 @@ paths:
                   type: string
                   description: Specific model version to use
       responses:
-        '200':
+        "200":
           description: No-show prediction result
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NoShowPrediction'
+                $ref: "#/components/schemas/NoShowPrediction"
 
   /ml/patient-insights/{patient_id}:
     get:
@@ -896,10 +926,15 @@ paths:
             type: array
             items:
               type: string
-              enum: [risk_assessment, treatment_recommendation, drug_interaction, scheduling_optimization]
+              enum: [
+                risk_assessment,
+                treatment_recommendation,
+                drug_interaction,
+                scheduling_optimization,
+              ]
           description: Specific types of insights to generate
       responses:
-        '200':
+        "200":
           description: Patient AI insights
           content:
             application/json:
@@ -912,7 +947,7 @@ paths:
                   insights:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AIInsight'
+                      $ref: "#/components/schemas/AIInsight"
                   generated_at:
                     type: string
                     format: date-time
@@ -958,20 +993,20 @@ paths:
             enum: [active, withdrawn, expired]
           description: Filter by LGPD consent status
       responses:
-        '200':
+        "200":
           description: Paginated patient list
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - $ref: "#/components/schemas/PaginatedResponse"
                   - type: object
                     properties:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/Patient'
-    
+                          $ref: "#/components/schemas/Patient"
+
     post:
       summary: Create new patient with LGPD compliance
       description: |
@@ -1007,26 +1042,27 @@ paths:
                   type: string
                   pattern: '^\+?[1-9]\d{1,14}$'
                 lgpd_consent:
-                  $ref: '#/components/schemas/LGPDConsent'
+                  $ref: "#/components/schemas/LGPDConsent"
                 emergency_contact:
-                  $ref: '#/components/schemas/EmergencyContact'
+                  $ref: "#/components/schemas/EmergencyContact"
                 medical_allergies:
                   type: array
                   items:
                     type: string
       responses:
-        '201':
+        "201":
           description: Patient created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Patient'
-        '409':
+                $ref: "#/components/schemas/Patient"
+        "409":
           description: Patient already exists (CPF conflict)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'  /patients/{patient_id}:
+                $ref: "#/components/schemas/Error"
+  /patients/{patient_id}:
     get:
       summary: Get patient details with audit trail
       operationId: getPatient
@@ -1042,19 +1078,19 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        "200":
           description: Patient details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Patient'
-        '403':
+                $ref: "#/components/schemas/Patient"
+        "403":
           description: LGPD consent required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-    
+                $ref: "#/components/schemas/Error"
+
     put:
       summary: Update patient information with compliance validation
       operationId: updatePatient
@@ -1087,18 +1123,18 @@ paths:
                   type: string
                   pattern: '^\+?[1-9]\d{1,14}$'
                 emergency_contact:
-                  $ref: '#/components/schemas/EmergencyContact'
+                  $ref: "#/components/schemas/EmergencyContact"
                 medical_allergies:
                   type: array
                   items:
                     type: string
       responses:
-        '200':
+        "200":
           description: Patient updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Patient'
+                $ref: "#/components/schemas/Patient"
 
   # ========================================
   # APPOINTMENT MANAGEMENT
@@ -1151,20 +1187,20 @@ paths:
             default: true
           description: Include TensorFlow.js no-show predictions
       responses:
-        '200':
+        "200":
           description: Paginated appointment list with predictions
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - $ref: "#/components/schemas/PaginatedResponse"
                   - type: object
                     properties:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/Appointment'
-    
+                          $ref: "#/components/schemas/Appointment"
+
     post:
       summary: Create appointment with AI optimization
       operationId: createAppointment
@@ -1204,12 +1240,12 @@ paths:
                   default: true
                   description: Use AI to optimize scheduling
       responses:
-        '201':
+        "201":
           description: Appointment created with AI optimization
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Appointment'
+                $ref: "#/components/schemas/Appointment"
 
   # ========================================
   # COMPLIANCE & AUDIT
@@ -1236,9 +1272,9 @@ paths:
                   type: string
                   format: uuid
                 consent:
-                  $ref: '#/components/schemas/LGPDConsent'
+                  $ref: "#/components/schemas/LGPDConsent"
       responses:
-        '201':
+        "201":
           description: LGPD consent recorded
           content:
             application/json:
@@ -1282,7 +1318,7 @@ paths:
                   maxLength: 500
                   description: Reason for consent withdrawal
       responses:
-        '200':
+        "200":
           description: Consent withdrawn successfully
           content:
             application/json:
@@ -1339,7 +1375,7 @@ paths:
             type: string
             enum: [create, read, update, delete, export, emergency_access]
       responses:
-        '200':
+        "200":
           description: Audit trail entries
           content:
             application/json:
@@ -1349,7 +1385,7 @@ paths:
                   entries:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AuditTrail'
+                      $ref: "#/components/schemas/AuditTrail"
                   total_count:
                     type: integer  /compliance/reports:
     get:
@@ -1379,12 +1415,12 @@ paths:
             type: string
             format: date
       responses:
-        '200':
+        "200":
           description: Compliance report generated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ComplianceReport'
+                $ref: "#/components/schemas/ComplianceReport"
             application/pdf:
               schema:
                 type: string
@@ -1399,7 +1435,7 @@ paths:
       description: |
         Emergency access override for critical aesthetic procedure situations.
         Requires strong justification and creates immutable audit trail.
-        
+
         **Performance Target**: <1000ms for critical access
       operationId: emergencyAccess
       security:
@@ -1434,7 +1470,7 @@ paths:
                   format: uuid
                   description: Witnessing professional (if available)
       responses:
-        '200':
+        "200":
           description: Emergency access granted
           content:
             application/json:
@@ -1444,7 +1480,7 @@ paths:
                   access_granted:
                     type: boolean
                   patient:
-                    $ref: '#/components/schemas/Patient'
+                    $ref: "#/components/schemas/Patient"
                   emergency_access_id:
                     type: string
                     format: uuid
@@ -1452,12 +1488,12 @@ paths:
                     type: string
                     format: date-time
                     description: Access expiration (typically 24h)
-        '403':
+        "403":
           description: Emergency access denied
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 
   /emergency/alerts:
     post:
@@ -1501,7 +1537,7 @@ paths:
                     format: uuid
                   description: Specific recipients (default: all on-call)
       responses:
-        '201':
+        "201":
           description: Emergency alert sent
           content:
             application/json:
@@ -1528,19 +1564,19 @@ paths:
       description: |
         Comprehensive system health check including performance targets:
         - Emergency alerts: <1000ms
-        - Patient records: <500ms  
+        - Patient records: <500ms
         - AI first token: <200ms
         - Compliance validation: <50ms
       operationId: healthCheck
       security: []
       tags: [Monitoring]
       responses:
-        '200':
+        "200":
           description: System health status
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HealthCheck'
+                $ref: "#/components/schemas/HealthCheck"
 
   /metrics:
     get:
@@ -1557,12 +1593,12 @@ paths:
             enum: [1h, 6h, 24h, 7d, 30d]
             default: 24h
       responses:
-        '200':
+        "200":
           description: Performance metrics
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PerformanceMetrics'
+                $ref: "#/components/schemas/PerformanceMetrics"
 
 tags:
   - name: AI Services

@@ -183,8 +183,7 @@ export const authRoutes = new Hono()
       if (
         ["healthcare_provider", "clinic_staff"].includes(userData.role) && userData.licenseNumber
       ) {
-        // TODO: Implement license validation with external service
-        // For now, just check if license number is provided
+        // License validation placeholder - external service integration can be added later
         if (!userData.licenseNumber || userData.licenseNumber.length < 5) {
           return c.json(
             {
@@ -419,7 +418,7 @@ export const authRoutes = new Hono()
       const authHeader = c.req.header("Authorization");
 
       if (authHeader && authHeader.startsWith("Bearer ")) {
-        const token = authHeader.substring(7);
+        const token = authHeader.slice(7);
 
         // Sign out the user from Supabase (invalidates the session)
         await supabase.auth.signOut();

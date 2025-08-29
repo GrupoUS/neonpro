@@ -90,8 +90,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (confirmAction && !loading) {
-        // TODO: Replace with proper confirm dialog
-        if (window.confirm("Are you sure?")) {
+        if (window.confirm(confirmMessage)) {
           onClick?.(e);
         }
       } else if (!loading) {
@@ -125,10 +124,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isDisabled}
         onClick={handleClick}
         ref={ref}
-        {
-          // role="button" - consider using actual button element
-          ...props
-        }
+        role="button"
+        {...props}
       >
         {leftIcon && !loading && (
           <span aria-hidden="true" className="flex items-center justify-center">

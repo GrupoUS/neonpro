@@ -411,7 +411,7 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     allowedHeaders: ["*"],
     exposedHeaders: ["*"],
     credentials: true,
-    maxAge: 86400, // 24 hours
+    maxAge: 86_400, // 24 hours
     lgpdCompliance: {
       enabled: false, // Disabled in development
       dataProcessingConsent: false,

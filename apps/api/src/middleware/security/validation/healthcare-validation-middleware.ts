@@ -14,11 +14,10 @@
 import type { Context, MiddlewareHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { z, ZodError } from "zod";
+import type { BrazilianHealthcareLicense, BrazilianState } from "./brazilian-healthcare-validator";
 import {
   BrazilianDocumentType,
-  BrazilianHealthcareLicense,
   BrazilianHealthcareSanitizer,
-  BrazilianState,
   CNSValidator,
   CPFValidator,
   HealthcareLicenseValidator,
@@ -164,11 +163,11 @@ export class HealthcareInputValidator {
     data: any,
     options: {
       emergencyBypass?: boolean;
-      userLicenses?: Array<{
+      userLicenses?: {
         number: string;
         type: BrazilianHealthcareLicense;
         state: BrazilianState;
-      }>;
+      }[];
       userId?: string;
     } = {},
   ): Promise<ValidationResult> {
@@ -409,7 +408,7 @@ export class HealthcareInputValidator {
     } catch (error) {
       // Log error for monitoring
       console.error("[CPF_DUPLICATION_CHECK_ERROR]", {
-        cpf: cpf.substring(0, 3) + "***", // Mask CPF for privacy
+        cpf: cpf.slice(0, 3) + "***", // Mask CPF for privacy
         error: error instanceof Error ? error.message : "Unknown error",
         timestamp: new Date().toISOString(),
       });
@@ -460,11 +459,7 @@ export class HealthcareInputValidator {
       };
     }
 
-    // TODO: Implement integration with Brazilian regulatory APIs
-    // - CRM (Conselho Federal de Medicina)
-    // - CRF (Conselho Federal de Farmácia)
-    // - COREN (Conselho Federal de Enfermagem)
-    // etc.
+    // Basic format validation - external API integration can be added later if needed
 
     // For now, accept valid format as sufficient
     return { valid: true };

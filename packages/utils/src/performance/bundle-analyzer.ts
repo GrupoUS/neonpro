@@ -574,4 +574,4 @@ export const brazilianBundleAnalyzer = new BundleAnalyzer({
   },
 });
 
-export { BundleAnalyzer };
+// BundleAnalyzer is already exported as a class above

@@ -1,12 +1,9 @@
-import { 
-  HealthcareCircuitBreaker, 
-  CircuitBreakerConfig, 
-  CircuitBreakerState 
-} from './healthcare-circuit-breaker';
-import { 
-  ServiceDegradationConfig, 
-  healthcareServiceDegradations 
-} from './service-degradation';
+import {
+  CircuitBreakerConfig,
+  CircuitBreakerState,
+  HealthcareCircuitBreaker,
+} from "./healthcare-circuit-breaker";
+import { healthcareServiceDegradations, ServiceDegradationConfig } from "./service-degradation";
 
 /**
  * Circuit Breaker Manager for Healthcare Services
@@ -26,49 +23,54 @@ export class CircuitBreakerManager {
    */
   private initializeHealthcareServices(): void {
     // Payment service circuit breaker
-    this.createCircuitBreaker('payment-api', {
-      serviceName: 'payment-api',
+    this.createCircuitBreaker("payment-api", {
+      serviceName: "payment-api",
       failureThreshold: 3,
       timeoutDuration: 30000, // 30 seconds
       halfOpenMaxCalls: 2,
-      healthcareCritical: false
+      healthcareCritical: false,
     });
 
     // SMS service circuit breaker
-    this.createCircuitBreaker('sms-service', {
-      serviceName: 'sms-service',
+    this.createCircuitBreaker("sms-service", {
+      serviceName: "sms-service",
       failureThreshold: 5,
       timeoutDuration: 60000, // 1 minute
       halfOpenMaxCalls: 3,
-      healthcareCritical: false
+      healthcareCritical: false,
     });
 
     // Email service circuit breaker
-    this.createCircuitBreaker('email-service', {
-      serviceName: 'email-service',
+    this.createCircuitBreaker("email-service", {
+      serviceName: "email-service",
       failureThreshold: 5,
       timeoutDuration: 60000,
       halfOpenMaxCalls: 3,
-      healthcareCritical: false
+      healthcareCritical: false,
     });
 
     // Patient data service (critical)
-    this.createCircuitBreaker('patient-data-api', {
-      serviceName: 'patient-data-api',
+    this.createCircuitBreaker("patient-data-api", {
+      serviceName: "patient-data-api",
       failureThreshold: 2, // Lower threshold for critical service
       timeoutDuration: 15000, // Shorter timeout
       halfOpenMaxCalls: 1,
-      healthcareCritical: true
+      healthcareCritical: true,
     });
 
     // Load degradation strategies
     Object.values(healthcareServiceDegradations).forEach(config => {
       this.degradationStrategies.set(config.serviceName, config);
     });
-  }  /**
+  }
+
+  /**
    * Create a new circuit breaker for a service
    */
-  createCircuitBreaker(serviceName: string, config: CircuitBreakerConfig): HealthcareCircuitBreaker {
+  createCircuitBreaker(
+    serviceName: string,
+    config: CircuitBreakerConfig,
+  ): HealthcareCircuitBreaker {
     const circuitBreaker = new HealthcareCircuitBreaker(config);
     this.circuitBreakers.set(serviceName, circuitBreaker);
     return circuitBreaker;
@@ -86,7 +88,7 @@ export class CircuitBreakerManager {
    */
   async execute<T>(serviceName: string, operation: () => Promise<T>): Promise<T> {
     const circuitBreaker = this.getCircuitBreaker(serviceName);
-    
+
     if (!circuitBreaker) {
       throw new Error(`No circuit breaker configured for service: ${serviceName}`);
     }
@@ -98,9 +100,9 @@ export class CircuitBreakerManager {
    * Execute with fallback strategy
    */
   async executeWithFallback<T>(
-    serviceName: string, 
+    serviceName: string,
     operation: () => Promise<T>,
-    fallback: () => Promise<T>
+    fallback: () => Promise<T>,
   ): Promise<T> {
     try {
       return await this.execute(serviceName, operation);
@@ -115,15 +117,16 @@ export class CircuitBreakerManager {
    */
   getSystemHealth(): Record<string, any> {
     const health: Record<string, any> = {};
-    
+
     for (const [serviceName, circuitBreaker] of this.circuitBreakers) {
       health[serviceName] = {
         state: circuitBreaker.currentState,
         healthy: circuitBreaker.isHealthy,
         metrics: circuitBreaker.getMetrics,
-        config: circuitBreaker.getConfig
+        config: circuitBreaker.getConfig,
       };
     }
-    
+
     return health;
   }
+}

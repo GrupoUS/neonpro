@@ -1,8 +1,9 @@
-import { Context, Next } from "hono";
+import type { Context, Next } from "hono";
 import { getCookie } from "hono/cookie";
 import { verify } from "hono/jwt";
 import { auditService } from "../services/audit.service";
-import { AuditAction, AuditContext, AuditEvent, AuditSeverity, ResourceType } from "../types/audit";
+import type { AuditContext, AuditEvent } from "../types/audit";
+import { AuditAction, AuditSeverity, ResourceType } from "../types/audit";
 
 /**
  * Middleware de auditoria para capturar automaticamente eventos HTTP
@@ -166,7 +167,7 @@ function extractToken(c: Context): string | null {
   // Tentar header Authorization
   const authHeader = c.req.header("Authorization");
   if (authHeader && authHeader.startsWith("Bearer ")) {
-    return authHeader.substring(7);
+    return authHeader.slice(7);
   }
 
   // Tentar cookie

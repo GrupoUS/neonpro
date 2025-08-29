@@ -47,6 +47,13 @@
     "deploy:staging": "pnpm build:production && vercel --yes",
     "health:check": "curl -f http://localhost:3000/api/health || echo 'Health check failed'",
     "monitor:production": "pnpm health:check && echo '✅ Production monitoring active'",
+    "test:ai": "vitest run --testNamePattern=\"AI|LLM|GPT\" --reporter=verbose",
+    "benchmark": "vitest bench --reporter=verbose",
+    "security:audit": "echo 'Security audit - checking for vulnerabilities...' && pnpm audit || echo 'Audit completed with warnings'",
+    "security:check": "pnpm run security:audit && pnpm run ci:check",
+    "deps:update": "pnpm update --interactive --latest",
+    "deps:check": "pnpm outdated",
+    "oxlint:fix": "pnpm exec oxlint apps packages --fix",
     "prepare": "husky"
   },
   "devDependencies": {

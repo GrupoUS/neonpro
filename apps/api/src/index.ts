@@ -48,6 +48,7 @@ import { rateLimitMiddleware } from "@/middleware/rate-limit";
 import { aiRoutes } from "@/routes/ai";
 import { analyticsRoutes } from "@/routes/analytics";
 import { appointmentRoutes } from "@/routes/appointments";
+import { auditRoutes } from "@/routes/audit";
 import { authRoutes } from "@/routes/auth";
 import { clinicRoutes } from "@/routes/clinics";
 import { complianceRoutes } from "@/routes/compliance";
@@ -257,7 +258,10 @@ const apiV1 = new Hono<AppEnv>()
   .use("/compliance-automation/*", ...orchestrator.createSecurityMiddleware())
   .route("/compliance-automation", complianceAutomationRoutes)
   // AI routes (standard validation)
-  .route("/ai", aiRoutes);
+  .route("/ai", aiRoutes)
+  // Audit routes (enhanced security - admin/DPO access only)
+  .use("/audit/*", ...orchestrator.createSecurityMiddleware()) // Enhanced security for audit logs
+  .route("/audit", auditRoutes);
 
 // Mount API v1 with healthcare security
 app.route("/api/v1", apiV1);
@@ -384,7 +388,7 @@ app.onError(async (err, c) => {
     success: false,
     error: "HEALTHCARE_API_ERROR",
     message: "A healthcare system error occurred. Technical support has been notified.",
-    requestId: `REQ_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`,
+    requestId: `REQ_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     timestamp: new Date().toISOString(),
     support: {
       emergencyContact: IS_PRODUCTION ? "+55 11 9999-9999" : undefined,

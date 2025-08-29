@@ -84,9 +84,13 @@ CONSTITUTIONAL_PRINCIPLES:
 
 ### 1. **Research & Decomposition**
 
+- Always begin with the `sequential-thinking` tool to analyze and understand the feature requirements
+- Use systematic thinking to break down the feature into smaller components
+- Identify potential complexities, dependencies, and constraints
 - Conduct thorough research on the feature requirements and constraints
 - Decompose the feature into smaller, manageable tasks
 - Identify potential complexities and dependencies
+- If tried more than 3 times to fix something and still stuck, start a new research cycle.
 - Use the `apex-researcher` agent for multi-source intelligence gathering: [`.ruler/agents/apex-researcher.md`](../.ruler/agents/apex-researcher.md)
 - Follow the Research Execution Framework below
 
@@ -120,7 +124,7 @@ RESEARCH_EXECUTION_FRAMEWORK:
 ### 3. **Planning & Task List**
 
 - Create a detailed task list using the todo tool to implement the feature
-- Break down complex features into manageable subtasks
+- Break down complex features into manageable subtasks, always make atomic tasks on archon and then subtasks on native todos task lists
 - Mark tasks as in_progress when starting, completed when finished
 - Use the `apex-dev` agent for development context and task management: [`.ruler/agents/apex-dev.md`](../.ruler/agents/apex-dev.md)
 - Use the `apex-ui-ux-designer` agent for UI/UX design tasks: [`.ruler/agents/apex-ui-ux-designer.md`](../.ruler/agents/apex-ui-ux-designer.md)
@@ -170,12 +174,17 @@ RESEARCH_EXECUTION_FRAMEWORK:
   - **MANDATORY**: Execute following ALL guidelines from `/.ruler` and `/docs` directories
   - **ALWAYS**: Consult documentation when uncertain about patterns, conventions, or approaches
   - Follow established code patterns, naming conventions, and project standards
+  - If tried more than 3 times to fix something and still stuck, start a new research cycle.
+  - Use Native `think` tool every 5 steps to ensure alignment with requirements and quality
   - Implement comprehensive error handling following project patterns
   - **Test Categories Required**: Success cases, error cases, edge cases, business logic
   - **Documentation First**: Check existing patterns before creating new ones
 
 ### 4. **Test Execution & Validation**
 
+- Run `pnpm format:check` to check for formatting issues
+- Run `npx oxlint apps packages --fix` to fix linter issues (Note: dprint formatting requires platform-specific dependency)
+- Run `pnpm format && pnpm lint:fix && pnpm type-check` to format code
 - Run `pnpm test` and all task tests to execute all unit tests
 - **Correction Loop**: If tests fail:
   - Fix the issues following TDD principles
@@ -188,7 +197,7 @@ RESEARCH_EXECUTION_FRAMEWORK:
   - Utilities/validators: 80%+
 - Only proceed when all unit tests are green and coverage meets requirements
 - Use Tasks tests to complement unit tests
-- Run `pnpm test:tasks` to execute all task tests
+- Run `run tasks:test` to execute all task tests
 
 ### 5. **Code Quality Check**
 
