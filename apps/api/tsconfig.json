@@ -48,8 +48,6 @@
       "@neonpro/shared/*": ["../../packages/shared/src/*"],
       "@neonpro/database": ["../../packages/database/src"],
       "@neonpro/database/*": ["../../packages/database/src/*"],
-      "@neonpro/database": ["../../packages/database/src"],
-      "@neonpro/database/*": ["../../packages/database/src/*"],
       "@neonpro/cache": ["../../packages/cache/src"],
       "@neonpro/cache/*": ["../../packages/cache/src/*"],
       "@neonpro/monitoring": ["../../packages/monitoring/src"],

@@ -105,7 +105,12 @@
       "Bash(./.claude/hooks/pre-tool.sh:*)",
       "Bash(/mnt/d/neonpro/.claude/hooks/pre-tool.sh:*)",
       "Bash(/mnt/d/neonpro/.claude/hooks/post-tool.sh:*)",
-      "Bash(/mnt/d/neonpro/.claude/hooks/session-stop.sh test_session:*)"
+      "Bash(/mnt/d/neonpro/.claude/hooks/session-stop.sh test_session:*)",
+      "mcp__supabase__get_project_url",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__list_migrations",
+      "mcp__Tavily__tavily-search",
+      "mcp__desktop-commander__list_processes"
     ],
     "deny": [
       "Edit",

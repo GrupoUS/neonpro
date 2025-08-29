@@ -142,7 +142,7 @@ export interface NoShowPredictionRequest {
   isFirstVisit: boolean;
   daysSinceLastAppointment?: number;
   weatherConditions?: WeatherConditions;
-  additionalContext?: Record<string, any>;
+  additionalContext?: Record<string, unknown>;
 }
 
 export interface WeatherConditions {
@@ -195,7 +195,7 @@ export interface NoShowPredictionApiResponse {
   error?: {
     code: string;
     message: string;
-    details?: any;
+    details?: Record<string, unknown>;
   };
   metadata?: {
     total?: number;
@@ -210,7 +210,7 @@ export interface NoShowPredictionEvent {
   type: "prediction_updated" | "intervention_triggered" | "outcome_recorded";
   appointmentId: string;
   patientId: string;
-  data: any;
+  data: NoShowPrediction | InterventionStrategy | { outcome: "show" | "no_show"; actualTime?: Date };
   timestamp: Date;
 }
 
@@ -268,24 +268,24 @@ export const INTERVENTION_ACTIONS_PT = {
 } as const;
 
 // Type guards
-export function isNoShowPrediction(obj: any): obj is NoShowPrediction {
+export function isNoShowPrediction(obj: unknown): obj is NoShowPrediction {
   return (
     typeof obj === "object"
     && obj !== null
-    && typeof obj.id === "string"
-    && typeof obj.appointmentId === "string"
-    && typeof obj.riskScore === "number"
-    && ["low", "medium", "high", "critical"].includes(obj.riskLevel)
+    && typeof (obj as NoShowPrediction).id === "string"
+    && typeof (obj as NoShowPrediction).appointmentId === "string"
+    && typeof (obj as NoShowPrediction).riskScore === "number"
+    && ["low", "medium", "high", "critical"].includes((obj as NoShowPrediction).riskLevel)
   );
 }
 
-export function isRiskFactor(obj: any): obj is RiskFactor {
+export function isRiskFactor(obj: unknown): obj is RiskFactor {
   return (
     typeof obj === "object"
     && obj !== null
-    && typeof obj.id === "string"
-    && typeof obj.name === "string"
-    && typeof obj.weight === "number"
+    && typeof (obj as RiskFactor).id === "string"
+    && typeof (obj as RiskFactor).name === "string"
+    && typeof (obj as RiskFactor).weight === "number"
   );
 }
 

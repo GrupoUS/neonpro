@@ -3,6 +3,8 @@
  * Implements granular permissions for clinic management
  */
 
+import type { NextApiRequest, NextApiResponse } from 'next';
+
 export interface Permission {
   id: string;
   name: string;
@@ -379,7 +381,11 @@ export class HealthcareRBAC {
 
   // Middleware helper for Next.js API routes
   static createPermissionMiddleware(requiredPermissions: string | string[]) {
-    return async (req: any, res: any, next: any) => {
+    return async (
+      req: NextApiRequest & { user?: { id: string } },
+      res: NextApiResponse,
+      next: () => void
+    ) => {
       const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ error: "Unauthorized" });
