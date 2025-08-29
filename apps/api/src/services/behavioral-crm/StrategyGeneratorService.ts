@@ -86,7 +86,7 @@ export interface CommunicationChannel {
 export interface TriggerCondition {
   type: "behavioral" | "temporal" | "event" | "score_change";
   condition: string; // Description of the trigger
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   isActive: boolean;
 }
 
@@ -151,8 +151,8 @@ export class StrategyGeneratorService {
     patientProfile: PatientBehaviorProfile,
     context?: {
       segments?: PatientSegment[];
-      recentEvents?: any[];
-      campaignHistory?: any[];
+      recentEvents?: unknown[];
+      campaignHistory?: unknown[];
     },
   ): Promise<PersonalizedStrategy> {
     try {
@@ -298,7 +298,7 @@ export class StrategyGeneratorService {
 
   private async determineStrategyType(
     profile: PatientBehaviorProfile,
-    _context?: any,
+    _context?: unknown,
   ): Promise<PersonalizedStrategy["type"]> {
     // High-risk patients need recovery strategies
     if (profile.scores.risk > 70) {
@@ -336,7 +336,7 @@ export class StrategyGeneratorService {
   private async createStrategyForType(
     profile: PatientBehaviorProfile,
     type: PersonalizedStrategy["type"],
-    _context?: any,
+    _context?: unknown,
   ): Promise<PersonalizedStrategy["strategy"]> {
     const strategies = {
       retention: {
@@ -572,7 +572,7 @@ export class StrategyGeneratorService {
   }
 
   private async personalizeActionTiming(
-    baseTiming: any,
+    baseTiming: ActionPlan["timing"],
     profile: PatientBehaviorProfile,
   ): Promise<ActionPlan["timing"]> {
     // Adapt to patient's response time pattern
@@ -949,7 +949,7 @@ export class StrategyGeneratorService {
   private calculateConfidence(
     profile: PatientBehaviorProfile,
     strategyType: PersonalizedStrategy["type"],
-    _context?: any,
+    _context?: unknown,
   ): number {
     let baseConfidence = 70;
 
