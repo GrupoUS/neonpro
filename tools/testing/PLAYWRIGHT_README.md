@@ -81,10 +81,12 @@ tools/testing/
 ## 📝 Testes disponíveis
 
 ### 1. example.spec.ts
+
 - ✅ Verifica título da página do Playwright
 - ✅ Testa navegação e cliques
 
-### 2. neonpro.spec.ts  
+### 2. neonpro.spec.ts
+
 - 🔄 Homepage (skipped - aguarda servidor local)
 - 🔄 Login page (skipped - aguarda servidor local)
 - ✅ Teste externo funcionando
@@ -102,22 +104,22 @@ Sugestões de testes importantes para o NeonPro:
 
 ```typescript
 // Compliance LGPD
-test('privacy policy is accessible', async ({ page }) => {
+test("privacy policy is accessible", async ({ page }) => {
   // Verificar se política de privacidade está visível
 });
 
 // Segurança
-test('login requires strong authentication', async ({ page }) => {
+test("login requires strong authentication", async ({ page }) => {
   // Verificar MFA, validação de senha forte
 });
 
 // Acessibilidade
-test('pages meet WCAG standards', async ({ page }) => {
+test("pages meet WCAG standards", async ({ page }) => {
   // Verificar contraste, navegação por teclado
 });
 
 // Responsividade
-test('works on mobile devices', async ({ page }) => {
+test("works on mobile devices", async ({ page }) => {
   // Testar em viewports mobile
 });
 ```

@@ -122,7 +122,7 @@ export class PerformanceMonitor {
       name,
       value,
       rating: this.getRating(name, value),
-      timestamp: Date.now(),
+      timestamp: new Date().toISOString(),
       id: this.generateMetricId(),
       context: {
         ...this.getBaseContext(),
@@ -503,7 +503,7 @@ export class PerformanceMonitor {
   private getBaseContext(): Record<string, string | number | boolean | object> {
     const context: Record<string, string | number | boolean | object> = {
       sessionId: this.sessionId,
-      timestamp: Date.now(),
+      timestamp: new Date().toISOString(),
       url: window.location.href,
       referrer: document.referrer,
       ...this.context,

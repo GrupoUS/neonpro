@@ -89,27 +89,7 @@
       "mcp__vercel__get_project",
       "mcp__vercel__list_teams",
       "mcp__vercel__list_projects",
-      "mcp__archon__update_task",
-      "Read(D:\\Coders\\Claude/**)",
-      "Read(D:\\Coders\\Claude/**)",
-      "Read(D:\\Coders\\Claude/**)",
-      "Read(D:\\Coders\\Claude/**)",
-      "Read(D:\\Coders\\Claude/**)",
-      "Read(D:\\Coders\\Claude/**)",
-      "Read(D:\\Coders\\Claude/**)",
-      "Read(D:\\Coders\\Claude/**)",
-      "Read(D:\\Coders\\Claude\\.claude/**)",
-      "Read(D:\\Coders\\Claude\\.claude/**)",
-      "Read(D:\\Coders\\Claude\\.claude/**)",
-      "Read(D:\\Coders\\Claude\\.claude/**)",
-      "Read(D:\\Coders\\Claude\\.claude/**)",
-      "Read(D:\\Coders\\Claude\\.claude/**)",
-      "Read(D:\\Coders\\Claude/**)",
-      "Read(D:\\Coders\\Claude\\.claude/**)",
-      "Read(D:\\Coders\\Claude/**)",
-      "Read(D:\\Coders\\Claude/**)",
-      "Read(D:\\Coders\\Claude\\.claude/**)",
-      "Read(D:\\Coders\\Claude\\.claude/**)"
+      "mcp__archon__update_task"
     ],
     "deny": [
       "Edit",
@@ -122,19 +102,6 @@
       "WebFetch"
     ]
   },
-  "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "desktop-commander",
-    "sequential-thinking",
-    "context7",
-    "tavily",
-    "exa",
-    "supabase-mcp",
-    "shadcn-ui",
-    "serena",
-    "archon",
-    "vercel"
-  ],
   "hooks": {
     "PreToolUse": [
       {
@@ -190,12 +157,6 @@
       "environmentIsolation": true,
       "timeoutGracePeriod": 10,
       "failureIsolation": true
-    },
-    "stateManagement": {
-      "enableAdvancedTracking": true,
-      "backupFrequency": "onCompletion",
-      "maxStateBackups": 10,
-      "cleanupInterval": 86400
     }
   },
   "memory": {
@@ -203,8 +164,7 @@
     "recursiveSearch": true,
     "projectContextPath": ".claude",
     "masterConfigFile": "CLAUDE.md",
-    "loadOnStartup": true,
-    "prioritizeProjectContext": true
+    "loadOnStartup": true
   },
   "parallelTasksCount": 5
 }

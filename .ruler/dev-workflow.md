@@ -30,6 +30,10 @@ CORE_STANDARDS:
   archon_first_rule: "MANDATORY Archon MCP integration for all task management"
   mandatory_execution_rules:
     right_tool_for_job: "Understand full context before implementation and choose the right mcp and agent for the job"
+    serena_mcp: "MANDATORY use of serena mcp to search codebase, *DO NOT USE* `NATIVE SEARCH CODEBASE`"
+    serena_mcp_integration: "MANDATORY use of serena mcp for semantic code analysis"
+    supabase_integration: "MANDATORY use of supabase mcp for database operations"
+    shadcn-ui_integration: "MANDATORY use of shadcn-ui mcp to manage ui components"
     no_interruptions: "Continue through ALL steps until problem fully solved"
     mandatory_first_step: "Always begin with sequential-thinking tool"
     only_terminate_when: "User query COMPLETELY resolved and Problem 100% solved"
@@ -140,7 +144,7 @@ RESEARCH_EXECUTION_FRAMEWORK:
     routing: "Sequential Thinking integration with architectural pattern analysis and validation"
     one_shot_template:
       role: "[Specific: Frontend Developer | Backend Engineer | Full-Stack | UI/UX Designer]"
-      context: "#workspace + #codebase + [archon knowledge base + relevant files]"
+      context: "#workspace + #codebase search with serena mcp + [archon knowledge base + relevant files]"
       task: "[Specific, measurable, actionable requirement]"
       constraints: "[Technical limitations, performance requirements]"
       output: "[Code | Documentation | Architecture | Analysis | Design]"

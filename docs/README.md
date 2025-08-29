@@ -1,6 +1,6 @@
 # 📚 NeonPro Documentation
 
-> **Healthcare-focused aesthetic clinic management system**  
+> **Healthcare-focused aesthetic clinic management system**\
 > Built with Next.js 15+, Supabase, TypeScript, and Vercel
 
 ## 📋 Documentation Structure
@@ -178,7 +178,7 @@ npm run build
 
 ---
 
-**Last Updated**: 2025-01-26  
-**Version**: 1.0  
-**Compliance**: LGPD, ANVISA, CFM  
+**Last Updated**: 2025-01-26\
+**Version**: 1.0\
+**Compliance**: LGPD, ANVISA, CFM\
 **Architecture**: Next.js 15+ + Supabase + Vercel

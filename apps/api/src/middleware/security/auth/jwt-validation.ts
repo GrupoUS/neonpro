@@ -336,7 +336,7 @@ setInterval(() => {
 /**
  * Enhanced JWT validation with healthcare-specific logic
  */
-export class HealthcareJWTValidator {
+class HealthcareJWTValidator {
   private config: JWTValidationConfig;
 
   constructor(config?: Partial<JWTValidationConfig>) {

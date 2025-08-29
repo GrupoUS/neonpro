@@ -4,6 +4,9 @@
   "description": "NeonPro shared configurations (Oxlint, Dprint, Tailwind, TypeScript)",
   "private": true,
   "main": "index.js",
+  "scripts": {
+    "build": "echo 'Config package - no build needed' && exit 0"
+  },
   "files": [
     "**"
   ],

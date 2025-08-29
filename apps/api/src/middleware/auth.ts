@@ -643,4 +643,4 @@ export const authUtils = {
 };
 
 // Export types and store for testing
-export { Permission, ROLE_PERMISSIONS, UserRole, userStore };
+export { ROLE_PERMISSIONS, userStore };

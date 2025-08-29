@@ -93,8 +93,6 @@ class HealthcareWebVitals {
     const healthcareMetric: HealthcareVitalsMetric = {
       ...metric,
       ...this.healthcareContext,
-      deviceType: this.healthcareContext.deviceType as unknown,
-      networkConnection: this.healthcareContext.networkConnection as unknown,
       criticalPath: this.isCriticalHealthcarePath(metric.name),
       rating: this.calculateHealthcareRating(metric),
     };
@@ -113,9 +111,8 @@ class HealthcareWebVitals {
   private handleCLSMetric(metric: CLSMetric): void {
     const webVitalsMetric: WebVitalsMetric = {
       ...metric,
-      timestamp: Date.now(),
-      url: window.location.href,
-      userAgent: navigator.userAgent,
+      category: "web-vitals",
+      timestamp: new Date().toISOString(),
     };
     this.handleMetric(webVitalsMetric);
   }
@@ -126,9 +123,8 @@ class HealthcareWebVitals {
   private handleFCPMetric(metric: FCPMetric): void {
     const webVitalsMetric: WebVitalsMetric = {
       ...metric,
-      timestamp: Date.now(),
-      url: window.location.href,
-      userAgent: navigator.userAgent,
+      category: "web-vitals",
+      timestamp: new Date().toISOString(),
     };
     this.handleMetric(webVitalsMetric);
   }
@@ -139,9 +135,8 @@ class HealthcareWebVitals {
   private handleFIDMetric(metric: FIDMetric): void {
     const webVitalsMetric: WebVitalsMetric = {
       ...metric,
-      timestamp: Date.now(),
-      url: window.location.href,
-      userAgent: navigator.userAgent,
+      category: "web-vitals",
+      timestamp: new Date().toISOString(),
     };
     this.handleMetric(webVitalsMetric);
   }
@@ -152,9 +147,8 @@ class HealthcareWebVitals {
   private handleLCPMetric(metric: LCPMetric): void {
     const webVitalsMetric: WebVitalsMetric = {
       ...metric,
-      timestamp: Date.now(),
-      url: window.location.href,
-      userAgent: navigator.userAgent,
+      category: "web-vitals",
+      timestamp: new Date().toISOString(),
     };
     this.handleMetric(webVitalsMetric);
   }
@@ -165,9 +159,8 @@ class HealthcareWebVitals {
   private handleTTFBMetric(metric: TTFBMetric): void {
     const webVitalsMetric: WebVitalsMetric = {
       ...metric,
-      timestamp: Date.now(),
-      url: window.location.href,
-      userAgent: navigator.userAgent,
+      category: "web-vitals",
+      timestamp: new Date().toISOString(),
     };
     this.handleMetric(webVitalsMetric);
   }
@@ -178,9 +171,8 @@ class HealthcareWebVitals {
   private handleINPMetric(metric: INPMetric): void {
     const webVitalsMetric: WebVitalsMetric = {
       ...metric,
-      timestamp: Date.now(),
-      url: window.location.href,
-      userAgent: navigator.userAgent,
+      category: "web-vitals",
+      timestamp: new Date().toISOString(),
     };
     this.handleMetric(webVitalsMetric);
   }
@@ -257,8 +249,9 @@ class HealthcareWebVitals {
               ? "needs-improvement"
               : "poor",
             id: `patient-lookup-${Date.now()}`,
+            category: "web-vitals",
             navigationType: "navigate",
-            timestamp: Date.now(),
+            timestamp: new Date().toISOString(),
             url: window.location.href,
             userAgent: navigator.userAgent,
             workflowType: "patient-registration" as const,
@@ -300,8 +293,9 @@ class HealthcareWebVitals {
                     ? "needs-improvement"
                     : "poor",
                   id: `medical-form-${Date.now()}`,
+                  category: "web-vitals",
                   navigationType: "navigate",
-                  timestamp: Date.now(),
+                  timestamp: new Date().toISOString(),
                   url: window.location.href,
                   userAgent: navigator.userAgent,
                   workflowType: "medical-form" as const,
@@ -342,8 +336,9 @@ class HealthcareWebVitals {
           ? "needs-improvement"
           : "poor",
         id: `realtime-update-${Date.now()}`,
+        category: "web-vitals",
         navigationType: "navigate",
-        timestamp: Date.now(),
+        timestamp: new Date().toISOString(),
         url: window.location.href,
         userAgent: navigator.userAgent,
         workflowType: "real-time-update" as const,
@@ -381,8 +376,9 @@ class HealthcareWebVitals {
               ? "needs-improvement"
               : "poor",
             id: `procedure-scheduling-${Date.now()}`,
+            category: "web-vitals",
             navigationType: "navigate",
-            timestamp: Date.now(),
+            timestamp: new Date().toISOString(),
             url: window.location.href,
             userAgent: navigator.userAgent,
             workflowType: "procedure-scheduling" as const,
@@ -419,7 +415,7 @@ class HealthcareWebVitals {
    */
   private detectNetworkConnection(): void {
     if ("connection" in navigator) {
-      const connection = (navigator as unknown).connection;
+      const connection = (navigator as any).connection;
       if (connection.effectiveType === "4g") {
         this.healthcareContext.networkConnection = "fast";
       } else if (connection.effectiveType === "3g") {

@@ -1,9 +1,11 @@
+import type {
+  CircuitBreakerConfig} from "./healthcare-circuit-breaker";
 import {
-  CircuitBreakerConfig,
   CircuitBreakerState,
   HealthcareCircuitBreaker,
 } from "./healthcare-circuit-breaker";
-import { healthcareServiceDegradations, ServiceDegradationConfig } from "./service-degradation";
+import type { ServiceDegradationConfig } from "./service-degradation";
+import { healthcareServiceDegradations } from "./service-degradation";
 
 /**
  * Circuit Breaker Manager for Healthcare Services
@@ -26,7 +28,7 @@ export class CircuitBreakerManager {
     this.createCircuitBreaker("payment-api", {
       serviceName: "payment-api",
       failureThreshold: 3,
-      timeoutDuration: 30000, // 30 seconds
+      timeoutDuration: 30_000, // 30 seconds
       halfOpenMaxCalls: 2,
       healthcareCritical: false,
     });
@@ -35,7 +37,7 @@ export class CircuitBreakerManager {
     this.createCircuitBreaker("sms-service", {
       serviceName: "sms-service",
       failureThreshold: 5,
-      timeoutDuration: 60000, // 1 minute
+      timeoutDuration: 60_000, // 1 minute
       halfOpenMaxCalls: 3,
       healthcareCritical: false,
     });
@@ -44,7 +46,7 @@ export class CircuitBreakerManager {
     this.createCircuitBreaker("email-service", {
       serviceName: "email-service",
       failureThreshold: 5,
-      timeoutDuration: 60000,
+      timeoutDuration: 60_000,
       halfOpenMaxCalls: 3,
       healthcareCritical: false,
     });
@@ -53,7 +55,7 @@ export class CircuitBreakerManager {
     this.createCircuitBreaker("patient-data-api", {
       serviceName: "patient-data-api",
       failureThreshold: 2, // Lower threshold for critical service
-      timeoutDuration: 15000, // Shorter timeout
+      timeoutDuration: 15_000, // Shorter timeout
       halfOpenMaxCalls: 1,
       healthcareCritical: true,
     });

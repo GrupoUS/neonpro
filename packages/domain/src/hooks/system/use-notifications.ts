@@ -73,10 +73,10 @@ export function useNotifications({
   realtime = true,
 }: UseNotificationsOptions): UseNotificationsReturn {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [preferences, setPreferences] = useState<NotificationPreferences | null>();
+  const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
-  const [subscription, setSubscription] = useState<RealtimeChannel | null>();
+  const [error, setError] = useState<string | null>(null);
+  const [subscription, setSubscription] = useState<RealtimeChannel | null>(null);
 
   const supabase = createClient(
     "https://placeholder.supabase.co",
@@ -87,7 +87,7 @@ export function useNotifications({
   const loadNotifications = useCallback(async () => {
     try {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       // Build query
       let query = supabase
@@ -352,7 +352,7 @@ export function useNotifications({
     return () => {
       if (subscription) {
         subscription.unsubscribe();
-        setSubscription(undefined);
+        setSubscription(null);
       }
     };
   }, [subscription]);

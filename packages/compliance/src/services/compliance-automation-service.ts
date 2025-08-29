@@ -600,12 +600,16 @@ export class BrazilianComplianceAutomationService {
   private async notifyExpiringAnvisaProducts(): Promise<void> {
     try {
       // Implementation would send notifications to responsible parties
-      await this.supabase.from("compliance_notifications").insert({
-        tenant_id: this.config.tenant_id,
-        notification_type: "anvisa_expiring_products",
-        message: "ANVISA product registrations expiring soon - renewal required",
-        priority: "high",
-        sent_at: new Date().toISOString(),
+      await this.supabase.from("compliance_alerts").insert({
+        alert_type: "anvisa_expiring_products",
+        alert_category: "anvisa",
+        clinic_id: this.config.tenant_id,
+        title: "ANVISA Product Registration Expiring",
+        description: "ANVISA product registrations expiring soon - renewal required",
+        severity: "warning",
+        affected_systems: ["product_registration"],
+        recommended_actions: {"action": "renew_product_registration"},
+        alert_status: "active",
       });
     } catch {}
   }
@@ -613,11 +617,13 @@ export class BrazilianComplianceAutomationService {
   private async initiateAnvisaProductRegistration(): Promise<void> {
     try {
       // Implementation would initiate product registration workflow
-      await this.supabase.from("compliance_workflows").insert({
-        tenant_id: this.config.tenant_id,
-        workflow_type: "anvisa_product_registration",
-        status: "initiated",
-        initiated_at: new Date().toISOString(),
+      await this.supabase.from("compliance_monitoring_events").insert({
+        event_type: "anvisa_product_registration",
+        event_category: "anvisa",
+        clinic_id: this.config.tenant_id,
+        event_data: {"monitoring_type": "product_registration", "action": "initiate_registration"},
+        compliance_status: "warning",
+        severity_level: 3,
       });
     } catch {}
   }
@@ -625,12 +631,16 @@ export class BrazilianComplianceAutomationService {
   private async notifyExpiringCfmLicenses(): Promise<void> {
     try {
       // Implementation would send notifications to medical professionals
-      await this.supabase.from("compliance_notifications").insert({
-        tenant_id: this.config.tenant_id,
-        notification_type: "cfm_expiring_licenses",
-        message: "CFM professional licenses expiring soon - renewal required",
-        priority: "critical",
-        sent_at: new Date().toISOString(),
+      await this.supabase.from("compliance_alerts").insert({
+        alert_type: "cfm_expiring_licenses",
+        alert_category: "cfm",
+        clinic_id: this.config.tenant_id,
+        title: "CFM Professional License Expiring",
+        description: "CFM professional licenses expiring soon - renewal required",
+        severity: "critical",
+        affected_systems: ["professional_licensing"],
+        recommended_actions: {"action": "renew_cfm_license"},
+        alert_status: "active",
       });
     } catch {}
   }
@@ -638,11 +648,13 @@ export class BrazilianComplianceAutomationService {
   private async initiateCfmLicenseRegistration(): Promise<void> {
     try {
       // Implementation would initiate license registration workflow
-      await this.supabase.from("compliance_workflows").insert({
-        tenant_id: this.config.tenant_id,
-        workflow_type: "cfm_license_registration",
-        status: "initiated",
-        initiated_at: new Date().toISOString(),
+      await this.supabase.from("compliance_monitoring_events").insert({
+        event_type: "cfm_license_registration",
+        event_category: "cfm",
+        clinic_id: this.config.tenant_id,
+        event_data: {"monitoring_type": "professional_license", "action": "initiate_registration"},
+        compliance_status: "critical",
+        severity_level: 4,
       });
     } catch {}
   }

@@ -21,7 +21,7 @@
     "quality:check": "pnpm run test:all",
     "format": "dprint fmt",
     "format:check": "dprint check",
-    "lint": "pnpm dlx oxlint apps packages --max-warnings=10",
+    "lint": "npx oxlint apps packages --max-warnings=10",
     "lint:fix": "pnpm dlx oxlint apps packages --fix && dprint fmt",
     "type-check": "tsc --noEmit",
     "trunk": "trunk check --all",
@@ -53,7 +53,7 @@
     "security:check": "pnpm run security:audit && pnpm run ci:check",
     "deps:update": "pnpm update --interactive --latest",
     "deps:check": "pnpm outdated",
-    "oxlint:fix": "pnpm exec oxlint apps packages --fix",
+    "oxlint:fix": "npx oxlint apps packages --fix",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -68,6 +68,7 @@
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "dotenv": "^17.2.1",
     "dprint": "^0.50.1",

@@ -20,7 +20,10 @@ export default defineConfig({
 
     // Test environment
     environment: "happy-dom",
-    setupFiles: ["apps/web/tests/integration/integration-test-setup.ts"],
+    setupFiles: [
+      "apps/web/tests/setup/global-mocks.ts",
+      "apps/web/tests/integration/integration-test-setup.ts"
+    ],
 
     // Performance and timeout settings
     testTimeout: 30_000, // 30 seconds for integration tests

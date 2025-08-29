@@ -6,6 +6,7 @@
 ## 📋 CATEGORIAS DE LIMPEZA
 
 ### **1. TEMPORÁRIOS (RISCO: BAIXO) ⭐**
+
 **Descrição:** Arquivos/diretórios temporários seguros para remoção
 **Tempo estimado:** 15-30min
 
@@ -27,6 +28,7 @@ temp_read_certification.bat
 ```
 
 ### **2. LOGS E REPORTS (RISCO: BAIXO) ⭐**
+
 **Descrição:** Logs e relatórios de testes/builds anteriores
 **Tempo estimado:** 10-20min
 
@@ -47,6 +49,7 @@ logs/*.log               # Diretório logs está vazio
 ```
 
 ### **3. BACKUPS (RISCO: MÉDIO) ⭐⭐**
+
 **Descrição:** Arquivos de backup antigos e desnecessários
 **Tempo estimado:** 30-60min
 
@@ -67,6 +70,7 @@ backups/                                    # Todo o diretório pode ser removid
 ```
 
 ### **4. ARQUIVOS DE TESTE TEMPORÁRIOS (RISCO: MÉDIO-ALTO) ⭐⭐⭐**
+
 **Descrição:** Scripts de teste/validação não integrados ao suite principal
 **Tempo estimado:** 20-40min
 
@@ -85,6 +89,7 @@ backend-hono.txt
 ```
 
 ### **5. ARQUIVOS DESABILITADOS (RISCO: BAIXO) ⭐**
+
 **Descrição:** Arquivos explicitamente desabilitados
 **Tempo estimado:** 5-10min
 
@@ -96,6 +101,7 @@ packages/ui/vitest.config.mjs.disabled
 ```
 
 ### **6. ARQUIVOS COMPILADOS ÓRFÃOS (RISCO: ALTO) ⭐⭐⭐⭐**
+
 **Descrição:** Arquivos .js/.d.ts em projetos TypeScript (VALIDAÇÃO CRÍTICA)
 **Tempo estimado:** 45-90min
 
@@ -115,15 +121,15 @@ packages/types/src/**/*.d.ts
 
 ## 📊 ESTATÍSTICAS ESTIMADAS
 
-| Categoria | Arquivos | Tamanho Est. | Risco | Tempo |
-|-----------|----------|--------------|-------|-------|
-| Temporários | ~50 | 100-500MB | Baixo | 30min |
-| Logs/Reports | ~20 | 50-200MB | Baixo | 20min |
-| Backups | ~15 + dir | 500MB-2GB | Médio | 60min |
-| Testes Temp | ~10 | 1-10MB | Médio-Alto | 40min |
-| Desabilitados | ~5 | <1MB | Baixo | 10min |
-| Compilados | ~100+ | 10-50MB | Alto | 90min |
-| **TOTAL** | **~200+** | **1-3GB** | **Variado** | **4-5h** |
+| Categoria     | Arquivos  | Tamanho Est. | Risco       | Tempo    |
+| ------------- | --------- | ------------ | ----------- | -------- |
+| Temporários   | ~50       | 100-500MB    | Baixo       | 30min    |
+| Logs/Reports  | ~20       | 50-200MB     | Baixo       | 20min    |
+| Backups       | ~15 + dir | 500MB-2GB    | Médio       | 60min    |
+| Testes Temp   | ~10       | 1-10MB       | Médio-Alto  | 40min    |
+| Desabilitados | ~5        | <1MB         | Baixo       | 10min    |
+| Compilados    | ~100+     | 10-50MB      | Alto        | 90min    |
+| **TOTAL**     | **~200+** | **1-3GB**    | **Variado** | **4-5h** |
 
 ## 🚀 ORDEM DE EXECUÇÃO RECOMENDADA
 

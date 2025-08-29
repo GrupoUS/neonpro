@@ -1,11 +1,15 @@
-import { Router } from "express";
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { auditMiddleware, AuditResourceType } from "../middleware/auditMiddleware";
-import { authenticateToken } from "../middleware/auth";
+import { auditMiddleware } from "../middleware/auditMiddleware";
+import { AuditResourceType } from "../services/AuditService";
+import { authMiddleware } from "../middleware/auth";
 import type { AuditLogQuery } from "../services/AuditService";
 import { AuditService } from "../services/AuditService";
+import { HTTP_STATUS } from "../lib/constants";
+import type { ApiResponse } from "@neonpro/shared/types";
 
-const router = Router();
+const auditRoutes = new Hono();
 
 // Validation schemas
 const auditQuerySchema = z.object({
@@ -42,169 +46,181 @@ const exportQuerySchema = auditQuerySchema.extend({
   format: z.enum(["json", "csv"]).optional().default("json"),
 });
 
-// Apply authentication and audit middleware to all routes
-router.use(authenticateToken);
-router.use(auditMiddleware(AuditResourceType.SYSTEM, {
+const statisticsQuerySchema = z.object({
+  start_date: z.string().datetime().optional(),
+  end_date: z.string().datetime().optional(),
+});
+
+const userAuditQuerySchema = z.object({
+  limit: z.number().min(1).max(1000).optional().default(50),
+  offset: z.number().min(0).optional().default(0),
+});
+
+// Apply middleware to all routes
+auditRoutes.use("*", authMiddleware());
+auditRoutes.use("*", auditMiddleware(AuditResourceType.SYSTEM, {
   skipRoutes: ["/health"], // Skip health check
   lgpdBasis: "Audit Management",
 }));
 
 /**
- * GET /api/audit/logs
- * Query audit logs with filters
+ * @route GET /api/audit/logs
+ * @desc Get audit logs with filtering
  */
-router.get("/logs", async (req, res) => {
+auditRoutes.get("/logs", zValidator("query", auditQuerySchema), async (c) => {
   try {
-    // Validate query parameters
-    const queryResult = auditQuerySchema.safeParse(req.query);
-    if (!queryResult.success) {
-      return res.status(400).json({
-        error: "Invalid query parameters",
-        details: queryResult.error.errors,
-      });
-    }
-
-    const params: AuditLogQuery = queryResult.data;
+    const params: AuditLogQuery = c.req.valid("query");
 
     // Non-admin users can only see their own logs
-    if (!req.user?.is_admin) {
-      params.user_id = req.user?.id;
+    const user = c.get("user");
+    if (!user?.is_admin) {
+      params.user_id = user?.id;
     }
 
     const logs = await AuditService.query(params);
 
-    res.json({
+    const response: ApiResponse<typeof logs> = {
       success: true,
       data: logs,
       count: logs.length,
-    });
+    };
+
+    return c.json(response);
   } catch (error) {
     console.error("Failed to query audit logs:", error);
-    res.status(500).json({
+    const errorResponse: ApiResponse<null> = {
+      success: false,
       error: "Failed to retrieve audit logs",
       message: error instanceof Error ? error.message : "Unknown error",
-    });
+    };
+    return c.json(errorResponse, HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 });
 
 /**
- * GET /api/audit/statistics
- * Get audit statistics and metrics
+ * @route GET /api/audit/statistics
+ * @desc Get audit statistics and metrics
  */
-router.get("/statistics", async (req, res) => {
+auditRoutes.get("/statistics", zValidator("query", statisticsQuerySchema), async (c) => {
   try {
     // Only admins can view statistics
-    if (!req.user?.is_admin) {
-      return res.status(403).json({
+    const user = c.get("user");
+    if (!user?.is_admin) {
+      const errorResponse: ApiResponse<null> = {
+        success: false,
         error: "Access denied",
         message: "Only administrators can view audit statistics",
-      });
+      };
+      return c.json(errorResponse, HTTP_STATUS.FORBIDDEN);
     }
 
-    const { start_date, end_date } = req.query;
+    const { start_date, end_date } = c.req.valid("query");
 
     const statistics = await AuditService.getStatistics(
-      start_date as string,
-      end_date as string,
+      start_date,
+      end_date,
     );
 
-    res.json({
+    const response: ApiResponse<typeof statistics> = {
       success: true,
       data: statistics,
-    });
+    };
+
+    return c.json(response);
   } catch (error) {
     console.error("Failed to get audit statistics:", error);
-    res.status(500).json({
+    const errorResponse: ApiResponse<null> = {
+      success: false,
       error: "Failed to retrieve audit statistics",
       message: error instanceof Error ? error.message : "Unknown error",
-    });
+    };
+    return c.json(errorResponse, HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 });
 
 /**
- * GET /api/audit/lgpd
- * Get LGPD-related audit events
+ * @route GET /api/audit/lgpd
+ * @desc Get LGPD-related audit events
  */
-router.get("/lgpd", async (req, res) => {
+auditRoutes.get("/lgpd", zValidator("query", statisticsQuerySchema), async (c) => {
   try {
     // Only admins and DPOs can view LGPD events
-    if (!req.user?.is_admin && !req.user?.is_dpo) {
-      return res.status(403).json({
+    const user = c.get("user");
+    if (!user?.is_admin && !user?.is_dpo) {
+      const errorResponse: ApiResponse<null> = {
+        success: false,
         error: "Access denied",
         message: "Only administrators and DPOs can view LGPD audit events",
-      });
+      };
+      return c.json(errorResponse, HTTP_STATUS.FORBIDDEN);
     }
 
-    const { start_date, end_date } = req.query;
+    const { start_date, end_date } = c.req.valid("query");
 
     const events = await AuditService.getLGPDEvents(
-      start_date as string,
-      end_date as string,
+      start_date,
+      end_date,
     );
 
-    res.json({
+    const response: ApiResponse<typeof events> = {
       success: true,
       data: events,
       count: events.length,
-    });
+    };
+
+    return c.json(response);
   } catch (error) {
     console.error("Failed to get LGPD audit events:", error);
-    res.status(500).json({
+    const errorResponse: ApiResponse<null> = {
+      success: false,
       error: "Failed to retrieve LGPD audit events",
       message: error instanceof Error ? error.message : "Unknown error",
-    });
+    };
+    return c.json(errorResponse, HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 });
 
 /**
- * GET /api/audit/export
- * Export audit logs in JSON or CSV format
+ * @route GET /api/audit/export
+ * @desc Export audit logs in JSON or CSV format
  */
-router.get("/export", async (req, res) => {
+auditRoutes.get("/export", zValidator("query", exportQuerySchema), async (c) => {
   try {
     // Only admins can export logs
-    if (!req.user?.is_admin) {
-      return res.status(403).json({
+    const user = c.get("user");
+    if (!user?.is_admin) {
+      const errorResponse: ApiResponse<null> = {
+        success: false,
         error: "Access denied",
         message: "Only administrators can export audit logs",
-      });
+      };
+      return c.json(errorResponse, HTTP_STATUS.FORBIDDEN);
     }
 
-    // Validate query parameters
-    const queryResult = exportQuerySchema.safeParse(req.query);
-    if (!queryResult.success) {
-      return res.status(400).json({
-        error: "Invalid query parameters",
-        details: queryResult.error.errors,
-      });
-    }
-
-    const { format, ...params } = queryResult.data;
+    const { format, ...params } = c.req.valid("query");
 
     const exportData = await AuditService.exportLogs(params, format);
 
     // Set appropriate headers based on format
+    const filename = `audit-logs-${new Date().toISOString().split("T")[0]}`;
+    
     if (format === "csv") {
-      res.setHeader("Content-Type", "text/csv");
-      res.setHeader(
-        "Content-Disposition",
-        `attachment; filename="audit-logs-${new Date().toISOString().split("T")[0]}.csv"`,
-      );
+      c.header("Content-Type", "text/csv");
+      c.header("Content-Disposition", `attachment; filename="${filename}.csv"`);
     } else {
-      res.setHeader("Content-Type", "application/json");
-      res.setHeader(
-        "Content-Disposition",
-        `attachment; filename="audit-logs-${new Date().toISOString().split("T")[0]}.json"`,
-      );
+      c.header("Content-Type", "application/json");
+      c.header("Content-Disposition", `attachment; filename="${filename}.json"`);
     }
 
-    res.send(exportData);
+    return c.body(exportData);
   } catch (error) {
     console.error("Failed to export audit logs:", error);
-    res.status(500).json({
+    const errorResponse: ApiResponse<null> = {
+      success: false,
       error: "Failed to export audit logs",
       message: error instanceof Error ? error.message : "Unknown error",
-    });
+    };
+    return c.json(errorResponse, HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 });
 
@@ -212,26 +228,27 @@ router.get("/export", async (req, res) => {
  * GET /api/audit/user/:userId
  * Get audit logs for a specific user
  */
-router.get("/user/:userId", async (req, res) => {
+auditRoutes.get("/user/:userId", zValidator("query", userAuditQuerySchema), async (c) => {
   try {
-    const { userId } = req.params;
-    const { limit = 50, offset = 0 } = req.query;
+    const userId = c.req.param("userId");
+    const { limit, offset } = c.req.valid("query");
+    const user = c.get("user");
 
     // Users can only see their own logs unless they're admin
-    if (!req.user?.is_admin && req.user?.id !== userId) {
-      return res.status(403).json({
+    if (!user?.is_admin && user?.id !== userId) {
+      return c.json({
         error: "Access denied",
         message: "You can only view your own audit logs",
-      });
+      }, HTTP_STATUS.FORBIDDEN);
     }
 
     const logs = await AuditService.query({
       user_id: userId,
-      limit: Number(limit),
-      offset: Number(offset),
+      limit,
+      offset,
     });
 
-    res.json({
+    return c.json({
       success: true,
       data: logs,
       count: logs.length,
@@ -239,10 +256,10 @@ router.get("/user/:userId", async (req, res) => {
     });
   } catch (error) {
     console.error("Failed to get user audit logs:", error);
-    res.status(500).json({
+    return c.json({
       error: "Failed to retrieve user audit logs",
       message: error instanceof Error ? error.message : "Unknown error",
-    });
+    }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 });
 
@@ -250,12 +267,11 @@ router.get("/user/:userId", async (req, res) => {
  * GET /api/audit/health
  * Health check endpoint (no audit logging)
  */
-router.get("/health", (req, res) => {
-  res.json({
+auditRoutes.get("/health", (c) => {
+  return c.json({
     status: "healthy",
-    service: "audit-api",
     timestamp: new Date().toISOString(),
   });
 });
 
-export default router;
+export default auditRoutes;

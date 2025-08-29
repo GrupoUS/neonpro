@@ -1,5 +1,0 @@
-# NPM Configuration to eliminate warnings
-fund=false
-audit-level=moderate
-loglevel=warn
-omit=

@@ -231,7 +231,7 @@ class HealthcareSecurityLogger {
     // In production: Database, SIEM, audit logs
     console.info(`[SECURITY_EVENT_STORED]`, {
       timestamp: new Date().toISOString(),
-      eventId: `sec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      eventId: `sec_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       alert,
     });
   }
@@ -241,7 +241,7 @@ class HealthcareSecurityLogger {
     // In production: Compliance database, regulatory audit logs
     console.info(`[COMPLIANCE_EVENT_STORED]`, {
       timestamp: new Date().toISOString(),
-      eventId: `comp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      eventId: `comp_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       alert,
     });
   }

@@ -18,6 +18,10 @@ tools: ['codebase', 'think', 'problems', 'changes', 'testFailure', 'terminalSele
 ## MANDATORY EXECUTION RULES
 
 **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.
+**MANDATORY** use of `serena mcp` to search codebase, *DO NOT USE NATIVE SEARCH CODEBASE tool*
+**MANDATORY** use of `serena mcp` for semantic code analysis
+**MANDATORY** use of `supabase mcp` for database operations
+**MANDATORY** use of `shadcn-ui mcp` to manage ui components
 **NO INTERRUPTIONS**: Continue through ALL steps until problem fully solved.
 **MANDATORY FIRST STEP**: Always begin with sequential-thinking tool.
 **ONLY TERMINATE WHEN**: User query COMPLETELY resolved and Problem 100% solved.

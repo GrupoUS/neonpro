@@ -581,7 +581,7 @@ export class LgpdService {
     _id: string,
   ): Promise<ConsentRecord | null> {
     // Implementation depends on database
-    return;
+    return null;
   }
 
   private static async updateConsent(_consent: ConsentRecord): Promise<void> {}
@@ -594,7 +594,7 @@ export class LgpdService {
     _id: string,
   ): Promise<DataSubjectRequest | null> {
     // Implementation depends on database
-    return;
+    return null;
   }
 
   private static async stopDataProcessing(
@@ -675,7 +675,7 @@ export class LgpdService {
     );
   }
 
-  private static generateBreachRiskAssessment(incident: unknown): string {
+  private static generateBreachRiskAssessment(incident: any): string {
     return `Risk assessment for breach affecting ${incident.affectedUsers.length} users`;
   }
 

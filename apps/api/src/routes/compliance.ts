@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { AuditService } from "@neonpro/audit-trail";
 import { Hono } from "hono";
 import { z } from "zod";
-import { HTTP_STATUS } from "../constants/http";
+import { HTTP_STATUS } from "../lib/constants";
 import type { ApiResponse } from "../types/api";
 
 // Schema definitions

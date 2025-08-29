@@ -56,6 +56,9 @@ export interface WebVitalsMetric extends PerformanceMetric {
 export interface HealthcareVitalsMetric extends WebVitalsMetric, HealthcareContext {
   criticalPath: boolean;
   complianceCategory?: "lgpd-sensitive" | "anvisa-regulated" | "cfm-controlled";
+  navigationType?: "navigate" | "reload" | "back_forward" | "prerender";
+  url?: string;
+  userAgent?: string;
 }
 
 export interface PerformanceThresholds {

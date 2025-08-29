@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
+  "scripts": {
+    "build": "echo 'TypeScript config package - no build needed' && exit 0"
+  },
   "files": [
     "*.json"
   ],

@@ -28,11 +28,11 @@ export interface MedicalRecord {
   physical_examination?: string;
   diagnosis?: string;
   treatment_plan?: string;
-  medications?: Array<{
+  medications?: {
     name: string;
     dosage: string;
     frequency: string;
-  }>;
+  }[];
   followup_instructions?: string;
 
   // Doctor information
@@ -323,6 +323,46 @@ export interface MedicalRecordComplianceResponse {
   corrective_actions: string[];
   /** Validation timestamp */
   validation_timestamp: Date;
+}
+
+/**
+ * CFM Medical Record Compliance Report
+ * Constitutional compliance report for medical record validations
+ */
+export interface MedicalRecordComplianceReport {
+  /** Summary statistics */
+  summary: {
+    total_validations: number;
+    compliant_validations: number;
+    compliance_rate: number;
+    high_score_validations: number;
+    average_compliance_score: number;
+  };
+  /** Validation breakdown by scope */
+  validation_breakdown: {
+    basic: number;
+    comprehensive: number;
+    constitutional_audit: number;
+  };
+  /** Quality indicators analysis */
+  quality_indicators: {
+    average_scores: {
+      legibility: number;
+      completeness: number;
+      accuracy: number;
+      timeliness: number;
+    };
+  };
+  /** Legal compliance statistics */
+  legal_compliance: {
+    cfm_resolution_compliance_rate: number;
+    lgpd_compliance_rate: number;
+    constitutional_compliance_rate: number;
+  };
+  /** Constitutional compliance score */
+  constitutional_compliance_score: number;
+  /** Report generation timestamp */
+  generated_at: string;
 } /**
  * CFM Medical Records Service Implementation
  * Constitutional healthcare compliance with CFM medical record standards ≥9.9/10

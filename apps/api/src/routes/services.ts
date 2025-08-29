@@ -90,7 +90,7 @@ export const servicesRoutes = new Hono()
     await next();
   })
   // 📋 List services
-  .get("/", zValidator("query", ServiceQuerySchema), (c) => {
+  .get("/", zValidator("query", ServiceQuerySchema), async (c) => {
     const {
       page,
       limit,
@@ -222,7 +222,7 @@ export const servicesRoutes = new Hono()
     }
   })
   // 💄 Get service by ID
-  .get("/:id", (c) => {
+  .get("/:id", async (c) => {
     const id = c.req.param("id");
 
     try {
@@ -299,7 +299,7 @@ export const servicesRoutes = new Hono()
     }
   })
   // ✨ Create service
-  .post("/", zValidator("json", CreateServiceSchema), (c) => {
+  .post("/", zValidator("json", CreateServiceSchema), async (c) => {
     const serviceData = c.req.valid("json");
 
     try {
@@ -375,7 +375,7 @@ export const servicesRoutes = new Hono()
     }
   })
   // ✏️ Update service
-  .put("/:id", zValidator("json", UpdateServiceSchema), (c) => {
+  .put("/:id", zValidator("json", UpdateServiceSchema), async (c) => {
     const id = c.req.param("id");
     const updateData = c.req.valid("json");
 
@@ -383,12 +383,12 @@ export const servicesRoutes = new Hono()
       // Build update object with only provided fields
       const updateFields: Record<string, any> = {};
 
-      if (updateData.name !== undefined) updateFields.name = updateData.name;
-      if (updateData.description !== undefined) updateFields.description = updateData.description;
-      if (updateData.category !== undefined) updateFields.category = updateData.category;
-      if (updateData.duration !== undefined) updateFields.duration = updateData.duration;
-      if (updateData.price !== undefined) updateFields.price = updateData.price;
-      if (updateData.isActive !== undefined) updateFields.is_active = updateData.isActive;
+      if (updateData.name !== undefined) {updateFields.name = updateData.name;}
+      if (updateData.description !== undefined) {updateFields.description = updateData.description;}
+      if (updateData.category !== undefined) {updateFields.category = updateData.category;}
+      if (updateData.duration !== undefined) {updateFields.duration = updateData.duration;}
+      if (updateData.price !== undefined) {updateFields.price = updateData.price;}
+      if (updateData.isActive !== undefined) {updateFields.is_active = updateData.isActive;}
       if (updateData.anvisaCategory !== undefined) {
         updateFields.anvisa_category = updateData.anvisaCategory;
       }
@@ -471,7 +471,7 @@ export const servicesRoutes = new Hono()
     }
   })
   // 🗑️ Delete service (soft delete)
-  .delete("/:id", (c) => {
+  .delete("/:id", async (c) => {
     const id = c.req.param("id");
 
     try {
@@ -513,7 +513,7 @@ export const servicesRoutes = new Hono()
     }
   })
   // 📊 Get services by category
-  .get("/category/:category", (c) => {
+  .get("/category/:category", async (c) => {
     const category = c.req.param("category");
 
     try {
@@ -590,7 +590,7 @@ export const servicesRoutes = new Hono()
     }
   })
   // 🏥 ANVISA compliance check
-  .get("/:id/compliance", (c) => {
+  .get("/:id/compliance", async (c) => {
     const id = c.req.param("id");
 
     try {
