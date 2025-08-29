@@ -320,7 +320,7 @@ const HEALTHCARE_SECURITY_CONFIGURATIONS: Record<string, HealthcareSecurityConfi
 export class HealthcareSecurityOrchestrator {
   private config: HealthcareSecurityConfig;
 
-  constructor(configName: string = "development", overrides?: Partial<HealthcareSecurityConfig>) {
+  constructor(configName = "development", overrides?: Partial<HealthcareSecurityConfig>) {
     this.config = {
       ...HEALTHCARE_SECURITY_CONFIGURATIONS[configName],
       ...overrides,

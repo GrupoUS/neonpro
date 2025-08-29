@@ -333,7 +333,7 @@ export class ComplianceError extends Error {
     message: string,
     code: string,
     regulation: HealthcareRegulation,
-    complianceScore: number = 0,
+    complianceScore = 0,
     details: Record<string, unknown> = {},
   ) {
     super(message);

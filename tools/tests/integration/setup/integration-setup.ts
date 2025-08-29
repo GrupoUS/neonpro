@@ -129,7 +129,7 @@ const createTestPatient = async (
 };
 
 // Wait utility for async operations
-const waitForAsync = async (ms: number = 100) => {
+const waitForAsync = async (ms = 100) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 

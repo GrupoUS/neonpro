@@ -197,7 +197,7 @@ class EmergencyCache {
    */
   get(
     key: string,
-    emergencyAccess: boolean = false,
+    emergencyAccess = false,
   ): EmergencyCacheEntry | null {
     const startTime = performance.now();
 

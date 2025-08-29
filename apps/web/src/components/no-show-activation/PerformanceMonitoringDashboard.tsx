@@ -175,7 +175,7 @@ export function PerformanceMonitoringDashboard({
 
   // Format percentage
   const formatPercentage = useCallback(
-    (value: number, decimals: number = 1): string => {
+    (value: number, decimals = 1): string => {
       return new Intl.NumberFormat("pt-BR", {
         style: "percent",
         minimumFractionDigits: decimals,

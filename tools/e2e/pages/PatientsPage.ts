@@ -449,7 +449,7 @@ export class PatientsPage extends BasePage {
     await this.expectElementToBeVisible(this.pagination);
   }
 
-  async expectPatientRowsToBeVisible(minCount: number = 1) {
+  async expectPatientRowsToBeVisible(minCount = 1) {
     const rowCount = await this.getPatientRowCount();
     if (rowCount < minCount) {
       throw new Error(

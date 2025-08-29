@@ -230,7 +230,7 @@ export class SupabaseRealtimeChat {
   async sendMessage(
     conversationId: string,
     content: any,
-    messageType: string = "text",
+    messageType = "text",
     healthcareContext?: HealthcareContext,
   ): Promise<ChatMessage> {
     try {

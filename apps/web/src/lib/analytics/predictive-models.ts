@@ -253,7 +253,7 @@ export class PredictiveModelsService {
     patientId: string,
     treatmentId: string,
     patientData: any,
-    modelId: string = "neonpro-outcome-predictor-v2.1",
+    modelId = "neonpro-outcome-predictor-v2.1",
   ): Promise<PredictiveIntelligence> {
     try {
       const model = this.models.get(modelId);
