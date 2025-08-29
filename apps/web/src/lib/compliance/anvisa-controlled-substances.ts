@@ -472,7 +472,7 @@ export class ANVISAControlledSubstancesService {
   /**
    * Get expiring prescriptions
    */
-  public getExpiringPrescriptions(days: number = 7): ControlledPrescription[] {
+  public getExpiringPrescriptions(days = 7): ControlledPrescription[] {
     const cutoffDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
     const results: ControlledPrescription[] = [];
 
@@ -628,7 +628,7 @@ export class ANVISAControlledSubstancesService {
   /**
    * Get audit trail
    */
-  public getAuditTrail(limit: number = 100): AuditTrailEntry[] {
+  public getAuditTrail(limit = 100): AuditTrailEntry[] {
     return this.auditTrail
       .filter((entry) => entry.complianceType === "anvisa")
       .slice(-limit)
@@ -681,7 +681,7 @@ export const anvisaUtils = {
   /**
    * Check if prescription is expiring soon
    */
-  isPrescriptionExpiringSoon: (validUntil: Date, days: number = 7): boolean => {
+  isPrescriptionExpiringSoon: (validUntil: Date, days = 7): boolean => {
     const cutoffDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
     return validUntil <= cutoffDate;
   },

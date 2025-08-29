@@ -262,7 +262,7 @@ export class DashboardPage extends BasePage {
     await this.expectElementToBeVisible(this.welcomeCard);
   }
 
-  async expectStatsCardsToBeVisible(expectedCount: number = 4) {
+  async expectStatsCardsToBeVisible(expectedCount = 4) {
     await this.expectElementToBeVisible(this.statsCards.first());
     const actualCount = await this.getStatsCardCount();
     if (actualCount !== expectedCount) {
@@ -353,7 +353,7 @@ export class DashboardPage extends BasePage {
   }
 
   // Performance checks
-  async expectFastLoadTime(maxLoadTimeMs: number = 3000) {
+  async expectFastLoadTime(maxLoadTimeMs = 3000) {
     const startTime = Date.now();
     await this.waitForPageLoad();
     const loadTime = Date.now() - startTime;
@@ -395,7 +395,7 @@ export class DashboardPage extends BasePage {
   }
 
   // Utility methods for testing
-  async takeScreenshotOfDashboard(name: string = "dashboard") {
+  async takeScreenshotOfDashboard(name = "dashboard") {
     await this.page.screenshot({
       path: `tools/e2e/screenshots/${name}-${Date.now()}.png`,
       fullPage: true,

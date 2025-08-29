@@ -864,7 +864,7 @@ export class EnterpriseSecurityService {
    */
   async checkRateLimit(
     key: string,
-    maxAttempts: number = 5,
+    maxAttempts = 5,
     windowMs: number = 15 * 60 * 1000,
   ): Promise<boolean> {
     const now = Date.now();

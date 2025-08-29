@@ -345,7 +345,7 @@ export const HEALTHCARE_PERFORMANCE_ASSERTIONS = {
   userExperience: {
     coreWebVitals: {
       description: "Core Web Vitals must meet healthcare standards",
-      assertion: (metrics: Record<string, number>, pageType: string = "clinical") => {
+      assertion: (metrics: Record<string, number>, pageType = "clinical") => {
         const budget = HEALTHCARE_PERFORMANCE_BUDGETS[pageType]
           || HEALTHCARE_PERFORMANCE_BUDGETS.clinical;
         return (
@@ -407,7 +407,7 @@ export function getCriticalHealthcareMetrics(
  */
 export function validateHealthcareMetrics(
   metrics: Record<string, number>,
-  pageType: string = "clinical",
+  pageType = "clinical",
 ): {
   passed: boolean;
   failures: {

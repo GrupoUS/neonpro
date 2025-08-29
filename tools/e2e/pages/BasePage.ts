@@ -16,7 +16,7 @@ export abstract class BasePage {
   }
 
   // Navigation methods
-  async goto(path: string = "/") {
+  async goto(path = "/") {
     const url = path.startsWith("http") ? path : `${this.baseUrl}${path}`;
     await this.page.goto(url);
     await this.waitForPageLoad();
@@ -42,19 +42,19 @@ export abstract class BasePage {
     await this.page.waitForLoadState("networkidle");
   }
 
-  async waitForElement(selector: string, timeout: number = 10_000) {
+  async waitForElement(selector: string, timeout = 10_000) {
     await this.page.waitForSelector(selector, { timeout });
   }
 
-  async waitForElementToBeVisible(locator: Locator, timeout: number = 10_000) {
+  async waitForElementToBeVisible(locator: Locator, timeout = 10_000) {
     await locator.waitFor({ state: "visible", timeout });
   }
 
-  async waitForElementToBeHidden(locator: Locator, timeout: number = 10_000) {
+  async waitForElementToBeHidden(locator: Locator, timeout = 10_000) {
     await locator.waitFor({ state: "hidden", timeout });
   }
 
-  async waitForUrl(url: string | RegExp, timeout: number = 10_000) {
+  async waitForUrl(url: string | RegExp, timeout = 10_000) {
     await this.page.waitForURL(url, { timeout });
   }
 
@@ -183,12 +183,12 @@ export abstract class BasePage {
   }
 
   // Form helpers
-  async submitForm(formSelector: string = "form") {
+  async submitForm(formSelector = "form") {
     const form = this.page.locator(formSelector);
     await form.press("Enter");
   }
 
-  async resetForm(formSelector: string = "form") {
+  async resetForm(formSelector = "form") {
     const resetButton = this.page.locator(`${formSelector} [type="reset"]`);
     if (await this.isElementVisible(resetButton)) {
       await this.clickElement(resetButton);

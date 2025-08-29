@@ -183,7 +183,7 @@ export function calculateProcessingMetrics(
   completed: number,
   total: number,
   processingTimes: readonly number[],
-  jobCount: number = 1,
+  jobCount = 1,
 ): ProcessingMetrics {
   const successRate = calculateSuccessRate(completed, total);
   const validTimes = validateProcessingTimes(processingTimes);

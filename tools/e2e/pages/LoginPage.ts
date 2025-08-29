@@ -100,7 +100,7 @@ export class LoginPage extends BasePage {
   }
 
   // High-level action methods
-  async login(email: string, password: string, rememberMe: boolean = false) {
+  async login(email: string, password: string, rememberMe = false) {
     await this.enterEmail(email);
     await this.enterPassword(password);
 
@@ -112,16 +112,16 @@ export class LoginPage extends BasePage {
   }
 
   async loginWithValidCredentials(
-    email: string = "test@example.com",
-    password: string = "password123",
+    email = "test@example.com",
+    password = "password123",
   ) {
     await this.login(email, password);
     await this.waitForSuccessfulLogin();
   }
 
   async loginWithInvalidCredentials(
-    email: string = "invalid@example.com",
-    password: string = "wrongpassword",
+    email = "invalid@example.com",
+    password = "wrongpassword",
   ) {
     await this.login(email, password);
     await this.waitForErrorMessage();

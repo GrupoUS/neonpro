@@ -71,7 +71,7 @@ export class TestUtils {
    */
   static async waitForPageLoad(
     page: Page,
-    timeout: number = 10_000,
+    timeout = 10_000,
   ): Promise<void> {
     await Promise.all([
       page.waitForLoadState("networkidle", { timeout }),
@@ -193,7 +193,7 @@ export class TestUtils {
     page: Page,
     url: string | RegExp,
     response: any,
-    status: number = 200,
+    status = 200,
   ): Promise<void> {
     await page.route(url, async (route) => {
       await route.fulfill({
@@ -210,7 +210,7 @@ export class TestUtils {
   static async waitForApiCall(
     page: Page,
     url: string | RegExp,
-    timeout: number = 10_000,
+    timeout = 10_000,
   ): Promise<any> {
     const response = await page.waitForResponse(
       (response) => {

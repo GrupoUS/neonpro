@@ -41,9 +41,9 @@ export class CircuitBreakerOpenError extends Error {
 
 export class HealthcareCircuitBreaker {
   private state: CircuitBreakerState = CircuitBreakerState.CLOSED;
-  private failureCount: number = 0;
+  private failureCount = 0;
   private lastFailureTime: Date | null = null;
-  private halfOpenCalls: number = 0;
+  private halfOpenCalls = 0;
   private metrics: CircuitBreakerMetrics;
 
   constructor(private config: CircuitBreakerConfig) {

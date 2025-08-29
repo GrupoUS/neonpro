@@ -406,7 +406,7 @@ export class CFMValidationService {
    * Check if CRM will expire soon
    */
   public async checkExpirationWarnings(
-    days: number = 30,
+    days = 30,
   ): Promise<CFMValidationResult[]> {
     const expiringLicenses: CFMValidationResult[] = [];
     const cutoffDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
@@ -436,7 +436,7 @@ export class CFMValidationService {
   /**
    * Get audit trail for CFM validations
    */
-  public getAuditTrail(limit: number = 100): AuditTrailEntry[] {
+  public getAuditTrail(limit = 100): AuditTrailEntry[] {
     return this.auditTrail
       .filter((entry) => entry.complianceType === "cfm")
       .slice(-limit)
@@ -522,7 +522,7 @@ export const cfmUtils = {
   /**
    * Check if license is expiring soon
    */
-  isLicenseExpiringSoon: (validUntil: Date, days: number = 30): boolean => {
+  isLicenseExpiringSoon: (validUntil: Date, days = 30): boolean => {
     const cutoffDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
     return validUntil <= cutoffDate;
   },

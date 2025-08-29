@@ -368,7 +368,7 @@ export class AuditPage extends BasePage {
       start: string;
       end: string;
     },
-    includeRecommendations: boolean = true,
+    includeRecommendations = true,
   ): Promise<ComplianceReport> {
     await this.page.click('[data-testid="generate-compliance-report"]');
 
@@ -445,7 +445,7 @@ export class AuditPage extends BasePage {
    */
   async monitorUserActivity(
     userId: string,
-    timeWindow: number = 60,
+    timeWindow = 60,
   ): Promise<{
     suspiciousActivities: {
       type: string;
@@ -543,7 +543,7 @@ export class AuditPage extends BasePage {
    * Check for unauthorized access attempts
    * @param timeWindow - Time window to check (in hours)
    */
-  async checkUnauthorizedAccess(timeWindow: number = 24): Promise<
+  async checkUnauthorizedAccess(timeWindow = 24): Promise<
     {
       timestamp: string;
       userId: string;
