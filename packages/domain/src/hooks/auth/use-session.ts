@@ -118,9 +118,9 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
     deviceTracking = true,
   } = options;
 
-  const [session, setSession] = useState<UserSession | null>(null);
+  const [session, setSession] = useState<UserSession | null>();
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>();
   const [securityAlerts, setSecurityAlerts] = useState<SecurityAlert[]>([]);
   const [devices, setDevices] = useState<DeviceRegistration[]>([]);
 
@@ -152,7 +152,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
     async (_email: string, _password: string): Promise<boolean> => {
       try {
         setIsLoading(true);
-        setError(null);
+        setError(undefined);
 
         toast("Login successful");
         return true;
@@ -173,7 +173,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
     try {
       setIsLoading(true);
 
-      setSession(null);
+      setSession(undefined);
       setSecurityAlerts([]);
       setDevices([]);
 
@@ -315,7 +315,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
       if (result.valid && result.session) {
         setSession(result.session);
       } else {
-        setSession(null);
+        setSession(undefined);
       }
 
       setIsLoading(false);

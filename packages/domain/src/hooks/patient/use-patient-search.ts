@@ -125,7 +125,7 @@ export const usePatientSearch = (
     return () => {
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
-        debounceTimeoutRef.current = null;
+        debounceTimeoutRef.current = undefined;
       }
     };
   }, [searchTerm, debounceMs, minSearchLength]);

@@ -14,9 +14,6 @@
     "dev": "tsc --watch",
     "type-check": "tsc --noEmit"
   },
-  "dependencies": {
-    "@neonpro/database": "workspace:*"
-  },
   "devDependencies": {
     "typescript": "^5.9.2"
   }

@@ -5,13 +5,6 @@
     "preinstall": "echo 'Using Bun package manager for optimal performance'",
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "preinstall": "pnpm dlx only-allow pnpm",
-    "build": "turbo build",
-    "build:web": "cd apps/web && pnpm build",
-    "build:api": "cd apps/api && pnpm build", 
-    "build:packages": "turbo build --filter='./packages/*'",
-    "vercel-build": "pnpm install && pnpm build",
-    "dev": "turbo dev",
     "dev:api": "turbo dev --filter=api",
     "dev:web": "turbo dev --filter=web",
     "dev:full": "turbo dev",
@@ -67,11 +60,6 @@
     "prepare": "husky",
     "install": "bun install",
     "postinstall": "bun run build"
-    "quality:gate": "pnpm run ci:check && pnpm run test:unit:safe && echo '✅ Quality gate passed - Healthcare compliance verified'",
-    "e2e:healthcare": "playwright test --grep=\"(Patient|LGPD|Emergency)\" --reporter=list",
-    "archon:sync": "echo '📋 Archon task synchronization - MCP server integration' && echo 'Tasks synchronized successfully'",
-    "test:emergency": "vitest run --testNamePattern=\"Emergency|Critical\" --reporter=default",
-    "prepare": "husky"
   },
   "devDependencies": {
     "@oxlint/win32-x64": "^1.13.0",
@@ -82,7 +70,7 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@turbo/gen": "^1.13.4",
-    "@types/node": "^24.3.0",
+    "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitest/coverage-v8": "^3.2.4",
@@ -101,7 +89,7 @@
     "sonner": "^2.0.7",
     "turbo": "^2.5.6",
     "turbo-windows-64": "^2.5.6",
-    "typescript": "^5.9.2",
+    "typescript": "^5.0.0",
     "vitest": "^3.2.4"
   },
   "packageManager": "bun@1.2.21",
@@ -138,7 +126,6 @@
     "recharts": "^3.1.2",
     "tailwindcss": "^3.4.15",
     "xlsx": "0.18.5"
-    "xlsx": "^0.19.3"
   },
   "pnpm": {
     "overrides": {
@@ -155,13 +142,6 @@
       "xlsx": ">=0.19.3",
       "marked": ">=4.0.10",
       "hawk": ">=9.0.1"
-      "ejs": "^3.1.7",
-      "jsonpath-plus": "^10.2.0",
-      "form-data": "^2.5.4",
-      "lodash": "^4.17.21",
-      "xlsx": "^0.20.2",
-      "marked": "^4.0.10",
-      "hawk": "^9.0.1"
     },
     "peerDependencyRules": {
       "ignoreMissing": [

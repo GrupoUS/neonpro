@@ -26,24 +26,7 @@ import type {
 } from "@neonpro/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@supabase/supabase-js";
-// Browser-compatible crypto utilities
-const createHash = (algorithm: string) => {
-  if (typeof window !== 'undefined') {
-    // Browser environment - use Web Crypto API
-    return {
-      update: (data: string) => ({
-        digest: (encoding: string) => {
-          // Simple fallback hash for demo - in production use proper Web Crypto API
-          return btoa(data).substring(0, 64);
-        }
-      })
-    };
-  } else {
-    // Node.js environment
-    const crypto = require('crypto');
-    return crypto.createHash(algorithm);
-  }
-};
+import { createHash } from "node:crypto";
 
 /**
  * Enhanced CFM Compliance Service

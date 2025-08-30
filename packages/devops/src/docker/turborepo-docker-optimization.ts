@@ -335,6 +335,7 @@ CMD ["node", "apps/web/server.js"]`;
 **/__tests__/**
 **/test/**
 coverage/**
+test-results/**
 
 # Build artifacts
 .next/cache

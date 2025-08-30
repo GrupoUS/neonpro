@@ -142,7 +142,7 @@ export interface NoShowPredictionRequest {
   isFirstVisit: boolean;
   daysSinceLastAppointment?: number;
   weatherConditions?: WeatherConditions;
-  additionalContext?: Record<string, unknown>;
+  additionalContext?: Record<string, any>;
 }
 
 export interface WeatherConditions {
@@ -195,7 +195,7 @@ export interface NoShowPredictionApiResponse {
   error?: {
     code: string;
     message: string;
-    details?: Record<string, unknown>;
+    details?: any;
   };
   metadata?: {
     total?: number;
@@ -210,7 +210,7 @@ export interface NoShowPredictionEvent {
   type: "prediction_updated" | "intervention_triggered" | "outcome_recorded";
   appointmentId: string;
   patientId: string;
-  data: NoShowPrediction | InterventionStrategy | { outcome: "show" | "no_show"; actualTime?: Date };
+  data: any;
   timestamp: Date;
 }
 
@@ -268,24 +268,24 @@ export const INTERVENTION_ACTIONS_PT = {
 } as const;
 
 // Type guards
-export function isNoShowPrediction(obj: unknown): obj is NoShowPrediction {
+export function isNoShowPrediction(obj: any): obj is NoShowPrediction {
   return (
     typeof obj === "object"
     && obj !== null
-    && typeof (obj as NoShowPrediction).id === "string"
-    && typeof (obj as NoShowPrediction).appointmentId === "string"
-    && typeof (obj as NoShowPrediction).riskScore === "number"
-    && ["low", "medium", "high", "critical"].includes((obj as NoShowPrediction).riskLevel)
+    && typeof obj.id === "string"
+    && typeof obj.appointmentId === "string"
+    && typeof obj.riskScore === "number"
+    && ["low", "medium", "high", "critical"].includes(obj.riskLevel)
   );
 }
 
-export function isRiskFactor(obj: unknown): obj is RiskFactor {
+export function isRiskFactor(obj: any): obj is RiskFactor {
   return (
     typeof obj === "object"
     && obj !== null
-    && typeof (obj as RiskFactor).id === "string"
-    && typeof (obj as RiskFactor).name === "string"
-    && typeof (obj as RiskFactor).weight === "number"
+    && typeof obj.id === "string"
+    && typeof obj.name === "string"
+    && typeof obj.weight === "number"
   );
 }
 

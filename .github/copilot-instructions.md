@@ -6,8 +6,8 @@ applyTo: "**/*"
 
 ## 📚 ALWAYS READ AND LOAD References
 
-- **🌟 Complete Workflow**: [`.ruler/dev-workflow.md`](./.ruler/dev-workflow.md)
-- **⚙️ Always Follow Project Standards**: [`docs/project.md`](./docs/project.md)
+- **🌟 Complete Workflow**: [`.ruler/dev-workflow.md`](../.ruler/dev-workflow.md)
+- **⚙️ Always Follow Project Standards**: [`docs/project.md`](../docs/project.md)
 
 ## 🧠 CORE PHILOSOPHY
 

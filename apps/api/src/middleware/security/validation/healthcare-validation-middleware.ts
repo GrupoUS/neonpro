@@ -49,7 +49,7 @@ export enum ValidationSeverity {
 interface ValidationRule {
   context: ValidationContext;
   severity: ValidationSeverity;
-  schema: z.ZodSchema<unknown>;
+  schema: z.ZodSchema<any>;
   requiresLicense: boolean;
   emergencyBypass: boolean;
   lgpdSensitive: boolean;
@@ -62,13 +62,13 @@ interface ValidationErrorDetail {
   message: string;
   code: string;
   severity: ValidationSeverity;
-  value?: unknown;
+  value?: any;
 }
 
 // Validation result
 interface ValidationResult {
   success: boolean;
-  data?: unknown;
+  data?: any;
   errors?: ValidationErrorDetail[];
   warnings?: ValidationErrorDetail[];
   emergencyBypass?: boolean;
@@ -149,9 +149,9 @@ const HEALTHCARE_VALIDATION_RULES: ValidationRule[] = [
  * Healthcare Input Validator Class
  */
 export class HealthcareInputValidator {
-  private auditLogger: unknown; // Your audit logging implementation
+  private auditLogger: any; // Your audit logging implementation
 
-  constructor(auditLogger?: unknown) {
+  constructor(auditLogger?: any) {
     this.auditLogger = auditLogger;
   }
 
@@ -160,7 +160,7 @@ export class HealthcareInputValidator {
    */
   async validateInput(
     context: ValidationContext,
-    data: unknown,
+    data: any,
     options: {
       emergencyBypass?: boolean;
       userLicenses?: {
@@ -255,16 +255,8 @@ export class HealthcareInputValidator {
    */
   private async handleEmergencyBypass(
     rule: ValidationRule,
-    data: unknown,
-    options: {
-      emergencyBypass?: boolean;
-      userLicenses?: {
-        number: string;
-        type: BrazilianHealthcareLicense;
-        state: BrazilianState;
-      }[];
-      userId?: string;
-    },
+    data: any,
+    options: any,
   ): Promise<ValidationResult> {
     // Relaxed validation for emergency situations
     const relaxedSchema = this.createRelaxedSchema(rule.schema);
@@ -289,10 +281,7 @@ export class HealthcareInputValidator {
   /**
    * Validate data against Zod schema
    */
-  private async validateSchema(
-    schema: z.ZodSchema<unknown>,
-    data: unknown,
-  ): Promise<ValidationResult> {
+  private async validateSchema(schema: z.ZodSchema<any>, data: any): Promise<ValidationResult> {
     try {
       const validatedData = await schema.parseAsync(data);
       return {
@@ -306,7 +295,7 @@ export class HealthcareInputValidator {
           message: issue.message,
           code: issue.code.toUpperCase(),
           severity: ValidationSeverity.HIGH,
-          value: issue.path.length > 0 ? issue.path[issue.path.length - 1] : undefined,
+          value: issue.received,
         }));
 
         return {
@@ -324,13 +313,13 @@ export class HealthcareInputValidator {
    */
   private async performAdditionalValidations(
     context: ValidationContext,
-    data: unknown,
+    data: any,
   ): Promise<ValidationResult> {
     const warnings: ValidationErrorDetail[] = [];
 
     // Check for duplicate CPF in high-priority contexts
-    if (context === ValidationContext.PATIENT_REGISTRATION && (data as { cpf?: string; }).cpf) {
-      const duplicateCheck = await this.checkCPFDuplication((data as { cpf: string; }).cpf);
+    if (context === ValidationContext.PATIENT_REGISTRATION && data.cpf) {
+      const duplicateCheck = await this.checkCPFDuplication(data.cpf);
       if (duplicateCheck.isDuplicate) {
         return {
           success: false,
@@ -345,19 +334,8 @@ export class HealthcareInputValidator {
     }
 
     // Validate professional licenses for provider contexts
-    if (
-      context === ValidationContext.PROVIDER_REGISTRATION
-      && (data as { licenses?: unknown; }).licenses
-    ) {
-      for (
-        const license of (data as {
-          licenses: {
-            number: string;
-            type: BrazilianHealthcareLicense;
-            state: BrazilianState;
-          }[];
-        }).licenses
-      ) {
+    if (context === ValidationContext.PROVIDER_REGISTRATION && data.licenses) {
+      for (const license of data.licenses) {
         const licenseValidation = await this.validateProfessionalLicense(license);
         if (!licenseValidation.valid) {
           return {
@@ -374,15 +352,12 @@ export class HealthcareInputValidator {
     }
 
     // Check age restrictions for certain contexts
-    if ((data as { dateOfBirth?: string; }).dateOfBirth) {
-      const ageValidation = this.validateAgeRestrictions(
-        context,
-        (data as { dateOfBirth: string; }).dateOfBirth,
-      );
+    if (data.dateOfBirth) {
+      const ageValidation = this.validateAgeRestrictions(context, data.dateOfBirth);
       if (!ageValidation.valid) {
         warnings.push({
           field: "dateOfBirth",
-          message: ageValidation.message || "Age validation failed",
+          message: ageValidation.message,
           code: "AGE_RESTRICTION_WARNING",
           severity: ValidationSeverity.MEDIUM,
         });
@@ -404,7 +379,7 @@ export class HealthcareInputValidator {
   ): Promise<{ isDuplicate: boolean; existingPatientId?: string; }> {
     try {
       // Sanitize CPF before database query
-      const sanitizedCpf = BrazilianHealthcareSanitizer.sanitizePatientData({ cpf }).cpf;
+      const sanitizedCpf = BrazilianHealthcareSanitizer.sanitizeCPF(cpf);
 
       if (!CPFValidator.validate(sanitizedCpf)) {
         throw new Error("Invalid CPF format for duplication check");
@@ -425,7 +400,7 @@ export class HealthcareInputValidator {
       if (existingPatients && existingPatients.length > 0) {
         return {
           isDuplicate: true,
-          existingPatientId: existingPatients?.[0]?.id,
+          existingPatientId: existingPatients[0].id,
         };
       }
 
@@ -528,18 +503,18 @@ export class HealthcareInputValidator {
   /**
    * Create relaxed schema for emergency situations
    */
-  private createRelaxedSchema(originalSchema: z.ZodSchema<unknown>): z.ZodSchema<unknown> {
+  private createRelaxedSchema(originalSchema: z.ZodSchema<any>): z.ZodSchema<any> {
     // For emergency situations, make most fields optional except critical ones
     if (originalSchema instanceof z.ZodObject) {
-      const { shape } = originalSchema;
-      const relaxedShape: Record<string, z.ZodTypeAny> = {};
+      const shape = originalSchema.shape;
+      const relaxedShape: any = {};
 
       for (const [key, value] of Object.entries(shape)) {
         // Keep CPF and critical identifiers required
         if (["cpf", "fullName", "emergencyType", "justification"].includes(key)) {
-          relaxedShape[key] = value instanceof z.ZodType ? value : z.unknown();
+          relaxedShape[key] = value;
         } else {
-          relaxedShape[key] = (value as z.ZodType<unknown>).optional();
+          relaxedShape[key] = (value as z.ZodType<any>).optional();
         }
       }
 
@@ -582,11 +557,7 @@ export class HealthcareInputValidator {
     console.log("🏥 Healthcare Validation Log:", JSON.stringify(logEntry, null, 2));
 
     if (this.auditLogger) {
-      if (typeof (this.auditLogger as unknown)?.log === "function") {
-        await (this.auditLogger as unknown & { log: (entry: unknown) => Promise<void>; }).log(
-          logEntry,
-        );
-      }
+      await this.auditLogger.log(logEntry);
     }
   }
 
@@ -596,15 +567,15 @@ export class HealthcareInputValidator {
   private async logEmergencyBypass(
     context: ValidationContext,
     userId?: string,
-    data?: unknown,
+    data?: any,
   ): Promise<void> {
     const logEntry = {
       timestamp: new Date().toISOString(),
       event: "EMERGENCY_VALIDATION_BYPASS",
       context,
       userId: userId || "anonymous",
-      justification: (data as { justification?: string; })?.justification || "Not provided",
-      emergencyType: (data as { emergencyType?: string; })?.emergencyType || "Not specified",
+      justification: data?.justification || "Not provided",
+      emergencyType: data?.emergencyType || "Not specified",
       patientData: BrazilianHealthcareSanitizer.removeSensitiveDataForLogging(data),
     };
 
@@ -622,7 +593,7 @@ export class HealthcareInputValidator {
 export function createHealthcareValidationMiddleware(
   context: ValidationContext,
   options: {
-    auditLogger?: unknown;
+    auditLogger?: any;
     allowEmergencyBypass?: boolean;
   } = {},
 ): MiddlewareHandler {
@@ -697,31 +668,31 @@ export function createHealthcareValidationMiddleware(
  * Validation middleware factory for common contexts
  */
 export const validationMiddlewares = {
-  patientRegistration: (auditLogger?: unknown) =>
+  patientRegistration: (auditLogger?: any) =>
     createHealthcareValidationMiddleware(ValidationContext.PATIENT_REGISTRATION, {
       auditLogger,
       allowEmergencyBypass: true,
     }),
 
-  patientUpdate: (auditLogger?: unknown) =>
+  patientUpdate: (auditLogger?: any) =>
     createHealthcareValidationMiddleware(ValidationContext.PATIENT_UPDATE, {
       auditLogger,
       allowEmergencyBypass: true,
     }),
 
-  providerRegistration: (auditLogger?: unknown) =>
+  providerRegistration: (auditLogger?: any) =>
     createHealthcareValidationMiddleware(ValidationContext.PROVIDER_REGISTRATION, {
       auditLogger,
       allowEmergencyBypass: false,
     }),
 
-  appointmentBooking: (auditLogger?: unknown) =>
+  appointmentBooking: (auditLogger?: any) =>
     createHealthcareValidationMiddleware(ValidationContext.APPOINTMENT_BOOKING, {
       auditLogger,
       allowEmergencyBypass: true,
     }),
 
-  emergencyAccess: (auditLogger?: unknown) =>
+  emergencyAccess: (auditLogger?: any) =>
     createHealthcareValidationMiddleware(ValidationContext.EMERGENCY_ACCESS, {
       auditLogger,
       allowEmergencyBypass: true,

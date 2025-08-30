@@ -216,10 +216,9 @@ jobs:
           cache: 'pnpm'
 
       - name: 📦 Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8.15.6
-          run_install: false
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🔍 Identify rollback target
         id: rollback-target

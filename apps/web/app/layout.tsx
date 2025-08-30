@@ -4,7 +4,6 @@ import "./globals.css";
 
 import { Toaster } from "@/components/ui/toaster";
 import { QueryProvider } from "@/providers/query-provider";
-import { AuthProvider } from "@/contexts/auth-context-new";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,19 +30,17 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}>
-        <AuthProvider>
-          <QueryProvider>
-            {children}
-            <Toaster />
+        <QueryProvider>
+          {children}
+          <Toaster />
 
-            {/* AI Agent Chat Placeholder - será implementado como componente separado */}
-            <div className="fixed bottom-5 right-5 z-50">
-              <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center animate-pulse shadow-lg cursor-pointer hover:scale-110 transition-transform">
-                <span className="text-primary-foreground text-xs">🤖</span>
-              </div>
+          {/* AI Agent Chat Placeholder - será implementado como componente separado */}
+          <div className="fixed bottom-5 right-5 z-50">
+            <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center animate-pulse shadow-lg cursor-pointer hover:scale-110 transition-transform">
+              <span className="text-primary-foreground text-xs">🤖</span>
             </div>
-          </QueryProvider>
-        </AuthProvider>
+          </div>
+        </QueryProvider>
       </body>
     </html>
   );

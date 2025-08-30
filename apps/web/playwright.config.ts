@@ -12,8 +12,8 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: [
     ["html", { outputFolder: "playwright-report" }],
-    ["json", { outputFile: "../../tools/testing/reports/e2e/results.json" }],
-    ["junit", { outputFile: "../../tools/testing/reports/e2e/results.xml" }],
+    ["json", { outputFile: "test-results/results.json" }],
+    ["junit", { outputFile: "test-results/results.xml" }],
   ],
   use: {
     baseURL: "http://localhost:3000",
@@ -95,5 +95,5 @@ export default defineConfig({
   },
 
   // Output directories
-  outputDir: "../../tools/testing/reports/e2e/",
+  outputDir: "test-results/",
 });

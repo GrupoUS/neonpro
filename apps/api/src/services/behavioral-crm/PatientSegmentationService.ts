@@ -242,7 +242,7 @@ export class PatientSegmentationService {
     // Apply exclusion criteria if specified
     if (target.exclusionCriteria) {
       candidates = candidates.filter(
-        (patient) => !this.doesPatientMatchCriteria(patient, target.exclusionCriteria!),
+        (patient) => !this.doesPatientMatchCriteria(patient, target.exclusionCriteria),
       );
     }
 
@@ -709,7 +709,7 @@ export class PatientSegmentationService {
         throw error;
       }
       if (!data) {
-        return null;
+        return;
       }
 
       return {
@@ -725,7 +725,7 @@ export class PatientSegmentationService {
         updatedAt: new Date(data.updated_at),
       };
     } catch {
-      return null;
+      return;
     }
   }
 

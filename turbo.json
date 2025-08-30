@@ -290,7 +290,7 @@
     "test:e2e": {
       "dependsOn": ["build"],
       "inputs": ["**/*.e2e.*", "**/e2e/**", "playwright.config.*"],
-      "outputs": ["playwright-report/**", "tools/testing/reports/**"]
+      "outputs": ["playwright-report/**", "test-results/**"]
     },
     "test:e2e:install": {
       "cache": false,

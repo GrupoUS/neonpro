@@ -74,14 +74,14 @@ export function usePermissions(
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [roles, setRoles] = useState<HealthcareRole[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>();
 
   const user = { id: options.userId || "user-1" };
 
   const refreshPermissions = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
-      setError(null);
+      setError(undefined);
 
       // Placeholder implementation
       const mockPermissions: Permission[] = [
@@ -123,7 +123,7 @@ export function usePermissions(
   const resetPermissions = useCallback(() => {
     setPermissions([]);
     setRoles([]);
-    setError(null);
+    setError(undefined);
   }, []);
 
   const subscribeToUpdates = useCallback((_userId: string) => {

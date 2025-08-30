@@ -93,7 +93,7 @@ export default defineConfig({
       "**/.turbo/**",
       "**/coverage/**",
       "**/playwright-report/**",
-
+      "**/test-results/**",
       "**/logs/**",
       "**/temp-*",
       "**/*.log",
@@ -172,7 +172,7 @@ export default defineConfig({
         "**/.turbo/**",
         "**/coverage/**",
         "**/playwright-report/**",
-
+        "**/test-results/**",
         "**/logs/**",
         "**/temp-*",
         "**/*.log",

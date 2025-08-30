@@ -170,17 +170,11 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
           navigationTiming: performance.getEntriesByType(
             "navigation",
           )[0] as PerformanceNavigationTiming,
-          memoryUsage: (performance as unknown).memory
+          memoryUsage: (performance as any).memory
             ? {
-              usedJSHeapSize:
-                (performance as unknown as { memory: { usedJSHeapSize: number; }; }).memory
-                  .usedJSHeapSize,
-              totalJSHeapSize:
-                (performance as unknown as { memory: { totalJSHeapSize: number; }; }).memory
-                  .totalJSHeapSize,
-              jsHeapSizeLimit:
-                (performance as unknown as { memory: { jsHeapSizeLimit: number; }; }).memory
-                  .jsHeapSizeLimit,
+              usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
+              totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
+              jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit,
             }
             : undefined,
           connectionType: (navigator as any).connection?.effectiveType,

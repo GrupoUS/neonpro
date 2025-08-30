@@ -32,8 +32,8 @@ export interface AuditLogEntry {
   action: AuditAction;
   resource_type: AuditResourceType;
   resource_id?: string;
-  old_values?: Record<string, unknown>;
-  new_values?: Record<string, unknown>;
+  old_values?: Record<string, any>;
+  new_values?: Record<string, any>;
   ip_address?: string;
   user_agent?: string;
   lgpd_basis?: string;
@@ -97,8 +97,8 @@ export class AuditService {
     action: AuditAction,
     resourceType: AuditResourceType,
     resourceId?: string,
-    oldValues?: Record<string, unknown>,
-    newValues?: Record<string, unknown>,
+    oldValues?: Record<string, any>,
+    newValues?: Record<string, any>,
     lgpdBasis?: string,
   ): Promise<void> {
     const userId = req.user?.id || "anonymous";

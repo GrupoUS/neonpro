@@ -177,7 +177,7 @@ interface UseLGPDDashboardReturn {
 }
 
 export function useLGPDDashboard(): UseLGPDDashboardReturn {
-  const [metrics, setMetrics] = useState<LGPDMetrics | null>(null);
+  const [metrics, setMetrics] = useState<LGPDMetrics | null>();
   const [recentConsents, setRecentConsents] = useState<ConsentRecord[]>([]);
   const [pendingRequests, setPendingRequests] = useState<DataSubjectRequest[]>(
     [],
@@ -188,13 +188,13 @@ export function useLGPDDashboard(): UseLGPDDashboardReturn {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>();
 
   const complianceManager = new LGPDComplianceManager();
 
   const loadDashboardData = useCallback(async () => {
     try {
-      setError(null);
+      setError(undefined);
 
       // Load metrics
       const metricsData = await complianceManager.getDashboardMetrics();

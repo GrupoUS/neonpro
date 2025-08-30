@@ -10,10 +10,9 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/auth-context-new";
+import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, useLocation } from "@tanstack/react-router";
 import {
   BarChart3,
   Calendar,
@@ -39,7 +38,7 @@ interface NavigationItem {
 
 export function MainNavigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  const pathname = usePathname();
+  const location = useLocation();
   const { user } = useAuth();
 
   // Simple permission checks based on user role
@@ -132,7 +131,7 @@ export function MainNavigation() {
 
   const isActiveRoute = (href: string) => {
     return (
-      pathname === href || pathname.startsWith(`${href}/`)
+      location.pathname === href || location.pathname.startsWith(`${href}/`)
     );
   };
 
@@ -146,8 +145,6 @@ export function MainNavigation() {
     <div className={cn("space-y-2", mobile && "w-full")}>
       {items.map((item) => (
         <Link
-          key={item.href}
-          href={item.href}
           className={cn(
             "flex items-center space-x-3 rounded-lg px-3 py-2 font-medium text-sm transition-colors",
             "hover:bg-accent hover:text-accent-foreground",
@@ -156,7 +153,9 @@ export function MainNavigation() {
               : "text-muted-foreground",
             mobile && "w-full",
           )}
+          key={item.href}
           onClick={() => mobile && setIsMobileMenuOpen(false)}
+          to={item.href}
         >
           <item.icon className="h-5 w-5" />
           <div className="min-w-0 flex-1">
@@ -189,7 +188,7 @@ export function MainNavigation() {
         <div className="flex min-h-0 flex-1 flex-col border-r bg-card">
           {/* Logo */}
           <div className="flex h-16 flex-shrink-0 items-center border-b px-4">
-            <Link href="/" className="flex items-center space-x-3">
+            <Link className="flex items-center space-x-3" to="/">
               <div className="neonpro-gradient flex h-8 w-8 items-center justify-center rounded-lg">
                 <Heart className="h-5 w-5 text-white" />
               </div>
@@ -258,7 +257,7 @@ export function MainNavigation() {
           </Button>
 
           {/* Mobile Logo in Header */}
-          <Link href="/" className="ml-4 flex items-center space-x-2">
+          <Link className="ml-4 flex items-center space-x-2" to="/">
             <div className="neonpro-gradient flex h-6 w-6 items-center justify-center rounded">
               <Heart className="h-4 w-4 text-white" />
             </div>
@@ -278,9 +277,9 @@ export function MainNavigation() {
                 {/* Mobile Logo */}
                 <div className="flex h-16 items-center border-b px-6">
                   <Link
-                    href="/"
                     className="flex items-center space-x-3"
                     onClick={() => setIsMobileMenuOpen(false)}
+                    to="/"
                   >
                     <div className="neonpro-gradient flex h-8 w-8 items-center justify-center rounded-lg">
                       <Heart className="h-5 w-5 text-white" />

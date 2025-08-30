@@ -261,7 +261,7 @@ export const HealthcareDashboardExample: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleMetricClick = (metric: HealthcareMetricCardProps) => {
+  const handleMetricClick = (metric: any) => {
     console.log("Metric clicked:", metric);
   };
 

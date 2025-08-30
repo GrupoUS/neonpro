@@ -12,7 +12,7 @@ const TIMEOUT_SECONDS = 120;
  */
 export default defineConfig({
   testDir: "./src",
-  outputDir: "../reports/visual/",
+  outputDir: "./test-results",
 
   // Visual-specific timeout settings
   timeout: 30 * 1000,
@@ -26,7 +26,7 @@ export default defineConfig({
   // Reporting configuration
   reporter: [
     ["html", { outputFolder: "./visual-report" }],
-    ["json", { outputFile: "../reports/visual/visual-results.json" }],
+    ["json", { outputFile: "./test-results/visual-results.json" }],
   ],
 
   // Global test configuration

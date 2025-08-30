@@ -44,7 +44,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/speakeasy": "^2.0.10",
     "@types/qrcode": "^1.5.5",
-    "typescript": "^5.9.2"
+    "typescript": "^5.5.4"
   },
   "peerDependencies": {
     "react": "^18.3.1"

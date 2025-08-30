@@ -416,7 +416,6 @@ export class StrategyGeneratorService {
 
     for (let i = 0; i < baseActions.length; i++) {
       const baseAction = baseActions[i];
-      if (!baseAction) {continue;}
 
       // Personalize timing based on patient patterns
       const timing = await this.personalizeActionTiming(
@@ -426,7 +425,7 @@ export class StrategyGeneratorService {
 
       // Adapt content to personality type
       const content = await this.adaptContentToPersonality(
-        baseAction.content || "",
+        baseAction.content,
         profile.personalityType,
         profile.patterns,
       );
@@ -447,11 +446,11 @@ export class StrategyGeneratorService {
       personalizedActions.push({
         id: `action_${Date.now()}_${i}`,
         sequence: i + 1,
-        type: baseAction.type || "communication",
-        title: baseAction.title || "Ação Personalizada",
+        type: baseAction.type,
+        title: baseAction.title,
         content,
         timing,
-        conditions: baseAction.conditions || {},
+        conditions: baseAction.conditions,
         personalization,
       });
     }
@@ -572,7 +571,7 @@ export class StrategyGeneratorService {
   }
 
   private async personalizeActionTiming(
-    baseTiming: ActionPlan["timing"],
+    baseTiming: unknown,
     profile: PatientBehaviorProfile,
   ): Promise<ActionPlan["timing"]> {
     // Adapt to patient's response time pattern
@@ -959,7 +958,7 @@ export class StrategyGeneratorService {
     }
 
     // Adjust based on data completeness (simulated)
-    const dataCompleteness = 0.8; // Would calculate based on available data
+    const { 8: dataCompleteness } = 0; // Would calculate based on available data
     baseConfidence *= dataCompleteness;
 
     // Adjust based on strategy type success rates
@@ -1035,7 +1034,7 @@ export class StrategyGeneratorService {
     const { revenueGenerated: revenue } = actualResults;
     const estimatedCost = 200; // Estimated cost per strategy execution
 
-    if (estimatedCost <= 0) {
+    if (estimatedCost === 0) {
       return 0;
     }
 
@@ -1082,7 +1081,7 @@ export class StrategyGeneratorService {
         throw error;
       }
       if (!data) {
-        return null;
+        return;
       }
 
       return {
@@ -1101,7 +1100,7 @@ export class StrategyGeneratorService {
         updatedAt: new Date(data.updated_at),
       };
     } catch {
-      return null;
+      return;
     }
   }
 

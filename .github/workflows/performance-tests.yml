@@ -1,13 +1,5 @@
 name: 🚀 Performance Tests
 
-# Permissions for GitHub Actions operations
-permissions:
-  contents: read
-  pull-requests: write
-  issues: write
-  checks: write
-  actions: read
-
 on:
   # Execute on PRs to main branches
   pull_request:
@@ -130,10 +122,9 @@ jobs:
           fetch-depth: 0
 
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8.15.6
-          run_install: false
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🏗️ Setup Node.js
         uses: actions/setup-node@v4
@@ -210,11 +201,11 @@ jobs:
               --project=${{ matrix.browser }} \
               --workers=1 \
               --reporter=html,json,junit \
-              --output-dir=tools/testing/reports/performance-${{ matrix.browser }} || echo "Performance tests completed with issues"
+              --output-dir=test-results/performance-${{ matrix.browser }} || echo "Performance tests completed with issues"
           else
             echo "⚠️ Performance test directory not found, creating mock results..."
-            mkdir -p tools/testing/reports/performance-${{ matrix.browser }}
-            echo '{"results": "Performance tests not configured yet"}' > tools/testing/reports/performance-${{ matrix.browser }}/results.json
+            mkdir -p test-results/performance-${{ matrix.browser }}
+            echo '{"results": "Performance tests not configured yet"}' > test-results/performance-${{ matrix.browser }}/results.json
           fi
         env:
           CI: true
@@ -230,7 +221,7 @@ jobs:
           const path = require('path');
 
           function findPerformanceResults() {
-            const resultsDir = 'tools/testing/reports';
+            const resultsDir = 'test-results';
             const results = [];
 
             function scanDir(dir) {
@@ -328,7 +319,7 @@ jobs:
         with:
           name: performance-results-${{ matrix.browser }}-${{ matrix.suite }}
           path: |
-            tools/testing/reports/
+            test-results/
             performance-summary-*.json
             playwright-report/
           retention-days: 30

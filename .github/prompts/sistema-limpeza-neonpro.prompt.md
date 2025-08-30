@@ -95,7 +95,7 @@ CATEGORIA 3 - BACKUPS OBSOLETOS (RISCO MÉDIO):
 
 CATEGORIA 4 - REPORTS/COVERAGE (RISCO MÉDIO):
 - "coverage/, nyc_output/"
-- "reports/"
+- "reports/, test-results/"
 - "*.report, *.coverage"
 - "lighthouse-results/"
 

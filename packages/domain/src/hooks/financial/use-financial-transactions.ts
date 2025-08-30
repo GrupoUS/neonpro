@@ -65,12 +65,12 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
   const [transactions, setTransactions] = useState<FinancialTransaction[]>([]);
   const [paymentMethods, _setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>();
 
   const refreshData = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
-      setError(null);
+      setError(undefined);
 
       // Placeholder implementation
       const mockTransactions: FinancialTransaction[] = [
@@ -113,7 +113,7 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
             ? error.message
             : "Failed to create transaction",
         );
-        return null;
+        return;
       }
     },
     [],
@@ -166,7 +166,7 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
         setError(
           error instanceof Error ? error.message : "Failed to process refund",
         );
-        return null;
+        return;
       }
     },
     [],
@@ -182,7 +182,7 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
             ? error.message
             : "Failed to add payment method",
         );
-        return null;
+        return;
       }
     },
     [],

@@ -6,7 +6,6 @@
 // =============================================================================
 
 import { supabase } from "@/lib/supabase";
-import type { PatientInteraction } from "./behavioral-utils";
 
 // =============================================================================
 // TYPES & INTERFACES
@@ -263,7 +262,7 @@ export class BehavioralAnalysisService {
 
   private async detectBehavioralPatterns(
     events: BehavioralEvent[],
-    interactions: PatientInteraction[],
+    interactions: unknown[],
   ): Promise<PatientBehaviorProfile["patterns"]> {
     // Communication Style Analysis
     const communicationStyle = this.analyzeCommunicationStyle(interactions);
@@ -290,35 +289,34 @@ export class BehavioralAnalysisService {
   }
 
   private analyzeCommunicationStyle(
-    interactions: PatientInteraction[],
+    interactions: unknown[],
   ): PatientBehaviorProfile["patterns"]["communicationStyle"] {
-    // Analyze communication patterns based on channel and sentiment
-    const formalChannels = interactions.filter(
-      (i) => i.channel === "email" || i.channel === "portal",
+    // Analyze language patterns, message length, formality
+    const avgMessageLength = interactions.reduce((sum, i) => sum + (i.message?.length || 0), 0)
+      / interactions.length;
+
+    const formalWords = interactions.filter(
+      (i) => i.message?.includes("Senhor") || i.message?.includes("Senhora"),
     ).length;
 
-    const positiveInteractions = interactions.filter(
-      (i) => i.sentiment === "positive",
-    ).length;
-
-    if (formalChannels > interactions.length * 0.7) {
+    if (avgMessageLength > 100 && formalWords > interactions.length * 0.3) {
       return "formal";
     }
-    if (positiveInteractions > interactions.length * 0.6) {
+    if (avgMessageLength > 50) {
       return "detailed";
     }
-    if (interactions.length > 0 && interactions.every(i => i.channel === "sms")) {
+    if (avgMessageLength < 20) {
       return "direct";
     }
     return "casual";
   }
 
   private analyzeResponseTime(
-    interactions: PatientInteraction[],
+    interactions: unknown[],
   ): PatientBehaviorProfile["patterns"]["responseTime"] {
     const responseTimes = interactions
-      .map((i) => i.responseTime)
-      .filter((t) => t !== undefined && t > 0);
+      .map((i) => i.responseTimeHours)
+      .filter((t) => t !== undefined);
 
     if (responseTimes.length === 0) {
       return "delayed";
@@ -352,14 +350,11 @@ export class BehavioralAnalysisService {
         {} as Record<string, number>,
       );
 
-    const channels = Object.keys(channelCounts);
-    if (channels.length === 0) {
-      return "whatsapp";
-    }
-
-    return channels.reduce((a, b) =>
-      (channelCounts[a] || 0) > (channelCounts[b] || 0) ? a : b
-    ) as PatientBehaviorProfile["patterns"]["preferredChannel"];
+    return (
+      (Object.keys(channelCounts).reduce((a, b) =>
+        channelCounts[a] > channelCounts[b] ? a : b
+      ) as PatientBehaviorProfile["patterns"]["preferredChannel"]) || "whatsapp"
+    );
   }
 
   private analyzeAppointmentBehavior(
@@ -455,7 +450,7 @@ export class BehavioralAnalysisService {
 
   private async analyzePersonalityType(
     events: BehavioralEvent[],
-    interactions: PatientInteraction[],
+    interactions: unknown[],
   ): Promise<PatientBehaviorProfile["personalityType"]> {
     let analyticalScore = 0;
     let expressiveScore = 0;
@@ -464,9 +459,7 @@ export class BehavioralAnalysisService {
 
     // Decision-making speed (Driver vs Amiable)
     const quickDecisions = events.filter(
-      (e) =>
-        e.metadata?.decisionTime && typeof e.metadata.decisionTime === "number"
-        && e.metadata.decisionTime < 24,
+      (e) => e.metadata?.decisionTime && e.metadata.decisionTime < 24,
     ).length;
     if (quickDecisions > events.length * 0.6) {
       driverScore += 2;
@@ -603,7 +596,7 @@ export class BehavioralAnalysisService {
         inactive: 3, // 3 months projected retention
       };
 
-      const projectedMonths = segmentMultipliers[segment as keyof typeof segmentMultipliers] || 12;
+      const projectedMonths = segmentMultipliers[segment] || 12;
       return Math.round(monthlyAverage * projectedMonths);
     } catch {
       return 5000; // Default LTV
@@ -657,7 +650,7 @@ export class BehavioralAnalysisService {
     }
   }
 
-  private async getPatientInteractions(_patientId: string): Promise<PatientInteraction[]> {
+  private async getPatientInteractions(_patientId: string): Promise<unknown[]> {
     // This would integrate with communication systems
     // WhatsApp, email, SMS logs, etc.
     return [];
