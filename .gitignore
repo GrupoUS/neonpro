@@ -34,8 +34,9 @@ tmp.drivedownload/
 
 # IDE and tooling
 archon/
-/archon/
+*/archon/*
 *archon/*
+.serena
 */.serena/*
 *.serena/*
 .vscode/
