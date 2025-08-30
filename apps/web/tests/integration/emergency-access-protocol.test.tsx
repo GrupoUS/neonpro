@@ -76,29 +76,30 @@ const mockEmergencyAuth = {
   createEmergencySession: vi.fn(),
 };
 
-// Use global notification service from vitest.setup.ts
-const mockNotificationService = (globalThis as unknown).mockNotificationService;
+// Import notification service mock directly from global-mocks
+import { mockNotificationService } from "../setup/global-mocks";
 
-vi.mock<typeof import("../../lib/services/emergency-access-service")>(
-  "../../lib/services/emergency-access-service",
-  () => ({
-    EmergencyAccessService: mockEmergencyService,
-  }),
-);
+// Mock the emergency services directly since they don't exist yet
+const EmergencyAccessService = vi.fn().mockImplementation(() => mockEmergencyService);
+const EmergencyAuthService = vi.fn().mockImplementation(() => mockEmergencyAuth);
+const EmergencyNotificationService = vi.fn().mockImplementation(() => mockNotificationService);
 
-vi.mock<typeof import("../../lib/auth/emergency-auth")>(
-  "../../lib/auth/emergency-auth",
-  () => ({
-    EmergencyAuthService: mockEmergencyAuth,
-  }),
-);
+// Make them available globally for the tests
+(globalThis as any).EmergencyAccessService = EmergencyAccessService;
+(globalThis as any).EmergencyAuthService = EmergencyAuthService;
+(globalThis as any).EmergencyNotificationService = EmergencyNotificationService;
 
-vi.mock<typeof import("../../lib/notifications/emergency-notifications")>(
-  "../../lib/notifications/emergency-notifications",
-  () => ({
-    EmergencyNotificationService: mockNotificationService,
-  }),
-); // Test data
+// Mock queryClient for tests
+const mockQueryClient = {
+  invalidateQueries: vi.fn(),
+  setQueryData: vi.fn(),
+  getQueryData: vi.fn(),
+  refetchQueries: vi.fn(),
+} as any;
+
+(globalThis as any).queryClient = mockQueryClient;
+
+// Test data
 const mockEmergencyPatient = {
   id: "patient-emergency-123",
   name: "João Silva Santos",
@@ -152,10 +153,7 @@ const mockEmergencyGrant: EmergencyAccessGrant = {
 
 // Test wrapper component
 const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
-  // Use the global mock QueryClient instead of creating a new one
-  const { queryClient } = globalThis;
-
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return <QueryClientProvider client={mockQueryClient}>{children}</QueryClientProvider>;
 };
 describe("emergency Access Protocol Integration Tests", () => {
   let queryClient: QueryClient;

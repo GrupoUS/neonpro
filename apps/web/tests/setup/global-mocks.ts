@@ -3,17 +3,35 @@
  * Defines all global mocks used across integration tests
  */
 
-import { vi } from "vitest";
+import { vi, type MockedFunction } from "vitest";
 
 // CPF Validator Mock
-const mockCpfValidator = {
+const mockCpfValidator: {
+  isValid: MockedFunction<any>;
+  format: MockedFunction<any>;
+  clean: MockedFunction<any>;
+} = {
   isValid: vi.fn().mockReturnValue(true),
   format: vi.fn().mockImplementation((cpf: string) => cpf),
   clean: vi.fn().mockImplementation((cpf: string) => cpf.replace(/\D/g, "")),
 };
 
 // Supabase Client Mock
-const mockSupabaseClient = {
+const mockSupabaseClient: {
+  from: MockedFunction<any>;
+  select: MockedFunction<any>;
+  insert: MockedFunction<any>;
+  update: MockedFunction<any>;
+  delete: MockedFunction<any>;
+  eq: MockedFunction<any>;
+  single: MockedFunction<any>;
+  auth: {
+    getUser: MockedFunction<any>;
+    signInWithPassword: MockedFunction<any>;
+    signOut: MockedFunction<any>;
+  };
+  channel: MockedFunction<any>;
+} = {
   from: vi.fn().mockReturnThis(),
   select: vi.fn().mockReturnThis(),
   insert: vi.fn().mockReturnThis(),
@@ -34,7 +52,13 @@ const mockSupabaseClient = {
 };
 
 // LGPD Service Mock
-const mockLgpdService = {
+const mockLgpdService: {
+  validateConsent: MockedFunction<any>;
+  logDataAccess: MockedFunction<any>;
+  checkDataRetention: MockedFunction<any>;
+  anonymizeData: MockedFunction<any>;
+  generateConsentReport: MockedFunction<any>;
+} = {
   validateConsent: vi.fn().mockReturnValue(true),
   logDataAccess: vi.fn().mockResolvedValue(true),
   checkDataRetention: vi.fn().mockReturnValue(true),
@@ -43,14 +67,39 @@ const mockLgpdService = {
 };
 
 // Notification Service Mock
-const mockNotificationService = {
-  sendEmergencyAlert: vi.fn().mockResolvedValue(true),
+const mockNotificationService: {
+  sendEmergencyAlert: MockedFunction<any>;
+  notifyCompliance: MockedFunction<any>;
+  logNotification: MockedFunction<any>;
+  notifyMedicalStaff: MockedFunction<any>;
+  logEmergencyNotification: MockedFunction<any>;
+} = {
+  sendEmergencyAlert: vi.fn().mockResolvedValue({
+    alert_sent: true,
+    recipients: ["emergency_supervisor", "head_doctor", "security"],
+    alert_id: "emergency-alert-123",
+  }),
   notifyCompliance: vi.fn().mockResolvedValue(true),
   logNotification: vi.fn().mockResolvedValue({}),
+  notifyMedicalStaff: vi.fn().mockResolvedValue({
+    notification_sent: true,
+    staff_notified: ["doctor_on_call", "head_nurse"],
+    notification_id: "staff-notification-123",
+  }),
+  logEmergencyNotification: vi.fn().mockResolvedValue({
+    log_created: true,
+    log_id: "emergency-log-123",
+    timestamp: new Date().toISOString(),
+  }),
 };
 
 // Compliance Service Mock
-const mockComplianceService = {
+const mockComplianceService: {
+  validateCompliance: MockedFunction<any>;
+  logComplianceEvent: MockedFunction<any>;
+  checkRequirements: MockedFunction<any>;
+  generateReport: MockedFunction<any>;
+} = {
   validateCompliance: vi.fn().mockReturnValue(true),
   logComplianceEvent: vi.fn().mockResolvedValue({}),
   checkRequirements: vi.fn().mockReturnValue([]),
