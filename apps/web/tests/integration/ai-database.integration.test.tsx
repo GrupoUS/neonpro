@@ -22,7 +22,7 @@ const DB_TEST_CONFIG = {
     max_retries: 3,
     isolation_level: "READ COMMITTED",
   },
-  timeout: 30000,
+  timeout: 30_000,
   retries: 3,
   cleanup: true,
 };
@@ -213,7 +213,7 @@ describe("aI Feature Flags Database", () => {
       .select("id");
 
     expect(insertError).toBeNull();
-    testFlagIds.push(...insertedFlags.map((f: unknown) => f.id));
+    testFlagIds.push(...insertedFlags.map((f: { id: string; }) => f.id));
 
     const stopTimer = TestPerformanceMonitor.startMeasurement(
       "indexed_feature_flag_query",
@@ -314,7 +314,7 @@ describe("aI Cache Management Database", () => {
       .select("id");
 
     expect(insertError).toBeNull();
-    testCacheIds.push(...insertedCaches.map((c: unknown) => c.id));
+    testCacheIds.push(...insertedCaches.map((c: { id: string; }) => c.id));
 
     // Query by tags
     const { data: taggedData, error: tagError } = await supabaseClient
@@ -441,7 +441,7 @@ describe("aI Audit Logging Database", () => {
       .select("id");
 
     expect(insertError).toBeNull();
-    testAuditIds.push(...insertedAudits.map((a: unknown) => a.id));
+    testAuditIds.push(...insertedAudits.map((a: { id: string; }) => a.id));
 
     const stopTimer = TestPerformanceMonitor.startMeasurement(
       "complex_audit_query",
@@ -543,7 +543,7 @@ describe("aI Monitoring Database", () => {
     expect(insertedMetrics).toHaveLength(25);
     expect(duration).toBeLessThan(1000); // Should be fast for bulk insert
 
-    testMetricIds.push(...insertedMetrics.map((m: unknown) => m.id));
+    testMetricIds.push(...insertedMetrics.map((m: { id: string; }) => m.id));
   });
 
   it("should support aggregation queries for monitoring dashboards", async () => {
@@ -575,7 +575,7 @@ describe("aI Monitoring Database", () => {
       .select("id");
 
     expect(insertError).toBeNull();
-    testMetricIds.push(...insertedMetrics.map((m: unknown) => m.id));
+    testMetricIds.push(...insertedMetrics.map((m: { id: string; }) => m.id));
 
     const stopTimer = TestPerformanceMonitor.startMeasurement(
       "metrics_aggregation",
@@ -595,7 +595,8 @@ describe("aI Monitoring Database", () => {
     expect(metrics).toHaveLength(3);
 
     // Manual aggregation for test validation
-    const avgValue = metrics.reduce((sum: number, m: unknown) => sum + m.metric_value, 0)
+    const avgValue =
+      metrics.reduce((sum: number, m: { metric_value: number; }) => sum + m.metric_value, 0)
       / metrics.length;
     expect(avgValue).toBeCloseTo(616.67, 1); // (500 + 750 + 600) / 3
 
@@ -631,7 +632,7 @@ describe("aI Monitoring Database", () => {
     expect(insertedMetrics).toHaveLength(batchSize);
     expect(duration).toBeLessThan(2000); // Should handle 100 metrics in under 2 seconds
 
-    testMetricIds.push(...insertedMetrics.map((m: unknown) => m.id));
+    testMetricIds.push(...insertedMetrics.map((m: { id: string; }) => m.id));
   });
 });
 
@@ -753,7 +754,7 @@ describe("aI Chat Database", () => {
       .select("id");
 
     expect(messageError).toBeNull();
-    testMessageIds.push(...messageData.map((m: unknown) => m.id));
+    testMessageIds.push(...messageData.map((m: { id: string; }) => m.id));
 
     const stopTimer = TestPerformanceMonitor.startMeasurement(
       "conversation_history_retrieval",

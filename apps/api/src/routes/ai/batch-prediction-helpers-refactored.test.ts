@@ -85,7 +85,7 @@ describe("Batch Prediction Helper Functions - Refactored (unit tests)", () => {
     it("calculates items per hour and rounds", () => {
       // items/hour = (totalProcessed / avgMs) * 3_600_000
       // Example: total=100, avg=1000ms => (100/1000)*3_600_000 = 360_000
-      expect(calculateThroughputPerHour(100, 1000)).toBe(360000);
+      expect(calculateThroughputPerHour(100, 1000)).toBe(360_000);
       // Check rounding
       // total=3, avg=2000ms => (3/2000)*3_600_000 = 5400
       expect(calculateThroughputPerHour(3, 2000)).toBe(5400);
@@ -186,12 +186,12 @@ describe("Batch Prediction Helper Functions - Refactored (unit tests)", () => {
       // Inject a non-number through 'any' cast to validate runtime guarding
       (mixed as any).push("12ms");
       const valid = validateProcessingTimes(mixed as unknown as number[]);
-      expect(valid).toEqual([0, 10]);
+      expect(valid).toStrictEqual([0, 10]);
     });
 
     it("returns empty array if nothing valid", () => {
       const input = [Number.NaN, Number.POSITIVE_INFINITY, -5] as number[];
-      expect(validateProcessingTimes(input as unknown as number[])).toEqual([]);
+      expect(validateProcessingTimes(input as unknown as number[])).toStrictEqual([]);
     });
   });
 
@@ -205,7 +205,7 @@ describe("Batch Prediction Helper Functions - Refactored (unit tests)", () => {
       expect(metrics.successRate).toBe(95);
       expect(metrics.averageProcessingTime).toBe(200);
       // throughput: (completed / avgMs)*3_600_000 = (95/200)*3_600_000 = 1_710_000 -> rounded
-      expect(metrics.throughputPerHour).toBe(1710000);
+      expect(metrics.throughputPerHour).toBe(1_710_000);
       // avg per job: 95/5 = 19
       expect(metrics.avgPredictionsPerJob).toBe(19);
       expect(metrics.efficiency).toBe("high");

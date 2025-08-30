@@ -111,7 +111,7 @@ class QualityReportGenerator {
   private async collectCoverageMetrics(): Promise<void> {
     try {
       // Run coverage tests
-      execSync("pnpm test:coverage", { cwd: rootDir, stdio: "pipe" });
+      execSync("bun run test:coverage", { cwd: rootDir, stdio: "pipe" });
 
       const coveragePath = path.join(
         rootDir,
@@ -150,7 +150,7 @@ class QualityReportGenerator {
   private async collectSecurityMetrics(): Promise<void> {
     try {
       // Run security audit
-      const auditOutput = execSync("pnpm audit --json", {
+      const auditOutput = execSync("bun audit --json", {
         cwd: rootDir,
         stdio: "pipe",
         encoding: "utf8",
@@ -180,7 +180,7 @@ class QualityReportGenerator {
   private async collectPerformanceMetrics(): Promise<void> {
     const buildStart = Date.now();
     try {
-      execSync("pnpm build", { cwd: rootDir, stdio: "pipe" });
+      execSync("bun run build", { cwd: rootDir, stdio: "pipe" });
     } catch {}
     const buildTime = Date.now() - buildStart;
 

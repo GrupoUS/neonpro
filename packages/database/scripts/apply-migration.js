@@ -39,7 +39,7 @@ async function checkSupabaseCLI() {
     log("❌ Supabase CLI não encontrado", COLORS.RED);
     log("🔧 Instalando Supabase CLI...", COLORS.YELLOW);
     try {
-      await execPromise("pnpm", ["install", "-g", "supabase"]);
+      await execPromise("bun", ["install", "-g", "supabase"]);
       log("✅ Supabase CLI instalado com sucesso", COLORS.GREEN);
       return true;
     } catch {
@@ -88,7 +88,7 @@ async function applyMigration() {
 
   try {
     // Check if connected to Supabase
-    await execPromise("pnpm", ["dlx", "supabase", "status"]);
+    await execPromise("bun", ["x", "supabase", "status"]);
     log("✅ Conectado ao Supabase", COLORS.GREEN);
   } catch {
     log("⚠️  Não conectado ao Supabase, tentando conectar...", COLORS.YELLOW);
@@ -98,7 +98,7 @@ async function applyMigration() {
     } catch {
       log("❌ Falha ao conectar com Supabase", COLORS.RED);
       log(
-        "💡 Execute manualmente: pnpm dlx supabase login && pnpm dlx supabase link",
+        "💡 Execute manualmente: bun x supabase login && bun x supabase link",
         COLORS.YELLOW,
       );
       return false;
@@ -107,7 +107,7 @@ async function applyMigration() {
 
   try {
     // Apply migrations
-    const result = await execPromise("pnpm", ["dlx", "supabase", "db", "push"]);
+    const result = await execPromise("bun", ["x", "supabase", "db", "push"]);
     log("✅ Migration aplicada com sucesso!", COLORS.GREEN);
     log(result.stdout, COLORS.GREEN);
     return true;
@@ -133,7 +133,7 @@ async function validateMigration() {
 
   try {
     // Run our existing test script
-    const result = await execPromise("pnpm", ["run", "test:middleware"]);
+    const result = await execPromise("bun", ["run", "test:middleware"]);
 
     if (result.stdout.includes("✅ Todos os testes passaram!")) {
       log("✅ Migration validada com sucesso!", COLORS.GREEN);

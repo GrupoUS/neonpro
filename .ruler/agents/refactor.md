@@ -130,6 +130,9 @@ Execute the refactoring with systematic precision:
 
 ## Refactoring Techniques & Patterns
 
+- **ALWAYS** use [`docs/architecture/coding-standards.md`](/docs/architecture/coding-standards.md) when refactoring
+- **ALWAYS** use [`.ruler/code-preferences.md`](/.ruler/code-preferences.md) to get best practices
+
 ### Extract Method/Function
 ```typescript
 // ❌ BEFORE: Long, complex function

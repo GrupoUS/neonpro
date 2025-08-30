@@ -42,23 +42,23 @@ const jestFn = usingJest
 
 const clock = {
   fakeTimers() {
-    if (usingVitest) viFakeTimers?.();
-    else if (usingJest) jestFakeTimers?.();
+    if (usingVitest) {viFakeTimers?.();}
+    else if (usingJest) {jestFakeTimers?.();}
   },
   setSystemTime(d: Date | number) {
-    if (usingVitest) viSetSystemTime?.(d);
-    else if (usingJest) jestSetSystemTime?.(d);
+    if (usingVitest) {viSetSystemTime?.(d);}
+    else if (usingJest) {jestSetSystemTime?.(d);}
   },
   realTimers() {
-    if (usingVitest) viRealTimers?.();
-    else if (usingJest) jestRealTimers?.();
+    if (usingVitest) {viRealTimers?.();}
+    else if (usingJest) {jestRealTimers?.();}
   },
   spyOn(obj: any, method: string) {
-    if (usingVitest) return viSpy?.(obj, method as any);
+    if (usingVitest) {return viSpy?.(obj, method as any);}
     return jestSpy?.(obj, method as any);
   },
   fn() {
-    if (usingVitest) return viFn?.();
+    if (usingVitest) {return viFn?.();}
     return jestFn?.();
   },
 };
@@ -124,9 +124,9 @@ describe("ANVISAControlledSubstancesService (singleton + basic queries)", () => 
     const s = Service.getInstance();
 
     // Single-match queries
-    expect(s.searchSubstances("Diazepam").map(x => x.id)).toEqual(["anvisa-001"]);
-    expect(s.searchSubstances("Valium").map(x => x.id)).toEqual(["anvisa-001"]);
-    expect(s.searchSubstances("Sulfato de Morfina").map(x => x.id)).toEqual(["anvisa-002"]);
+    expect(s.searchSubstances("Diazepam").map(x => x.id)).toStrictEqual(["anvisa-001"]);
+    expect(s.searchSubstances("Valium").map(x => x.id)).toStrictEqual(["anvisa-001"]);
+    expect(s.searchSubstances("Sulfato de Morfina").map(x => x.id)).toStrictEqual(["anvisa-002"]);
 
     // Multiple results sorted by substanceName
     const results = s.searchSubstances("i"); // "Isotretinoína", "Morfina"
@@ -143,9 +143,9 @@ describe("ANVISAControlledSubstancesService (singleton + basic queries)", () => 
   test("getSubstancesByClass filters and sorts", () => {
     const s = Service.getInstance();
     const b1 = s.getSubstancesByClass("B1");
-    expect(b1.map(x => x.substanceName)).toEqual(["Diazepam"]);
+    expect(b1.map(x => x.substanceName)).toStrictEqual(["Diazepam"]);
     const c2 = s.getSubstancesByClass("C2");
-    expect(c2.map(x => x.substanceName)).toEqual(["Isotretinoína"]);
+    expect(c2.map(x => x.substanceName)).toStrictEqual(["Isotretinoína"]);
   });
 
   test("getControlledClassesInfo exposes classification constants", () => {
@@ -325,19 +325,19 @@ describe("Queries: by patient/doctor, expiring, stats, audit trail, and complian
   test("getPrescriptionsByPatient returns prescriptions sorted by date desc", async () => {
     const s = Service.getInstance();
     const r1 = await createRx({ patientId: "alice", qty: 3 });
-    clock.setSystemTime(new Date(T0.getTime() + 1_000)); // +1s
+    clock.setSystemTime(new Date(T0.getTime() + 1000)); // +1s
     const r2 = await createRx({ patientId: "alice", qty: 1 });
     const list = s.getPrescriptionsByPatient("alice");
-    expect(list.map(r => r.id)).toEqual([r2.id, r1.id]);
+    expect(list.map(r => r.id)).toStrictEqual([r2.id, r1.id]);
   });
 
   test("getPrescriptionsByDoctor returns prescriptions sorted by date desc", async () => {
     const s = Service.getInstance();
     const r1 = await createRx({ doctorCRM: "CRM-77" });
-    clock.setSystemTime(new Date(T0.getTime() + 2_000));
+    clock.setSystemTime(new Date(T0.getTime() + 2000));
     const r2 = await createRx({ doctorCRM: "CRM-77" });
     const list = s.getPrescriptionsByDoctor("CRM-77");
-    expect(list.map(r => r.id)).toEqual([r2.id, r1.id]);
+    expect(list.map(r => r.id)).toStrictEqual([r2.id, r1.id]);
   });
 
   test("getExpiringPrescriptions returns those due within N days and sorts by validUntil asc", async () => {
@@ -356,7 +356,7 @@ describe("Queries: by patient/doctor, expiring, stats, audit trail, and complian
 
     // With a larger window, both can appear and order is by validUntil asc (r1 first)
     expiring = s.getExpiringPrescriptions(20);
-    expect(expiring.map(x => x.id)).toEqual([r1.id, r2.id]);
+    expect(expiring.map(x => x.id)).toStrictEqual([r1.id, r2.id]);
   });
 
   test("getTrackingStatistics counts totals and classes without expired prescriptions", async () => {
@@ -384,7 +384,7 @@ describe("Queries: by patient/doctor, expiring, stats, audit trail, and complian
     const last = await createRx({ qty: 1 });
 
     const trail = s.getAuditTrail(2);
-    expect(trail.length).toBe(2);
+    expect(trail).toHaveLength(2);
     expect(trail[0].entityId).toBe(last.id); // newest first
     expect(trail.every(e => e.complianceType === "anvisa")).toBe(true);
   });
@@ -426,7 +426,7 @@ describe("clearData resets state but keeps substances loaded", () => {
     s.clearData();
 
     expect(s.getTrackingStatistics().totalPrescriptions).toBe(0);
-    expect(s.getAuditTrail(10).length).toBe(0);
+    expect(s.getAuditTrail(10)).toHaveLength(0);
 
     // Substances still available
     const b1 = s.getSubstancesByClass("B1");

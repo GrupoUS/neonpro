@@ -2,10 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Import the SUT (system under test). We import from the implementation file.
 // If your implementation file lives elsewhere, adjust this path accordingly.
-import SupabaseRealtimeChat, {
-  getSupabaseRealtimeChat,
-  type SupabaseRealtimeConfig,
-} from "../supabase-realtime";
+import SupabaseRealtimeChat, { getSupabaseRealtimeChat } from "../supabase-realtime";
+import type { SupabaseRealtimeConfig } from "../supabase-realtime";
 
 // Mock @supabase/supabase-js createClient to return a fully stubbed client
 vi.mock("@supabase/supabase-js", () => {
@@ -63,9 +61,9 @@ vi.mock("@supabase/supabase-js", () => {
           handlers["broadcast:typing"].push(cb);
         } else if (type === "presence") {
           const ev = filterOrOpts?.event;
-          if (ev === "sync") handlers["presence:sync"].push(cb);
-          if (ev === "join") handlers["presence:join"].push(cb);
-          if (ev === "leave") handlers["presence:leave"].push(cb);
+          if (ev === "sync") {handlers["presence:sync"].push(cb);}
+          if (ev === "join") {handlers["presence:join"].push(cb);}
+          if (ev === "leave") {handlers["presence:leave"].push(cb);}
         }
         return ch;
       }),
@@ -537,13 +535,13 @@ describe("SupabaseRealtimeChat - unsubscribe and disconnect", () => {
     await chat.subscribeToConversation("c-unsub", { onMessage: () => {} });
 
     // simulate a typing timer existing
-    // @ts-ignore access private map for test via any
-    (chat as any).typingTimers.set("c-unsub", setTimeout(() => {}, 10000));
+    // @ts-expect-error access private map for test via any
+    (chat as any).typingTimers.set("c-unsub", setTimeout(() => {}, 10_000));
 
     await chat.unsubscribeFromConversation("c-unsub");
     expect(mockClient.removeChannel).toHaveBeenCalled();
     // ensure timer cleared
-    // @ts-ignore
+    // @ts-expect-error
     expect((chat as any).typingTimers.has("c-unsub")).toBe(false);
   });
 
@@ -572,10 +570,10 @@ describe("SupabaseRealtimeChat - unsubscribe and disconnect", () => {
     await chat.subscribeToConversation("c-d2", { onMessage: () => {} });
 
     // add timers
-    // @ts-ignore
-    (chat as any).typingTimers.set("c-d1", setTimeout(() => {}, 10000));
-    // @ts-ignore
-    (chat as any).typingTimers.set("c-d2", setTimeout(() => {}, 10000));
+    // @ts-expect-error
+    (chat as any).typingTimers.set("c-d1", setTimeout(() => {}, 10_000));
+    // @ts-expect-error
+    (chat as any).typingTimers.set("c-d2", setTimeout(() => {}, 10_000));
 
     await chat.disconnect();
     expect(mockClient.removeAllChannels).toHaveBeenCalled();
@@ -678,29 +676,29 @@ describe("SupabaseRealtimeChat - helpers", () => {
   it("getSenderType returns healthcare_professional when professional_info present, otherwise patient", async () => {
     const chat1 = new SupabaseRealtimeChat(baseConfig);
     await chat1.initialize("u-1", { professional_info: { specialty: "cardio" } } as any);
-    // @ts-ignore
+    // @ts-expect-error
     expect(chat1["getSenderType"]()).toBe("healthcare_professional");
 
     const chat2 = new SupabaseRealtimeChat({ ...baseConfig });
     await chat2.initialize("u-2");
-    // @ts-ignore
+    // @ts-expect-error
     expect(chat2["getSenderType"]()).toBe("patient");
   });
 
   it("isEmergencyMessage detects Portuguese emergency keywords", () => {
     const chat = new SupabaseRealtimeChat(baseConfig);
-    // @ts-ignore
+    // @ts-expect-error
     expect(chat["isEmergencyMessage"]({ text: "É uma situação urgente!" })).toBe(true);
-    // @ts-ignore
+    // @ts-expect-error
     expect(chat["isEmergencyMessage"]({ text: "apenas um teste" })).toBe(false);
-    // @ts-ignore
+    // @ts-expect-error
     expect(chat["isEmergencyMessage"]("nope")).toBe(false);
   });
 
   it("transformMessage coerces date fields and preserves content (encryption placeholder)", () => {
     const chat = new SupabaseRealtimeChat({ ...baseConfig, messageEncryption: true });
     const now = new Date().toISOString();
-    // @ts-ignore
+    // @ts-expect-error
     const msg = chat["transformMessage"]({
       id: "m-x",
       conversation_id: "c-x",
@@ -719,7 +717,7 @@ describe("SupabaseRealtimeChat - helpers", () => {
     expect(msg.created_at).toBeInstanceOf(Date);
     expect(msg.updated_at).toBeInstanceOf(Date);
     expect(msg.read_at).toBeInstanceOf(Date);
-    expect(msg.content).toEqual({ text: "encrypted?" });
+    expect(msg.content).toStrictEqual({ text: "encrypted?" });
   });
 });
 

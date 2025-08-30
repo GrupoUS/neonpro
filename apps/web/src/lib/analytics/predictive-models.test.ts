@@ -207,8 +207,8 @@ describe("PredictiveModelsService", () => {
       expect(result.modelVersion).toBe("neonpro-outcome-predictor-v2.1");
       expect(result.confidence).toBeGreaterThan(0.5);
       expect(result.predictions.noShowProbability).toBeCloseTo(mockNoShow, 6);
-      expect(result.predictions.complications).toEqual(mockComps);
-      expect(result.predictions.recoveryTimeline.length).toBe(1);
+      expect(result.predictions.complications).toStrictEqual(mockComps);
+      expect(result.predictions.recoveryTimeline).toHaveLength(1);
       expect(result.recommendations.optimalTreatment.duration).toBe(28);
 
       // Risk level should consider outcomeScore and high-risk complications

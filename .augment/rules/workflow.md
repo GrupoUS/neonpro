@@ -1,3 +1,7 @@
+---
+type: "always_apply"
+---
+
 # Development Workflow
 
 > **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
@@ -18,14 +22,16 @@ When you have ANY doubt during development:
 
 ## 🤖 AGENT COORDINATION SYSTEM
 
-**🎯 Filosofia de Coordenação**: *"Roteamento inteligente para o agente certo na hora certa"*
+**🎯 Filosofia de Coordenação**: _"Roteamento inteligente para o agente certo na hora certa"_
 
 ### **🔄 Sistema de Roteamento Inteligente**
 
 **Coordenador Central** (Sempre Ativo):
+
 - **💻 @apex-dev** - Coordenador base + desenvolvimento full-stack healthcare
 
 **Especialistas On-Demand** (Ativação por Contexto):
+
 - **🔬 @apex-researcher** - Pesquisa multi-fonte e validação constitucional
 - **🎨 @apex-ui-ux-designer** - Design healthcare com acessibilidade WCAG 2.1 AA+
 - **🏗️ @architect** - Arquitetura de sistemas e design patterns
@@ -57,24 +63,28 @@ When you have ANY doubt during development:
 ### **🔄 Workflows de Colaboração Predefinidos**
 
 **🚀 Desenvolvimento Completo de Feature**:
+
 ```yaml
 sequence: architect → apex-researcher → apex-dev → apex-ui-ux-designer → audit → documentation
 output: "Production-ready healthcare feature with full documentation"
 ```
 
 **🔬 Pesquisa e Implementação**:
+
 ```yaml
 sequence: apex-researcher → architect → apex-dev → audit
 output: "Evidence-based implementation with security validation"
 ```
 
 **🔧 Refatoração Segura**:
+
 ```yaml
 sequence: audit → refactor → apex-dev → audit
 output: "Improved codebase with maintained security standards"
 ```
 
 ### **📋 MVP Completo**:
+
 ```yaml
 sequence: prd → architect → apex-researcher → apex-dev → apex-ui-ux-designer → audit → documentation
 output: "Production-ready MVP with full compliance"
@@ -82,26 +92,28 @@ output: "Production-ready MVP with full compliance"
 
 ### **🎯 Matriz de Decisão para Seleção de Agentes**
 
-| Contexto/Trigger | Agente Principal | Agentes Colaboradores | Workflow |
-|------------------|------------------|----------------------|----------|
-| 🔬 **Pesquisa/Análise** | @apex-researcher | @architect, @apex-dev | Research → Implementation |
-| 💻 **Desenvolvimento** | @apex-dev | @architect, @audit | Plan → Code → Validate |
-| 🎨 **UI/UX Design** | @apex-ui-ux-designer | @apex-dev, @audit | Design → Implement → Test |
-| 🏗️ **Arquitetura** | @architect | @apex-researcher, @apex-dev | Research → Design → Implement |
-| 🔒 **Segurança** | @audit | @apex-dev, @refactor | Audit → Fix → Re-audit |
-| 📋 **Produto** | @prd | @architect, @apex-ui-ux-designer | Spec → Design → Develop |
-| 🔧 **Refatoração** | @refactor | @audit, @apex-dev | Audit → Refactor → Validate |
-| 📚 **Documentação** | @documentation | @apex-dev, @architect | Code → Document → Review |
-| 📢 **Marketing** | @briefing | @apex-ui-ux-designer, @prd | Strategy → Design → Content |
-| ⚖️ **Padrões** | @rules | @audit, @apex-dev | Define → Implement → Enforce |
+| Contexto/Trigger        | Agente Principal     | Agentes Colaboradores            | Workflow                      |
+| ----------------------- | -------------------- | -------------------------------- | ----------------------------- |
+| 🔬 **Pesquisa/Análise** | @apex-researcher     | @architect, @apex-dev            | Research → Implementation     |
+| 💻 **Desenvolvimento**  | @apex-dev            | @architect, @audit               | Plan → Code → Validate        |
+| 🎨 **UI/UX Design**     | @apex-ui-ux-designer | @apex-dev, @audit                | Design → Implement → Test     |
+| 🏗️ **Arquitetura**       | @architect           | @apex-researcher, @apex-dev      | Research → Design → Implement |
+| 🔒 **Segurança**        | @audit               | @apex-dev, @refactor             | Audit → Fix → Re-audit        |
+| 📋 **Produto**          | @prd                 | @architect, @apex-ui-ux-designer | Spec → Design → Develop       |
+| 🔧 **Refatoração**      | @refactor            | @audit, @apex-dev                | Audit → Refactor → Validate   |
+| 📚 **Documentação**     | @documentation       | @apex-dev, @architect            | Code → Document → Review      |
+| 📢 **Marketing**        | @briefing            | @apex-ui-ux-designer, @prd       | Strategy → Design → Content   |
+| ⚖️ **Padrões**           | @rules               | @audit, @apex-dev                | Define → Implement → Enforce  |
 
 **🔄 Regras de Ativação Automática**:
+
 - **Complexidade ≥7**: Ativação automática de @apex-researcher
 - **UI/UX necessário**: Auto-inclusão de @apex-ui-ux-designer
 - **Segurança crítica**: Auto-inclusão de @audit
 - **Arquitetura nova**: Auto-inclusão de @architect
 
 ## 🎯 CORE PRINCIPLES & MISSION
+
 ```yaml
 CORE_STANDARDS:
   mantra: "Think → Research → Decompose → Plan → Implement → Validate"
@@ -133,6 +145,7 @@ WORKFLOW_MANAGEMENT_PRINCIPLES:
   quality_consistency: "Maintain consistent progressive standards across all agents and thinking levels"
   recovery_protocols: "Comprehensive error handling with mcp research and multiple errors fail and cognitive recovery procedures"
 ```
+
 ## 🧠 META-COGNITIVE & CONSTITUTIONAL FRAMEWORK
 
 ```yaml
@@ -148,15 +161,35 @@ COGNITIVE_ARCHITECTURE:
 VIBECODER_ENGINEERING_PRINCIPLES:
   kiss_principle:
     definition: "Keep It Simple, Stupid - Simplicity is key"
-    core_rules: ["Choose simplest solution that meets requirements", "Prefer readable code over clever optimizations", "Reduce cognitive load", "Does this solve the core problem without unnecessary complexity?", "Use clear, descriptive naming and avoid Over-Engineering"]
+    core_rules: [
+      "Choose simplest solution that meets requirements",
+      "Prefer readable code over clever optimizations",
+      "Reduce cognitive load",
+      "Does this solve the core problem without unnecessary complexity?",
+      "Use clear, descriptive naming and avoid Over-Engineering",
+    ]
 
   yagni_principle:
     definition: "You Aren't Gonna Need It - Don't implement until needed"
-    core_rules: ["Build only what current requirements specify", "Resist 'just in case' features", "Refactor when requirements emerge", "Focus on current user stories", "Remove unused code immediately"]
+    core_rules: [
+      "Build only what current requirements specify",
+      "Resist 'just in case' features",
+      "Refactor when requirements emerge",
+      "Focus on current user stories",
+      "Remove unused code immediately",
+    ]
 
   chain_of_thought:
     definition: "Explicit step-by-step reasoning for accuracy"
-    core_rules: ["Break problems into sequential steps", "Verbalize reasoning process", "Show intermediate decisions", "Question assumptions", "Validate against requirements", "Each step follows logically from previous steps", "Final solution traced back to requirements"]
+    core_rules: [
+      "Break problems into sequential steps",
+      "Verbalize reasoning process",
+      "Show intermediate decisions",
+      "Question assumptions",
+      "Validate against requirements",
+      "Each step follows logically from previous steps",
+      "Final solution traced back to requirements",
+    ]
 
 CONSTITUTIONAL_PRINCIPLES:
   principle_based_design: "Align with software engineering excellence"
@@ -182,6 +215,7 @@ CONSTITUTIONAL_PRINCIPLES:
 - If tried more than 3 times to fix something and still stuck, start a new research cycle.
 
 **🔬 Ativação Automática do @apex-researcher**:
+
 - Implementações técnicas complexas
 - Integração de novos frameworks/bibliotecas
 - Requisitos de segurança/compliance
@@ -190,6 +224,7 @@ CONSTITUTIONAL_PRINCIPLES:
 - Regulamentações específicas de saúde (HIPAA, LGPD)
 
 **Comando de Ativação**:
+
 ```bash
 @apex-researcher "pesquisar [tecnologia/padrão/regulamentação]"
 ```
@@ -198,24 +233,24 @@ CONSTITUTIONAL_PRINCIPLES:
 
 ```yaml
 RESEARCH_EXECUTION_FRAMEWORK:
-    vibecoder_integration: "Think & Analyze - ALWAYS before any action - NO EXCEPTIONS"
-    primary_tool: "sequential-thinking + native think tool (MANDATORY FIRST STEP)"
-    purpose: "Comprehensive requirement analysis with context understanding and complexity assessment"
-    intelligence: "Dynamic complexity scoring (L1-L10) with automatic cognitive and agent routing"
-    thinking_activation: "Auto-scaled based on complexity detection and domain triggers"
-    routing: "Intelligent MCP selection based on complexity, domain, and requirements analysis"
-    agent_coordination: "Sequential thinking primary, potential apex_researcher_agent for complex analysis"
-    process:
-      - "Understand requirements completely with constitutional analysis"
-      - "Identify constraints and dependencies with multi-perspective evaluation"
-      - "Assess complexity level (1-10) with domain-specific triggers"
-      - "Define strategic approach with agent coordination planning"
-      - "Break down into manageable components with quality gate definition"
-    deliverables: "Complete requirements with execution plan, cognitive activation, and agent assignments"
-    purpose: "Knowledge acquisition and validation for informed implementation with multi-source validation"
-    intelligence: "Multi-source research orchestration with authority validation and cross-referencing"
-    routing: "Context7 → Tavily → Archon → Exa chain for complexity, with sequential thinking integration"
-    quality_gate: "100% requirement clarity with multi-source validation and constitutional compliance"
+  vibecoder_integration: "Think & Analyze - ALWAYS before any action - NO EXCEPTIONS"
+  primary_tool: "sequential-thinking + native think tool (MANDATORY FIRST STEP)"
+  purpose: "Comprehensive requirement analysis with context understanding and complexity assessment"
+  intelligence: "Dynamic complexity scoring (L1-L10) with automatic cognitive and agent routing"
+  thinking_activation: "Auto-scaled based on complexity detection and domain triggers"
+  routing: "Intelligent MCP selection based on complexity, domain, and requirements analysis"
+  agent_coordination: "Sequential thinking primary, potential apex_researcher_agent for complex analysis"
+  process:
+    - "Understand requirements completely with constitutional analysis"
+    - "Identify constraints and dependencies with multi-perspective evaluation"
+    - "Assess complexity level (1-10) with domain-specific triggers"
+    - "Define strategic approach with agent coordination planning"
+    - "Break down into manageable components with quality gate definition"
+  deliverables: "Complete requirements with execution plan, cognitive activation, and agent assignments"
+  purpose: "Knowledge acquisition and validation for informed implementation with multi-source validation"
+  intelligence: "Multi-source research orchestration with authority validation and cross-referencing"
+  routing: "Context7 → Tavily → Archon → Exa chain for complexity, with sequential thinking integration"
+  quality_gate: "100% requirement clarity with multi-source validation and constitutional compliance"
 ```
 
 ### 3. **Planning & Task List**
@@ -226,6 +261,7 @@ RESEARCH_EXECUTION_FRAMEWORK:
 - **Follow the Project Context Guide:** [`docs/project.md`](../docs/project.md)
 
 **🎯 Ativação de Agentes por Contexto**:
+
 ```bash
 # Planejamento Técnico
 @apex-dev "planejar implementação de [feature]"
@@ -243,28 +279,28 @@ RESEARCH_EXECUTION_FRAMEWORK:
 - Follow the Planning & Design Framework below
 
 ```yaml
-  phase_3_planning_design:
-    vibecoder_integration: "Context Engineering & Planning with ONE-SHOT template methodology"
-    contextual_loading: "UI/UX agent loaded automatically when design tasks detected"
-    purpose: "Solution architecture and strategic implementation planning with systematic design approach"
-    intelligence: "Risk assessment with comprehensive mitigation strategies and architectural validation"
-    routing: "Sequential Thinking integration with architectural pattern analysis and validation"
-    one_shot_template:
-      role: "[Specific: Frontend Developer | Backend Engineer | Full-Stack | UI/UX Designer]"
-      context: "#workspace + #codebase search with serena mcp + [archon knowledge base + relevant files]"
-      task: "[Specific, measurable, actionable requirement]"
-      constraints: "[Technical limitations, performance requirements]"
-      output: "[Code | Documentation | Architecture | Analysis | Design]"
-      success_criteria: "[Measurable outcomes, quality thresholds]"
-    task_planning:
-      structure:
-        - "Break down into atomic executable tasks with agent assignment"
-        - "Assign optimal tools and agents for each task with specialization matching"
-        - "Define validation checkpoints with quality gates"
-        - "Create dependency mapping with agent coordination requirements"
-        - "Set measurable success criteria with progressive quality standards"
-    deliverables: "Detailed execution plan with quality gates, agent coordination, and architectural specifications"
-    quality_gate: "Architecture review ≥9.5/10 with scalability validation and security compliance"
+phase_3_planning_design:
+  vibecoder_integration: "Context Engineering & Planning with ONE-SHOT template methodology"
+  contextual_loading: "UI/UX agent loaded automatically when design tasks detected"
+  purpose: "Solution architecture and strategic implementation planning with systematic design approach"
+  intelligence: "Risk assessment with comprehensive mitigation strategies and architectural validation"
+  routing: "Sequential Thinking integration with architectural pattern analysis and validation"
+  one_shot_template:
+    role: "[Specific: Frontend Developer | Backend Engineer | Full-Stack | UI/UX Designer]"
+    context: "#workspace + #codebase search with serena mcp + [archon knowledge base + relevant files]"
+    task: "[Specific, measurable, actionable requirement]"
+    constraints: "[Technical limitations, performance requirements]"
+    output: "[Code | Documentation | Architecture | Analysis | Design]"
+    success_criteria: "[Measurable outcomes, quality thresholds]"
+  task_planning:
+    structure:
+      - "Break down into atomic executable tasks with agent assignment"
+      - "Assign optimal tools and agents for each task with specialization matching"
+      - "Define validation checkpoints with quality gates"
+      - "Create dependency mapping with agent coordination requirements"
+      - "Set measurable success criteria with progressive quality standards"
+  deliverables: "Detailed execution plan with quality gates, agent coordination, and architectural specifications"
+  quality_gate: "Architecture review ≥9.5/10 with scalability validation and security compliance"
 ```
 
 ### 3. **TDD Implementation (Red-Green-Refactor)**
@@ -322,19 +358,19 @@ RESEARCH_EXECUTION_FRAMEWORK:
   - Only proceed when linting and type checks are clean
 
 ```yaml
-  validation:
-    vibecoder_integration: "Quality Validation & Testing with constitutional enforcement gates"
-    architecture_analysis: "Always check architecture docs for best practices validation"
-    technology_excellence: "Framework best practices compliance and performance optimization"
-    qa_mandatory:
-      post_modification_checks:
-        - "Syntax errors verification with zero tolerance policy"
-        - "Duplicates/orphans detection with cleanup protocols"
-        - "Feature validation against requirements with completeness verification"
-        - "Requirements compliance with constitutional principles validation"
-        - "Security vulnerabilities assessment with compliance verification"
-        - "Test coverage ≥90% with comprehensive testing protocols"
-    verification_rule: "Never assume changes complete without explicit verification"
+validation:
+  vibecoder_integration: "Quality Validation & Testing with constitutional enforcement gates"
+  architecture_analysis: "Always check architecture docs for best practices validation"
+  technology_excellence: "Framework best practices compliance and performance optimization"
+  qa_mandatory:
+    post_modification_checks:
+      - "Syntax errors verification with zero tolerance policy"
+      - "Duplicates/orphans detection with cleanup protocols"
+      - "Feature validation against requirements with completeness verification"
+      - "Requirements compliance with constitutional principles validation"
+      - "Security vulnerabilities assessment with compliance verification"
+      - "Test coverage ≥90% with comprehensive testing protocols"
+  verification_rule: "Never assume changes complete without explicit verification"
 ```
 
 ### 6. **Memory Documentation Protocol**
@@ -360,6 +396,7 @@ RESEARCH_EXECUTION_FRAMEWORK:
 ### 11. **Out-of-Scope Documentation**
 
 - **🔄 Ativação do @documentation**: Para documentação não coberta por protocolos existentes
+
 ```bash
 @documentation "criar documentação para [conceito/padrão/integração]"
 ```

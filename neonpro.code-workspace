@@ -33,12 +33,22 @@
     "git.enableSmartCommit": true,
     "git.autofetch": true,
     "github.copilot.chat.useInstructions": false,
-    "markdown.validate.enabled": true,
+    "markdown.validate.enabled": false,
     "[jsonc]": {
       "editor.defaultFormatter": "vscode.json-language-features",
     },
     "[markdown]": {
+      "editor.unicodeHighlight.ambiguousCharacters": false,
+      "editor.unicodeHighlight.invisibleCharacters": false,
+      "diffEditor.ignoreTrimWhitespace": false,
+      "editor.wordWrap": "on",
+      "editor.formatOnSave": true,
+      "editor.renderWhitespace": "all",
+      "editor.acceptSuggestionOnEnter": "off",
       "editor.defaultFormatter": "dprint.dprint",
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "never",
+      },
     },
     "oxc.enable": true,
     "[typescript]": {

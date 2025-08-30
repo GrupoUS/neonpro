@@ -3,7 +3,8 @@
  * Defines all global mocks used across integration tests
  */
 
-import { type MockedFunction, vi } from "vitest";
+import { vi } from "vitest";
+import type { MockedFunction } from "vitest";
 
 // CPF Validator Mock
 const mockCpfValidator: {
@@ -61,10 +62,10 @@ const createMockQueryBuilder = () => {
       // Add IDs to inserted data if missing and add timestamps
       insertedData = insertedData.map((item: any) => ({
         ...item,
-        id: item.id || `test-id-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        id: item.id || `test-id-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
         created_at: item.created_at || new Date().toISOString(),
         updated_at: item.updated_at || new Date().toISOString(),
-        expires_at: item.expires_at || new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
+        expires_at: item.expires_at || new Date(Date.now() + 3_600_000).toISOString(), // 1 hour from now
       }));
 
       // Check for duplicate key scenario by checking existing records
