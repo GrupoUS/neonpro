@@ -21,6 +21,8 @@ dist/
 **/dist/
 out/
 **/out/
+.turbo/**
+**/.turbo/**
 
 # temporary upload files (Google Drive sync)
 .tmp.driveupload/
@@ -36,13 +38,9 @@ tmp.drivedownload/
 archon/
 /archon/
 *archon/*
-*/.serena/*
+*serena/*
+*.serena
 *.serena/*
-.vscode/
-.idea/
-.trunk/
-.gitlab/
-
 
 
 # logs
@@ -62,7 +60,6 @@ mcp.json
 next-env.d.ts
 
 # Playwright
-/test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
@@ -101,3 +98,4 @@ next-env.d.ts
 .claude/agents/apex-dev.md
 .claude/agents/apex-dev.md.bak
 # END Ruler Generated Files
+.vercel
