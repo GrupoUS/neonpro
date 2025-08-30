@@ -1,0 +1,113 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+.next/
+dist/
+build/
+out/
+
+# Development files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage/
+test-results/
+playwright-report/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Cache directories
+.cache/
+.parcel-cache/
+.turbo/
+.eslintcache
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Documentation and development files
+docs/
+*.md
+!README.md
+
+# Tools and scripts
+tools/
+scripts/
+*.sh
+*.bat
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+
+# Large media files
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# Temporary files
+temp/
+tmp/
+.temp/
+.tmp/
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Monorepo specific
+packages/*/node_modules/
+packages/*/dist/
+packages/*/.next/
+apps/*/node_modules/
+apps/*/dist/
+apps/*/.next/
+
+# Archon specific
+archon/

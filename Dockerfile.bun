@@ -1,0 +1,60 @@
+# 🚀 Multi-stage Bun Healthcare Platform
+FROM oven/bun:1.2.21-alpine as base
+WORKDIR /app
+
+# Install security updates and healthcare compliance tools
+RUN apk update && apk upgrade && \
+    apk add --no-cache dumb-init ca-certificates && \
+    rm -rf /var/cache/apk/*
+
+# 📦 Dependencies stage
+FROM base as deps
+COPY package.json bun.lock bunfig.toml ./
+COPY packages/*/package.json ./packages/*/
+COPY apps/*/package.json ./apps/*/
+COPY tools/*/package.json ./tools/*/
+
+# Install with frozen lockfile for reproducible builds
+RUN bun install --frozen-lockfile --production
+
+# 🏗️ Build stage
+FROM base as builder
+COPY . .
+COPY --from=deps /app/node_modules ./node_modules
+
+# Healthcare compliance: Set secure build environment
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV BUN_ENV=production
+
+# Build all applications
+RUN bun run build:api && \
+    bun run build:web
+
+# 🌟 Production runtime
+FROM oven/bun:1.2.21-alpine as runner
+WORKDIR /app
+
+# Healthcare security: Create non-root user
+RUN addgroup --system --gid 1001 healthcare && \
+    adduser --system --uid 1001 neonpro
+
+# Copy built applications
+COPY --from=builder --chown=neonpro:healthcare /app/apps/web/.next/standalone ./
+COPY --from=builder --chown=neonpro:healthcare /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder --chown=neonpro:healthcare /app/apps/api/dist ./apps/api/dist
+
+# Healthcare compliance: Set secure file permissions
+RUN chmod -R 755 /app && \
+    chown -R neonpro:healthcare /app
+
+USER neonpro
+EXPOSE 3000 8000
+
+# Health check for healthcare monitoring
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD bun run --bun apps/api/dist/health.js
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["bun", "run", "start"]
