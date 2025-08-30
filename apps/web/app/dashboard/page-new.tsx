@@ -65,7 +65,7 @@ function useDashboardData() {
   const { user } = useAuth();
 
   const fetchDashboardData = async () => {
-    if (!user) return;
+    if (!user) {return;}
 
     try {
       setLoading(true);
@@ -267,7 +267,7 @@ export default function DashboardPage() {
   if (authLoading) {
     return (
       <StateManager
-        loading={true}
+        loading
         loadingComponent={<LoadingCard title="Carregando autenticação..." description="Verificando suas credenciais" />}
       >
         <div />
@@ -279,7 +279,7 @@ export default function DashboardPage() {
   if (!user) {
     return (
       <StateManager
-        isEmpty={true}
+        isEmpty
         emptyComponent={
           <EmptyState
             title="Acesso Negado"

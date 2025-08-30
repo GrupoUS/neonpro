@@ -160,7 +160,7 @@ function usePatientsAPI() {
     search = "", 
     status = "active"
   ) => {
-    if (!user) return;
+    if (!user) {return;}
 
     try {
       setLoading(true);
@@ -330,7 +330,7 @@ function PatientCard({ patient, onEdit, onView, onDelete }: {
   };
 
   const getAgeFromBirthDate = (birthDate?: string) => {
-    if (!birthDate) return null;
+    if (!birthDate) {return null;}
     const today = new Date();
     const birth = new Date(birthDate);
     const age = today.getFullYear() - birth.getFullYear();
@@ -996,10 +996,10 @@ function PatientDetailsDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  if (!patient) return null;
+  if (!patient) {return null;}
 
   const getAgeFromBirthDate = (birthDate?: string) => {
-    if (!birthDate) return "Não informado";
+    if (!birthDate) {return "Não informado";}
     const today = new Date();
     const birth = new Date(birthDate);
     const age = today.getFullYear() - birth.getFullYear();
@@ -1456,7 +1456,7 @@ export default function PatientsPage() {
   };
 
   const handleUpdatePatient = async (data: PatientFormData) => {
-    if (!selectedPatient) return;
+    if (!selectedPatient) {return;}
 
     try {
       setSubmitting(true);
@@ -1473,7 +1473,7 @@ export default function PatientsPage() {
   };
 
   const handleDeletePatient = async () => {
-    if (!patientToDelete) return;
+    if (!patientToDelete) {return;}
 
     try {
       setSubmitting(true);
@@ -1511,7 +1511,7 @@ export default function PatientsPage() {
   if (!user) {
     return (
       <StateManager
-        isEmpty={true}
+        isEmpty
         emptyComponent={
           <EmptyState
             title="Acesso Negado"
@@ -1804,7 +1804,7 @@ export default function PatientsPage() {
         open={showDetailsDialog}
         onOpenChange={(open) => {
           setShowDetailsDialog(open);
-          if (!open) setSelectedPatient(null);
+          if (!open) {setSelectedPatient(null);}
         }}
       />
 

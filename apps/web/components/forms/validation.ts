@@ -53,7 +53,7 @@ export const validateCPF = (cpf: string): boolean => {
     sum += parseInt(digits[i]) * (10 - i);
   }
   let checkDigit1 = 11 - (sum % 11);
-  if (checkDigit1 >= 10) checkDigit1 = 0;
+  if (checkDigit1 >= 10) {checkDigit1 = 0;}
 
   // Calculate second check digit
   sum = 0;
@@ -61,7 +61,7 @@ export const validateCPF = (cpf: string): boolean => {
     sum += parseInt(digits[i]) * (11 - i);
   }
   let checkDigit2 = 11 - (sum % 11);
-  if (checkDigit2 >= 10) checkDigit2 = 0;
+  if (checkDigit2 >= 10) {checkDigit2 = 0;}
 
   return parseInt(digits[9]) === checkDigit1 && parseInt(digits[10]) === checkDigit2;
 };
@@ -70,7 +70,7 @@ export const validateCPF = (cpf: string): boolean => {
 export const validateCNPJ = (cnpj: string): boolean => {
   const digits = cnpj.replace(/\D/g, '');
   
-  if (digits.length !== 14) return false;
+  if (digits.length !== 14) {return false;}
 
   const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
@@ -83,8 +83,8 @@ export const validateCNPJ = (cnpj: string): boolean => {
     return remainder < 2 ? 0 : 11 - remainder;
   };
 
-  const digit1 = calculateDigit(digits.substring(0, 12), weights1);
-  const digit2 = calculateDigit(digits.substring(0, 13), weights2);
+  const digit1 = calculateDigit(digits.slice(0, 12), weights1);
+  const digit2 = calculateDigit(digits.slice(0, 13), weights2);
 
   return parseInt(digits[12]) === digit1 && parseInt(digits[13]) === digit2;
 };
@@ -92,7 +92,7 @@ export const validateCNPJ = (cnpj: string): boolean => {
 // Healthcare specific validators
 export const healthcareValidators = {
   cpf: (value: string) => {
-    if (!value) return null;
+    if (!value) {return null;}
     if (!HEALTHCARE_PATTERNS.cpf.test(value)) {
       return "CPF deve estar no formato: 000.000.000-00";
     }
@@ -103,7 +103,7 @@ export const healthcareValidators = {
   },
 
   cnpj: (value: string) => {
-    if (!value) return null;
+    if (!value) {return null;}
     if (!HEALTHCARE_PATTERNS.cnpj.test(value)) {
       return "CNPJ deve estar no formato: 00.000.000/0000-00";
     }
@@ -114,7 +114,7 @@ export const healthcareValidators = {
   },
 
   email: (value: string) => {
-    if (!value) return null;
+    if (!value) {return null;}
     if (!HEALTHCARE_PATTERNS.email.test(value)) {
       return "Email inválido";
     }
@@ -122,7 +122,7 @@ export const healthcareValidators = {
   },
 
   phone: (value: string) => {
-    if (!value) return null;
+    if (!value) {return null;}
     if (!HEALTHCARE_PATTERNS.phone.test(value)) {
       return "Telefone deve estar no formato: (00) 00000-0000";
     }
@@ -130,7 +130,7 @@ export const healthcareValidators = {
   },
 
   medicalLicense: (value: string) => {
-    if (!value) return null;
+    if (!value) {return null;}
     if (!HEALTHCARE_PATTERNS.medicalLicense.test(value)) {
       return "CRM deve estar no formato: SP123456";
     }
@@ -138,7 +138,7 @@ export const healthcareValidators = {
   },
 
   birthDate: (value: string) => {
-    if (!value) return null;
+    if (!value) {return null;}
     const date = new Date(value);
     const today = new Date();
     const age = today.getFullYear() - date.getFullYear();
@@ -150,7 +150,7 @@ export const healthcareValidators = {
   },
 
   bloodType: (value: string) => {
-    if (!value) return null;
+    if (!value) {return null;}
     if (!HEALTHCARE_PATTERNS.bloodType.test(value)) {
       return "Tipo sanguíneo deve ser: A+, A-, B+, B-, AB+, AB-, O+, O-";
     }
@@ -158,7 +158,7 @@ export const healthcareValidators = {
   },
 
   weight: (value: number) => {
-    if (!value) return null;
+    if (!value) {return null;}
     if (value < 0.5 || value > 500) {
       return "Peso deve estar entre 0.5kg e 500kg";
     }
@@ -166,7 +166,7 @@ export const healthcareValidators = {
   },
 
   height: (value: number) => {
-    if (!value) return null;
+    if (!value) {return null;}
     if (value < 30 || value > 250) {
       return "Altura deve estar entre 30cm e 250cm";
     }
@@ -202,7 +202,7 @@ export const validateField = (
     }
 
     // Skip other validations if value is empty and not required
-    if (!value) continue;
+    if (!value) {continue;}
 
     // Length validation
     if (rule.minLength && value.toString().length < rule.minLength) {
@@ -221,7 +221,7 @@ export const validateField = (
     // Custom validation
     if (rule.custom) {
       const customError = rule.custom(value);
-      if (customError) return customError;
+      if (customError) {return customError;}
     }
   }
 

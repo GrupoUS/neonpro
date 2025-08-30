@@ -1,7 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { ValidationSchema, ValidationResult, validateSchema } from "./validation";
+import type { ValidationSchema} from "./validation";
+import { ValidationResult, validateSchema } from "./validation";
 
 export interface FormState {
   data: Record<string, any>;
@@ -135,7 +136,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   }, []);
 
   const validateField = useCallback((name: string) => {
-    if (!validationSchema?.[name]) return;
+    if (!validationSchema?.[name]) {return;}
 
     const result = validateSchema(state.data, { [name]: validationSchema[name] });
     
@@ -160,7 +161,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   }, [state.data, validationSchema]);
 
   const validateForm = useCallback((): boolean => {
-    if (!validationSchema) return true;
+    if (!validationSchema) {return true;}
 
     const result = validateSchema(state.data, validationSchema);
     

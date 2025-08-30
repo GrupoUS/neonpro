@@ -31,6 +31,7 @@
     "@hookform/resolvers": "^3.10.0",
     "@neonpro/database": "workspace:*",
     "@neonpro/domain": "workspace:*",
+    "@neonpro/monitoring": "workspace:*",
     "@neonpro/shared": "workspace:*",
     "@neonpro/ui": "workspace:*",
     "@neonpro/utils": "workspace:*",

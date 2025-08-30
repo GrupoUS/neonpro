@@ -40,3 +40,9 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   unobserve: vi.fn(),
   disconnect: vi.fn(),
 }));
+
+// Mock window.confirm for security tests
+Object.defineProperty(window, "confirm", {
+  writable: true,
+  value: vi.fn(() => true),
+});

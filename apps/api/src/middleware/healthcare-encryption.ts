@@ -208,8 +208,8 @@ export class HealthcareEncryption {
     const key = keyManager.getCurrentKey(category);
     const iv = crypto.randomBytes(ENCRYPTION_CONFIG.IV_LENGTH);
 
-    // Create cipher
-    const cipher = crypto.createCipher(
+    // Create cipher with proper createCipheriv (fixes deprecated createCipher vulnerability)
+    const cipher = crypto.createCipheriv(
       ENCRYPTION_CONFIG.ALGORITHM,
       key.key,
       iv,
@@ -285,8 +285,8 @@ export class HealthcareEncryption {
     });
 
     try {
-      // Create decipher
-      const decipher = crypto.createDecipher(
+      // Create decipher with proper createDecipheriv (fixes deprecated createDecipher vulnerability)
+      const decipher = crypto.createDecipheriv(
         ENCRYPTION_CONFIG.ALGORITHM,
         key.key,
         Buffer.from(encryptedData.iv, "hex"),

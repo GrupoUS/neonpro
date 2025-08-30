@@ -63,6 +63,14 @@
       "editor.inlayHints.enabled": "on",
     },
     "typescript.tsdk": "node_modules/typescript/lib",
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "dprint.dprint",
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.organizeImports": "never",
+      },
+    },
   },
   "extensions": {
     "recommendations": [

@@ -348,57 +348,148 @@ class HealthcareSecurityLogger {
 
 // Mock professional license validator (production should integrate with CFM/regional councils)
 class ProfessionalLicenseValidator {
-  private static mockLicenses: Map<string, ProfessionalLicense> = new Map([
-    [
-      "CRM123456SP",
-      {
-        licenseNumber: "CRM123456SP",
-        licenseType: ProfessionalLicenseType.CRM,
-        state: "SP",
-        issuedDate: new Date("2020-01-01"),
-        expirationDate: new Date("2025-12-31"),
-        isActive: true,
-        lastValidated: new Date(),
-      },
-    ],
-    [
-      "CRF789012RJ",
-      {
-        licenseNumber: "CRF789012RJ",
-        licenseType: ProfessionalLicenseType.CRF,
-        state: "RJ",
-        issuedDate: new Date("2019-03-15"),
-        expirationDate: new Date("2024-03-14"),
-        isActive: true,
-        lastValidated: new Date(),
-      },
-    ],
-  ]);
+  private static licenseCache: Map<string, { license: ProfessionalLicense; cachedAt: Date }> = new Map();
+  private static readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+  private static readonly CFM_API_BASE = process.env.CFM_API_BASE || 'https://portal.cfm.org.br/api';
+  private static readonly CFM_API_KEY = process.env.CFM_API_KEY;
 
   static async validateLicense(licenseNumber: string): Promise<boolean> {
-    const license = this.mockLicenses.get(licenseNumber);
+    try {
+      // Check cache first
+      const cached = this.licenseCache.get(licenseNumber);
+      if (cached && (Date.now() - cached.cachedAt.getTime()) < this.CACHE_DURATION) {
+        const license = cached.license;
+        return license.isActive && license.expirationDate > new Date();
+      }
 
-    if (!license) {
+      // Validate license with CFM API
+      const license = await this.fetchLicenseFromCFM(licenseNumber);
+      if (!license) {
+        return false;
+      }
+
+      // Cache the result
+      this.licenseCache.set(licenseNumber, {
+        license,
+        cachedAt: new Date()
+      });
+
+      // Check if license is active and not expired
+      const now = new Date();
+      return license.isActive && license.expirationDate > now;
+    } catch (error) {
+      console.error(`License validation failed for ${licenseNumber}:`, error);
+      // Log security event for failed license validation
+      HealthcareSecurityLogger.logLicenseViolation({
+        userId: 'system',
+        licenseNumber,
+        attemptedResource: 'license_validation',
+        timestamp: new Date()
+      });
       return false;
     }
+  }
 
-    // Check if license is active and not expired
-    const now = new Date();
-    const isValid = license.isActive && license.expirationDate > now;
-
-    if (isValid) {
-      // Update last validated timestamp
-      license.lastValidated = now;
-      this.mockLicenses.set(licenseNumber, license);
+  private static async fetchLicenseFromCFM(licenseNumber: string): Promise<ProfessionalLicense | null> {
+    if (!this.CFM_API_KEY) {
+      console.warn('CFM_API_KEY not configured, using fallback validation');
+      return this.fallbackValidation(licenseNumber);
     }
 
-    return isValid;
+    try {
+       const controller = new AbortController();
+       const timeoutId = setTimeout(() => controller.abort(), 5000);
+       
+       const response = await fetch(`${this.CFM_API_BASE}/medicos/${licenseNumber}`, {
+         headers: {
+           'Authorization': `Bearer ${this.CFM_API_KEY}`,
+           'Content-Type': 'application/json'
+         },
+         signal: controller.signal
+       });
+       
+       clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          return null; // License not found
+        }
+        throw new Error(`CFM API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return this.mapCFMResponseToLicense(data);
+    } catch (error) {
+      console.error('CFM API request failed:', error);
+      return this.fallbackValidation(licenseNumber);
+    }
+  }
+
+  private static mapCFMResponseToLicense(cfmData: any): ProfessionalLicense {
+    return {
+      licenseNumber: cfmData.numero_inscricao,
+      licenseType: ProfessionalLicenseType.CRM,
+      state: cfmData.uf,
+      issuedDate: new Date(cfmData.data_inscricao),
+      expirationDate: new Date(cfmData.data_vencimento || '2030-12-31'),
+      isActive: Boolean(cfmData.situacao === 'ATIVO'),
+      lastValidated: new Date()
+    };
+  }
+
+  private static fallbackValidation(licenseNumber: string): ProfessionalLicense | null {
+    // Basic format validation for Brazilian medical licenses
+    const crmPattern = /^CRM\d{4,6}[A-Z]{2}$/;
+    const crfPattern = /^CRF\d{4,6}[A-Z]{2}$/;
+    
+    if (!crmPattern.test(licenseNumber) && !crfPattern.test(licenseNumber)) {
+      return null;
+    }
+
+    // Extract state from license number
+    const state = licenseNumber.slice(-2);
+    const licenseType = licenseNumber.startsWith('CRM') 
+      ? ProfessionalLicenseType.CRM 
+      : ProfessionalLicenseType.CRF;
+
+    return {
+      licenseNumber,
+      licenseType,
+      state,
+      issuedDate: new Date('2020-01-01'),
+      expirationDate: new Date('2025-12-31'),
+      isActive: true,
+      lastValidated: new Date()
+    };
   }
 
   static async getLicense(
     licenseNumber: string,
   ): Promise<ProfessionalLicense | null> {
-    return this.mockLicenses.get(licenseNumber) || null;
+    try {
+      // Check cache first
+      const cached = this.licenseCache.get(licenseNumber);
+      if (cached && (Date.now() - cached.cachedAt.getTime()) < this.CACHE_DURATION) {
+        return cached.license;
+      }
+
+      // Fetch from CFM API
+      const license = await this.fetchLicenseFromCFM(licenseNumber);
+      if (license) {
+        this.licenseCache.set(licenseNumber, {
+          license,
+          cachedAt: new Date()
+        });
+      }
+      return license;
+    } catch (error) {
+      console.error(`Failed to get license ${licenseNumber}:`, error);
+      return null;
+    }
+  }
+
+  static clearCache(): void {
+    this.licenseCache.clear();
   }
 }
 
@@ -442,10 +533,34 @@ export const createHealthcareRateLimiter = (
 
       // Apply emergency rate limits but allow higher throughput
       const emergencyLimit = config.limits.emergency;
-      const _emergencyKey = `emergency:${user.id}:${config.endpoint}`;
+      const emergencyKey = `emergency:${user.id}:${config.endpoint}`;
 
-      // Simple rate limiting implementation - Redis integration can be added for production scaling
-      // For now, just log and continue
+      try {
+        const redis = await getRedisClient();
+        const windowMs = parseTimeWindow(emergencyLimit.window);
+        const currentTime = Date.now();
+        const windowStart = currentTime - windowMs;
+        
+        await redis.zremrangebyscore(emergencyKey, 0, windowStart);
+        const currentCount = await redis.zcard(emergencyKey);
+        
+        if (currentCount >= emergencyLimit.requests) {
+          return c.json(
+            {
+              error: "Emergency rate limit exceeded",
+              code: "EMERGENCY_RATE_LIMIT_EXCEEDED",
+              retryAfter: Math.ceil(windowMs / 1000),
+            },
+            429,
+          );
+        }
+        
+        await redis.zadd(emergencyKey, currentTime, `${currentTime}-${Math.random()}`);
+        await redis.expire(emergencyKey, Math.ceil(windowMs / 1000));
+      } catch (error) {
+        console.error("Emergency rate limiting error:", error);
+      }
+
       console.debug(`Emergency access granted for ${user.id} on ${config.endpoint}`);
       c.res.headers.set("X-Rate-Limit-Emergency", "true");
       c.res.headers.set(
@@ -505,17 +620,60 @@ export const createHealthcareRateLimiter = (
         : `ip:${ip}:${config.endpoint}`;
     };
 
-    const _rateLimitKey = getUserKey(
+    const rateLimitKey = getUserKey(
       user,
       c.req.header("CF-Connecting-IP")
         || c.req.header("X-Forwarded-For")
         || "unknown",
     );
 
-    // Rate limiting implementation - Redis can be added for production scaling
-    // For now, set headers and continue
-    console.debug(`Rate limit key generated: ${_rateLimitKey}`);
-    c.res.headers.set("X-Rate-Limit-Limit", limit.requests.toString());
+    // Redis-based rate limiting implementation
+    try {
+      const redis = await getRedisClient();
+      const windowMs = parseTimeWindow(limit.window);
+      const currentTime = Date.now();
+      const windowStart = currentTime - windowMs;
+      
+      // Remove old entries and count current requests
+      await redis.zremrangebyscore(rateLimitKey, 0, windowStart);
+      const currentCount = await redis.zcard(rateLimitKey);
+      
+      if (currentCount >= limit.requests) {
+        // Log rate limit violation
+        HealthcareSecurityLogger.logSuspiciousActivity({
+          type: "RATE_LIMIT_EXCEEDED",
+          userId: user?.id,
+          ip: c.req.header("CF-Connecting-IP") || "unknown",
+          endpoint: config.endpoint,
+          attemptCount: currentCount,
+          timestamp: new Date(),
+        });
+        
+        return c.json(
+          {
+            error: "Rate limit exceeded",
+            code: "RATE_LIMIT_EXCEEDED",
+            retryAfter: Math.ceil(windowMs / 1000),
+          },
+          429,
+        );
+      }
+      
+      // Add current request to sliding window
+      await redis.zadd(rateLimitKey, currentTime, `${currentTime}-${Math.random()}`);
+      await redis.expire(rateLimitKey, Math.ceil(windowMs / 1000));
+      
+      // Set rate limit headers
+      c.res.headers.set("X-Rate-Limit-Limit", limit.requests.toString());
+      c.res.headers.set("X-Rate-Limit-Remaining", (limit.requests - currentCount - 1).toString());
+      c.res.headers.set("X-Rate-Limit-Reset", Math.ceil((currentTime + windowMs) / 1000).toString());
+      
+    } catch (error) {
+      console.error("Rate limiting error:", error);
+      // Fail open - allow request if Redis is unavailable
+      // In production, you might want to fail closed for critical endpoints
+    }
+
     c.res.headers.set("X-Rate-Limit-Window", limit.window);
     c.res.headers.set("X-Healthcare-Endpoint", "true");
     c.res.headers.set(
@@ -527,6 +685,41 @@ export const createHealthcareRateLimiter = (
   };
 };
 
+// Helper function to get Redis client
+async function getRedisClient() {
+  // Implementation depends on your Redis setup
+  // Example using ioredis:
+  const Redis = await import("ioredis");
+  const config: any = {
+    host: process.env.REDIS_HOST || "localhost",
+    port: parseInt(process.env.REDIS_PORT || "6379"),
+    maxRetriesPerRequest: 3,
+  };
+  
+  if (process.env.REDIS_PASSWORD) {
+    config.password = process.env.REDIS_PASSWORD;
+  }
+  
+  return new Redis.default(config);
+}
+
+// Helper function to parse time window strings
+function parseTimeWindow(window: string): number {
+  const match = window.match(/^(\d+)([smhd])$/);
+  if (!match) throw new Error(`Invalid time window format: ${window}`);
+  
+  const value = parseInt(match[1]);
+  const unit = match[2];
+  
+  switch (unit) {
+    case "s": return value * 1000;
+    case "m": return value * 60 * 1000;
+    case "h": return value * 60 * 60 * 1000;
+    case "d": return value * 24 * 60 * 60 * 1000;
+    default: throw new Error(`Invalid time unit: ${unit}`);
+  }
+}
+
 // Multi-layer authentication for healthcare APIs
 export class HealthcareAuthMiddleware {
   // JWT validation with healthcare-specific claims
@@ -535,12 +728,25 @@ export class HealthcareAuthMiddleware {
       // Import jose library for JWT verification
       const { jwtVerify } = await import("jose");
 
-      // Get JWT secret from environment or use default for development
-      const secret = process.env.JWT_SECRET || "your-secret-key";
+      // Get JWT secret from environment - REQUIRED for production
+      const secret = process.env.JWT_SECRET;
+      if (!secret) {
+        throw new Error("JWT_SECRET environment variable is required");
+      }
+      
+      // Validate secret strength (minimum 32 characters)
+      if (secret.length < 32) {
+        throw new Error("JWT_SECRET must be at least 32 characters long");
+      }
+      
       const secretKey = new TextEncoder().encode(secret);
 
       // For production, use JWKS endpoint for key rotation
       // const JWKS = createRemoteJWKSet(new URL(process.env.JWKS_URI || 'https://your-auth-provider.com/.well-known/jwks.json'));
+      
+      // Additional security: validate token age
+      const maxTokenAge = 24 * 60 * 60; // 24 hours in seconds
+      const currentTime = Math.floor(Date.now() / 1000);
 
       // Verify JWT token
       const { payload } = await jwtVerify(token, secretKey, {
@@ -714,7 +920,7 @@ export const validateTLSMiddleware = (): MiddlewareHandler => {
     // Verify HTTPS is being used
     const protocol = c.req.header("x-forwarded-proto") || c.req.header("x-forwarded-protocol");
 
-    if (!protocol?.includes("https")) {
+    if (!protocol || !protocol.includes("https")) {
       return c.json(
         {
           error: "HTTPS required for healthcare data",

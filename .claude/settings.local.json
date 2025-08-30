@@ -92,7 +92,8 @@
       "mcp__archon__update_task",
       "mcp__Sequential_Thinking__sequentialthinking",
       "mcp__Tavily__tavily-extract",
-      "mcp__Tavily__tavily-search"
+      "mcp__Tavily__tavily-search",
+      "mcp__archon__update_project"
     ],
     "deny": [
       "Edit",
@@ -105,34 +106,6 @@
       "WebFetch"
     ]
   },
-  "hookConfiguration": {
-    "enableProactiveCommands": true,
-    "enablePlanTracking": true,
-    "enableErrorRecovery": true,
-    "maxRetries": 3,
-    "defaultTimeout": 60,
-    "logLevel": "info",
-    "errorThreshold": 5,
-    "planCompletionDetection": {
-      "enabled": true,
-      "inactivityTimeout": 300,
-      "minimumCompletionIndicators": 3
-    },
-    "commandExecution": {
-      "parallelExecution": true,
-      "environmentIsolation": true,
-      "timeoutGracePeriod": 10,
-      "failureIsolation": true
-    }
-  },
-  "memory": {
-    "autoLoadClaude": true,
-    "recursiveSearch": true,
-    "projectContextPath": ".claude",
-    "masterConfigFile": "CLAUDE.md",
-    "loadOnStartup": true
-  },
-  "parallelTasksCount": 5,
   "hooks": {
     "PostToolUse": [
       {
@@ -180,5 +153,33 @@
         ]
       }
     ]
-  }
+  },
+  "hookConfiguration": {
+    "enableProactiveCommands": true,
+    "enablePlanTracking": true,
+    "enableErrorRecovery": true,
+    "maxRetries": 3,
+    "defaultTimeout": 60,
+    "logLevel": "info",
+    "errorThreshold": 5,
+    "planCompletionDetection": {
+      "enabled": true,
+      "inactivityTimeout": 300,
+      "minimumCompletionIndicators": 3
+    },
+    "commandExecution": {
+      "parallelExecution": true,
+      "environmentIsolation": true,
+      "timeoutGracePeriod": 10,
+      "failureIsolation": true
+    }
+  },
+  "memory": {
+    "autoLoadClaude": true,
+    "recursiveSearch": true,
+    "projectContextPath": ".claude",
+    "masterConfigFile": "CLAUDE.md",
+    "loadOnStartup": true
+  },
+  "parallelTasksCount": 5
 }

@@ -63,19 +63,19 @@ export default function LoginPage() {
                 </h4>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex items-center gap-2 rounded-lg bg-background/20 p-2">
-                    <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
                     <span className="text-sm font-medium">LGPD</span>
                   </div>
                   <div className="flex items-center gap-2 rounded-lg bg-background/20 p-2">
-                    <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
                     <span className="text-sm font-medium">ANVISA</span>
                   </div>
                   <div className="flex items-center gap-2 rounded-lg bg-background/20 p-2">
-                    <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
                     <span className="text-sm font-medium">CFM</span>
                   </div>
                   <div className="flex items-center gap-2 rounded-lg bg-background/20 p-2">
-                    <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
                     <span className="text-sm font-medium">ISO 27001</span>
                   </div>
                 </div>
@@ -88,19 +88,19 @@ export default function LoginPage() {
                 </h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
-                    <div className="h-1 w-1 rounded-full bg-primary"></div>
+                    <div className="h-1 w-1 rounded-full bg-primary" />
                     Gestão completa de pacientes e agendamentos
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="h-1 w-1 rounded-full bg-primary"></div>
+                    <div className="h-1 w-1 rounded-full bg-primary" />
                     Prontuários eletrônicos seguros
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="h-1 w-1 rounded-full bg-primary"></div>
+                    <div className="h-1 w-1 rounded-full bg-primary" />
                     Relatórios e analytics avançados
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="h-1 w-1 rounded-full bg-primary"></div>
+                    <div className="h-1 w-1 rounded-full bg-primary" />
                     Integração com equipamentos médicos
                   </li>
                 </ul>

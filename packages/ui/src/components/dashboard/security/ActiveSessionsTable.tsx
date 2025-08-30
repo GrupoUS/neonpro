@@ -19,6 +19,7 @@ import { Alert, AlertDescription } from "../../ui/alert";
 import { Badge } from "../../ui/badge";
 import { Button } from "../../ui/button";
 import {
+  ConfirmationDialog,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -62,6 +63,8 @@ export function ActiveSessionsTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [riskFilter, setRiskFilter] = useState<string>("all");
   const [selectedSession, setSelectedSession] = useState<ActiveSession | null>();
+  const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
+  const [sessionToTerminate, setSessionToTerminate] = useState<string | null>(null);
 
   const fetchSessions = async () => {
     try {
@@ -93,14 +96,17 @@ export function ActiveSessionsTable() {
     return () => clearInterval(interval);
   }, [fetchSessions]);
 
-  const handleTerminateSession = async (sessionId: string) => {
-    if (!confirm("Tem certeza que deseja encerrar esta sessão?")) {
-      return;
-    }
+  const handleTerminateSession = (sessionId: string) => {
+    setSessionToTerminate(sessionId);
+    setShowTerminateConfirm(true);
+  };
+
+  const confirmTerminateSession = async () => {
+    if (!sessionToTerminate) {return;}
 
     try {
       const response = await fetch(
-        `/api/security/sessions/${sessionId}/terminate`,
+        `/api/security/sessions/${sessionToTerminate}/terminate`,
         {
           method: "POST",
           headers: {
@@ -117,6 +123,9 @@ export function ActiveSessionsTable() {
       toast.success("Sessão encerrada com sucesso");
     } catch {
       toast.error("Erro ao encerrar sessão");
+    } finally {
+      setShowTerminateConfirm(false);
+      setSessionToTerminate(null);
     }
   };
 
@@ -587,6 +596,38 @@ export function ActiveSessionsTable() {
           </span>
         )}
       </div>
+
+      {/* Healthcare-Compliant Confirmation Dialog */}
+      <Dialog open={showTerminateConfirm} onOpenChange={setShowTerminateConfirm}>
+        <ConfirmationDialog
+          title="Encerrar Sessão Ativa"
+          description="Tem certeza que deseja encerrar esta sessão? Esta ação não pode ser desfeita e o usuário será desconectado imediatamente."
+          confirmText="Encerrar Sessão"
+          cancelText="Cancelar"
+          isDestructive
+          lgpdRequired
+          medicalContext="patient-data"
+          onConfirm={confirmTerminateSession}
+          onCancel={() => {
+            setShowTerminateConfirm(false);
+            setSessionToTerminate(null);
+          }}
+        >
+          <div className="space-y-3">
+            <div className="rounded-lg bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 p-3 shadow-healthcare-sm backdrop-blur-sm">
+              <p className="font-medium text-warning text-sm">
+                ⚠️ Atenção: Esta ação será registrada nos logs de auditoria conforme LGPD
+              </p>
+            </div>
+            <div className="rounded-lg bg-gradient-to-br from-info/15 via-info/10 to-info/5 p-3 shadow-healthcare-sm backdrop-blur-sm">
+              <p className="text-info text-sm">
+                🏥 Contexto Médico: O encerramento de sessões é monitorado para garantir a segurança
+                dos dados de saúde
+              </p>
+            </div>
+          </div>
+        </ConfirmationDialog>
+      </Dialog>
     </div>
   );
 }

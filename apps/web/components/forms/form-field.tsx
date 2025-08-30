@@ -23,7 +23,7 @@ export interface FormFieldProps {
   required?: boolean;
   placeholder?: string;
   description?: string;
-  options?: Array<{ value: string; label: string; disabled?: boolean }>;
+  options?: { value: string; label: string; disabled?: boolean }[];
   className?: string;
   inputClassName?: string;
   rows?: number;

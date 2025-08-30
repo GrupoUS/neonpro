@@ -130,7 +130,7 @@ export function LoginForm() {
               required
               className="w-full"
               autoComplete="email"
-              autoFocus
+              
             />
           </div>
 
