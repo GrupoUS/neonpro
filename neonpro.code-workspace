@@ -6,37 +6,10 @@
     },
   ],
   "settings": {
-    "editor.fontSize": 16,
+    "editor.fontSize": 17,
     "files.autoSave": "afterDelay",
-    "editor.defaultFormatter": "GitHub.copilot",
+    "editor.defaultFormatter": "Augment.vscode-augment",
     "workbench.colorTheme": "One Hunter Flexoki Dark",
-    "github.copilot.enable": {
-      "*": true,
-      "plaintext": true,
-      "markdown": true,
-      "typescript": true,
-      "javascript": true,
-      "python": true,
-    },
-    "github.copilot.editor.enableAutoCompletions": true,
-    "github.copilot.chat.useProjectTemplates": false,
-    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-    "github.copilot.chat.instructionsFiles": [
-      ".github/copilot-instructions.md",
-      ".github/instructions/intelligent-orchestrator.instructions.md",
-      ".github/instructions/master-rules.instructions.md",
-      ".github/prompts/promptsgeral.prompt.md",
-      ".trae/rules/user_rules.md",
-    ],
-    "github.copilot.chat.modeFilesLocations": {
-      ".github/chatmodes": true,
-    },
-    "github.copilot.chat.implicitContext": "disabled",
-    "github.copilot.chat.folderTreeContext": "disabled",
-    "github.copilot.chat.modeFiles": "disabled",
-    "github.copilot.advanced": {
-      "context.includeWorkspace": false,
-    },
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
@@ -48,6 +21,7 @@
       "**/node_modules": true,
       "**/.git": true,
       "**/.next": true,
+      "**/.turbo": true,
       "**/dist": true,
       "**/coverage": true,
       "**/__pycache__": true,
@@ -67,6 +41,18 @@
       "editor.defaultFormatter": "dprint.dprint",
     },
     "oxc.enable": true,
+    "[typescript]": {
+      "editor.defaultFormatter": "dprint.dprint",
+      "editor.formatOnSave": true,
+      "editor.formatOnPaste": true,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.organizeImports": "never",
+      },
+      "editor.suggest.insertMode": "replace",
+      "editor.inlayHints.enabled": "on",
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
   },
   "extensions": {
     "recommendations": [

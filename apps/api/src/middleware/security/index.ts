@@ -594,11 +594,7 @@ export function createHealthcareAPISecurityStack(
 /**
  * Export all types and enums for external use
  */
-export {
-  HealthcareCORSPolicy,
-  HealthcareRole,
-  ValidationContext,
-};
+export { HealthcareCORSPolicy, HealthcareRole, ValidationContext };
 
 /**
  * Export individual middleware creation functions

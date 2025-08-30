@@ -1,32 +1,25 @@
 import { createClient } from "@supabase/supabase-js";
 import { Hono } from "hono";
+import {
+  handleHealthCheck,
+  handleQuickHealthCheck,
+  handleRLSValidation,
+  testDatabaseConnection,
+  validateDatabaseEnvironment,
+} from "../lib/database";
+import { createErrorResponse, createSuccessResponse } from "../types/api";
 
-const health = new Hono();
-
+// Health check result interface
 interface HealthCheckResult {
   service: string;
   status: "healthy" | "degraded" | "unhealthy";
   timestamp: string;
   response_time_ms: number;
-  details: unknown;
+  details: Record<string, any>;
   version: string;
 }
 
-interface SystemHealth {
-  overall_status: "healthy" | "degraded" | "unhealthy";
-  services: HealthCheckResult[];
-  system_info: {
-    uptime_ms: number;
-    memory_usage: unknown;
-    node_version: string;
-    environment: string;
-  };
-  dependencies: {
-    database: HealthCheckResult;
-    supabase: HealthCheckResult;
-    redis: HealthCheckResult;
-  };
-}
+const health = new Hono();
 
 class HealthCheckService {
   private static startTime = Date.now();
@@ -54,7 +47,7 @@ class HealthCheckService {
           status: "unhealthy",
           timestamp: new Date().toISOString(),
           response_time_ms: responseTime,
-          details: { error: error.message },
+          details: { error: error instanceof Error ? error.message : String(error) },
           version: "1.0.0",
         };
       }
@@ -76,7 +69,7 @@ class HealthCheckService {
         status: "unhealthy",
         timestamp: new Date().toISOString(),
         response_time_ms: Date.now() - startTime,
-        details: { error: error.message },
+        details: { error: error instanceof Error ? error.message : String(error) },
         version: "1.0.0",
       };
     }
@@ -112,7 +105,7 @@ class HealthCheckService {
         status: "unhealthy",
         timestamp: new Date().toISOString(),
         response_time_ms: Date.now() - startTime,
-        details: { error: error.message },
+        details: { error: error instanceof Error ? error.message : String(error) },
         version: "1.0.0",
       };
     }
@@ -143,13 +136,13 @@ class HealthCheckService {
         status: "unhealthy",
         timestamp: new Date().toISOString(),
         response_time_ms: Date.now() - startTime,
-        details: { error: error.message },
+        details: { error: error instanceof Error ? error.message : String(error) },
         version: "1.0.0",
       };
     }
   }
 
-  static getSystemInfo(): unknown {
+  static getSystemInfo(): Record<string, any> {
     return {
       uptime_ms: Date.now() - HealthCheckService.startTime,
       memory_usage: process.memoryUsage(),
@@ -160,7 +153,7 @@ class HealthCheckService {
 
   static determineOverallStatus(
     services: HealthCheckResult[],
-    dependencies: unknown,
+    dependencies: Record<string, HealthCheckResult>,
   ): "healthy" | "degraded" | "unhealthy" {
     const allChecks = [
       ...services,
@@ -170,10 +163,10 @@ class HealthCheckService {
     ];
 
     const unhealthyCount = allChecks.filter(
-      (check) => check.status === "unhealthy",
+      (check) => check && check.status === "unhealthy",
     ).length;
     const degradedCount = allChecks.filter(
-      (check) => check.status === "degraded",
+      (check) => check && check.status === "degraded",
     ).length;
 
     if (unhealthyCount > 0) {
@@ -187,76 +180,108 @@ class HealthCheckService {
 }
 
 // Main health check endpoint - overall system health
-health.get("/health", async (c) => {
+health.get("/", async (c) => {
   try {
-    const [dbHealth, supabaseHealth, redisHealth] = await Promise.all([
-      HealthCheckService.checkDatabaseHealth(),
-      HealthCheckService.checkSupabaseHealth(),
-      HealthCheckService.checkRedisHealth(),
-    ]);
-
-    const services: HealthCheckResult[] = [];
-    const dependencies = {
-      database: dbHealth,
-      supabase: supabaseHealth,
-      redis: redisHealth,
-    };
-
-    const systemHealth: SystemHealth = {
-      overall_status: HealthCheckService.determineOverallStatus(
-        services,
-        dependencies,
-      ),
-      services,
-      system_info: HealthCheckService.getSystemInfo(),
-      dependencies,
-    };
-
-    // Set appropriate HTTP status code
-    const statusCode = systemHealth.overall_status === "healthy"
-      ? 200
-      : systemHealth.overall_status === "degraded"
-      ? 200
-      : 503;
-
-    return c.json(
-      {
-        healthy: systemHealth.overall_status === "healthy",
-        status: systemHealth.overall_status,
-        timestamp: new Date().toISOString(),
-        ...systemHealth,
-      },
-      statusCode,
-    );
+    const healthResult = await handleHealthCheck();
+    c.status(healthResult.status as any);
+    return c.json(healthResult.body);
   } catch (error) {
+    console.error("Health check failed:", error);
     return c.json(
-      {
-        healthy: false,
-        status: "unhealthy",
-        timestamp: new Date().toISOString(),
-        error: error.message,
-      },
+      createErrorResponse(
+        "Health check failed",
+        error instanceof Error ? error.message : "Unknown error",
+      ),
+      503,
+    );
+  }
+});
+
+// Quick health check for load balancers
+health.get("/quick", async (c) => {
+  try {
+    const quickResult = await handleQuickHealthCheck();
+    c.status(quickResult.status as any);
+    return c.json(quickResult.body);
+  } catch (error) {
+    console.error("Quick health check failed:", error);
+    return c.json(
+      createErrorResponse("Quick health check failed"),
       503,
     );
   }
 });
 
 // Database-specific health check
-health.get("/health/database", async (c) => {
-  const dbHealth = await HealthCheckService.checkDatabaseHealth();
-  const statusCode = dbHealth.status === "healthy"
-    ? 200
-    : dbHealth.status === "degraded"
-    ? 200
-    : 503;
+health.get("/database", async (c) => {
+  try {
+    const connectionTest = await testDatabaseConnection();
 
-  return c.json(
-    {
-      healthy: dbHealth.status === "healthy",
-      ...dbHealth,
-    },
-    statusCode,
-  );
+    if (!connectionTest.connected) {
+      return c.json(
+        createErrorResponse("Database connection failed", connectionTest.error),
+        503,
+      );
+    }
+
+    return c.json(
+      createSuccessResponse({
+        status: "healthy",
+        connected: connectionTest.connected,
+        latency: connectionTest.latency,
+        timestamp: new Date().toISOString(),
+      }),
+    );
+  } catch (error) {
+    console.error("Database health check failed:", error);
+    return c.json(
+      createErrorResponse("Database health check failed"),
+      503,
+    );
+  }
+});
+
+// Security and RLS validation check
+health.get("/security", async (c) => {
+  try {
+    const rlsResult = await handleRLSValidation();
+    c.status(rlsResult.status as any);
+    return c.json(rlsResult.body);
+  } catch (error) {
+    console.error("Security health check failed:", error);
+    return c.json(
+      createErrorResponse("Security health check failed"),
+      503,
+    );
+  }
+});
+
+// Environment configuration validation
+health.get("/environment", async (c) => {
+  try {
+    const envValidation = validateDatabaseEnvironment();
+
+    if (!envValidation.valid) {
+      return c.json(
+        createErrorResponse("Environment validation failed", envValidation.issues),
+        500,
+      );
+    }
+
+    return c.json(
+      createSuccessResponse({
+        status: "valid",
+        issues: envValidation.issues,
+        timestamp: new Date().toISOString(),
+      }),
+    );
+  } catch (error) {
+    console.error("Environment validation failed:", error);
+    return c.json(
+      createErrorResponse("Environment validation failed"),
+      500,
+    );
+  }
 });
 
 // Supabase-specific health check
@@ -311,7 +336,7 @@ health.get("/health/ai-services", async (c) => {
 
     const serviceResults = aiServiceChecks.map((result, index) => ({
       service: serviceNames[index],
-      status: result.status === "fulfilled" && result.value.healthy
+      status: result.status === "fulfilled" && (result.value as any)?.healthy
         ? "healthy"
         : "unhealthy",
       details: result.status === "fulfilled"
@@ -346,7 +371,7 @@ health.get("/health/ai-services", async (c) => {
     return c.json(
       {
         healthy: false,
-        error: error.message,
+        error: (error as Error).message,
         timestamp: new Date().toISOString(),
       },
       503,

@@ -321,21 +321,21 @@ export const professionalsRoutes = new Hono()
       // Build update object dynamically
       const updateFields: Record<string, any> = {};
 
-      if (updateData.fullName !== undefined) {updateFields.full_name = updateData.fullName;}
-      if (updateData.email !== undefined) {updateFields.email = updateData.email;}
-      if (updateData.phone !== undefined) {updateFields.phone = updateData.phone;}
-      if (updateData.profession !== undefined) {updateFields.profession = updateData.profession;}
+      if (updateData.fullName !== undefined) updateFields.full_name = updateData.fullName;
+      if (updateData.email !== undefined) updateFields.email = updateData.email;
+      if (updateData.phone !== undefined) updateFields.phone = updateData.phone;
+      if (updateData.profession !== undefined) updateFields.profession = updateData.profession;
       if (updateData.specialization !== undefined) {
         updateFields.specialization = updateData.specialization;
       }
       if (updateData.registrationNumber !== undefined) {
         updateFields.registration_number = updateData.registrationNumber;
       }
-      if (updateData.isActive !== undefined) {updateFields.is_active = updateData.isActive;}
+      if (updateData.isActive !== undefined) updateFields.is_active = updateData.isActive;
       if (updateData.workingHours !== undefined) {
         updateFields.working_hours = updateData.workingHours;
       }
-      if (updateData.permissions !== undefined) {updateFields.permissions = updateData.permissions;}
+      if (updateData.permissions !== undefined) updateFields.permissions = updateData.permissions;
 
       const { data: professional, error } = await supabase
         .from("professionals")

@@ -608,7 +608,7 @@ export class BrazilianComplianceAutomationService {
         description: "ANVISA product registrations expiring soon - renewal required",
         severity: "warning",
         affected_systems: ["product_registration"],
-        recommended_actions: {"action": "renew_product_registration"},
+        recommended_actions: { "action": "renew_product_registration" },
         alert_status: "active",
       });
     } catch {}
@@ -621,7 +621,10 @@ export class BrazilianComplianceAutomationService {
         event_type: "anvisa_product_registration",
         event_category: "anvisa",
         clinic_id: this.config.tenant_id,
-        event_data: {"monitoring_type": "product_registration", "action": "initiate_registration"},
+        event_data: {
+          "monitoring_type": "product_registration",
+          "action": "initiate_registration",
+        },
         compliance_status: "warning",
         severity_level: 3,
       });
@@ -639,7 +642,7 @@ export class BrazilianComplianceAutomationService {
         description: "CFM professional licenses expiring soon - renewal required",
         severity: "critical",
         affected_systems: ["professional_licensing"],
-        recommended_actions: {"action": "renew_cfm_license"},
+        recommended_actions: { "action": "renew_cfm_license" },
         alert_status: "active",
       });
     } catch {}
@@ -652,7 +655,10 @@ export class BrazilianComplianceAutomationService {
         event_type: "cfm_license_registration",
         event_category: "cfm",
         clinic_id: this.config.tenant_id,
-        event_data: {"monitoring_type": "professional_license", "action": "initiate_registration"},
+        event_data: {
+          "monitoring_type": "professional_license",
+          "action": "initiate_registration",
+        },
         compliance_status: "critical",
         severity_level: 4,
       });

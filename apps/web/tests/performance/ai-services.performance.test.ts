@@ -161,7 +161,7 @@ class PerformanceTestUtils {
             stopTimer();
           } catch (_error) {
             stopTimer();
-            PerformanceTestUtils.recordError(testName, error as Error);
+            PerformanceTestUtils.recordError(testName, _error as Error);
           }
 
           // Small delay between requests (100-500ms)
@@ -305,8 +305,8 @@ describe("aI Services Performance Tests", () => {
           `Single chat request completed in ${duration.toFixed(2)}ms`,
         );
       } catch (_error) {
-        PerformanceTestUtils.recordError("single_chat_request", error as Error);
-        throw error;
+        PerformanceTestUtils.recordError("single_chat_request", _error as Error);
+        throw _error;
       }
     }, 30_000);
 
@@ -450,9 +450,9 @@ describe("aI Services Performance Tests", () => {
       } catch (_error) {
         PerformanceTestUtils.recordError(
           "single_compliance_check",
-          error as Error,
+          _error as Error,
         );
-        throw error;
+        throw _error;
       }
     });
 
@@ -536,9 +536,9 @@ describe("aI Services Performance Tests", () => {
       } catch (_error) {
         PerformanceTestUtils.recordError(
           "single_conversation_analysis",
-          error as Error,
+          _error as Error,
         );
-        throw error;
+        throw _error;
       }
     }, 30_000);
 
@@ -660,8 +660,8 @@ describe("aI Services Performance Tests", () => {
         // E2E workflow should complete in reasonable time
         expect(duration).toBeLessThan(5000); // 5 seconds max for complete workflow
       } catch (_error) {
-        PerformanceTestUtils.recordError("e2e_workflow", error as Error);
-        throw error;
+        PerformanceTestUtils.recordError("e2e_workflow", _error as Error);
+        throw _error;
       }
     });
   });

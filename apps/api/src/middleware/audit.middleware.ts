@@ -5,6 +5,33 @@ import { auditService } from "../services/audit.service";
 import type { AuditContext, AuditEvent } from "../types/audit";
 import { AuditAction, AuditSeverity, ResourceType } from "../types/audit";
 
+// Type definitions for audit middleware
+interface ResponseBody {
+  [key: string]: unknown;
+}
+
+interface RequestBody {
+  [key: string]: unknown;
+  name?: string;
+  title?: string;
+  description?: string;
+}
+
+interface UserAgentInfo {
+  raw: string;
+  is_mobile: boolean;
+  is_bot: boolean;
+  browser: string;
+  os: string;
+}
+
+interface ResponseInfo {
+  status_code: number;
+  duration_ms: number;
+  error_message?: string;
+  response_body?: ResponseBody;
+}
+
 /**
  * Middleware de auditoria para capturar automaticamente eventos HTTP
  */
@@ -31,6 +58,10 @@ export const auditMiddleware = () => {
       }
     } catch (error) {
       // Token inválido ou não presente - continuar sem user_id
+      console.debug(
+        "JWT validation failed:",
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
 
     // Adicionar contexto ao request para uso posterior
@@ -42,7 +73,7 @@ export const auditMiddleware = () => {
       return;
     }
 
-    let responseBody: any;
+    let responseBody: ResponseBody | undefined;
     let statusCode: number;
     let errorMessage: string | undefined;
 
@@ -89,12 +120,7 @@ export const auditMiddleware = () => {
 async function logAuditEvent(
   c: Context,
   auditContext: AuditContext,
-  responseInfo: {
-    status_code: number;
-    duration_ms: number;
-    error_message?: string;
-    response_body?: any;
-  },
+  responseInfo: ResponseInfo,
 ): Promise<void> {
   try {
     const method = c.req.method;
@@ -118,10 +144,10 @@ async function logAuditEvent(
     );
 
     // Capturar dados da requisição se necessário
-    let requestBody: any;
+    let requestBody: RequestBody | undefined;
     if (shouldCaptureRequestBody(method, path)) {
       try {
-        requestBody = await c.req.json();
+        requestBody = await c.req.json() as RequestBody;
       } catch {
         // Ignorar erros de parsing
       }
@@ -224,16 +250,36 @@ function shouldSkipAudit(path: string, method: string): boolean {
  */
 function determineAction(method: string, path: string): AuditAction {
   // Ações específicas baseadas na rota
-  if (path.includes("/login")) {return AuditAction.LOGIN;}
-  if (path.includes("/logout")) {return AuditAction.LOGOUT;}
-  if (path.includes("/export")) {return AuditAction.EXPORT;}
-  if (path.includes("/import")) {return AuditAction.IMPORT;}
-  if (path.includes("/backup")) {return AuditAction.BACKUP;}
-  if (path.includes("/restore")) {return AuditAction.RESTORE;}
-  if (path.includes("/reports")) {return AuditAction.REPORT_GENERATE;}
-  if (path.includes("/password")) {return AuditAction.PASSWORD_CHANGE;}
-  if (path.includes("/permissions")) {return AuditAction.PERMISSION_CHANGE;}
-  if (path.includes("/config")) {return AuditAction.SYSTEM_CONFIG;}
+  if (path.includes("/login")) {
+    return AuditAction.LOGIN;
+  }
+  if (path.includes("/logout")) {
+    return AuditAction.LOGOUT;
+  }
+  if (path.includes("/export")) {
+    return AuditAction.EXPORT;
+  }
+  if (path.includes("/import")) {
+    return AuditAction.IMPORT;
+  }
+  if (path.includes("/backup")) {
+    return AuditAction.BACKUP;
+  }
+  if (path.includes("/restore")) {
+    return AuditAction.RESTORE;
+  }
+  if (path.includes("/reports")) {
+    return AuditAction.REPORT_GENERATE;
+  }
+  if (path.includes("/password")) {
+    return AuditAction.PASSWORD_CHANGE;
+  }
+  if (path.includes("/permissions")) {
+    return AuditAction.PERMISSION_CHANGE;
+  }
+  if (path.includes("/config")) {
+    return AuditAction.SYSTEM_CONFIG;
+  }
 
   // Ações baseadas no método HTTP
   switch (method) {
@@ -255,19 +301,45 @@ function determineAction(method: string, path: string): AuditAction {
  * Determina tipo de recurso baseado na rota
  */
 function determineResourceType(path: string): ResourceType {
-  if (path.includes("/patients")) {return ResourceType.PATIENT;}
-  if (path.includes("/appointments")) {return ResourceType.APPOINTMENT;}
-  if (path.includes("/professionals")) {return ResourceType.PROFESSIONAL;}
-  if (path.includes("/payments")) {return ResourceType.PAYMENT;}
-  if (path.includes("/treatments")) {return ResourceType.TREATMENT;}
-  if (path.includes("/medical-records")) {return ResourceType.MEDICAL_RECORD;}
-  if (path.includes("/users")) {return ResourceType.USER;}
-  if (path.includes("/roles")) {return ResourceType.ROLE;}
-  if (path.includes("/permissions")) {return ResourceType.PERMISSION;}
-  if (path.includes("/reports")) {return ResourceType.REPORT;}
-  if (path.includes("/backup")) {return ResourceType.BACKUP;}
-  if (path.includes("/config")) {return ResourceType.CONFIGURATION;}
-  if (path.includes("/audit")) {return ResourceType.AUDIT_LOG;}
+  if (path.includes("/patients")) {
+    return ResourceType.PATIENT;
+  }
+  if (path.includes("/appointments")) {
+    return ResourceType.APPOINTMENT;
+  }
+  if (path.includes("/professionals")) {
+    return ResourceType.PROFESSIONAL;
+  }
+  if (path.includes("/payments")) {
+    return ResourceType.PAYMENT;
+  }
+  if (path.includes("/treatments")) {
+    return ResourceType.TREATMENT;
+  }
+  if (path.includes("/medical-records")) {
+    return ResourceType.MEDICAL_RECORD;
+  }
+  if (path.includes("/users")) {
+    return ResourceType.USER;
+  }
+  if (path.includes("/roles")) {
+    return ResourceType.ROLE;
+  }
+  if (path.includes("/permissions")) {
+    return ResourceType.PERMISSION;
+  }
+  if (path.includes("/reports")) {
+    return ResourceType.REPORT;
+  }
+  if (path.includes("/backup")) {
+    return ResourceType.BACKUP;
+  }
+  if (path.includes("/config")) {
+    return ResourceType.CONFIGURATION;
+  }
+  if (path.includes("/audit")) {
+    return ResourceType.AUDIT_LOG;
+  }
 
   return ResourceType.SYSTEM;
 }
@@ -284,7 +356,7 @@ function extractResourceId(path: string): string | undefined {
 /**
  * Extrai nome do recurso do corpo da requisição ou URL
  */
-function extractResourceName(path: string, requestBody?: any): string | undefined {
+function extractResourceName(path: string, requestBody?: RequestBody): string | undefined {
   if (requestBody) {
     return requestBody.name || requestBody.title || requestBody.description;
   }
@@ -303,16 +375,32 @@ function determineSeverity(
   errorMessage?: string,
 ): AuditSeverity {
   // Eventos críticos
-  if (statusCode === 401 || statusCode === 403) {return AuditSeverity.CRITICAL;}
-  if (action === AuditAction.LOGIN && statusCode !== 200) {return AuditSeverity.HIGH;}
-  if (action === AuditAction.PERMISSION_CHANGE) {return AuditSeverity.HIGH;}
-  if (action === AuditAction.PASSWORD_CHANGE) {return AuditSeverity.HIGH;}
-  if (action === AuditAction.DELETE) {return AuditSeverity.MEDIUM;}
-  if (errorMessage) {return AuditSeverity.MEDIUM;}
+  if (statusCode === 401 || statusCode === 403) {
+    return AuditSeverity.CRITICAL;
+  }
+  if (action === AuditAction.LOGIN && statusCode !== 200) {
+    return AuditSeverity.HIGH;
+  }
+  if (action === AuditAction.PERMISSION_CHANGE) {
+    return AuditSeverity.HIGH;
+  }
+  if (action === AuditAction.PASSWORD_CHANGE) {
+    return AuditSeverity.HIGH;
+  }
+  if (action === AuditAction.DELETE) {
+    return AuditSeverity.MEDIUM;
+  }
+  if (errorMessage) {
+    return AuditSeverity.MEDIUM;
+  }
 
   // Eventos de alta severidade
-  if (statusCode >= 500) {return AuditSeverity.HIGH;}
-  if (statusCode >= 400) {return AuditSeverity.MEDIUM;}
+  if (statusCode >= 500) {
+    return AuditSeverity.HIGH;
+  }
+  if (statusCode >= 400) {
+    return AuditSeverity.MEDIUM;
+  }
 
   return AuditSeverity.LOW;
 }
@@ -322,13 +410,19 @@ function determineSeverity(
  */
 function shouldCaptureRequestBody(method: string, path: string): boolean {
   // Não capturar para métodos GET
-  if (method === "GET") {return false;}
+  if (method === "GET") {
+    return false;
+  }
 
   // Não capturar para rotas de upload de arquivo
-  if (path.includes("/upload")) {return false;}
+  if (path.includes("/upload")) {
+    return false;
+  }
 
   // Não capturar para rotas sensíveis
-  if (path.includes("/password") || path.includes("/login")) {return false;}
+  if (path.includes("/password") || path.includes("/login")) {
+    return false;
+  }
 
   return ["POST", "PUT", "PATCH"].includes(method);
 }
@@ -338,13 +432,19 @@ function shouldCaptureRequestBody(method: string, path: string): boolean {
  */
 function shouldCaptureResponseBody(path: string, method: string): boolean {
   // Capturar apenas para operações de criação e atualização
-  if (!["POST", "PUT", "PATCH"].includes(method)) {return false;}
+  if (!["POST", "PUT", "PATCH"].includes(method)) {
+    return false;
+  }
 
   // Não capturar para rotas de upload
-  if (path.includes("/upload")) {return false;}
+  if (path.includes("/upload")) {
+    return false;
+  }
 
   // Não capturar para rotas de export (podem ser muito grandes)
-  if (path.includes("/export")) {return false;}
+  if (path.includes("/export")) {
+    return false;
+  }
 
   return true;
 }
@@ -352,8 +452,10 @@ function shouldCaptureResponseBody(path: string, method: string): boolean {
 /**
  * Parse básico do User-Agent
  */
-function parseUserAgent(userAgent?: string): any {
-  if (!userAgent) {return undefined;}
+function parseUserAgent(userAgent?: string): UserAgentInfo | undefined {
+  if (!userAgent) {
+    return undefined;
+  }
 
   return {
     raw: userAgent,
@@ -365,19 +467,37 @@ function parseUserAgent(userAgent?: string): any {
 }
 
 function extractBrowser(userAgent: string): string {
-  if (userAgent.includes("Chrome")) {return "Chrome";}
-  if (userAgent.includes("Firefox")) {return "Firefox";}
-  if (userAgent.includes("Safari")) {return "Safari";}
-  if (userAgent.includes("Edge")) {return "Edge";}
+  if (userAgent.includes("Chrome")) {
+    return "Chrome";
+  }
+  if (userAgent.includes("Firefox")) {
+    return "Firefox";
+  }
+  if (userAgent.includes("Safari")) {
+    return "Safari";
+  }
+  if (userAgent.includes("Edge")) {
+    return "Edge";
+  }
   return "Unknown";
 }
 
 function extractOS(userAgent: string): string {
-  if (userAgent.includes("Windows")) {return "Windows";}
-  if (userAgent.includes("Mac OS")) {return "macOS";}
-  if (userAgent.includes("Linux")) {return "Linux";}
-  if (userAgent.includes("Android")) {return "Android";}
-  if (userAgent.includes("iOS")) {return "iOS";}
+  if (userAgent.includes("Windows")) {
+    return "Windows";
+  }
+  if (userAgent.includes("Mac OS")) {
+    return "macOS";
+  }
+  if (userAgent.includes("Linux")) {
+    return "Linux";
+  }
+  if (userAgent.includes("Android")) {
+    return "Android";
+  }
+  if (userAgent.includes("iOS")) {
+    return "iOS";
+  }
   return "Unknown";
 }
 
