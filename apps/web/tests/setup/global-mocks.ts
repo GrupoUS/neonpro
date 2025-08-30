@@ -21,6 +21,9 @@ const createSupabaseMockResponse = (data: any, error: any = null) => {
   return Promise.resolve({ data, error });
 };
 
+// Track inserted data to simulate database state
+const insertedRecords = new Map<string, any[]>();
+
 // Helper functions to control mock behavior
 const setMockError = (error: any) => {
   // Not used in simplified version
@@ -31,7 +34,7 @@ const clearMockError = () => {
 };
 
 const resetMockData = () => {
-  // Not used in simplified version
+  insertedRecords.clear();
 };
 
 const createMockQueryBuilder = () => {
@@ -42,20 +45,43 @@ const createMockQueryBuilder = () => {
   const mockBuilder = {
     select: vi.fn().mockImplementation(() => {
       hasSelectAfterInsert = true;
+
+      // If this is a select-only operation (no insert), return stored data
+      if (!insertedData) {
+        const tableName = (mockBuilder as any).currentTable || "default";
+        const storedRecords = insertedRecords.get(tableName) || [];
+        insertedData = storedRecords.slice(0, 10); // Return up to 10 records for queries
+      }
+
       return mockBuilder;
     }),
     insert: vi.fn().mockImplementation((data) => {
       insertedData = Array.isArray(data) ? data : [data];
 
-      // Add IDs to inserted data if missing
+      // Add IDs to inserted data if missing and add timestamps
       insertedData = insertedData.map((item: any) => ({
         ...item,
-        id: item.id || `test-id-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: item.id || `test-id-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        created_at: item.created_at || new Date().toISOString(),
+        updated_at: item.updated_at || new Date().toISOString(),
+        expires_at: item.expires_at || new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
       }));
 
-      // Check for duplicate key scenario
-      if (insertedData.some((item: any) => item.name && item.name.includes("duplicate"))) {
+      // Check for duplicate key scenario by checking existing records
+      const tableName = (mockBuilder as any).currentTable || "default";
+      const existingRecords = insertedRecords.get(tableName) || [];
+      const hasDuplicate = insertedData.some((newItem: any) =>
+        existingRecords.some((existing: any) =>
+          existing.name && newItem.name && existing.name === newItem.name
+        )
+      );
+
+      if (hasDuplicate) {
         shouldError = true;
+      } else {
+        // Store the records for future duplicate checking
+        const updatedRecords = [...existingRecords, ...insertedData];
+        insertedRecords.set(tableName, updatedRecords);
       }
 
       return mockBuilder;
@@ -108,31 +134,24 @@ const createMockQueryBuilder = () => {
     returns: vi.fn().mockReturnThis(),
   };
 
-  // Make all methods return the builder for chaining
-  Object.keys(mockBuilder).forEach(key => {
-    if (
-      typeof mockBuilder[key as keyof typeof mockBuilder] === "function"
-      && !["single", "maybeSingle", "csv", "geojson", "explain", "rollback"].includes(key)
-    ) {
-      mockBuilder[key as keyof typeof mockBuilder] = vi.fn().mockReturnValue(mockBuilder);
-    }
-  });
-
-  // Add then method for promise-like behavior (required for await)
+  // Add promise-like behavior for direct awaiting
   (mockBuilder as any).then = function(onResolve: any, onReject?: any) {
-    if (shouldReturnError) {
-      const result = { data: null, error: mockError };
+    if (shouldError) {
+      const result = {
+        data: null,
+        error: { message: "duplicate key value violates unique constraint", code: "23505" },
+      };
       return Promise.resolve(result).then(onResolve, onReject);
     }
 
     // Return appropriate data based on the last operation
-    let resultData = mockInsertData;
+    let resultData = insertedData;
 
     // For select operations after insert, return the inserted data as array
-    if (isSelectOperation && mockInsertData) {
-      resultData = Array.isArray(mockInsertData) ? mockInsertData : [mockInsertData];
+    if (hasSelectAfterInsert && insertedData) {
+      resultData = Array.isArray(insertedData) ? insertedData : [insertedData];
     } // For select operations without insert, return empty array
-    else if (isSelectOperation && !mockInsertData) {
+    else if (hasSelectAfterInsert && !insertedData) {
       resultData = [];
     }
 
@@ -157,8 +176,10 @@ const mockSupabaseClient: {
   };
 } = {
   from: vi.fn().mockImplementation((tableName: string) => {
-    currentTable = tableName;
-    return createMockQueryBuilder();
+    const builder = createMockQueryBuilder();
+    // Set the current table for the builder
+    (builder as any).currentTable = tableName;
+    return builder;
   }),
   auth: {
     getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),

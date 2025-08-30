@@ -7,6 +7,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { EmergencyPatientCache } from "./emergency-cache";
 
 type IEmergencyCacheAny = any;
 
@@ -125,7 +126,7 @@ describe("EmergencyCache", () => {
     console.error = originalConsole.error;
   });
 
-// Move import to top of file
+  // Move import to top of file
 
   function newCacheInstance(): IEmergencyCacheAny {
     return {} as IEmergencyCacheAny; // Temporary placeholder until EmergencyCache is imported

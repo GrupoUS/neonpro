@@ -1,8 +1,10 @@
 // Emergency Access Protocol Integration Test
 // Healthcare emergency access with LGPD compliance and audit trail
 
+import React, { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createClient } from "@supabase/supabase-js";
 
 // Types for emergency access
 interface EmergencyAccessRequest {
@@ -152,7 +154,7 @@ const mockEmergencyGrant: EmergencyAccessGrant = {
 };
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
+const TestWrapper = ({ children }: { children: ReactNode }) => {
   return <QueryClientProvider client={mockQueryClient}>{children}</QueryClientProvider>;
 };
 describe("emergency Access Protocol Integration Tests", () => {

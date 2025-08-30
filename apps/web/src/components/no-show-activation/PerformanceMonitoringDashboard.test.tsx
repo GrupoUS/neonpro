@@ -3,7 +3,7 @@
  *
  * Framework/Libraries:
  * - React Testing Library (@testing-library/react, @testing-library/jest-dom)
- * - Jest test runner (swap jest.* with vi.* if using Vitest)
+ * - Vitest test runner
  *
  * Scope:
  * - Validate rendering and text content for KPIs and tabs
@@ -16,6 +16,7 @@
 import "@testing-library/jest-dom";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi, beforeEach, test } from "vitest";
 
 // Import the component under test (co-located)
 import PerformanceMonitoringDashboard, {
@@ -84,7 +85,7 @@ const getCardByTitle = (title: string) => {
 };
 
 describe("PerformanceMonitoringDashboard - Overview KPIs and thresholds", () => {
-  test("renders KPI values with pt-BR formats and success classes when above targets", () => {
+  it("renders KPI values with pt-BR formats and success classes when above targets", () => {
     render(<PerformanceMonitoringDashboard metrics={baseMetrics()} />);
 
     // Precisão do Modelo
@@ -119,7 +120,7 @@ describe("PerformanceMonitoringDashboard - Overview KPIs and thresholds", () => 
     expect(screen.getByText("4min")).toBeInTheDocument();
   });
 
-  test("applies warning classes when below targets and verifies values", () => {
+  it("applies warning classes when below targets and verifies values", () => {
     const below = baseMetrics({
       predictions: { ...baseMetrics().predictions, accuracy: 0.86 },
       appointments: { ...baseMetrics().appointments, reductionPercentage: 0.20 },
@@ -140,8 +141,8 @@ describe("PerformanceMonitoringDashboard - Overview KPIs and thresholds", () => 
 });
 
 describe("PerformanceMonitoringDashboard - Export, Refresh, and Period Change", () => {
-  test("calls onExportReport with correct format and current period", async () => {
-    const onExportReport = jest.fn();
+  it("calls onExportReport with correct format and current period", async () => {
+    const onExportReport = vi.fn();
     const metrics = baseMetrics({ period: { startDate: "x", endDate: "y", periodType: "week" } });
 
     render(<PerformanceMonitoringDashboard metrics={metrics} onExportReport={onExportReport} />);
@@ -155,9 +156,9 @@ describe("PerformanceMonitoringDashboard - Export, Refresh, and Period Change", 
     expect(onExportReport).toHaveBeenCalledWith("pdf", "week");
   });
 
-  test("calls onRefresh and shows spinner/disabled state while refreshing", async () => {
-    jest.useFakeTimers();
-    const onRefresh = jest.fn().mockResolvedValue(undefined);
+  it("calls onRefresh and shows spinner/disabled state while refreshing", async () => {
+    vi.useFakeTimers();
+    const onRefresh = vi.fn().mockResolvedValue(undefined);
     render(<PerformanceMonitoringDashboard metrics={baseMetrics()} onRefresh={onRefresh} />);
 
     const btn = screen.getByRole("button", { name: /Atualizar/i });
@@ -176,15 +177,15 @@ describe("PerformanceMonitoringDashboard - Export, Refresh, and Period Change", 
 
     // After 1s timeout, spinner stops (advance timers)
     await act(async () => {
-      jest.advanceTimersByTime(1100);
+      vi.advanceTimersByTime(1100);
     });
     expect(btn).toBeEnabled();
 
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
-  test("invokes onPeriodChange when user selects a different period", async () => {
-    const onPeriodChange = jest.fn();
+  it("invokes onPeriodChange when user selects a different period", async () => {
+    const onPeriodChange = vi.fn();
     render(
       <PerformanceMonitoringDashboard metrics={baseMetrics()} onPeriodChange={onPeriodChange} />,
     );
@@ -210,7 +211,7 @@ describe("PerformanceMonitoringDashboard - Export, Refresh, and Period Change", 
 });
 
 describe("PerformanceMonitoringDashboard - Tabs and conditional rendering", () => {
-  test("renders Overview by default and can switch to Predictions and Financial", async () => {
+  it("renders Overview by default and can switch to Predictions and Financial", async () => {
     render(<PerformanceMonitoringDashboard metrics={baseMetrics()} />);
 
     // Default: Overview content has key KPI labels
@@ -227,7 +228,7 @@ describe("PerformanceMonitoringDashboard - Tabs and conditional rendering", () =
     expect(screen.getByText(/Projeção Anual/i)).toBeInTheDocument();
   });
 
-  test('shows "Meta anual atingida!" when projectedAnnualROI >= target and hides otherwise', () => {
+  it('shows "Meta anual atingida!" when projectedAnnualROI >= target and hides otherwise', () => {
     const above = baseMetrics({
       financial: { ...baseMetrics().financial, projectedAnnualROI: 200000 },
     });
@@ -248,7 +249,7 @@ describe("PerformanceMonitoringDashboard - Tabs and conditional rendering", () =
 });
 
 describe("PerformanceMonitoringDashboard - Progress capping and calculations", () => {
-  test("caps progress at 100% for projectedAnnualROI progress", async () => {
+  it("caps progress at 100% for projectedAnnualROI progress", async () => {
     const huge = baseMetrics({
       financial: { ...baseMetrics().financial, projectedAnnualROI: 1_000_000 },
     });
@@ -264,7 +265,7 @@ describe("PerformanceMonitoringDashboard - Progress capping and calculations", (
     expect(val).toBeGreaterThanOrEqual(100);
   });
 
-  test("staff response progress calculation decreases as response time increases", () => {
+  it("staff response progress calculation decreases as response time increases", () => {
     // At target (300s) progress baseline
     const atTarget = baseMetrics({ staff: { ...baseMetrics().staff, averageResponseTime: 300 } });
     const faster = baseMetrics({ staff: { ...baseMetrics().staff, averageResponseTime: 120 } });
@@ -286,7 +287,7 @@ describe("PerformanceMonitoringDashboard - Progress capping and calculations", (
 });
 
 describe("PerformanceMonitoringDashboard - Summary stats and counts", () => {
-  test("displays totals with pt-BR thousands separators", () => {
+  it("displays totals with pt-BR thousands separators", () => {
     render(<PerformanceMonitoringDashboard metrics={baseMetrics()} />);
 
     // Consultas Analisadas

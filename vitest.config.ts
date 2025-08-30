@@ -23,13 +23,13 @@ export default defineConfig({
     // Optimized isolation for Bun performance
     isolate: false, // Disable isolation for better performance with Bun
 
-    // Use threads pool for better Bun compatibility
-    pool: "threads",
+    // Use forks pool for better Bun compatibility
+    pool: "forks",
     poolOptions: {
-      threads: {
-        singleThread: true, // Single thread for better Bun performance
-        maxThreads: 1,
-        minThreads: 1,
+      forks: {
+        singleFork: true, // Single fork for better Bun performance
+        maxForks: 1,
+        minForks: 1,
       },
     },
 
@@ -215,8 +215,6 @@ export default defineConfig({
     // React version conflict resolution - updated for Vitest 3.x
     server: {
       deps: {
-        // Use exclude instead of external (deprecated)
-        exclude: ["react", "react-dom"],
         // Inline testing libraries to ensure single instances
         inline: [
           "@testing-library/react",

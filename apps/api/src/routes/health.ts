@@ -1,3 +1,4 @@
+import { createClient } from "@supabase/supabase-js";
 import { Hono } from "hono";
 import {
   handleHealthCheck,
@@ -7,6 +8,16 @@ import {
   validateDatabaseEnvironment,
 } from "../lib/database";
 import { createErrorResponse, createSuccessResponse } from "../types/api";
+
+// Health check result interface
+interface HealthCheckResult {
+  service: string;
+  status: "healthy" | "degraded" | "unhealthy";
+  timestamp: string;
+  response_time_ms: number;
+  details: Record<string, any>;
+  version: string;
+}
 
 const health = new Hono();
 
@@ -36,7 +47,7 @@ class HealthCheckService {
           status: "unhealthy",
           timestamp: new Date().toISOString(),
           response_time_ms: responseTime,
-          details: { error: error.message },
+          details: { error: error instanceof Error ? error.message : String(error) },
           version: "1.0.0",
         };
       }
@@ -58,7 +69,7 @@ class HealthCheckService {
         status: "unhealthy",
         timestamp: new Date().toISOString(),
         response_time_ms: Date.now() - startTime,
-        details: { error: error.message },
+        details: { error: error instanceof Error ? error.message : String(error) },
         version: "1.0.0",
       };
     }
@@ -94,7 +105,7 @@ class HealthCheckService {
         status: "unhealthy",
         timestamp: new Date().toISOString(),
         response_time_ms: Date.now() - startTime,
-        details: { error: error.message },
+        details: { error: error instanceof Error ? error.message : String(error) },
         version: "1.0.0",
       };
     }
@@ -125,13 +136,13 @@ class HealthCheckService {
         status: "unhealthy",
         timestamp: new Date().toISOString(),
         response_time_ms: Date.now() - startTime,
-        details: { error: error.message },
+        details: { error: error instanceof Error ? error.message : String(error) },
         version: "1.0.0",
       };
     }
   }
 
-  static getSystemInfo(): unknown {
+  static getSystemInfo(): Record<string, any> {
     return {
       uptime_ms: Date.now() - HealthCheckService.startTime,
       memory_usage: process.memoryUsage(),
@@ -142,7 +153,7 @@ class HealthCheckService {
 
   static determineOverallStatus(
     services: HealthCheckResult[],
-    dependencies: unknown,
+    dependencies: Record<string, HealthCheckResult>,
   ): "healthy" | "degraded" | "unhealthy" {
     const allChecks = [
       ...services,
@@ -152,10 +163,10 @@ class HealthCheckService {
     ];
 
     const unhealthyCount = allChecks.filter(
-      (check) => check.status === "unhealthy",
+      (check) => check && check.status === "unhealthy",
     ).length;
     const degradedCount = allChecks.filter(
-      (check) => check.status === "degraded",
+      (check) => check && check.status === "degraded",
     ).length;
 
     if (unhealthyCount > 0) {
@@ -172,7 +183,8 @@ class HealthCheckService {
 health.get("/", async (c) => {
   try {
     const healthResult = await handleHealthCheck();
-    return c.json(healthResult.body, healthResult.status);
+    c.status(healthResult.status as any);
+    return c.json(healthResult.body);
   } catch (error) {
     console.error("Health check failed:", error);
     return c.json(
@@ -189,7 +201,8 @@ health.get("/", async (c) => {
 health.get("/quick", async (c) => {
   try {
     const quickResult = await handleQuickHealthCheck();
-    return c.json(quickResult.body, quickResult.status);
+    c.status(quickResult.status as any);
+    return c.json(quickResult.body);
   } catch (error) {
     console.error("Quick health check failed:", error);
     return c.json(
@@ -232,7 +245,8 @@ health.get("/database", async (c) => {
 health.get("/security", async (c) => {
   try {
     const rlsResult = await handleRLSValidation();
-    return c.json(rlsResult.body, rlsResult.status);
+    c.status(rlsResult.status as any);
+    return c.json(rlsResult.body);
   } catch (error) {
     console.error("Security health check failed:", error);
     return c.json(
@@ -322,7 +336,7 @@ health.get("/health/ai-services", async (c) => {
 
     const serviceResults = aiServiceChecks.map((result, index) => ({
       service: serviceNames[index],
-      status: result.status === "fulfilled" && result.value.healthy
+      status: result.status === "fulfilled" && (result.value as any)?.healthy
         ? "healthy"
         : "unhealthy",
       details: result.status === "fulfilled"
@@ -357,7 +371,7 @@ health.get("/health/ai-services", async (c) => {
     return c.json(
       {
         healthy: false,
-        error: error.message,
+        error: (error as Error).message,
         timestamp: new Date().toISOString(),
       },
       503,
