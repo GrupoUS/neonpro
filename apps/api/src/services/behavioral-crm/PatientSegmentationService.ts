@@ -662,7 +662,7 @@ export class PatientSegmentationService {
     }
   }
 
-  private convertToPatientProfile(dbProfile: any): PatientBehaviorProfile {
+  private convertToPatientProfile(dbProfile: unknown): PatientBehaviorProfile {
     return {
       patientId: dbProfile.patient_id,
       scores: dbProfile.scores,
@@ -819,7 +819,7 @@ export class PatientSegmentationService {
     }
   }
 
-  private async storeABTest(test: any): Promise<void> {
+  private async storeABTest(test: unknown): Promise<void> {
     const { error } = await supabase.from("segment_ab_tests").insert(test);
 
     if (error) {

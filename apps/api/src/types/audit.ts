@@ -59,9 +59,9 @@ export const AuditEventSchema = z.object({
   endpoint: z.string().optional(),
   status_code: z.number().optional(),
   severity: z.nativeEnum(AuditSeverity).default(AuditSeverity.LOW),
-  details: z.record(z.any()).optional(),
-  before_data: z.record(z.any()).optional(),
-  after_data: z.record(z.any()).optional(),
+  details: z.record(z.unknown()).optional(),
+  before_data: z.record(z.unknown()).optional(),
+  after_data: z.record(z.unknown()).optional(),
   error_message: z.string().optional(),
   duration_ms: z.number().optional(),
   timestamp: z.date().default(() => new Date()),
@@ -129,7 +129,7 @@ export interface AuditExportOptions {
 }
 
 // Resposta padrão para APIs de auditoria
-export interface AuditResponse<T = any> {
+export interface AuditResponse<T = unknown> {
   success: boolean;
   data: T;
   total?: number;
