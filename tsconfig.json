@@ -7,6 +7,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
@@ -15,6 +16,8 @@
     "incremental": true,
     "baseUrl": ".",
     "types": ["vitest/globals"],
+    "verbatimModuleSyntax": false,
+    "noEmit": true,
     "paths": {
       "@/*": ["./*"],
       "@neonpro/ui": ["./packages/ui/src"],

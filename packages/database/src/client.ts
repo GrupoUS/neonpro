@@ -5,17 +5,43 @@
  */
 
 import { createBrowserClient, createServerClient as createSSRServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
 
-// Healthcare environment validation
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-
-if (!(supabaseUrl && supabaseAnonKey)) {
-  throw new Error(
-    "Missing Supabase environment variables - Healthcare compliance requires secure configuration",
-  );
+// Environment variable validation with proper types
+interface SupabaseConfig {
+  url: string;
+  anonKey: string;
+  serviceRoleKey?: string;
+  jwtSecret?: string;
 }
+
+function validateEnvironment(): SupabaseConfig {
+  const config: SupabaseConfig = {
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    jwtSecret: process.env.SUPABASE_JWT_SECRET,
+  };
+
+  if (!(config.url && config.anonKey)) {
+    throw new Error(
+      "Missing required Supabase environment variables - Healthcare compliance requires secure configuration",
+    );
+  }
+
+  // Validate URL format
+  try {
+    new URL(config.url);
+  } catch {
+    throw new Error("Invalid SUPABASE_URL format");
+  }
+
+  return config;
+}
+
+// Validated environment configuration
+const supabaseConfig = validateEnvironment();
 
 /**
  * Browser Client for Client Components
@@ -23,7 +49,7 @@ if (!(supabaseUrl && supabaseAnonKey)) {
  * Includes healthcare-specific error handling and audit logging
  */
 export function createClient() {
-  return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey, {
+  return createBrowserClient<Database>(supabaseConfig.url, supabaseConfig.anonKey, {
     global: {
       headers: {
         "X-Client-Type": "neonpro-healthcare",
@@ -56,7 +82,7 @@ export function createServerClient(cookieStore: {
     cookies: { name: string; value: string; options?: unknown; }[],
   ) => void;
 }) {
-  return createSSRServerClient<Database>(supabaseUrl, supabaseAnonKey, {
+  return createSSRServerClient<Database>(supabaseConfig.url, supabaseConfig.anonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -81,4 +107,38 @@ export function createServerClient(cookieStore: {
       flowType: "pkce",
     },
   });
+}
+
+/**
+ * Admin Client for Service Role Operations
+ * WARNING: Use with extreme caution - bypasses RLS policies
+ * Only for administrative operations and system maintenance
+ */
+export function createAdminClient() {
+  if (!supabaseConfig.serviceRoleKey) {
+    throw new Error(
+      "SUPABASE_SERVICE_ROLE_KEY is required for admin operations - Healthcare compliance requires explicit admin access",
+    );
+  }
+
+  return createSupabaseClient<Database>(supabaseConfig.url, supabaseConfig.serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+    global: {
+      headers: {
+        "X-Client-Type": "neonpro-healthcare-admin",
+        "X-Compliance": "LGPD-ANVISA-CFM",
+        "X-Admin-Access": "true",
+      },
+    },
+  });
+}
+
+/**
+ * Get Supabase configuration for external use
+ */
+export function getSupabaseConfig(): SupabaseConfig {
+  return { ...supabaseConfig };
 }

@@ -10,8 +10,7 @@
  * - Advanced audit logging
  */
 
-import type { Context, MiddlewareHandler } from "hono";
-import { createError } from "./error-handler";
+import type { MiddlewareHandler } from "hono";
 
 // Healthcare user roles with license requirements
 export enum HealthcareRole {
@@ -443,10 +442,11 @@ export const createHealthcareRateLimiter = (
 
       // Apply emergency rate limits but allow higher throughput
       const emergencyLimit = config.limits.emergency;
-      const key = `emergency:${user.id}:${config.endpoint}`;
+      const _emergencyKey = `emergency:${user.id}:${config.endpoint}`;
 
       // Simple rate limiting implementation - Redis integration can be added for production scaling
       // For now, just log and continue
+      console.debug(`Emergency access granted for ${user.id} on ${config.endpoint}`);
       c.res.headers.set("X-Rate-Limit-Emergency", "true");
       c.res.headers.set(
         "X-Rate-Limit-Limit",
@@ -505,7 +505,7 @@ export const createHealthcareRateLimiter = (
         : `ip:${ip}:${config.endpoint}`;
     };
 
-    const key = getUserKey(
+    const _rateLimitKey = getUserKey(
       user,
       c.req.header("CF-Connecting-IP")
         || c.req.header("X-Forwarded-For")
@@ -514,6 +514,7 @@ export const createHealthcareRateLimiter = (
 
     // Rate limiting implementation - Redis can be added for production scaling
     // For now, set headers and continue
+    console.debug(`Rate limit key generated: ${_rateLimitKey}`);
     c.res.headers.set("X-Rate-Limit-Limit", limit.requests.toString());
     c.res.headers.set("X-Rate-Limit-Window", limit.window);
     c.res.headers.set("X-Healthcare-Endpoint", "true");
@@ -532,7 +533,7 @@ export class HealthcareAuthMiddleware {
   static async validateJWT(token: string): Promise<HealthcareUser> {
     try {
       // Import jose library for JWT verification
-      const { jwtVerify, createRemoteJWKSet } = await import("jose");
+      const { jwtVerify } = await import("jose");
 
       // Get JWT secret from environment or use default for development
       const secret = process.env.JWT_SECRET || "your-secret-key";
@@ -602,9 +603,11 @@ export class HealthcareAuthMiddleware {
       }
 
       return healthcareUser;
-
-      throw new Error("Invalid token");
     } catch (error) {
+      console.error(
+        "JWT validation failed:",
+        error instanceof Error ? error.message : "Unknown error",
+      );
       throw new Error("Invalid healthcare credentials");
     }
   }
@@ -655,7 +658,7 @@ export class HealthcareAuthMiddleware {
   private static async authorizeProviderAccess(
     user: HealthcareUser,
     resource: string,
-    action: string,
+    _action: string,
   ): Promise<boolean> {
     // Verify professional license is active
     if (user.professionalLicense) {

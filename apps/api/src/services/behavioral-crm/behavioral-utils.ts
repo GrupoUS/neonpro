@@ -184,9 +184,9 @@ export function determineCommunicationStyle(
 
   const avgResponseTime = calculateAverageResponseTime(interactions);
 
-  if (avgResponseTime < 2) {return "direct";}
-  if (avgResponseTime < 8) {return "casual";}
-  if (avgResponseTime < 24) {return "formal";}
+  if (avgResponseTime < 2) return "direct";
+  if (avgResponseTime < 8) return "casual";
+  if (avgResponseTime < 24) return "formal";
   return "detailed";
 }
 
@@ -196,9 +196,9 @@ export function determineCommunicationStyle(
 export function categorizeResponseTime(
   avgHours: number,
 ): "immediate" | "hours" | "days" | "delayed" {
-  if (avgHours <= 1) {return "immediate";}
-  if (avgHours <= 8) {return "hours";}
-  if (avgHours <= 24) {return "days";}
+  if (avgHours <= 1) return "immediate";
+  if (avgHours <= 8) return "hours";
+  if (avgHours <= 24) return "days";
   return "delayed";
 }
 
@@ -235,7 +235,7 @@ function getDaysDifference(startDate: Date, endDate: Date): number {
 }
 
 function calculateConsistencyScore(events: readonly BehavioralEvent[]): number {
-  if (events.length < 2) {return 20;}
+  if (events.length < 2) return 20;
 
   // Calculate standard deviation of intervals between appointments
   // Lower deviation = higher consistency
@@ -282,7 +282,7 @@ function getOutcomeScore(outcome: "positive" | "neutral" | "negative"): number {
 }
 
 function calculateAverageResponseTime(interactions: readonly PatientInteraction[]): number {
-  if (interactions.length === 0) {return 24;} // Default to 24 hours
+  if (interactions.length === 0) return 24; // Default to 24 hours
 
   const totalTime = interactions.reduce((sum, interaction) => sum + interaction.responseTime, 0);
   return totalTime / interactions.length;

@@ -234,7 +234,7 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
 
   private handleEscalation = async () => {
     const error = this.state.healthcareError;
-    if (!error) {return;}
+    if (!error) return;
 
     try {
       const escalationData = {

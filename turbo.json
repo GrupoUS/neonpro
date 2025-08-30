@@ -5,8 +5,14 @@
     "**/package.json",
     "**/tsconfig.json",
     "dprint.json",
-    "pnpm-workspace.yaml"
+    "bunfig.toml",
+    "bun.lock"
   ],
+  "experimentalSpaces": {
+    "id": "neonpro-healthcare"
+  },
+  "daemon": true,
+  "ui": "tui",
   "globalEnv": [
     "NODE_ENV",
     "VERCEL_ENV",
@@ -42,11 +48,14 @@
         "tsconfig.json",
         "next.config.*",
         "tailwind.config.*",
+        "bunfig.toml",
         "!*/**/__tests__/**",
         "!*/**/*.test.*",
         "!*/**/*.spec.*"
       ],
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"],
+      "persistent": false,
+      "cache": true,
       "env": [
         "NODE_ENV",
         "NEXT_PUBLIC_SUPABASE_URL",

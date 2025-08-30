@@ -13,14 +13,20 @@ export const TEST_CONFIG = {
     query_timeout: 5000,
   },
   supabase: {
-    test_project_url: process.env.TEST_SUPABASE_URL || "https://test.supabase.co",
-    test_anon_key: process.env.TEST_SUPABASE_ANON_KEY || "test-anon-key",
-    test_service_role_key: process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
+    test_project_url: process.env.TEST_SUPABASE_URL || "http://mock-supabase-server",
+    test_anon_key: process.env.TEST_SUPABASE_ANON_KEY || "mock-anon-key",
+    test_service_role_key: process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "mock-service-key",
   },
   api: {
-    test_api_base_url: process.env.TEST_API_BASE_URL || "http://localhost:3001",
+    test_api_base_url: process.env.TEST_API_BASE_URL || "http://mock-api-server",
     request_timeout: 10_000,
     retry_attempts: 3,
+  },
+  // Mock mode configuration - Always use mocks for integration tests
+  mock_mode: {
+    enabled: true, // Always use mock mode for integration tests
+    supabase_mock: true,
+    api_mock: true,
   },
   performance: {
     api_response_threshold_ms: 500,
@@ -104,7 +110,7 @@ export function createTestQueryClient(): QueryClient {
     defaultOptions: {
       queries: {
         retry: false,
-        cacheTime: 0,
+        gcTime: 0,
         staleTime: 0,
       },
       mutations: {
@@ -189,7 +195,7 @@ export class TestPerformanceMonitor {
 export class TestLGPDCompliance {
   static validateConsentRequirement(testData: unknown): boolean {
     return (
-      testData.lgpd_consent === true && testData.lgpd_consent_date !== undefined
+      (testData as any).lgpd_consent === true && (testData as any).lgpd_consent_date !== undefined
     );
   }
 
@@ -197,7 +203,7 @@ export class TestLGPDCompliance {
     requestedData: string[],
     actualData: unknown,
   ): boolean {
-    const actualKeys = Object.keys(actualData);
+    const actualKeys = Object.keys(actualData as Record<string, unknown>);
     return requestedData.every((field) => actualKeys.includes(field));
   }
 
@@ -209,7 +215,7 @@ export class TestLGPDCompliance {
       "resource",
       "legal_basis",
     ];
-    return requiredFields.every((field) => auditEntry[field] !== undefined);
+    return requiredFields.every((field) => (auditEntry as any)[field] !== undefined);
   }
 
   static mockCPFValidation(cpf: string): { valid: boolean; formatted: string; } {

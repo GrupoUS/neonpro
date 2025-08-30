@@ -1,4 +1,108 @@
 {
+  "folders": [
+    {
+      "name": "neonpro",
+      "path": ".",
+    },
+  ],
+  "settings": {
+    "editor.fontSize": 17,
+    "files.autoSave": "afterDelay",
+    "editor.defaultFormatter": "Augment.vscode-augment",
+    "workbench.colorTheme": "One Hunter Flexoki Dark",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit",
+    },
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.suggest.autoImports": true,
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/.git": true,
+      "**/.next": true,
+      "**/.turbo": true,
+      "**/dist": true,
+      "**/coverage": true,
+      "**/__pycache__": true,
+      "**/.vercel": true,
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "extensions.autoUpdate": true,
+    "git.enableSmartCommit": true,
+    "git.autofetch": true,
+    "github.copilot.chat.useInstructions": false,
+    "markdown.validate.enabled": true,
+    "[jsonc]": {
+      "editor.defaultFormatter": "vscode.json-language-features",
+    },
+    "[markdown]": {
+      "editor.defaultFormatter": "dprint.dprint",
+    },
+    "oxc.enable": true,
+    "[typescript]": {
+      "editor.defaultFormatter": "dprint.dprint",
+      "editor.formatOnSave": true,
+      "editor.formatOnPaste": true,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.organizeImports": "never",
+      },
+      "editor.suggest.insertMode": "replace",
+      "editor.inlayHints.enabled": "on",
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+  },
+  "extensions": {
+    "recommendations": [
+      "GitHub.copilot",
+      "GitHub.copilot-chat",
+      "ms-vscode.vscode-typescript-next",
+      "bradlc.vscode-tailwindcss",
+      "ms-python.python",
+      "esbenp.prettier-vscode",
+      "ms-vscode.vscode-json",
+    ],
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "NeonPro: Dev Server",
+        "type": "shell",
+        "command": "pnpm dev",
+        "options": {
+          "cwd": "${workspaceFolder}/neonpro",
+        },
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "new",
+        },
+        "problemMatcher": [],
+      },
+      {
+        "label": "NeonPro: Build",
+        "type": "shell",
+        "command": "pnpm build",
+        "options": {
+          "cwd": "${workspaceFolder}/neonpro",
+        },
+        "group": "build",
+      },
+      {
+        "label": "VIBECODE: System Validation",
+        "type": "shell",
+        "command": "python memory-bank/python/copilot_config_validator.py",
+        "group": "test",
+      },
+    ],
+  },
+}
+=======
 	"folders": [
 		{
 			"path": "."

@@ -46,13 +46,13 @@ export class AuditService {
    */
   async logEvent(event: AuditEvent): Promise<AuditLogEntry | null> {
     try {
-      if (!this.config.enabled) {return null;}
+      if (!this.config.enabled) return null;
 
       // Validar dados de entrada
       const validatedEvent = AuditEventSchema.parse(event);
 
       // Filtrar por nível de severidade
-      if (this.shouldSkipEvent(validatedEvent)) {return null;}
+      if (this.shouldSkipEvent(validatedEvent)) return null;
 
       // Limitar tamanho dos detalhes
       if (validatedEvent.details) {
@@ -336,10 +336,10 @@ export class AuditService {
     const configLevel = severityLevels.indexOf(this.config.log_level);
     const eventLevel = severityLevels.indexOf(event.severity);
 
-    if (eventLevel < configLevel) {return true;}
+    if (eventLevel < configLevel) return true;
 
     // Verificar ações excluídas
-    if (this.config.excluded_actions.includes(event.action)) {return true;}
+    if (this.config.excluded_actions.includes(event.action)) return true;
 
     // Verificar endpoints excluídos
     if (event.endpoint && this.config.excluded_endpoints.some(ep => event.endpoint?.includes(ep))) {
@@ -413,7 +413,7 @@ export class AuditService {
   }
 
   private convertToCSV(logs: AuditLogEntry[], includeDetails: boolean): string {
-    if (logs.length === 0) {return "";}
+    if (logs.length === 0) return "";
 
     const headers = [
       "id",
