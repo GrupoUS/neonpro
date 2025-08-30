@@ -95,17 +95,7 @@
       "mcp__supabase__get_project",
       "mcp__supabase__search_docs",
       "mcp__supabase__execute_sql",
-      "Read(//**)",
       "mcp__Sequential_Thinking__sequentialthinking",
-      "Bash(source:*)",
-      "Bash(log_info \"TEST\" \"Testing commons.sh logging function\")",
-      "Bash(touch:*)",
-      "Bash(cleanup_temp_files)",
-      "Bash(rm:*)",
-      "Bash(./.claude/hooks/pre-tool.sh:*)",
-      "Bash(/mnt/d/neonpro/.claude/hooks/pre-tool.sh:*)",
-      "Bash(/mnt/d/neonpro/.claude/hooks/post-tool.sh:*)",
-      "Bash(/mnt/d/neonpro/.claude/hooks/session-stop.sh test_session:*)",
       "mcp__supabase__get_project_url",
       "mcp__supabase__list_tables",
       "mcp__supabase__list_migrations",
@@ -131,7 +121,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/mnt/d/neonpro/.claude/hooks/pre-tool.sh",
+            "command": "/.claude/hooks/pre-tool.sh",
             "timeout": 45
           }
         ]
@@ -143,7 +133,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/mnt/d/neonpro/.claude/hooks/post-tool.sh",
+            "command": "/.claude/hooks/post-tool.sh",
             "timeout": 60
           }
         ]
@@ -154,7 +144,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/mnt/d/neonpro/.claude/hooks/session-stop.sh",
+            "command": "/.claude/hooks/session-stop.sh",
             "timeout": 90
           }
         ]

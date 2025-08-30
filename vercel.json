@@ -1,39 +1,78 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "builds": [
+  "buildCommand": "bun run build:web",
+  "outputDirectory": "apps/web/.next",
+  "installCommand": "bun install --frozen-lockfile",
+  "framework": "nextjs",
+  "regions": ["cdg1", "iad1"],
+  "functions": {
+    "apps/api/src/**/*.ts": {
+      "runtime": "nodejs18.x",
+      "memory": 1024
+    }
+  },
+  "rewrites": [
     {
-      "src": "apps/web/package.json",
-      "use": "@vercel/next",
-      "config": {
-        "outputDirectory": ".next"
-      }
-    },
-    {
-      "src": "apps/api/package.json", 
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["dist/**"]
-      }
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
     }
   ],
-  "routes": [
+  "headers": [
     {
-      "src": "/api/(.*)",
-      "dest": "apps/api/dist/index.js"
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
     },
     {
-      "src": "/(.*)",
-      "dest": "apps/web/$1"
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "NEXT_TELEMETRY_DISABLED": "1"
   },
-  "functions": {
-    "apps/api/dist/index.js": {
-      "maxDuration": 30
+  "crons": [
+    {
+      "path": "/api/health",
+      "schedule": "0 */6 * * *"
     }
-  },
-  "regions": ["gru1"],
-  "framework": "nextjs"
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "develop": false,
+      "feature/*": false
+    }
+  }
 }
