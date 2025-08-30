@@ -16,12 +16,11 @@
 import "@testing-library/jest-dom";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi, beforeEach, test } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 // Import the component under test (co-located)
-import PerformanceMonitoringDashboard, {
-  PerformanceMetrics,
-} from "./PerformanceMonitoringDashboard";
+import type { PerformanceMetrics } from "./PerformanceMonitoringDashboard";
+import PerformanceMonitoringDashboard from "./PerformanceMonitoringDashboard";
 
 // Utility: deterministic base metrics near thresholds
 const baseMetrics = (overrides: Partial<PerformanceMetrics> = {}): PerformanceMetrics => ({
@@ -52,12 +51,12 @@ const baseMetrics = (overrides: Partial<PerformanceMetrics> = {}): PerformanceMe
     reductionPercentage: 0.28, // above 0.25 target
   },
   financial: {
-    totalCosts: 50000,
+    totalCosts: 50_000,
     interventionCosts: 8000,
-    preventionSavings: 52000,
-    netROI: 44000,
+    preventionSavings: 52_000,
+    netROI: 44_000,
     costPerPrevention: 36.36,
-    projectedAnnualROI: 200000, // above 150000 target
+    projectedAnnualROI: 200_000, // above 150000 target
   },
   staff: {
     totalAlerts: 860,
@@ -94,17 +93,17 @@ describe("PerformanceMonitoringDashboard - Overview KPIs and thresholds", () => 
     // success when >= 0.87
     expect(accCard).toHaveClass("border-l-green-500");
     // Percent text like "88,0%" in pt-BR
-    expect(screen.getByText(/88[,\.]0?%/)).toBeInTheDocument();
+    expect(screen.getByText(/88[,.]0?%/)).toBeInTheDocument();
 
     // Redução de Faltas
     const redCard = getCardByTitle("Redução de Faltas");
     expect(redCard).toHaveClass("border-l-green-500");
-    expect(screen.getByText(/28[,\.]0?%/)).toBeInTheDocument();
+    expect(screen.getByText(/28[,.]0?%/)).toBeInTheDocument();
 
     // Taxa de Resposta
     const respCard = getCardByTitle("Taxa de Resposta");
     expect(respCard).toHaveClass("border-l-green-500");
-    expect(screen.getByText(/62[,\.]0?%/)).toBeInTheDocument();
+    expect(screen.getByText(/62[,.]0?%/)).toBeInTheDocument();
 
     // ROI Projetado (currency BRL)
     const roiCard = getCardByTitle("ROI Projetado");
@@ -123,9 +122,9 @@ describe("PerformanceMonitoringDashboard - Overview KPIs and thresholds", () => 
   it("applies warning classes when below targets and verifies values", () => {
     const below = baseMetrics({
       predictions: { ...baseMetrics().predictions, accuracy: 0.86 },
-      appointments: { ...baseMetrics().appointments, reductionPercentage: 0.20 },
+      appointments: { ...baseMetrics().appointments, reductionPercentage: 0.2 },
       interventions: { ...baseMetrics().interventions, responseRate: 0.5 },
-      financial: { ...baseMetrics().financial, projectedAnnualROI: 120000 },
+      financial: { ...baseMetrics().financial, projectedAnnualROI: 120_000 },
       staff: { ...baseMetrics().staff, averageResponseTime: 420 }, // 7 minutes (above target)
     });
     render(<PerformanceMonitoringDashboard metrics={below} />);
@@ -230,7 +229,7 @@ describe("PerformanceMonitoringDashboard - Tabs and conditional rendering", () =
 
   it('shows "Meta anual atingida!" when projectedAnnualROI >= target and hides otherwise', () => {
     const above = baseMetrics({
-      financial: { ...baseMetrics().financial, projectedAnnualROI: 200000 },
+      financial: { ...baseMetrics().financial, projectedAnnualROI: 200_000 },
     });
     const { rerender } = render(<PerformanceMonitoringDashboard metrics={above} />);
 
@@ -240,7 +239,7 @@ describe("PerformanceMonitoringDashboard - Tabs and conditional rendering", () =
 
     // Now below target
     const below = baseMetrics({
-      financial: { ...baseMetrics().financial, projectedAnnualROI: 120000 },
+      financial: { ...baseMetrics().financial, projectedAnnualROI: 120_000 },
     });
     rerender(<PerformanceMonitoringDashboard metrics={below} />);
     fireEvent.click(screen.getByRole("tab", { name: /Financeiro/i }));

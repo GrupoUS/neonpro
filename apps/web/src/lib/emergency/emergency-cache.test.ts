@@ -61,7 +61,7 @@ class InMemoryDB {
     };
   }
   _getStore(name: string) {
-    if (!this.stores.has(name)) this.stores.set(name, new InMemoryObjectStore<any>());
+    if (!this.stores.has(name)) {this.stores.set(name, new InMemoryObjectStore<any>());}
     return this.stores.get(name)!;
   }
 }
@@ -146,7 +146,7 @@ describe("EmergencyCache", () => {
 
     const entry1 = cache.get("k1");
     expect(entry1).toBeTruthy();
-    expect(entry1!.data).toEqual({ a: 1 });
+    expect(entry1!.data).toStrictEqual({ a: 1 });
     expect(entry1!.accessCount).toBe(1);
     // critical read should produce LGPD access log
     expect(console.log).toHaveBeenCalledWith(
@@ -202,7 +202,7 @@ describe("EmergencyCache", () => {
 
     const entry = cache.get("k-exp2", true);
     expect(entry).toBeTruthy();
-    expect(entry!.data).toEqual({ v: 2 });
+    expect(entry!.data).toStrictEqual({ v: 2 });
     expect(console.log).toHaveBeenCalledWith(
       "LGPD Access Log:",
       expect.objectContaining({
@@ -332,8 +332,8 @@ describe("EmergencyCache", () => {
     const agg = cache.getEmergencyPatient("p20");
     expect(agg).toBeTruthy();
     expect(agg!.personalInfo.name).toBe("Zoe");
-    expect(agg!.criticalData.allergies.length).toBe(1);
-    expect(agg!.criticalData.medications.length).toBe(1);
+    expect(agg!.criticalData.allergies).toHaveLength(1);
+    expect(agg!.criticalData.medications).toHaveLength(1);
     expect(Array.isArray(agg!.emergencyContacts)).toBe(true);
     expect(agg!.lgpd.consentLevel).toBe("emergency-only");
   });
@@ -365,7 +365,7 @@ describe("EmergencyCache", () => {
     cache.get("patient:b");
 
     const list = cache.getCriticalPatients();
-    expect(list.map(e => e.id)).toEqual(["patient:a", "patient:b"]);
+    expect(list.map(e => e.id)).toStrictEqual(["patient:a", "patient:b"]);
   });
 
   it("getPerformanceStats reports cache size and number of critical entries", async () => {
@@ -429,7 +429,7 @@ describe("EmergencyCache", () => {
     await cache.set("mem-only", { q: 1 }, { patientId: "p", type: "patient" });
     // Should be retrievable from memory
     const entry = cache.get("mem-only");
-    expect(entry?.data).toEqual({ q: 1 });
+    expect(entry?.data).toStrictEqual({ q: 1 });
     // No persistence occurred
     expect(() => db._getStore("emergency_data")).toThrowError || expect(true).toBeTruthy();
     expect(console.error).toHaveBeenCalledWith("Failed to open IndexedDB for emergency cache");

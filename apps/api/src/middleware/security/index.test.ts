@@ -162,7 +162,7 @@ describe("HealthcareSecurityOrchestrator - createSecurityMiddleware ordering and
     const middlewares = orchestrator.createSecurityMiddleware();
 
     const names = middlewares.map((mw: any) => mw.__name);
-    expect(names).toEqual(["error", "headers", "cors", "rate-limit-redis", "auth"]);
+    expect(names).toStrictEqual(["error", "headers", "cors", "rate-limit-redis", "auth"]);
 
     // Validate key options forwarded
     const authArgs = (middlewares.find((mw: any) => mw.__name === "auth") as any).__args;
@@ -182,7 +182,7 @@ describe("HealthcareSecurityOrchestrator - createSecurityMiddleware ordering and
     const orchestrator = new HealthcareSecurityOrchestrator("development");
     const names = orchestrator.createSecurityMiddleware().map((mw: any) => mw.__name);
     // In development: error, headers, cors are enabled; rate limiting and auth disabled.
-    expect(names).toEqual(["error", "headers", "cors"]);
+    expect(names).toStrictEqual(["error", "headers", "cors"]);
   });
 
   it("uses in-memory rate limiter when storage=memory or missing redisClient", () => {
@@ -226,7 +226,7 @@ describe("HealthcareSecurityOrchestrator - createSecurityMiddleware ordering and
 
     const headerArgs = (mws.find((mw: any) => mw.__name === "headers") as any).__args;
     expect(headerArgs.configName).toBe("override-headers");
-    expect(headerArgs.skipPaths).toEqual(["/health"]);
+    expect(headerArgs.skipPaths).toStrictEqual(["/health"]);
   });
 });
 
@@ -296,7 +296,7 @@ describe("Factory functions - healthcareSecurityMiddlewares", () => {
 
   it("development returns relaxed stack", () => {
     const names = healthcareSecurityMiddlewares.development().map((mw: any) => mw.__name);
-    expect(names).toEqual(["error", "headers", "cors"]);
+    expect(names).toStrictEqual(["error", "headers", "cors"]);
   });
 
   it("custom allows arbitrary config name", () => {
@@ -314,7 +314,7 @@ describe("createHealthcareAPISecurityStack", () => {
       EndpointSecurityLevel.MEDICAL_RECORDS,
     );
     const names = middlewares.map((mw: any) => mw.__name);
-    expect(names).toEqual(["error", "headers", "cors", "rate-limit-memory", "auth"]);
+    expect(names).toStrictEqual(["error", "headers", "cors", "rate-limit-memory", "auth"]);
   });
 
   it("selects patient_portal_production for PRODUCTION + PATIENT_PORTAL", () => {

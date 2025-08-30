@@ -89,7 +89,10 @@
       "mcp__vercel__get_project",
       "mcp__vercel__list_teams",
       "mcp__vercel__list_projects",
-      "mcp__archon__update_task"
+      "mcp__archon__update_task",
+      "mcp__Sequential_Thinking__sequentialthinking",
+      "mcp__Tavily__tavily-extract",
+      "mcp__Tavily__tavily-search"
     ],
     "deny": [
       "Edit",
@@ -100,43 +103,6 @@
       "NotebookEdit",
       "WebSearch",
       "WebFetch"
-    ]
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "D:\\neonpro\\.claude\\hooks\\pre-tool.bat",
-            "timeout": 45
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "D:\\neonpro\\.claude\\hooks\\post-tool.bat",
-            "timeout": 60
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "D:\\neonpro\\.claude\\hooks\\session-stop.bat",
-            "timeout": 90
-          }
-        ]
-      }
     ]
   },
   "hookConfiguration": {
@@ -166,5 +132,53 @@
     "masterConfigFile": "CLAUDE.md",
     "loadOnStartup": true
   },
-  "parallelTasksCount": 5
+  "parallelTasksCount": 5,
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "mcp__desktop-commander__write_file|mcp__desktop-commander__edit_block",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/format-and-lint.py",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "mcp__desktop-commander__write_file|mcp__desktop-commander__edit_block",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/file-validator.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/workflow-coordinator.py",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-context.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
 }

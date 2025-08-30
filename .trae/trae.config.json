@@ -4,7 +4,7 @@
 		"name": "NeonPro AI Aesthetic Clinic Platform",
 		"type": "aesthetic-ai",
 		"compliance": {
-			"standards": ["LGPD", "ANVISA Class IIa", "CFM Ethics"],
+			"standards": ["LGPD", "ANVISA Class IIa"],
 			"auditTrail": true,
 			"dataProtection": "aesthetic"
 		},
@@ -16,8 +16,7 @@
 	},
 	"tasks": {
 		"configFiles": [
-			".trae/tasks/tasks.json",
-			".trae/tasks/neonpro-tasks.json"
+			".trae/tasks.json"
 		],
 		"defaultGroup": "build",
 		"archonIntegration": {
@@ -116,7 +115,6 @@
 		"primary": "vibecoder",
 		"configPath": ".trae/builders/vibecoder.md",
 		"specializations": [
-			"healthcare-ai",
 			"full-stack",
 			"compliance-driven"
 		]

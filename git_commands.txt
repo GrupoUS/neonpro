@@ -1,0 +1,8 @@
+cd /home/vibecoder/neonpro
+git add .
+git commit -m "chore: finalize bun migration configuration updates"
+git push origin coderabbitai/utg/b3d6a5a
+git checkout main
+git pull origin main
+git merge coderabbitai/utg/b3d6a5a
+git push origin main

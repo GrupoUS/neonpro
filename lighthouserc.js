@@ -10,7 +10,7 @@ module.exports = {
         "http://localhost:3000/professional/patients",
         "http://localhost:3000/professional/appointments",
       ],
-      startServerCommand: "pnpm dev",
+      startServerCommand: "bun dev",
       startServerReadyPattern: "ready",
       startServerReadyTimeout: 60_000,
       numberOfRuns: 3,

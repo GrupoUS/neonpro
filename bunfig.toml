@@ -7,16 +7,16 @@ cache = true
 exact = true
 frozen = false
 dryRun = false
-production = true
+production = false
 optional = true
 dev = true
 peer = true
 registry = "https://registry.npmjs.org/"
 telemetry = false
 
-# Performance optimizations
-concurrent = 16
-timeout = 60000
+# Performance optimizations for monorepo
+concurrent = 8
+timeout = 120000
 parallel = true
 
 # Healthcare platform specific settings
@@ -24,13 +24,19 @@ verify = true
 audit = true
 checkIntegrity = true
 
+# Trust and security settings
+trust = true
+save-exact = true
+
 [install.scopes]
 # Scoped package registries (if needed for private packages)
+# "@neonpro" = "https://npm.pkg.github.com"
 
 [run]
 # Script execution configuration
 shell = "system"
 silent = false
+bun = true
 
 # Environment variables for healthcare compliance
 [run.env]
@@ -38,61 +44,20 @@ NODE_ENV = "development"
 HEALTHCARE_COMPLIANCE = "true"
 LGPD_ENABLED = "true"
 ANVISA_VALIDATION = "true"
+BUN_ENV = "development"
 
 [test]
 # Testing configuration optimized for healthcare platform
 coverage = true
-timeout = 30000
-preload = ["./tests/setup.ts"]
-
-[build]
-# Build optimizations
-minify = true
-sourcemap = true
-target = "bun"
-format = "esm"
-external = ["react", "react-dom"]
-splitting = true
-treeshaking = true
-
-# Healthcare platform specific build settings
-[build.env]
-NEXT_TELEMETRY_DISABLED = "1"
-HEALTHCARE_BUILD = "true"
-
-[dev]
-# Development server configuration
-hot = true
-port = 3000
+timeout = 60000
+preload = ["./vitest.setup.simple.ts"]
 
 [lockfile]
 # Lockfile configuration for security and reproducibility
 save = true
-print = "yarn"
-
-# Security settings for healthcare compliance
-[security]
-audit = true
-advisories = true
+print = "bun"
 
 # Workspace configuration for monorepo
 [workspace]
 # Enable workspace support for NeonPro monorepo
 enabled = true
-
-# Performance tuning for large healthcare platform
-[performance]
-# Memory and CPU optimizations
-maxMemory = "4GB"
-workers = 4
-
-# Cache configuration for optimal performance
-[cache]
-dir = ".bun-cache"
-ttl = 86400 # 24 hours
-
-# Logging configuration for healthcare audit trails
-[log]
-level = "info"
-format = "json"
-audit = true

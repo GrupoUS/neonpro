@@ -8,9 +8,7 @@
     "bunfig.toml",
     "bun.lock"
   ],
-  "experimentalSpaces": {
-    "id": "neonpro-healthcare"
-  },
+
   "daemon": true,
   "ui": "tui",
   "globalEnv": [

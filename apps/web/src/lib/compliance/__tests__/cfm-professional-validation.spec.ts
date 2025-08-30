@@ -157,8 +157,8 @@ describe("CFMValidationService", () => {
       const res = await svc.validateLicense("CRM-SP 123456");
       expect(res.isValid).toBe(true);
       expect(res.source).toBe("cfm-api");
-      expect(res.errors).toEqual([]);
-      expect(res.warnings).toEqual([]);
+      expect(res.errors).toStrictEqual([]);
+      expect(res.warnings).toStrictEqual([]);
       expect(res.data?.license).toBe("CRM-SP 123456");
       expect(res.data?.state).toBe("SP");
       expect(res.data?.verificationSource).toBe("cfm-api");
@@ -264,7 +264,7 @@ describe("CFMValidationService", () => {
     it("aggregates results and errors from multiple validations", async () => {
       vi.spyOn(svc as AnyObj, "callCFMAPI").mockImplementation(
         async (_state: any, number: string) => {
-          if (number === "000000") return null;
+          if (number === "000000") {return null;}
           return makeProfessional({ crmNumber: `CRM-SP ${number}` });
         },
       );
@@ -293,7 +293,7 @@ describe("CFMValidationService", () => {
       await svc.validateLicense("CRM-SP 123456");
 
       const trail = svc.getAuditTrail(10);
-      expect(trail.length).toBe(1);
+      expect(trail).toHaveLength(1);
       expect(trail[0].action).toBe("license-validated");
       expect(trail[0].complianceType).toBe("cfm");
       expect(trail[0].description).toContain("VALID");
@@ -315,12 +315,12 @@ describe("CFMValidationService", () => {
       for (let i = 0; i < 55; i++) {
         apiSpy.mockResolvedValueOnce(
           makeProfessional({
-            crmNumber: `CRM-SP ${String(100000 + i)}`,
-            id: `cfm-SP-${String(100000 + i)}`,
+            crmNumber: `CRM-SP ${String(100_000 + i)}`,
+            id: `cfm-SP-${String(100_000 + i)}`,
           }),
         );
         // Use unique numbers to populate cache
-        const resp = await svc.validateLicense(`CRM-SP ${String(100000 + i)}`);
+        const resp = await svc.validateLicense(`CRM-SP ${String(100_000 + i)}`);
         expect(resp.isValid).toBe(true);
       }
 

@@ -116,8 +116,8 @@ function Test-VitestRun {
     Write-Host "🧪 Testando execução do Vitest..." -ForegroundColor Yellow
     
     try {
-        Write-Host "  Executando: pnpm vitest --run --reporter=basic" -ForegroundColor Gray
-        $result = pnpm vitest --run --reporter=basic 2>&1
+        Write-Host "  Executando: pnpm vitest --run --reporter=verbose" -ForegroundColor Gray
+        $result = pnpm vitest --run --reporter=verbose 2>&1
         
         if ($LASTEXITCODE -eq 0) {
             Write-Host "  ✅ Vitest executou com sucesso" -ForegroundColor Green

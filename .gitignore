@@ -36,6 +36,13 @@ tmp.drivedownload/
 archon/
 /archon/
 *archon/*
+*/.serena/*
+*.serena/*
+.vscode/
+.idea/
+.trunk/
+.gitlab/
+
 
 
 # logs

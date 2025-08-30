@@ -90,7 +90,7 @@ function newSupabaseMock(options: {
     insert,
     select: (sel?: any, opts?: any) => {
       // Route selects: when called in getStats it has only '*' argument and no count option
-      if (opts && opts.count) return selectFn(sel, opts);
+      if (opts && opts.count) {return selectFn(sel, opts);}
       return selectStats(sel);
     },
     delete: del,
@@ -227,7 +227,7 @@ describe("AuditService", () => {
     mockCreateClient.mockReturnValue(supabaseMocks.client);
     service = new AuditService();
 
-    const big = "x".repeat(10100);
+    const big = "x".repeat(10_100);
     const evt = sampleEvent({
       details: { big },
       timestamp: new Date("2025-08-01T12:00:00.000Z"),
@@ -282,7 +282,7 @@ describe("AuditService", () => {
 
     const res = await service.getLogs(filters as any);
     expect(res.success).toBe(true);
-    expect(res.data.length).toBe(2);
+    expect(res.data).toHaveLength(2);
     expect(res.total).toBe(2);
     expect(res.limit).toBe(50);
     expect(res.page).toBe(1);
@@ -349,7 +349,7 @@ describe("AuditService", () => {
           action: "UPDATE",
           severity: AuditSeverity.CRITICAL,
         }),
-        timestamp: new Date(now.getTime() - 3600_000).toISOString(),
+        timestamp: new Date(now.getTime() - 3_600_000).toISOString(),
         created_at: now.toISOString(),
         updated_at: now.toISOString(),
       },
@@ -360,7 +360,7 @@ describe("AuditService", () => {
           action: "LOGIN",
           severity: AuditSeverity.MEDIUM,
         }),
-        timestamp: new Date(now.getTime() - 2 * 24 * 3600_000).toISOString(),
+        timestamp: new Date(now.getTime() - 2 * 24 * 3_600_000).toISOString(),
         created_at: now.toISOString(),
         updated_at: now.toISOString(),
       },
@@ -377,12 +377,12 @@ describe("AuditService", () => {
     expect(s.total_events).toBe(3);
     expect(s.events_by_action.LOGIN).toBe(2);
     expect(s.events_by_severity[AuditSeverity.CRITICAL]).toBe(1);
-    expect(s.top_users[0]).toEqual({ user_id: "u1", count: 2 });
-    expect(s.recent_critical_events.length).toBe(1);
+    expect(s.top_users[0]).toStrictEqual({ user_id: "u1", count: 2 });
+    expect(s.recent_critical_events).toHaveLength(1);
     // daily_activity covers 3 days and is sorted ascending by date
-    expect(s.daily_activity.length).toBe(3);
+    expect(s.daily_activity).toHaveLength(3);
     const dates = s.daily_activity.map((d) => d.date);
-    expect([...dates].sort()).toEqual(dates);
+    expect([...dates].sort()).toStrictEqual(dates);
     // Sum of counts should equal number of events that fell within the 3-day window (all 3)
     const totalDaily = s.daily_activity.reduce((acc, d) => acc + d.count, 0);
     expect(totalDaily).toBe(3);
@@ -398,14 +398,14 @@ describe("AuditService", () => {
         data: [{ id: "1", timestamp: new Date("2025-08-01T12:00:00.000Z") }],
         total: 1,
         page: 1,
-        limit: 10000,
+        limit: 10_000,
         timestamp: new Date(),
       });
 
     const res = await (svc as any).exportLogs({
       format: "json",
       include_details: false,
-      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10000 },
+      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10_000 },
     });
 
     expect(res.success).toBe(true);
@@ -449,19 +449,19 @@ describe("AuditService", () => {
       data: logs,
       total: 1,
       page: 1,
-      limit: 10000,
+      limit: 10_000,
       timestamp: new Date(),
     });
 
     const resNo = await (svc as any).exportLogs({
       format: "csv",
       include_details: false,
-      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10000 },
+      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10_000 },
     });
     const resYes = await (svc as any).exportLogs({
       format: "csv",
       include_details: true,
-      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10000 },
+      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10_000 },
     });
 
     expect(resNo.success).toBe(true);
@@ -477,14 +477,14 @@ describe("AuditService", () => {
       data: [],
       total: 0,
       page: 1,
-      limit: 10000,
+      limit: 10_000,
       timestamp: new Date(),
     });
 
     const pdf = await (svc as any).exportLogs({
       format: "pdf",
       include_details: false,
-      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10000 },
+      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10_000 },
     });
     expect(pdf.success).toBe(false);
     expect(pdf.message).toMatch(
@@ -494,7 +494,7 @@ describe("AuditService", () => {
     const other = await (svc as any).exportLogs({
       format: "xml" as any,
       include_details: false,
-      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10000 },
+      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10_000 },
     });
     expect(other.success).toBe(false);
     expect(other.message).toMatch(/Formato de exportação não suportado/);

@@ -89,7 +89,7 @@ api.use(
       "X-Request-ID",
     ],
     credentials: true,
-    maxAge: 86400, // 24 hours
+    maxAge: 86_400, // 24 hours
   }),
 );
 

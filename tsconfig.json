@@ -42,12 +42,19 @@
       }
     ]
   },
-  "include": ["vitest.d.ts", ".next/types/**/*.ts"],
+  "include": [
+    "vitest.d.ts",
+    ".next/types/**/*.ts",
+    "instrumentation.ts",
+    "instrumentation-client.ts"
+  ],
   "exclude": [
     "node_modules",
     ".next",
     "dist",
     "out",
+    "build",
+    "coverage",
     "apps/**/*",
     "packages/**/*",
     "tools/**/*",
@@ -55,7 +62,15 @@
     "tests/**/*",
     "playwright-report/**/*",
     "test-results/**/*",
-    "tools/testing/reports/**/*"
+    "tools/testing/reports/**/*",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/__tests__/**",
+    "supabase/migrations/**",
+    "**/.turbo/**",
+    "**/.cache/**",
+    "bun.lock",
+    "**/*.log"
   ],
   "references": [
     {
@@ -78,6 +93,12 @@
     },
     {
       "path": "./packages/shared"
+    },
+    {
+      "path": "./packages/auth"
+    },
+    {
+      "path": "./packages/core-services"
     }
   ]
 }

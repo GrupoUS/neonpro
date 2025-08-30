@@ -12,7 +12,7 @@
     "clean": "turbo run clean",
     "test:unit": "vitest run --coverage --pool=threads --poolOptions.threads.singleThread=true",
     "test:unit:bun": "vitest run --no-coverage --pool=threads --poolOptions.threads.singleThread=true --reporter=verbose --isolate=false",
-    "test:bun:fast": "vitest run --no-coverage --pool=threads --poolOptions.threads.singleThread=true --reporter=basic --isolate=false --css=false",
+    "test:bun:fast": "vitest run --no-coverage --pool=threads --poolOptions.threads.singleThread=true --reporter=verbose --isolate=false --css=false",
     "test:bun:integration": "vitest run --config vitest.config.integration.ts --no-coverage --pool=threads --poolOptions.threads.singleThread=true",
     "test:watch": "vitest --watch --pool=threads --poolOptions.threads.singleThread=true",
     "test:ui": "vitest --ui",

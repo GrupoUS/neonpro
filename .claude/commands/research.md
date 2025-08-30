@@ -61,6 +61,11 @@ automatic_scenarios:
 
 ## Research & Knowledge Execution Pattern
 
+- **ALWAYS USE APEX Research**: [`.ruler/agents/apex-researcher.md`](/.ruler/agents/apex-researcher.md)
+```bash
+@apex-researcher "pesquisar [tecnologia/padrão/regulamentação]"
+```
+
 ### 1. Research Strategy & Planning
 
 ```bash

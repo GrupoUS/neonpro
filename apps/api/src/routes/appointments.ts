@@ -78,7 +78,7 @@ async function checkSchedulingConflicts(
   excludeAppointmentId?: string,
 ): Promise<boolean> {
   const appointmentStart = new Date(scheduledAt);
-  const appointmentEnd = new Date(appointmentStart.getTime() + durationMinutes * 60000);
+  const appointmentEnd = new Date(appointmentStart.getTime() + durationMinutes * 60_000);
 
   let query = db
     .from("appointments")
@@ -101,7 +101,7 @@ async function checkSchedulingConflicts(
   // Check for time overlaps
   for (const conflict of conflicts) {
     const conflictStart = new Date(conflict.scheduled_at);
-    const conflictEnd = new Date(conflictStart.getTime() + conflict.duration_minutes * 60000);
+    const conflictEnd = new Date(conflictStart.getTime() + conflict.duration_minutes * 60_000);
 
     // Check if appointments overlap
     if (

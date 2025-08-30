@@ -14,7 +14,7 @@
     "validate:schemas": "tsx src/validators/schema-validator.ts",
     "generate:postman": "tsx src/generators/postman-generator.ts",
     "generate:sdk": "tsx src/generators/sdk-generator.ts",
-    "docs:full": "pnpm generate:openapi && pnpm generate:adrs && pnpm validate:api"
+    "docs:full": "bun run generate:openapi && bun run generate:adrs && bun run validate:api"
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
