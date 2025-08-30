@@ -1,4 +1,3 @@
-
 //
 // ============================================================================
 // UNIT TESTS (appended)
@@ -102,8 +101,8 @@ describe("Batch Prediction Helper Functions - Refactored (unit tests)", () => {
 
     it("returns rounded average per job", () => {
       expect(calculateAveragePredictionsPerJob(10, 3)).toBe(3); // 3.33 -> 3
-      expect(calculateAveragePredictionsPerJob(5, 2)).toBe(3);  // 2.5 -> 3
-      expect(calculateAveragePredictionsPerJob(9, 2)).toBe(5);  // 4.5 -> 5
+      expect(calculateAveragePredictionsPerJob(5, 2)).toBe(3); // 2.5 -> 3
+      expect(calculateAveragePredictionsPerJob(9, 2)).toBe(5); // 4.5 -> 5
     });
   });
 

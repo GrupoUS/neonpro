@@ -1,9 +1,5 @@
-import type {
-  CircuitBreakerConfig} from "./healthcare-circuit-breaker";
-import {
-  CircuitBreakerState,
-  HealthcareCircuitBreaker,
-} from "./healthcare-circuit-breaker";
+import type { CircuitBreakerConfig } from "./healthcare-circuit-breaker";
+import { CircuitBreakerState, HealthcareCircuitBreaker } from "./healthcare-circuit-breaker";
 import type { ServiceDegradationConfig } from "./service-degradation";
 import { healthcareServiceDegradations } from "./service-degradation";
 

@@ -14,7 +14,7 @@
  * - We access private methods/properties via type casting to any; TS privacy is compile-time only.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Import the module under test. Adjust the import if the source file path differs.
 import { PredictiveModelsService } from "./predictive-models";
@@ -41,13 +41,13 @@ describe("PredictiveModelsService", () => {
       expect(outcome).toBeTruthy();
       expect(outcome?.name).toBe("NeonPro Outcome Predictor");
       expect(outcome?.version).toBe("2.1");
-      expect(outcome?.precision).toBeCloseTo((outcome!.accuracy) * 0.95, 6);
-      expect(outcome?.recall).toBeCloseTo((outcome!.accuracy) * 0.92, 6);
-      expect(outcome?.f1Score).toBeCloseTo((outcome!.accuracy) * 0.93, 6);
+      expect(outcome?.precision).toBeCloseTo((outcome?.accuracy ?? 0) * 0.95, 6);
+      expect(outcome?.recall).toBeCloseTo((outcome?.accuracy ?? 0) * 0.92, 6);
+      expect(outcome?.f1Score).toBeCloseTo((outcome?.accuracy ?? 0) * 0.93, 6);
       expect(outcome?.trainingDate).toBeInstanceOf(Date);
       expect(outcome?.deploymentDate).toBeInstanceOf(Date);
       expect(outcome?.lastRetraining).toBeInstanceOf(Date);
-      expect(outcome?.validationMetrics?.auc).toBeCloseTo(outcome!.accuracy, 6);
+      expect(outcome?.validationMetrics?.auc).toBeCloseTo(outcome?.accuracy ?? 0, 6);
     });
   });
 
@@ -72,6 +72,7 @@ describe("PredictiveModelsService", () => {
     it("updates lastRetraining, increases trainingDataSize, and slightly improves accuracy", async () => {
       const id = "neonpro-no-show-predictor-v1.5";
       const before = (service as any).models.get(id);
+      expect(before).toBeDefined();
       const origSize = before.trainingDataSize;
       const origAcc = before.accuracy;
 
@@ -181,7 +182,15 @@ describe("PredictiveModelsService", () => {
         { milestone: "X", expectedDay: 3, probability: 0.9, dependencies: [], criticalFactors: [] },
       ]);
       vi.spyOn(service as any, "generateRecommendations").mockReturnValue({
-        optimalTreatment: { id: "opt", name: "Opt", description: "", steps: [], duration: 28, cost: 0, successProbability: 0.82 },
+        optimalTreatment: {
+          id: "opt",
+          name: "Opt",
+          description: "",
+          steps: [],
+          duration: 28,
+          cost: 0,
+          successProbability: 0.82,
+        },
         preventiveMeasures: [],
         followUpSchedule: { appointments: [] },
         riskMitigation: [],
@@ -191,7 +200,7 @@ describe("PredictiveModelsService", () => {
       const result = await service.predictPatientOutcome(
         "patient-1",
         "laser_facial",
-        { age: 40 }
+        { age: 40 },
       );
 
       expect(result.patientId).toBe("patient-1");
@@ -208,7 +217,7 @@ describe("PredictiveModelsService", () => {
 
     it("throws an explicit error when modelId is unknown", async () => {
       await expect(
-        service.predictPatientOutcome("p", "t", {}, "unknown-model-id")
+        service.predictPatientOutcome("p", "t", {}, "unknown-model-id"),
       ).rejects.toThrow(/Model unknown-model-id not found/);
     });
 
@@ -216,7 +225,7 @@ describe("PredictiveModelsService", () => {
       // Force an internal method to throw
       vi.spyOn(service as any, "extractFeatures").mockRejectedValue(new Error("boom"));
       await expect(
-        service.predictPatientOutcome("p2", "t2", {})
+        service.predictPatientOutcome("p2", "t2", {}),
       ).rejects.toThrow(/Failed to generate prediction: /);
     });
   });
@@ -234,10 +243,15 @@ describe("PredictiveModelsService", () => {
         {
           age: 30,
           skinType: "sensitive", // increases impact for 'skin_type'
-          complianceScore: 0.6,   // affects compliance-based adjustments
-          lifestyle: { smoking: true, alcohol: "moderate", exercise: "regular", stressLevel: "moderate" },
+          complianceScore: 0.6, // affects compliance-based adjustments
+          lifestyle: {
+            smoking: true,
+            alcohol: "moderate",
+            exercise: "regular",
+            stressLevel: "moderate",
+          },
         },
-        "laser_facial"
+        "laser_facial",
       );
 
       const comps = await (service as any).predictComplications(features, {});

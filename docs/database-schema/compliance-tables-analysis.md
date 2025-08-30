@@ -9,9 +9,10 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
 ### 1. Tabelas Principais de Compliance
 
 #### `compliance_tracking`
+
 - **Propósito**: Rastreamento geral de conformidade
 - **RLS**: Habilitado
-- **Campos principais**: 
+- **Campos principais**:
   - `id`, `entity_type`, `entity_id`
   - `requirement_id`, `compliance_status`
   - `assessed_by`, `responsible_person`
@@ -19,6 +20,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `created_by`, `updated_by`
 
 #### `compliance_violations`
+
 - **Propósito**: Registro de violações de conformidade
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -29,6 +31,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `verified_by`, `created_by`, `updated_by`
 
 #### `compliance_scores`
+
 - **Propósito**: Pontuação de conformidade
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -39,6 +42,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
 ### 2. Tabelas de Relatórios e Alertas
 
 #### `compliance_reports`
+
 - **Propósito**: Relatórios de conformidade
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -47,6 +51,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `created_by`, `updated_by`
 
 #### `compliance_alerts_v2`
+
 - **Propósito**: Sistema de alertas de conformidade (versão 2)
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -56,6 +61,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `triggered_by_user_id`
 
 #### `compliance_alert_rules`
+
 - **Propósito**: Regras para geração de alertas
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -65,6 +71,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
 ### 3. Tabelas de Configuração e Templates
 
 #### `compliance_report_templates`
+
 - **Propósito**: Templates para relatórios
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -72,6 +79,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `created_by`, `updated_by`
 
 #### `compliance_dashboard_configs`
+
 - **Propósito**: Configurações do dashboard
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -79,6 +87,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `created_by`, `updated_by`
 
 #### `compliance_dashboard_widgets`
+
 - **Propósito**: Widgets do dashboard
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -86,6 +95,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `created_by`, `updated_by`
 
 #### `compliance_scoring_rules`
+
 - **Propósito**: Regras de pontuação
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -95,6 +105,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
 ### 4. Tabelas de Exportação e Compartilhamento
 
 #### `compliance_export_jobs`
+
 - **Propósito**: Jobs de exportação de dados
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -102,6 +113,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `requested_by`, `approved_by`
 
 #### `compliance_export_templates`
+
 - **Propósito**: Templates de exportação
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -109,6 +121,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `created_by`, `updated_by`
 
 #### `compliance_shared_reports`
+
 - **Propósito**: Relatórios compartilhados
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -116,6 +129,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `shared_with_user_id`, `revoked_by`
 
 #### `compliance_export_access_log`
+
 - **Propósito**: Log de acesso a exportações
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -125,6 +139,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
 ### 5. Tabelas de Auditoria
 
 #### `audit_events`
+
 - **Propósito**: Eventos de auditoria
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -132,6 +147,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `reviewed_by`, `event_timestamp`
 
 #### `audit_trail_snapshots`
+
 - **Propósito**: Snapshots da trilha de auditoria
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -140,6 +156,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
 ### 6. Tabelas de Profissionais e Certificações
 
 #### `professional_compliance_assessments`
+
 - **Propósito**: Avaliações de conformidade profissional
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -147,6 +164,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `created_by`
 
 #### `professional_compliance_alerts`
+
 - **Propósito**: Alertas de conformidade profissional
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -154,12 +172,14 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `created_by`
 
 #### `professional_audit_log`
+
 - **Propósito**: Log de auditoria profissional
 - **RLS**: Habilitado
 - **Campos principais**:
   - `id`, `profile_id`, `auditor_id`
 
 #### `professional_registrations`
+
 - **Propósito**: Registros profissionais
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -167,6 +187,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `created_by`, `updated_by`
 
 #### `professional_certifications`
+
 - **Propósito**: Certificações profissionais
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -176,6 +197,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
 ### 7. Tabelas de Requisitos Regulatórios
 
 #### `regulatory_requirements`
+
 - **Propósito**: Requisitos regulatórios
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -185,6 +207,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
 ### 8. Tabelas de Acesso e Violações
 
 #### `system_access_log`
+
 - **Propósito**: Log de acesso ao sistema
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -192,6 +215,7 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
   - `access_timestamp`
 
 #### `access_violations`
+
 - **Propósito**: Violações de acesso
 - **RLS**: Habilitado
 - **Campos principais**:
@@ -200,17 +224,20 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
 ## Conclusões
 
 ### ✅ Pontos Positivos
+
 1. **Cobertura Completa**: 24 tabelas cobrem todos os aspectos de compliance
 2. **RLS Habilitado**: Todas as tabelas têm Row Level Security ativo
 3. **Auditoria Completa**: Campos de `created_by` e `updated_by` em todas as tabelas
 4. **Estrutura Profissional**: Sistema robusto para conformidade regulatória
 
 ### ⚠️ Pontos de Atenção
+
 1. **Migrações Locais**: Apenas 2 migrações locais vs 24 tabelas no banco
 2. **Documentação**: Nem todas as tabelas estão documentadas localmente
 3. **Sincronização**: Possível dessincronia entre ambiente local e remoto
 
 ### 🔧 Recomendações
+
 1. **Sincronizar Migrações**: Baixar migrações do banco remoto
 2. **Documentar Tabelas**: Criar documentação para todas as 24 tabelas
 3. **Validar Tipos**: Verificar se os tipos TypeScript estão atualizados
@@ -219,12 +246,13 @@ Esta análise foi realizada usando o **MCP Serena** para buscar no codebase e o 
 ## Metodologia
 
 Esta análise foi realizada utilizando:
+
 - **MCP Serena**: Para busca no codebase local
 - **MCP Supabase**: Para consulta ao banco de dados remoto
 - **Análise Sistemática**: Identificação de padrões e estruturas
 
 ---
 
-*Documento gerado automaticamente em: 2025-01-28*
-*Projeto: NeonPro Brasil*
-*Banco: Supabase PostgreSQL*
+_Documento gerado automaticamente em: 2025-01-28_
+_Projeto: NeonPro Brasil_
+_Banco: Supabase PostgreSQL_

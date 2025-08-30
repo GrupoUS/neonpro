@@ -28,7 +28,7 @@
 		}
 	},
 	"development": {
-		"packageManager": "pnpm",
+		"packageManager": "bun",
 		"nodeVersion": ">=20.0.0",
 		"typescript": {
 			"strict": true,
@@ -57,6 +57,9 @@
 		}
 	},
 	"mcp": {
+		"configFile": ".trae/mcp.json",
+		"official": true,
+		"autoLoad": true,
 		"servers": {
 			"archon": {
 				"name": "mcp.config.usrlocalmcp.archon",
@@ -71,6 +74,31 @@
 			"context7": {
 				"name": "mcp.config.usrlocalmcp.context7",
 				"role": "documentation-research",
+				"priority": "medium"
+			},
+			"shadcn-ui": {
+				"name": "shadcn-ui",
+				"role": "ui-components",
+				"priority": "medium"
+			},
+			"tavily": {
+				"name": "Tavily",
+				"role": "web-search",
+				"priority": "medium"
+			},
+			"sequential-thinking": {
+				"name": "Sequential Thinking",
+				"role": "reasoning",
+				"priority": "high"
+			},
+			"serena": {
+				"name": "serena",
+				"role": "code-analysis",
+				"priority": "high"
+			},
+			"desktop-commander": {
+				"name": "desktop-commander",
+				"role": "system-operations",
 				"priority": "medium"
 			}
 		}

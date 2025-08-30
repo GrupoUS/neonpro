@@ -5,7 +5,8 @@
     "**/package.json",
     "**/tsconfig.json",
     "dprint.json",
-    "pnpm-workspace.yaml"
+    "bunfig.toml",
+    "bun.lock"
   ],
   "globalEnv": [
     "NODE_ENV",

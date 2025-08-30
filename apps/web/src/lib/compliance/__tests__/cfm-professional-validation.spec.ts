@@ -12,12 +12,12 @@
  *  - We reset cache and audit trail between tests to avoid state bleed.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Import the implementation (the implementation file currently has a .test.ts suffix)
 import CFMValidationService, {
-  cfmValidationService,
   cfmUtils,
+  cfmValidationService,
 } from "../cfm-professional-validation.test";
 
 // Helpers
@@ -128,8 +128,12 @@ describe("cfmUtils", () => {
   describe("getSpecialtyDisplayName", () => {
     it("returns localized Portuguese names", () => {
       expect(cfmUtils.getSpecialtyDisplayName("dermatologia" as any)).toBe("Dermatologia");
-      expect(cfmUtils.getSpecialtyDisplayName("medicina-estetica" as any)).toBe("Medicina Estética");
-      expect(cfmUtils.getSpecialtyDisplayName("cirurgia-plastica" as any)).toBe("Cirurgia Plástica");
+      expect(cfmUtils.getSpecialtyDisplayName("medicina-estetica" as any)).toBe(
+        "Medicina Estética",
+      );
+      expect(cfmUtils.getSpecialtyDisplayName("cirurgia-plastica" as any)).toBe(
+        "Cirurgia Plástica",
+      );
       // unknown -> echoes input
       expect(cfmUtils.getSpecialtyDisplayName("foo" as any)).toBe("foo");
     });
@@ -141,7 +145,14 @@ describe("CFMValidationService", () => {
     it("returns active result with no warnings when professional has no restrictions", async () => {
       const spy = vi
         .spyOn(svc as AnyObj, "callCFMAPI")
-        .mockResolvedValue(makeProfessional({ state: "SP", crmNumber: "CRM-SP 123456", restrictions: [], status: "active" }));
+        .mockResolvedValue(
+          makeProfessional({
+            state: "SP",
+            crmNumber: "CRM-SP 123456",
+            restrictions: [],
+            status: "active",
+          }),
+        );
 
       const res = await svc.validateLicense("CRM-SP 123456");
       expect(res.isValid).toBe(true);
@@ -251,10 +262,12 @@ describe("CFMValidationService", () => {
 
   describe("validateMultipleLicenses", () => {
     it("aggregates results and errors from multiple validations", async () => {
-      vi.spyOn(svc as AnyObj, "callCFMAPI").mockImplementation(async (_state: any, number: string) => {
-        if (number === "000000") return null;
-        return makeProfessional({ crmNumber: `CRM-SP ${number}` });
-      });
+      vi.spyOn(svc as AnyObj, "callCFMAPI").mockImplementation(
+        async (_state: any, number: string) => {
+          if (number === "000000") return null;
+          return makeProfessional({ crmNumber: `CRM-SP ${number}` });
+        },
+      );
 
       const res = await svc.validateMultipleLicenses([
         "CRM-SP 111111", // valid

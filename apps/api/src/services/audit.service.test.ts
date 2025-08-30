@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { jest } from '@jest/globals';
+import { jest } from "@jest/globals";
 
 jest.useFakeTimers();
 
@@ -7,7 +7,7 @@ jest.useFakeTimers();
 // Mocks
 //
 const mockCreateClient = jest.fn();
-jest.unstable_mockModule('@supabase/supabase-js', () => ({
+jest.unstable_mockModule("@supabase/supabase-js", () => ({
   createClient: mockCreateClient,
 }));
 
@@ -16,22 +16,22 @@ jest.unstable_mockModule('@supabase/supabase-js', () => ({
 const mockAuditEventSchema = { parse: (e: any) => e };
 const mockAuditFilterSchema = { parse: (f: any) => f };
 enum MockAuditSeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical',
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
-jest.unstable_mockModule('../types/audit', () => ({
+jest.unstable_mockModule("../types/audit", () => ({
   AuditEventSchema: mockAuditEventSchema,
   AuditFilterSchema: mockAuditFilterSchema,
   AuditSeverity: MockAuditSeverity,
 }));
 
 // Import the module under test AFTER mocks
-const { AuditService } = await import('./audit.service');
-const { AuditSeverity } = await import('../types/audit');
+const { AuditService } = await import("./audit.service");
+const { AuditSeverity } = await import("../types/audit");
 
-type ThenableResult<T> = T & { then: (resolve: (v: any) => any, reject?: (e: any) => any) => any };
+type ThenableResult<T> = T & { then: (resolve: (v: any) => any, reject?: (e: any) => any) => any; };
 
 function thenable<T extends object>(payload: T): ThenableResult<T> {
   return Promise.resolve(payload) as any;
@@ -48,7 +48,7 @@ function makeSelectQueryBuilder(result: any) {
   return { qb, select };
 }
 
-function makeInsertChain(result: { data: any; error: any }, capture?: (payload: any) => void) {
+function makeInsertChain(result: { data: any; error: any; }, capture?: (payload: any) => void) {
   const single = jest.fn(() => Promise.resolve(result));
   const select = jest.fn(() => ({ single }));
   const insert = jest.fn((payload: any) => {
@@ -58,33 +58,31 @@ function makeInsertChain(result: { data: any; error: any }, capture?: (payload: 
   return { insert, select, single };
 }
 
-function makeDeleteChain(result: { count?: number | null; error?: any }) {
+function makeDeleteChain(result: { count?: number | null; error?: any; }) {
   const lt = jest.fn((_col: string, _val: string) => Promise.resolve(result));
   const del = jest.fn(() => ({ lt }));
   return { del, lt };
 }
 
 function newSupabaseMock(options: {
-  insertResult?: { data: any; error: any };
+  insertResult?: { data: any; error: any; };
   onInsertPayload?: (p: any) => void;
-  selectResult?: { data: any[]; error: any; count?: number | null };
-  statsResult?: { data: any[]; error: any };
-  deleteResult?: { count?: number | null; error?: any };
+  selectResult?: { data: any[]; error: any; count?: number | null; };
+  statsResult?: { data: any[]; error: any; };
+  deleteResult?: { count?: number | null; error?: any; };
 }) {
   const { insert, select, single } = makeInsertChain(
     options.insertResult ?? { data: null, error: null },
-    options.onInsertPayload
+    options.onInsertPayload,
   );
   const { qb, select: selectFn } = makeSelectQueryBuilder(
-    options.selectResult ?? { data: [], error: null, count: 0 }
+    options.selectResult ?? { data: [], error: null, count: 0 },
   );
   const { del, lt } = makeDeleteChain(options.deleteResult ?? { count: 0, error: null });
 
   const selectStats = jest.fn(() => {
     const qb2: any = {};
-    qb2.gte = jest.fn(() =>
-      thenable(options.statsResult ?? { data: [], error: null })
-    );
+    qb2.gte = jest.fn(() => thenable(options.statsResult ?? { data: [], error: null }));
     return qb2;
   });
 
@@ -104,27 +102,27 @@ function newSupabaseMock(options: {
 
 function sampleEvent(overrides: Partial<any> = {}) {
   return {
-    user_id: 'u1',
-    session_id: 's1',
-    action: 'LOGIN',
-    resource_type: 'user',
-    resource_id: 'r1',
-    resource_name: 'John',
-    ip_address: '127.0.0.1',
-    user_agent: 'agent',
-    method: 'POST',
-    endpoint: '/api/login',
+    user_id: "u1",
+    session_id: "s1",
+    action: "LOGIN",
+    resource_type: "user",
+    resource_id: "r1",
+    resource_name: "John",
+    ip_address: "127.0.0.1",
+    user_agent: "agent",
+    method: "POST",
+    endpoint: "/api/login",
     status_code: 200,
     severity: AuditSeverity.LOW,
     error_message: null,
     duration_ms: 12,
-    details: { foo: 'bar' },
-    timestamp: new Date('2025-08-01T12:00:00.000Z'),
+    details: { foo: "bar" },
+    timestamp: new Date("2025-08-01T12:00:00.000Z"),
     ...overrides,
   };
 }
 
-describe('AuditService', () => {
+describe("AuditService", () => {
   let service: any;
   let supabaseMocks: ReturnType<typeof newSupabaseMock>;
   const originalWarn = console.warn;
@@ -143,13 +141,13 @@ describe('AuditService', () => {
     jest.useRealTimers();
   });
 
-  test('logEvent: inserts valid event and returns mapped AuditLogEntry; triggers critical alert', async () => {
+  test("logEvent: inserts valid event and returns mapped AuditLogEntry; triggers critical alert", async () => {
     const inserted = {
-      id: '1',
+      id: "1",
       ...sampleEvent({ severity: AuditSeverity.CRITICAL }),
-      timestamp: '2025-08-01T12:00:00.000Z',
-      created_at: '2025-08-01T12:00:01.000Z',
-      updated_at: '2025-08-01T12:00:02.000Z',
+      timestamp: "2025-08-01T12:00:00.000Z",
+      created_at: "2025-08-01T12:00:01.000Z",
+      updated_at: "2025-08-01T12:00:02.000Z",
     };
 
     supabaseMocks = newSupabaseMock({
@@ -160,31 +158,31 @@ describe('AuditService', () => {
     service = new AuditService();
 
     const result = await service.logEvent(
-      sampleEvent({ severity: AuditSeverity.CRITICAL })
+      sampleEvent({ severity: AuditSeverity.CRITICAL }),
     );
 
     expect(result).toBeTruthy();
-    expect(result.id).toBe('1');
+    expect(result.id).toBe("1");
     expect(result.timestamp).toBeInstanceOf(Date);
     expect(result.created_at).toBeInstanceOf(Date);
     expect(result.updated_at).toBeInstanceOf(Date);
 
     // Critical path should log a warning via handleCriticalEvent
     expect(console.warn).toHaveBeenCalledWith(
-      'EVENTO CRÍTICO DE AUDITORIA:',
+      "EVENTO CRÍTICO DE AUDITORIA:",
       expect.objectContaining({
-        id: '1',
-        action: 'LOGIN',
-        resource_type: 'user',
-        user_id: 'u1',
+        id: "1",
+        action: "LOGIN",
+        resource_type: "user",
+        user_id: "u1",
         timestamp: expect.any(Date),
-      })
+      }),
     );
   });
 
-  test('logEvent: returns null when DB insert returns error', async () => {
+  test("logEvent: returns null when DB insert returns error", async () => {
     supabaseMocks = newSupabaseMock({
-      insertResult: { data: null, error: { message: 'db error' } },
+      insertResult: { data: null, error: { message: "db error" } },
     });
     mockCreateClient.mockReturnValue(supabaseMocks.client);
     service = new AuditService();
@@ -192,12 +190,12 @@ describe('AuditService', () => {
     const res = await service.logEvent(sampleEvent());
     expect(res).toBeNull();
     expect(console.error).toHaveBeenCalledWith(
-      'Erro ao inserir log de auditoria:',
-      { message: 'db error' }
+      "Erro ao inserir log de auditoria:",
+      { message: "db error" },
     );
   });
 
-  test('logEvent: skips event when endpoint is excluded', async () => {
+  test("logEvent: skips event when endpoint is excluded", async () => {
     supabaseMocks = newSupabaseMock({
       insertResult: { data: null, error: null },
     });
@@ -205,22 +203,22 @@ describe('AuditService', () => {
     service = new AuditService();
 
     const res = await service.logEvent(
-      sampleEvent({ endpoint: '/healthcheck' })
+      sampleEvent({ endpoint: "/healthcheck" }),
     ); // contains "/health"
     expect(res).toBeNull();
     expect(supabaseMocks.insert).not.toHaveBeenCalled();
   });
 
-  test('logEvent: truncates oversize details and annotates metadata before insert', async () => {
+  test("logEvent: truncates oversize details and annotates metadata before insert", async () => {
     let captured: any;
     supabaseMocks = newSupabaseMock({
       insertResult: {
         data: {
-          id: '2',
+          id: "2",
           ...sampleEvent(),
-          timestamp: '2025-08-01T12:00:00.000Z',
-          created_at: '2025-08-01T12:00:01.000Z',
-          updated_at: '2025-08-01T12:00:02.000Z',
+          timestamp: "2025-08-01T12:00:00.000Z",
+          created_at: "2025-08-01T12:00:01.000Z",
+          updated_at: "2025-08-01T12:00:02.000Z",
         },
         error: null,
       },
@@ -229,10 +227,10 @@ describe('AuditService', () => {
     mockCreateClient.mockReturnValue(supabaseMocks.client);
     service = new AuditService();
 
-    const big = 'x'.repeat(10100);
+    const big = "x".repeat(10100);
     const evt = sampleEvent({
       details: { big },
-      timestamp: new Date('2025-08-01T12:00:00.000Z'),
+      timestamp: new Date("2025-08-01T12:00:00.000Z"),
     });
     const res = await service.logEvent(evt);
 
@@ -240,24 +238,24 @@ describe('AuditService', () => {
     expect(captured).toBeDefined();
     expect(captured.details).toBeDefined();
     expect(captured.details._truncated).toBe(true);
-    expect(typeof captured.details._original_size).toBe('number');
+    expect(typeof captured.details._original_size).toBe("number");
   });
 
-  test('getLogs: applies filters, ordering, pagination and maps dates', async () => {
+  test("getLogs: applies filters, ordering, pagination and maps dates", async () => {
     const data = [
       {
-        id: 'a',
+        id: "a",
         ...sampleEvent(),
-        timestamp: '2025-08-28T10:00:00.000Z',
-        created_at: '2025-08-28T10:00:01.000Z',
-        updated_at: '2025-08-28T10:00:02.000Z',
+        timestamp: "2025-08-28T10:00:00.000Z",
+        created_at: "2025-08-28T10:00:01.000Z",
+        updated_at: "2025-08-28T10:00:02.000Z",
       },
       {
-        id: 'b',
-        ...sampleEvent({ user_id: 'u2' }),
-        timestamp: '2025-08-28T11:00:00.000Z',
-        created_at: '2025-08-28T11:00:01.000Z',
-        updated_at: '2025-08-28T11:00:02.000Z',
+        id: "b",
+        ...sampleEvent({ user_id: "u2" }),
+        timestamp: "2025-08-28T11:00:00.000Z",
+        created_at: "2025-08-28T11:00:01.000Z",
+        updated_at: "2025-08-28T11:00:02.000Z",
       },
     ];
 
@@ -267,17 +265,17 @@ describe('AuditService', () => {
     service = new AuditService();
 
     const filters = {
-      start_date: '2025-08-27T00:00:00.000Z',
-      end_date: '2025-08-29T00:00:00.000Z',
-      user_id: 'u1',
-      action: 'LOGIN',
-      resource_type: 'user',
-      resource_id: 'r1',
+      start_date: "2025-08-27T00:00:00.000Z",
+      end_date: "2025-08-29T00:00:00.000Z",
+      user_id: "u1",
+      action: "LOGIN",
+      resource_type: "user",
+      resource_id: "r1",
       severity: AuditSeverity.LOW,
-      ip_address: '127.0.0.1',
+      ip_address: "127.0.0.1",
       status_code: 200,
-      sort_by: 'timestamp',
-      sort_order: 'desc' as const,
+      sort_by: "timestamp",
+      sort_order: "desc" as const,
       offset: 0,
       limit: 50,
     };
@@ -292,24 +290,24 @@ describe('AuditService', () => {
 
     // Ensure filters were applied
     expect(supabaseMocks.qb.gte).toHaveBeenCalledWith(
-      'timestamp',
-      filters.start_date
+      "timestamp",
+      filters.start_date,
     );
     expect(supabaseMocks.qb.lte).toHaveBeenCalledWith(
-      'timestamp',
-      filters.end_date
+      "timestamp",
+      filters.end_date,
     );
-    expect(supabaseMocks.qb.eq).toHaveBeenCalledWith('user_id', 'u1');
-    expect(supabaseMocks.qb.order).toHaveBeenCalledWith('timestamp', {
+    expect(supabaseMocks.qb.eq).toHaveBeenCalledWith("user_id", "u1");
+    expect(supabaseMocks.qb.order).toHaveBeenCalledWith("timestamp", {
       ascending: false,
     });
     expect(supabaseMocks.qb.range).toHaveBeenCalledWith(0, 49);
   });
 
-  test('getLogs: returns failure response when query throws error', async () => {
+  test("getLogs: returns failure response when query throws error", async () => {
     const selectResult = {
       data: null,
-      error: { message: 'boom' },
+      error: { message: "boom" },
       count: null,
     };
     // Return an error only after await
@@ -322,22 +320,22 @@ describe('AuditService', () => {
 
     service = new AuditService();
     const res = await service.getLogs(
-      { sort_by: 'timestamp', sort_order: 'asc', offset: 0, limit: 10 } as any
+      { sort_by: "timestamp", sort_order: "asc", offset: 0, limit: 10 } as any,
     );
     expect(res.success).toBe(false);
     expect(res.message).toMatch(/Erro ao consultar logs/);
   });
 
-  test('getStats: computes totals, groupings, recent criticals, top users, and daily activity', async () => {
-    const now = new Date('2025-08-29T12:00:00.000Z');
+  test("getStats: computes totals, groupings, recent criticals, top users, and daily activity", async () => {
+    const now = new Date("2025-08-29T12:00:00.000Z");
     jest.useFakeTimers().setSystemTime(now);
 
     const logs = [
       {
-        id: '1',
+        id: "1",
         ...sampleEvent({
-          user_id: 'u1',
-          action: 'LOGIN',
+          user_id: "u1",
+          action: "LOGIN",
           severity: AuditSeverity.LOW,
         }),
         timestamp: now.toISOString(),
@@ -345,10 +343,10 @@ describe('AuditService', () => {
         updated_at: now.toISOString(),
       },
       {
-        id: '2',
+        id: "2",
         ...sampleEvent({
-          user_id: 'u1',
-          action: 'UPDATE',
+          user_id: "u1",
+          action: "UPDATE",
           severity: AuditSeverity.CRITICAL,
         }),
         timestamp: new Date(now.getTime() - 3600_000).toISOString(),
@@ -356,10 +354,10 @@ describe('AuditService', () => {
         updated_at: now.toISOString(),
       },
       {
-        id: '3',
+        id: "3",
         ...sampleEvent({
-          user_id: 'u2',
-          action: 'LOGIN',
+          user_id: "u2",
+          action: "LOGIN",
           severity: AuditSeverity.MEDIUM,
         }),
         timestamp: new Date(now.getTime() - 2 * 24 * 3600_000).toISOString(),
@@ -379,7 +377,7 @@ describe('AuditService', () => {
     expect(s.total_events).toBe(3);
     expect(s.events_by_action.LOGIN).toBe(2);
     expect(s.events_by_severity[AuditSeverity.CRITICAL]).toBe(1);
-    expect(s.top_users[0]).toEqual({ user_id: 'u1', count: 2 });
+    expect(s.top_users[0]).toEqual({ user_id: "u1", count: 2 });
     expect(s.recent_critical_events.length).toBe(1);
     // daily_activity covers 3 days and is sorted ascending by date
     expect(s.daily_activity.length).toBe(3);
@@ -390,14 +388,14 @@ describe('AuditService', () => {
     expect(totalDaily).toBe(3);
   });
 
-  test('exportLogs: returns JSON export metadata', async () => {
+  test("exportLogs: returns JSON export metadata", async () => {
     // Spy on getLogs to avoid DB
     const svc = new AuditService();
     const spy = jest
-      .spyOn(svc as any, 'getLogs')
+      .spyOn(svc as any, "getLogs")
       .mockResolvedValue({
         success: true,
-        data: [{ id: '1', timestamp: new Date('2025-08-01T12:00:00.000Z') }],
+        data: [{ id: "1", timestamp: new Date("2025-08-01T12:00:00.000Z") }],
         total: 1,
         page: 1,
         limit: 10000,
@@ -405,34 +403,34 @@ describe('AuditService', () => {
       });
 
     const res = await (svc as any).exportLogs({
-      format: 'json',
+      format: "json",
       include_details: false,
-      filters: { sort_by: 'timestamp', sort_order: 'desc', offset: 0, limit: 10000 },
+      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10000 },
     });
 
     expect(res.success).toBe(true);
     expect(res.data.download_url).toMatch(
-      /^\/api\/audit\/download\/audit_logs_\d+\.json$/
+      /^\/api\/audit\/download\/audit_logs_\d+\.json$/,
     );
     expect(res.data.file_size).toBeGreaterThan(0);
     expect(spy).toHaveBeenCalled();
   });
 
-  test('exportLogs: CSV size increases when include_details = true', async () => {
+  test("exportLogs: CSV size increases when include_details = true", async () => {
     const logs = [
       {
-        id: '1',
-        timestamp: new Date('2025-08-01T12:00:00.000Z'),
-        user_id: 'u1',
-        session_id: 's1',
-        action: 'LOGIN',
-        resource_type: 'user',
-        resource_id: 'r1',
-        resource_name: 'John',
-        ip_address: '127.0.0.1',
-        user_agent: 'ua',
-        method: 'POST',
-        endpoint: '/api/login',
+        id: "1",
+        timestamp: new Date("2025-08-01T12:00:00.000Z"),
+        user_id: "u1",
+        session_id: "s1",
+        action: "LOGIN",
+        resource_type: "user",
+        resource_id: "r1",
+        resource_name: "John",
+        ip_address: "127.0.0.1",
+        user_agent: "ua",
+        method: "POST",
+        endpoint: "/api/login",
         status_code: 200,
         severity: AuditSeverity.LOW,
         error_message: null,
@@ -440,13 +438,13 @@ describe('AuditService', () => {
         details: { a: 1 },
         before_data: { b: 2 },
         after_data: { c: 3 },
-        created_at: new Date('2025-08-01T12:00:01.000Z'),
-        updated_at: new Date('2025-08-01T12:00:02.000Z'),
+        created_at: new Date("2025-08-01T12:00:01.000Z"),
+        updated_at: new Date("2025-08-01T12:00:02.000Z"),
       },
     ];
 
     const svc = new AuditService();
-    jest.spyOn(svc as any, 'getLogs').mockResolvedValue({
+    jest.spyOn(svc as any, "getLogs").mockResolvedValue({
       success: true,
       data: logs,
       total: 1,
@@ -456,14 +454,14 @@ describe('AuditService', () => {
     });
 
     const resNo = await (svc as any).exportLogs({
-      format: 'csv',
+      format: "csv",
       include_details: false,
-      filters: { sort_by: 'timestamp', sort_order: 'desc', offset: 0, limit: 10000 },
+      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10000 },
     });
     const resYes = await (svc as any).exportLogs({
-      format: 'csv',
+      format: "csv",
       include_details: true,
-      filters: { sort_by: 'timestamp', sort_order: 'desc', offset: 0, limit: 10000 },
+      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10000 },
     });
 
     expect(resNo.success).toBe(true);
@@ -472,9 +470,9 @@ describe('AuditService', () => {
     expect(resYes.data.download_url).toMatch(/\.csv$/);
   });
 
-  test('exportLogs: returns error for unsupported formats and unimplemented PDF', async () => {
+  test("exportLogs: returns error for unsupported formats and unimplemented PDF", async () => {
     const svc = new AuditService();
-    jest.spyOn(svc as any, 'getLogs').mockResolvedValue({
+    jest.spyOn(svc as any, "getLogs").mockResolvedValue({
       success: true,
       data: [],
       total: 0,
@@ -484,25 +482,25 @@ describe('AuditService', () => {
     });
 
     const pdf = await (svc as any).exportLogs({
-      format: 'pdf',
+      format: "pdf",
       include_details: false,
-      filters: { sort_by: 'timestamp', sort_order: 'desc', offset: 0, limit: 10000 },
+      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10000 },
     });
     expect(pdf.success).toBe(false);
     expect(pdf.message).toMatch(
-      /PDF.*não implementada|PDF.*não implementado|PDF/i
+      /PDF.*não implementada|PDF.*não implementado|PDF/i,
     );
 
     const other = await (svc as any).exportLogs({
-      format: 'xml' as any,
+      format: "xml" as any,
       include_details: false,
-      filters: { sort_by: 'timestamp', sort_order: 'desc', offset: 0, limit: 10000 },
+      filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10000 },
     });
     expect(other.success).toBe(false);
     expect(other.message).toMatch(/Formato de exportação não suportado/);
   });
 
-  test('cleanupOldLogs: deletes logs older than retention and returns count; handles error -> 0', async () => {
+  test("cleanupOldLogs: deletes logs older than retention and returns count; handles error -> 0", async () => {
     // Success path
     supabaseMocks = newSupabaseMock({
       deleteResult: { count: 42, error: null },
@@ -513,21 +511,21 @@ describe('AuditService', () => {
     expect(n).toBe(42);
     expect(supabaseMocks.del).toHaveBeenCalled();
     expect(supabaseMocks.lt).toHaveBeenCalledWith(
-      'timestamp',
-      expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/)
+      "timestamp",
+      expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/),
     );
 
     // Error path
     supabaseMocks = newSupabaseMock({
-      deleteResult: { count: null, error: { message: 'oops' } },
+      deleteResult: { count: null, error: { message: "oops" } },
     });
     mockCreateClient.mockReturnValue(supabaseMocks.client);
     const svc2 = new AuditService();
     const m = await (svc2 as any).cleanupOldLogs();
     expect(m).toBe(0);
     expect(console.error).toHaveBeenCalledWith(
-      'Erro ao limpar logs antigos:',
-      { message: 'oops' }
+      "Erro ao limpar logs antigos:",
+      { message: "oops" },
     );
   });
 });

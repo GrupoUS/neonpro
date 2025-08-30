@@ -2,12 +2,12 @@
 // Comprehensive testing for AI services database schema and operations
 
 import { createClient } from "@supabase/supabase-js";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { mockSupabaseClient } from "../setup/global-mocks";
 import TestIntegrationSetup, {
   TEST_CONFIG,
   TestPerformanceMonitor,
 } from "./integration-test-setup";
-import { mockSupabaseClient } from "../setup/global-mocks";
 
 // Database Test Configuration
 const DB_TEST_CONFIG = {
@@ -123,7 +123,7 @@ describe("aI Feature Flags Database", () => {
   beforeAll(async () => {
     // Always use mock mode for integration tests
     useMockMode = true;
-    console.log('🔧 Using mock mode for Feature Flags Database tests');
+    console.log("🔧 Using mock mode for Feature Flags Database tests");
     supabaseClient = mockSupabaseClient;
   });
 
@@ -246,7 +246,7 @@ describe("aI Cache Management Database", () => {
   beforeAll(async () => {
     // Always use mock mode for integration tests
     useMockMode = true;
-    console.log('🔧 Using mock mode for Cache Management Database tests');
+    console.log("🔧 Using mock mode for Cache Management Database tests");
     supabaseClient = mockSupabaseClient;
   });
 
@@ -364,7 +364,7 @@ describe("aI Audit Logging Database", () => {
   beforeAll(async () => {
     // Always use mock mode for integration tests
     useMockMode = true;
-    console.log('🔧 Using mock mode for Audit Logging Database tests');
+    console.log("🔧 Using mock mode for Audit Logging Database tests");
     supabaseClient = mockSupabaseClient;
   });
 
@@ -501,7 +501,7 @@ describe("aI Monitoring Database", () => {
   beforeAll(async () => {
     // Always use mock mode for integration tests
     useMockMode = true;
-    console.log('🔧 Using mock mode for Monitoring Database tests');
+    console.log("🔧 Using mock mode for Monitoring Database tests");
     supabaseClient = mockSupabaseClient;
   });
 
@@ -645,7 +645,7 @@ describe("aI Chat Database", () => {
   beforeAll(async () => {
     // Always use mock mode for integration tests
     useMockMode = true;
-    console.log('🔧 Using mock mode for Chat Database tests');
+    console.log("🔧 Using mock mode for Chat Database tests");
     supabaseClient = mockSupabaseClient;
   });
 
@@ -839,11 +839,8 @@ describe("aI Database Performance", () => {
   beforeAll(async () => {
     // Always use mock mode for integration tests
     useMockMode = true;
-    console.log('🔧 Using mock mode for Database Performance tests');
+    console.log("🔧 Using mock mode for Database Performance tests");
     supabaseClient = mockSupabaseClient;
-        TEST_CONFIG.supabase.test_service_role_key,
-      );
-    }
   });
 
   it("should handle database connection pooling under load", async () => {
@@ -868,7 +865,7 @@ describe("aI Database Performance", () => {
   });
 
   it("should maintain performance under mixed read/write operations", async () => {
-    const mixedOperations = [];
+    const mixedOperations: Promise<any>[] = [];
 
     // Mix of operations: 60% reads, 40% writes
     for (let i = 0; i < 30; i++) {

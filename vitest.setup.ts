@@ -12,10 +12,12 @@ global.console = {
 process.env = {
   ...process.env,
   NODE_ENV: "test",
-  SUPABASE_URL: "http://localhost:54321",
-  SUPABASE_ANON_KEY: "test-key",
-  DATABASE_URL: "postgresql://test:test@localhost:5432/test",
-  JWT_SECRET: "test-secret",
+  SUPABASE_URL: "http://mock-supabase-server",
+  SUPABASE_ANON_KEY: "mock-anon-key",
+  DATABASE_URL: "postgresql://mock:mock@mock-db:5432/mock_test",
+  JWT_SECRET: "mock-secret",
+  TEST_API_BASE_URL: "http://mock-api-server",
+  TEST_SUPABASE_URL: "http://mock-supabase-server",
 };
 
 // Mock crypto
@@ -28,8 +30,8 @@ Object.defineProperty(global, "crypto", {
 
 // Create a fetch mock
 const mockFetch = vi.fn(
-  async (input: RequestInfo | URL, init?: RequestInit) => {
-    const url = typeof input === "string" ? input : input.toString();
+  async (input: RequestInfo | URL, _init?: RequestInit) => {
+    const _url = typeof input === "string" ? input : input.toString();
 
     // For API routes, return mock response
     return Promise.resolve({

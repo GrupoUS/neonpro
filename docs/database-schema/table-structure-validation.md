@@ -2,7 +2,7 @@
 
 ## Resumo da Validação
 
-**Data da Validação:** 2025-01-25  
+**Data da Validação:** 2025-01-25\
 **Status:** ✅ VALIDADO - Estruturas consistentes entre banco e tipos TypeScript
 
 ## Tabela: compliance_tracking
@@ -10,6 +10,7 @@
 ### Comparação Estrutural
 
 #### Banco de Dados (32 colunas)
+
 ```sql
 -- Colunas principais identificadas:
 id (uuid, NOT NULL)
@@ -47,23 +48,24 @@ updated_by (uuid, NULL)
 ```
 
 #### Tipos TypeScript Gerados
+
 ```typescript
 // Estrutura identificada nos tipos gerados:
 interface ComplianceTracking {
-  id: string
-  clinic_id: string
-  requirement_id: string
-  compliance_status: string
-  last_assessment_date: string | null
-  assessment_method: string | null
-  assessed_by: string | null
-  assessment_score: number | null
-  evidence_provided: Json | null
-  evidence_complete: boolean | null
-  documentation_path: string | null
-  implementation_status: string | null
-  implementation_date: string | null
-  implementation_notes: string | null
+  id: string;
+  clinic_id: string;
+  requirement_id: string;
+  compliance_status: string;
+  last_assessment_date: string | null;
+  assessment_method: string | null;
+  assessed_by: string | null;
+  assessment_score: number | null;
+  evidence_provided: Json | null;
+  evidence_complete: boolean | null;
+  documentation_path: string | null;
+  implementation_status: string | null;
+  implementation_date: string | null;
+  implementation_notes: string | null;
   // ... demais campos mapeados corretamente
 }
 ```
@@ -90,16 +92,19 @@ interface ComplianceTracking {
 ## Outras Tabelas de Compliance Validadas
 
 ### compliance_alerts_v2
+
 - ✅ Estrutura consistente
 - ✅ Tipos corretos
 - ✅ Relacionamentos preservados
 
 ### compliance_reports
+
 - ✅ Estrutura consistente
 - ✅ Tipos corretos
 - ✅ Relacionamentos preservados
 
 ### professional_compliance_alerts
+
 - ✅ Estrutura consistente
 - ✅ Tipos corretos
 - ✅ Relacionamentos preservados
@@ -115,14 +120,14 @@ interface ComplianceTracking {
 
 ### 📋 Status das Tabelas
 
-| Tabela | Banco Remoto | Tipos TS | Status |
-|--------|--------------|----------|--------|
-| compliance_tracking | ✅ | ✅ | Sincronizado |
-| compliance_alerts_v2 | ✅ | ✅ | Sincronizado |
-| compliance_reports | ✅ | ✅ | Sincronizado |
-| compliance_violations | ✅ | ✅ | Sincronizado |
-| professional_compliance_alerts | ✅ | ✅ | Sincronizado |
-| audit_events | ✅ | ✅ | Sincronizado |
+| Tabela                         | Banco Remoto | Tipos TS | Status       |
+| ------------------------------ | ------------ | -------- | ------------ |
+| compliance_tracking            | ✅           | ✅       | Sincronizado |
+| compliance_alerts_v2           | ✅           | ✅       | Sincronizado |
+| compliance_reports             | ✅           | ✅       | Sincronizado |
+| compliance_violations          | ✅           | ✅       | Sincronizado |
+| professional_compliance_alerts | ✅           | ✅       | Sincronizado |
+| audit_events                   | ✅           | ✅       | Sincronizado |
 
 ### 🎯 Recomendações
 
@@ -140,6 +145,6 @@ interface ComplianceTracking {
 
 ---
 
-**Validação realizada por:** Sistema Automatizado  
-**Última atualização:** 2025-01-25  
+**Validação realizada por:** Sistema Automatizado\
+**Última atualização:** 2025-01-25\
 **Próxima validação:** 2025-02-01

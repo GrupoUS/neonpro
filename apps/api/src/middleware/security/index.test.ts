@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
-  HealthcareSecurityOrchestrator,
-  healthcareSecurityMiddlewares,
-  securityComponents,
-  securityPresets,
   createHealthcareAPISecurityStack,
-  SecurityEnvironment,
   EndpointSecurityLevel,
+  healthcareSecurityMiddlewares,
+  HealthcareSecurityOrchestrator,
+  securityComponents,
+  SecurityEnvironment,
+  securityPresets,
 } from "./index";
 
 // Mock all component factories to capture calls/arguments and return identifiable middleware fns
@@ -169,7 +169,8 @@ describe("HealthcareSecurityOrchestrator - createSecurityMiddleware ordering and
     expect(authArgs.requireHealthcareLicense).toBe(true);
     expect(Array.isArray(authArgs.allowedRoles)).toBe(true);
 
-    const rateArgs = (middlewares.find((mw: any) => mw.__name === "rate-limit-redis") as any).__args;
+    const rateArgs =
+      (middlewares.find((mw: any) => mw.__name === "rate-limit-redis") as any).__args;
     expect(rateArgs.monitoring).toBe(true);
     expect(rateArgs.alerting).toBe(true);
 

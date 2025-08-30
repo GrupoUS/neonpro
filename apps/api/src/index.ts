@@ -47,13 +47,14 @@ import { lgpdMiddleware } from "@/middleware/lgpd";
 import { rateLimitMiddleware } from "@/middleware/rate-limit";
 import { aiRoutes } from "@/routes/ai";
 import { analyticsRoutes } from "@/routes/analytics";
-import { appointmentRoutes } from "@/routes/appointments";
+import appointments from "@/routes/appointments";
 import auditRoutes from "@/routes/audit";
 import { authRoutes } from "@/routes/auth";
 import { clinicRoutes } from "@/routes/clinics";
 import complianceRoutes from "@/routes/compliance";
 import complianceAutomationRoutes from "@/routes/compliance-automation";
-import { patientRoutes } from "@/routes/patients";
+import health from "@/routes/health";
+import patients from "@/routes/patients";
 import { professionalsRoutes } from "@/routes/professionals";
 import { servicesRoutes } from "@/routes/services";
 import type { AppEnv } from "@/types/env";
@@ -232,6 +233,8 @@ app.get("/health", async (context) => {
 
 // API routes - Structured for optimal Hono RPC inference with healthcare validation
 const apiV1 = new Hono<AppEnv>()
+  // Health check routes (no authentication required)
+  .route("/health", health)
   // Authentication routes (no additional validation needed - handled by security stack)
   .route("/auth", authRoutes)
   // Clinic management routes (provider registration validation)
@@ -240,10 +243,10 @@ const apiV1 = new Hono<AppEnv>()
   // Patient routes (patient data validation with LGPD compliance)
   .use("/patients/*", validationMiddlewares.patientRegistration) // For new patient registration
   .use("/patients/*/update", validationMiddlewares.patientUpdate) // For patient data updates
-  .route("/patients", patientRoutes)
+  .route("/patients", patients)
   // Appointment routes (appointment booking validation)
   .use("/appointments/*", validationMiddlewares.appointmentBooking)
-  .route("/appointments", appointmentRoutes)
+  .route("/appointments", appointments)
   // Professional routes (healthcare provider validation)
   .use("/professionals/*", validationMiddlewares.providerRegistration)
   .route("/professionals", professionalsRoutes)
@@ -284,12 +287,12 @@ const emergencyV1 = new Hono<AppEnv>()
   )
   // Emergency patient access
   .use("/patients/*", validationMiddlewares.emergencyAccess)
-  .route("/patients", patientRoutes)
+  .route("/patients", patients)
   // Emergency medical records access
-  .route("/medical-records", patientRoutes) // Reuse patient routes for medical records in emergency
+  .route("/medical-records", patients) // Reuse patient routes for medical records in emergency
   // Emergency appointment scheduling
   .use("/appointments/*", validationMiddlewares.emergencyAccess)
-  .route("/appointments", appointmentRoutes);
+  .route("/appointments", appointments);
 
 // Mount emergency API with special path
 app.route("/api/emergency/v1", emergencyV1);

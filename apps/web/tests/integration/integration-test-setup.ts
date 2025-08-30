@@ -13,12 +13,12 @@ export const TEST_CONFIG = {
     query_timeout: 5000,
   },
   supabase: {
-    test_project_url: process.env.TEST_SUPABASE_URL || "http://localhost:54321",
-    test_anon_key: process.env.TEST_SUPABASE_ANON_KEY || "test-anon-key",
-    test_service_role_key: process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
+    test_project_url: process.env.TEST_SUPABASE_URL || "http://mock-supabase-server",
+    test_anon_key: process.env.TEST_SUPABASE_ANON_KEY || "mock-anon-key",
+    test_service_role_key: process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "mock-service-key",
   },
   api: {
-    test_api_base_url: process.env.TEST_API_BASE_URL || "http://localhost:3000",
+    test_api_base_url: process.env.TEST_API_BASE_URL || "http://mock-api-server",
     request_timeout: 10_000,
     retry_attempts: 3,
   },

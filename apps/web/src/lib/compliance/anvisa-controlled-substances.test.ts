@@ -60,12 +60,12 @@ const clock = {
   fn() {
     if (usingVitest) return viFn?.();
     return jestFn?.();
-  }
+  },
 };
 
 import Service, {
   anvisaControlledSubstancesService,
-  anvisaUtils
+  anvisaUtils,
 } from "./anvisa-controlled-substances"; // Adjust import if implementation filename differs
 
 // Helper to reset singleton state between tests
@@ -172,7 +172,7 @@ describe("Prescription creation validations", () => {
     quantity: 10,
     treatmentDays: 30,
     patientId: "patient-1",
-    doctorCRM: "CRM-12345"
+    doctorCRM: "CRM-12345",
   } as any; // Use any to avoid test compile-time dependency on internal types
 
   test("fails when substance does not exist", async () => {
@@ -185,7 +185,10 @@ describe("Prescription creation validations", () => {
   test("fails when prescription type does not match substance class", async () => {
     const s = Service.getInstance();
     // For Diazepam (B1), wrong type 'receituario-a'
-    const res = await s.createControlledPrescription({ ...baseData, prescriptionType: "receituario-a" });
+    const res = await s.createControlledPrescription({
+      ...baseData,
+      prescriptionType: "receituario-a",
+    });
     expect(res.isValid).toBe(false);
     expect(res.errors[0]).toMatch(/Tipo de receituário incorreto/i);
   });
@@ -228,7 +231,7 @@ describe("Dispensation flow", () => {
       quantity,
       treatmentDays: 30,
       patientId: "p-1",
-      doctorCRM: "CRM-1"
+      doctorCRM: "CRM-1",
     } as any);
     expect(res.isValid).toBe(true);
     return res.data!;
@@ -304,7 +307,7 @@ describe("Queries: by patient/doctor, expiring, stats, audit trail, and complian
       substanceId: string;
       type: string;
       tDays: number;
-    }> = {}
+    }> = {},
   ) {
     const s = Service.getInstance();
     const res = await s.createControlledPrescription({
@@ -313,7 +316,7 @@ describe("Queries: by patient/doctor, expiring, stats, audit trail, and complian
       quantity: args.qty ?? 5,
       treatmentDays: args.tDays ?? 30,
       patientId: args.patientId ?? "p-1",
-      doctorCRM: args.doctorCRM ?? "CRM-1"
+      doctorCRM: args.doctorCRM ?? "CRM-1",
     } as any);
     expect(res.isValid).toBe(true);
     return res.data!;
@@ -412,7 +415,7 @@ describe("clearData resets state but keeps substances loaded", () => {
       quantity: 2,
       treatmentDays: 30,
       patientId: "p-x",
-      doctorCRM: "CRM-x"
+      doctorCRM: "CRM-x",
     } as any);
     expect(res.isValid).toBe(true);
 

@@ -15,20 +15,31 @@ export default defineConfig({
     jsxImportSource: "react",
   },
   test: {
-    // Global configuration - enhanced isolation
+    // Global configuration - optimized for Bun
     globals: true,
     environment: "happy-dom",
     setupFiles: ["./vitest.setup.simple.ts"],
 
-    // Enhanced test isolation to prevent DOM duplication
-    isolate: true,
+    // Optimized isolation for Bun performance
+    isolate: false, // Disable isolation for better performance with Bun
 
-    // Sequential hook execution to prevent race conditions
-    sequence: {
-      hooks: "list",
+    // Use threads pool for better Bun compatibility
+    pool: "threads",
+    poolOptions: {
+      threads: {
+        singleThread: true, // Single thread for better Bun performance
+        maxThreads: 1,
+        minThreads: 1,
+      },
     },
 
-    // Happy-DOM environment options - better form support
+    // Sequential execution optimized for Bun
+    sequence: {
+      hooks: "list",
+      concurrent: false, // Disable concurrency for stability
+    },
+
+    // Happy-DOM environment options - optimized for Bun
     environmentOptions: {
       happyDOM: {
         url: "http://localhost:3000",
@@ -38,6 +49,18 @@ export default defineConfig({
           disableJavaScriptFileLoading: true,
           disableCSSFileLoading: true,
           enableFileSystemHttpRequests: false,
+          disableComputedStyleRendering: true, // Better performance
+          disableIframePageLoading: true, // Better performance
+        },
+      },
+    },
+
+    // Bun-specific optimizations
+    css: false, // Skip CSS processing for better performance
+    deps: {
+      optimizer: {
+        web: {
+          enabled: false, // Disable to avoid crypto resolution issues
         },
       },
     },
@@ -121,14 +144,6 @@ export default defineConfig({
       "apps/web/lib/lgpd/automation/**",
     ],
 
-    // Optimized performance - use forks to avoid serialization issues
-    pool: "forks",
-    poolOptions: {
-      forks: {
-        singleFork: true,
-      },
-    },
-
     // Reasonable timeouts
     testTimeout: 10_000, // Reduced from 30s
     hookTimeout: 10_000,
@@ -197,11 +212,11 @@ export default defineConfig({
         },
       },
     },
-    // React version conflict resolution
+    // React version conflict resolution - updated for Vitest 3.x
     server: {
       deps: {
-        // Externalize React to prevent multiple instances
-        external: ["react", "react-dom"],
+        // Use exclude instead of external (deprecated)
+        exclude: ["react", "react-dom"],
         // Inline testing libraries to ensure single instances
         inline: [
           "@testing-library/react",

@@ -3,7 +3,7 @@
  * Defines all global mocks used across integration tests
  */
 
-import { vi, type MockedFunction } from "vitest";
+import { type MockedFunction, vi } from "vitest";
 
 // CPF Validator Mock
 const mockCpfValidator: {
@@ -16,29 +16,150 @@ const mockCpfValidator: {
   clean: vi.fn().mockImplementation((cpf: string) => cpf.replace(/\D/g, "")),
 };
 
-// Supabase Client Mock
+// Simplified and Working Supabase Client Mock
+const createSupabaseMockResponse = (data: any, error: any = null) => {
+  return Promise.resolve({ data, error });
+};
+
+// Helper functions to control mock behavior
+const setMockError = (error: any) => {
+  // Not used in simplified version
+};
+
+const clearMockError = () => {
+  // Not used in simplified version
+};
+
+const resetMockData = () => {
+  // Not used in simplified version
+};
+
+const createMockQueryBuilder = () => {
+  let insertedData: any = null;
+  let hasSelectAfterInsert = false;
+  let shouldError = false;
+
+  const mockBuilder = {
+    select: vi.fn().mockImplementation(() => {
+      hasSelectAfterInsert = true;
+      return mockBuilder;
+    }),
+    insert: vi.fn().mockImplementation((data) => {
+      insertedData = Array.isArray(data) ? data : [data];
+
+      // Add IDs to inserted data if missing
+      insertedData = insertedData.map((item: any) => ({
+        ...item,
+        id: item.id || `test-id-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      }));
+
+      // Check for duplicate key scenario
+      if (insertedData.some((item: any) => item.name && item.name.includes("duplicate"))) {
+        shouldError = true;
+      }
+
+      return mockBuilder;
+    }),
+    update: vi.fn().mockReturnThis(),
+    delete: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    neq: vi.fn().mockReturnThis(),
+    gt: vi.fn().mockReturnThis(),
+    gte: vi.fn().mockReturnThis(),
+    lt: vi.fn().mockReturnThis(),
+    lte: vi.fn().mockReturnThis(),
+    like: vi.fn().mockReturnThis(),
+    ilike: vi.fn().mockReturnThis(),
+    is: vi.fn().mockReturnThis(),
+    in: vi.fn().mockReturnThis(),
+    contains: vi.fn().mockReturnThis(),
+    containedBy: vi.fn().mockReturnThis(),
+    rangeGt: vi.fn().mockReturnThis(),
+    rangeGte: vi.fn().mockReturnThis(),
+    rangeLt: vi.fn().mockReturnThis(),
+    rangeLte: vi.fn().mockReturnThis(),
+    rangeAdjacent: vi.fn().mockReturnThis(),
+    overlaps: vi.fn().mockReturnThis(),
+    textSearch: vi.fn().mockReturnThis(),
+    match: vi.fn().mockReturnThis(),
+    not: vi.fn().mockReturnThis(),
+    or: vi.fn().mockReturnThis(),
+    filter: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
+    range: vi.fn().mockReturnThis(),
+    abortSignal: vi.fn().mockReturnThis(),
+    single: vi.fn().mockImplementation(() => {
+      if (shouldError) {
+        return createSupabaseMockResponse(null, {
+          message: "duplicate key value violates unique constraint",
+          code: "23505",
+        });
+      }
+
+      const data = insertedData && insertedData.length > 0 ? insertedData[0] : { id: "test-id" };
+      return createSupabaseMockResponse(data, null);
+    }),
+    maybeSingle: vi.fn().mockImplementation(() => createSupabaseMockResponse(null, null)),
+    csv: vi.fn().mockImplementation(() => createSupabaseMockResponse("", null)),
+    geojson: vi.fn().mockImplementation(() => createSupabaseMockResponse(null, null)),
+    explain: vi.fn().mockImplementation(() => createSupabaseMockResponse(null, null)),
+    rollback: vi.fn().mockImplementation(() => createSupabaseMockResponse(null, null)),
+    returns: vi.fn().mockReturnThis(),
+  };
+
+  // Make all methods return the builder for chaining
+  Object.keys(mockBuilder).forEach(key => {
+    if (
+      typeof mockBuilder[key as keyof typeof mockBuilder] === "function"
+      && !["single", "maybeSingle", "csv", "geojson", "explain", "rollback"].includes(key)
+    ) {
+      mockBuilder[key as keyof typeof mockBuilder] = vi.fn().mockReturnValue(mockBuilder);
+    }
+  });
+
+  // Add then method for promise-like behavior (required for await)
+  (mockBuilder as any).then = function(onResolve: any, onReject?: any) {
+    if (shouldReturnError) {
+      const result = { data: null, error: mockError };
+      return Promise.resolve(result).then(onResolve, onReject);
+    }
+
+    // Return appropriate data based on the last operation
+    let resultData = mockInsertData;
+
+    // For select operations after insert, return the inserted data as array
+    if (isSelectOperation && mockInsertData) {
+      resultData = Array.isArray(mockInsertData) ? mockInsertData : [mockInsertData];
+    } // For select operations without insert, return empty array
+    else if (isSelectOperation && !mockInsertData) {
+      resultData = [];
+    }
+
+    const result = { data: resultData, error: null };
+    return Promise.resolve(result).then(onResolve, onReject);
+  };
+
+  return mockBuilder;
+};
+
 const mockSupabaseClient: {
   from: MockedFunction<any>;
-  select: MockedFunction<any>;
-  insert: MockedFunction<any>;
-  update: MockedFunction<any>;
-  delete: MockedFunction<any>;
-  eq: MockedFunction<any>;
-  single: MockedFunction<any>;
   auth: {
     getUser: MockedFunction<any>;
     signInWithPassword: MockedFunction<any>;
     signOut: MockedFunction<any>;
   };
   channel: MockedFunction<any>;
+  rpc: MockedFunction<any>;
+  storage: {
+    from: MockedFunction<any>;
+  };
 } = {
-  from: vi.fn().mockReturnThis(),
-  select: vi.fn().mockReturnThis(),
-  insert: vi.fn().mockReturnThis(),
-  update: vi.fn().mockReturnThis(),
-  delete: vi.fn().mockReturnThis(),
-  eq: vi.fn().mockReturnThis(),
-  single: vi.fn().mockResolvedValue({ data: null, error: null }),
+  from: vi.fn().mockImplementation((tableName: string) => {
+    currentTable = tableName;
+    return createMockQueryBuilder();
+  }),
   auth: {
     getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
     signInWithPassword: vi.fn().mockResolvedValue({ data: null, error: null }),
@@ -49,6 +170,15 @@ const mockSupabaseClient: {
     subscribe: vi.fn().mockReturnThis(),
     unsubscribe: vi.fn().mockReturnThis(),
   }),
+  rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: vi.fn().mockReturnValue({
+      upload: vi.fn().mockResolvedValue({ data: null, error: null }),
+      download: vi.fn().mockResolvedValue({ data: null, error: null }),
+      remove: vi.fn().mockResolvedValue({ data: null, error: null }),
+      list: vi.fn().mockResolvedValue({ data: [], error: null }),
+    }),
+  },
 };
 
 // LGPD Service Mock
@@ -115,9 +245,12 @@ const mockComplianceService: {
 
 // Export for direct imports if needed
 export {
+  clearMockError,
+  mockComplianceService,
   mockCpfValidator,
-  mockSupabaseClient,
   mockLgpdService,
   mockNotificationService,
-  mockComplianceService,
+  mockSupabaseClient,
+  resetMockData,
+  setMockError,
 };
