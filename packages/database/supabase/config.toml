@@ -1,6 +1,6 @@
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "neonpro-healthcare"
+project_id = "neonpro"
 
 [api]
 enabled = true
@@ -15,6 +15,7 @@ extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
 [db]
+enabled = true
 # Port to use for the local database URL.
 port = 54322
 # Port used by db diff command to initialize the shadow database.

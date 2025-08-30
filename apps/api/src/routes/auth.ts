@@ -1,644 +1,734 @@
-/**
- * 🔐 Authentication Routes - NeonPro API
- * =======================================
- *
- * Rotas de autenticação com validação Zod e type-safety
- * completo para Hono RPC integration.
- */
-
-import { zValidator } from "@hono/zod-validator";
-import type { AuthToken, AuthUser } from "@neonpro/shared/schemas";
-import {
-  ChangePasswordRequestSchema,
-  ForgotPasswordRequestSchema,
-  LoginRequestSchema,
-  RefreshTokenRequestSchema,
-  RegisterRequestSchema,
-  ResetPasswordRequestSchema,
-} from "@neonpro/shared/schemas";
-import type { ApiResponse } from "@neonpro/shared/types";
 import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
+import { createClient } from "@supabase/supabase-js";
+import { sign, verify } from "hono/jwt";
+import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import { HTTP_STATUS } from "../lib/constants.js";
-import { supabase } from "../lib/supabase.js";
+import crypto from "crypto";
 
-// Helper function to get user permissions based on role
-function getUserPermissions(role: string): string[] {
-  const rolePermissions: Record<string, string[]> = {
-    admin: [
-      "read:patients",
-      "write:patients",
-      "delete:patients",
-      "read:appointments",
-      "write:appointments",
-      "delete:appointments",
-      "read:users",
-      "write:users",
-      "read:analytics",
-      "manage:system",
-    ],
-    healthcare_provider: [
-      "read:patients",
-      "write:patients",
-      "read:appointments",
-      "write:appointments",
-      "read:medical_records",
-      "write:medical_records",
-    ],
-    clinic_staff: [
-      "read:patients",
-      "write:patients",
-      "read:appointments",
-      "write:appointments",
-    ],
-    patient: [
-      "read:own_data",
-      "write:own_data",
-      "read:own_appointments",
-      "write:own_appointments",
-    ],
+export const authRoutes = new Hono();
+
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// JWT Secret for custom tokens (should be in env)
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+const JWT_EXPIRE_TIME = '24h';
+const REFRESH_TOKEN_EXPIRE_DAYS = 30;
+
+// Utility functions
+const generateSessionId = () => crypto.randomBytes(32).toString('hex');
+
+const getClientInfo = (c: any) => {
+  const userAgent = c.req.header("User-Agent") || "";
+  const xForwardedFor = c.req.header("X-Forwarded-For");
+  const xRealIp = c.req.header("X-Real-IP");
+  const ipAddress = xForwardedFor?.split(",")[0] || xRealIp || "unknown";
+  
+  return {
+    ip_address: ipAddress,
+    user_agent: userAgent,
+    device_fingerprint: crypto.createHash('md5')
+      .update(userAgent + ipAddress)
+      .digest('hex')
   };
+};
 
-  return rolePermissions[role] || [];
-}
+// POST /auth/login - Email/Password login
+authRoutes.post("/login", async (c) => {
+  try {
+    const body = await c.req.json().catch(() => null);
 
-// Create auth router
-export const authRoutes = new Hono()
-  // 🚪 Login endpoint
-  .post("/login", zValidator("json", LoginRequestSchema), async (c) => {
-    const { email, password } = c.req.valid("json");
-
-    try {
-      // Authenticate with Supabase
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (authError || !authData.user) {
-        return c.json(
-          {
-            success: false,
-            error: "INVALID_CREDENTIALS",
-            message: "Email ou senha incorretos",
-          },
-          HTTP_STATUS.UNAUTHORIZED,
-        );
-      }
-
-      // Get user profile from our users table
-      const { data: userProfile, error: profileError } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", authData.user.id)
-        .single();
-
-      if (profileError || !userProfile) {
-        return c.json(
-          {
-            success: false,
-            error: "USER_NOT_FOUND",
-            message: "Perfil do usuário não encontrado",
-          },
-          HTTP_STATUS.NOT_FOUND,
-        );
-      }
-
-      // Check if user is active
-      if (!userProfile.is_active) {
-        return c.json(
-          {
-            success: false,
-            error: "USER_INACTIVE",
-            message: "Conta desativada. Entre em contato com o suporte.",
-          },
-          HTTP_STATUS.FORBIDDEN,
-        );
-      }
-
-      // Get user permissions based on role
-      const permissions = getUserPermissions(userProfile.role);
-
-      const user: AuthUser = {
-        id: userProfile.id,
-        email: userProfile.email,
-        fullName: userProfile.name,
-        role: userProfile.role,
-        isActive: userProfile.is_active,
-        isVerified: userProfile.is_verified,
-        isMFAEnabled: userProfile.is_mfa_enabled,
-        createdAt: userProfile.created_at,
-        permissions,
-      };
-
-      const tokens: AuthToken = {
-        accessToken: authData.session.access_token,
-        refreshToken: authData.session.refresh_token,
-        tokenType: "Bearer",
-        expiresIn: authData.session.expires_in || 3600,
-      };
-
-      const response: ApiResponse<{ user: AuthUser; tokens: AuthToken; }> = {
-        success: true,
-        data: { user, tokens },
-        message: "Login realizado com sucesso",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
-    } catch (error) {
-      console.error("Login error:", error);
+    if (!body || !body.email || !body.password) {
       return c.json(
-        {
-          success: false,
-          error: "INTERNAL_ERROR",
-          message: "Erro interno do servidor",
-        },
-        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        { error: "Email and password are required" },
+        HTTP_STATUS.BAD_REQUEST,
       );
     }
-  })
-  // 📝 Register endpoint
-  .post("/register", zValidator("json", RegisterRequestSchema), async (c) => {
-    const userData = c.req.valid("json");
 
-    try {
-      // Check if user already exists
-      const { data: existingUser } = await supabase
-        .from("users")
-        .select("id")
-        .eq("email", userData.email)
-        .single();
+    const { email, password, remember_me = false } = body;
 
-      if (existingUser) {
-        return c.json(
-          {
-            success: false,
-            error: "USER_EXISTS",
-            message: "Usuário já existe com este email",
-          },
-          HTTP_STATUS.CONFLICT,
-        );
-      }
+    // Authenticate with Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      // Validate license number if professional role
-      if (
-        ["healthcare_provider", "clinic_staff"].includes(userData.role) && userData.licenseNumber
-      ) {
-        // License validation placeholder - external service integration can be added later
-        if (!userData.licenseNumber || userData.licenseNumber.length < 5) {
-          return c.json(
-            {
-              success: false,
-              error: "INVALID_LICENSE",
-              message: "Número de licença profissional inválido",
-            },
-            HTTP_STATUS.BAD_REQUEST,
-          );
-        }
-      }
-
-      // Create user in Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: userData.email,
-        password: userData.password,
-        email_confirm: false, // Require email verification
-        user_metadata: {
-          full_name: userData.fullName,
-          role: userData.role,
-          clinic_id: userData.clinicId,
-          license_number: userData.licenseNumber,
-        },
-      });
-
-      if (authError) {
-        return c.json(
-          {
-            success: false,
-            error: "AUTH_ERROR",
-            message: authError.message,
-          },
-          HTTP_STATUS.BAD_REQUEST,
-        );
-      }
-
-      // Create user profile in our users table
-      const { error: profileError } = await supabase
-        .from("users")
-        .insert({
-          id: authData.user.id,
-          email: userData.email,
-          name: userData.fullName,
-          role: userData.role,
-          clinic_id: userData.clinicId,
-          license_number: userData.licenseNumber,
-          is_active: true,
-          is_verified: false,
-          is_mfa_enabled: false,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        });
-
-      if (profileError) {
-        // Cleanup: delete the auth user if profile creation failed
-        await supabase.auth.admin.deleteUser(authData.user.id);
-
-        return c.json(
-          {
-            success: false,
-            error: "PROFILE_ERROR",
-            message: "Erro ao criar perfil do usuário",
-          },
-          HTTP_STATUS.INTERNAL_SERVER_ERROR,
-        );
-      }
-
-      // Send verification email
-      const { error: emailError } = await supabase.auth.admin.generateLink({
-        type: "signup",
-        email: userData.email,
-      });
-
-      if (emailError) {
-        console.error("Error sending verification email:", emailError);
-        // Don't fail the registration if email sending fails
-      }
-
-      const user: AuthUser = {
-        id: authData.user.id,
-        email: userData.email,
-        fullName: userData.fullName,
-        role: userData.role,
-        isActive: true,
-        isVerified: false,
-        isMFAEnabled: false,
-        createdAt: authData.user.created_at,
-        permissions: [],
-      };
-
-      const response: ApiResponse<{
-        user: AuthUser;
-        requiresVerification: boolean;
-      }> = {
-        success: true,
-        data: {
-          user,
-          requiresVerification: true,
-        },
-        message: "Cadastro realizado com sucesso. Verifique seu email.",
-      };
-
-      return c.json(response, HTTP_STATUS.CREATED);
-    } catch (error) {
-      console.error("Registration error:", error);
+    if (authError || !authData.user) {
+      console.error("Authentication error:", authError);
       return c.json(
-        {
-          success: false,
-          error: "INTERNAL_ERROR",
-          message: "Erro ao criar usuário",
-        },
-        HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      );
-    }
-  })
-  // 🔄 Refresh token endpoint
-  .post("/refresh", zValidator("json", RefreshTokenRequestSchema), async (c) => {
-    const { refreshToken } = c.req.valid("json");
-
-    try {
-      // Refresh the session with Supabase
-      const { data: sessionData, error: refreshError } = await supabase.auth.refreshSession({
-        refresh_token: refreshToken,
-      });
-
-      if (refreshError || !sessionData.session) {
-        return c.json(
-          {
-            success: false,
-            error: "TOKEN_INVALID",
-            message: "Token de renovação inválido ou expirado",
-          },
-          HTTP_STATUS.UNAUTHORIZED,
-        );
-      }
-
-      const tokens: AuthToken = {
-        accessToken: sessionData.session.access_token,
-        refreshToken: sessionData.session.refresh_token,
-        tokenType: "Bearer",
-        expiresIn: sessionData.session.expires_in || 3600,
-      };
-
-      const response: ApiResponse<{ tokens: AuthToken; }> = {
-        success: true,
-        data: { tokens },
-        message: "Token renovado com sucesso",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
-    } catch (error) {
-      console.error("Refresh token error:", error);
-      return c.json(
-        {
-          success: false,
-          error: "TOKEN_INVALID",
-          message: "Token de renovação inválido",
-        },
+        { error: "Invalid credentials" },
         HTTP_STATUS.UNAUTHORIZED,
       );
     }
-  })
-  // 👤 Get profile endpoint (requires auth)
-  .get("/profile", async (c) => {
-    try {
-      // Get user from auth middleware
-      const userId = c.get("userId"); // From auth middleware
 
-      if (!userId) {
-        return c.json(
-          {
-            success: false,
-            error: "UNAUTHORIZED",
-            message: "Token de acesso necessário",
-          },
-          HTTP_STATUS.UNAUTHORIZED,
-        );
-      }
+    const user = authData.user;
 
-      // Fetch user from database
-      const { data: userData, error: userError } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", userId)
-        .single();
+    // Get user profile
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
 
-      if (userError || !userData) {
-        return c.json(
-          {
-            success: false,
-            error: "USER_NOT_FOUND",
-            message: "Usuário não encontrado",
-          },
-          HTTP_STATUS.NOT_FOUND,
-        );
-      }
-
-      const user: AuthUser = {
-        id: userData.id,
-        email: userData.email,
-        fullName: userData.full_name,
-        role: userData.role,
-        isActive: userData.is_active,
-        isVerified: userData.is_verified,
-        isMFAEnabled: userData.is_mfa_enabled || false,
-        createdAt: userData.created_at,
-        permissions: getUserPermissions(userData.role),
-      };
-
-      const response: ApiResponse<AuthUser> = {
-        success: true,
-        data: user,
-        message: "Perfil recuperado com sucesso",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
-    } catch {
+    if (profileError || !profile) {
+      console.error("Profile fetch error:", profileError);
       return c.json(
-        {
-          success: false,
-          error: "INTERNAL_ERROR",
-          message: "Erro ao buscar perfil",
-        },
+        { error: "User profile not found" },
+        HTTP_STATUS.NOT_FOUND,
+      );
+    }
+
+    // Create session record
+    const sessionId = generateSessionId();
+    const clientInfo = getClientInfo(c);
+
+    const { error: sessionError } = await supabase
+      .from("active_user_sessions")
+      .insert({
+        session_id: sessionId,
+        user_id: user.id,
+        user_email: user.email!,
+        user_role: profile.role,
+        ...clientInfo,
+      });
+
+    if (sessionError) {
+      console.error("Session creation error:", sessionError);
+    }
+
+    // Generate custom JWT
+    const tokenPayload = {
+      sub: user.id,
+      email: user.email,
+      role: profile.role,
+      session_id: sessionId,
+      full_name: profile.full_name,
+      professional_title: profile.professional_title,
+      medical_license: profile.medical_license,
+      department: profile.department,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + (remember_me ? 30 * 24 * 60 * 60 : 24 * 60 * 60), // 30 days or 24 hours
+    };
+
+    const accessToken = await sign(tokenPayload, JWT_SECRET);
+
+    // Set HTTP-only cookie
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict' as const,
+      maxAge: remember_me ? 30 * 24 * 60 * 60 : 24 * 60 * 60, // 30 days or 24 hours
+      path: '/',
+    };
+
+    setCookie(c, 'auth_token', accessToken, cookieOptions);
+
+    // Log security event
+    await supabase
+      .from("security_events")
+      .insert({
+        event_type: "user_login",
+        user_id: user.id,
+        user_email: user.email,
+        ip_address: clientInfo.ip_address,
+        user_agent: clientInfo.user_agent,
+        metadata: {
+          session_id: sessionId,
+          remember_me,
+          login_method: "email_password"
+        }
+      })
+      .catch(err => console.error("Security log error:", err));
+
+    return c.json({
+      message: "Login successful",
+      user: {
+        id: user.id,
+        email: user.email,
+        full_name: profile.full_name,
+        first_name: profile.first_name,
+        last_name: profile.last_name,
+        role: profile.role,
+        professional_title: profile.professional_title,
+        medical_license: profile.medical_license,
+        department: profile.department,
+        avatar_url: profile.avatar_url,
+        phone: profile.phone,
+      },
+      session_id: sessionId,
+      access_token: accessToken,
+      expires_in: remember_me ? 30 * 24 * 60 * 60 : 24 * 60 * 60,
+    });
+
+  } catch (error) {
+    console.error("Login error:", error);
+    return c.json(
+      { error: "Internal server error" },
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    );
+  }
+});
+
+// POST /auth/logout - Logout user
+authRoutes.post("/logout", async (c) => {
+  try {
+    const token = c.req.header("Authorization")?.replace("Bearer ", "") || getCookie(c, 'auth_token');
+
+    if (token) {
+      try {
+        const payload = await verify(token, JWT_SECRET);
+        const sessionId = payload.session_id as string;
+        const userId = payload.sub as string;
+
+        // Remove session from database
+        await supabase
+          .from("active_user_sessions")
+          .delete()
+          .eq("session_id", sessionId);
+
+        // Log security event
+        await supabase
+          .from("security_events")
+          .insert({
+            event_type: "user_logout",
+            user_id: userId,
+            user_email: payload.email as string,
+            ip_address: getClientInfo(c).ip_address,
+            user_agent: getClientInfo(c).user_agent,
+            metadata: {
+              session_id: sessionId,
+              logout_method: "explicit"
+            }
+          })
+          .catch(err => console.error("Security log error:", err));
+
+      } catch (jwtError) {
+        console.error("JWT verification error during logout:", jwtError);
+      }
+    }
+
+    // Clear cookie
+    deleteCookie(c, 'auth_token');
+
+    return c.json({
+      message: "Logout successful"
+    });
+
+  } catch (error) {
+    console.error("Logout error:", error);
+    return c.json(
+      { error: "Internal server error" },
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    );
+  }
+});
+
+// GET /auth/me - Get current user info
+authRoutes.get("/me", async (c) => {
+  try {
+    const token = c.req.header("Authorization")?.replace("Bearer ", "") || getCookie(c, 'auth_token');
+
+    if (!token) {
+      return c.json(
+        { error: "Authentication required" },
+        HTTP_STATUS.UNAUTHORIZED,
+      );
+    }
+
+    const payload = await verify(token, JWT_SECRET).catch(() => null);
+
+    if (!payload) {
+      return c.json(
+        { error: "Invalid token" },
+        HTTP_STATUS.UNAUTHORIZED,
+      );
+    }
+
+    const userId = payload.sub as string;
+    const sessionId = payload.session_id as string;
+
+    // Verify session is still active
+    const { data: session, error: sessionError } = await supabase
+      .from("active_user_sessions")
+      .select("last_activity")
+      .eq("session_id", sessionId)
+      .eq("user_id", userId)
+      .single();
+
+    if (sessionError || !session) {
+      return c.json(
+        { error: "Session expired or invalid" },
+        HTTP_STATUS.UNAUTHORIZED,
+      );
+    }
+
+    // Update last activity
+    await supabase
+      .from("active_user_sessions")
+      .update({ last_activity: new Date().toISOString() })
+      .eq("session_id", sessionId);
+
+    // Get fresh user profile
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (profileError || !profile) {
+      return c.json(
+        { error: "User profile not found" },
+        HTTP_STATUS.NOT_FOUND,
+      );
+    }
+
+    return c.json({
+      user: {
+        id: profile.id,
+        email: profile.email,
+        full_name: profile.full_name,
+        first_name: profile.first_name,
+        last_name: profile.last_name,
+        role: profile.role,
+        professional_title: profile.professional_title,
+        medical_license: profile.medical_license,
+        department: profile.department,
+        avatar_url: profile.avatar_url,
+        phone: profile.phone,
+        google_verified_email: profile.google_verified_email,
+        profile_sync_status: profile.profile_sync_status,
+      },
+      session: {
+        session_id: sessionId,
+        last_activity: session.last_activity,
+        expires_at: new Date(payload.exp * 1000).toISOString(),
+      }
+    });
+
+  } catch (error) {
+    console.error("User info error:", error);
+    return c.json(
+      { error: "Internal server error" },
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    );
+  }
+});
+
+// POST /auth/register - Register new user
+authRoutes.post("/register", async (c) => {
+  try {
+    const body = await c.req.json().catch(() => null);
+
+    if (!body || !body.email || !body.password) {
+      return c.json(
+        { error: "Email and password are required" },
+        HTTP_STATUS.BAD_REQUEST,
+      );
+    }
+
+    const { 
+      email, 
+      password, 
+      full_name, 
+      first_name, 
+      last_name,
+      professional_title,
+      medical_license,
+      department,
+      phone,
+      role = "professional"
+    } = body;
+
+    // Register with Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name,
+          first_name,
+          last_name,
+          professional_title,
+          medical_license,
+          department,
+          phone,
+          role,
+        }
+      }
+    });
+
+    if (authError) {
+      console.error("Registration error:", authError);
+      
+      if (authError.message.includes("already registered")) {
+        return c.json(
+          { error: "Email already registered" },
+          HTTP_STATUS.CONFLICT,
+        );
+      }
+      
+      return c.json(
+        { error: "Registration failed" },
+        HTTP_STATUS.BAD_REQUEST,
+      );
+    }
+
+    if (!authData.user) {
+      return c.json(
+        { error: "Registration failed" },
+        HTTP_STATUS.BAD_REQUEST,
+      );
+    }
+
+    // Create profile record (this might be handled by database trigger)
+    const profileData = {
+      id: authData.user.id,
+      email,
+      full_name: full_name || `${first_name || ""} ${last_name || ""}`.trim(),
+      first_name,
+      last_name,
+      professional_title,
+      medical_license,
+      department,
+      phone,
+      role,
+      profile_sync_status: "completed"
+    };
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .upsert(profileData);
+
+    if (profileError) {
+      console.error("Profile creation error:", profileError);
+      // Continue anyway, might be handled by trigger
+    }
+
+    // Log security event
+    await supabase
+      .from("security_events")
+      .insert({
+        event_type: "user_registration",
+        user_id: authData.user.id,
+        user_email: email,
+        ip_address: getClientInfo(c).ip_address,
+        user_agent: getClientInfo(c).user_agent,
+        metadata: {
+          registration_method: "email_password",
+          role: role,
+          professional_title: professional_title,
+          department: department
+        }
+      })
+      .catch(err => console.error("Security log error:", err));
+
+    return c.json({
+      message: "Registration successful. Please check your email for verification.",
+      user: {
+        id: authData.user.id,
+        email: authData.user.email,
+        email_confirmed_at: authData.user.email_confirmed_at,
+      },
+      requires_email_confirmation: !authData.user.email_confirmed_at
+    }, HTTP_STATUS.CREATED);
+
+  } catch (error) {
+    console.error("Registration error:", error);
+    return c.json(
+      { error: "Internal server error" },
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    );
+  }
+});
+
+// POST /auth/forgot-password - Request password reset
+authRoutes.post("/forgot-password", async (c) => {
+  try {
+    const body = await c.req.json().catch(() => null);
+
+    if (!body || !body.email) {
+      return c.json(
+        { error: "Email is required" },
+        HTTP_STATUS.BAD_REQUEST,
+      );
+    }
+
+    const { email } = body;
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${process.env.FRONTEND_URL}/reset-password`,
+    });
+
+    if (error) {
+      console.error("Password reset error:", error);
+      // Don't reveal if email exists or not for security
+    }
+
+    // Always return success for security reasons
+    return c.json({
+      message: "If the email exists, a password reset link has been sent."
+    });
+
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    return c.json(
+      { error: "Internal server error" },
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    );
+  }
+});
+
+// POST /auth/reset-password - Reset password with token
+authRoutes.post("/reset-password", async (c) => {
+  try {
+    const body = await c.req.json().catch(() => null);
+
+    if (!body || !body.access_token || !body.refresh_token || !body.new_password) {
+      return c.json(
+        { error: "Access token, refresh token, and new password are required" },
+        HTTP_STATUS.BAD_REQUEST,
+      );
+    }
+
+    const { access_token, refresh_token, new_password } = body;
+
+    // Set the session with the tokens from the email link
+    const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+      access_token,
+      refresh_token,
+    });
+
+    if (sessionError || !sessionData.user) {
+      return c.json(
+        { error: "Invalid or expired reset token" },
+        HTTP_STATUS.BAD_REQUEST,
+      );
+    }
+
+    // Update password
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: new_password
+    });
+
+    if (updateError) {
+      console.error("Password update error:", updateError);
+      return c.json(
+        { error: "Failed to update password" },
+        HTTP_STATUS.BAD_REQUEST,
+      );
+    }
+
+    // Log security event
+    await supabase
+      .from("security_events")
+      .insert({
+        event_type: "password_reset",
+        user_id: sessionData.user.id,
+        user_email: sessionData.user.email!,
+        ip_address: getClientInfo(c).ip_address,
+        user_agent: getClientInfo(c).user_agent,
+        metadata: {
+          reset_method: "email_token"
+        }
+      })
+      .catch(err => console.error("Security log error:", err));
+
+    return c.json({
+      message: "Password reset successful. You can now login with your new password."
+    });
+
+  } catch (error) {
+    console.error("Reset password error:", error);
+    return c.json(
+      { error: "Internal server error" },
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    );
+  }
+});
+
+// GET /auth/sessions - Get active sessions for current user
+authRoutes.get("/sessions", async (c) => {
+  try {
+    const token = c.req.header("Authorization")?.replace("Bearer ", "") || getCookie(c, 'auth_token');
+
+    if (!token) {
+      return c.json(
+        { error: "Authentication required" },
+        HTTP_STATUS.UNAUTHORIZED,
+      );
+    }
+
+    const payload = await verify(token, JWT_SECRET).catch(() => null);
+
+    if (!payload) {
+      return c.json(
+        { error: "Invalid token" },
+        HTTP_STATUS.UNAUTHORIZED,
+      );
+    }
+
+    const userId = payload.sub as string;
+
+    const { data: sessions, error } = await supabase
+      .from("active_user_sessions")
+      .select("id, session_id, ip_address, user_agent, started_at, last_activity")
+      .eq("user_id", userId)
+      .order("last_activity", { ascending: false });
+
+    if (error) {
+      console.error("Sessions fetch error:", error);
+      return c.json(
+        { error: "Failed to fetch sessions" },
         HTTP_STATUS.INTERNAL_SERVER_ERROR,
       );
     }
-  })
-  // 🚪 Logout endpoint
-  .post("/logout", async (c) => {
-    try {
-      // Get the authorization header
-      const authHeader = c.req.header("Authorization");
 
-      if (authHeader && authHeader.startsWith("Bearer ")) {
-        const token = authHeader.slice(7);
+    return c.json({
+      current_session_id: payload.session_id,
+      sessions: sessions || []
+    });
 
-        // Sign out the user from Supabase (invalidates the session)
-        await supabase.auth.signOut();
+  } catch (error) {
+    console.error("Sessions fetch error:", error);
+    return c.json(
+      { error: "Internal server error" },
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    );
+  }
+});
 
-        // Note: In a production environment, you might want to maintain
-        // a blacklist of invalidated tokens or use a token store
-      }
+// DELETE /auth/sessions/:session_id - Revoke specific session
+authRoutes.delete("/sessions/:session_id", async (c) => {
+  try {
+    const sessionIdToRevoke = c.req.param("session_id");
+    const token = c.req.header("Authorization")?.replace("Bearer ", "") || getCookie(c, 'auth_token');
 
-      const response: ApiResponse<{ loggedOut: boolean; }> = {
-        success: true,
-        data: { loggedOut: true },
-        message: "Logout realizado com sucesso",
-      };
-
-      return c.json(response, HTTP_STATUS.OK);
-    } catch {
+    if (!token) {
       return c.json(
-        {
-          success: false,
-          error: "INTERNAL_ERROR",
-          message: "Erro ao fazer logout",
-        },
+        { error: "Authentication required" },
+        HTTP_STATUS.UNAUTHORIZED,
+      );
+    }
+
+    const payload = await verify(token, JWT_SECRET).catch(() => null);
+
+    if (!payload) {
+      return c.json(
+        { error: "Invalid token" },
+        HTTP_STATUS.UNAUTHORIZED,
+      );
+    }
+
+    const userId = payload.sub as string;
+
+    // Delete the specified session
+    const { error } = await supabase
+      .from("active_user_sessions")
+      .delete()
+      .eq("session_id", sessionIdToRevoke)
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error("Session revoke error:", error);
+      return c.json(
+        { error: "Failed to revoke session" },
         HTTP_STATUS.INTERNAL_SERVER_ERROR,
       );
     }
-  })
-  // 🔑 Forgot password endpoint
-  .post(
-    "/forgot-password",
-    zValidator("json", ForgotPasswordRequestSchema),
-    async (c) => {
-      const { email } = c.req.valid("json");
 
-      try {
-        // Send password reset email using Supabase
-        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${process.env.FRONTEND_URL}/reset-password`,
-        });
-
-        if (resetError) {
-          console.error("Password reset error:", resetError);
-          // Don't reveal if email exists or not for security
+    // Log security event
+    await supabase
+      .from("security_events")
+      .insert({
+        event_type: "session_revoked",
+        user_id: userId,
+        user_email: payload.email as string,
+        ip_address: getClientInfo(c).ip_address,
+        user_agent: getClientInfo(c).user_agent,
+        metadata: {
+          revoked_session_id: sessionIdToRevoke,
+          revoked_by_session_id: payload.session_id
         }
+      })
+      .catch(err => console.error("Security log error:", err));
 
-        // Always return success to prevent email enumeration attacks
-        const response: ApiResponse<{ emailSent: boolean; }> = {
-          success: true,
-          data: { emailSent: true },
-          message: "Se o email existir, um link de recuperação será enviado",
-        };
+    return c.json({
+      message: "Session revoked successfully",
+      revoked_session_id: sessionIdToRevoke
+    });
 
-        return c.json(response, HTTP_STATUS.OK);
-      } catch (error) {
-        console.error("Forgot password error:", error);
-        return c.json(
-          {
-            success: false,
-            error: "INTERNAL_ERROR",
-            message: "Erro ao processar solicitação de recuperação",
-          },
-          HTTP_STATUS.INTERNAL_SERVER_ERROR,
-        );
-      }
-    },
-  )
-  // 🔐 Reset password endpoint
-  .post(
-    "/reset-password",
-    zValidator("json", ResetPasswordRequestSchema),
-    async (c) => {
-      const { token, password } = c.req.valid("json");
+  } catch (error) {
+    console.error("Session revoke error:", error);
+    return c.json(
+      { error: "Internal server error" },
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    );
+  }
+});
 
-      try {
-        // Verify the reset token and update password using Supabase
-        const { data: sessionData, error: verifyError } = await supabase.auth.verifyOtp({
-          token_hash: token,
-          type: "recovery",
-        });
+// POST /auth/verify-token - Verify if token is valid
+authRoutes.post("/verify-token", async (c) => {
+  try {
+    const body = await c.req.json().catch(() => null);
+    const token = body?.token || c.req.header("Authorization")?.replace("Bearer ", "") || getCookie(c, 'auth_token');
 
-        if (verifyError || !sessionData.session) {
-          return c.json(
-            {
-              success: false,
-              error: "TOKEN_INVALID",
-              message: "Token de recuperação inválido ou expirado",
-            },
-            HTTP_STATUS.BAD_REQUEST,
-          );
-        }
+    if (!token) {
+      return c.json(
+        { error: "Token is required" },
+        HTTP_STATUS.BAD_REQUEST,
+      );
+    }
 
-        // Update the user's password
-        const { error: updateError } = await supabase.auth.updateUser({
-          password: password,
-        });
+    const payload = await verify(token, JWT_SECRET).catch(() => null);
 
-        if (updateError) {
-          console.error("Password update error:", updateError);
-          return c.json(
-            {
-              success: false,
-              error: "PASSWORD_UPDATE_FAILED",
-              message: "Erro ao atualizar senha",
-            },
-            HTTP_STATUS.INTERNAL_SERVER_ERROR,
-          );
-        }
+    if (!payload) {
+      return c.json({
+        valid: false,
+        error: "Invalid or expired token"
+      });
+    }
 
-        const response: ApiResponse<{ passwordChanged: boolean; }> = {
-          success: true,
-          data: { passwordChanged: true },
-          message: "Senha alterada com sucesso",
-        };
+    const sessionId = payload.session_id as string;
+    const userId = payload.sub as string;
 
-        return c.json(response, HTTP_STATUS.OK);
-      } catch (error) {
-        console.error("Reset password error:", error);
-        return c.json(
-          {
-            success: false,
-            error: "INTERNAL_ERROR",
-            message: "Erro ao redefinir senha",
-          },
-          HTTP_STATUS.INTERNAL_SERVER_ERROR,
-        );
-      }
-    },
-  )
-  // 🔒 Change password endpoint (requires auth)
-  .post(
-    "/change-password",
-    zValidator("json", ChangePasswordRequestSchema),
-    async (c) => {
-      const { currentPassword, newPassword } = c.req.valid("json");
+    // Verify session is still active
+    const { data: session, error: sessionError } = await supabase
+      .from("active_user_sessions")
+      .select("last_activity")
+      .eq("session_id", sessionId)
+      .eq("user_id", userId)
+      .single();
 
-      try {
-        const userId = c.get("userId");
-        const authHeader = c.req.header("authorization");
+    if (sessionError || !session) {
+      return c.json({
+        valid: false,
+        error: "Session expired or not found"
+      });
+    }
 
-        if (!userId || !authHeader) {
-          return c.json(
-            {
-              success: false,
-              error: "UNAUTHORIZED",
-              message: "Autenticação necessária",
-            },
-            HTTP_STATUS.UNAUTHORIZED,
-          );
-        }
+    return c.json({
+      valid: true,
+      user: {
+        id: payload.sub,
+        email: payload.email,
+        role: payload.role,
+        full_name: payload.full_name,
+        professional_title: payload.professional_title,
+        medical_license: payload.medical_license,
+        department: payload.department,
+      },
+      expires_at: new Date(payload.exp * 1000).toISOString(),
+      session_id: sessionId
+    });
 
-        // Extract token from authorization header
-        const token = authHeader.replace("Bearer ", "");
-
-        // Verify current password by attempting to sign in
-        const { data: userData } = await supabase.auth.getUser(token);
-        if (!userData.user?.email) {
-          return c.json(
-            {
-              success: false,
-              error: "UNAUTHORIZED",
-              message: "Token inválido",
-            },
-            HTTP_STATUS.UNAUTHORIZED,
-          );
-        }
-
-        // Verify current password
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: userData.user.email,
-          password: currentPassword,
-        });
-
-        if (signInError) {
-          return c.json(
-            {
-              success: false,
-              error: "INVALID_CREDENTIALS",
-              message: "Senha atual incorreta",
-            },
-            HTTP_STATUS.BAD_REQUEST,
-          );
-        }
-
-        // Update to new password
-        const { error: updateError } = await supabase.auth.updateUser({
-          password: newPassword,
-        });
-
-        if (updateError) {
-          return c.json(
-            {
-              success: false,
-              error: "PASSWORD_UPDATE_FAILED",
-              message: "Falha ao atualizar senha",
-            },
-            HTTP_STATUS.INTERNAL_SERVER_ERROR,
-          );
-        }
-
-        // Sign out to invalidate all existing tokens
-        await supabase.auth.signOut();
-
-        const response: ApiResponse<{ passwordReset: boolean; }> = {
-          success: true,
-          data: { passwordReset: true },
-          message: "Senha alterada com sucesso. Faça login novamente.",
-        };
-
-        return c.json(response, HTTP_STATUS.OK);
-      } catch {
-        return c.json(
-          {
-            success: false,
-            error: "INTERNAL_ERROR",
-            message: "Erro ao alterar senha",
-          },
-          HTTP_STATUS.INTERNAL_SERVER_ERROR,
-        );
-      }
-    },
-  );
-
-// Export the router
-export default authRoutes;
+  } catch (error) {
+    console.error("Token verification error:", error);
+    return c.json(
+      { error: "Internal server error" },
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    );
+  }
+});

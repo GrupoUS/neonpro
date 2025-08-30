@@ -40,9 +40,10 @@ jobs:
           cache: 'pnpm'
 
       - name: 📦 Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v2
         with:
-          version: ${{ env.PNPM_VERSION }}
+          version: 8.15.6
+          run_install: false
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile

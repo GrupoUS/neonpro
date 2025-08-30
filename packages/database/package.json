@@ -6,12 +6,16 @@
   "types": "dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./client": {
-      "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.js"
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
+    },
+    "./supabase-generated": {
+      "types": "./dist/supabase-generated.d.ts",
+      "default": "./dist/supabase-generated.js"
     },
     "./prisma": {
       "types": "./node_modules/@prisma/client/index.d.ts",
@@ -83,14 +87,14 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
+    "@types/node": "^24.3.0",
     "@types/react": "^19.0.0",
     "next": "^15.1.0",
     "prisma": "^5.22.0",
     "react": "^19.0.0",
     "supabase": "^1.127.4",
     "tsx": "^4.6.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.9.2"
   },
   "peerDependencies": {
     "next": ">=14.0.0",

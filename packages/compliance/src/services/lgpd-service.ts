@@ -554,7 +554,7 @@ export class LgpdService {
     if (anpdNotificationRequired) {
       await LgpdService.scheduleAnpdNotification(
         incident,
-        notificationDeadline!,
+        notificationDeadline as Date,
       );
     }
 
@@ -675,7 +675,15 @@ export class LgpdService {
     );
   }
 
-  private static generateBreachRiskAssessment(incident: any): string {
+  private static generateBreachRiskAssessment(incident: {
+    description: string;
+    affectedUsers: string[];
+    dataCategories: DataCategory[];
+    severity: "low" | "medium" | "high" | "critical";
+    discoveredAt: Date;
+    containedAt?: Date;
+    cause: string;
+  }): string {
     return `Risk assessment for breach affecting ${incident.affectedUsers.length} users`;
   }
 

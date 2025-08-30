@@ -343,7 +343,6 @@
 
     // Test and report outputs
     "**/playwright-report/**",
-    "**/test-results/**",
     "**/performance-report.json",
     "**/load-test-report.json",
 

@@ -89,7 +89,29 @@
       "mcp__vercel__get_project",
       "mcp__vercel__list_teams",
       "mcp__vercel__list_projects",
-      "mcp__archon__update_task"
+      "mcp__archon__update_task",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__get_anon_key",
+      "mcp__supabase__get_project",
+      "mcp__supabase__search_docs",
+      "mcp__supabase__execute_sql",
+      "Read(//**)",
+      "mcp__Sequential_Thinking__sequentialthinking",
+      "Bash(source:*)",
+      "Bash(log_info \"TEST\" \"Testing commons.sh logging function\")",
+      "Bash(touch:*)",
+      "Bash(cleanup_temp_files)",
+      "Bash(rm:*)",
+      "Bash(./.claude/hooks/pre-tool.sh:*)",
+      "Bash(/mnt/d/neonpro/.claude/hooks/pre-tool.sh:*)",
+      "Bash(/mnt/d/neonpro/.claude/hooks/post-tool.sh:*)",
+      "Bash(/mnt/d/neonpro/.claude/hooks/session-stop.sh test_session:*)",
+      "mcp__supabase__get_project_url",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__list_migrations",
+      "mcp__Tavily__tavily-search",
+      "mcp__desktop-commander__list_processes",
+      "mcp__archon__update_project"
     ],
     "deny": [
       "Edit",
@@ -109,7 +131,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "D:\\neonpro\\.claude\\hooks\\pre-tool.bat",
+            "command": "/mnt/d/neonpro/.claude/hooks/pre-tool.sh",
             "timeout": 45
           }
         ]
@@ -121,7 +143,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "D:\\neonpro\\.claude\\hooks\\post-tool.bat",
+            "command": "/mnt/d/neonpro/.claude/hooks/post-tool.sh",
             "timeout": 60
           }
         ]
@@ -132,7 +154,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "D:\\neonpro\\.claude\\hooks\\session-stop.bat",
+            "command": "/mnt/d/neonpro/.claude/hooks/session-stop.sh",
             "timeout": 90
           }
         ]

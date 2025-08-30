@@ -140,3 +140,92 @@
     }
   ]
 }
+=======
+	"version": "3.0.0",
+	"_metadata": {
+		"project": "NeonPro AI Healthcare Platform",
+		"description": "Essential tasks only - no over-engineering",
+		"philosophy": "KISS principle - Keep It Simple, Stupid",
+		"created": "2025-01-29",
+		"optimized_from": "consolidated-tasks.json (20 → 8 tasks)"
+	},
+	"tasks": [
+		{
+			"label": "🚀 Dev Server",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["dev"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "Start development server",
+			"isBackground": true,
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "dedicated"
+			}
+		},
+		{
+			"label": "🔧 Build",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["build"],
+			"group": "build",
+			"detail": "Build project for production"
+		},
+		{
+			"label": "✅ Quality Check",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["ci:check"],
+			"group": "build",
+			"detail": "Complete code validation (format + lint + types)"
+		},
+		{
+			"label": "🔧 Fix Code",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["ci:fix"],
+			"group": "build",
+			"detail": "Auto-fix formatting and linting issues"
+		},
+		{
+			"label": "🧪 Test",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["test:all"],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"detail": "Run all tests (unit + integration + e2e)"
+		},
+		{
+			"label": "🧪 Test Watch",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["dlx", "vitest", "--watch"],
+			"group": "test",
+			"detail": "Watch mode for development",
+			"isBackground": true
+		},
+		{
+			"label": "🔒 Security Audit",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["security:audit"],
+			"group": "build",
+			"detail": "Healthcare security compliance check"
+		},
+		{
+			"label": "📦 Install",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["install"],
+			"group": "build",
+			"detail": "Install dependencies"
+		}
+	]
+}

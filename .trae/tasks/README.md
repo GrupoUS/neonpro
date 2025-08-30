@@ -1,136 +1,90 @@
-# 🚀 NeonPro Trae Tasks Configuration
+# 📋 NeonPro Tasks - Otimização Anti-Over-Engineering
 
-## 📋 Overview
+## 🎯 Filosofia KISS Aplicada
 
-This directory contains task configurations for the NeonPro AI Healthcare Platform, migrated from global Trae IDE settings to project-specific configurations.
+**Problema Identificado**: 20 tasks com múltiplas redundâncias e over-engineering
+**Solução**: 8 tasks essenciais seguindo o princípio KISS (Keep It Simple, Stupid)
 
-## 📁 File Structure
+## 📊 Análise de Redundâncias Eliminadas
 
-```
-.trae/tasks/
-├── tasks.json           # Original tasks migrated from global config
-├── neonpro-tasks.json   # Enhanced healthcare-specific tasks
-└── README.md           # This documentation
-```
+### ❌ Redundâncias Identificadas (20 → 8 tasks)
 
-## 🔄 Migration Process
+1. **Testes Duplicados**:
+   - ❌ `Run Tests` + `Watch Tests` + `AI Model Tests` + `Healthcare Tests` + `Emergency Response Test` + `E2E Tests` + `E2E Healthcare Flows`
+   - ✅ `Test` (test:all) + `Test Watch` (modo desenvolvimento)
 
-### What Was Done
+2. **Qualidade de Código Fragmentada**:
+   - ❌ `Format Code` + `Lint Code` + `Fix Lint Issues` + `Type Check` + `Full Code Check` + `Code Quality Gate`
+   - ✅ `Quality Check` (ci:check) + `Fix Code` (ci:fix)
 
-1. **Created Tasks Directory**: Organized task configurations in `.trae/tasks/`
-2. **Migrated Global Config**: Copied `tasks.json` from `C:\Users\Mauri\AppData\Roaming\Trae\User\`
-3. **Enhanced Configuration**: Created `neonpro-tasks.json` with healthcare-specific tasks
-4. **Integrated with Archon**: Connected task system with Archon MCP server
-5. **Project Configuration**: Created `trae.config.json` for project-wide settings
+3. **Tasks Muito Específicas**:
+   - ❌ `Performance Benchmark` + `Database Migration` + `Archon Task Sync`
+   - ✅ Integradas em `Security Audit` quando necessário
 
-### Benefits
+## ✅ Tasks Essenciais (8 tasks)
 
-- ✅ **Project-Specific**: Tasks are now specific to NeonPro project
-- ✅ **Healthcare Compliance**: Added LGPD, ANVISA, and CFM compliance tasks
-- ✅ **AI-First Development**: Integrated AI model testing and validation
-- ✅ **Performance Monitoring**: Emergency response and healthcare operation benchmarks
-- ✅ **Archon Integration**: Seamless task management with MCP server
+### 🚀 Desenvolvimento
+1. **Dev Server** - `pnpm dev`
+2. **Build** - `pnpm build`
+3. **Install** - `pnpm install`
 
-## 🏥 Healthcare-Specific Tasks
+### 🔧 Qualidade
+4. **Quality Check** - `pnpm ci:check` (format + lint + types)
+5. **Fix Code** - `pnpm ci:fix` (auto-fix tudo)
 
-### Compliance Tasks
-- `🏥 Healthcare Compliance Check` - LGPD, ANVISA, CFM validation
-- `🔒 Security Audit` - Healthcare data security assessment
-- `📊 Code Quality Gate` - ≥9.8/10 quality standard
+### 🧪 Testes
+6. **Test** - `pnpm test:all` (unit + integration + e2e)
+7. **Test Watch** - `vitest --watch` (desenvolvimento)
 
-### Performance Tasks
-- `🚨 Emergency Response Test` - <200ms critical patient data access
-- `⚡ Performance Benchmark` - Healthcare ops <2s, AI <500ms
-- `🤖 AI Model Tests` - AI validation and performance
+### 🔒 Segurança
+8. **Security Audit** - `pnpm security:audit` (compliance healthcare)
 
-### Development Tasks
-- `🚀 NeonPro Dev Server` - AI streaming development server
-- `🧬 Database Migration` - Supabase migrations with audit trail
-- `🎭 E2E Healthcare Flows` - Critical healthcare workflow testing
+## 🎯 Benefícios da Otimização
 
-## 🔧 Configuration Files
+### ✅ Simplicidade
+- **60% menos tasks** (20 → 8)
+- **Zero redundâncias**
+- **Comandos únicos e claros**
 
-### tasks.json (Original)
-Migrated from global Trae IDE configuration, contains:
-- Code formatting and linting
-- Test execution
-- Build processes
+### ✅ Eficiência
+- **Comandos compostos** (`ci:check`, `test:all`)
+- **Menos cliques** para desenvolvedores
+- **Workflow mais fluido**
 
-### neonpro-tasks.json (Enhanced)
-Healthcare-specific enhancements:
-- Compliance validation
-- Performance benchmarking
-- AI model testing
-- Security auditing
-- Archon integration
+### ✅ Manutenibilidade
+- **Menos arquivos para manter**
+- **Comandos padronizados**
+- **Documentação clara**
 
-### trae.config.json (Project Config)
-Main project configuration:
-- Task file references
-- Archon MCP integration
-- Healthcare compliance settings
-- AI framework configuration
-- Quality gates and performance targets
+## 📁 Arquivos
 
-## 🤖 Archon Integration
+- `essential-tasks.json` - **8 tasks otimizadas** (recomendado)
+- `consolidated-tasks.json` - 20 tasks originais (manter para referência)
+- `tasks.json` - Tasks básicas (legado)
+- `neonpro-tasks.json` - Tasks específicas (legado)
 
-The task system is integrated with Archon MCP server for:
-- **Task Management**: Centralized task tracking and execution
-- **Knowledge Management**: Project documentation and standards
-- **Workflow Orchestration**: Automated task dependencies
-- **Progress Tracking**: Real-time task status updates
+## 🚀 Recomendação de Uso
 
-### Archon Commands
-- `📋 Archon Task Sync` - Synchronize tasks with MCP server
-- Automatic task status updates
-- Integration with project workflows
+**Use `essential-tasks.json`** - Contém apenas o essencial, sem over-engineering.
 
-## 🎯 Usage
+### Comandos Validados ✅
 
-### Running Tasks
-1. Use Trae IDE task runner (Ctrl+Shift+P → "Tasks: Run Task")
-2. Select from available task categories:
-   - **Build**: Development and quality tasks
-   - **Test**: Testing and validation tasks
-   - **Healthcare**: Compliance and security tasks
+Todos os comandos foram validados no `package.json`:
+- ✅ `dev` - Servidor de desenvolvimento
+- ✅ `build` - Build de produção
+- ✅ `ci:check` - Validação completa
+- ✅ `ci:fix` - Correção automática
+- ✅ `test:all` - Todos os testes
+- ✅ `security:audit` - Auditoria de segurança
+- ✅ `install` - Instalação de dependências
 
-### Task Categories
-- **Build Tasks**: Development, formatting, linting, quality gates
-- **Test Tasks**: Unit tests, E2E tests, AI model validation
-- **Healthcare Tasks**: Compliance checks, security audits, performance benchmarks
+## 💡 Princípios Aplicados
 
-## 📈 Performance Targets
-
-| Category | Target | Task |
-|----------|--------|------|
-| Emergency Response | <200ms | Critical patient data access |
-| Healthcare Operations | <2s | General healthcare workflows |
-| AI Response | <500ms | AI model interactions |
-| Code Quality | ≥9.8/10 | Quality gate validation |
-| Test Coverage | ≥95% | Healthcare feature coverage |
-
-## 🔒 Compliance Standards
-
-- **LGPD**: Brazilian data protection compliance
-- **ANVISA Class IIa**: Medical device software compliance
-- **CFM Ethics**: Medical ethics and professional conduct
-
-## 🚀 Next Steps
-
-1. **Customize Tasks**: Modify tasks based on specific project needs
-2. **Add Scripts**: Create corresponding package.json scripts
-3. **CI/CD Integration**: Connect tasks with GitHub Actions workflows
-4. **Team Onboarding**: Share configuration with development team
-
-## 📚 References
-
-- [Trae IDE Documentation](https://trae.ai/docs)
-- [NeonPro Architecture](../../docs/architecture/)
-- [Core Workflow](../../.ruler/core-workflow.md)
-- [Project Standards](../../docs/project.md)
+1. **KISS** - Keep It Simple, Stupid
+2. **DRY** - Don't Repeat Yourself
+3. **YAGNI** - You Aren't Gonna Need It
+4. **Single Responsibility** - Uma task, uma responsabilidade clara
 
 ---
 
-**Created**: 2025-01-28  
-**Last Updated**: 2025-01-28  
-**Maintainer**: NeonPro Development Team
+**Resultado**: Sistema de tasks limpo, eficiente e sem over-engineering! 🎉

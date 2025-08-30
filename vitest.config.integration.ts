@@ -69,8 +69,8 @@ export default defineConfig({
     // Reporter configuration
     reporter: ["default", "json", "html"],
     outputFile: {
-      json: "test-results/integration-results.json",
-      html: "test-results/integration-report.html",
+      json: "tools/testing/reports/integration/integration-results.json",
+      html: "tools/testing/reports/integration/integration-report.html",
     },
 
     // Pool configuration for parallel execution

@@ -315,10 +315,30 @@ export interface PerformanceReport {
     complianceScore: number;
   };
   sections: {
-    webVitals: any;
-    aiPerformance: any;
-    cacheEfficiency: any;
-    systemHealth: any;
+    webVitals: {
+      metrics: WebVitalsMetric[];
+      thresholds: PerformanceThresholds;
+      complianceStatus: string;
+    };
+    aiPerformance: {
+      metrics: AIMetric[];
+      modelMetrics: {
+        modelId: string;
+        accuracy: number;
+        responseTime: number;
+        driftScore?: number;
+      }[];
+    };
+    cacheEfficiency: {
+      metrics: CacheMetric[];
+      hitRatesByLayer: Record<string, number>;
+      performanceTrends: { timestamp: string; responseTime: number }[];
+    };
+    systemHealth: {
+      metrics: SystemMetric[];
+      resourceUtilization: Record<string, number>;
+      healthStatus: "healthy" | "warning" | "critical";
+    };
   };
   recommendations: string[];
   clinicId?: string;

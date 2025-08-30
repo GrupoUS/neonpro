@@ -643,7 +643,7 @@ await page.fill('[data-testid="username"]', "user");
     "tools/tests/**/*.ts",
     "tools/e2e/**/*.ts"
   ],
-  "excludes": ["test-results/**", "playwright-report/**", "coverage/**"]
+  "excludes": ["playwright-report/**", "coverage/**"]
 }
 ```
 

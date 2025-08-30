@@ -72,12 +72,12 @@ export function useRecurringAppointments(
   >([]);
   const [instances, setInstances] = useState<AppointmentInstance[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(null);
 
   const refreshData = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       // Placeholder implementation
       const mockRecurring: RecurringAppointment[] = [
@@ -144,7 +144,7 @@ export function useRecurringAppointments(
           ? error.message
           : "Failed to create recurring appointment";
         setError(errorMessage);
-        return;
+        return null;
       }
     },
     [],
@@ -220,7 +220,7 @@ export function useRecurringAppointments(
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Failed to create exception";
         setError(errorMessage);
-        return;
+        return null;
       }
     },
     [],

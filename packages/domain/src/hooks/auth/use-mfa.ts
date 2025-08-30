@@ -4,11 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 const useUser = () => ({ id: "mock-user-id" });
 
 import {
-  MfaMethod,
-  mfaSetupSchema,
-  mfaVerificationSchema,
-  setupMfa,
-  verifyMfa,
+    MfaMethod,
+    mfaSetupSchema,
+    mfaVerificationSchema,
+    setupMfa,
+    verifyMfa,
 } from "@neonpro/security";
 
 export interface MfaConfig {
@@ -40,13 +40,13 @@ export const useMFA = () => {
   const user = useUser();
   const [isEnabled, setIsEnabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [config, setConfig] = useState<MfaConfig | null>();
-  const [error, setError] = useState<string | null>();
+  const [config, setConfig] = useState<MfaConfig | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const loadMfaConfig = useCallback(async (userId: string) => {
     try {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       // In production, fetch from database
       // For now, mock the configuration
@@ -86,7 +86,7 @@ export const useMFA = () => {
 
       try {
         setIsLoading(true);
-        setError(undefined);
+        setError(null);
 
         const setupRequest = mfaSetupSchema.parse({
           userId: user.id,
@@ -108,7 +108,7 @@ export const useMFA = () => {
                 phoneNumber: options?.phoneNumber,
                 email: options?.email,
               }
-              : undefined
+              : null
           );
         }
 
@@ -136,7 +136,7 @@ export const useMFA = () => {
 
       try {
         setIsLoading(true);
-        setError(undefined);
+        setError(null);
 
         const verificationRequest = mfaVerificationSchema.parse({
           userId: user.id,
@@ -150,7 +150,7 @@ export const useMFA = () => {
         if (result.success) {
           // Update enabled state
           setIsEnabled(true);
-          setConfig((prev) => prev ? { ...prev, isEnabled: true } : undefined);
+          setConfig((prev) => prev ? { ...prev, isEnabled: true } : null);
         }
 
         return result;
@@ -179,14 +179,14 @@ export const useMFA = () => {
 
     try {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       // In production, call API to disable MFA
       // For now, mock the operation
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setIsEnabled(false);
-      setConfig((prev) => (prev ? { ...prev, isEnabled: false } : undefined));
+      setConfig((prev) => (prev ? { ...prev, isEnabled: false } : null));
 
       return { success: true, message: "MFA disabled successfully" };
     } catch (error) {
@@ -209,7 +209,7 @@ export const useMFA = () => {
 
     try {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       const result = await setupMfa({
         userId: user.id,
@@ -223,7 +223,7 @@ export const useMFA = () => {
               ...prev,
               backupCodesCount: result.backupCodes?.length || 0,
             }
-            : undefined
+            : null
         );
       }
 
@@ -251,7 +251,7 @@ export const useMFA = () => {
     verifyMfaCode,
     disableMfa,
     regenerateBackupCodes,
-    clearError: () => setError(undefined),
+    clearError: () => setError(null),
 
     // Utilities
     isMethodEnabled: (method: MfaMethod) => config?.method === method && isEnabled,
