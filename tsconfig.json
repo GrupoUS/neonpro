@@ -1,0 +1,104 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "ES2022"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "types": ["vitest/globals"],
+    "verbatimModuleSyntax": false,
+    "noEmit": true,
+    "paths": {
+      "@/*": ["./*"],
+      "@neonpro/ui": ["./packages/ui/src"],
+      "@neonpro/ui/*": ["./packages/ui/src/*"],
+      "@neonpro/utils": ["./packages/utils/src"],
+      "@neonpro/utils/*": ["./packages/utils/src/*"],
+      "@neonpro/domain": ["./packages/domain/src"],
+      "@neonpro/domain/*": ["./packages/domain/src/*"],
+      "@neonpro/database": ["./packages/database/src"],
+      "@neonpro/database/*": ["./packages/database/src/*"],
+      "@neonpro/types": ["./packages/types/src"],
+      "@neonpro/types/*": ["./packages/types/src/*"],
+      "@neonpro/config": ["./packages/config"],
+      "@neonpro/config/*": ["./packages/config/*"],
+      "@neonpro/shared": ["./packages/shared/src"],
+      "@neonpro/shared/*": ["./packages/shared/src/*"]
+    },
+    "strictNullChecks": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "vitest.d.ts",
+    ".next/types/**/*.ts",
+    "instrumentation.ts",
+    "instrumentation-client.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "dist",
+    "out",
+    "build",
+    "coverage",
+    "apps/**/*",
+    "packages/**/*",
+    "tools/**/*",
+    "e2e/**/*",
+    "tests/**/*",
+    "playwright-report/**/*",
+    "test-results/**/*",
+    "tools/testing/reports/**/*",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/__tests__/**",
+    "supabase/migrations/**",
+    "**/.turbo/**",
+    "**/.cache/**",
+    "bun.lock",
+    "**/*.log"
+  ],
+  "references": [
+    {
+      "path": "./apps/api"
+    },
+    {
+      "path": "./packages/ui"
+    },
+    {
+      "path": "./packages/utils"
+    },
+    {
+      "path": "./packages/domain"
+    },
+    {
+      "path": "./packages/database"
+    },
+    {
+      "path": "./packages/types"
+    },
+    {
+      "path": "./packages/shared"
+    },
+    {
+      "path": "./packages/auth"
+    },
+    {
+      "path": "./packages/core-services"
+    }
+  ]
+}
