@@ -110,7 +110,8 @@
       "mcp__supabase__list_tables",
       "mcp__supabase__list_migrations",
       "mcp__Tavily__tavily-search",
-      "mcp__desktop-commander__list_processes"
+      "mcp__desktop-commander__list_processes",
+      "mcp__archon__update_project"
     ],
     "deny": [
       "Edit",
