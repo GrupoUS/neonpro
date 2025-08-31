@@ -1,4 +1,4 @@
-const { execSync } = require("child_process");
+const { execSync } = require("node:child_process");
 
 // Use environment variables or defaults for repo path and branch
 const repoPath = process.env.REPO_PATH || process.cwd();

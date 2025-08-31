@@ -4,6 +4,8 @@
  */
 
 import { vi } from "vitest";
+// Import the singleton mock from the dedicated setup file
+import { mockSupabaseClient } from "./supabase-mock";
 
 // Set up comprehensive test environment variables
 process.env.NODE_ENV = "test";

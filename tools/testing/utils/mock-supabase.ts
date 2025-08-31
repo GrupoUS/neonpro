@@ -10,15 +10,15 @@ export interface MockQueryResult {
 }
 
 export interface MockSupabaseClient {
-  from: jest.MockedFunction<any>;
-  rpc: jest.MockedFunction<any>;
+  from: jest.MockedFunction<unknown>;
+  rpc: jest.MockedFunction<unknown>;
   auth: {
-    getUser: jest.MockedFunction<any>;
-    signInWithPassword: jest.MockedFunction<any>;
-    signOut: jest.MockedFunction<any>;
+    getUser: jest.MockedFunction<unknown>;
+    signInWithPassword: jest.MockedFunction<unknown>;
+    signOut: jest.MockedFunction<unknown>;
   };
   storage: {
-    from: jest.MockedFunction<any>;
+    from: jest.MockedFunction<unknown>;
   };
 }
 

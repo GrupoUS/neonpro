@@ -179,7 +179,7 @@ export function useEmergencyVoiceCommands({
   // Setup Speech Recognition Event Handlers
   useEffect(() => {
     const recognitionInstance = recognitionRef.current;
-    if (!recognitionInstance) return;
+    if (!recognitionInstance) {return;}
 
     const handleResult = (event: SpeechRecognitionEvent) => {
       let interimTranscript = '';
@@ -331,7 +331,7 @@ export function useEmergencyVoiceCommands({
 
   // Start listening
   const startListening = useCallback(() => {
-    if (!recognitionRef.current || recognition.isListening) return;
+    if (!recognitionRef.current || recognition.isListening) {return;}
 
     try {
       setRecognition(prev => ({ ...prev, transcript: "", finalTranscript: "" }));
@@ -346,7 +346,7 @@ export function useEmergencyVoiceCommands({
 
   // Stop listening
   const stopListening = useCallback(() => {
-    if (!recognitionRef.current || !recognition.isListening) return;
+    if (!recognitionRef.current || !recognition.isListening) {return;}
 
     recognitionRef.current.stop();
   }, [recognition.isListening]);
@@ -371,14 +371,14 @@ export function useEmergencyVoiceCommands({
       volume?: number;
     } = {}
   ) => {
-    if (!synthRef.current || !synthesis.isSupported) return;
+    if (!synthRef.current || !synthesis.isSupported) {return;}
 
     const { 
       priority = "medium", 
       interrupt = false, 
-      rate = 1.0, 
-      pitch = 1.0, 
-      volume = 1.0 
+      rate = 1, 
+      pitch = 1, 
+      volume = 1 
     } = options;
 
     // Stop current speech if interrupting (for emergencies)
@@ -432,7 +432,7 @@ export function useEmergencyVoiceCommands({
       priority: "critical", 
       interrupt: true,
       rate: 0.8, // Slower for clarity in emergency
-      volume: 1.0 // Full volume
+      volume: 1 // Full volume
     });
   }, [speakText]);
 

@@ -21,8 +21,8 @@ describe("neonPro Healthcare System", () => {
     expect(document.createElement).toBeDefined();
   });
 
-  it("should have React Testing Library available", () => {
-    const { render } = require("@testing-library/react");
+  it("should have React Testing Library available", async () => {
+    const { render } = await import("@testing-library/react");
     expect(typeof render).toBe("function");
   });
 

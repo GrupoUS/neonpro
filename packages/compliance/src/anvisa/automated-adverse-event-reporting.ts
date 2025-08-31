@@ -491,7 +491,7 @@ export class ANVISAAdverseEventReporter {
           event_type: this.classifyEventType(content, context),
           severity,
           event_details: {
-            description: content.substring(0, 500), // Truncate for privacy
+            description: content.slice(0, 500), // Truncate for privacy
             onset_date: new Date(), // Assume recent
             discovery_date: new Date(),
             outcome: "unknown",

@@ -1,7 +1,7 @@
 // Global Healthcare Testing Setup for NeonPro
 // LGPD, ANVISA, and CFM compliance global configuration
 
-const { setupHealthcareEnvironment } = require("./test-env");
+import { setupHealthcareEnvironment } from "./test-env.js";
 
 // Global setup executed before all tests
 module.exports = async () => {

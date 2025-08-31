@@ -258,7 +258,7 @@ describe("🔌 NEONPRO Healthcare - Hono RPC Client Integration", () => {
       expect(res.status).toBe(401);
 
       const body = await res.json();
-      expect(body).toEqual({
+      expect(body).toStrictEqual({
         error: "Credenciais inválidas",
         message: "Email ou senha incorretos",
       });
@@ -390,7 +390,7 @@ describe("🔌 NEONPRO Healthcare - Hono RPC Client Integration", () => {
       expect(res.status).toBe(400);
 
       const body = await res.json();
-      expect(body).toEqual({
+      expect(body).toStrictEqual({
         error: "Campos obrigatórios",
         message: "patientId, professionalId e scheduledFor são obrigatórios",
       });

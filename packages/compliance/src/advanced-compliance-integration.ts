@@ -4,8 +4,10 @@
  * Complete Brazilian healthcare compliance automation system
  */
 
-import { ANVISAAdverseEventReporter, type AdverseEvent } from "./anvisa/automated-adverse-event-reporting";
-import { CFMProfessionalValidator, type CFMProfessional } from "./cfm/professional-validation";
+import { ANVISAAdverseEventReporter } from './anvisa/automated-adverse-event-reporting';
+import type { AdverseEvent } from './anvisa/automated-adverse-event-reporting';
+import { CFMProfessionalValidator } from './cfm/professional-validation';
+import type { CFMProfessional } from './cfm/professional-validation';
 import type { ChatMessage } from "@/types/chat";
 
 export interface ComplianceConfiguration {
@@ -273,13 +275,13 @@ export class AdvancedComplianceIntegration {
       }
 
       if (anvisaStatus.approaching_deadlines.length > 5) {
-        if (healthStatus !== "critical") healthStatus = "warning";
+        if (healthStatus !== "critical") {healthStatus = "warning";}
         issues.push(`${anvisaStatus.approaching_deadlines.length} ANVISA deadlines approaching`);
         recommendations.push("Prioritize ANVISA report submissions");
       }
 
       if (cfmMetrics.validation_rate < 90) {
-        if (healthStatus !== "critical") healthStatus = "warning";
+        if (healthStatus !== "critical") {healthStatus = "warning";}
         issues.push(`CFM validation rate below target: ${cfmMetrics.validation_rate}%`);
         recommendations.push("Review professional validation processes");
       }
@@ -358,7 +360,7 @@ export class AdvancedComplianceIntegration {
       professionals_validated: 25,
       new_validations: 8,
       expired_certifications: 2,
-      compliance_rate: 92.0,
+      compliance_rate: 92,
     };
 
     // Integration metrics
@@ -442,7 +444,7 @@ export class AdvancedComplianceIntegration {
     event: Partial<AdverseEvent>,
     professional?: CFMProfessional
   ): void {
-    if (!professional) return;
+    if (!professional) {return;}
 
     // Add professional data to adverse event
     if (event.reporter_data) {

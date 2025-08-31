@@ -75,7 +75,7 @@ describe("Basic Utility Functions", () => {
     expect(patients[0]).toBe("João");
 
     const filtered = patients.filter((name) => name.startsWith("M"));
-    expect(filtered).toEqual(["Maria"]);
+    expect(filtered).toStrictEqual(["Maria"]);
   });
 
   it("should work with objects", () => {

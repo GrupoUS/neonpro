@@ -203,8 +203,8 @@ export const waitFor = (ms: number): Promise<void> =>
 export const createMockResponse = (data: unknown, status = 200) => ({
   ok: status >= 200 && status < 300,
   status,
-  json: () => Promise.resolve(data),
-  text: () => Promise.resolve(JSON.stringify(data)),
+  json: async () => data,
+  text: async () => JSON.stringify(data),
 });
 
 // Re-export testing library utilities

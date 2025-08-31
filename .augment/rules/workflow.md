@@ -202,17 +202,42 @@ CONSTITUTIONAL_PRINCIPLES:
   right_tool_selection: "Understand full context before implementation"
 ```
 
+## 🔧 MCP TOOL INTEGRATION
+
+**📚 Detailed guidance:** [`.ruler/agents/mcp-coordination.md`](../.ruler/agents/mcp-coordination.md)
+
+### **⚡ Mandatory Sequence**
+
+1. **🧠 sequential-thinking** (FIRST STEP)
+2. **📋 archon** (task management)
+3. **🔍 serena** (codebase - NEVER native)
+
+### **🎯 Contextual MCPs**
+
+- **💻 desktop-commander** - Files/system
+- **📚 context7** - Documentation
+- **🌐 tavily** - Real-time info
+- **🎨 shadcn-ui** - UI components
+
+### **🚨 Critical Rules**
+
+- NEVER skip mandatory sequence
+- NEVER use native codebase-retrieval
+- IF STUCK >3x: reassess with sequential-thinking
+
 ## Mandatory Development Steps
 
-### 1. **Research & Decomposition**
+### 1. **Research & Decomposition** 🧠
 
-- Always begin with the `sequential-thinking` tool to analyze and understand the feature requirements
-- Use systematic thinking to break down the feature into smaller components
-- Identify potential complexities, dependencies, and constraints
-- Conduct thorough research on the feature requirements and constraints
-- Decompose the feature into smaller, manageable tasks
-- Identify potential complexities and dependencies
-- If tried more than 3 times to fix something and still stuck, start a new research cycle.
+**🔧 MCP**: sequential-thinking → archon → serena
+
+- **MANDATORY**: Start with `sequential-thinking` to analyze requirements
+- Use `archon` to check project context and create/update tasks
+- Use `serena` (NEVER native) to understand current codebase
+- Break down feature into smaller components
+- Identify complexities, dependencies, and constraints
+- **Complexity ≥7**: Add context7 → tavily
+- **Stuck >3x**: See MCP Error Recovery (mcp-coordination.md)
 
 **🔬 Ativação Automática do @apex-researcher**:
 
@@ -253,12 +278,16 @@ RESEARCH_EXECUTION_FRAMEWORK:
   quality_gate: "100% requirement clarity with multi-source validation and constitutional compliance"
 ```
 
-### 3. **Planning & Task List**
+### 3. **Planning & Task List** 📋
 
-- Create a detailed task list using the todo tool to implement the feature
-- Break down complex features into manageable subtasks, always make atomic tasks on archon and then subtasks on native todos task lists
+**🔧 MCP**: archon + serena
+
+- **MANDATORY**: Use `archon` for task management (create_task, update_task, list_tasks)
+- Create detailed task list using archon's system
+- Break down features: atomic tasks on archon, subtasks on native todos
+- Use `serena` to analyze codebase complexity and dependencies
 - Mark tasks as in_progress when starting, completed when finished
-- **Follow the Project Context Guide:** [`docs/project.md`](../docs/project.md)
+- **Follow:** [`docs/project.md`](../docs/project.md)
 
 **🎯 Ativação de Agentes por Contexto**:
 
@@ -318,44 +347,56 @@ phase_3_planning_design:
   - ✅ **USEFUL**: UI components with logic, helpers
 
 - **Implementation Guidelines:**
-  - **MANDATORY**: Execute following ALL guidelines from `/.ruler` and `/docs` directories
-  - **ALWAYS**: Consult documentation when uncertain about patterns, conventions, or approaches
+  - **🔧 MCP**: serena → desktop-commander (+shadcn-ui for UI)
+  - **MANDATORY**: Follow ALL guidelines from `/.ruler` and `/docs`
+  - Use `serena` for codebase analysis (get_symbols_overview → find_symbol)
+  - Use `desktop-commander` for file operations (chunked 25-30 lines max)
+  - Use `shadcn-ui` to check component availability before custom development
   - Follow established code patterns, naming conventions, and project standards
-  - If tried more than 3 times to fix something and still stuck, start a new research cycle.
-  - Use Native `think` tool every 5 steps to ensure alignment with requirements and quality
+  - **Stuck >3x**: Use sequential-thinking to reassess
+  - Use `think` tool every 5 steps for alignment with requirements
   - Implement comprehensive error handling following project patterns
-  - **Test Categories Required**: Success cases, error cases, edge cases, business logic
-  - **Documentation First**: Check existing patterns before creating new ones
+  - **Test Categories**: Success cases, error cases, edge cases, business logic
+  - **Documentation First**: Check existing patterns with `serena`
 
-### 4. **Test Execution & Validation**
+### 4. **Test Execution & Validation** ✅
 
-- Run `pnpm format:check` to check for formatting issues
-- Run `npx oxlint apps packages --fix` to fix linter issues (Note: dprint formatting requires platform-specific dependency)
+**🔧 MCP**: desktop-commander + serena
+
+- Use `desktop-commander` to run all test commands
+- Run `pnpm format:check` for formatting issues
+- Run `npx oxlint apps packages --fix` for linter issues
 - Run `pnpm format && pnpm lint:fix && pnpm type-check` to format code
-- Run `pnpm test` and all task tests to execute all unit tests
+- Run `pnpm test` and all task tests
 - **Correction Loop**: If tests fail:
-  - Fix the issues following TDD principles
-  - Run `pnpm test` and tasks tests again
+  - Use `serena` to analyze failing code and dependencies
+  - Fix issues following TDD principles
+  - **Stuck >3x**: Use sequential-thinking to reassess
   - Repeat until ALL tests pass
 - **Coverage Requirements** (from ttd-flow.md):
   - Critical business logic: 100%
   - AI agents/services: 90%+
   - Complex hooks: 85%+
   - Utilities/validators: 80%+
-- Only proceed when all unit tests are green and coverage meets requirements
-- Use Tasks tests to complement unit tests
+- Use `archon` to document test results and coverage metrics
+- Only proceed when all tests green and coverage meets requirements
 - Run `run tasks:test` to execute all task tests
 
-### 5. **Code Quality Check**
+### 5. **Code Quality Check** 🔍
 
-- Run `pnpx next lint` to check for linting issues
+**🔧 MCP**: desktop-commander + serena
+
+- Use `desktop-commander` to run quality check commands
+- Run `pnpx next lint` for linting issues
 - Run `pnpx tsc --noEmit` to verify TypeScript compilation
+- Use `serena` to analyze code quality and identify issues
 - Fix any errors or warnings before proceeding
-- **Correction Loop**: If issues are found:
-  - Fix the reported issues
-  - Return to **Step 4** (Unit Testing) and repeat the entire cycle
+- **Correction Loop**: If issues found:
+  - Use `serena` to understand code structure and dependencies
+  - Fix issues using `desktop-commander` for file operations
+  - **Stuck >3x**: Use sequential-thinking to reassess
+  - Return to **Step 4** and repeat cycle
   - Continue until ALL quality checks pass
-  - Only proceed when linting and type checks are clean
 
 ```yaml
 validation:
@@ -373,25 +414,35 @@ validation:
   verification_rule: "Never assume changes complete without explicit verification"
 ```
 
-### 6. **Memory Documentation Protocol**
+### 6. **Memory Documentation Protocol** 📝
 
-- **MANDATORY**: Follow the Proactive Update Protocol from `docs/memory.md`:
-  - Create `mistakes/[error-category].md` if any mistake was made and corrected
+**🔧 MCP**: desktop-commander + archon
+
+- **MANDATORY**: Follow Proactive Update Protocol from `docs/memory.md`:
+  - Use `desktop-commander` to create documentation files (chunked)
+  - Use `archon` to create/update project documents and knowledge base
+  - Create `mistakes/[error-category].md` if mistakes corrected
   - Create `features/[feature-name].md` for new features or modified behavior
-  - **TDD Documentation**: Include test coverage metrics, test patterns used, and any TDD-specific decisions
-  - Update `docs\project.md` if new project standards were established
-  - Update `.ruler\code-preferences.md` if coding preferences were clarified
-- Update relevant README files if needed
-- **Test Documentation**: Document any new test patterns, mocks, or testing utilities created during TDD process
+  - **TDD Documentation**: Include test coverage metrics, patterns, decisions
+  - Update `docs\project.md` if new project standards established
+  - Update `.ruler\code-preferences.md` if coding preferences clarified
+- Use `desktop-commander` to update README files if needed
+- **Test Documentation**: Document new test patterns, mocks, utilities
+- Store learnings in archon knowledge base for future retrieval
 
-### 10. **Documentation Folder Updates**
+### 10. **Documentation Folder Updates** 📚
 
-- **Evaluate and Suggest**: Assess if the following documentation folders need updates based on the implemented feature:
-  - Application flows (`docs/app-flows/`) - if user flows were modified
-  - API documentation (`docs/apis/`) - if endpoints were created/modified
-  - Database schemas (`docs/database-schema/`) - if database structure changed
+**🔧 MCP**: serena + desktop-commander
+
+- Use `serena` to analyze code changes and identify documentation impact
+- **Evaluate and Suggest**: Assess if documentation folders need updates:
+  - Application flows (`docs/app-flows/`) - if user flows modified
+  - API documentation (`docs/apis/`) - if endpoints created/modified
+  - Database schemas (`docs/database-schema/`) - if structure changed
   - Any other relevant documentation folders
-- **Suggest to User**: Recommend specific updates needed and ask user to review/update the identified documentation folders
+- Use `desktop-commander` to create/update documentation files
+- Use `archon` to store documentation updates in knowledge base
+- **Suggest to User**: Recommend specific updates and ask user to review
 
 ### 11. **Out-of-Scope Documentation**
 
@@ -424,7 +475,10 @@ validation:
 ## Important Notes
 
 - **🚫 Never skip steps** unless explicitly told by the user
-- **📖 Always consult `/docs`** when uncertain
-- **✅ Complete each step** before moving to the next
+- **🔧 Always follow MCP Mandatory Sequence**: sequential-thinking → archon → serena (NEVER native codebase-retrieval)
+- **📖 Always consult `/docs`** when uncertain, using `desktop-commander` for file operations
+- **✅ Complete each step** before moving to the next, using appropriate MCPs for each phase
 - **🔄 Iterate** until all quality checks pass
-- **📝 Document everything** for future reference
+- **📝 Document everything** for future reference using `archon` knowledge base
+- **🎯 For detailed MCP guidance**: See [`.ruler/agents/mcp-coordination.md`](../.ruler/agents/mcp-coordination.md)
+- **🚨 If stuck >3 attempts**: Use sequential-thinking to reassess and try alternatives

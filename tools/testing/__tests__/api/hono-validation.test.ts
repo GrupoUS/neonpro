@@ -131,7 +131,7 @@ describe("🏥 NEONPRO Healthcare - Core API Validation", () => {
       expect(res.headers.get("content-type")).toContain("application/json");
 
       const body = await res.json();
-      expect(body).toEqual({
+      expect(body).toStrictEqual({
         message: "NEONPRO Healthcare API",
         version: "v1.0.0",
         status: "operational",
@@ -153,7 +153,7 @@ describe("🏥 NEONPRO Healthcare - Core API Validation", () => {
       expect(res.status).toBe(401);
 
       const body = await res.json();
-      expect(body).toEqual({
+      expect(body).toStrictEqual({
         error: "Não autorizado",
         message: "Credenciais inválidas ou token expirado",
         code: "UNAUTHORIZED",
@@ -187,7 +187,7 @@ describe("🏥 NEONPRO Healthcare - Core API Validation", () => {
       expect(res.status).toBe(200);
 
       const body = await res.json();
-      expect(body).toEqual({
+      expect(body).toStrictEqual({
         version: "v1.0.0",
         endpoints: {
           patients: "/api/v1/patients",

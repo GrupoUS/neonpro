@@ -165,7 +165,7 @@ export function useEmergencyPerformance({
   // Start performance monitoring
   const startPerformanceMonitoring = useCallback(() => {
     performanceMonitoringRef.current = setInterval(async () => {
-      if (!performanceOptimizerRef.current) return;
+      if (!performanceOptimizerRef.current) {return;}
 
       try {
         const systemStatus = await performanceOptimizerRef.current.getSystemStatus();
@@ -215,7 +215,7 @@ export function useEmergencyPerformance({
           system_status: "offline",
         }));
       }
-    }, 15000); // Monitor every 15 seconds
+    }, 15_000); // Monitor every 15 seconds
   }, [performance_sla_ms, onPerformanceDegraded, toast]);
 
   // Process emergency message with performance optimization
@@ -310,7 +310,7 @@ export function useEmergencyPerformance({
       const fallbackMetrics: PerformanceMetrics = {
         response_time_ms: 50,
         queue_wait_time_ms: 0,
-        cache_hit_ratio: 1.0,
+        cache_hit_ratio: 1,
         edge_processing_time_ms: 0,
         offline_fallback_used: true,
         geographic_latency_ms: 0,
@@ -326,7 +326,7 @@ export function useEmergencyPerformance({
       // Clean up old requests
       setTimeout(() => {
         emergencyRequestsRef.current.delete(requestId);
-      }, 300000); // Remove after 5 minutes
+      }, 300_000); // Remove after 5 minutes
     }
   }, [
     patient_id,
@@ -376,9 +376,9 @@ export function useEmergencyPerformance({
     const averageResponseTime = systemStatus.performance_summary.average_response_time;
     const slaComplianceRate = systemStatus.performance_summary.sla_compliance_rate;
 
-    if (activeEdgeNodes === 0) return "offline";
-    if (slaComplianceRate < 0.8 || averageResponseTime > performance_sla_ms * 2) return "critical";
-    if (slaComplianceRate < 0.9 || averageResponseTime > performance_sla_ms * 1.5) return "degraded";
+    if (activeEdgeNodes === 0) {return "offline";}
+    if (slaComplianceRate < 0.8 || averageResponseTime > performance_sla_ms * 2) {return "critical";}
+    if (slaComplianceRate < 0.9 || averageResponseTime > performance_sla_ms * 1.5) {return "degraded";}
     return "optimal";
   };
 

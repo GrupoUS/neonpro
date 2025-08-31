@@ -89,12 +89,6 @@ function setupPatientDataMocks(mock: unknown) {
 function setupAnvisaDataMocks(_mock: unknown) {
   // Mock ANVISA device registration data}
 
-  function setupCFMDataMocks(_mock: unknown) {
-    // Mock CFM professional validation data
-  }
-
-  function setupAuditTrailMocks(_mock: unknown) {
-    // Implementation here
-    // Mock audit trail for compliance
-  }
+  // Removed unused functions setupCFMDataMocks and setupAuditTrailMocks
+  // These can be re-added when needed for specific test scenarios
 }
