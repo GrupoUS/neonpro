@@ -68,33 +68,6 @@ Related to #[issue-number]
 - [ ] Tests pass consistently
 - [ ] Mock/stub usage is appropriate
 
-### Health Compliance (NeonPro Specific)
-- [ ] LGPD compliance verified
-- [ ] ANVISA regulations followed
-- [ ] CFM guidelines adhered to
-- [ ] Patient data protection ensured
-- [ ] Medical data encryption validated
-
-## 🏥 Health & Compliance Validation
-
-### LGPD (Lei Geral de Proteção de Dados)
-- [ ] Personal data processing documented
-- [ ] Data subject rights respected
-- [ ] Consent mechanisms implemented
-- [ ] Data retention policies followed
-
-### ANVISA (Agência Nacional de Vigilância Sanitária)
-- [ ] Medical device regulations compliance
-- [ ] Software classification verified
-- [ ] Risk management documented
-- [ ] Quality management system followed
-
-### CFM (Conselho Federal de Medicina)
-- [ ] Medical practice guidelines followed
-- [ ] Telemedicine regulations compliance
-- [ ] Medical record standards met
-- [ ] Professional responsibility maintained
-
 ## 🚀 Deployment Checklist
 
 - [ ] Database migrations tested

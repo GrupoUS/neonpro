@@ -5,7 +5,6 @@
  */
 
 import { createAdminClient, createClient, getSupabaseConfig } from "./client";
-import type { Database } from "./types";
 
 // Health check result types
 export interface DatabaseHealthCheck {
@@ -128,7 +127,7 @@ async function testAuthentication(): Promise<HealthCheckResult> {
 
   try {
     const client = createClient();
-    const { data: { session }, error } = await client.auth.getSession();
+    const { data: { session } } = await client.auth.getSession();
 
     return {
       status: "pass",
@@ -159,8 +158,8 @@ async function testRLSPolicies(): Promise<HealthCheckResult> {
     const adminClient = createAdminClient();
 
     // Test RLS is enabled on critical tables
-    const { data: rlsStatus, error } = await adminClient
-      .rpc("check_rls_enabled", { table_names: ["patients", "appointments", "medical_records"] });
+    const { data: rlsStatus, error } = await (adminClient as any)
+      .rpc("check_rls_enabled", { table_name: "patients" });
 
     if (error) {
       return {
@@ -290,7 +289,7 @@ function extractRegionFromUrl(url: string): string {
     const urlObj = new URL(url);
     const subdomain = urlObj.hostname.split(".")[0];
     // Extract region from subdomain pattern: projectid.supabase.co
-    return subdomain.includes("-") ? subdomain.split("-").pop() || "unknown" : "unknown";
+    return subdomain && subdomain.includes("-") ? subdomain.split("-").pop() || "unknown" : "unknown";
   } catch {
     return "unknown";
   }

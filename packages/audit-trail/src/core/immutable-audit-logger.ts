@@ -136,7 +136,7 @@ export class ImmutableAuditLogger {
   // Real-time monitoring
   private readonly performanceInterval: NodeJS.Timeout;
 
-  constructor(config: AuditConfig) {
+  constructor(config: AuditConfig) { // eslint-disable-line no-use-before-define
     this.config = AuditConfigSchema.parse(config);
     this.supabase = createClient(config.supabaseUrl, config.supabaseServiceKey);
     this.chainId = randomUUID();
@@ -146,7 +146,7 @@ export class ImmutableAuditLogger {
       this.monitorPerformance();
     }, 30_000); // Monitor every 30 seconds
 
-    this.initializeAuditLogger();
+    await this.initializeAuditLogger();
   }
 
   /**

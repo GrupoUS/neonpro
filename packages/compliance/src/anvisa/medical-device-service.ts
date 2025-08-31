@@ -675,10 +675,10 @@ export class MedicalDeviceService {
    * Calculate Overall Device Compliance Score
    */
   private calculateDeviceComplianceScore(
-    constitutional: unknown,
-    anvisa: unknown,
-    quality: unknown,
-    professional: unknown,
+    constitutional: any,
+    anvisa: any,
+    quality: any,
+    professional: any,
   ): ComplianceScore {
     const weights = {
       constitutional: 0.4, // Constitutional compliance is highest priority
@@ -702,7 +702,7 @@ export class MedicalDeviceService {
     registration: MedicalDeviceRegistration,
   ): Promise<{
     summary: DeviceComplianceResult["complianceChecks"];
-    auditTrail: unknown[];
+    auditTrail: any[];
   }> {
     const auditTrail: unknown[] = [];
     const checks = {
@@ -792,7 +792,7 @@ export class MedicalDeviceService {
    */
   private async assessConstitutionalCompliance(
     registration: MedicalDeviceRegistration,
-    complianceChecks: unknown,
+    complianceChecks: any,
   ): Promise<DeviceComplianceResult["constitutionalCompliance"]> {
     let patientSafetyScore = 10;
     let regulatoryScore = 10;
@@ -872,10 +872,26 @@ export class MedicalDeviceService {
   }
 
   private async getDeviceRegistration(
-    _deviceId: string,
-    _tenantId: string,
+    deviceId: string,
+    tenantId: string,
   ): Promise<MedicalDeviceRegistration | null> {
-    return; // Would query Supabase database
+    try {
+      const { data, error } = await this.supabaseClient
+        .from("medical_device_registrations")
+        .select("*")
+        .eq("device_id", deviceId)
+        .eq("tenant_id", tenantId)
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to get device registration: ${error.message}`);
+      }
+
+      return data as MedicalDeviceRegistration;
+    } catch (error) {
+      console.error("Error getting device registration:", error);
+      return null;
+    }
   }
 
   private async validateManufacturerWithANVISA(
@@ -929,8 +945,8 @@ export class MedicalDeviceService {
   ): Promise<void> {}
 
   private determineComplianceStatus(
-    assessment: unknown,
-    violations: unknown[],
+    assessment: any,
+    violations: any[],
   ): DeviceComplianceResult["complianceStatus"] {
     if (violations.some((v) => v.severity === "CRITICAL")) {
       return "CRITICAL_VIOLATION";
@@ -945,22 +961,22 @@ export class MedicalDeviceService {
   }
 
   private async identifyViolations(
-    _checks: unknown,
-    _assessment: unknown,
+    _checks: any,
+    _assessment: any,
   ): Promise<DeviceComplianceResult["violations"]> {
     return []; // Would implement violation identification logic
   }
 
   private async generateRecommendations(
-    _checks: unknown,
-    _assessment: unknown,
+    _checks: any,
+    _assessment: any,
   ): Promise<DeviceComplianceResult["recommendations"]> {
     return []; // Would implement recommendation generation logic
   }
 
   private async generateNextActions(
-    _violations: unknown[],
-    _recommendations: unknown[],
+    _violations: any[],
+    _recommendations: any[],
   ): Promise<DeviceComplianceResult["nextActions"]> {
     return {
       immediateActions: [],
@@ -972,8 +988,8 @@ export class MedicalDeviceService {
 
   private async createAuditEvent(
     action: string,
-    data: unknown,
-  ): Promise<unknown> {
+    data: any,
+  ): Promise<any> {
     return {
       id: crypto.randomUUID(),
       eventType: "MEDICAL_DEVICE_COMPLIANCE",

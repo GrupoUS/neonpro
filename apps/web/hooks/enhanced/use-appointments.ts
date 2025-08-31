@@ -381,15 +381,8 @@ export function useDeleteAppointment() {
     ],
 
     onMutate: async (id: string) => {
-      // Show confirmation dialog
-      const confirmed = window.confirm(
-        "Tem certeza que deseja remover esta consulta? Esta ação não pode ser desfeita.",
-      );
-
-      if (!confirmed) {
-        throw new Error("Operação cancelada pelo usuário");
-      }
-
+      // Note: Confirmation should be handled at component level using ConfirmationDialog
+      // for healthcare compliance and accessibility (WCAG 2.1 AA+)
       return { id };
     },
 

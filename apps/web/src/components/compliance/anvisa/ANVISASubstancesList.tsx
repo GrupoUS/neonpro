@@ -3,7 +3,7 @@ import { Badge, Button, Input } from "@neonpro/ui";
 import React from "react";
 // Using native select for simplicity to avoid type conflicts
 import { Filter, Search } from "lucide-react";
-import { ANVISAControlledClass, ANVISASubstance } from "../../../types/compliance";
+import type { ANVISAControlledClass, ANVISASubstance } from "../../../types/compliance";
 
 interface ANVISASubstancesListProps {
   substances: ANVISASubstance[];

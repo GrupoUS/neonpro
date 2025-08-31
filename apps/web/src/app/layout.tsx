@@ -104,14 +104,14 @@ export default function RootLayout({
         <HealthcareThemeProvider
           attribute="class"
           defaultTheme="light"
-          enableSystem={true}
+          enableSystem
           disableTransitionOnChange={false}
         >
           <AuthProvider>
             <ApiProvider>
               <PerformanceMonitorProvider
                 clinicId="neonpro-default"
-                enableRealtimeStreaming={true}
+                enableRealtimeStreaming
                 config={{
                   webVitalsEnabled: true,
                   aiMetricsEnabled: false, // Conservative start - will enable in T1.5.2

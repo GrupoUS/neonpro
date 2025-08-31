@@ -88,7 +88,7 @@ export function IntegrationExample() {
 
   const handleCreateTestAppointment = async () => {
     if (!patients?.data?.[0]) {
-      alert("Crie um paciente primeiro!");
+      toast.error("Crie um paciente primeiro!");
       return;
     }
 

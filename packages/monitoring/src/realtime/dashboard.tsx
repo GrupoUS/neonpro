@@ -34,11 +34,11 @@ export const RealTimePerformanceDashboard: React.FC<
   RealTimePerformanceDashboardProps
 > = ({
   clinicId,
-  userId,
+  _userId,
   refreshInterval = 5000,
   showAlerts = true,
   compactMode = false,
-  healthcareContext = {},
+  _healthcareContext = {},
 }) => {
   // State management
   const [dashboardData, setDashboardData] = useState<PerformanceDashboardData | null>(null);
@@ -523,23 +523,23 @@ const generateTrends = (metrics: PerformanceMetric[]) => {
   }));
 };
 
-const aggregateModelPerformance = (metrics: PerformanceMetric[]) => {
+const aggregateModelPerformance = (_metrics: PerformanceMetric[]) => {
   return [];
 };
 
-const generateDriftData = (metrics: PerformanceMetric[]) => {
+const generateDriftData = (_metrics: PerformanceMetric[]) => {
   return [];
 };
 
-const aggregateHitRates = (metrics: PerformanceMetric[]) => {
+const aggregateHitRates = (_metrics: PerformanceMetric[]) => {
   return [];
 };
 
-const generateCachePerformance = (metrics: PerformanceMetric[]) => {
+const generateCachePerformance = (_metrics: PerformanceMetric[]) => {
   return [];
 };
 
-const aggregateResourceUsage = (metrics: PerformanceMetric[]) => {
+const aggregateResourceUsage = (_metrics: PerformanceMetric[]) => {
   return [];
 };
 
@@ -572,7 +572,7 @@ const calculateSystemHealth = (
 };
 
 const calculateCategoryStatus = (
-  metrics: PerformanceMetric[],
+  _metrics: PerformanceMetric[],
 ): "healthy" | "warning" | "critical" => {
   return "healthy"; // Simplified for now
 };

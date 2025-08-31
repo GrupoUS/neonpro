@@ -33,8 +33,8 @@ export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
 }) => {
   const getClassBadgeVariant = (controlledClass: ControlledSubstanceClass) => {
     // Map classes to badge variants based on severity
-    if (controlledClass === "A1" || controlledClass === "A2") return "destructive";
-    if (controlledClass === "A3" || controlledClass === "B1") return "default";
+    if (controlledClass === "A1" || controlledClass === "A2") {return "destructive";}
+    if (controlledClass === "A3" || controlledClass === "B1") {return "default";}
     return "secondary";
   };
 
@@ -90,7 +90,7 @@ export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
         {loading
           ? (
             <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
               <span className="ml-2 text-gray-600">Carregando substâncias...</span>
             </div>
           )

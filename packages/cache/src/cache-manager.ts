@@ -14,11 +14,11 @@ import type {
 } from "./types";
 
 interface AIConversation {
-  messages: Array<{
+  messages: {
     role: string;
     content: string;
     timestamp: Date;
-  }>;
+  }[];
   context?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
 }

@@ -61,7 +61,7 @@ class InMemoryDB {
     };
   }
   _getStore(name: string) {
-    if (!this.stores.has(name)) this.stores.set(name, new InMemoryObjectStore<any>());
+    if (!this.stores.has(name)) {this.stores.set(name, new InMemoryObjectStore<any>());}
     return this.stores.get(name)!;
   }
 }

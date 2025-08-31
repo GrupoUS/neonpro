@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
   "categories": {
     "correctness": "error",
     "suspicious": "warn",
@@ -8,6 +9,38 @@
     "nursery": "off",
     "restriction": "off"
   },
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/coverage/**",
+    "**/playwright-report/**",
+    "**/test-results/**",
+    "**/.vercel/**",
+    "**/.git/**",
+    "**/.trunk/**",
+    "**/.claude/**",
+    "**/.github/**",
+    "**/.vscode/**",
+    "**/.idea/**",
+    "**/.trae/**",
+    "**/.ruler/**",
+    "**/archon/**",
+    "**/serena/**",
+    "**/temp-*/**",
+    "**/tmp.*/**",
+    "**/.tmp/**",
+    "**/archives/**",
+    "**/backups/**",
+    "**/deprecated/**",
+    "**/legacy/**",
+    "**/supabase/migrations/**",
+    "**/supabase/types/**",
+    "**/*.generated.*",
+    "**/*.d.ts"
+  ],
   "plugins": [
     "typescript",
     "react",
@@ -565,5 +598,49 @@
         "unicorn/no-document-cookie": "error"
       }
     }
+  ],
+  "performance": {
+    "maxFileSize": "1MB",
+    "maxWorkers": 2,
+    "memoryLimit": "512MB",
+    "cacheEnabled": true,
+    "incrementalMode": true
+  },
+  "includes": [
+    "apps/**/*.{ts,tsx,js,jsx}",
+    "packages/**/*.{ts,tsx,js,jsx}",
+    "scripts/**/*.{ts,js}"
+  ],
+  "excludes": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/coverage/**",
+    "**/playwright-report/**",
+    "**/test-results/**",
+    "**/.vercel/**",
+    "**/.git/**",
+    "**/.trunk/**",
+    "**/.claude/**",
+    "**/.github/**",
+    "**/.vscode/**",
+    "**/.idea/**",
+    "**/.trae/**",
+    "**/.ruler/**",
+    "**/archon/**",
+    "**/serena/**",
+    "**/temp-*/**",
+    "**/tmp.*/**",
+    "**/.tmp/**",
+    "**/archives/**",
+    "**/backups/**",
+    "**/deprecated/**",
+    "**/legacy/**",
+    "**/supabase/migrations/**",
+    "**/supabase/types/**",
+    "**/*.generated.*",
+    "**/*.d.ts"
   ]
 }

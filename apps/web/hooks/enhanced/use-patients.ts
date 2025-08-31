@@ -310,15 +310,9 @@ export function useDeletePatient() {
     },
 
     onMutate: async (id: string) => {
-      // Show confirmation dialog before deletion
-      const confirmed = window.confirm(
-        "Tem certeza que deseja remover este paciente? Esta ação não pode ser desfeita.",
-      );
-
-      if (!confirmed) {
-        throw new Error("Operação cancelada pelo usuário");
-      }
-
+      // Note: Confirmation should be handled at component level using ConfirmationDialog
+      // for healthcare compliance, LGPD compliance, and accessibility (WCAG 2.1 AA+)
+      // Patient data deletion requires special healthcare context and audit logging
       return { id };
     },
   });

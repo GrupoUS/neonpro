@@ -112,22 +112,22 @@ export class BlockchainStorage {
   private readonly mockChain: Map<string, BlockchainTransaction> = new Map();
   private mockBlockNumber = 1;
 
-  constructor(config: BlockchainConfig) {
+  constructor(config: BlockchainConfig) { // eslint-disable-line no-use-before-define
     this.config = BlockchainConfigSchema.parse(config);
     this.supabase = createClient(config.supabaseUrl, config.supabaseServiceKey);
 
     // Start processing queue
-    this.processingInterval = setInterval(() => {
-      this.processVerificationQueue();
+    this.processingInterval = setInterval(async () => {
+      await this.processVerificationQueue();
     }, this.config.processingInterval);
 
-    this.initializeBlockchainStorage();
+    await this.initializeBlockchainStorage();
   }
 
   /**
    * Initialize blockchain storage system
    */
-  private async initializeBlockchainStorage(): Promise<void> {
+  private async initializeBlockchainStorage(): Promise<void> { // eslint-disable-line no-use-before-define
     try {
       // Load pending transactions
       await this.loadPendingTransactions();

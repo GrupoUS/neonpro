@@ -12,8 +12,8 @@ import type { Database } from "./types";
 interface SupabaseConfig {
   url: string;
   anonKey: string;
-  serviceRoleKey?: string;
-  jwtSecret?: string;
+  serviceRoleKey?: string | undefined;
+  jwtSecret?: string | undefined;
 }
 
 function validateEnvironment(): SupabaseConfig {

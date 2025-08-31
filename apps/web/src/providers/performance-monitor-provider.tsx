@@ -60,7 +60,7 @@ export function PerformanceMonitorProvider({
 
   // Check LGPD performance monitoring consent
   const hasPerformanceConsent = () => {
-    if (typeof window === "undefined") return false;
+    if (typeof window === "undefined") {return false;}
 
     const consent = localStorage.getItem("performance-consent");
     const lgpdConsent = localStorage.getItem("lgpd-consent-performance");
@@ -72,11 +72,11 @@ export function PerformanceMonitorProvider({
   useEffect(() => {
     const initializeMonitoring = async () => {
       // Only initialize once
-      if (initializeAttempted.current) return;
+      if (initializeAttempted.current) {return;}
       initializeAttempted.current = true;
 
       // Check browser environment
-      if (typeof window === "undefined") return;
+      if (typeof window === "undefined") {return;}
 
       // Verify LGPD compliance consent
       if (!hasPerformanceConsent()) {
@@ -152,31 +152,31 @@ export function PerformanceMonitorProvider({
 
   // Detect workflow type from current URL for healthcare context
   const detectWorkflowFromUrl = (): HealthcareContext["workflowType"] => {
-    if (typeof window === "undefined") return undefined;
+    if (typeof window === "undefined") {return undefined;}
 
     const path = window.location.pathname.toLowerCase();
 
-    if (path.includes("patient") && path.includes("register")) return "patient-registration";
-    if (path.includes("form") || path.includes("medical")) return "medical-form";
-    if (path.includes("appointment") || path.includes("schedule")) return "procedure-scheduling";
-    if (path.includes("history") || path.includes("record")) return "medical-history";
-    if (path.includes("emergency")) return "emergency-protocol";
-    if (path.includes("dashboard") || path.includes("real-time")) return "real-time-update";
+    if (path.includes("patient") && path.includes("register")) {return "patient-registration";}
+    if (path.includes("form") || path.includes("medical")) {return "medical-form";}
+    if (path.includes("appointment") || path.includes("schedule")) {return "procedure-scheduling";}
+    if (path.includes("history") || path.includes("record")) {return "medical-history";}
+    if (path.includes("emergency")) {return "emergency-protocol";}
+    if (path.includes("dashboard") || path.includes("real-time")) {return "real-time-update";}
 
     return undefined;
   };
 
   // Detect device type for healthcare context
   const detectDeviceType = (): HealthcareContext["deviceType"] => {
-    if (typeof window === "undefined") return "desktop";
+    if (typeof window === "undefined") {return "desktop";}
 
     const userAgent = navigator.userAgent.toLowerCase();
-    if (/tablet|ipad|playbook|silk/.test(userAgent)) return "tablet";
+    if (/tablet|ipad|playbook|silk/.test(userAgent)) {return "tablet";}
     if (
       /mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/.test(
         userAgent,
       )
-    ) return "mobile";
+    ) {return "mobile";}
 
     return "desktop";
   };
@@ -200,7 +200,7 @@ export function PerformanceMonitorProvider({
 
   // Listen for URL changes to update workflow context
   useEffect(() => {
-    if (!monitor || typeof window === "undefined") return;
+    if (!monitor || typeof window === "undefined") {return;}
 
     const handleUrlChange = () => {
       const newWorkflowType = detectWorkflowFromUrl();
@@ -290,7 +290,7 @@ export const usePerformanceMetrics = () => {
   const [loading, setLoading] = useState(false);
 
   const refreshMetrics = async () => {
-    if (!isMonitoringEnabled) return;
+    if (!isMonitoringEnabled) {return;}
 
     setLoading(true);
     try {
@@ -308,7 +308,7 @@ export const usePerformanceMetrics = () => {
       refreshMetrics();
 
       // Refresh metrics every 10 seconds
-      const interval = setInterval(refreshMetrics, 10000);
+      const interval = setInterval(refreshMetrics, 10_000);
       return () => clearInterval(interval);
     }
   }, [isMonitoringEnabled]);

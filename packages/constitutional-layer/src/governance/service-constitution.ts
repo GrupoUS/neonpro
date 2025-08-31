@@ -143,17 +143,17 @@ export class ServiceConstitution {
   private readonly monitoringIntervals: Map<string, NodeJS.Timeout> = new Map();
   private readonly metricsBuffer: GovernanceMetrics[] = [];
 
-  constructor(config: ServiceConstitutionConfig) {
+  constructor(config: ServiceConstitutionConfig) { // eslint-disable-line no-use-before-define
     this.config = config;
     this.supabase = createClient(config.supabaseUrl, config.supabaseServiceKey);
 
-    this.initializeConstitution();
+    await this.initializeConstitution();
   }
 
   /**
    * Initialize constitutional governance system
    */
-  private async initializeConstitution(): Promise<void> {
+  private async initializeConstitution(): Promise<void> { // eslint-disable-line no-use-before-define
     try {
       // Load constitutional policies from Supabase
       await this.loadPolicies();
@@ -171,7 +171,7 @@ export class ServiceConstitution {
 
       // console.log("✅ Service Constitution initialized successfully");
     } catch (error) {
-      // console.error("❌ Failed to initialize Service Constitution:", error);
+      console.error("Failed to initialize Service Constitution:", error);
       throw error;
     }
   }
@@ -388,10 +388,10 @@ export class ServiceConstitution {
 
       if (violationFound) {
         violations.push({
-          rule: rule.condition,
+          rule: rule.condition as string,
           severity: rule.severity,
           message: `Policy violation: ${rule.condition}`,
-          autoRemediation: rule.autoRemediation ? rule.action : undefined,
+          ...(rule.autoRemediation && { autoRemediation: rule.action }),
         });
 
         if (rule.autoRemediation) {

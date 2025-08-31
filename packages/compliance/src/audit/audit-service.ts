@@ -26,9 +26,9 @@ import type {
  * Manages audit logging and trail validation for healthcare compliance
  */
 export class AuditService {
-  private readonly supabaseClient: unknown;
+  private readonly supabaseClient: any;
 
-  constructor(supabaseClient: unknown) {
+  constructor(supabaseClient: any) {
     this.supabaseClient = supabaseClient;
   }
 
@@ -220,7 +220,7 @@ export class AuditService {
       ];
 
       const loggedEventTypes = new Set(
-        logs.map((log: unknown) => log.event_type),
+        logs.map((log: AuditLog) => log.event_type),
       );
 
       for (const requiredType of requiredEventTypes) {
@@ -234,7 +234,7 @@ export class AuditService {
       // Check for gaps in audit trail (periods without any logs)
       if (logs.length > 0) {
         const sortedLogs = logs.sort(
-          (a: unknown, b: unknown) =>
+          (a: AuditLog, b: AuditLog) =>
             new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
         );
 
@@ -255,7 +255,7 @@ export class AuditService {
 
       // Check for suspicious patterns
       const criticalEvents = logs.filter(
-        (log: unknown) => log.severity === AuditSeverity.CRITICAL,
+        (log: AuditLog) => log.severity === AuditSeverity.CRITICAL,
       );
       if (criticalEvents.length > 10) {
         violations.push("High number of critical events detected");

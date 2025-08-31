@@ -358,7 +358,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const refreshAuth = async (): Promise<void> => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {return;}
 
     try {
       const response = await AuthAPI.getCurrentUser();
@@ -378,7 +378,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const verifyToken = async (): Promise<boolean> => {
     try {
       const token = localStorage.getItem("auth_token");
-      if (!token) return false;
+      if (!token) {return false;}
 
       const response = await AuthAPI.verifyToken(token);
       return response.valid === true;
@@ -390,7 +390,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Auto-refresh auth every 5 minutes if authenticated
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {return;}
 
     const interval = setInterval(() => {
       refreshAuth();

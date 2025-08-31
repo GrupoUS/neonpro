@@ -133,7 +133,7 @@ function Button({
       announcement.setAttribute("aria-atomic", "true");
       announcement.className = "sr-only";
       announcement.textContent = srAnnouncement;
-      document.body.appendChild(announcement);
+      document.body.append(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }
 

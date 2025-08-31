@@ -295,9 +295,18 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
 
       window.location.href = `mailto:suporte@neonpro.com.br?subject=${subject}&body=${body}`;
     }
-    alert(
-      "Erro reportado para a equipe técnica. Aguarde resolução ou entre em contato com o suporte.",
-    );
+    // Use toast notification instead of alert for better UX and accessibility
+    if (typeof window !== "undefined" && window.dispatchEvent) {
+      window.dispatchEvent(
+        new CustomEvent("healthcare-error-reported", {
+          detail: {
+            message:
+              "Erro reportado para a equipe técnica. Aguarde resolução ou entre em contato com o suporte.",
+            type: "success",
+          },
+        }),
+      );
+    }
   };
 
   render() {

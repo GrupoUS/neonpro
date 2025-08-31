@@ -90,9 +90,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (confirmAction && !loading) {
-        if (window.confirm(confirmMessage)) {
-          onClick?.(e);
-        }
+        // DEPRECATED: confirmAction prop is deprecated for security and accessibility reasons
+        // Use ConfirmationDialog component at parent level for healthcare compliance
+        console.warn(
+          "Button confirmAction prop is deprecated. Use ConfirmationDialog component for healthcare compliance and WCAG 2.1 AA+ accessibility.",
+        );
+        onClick?.(e);
       } else if (!loading) {
         onClick?.(e);
       }

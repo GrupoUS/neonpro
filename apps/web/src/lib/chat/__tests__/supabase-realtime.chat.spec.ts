@@ -61,9 +61,9 @@ vi.mock("@supabase/supabase-js", () => {
           handlers["broadcast:typing"].push(cb);
         } else if (type === "presence") {
           const ev = filterOrOpts?.event;
-          if (ev === "sync") handlers["presence:sync"].push(cb);
-          if (ev === "join") handlers["presence:join"].push(cb);
-          if (ev === "leave") handlers["presence:leave"].push(cb);
+          if (ev === "sync") {handlers["presence:sync"].push(cb);}
+          if (ev === "join") {handlers["presence:join"].push(cb);}
+          if (ev === "leave") {handlers["presence:leave"].push(cb);}
         }
         return ch;
       }),

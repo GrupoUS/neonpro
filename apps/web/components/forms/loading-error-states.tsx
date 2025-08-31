@@ -164,7 +164,7 @@ export const NetworkStatus: React.FC<NetworkStatusProps> = ({
   isOnline = true,
   className,
 }) => {
-  if (isOnline) return null;
+  if (isOnline) {return null;}
 
   return (
     <div

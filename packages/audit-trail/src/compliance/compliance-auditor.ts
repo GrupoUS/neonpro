@@ -161,17 +161,17 @@ export class ComplianceAuditor {
   // Real-time monitoring
   private readonly monitoringInterval: NodeJS.Timeout | null = undefined;
 
-  constructor(config: ComplianceConfig) {
+  constructor(config: ComplianceConfig) { // eslint-disable-line no-use-before-define
     this.config = ComplianceConfigSchema.parse(config);
     this.supabase = createClient(config.supabaseUrl, config.supabaseServiceKey);
 
-    this.initializeComplianceAuditor();
+    await this.initializeComplianceAuditor();
   }
 
   /**
    * Initialize compliance auditor system
    */
-  private async initializeComplianceAuditor(): Promise<void> {
+  private async initializeComplianceAuditor(): Promise<void> { // eslint-disable-line no-use-before-define
     try {
       // Load compliance rules for all frameworks
       await this.loadComplianceRules();

@@ -29035,6 +29035,18 @@ export interface Database {
         Args: { user_id: string; };
         Returns: boolean;
       };
+      check_rls_enabled: {
+        Args: { table_name: string; };
+        Returns: boolean;
+      };
+      check_table_rls: {
+        Args: { table_name: string; };
+        Returns: Json;
+      };
+      get_table_policies: {
+        Args: { table_name: string; };
+        Returns: Json;
+      };
     };
     Enums: {
       api_provider_type:

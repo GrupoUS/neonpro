@@ -72,7 +72,7 @@ export function HealthcareThemeProvider({
 
   // System theme detection
   useEffect(() => {
-    if (!enableSystem) return;
+    if (!enableSystem) {return;}
 
     const media = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -135,7 +135,7 @@ export function HealthcareThemeProvider({
 
   // Save configuration (LGPD compliant with explicit consent)
   useEffect(() => {
-    if (!mounted || !config.lgpdCompliant) return;
+    if (!mounted || !config.lgpdCompliant) {return;}
 
     try {
       localStorage.setItem(STORAGE_KEYS.THEME_CONFIG, JSON.stringify(config));
@@ -146,7 +146,7 @@ export function HealthcareThemeProvider({
 
   // Apply theme classes to document
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted) {return;}
 
     const root = document.documentElement;
 
@@ -226,7 +226,7 @@ export function HealthcareThemeProvider({
     announcement.setAttribute("aria-atomic", "true");
     announcement.className = "sr-only";
     announcement.textContent = message;
-    document.body.appendChild(announcement);
+    document.body.append(announcement);
 
     setTimeout(() => document.body.removeChild(announcement), 1000);
   };

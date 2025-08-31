@@ -1,7 +1,7 @@
 export type Json = string | number | boolean | null | {
     [key: string]: Json | undefined;
 } | Json[];
-export type Database = {
+export interface Database {
     __InternalSupabase: {
         PostgrestVersion: "12.2.12 (cd3cf9e)";
     };
@@ -29182,7 +29182,7 @@ export type Database = {
             [_ in never]: never;
         };
     };
-};
+}
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">];
 export type Tables<DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"]) | {

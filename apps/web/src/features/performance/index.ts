@@ -56,15 +56,15 @@ export function requestPerformanceConsent() {
   const hasConsent = window.localStorage.getItem("performance-consent");
 
   if (!hasConsent) {
-    const consent = window.confirm(
-      "Para melhorar a performance do sistema de saúde, podemos coletar métricas de performance não identificadas. Aceita?",
+    // Note: Performance consent should be handled at component level using ConfirmationDialog
+    // for LGPD compliance and accessibility (WCAG 2.1 AA+)
+    console.warn(
+      "Performance consent should be requested using ConfirmationDialog component for LGPD compliance and accessibility.",
     );
 
-    window.localStorage.setItem(
-      "performance-consent",
-      consent ? "true" : "false",
-    );
-    return consent;
+    // Default to denied until proper consent is implemented
+    window.localStorage.setItem("performance-consent", "false");
+    return false;
   }
 
   return hasConsent === "true";

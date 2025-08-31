@@ -247,12 +247,14 @@
     "lint": {
       "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json"],
       "outputs": [],
-      "outputLogs": "new-only"
+      "outputLogs": "new-only",
+      "env": ["NODE_OPTIONS=--max-old-space-size=2048"]
     },
     "lint:fix": {
       "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json"],
       "outputs": [],
-      "outputLogs": "new-only"
+      "outputLogs": "new-only",
+      "env": ["NODE_OPTIONS=--max-old-space-size=2048"]
     },
     "type-check": {
       "dependsOn": ["^build"],

@@ -304,7 +304,13 @@ export class DPIAService {
    */
 
   private async generateMitigationMeasures(
-    riskAssessment: unknown,
+    riskAssessment: {
+      overallRisk: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+      privacyRisks: string[];
+      securityRisks: string[];
+      complianceRisks: string[];
+      healthcareRisks: string[];
+    },
   ): Promise<{ measures: string[]; effectivenessScore: ComplianceScore; }> {
     const measures: string[] = [];
     let effectivenessScore = 0;
@@ -359,8 +365,14 @@ export class DPIAService {
    * Calculate constitutional compliance score
    */
   private calculateConstitutionalScore(
-    riskAssessment: unknown,
-    mitigationMeasures: unknown,
+    riskAssessment: {
+      overallRisk: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+      privacyRisks: string[];
+      securityRisks: string[];
+      complianceRisks: string[];
+      healthcareRisks: string[];
+    },
+    mitigationMeasures: { measures: string[]; effectivenessScore: ComplianceScore; },
   ): ComplianceScore {
     let score = 10; // Start with perfect score
 
@@ -401,8 +413,8 @@ export class DPIAService {
    */
   private async createAuditEvent(
     action: string,
-    input: unknown,
-  ): Promise<unknown> {
+    input: DPIAInput | any,
+  ): Promise<any> {
     return {
       id: crypto.randomUUID(),
       eventType: "COMPLIANCE_DPIA",

@@ -370,7 +370,18 @@ export interface Database {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      check_rls_enabled: {
+        Args: { table_name: string; };
+        Returns: boolean;
+      };
+      check_table_rls: {
+        Args: { table_name: string; };
+        Returns: Json;
+      };
+      get_table_policies: {
+        Args: { table_name: string; };
+        Returns: Json;
+      };
     };
     Enums: {
       user_role:

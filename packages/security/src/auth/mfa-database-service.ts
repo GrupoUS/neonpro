@@ -454,7 +454,7 @@ export class MfaDatabaseService {
       attempts: data.attempts,
       maxAttempts: data.max_attempts,
       expiresAt: new Date(data.expires_at),
-      createdAt: new Date(data.created_at),
+      createdAt: data.created_at ? new Date(data.created_at) : undefined,
       verifiedAt: data.verified_at ? new Date(data.verified_at) : undefined,
     };
   }

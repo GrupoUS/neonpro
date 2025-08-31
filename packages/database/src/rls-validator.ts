@@ -5,7 +5,7 @@
  */
 
 import { createAdminClient } from "./client";
-import type { Database } from "./types";
+// Removed unused Database type import
 
 // RLS validation result types
 export interface RLSValidationResult {
@@ -127,15 +127,14 @@ async function validateTableRLS(
 
   try {
     // Check if RLS is enabled
-    const { data: rlsData, error: rlsError } = await adminClient
+    const { data: rlsInfo, error } = await (adminClient as any)
       .rpc("check_table_rls", { table_name: tableName });
 
-    if (rlsError) {
-      tableStatus.issues.push(`Failed to check RLS status: ${rlsError.message}`);
+    if (error) {
+      tableStatus.issues.push(`Failed to check RLS status: ${error.message}`);
       return tableStatus;
     }
-
-    tableStatus.rlsEnabled = rlsData?.rls_enabled || false;
+    tableStatus.rlsEnabled = (rlsInfo as { rls_enabled: boolean } | null)?.rls_enabled || false;
 
     if (!tableStatus.rlsEnabled) {
       tableStatus.issues.push("RLS is not enabled - CRITICAL SECURITY ISSUE");
@@ -144,7 +143,7 @@ async function validateTableRLS(
     }
 
     // Get policies for the table
-    const { data: policiesData, error: policiesError } = await adminClient
+    const { data: policiesData, error: policiesError } = await (adminClient as any)
       .rpc("get_table_policies", { table_name: tableName });
 
     if (policiesError) {
@@ -153,7 +152,8 @@ async function validateTableRLS(
     }
 
     // Validate each policy
-    tableStatus.policies = (policiesData || []).map((policy: any) => ({
+    const policies = (policiesData as any[]) || [];
+    tableStatus.policies = policies.map((policy: any) => ({
       policyName: policy.policy_name,
       command: policy.command,
       roles: policy.roles || [],
@@ -294,8 +294,9 @@ export async function quickRLSCheck(): Promise<{ status: string; criticalTablesS
 
     for (const tableName of CRITICAL_HEALTHCARE_TABLES.slice(0, 5)) { // Check first 5 for speed
       try {
-        const { data } = await adminClient.rpc("check_table_rls", { table_name: tableName });
-        if (data?.rls_enabled) {
+        const { data } = await (adminClient as any).rpc("check_table_rls", { table_name: tableName });
+        const rlsInfo = data as { rls_enabled: boolean } | null;
+        if (rlsInfo?.rls_enabled) {
           securedCount++;
         }
       } catch {

@@ -1017,11 +1017,11 @@ export class MedicalEthicsService {
    */
 
   private calculateEthicsComplianceScore(assessmentResults: {
-    patient_autonomy: unknown;
-    professional_conduct: unknown;
-    medical_advertising: unknown;
-    conflict_of_interest: unknown;
-    continuing_education: unknown;
+    patient_autonomy: { compliant: boolean; score: number; issues: string[]; violations: EthicsViolation[]; };
+    professional_conduct: { compliant: boolean; score: number; issues: string[]; violations: EthicsViolation[]; };
+    medical_advertising: { compliant: boolean; score: number; issues: string[]; violations: EthicsViolation[]; };
+    conflict_of_interest: { compliant: boolean; score: number; issues: string[]; violations: EthicsViolation[]; };
+    continuing_education: { compliant: boolean; score: number; issues: string[]; violations: EthicsViolation[]; };
   }): number {
     try {
       // Weighted scoring based on constitutional importance
@@ -1054,10 +1054,10 @@ export class MedicalEthicsService {
       Object.values(assessmentResults).forEach((result) => {
         if (result.violations) {
           const criticalViolations = result.violations.filter(
-            (v: unknown) => v.severity === "critical",
+            (v: EthicsViolation) => v.severity === "critical",
           );
           const majorViolations = result.violations.filter(
-            (v: unknown) => v.severity === "major",
+            (v: EthicsViolation) => v.severity === "major",
           );
 
           // Critical violations significantly impact constitutional compliance
@@ -1255,7 +1255,7 @@ export class MedicalEthicsService {
    */
   async generateEthicsComplianceReport(
     tenantId: string,
-  ): Promise<{ success: boolean; data?: unknown; error?: string; }> {
+  ): Promise<{ success: boolean; data?: any; error?: string; }> {
     try {
       const { data: assessments, error } = await this.supabase
         .from("cfm_medical_ethics_assessments")
