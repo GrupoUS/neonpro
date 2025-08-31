@@ -74,6 +74,7 @@ export class EmergencyPerformanceOptimizer {
   private edgeNodes: Map<string, EdgeNode> = new Map();
   private offlineCache: any;
   private performanceMetrics: Map<string, PerformanceMetrics> = new Map();
+  private performanceMonitoringInterval: NodeJS.Timeout | null = null;
 
   constructor() {
     this.initializeOfflineCache();
@@ -417,7 +418,7 @@ export class EmergencyPerformanceOptimizer {
   }
 
   private startPerformanceMonitoring(): void {
-    setInterval(() => {
+    this.performanceMonitoringInterval = setInterval(() => {
       this.updateEdgeNodeStatus();
       this.optimizeQueueProcessing();
     }, 30_000); // Every 30 seconds
@@ -501,6 +502,10 @@ export class EmergencyPerformanceOptimizer {
 
   public destroy(): void {
     // Cleanup resources
+    if (this.performanceMonitoringInterval) {
+      clearInterval(this.performanceMonitoringInterval);
+      this.performanceMonitoringInterval = null;
+    }
   }
 }
 

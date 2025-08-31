@@ -140,7 +140,6 @@ export function useImageProcessing() {
         quality: options.quality || 1,
         backgroundColor: options.backgroundColor || "#ffffff",
         useCORS: true,
-        allowTaint: true,
         logging: false,
         width: element.scrollWidth,
         height: element.scrollHeight,
@@ -153,9 +152,15 @@ export function useImageProcessing() {
       const mimeType = `image/${format}`;
       const quality = format === "jpeg" ? (options.quality || 0.8) : undefined;
       
-      const blob = await new Promise<Blob>((resolve) => {
+      const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob(
-          (blob) => resolve(blob!),
+          (blob) => {
+            if (blob === null) {
+              reject(new Error('canvas.toBlob returned null'));
+            } else {
+              resolve(blob);
+            }
+          },
           mimeType,
           quality
         );
@@ -199,7 +204,11 @@ export function useImageProcessing() {
       const { Canvg } = await import("canvg");
       
       const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d")!;
+      const ctx = canvas.getContext("2d");
+      
+      if (!ctx) {
+        throw new Error("Failed to get 2D rendering context from canvas");
+      }
       
       // Set canvas size
       canvas.width = options.width || 800;
@@ -219,9 +228,15 @@ export function useImageProcessing() {
       const mimeType = `image/${format}`;
       const quality = format === "jpeg" ? (options.quality || 0.8) : undefined;
       
-      const blob = await new Promise<Blob>((resolve) => {
+      const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob(
-          (blob) => resolve(blob!),
+          (blob) => {
+            if (blob === null) {
+              reject(new Error('canvas.toBlob returned null'));
+            } else {
+              resolve(blob);
+            }
+          },
           mimeType,
           quality
         );

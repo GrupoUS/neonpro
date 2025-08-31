@@ -6,6 +6,11 @@ type: "always_apply"
 
 > **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
 
+## 📚 ALWAYS READ AND LOAD References
+
+- **🌟 Complete Workflow**: [`.ruler/dev-workflow.md`](../.ruler/dev-workflow.md)
+- **⚙️ Always Follow Project Standards**: [`docs/project.md`](../docs/project.md)
+
 ## Pre-Development Guidelines
 
 **📚 Documentation Consultation:**

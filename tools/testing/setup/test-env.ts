@@ -55,7 +55,4 @@ vi.mock<typeof import("next/cache")>("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-// Import the singleton mock from the dedicated setup file
-import { mockSupabaseClient } from "./supabase-mock";
-
 export { mockAsyncLocalStorage, mockSupabaseClient };

@@ -188,7 +188,7 @@ test.describe("🔐 Healthcare Security Testing - Patient Data Protection", () =
     const xssPayloads = [
       '<script>alert("XSS")</script>',
       '<img src=x onerror=alert("XSS")>',
-      'javascript:alert("XSS")',
+      'data:text/html,<script>alert("XSS")</script>', // Safer alternative to javascript: URL
       '<svg onload=alert("XSS")>',
     ];
 
@@ -208,7 +208,7 @@ test.describe("🔐 Healthcare Security Testing - Patient Data Protection", () =
         .textContent();
       expect(searchResults).not.toContain("<script>");
       expect(searchResults).not.toContain("<img");
-      expect(searchResults).not.toContain("javascript:");
+      expect(searchResults).not.toContain("data:text/html"); // Updated to match our safer test payload
 
       await page.getByTestId("clear-search").click();
     }

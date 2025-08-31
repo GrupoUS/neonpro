@@ -192,7 +192,7 @@ export class EdgeCacheLayer implements CacheOperation {
     return data;
   }
 
-  private decompress(data: string): any {
+  private decompress(data: string): unknown {
     try {
       return JSON.parse(data);
     } catch {

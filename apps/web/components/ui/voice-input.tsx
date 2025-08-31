@@ -191,7 +191,7 @@ export function VoiceInput({
 
       {isListening && (
         <div className="flex items-center gap-2 text-sm text-blue-600">
-          <MicOff className="h-4 w-4 animate-pulse" />
+          <Mic className="h-4 w-4 animate-pulse" />
           <span>Ouvindo...</span>
         </div>
       )}

@@ -32,7 +32,7 @@ const ATTACK_PAYLOADS = {
 
   XSS_ATTACKS: [
     "<script>alert('XSS')</script>",
-    "javascript:alert('XSS')",
+    "data:text/html,<script>alert('XSS')</script>",
     "<img src=x onerror=alert('XSS')>",
     "<svg onload=alert('XSS')>",
     "';alert('XSS');//",

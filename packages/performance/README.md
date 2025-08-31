@@ -46,7 +46,7 @@ import { useHealthcarePreloader, LazyPDFGenerator } from '@neonpro/performance';
 'use client'
 
 import { useHealthcarePreloader } from '@neonpro/performance';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 
 export default function EmergencyDashboard() {
   const { 

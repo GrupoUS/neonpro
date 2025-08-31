@@ -138,7 +138,7 @@ export function ExternalChatWidget({
 
   // Enviar mensagem
   const handleSendMessage = useCallback(async (content: string) => {
-    if (!content.trim() || isLoading) {return;}
+    if (!content || !content.trim() || isLoading) {return;}
 
     // Adicionar mensagem do usuário
     addMessage({
@@ -363,8 +363,8 @@ export function ExternalChatWidget({
                       <div className="bg-gray-100 text-gray-500 px-4 py-2 rounded-lg text-sm">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75" />
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150" />
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.15s]" />
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.3s]" />
                         </div>
                       </div>
                     </div>

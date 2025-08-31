@@ -489,6 +489,6 @@ export const isPaginatedResponse = <T>(
     && response !== null
     && "success" in response
     && "meta" in response
-    && "pagination" in (response as { meta: any; }).meta
+    && "pagination" in (response as { meta: Record<string, unknown>; }).meta
   );
 };

@@ -15,20 +15,6 @@ export * from './lazy-loading/healthcare-dynamic-loader';
 // Performance Hooks
 export * from './hooks/use-healthcare-preloader';
 
-// Re-export commonly used components
-export {
-  LazyPDFGenerator,
-  LazyHealthcareCharts,
-  LazyAnimations,
-  LazyScreenshot,
-  HealthcareDynamicLoader,
-  HealthcarePriority,
-} from './lazy-loading/healthcare-dynamic-loader';
-
-export {
-  useHealthcarePreloader,
-} from './hooks/use-healthcare-preloader';
-
 // Type definitions
 export type {
   HealthcarePriority as Priority,
@@ -36,10 +22,10 @@ export type {
 
 // Performance utilities
 export const PERFORMANCE_THRESHOLDS = {
-  EMERGENCY: 200, // ms
-  URGENT: 500,    // ms 
-  STANDARD: 1000, // ms
-  ADMIN: 2000,    // ms
+  EMERGENCY: 200,        // ms
+  URGENT: 500,          // ms 
+  STANDARD: 1000,       // ms
+  ADMINISTRATIVE: 2000, // ms
 } as const;
 
 // Bundle size estimates (for monitoring)

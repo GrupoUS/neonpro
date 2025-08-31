@@ -140,7 +140,7 @@ export async function handleRLSValidation(): Promise<{
  */
 export async function handleQuickRLSCheck(): Promise<{
   status: number;
-  body: any;
+  body: Record<string, unknown>;
 }> {
   try {
     const result = await quickRLSCheck();
@@ -170,7 +170,7 @@ export async function handleQuickRLSCheck(): Promise<{
  */
 export async function handleDatabaseInfo(): Promise<{
   status: number;
-  body: any;
+  body: Record<string, unknown>;
 }> {
   try {
     const config = getSupabaseConfig();
@@ -303,7 +303,7 @@ function extractRegionFromUrl(url: string): string {
 export async function initializeDatabase(): Promise<{
   success: boolean;
   message: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }> {
   try {
     // Validate environment

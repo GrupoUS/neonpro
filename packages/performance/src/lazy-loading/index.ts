@@ -4,12 +4,3 @@
  */
 
 export * from './healthcare-dynamic-loader';
-export {
-  HealthcareDynamicLoader,
-  HealthcarePriority,
-  LazyPDFGenerator,
-  LazyHealthcareCharts,
-  LazyAnimations,
-  LazyScreenshot,
-  useHealthcarePreloader as useHealthcarePreloaderFromLoader,
-} from './healthcare-dynamic-loader';

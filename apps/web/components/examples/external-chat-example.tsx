@@ -87,10 +87,23 @@ export function ExternalChatExample() {
     };
   }, []);
 
+  // Timeout wrapper for AI response
+  const withTimeout = useCallback(<T>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
+    return Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('AI response timeout after ' + timeoutMs + 'ms'));
+        }, timeoutMs);
+      })
+    ]);
+  }, []);
+
   // Handler principal para mensagens
   const handleMessage = useCallback(async (message: string) => {
     try {
-      const aiResponse = await simulateAIResponse(message);
+      // Apply 8-second timeout to AI response
+      const aiResponse = await withTimeout(simulateAIResponse(message), 8000);
       const processedResponse = processAIResponse(message, aiResponse);
       
       if (processedResponse.shouldHandoff) {
@@ -105,13 +118,24 @@ export function ExternalChatExample() {
       return processedResponse.response;
     } catch (error) {
       console.error('Erro ao processar mensagem:', error);
+      
+      // Check if it's a timeout error
+      if (error instanceof Error && error.message.includes('timeout')) {
+        console.error('AI response timed out, initiating human handoff');
+        return {
+          response: "Desculpe, a resposta está demorando mais que o esperado. Vou conectá-lo com um atendente humano para ajudá-lo melhor.",
+          confidence: 0,
+          requiresHumanHandoff: true
+        };
+      }
+      
       return {
         response: "Desculpe, ocorreu um erro interno. Vou conectá-lo com um atendente humano.",
         confidence: 0,
         requiresHumanHandoff: true
       };
     }
-  }, [simulateAIResponse, processAIResponse, getHandoffMessage]);
+  }, [withTimeout, simulateAIResponse, processAIResponse, getHandoffMessage]);
 
   // Handler para solicitação de atendimento humano
   const handleHumanHandoff = useCallback(() => {

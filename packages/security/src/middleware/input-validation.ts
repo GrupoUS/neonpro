@@ -1,6 +1,6 @@
-import { z } from "zod";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { z } from "zod";
 
 // Constants for byte conversions
 const BYTES_PER_KB = 1024;
@@ -979,7 +979,7 @@ export const sanitizeInput = (input: string): string => {
   return input
     .trim()
     .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "") // Remove script tags
-    .replaceAll("javascript:", "") // Remove javascript: protocol
+    .replaceAll(/javascript:/gi, "") // Remove javascript: protocol
     .replaceAll(/on\w+\s*=/gi, ""); // Remove event handlers
 };
 

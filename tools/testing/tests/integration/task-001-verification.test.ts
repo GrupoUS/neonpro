@@ -121,8 +121,8 @@ describe("tASK-001 Infrastructure Verification", () => {
 
   describe("aPI Endpoints Structure Verification", () => {
     it("should have monitoring health API route file", () => {
-      const fs = require("node:fs");
-      const path = require("node:path");
+      import fs from "node:fs";
+      import path from "node:path";
 
       const routePath = path.join(
         process.cwd(),
@@ -132,8 +132,8 @@ describe("tASK-001 Infrastructure Verification", () => {
     });
 
     it("should have monitoring metrics API route file", () => {
-      const fs = require("node:fs");
-      const path = require("node:path");
+      import fs from "node:fs";
+      import path from "node:path";
 
       const routePath = path.join(
         process.cwd(),

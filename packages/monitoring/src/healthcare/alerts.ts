@@ -134,8 +134,8 @@ export class HealthcareAlertManager {
    */
   async processAlert(
     alertName: string,
-    condition: any,
-    metadata?: Record<string, any>,
+    condition: Record<string, unknown>,
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
     const rule = healthcareAlerts.find((r) => r.name === alertName);
 
@@ -165,8 +165,8 @@ export class HealthcareAlertManager {
    */
   private async sendAlert(
     rule: AlertRule,
-    condition: any,
-    metadata?: Record<string, any>,
+    condition: Record<string, unknown>,
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
     console.error(`[${rule.severity.toUpperCase()} ALERT] ${rule.name}`, {
       condition,

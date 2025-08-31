@@ -315,10 +315,10 @@ export interface PerformanceReport {
     complianceScore: number;
   };
   sections: {
-    webVitals: any;
-    aiPerformance: any;
-    cacheEfficiency: any;
-    systemHealth: any;
+    webVitals: Record<string, unknown>;
+    aiPerformance: Record<string, unknown>;
+    cacheEfficiency: Record<string, unknown>;
+    systemHealth: Record<string, unknown>;
   };
   recommendations: string[];
   clinicId?: string;

@@ -98,12 +98,21 @@ export function useExcelProcessing() {
   const [error, setError] = useState<Error | null>(null);
 
   // Import Excel file
-  const importExcel = useCallback(async (file: File, template?: string): Promise<ExcelData> => {
+  const importExcel = useCallback(async (file: File, template?: string, maxFileSize?: number): Promise<ExcelData> => {
     setIsProcessing(true);
     setProgress(0);
     setError(null);
 
     try {
+      // Check file size before processing
+      if (maxFileSize && file.size > maxFileSize) {
+        const errorMsg = `Arquivo muito grande (${Math.round(file.size / 1024 / 1024)}MB). Tamanho máximo permitido: ${Math.round(maxFileSize / 1024 / 1024)}MB`;
+        setError(new Error(errorMsg));
+        setIsProcessing(false);
+        setProgress(0);
+        throw new Error(errorMsg);
+      }
+
       // Lazy load xlsx library
       const XLSX = await import("xlsx");
       
@@ -237,22 +246,33 @@ export const ExcelTemplates = {
     requiredHeaders: ["nome", "cpf", "telefone", "email"],
     optionalHeaders: ["data_nascimento", "endereco", "observacoes"],
     validation: (data: ExcelData) => {
-      // Validate patient data structure
-      return data.headers.some(h => ["nome", "cpf"].includes(h.toLowerCase()));
+      // Validate patient data structure - ensure all required headers are present
+      if (!data.headers) {return false;}
+      const requiredHeaders = ["nome", "cpf"];
+      const normalizedHeaders = new Set(data.headers.map(h => h.toLowerCase().trim()));
+      return requiredHeaders.every(h => normalizedHeaders.has(h));
     },
   },
   appointments: {
     requiredHeaders: ["paciente", "data", "horario", "procedimento"],
     optionalHeaders: ["observacoes", "valor", "status"],
     validation: (data: ExcelData) => {
-      return data.headers.some(h => ["data", "horario"].includes(h.toLowerCase()));
+      // Validate appointment data structure - ensure all required headers are present
+      if (!data.headers) {return false;}
+      const requiredHeaders = ["data", "horario", "paciente", "procedimento"];
+      const normalizedHeaders = new Set(data.headers.map(h => h.toLowerCase().trim()));
+      return requiredHeaders.every(h => normalizedHeaders.has(h));
     },
   },
   financial: {
     requiredHeaders: ["descricao", "valor", "data", "tipo"],
     optionalHeaders: ["categoria", "observacoes", "paciente"],
     validation: (data: ExcelData) => {
-      return data.headers.some(h => ["valor", "data"].includes(h.toLowerCase()));
+      // Validate financial data structure - ensure all required headers are present
+      if (!data.headers) {return false;}
+      const requiredHeaders = ["descricao", "valor", "data", "tipo"];
+      const normalizedHeaders = new Set(data.headers.map(h => h.toLowerCase().trim()));
+      return requiredHeaders.every(h => normalizedHeaders.has(h));
     },
   },
 } as const;

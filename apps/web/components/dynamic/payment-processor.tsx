@@ -130,6 +130,22 @@ export function usePaymentProcessing() {
     setError(null);
 
     try {
+      // Validate amount on client-side before API call
+      if (!params.amount) {
+        throw new Error('Valor do pagamento é obrigatório');
+      }
+      
+      if (!Number.isFinite(params.amount)) {
+        throw new Error('Valor do pagamento deve ser um número válido');
+      }
+      
+      if (params.amount <= 0) {
+        throw new Error('Valor do pagamento deve ser maior que zero');
+      }
+      
+      if (params.amount > MAX_PAYMENT_AMOUNT) {
+        throw new Error(`Valor do pagamento não pode exceder R$ ${(MAX_PAYMENT_AMOUNT / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
+      }
       const response = await fetch('/api/payments/create-intent', {
         method: 'POST',
         headers: {
@@ -230,6 +246,9 @@ export function usePaymentProcessing() {
     paymentIntent,
   };
 }
+
+// Maximum payment amount in centavos (R$ 50.000,00)
+const MAX_PAYMENT_AMOUNT = 5_000_000;
 
 // Healthcare-specific payment configurations
 export const HealthcarePaymentConfig = {

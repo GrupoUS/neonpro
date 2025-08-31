@@ -63,6 +63,94 @@ export { VoiceInput } from "./voice-input";
 export { MessageRenderer, type Message } from "./message-renderer";
 export { ExternalChatWidget } from "./external-chat-widget";
 
+// Internal AI Assistant Panel Components (T2.2)
+export { 
+  InternalAssistantPanel,
+  type UserRole,
+  type QuerySuggestion,
+  type QueryResult,
+  type InternalAssistantPanelProps 
+} from "./internal-assistant-panel";
+
+export { 
+  PerformanceInsights,
+  type PerformanceMetric,
+  type PerformanceInsightsProps 
+} from "./performance-insights";
+
+export { 
+  ComplianceMonitor,
+  type ComplianceItem,
+  type DataProcessingActivity,
+  type ComplianceMonitorProps 
+} from "./compliance-monitor";
+
+export { 
+  ResultsVisualization,
+  type DataPoint,
+  type ChartData,
+  type TableData,
+  type QueryResult as VizQueryResult,
+  type ResultsVisualizationProps 
+} from "./results-visualization";
+
+// AI-First Component Patterns (T2.4) - Loading States
+export { 
+  AILoadingStates,
+  PatientAnalysisLoading,
+  MedicalQueryLoading,
+  VoiceProcessingLoading,
+  useAILoadingState
+} from "./ai-loading-states";
+
+// AI-First Component Patterns (T2.4) - Confidence Visualization
+export { 
+  ConfidencePatterns,
+  DiagnosisConfidence,
+  TreatmentConfidence,
+  RiskAssessmentConfidence,
+  VoiceRecognitionConfidence,
+  MultiConfidence,
+  ConfidenceTrend,
+  getConfidenceLevel,
+  ConfidenceThresholds,
+  HealthcareConfidenceCategories,
+  type ConfidenceCategory
+} from "./confidence-patterns";
+
+// AI-First Component Patterns (T2.4) - Error Boundaries
+export { 
+  AIErrorBoundary,
+  withAIErrorBoundary,
+  classifyAIError,
+  AIErrorType,
+  AIErrorClassification,
+  RecoveryActions
+} from "./error-boundary-ai";
+
+// AI-First Component Patterns (T2.4) - Context Switching
+export { 
+  ContextSwitching,
+  useContextSwitching,
+  ContextSwitchingProvider,
+  useContextSwitchingContext,
+  QuickContextSwitcher,
+  ContextType,
+  Department,
+  UserRole,
+  SwitchReason,
+  type ContextState
+} from "./context-switching";
+
+// AI-First Component Patterns (T2.4) - Voice Interaction
+export { 
+  VoiceInteractionUX,
+  useVoiceInteraction,
+  VoiceMode,
+  VoiceContext,
+  VoiceState
+} from "./voice-interaction-ux";
+
 // Hooks
 export { useChatHandoff } from "../../hooks/use-chat-handoff";
 

@@ -3,6 +3,9 @@
  * Provides comprehensive mocking for all Supabase operations
  */
 
+import type { Mock } from "vitest";
+import { vi } from "vitest";
+
 export interface MockQueryResult {
   data?: unknown;
   error?: unknown;
@@ -10,15 +13,15 @@ export interface MockQueryResult {
 }
 
 export interface MockSupabaseClient {
-  from: jest.MockedFunction<unknown>;
-  rpc: jest.MockedFunction<unknown>;
+  from: Mock<unknown, unknown[]>;
+  rpc: Mock<unknown, unknown[]>;
   auth: {
-    getUser: jest.MockedFunction<unknown>;
-    signInWithPassword: jest.MockedFunction<unknown>;
-    signOut: jest.MockedFunction<unknown>;
+    getUser: Mock<unknown, unknown[]>;
+    signInWithPassword: Mock<unknown, unknown[]>;
+    signOut: Mock<unknown, unknown[]>;
   };
   storage: {
-    from: jest.MockedFunction<unknown>;
+    from: Mock<unknown, unknown[]>;
   };
 }
 
@@ -27,64 +30,64 @@ export interface MockSupabaseClient {
  */
 export function createMockSupabaseClient(): MockSupabaseClient {
   const mockClient: MockSupabaseClient = {
-    from: jest.fn().mockReturnThis(),
-    rpc: jest.fn().mockResolvedValue({ data: undefined, error: undefined }),
+    from: vi.fn().mockReturnThis(),
+    rpc: vi.fn().mockResolvedValue({ data: undefined, error: undefined }),
     auth: {
-      getUser: jest.fn().mockResolvedValue({
+      getUser: vi.fn().mockResolvedValue({
         data: { user: { id: "test-user-id" } },
         error: undefined,
       }),
-      signInWithPassword: jest.fn().mockResolvedValue({
+      signInWithPassword: vi.fn().mockResolvedValue({
         data: { user: { id: "test-user-id" } },
         error: undefined,
       }),
-      signOut: jest.fn().mockResolvedValue({ error: undefined }),
+      signOut: vi.fn().mockResolvedValue({ error: undefined }),
     },
     storage: {
-      from: jest.fn().mockReturnThis(),
+      from: vi.fn().mockReturnThis(),
     },
   };
 
   // Chain-able query methods
   const chainableMethods = {
-    select: jest.fn().mockReturnThis(),
-    insert: jest.fn().mockReturnThis(),
-    update: jest.fn().mockReturnThis(),
-    delete: jest.fn().mockReturnThis(),
-    upsert: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    neq: jest.fn().mockReturnThis(),
-    gt: jest.fn().mockReturnThis(),
-    gte: jest.fn().mockReturnThis(),
-    lt: jest.fn().mockReturnThis(),
-    lte: jest.fn().mockReturnThis(),
-    like: jest.fn().mockReturnThis(),
-    ilike: jest.fn().mockReturnThis(),
-    is: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    contains: jest.fn().mockReturnThis(),
-    containedBy: jest.fn().mockReturnThis(),
-    rangeGt: jest.fn().mockReturnThis(),
-    rangeGte: jest.fn().mockReturnThis(),
-    rangeLt: jest.fn().mockReturnThis(),
-    rangeLte: jest.fn().mockReturnThis(),
-    rangeAdjacent: jest.fn().mockReturnThis(),
-    overlaps: jest.fn().mockReturnThis(),
-    textSearch: jest.fn().mockReturnThis(),
-    match: jest.fn().mockReturnThis(),
-    not: jest.fn().mockReturnThis(),
-    or: jest.fn().mockReturnThis(),
-    filter: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
-    range: jest.fn().mockReturnThis(),
-    abortSignal: jest.fn().mockReturnThis(),
-    single: jest.fn().mockReturnThis(),
-    maybeSingle: jest.fn().mockReturnThis(),
-    csv: jest.fn().mockReturnThis(),
-    explain: jest.fn().mockReturnThis(),
-    rollback: jest.fn().mockReturnThis(),
-    returns: jest.fn().mockReturnThis(),
+    select: vi.fn().mockReturnThis(),
+    insert: vi.fn().mockReturnThis(),
+    update: vi.fn().mockReturnThis(),
+    delete: vi.fn().mockReturnThis(),
+    upsert: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    neq: vi.fn().mockReturnThis(),
+    gt: vi.fn().mockReturnThis(),
+    gte: vi.fn().mockReturnThis(),
+    lt: vi.fn().mockReturnThis(),
+    lte: vi.fn().mockReturnThis(),
+    like: vi.fn().mockReturnThis(),
+    ilike: vi.fn().mockReturnThis(),
+    is: vi.fn().mockReturnThis(),
+    in: vi.fn().mockReturnThis(),
+    contains: vi.fn().mockReturnThis(),
+    containedBy: vi.fn().mockReturnThis(),
+    rangeGt: vi.fn().mockReturnThis(),
+    rangeGte: vi.fn().mockReturnThis(),
+    rangeLt: vi.fn().mockReturnThis(),
+    rangeLte: vi.fn().mockReturnThis(),
+    rangeAdjacent: vi.fn().mockReturnThis(),
+    overlaps: vi.fn().mockReturnThis(),
+    textSearch: vi.fn().mockReturnThis(),
+    match: vi.fn().mockReturnThis(),
+    not: vi.fn().mockReturnThis(),
+    or: vi.fn().mockReturnThis(),
+    filter: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
+    range: vi.fn().mockReturnThis(),
+    abortSignal: vi.fn().mockReturnThis(),
+    single: vi.fn().mockReturnThis(),
+    maybeSingle: vi.fn().mockReturnThis(),
+    csv: vi.fn().mockReturnThis(),
+    explain: vi.fn().mockReturnThis(),
+    rollback: vi.fn().mockReturnThis(),
+    returns: vi.fn().mockReturnThis(),
   };
 
   // Apply chainable methods to the client
@@ -122,26 +125,26 @@ export function createSuccessfulMockSupabaseClient(
 
   // Override with successful responses
   client.from.mockImplementation(() => ({
-    select: jest.fn().mockResolvedValue({ data, error: undefined }),
-    insert: jest.fn().mockResolvedValue({ data, error: undefined }),
-    update: jest.fn().mockResolvedValue({ data, error: undefined }),
-    delete: jest.fn().mockResolvedValue({ data, error: undefined }),
-    upsert: jest.fn().mockResolvedValue({ data, error: undefined }),
-    eq: jest.fn().mockReturnThis(),
-    neq: jest.fn().mockReturnThis(),
-    gt: jest.fn().mockReturnThis(),
-    gte: jest.fn().mockReturnThis(),
-    lt: jest.fn().mockReturnThis(),
-    lte: jest.fn().mockReturnThis(),
-    like: jest.fn().mockReturnThis(),
-    ilike: jest.fn().mockReturnThis(),
-    is: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
-    range: jest.fn().mockReturnThis(),
-    single: jest.fn().mockReturnThis(),
-    maybeSingle: jest.fn().mockReturnThis(),
+    select: vi.fn().mockResolvedValue({ data, error: undefined }),
+    insert: vi.fn().mockResolvedValue({ data, error: undefined }),
+    update: vi.fn().mockResolvedValue({ data, error: undefined }),
+    delete: vi.fn().mockResolvedValue({ data, error: undefined }),
+    upsert: vi.fn().mockResolvedValue({ data, error: undefined }),
+    eq: vi.fn().mockReturnThis(),
+    neq: vi.fn().mockReturnThis(),
+    gt: vi.fn().mockReturnThis(),
+    gte: vi.fn().mockReturnThis(),
+    lt: vi.fn().mockReturnThis(),
+    lte: vi.fn().mockReturnThis(),
+    like: vi.fn().mockReturnThis(),
+    ilike: vi.fn().mockReturnThis(),
+    is: vi.fn().mockReturnThis(),
+    in: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
+    range: vi.fn().mockReturnThis(),
+    single: vi.fn().mockReturnThis(),
+    maybeSingle: vi.fn().mockReturnThis(),
   }));
 
   return client;
@@ -157,26 +160,26 @@ export function createErrorMockSupabaseClient(
 
   // Override with error responses
   client.from.mockImplementation(() => ({
-    select: jest.fn().mockResolvedValue({ data: undefined, error }),
-    insert: jest.fn().mockResolvedValue({ data: undefined, error }),
-    update: jest.fn().mockResolvedValue({ data: undefined, error }),
-    delete: jest.fn().mockResolvedValue({ data: undefined, error }),
-    upsert: jest.fn().mockResolvedValue({ data: undefined, error }),
-    eq: jest.fn().mockReturnThis(),
-    neq: jest.fn().mockReturnThis(),
-    gt: jest.fn().mockReturnThis(),
-    gte: jest.fn().mockReturnThis(),
-    lt: jest.fn().mockReturnThis(),
-    lte: jest.fn().mockReturnThis(),
-    like: jest.fn().mockReturnThis(),
-    ilike: jest.fn().mockReturnThis(),
-    is: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
-    range: jest.fn().mockReturnThis(),
-    single: jest.fn().mockReturnThis(),
-    maybeSingle: jest.fn().mockReturnThis(),
+    select: vi.fn().mockResolvedValue({ data: undefined, error }),
+    insert: vi.fn().mockResolvedValue({ data: undefined, error }),
+    update: vi.fn().mockResolvedValue({ data: undefined, error }),
+    delete: vi.fn().mockResolvedValue({ data: undefined, error }),
+    upsert: vi.fn().mockResolvedValue({ data: undefined, error }),
+    eq: vi.fn().mockReturnThis(),
+    neq: vi.fn().mockReturnThis(),
+    gt: vi.fn().mockReturnThis(),
+    gte: vi.fn().mockReturnThis(),
+    lt: vi.fn().mockReturnThis(),
+    lte: vi.fn().mockReturnThis(),
+    like: vi.fn().mockReturnThis(),
+    ilike: vi.fn().mockReturnThis(),
+    is: vi.fn().mockReturnThis(),
+    in: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
+    range: vi.fn().mockReturnThis(),
+    single: vi.fn().mockReturnThis(),
+    maybeSingle: vi.fn().mockReturnThis(),
   }));
 
   return client;

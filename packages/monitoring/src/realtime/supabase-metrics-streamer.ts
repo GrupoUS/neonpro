@@ -19,7 +19,7 @@ import type {
 } from "../types";
 
 export class SupabaseMetricsStreamer {
-  private readonly supabase: any;
+  private readonly supabase: unknown;
   private readonly config: SupabaseStreamingConfig;
   private healthcareContext: HealthcareContext = {};
   private metricBuffer: PerformanceMetric[] = [];
@@ -295,7 +295,7 @@ export class SupabaseMetricsStreamer {
           schema: "public",
           table: "performance_alerts",
         },
-        (payload: any) => {
+        (payload: Record<string, unknown>) => {
           console.log("📡 Real-time alert received:", payload.new);
           // Could emit to dashboard or notification system
         },

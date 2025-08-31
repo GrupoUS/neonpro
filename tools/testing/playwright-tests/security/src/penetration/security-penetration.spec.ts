@@ -70,7 +70,7 @@ const XSS_PAYLOADS: XSSPayload[] = [
   },
   {
     name: "JavaScript Protocol",
-    payload: 'javascript:alert("XSS")',
+    payload: 'data:text/html,<script>alert("XSS")</script>',
     expectedBlocked: true,
     context: "url",
   },

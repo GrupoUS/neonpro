@@ -90,7 +90,7 @@ export const RealtimeUtils = {
    * Format healthcare notification message
    */
   formatHealthcareMessage: (type: string, data: unknown): string => {
-    const formatMap: Record<string, (data: any) => string> = {
+    const formatMap: Record<string, (data: Record<string, unknown>) => string> = {
       patient_update: (data) => `Paciente ${data.name || data.id} foi atualizado`,
       appointment_change: (data) =>
         `Agendamento ${data.id} foi ${data.status === "cancelled" ? "cancelado" : "alterado"}`,

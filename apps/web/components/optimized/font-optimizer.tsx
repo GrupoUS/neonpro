@@ -2,7 +2,7 @@
 
 import { Inter, Lora, JetBrains_Mono } from 'next/font/google';
 import localFont from 'next/font/local';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // Optimized Google Fonts with display swap and preload
 const inter = Inter({
@@ -257,6 +257,12 @@ export function FontLoadingProvider({ children }: FontLoadingProviderProps) {
 export function useFontOptimization() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [fontLoadTime, setFontLoadTime] = useState<number | null>(null);
+  const fontsLoadedRef = useRef(false);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    fontsLoadedRef.current = fontsLoaded;
+  }, [fontsLoaded]);
 
   useEffect(() => {
     const startTime = performance.now();
@@ -281,7 +287,7 @@ export function useFontOptimization() {
     // Cleanup after 5 seconds (fallback)
     const timeout = setTimeout(() => {
       clearInterval(interval);
-      if (!fontsLoaded) {
+      if (!fontsLoadedRef.current) {
         setFontsLoaded(true);
         document.documentElement.classList.add('fonts-loaded');
       }
@@ -291,7 +297,7 @@ export function useFontOptimization() {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, [fontsLoaded]);
+  }, []); // Remove fontsLoaded from dependency array since we use ref now
 
   return {
     fontsLoaded,

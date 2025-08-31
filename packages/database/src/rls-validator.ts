@@ -134,7 +134,7 @@ async function validateTableRLS(
       tableStatus.issues.push(`Failed to check RLS status: ${error.message}`);
       return tableStatus;
     }
-    tableStatus.rlsEnabled = (rlsInfo as { rls_enabled: boolean } | null)?.rls_enabled || false;
+    tableStatus.rlsEnabled = (rlsInfo as { rls_enabled: boolean; } | null)?.rls_enabled || false;
 
     if (!tableStatus.rlsEnabled) {
       tableStatus.issues.push("RLS is not enabled - CRITICAL SECURITY ISSUE");
@@ -152,8 +152,8 @@ async function validateTableRLS(
     }
 
     // Validate each policy
-    const policies = (policiesData as any[]) || [];
-    tableStatus.policies = policies.map((policy: any) => ({
+    const policies = (policiesData as Record<string, unknown>[]) || [];
+    tableStatus.policies = policies.map((policy: Record<string, unknown>) => ({
       policyName: policy.policy_name,
       command: policy.command,
       roles: policy.roles || [],
@@ -179,7 +179,7 @@ async function validateTableRLS(
 /**
  * Validate if a policy meets healthcare compliance requirements
  */
-function validatePolicyCompliance(policy: any, tableName: string): boolean {
+function validatePolicyCompliance(policy: Record<string, unknown>, tableName: string): boolean {
   const expression = policy.expression?.toLowerCase() || "";
 
   // Healthcare tables should have clinic-based isolation
@@ -294,8 +294,10 @@ export async function quickRLSCheck(): Promise<{ status: string; criticalTablesS
 
     for (const tableName of CRITICAL_HEALTHCARE_TABLES.slice(0, 5)) { // Check first 5 for speed
       try {
-        const { data } = await (adminClient as any).rpc("check_table_rls", { table_name: tableName });
-        const rlsInfo = data as { rls_enabled: boolean } | null;
+        const { data } = await (adminClient as any).rpc("check_table_rls", {
+          table_name: tableName,
+        });
+        const rlsInfo = data as { rls_enabled: boolean; } | null;
         if (rlsInfo?.rls_enabled) {
           securedCount++;
         }

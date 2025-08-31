@@ -4,7 +4,7 @@
 import { setupHealthcareEnvironment } from "./test-env.js";
 
 // Global setup executed before all tests
-module.exports = async () => {
+export default async () => {
   // Setup healthcare environment variables
   await setupHealthcareEnvironment();
 

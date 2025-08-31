@@ -118,14 +118,15 @@ class RedisCacheLayer implements CacheLayer {
   name = "redis";
   priority = 2;
 
-  private readonly redis: any | null;
+  private readonly redis: unknown | null;
   private accessCount = 0;
   private hitCount = 0;
   private readonly keyPrefix: string;
 
   constructor(config: EnterpriseCacheConfig["layers"]["redis"]) {
     try {
-      // Dynamic import to make Redis optional
+      // Dynamic require to make Redis optional dependency
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const RedisModule = require("ioredis");
       this.redis = new RedisModule({
         host: config.host,

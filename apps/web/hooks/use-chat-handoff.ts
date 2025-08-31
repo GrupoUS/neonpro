@@ -58,7 +58,7 @@ export function useChatHandoff(config: Partial<HandoffConfig> = {}) {
     retryCount: 0
   });
 
-  const handoffTimeoutRef = useRef<NodeJS.Timeout>();
+  const handoffTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   // Verificar se mensagem requer handoff
   const shouldTriggerHandoff = useCallback((message: string, confidence: number): {
@@ -136,12 +136,14 @@ export function useChatHandoff(config: Partial<HandoffConfig> = {}) {
 
   // Incrementar tentativas
   const incrementRetries = useCallback(() => {
+    let shouldRequestHandoff = false;
+    
     setHandoffState(prev => {
       const newRetryCount = prev.retryCount + 1;
       
-      // Auto handoff se exceder máximo de tentativas
+      // Check if should trigger auto handoff
       if (newRetryCount >= finalConfig.maxRetries) {
-        requestHandoff('Múltiplas tentativas sem resolução');
+        shouldRequestHandoff = true;
       }
       
       return {
@@ -149,6 +151,11 @@ export function useChatHandoff(config: Partial<HandoffConfig> = {}) {
         retryCount: newRetryCount
       };
     });
+    
+    // Auto handoff se exceder máximo de tentativas
+    if (shouldRequestHandoff) {
+      requestHandoff('Múltiplas tentativas sem resolução');
+    }
   }, [finalConfig.maxRetries, requestHandoff]);
 
   // Processar resposta da AI

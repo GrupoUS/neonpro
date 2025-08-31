@@ -145,7 +145,7 @@ export const healthcareUtils = {
   },
 
   // Get healthcare audit trail
-  getAuditTrail: (): any[] => {
+  getAuditTrail: (): Record<string, unknown>[] => {
     return healthcareCache.getHealthcareAuditTrail();
   },
 

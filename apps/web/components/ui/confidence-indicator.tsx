@@ -16,6 +16,9 @@ export function ConfidenceIndicator({
   showPercentage = true,
   size = "md"
 }: ConfidenceIndicatorProps) {
+  // Clamp confidence to [0,100] range and round it
+  const clampedConfidence = Math.min(100, Math.max(0, Math.round(confidence)));
+  
   const getConfidenceLevel = (confidence: number) => {
     if (confidence >= 85) {return "high";}
     if (confidence >= 60) {return "medium";}
@@ -59,7 +62,7 @@ export function ConfidenceIndicator({
     }
   };
 
-  const level = getConfidenceLevel(confidence);
+  const level = getConfidenceLevel(clampedConfidence);
   const colorClass = getConfidenceColor(level);
   const sizeClass = getSizeClass(size);
   const text = getConfidenceText(level);
@@ -73,7 +76,7 @@ export function ConfidenceIndicator({
         className
       )}
       role="status"
-      aria-label={`Nível de confiança: ${text}, ${confidence}%`}
+      aria-label={`Nível de confiança: ${text}${showPercentage ? `, ${clampedConfidence}%` : ''}`}
     >
       <div
         className={cn(
@@ -87,7 +90,7 @@ export function ConfidenceIndicator({
       <span>{text}</span>
       {showPercentage && (
         <span className="font-semibold">
-          {confidence}%
+          {clampedConfidence}%
         </span>
       )}
     </Badge>

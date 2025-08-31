@@ -157,10 +157,10 @@ export class HealthcarePerformanceMonitor {
    * Get current performance metrics summary
    */
   async getMetricsSummary(): Promise<{
-    webVitals: any;
-    aiMetrics: any;
-    cacheMetrics: any;
-    systemMetrics: any;
+    webVitals: Record<string, unknown>;
+    aiMetrics: Record<string, unknown>;
+    cacheMetrics: Record<string, unknown>;
+    systemMetrics: Record<string, unknown>;
     lastUpdated: string;
   }> {
     return {

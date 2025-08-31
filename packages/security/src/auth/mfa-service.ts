@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { z } from "zod";
 
 // Constants for magic numbers
@@ -199,7 +200,6 @@ function generateHotp(secret: string, counter: number): string {
   counterBuffer.writeUInt32BE(counter & 0xFF_FF_FF_FF, BUFFER_OFFSET_HIGH_BITS);
 
   // Generate HMAC
-  const crypto = require("node:crypto");
   const hmac = crypto.createHmac("sha1", key);
   hmac.update(counterBuffer);
   const digest = hmac.digest();

@@ -4,16 +4,14 @@ import Image from "next/image";
 import { useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
-interface OptimizedImageProps {
+// Base props shared by both fill and sized variants
+interface BaseOptimizedImageProps {
   src: string;
   alt: string;
-  width?: number;
-  height?: number;
   className?: string;
   priority?: boolean;
   quality?: number;
   sizes?: string;
-  fill?: boolean;
   placeholder?: "blur" | "empty";
   blurDataURL?: string;
   onLoadingComplete?: () => void;
@@ -24,6 +22,20 @@ interface OptimizedImageProps {
   fallbackSrc?: string;
   showSkeleton?: boolean;
 }
+
+// Discriminated union to prevent width/height with fill=true
+type OptimizedImageProps = BaseOptimizedImageProps & (
+  | {
+      fill: true;
+      width?: never;
+      height?: never;
+    }
+  | {
+      fill?: false;
+      width?: number;
+      height?: number;
+    }
+);
 
 // Healthcare image configurations
 const HealthcareImageConfig = {
@@ -73,7 +85,10 @@ function generateBlurPlaceholder(width: number, height: number): string {
     </svg>
   `;
   
-  const base64 = Buffer.from(svg).toString("base64");
+  // Browser-safe base64 encoding with Unicode support
+  const base64 = typeof window !== 'undefined' 
+    ? window.btoa(unescape(encodeURIComponent(svg)))
+    : '';
   return `data:image/svg+xml;base64,${base64}`;
 }
 

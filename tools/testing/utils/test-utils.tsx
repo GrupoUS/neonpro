@@ -204,7 +204,11 @@ export const createMockResponse = (data: unknown, status = 200) => ({
   ok: status >= 200 && status < 300,
   status,
   json: async () => data,
-  text: async () => JSON.stringify(data),
+  text: async () => {
+    if (typeof data === 'string') {return data;}
+    if (data === null || data === undefined) {return '';}
+    return JSON.stringify(data);
+  },
 });
 
 // Re-export testing library utilities

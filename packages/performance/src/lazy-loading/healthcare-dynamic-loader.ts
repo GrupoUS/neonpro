@@ -5,7 +5,7 @@
  */
 
 import type { ComponentType, LazyExoticComponent } from 'react';
-import { lazy } from 'react';
+import React, { lazy } from 'react';
 
 // Priority levels for healthcare components
 export enum HealthcarePriority {
@@ -40,28 +40,44 @@ export class HealthcareDynamicLoader {
   /**
    * Lazy load React PDF components for medical reports
    */
-  static loadPDFGenerator = () => lazy(async () => {
-    const [pdfRenderer, jsPdf] = await Promise.all([
-      import('@react-pdf/renderer'),
-      import('jspdf')
-    ]);
-    
-    return {
-      default: {
-        PDFDocument: pdfRenderer.Document,
-        PDFPage: pdfRenderer.Page,
-        PDFView: pdfRenderer.View,
-        PDFText: pdfRenderer.Text,
-        PDFDownloadLink: pdfRenderer.PDFDownloadLink,
-        jsPDF: jsPdf.default,
-      }
-    };
-  });
+  static loadPDFGenerator() {
+    return lazy(async () => {
+    try {
+      const [pdfRenderer, jsPdf] = await Promise.all([
+        import('@react-pdf/renderer'),
+        import('jspdf')
+      ]);
+      
+      return {
+        default: {
+          PDFDocument: pdfRenderer.Document,
+          PDFPage: pdfRenderer.Page,
+          PDFView: pdfRenderer.View,
+          PDFText: pdfRenderer.Text,
+          PDFDownloadLink: pdfRenderer.PDFDownloadLink,
+          jsPDF: jsPdf.default,
+        }
+      };
+    } catch (error) {
+      console.error('PDF libraries failed to load:', error);
+      return {
+        default: {
+          PDFDocument: ({ children }: any) => React.createElement('div', { className: 'pdf-unavailable' }, 'PDF functionality unavailable'),
+          PDFPage: ({ children }: any) => React.createElement('div', { className: 'pdf-page' }, children),
+          PDFView: ({ children }: any) => React.createElement('div', { className: 'pdf-view' }, children),
+          PDFText: ({ children }: any) => React.createElement('span', { className: 'pdf-text' }, children),
+          PDFDownloadLink: ({ children }: any) => React.createElement('button', { disabled: true, className: 'pdf-download-disabled' }, 'PDF Download unavailable'),
+          jsPDF: undefined,
+        }
+      };
+    });
+  }
 
   /**
    * Lazy load Chart components for healthcare analytics
    */
-  static loadChartsLibrary = () => lazy(async () => {
+  static loadChartsLibrary() {
+    return lazy(async () => {
     const recharts = await import('recharts');
     
     return {
@@ -77,12 +93,14 @@ export class HealthcareDynamicLoader {
         ResponsiveContainer: recharts.ResponsiveContainer,
       }
     };
-  });
+    });
+  }
 
   /**
    * Lazy load animation library for UI feedback
    */
-  static loadAnimationLibrary = () => lazy(async () => {
+  static loadAnimationLibrary() {
+    return lazy(async () => {
     const framerMotion = await import('framer-motion');
     
     return {
@@ -93,18 +111,52 @@ export class HealthcareDynamicLoader {
         useInView: framerMotion.useInView,
       }
     };
-  });
+    });
+  }
 
   /**
    * Lazy load HTML2Canvas for medical screenshots
    */
-  static loadScreenshotLibrary = () => lazy(async () => {
+  static loadScreenshotLibrary() {
+    return lazy(async () => {
     const html2canvas = await import('html2canvas');
     
     return {
       default: html2canvas.default
     };
-  });
+    });
+  }
+
+  /**
+   * Preload PDF libraries - returns the actual import promise
+   */
+  static preloadPDFGenerator = (): Promise<any> => {
+    return Promise.all([
+      import('@react-pdf/renderer'),
+      import('jspdf')
+    ]);
+  };
+
+  /**
+   * Preload screenshot library - returns the actual import promise
+   */
+  static preloadScreenshotLibrary = (): Promise<any> => {
+    return import('html2canvas');
+  };
+
+  /**
+   * Preload charts library - returns the actual import promise
+   */
+  static preloadChartsLibrary = (): Promise<any> => {
+    return import('recharts');
+  };
+
+  /**
+   * Preload animation library - returns the actual import promise
+   */
+  static preloadAnimationLibrary = (): Promise<any> => {
+    return import('framer-motion');
+  };
 
   /**
    * Preload critical healthcare components based on route
@@ -115,16 +167,16 @@ export class HealthcareDynamicLoader {
     // Emergency routes - preload immediately
     if (route.includes('/emergency') || route.includes('/ambulance')) {
       preloadPromises.push(
-        this.loadPDFGenerator(),
-        this.loadScreenshotLibrary()
+        HealthcareDynamicLoader.preloadPDFGenerator(),
+        HealthcareDynamicLoader.preloadScreenshotLibrary()
       );
     }
     
     // Patient dashboard - preload charts and animations
     else if (route.includes('/dashboard') || route.includes('/patient')) {
       preloadPromises.push(
-        this.loadChartsLibrary(),
-        this.loadAnimationLibrary()
+        HealthcareDynamicLoader.preloadChartsLibrary(),
+        HealthcareDynamicLoader.preloadAnimationLibrary()
       );
     }
     
@@ -187,25 +239,39 @@ export class HealthcareDynamicLoader {
    * Preload emergency healthcare components during idle time
    */
   static preloadEmergencyComponents = (): void => {
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(() => {
-        // Preload PDF generation for emergency medical reports
-        this.preloadedComponents.set('pdf', 
-          import('@react-pdf/renderer').then(() => import('jspdf'))
-        );
-        
-        // Preload screenshot capability for medical documentation
-        this.preloadedComponents.set('screenshot', 
-          import('html2canvas')
-        );
-        
-        // Preload TensorFlow.js for medical AI features
-        this.preloadedComponents.set('tensorflow',
-          import('@neonpro/ai/src/prediction/core/tensorflow-lazy-loader').then(
-            module => module.TensorFlowLazyLoader
-          )
-        );
-      });
+    const executePreload = () => {
+      // Preload PDF generation for emergency medical reports
+      this.preloadedComponents.set('pdf', 
+        Promise.all([
+          import('@react-pdf/renderer'),
+          import('jspdf')
+        ]).then(([pdfRenderer, jsPdf]) => ({
+          pdfRenderer: pdfRenderer.default || pdfRenderer,
+          jsPdf: jsPdf.default || jsPdf
+        }))
+      );
+      
+      // Preload screenshot capability for medical documentation
+      this.preloadedComponents.set('screenshot', 
+        import('html2canvas').then(module => module.default || module)
+      );
+      
+      // Preload TensorFlow.js for medical AI features
+      this.preloadedComponents.set('tensorflow',
+        import('@neonpro/ai/ml').then(
+          module => module.TensorFlowLazyLoader || module.default
+        ).catch(error => {
+          console.warn('TensorFlow AI module not available:', error);
+          return null;
+        })
+      );
+    };
+
+    // Use requestIdleCallback if available, otherwise use setTimeout as fallback
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      window.requestIdleCallback(executePreload);
+    } else {
+      setTimeout(executePreload, 200);
     }
   };
 
@@ -233,22 +299,10 @@ export class HealthcareDynamicLoader {
   };
 }
 
-// Healthcare-specific lazy loading hooks
-export const useHealthcarePreloader = () => {
-  const preloadForEmergency = () => HealthcareDynamicLoader.preloadByRoute('/emergency');
-  const preloadForDashboard = () => HealthcareDynamicLoader.preloadByRoute('/dashboard');  
-  const preloadForPatient = () => HealthcareDynamicLoader.preloadByRoute('/patient');
 
-  return {
-    preloadForEmergency,
-    preloadForDashboard, 
-    preloadForPatient,
-    warmUpCriticalLibraries: HealthcareDynamicLoader.warmUpHealthcareLibraries,
-  };
-};
 
 // Export lazy-loaded components ready for healthcare use
-export const LazyPDFGenerator = HealthcareDynamicLoader.loadPDFGenerator();
-export const LazyHealthcareCharts = HealthcareDynamicLoader.loadChartsLibrary();
-export const LazyAnimations = HealthcareDynamicLoader.loadAnimationLibrary();
-export const LazyScreenshot = HealthcareDynamicLoader.loadScreenshotLibrary();
+export const LazyPDFGenerator = HealthcareDynamicLoader.loadPDFGenerator;
+export const LazyHealthcareCharts = HealthcareDynamicLoader.loadChartsLibrary;
+export const LazyAnimations = HealthcareDynamicLoader.loadAnimationLibrary;
+export const LazyScreenshot = HealthcareDynamicLoader.loadScreenshotLibrary;

@@ -160,7 +160,7 @@ export class AIContextCacheLayer implements CacheOperation {
   // AI-specific methods
   async setConversationContext(
     conversationId: string,
-    context: any,
+    context: Record<string, unknown>,
     metadata: AIContextMetadata,
   ): Promise<void> {
     const key = `conversation:${conversationId}`;
@@ -176,7 +176,7 @@ export class AIContextCacheLayer implements CacheOperation {
 
   async setKnowledgeContext(
     knowledgeId: string,
-    knowledge: any,
+    knowledge: Record<string, unknown>,
     metadata: AIContextMetadata,
   ): Promise<void> {
     const key = `knowledge:${knowledgeId}`;
@@ -331,7 +331,7 @@ export class AIContextCacheLayer implements CacheOperation {
     return data;
   }
 
-  private decompress(data: string): any {
+  private decompress(data: string): unknown {
     try {
       return JSON.parse(data);
     } catch {
@@ -360,7 +360,7 @@ export class AIContextCacheLayer implements CacheOperation {
     }
   }
 
-  private calculateEvictionScore(entry: any): number {
+  private calculateEvictionScore(entry: Record<string, unknown>): number {
     const now = Date.now();
     const age = now - entry.timestamp;
     const accessRecency = now - (entry.lastAccessed || entry.timestamp);

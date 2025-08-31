@@ -11,6 +11,7 @@
  * - Right to direct transmission between controllers when technically feasible
  */
 
+import crypto from "node:crypto";
 import { z } from "zod";
 import type { ComplianceScore, ConstitutionalResponse } from "../types";
 import { PatientDataClassification } from "../types";
@@ -732,7 +733,6 @@ export class DataPortabilityService {
     request: DataPortabilityRequest,
   ): Promise<{ key: string; }> {
     // Generate AES-256 encryption key
-    const crypto = require("node:crypto");
     const keyMaterial = `${request.patientId}-${request.tenantId}-${Date.now()}`;
     const key = crypto.createHash("sha256").update(keyMaterial).digest("hex");
 
@@ -753,7 +753,6 @@ export class DataPortabilityService {
 
   private async generateSecurePassword(): Promise<string> {
     // Generate cryptographically secure password for export access
-    const crypto = require("node:crypto");
     const length = 16;
     const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
     let password = "";
@@ -771,7 +770,6 @@ export class DataPortabilityService {
     password: string,
   ): Promise<void> {
     // Apply password protection to the export
-    const crypto = require("node:crypto");
 
     // Hash the password for storage
     const passwordHash = crypto
@@ -795,7 +793,6 @@ export class DataPortabilityService {
     result: PortabilityResult,
   ): Promise<string> {
     // Generate HMAC signature for data integrity
-    const crypto = require("node:crypto");
     const dataToSign = JSON.stringify({
       requestId: result.requestId,
       tenantId: result.tenantId,

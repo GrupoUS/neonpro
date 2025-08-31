@@ -179,8 +179,13 @@ export function DynamicLoadingAnimation({
   );
 }
 
+// Define proper prop types for healthcare components
+type PatientCardProps = React.ComponentProps<typeof PatientCardAnimated>;
+type AppointmentTransitionsProps = React.ComponentProps<typeof AppointmentTransitions>;  
+type DashboardAnimationsProps = React.ComponentProps<typeof DashboardAnimations>;
+
 // Healthcare-specific animated components exports
-export function DynamicPatientCard(props: any) {
+export function DynamicPatientCard(props: PatientCardProps) {
   return (
     <Suspense fallback={<LoadingWithMessage variant="animation" />}>
       <PatientCardAnimated {...props} />
@@ -188,7 +193,7 @@ export function DynamicPatientCard(props: any) {
   );
 }
 
-export function DynamicAppointmentTransitions(props: any) {
+export function DynamicAppointmentTransitions(props: AppointmentTransitionsProps) {
   return (
     <Suspense fallback={<LoadingWithMessage variant="animation" />}>
       <AppointmentTransitions {...props} />
@@ -196,7 +201,7 @@ export function DynamicAppointmentTransitions(props: any) {
   );
 }
 
-export function DynamicDashboardAnimations(props: any) {
+export function DynamicDashboardAnimations(props: DashboardAnimationsProps) {
   return (
     <Suspense fallback={<LoadingWithMessage variant="animation" />}>
       <DashboardAnimations {...props} />
@@ -222,8 +227,8 @@ export function useHealthcareAnimations() {
   }, []);
 
   // Get animation config based on current mode
-  const getAnimationConfig = useCallback((override?: Partial<typeof HealthcareAnimations.normal>) => {
-    const base = HealthcareAnimations[animationMode] || HealthcareAnimations.normal;
+  const getAnimationConfig = useCallback((override?: Partial<typeof HealthcareAnimations.gentle>) => {
+    const base = HealthcareAnimations[animationMode as keyof typeof HealthcareAnimations] || HealthcareAnimations.gentle;
     
     if (reducedMotion || animationMode === "off") {
       return { duration: 0, ease: "linear" };

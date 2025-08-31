@@ -17,6 +17,12 @@ export {
 } from "./MobileDashboardCards";
 export { MobileBottomNavigation, MobileNavigation } from "./MobileNavigation";
 
+// Emergency Interface Components - T3.2 Mobile Emergency Interface <100ms Response
+export { default as EmergencyPatientLookup } from './EmergencyPatientLookup';
+export { default as CriticalInfoDisplay } from './CriticalInfoDisplay'; 
+export { default as OfflineSyncManager } from './OfflineSyncManager';
+export { default as EmergencyModeInterface } from './EmergencyModeInterface';
+
 // Mobile-specific types
 export interface MobileNavigationItem {
   label: string;

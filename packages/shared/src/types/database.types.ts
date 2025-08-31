@@ -194,7 +194,7 @@ export interface Database {
           action: string;
           resource_type: string;
           resource_id: string | null;
-          metadata: any | null;
+          metadata: Record<string, unknown> | null;
           ip_address: string;
           user_agent: string;
           timestamp: string;

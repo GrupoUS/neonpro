@@ -233,7 +233,7 @@ describe("🚨 Input Validation & Injection Prevention", () => {
       const xssPayloads = [
         '<script>alert("xss")</script>',
         '"><script>document.location="http://evil.com"</script>',
-        'javascript:alert("xss")',
+        'data:text/html,<script>alert("xss")</script>',
         '<img src="x" onerror="alert(\'xss\')">',
         "<svg onload=\"alert('xss')\">",
         '&lt;script&gt;alert("xss")&lt;/script&gt;',

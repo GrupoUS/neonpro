@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter, Router } from 'next/router';
 import { HealthcareDynamicLoader, HealthcarePriority } from '../lazy-loading/healthcare-dynamic-loader';
 
 interface PreloaderOptions {
@@ -20,6 +20,11 @@ interface PreloaderStats {
   averageLoadTime: number;
   failedLoads: number;
 }
+
+// Helper to check if we're in a pages router environment
+const isPagesRouter = () => {
+  return typeof Router !== 'undefined' && Router.events;
+};
 
 export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
   const {
@@ -65,9 +70,13 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
       
       // Determine priority based on route
       let priority = HealthcarePriority.STANDARD;
-      if (currentPath.includes('/emergency')) {priority = HealthcarePriority.EMERGENCY;}
-      else if (currentPath.includes('/urgent')) {priority = HealthcarePriority.URGENT;}
-      else if (currentPath.includes('/admin')) {priority = HealthcarePriority.ADMINISTRATIVE;}
+      if (currentPath.includes('/emergency')) {
+        priority = HealthcarePriority.EMERGENCY;
+      } else if (currentPath.includes('/urgent')) {
+        priority = HealthcarePriority.URGENT;
+      } else if (currentPath.includes('/admin')) {
+        priority = HealthcarePriority.ADMINISTRATIVE;
+      }
 
       trackLoadTime(loadTime, priority);
       statsRef.current.preloadedComponents++;
@@ -167,15 +176,21 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
    * Preload on route changes
    */
   useEffect(() => {
+    // Guard to only run in pages router environment
+    if (!isPagesRouter()) {
+      console.warn('Healthcare preloader: Router events not available in App Router environment');
+      return;
+    }
+
     const handleRouteChangeStart = (url: string) => {
       predictivePreload(url);
     };
 
-    router.events.on('routeChangeStart', handleRouteChangeStart);
+    Router.events.on('routeChangeStart', handleRouteChangeStart);
     return () => {
-      router.events.off('routeChangeStart', handleRouteChangeStart);
+      Router.events.off('routeChangeStart', handleRouteChangeStart);
     };
-  }, [router, predictivePreload]);
+  }, [predictivePreload]);
 
   /**
    * Get current performance statistics
