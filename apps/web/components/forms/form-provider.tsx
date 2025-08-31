@@ -1,8 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
-import type { ValidationSchema} from "./validation";
-import { ValidationResult, validateSchema } from "./validation";
+import React, { createContext, useCallback, useContext, useState } from "react";
+import type { ValidationSchema } from "./validation";
+import { validateSchema, ValidationResult } from "./validation";
 
 export interface FormState {
   data: Record<string, any>;
@@ -62,14 +62,14 @@ export const FormProvider: React.FC<FormProviderProps> = ({
     setState(prev => {
       const newData = { ...prev.data, [name]: value };
       const isDirty = JSON.stringify(newData) !== JSON.stringify(initialData);
-      
+
       let newErrors = { ...prev.errors };
-      
+
       // Clear error when value changes
       if (prev.errors[name]) {
         delete newErrors[name];
       }
-      
+
       // Validate on change if enabled
       if (validateOnChange && validationSchema?.[name]) {
         const result = validateSchema(newData, { [name]: validationSchema[name] });
@@ -77,9 +77,9 @@ export const FormProvider: React.FC<FormProviderProps> = ({
           newErrors[name] = result.errors[name];
         }
       }
-      
+
       const isValid = Object.keys(newErrors).length === 0;
-      
+
       return {
         ...prev,
         data: newData,
@@ -103,7 +103,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({
       const newErrors = { ...prev.errors };
       delete newErrors[name];
       const isValid = Object.keys(newErrors).length === 0;
-      
+
       return {
         ...prev,
         errors: newErrors,
@@ -136,21 +136,21 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   }, []);
 
   const validateField = useCallback((name: string) => {
-    if (!validationSchema?.[name]) {return;}
+    if (!validationSchema?.[name]) return;
 
     const result = validateSchema(state.data, { [name]: validationSchema[name] });
-    
+
     setState(prev => {
       const newErrors = { ...prev.errors };
-      
+
       if (result.errors[name]) {
         newErrors[name] = result.errors[name];
       } else {
         delete newErrors[name];
       }
-      
+
       const isValid = Object.keys(newErrors).length === 0;
-      
+
       return {
         ...prev,
         errors: newErrors,
@@ -161,10 +161,10 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   }, [state.data, validationSchema]);
 
   const validateForm = useCallback((): boolean => {
-    if (!validationSchema) {return true;}
+    if (!validationSchema) return true;
 
     const result = validateSchema(state.data, validationSchema);
-    
+
     setState(prev => ({
       ...prev,
       errors: result.errors,
@@ -174,7 +174,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({
         return acc;
       }, {} as Record<string, boolean>),
     }));
-    
+
     return result.isValid;
   }, [state.data, validationSchema]);
 
@@ -192,20 +192,20 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   }, [initialData]);
 
   const submitForm = useCallback(async (
-    onSubmit: (data: Record<string, any>) => Promise<void> | void
+    onSubmit: (data: Record<string, any>) => Promise<void> | void,
   ) => {
     setSubmitting(true);
-    
+
     try {
       // Validate form before submission
       const isFormValid = validateForm();
-      
+
       if (!isFormValid) {
         throw new Error("Por favor, corrija os erros do formulário");
       }
-      
+
       await onSubmit(state.data);
-      
+
       if (resetOnSubmit) {
         resetForm();
       }

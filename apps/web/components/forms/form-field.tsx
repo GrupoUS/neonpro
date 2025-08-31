@@ -1,19 +1,34 @@
 "use client";
 
-import React from "react";
-import { cn } from "@/lib/utils";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import { AlertTriangle, CheckCircle, Info } from "lucide-react";
+import React from "react";
 
 export interface FormFieldProps {
   id: string;
   name: string;
   label: string;
-  type?: 'text' | 'email' | 'tel' | 'date' | 'number' | 'textarea' | 'select' | 'checkbox' | 'password';
+  type?:
+    | "text"
+    | "email"
+    | "tel"
+    | "date"
+    | "number"
+    | "textarea"
+    | "select"
+    | "checkbox"
+    | "password";
   value?: any;
   onChange?: (value: any) => void;
   onBlur?: () => void;
@@ -23,7 +38,7 @@ export interface FormFieldProps {
   required?: boolean;
   placeholder?: string;
   description?: string;
-  options?: { value: string; label: string; disabled?: boolean }[];
+  options?: { value: string; label: string; disabled?: boolean; }[];
   className?: string;
   inputClassName?: string;
   rows?: number;
@@ -32,14 +47,14 @@ export interface FormFieldProps {
   step?: number;
   pattern?: string;
   autoComplete?: string;
-  'data-testid'?: string;
+  "data-testid"?: string;
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
   id,
   name,
   label,
-  type = 'text',
+  type = "text",
   value,
   onChange,
   onBlur,
@@ -58,7 +73,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   step,
   pattern,
   autoComplete,
-  'data-testid': testId,
+  "data-testid": testId,
 }) => {
   const hasError = Boolean(error);
   const isValid = !hasError && value && !loading;
@@ -66,9 +81,9 @@ export const FormField: React.FC<FormFieldProps> = ({
   const baseInputProps = {
     id,
     name,
-    value: value || '',
+    value: value || "",
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      onChange?.(type === 'number' ? parseFloat(e.target.value) : e.target.value);
+      onChange?.(type === "number" ? parseFloat(e.target.value) : e.target.value);
     },
     onBlur,
     disabled: disabled || loading,
@@ -78,11 +93,11 @@ export const FormField: React.FC<FormFieldProps> = ({
       hasError && "border-red-500 focus:border-red-500 focus:ring-red-200",
       isValid && "border-green-500 focus:border-green-500 focus:ring-green-200",
       loading && "opacity-50 cursor-wait",
-      inputClassName
+      inputClassName,
     ),
-    'aria-invalid': hasError,
-    'aria-describedby': `${id}-description ${id}-error`,
-    'data-testid': testId,
+    "aria-invalid": hasError,
+    "aria-describedby": `${id}-description ${id}-error`,
+    "data-testid": testId,
     autoComplete,
     pattern,
     min,
@@ -92,7 +107,7 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   const renderInput = () => {
     switch (type) {
-      case 'textarea':
+      case "textarea":
         return (
           <Textarea
             {...baseInputProps}
@@ -101,20 +116,20 @@ export const FormField: React.FC<FormFieldProps> = ({
           />
         );
 
-      case 'select':
+      case "select":
         return (
-          <Select 
-            value={value || ''} 
+          <Select
+            value={value || ""}
             onValueChange={onChange}
             disabled={disabled || loading}
           >
-            <SelectTrigger 
+            <SelectTrigger
               className={cn(
                 "transition-all duration-200",
                 hasError && "border-red-500 focus:border-red-500 focus:ring-red-200",
                 isValid && "border-green-500 focus:border-green-500 focus:ring-green-200",
                 loading && "opacity-50 cursor-wait",
-                inputClassName
+                inputClassName,
               )}
               aria-invalid={hasError}
               data-testid={testId}
@@ -123,8 +138,8 @@ export const FormField: React.FC<FormFieldProps> = ({
             </SelectTrigger>
             <SelectContent>
               {options?.map((option) => (
-                <SelectItem 
-                  key={option.value} 
+                <SelectItem
+                  key={option.value}
                   value={option.value}
                   disabled={option.disabled}
                 >
@@ -135,7 +150,7 @@ export const FormField: React.FC<FormFieldProps> = ({
           </Select>
         );
 
-      case 'checkbox':
+      case "checkbox":
         return (
           <div className="flex items-start space-x-3">
             <Checkbox
@@ -147,19 +162,19 @@ export const FormField: React.FC<FormFieldProps> = ({
               className={cn(
                 "mt-1",
                 hasError && "border-red-500",
-                isValid && "border-green-500"
+                isValid && "border-green-500",
               )}
               aria-invalid={hasError}
               aria-describedby={`${id}-description ${id}-error`}
               data-testid={testId}
             />
             <div className="flex-1">
-              <Label 
+              <Label
                 htmlFor={id}
                 className={cn(
                   "text-sm font-medium leading-5",
                   hasError && "text-red-600",
-                  disabled && "text-gray-400"
+                  disabled && "text-gray-400",
                 )}
               >
                 {label}
@@ -184,7 +199,7 @@ export const FormField: React.FC<FormFieldProps> = ({
     }
   };
 
-  if (type === 'checkbox') {
+  if (type === "checkbox") {
     return (
       <div className={cn("space-y-2", className)}>
         {renderInput()}
@@ -200,12 +215,12 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   return (
     <div className={cn("space-y-2", className)}>
-      <Label 
+      <Label
         htmlFor={id}
         className={cn(
           "text-sm font-medium",
           hasError && "text-red-600",
-          disabled && "text-gray-400"
+          disabled && "text-gray-400",
         )}
       >
         {label}
@@ -215,9 +230,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             Carregando...
           </span>
         )}
-        {isValid && (
-          <CheckCircle className="inline w-4 h-4 ml-2 text-green-500" />
-        )}
+        {isValid && <CheckCircle className="inline w-4 h-4 ml-2 text-green-500" />}
       </Label>
 
       {description && (

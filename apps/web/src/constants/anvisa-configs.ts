@@ -9,8 +9,8 @@ import {
 } from "lucide-react";
 
 import type {
-  ControlledSubstanceClass,
   ControlledPrescriptionStatus,
+  ControlledSubstanceClass,
 } from "@/lib/compliance/anvisa-controlled-substances";
 
 // ANVISA Substance Class Configuration

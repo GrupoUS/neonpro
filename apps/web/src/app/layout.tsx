@@ -1,42 +1,43 @@
 import type { Metadata } from "next";
-import { Inter, Lora, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Lora } from "next/font/google";
 import "./globals.css";
 
+import { PerformanceStatus } from "@/components/performance/performance-status";
 import { Toaster } from "@/components/ui/toaster";
 import { ApiProvider } from "@/contexts/api-context";
 import { AuthProvider } from "@/contexts/auth-context";
 import { HealthcareThemeProvider } from "@/contexts/theme-context";
 import { PerformanceMonitorProvider } from "@/providers/performance-monitor-provider";
-import { PerformanceStatus } from "@/components/performance/performance-status";
 
 // Enhanced font loading for Portuguese medical content
-const inter = Inter({ 
-  subsets: ["latin"], 
+const inter = Inter({
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
 });
 
-const lora = Lora({ 
-  subsets: ["latin"], 
+const lora = Lora({
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-lora",
 });
 
-const jetbrainsMono = JetBrains_Mono({ 
-  subsets: ["latin"], 
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-jetbrains-mono",
 });
 
 export const metadata: Metadata = {
   title: "NeonPro - Plataforma Healthcare AI",
-  description: "Plataforma de gestão para clínicas de estética com IA integrada e compliance LGPD/ANVISA/CFM",
+  description:
+    "Plataforma de gestão para clínicas de estética com IA integrada e compliance LGPD/ANVISA/CFM",
   keywords: [
     "healthcare",
     "estética",
     "LGPD",
     "ANVISA",
-    "CFM", 
+    "CFM",
     "gestão clínica",
     "inteligência artificial",
     "agendamento",
@@ -78,24 +79,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html 
-      lang="pt-BR" 
+    <html
+      lang="pt-BR"
       suppressHydrationWarning
       className={`${inter.variable} ${lora.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        
+
         {/* Enhanced PWA Support for Healthcare Mobile Apps */}
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="NeonPro Healthcare" />
-        
+
         {/* Emergency Contact Detection - Disabled for healthcare forms */}
         <meta name="format-detection" content="telephone=no" />
-        
+
         {/* Accessibility Enhancement */}
         <meta name="color-scheme" content="light dark" />
       </head>
@@ -121,37 +122,37 @@ export default function RootLayout({
                 }}
               >
                 <div className="min-h-screen bg-background text-foreground">
-                <div className="relative flex min-h-screen flex-col">
-                  <main className="flex-1">{children}</main>
+                  <div className="relative flex min-h-screen flex-col">
+                    <main className="flex-1">{children}</main>
+                  </div>
+
+                  {/* Healthcare Toast System */}
+                  <Toaster />
+
+                  {/* Emergency Mode Indicator */}
+                  <div
+                    id="emergency-mode-indicator"
+                    className="emergency-mode-indicator"
+                    aria-live="polite"
+                    aria-atomic="true"
+                  />
+
+                  {/* Accessibility Announcements */}
+                  <div
+                    id="accessibility-announcements"
+                    className="sr-only"
+                    aria-live="assertive"
+                    aria-atomic="true"
+                  />
+
+                  {/* Performance Monitoring Status (Development Only) */}
+                  <PerformanceStatus />
                 </div>
-                
-                {/* Healthcare Toast System */}
-                <Toaster />
-                
-                {/* Emergency Mode Indicator */}
-                <div 
-                  id="emergency-mode-indicator"
-                  className="emergency-mode-indicator"
-                  aria-live="polite"
-                  aria-atomic="true"
-                />
-                
-                {/* Accessibility Announcements */}
-                <div 
-                  id="accessibility-announcements"
-                  className="sr-only"
-                  aria-live="assertive"
-                  aria-atomic="true"
-                />
-                
-                {/* Performance Monitoring Status (Development Only) */}
-                <PerformanceStatus />
-              </div>
               </PerformanceMonitorProvider>
             </ApiProvider>
           </AuthProvider>
         </HealthcareThemeProvider>
-        
+
         {/* Emergency Mode Global Styles Injection */}
         <script
           dangerouslySetInnerHTML={{

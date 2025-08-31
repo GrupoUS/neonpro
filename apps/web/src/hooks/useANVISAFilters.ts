@@ -1,8 +1,8 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import type {
+  ANVISAControlledClass,
   ANVISASubstance,
   ControlledPrescription,
-  ANVISAControlledClass,
 } from "../types/compliance";
 
 export interface UseANVISAFiltersReturn {
@@ -11,29 +11,29 @@ export interface UseANVISAFiltersReturn {
   prescriptionSearchTerm: string;
   setSubstanceSearchTerm: (term: string) => void;
   setPrescriptionSearchTerm: (term: string) => void;
-  
+
   // Filter states
   selectedClass: ANVISAControlledClass | "all";
   selectedStatus: string;
   setSelectedClass: (classType: ANVISAControlledClass | "all") => void;
   setSelectedStatus: (status: string) => void;
-  
+
   // Filtered data
   filteredSubstances: ANVISASubstance[];
   filteredPrescriptions: ControlledPrescription[];
-  
+
   // Reset function
   resetFilters: () => void;
 }
 
 export const useANVISAFilters = (
   substances: ANVISASubstance[],
-  prescriptions: ControlledPrescription[]
+  prescriptions: ControlledPrescription[],
 ): UseANVISAFiltersReturn => {
   // Search states
   const [substanceSearchTerm, setSubstanceSearchTerm] = useState("");
   const [prescriptionSearchTerm, setPrescriptionSearchTerm] = useState("");
-  
+
   // Filter states
   const [selectedClass, setSelectedClass] = useState<ANVISAControlledClass | "all">("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -41,15 +41,13 @@ export const useANVISAFilters = (
   // Filtered substances
   const filteredSubstances = useMemo(() => {
     return substances.filter((substance) => {
-      const matchesSearch = 
-        substanceSearchTerm === "" ||
-        substance.substanceName.toLowerCase().includes(substanceSearchTerm.toLowerCase()) ||
-        substance.commercialName.toLowerCase().includes(substanceSearchTerm.toLowerCase()) ||
-        substance.activeIngredient.toLowerCase().includes(substanceSearchTerm.toLowerCase());
-      
-      const matchesClass = 
-        selectedClass === "all" || substance.controlledClass === selectedClass;
-      
+      const matchesSearch = substanceSearchTerm === ""
+        || substance.substanceName.toLowerCase().includes(substanceSearchTerm.toLowerCase())
+        || substance.commercialName.toLowerCase().includes(substanceSearchTerm.toLowerCase())
+        || substance.activeIngredient.toLowerCase().includes(substanceSearchTerm.toLowerCase());
+
+      const matchesClass = selectedClass === "all" || substance.controlledClass === selectedClass;
+
       return matchesSearch && matchesClass;
     });
   }, [substances, substanceSearchTerm, selectedClass]);
@@ -57,15 +55,15 @@ export const useANVISAFilters = (
   // Filtered prescriptions
   const filteredPrescriptions = useMemo(() => {
     return prescriptions.filter((prescription) => {
-      const matchesSearch = 
-        prescriptionSearchTerm === "" ||
-        prescription.prescriptionNumber.toLowerCase().includes(prescriptionSearchTerm.toLowerCase()) ||
-        prescription.patientId.toLowerCase().includes(prescriptionSearchTerm.toLowerCase()) ||
-        prescription.doctorCRM.toLowerCase().includes(prescriptionSearchTerm.toLowerCase());
-      
-      const matchesStatus = 
-        selectedStatus === "all" || prescription.status === selectedStatus;
-      
+      const matchesSearch = prescriptionSearchTerm === ""
+        || prescription.prescriptionNumber.toLowerCase().includes(
+          prescriptionSearchTerm.toLowerCase(),
+        )
+        || prescription.patientId.toLowerCase().includes(prescriptionSearchTerm.toLowerCase())
+        || prescription.doctorCRM.toLowerCase().includes(prescriptionSearchTerm.toLowerCase());
+
+      const matchesStatus = selectedStatus === "all" || prescription.status === selectedStatus;
+
       return matchesSearch && matchesStatus;
     });
   }, [prescriptions, prescriptionSearchTerm, selectedStatus]);
@@ -84,17 +82,17 @@ export const useANVISAFilters = (
     prescriptionSearchTerm,
     setSubstanceSearchTerm,
     setPrescriptionSearchTerm,
-    
+
     // Filter states
     selectedClass,
     selectedStatus,
     setSelectedClass,
     setSelectedStatus,
-    
+
     // Filtered data
     filteredSubstances,
     filteredPrescriptions,
-    
+
     // Reset function
     resetFilters,
   };

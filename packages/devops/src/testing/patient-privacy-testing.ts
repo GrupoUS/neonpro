@@ -4,7 +4,6 @@
  * Implements comprehensive patient data protection validation
  */
 
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import type { ComplianceMetrics } from "../types/testing";
 
 export interface PatientPrivacyTestConfig {
@@ -318,7 +317,7 @@ export class PatientPrivacyTester {
   private async validateAuditLogging(
     patientData: PatientData,
   ): Promise<boolean> {
-    return patientData.auditLog?.enabled;
+    return patientData.auditLog?.enabled ?? false;
   }
 
   private async validateSecureBackup(

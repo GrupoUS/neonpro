@@ -554,8 +554,8 @@ export class ServiceConstitution {
   }
 
   private async evaluateGenericRule(
-    condition: string,
-    context: GovernanceContext,
+    _condition: string,
+    _context: GovernanceContext,
   ): Promise<boolean> {
     // Implement generic rule evaluation logic
     // This could use a rule engine or simple condition parsing
@@ -772,8 +772,8 @@ export class ServiceConstitution {
       await this.supabase.from("governance_metrics").insert(this.metricsBuffer);
 
       this.metricsBuffer.length = 0; // Clear buffer
-    } catch (error) {
-      // console.error("Failed to flush governance metrics:", error);
+    } catch (_error) {
+      // console.error("Failed to flush governance metrics:", _error);
     }
   }
 
@@ -983,11 +983,14 @@ export class ServiceConstitution {
     const daily = new Map<string, number[]>();
 
     for (const metric of metrics) {
-      const date = new Date(metric.timestamp).toISOString().split("T")[0];
+      const [date] = new Date(metric.timestamp).toISOString().split("T");
       if (!daily.has(date)) {
         daily.set(date, []);
       }
-      daily.get(date)!.push(metric[field] as number);
+      const dailyValues = daily.get(date);
+      if (dailyValues) {
+        dailyValues.push(metric[field] as number);
+      }
     }
 
     return [...daily.entries()]
@@ -1003,7 +1006,7 @@ export class ServiceConstitution {
    */
   public async shutdown(): Promise<void> {
     // Clear monitoring intervals
-    for (const [name, interval] of this.monitoringIntervals) {
+    for (const [, interval] of this.monitoringIntervals) {
       clearInterval(interval);
       // console.log(`⏹️ Stopped monitoring: ${name}`);
     }

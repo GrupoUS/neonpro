@@ -13,6 +13,79 @@ import type {
   SupabaseCacheConfig,
 } from "./types";
 
+interface AIConversation {
+  messages: Array<{
+    role: string;
+    content: string;
+    timestamp: Date;
+  }>;
+  context?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
+}
+
+interface AIMetadata {
+  contextType: "conversation" | "knowledge" | "embedding" | "reasoning";
+  importance: "low" | "medium" | "high" | "critical";
+  userId: string;
+  sessionId: string;
+  topic?: string;
+  lastUsed?: Date;
+  accessFrequency?: number;
+}
+
+interface AuditTrailEntry {
+  timestamp: string;
+  operation: string;
+  key: string;
+  layer?: string;
+  success: boolean;
+  executionTime: number;
+  metadata?: Record<string, unknown>;
+}
+
+interface CacheManagerStats {
+  layers: {
+    browser: {
+      hits: number;
+      misses: number;
+      hitRate: number;
+      totalRequests: number;
+      averageResponseTime: number;
+    };
+    edge: {
+      hits: number;
+      misses: number;
+      hitRate: number;
+      totalRequests: number;
+      averageResponseTime: number;
+    };
+    supabase: {
+      hits: number;
+      misses: number;
+      hitRate: number;
+      totalRequests: number;
+      averageResponseTime: number;
+    };
+    aiContext: {
+      hits: number;
+      misses: number;
+      hitRate: number;
+      totalRequests: number;
+      averageResponseTime: number;
+    };
+  };
+  overall: {
+    totalHits: number;
+    totalMisses: number;
+    averageHitRate: number;
+    totalOperations: number;
+  };
+  audit: {
+    totalEntries: number;
+    lastOperation?: string;
+  };
+}
+
 export interface MultiLayerCacheConfig {
   supabase: SupabaseCacheConfig;
   browser?: BrowserCacheConfig;
@@ -392,7 +465,7 @@ export class MultiLayerCacheManager {
     averageResponseTime: number;
   }> {
     const supabaseHealth = (await (
-      this.supabase as any
+      this.supabase as SupabaseCacheLayer & { getHealthMetrics?: () => Promise<{ healthcareEntries: number }> }
     ).getHealthMetrics?.()) || {
       healthcareEntries: 0,
     };
@@ -415,7 +488,7 @@ export class MultiLayerCacheManager {
   async storeAIConversation(
     userId: string,
     sessionId: string,
-    conversation: any,
+    conversation: AIConversation,
     metadata?: {
       importance?: "low" | "medium" | "high" | "critical";
       topic?: string;
@@ -423,7 +496,7 @@ export class MultiLayerCacheManager {
     },
   ): Promise<void> {
     const key = `ai:conversation:${userId}:${sessionId}`;
-    const aiMetadata: any = {
+    const aiMetadata: AIMetadata = {
       contextType: "conversation",
       importance: metadata?.importance || "medium",
       userId,
@@ -444,7 +517,7 @@ export class MultiLayerCacheManager {
   async getAIConversation(
     userId: string,
     sessionId: string,
-  ): Promise<any | null> {
+  ): Promise<AIConversation | null> {
     const key = `ai:conversation:${userId}:${sessionId}`;
     return await this.get(key, [CacheLayer.AI_CONTEXT]);
   }
@@ -545,7 +618,7 @@ export class MultiLayerCacheManager {
   /**
    * Get healthcare audit trail
    */
-  getHealthcareAuditTrail(): any[] {
+  getHealthcareAuditTrail(): AuditTrailEntry[] {
     // Return audit trail from all layers
     return this.auditTrail.slice(-100);
   }
@@ -553,7 +626,7 @@ export class MultiLayerCacheManager {
   /**
    * Get comprehensive cache statistics
    */
-  getStats(): { [key: string]: any; } {
+  getStats(): CacheManagerStats {
     return {
       layers: {
         browser: this.stats.browser,
@@ -578,7 +651,9 @@ export class MultiLayerCacheManager {
       },
       audit: {
         totalEntries: this.auditTrail.length,
-        lastOperation: this.auditTrail[this.auditTrail.length - 1]?.timestamp,
+        ...(this.auditTrail.length > 0 && {
+          lastOperation: this.auditTrail[this.auditTrail.length - 1].timestamp,
+        }),
       },
     };
   }

@@ -1,9 +1,10 @@
 # 📋 Component Interface Specification - NeonPro Healthcare
 
 ## 🎯 **OBJETIVO**
+
 Especificar todas as interfaces de componentes, contratos API e limites do sistema NeonPro baseado na estrutura Supabase validada.
 
-**Status**: ✅ Supabase Validation Complete | 🔄 Interface Specification In Progress  
+**Status**: ✅ Supabase Validation Complete | 🔄 Interface Specification In Progress\
 **Target**: Production-ready contracts with enterprise-grade healthcare compliance
 
 ---
@@ -17,42 +18,42 @@ Especificar todas as interfaces de componentes, contratos API e limites do siste
 export interface Patient extends BaseEntity {
   // Core Identity
   id: string;
-  clinic_id: string;              // Multi-tenant isolation
-  
+  clinic_id: string; // Multi-tenant isolation
+
   // Personal Information
   name: string;
   email: string;
   phone: string;
   birth_date: string;
-  cpf?: string;                   // Brazilian tax ID
-  rg?: string;                    // Brazilian identity
-  
+  cpf?: string; // Brazilian tax ID
+  rg?: string; // Brazilian identity
+
   // Address (Brazil-specific)
   address_line1?: string;
   address_line2?: string;
   city?: string;
   state?: string;
   postal_code?: string;
-  country?: string;               // Default: 'Brazil'
-  
+  country?: string; // Default: 'Brazil'
+
   // Healthcare Specific
   medical_history?: string;
   allergies?: string[];
   medications?: string[];
   emergency_contact_name?: string;
   emergency_contact_phone?: string;
-  
+
   // LGPD Compliance
   data_consent_given: boolean;
   lgpd_consent_date?: string;
   lgpd_consent_version?: string;
   privacy_settings: PrivacySettings;
   communication_consent: CommunicationConsent;
-  
+
   // Photo & UI
   photo_url?: string;
-  preferred_language?: string;    // Default: 'pt-BR'
-  
+  preferred_language?: string; // Default: 'pt-BR'
+
   // System fields
   created_at: string;
   updated_at: string;
@@ -65,18 +66,18 @@ export interface Patient extends BaseEntity {
 export interface Appointment extends BaseEntity {
   // Core IDs
   id: string;
-  clinic_id: string;              // Multi-tenant
+  clinic_id: string; // Multi-tenant
   patient_id: string;
   professional_id: string;
   service_type_id: string;
   room_id?: string;
-  
+
   // Scheduling
-  start_time: string;             // ISO timestamp with timezone
+  start_time: string; // ISO timestamp with timezone
   end_time: string;
   status: AppointmentStatus;
-  priority: number;               // 1-5 scale
-  
+  priority: number; // 1-5 scale
+
   // Communication & Reminders
   notes?: string;
   internal_notes?: string;
@@ -84,12 +85,12 @@ export interface Appointment extends BaseEntity {
   confirmation_sent_at?: string;
   whatsapp_reminder_sent: boolean;
   sms_reminder_sent: boolean;
-  
+
   // Cancellation
   cancelled_at?: string;
   cancelled_by?: string;
   cancellation_reason?: string;
-  
+
   // Audit
   created_at: string;
   updated_at: string;
@@ -103,12 +104,12 @@ export interface Appointment extends BaseEntity {
 ```typescript
 export enum AppointmentStatus {
   SCHEDULED = "scheduled",
-  CONFIRMED = "confirmed", 
+  CONFIRMED = "confirmed",
   CHECKED_IN = "checked_in",
   IN_PROGRESS = "in_progress",
   COMPLETED = "completed",
   CANCELLED = "cancelled",
-  NO_SHOW = "no_show"
+  NO_SHOW = "no_show",
 }
 
 export enum UserRole {
@@ -116,7 +117,7 @@ export enum UserRole {
   DOCTOR = "doctor",
   NURSE = "nurse",
   RECEPTIONIST = "receptionist",
-  PATIENT = "patient"
+  PATIENT = "patient",
 }
 ```
 
@@ -127,7 +128,6 @@ export enum UserRole {
 ```typescript
 // Complete Healthcare API Interface
 export interface HealthcareAPI {
-  
   // Patient Management
   patients: {
     list(params: {
@@ -137,18 +137,18 @@ export interface HealthcareAPI {
       search?: string;
       active?: boolean;
     }): Promise<PaginatedResponse<Patient>>;
-    
+
     getById(patientId: string): Promise<Patient>;
     create(data: CreatePatientRequest): Promise<Patient>;
     update(patientId: string, data: UpdatePatientRequest): Promise<Patient>;
-    delete(patientId: string): Promise<{ success: boolean; message: string }>;
-    
+    delete(patientId: string): Promise<{ success: boolean; message: string; }>;
+
     // LGPD Methods
     getConsentStatus(patientId: string): Promise<ConsentStatus>;
     updateConsent(patientId: string, consent: ConsentUpdate): Promise<void>;
     exportData(patientId: string): Promise<PatientDataExport>;
   };
-  
+
   // Appointment System
   appointments: {
     list(params: {
@@ -159,19 +159,19 @@ export interface HealthcareAPI {
       professionalId?: string;
       status?: AppointmentStatus[];
     }): Promise<PaginatedResponse<Appointment>>;
-    
+
     book(data: AppointmentBookingRequest): Promise<Appointment>;
-    cancel(appointmentId: string, data: { reason: string }): Promise<void>;
+    cancel(appointmentId: string, data: { reason: string; }): Promise<void>;
     confirm(appointmentId: string): Promise<Appointment>;
-    
-    // Availability 
+
+    // Availability
     getAvailability(params: {
       professionalId: string;
       date: string;
       duration: number;
     }): Promise<TimeSlot[]>;
   };
-  
+
   // Authentication & Authorization
   auth: {
     signIn(credentials: SignInCredentials): Promise<AuthResult>;
@@ -194,10 +194,10 @@ export interface DatabaseClient {
   patients: PatientRepository;
   appointments: AppointmentRepository;
   professionals: ProfessionalRepository;
-  
+
   // RLS Management
   rls: RLSManager;
-  
+
   // Connection management
   health(): Promise<DatabaseHealth>;
 }
@@ -228,7 +228,7 @@ export interface ComplianceManager {
   validateConsent(patientId: string): Promise<ConsentValidation>;
   recordDataAccess(operation: DataAccessOperation): Promise<void>;
   generateAuditReport(params: AuditReportParams): Promise<AuditReport>;
-  
+
   // Brazilian Healthcare Compliance
   validateCRM(crm: string, state: string): Promise<CRMValidation>;
   validateCPF(cpf: string): Promise<boolean>;
@@ -244,7 +244,7 @@ export interface ErrorHandlingSystem {
   ValidationError: ErrorConstructor<ValidationErrorDetails>;
   AuthenticationError: ErrorConstructor<AuthErrorDetails>;
   DatabaseError: ErrorConstructor<DatabaseErrorDetails>;
-  
+
   handleError(error: Error): ErrorResponse;
   retryOperation<T>(operation: () => Promise<T>, policy: RetryPolicy): Promise<T>;
 }
@@ -255,7 +255,7 @@ export interface ErrorHandlingSystem {
 ## ✅ **ACCEPTANCE CRITERIA CHECKLIST**
 
 - [x] ✅ **Supabase Schema Analysis**: Complete healthcare database structure validated
-- [x] 🔄 **TypeScript Contracts**: Enhanced interfaces based on real database structure  
+- [x] 🔄 **TypeScript Contracts**: Enhanced interfaces based on real database structure
 - [ ] 📝 **OpenAPI 3.0 Specification**: REST API documentation with healthcare operations
 - [ ] 📦 **Package Interface Definitions**: Clear contracts for all @neonpro/* packages
 - [ ] 🔗 **Component Responsibility Matrix**: Clear separation of concerns

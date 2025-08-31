@@ -348,9 +348,11 @@ class HealthcareSecurityLogger {
 
 // Mock professional license validator (production should integrate with CFM/regional councils)
 class ProfessionalLicenseValidator {
-  private static licenseCache: Map<string, { license: ProfessionalLicense; cachedAt: Date }> = new Map();
+  private static licenseCache: Map<string, { license: ProfessionalLicense; cachedAt: Date; }> =
+    new Map();
   private static readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
-  private static readonly CFM_API_BASE = process.env.CFM_API_BASE || 'https://portal.cfm.org.br/api';
+  private static readonly CFM_API_BASE = process.env.CFM_API_BASE
+    || "https://portal.cfm.org.br/api";
   private static readonly CFM_API_KEY = process.env.CFM_API_KEY;
 
   static async validateLicense(licenseNumber: string): Promise<boolean> {
@@ -371,7 +373,7 @@ class ProfessionalLicenseValidator {
       // Cache the result
       this.licenseCache.set(licenseNumber, {
         license,
-        cachedAt: new Date()
+        cachedAt: new Date(),
       });
 
       // Check if license is active and not expired
@@ -381,34 +383,36 @@ class ProfessionalLicenseValidator {
       console.error(`License validation failed for ${licenseNumber}:`, error);
       // Log security event for failed license validation
       HealthcareSecurityLogger.logLicenseViolation({
-        userId: 'system',
+        userId: "system",
         licenseNumber,
-        attemptedResource: 'license_validation',
-        timestamp: new Date()
+        attemptedResource: "license_validation",
+        timestamp: new Date(),
       });
       return false;
     }
   }
 
-  private static async fetchLicenseFromCFM(licenseNumber: string): Promise<ProfessionalLicense | null> {
+  private static async fetchLicenseFromCFM(
+    licenseNumber: string,
+  ): Promise<ProfessionalLicense | null> {
     if (!this.CFM_API_KEY) {
-      console.warn('CFM_API_KEY not configured, using fallback validation');
+      console.warn("CFM_API_KEY not configured, using fallback validation");
       return this.fallbackValidation(licenseNumber);
     }
 
     try {
-       const controller = new AbortController();
-       const timeoutId = setTimeout(() => controller.abort(), 5000);
-       
-       const response = await fetch(`${this.CFM_API_BASE}/medicos/${licenseNumber}`, {
-         headers: {
-           'Authorization': `Bearer ${this.CFM_API_KEY}`,
-           'Content-Type': 'application/json'
-         },
-         signal: controller.signal
-       });
-       
-       clearTimeout(timeoutId);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      const response = await fetch(`${this.CFM_API_BASE}/medicos/${licenseNumber}`, {
+        headers: {
+          "Authorization": `Bearer ${this.CFM_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -420,7 +424,7 @@ class ProfessionalLicenseValidator {
       const data = await response.json();
       return this.mapCFMResponseToLicense(data);
     } catch (error) {
-      console.error('CFM API request failed:', error);
+      console.error("CFM API request failed:", error);
       return this.fallbackValidation(licenseNumber);
     }
   }
@@ -431,9 +435,9 @@ class ProfessionalLicenseValidator {
       licenseType: ProfessionalLicenseType.CRM,
       state: cfmData.uf,
       issuedDate: new Date(cfmData.data_inscricao),
-      expirationDate: new Date(cfmData.data_vencimento || '2030-12-31'),
-      isActive: Boolean(cfmData.situacao === 'ATIVO'),
-      lastValidated: new Date()
+      expirationDate: new Date(cfmData.data_vencimento || "2030-12-31"),
+      isActive: Boolean(cfmData.situacao === "ATIVO"),
+      lastValidated: new Date(),
     };
   }
 
@@ -441,25 +445,25 @@ class ProfessionalLicenseValidator {
     // Basic format validation for Brazilian medical licenses
     const crmPattern = /^CRM\d{4,6}[A-Z]{2}$/;
     const crfPattern = /^CRF\d{4,6}[A-Z]{2}$/;
-    
+
     if (!crmPattern.test(licenseNumber) && !crfPattern.test(licenseNumber)) {
       return null;
     }
 
     // Extract state from license number
     const state = licenseNumber.slice(-2);
-    const licenseType = licenseNumber.startsWith('CRM') 
-      ? ProfessionalLicenseType.CRM 
+    const licenseType = licenseNumber.startsWith("CRM")
+      ? ProfessionalLicenseType.CRM
       : ProfessionalLicenseType.CRF;
 
     return {
       licenseNumber,
       licenseType,
       state,
-      issuedDate: new Date('2020-01-01'),
-      expirationDate: new Date('2025-12-31'),
+      issuedDate: new Date("2020-01-01"),
+      expirationDate: new Date("2025-12-31"),
       isActive: true,
-      lastValidated: new Date()
+      lastValidated: new Date(),
     };
   }
 
@@ -478,7 +482,7 @@ class ProfessionalLicenseValidator {
       if (license) {
         this.licenseCache.set(licenseNumber, {
           license,
-          cachedAt: new Date()
+          cachedAt: new Date(),
         });
       }
       return license;
@@ -540,10 +544,10 @@ export const createHealthcareRateLimiter = (
         const windowMs = parseTimeWindow(emergencyLimit.window);
         const currentTime = Date.now();
         const windowStart = currentTime - windowMs;
-        
+
         await redis.zremrangebyscore(emergencyKey, 0, windowStart);
         const currentCount = await redis.zcard(emergencyKey);
-        
+
         if (currentCount >= emergencyLimit.requests) {
           return c.json(
             {
@@ -554,7 +558,7 @@ export const createHealthcareRateLimiter = (
             429,
           );
         }
-        
+
         await redis.zadd(emergencyKey, currentTime, `${currentTime}-${Math.random()}`);
         await redis.expire(emergencyKey, Math.ceil(windowMs / 1000));
       } catch (error) {
@@ -633,11 +637,11 @@ export const createHealthcareRateLimiter = (
       const windowMs = parseTimeWindow(limit.window);
       const currentTime = Date.now();
       const windowStart = currentTime - windowMs;
-      
+
       // Remove old entries and count current requests
       await redis.zremrangebyscore(rateLimitKey, 0, windowStart);
       const currentCount = await redis.zcard(rateLimitKey);
-      
+
       if (currentCount >= limit.requests) {
         // Log rate limit violation
         HealthcareSecurityLogger.logSuspiciousActivity({
@@ -648,7 +652,7 @@ export const createHealthcareRateLimiter = (
           attemptCount: currentCount,
           timestamp: new Date(),
         });
-        
+
         return c.json(
           {
             error: "Rate limit exceeded",
@@ -658,16 +662,18 @@ export const createHealthcareRateLimiter = (
           429,
         );
       }
-      
+
       // Add current request to sliding window
       await redis.zadd(rateLimitKey, currentTime, `${currentTime}-${Math.random()}`);
       await redis.expire(rateLimitKey, Math.ceil(windowMs / 1000));
-      
+
       // Set rate limit headers
       c.res.headers.set("X-Rate-Limit-Limit", limit.requests.toString());
       c.res.headers.set("X-Rate-Limit-Remaining", (limit.requests - currentCount - 1).toString());
-      c.res.headers.set("X-Rate-Limit-Reset", Math.ceil((currentTime + windowMs) / 1000).toString());
-      
+      c.res.headers.set(
+        "X-Rate-Limit-Reset",
+        Math.ceil((currentTime + windowMs) / 1000).toString(),
+      );
     } catch (error) {
       console.error("Rate limiting error:", error);
       // Fail open - allow request if Redis is unavailable
@@ -695,11 +701,11 @@ async function getRedisClient() {
     port: parseInt(process.env.REDIS_PORT || "6379"),
     maxRetriesPerRequest: 3,
   };
-  
+
   if (process.env.REDIS_PASSWORD) {
     config.password = process.env.REDIS_PASSWORD;
   }
-  
+
   return new Redis.default(config);
 }
 
@@ -707,16 +713,21 @@ async function getRedisClient() {
 function parseTimeWindow(window: string): number {
   const match = window.match(/^(\d+)([smhd])$/);
   if (!match) throw new Error(`Invalid time window format: ${window}`);
-  
+
   const value = parseInt(match[1]);
   const unit = match[2];
-  
+
   switch (unit) {
-    case "s": return value * 1000;
-    case "m": return value * 60 * 1000;
-    case "h": return value * 60 * 60 * 1000;
-    case "d": return value * 24 * 60 * 60 * 1000;
-    default: throw new Error(`Invalid time unit: ${unit}`);
+    case "s":
+      return value * 1000;
+    case "m":
+      return value * 60 * 1000;
+    case "h":
+      return value * 60 * 60 * 1000;
+    case "d":
+      return value * 24 * 60 * 60 * 1000;
+    default:
+      throw new Error(`Invalid time unit: ${unit}`);
   }
 }
 
@@ -733,17 +744,17 @@ export class HealthcareAuthMiddleware {
       if (!secret) {
         throw new Error("JWT_SECRET environment variable is required");
       }
-      
+
       // Validate secret strength (minimum 32 characters)
       if (secret.length < 32) {
         throw new Error("JWT_SECRET must be at least 32 characters long");
       }
-      
+
       const secretKey = new TextEncoder().encode(secret);
 
       // For production, use JWKS endpoint for key rotation
       // const JWKS = createRemoteJWKSet(new URL(process.env.JWKS_URI || 'https://your-auth-provider.com/.well-known/jwks.json'));
-      
+
       // Additional security: validate token age
       const maxTokenAge = 24 * 60 * 60; // 24 hours in seconds
       const currentTime = Math.floor(Date.now() / 1000);

@@ -1,4 +1,6 @@
-import * as tf from "@tensorflow/tfjs";
+// TensorFlow.js now lazy-loaded to reduce bundle size by ~10MB
+// import * as tf from "@tensorflow/tfjs"; // ❌ Removed static import
+import { tensorFlowLoader, LazyTensorFlowOperations } from "./tensorflow-lazy-loader";
 import type {
   BotoxOptimization,
   DurationEstimation,
@@ -66,10 +68,11 @@ export class AestheticPredictionEngine {
 
       // Extract and prepare features
       const features = await this.extractTreatmentFeatures(patient, treatment);
+      const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
       // Make prediction
-      const prediction = model.predict(inputTensor) as tf.Tensor;
+      const prediction = model.predict(inputTensor) as any;
       const predictionData = await prediction.data();
 
       // Post-process results
@@ -131,9 +134,10 @@ export class AestheticPredictionEngine {
         targetAreas,
         desiredIntensity,
       );
+      const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as tf.Tensor;
+      const prediction = model.predict(inputTensor) as any;
       const predictionData = await prediction.data();
 
       const result = this.postProcessBotoxOptimization(
@@ -186,9 +190,10 @@ export class AestheticPredictionEngine {
         targetAreas,
         volumeGoals,
       );
+      const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as tf.Tensor;
+      const prediction = model.predict(inputTensor) as any;
       const predictionData = await prediction.data();
 
       const result = this.postProcessFillerVolume(predictionData, targetAreas);
@@ -238,9 +243,10 @@ export class AestheticPredictionEngine {
         laserType,
         treatmentGoal,
       );
+      const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as tf.Tensor;
+      const prediction = model.predict(inputTensor) as any;
       const predictionData = await prediction.data();
 
       const result = this.postProcessLaserSettings(predictionData);
@@ -534,9 +540,10 @@ export class AestheticPredictionEngine {
         patient,
         treatment,
       );
+      const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as tf.Tensor;
+      const prediction = model.predict(inputTensor) as any;
       const predictionData = await prediction.data();
 
       const result = this.postProcessRiskAssessment(
@@ -585,9 +592,10 @@ export class AestheticPredictionEngine {
       const model = await aiModelManager.loadModel("duration-estimation");
 
       const features = await this.extractDurationFeatures(patient, treatment);
+      const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as tf.Tensor;
+      const prediction = model.predict(inputTensor) as any;
       const predictionData = await prediction.data();
 
       const result = this.postProcessDurationEstimation(
@@ -639,9 +647,10 @@ export class AestheticPredictionEngine {
       const model = await aiModelManager.loadModel("success-probability");
 
       const features = await this.extractSuccessFeatures(patient, treatment);
+      const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as tf.Tensor;
+      const prediction = model.predict(inputTensor) as any;
       const predictionData = await prediction.data();
 
       const result = this.postProcessSuccessProbability(

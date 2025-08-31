@@ -102,7 +102,7 @@ export function ActiveSessionsTable() {
   };
 
   const confirmTerminateSession = async () => {
-    if (!sessionToTerminate) {return;}
+    if (!sessionToTerminate) return;
 
     try {
       const response = await fetch(

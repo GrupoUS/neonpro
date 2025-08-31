@@ -3,8 +3,8 @@
  * Vercel Analytics & Speed Insights Integration
  */
 
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 /**
  * Performance Monitoring Components
@@ -13,8 +13,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 export function PerformanceMonitoring() {
   return (
     <>
-      {process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true' && <Analytics />}
-      {process.env.NEXT_PUBLIC_ENABLE_MONITORING === 'true' && <SpeedInsights />}
+      {process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true" && <Analytics />}
+      {process.env.NEXT_PUBLIC_ENABLE_MONITORING === "true" && <SpeedInsights />}
     </>
   );
 }
@@ -30,30 +30,30 @@ export function reportWebVitals(metric: {
   delta: number;
   entries: any[];
 }) {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     // Console log for debugging (remove in production)
-    console.log('Web Vitals:', {
+    console.log("Web Vitals:", {
       name: metric.name,
       value: metric.value,
-      id: metric.id
+      id: metric.id,
     });
 
     // Send to analytics service
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', metric.name, {
-        event_category: 'Web Vitals',
-        value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", metric.name, {
+        event_category: "Web Vitals",
+        value: Math.round(metric.name === "CLS" ? metric.value * 1000 : metric.value),
         event_label: metric.id,
         non_interaction: true,
       });
     }
 
     // Send to Vercel Analytics
-    if (typeof window !== 'undefined' && (window as any).va) {
-      (window as any).va('track', 'Web Vitals', {
+    if (typeof window !== "undefined" && (window as any).va) {
+      (window as any).va("track", "Web Vitals", {
         metric: metric.name,
         value: metric.value,
-        id: metric.id
+        id: metric.id,
       });
     }
   }
@@ -73,37 +73,37 @@ export class HealthcarePerformanceTracker {
   }
 
   trackPatientAction(action: string, duration?: number) {
-    this.trackEvent('patient_action', {
+    this.trackEvent("patient_action", {
       action,
       duration,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
   trackAppointmentAction(action: string, duration?: number) {
-    this.trackEvent('appointment_action', {
+    this.trackEvent("appointment_action", {
       action,
       duration,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
   trackDashboardLoad(loadTime: number) {
-    this.trackEvent('dashboard_load', {
+    this.trackEvent("dashboard_load", {
       loadTime,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
   private trackEvent(eventName: string, data: any) {
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       // Send to Vercel Analytics
-      if (typeof window !== 'undefined' && (window as any).va) {
-        (window as any).va('track', eventName, data);
+      if (typeof window !== "undefined" && (window as any).va) {
+        (window as any).va("track", eventName, data);
       }
 
       // Console log for debugging
-      console.log('Healthcare Performance:', eventName, data);
+      console.log("Healthcare Performance:", eventName, data);
     }
   }
 }
@@ -113,25 +113,25 @@ export class HealthcarePerformanceTracker {
  */
 export function usePerformanceTiming() {
   const startTiming = (label: string) => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       performance.mark(`${label}_start`);
     }
   };
 
   const endTiming = (label: string) => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
         performance.mark(`${label}_end`);
         performance.measure(label, `${label}_start`, `${label}_end`);
-        
+
         const measure = performance.getEntriesByName(label)[0];
-        if (measure && process.env.NODE_ENV === 'development') {
+        if (measure && process.env.NODE_ENV === "development") {
           console.log(`Performance: ${label} took ${measure.duration}ms`);
         }
-        
+
         return measure?.duration;
       } catch (error) {
-        console.warn('Performance timing error:', error);
+        console.warn("Performance timing error:", error);
       }
     }
     return 0;

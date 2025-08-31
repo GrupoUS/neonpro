@@ -1,9 +1,10 @@
 # 🛠️ Cross-cutting Concerns Architecture - NeonPro Healthcare
 
 ## 🎯 **OBJETIVO**
+
 Projetar e documentar as preocupações horizontais do sistema que atravessam múltiplas camadas e componentes, garantindo consistência, observabilidade e compliance healthcare.
 
-**Base**: Validação Supabase completa + Interface Specification + Enterprise healthcare requirements  
+**Base**: Validação Supabase completa + Interface Specification + Enterprise healthcare requirements\
 **Target**: Production-ready horizontal architecture com LGPD compliance
 
 ---
@@ -90,7 +91,7 @@ interface LogContext {
 ```typescript
 // Patient Access Logging (LGPD Required)
 interface PatientAccessLog {
-  action: 'view' | 'create' | 'update' | 'delete' | 'export';
+  action: "view" | "create" | "update" | "delete" | "export";
   patientId: string;
   accessedFields: string[];
   lgpdBasis: string;
@@ -103,9 +104,9 @@ interface PatientAccessLog {
 
 // Data Modification Audit
 interface DataModificationLog {
-  entity: 'patient' | 'appointment' | 'professional' | 'clinic';
+  entity: "patient" | "appointment" | "professional" | "clinic";
   entityId: string;
-  operation: 'create' | 'update' | 'delete' | 'restore';
+  operation: "create" | "update" | "delete" | "restore";
   oldValues?: Record<string, any>;
   newValues?: Record<string, any>;
   changedFields: string[];
@@ -116,7 +117,7 @@ interface DataModificationLog {
 
 // Medical Action Logging
 interface MedicalActionLog {
-  action: 'appointment_start' | 'appointment_complete' | 'prescription_create' | 'diagnosis_record';
+  action: "appointment_start" | "appointment_complete" | "prescription_create" | "diagnosis_record";
   appointmentId?: string;
   patientId: string;
   professionalId: string;
@@ -140,7 +141,7 @@ export class HealthcareLogger {
   private winston: winston.Logger;
   private sentry: Sentry;
   private auditStore: AuditLogRepository;
-  
+
   constructor(config: LoggingConfig) {
     // Winston for structured application logs
     this.winston = winston.createLogger({
@@ -148,33 +149,33 @@ export class HealthcareLogger {
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json(),
-        winston.format.errors({ stack: true })
+        winston.format.errors({ stack: true }),
       ),
       transports: [
-        new winston.transports.File({ filename: 'app.log' }),
-        new winston.transports.Console({ format: winston.format.simple() })
-      ]
+        new winston.transports.File({ filename: "app.log" }),
+        new winston.transports.Console({ format: winston.format.simple() }),
+      ],
     });
-    
+
     // Sentry for error tracking and alerting
     this.sentry = Sentry;
-    
+
     // Dedicated audit log storage (Supabase audit_logs table)
     this.auditStore = new AuditLogRepository();
   }
-  
+
   async logHealthcareEvent(event: HealthcareLogEvent): Promise<void> {
     // 1. Structure the log with LGPD compliance
     const structuredLog = {
       ...event,
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
-      version: process.env.APP_VERSION
+      version: process.env.APP_VERSION,
     };
-    
+
     // 2. Application logging (Winston)
-    this.winston.info('Healthcare Event', structuredLog);
-    
+    this.winston.info("Healthcare Event", structuredLog);
+
     // 3. Audit trail (Database)
     if (this.isAuditableEvent(event)) {
       await this.auditStore.create({
@@ -187,12 +188,12 @@ export class HealthcareLogger {
         ip_address: event.ipAddress,
         user_agent: event.userAgent,
         lgpd_basis: event.lgpdBasis,
-        clinic_id: event.clinicId
+        clinic_id: event.clinicId,
       });
     }
-    
+
     // 4. Error tracking (Sentry) for critical events
-    if (event.severity === 'error' || event.severity === 'critical') {
+    if (event.severity === "error" || event.severity === "critical") {
       this.sentry.captureEvent({
         message: event.message,
         level: event.severity,
@@ -200,8 +201,8 @@ export class HealthcareLogger {
         tags: {
           component: event.component,
           clinicId: event.clinicId,
-          userId: event.userId
-        }
+          userId: event.userId,
+        },
       });
     }
   }
@@ -263,7 +264,7 @@ export class HealthcareAuthMiddleware {
   private redis: Redis;
   private rlsManager: RLSManager;
   private logger: HealthcareLogger;
-  
+
   /**
    * Main authentication middleware
    */
@@ -272,35 +273,35 @@ export class HealthcareAuthMiddleware {
       // 1. Extract and validate JWT
       const token = this.extractToken(req);
       if (!token) {
-        throw new AuthenticationError('No token provided');
+        throw new AuthenticationError("No token provided");
       }
-      
+
       // 2. Verify JWT with Supabase
       const { data: user, error } = await this.supabase.auth.getUser(token);
       if (error || !user) {
-        throw new AuthenticationError('Invalid token');
+        throw new AuthenticationError("Invalid token");
       }
-      
+
       // 3. Get session metadata from Redis
       const sessionData = await this.redis.get(`session:${user.id}`);
       if (!sessionData) {
-        throw new AuthenticationError('Session expired');
+        throw new AuthenticationError("Session expired");
       }
-      
+
       // 4. Parse and validate session
       const session = JSON.parse(sessionData);
       if (this.isSessionExpired(session)) {
         await this.redis.del(`session:${user.id}`);
-        throw new AuthenticationError('Session expired');
+        throw new AuthenticationError("Session expired");
       }
-      
+
       // 5. Set RLS context for database queries
       await this.rlsManager.setUserContext(
         user.id,
         session.role,
-        session.clinicId
+        session.clinicId,
       );
-      
+
       // 6. Attach user context to request
       req.user = {
         id: user.id,
@@ -308,42 +309,41 @@ export class HealthcareAuthMiddleware {
         role: session.role,
         clinicId: session.clinicId,
         permissions: session.permissions,
-        professionalId: session.professionalId
+        professionalId: session.professionalId,
       };
-      
+
       // 7. Log authentication event
       await this.logger.security.authenticationEvent({
-        type: 'api_access',
+        type: "api_access",
         userId: user.id,
         clinicId: session.clinicId,
         endpoint: req.path,
         method: req.method,
         ipAddress: req.ip,
-        userAgent: req.get('User-Agent'),
-        success: true
+        userAgent: req.get("User-Agent"),
+        success: true,
       });
-      
+
       next();
-      
     } catch (error) {
       // Log authentication failure
       await this.logger.security.authenticationEvent({
-        type: 'authentication_failure',
+        type: "authentication_failure",
         endpoint: req.path,
         method: req.method,
         ipAddress: req.ip,
-        userAgent: req.get('User-Agent'),
+        userAgent: req.get("User-Agent"),
         error: error.message,
-        success: false
+        success: false,
       });
-      
+
       res.status(401).json({
-        error: 'Authentication failed',
-        code: 'UNAUTHORIZED'
+        error: "Authentication failed",
+        code: "UNAUTHORIZED",
       });
     }
   }
-  
+
   /**
    * Role-based authorization middleware
    */
@@ -355,37 +355,37 @@ export class HealthcareAuthMiddleware {
           role: req.user?.role,
           requiredRoles: allowedRoles,
           endpoint: req.path,
-          method: req.method
+          method: req.method,
         });
-        
+
         return res.status(403).json({
-          error: 'Insufficient permissions',
-          code: 'FORBIDDEN'
+          error: "Insufficient permissions",
+          code: "FORBIDDEN",
         });
       }
       next();
     };
   }
-  
+
   /**
    * Clinic access validation
    */
-  requireClinicAccess(clinicIdParam: string = 'clinicId') {
+  requireClinicAccess(clinicIdParam: string = "clinicId") {
     return (req: Request, res: Response, next: NextFunction) => {
       const requestedClinicId = req.params[clinicIdParam] || req.body.clinic_id;
-      
-      if (req.user.role !== 'admin' && req.user.clinicId !== requestedClinicId) {
+
+      if (req.user.role !== "admin" && req.user.clinicId !== requestedClinicId) {
         this.logger.security.authorizationFailure({
           userId: req.user.id,
           userClinicId: req.user.clinicId,
           requestedClinicId,
           endpoint: req.path,
-          type: 'clinic_access_violation'
+          type: "clinic_access_violation",
         });
-        
+
         return res.status(403).json({
-          error: 'Access denied to clinic data',
-          code: 'CLINIC_ACCESS_DENIED'
+          error: "Access denied to clinic data",
+          code: "CLINIC_ACCESS_DENIED",
         });
       }
       next();
@@ -404,7 +404,7 @@ export class SessionManager {
   private redis: Redis;
   private readonly SESSION_TTL = 24 * 60 * 60; // 24 hours
   private readonly REFRESH_TTL = 7 * 24 * 60 * 60; // 7 days
-  
+
   async createSession(user: User, profile: Professional): Promise<SessionData> {
     const sessionData: SessionData = {
       userId: user.id,
@@ -416,34 +416,34 @@ export class SessionManager {
       createdAt: new Date().toISOString(),
       lastAccess: new Date().toISOString(),
       ipAddress: user.lastSignInIP,
-      userAgent: user.userAgent
+      userAgent: user.userAgent,
     };
-    
+
     // Store in Redis with TTL
     await this.redis.setex(
       `session:${user.id}`,
       this.SESSION_TTL,
-      JSON.stringify(sessionData)
+      JSON.stringify(sessionData),
     );
-    
+
     return sessionData;
   }
-  
+
   async refreshSession(userId: string): Promise<SessionData | null> {
     const sessionKey = `session:${userId}`;
     const sessionData = await this.redis.get(sessionKey);
-    
+
     if (!sessionData) return null;
-    
+
     const session = JSON.parse(sessionData);
     session.lastAccess = new Date().toISOString();
-    
+
     // Extend TTL
     await this.redis.setex(sessionKey, this.SESSION_TTL, JSON.stringify(session));
-    
+
     return session;
   }
-  
+
   async destroySession(userId: string): Promise<void> {
     await this.redis.del(`session:${userId}`);
   }
@@ -469,12 +469,12 @@ export interface HealthcareErrorSystem {
   external: ExternalServiceErrorHandler;
   compliance: ComplianceErrorHandler;
   medical: MedicalDataErrorHandler;
-  
+
   // Recovery Strategies
   retry: RetryPolicyManager;
   fallback: FallbackStrategyManager;
   notification: ErrorNotificationSystem;
-  
+
   // Error Analysis & Reporting
   analytics: ErrorAnalyticsService;
 }
@@ -489,14 +489,14 @@ export abstract class HealthcareError extends Error {
   public readonly context: ErrorContext;
   public readonly timestamp: string;
   public readonly recoverable: boolean;
-  
+
   constructor(
     message: string,
     code: string,
     category: ErrorCategory,
-    severity: ErrorSeverity = 'medium',
+    severity: ErrorSeverity = "medium",
     context: ErrorContext = {},
-    recoverable: boolean = false
+    recoverable: boolean = false,
   ) {
     super(message);
     this.code = code;
@@ -513,11 +513,11 @@ export class PatientDataError extends HealthcareError {
   constructor(message: string, patientId?: string, operation?: string) {
     super(
       message,
-      'PATIENT_DATA_ERROR',
-      'medical_data',
-      'high',
+      "PATIENT_DATA_ERROR",
+      "medical_data",
+      "high",
       { patientId, operation },
-      false
+      false,
     );
   }
 }
@@ -526,11 +526,11 @@ export class LGPDComplianceError extends HealthcareError {
   constructor(message: string, violation: string, patientId?: string) {
     super(
       message,
-      'LGPD_VIOLATION',
-      'compliance',
-      'critical',
+      "LGPD_VIOLATION",
+      "compliance",
+      "critical",
       { violation, patientId },
-      false
+      false,
     );
   }
 }
@@ -539,11 +539,11 @@ export class MedicalLicenseError extends HealthcareError {
   constructor(message: string, license: string, professionalId?: string) {
     super(
       message,
-      'MEDICAL_LICENSE_ERROR',
-      'compliance',
-      'high',
+      "MEDICAL_LICENSE_ERROR",
+      "compliance",
+      "high",
       { license, professionalId },
-      true
+      true,
     );
   }
 }
@@ -558,91 +558,97 @@ export class MedicalLicenseError extends HealthcareError {
 export class ErrorRecoveryManager {
   private logger: HealthcareLogger;
   private notificationService: NotificationService;
-  
+
   async handleError(error: HealthcareError, context: RequestContext): Promise<ErrorResponse> {
     // 1. Log the error with full context
     await this.logger.app.error(error.message, error, {
       ...context,
       errorCode: error.code,
       errorCategory: error.category,
-      severity: error.severity
+      severity: error.severity,
     });
-    
+
     // 2. Apply recovery strategy based on error type
     const recoveryResult = await this.applyRecoveryStrategy(error, context);
-    
+
     // 3. Notify relevant parties if critical
-    if (error.severity === 'critical') {
+    if (error.severity === "critical") {
       await this.notificationService.sendCriticalAlert({
         error,
         context,
-        recoveryResult
+        recoveryResult,
       });
     }
-    
+
     // 4. Generate user-friendly response
     return this.generateErrorResponse(error, recoveryResult);
   }
-  
+
   private async applyRecoveryStrategy(
     error: HealthcareError,
-    context: RequestContext
+    context: RequestContext,
   ): Promise<RecoveryResult> {
     switch (error.category) {
-      case 'database':
+      case "database":
         return this.handleDatabaseError(error, context);
-      case 'external_service':
+      case "external_service":
         return this.handleExternalServiceError(error, context);
-      case 'compliance':
+      case "compliance":
         return this.handleComplianceError(error, context);
-      case 'medical_data':
+      case "medical_data":
         return this.handleMedicalDataError(error, context);
       default:
         return this.handleGenericError(error, context);
     }
   }
-  
-  private async handleDatabaseError(error: HealthcareError, context: RequestContext): Promise<RecoveryResult> {
+
+  private async handleDatabaseError(
+    error: HealthcareError,
+    context: RequestContext,
+  ): Promise<RecoveryResult> {
     // Database connection issues
-    if (error.code === 'DB_CONNECTION_FAILED') {
+    if (error.code === "DB_CONNECTION_FAILED") {
       // Try alternative read replicas
       const fallbackResult = await this.tryFallbackDatabase(context);
       if (fallbackResult.success) {
-        return { success: true, strategy: 'fallback_database', data: fallbackResult.data };
+        return { success: true, strategy: "fallback_database", data: fallbackResult.data };
       }
     }
-    
+
     // Constraint violations
-    if (error.code === 'DB_CONSTRAINT_VIOLATION') {
+    if (error.code === "DB_CONSTRAINT_VIOLATION") {
       // Provide specific guidance based on constraint
       return {
         success: false,
-        strategy: 'user_guidance',
-        userMessage: this.generateConstraintGuidance(error)
+        strategy: "user_guidance",
+        userMessage: this.generateConstraintGuidance(error),
       };
     }
-    
-    return { success: false, strategy: 'none' };
+
+    return { success: false, strategy: "none" };
   }
-  
-  private async handleComplianceError(error: HealthcareError, context: RequestContext): Promise<RecoveryResult> {
+
+  private async handleComplianceError(
+    error: HealthcareError,
+    context: RequestContext,
+  ): Promise<RecoveryResult> {
     // LGPD violations are not recoverable - prevent action
-    if (error.code === 'LGPD_VIOLATION') {
+    if (error.code === "LGPD_VIOLATION") {
       await this.logger.security.complianceViolation({
         violation: error.context.violation,
         userId: context.userId,
         patientId: error.context.patientId,
-        action: context.action
+        action: context.action,
       });
-      
+
       return {
         success: false,
-        strategy: 'block_action',
-        userMessage: 'Ação bloqueada por violação de conformidade LGPD'
+        strategy: "block_action",
+        userMessage: "Ação bloqueada por violação de conformidade LGPD",
       };
     }
-    
-    return { success: false, strategy: 'none' };
+
+    return { success: false, strategy: "none" };
   }
 }
 ```
@@ -660,16 +666,16 @@ export class ErrorRecoveryManager {
 export interface HealthcareCacheSystem {
   // Edge Caching (Vercel Edge)
   edge: EdgeCacheManager;
-  
+
   // Application Cache (Redis)
   app: ApplicationCacheManager;
-  
+
   // Database Query Cache
   query: QueryCacheManager;
-  
+
   // Session & User Data Cache
   session: SessionCacheManager;
-  
+
   // Healthcare-Specific Caches
   healthcare: HealthcareCacheManager;
 }
@@ -680,53 +686,60 @@ export interface HealthcareCacheSystem {
 export class HealthcareCacheManager {
   private redis: Redis;
   private logger: HealthcareLogger;
-  
+
   // Patient data caching with LGPD compliance
   async cachePatientData(patientId: string, data: Patient, ttl: number = 300): Promise<void> {
     // Only cache non-sensitive fields
     const cacheableData = this.sanitizeForCache(data);
-    
+
     await this.redis.setex(
       `patient:${patientId}`,
       ttl,
-      JSON.stringify(cacheableData)
+      JSON.stringify(cacheableData),
     );
-    
+
     // Log cache operation for LGPD audit
     await this.logger.healthcare.dataModification({
-      entity: 'patient',
+      entity: "patient",
       entityId: patientId,
-      operation: 'cache_store',
+      operation: "cache_store",
       newValues: { cached_fields: Object.keys(cacheableData) },
-      userId: 'system',
-      reason: 'performance_optimization'
+      userId: "system",
+      reason: "performance_optimization",
     });
   }
-  
+
   // Appointment caching with clinic isolation
-  async cacheClinicAppointments(clinicId: string, date: string, appointments: Appointment[]): Promise<void> {
+  async cacheClinicAppointments(
+    clinicId: string,
+    date: string,
+    appointments: Appointment[],
+  ): Promise<void> {
     const cacheKey = `appointments:${clinicId}:${date}`;
-    
+
     await this.redis.setex(
       cacheKey,
       600, // 10 minutes TTL
-      JSON.stringify(appointments)
+      JSON.stringify(appointments),
     );
-    
+
     // Set up cache invalidation tags
     await this.redis.sadd(`cache_tags:clinic:${clinicId}`, cacheKey);
     await this.redis.sadd(`cache_tags:appointments:${date}`, cacheKey);
   }
-  
+
   // Professional schedule caching
-  async cacheProfessionalSchedule(professionalId: string, schedule: ProfessionalSchedule): Promise<void> {
+  async cacheProfessionalSchedule(
+    professionalId: string,
+    schedule: ProfessionalSchedule,
+  ): Promise<void> {
     await this.redis.setex(
       `schedule:${professionalId}`,
       3600, // 1 hour TTL
-      JSON.stringify(schedule)
+      JSON.stringify(schedule),
     );
   }
-  
+
   // Smart cache invalidation
   async invalidateByTags(tags: string[]): Promise<void> {
     for (const tag of tags) {
@@ -737,22 +750,26 @@ export class HealthcareCacheManager {
       }
     }
   }
-  
+
   // LGPD-compliant cache cleanup
   private sanitizeForCache(data: any): any {
     const sensitive_fields = [
-      'cpf', 'rg', 'medical_history', 'medications', 
-      'allergies', 'emergency_contact_phone'
+      "cpf",
+      "rg",
+      "medical_history",
+      "medications",
+      "allergies",
+      "emergency_contact_phone",
     ];
-    
+
     const sanitized = { ...data };
-    
+
     for (const field of sensitive_fields) {
       if (sanitized[field]) {
         delete sanitized[field];
       }
     }
-    
+
     return sanitized;
   }
 }
@@ -771,16 +788,16 @@ export class HealthcareCacheManager {
 export interface HealthcareMonitoringSystem {
   // Application Performance Monitoring
   apm: APMService;
-  
+
   // Error Tracking & Alerting
   errorTracking: ErrorTrackingService;
-  
+
   // Healthcare-Specific Metrics
   healthcareMetrics: HealthcareMetricsService;
-  
+
   // Business Intelligence
   businessMetrics: BusinessMetricsService;
-  
+
   // Compliance Monitoring
   complianceMetrics: ComplianceMetricsService;
 }
@@ -792,61 +809,61 @@ export class HealthcareMetricsService {
   private sentry: Sentry;
   private vercelAnalytics: VercelAnalytics;
   private customMetrics: CustomMetricsCollector;
-  
+
   // Patient journey metrics
   async trackPatientJourney(event: PatientJourneyEvent): Promise<void> {
-    await this.customMetrics.track('patient_journey', {
+    await this.customMetrics.track("patient_journey", {
       stage: event.stage, // 'registration', 'booking', 'checkin', 'consultation', 'followup'
       patientId: event.patientId,
       clinicId: event.clinicId,
       duration: event.duration,
-      success: event.success
+      success: event.success,
     });
   }
-  
+
   // Appointment metrics
   async trackAppointmentMetrics(metrics: AppointmentMetrics): Promise<void> {
-    await this.customMetrics.track('appointment_metrics', {
+    await this.customMetrics.track("appointment_metrics", {
       type: metrics.type, // 'booking', 'completion', 'cancellation', 'no_show'
       appointmentId: metrics.appointmentId,
       clinicId: metrics.clinicId,
       professionalId: metrics.professionalId,
       duration: metrics.duration,
       wait_time: metrics.waitTime,
-      patient_satisfaction: metrics.patientSatisfaction
+      patient_satisfaction: metrics.patientSatisfaction,
     });
   }
-  
+
   // System performance metrics
   async trackSystemPerformance(metrics: SystemPerformanceMetrics): Promise<void> {
     // API response times
-    await this.vercelAnalytics.track('api_performance', {
+    await this.vercelAnalytics.track("api_performance", {
       endpoint: metrics.endpoint,
       method: metrics.method,
       duration: metrics.responseTime,
       status_code: metrics.statusCode,
-      clinic_id: metrics.clinicId
+      clinic_id: metrics.clinicId,
     });
-    
+
     // Database query performance
     if (metrics.dbMetrics) {
-      await this.customMetrics.track('database_performance', {
+      await this.customMetrics.track("database_performance", {
         query_type: metrics.dbMetrics.queryType,
         duration: metrics.dbMetrics.duration,
         rows_affected: metrics.dbMetrics.rowsAffected,
-        clinic_id: metrics.clinicId
+        clinic_id: metrics.clinicId,
       });
     }
   }
-  
+
   // LGPD compliance metrics
   async trackComplianceMetrics(event: ComplianceEvent): Promise<void> {
-    await this.customMetrics.track('lgpd_compliance', {
+    await this.customMetrics.track("lgpd_compliance", {
       event_type: event.type, // 'consent_given', 'data_access', 'data_export', 'data_deletion'
       patient_id: event.patientId,
       clinic_id: event.clinicId,
       legal_basis: event.legalBasis,
-      success: event.success
+      success: event.success,
     });
   }
 }
@@ -869,21 +886,21 @@ export interface SecurityBoundaries {
     ddosProtection: DDoSProtectionConfig;
     rateLimiting: RateLimitingConfig;
   };
-  
-  // Application Security  
+
+  // Application Security
   application: {
     inputValidation: InputValidationConfig;
     outputSanitization: OutputSanitizationConfig;
     sqlInjectionPrevention: SQLInjectionPreventionConfig;
   };
-  
+
   // Data Security
   data: {
     encryption: EncryptionConfig;
     fieldLevelSecurity: FieldLevelSecurityConfig;
     dataClassification: DataClassificationConfig;
   };
-  
+
   // Access Control
   access: {
     multiFactorAuth: MFAConfig;
@@ -898,54 +915,54 @@ export interface SecurityBoundaries {
 export class DataSecurityManager {
   private encryptionService: EncryptionService;
   private accessAuditor: AccessAuditor;
-  
+
   // Encrypt sensitive healthcare data
   async encryptSensitiveFields(data: any, entityType: string): Promise<any> {
     const sensitiveFields = this.getSensitiveFields(entityType);
     const encrypted = { ...data };
-    
+
     for (const field of sensitiveFields) {
       if (encrypted[field]) {
         encrypted[field] = await this.encryptionService.encrypt(encrypted[field]);
       }
     }
-    
+
     return encrypted;
   }
-  
+
   // Validate data access permissions
   async validateDataAccess(request: DataAccessRequest): Promise<AccessResult> {
     // 1. Check user permissions
     const hasPermission = await this.checkUserPermissions(request);
     if (!hasPermission) {
-      return { allowed: false, reason: 'insufficient_permissions' };
+      return { allowed: false, reason: "insufficient_permissions" };
     }
-    
+
     // 2. Check clinic isolation
     const withinClinic = await this.checkClinicBoundaries(request);
     if (!withinClinic) {
-      return { allowed: false, reason: 'clinic_isolation_violation' };
+      return { allowed: false, reason: "clinic_isolation_violation" };
     }
-    
+
     // 3. Check LGPD compliance
     const lgpdCompliant = await this.checkLGPDCompliance(request);
     if (!lgpdCompliant) {
-      return { allowed: false, reason: 'lgpd_violation' };
+      return { allowed: false, reason: "lgpd_violation" };
     }
-    
+
     // 4. Log access for audit trail
     await this.accessAuditor.logAccess(request);
-    
+
     return { allowed: true };
   }
-  
+
   private getSensitiveFields(entityType: string): string[] {
     const sensitiveFieldsMap = {
-      patient: ['cpf', 'rg', 'medical_history', 'medications', 'allergies'],
-      professional: ['medical_license', 'cpf', 'personal_phone'],
-      appointment: ['internal_notes', 'private_observations']
+      patient: ["cpf", "rg", "medical_history", "medications", "allergies"],
+      professional: ["medical_license", "cpf", "personal_phone"],
+      appointment: ["internal_notes", "private_observations"],
     };
-    
+
     return sensitiveFieldsMap[entityType] || [];
   }
 }
@@ -974,7 +991,7 @@ export class DataSecurityManager {
 **Sistema horizontal enterprise-grade estabelecido:**
 
 1. **Logging Architecture**: Healthcare compliant com LGPD audit trail
-2. **Authentication Flow**: Multi-tenant com RLS integration automática  
+2. **Authentication Flow**: Multi-tenant com RLS integration automática
 3. **Error Handling**: Recovery strategies específicas para healthcare
 4. **Caching Strategy**: Multi-tier com sanitização LGPD
 5. **Security Boundaries**: Enterprise-grade com clinic isolation

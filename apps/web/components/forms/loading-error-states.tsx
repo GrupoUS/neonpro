@@ -1,35 +1,43 @@
 "use client";
 
-import React from "react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertTriangle, RefreshCw, Wifi, WifiOff, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  AlertTriangle,
+  CheckCircle,
+  Loader2,
+  RefreshCw,
+  Wifi,
+  WifiOff,
+  XCircle,
+} from "lucide-react";
+import React from "react";
 
 // Loading States
 export interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
 
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
-  size = 'md', 
-  className 
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+  size = "md",
+  className,
 }) => {
   const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-6 h-6',
-    lg: 'w-8 h-8',
+    sm: "w-4 h-4",
+    md: "w-6 h-6",
+    lg: "w-8 h-8",
   };
 
   return (
-    <Loader2 
+    <Loader2
       className={cn(
-        'animate-spin text-blue-600',
+        "animate-spin text-blue-600",
         sizeClasses[size],
-        className
-      )} 
+        className,
+      )}
     />
   );
 };
@@ -39,18 +47,18 @@ export interface LoadingSkeletonProps {
   className?: string;
 }
 
-export const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ 
-  lines = 3, 
-  className 
+export const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({
+  lines = 3,
+  className,
 }) => {
   return (
     <div className={cn("space-y-3", className)}>
       {Array.from({ length: lines }, (_, i) => (
-        <Skeleton 
-          key={i} 
+        <Skeleton
+          key={i}
           className={cn(
             "h-4 w-full",
-            i === lines - 1 && "w-3/4" // Last line shorter
+            i === lines - 1 && "w-3/4", // Last line shorter
           )}
         />
       ))}
@@ -88,7 +96,7 @@ export interface ErrorBoundaryProps {
   onRetry?: () => void;
   showRetry?: boolean;
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
 export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
@@ -96,28 +104,30 @@ export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
   onRetry,
   showRetry = true,
   className,
-  size = 'md',
+  size = "md",
 }) => {
   const errorMessage = error instanceof Error ? error.message : error;
-  
+
   const sizeClasses = {
-    sm: 'p-3',
-    md: 'p-4',
-    lg: 'p-6',
+    sm: "p-3",
+    md: "p-4",
+    lg: "p-6",
   };
 
   const iconSize = {
-    sm: 'w-4 h-4',
-    md: 'w-6 h-6',
-    lg: 'w-8 h-8',
+    sm: "w-4 h-4",
+    md: "w-6 h-6",
+    lg: "w-8 h-8",
   };
 
   return (
-    <div className={cn(
-      "border border-red-200 bg-red-50 rounded-lg",
-      sizeClasses[size],
-      className
-    )}>
+    <div
+      className={cn(
+        "border border-red-200 bg-red-50 rounded-lg",
+        sizeClasses[size],
+        className,
+      )}
+    >
       <div className="flex items-start space-x-3">
         <XCircle className={cn("text-red-600 mt-0.5", iconSize[size])} />
         <div className="flex-1 min-w-0">
@@ -154,13 +164,15 @@ export const NetworkStatus: React.FC<NetworkStatusProps> = ({
   isOnline = true,
   className,
 }) => {
-  if (isOnline) {return null;}
+  if (isOnline) return null;
 
   return (
-    <div className={cn(
-      "flex items-center space-x-2 p-2 bg-orange-50 border border-orange-200 rounded-lg text-orange-800",
-      className
-    )}>
+    <div
+      className={cn(
+        "flex items-center space-x-2 p-2 bg-orange-50 border border-orange-200 rounded-lg text-orange-800",
+        className,
+      )}
+    >
       <WifiOff className="w-4 h-4" />
       <span className="text-sm font-medium">
         Sem conexão com a internet
@@ -193,10 +205,12 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
   }, [autoHide, onDismiss, duration]);
 
   return (
-    <div className={cn(
-      "flex items-start space-x-3 p-4 bg-green-50 border border-green-200 rounded-lg",
-      className
-    )}>
+    <div
+      className={cn(
+        "flex items-start space-x-3 p-4 bg-green-50 border border-green-200 rounded-lg",
+        className,
+      )}
+    >
       <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
       <div className="flex-1">
         <p className="text-sm font-medium text-green-800">{message}</p>
@@ -239,9 +253,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         <Icon className="w-12 h-12 text-gray-400" />
       </div>
       <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
-      {description && (
-        <p className="text-gray-600 mb-6 max-w-md mx-auto">{description}</p>
-      )}
+      {description && <p className="text-gray-600 mb-6 max-w-md mx-auto">{description}</p>}
       {action && (
         <Button onClick={action.onClick}>
           {action.label}
@@ -261,7 +273,7 @@ export interface StateManagerProps {
   errorComponent?: React.ReactNode;
   emptyComponent?: React.ReactNode;
   onRetry?: () => void;
-  emptyProps?: Omit<EmptyStateProps, 'title'> & { title?: string };
+  emptyProps?: Omit<EmptyStateProps, "title"> & { title?: string; };
   className?: string;
 }
 

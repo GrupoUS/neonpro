@@ -7,6 +7,49 @@
 import type { MultiLayerCacheManager } from "./cache-manager";
 import type { CacheLayer } from "./types";
 
+// Type definitions for enterprise cache service
+interface CacheMetrics {
+  hitRate: number;
+  missRate: number;
+  totalHits: number;
+  totalMisses: number;
+  totalRequests: number;
+  averageResponseTime: number;
+}
+
+interface OperationMetadata {
+  userId?: string;
+  sessionId?: string;
+  source?: string;
+  tags?: string[];
+  [key: string]: unknown;
+}
+
+interface HealthCheckMetrics {
+  performance: {
+    totalOperations: number;
+    successfulOperations: number;
+    failedOperations: number;
+    averageResponseTime: number;
+    totalResponseTime: number;
+    successRate: number;
+  };
+  cache: CacheMetrics;
+  audit: {
+    totalEntries: number;
+    recentEntries: {
+      timestamp: string;
+      operation: string;
+      key: string;
+      layer?: CacheLayer;
+      success: boolean;
+      executionTime: number;
+      metadata?: OperationMetadata;
+    }[];
+    successRate: number;
+  };
+}
+
 /**
  * Enhanced cache service with enterprise features
  */
@@ -19,7 +62,7 @@ export class EnterpriseCacheService {
     layer?: CacheLayer;
     success: boolean;
     executionTime: number;
-    metadata?: any;
+    metadata?: OperationMetadata;
   }[] = [];
 
   private metrics = {
@@ -124,30 +167,7 @@ export class EnterpriseCacheService {
   /**
    * Get comprehensive enterprise metrics
    */
-  getMetrics(): {
-    performance: {
-      totalOperations: number;
-      successfulOperations: number;
-      failedOperations: number;
-      averageResponseTime: number;
-      totalResponseTime: number;
-      successRate: number;
-    };
-    cache: any;
-    audit: {
-      totalEntries: number;
-      recentEntries: {
-        timestamp: string;
-        operation: string;
-        key: string;
-        layer?: CacheLayer;
-        success: boolean;
-        executionTime: number;
-        metadata?: any;
-      }[];
-      successRate: number;
-    };
-  } {
+  getMetrics(): HealthCheckMetrics {
     const cacheStats = this.cacheManager.getStats();
     const successRate = this.metrics.totalOperations > 0
       ? (this.metrics.successfulOperations / this.metrics.totalOperations)
@@ -159,7 +179,7 @@ export class EnterpriseCacheService {
         ...this.metrics,
         successRate,
       },
-      cache: cacheStats,
+      cache: cacheStats as CacheMetrics,
       audit: {
         totalEntries: this.auditLog.length,
         recentEntries: this.auditLog.slice(-10), // Last 10 entries
@@ -227,7 +247,7 @@ export class EnterpriseCacheService {
    */
   async healthCheck(): Promise<{
     status: "healthy" | "degraded" | "unhealthy";
-    metrics: any;
+    metrics: HealthCheckMetrics;
     issues: string[];
   }> {
     const issues: string[] = [];
@@ -267,7 +287,7 @@ export class EnterpriseCacheService {
     key: string,
     success: boolean,
     executionTime: number,
-    metadata?: any,
+    metadata?: OperationMetadata,
   ): void {
     // Update metrics
     this.metrics.totalOperations++;

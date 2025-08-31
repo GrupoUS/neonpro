@@ -74,6 +74,51 @@ export interface MfaAuditLog {
  * Database operations for MFA functionality
  * Integrates with Supabase for persistent storage
  */
+// Database row interfaces for type safety
+interface MfaSettingsRow {
+  id: string;
+  user_id: string;
+  clinic_id?: string;
+  mfa_enabled: boolean;
+  preferred_method?: string;
+  enforced: boolean;
+  sms_enabled: boolean;
+  sms_phone_number?: string;
+  sms_verified: boolean;
+  sms_last_used?: string;
+  email_enabled: boolean;
+  email_address?: string;
+  email_verified: boolean;
+  email_last_used?: string;
+  totp_enabled: boolean;
+  totp_secret?: string;
+  totp_verified: boolean;
+  totp_last_used?: string;
+  biometric_enabled: boolean;
+  biometric_verified: boolean;
+  biometric_last_used?: string;
+  backup_codes_enabled: boolean;
+  backup_codes_count: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface MfaVerificationCodeRow {
+  id: string;
+  user_id: string;
+  clinic_id?: string;
+  code: string;
+  type: string;
+  phone_number?: string;
+  email?: string;
+  used: boolean;
+  attempts: number;
+  max_attempts: number;
+  expires_at: string;
+  created_at?: string;
+  verified_at?: string;
+}
+
 export class MfaDatabaseService {
   private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || "",
@@ -144,8 +189,8 @@ export class MfaDatabaseService {
         : undefined,
       backupCodesEnabled: data.backup_codes_enabled,
       backupCodesCount: data.backup_codes_count,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
+      createdAt: data.created_at ? new Date(data.created_at) : undefined,
+      updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,
     };
   }
 
@@ -358,13 +403,13 @@ export class MfaDatabaseService {
     };
   }
 
-  private mapDbDataToSettings(data: any): MfaSettings {
+  private mapDbDataToSettings(data: MfaSettingsRow): MfaSettings {
     return {
       id: data.id,
       userId: data.user_id,
       clinicId: data.clinic_id,
       mfaEnabled: data.mfa_enabled,
-      preferredMethod: data.preferred_method,
+      preferredMethod: data.preferred_method as MfaMethod | undefined,
       enforced: data.enforced,
       smsEnabled: data.sms_enabled,
       smsPhoneNumber: data.sms_phone_number,
@@ -391,18 +436,18 @@ export class MfaDatabaseService {
         : undefined,
       backupCodesEnabled: data.backup_codes_enabled,
       backupCodesCount: data.backup_codes_count,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
+      createdAt: data.created_at ? new Date(data.created_at) : undefined,
+      updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,
     };
   }
 
-  private mapDbDataToCode(data: any): MfaVerificationCode {
+  private mapDbDataToCode(data: MfaVerificationCodeRow): MfaVerificationCode {
     return {
       id: data.id,
       userId: data.user_id,
       clinicId: data.clinic_id,
       code: data.code,
-      type: data.type,
+      type: data.type as "sms" | "email" | "totp" | "recovery",
       phoneNumber: data.phone_number,
       email: data.email,
       used: data.used,

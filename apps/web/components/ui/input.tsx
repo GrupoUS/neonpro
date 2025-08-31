@@ -1,13 +1,13 @@
-import type * as React from "react";
-import { forwardRef, useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import type * as React from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 
 interface HealthcareInputProps {
   /** Healthcare-specific input types for Brazilian medical data */
-  healthcareType?: 
-    | "cpf" 
-    | "rg" 
-    | "medical-record" 
+  healthcareType?:
+    | "cpf"
+    | "rg"
+    | "medical-record"
     | "cns" // Cartão Nacional de Saúde
     | "crm" // Conselho Regional de Medicina
     | "phone-brazil"
@@ -15,26 +15,26 @@ interface HealthcareInputProps {
     | "medical-date"
     | "patient-name"
     | "medical-notes";
-  
+
   /** Medical urgency level affects styling and validation */
   urgency?: "low" | "medium" | "high" | "critical";
-  
+
   /** LGPD compliance features */
   lgpdSensitive?: boolean;
   lgpdConsentRequired?: boolean;
-  
+
   /** Emergency mode compatibility */
   emergencyMode?: boolean;
-  
+
   /** Enhanced validation states for medical data */
   validationState?: "valid" | "invalid" | "warning" | "critical";
-  
+
   /** Medical form context */
   medicalContext?: "patient-registration" | "consultation" | "emergency" | "prescription";
-  
+
   /** Auto-formatting for Brazilian standards */
   autoFormat?: boolean;
-  
+
   /** Screen reader enhancements for medical terminology */
   medicalDescription?: string;
 }
@@ -118,7 +118,7 @@ const Input = forwardRef<
   // Auto-format based on healthcare type
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let formattedValue = e.target.value;
-    
+
     if (autoFormat && healthcareType && formatMasks[healthcareType]) {
       formattedValue = formatMasks[healthcareType](e.target.value);
     }
@@ -128,8 +128,8 @@ const Input = forwardRef<
       formattedValue = formattedValue
         .toLowerCase()
         .split(" ")
-        .map(word => 
-          word.length > 2 
+        .map(word =>
+          word.length > 2
             ? word.charAt(0).toUpperCase() + word.slice(1)
             : word
         )
@@ -137,7 +137,7 @@ const Input = forwardRef<
     }
 
     setInternalValue(formattedValue);
-    
+
     // Create synthetic event with formatted value
     const syntheticEvent = {
       ...e,
@@ -146,7 +146,7 @@ const Input = forwardRef<
         value: formattedValue,
       },
     };
-    
+
     if (onChange) {
       onChange(syntheticEvent as React.ChangeEvent<HTMLInputElement>);
     }
@@ -155,7 +155,7 @@ const Input = forwardRef<
   // Determine input type based on healthcare type
   const getInputType = () => {
     if (type) return type;
-    
+
     switch (healthcareType) {
       case "medical-date":
         return "date";
@@ -204,7 +204,7 @@ const Input = forwardRef<
   // Enhanced placeholder text for healthcare contexts
   const getPlaceholder = () => {
     if (props.placeholder) return props.placeholder;
-    
+
     switch (healthcareType) {
       case "cpf":
         return "000.000.000-00";
@@ -243,38 +243,30 @@ const Input = forwardRef<
         className={cn(
           // Base styling
           "flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base shadow-xs outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-          
           // Background and border based on context
-          medicalContext === "emergency" 
-            ? "bg-background border-status-urgent/50" 
+          medicalContext === "emergency"
+            ? "bg-background border-status-urgent/50"
             : "bg-transparent border-input dark:bg-input/30",
-          
           // Focus states with healthcare enhancements
           "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
-          emergencyMode && "focus-visible:ring-status-critical focus-visible:border-status-critical",
-          
+          emergencyMode
+            && "focus-visible:ring-status-critical focus-visible:border-status-critical",
           // Validation states
           validationState === "invalid" && "border-destructive aria-invalid:ring-destructive/20",
           validationState === "valid" && "border-success",
           validationState === "warning" && "border-warning",
           validationState === "critical" && "border-status-critical ring-2 ring-status-critical/20",
-          
           // Urgency-based styling
           urgency === "high" && "border-warning/60 bg-warning/5",
           urgency === "critical" && "border-status-critical/60 bg-status-critical/5 font-medium",
-          
           // LGPD sensitive data styling
           lgpdSensitive && "border-lgpd-compliant/40 bg-lgpd-compliant/5",
-          
           // Emergency mode styling
           emergencyMode && "min-h-[44px] text-base font-medium border-2",
-          
           // High contrast mode
           "high-contrast:border-2 high-contrast:border-current",
-          
           // File input styling
           "file:inline-flex file:h-7 file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm",
-          
           className,
         )}
         data-slot="input"
@@ -298,16 +290,14 @@ const Input = forwardRef<
           props.onBlur?.(e);
         }}
         // Enhanced accessibility for medical contexts
-        aria-describedby={
-          medicalDescription 
-            ? `${props.id || "input"}-medical-description`
-            : props["aria-describedby"]
-        }
+        aria-describedby={medicalDescription
+          ? `${props.id || "input"}-medical-description`
+          : props["aria-describedby"]}
         aria-invalid={validationState === "invalid" || validationState === "critical"}
         aria-required={lgpdConsentRequired || props.required}
         {...props}
       />
-      
+
       {/* Medical description for screen readers */}
       {medicalDescription && (
         <div
@@ -317,19 +307,19 @@ const Input = forwardRef<
           {medicalDescription}
         </div>
       )}
-      
+
       {/* LGPD consent indicator */}
       {lgpdSensitive && (
-        <div 
+        <div
           className="absolute -top-1 -right-1 w-2 h-2 bg-lgpd-compliant rounded-full"
           title="Dado sensível protegido pela LGPD"
           aria-label="Dado médico sensível"
         />
       )}
-      
+
       {/* Critical validation indicator */}
       {validationState === "critical" && (
-        <div 
+        <div
           className="absolute right-2 top-1/2 -translate-y-1/2 w-2 h-2 bg-status-critical rounded-full animate-pulse"
           title="Atenção: Validação crítica necessária"
           aria-label="Validação crítica"
@@ -341,4 +331,4 @@ const Input = forwardRef<
 
 Input.displayName = "Input";
 
-export { Input, type HealthcareInputProps };
+export { type HealthcareInputProps, Input };

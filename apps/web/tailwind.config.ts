@@ -25,7 +25,7 @@ const config: Config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        
+
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -104,7 +104,7 @@ const config: Config = {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
-      
+
       borderRadius: {
         "2xs": "0.25rem",
         xs: "0.375rem",
@@ -142,16 +142,19 @@ const config: Config = {
       },
 
       backgroundImage: {
-        "gradient-primary": "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)))",
+        "gradient-primary":
+          "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)))",
         "gradient-secondary": "linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)))",
         "gradient-accent": "linear-gradient(135deg, hsl(var(--accent)), hsl(var(--primary)))",
         "gradient-card": "linear-gradient(135deg, hsl(var(--card)), hsl(var(--muted)))",
-        
+
         // TweakCN NEONPRO Healthcare Gradients
         "neonpro-gradient": "linear-gradient(135deg, hsl(var(--background)), hsl(var(--primary)))",
         "healthcare-gradient": "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))",
-        "emergency-gradient": "linear-gradient(135deg, hsl(var(--status-critical)), hsl(var(--warning)))",
-        "success-gradient": "linear-gradient(135deg, hsl(var(--success)), hsl(var(--lgpd-compliant)))",
+        "emergency-gradient":
+          "linear-gradient(135deg, hsl(var(--status-critical)), hsl(var(--warning)))",
+        "success-gradient":
+          "linear-gradient(135deg, hsl(var(--success)), hsl(var(--lgpd-compliant)))",
       },
 
       boxShadow: {
@@ -164,12 +167,14 @@ const config: Config = {
         "healthcare-lg": "var(--shadow-lg)",
         "healthcare-xl": "var(--shadow-xl)",
         "healthcare-2xl": "var(--shadow-2xl)",
-        
+
         // TweakCN NEONPRO specific shadows
         "neonpro-glow": "0 0 20px hsl(var(--primary) / 0.3), 0 0 40px hsl(var(--primary) / 0.1)",
-        "neonpro-card": "0 10px 25px -3px hsl(var(--foreground) / 0.1), 0 4px 6px -2px hsl(var(--foreground) / 0.05)",
-        "emergency-glow": "0 0 20px hsl(var(--status-critical) / 0.5), 0 0 40px hsl(var(--status-critical) / 0.2)",
-        
+        "neonpro-card":
+          "0 10px 25px -3px hsl(var(--foreground) / 0.1), 0 4px 6px -2px hsl(var(--foreground) / 0.05)",
+        "emergency-glow":
+          "0 0 20px hsl(var(--status-critical) / 0.5), 0 0 40px hsl(var(--status-critical) / 0.2)",
+
         // Focus shadows for accessibility
         "focus": "0 0 0 var(--focus-ring-width) hsl(var(--ring) / 0.5)",
         "focus-visible": "0 0 0 var(--focus-ring-width) hsl(var(--ring))",
@@ -184,7 +189,7 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        
+
         // Healthcare-specific animations
         "pulse-healthcare": {
           "0%, 100%": { opacity: "1", transform: "scale(1)" },
@@ -224,14 +229,16 @@ const config: Config = {
         },
         "glow": {
           "0%, 100%": { boxShadow: "0 0 5px hsl(var(--primary) / 0.5)" },
-          "50%": { boxShadow: "0 0 20px hsl(var(--primary) / 0.8), 0 0 40px hsl(var(--primary) / 0.3)" },
+          "50%": {
+            boxShadow: "0 0 20px hsl(var(--primary) / 0.8), 0 0 40px hsl(var(--primary) / 0.3)",
+          },
         },
       },
 
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        
+
         // Healthcare-specific animations with motion considerations
         "pulse-healthcare": "pulse-healthcare 2s ease-in-out infinite",
         "pulse-emergency": "pulse-emergency 1s ease-in-out infinite",

@@ -1,9 +1,6 @@
-import { useState, useEffect } from "react";
 import { ANVISAControlledSubstancesService } from "@/lib/compliance/anvisa-controlled-substances";
-import type {
-  ANVISASubstance,
-  ControlledPrescription,
-} from "@/types/compliance";
+import type { ANVISASubstance, ControlledPrescription } from "@/types/compliance";
+import { useEffect, useState } from "react";
 
 // Mock data for prescriptions (temporary until backend integration)
 const mockPrescriptions: ControlledPrescription[] = [
@@ -57,12 +54,12 @@ export const useANVISAData = (): UseANVISADataReturn => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Load controlled substances
       const anvisaService = ANVISAControlledSubstancesService.getInstance();
       const substancesData = anvisaService.searchSubstances(""); // Get all substances
       setSubstances(substancesData);
-      
+
       // Load prescriptions (using mock data for now)
       setPrescriptions(mockPrescriptions);
     } catch (err) {

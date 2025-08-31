@@ -4,7 +4,7 @@
  * Implements comprehensive end-to-end healthcare workflow validation
  */
 
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, vi } from "vitest";
 
 export interface HealthcareE2EConfig {
   enablePatientJourney: boolean;

@@ -212,13 +212,13 @@ export class HealthcareEncryption {
     const envKey = process.env.ENCRYPTION_MASTER_KEY;
     if (!envKey) {
       throw new Error(
-        'ENCRYPTION_MASTER_KEY environment variable is required. ' +
-        'This is a critical security requirement for healthcare data protection.'
+        "ENCRYPTION_MASTER_KEY environment variable is required. "
+          + "This is a critical security requirement for healthcare data protection.",
       );
     }
     if (envKey.length < 32) {
       throw new Error(
-        'ENCRYPTION_MASTER_KEY must be at least 32 characters long for AES-256 security.'
+        "ENCRYPTION_MASTER_KEY must be at least 32 characters long for AES-256 security.",
       );
     }
 

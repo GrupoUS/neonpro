@@ -1,47 +1,61 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { EmptyState, ErrorBoundary, StateManager } from "@/components/forms/loading-error-states";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { useAuth } from "@/contexts/auth-context-new";
-import { StateManager, ErrorBoundary, EmptyState } from "@/components/forms/loading-error-states";
 import {
-  Users,
-  Plus,
-  Search,
-  Filter,
-  MoreHorizontal,
-  Edit,
-  Eye,
-  Trash2,
-  Phone,
-  Mail,
-  MapPin,
-  Calendar,
-  Shield,
-  AlertTriangle,
-  UserCheck,
-  Heart,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/contexts/auth-context-new";
+import {
   Activity,
-  RefreshCw,
-  X,
+  AlertTriangle,
+  Calendar,
   Check,
   ChevronLeft,
   ChevronRight,
+  Edit,
+  Eye,
+  Filter,
+  Heart,
+  Mail,
+  MapPin,
+  MoreHorizontal,
+  Phone,
+  Plus,
+  RefreshCw,
+  Search,
+  Shield,
+  Trash2,
+  UserCheck,
+  Users,
+  X,
 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 // API Base URL
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
@@ -155,12 +169,12 @@ function usePatientsAPI() {
   };
 
   const fetchPatients = useCallback(async (
-    page = 1, 
-    limit = 20, 
-    search = "", 
-    status = "active"
+    page = 1,
+    limit = 20,
+    search = "",
+    status = "active",
   ) => {
-    if (!user) {return;}
+    if (!user) return;
 
     try {
       setLoading(true);
@@ -180,7 +194,7 @@ function usePatientsAPI() {
 
       const response = await fetch(
         `${API_BASE_URL}/patients?${params.toString()}`,
-        { headers: getHeaders() }
+        { headers: getHeaders() },
       );
 
       if (!response.ok) {
@@ -201,7 +215,7 @@ function usePatientsAPI() {
   const createPatient = async (patientData: PatientFormData) => {
     try {
       const clinicId = "mock-clinic-id";
-      
+
       const formattedData = {
         clinic_id: clinicId,
         given_names: patientData.given_names.split(" ").filter(Boolean),
@@ -221,9 +235,15 @@ function usePatientsAPI() {
         cpf: patientData.cpf || null,
         rg: patientData.rg || null,
         blood_type: patientData.blood_type || null,
-        allergies: patientData.allergies ? patientData.allergies.split(",").map(a => a.trim()) : null,
-        chronic_conditions: patientData.chronic_conditions ? patientData.chronic_conditions.split(",").map(c => c.trim()) : null,
-        current_medications: patientData.current_medications ? patientData.current_medications.split(",").map(m => m.trim()) : null,
+        allergies: patientData.allergies
+          ? patientData.allergies.split(",").map(a => a.trim())
+          : null,
+        chronic_conditions: patientData.chronic_conditions
+          ? patientData.chronic_conditions.split(",").map(c => c.trim())
+          : null,
+        current_medications: patientData.current_medications
+          ? patientData.current_medications.split(",").map(m => m.trim())
+          : null,
         insurance_provider: patientData.insurance_provider || null,
         insurance_number: patientData.insurance_number || null,
         emergency_contact_name: patientData.emergency_contact_name || null,
@@ -330,12 +350,12 @@ function PatientCard({ patient, onEdit, onView, onDelete }: {
   };
 
   const getAgeFromBirthDate = (birthDate?: string) => {
-    if (!birthDate) {return null;}
+    if (!birthDate) return null;
     const today = new Date();
     const birth = new Date(birthDate);
     const age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
       return age - 1;
     }
@@ -360,23 +380,25 @@ function PatientCard({ patient, onEdit, onView, onDelete }: {
               </CardDescription>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-1">
-            {patient.lgpd_consent_given ? (
-              <Badge variant="default" className="bg-green-100 text-green-800 text-xs">
-                <Shield className="h-3 w-3 mr-1" />
-                LGPD
-              </Badge>
-            ) : (
-              <Badge variant="destructive" className="text-xs">
-                <AlertTriangle className="h-3 w-3 mr-1" />
-                Pendente
-              </Badge>
-            )}
+            {patient.lgpd_consent_given
+              ? (
+                <Badge variant="default" className="bg-green-100 text-green-800 text-xs">
+                  <Shield className="h-3 w-3 mr-1" />
+                  LGPD
+                </Badge>
+              )
+              : (
+                <Badge variant="destructive" className="text-xs">
+                  <AlertTriangle className="h-3 w-3 mr-1" />
+                  Pendente
+                </Badge>
+              )}
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="pt-0">
         <div className="space-y-2 text-sm">
           {patient.phone_primary && (
@@ -385,14 +407,14 @@ function PatientCard({ patient, onEdit, onView, onDelete }: {
               {patient.phone_primary}
             </div>
           )}
-          
+
           {patient.email && (
             <div className="flex items-center text-muted-foreground">
               <Mail className="h-4 w-4 mr-2" />
               {patient.email}
             </div>
           )}
-          
+
           {patient.birth_date && (
             <div className="flex items-center text-muted-foreground">
               <Calendar className="h-4 w-4 mr-2" />
@@ -404,12 +426,14 @@ function PatientCard({ patient, onEdit, onView, onDelete }: {
             <div className="flex items-center space-x-4 text-xs text-muted-foreground">
               <span>{patient.total_appointments} consultas</span>
               {patient.no_show_risk_score > 0 && (
-                <span className={patient.no_show_risk_score > 50 ? "text-red-600" : "text-yellow-600"}>
+                <span
+                  className={patient.no_show_risk_score > 50 ? "text-red-600" : "text-yellow-600"}
+                >
                   Risco: {patient.no_show_risk_score}%
                 </span>
               )}
             </div>
-            
+
             <div className="flex items-center space-x-1">
               <Button
                 variant="ghost"
@@ -420,7 +444,7 @@ function PatientCard({ patient, onEdit, onView, onDelete }: {
                 <Eye className="h-4 w-4" />
                 <span className="sr-only">Ver detalhes</span>
               </Button>
-              
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -430,7 +454,7 @@ function PatientCard({ patient, onEdit, onView, onDelete }: {
                 <Edit className="h-4 w-4" />
                 <span className="sr-only">Editar</span>
               </Button>
-              
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -448,11 +472,11 @@ function PatientCard({ patient, onEdit, onView, onDelete }: {
   );
 }
 
-function PatientForm({ 
-  patient, 
-  onSubmit, 
-  onCancel, 
-  loading 
+function PatientForm({
+  patient,
+  onSubmit,
+  onCancel,
+  loading,
 }: {
   patient?: Patient;
   onSubmit: (data: PatientFormData) => void;
@@ -499,7 +523,7 @@ function PatientForm({
     if (!formData.given_names.trim()) {
       newErrors.given_names = "Nome é obrigatório";
     }
-    
+
     if (!formData.family_name.trim()) {
       newErrors.family_name = "Sobrenome é obrigatório";
     }
@@ -522,7 +546,7 @@ function PatientForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       onSubmit(formData);
     }
@@ -556,9 +580,7 @@ function PatientForm({
                 placeholder="João Carlos"
                 className={errors.given_names ? "border-red-500" : ""}
               />
-              {errors.given_names && (
-                <p className="text-sm text-red-600">{errors.given_names}</p>
-              )}
+              {errors.given_names && <p className="text-sm text-red-600">{errors.given_names}</p>}
             </div>
 
             <div className="space-y-2">
@@ -570,9 +592,7 @@ function PatientForm({
                 placeholder="Silva"
                 className={errors.family_name ? "border-red-500" : ""}
               />
-              {errors.family_name && (
-                <p className="text-sm text-red-600">{errors.family_name}</p>
-              )}
+              {errors.family_name && <p className="text-sm text-red-600">{errors.family_name}</p>}
             </div>
           </div>
 
@@ -669,9 +689,7 @@ function PatientForm({
                 placeholder="000.000.000-00"
                 className={errors.cpf ? "border-red-500" : ""}
               />
-              {errors.cpf && (
-                <p className="text-sm text-red-600">{errors.cpf}</p>
-              )}
+              {errors.cpf && <p className="text-sm text-red-600">{errors.cpf}</p>}
             </div>
 
             <div className="space-y-2">
@@ -719,9 +737,7 @@ function PatientForm({
               placeholder="paciente@email.com"
               className={errors.email ? "border-red-500" : ""}
             />
-            {errors.email && (
-              <p className="text-sm text-red-600">{errors.email}</p>
-            )}
+            {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
           </div>
 
           <div className="space-y-2">
@@ -780,7 +796,7 @@ function PatientForm({
 
           <div className="space-y-4">
             <h4 className="font-medium">Contato de Emergência</h4>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="emergency_contact_name">Nome</Label>
@@ -808,7 +824,8 @@ function PatientForm({
               <Input
                 id="emergency_contact_relationship"
                 value={formData.emergency_contact_relationship}
-                onChange={(e) => handleInputChange("emergency_contact_relationship", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("emergency_contact_relationship", e.target.value)}
                 placeholder="Mãe, Cônjuge, etc."
               />
             </div>
@@ -857,7 +874,7 @@ function PatientForm({
 
             <div className="space-y-4">
               <h4 className="font-medium">Informações do Plano de Saúde</h4>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="insurance_provider">Operadora</Label>
@@ -887,8 +904,8 @@ function PatientForm({
           <Alert className="border-blue-200 bg-blue-50">
             <Shield className="h-4 w-4" />
             <AlertDescription>
-              Os consentimentos abaixo são essenciais para o tratamento e 
-              gestão dos dados do paciente em conformidade com a LGPD.
+              Os consentimentos abaixo são essenciais para o tratamento e gestão dos dados do
+              paciente em conformidade com a LGPD.
             </AlertDescription>
           </Alert>
 
@@ -905,9 +922,8 @@ function PatientForm({
                   Consentimento LGPD (Obrigatório) *
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  Autorizo o tratamento dos meus dados pessoais para fins de 
-                  prestação de serviços médicos, conforme descrito na Política 
-                  de Privacidade.
+                  Autorizo o tratamento dos meus dados pessoais para fins de prestação de serviços
+                  médicos, conforme descrito na Política de Privacidade.
                 </p>
                 {errors.lgpd_consent_given && (
                   <p className="text-sm text-red-600">{errors.lgpd_consent_given}</p>
@@ -926,8 +942,8 @@ function PatientForm({
                   Comunicações de Marketing
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  Autorizo o recebimento de comunicações promocionais, 
-                  campanhas de saúde e informações sobre novos serviços.
+                  Autorizo o recebimento de comunicações promocionais, campanhas de saúde e
+                  informações sobre novos serviços.
                 </p>
               </div>
             </div>
@@ -943,8 +959,8 @@ function PatientForm({
                   Pesquisas Científicas
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  Autorizo o uso dos meus dados anonimizados para 
-                  pesquisas científicas e estudos epidemiológicos.
+                  Autorizo o uso dos meus dados anonimizados para pesquisas científicas e estudos
+                  epidemiológicos.
                 </p>
               </div>
             </div>
@@ -970,36 +986,38 @@ function PatientForm({
           Cancelar
         </Button>
         <Button type="submit" disabled={loading}>
-          {loading ? (
-            <>
-              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-              Salvando...
-            </>
-          ) : (
-            <>
-              <Check className="h-4 w-4 mr-2" />
-              {patient ? "Atualizar" : "Cadastrar"} Paciente
-            </>
-          )}
+          {loading
+            ? (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                Salvando...
+              </>
+            )
+            : (
+              <>
+                <Check className="h-4 w-4 mr-2" />
+                {patient ? "Atualizar" : "Cadastrar"} Paciente
+              </>
+            )}
         </Button>
       </div>
     </form>
   );
 }
 
-function PatientDetailsDialog({ 
-  patient, 
-  open, 
-  onOpenChange 
+function PatientDetailsDialog({
+  patient,
+  open,
+  onOpenChange,
 }: {
   patient: Patient | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  if (!patient) {return null;}
+  if (!patient) return null;
 
   const getAgeFromBirthDate = (birthDate?: string) => {
-    if (!birthDate) {return "Não informado";}
+    if (!birthDate) return "Não informado";
     const today = new Date();
     const birth = new Date(birthDate);
     const age = today.getFullYear() - birth.getFullYear();
@@ -1040,20 +1058,22 @@ function PatientDetailsDialog({
                 </p>
               </div>
             </div>
-            
+
             <div className="flex gap-2">
-              {patient.lgpd_consent_given ? (
-                <Badge variant="default" className="bg-green-100 text-green-800">
-                  <Shield className="h-3 w-3 mr-1" />
-                  LGPD Conforme
-                </Badge>
-              ) : (
-                <Badge variant="destructive">
-                  <AlertTriangle className="h-3 w-3 mr-1" />
-                  LGPD Pendente
-                </Badge>
-              )}
-              
+              {patient.lgpd_consent_given
+                ? (
+                  <Badge variant="default" className="bg-green-100 text-green-800">
+                    <Shield className="h-3 w-3 mr-1" />
+                    LGPD Conforme
+                  </Badge>
+                )
+                : (
+                  <Badge variant="destructive">
+                    <AlertTriangle className="h-3 w-3 mr-1" />
+                    LGPD Pendente
+                  </Badge>
+                )}
+
               <Badge variant="outline">
                 Status: {patient.patient_status}
               </Badge>
@@ -1076,7 +1096,7 @@ function PatientDetailsDialog({
                   </Label>
                   <p className="font-medium">{patient.full_name}</p>
                 </div>
-                
+
                 {patient.preferred_name && (
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">
@@ -1085,19 +1105,19 @@ function PatientDetailsDialog({
                     <p className="font-medium">{patient.preferred_name}</p>
                   </div>
                 )}
-                
+
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">
                     Data de Nascimento
                   </Label>
                   <p className="font-medium">
-                    {patient.birth_date 
-                      ? new Date(patient.birth_date).toLocaleDateString("pt-BR") + 
-                        ` (${getAgeFromBirthDate(patient.birth_date)})`
+                    {patient.birth_date
+                      ? new Date(patient.birth_date).toLocaleDateString("pt-BR")
+                        + ` (${getAgeFromBirthDate(patient.birth_date)})`
                       : "Não informado"}
                   </p>
                 </div>
-                
+
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">
                     Gênero
@@ -1106,7 +1126,7 @@ function PatientDetailsDialog({
                     {patient.gender || "Não informado"}
                   </p>
                 </div>
-                
+
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">
                     Estado Civil
@@ -1115,7 +1135,7 @@ function PatientDetailsDialog({
                     {patient.marital_status || "Não informado"}
                   </p>
                 </div>
-                
+
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">
                     Tipo Sanguíneo
@@ -1124,14 +1144,14 @@ function PatientDetailsDialog({
                     {patient.blood_type || "Não informado"}
                   </p>
                 </div>
-                
+
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">
                     CPF
                   </Label>
                   <p className="font-medium">{patient.cpf || "Não informado"}</p>
                 </div>
-                
+
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">
                     RG
@@ -1199,9 +1219,9 @@ function PatientDetailsDialog({
                   </div>
                 </div>
 
-                {(patient.emergency_contact_name || 
-                  patient.emergency_contact_phone || 
-                  patient.emergency_contact_relationship) && (
+                {(patient.emergency_contact_name
+                  || patient.emergency_contact_phone
+                  || patient.emergency_contact_relationship) && (
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">
                       Contato de Emergência
@@ -1236,7 +1256,11 @@ function PatientDetailsDialog({
                     </Label>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {patient.allergies.map((allergy, index) => (
-                        <Badge key={index} variant="outline" className="text-red-600 border-red-200">
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-red-600 border-red-200"
+                        >
                           {allergy}
                         </Badge>
                       ))}
@@ -1251,7 +1275,11 @@ function PatientDetailsDialog({
                     </Label>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {patient.chronic_conditions.map((condition, index) => (
-                        <Badge key={index} variant="outline" className="text-orange-600 border-orange-200">
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-orange-600 border-orange-200"
+                        >
                           <Heart className="h-3 w-3 mr-1" />
                           {condition}
                         </Badge>
@@ -1267,7 +1295,11 @@ function PatientDetailsDialog({
                     </Label>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {patient.current_medications.map((medication, index) => (
-                        <Badge key={index} variant="outline" className="text-blue-600 border-blue-200">
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-blue-600 border-blue-200"
+                        >
                           {medication}
                         </Badge>
                       ))}
@@ -1311,10 +1343,15 @@ function PatientDetailsDialog({
                     <CardTitle className="text-sm">Risco de No-Show</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className={`text-2xl font-bold ${
-                      patient.no_show_risk_score > 50 ? "text-red-600" : 
-                      patient.no_show_risk_score > 25 ? "text-yellow-600" : "text-green-600"
-                    }`}>
+                    <p
+                      className={`text-2xl font-bold ${
+                        patient.no_show_risk_score > 50
+                          ? "text-red-600"
+                          : patient.no_show_risk_score > 25
+                          ? "text-yellow-600"
+                          : "text-green-600"
+                      }`}
+                    >
                       {patient.no_show_risk_score}%
                     </p>
                   </CardContent>
@@ -1326,10 +1363,9 @@ function PatientDetailsDialog({
                   </CardHeader>
                   <CardContent>
                     <p className="font-medium">
-                      {patient.last_visit_date 
+                      {patient.last_visit_date
                         ? new Date(patient.last_visit_date).toLocaleDateString("pt-BR")
-                        : "Nunca"
-                      }
+                        : "Nunca"}
                     </p>
                   </CardContent>
                 </Card>
@@ -1353,47 +1389,53 @@ function PatientDetailsDialog({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between p-2 rounded bg-muted/50">
                     <span>LGPD</span>
-                    {patient.lgpd_consent_given ? (
-                      <Badge variant="default" className="bg-green-100 text-green-800">
-                        <Check className="h-3 w-3 mr-1" />
-                        Autorizado
-                      </Badge>
-                    ) : (
-                      <Badge variant="destructive">
-                        <X className="h-3 w-3 mr-1" />
-                        Pendente
-                      </Badge>
-                    )}
+                    {patient.lgpd_consent_given
+                      ? (
+                        <Badge variant="default" className="bg-green-100 text-green-800">
+                          <Check className="h-3 w-3 mr-1" />
+                          Autorizado
+                        </Badge>
+                      )
+                      : (
+                        <Badge variant="destructive">
+                          <X className="h-3 w-3 mr-1" />
+                          Pendente
+                        </Badge>
+                      )}
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-2 rounded bg-muted/50">
                     <span>Marketing</span>
-                    {patient.marketing_consent ? (
-                      <Badge variant="default" className="bg-green-100 text-green-800">
-                        <Check className="h-3 w-3 mr-1" />
-                        Autorizado
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline">
-                        <X className="h-3 w-3 mr-1" />
-                        Não autorizado
-                      </Badge>
-                    )}
+                    {patient.marketing_consent
+                      ? (
+                        <Badge variant="default" className="bg-green-100 text-green-800">
+                          <Check className="h-3 w-3 mr-1" />
+                          Autorizado
+                        </Badge>
+                      )
+                      : (
+                        <Badge variant="outline">
+                          <X className="h-3 w-3 mr-1" />
+                          Não autorizado
+                        </Badge>
+                      )}
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-2 rounded bg-muted/50">
                     <span>Pesquisa</span>
-                    {patient.research_consent ? (
-                      <Badge variant="default" className="bg-green-100 text-green-800">
-                        <Check className="h-3 w-3 mr-1" />
-                        Autorizado
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline">
-                        <X className="h-3 w-3 mr-1" />
-                        Não autorizado
-                      </Badge>
-                    )}
+                    {patient.research_consent
+                      ? (
+                        <Badge variant="default" className="bg-green-100 text-green-800">
+                          <Check className="h-3 w-3 mr-1" />
+                          Autorizado
+                        </Badge>
+                      )
+                      : (
+                        <Badge variant="outline">
+                          <X className="h-3 w-3 mr-1" />
+                          Não autorizado
+                        </Badge>
+                      )}
                   </div>
                 </div>
               </div>
@@ -1456,7 +1498,7 @@ export default function PatientsPage() {
   };
 
   const handleUpdatePatient = async (data: PatientFormData) => {
-    if (!selectedPatient) {return;}
+    if (!selectedPatient) return;
 
     try {
       setSubmitting(true);
@@ -1473,7 +1515,7 @@ export default function PatientsPage() {
   };
 
   const handleDeletePatient = async () => {
-    if (!patientToDelete) {return;}
+    if (!patientToDelete) return;
 
     try {
       setSubmitting(true);
@@ -1518,7 +1560,7 @@ export default function PatientsPage() {
             description="Você precisa estar logado para acessar a página de pacientes."
             action={{
               label: "Fazer Login",
-              onClick: () => window.location.href = "/login"
+              onClick: () => window.location.href = "/login",
             }}
           />
         }
@@ -1539,321 +1581,327 @@ export default function PatientsPage() {
         description: "Comece cadastrando o primeiro paciente da clínica.",
         action: {
           label: "Cadastrar Primeiro Paciente",
-          onClick: () => setShowCreateDialog(true)
-        }
+          onClick: () => setShowCreateDialog(true),
+        },
       }}
       className="space-y-6 p-6"
     >
       <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Pacientes</h1>
-          <p className="text-muted-foreground">
-            Gerencie o cadastro e informações dos pacientes da clínica
-          </p>
-        </div>
-        
-        <Button onClick={() => setShowCreateDialog(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Novo Paciente
-        </Button>
-      </div>
-
-      {/* Search and Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <form onSubmit={handleSearch} className="flex gap-4 items-end">
-            <div className="flex-1">
-              <Label htmlFor="search">Buscar Pacientes</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="search"
-                  placeholder="Buscar por nome, email ou telefone..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            
-            <div>
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={statusFilter}
-                onValueChange={setStatusFilter}
-              >
-                <SelectTrigger className="w-40">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Ativos</SelectItem>
-                  <SelectItem value="inactive">Inativos</SelectItem>
-                  <SelectItem value="all">Todos</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <Button type="submit" disabled={loading}>
-              <Filter className="h-4 w-4 mr-2" />
-              Filtrar
-            </Button>
-            
-            <Button 
-              type="button" 
-              variant="outline"
-              onClick={() => fetchPatients(pagination.page, pagination.limit, searchTerm, statusFilter)}
-              disabled={loading}
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      {/* Error State */}
-      {error && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* Results */}
-      <div className="space-y-4">
-        {loading ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i}>
-                <CardHeader>
-                  <div className="flex items-center space-x-3">
-                    <Skeleton className="h-10 w-10 rounded-full" />
-                    <div className="space-y-1">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-3 w-24" />
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-3/4" />
-                    <Skeleton className="h-3 w-1/2" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Pacientes</h1>
+            <p className="text-muted-foreground">
+              Gerencie o cadastro e informações dos pacientes da clínica
+            </p>
           </div>
-        ) : patients.length > 0 ? (
-          <>
-            {/* Results Header */}
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
-                Mostrando {patients.length} de {pagination.total} pacientes
-              </p>
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(pagination.page - 1)}
-                  disabled={pagination.page <= 1}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Anterior
-                </Button>
-                
-                <span className="text-sm">
-                  Página {pagination.page} de {pagination.pages}
-                </span>
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(pagination.page + 1)}
-                  disabled={pagination.page >= pagination.pages}
-                >
-                  Próximo
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
 
-            {/* Patient Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {patients.map((patient) => (
-                <PatientCard
-                  key={patient.id}
-                  patient={patient}
-                  onEdit={handleEdit}
-                  onView={handleView}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </div>
+          <Button onClick={() => setShowCreateDialog(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Novo Paciente
+          </Button>
+        </div>
 
-            {/* Pagination Footer */}
-            {pagination.pages > 1 && (
-              <div className="flex justify-center">
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => handlePageChange(1)}
-                    disabled={pagination.page <= 1}
-                  >
-                    Primeira
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handlePageChange(pagination.page - 1)}
-                    disabled={pagination.page <= 1}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  
-                  <span className="px-4 py-2 text-sm">
-                    {pagination.page} de {pagination.pages}
-                  </span>
-                  
-                  <Button
-                    variant="outline"
-                    onClick={() => handlePageChange(pagination.page + 1)}
-                    disabled={pagination.page >= pagination.pages}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handlePageChange(pagination.pages)}
-                    disabled={pagination.page >= pagination.pages}
-                  >
-                    Última
-                  </Button>
+        {/* Search and Filters */}
+        <Card>
+          <CardContent className="pt-6">
+            <form onSubmit={handleSearch} className="flex gap-4 items-end">
+              <div className="flex-1">
+                <Label htmlFor="search">Buscar Pacientes</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="search"
+                    placeholder="Buscar por nome, email ou telefone..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
                 </div>
               </div>
-            )}
-          </>
-        ) : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Users className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Nenhum paciente encontrado</h3>
-              <p className="text-muted-foreground text-center mb-4">
-                {searchTerm || statusFilter !== "active" 
-                  ? "Tente ajustar os filtros de busca"
-                  : "Comece adicionando o primeiro paciente da clínica"
-                }
-              </p>
-              {!searchTerm && statusFilter === "active" && (
-                <Button onClick={() => setShowCreateDialog(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Adicionar Primeiro Paciente
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+
+              <div>
+                <Label htmlFor="status">Status</Label>
+                <Select
+                  value={statusFilter}
+                  onValueChange={setStatusFilter}
+                >
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Ativos</SelectItem>
+                    <SelectItem value="inactive">Inativos</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button type="submit" disabled={loading}>
+                <Filter className="h-4 w-4 mr-2" />
+                Filtrar
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() =>
+                  fetchPatients(pagination.page, pagination.limit, searchTerm, statusFilter)}
+                disabled={loading}
+              >
+                <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Error State */}
+        {error && (
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
-      </div>
 
-      {/* Dialogs */}
-      {/* Create Patient Dialog */}
-      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Cadastrar Novo Paciente</DialogTitle>
-            <DialogDescription>
-              Preencha as informações do novo paciente. Campos marcados com * são obrigatórios.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <PatientForm
-            onSubmit={handleCreatePatient}
-            onCancel={() => setShowCreateDialog(false)}
-            loading={submitting}
-          />
-        </DialogContent>
-      </Dialog>
+        {/* Results */}
+        <div className="space-y-4">
+          {loading
+            ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <Card key={i}>
+                    <CardHeader>
+                      <div className="flex items-center space-x-3">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="space-y-1">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-3 w-24" />
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <Skeleton className="h-3 w-full" />
+                        <Skeleton className="h-3 w-3/4" />
+                        <Skeleton className="h-3 w-1/2" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )
+            : patients.length > 0
+            ? (
+              <>
+                {/* Results Header */}
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Mostrando {patients.length} de {pagination.total} pacientes
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(pagination.page - 1)}
+                      disabled={pagination.page <= 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Anterior
+                    </Button>
 
-      {/* Edit Patient Dialog */}
-      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Editar Paciente</DialogTitle>
-            <DialogDescription>
-              Atualize as informações do paciente.
-            </DialogDescription>
-          </DialogHeader>
-          
-          {selectedPatient && (
+                    <span className="text-sm">
+                      Página {pagination.page} de {pagination.pages}
+                    </span>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(pagination.page + 1)}
+                      disabled={pagination.page >= pagination.pages}
+                    >
+                      Próximo
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Patient Cards */}
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {patients.map((patient) => (
+                    <PatientCard
+                      key={patient.id}
+                      patient={patient}
+                      onEdit={handleEdit}
+                      onView={handleView}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </div>
+
+                {/* Pagination Footer */}
+                {pagination.pages > 1 && (
+                  <div className="flex justify-center">
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => handlePageChange(1)}
+                        disabled={pagination.page <= 1}
+                      >
+                        Primeira
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => handlePageChange(pagination.page - 1)}
+                        disabled={pagination.page <= 1}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+
+                      <span className="px-4 py-2 text-sm">
+                        {pagination.page} de {pagination.pages}
+                      </span>
+
+                      <Button
+                        variant="outline"
+                        onClick={() => handlePageChange(pagination.page + 1)}
+                        disabled={pagination.page >= pagination.pages}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => handlePageChange(pagination.pages)}
+                        disabled={pagination.page >= pagination.pages}
+                      >
+                        Última
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )
+            : (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Users className="h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Nenhum paciente encontrado</h3>
+                  <p className="text-muted-foreground text-center mb-4">
+                    {searchTerm || statusFilter !== "active"
+                      ? "Tente ajustar os filtros de busca"
+                      : "Comece adicionando o primeiro paciente da clínica"}
+                  </p>
+                  {!searchTerm && statusFilter === "active" && (
+                    <Button onClick={() => setShowCreateDialog(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar Primeiro Paciente
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+        </div>
+
+        {/* Dialogs */}
+        {/* Create Patient Dialog */}
+        <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Cadastrar Novo Paciente</DialogTitle>
+              <DialogDescription>
+                Preencha as informações do novo paciente. Campos marcados com * são obrigatórios.
+              </DialogDescription>
+            </DialogHeader>
+
             <PatientForm
-              patient={selectedPatient}
-              onSubmit={handleUpdatePatient}
-              onCancel={() => {
-                setShowEditDialog(false);
-                setSelectedPatient(null);
-              }}
+              onSubmit={handleCreatePatient}
+              onCancel={() => setShowCreateDialog(false)}
               loading={submitting}
             />
-          )}
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
 
-      {/* Patient Details Dialog */}
-      <PatientDetailsDialog
-        patient={selectedPatient}
-        open={showDetailsDialog}
-        onOpenChange={(open) => {
-          setShowDetailsDialog(open);
-          if (!open) {setSelectedPatient(null);}
-        }}
-      />
+        {/* Edit Patient Dialog */}
+        <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Editar Paciente</DialogTitle>
+              <DialogDescription>
+                Atualize as informações do paciente.
+              </DialogDescription>
+            </DialogHeader>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Desativar Paciente</DialogTitle>
-            <DialogDescription>
-              Tem certeza que deseja desativar o paciente{" "}
-              <strong>{patientToDelete?.full_name}</strong>?
-            </DialogDescription>
-          </DialogHeader>
-          
-          <Alert>
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              Esta ação irá desativar o paciente, mas manterá todos os dados 
-              históricos por questões de conformidade LGPD e auditoria médica.
-            </AlertDescription>
-          </Alert>
-          
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setDeleteDialogOpen(false);
-                setPatientToDelete(null);
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeletePatient}
-              disabled={submitting}
-            >
-              {submitting ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Desativando...
-                </>
-              ) : (
-                "Desativar Paciente"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            {selectedPatient && (
+              <PatientForm
+                patient={selectedPatient}
+                onSubmit={handleUpdatePatient}
+                onCancel={() => {
+                  setShowEditDialog(false);
+                  setSelectedPatient(null);
+                }}
+                loading={submitting}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Patient Details Dialog */}
+        <PatientDetailsDialog
+          patient={selectedPatient}
+          open={showDetailsDialog}
+          onOpenChange={(open) => {
+            setShowDetailsDialog(open);
+            if (!open) setSelectedPatient(null);
+          }}
+        />
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Desativar Paciente</DialogTitle>
+              <DialogDescription>
+                Tem certeza que deseja desativar o paciente{" "}
+                <strong>{patientToDelete?.full_name}</strong>?
+              </DialogDescription>
+            </DialogHeader>
+
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                Esta ação irá desativar o paciente, mas manterá todos os dados históricos por
+                questões de conformidade LGPD e auditoria médica.
+              </AlertDescription>
+            </Alert>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setDeleteDialogOpen(false);
+                  setPatientToDelete(null);
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDeletePatient}
+                disabled={submitting}
+              >
+                {submitting
+                  ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      Desativando...
+                    </>
+                  )
+                  : (
+                    "Desativar Paciente"
+                  )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </StateManager>
   );

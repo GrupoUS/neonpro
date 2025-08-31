@@ -1,8 +1,8 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, FileText, RefreshCw, Shield } from "lucide-react";
+import React from "react";
 import type { ANVISASubstance, ControlledPrescription } from "../../types/compliance";
 
 interface ANVISAHeaderProps {

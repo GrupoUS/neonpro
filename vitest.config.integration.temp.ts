@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     // Test configuration
     name: "integration",
-    
+
     exclude: [
       "node_modules/**",
       "dist/**",
@@ -18,25 +18,25 @@ export default defineConfig({
       "**/playwright/**",
       "**/*.e2e.{test,spec}.{js,ts,jsx,tsx}",
     ],
-    
+
     include: [
       "apps/web/tests/integration/**/*.{test,spec}.{js,ts,jsx,tsx}",
       "packages/**/tests/integration/**/*.{test,spec}.{js,ts,jsx,tsx}",
     ],
-    
+
     // Environment configuration
     environment: "happy-dom",
-    
+
     // Setup files
     setupFiles: [
       "./tests/setup/global-mocks.ts",
       "./tests/setup/integration-test-setup.ts",
     ],
-    
+
     // Timeouts
     testTimeout: 30_000, // 30 seconds for individual tests
     hookTimeout: 10_000, // 10 seconds for setup/teardown
-    
+
     // Coverage configuration
     coverage: {
       provider: "v8",
@@ -58,16 +58,16 @@ export default defineConfig({
         "**/build/**",
       ],
     },
-    
+
     // Global configuration
     globals: true,
     mockReset: true,
     clearMocks: true,
     restoreMocks: true,
-    
+
     // Reporters
     reporter: ["default", "json", "html"],
-    
+
     // Pool configuration for better performance
     pool: "forks",
     poolOptions: {
@@ -75,17 +75,17 @@ export default defineConfig({
         maxForks: 4,
       },
     },
-    
+
     // Retry configuration
     retry: 2,
-    
+
     // Sequence configuration
     sequence: {
       concurrent: false,
       shuffle: false,
     },
   },
-  
+
   // Resolve configuration
   resolve: {
     alias: {

@@ -21,7 +21,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         neonpro:
           "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-neonpro-card transition-all duration-300 hover:scale-105 hover:shadow-neonpro-glow",
-        
+
         // Healthcare-Specific Button Variants
         medical:
           "bg-success text-success-foreground shadow-xs hover:bg-success/90 focus-visible:ring-success/50 border border-success/20",
@@ -42,14 +42,15 @@ const buttonVariants = cva(
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         xl: "h-12 rounded-lg px-8 has-[>svg]:px-6 text-base", // Healthcare forms
         icon: "size-9",
-        
+
         // Healthcare Touch Targets - WCAG 2.1 AA Compliant
         touch: "min-h-[44px] min-w-[44px] px-4 py-2", // Minimum touch target
         "touch-lg": "min-h-[56px] min-w-[56px] px-6 py-3 text-base", // Emergency scenarios
         "touch-xl": "min-h-[64px] min-w-[64px] px-8 py-4 text-lg font-semibold", // Critical situations
-        
+
         // Mobile Emergency Interface
-        "mobile-emergency": "min-h-[56px] min-w-full px-6 py-4 text-lg font-bold rounded-lg touch-manipulation",
+        "mobile-emergency":
+          "min-h-[56px] min-w-full px-6 py-4 text-lg font-bold rounded-lg touch-manipulation",
       },
     },
     defaultVariants: {
@@ -84,11 +85,14 @@ function Button({
   srAnnouncement,
   children,
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & 
-  HealthcareButtonProps & {
+}:
+  & React.ComponentProps<"button">
+  & VariantProps<typeof buttonVariants>
+  & HealthcareButtonProps
+  & {
     asChild?: boolean;
-  }) {
+  })
+{
   const Comp = asChild ? Slot : "button";
 
   // Auto-adjust variant based on urgency for healthcare contexts
@@ -132,7 +136,7 @@ function Button({
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }
-    
+
     // Call original onClick if provided
     if (props.onClick) {
       props.onClick(e);
@@ -149,7 +153,7 @@ function Button({
         emergencyMode && "shadow-emergency-glow border-2 border-white font-bold",
         // High contrast mode compatibility
         "high-contrast:border-2 high-contrast:border-current",
-        className
+        className,
       )}
       data-slot="button"
       data-urgency={urgency}
@@ -158,11 +162,9 @@ function Button({
       disabled={isLoading || props.disabled}
       onClick={handleClick}
       // Enhanced accessibility for healthcare contexts
-      aria-describedby={
-        urgency === "critical" || urgency === "high" 
-          ? "healthcare-critical-action-warning" 
-          : undefined
-      }
+      aria-describedby={urgency === "critical" || urgency === "high"
+        ? "healthcare-critical-action-warning"
+        : undefined}
       {...props}
     >
       {isLoading && (
@@ -192,7 +194,7 @@ function Button({
         </>
       )}
       {children}
-      
+
       {/* Hidden accessibility warning for critical actions */}
       {(urgency === "critical" || urgency === "high") && (
         <div

@@ -3,15 +3,15 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Icons } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/auth-context-new";
-import { AlertCircle, Eye, EyeOff, Shield, Lock, UserCheck } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { AlertCircle, Eye, EyeOff, Lock, Shield, UserCheck } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -43,12 +43,12 @@ export function LoginForm() {
 
       if (response.success && response.user) {
         setSuccessMessage("Login realizado com sucesso! Redirecionando...");
-        
+
         // Clear form
         setEmail("");
         setPassword("");
         setRememberMe(false);
-        
+
         // Redirect will be handled by auth context
       } else {
         setError(response.error || "Falha na autenticação");
@@ -71,11 +71,11 @@ export function LoginForm() {
             <Shield className="h-6 w-6 text-primary-foreground" />
           </div>
         </div>
-        
+
         <CardTitle className="font-bold text-foreground text-2xl">
           Acesso Seguro
         </CardTitle>
-        
+
         <CardDescription className="text-muted-foreground">
           Sistema de Gestão Médica - Conformidade LGPD & HIPAA
         </CardDescription>
@@ -130,7 +130,6 @@ export function LoginForm() {
               required
               className="w-full"
               autoComplete="email"
-              
             />
           </div>
 
@@ -160,11 +159,9 @@ export function LoginForm() {
                 disabled={loading || isSubmitting}
                 aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
               >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4 text-muted-foreground" />
-                ) : (
-                  <Eye className="h-4 w-4 text-muted-foreground" />
-                )}
+                {showPassword
+                  ? <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  : <Eye className="h-4 w-4 text-muted-foreground" />}
               </Button>
             </div>
           </div>
@@ -185,7 +182,7 @@ export function LoginForm() {
                 Manter conectado (30 dias)
               </Label>
             </div>
-            
+
             <Link
               href="/auth/forgot-password"
               className="text-sm text-primary hover:text-primary/80 font-medium"
@@ -201,17 +198,19 @@ export function LoginForm() {
             className="neonpro-button-primary w-full h-11"
             disabled={!isFormValid}
           >
-            {isSubmitting || loading ? (
-              <>
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                Autenticando...
-              </>
-            ) : (
-              <>
-                <Shield className="mr-2 h-4 w-4" />
-                Acessar Sistema
-              </>
-            )}
+            {isSubmitting || loading
+              ? (
+                <>
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  Autenticando...
+                </>
+              )
+              : (
+                <>
+                  <Shield className="mr-2 h-4 w-4" />
+                  Acessar Sistema
+                </>
+              )}
           </Button>
         </form>
 
@@ -283,20 +282,20 @@ export function LoginFormSkeleton() {
           <div className="h-4 w-48 bg-muted rounded animate-pulse mx-auto" />
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="h-4 w-24 bg-muted rounded animate-pulse" />
           <div className="h-10 w-full bg-muted rounded animate-pulse" />
         </div>
-        
+
         <div className="space-y-2">
           <div className="h-4 w-20 bg-muted rounded animate-pulse" />
           <div className="h-10 w-full bg-muted rounded animate-pulse" />
         </div>
-        
+
         <div className="h-11 w-full bg-muted rounded animate-pulse" />
-        
+
         <div className="flex justify-center">
           <Icons.spinner className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>

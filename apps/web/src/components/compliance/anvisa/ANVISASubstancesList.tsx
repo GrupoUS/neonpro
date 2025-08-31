@@ -1,9 +1,9 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@neonpro/ui";
+import { Badge, Button, Input } from "@neonpro/ui";
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
-import { Input, Badge, Button } from '@neonpro/ui';
 // Using native select for simplicity to avoid type conflicts
-import { Search, Filter } from "lucide-react";
-import { ANVISASubstance, ANVISAControlledClass } from "../../../types/compliance";
+import { Filter, Search } from "lucide-react";
+import { ANVISAControlledClass, ANVISASubstance } from "../../../types/compliance";
 
 interface ANVISASubstancesListProps {
   substances: ANVISASubstance[];
@@ -59,10 +59,9 @@ export function ANVISASubstancesList({
   };
 
   const filteredSubstances = substances.filter((substance) => {
-    const matchesSearch =
-      substance.substanceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      substance.commercialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      substance.activeIngredient.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = substance.substanceName.toLowerCase().includes(searchTerm.toLowerCase())
+      || substance.commercialName.toLowerCase().includes(searchTerm.toLowerCase())
+      || substance.activeIngredient.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesClass = selectedClass === "all" || substance.controlledClass === selectedClass;
     return matchesSearch && matchesClass;
   });
@@ -85,8 +84,8 @@ export function ANVISASubstancesList({
             />
           </div>
           <div className="w-48">
-            <select 
-              value={selectedClass} 
+            <select
+              value={selectedClass}
               onChange={(e) => onClassChange(e.target.value as ANVISAControlledClass | "all")}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -105,56 +104,58 @@ export function ANVISASubstancesList({
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {filteredSubstances.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              Nenhuma substância encontrada
-            </div>
-          ) : (
-            filteredSubstances.map((substance) => (
-              <div
-                key={substance.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-lg">{getClassIcon(substance.controlledClass)}</span>
-                    <Badge variant={getClassBadgeVariant(substance.controlledClass)}>
-                      {substance.controlledClass}
-                    </Badge>
-                    <Badge variant="outline">{substance.prescriptionType}</Badge>
-                  </div>
-                  <h3 className="font-medium">{substance.substanceName}</h3>
-                  <p className="text-sm text-muted-foreground">{substance.commercialName}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Ingrediente Ativo: {substance.activeIngredient}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Concentração: {substance.concentration}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Forma Farmacêutica: {substance.pharmaceuticalForm}
-                  </p>
-                  {substance.restrictions.length > 0 && (
-                    <div className="mt-2">
-                      <p className="text-xs font-medium text-orange-600">Restrições:</p>
-                      <p className="text-xs text-muted-foreground">
-                        {substance.restrictions.join(", ")}
-                      </p>
+          {filteredSubstances.length === 0
+            ? (
+              <div className="text-center py-8 text-muted-foreground">
+                Nenhuma substância encontrada
+              </div>
+            )
+            : (
+              filteredSubstances.map((substance) => (
+                <div
+                  key={substance.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">{getClassIcon(substance.controlledClass)}</span>
+                      <Badge variant={getClassBadgeVariant(substance.controlledClass)}>
+                        {substance.controlledClass}
+                      </Badge>
+                      <Badge variant="outline">{substance.prescriptionType}</Badge>
                     </div>
+                    <h3 className="font-medium">{substance.substanceName}</h3>
+                    <p className="text-sm text-muted-foreground">{substance.commercialName}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Ingrediente Ativo: {substance.activeIngredient}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Concentração: {substance.concentration}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Forma Farmacêutica: {substance.pharmaceuticalForm}
+                    </p>
+                    {substance.restrictions.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-xs font-medium text-orange-600">Restrições:</p>
+                        <p className="text-xs text-muted-foreground">
+                          {substance.restrictions.join(", ")}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  {onSubstanceSelect && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onSubstanceSelect(substance)}
+                    >
+                      Selecionar
+                    </Button>
                   )}
                 </div>
-                {onSubstanceSelect && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onSubstanceSelect(substance)}
-                  >
-                    Selecionar
-                  </Button>
-                )}
-              </div>
-            ))
-          )}
+              ))
+            )}
         </div>
       </CardContent>
     </Card>

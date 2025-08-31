@@ -1,7 +1,8 @@
 // Script para configurar e testar OAuth do Google
 // Usage: node scripts/setup-google-oauth.js
 
-require("dotenv").config({ path: ".env.local" });
+import { config } from "dotenv";
+config({ path: ".env.local" });
 
 const currentConfig = {
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,

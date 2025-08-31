@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
 /**
  * Optimized Image Component for NeonPro
  * Production-ready image optimization with Next.js Image
  */
 
-import Image from 'next/image';
-import { useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { useState } from "react";
 
 interface OptimizedImageProps {
   src: string;
@@ -19,7 +19,7 @@ interface OptimizedImageProps {
   fill?: boolean;
   sizes?: string;
   quality?: number;
-  placeholder?: 'blur' | 'empty';
+  placeholder?: "blur" | "empty";
   blurDataURL?: string;
   onLoadingComplete?: () => void;
   style?: React.CSSProperties;
@@ -29,12 +29,12 @@ interface OptimizedImageProps {
  * Default blur data URL for placeholder
  * Low quality, minimal base64 image
  */
-const DEFAULT_BLUR_DATA_URL = 
+const DEFAULT_BLUR_DATA_URL =
   "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==";
 
 /**
  * Optimized Image Component
- * 
+ *
  * Features:
  * - Next.js Image optimization
  * - Automatic WebP/AVIF conversion
@@ -43,11 +43,11 @@ const DEFAULT_BLUR_DATA_URL =
  * - Error handling with fallback
  * - Loading state management
  */
-export function OptimizedImage({ 
-  src, 
-  alt, 
-  width, 
-  height, 
+export function OptimizedImage({
+  src,
+  alt,
+  width,
+  height,
   priority = false,
   className,
   fill = false,
@@ -75,10 +75,10 @@ export function OptimizedImage({
   // Fallback image for errors
   if (imageError) {
     return (
-      <div 
+      <div
         className={cn(
           "flex items-center justify-center bg-gray-100 text-gray-400 text-sm",
-          className
+          className,
         )}
         style={{ width, height, ...style }}
       >
@@ -96,16 +96,16 @@ export function OptimizedImage({
     quality,
     priority,
     placeholder,
-    blurDataURL: placeholder === 'blur' ? blurDataURL : undefined,
+    blurDataURL: placeholder === "blur" ? blurDataURL : undefined,
     onLoad: handleLoad,
     onError: handleError,
     className: cn(
       "transition-opacity duration-300",
       isLoading ? "opacity-0" : "opacity-100",
-      className
+      className,
     ),
     style: {
-      objectFit: 'cover' as const,
+      objectFit: "cover" as const,
       ...style,
     },
     ...props,
@@ -141,7 +141,7 @@ export function AvatarImage({
   size = 40,
   className,
   ...props
-}: Omit<OptimizedImageProps, 'width' | 'height'> & { size?: number }) {
+}: Omit<OptimizedImageProps, "width" | "height"> & { size?: number; }) {
   return (
     <OptimizedImage
       src={src}
@@ -167,7 +167,7 @@ export function LogoImage({
   priority = true,
   className,
   ...props
-}: Omit<OptimizedImageProps, 'placeholder'>) {
+}: Omit<OptimizedImageProps, "placeholder">) {
   return (
     <OptimizedImage
       src={src}
@@ -201,13 +201,13 @@ export function MedicalImage({
 }) {
   // Add compliance tracking
   const handleLoad = () => {
-    if (process.env.NODE_ENV === 'production' && patientId && clinicId) {
+    if (process.env.NODE_ENV === "production" && patientId && clinicId) {
       // Log medical image access for LGPD compliance
-      console.log('Medical image accessed:', {
+      console.log("Medical image accessed:", {
         patientId,
         clinicId,
         timestamp: new Date().toISOString(),
-        imageAlt: alt
+        imageAlt: alt,
       });
     }
     props.onLoadingComplete?.();

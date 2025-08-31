@@ -264,7 +264,7 @@ describe("CFMValidationService", () => {
     it("aggregates results and errors from multiple validations", async () => {
       vi.spyOn(svc as AnyObj, "callCFMAPI").mockImplementation(
         async (_state: any, number: string) => {
-          if (number === "000000") {return null;}
+          if (number === "000000") return null;
           return makeProfessional({ crmNumber: `CRM-SP ${number}` });
         },
       );

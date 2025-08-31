@@ -1,6 +1,6 @@
 import type { GraphModel, LayersModel } from "@tensorflow/tfjs";
-import * as tf from "@tensorflow/tfjs";
 import type { ModelMetadata, ModelType, PredictionConfig } from "../types";
+import { LazyTensorFlowOperations, tensorFlowLoader } from "./tensorflow-lazy-loader";
 
 /**
  * Core AI Model Manager for NeonPro Aesthetic Treatment Predictions
@@ -79,15 +79,12 @@ export class AIModelManager {
     }
 
     try {
-      // Configure TensorFlow.js for optimal browser performance
-      await tf.ready();
+      // Initialize TensorFlow.js with lazy loading - saves ~10MB in initial bundle
+      console.log("🧠 Initializing AI Model Manager with lazy TensorFlow.js loading...");
+      const tf = await tensorFlowLoader.getTensorFlow();
 
-      // Set backend preference for best performance
-      if (tf.env().platform.has("webgl")) {
-        await tf.setBackend("webgl");
-      } else if (tf.env().platform.has("cpu")) {
-        await tf.setBackend("cpu");
-      }
+      // TensorFlow.js is now loaded and optimized for healthcare performance
+      console.log(`✅ AI Model Manager initialized with backend: ${tf.getBackend()}`);
 
       // Preload critical models for immediate availability
       const criticalModels: ModelType[] = [
@@ -156,8 +153,8 @@ export class AIModelManager {
     const startTime = performance.now();
 
     try {
-      // Load model with timeout protection
-      const modelPromise = tf.loadLayersModel(config.modelPath);
+      // Load model with lazy TensorFlow.js loading
+      const modelPromise = LazyTensorFlowOperations.loadModel(config.modelPath, "layers");
       const timeoutPromise = new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error("Model loading timeout")), 30_000)
       );
@@ -271,8 +268,12 @@ export class AIModelManager {
       initialized: this.isInitialized,
       modelsLoaded: this.models.size,
       totalModels: Object.keys(this.MODEL_CONFIGS).length,
-      memoryUsage: tf.memory(),
-      backend: tf.getBackend(),
+      memoryUsage: tensorFlowLoader.isAvailable()
+        ? (await tensorFlowLoader.getTensorFlow()).then(tf => tf.memory())
+        : "TensorFlow not loaded",
+      backend: tensorFlowLoader.isAvailable()
+        ? (await tensorFlowLoader.getTensorFlow()).getBackend()
+        : "Not initialized",
     };
 
     const loadedCount = this.models.size;

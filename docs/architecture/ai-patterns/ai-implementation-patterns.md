@@ -1,9 +1,10 @@
 # 🤖 AI Implementation Patterns - NeonPro Healthcare
 
 ## 🎯 **OBJETIVO**
+
 Definir padrões de implementação para agentes IA no contexto healthcare, integrando Vercel AI SDK 5.0.23 com compliance LGPD, sanitização PHI e arquitetura multi-tenant.
 
-**Base**: Validação Supabase + Interface Specification + Cross-cutting Architecture  
+**Base**: Validação Supabase + Interface Specification + Cross-cutting Architecture\
 **Target**: Healthcare AI compliant com enterprise security e usabilidade otimizada para IA agents
 
 ---
@@ -26,7 +27,7 @@ export interface HealthcareAISystem {
     operational_optimization: OperationalAI;
     compliance_monitoring: ComplianceAI;
   };
-  
+
   // Data Processing Pipeline
   data_pipeline: {
     sanitization: PHISanitizationService;
@@ -34,7 +35,7 @@ export interface HealthcareAISystem {
     enrichment: DataEnrichmentService;
     audit: AIAuditService;
   };
-  
+
   // Integration Layer
   integration: {
     vercel_ai_sdk: VercelAIIntegration;
@@ -42,7 +43,7 @@ export interface HealthcareAISystem {
     external_services: ExternalServiceIntegration;
     real_time: RealtimeAIIntegration;
   };
-  
+
   // Compliance & Security
   compliance: {
     phi_protection: PHIProtectionService;
@@ -67,7 +68,7 @@ export interface AIComponentPattern {
     ai_interaction_points: string[];
     compliance_requirements: string[];
   };
-  
+
   // Predictable Input Schema
   inputs: {
     schema: JSONSchema;
@@ -75,7 +76,7 @@ export interface AIComponentPattern {
     sanitization_rules: SanitizationRule[];
     required_permissions: Permission[];
   };
-  
+
   // Consistent Output Format
   outputs: {
     success_schema: JSONSchema;
@@ -83,7 +84,7 @@ export interface AIComponentPattern {
     metadata_schema: JSONSchema;
     audit_data: AuditDataSchema;
   };
-  
+
   // Explicit Dependencies
   dependencies: {
     internal_services: string[];
@@ -91,7 +92,7 @@ export interface AIComponentPattern {
     ai_models: string[];
     compliance_validators: string[];
   };
-  
+
   // Implementation Examples
   examples: {
     basic_usage: CodeExample;
@@ -113,16 +114,16 @@ export interface AIComponentPattern {
  * Vercel AI SDK 5.0.23 Healthcare Configuration
  * Features: Multi-provider, streaming, function calling, privacy-preserving
  */
-import { openai } from '@ai-sdk/openai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { streamText, generateObject, tool } from 'ai';
+import { anthropic } from "@ai-sdk/anthropic";
+import { openai } from "@ai-sdk/openai";
+import { generateObject, streamText, tool } from "ai";
 
 export class HealthcareAIService {
   private openai_client: OpenAIProvider;
   private anthropic_client: AnthropicProvider;
   private phi_sanitizer: PHISanitizer;
   private audit_logger: AIAuditLogger;
-  
+
   constructor(config: HealthcareAIConfig) {
     // Initialize providers with healthcare-specific settings
     this.openai_client = openai({
@@ -131,40 +132,40 @@ export class HealthcareAIService {
       // Healthcare-specific configuration
       organization: config.healthcare_org_id,
       maxRetries: 3,
-      timeout: 30000
+      timeout: 30000,
     });
-    
+
     this.anthropic_client = anthropic({
       apiKey: config.anthropic_api_key,
       // Claude-specific healthcare settings
       maxTokens: config.max_tokens || 4096,
-      temperature: config.temperature || 0.1  // Low temperature for healthcare
+      temperature: config.temperature || 0.1, // Low temperature for healthcare
     });
-    
+
     this.phi_sanitizer = new PHISanitizer(config.sanitization_rules);
     this.audit_logger = new AIAuditLogger(config.audit_config);
   }
-  
+
   /**
    * Healthcare-Compliant Text Generation
    */
   async generateHealthcareResponse(request: HealthcareAIRequest): Promise<HealthcareAIResponse> {
     // 1. Validate user permissions
     await this.validateHealthcareAccess(request.user_context);
-    
+
     // 2. Sanitize input for PHI
     const sanitized_input = await this.phi_sanitizer.sanitize(request.input);
-    
+
     // 3. Audit the request
     await this.audit_logger.logAIRequest({
       user_id: request.user_context.user_id,
       clinic_id: request.user_context.clinic_id,
-      action: 'ai_generation',
+      action: "ai_generation",
       input_type: request.type,
       sanitized_input_hash: this.hashInput(sanitized_input),
-      model_provider: request.provider || 'openai'
+      model_provider: request.provider || "openai",
     });
-    
+
     // 4. Generate AI response
     const result = await streamText({
       model: this.getModel(request.provider),
@@ -172,9 +173,9 @@ export class HealthcareAIService {
       temperature: 0.1, // Conservative for healthcare
       maxTokens: 2048,
       tools: this.getHealthcareTools(),
-      toolChoice: 'auto',
+      toolChoice: "auto",
     });
-    
+
     // 5. Validate and audit response
     const validated_response = await this.validateHealthcareResponse(result);
     await this.audit_logger.logAIResponse({
@@ -182,9 +183,9 @@ export class HealthcareAIService {
       response_hash: this.hashResponse(validated_response),
       tokens_used: result.usage.totalTokens,
       model_used: request.provider,
-      success: true
+      success: true,
     });
-    
+
     return {
       id: request.id,
       response: validated_response,
@@ -193,11 +194,11 @@ export class HealthcareAIService {
         tokens_used: result.usage.totalTokens,
         sanitized: true,
         audited: true,
-        compliance_verified: true
-      }
+        compliance_verified: true,
+      },
     };
   }
-  
+
   /**
    * Healthcare Tools for AI Function Calling
    */
@@ -205,7 +206,7 @@ export class HealthcareAIService {
     return {
       // Appointment scheduling assistance
       check_appointment_availability: tool({
-        description: 'Check appointment availability for a professional',
+        description: "Check appointment availability for a professional",
         parameters: z.object({
           professional_id: z.string(),
           date: z.string(),
@@ -216,41 +217,41 @@ export class HealthcareAIService {
           return await this.appointmentService.checkAvailability({
             professional_id,
             date,
-            duration_minutes
+            duration_minutes,
           });
         },
       }),
-      
+
       // Patient information (sanitized)
       get_patient_summary: tool({
-        description: 'Get sanitized patient summary for clinical context',
+        description: "Get sanitized patient summary for clinical context",
         parameters: z.object({
           patient_id: z.string(),
-          summary_type: z.enum(['basic', 'clinical', 'administrative']),
+          summary_type: z.enum(["basic", "clinical", "administrative"]),
         }),
         execute: async ({ patient_id, summary_type }) => {
           // Return sanitized patient data
           return await this.patientService.getSanitizedSummary({
             patient_id,
             type: summary_type,
-            exclude_phi: true
+            exclude_phi: true,
           });
         },
       }),
-      
+
       // Clinical decision support
       clinical_guidelines: tool({
-        description: 'Get clinical guidelines and best practices',
+        description: "Get clinical guidelines and best practices",
         parameters: z.object({
           specialty: z.string(),
           condition: z.string(),
-          guideline_type: z.enum(['treatment', 'diagnosis', 'prevention']),
+          guideline_type: z.enum(["treatment", "diagnosis", "prevention"]),
         }),
         execute: async ({ specialty, condition, guideline_type }) => {
           return await this.clinicalService.getGuidelines({
             specialty,
             condition,
-            type: guideline_type
+            type: guideline_type,
           });
         },
       }),
@@ -272,34 +273,34 @@ export class HealthcareChatService {
       messages: await this.sanitizeMessages(request.messages),
       temperature: 0.1,
       maxTokens: 2048,
-      
+
       // Healthcare-specific system prompt
       system: this.buildSystemPrompt(request.user_context),
-      
+
       // Tools available to the AI
       tools: this.getHealthcareTools(),
-      
+
       // Streaming configuration
       onChunk: (chunk) => {
         this.auditStreamChunk(chunk, request.user_context);
       },
-      
+
       onFinish: (result) => {
         this.auditChatCompletion(result, request);
       },
     });
-    
+
     return stream.pipeThrough(
       new TransformStream({
         transform: (chunk, controller) => {
           // Additional sanitization of streamed content
           const sanitized = this.sanitizeStreamChunk(chunk);
           controller.enqueue(sanitized);
-        }
-      })
+        },
+      }),
     );
   }
-  
+
   private buildSystemPrompt(userContext: HealthcareUserContext): string {
     return `
     You are a healthcare AI assistant integrated into NeonPro, a Brazilian healthcare management system.
@@ -314,7 +315,7 @@ export class HealthcareChatService {
     USER CONTEXT:
     - Role: ${userContext.role}
     - Clinic: ${userContext.clinic_name}
-    - Specialties: ${userContext.specialties?.join(', ')}
+    - Specialties: ${userContext.specialties?.join(", ")}
     - Language: Portuguese (Brazil)
     
     CAPABILITIES:
@@ -349,59 +350,75 @@ export class PHISanitizer {
   private patterns: SanitizationPattern[];
   private brazilian_patterns: BrazilianHealthcarePattern[];
   private ai_audit: AIAuditService;
-  
+
   constructor(config: SanitizationConfig) {
     this.patterns = [
       // Brazilian Identity Documents
-      { type: 'cpf', pattern: /\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11}/, replacement: '[CPF-SANITIZED]' },
-      { type: 'rg', pattern: /\d{1,2}\.\d{3}\.\d{3}-[\dX]/, replacement: '[RG-SANITIZED]' },
-      { type: 'cnpj', pattern: /\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}/, replacement: '[CNPJ-SANITIZED]' },
-      
+      { type: "cpf", pattern: /\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11}/, replacement: "[CPF-SANITIZED]" },
+      { type: "rg", pattern: /\d{1,2}\.\d{3}\.\d{3}-[\dX]/, replacement: "[RG-SANITIZED]" },
+      {
+        type: "cnpj",
+        pattern: /\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}/,
+        replacement: "[CNPJ-SANITIZED]",
+      },
+
       // Medical Information
-      { type: 'crm', pattern: /CRM[-\s]?\d{4,6}/, replacement: '[CRM-SANITIZED]' },
-      { type: 'medical_record', pattern: /prontu[áa]rio[:\s]\d+/i, replacement: '[PRONTUÁRIO-SANITIZED]' },
-      
+      { type: "crm", pattern: /CRM[-\s]?\d{4,6}/, replacement: "[CRM-SANITIZED]" },
+      {
+        type: "medical_record",
+        pattern: /prontu[áa]rio[:\s]\d+/i,
+        replacement: "[PRONTUÁRIO-SANITIZED]",
+      },
+
       // Personal Information
-      { type: 'phone', pattern: /\(\d{2}\)\s?\d{4,5}-?\d{4}/, replacement: '[TELEFONE-SANITIZED]' },
-      { type: 'email', pattern: /[\w.-]+@[\w.-]+\.\w+/, replacement: '[EMAIL-SANITIZED]' },
-      { type: 'address', pattern: /rua|av\.|avenida|travessa.+\d+/i, replacement: '[ENDEREÇO-SANITIZED]' },
-      
+      { type: "phone", pattern: /\(\d{2}\)\s?\d{4,5}-?\d{4}/, replacement: "[TELEFONE-SANITIZED]" },
+      { type: "email", pattern: /[\w.-]+@[\w.-]+\.\w+/, replacement: "[EMAIL-SANITIZED]" },
+      {
+        type: "address",
+        pattern: /rua|av\.|avenida|travessa.+\d+/i,
+        replacement: "[ENDEREÇO-SANITIZED]",
+      },
+
       // Health Information
-      { type: 'diagnosis', pattern: /diagnóstico[:\s].+$/im, replacement: '[DIAGNÓSTICO-SANITIZED]' },
-      { type: 'medication', pattern: /medicação[:\s].+$/im, replacement: '[MEDICAÇÃO-SANITIZED]' },
-      { type: 'allergy', pattern: /alergia[:\s].+$/im, replacement: '[ALERGIA-SANITIZED]' },
+      {
+        type: "diagnosis",
+        pattern: /diagnóstico[:\s].+$/im,
+        replacement: "[DIAGNÓSTICO-SANITIZED]",
+      },
+      { type: "medication", pattern: /medicação[:\s].+$/im, replacement: "[MEDICAÇÃO-SANITIZED]" },
+      { type: "allergy", pattern: /alergia[:\s].+$/im, replacement: "[ALERGIA-SANITIZED]" },
     ];
   }
-  
+
   /**
    * Sanitize input for AI processing
    */
   async sanitize(input: string, context: SanitizationContext): Promise<SanitizedInput> {
     let sanitized_text = input;
     const sanitization_log: SanitizationLogEntry[] = [];
-    
+
     // Apply all sanitization patterns
     for (const pattern of this.patterns) {
-      const matches = sanitized_text.match(new RegExp(pattern.pattern, 'gi'));
+      const matches = sanitized_text.match(new RegExp(pattern.pattern, "gi"));
       if (matches) {
         sanitization_log.push({
           pattern_type: pattern.type,
           matches_count: matches.length,
-          original_positions: this.getMatchPositions(input, pattern.pattern)
+          original_positions: this.getMatchPositions(input, pattern.pattern),
         });
-        
+
         sanitized_text = sanitized_text.replace(
-          new RegExp(pattern.pattern, 'gi'),
-          pattern.replacement
+          new RegExp(pattern.pattern, "gi"),
+          pattern.replacement,
         );
       }
     }
-    
+
     // Additional context-aware sanitization
     if (context.include_names) {
       sanitized_text = await this.sanitizeNames(sanitized_text);
     }
-    
+
     // Audit sanitization
     await this.ai_audit.logSanitization({
       original_hash: this.hashInput(input),
@@ -409,47 +426,50 @@ export class PHISanitizer {
       patterns_applied: sanitization_log.map(l => l.pattern_type),
       phi_detected: sanitization_log.length > 0,
       user_id: context.user_id,
-      clinic_id: context.clinic_id
+      clinic_id: context.clinic_id,
     });
-    
+
     return {
       sanitized_text,
       sanitization_applied: sanitization_log.length > 0,
       patterns_detected: sanitization_log.map(l => l.pattern_type),
       safe_for_ai: true,
-      audit_id: await this.ai_audit.createAuditEntry(context)
+      audit_id: await this.ai_audit.createAuditEntry(context),
     };
   }
-  
+
   /**
    * Validate AI response for PHI leakage
    */
-  async validateAIResponse(response: string, context: ValidationContext): Promise<ValidationResult> {
+  async validateAIResponse(
+    response: string,
+    context: ValidationContext,
+  ): Promise<ValidationResult> {
     // Check for potential PHI in AI response
     const phi_detected = await this.detectPHIInResponse(response);
-    
+
     if (phi_detected.length > 0) {
       // Critical: AI response contains PHI
       await this.ai_audit.logCriticalViolation({
-        violation_type: 'phi_in_ai_response',
+        violation_type: "phi_in_ai_response",
         detected_patterns: phi_detected,
         response_hash: this.hashInput(response),
         user_id: context.user_id,
-        clinic_id: context.clinic_id
+        clinic_id: context.clinic_id,
       });
-      
+
       return {
         safe: false,
-        violation_type: 'phi_leakage',
+        violation_type: "phi_leakage",
         detected_patterns: phi_detected,
-        action: 'block_response'
+        action: "block_response",
       };
     }
-    
+
     return {
       safe: true,
       validated_at: new Date().toISOString(),
-      audit_id: await this.ai_audit.createValidationEntry(context)
+      audit_id: await this.ai_audit.createValidationEntry(context),
     };
   }
 }
@@ -464,7 +484,7 @@ export class PHISanitizer {
 export class LGPDAIComplianceService {
   private audit_logger: AIAuditLogger;
   private consent_manager: ConsentManager;
-  
+
   /**
    * Validate LGPD compliance before AI processing
    */
@@ -472,68 +492,68 @@ export class LGPDAIComplianceService {
     // 1. Check user consent for AI processing
     const consent_status = await this.consent_manager.getAIProcessingConsent(
       request.user_id,
-      request.clinic_id
+      request.clinic_id,
     );
-    
+
     if (!consent_status.ai_processing_allowed) {
       return {
         compliant: false,
-        violation: 'no_ai_consent',
-        required_action: 'obtain_consent'
+        violation: "no_ai_consent",
+        required_action: "obtain_consent",
       };
     }
-    
+
     // 2. Validate data minimization principle
     const data_assessment = await this.assessDataMinimization(request);
     if (!data_assessment.compliant) {
       return {
         compliant: false,
-        violation: 'data_minimization',
-        required_action: 'reduce_data_scope'
+        violation: "data_minimization",
+        required_action: "reduce_data_scope",
       };
     }
-    
+
     // 3. Check purpose limitation
     const purpose_valid = await this.validateProcessingPurpose(request);
     if (!purpose_valid) {
       return {
         compliant: false,
-        violation: 'purpose_limitation',
-        required_action: 'clarify_purpose'
+        violation: "purpose_limitation",
+        required_action: "clarify_purpose",
       };
     }
-    
+
     // 4. Audit the compliance check
     await this.audit_logger.logLGPDValidation({
       request_id: request.id,
       user_id: request.user_id,
       clinic_id: request.clinic_id,
-      validation_result: 'compliant',
+      validation_result: "compliant",
       consent_version: consent_status.consent_version,
       data_categories: data_assessment.categories,
-      processing_purpose: request.purpose
+      processing_purpose: request.purpose,
     });
-    
+
     return {
       compliant: true,
       consent_version: consent_status.consent_version,
       valid_until: consent_status.expires_at,
-      audit_id: await this.audit_logger.getLastAuditId()
+      audit_id: await this.audit_logger.getLastAuditId(),
     };
   }
-  
+
   /**
    * Handle data subject rights in AI context
    */
   async handleDataSubjectRequest(request: AIDataSubjectRequest): Promise<DataSubjectResponse> {
     switch (request.right_type) {
-      case 'access':
+      case "access":
         return await this.handleAIDataAccess(request);
-      case 'portability':
+      case "portability":
         return await this.handleAIDataExport(request);
-      case 'erasure':
+      case "erasure":
         return await this.handleAIDataErasure(request);
-      case 'rectification':
+      case "rectification":
         return await this.handleAIDataCorrection(request);
       default:
         throw new Error(`Unsupported data subject right: ${request.right_type}`);
@@ -553,53 +573,53 @@ export class LGPDAIComplianceService {
  * Healthcare AI Chat Component Template
  * Ready for AI agent implementation with full compliance
  */
-import { useChat } from 'ai/react';
-import { useState } from 'react';
-import { HealthcareChatService } from '@neonpro/ai';
-import { PHISanitizer } from '@neonpro/compliance';
+import { HealthcareChatService } from "@neonpro/ai";
+import { PHISanitizer } from "@neonpro/compliance";
+import { useChat } from "ai/react";
+import { useState } from "react";
 
 export interface HealthcareAIChatProps {
   // User context for compliance
   userContext: HealthcareUserContext;
-  
+
   // Chat configuration
   chatConfig: {
-    model_preference: 'openai' | 'anthropic';
+    model_preference: "openai" | "anthropic";
     max_messages: number;
     enable_tools: boolean;
     specialization?: string;
   };
-  
+
   // UI customization
   ui?: {
-    theme: 'light' | 'dark';
+    theme: "light" | "dark";
     compact: boolean;
     show_audit_info: boolean;
   };
-  
+
   // Event handlers
   onMessage?: (message: ChatMessage) => void;
   onError?: (error: AIError) => void;
   onComplianceViolation?: (violation: ComplianceViolation) => void;
 }
 
-export function HealthcareAIChat({ 
-  userContext, 
-  chatConfig, 
-  ui = {}, 
+export function HealthcareAIChat({
+  userContext,
+  chatConfig,
+  ui = {},
   onMessage,
   onError,
-  onComplianceViolation 
+  onComplianceViolation,
 }: HealthcareAIChatProps) {
   const [isCompliant, setIsCompliant] = useState<boolean>(true);
   const [sanitizationActive, setSanitizationActive] = useState<boolean>(true);
-  
+
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/healthcare-chat',
+    api: "/api/healthcare-chat",
     headers: {
-      'X-Clinic-ID': userContext.clinic_id,
-      'X-User-Role': userContext.role,
-      'X-Professional-ID': userContext.professional_id || '',
+      "X-Clinic-ID": userContext.clinic_id,
+      "X-User-Role": userContext.role,
+      "X-Professional-ID": userContext.professional_id || "",
     },
     body: {
       model: chatConfig.model_preference,
@@ -620,41 +640,41 @@ export function HealthcareAIChat({
     },
     onFinish: (message) => {
       onMessage?.(message);
-    }
+    },
   });
-  
+
   const handleSecureSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Pre-submission PHI sanitization
     if (sanitizationActive) {
       const sanitizer = new PHISanitizer();
       const sanitized = await sanitizer.sanitize(input, {
         user_id: userContext.user_id,
         clinic_id: userContext.clinic_id,
-        include_names: true
+        include_names: true,
       });
-      
+
       if (!sanitized.safe_for_ai) {
-        onError?.(new AIError('PHI detected in input', 'phi_violation'));
+        onError?.(new AIError("PHI detected in input", "phi_violation"));
         return;
       }
     }
-    
+
     handleSubmit(e);
   };
-  
+
   return (
     <div className="healthcare-ai-chat">
       {/* Compliance Status Bar */}
       <div className="compliance-status">
-        <ComplianceIndicator 
+        <ComplianceIndicator
           isCompliant={isCompliant}
           sanitizationActive={sanitizationActive}
           userRole={userContext.role}
         />
       </div>
-      
+
       {/* Chat Messages */}
       <div className="messages">
         {messages.map((message) => (
@@ -666,7 +686,7 @@ export function HealthcareAIChat({
           />
         ))}
       </div>
-      
+
       {/* Input Form */}
       <form onSubmit={handleSecureSubmit}>
         <HealthcareTextInput
@@ -677,16 +697,16 @@ export function HealthcareAIChat({
           sanitizationActive={sanitizationActive}
           onSanitizationToggle={setSanitizationActive}
         />
-        
-        <button 
-          type="submit" 
+
+        <button
+          type="submit"
           disabled={isLoading || !isCompliant}
           className="send-button"
         >
-          {isLoading ? 'Processando...' : 'Enviar'}
+          {isLoading ? "Processando..." : "Enviar"}
         </button>
       </form>
-      
+
       {/* Compliance Disclaimer */}
       <HealthcareDisclaimer />
     </div>
@@ -704,15 +724,15 @@ export function HealthcareAIChat({
 export function AIAppointmentAssistant({ clinicId, userContext }: AIAssistantProps) {
   const [appointmentIntent, setAppointmentIntent] = useState<AppointmentIntent | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   const { generateObject } = useAI({
-    model: 'gpt-4-turbo',
-    schema: AppointmentIntentSchema
+    model: "gpt-4-turbo",
+    schema: AppointmentIntentSchema,
   });
-  
+
   const handleNaturalLanguageRequest = async (input: string) => {
     setIsProcessing(true);
-    
+
     try {
       // Extract appointment intent using AI
       const intent = await generateObject({
@@ -721,7 +741,7 @@ export function AIAppointmentAssistant({ clinicId, userContext }: AIAssistantPro
         "${input}"
         
         Context: Healthcare clinic scheduling system
-        Current date: ${new Date().toLocaleDateString('pt-BR')}
+        Current date: ${new Date().toLocaleDateString("pt-BR")}
         
         Extract:
         - Patient information (if mentioned)
@@ -731,21 +751,20 @@ export function AIAppointmentAssistant({ clinicId, userContext }: AIAssistantPro
         - Urgency level
         - Additional requirements
         `,
-        schema: AppointmentIntentSchema
+        schema: AppointmentIntentSchema,
       });
-      
+
       setAppointmentIntent(intent);
-      
+
       // Show confirmation UI
       return intent;
-      
     } catch (error) {
-      console.error('AI appointment extraction failed:', error);
+      console.error("AI appointment extraction failed:", error);
     } finally {
       setIsProcessing(false);
     }
   };
-  
+
   return (
     <div className="ai-appointment-assistant">
       <NaturalLanguageInput
@@ -753,7 +772,7 @@ export function AIAppointmentAssistant({ clinicId, userContext }: AIAssistantPro
         placeholder="Ex: Agendar consulta com Dr. Silva para próxima semana"
         isProcessing={isProcessing}
       />
-      
+
       {appointmentIntent && (
         <AppointmentIntentConfirmation
           intent={appointmentIntent}
@@ -779,59 +798,58 @@ export function AIAppointmentAssistant({ clinicId, userContext }: AIAssistantPro
  * Healthcare AI Testing Utilities
  */
 export class HealthcareAITestUtils {
-  
   /**
    * Test PHI sanitization
    */
   static async testPHISanitization(testCases: PHITestCase[]): Promise<TestResult[]> {
     const sanitizer = new PHISanitizer();
     const results: TestResult[] = [];
-    
+
     for (const testCase of testCases) {
       const result = await sanitizer.sanitize(testCase.input, testCase.context);
-      
+
       results.push({
         test_name: testCase.name,
         passed: !result.sanitized_text.includes(testCase.expected_phi),
         phi_detected: result.patterns_detected,
-        safe_for_ai: result.safe_for_ai
+        safe_for_ai: result.safe_for_ai,
       });
     }
-    
+
     return results;
   }
-  
+
   /**
    * Test AI response compliance
    */
   static async testAIResponseCompliance(responses: string[]): Promise<ComplianceTestResult> {
     const violations: ComplianceViolation[] = [];
-    
+
     for (const response of responses) {
       // Test for medical advice (prohibited)
       if (this.containsMedicalAdvice(response)) {
         violations.push({
-          type: 'medical_advice',
-          severity: 'critical',
-          response_snippet: response.substring(0, 100)
+          type: "medical_advice",
+          severity: "critical",
+          response_snippet: response.substring(0, 100),
         });
       }
-      
+
       // Test for PHI leakage
       if (await this.detectPHI(response)) {
         violations.push({
-          type: 'phi_leakage',
-          severity: 'critical',
-          response_snippet: response.substring(0, 100)
+          type: "phi_leakage",
+          severity: "critical",
+          response_snippet: response.substring(0, 100),
         });
       }
     }
-    
+
     return {
       total_responses_tested: responses.length,
       violations_found: violations.length,
       compliance_rate: (responses.length - violations.length) / responses.length,
-      violations
+      violations,
     };
   }
 }
@@ -839,23 +857,23 @@ export class HealthcareAITestUtils {
 // Example test cases
 const PHI_TEST_CASES: PHITestCase[] = [
   {
-    name: 'CPF Detection',
-    input: 'Paciente João Silva, CPF 123.456.789-00',
-    expected_phi: '123.456.789-00',
-    context: { user_id: 'test', clinic_id: 'test' }
+    name: "CPF Detection",
+    input: "Paciente João Silva, CPF 123.456.789-00",
+    expected_phi: "123.456.789-00",
+    context: { user_id: "test", clinic_id: "test" },
   },
   {
-    name: 'Medical Record',
-    input: 'Prontuário 12345 - paciente com diabetes',
-    expected_phi: '12345',
-    context: { user_id: 'test', clinic_id: 'test' }
+    name: "Medical Record",
+    input: "Prontuário 12345 - paciente com diabetes",
+    expected_phi: "12345",
+    context: { user_id: "test", clinic_id: "test" },
   },
   {
-    name: 'Phone Number',
-    input: 'Contato: (11) 99999-9999',
-    expected_phi: '(11) 99999-9999',
-    context: { user_id: 'test', clinic_id: 'test' }
-  }
+    name: "Phone Number",
+    input: "Contato: (11) 99999-9999",
+    expected_phi: "(11) 99999-9999",
+    context: { user_id: "test", clinic_id: "test" },
+  },
 ];
 ```
 
@@ -870,7 +888,6 @@ const PHI_TEST_CASES: PHITestCase[] = [
  * Healthcare AI Features Implementation Guide
  */
 export interface HealthcareAIFeatures {
-  
   // Administrative AI
   administrative: {
     appointment_scheduling: {
@@ -879,14 +896,14 @@ export interface HealthcareAIFeatures {
       optimal_time_suggestions: boolean;
       automated_confirmations: boolean;
     };
-    
+
     patient_communication: {
       automated_reminders: boolean;
       multilingual_support: boolean;
       personalized_messaging: boolean;
       whatsapp_integration: boolean;
     };
-    
+
     workflow_optimization: {
       task_prioritization: boolean;
       resource_allocation: boolean;
@@ -894,7 +911,7 @@ export interface HealthcareAIFeatures {
       efficiency_recommendations: boolean;
     };
   };
-  
+
   // Clinical Support AI (Non-diagnostic)
   clinical_support: {
     information_retrieval: {
@@ -903,14 +920,14 @@ export interface HealthcareAIFeatures {
       procedure_protocols: boolean;
       best_practices: boolean;
     };
-    
+
     documentation_assistance: {
       note_templates: boolean;
       coding_suggestions: boolean;
       compliance_checks: boolean;
       audit_preparation: boolean;
     };
-    
+
     education_training: {
       continuing_education: boolean;
       protocol_training: boolean;
@@ -918,7 +935,7 @@ export interface HealthcareAIFeatures {
       competency_tracking: boolean;
     };
   };
-  
+
   // Operational AI
   operational: {
     predictive_analytics: {
@@ -927,7 +944,7 @@ export interface HealthcareAIFeatures {
       resource_planning: boolean;
       capacity_optimization: boolean;
     };
-    
+
     quality_improvement: {
       performance_monitoring: boolean;
       outcome_tracking: boolean;

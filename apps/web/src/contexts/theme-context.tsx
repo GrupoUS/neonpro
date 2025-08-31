@@ -46,7 +46,7 @@ const STORAGE_KEYS = {
   ACCESSIBILITY_PREFS: "neonpro-accessibility-preferences",
 } as const;
 
-export function HealthcareThemeProvider({ 
+export function HealthcareThemeProvider({
   children,
   attribute = "class",
   defaultTheme = "light",
@@ -63,7 +63,7 @@ export function HealthcareThemeProvider({
     ...defaultConfig,
     theme: defaultTheme,
   }));
-  
+
   const [systemTheme, setSystemTheme] = useState<HealthcareTheme>("light");
   const [mounted, setMounted] = useState(false);
 
@@ -75,21 +75,21 @@ export function HealthcareThemeProvider({
     if (!enableSystem) return;
 
     const media = window.matchMedia("(prefers-color-scheme: dark)");
-    
+
     const updateSystemTheme = () => {
       setSystemTheme(media.matches ? "dark" : "light");
     };
 
     updateSystemTheme();
     media.addEventListener("change", updateSystemTheme);
-    
+
     return () => media.removeEventListener("change", updateSystemTheme);
   }, [enableSystem]);
 
   // Motion preference detection
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    
+
     const updateMotionPreference = () => {
       if (media.matches) {
         setConfig(prev => ({ ...prev, motionPreference: "reduced" }));
@@ -98,14 +98,14 @@ export function HealthcareThemeProvider({
 
     updateMotionPreference();
     media.addEventListener("change", updateMotionPreference);
-    
+
     return () => media.removeEventListener("change", updateMotionPreference);
   }, []);
 
   // High contrast detection
   useEffect(() => {
     const media = window.matchMedia("(prefers-contrast: high)");
-    
+
     const updateContrastPreference = () => {
       if (media.matches && config.accessibilityMode === "normal") {
         setConfig(prev => ({ ...prev, accessibilityMode: "high-contrast" }));
@@ -114,7 +114,7 @@ export function HealthcareThemeProvider({
 
     updateContrastPreference();
     media.addEventListener("change", updateContrastPreference);
-    
+
     return () => media.removeEventListener("change", updateContrastPreference);
   }, [config.accessibilityMode]);
 
@@ -129,7 +129,7 @@ export function HealthcareThemeProvider({
     } catch (error) {
       console.warn("Failed to load healthcare theme configuration:", error);
     }
-    
+
     setMounted(true);
   }, []);
 
@@ -149,22 +149,22 @@ export function HealthcareThemeProvider({
     if (!mounted) return;
 
     const root = document.documentElement;
-    
+
     // Remove all theme classes
     root.classList.remove("light", "dark", "high-contrast", "emergency-mode");
-    
+
     if (disableTransitionOnChange) {
       root.classList.add("[&_*]:!transition-none");
     }
 
     // Apply resolved theme
     root.classList.add(resolvedTheme);
-    
+
     // Apply accessibility modes
     if (config.accessibilityMode === "high-contrast") {
       root.classList.add("high-contrast");
     }
-    
+
     if (config.emergencyModeActive) {
       root.classList.add("emergency-mode");
     }
@@ -215,19 +215,19 @@ export function HealthcareThemeProvider({
       ...prev,
       emergencyModeActive: !prev.emergencyModeActive,
     }));
-    
+
     // Announce emergency mode change for screen readers
-    const message = config.emergencyModeActive 
-      ? "Modo de emergência desativado" 
+    const message = config.emergencyModeActive
+      ? "Modo de emergência desativado"
       : "Modo de emergência ativado - Interface otimizada para situações críticas";
-    
+
     const announcement = document.createElement("div");
     announcement.setAttribute("aria-live", "assertive");
     announcement.setAttribute("aria-atomic", "true");
     announcement.className = "sr-only";
     announcement.textContent = message;
     document.body.appendChild(announcement);
-    
+
     setTimeout(() => document.body.removeChild(announcement), 1000);
   };
 
@@ -265,11 +265,11 @@ export function HealthcareThemeProvider({
 // Hook for using healthcare theme context
 export function useHealthcareTheme() {
   const context = useContext(HealthcareThemeContext);
-  
+
   if (context === undefined) {
     throw new Error("useHealthcareTheme must be used within a HealthcareThemeProvider");
   }
-  
+
   return context;
 }
 
@@ -280,7 +280,7 @@ export const useTheme = useHealthcareTheme;
 // Emergency mode hook for critical healthcare scenarios
 export function useEmergencyMode() {
   const { config, toggleEmergencyMode } = useHealthcareTheme();
-  
+
   return {
     isActive: config.emergencyModeActive,
     toggle: toggleEmergencyMode,
@@ -300,7 +300,7 @@ export function useEmergencyMode() {
 // Accessibility preferences hook
 export function useAccessibilityPreferences() {
   const { config, setAccessibilityMode, setMotionPreference } = useHealthcareTheme();
-  
+
   return {
     accessibilityMode: config.accessibilityMode,
     motionPreference: config.motionPreference,
@@ -314,7 +314,7 @@ export function useAccessibilityPreferences() {
 // LGPD compliance hook for Brazilian healthcare requirements
 export function useLGPDCompliance() {
   const { config, setConfig } = useHealthcareTheme() as any;
-  
+
   return {
     isCompliant: config.lgpdCompliant,
     enableCompliance: () => setConfig((prev: any) => ({ ...prev, lgpdCompliant: true })),

@@ -104,7 +104,7 @@ export const RealTimePerformanceDashboard: React.FC<
     } finally {
       setLoading(false);
     }
-  }, [clinicId, supabase]);
+  }, [clinicId]);
 
   /**
    * Load metrics by category

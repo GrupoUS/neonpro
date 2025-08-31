@@ -1,12 +1,18 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, AlertCircle, CheckCircle, Clock } from "lucide-react";
-import type { ANVISASubstance } from "../../types/compliance";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { ControlledSubstanceClass } from "@/lib/compliance/anvisa-controlled-substances";
-import { SUBSTANCE_CLASS_CONFIG, getSubstanceClassConfig } from "../../constants/anvisa-configs";
+import { AlertCircle, CheckCircle, Clock, Search } from "lucide-react";
+import React from "react";
+import { getSubstanceClassConfig, SUBSTANCE_CLASS_CONFIG } from "../../constants/anvisa-configs";
+import type { ANVISASubstance } from "../../types/compliance";
 
 interface ANVISASubstancesListProps {
   substances: ANVISASubstance[];
@@ -45,7 +51,7 @@ export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
           <Search className="h-5 w-5" />
           <span>Substâncias Controladas</span>
         </CardTitle>
-        
+
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
@@ -59,7 +65,8 @@ export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
           <div className="w-full sm:w-48">
             <Select
               value={selectedClass}
-              onValueChange={(value: string) => onClassChange(value as ControlledSubstanceClass | "all")}
+              onValueChange={(value: string) =>
+                onClassChange(value as ControlledSubstanceClass | "all")}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Filtrar por classe" />
@@ -78,66 +85,70 @@ export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent>
-        {loading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-gray-600">Carregando substâncias...</span>
-          </div>
-        ) : substances.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <Search className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <p>Nenhuma substância encontrada</p>
-            <p className="text-sm">Tente ajustar os filtros de busca</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {substances.map((substance) => {
-              const config = getSubstanceClassConfig(substance.controlledClass);
-              return (
-                <div
-                  key={substance.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center space-x-2">
-                        {getClassIcon(substance.controlledClass)}
-                        <Badge variant={getClassBadgeVariant(substance.controlledClass)}>
-                          {substance.controlledClass}
-                        </Badge>
+        {loading
+          ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <span className="ml-2 text-gray-600">Carregando substâncias...</span>
+            </div>
+          )
+          : substances.length === 0
+          ? (
+            <div className="text-center py-8 text-gray-500">
+              <Search className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p>Nenhuma substância encontrada</p>
+              <p className="text-sm">Tente ajustar os filtros de busca</p>
+            </div>
+          )
+          : (
+            <div className="space-y-3">
+              {substances.map((substance) => {
+                const config = getSubstanceClassConfig(substance.controlledClass);
+                return (
+                  <div
+                    key={substance.id}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2">
+                          {getClassIcon(substance.controlledClass)}
+                          <Badge variant={getClassBadgeVariant(substance.controlledClass)}>
+                            {substance.controlledClass}
+                          </Badge>
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-gray-900">
+                            {substance.name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {substance.activeIngredient}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-medium text-gray-900">
-                          {substance.name}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          {substance.activeIngredient}
-                        </p>
+
+                      <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
+                        <span>Classe: {config.label}</span>
+                        <span>•</span>
+                        <span>{config.description}</span>
                       </div>
                     </div>
-                    
-                    <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
-                      <span>Classe: {config.label}</span>
-                      <span>•</span>
-                      <span>{config.description}</span>
+
+                    <div className="text-right">
+                      <div className="text-sm font-medium text-gray-900">
+                        {substance.manufacturer}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Registro: {substance.registrationNumber}
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="text-right">
-                    <div className="text-sm font-medium text-gray-900">
-                      {substance.manufacturer}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      Registro: {substance.registrationNumber}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
       </CardContent>
     </Card>
   );

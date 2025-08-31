@@ -15,11 +15,10 @@ export default function LoginPage() {
     <div className="min-h-screen bg-background">
       {/* Main Container */}
       <div className="container relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-        
         {/* Left Side - Branding & Healthcare Information */}
         <div className="relative hidden h-full flex-col border-border border-r bg-gradient-to-br from-primary/5 to-chart-5/5 p-10 text-foreground lg:flex">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-chart-5/5" />
-          
+
           {/* Header */}
           <div className="relative z-20 flex items-center font-medium text-xl">
             <div className="neonpro-gradient neonpro-glow mr-3 flex h-10 w-10 items-center justify-center rounded-lg">
@@ -44,9 +43,8 @@ export default function LoginPage() {
             {/* Main Testimonial */}
             <blockquote className="space-y-4">
               <p className="font-medium text-foreground text-lg leading-relaxed">
-                &ldquo;Plataforma completa que revolucionou nossa gestão. 
-                Segurança total dos dados dos pacientes com conformidade 
-                integral às regulamentações brasileiras.&rdquo;
+                &ldquo;Plataforma completa que revolucionou nossa gestão. Segurança total dos dados
+                dos pacientes com conformidade integral às regulamentações brasileiras.&rdquo;
               </p>
               <footer className="font-medium text-muted-foreground">
                 Dr. Ana Carolina Silva<br />

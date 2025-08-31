@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 // Constants for byte conversions
 const BYTES_PER_KB = 1024;
@@ -881,9 +883,6 @@ export const notificationPreferencesSchema = z.object({
 // ========================================
 // VALIDATION MIDDLEWARE FUNCTIONS
 // ========================================
-
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
 export interface ValidationResult<T> {
   success: boolean;

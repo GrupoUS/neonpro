@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { ControlledPrescription } from "../types/compliance";
 import { ANVISAControlledSubstancesService } from "../lib/compliance/anvisa-controlled-substances";
+import type { ControlledPrescription } from "../types/compliance";
 
 export interface PrescriptionFormData {
   substanceId: string;
@@ -17,13 +17,13 @@ export interface UseANVISAPrescriptionFormReturn {
   formData: PrescriptionFormData;
   isSubmitting: boolean;
   formErrors: Record<string, string>;
-  
+
   // Form actions
   updateFormData: (field: keyof PrescriptionFormData, value: string | number) => void;
   resetForm: () => void;
   validateForm: () => boolean;
   submitForm: () => Promise<boolean>;
-  
+
   // Form helpers
   setFormErrors: (errors: Record<string, string>) => void;
   clearFormErrors: () => void;
@@ -41,7 +41,7 @@ const initialFormData: PrescriptionFormData = {
 
 export const useANVISAPrescriptionForm = (
   onSuccess?: (prescription: ControlledPrescription) => void,
-  onError?: (error: string) => void
+  onError?: (error: string) => void,
 ): UseANVISAPrescriptionFormReturn => {
   const [formData, setFormData] = useState<PrescriptionFormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -115,7 +115,9 @@ export const useANVISAPrescriptionForm = (
         onSuccess?.(result.data);
         return true;
       } else {
-        const errorMessage = result.errors.length > 0 ? result.errors.join(", ") : "Erro ao criar prescrição";
+        const errorMessage = result.errors.length > 0
+          ? result.errors.join(", ")
+          : "Erro ao criar prescrição";
         onError?.(errorMessage);
         return false;
       }
@@ -137,13 +139,13 @@ export const useANVISAPrescriptionForm = (
     formData,
     isSubmitting,
     formErrors,
-    
+
     // Form actions
     updateFormData,
     resetForm,
     validateForm,
     submitForm,
-    
+
     // Form helpers
     setFormErrors,
     clearFormErrors,

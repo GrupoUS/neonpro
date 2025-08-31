@@ -1,22 +1,22 @@
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
 });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
     transpilePackages: [
-      '@neonpro/ui',
-      '@neonpro/brazilian-healthcare-ui',
-      '@neonpro/types',
-      '@neonpro/utils',
-      '@neonpro/auth',
-      '@neonpro/core-services'
+      "@neonpro/ui",
+      "@neonpro/brazilian-healthcare-ui",
+      "@neonpro/types",
+      "@neonpro/utils",
+      "@neonpro/auth",
+      "@neonpro/core-services",
     ],
   },
   images: {
-    domains: ['ownkoxryswokcdanrdgj.supabase.co'],
-    formats: ['image/webp', 'image/avif'],
+    domains: ["ownkoxryswokcdanrdgj.supabase.co"],
+    formats: ["image/webp", "image/avif"],
   },
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
@@ -24,11 +24,15 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/api/:path*',
+        source: "/api/:path*",
         headers: [
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
-          { key: 'Access-Control-Allow-Headers', value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization' },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
+          {
+            key: "Access-Control-Allow-Headers",
+            value:
+              "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization",
+          },
         ],
       },
     ];

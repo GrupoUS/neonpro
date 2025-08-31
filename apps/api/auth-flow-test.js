@@ -77,8 +77,8 @@ const mockUsers = {
 console.log("✅ Mock users configured:");
 Object.values(mockUsers).forEach(user => {
   console.log(`   ${user.role}: ${user.email} (Active: ${user.isActive})`);
-  if (user.token) {console.log(`     Token: ${user.token}`);}
-  if (user.clinicId) {console.log(`     Clinic: ${user.clinicId}`);}
+  if (user.token) console.log(`     Token: ${user.token}`);
+  if (user.clinicId) console.log(`     Clinic: ${user.clinicId}`);
 });
 
 console.log("\n📋 Test 2: JWT Token Validation");
@@ -157,7 +157,7 @@ function hasPermission(userRole, userPermissions, requiredPermission) {
 }
 
 function canAccessClinic(userRole, userClinicId, targetClinicId) {
-  if (userRole === "ADMIN") {return true;} // Admin can access any clinic
+  if (userRole === "ADMIN") return true; // Admin can access any clinic
   return userClinicId === targetClinicId;
 }
 
@@ -364,9 +364,9 @@ for (const test of authEndpointTests) {
     const status = result.success ? "✅ SUCCESS" : "❌ FAILED";
     console.log(`   ${status} ${test.name}`);
     if (result.success) {
-      if (result.user) {console.log(`     User: ${result.user.email} (${result.user.role})`);}
-      if (result.session) {console.log(`     Token expires: ${result.session.expires_in}s`);}
-      if (result.requiresVerification) {console.log(`     Requires email verification`);}
+      if (result.user) console.log(`     User: ${result.user.email} (${result.user.role})`);
+      if (result.session) console.log(`     Token expires: ${result.session.expires_in}s`);
+      if (result.requiresVerification) console.log(`     Requires email verification`);
     } else {
       console.log(`     Error: ${result.error}`);
     }

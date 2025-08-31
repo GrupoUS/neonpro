@@ -188,7 +188,7 @@ class RBACSetup {
   private async testRBACPermissions(): Promise<SetupResult> {
     try {
       // Test basic role functions
-      const { data: _roleTest, error: roleError } = await this.supabase.rpc(
+      const { error: roleError } = await this.supabase.rpc(
         "has_role",
         {
           required_role: "owner",
@@ -196,10 +196,11 @@ class RBACSetup {
       );
 
       if (roleError) {
+        // Role test failed - silently continue
       }
 
       // Test minimum role functions
-      const { data: _minRoleTest, error: minRoleError } = await this.supabase.rpc(
+      const { error: minRoleError } = await this.supabase.rpc(
         "has_minimum_role",
         {
           required_role: "staff",
@@ -207,6 +208,7 @@ class RBACSetup {
       );
 
       if (minRoleError) {
+        // Minimum role test failed - silently continue
       }
 
       return {
@@ -265,9 +267,13 @@ class RBACSetup {
  */
 if (require.main === module) {
   const setup = new RBACSetup();
-  setup.setup().catch((_error) => {
-    process.exit(1);
-  });
+  (async () => {
+    try {
+      await setup.setup();
+    } catch {
+      process.exit(1);
+    }
+  })();
 }
 
 export { RBACSetup };

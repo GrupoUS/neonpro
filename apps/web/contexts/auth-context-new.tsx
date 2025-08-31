@@ -1,8 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 // API Base URL - should be from environment
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
@@ -58,7 +58,11 @@ interface AuthContextType {
   }) => Promise<AuthResponse>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<AuthResponse>;
-  resetPasswordWithToken: (accessToken: string, refreshToken: string, newPassword: string) => Promise<AuthResponse>;
+  resetPasswordWithToken: (
+    accessToken: string,
+    refreshToken: string,
+    newPassword: string,
+  ) => Promise<AuthResponse>;
   refreshAuth: () => Promise<void>;
   verifyToken: () => Promise<boolean>;
 }
@@ -84,7 +88,7 @@ interface AuthProviderProps {
 class AuthAPI {
   private static async makeRequest(endpoint: string, options: RequestInit = {}): Promise<any> {
     const url = `${API_BASE_URL}/auth${endpoint}`;
-    
+
     const defaultOptions: RequestInit = {
       headers: {
         "Content-Type": "application/json",
@@ -113,7 +117,7 @@ class AuthAPI {
       console.error(`API Error (${endpoint}):`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Network error occurred"
+        error: error instanceof Error ? error.message : "Network error occurred",
       };
     }
   }
@@ -162,7 +166,11 @@ class AuthAPI {
     });
   }
 
-  static async resetPassword(accessToken: string, refreshToken: string, newPassword: string): Promise<AuthResponse> {
+  static async resetPassword(
+    accessToken: string,
+    refreshToken: string,
+    newPassword: string,
+  ): Promise<AuthResponse> {
     return await this.makeRequest("/reset-password", {
       method: "POST",
       body: JSON.stringify({
@@ -219,7 +227,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Verify token and get user data
       const response = await AuthAPI.getCurrentUser();
-      
+
       if (response.success && response.user) {
         setUser(response.user);
         setSession(response.session);
@@ -239,34 +247,38 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const signIn = async (email: string, password: string, rememberMe = false): Promise<AuthResponse> => {
+  const signIn = async (
+    email: string,
+    password: string,
+    rememberMe = false,
+  ): Promise<AuthResponse> => {
     try {
       setLoading(true);
-      
+
       const response = await AuthAPI.login(email, password, rememberMe);
-      
+
       if (response.success && response.user) {
         setUser(response.user);
         if (response.session_id) {
           setSession({
             session_id: response.session_id,
             last_activity: new Date().toISOString(),
-            expires_at: new Date(Date.now() + (response.expires_in || 86_400) * 1000).toISOString()
+            expires_at: new Date(Date.now() + (response.expires_in || 86_400) * 1000).toISOString(),
           });
         }
-        
+
         // Redirect to dashboard after successful login
         setTimeout(() => {
           router.push("/dashboard");
         }, 100);
       }
-      
+
       return response;
     } catch (error) {
       console.error("Sign in error:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Sign in failed"
+        error: error instanceof Error ? error.message : "Sign in failed",
       };
     } finally {
       setLoading(false);
@@ -276,15 +288,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signUp = async (userData: any): Promise<AuthResponse> => {
     try {
       setLoading(true);
-      
+
       const response = await AuthAPI.register(userData);
-      
+
       return response;
     } catch (error) {
       console.error("Sign up error:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Sign up failed"
+        error: error instanceof Error ? error.message : "Sign up failed",
       };
     } finally {
       setLoading(false);
@@ -294,14 +306,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signOut = async (): Promise<void> => {
     try {
       setLoading(true);
-      
+
       // Call API to logout (handles session cleanup)
       await AuthAPI.logout();
-      
+
       // Clear local state
       setUser(null);
       setSession(null);
-      
+
       // Redirect to login
       router.push("/login");
     } catch (error) {
@@ -324,15 +336,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error("Reset password error:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Reset password failed"
+        error: error instanceof Error ? error.message : "Reset password failed",
       };
     }
   };
 
   const resetPasswordWithToken = async (
-    accessToken: string, 
-    refreshToken: string, 
-    newPassword: string
+    accessToken: string,
+    refreshToken: string,
+    newPassword: string,
   ): Promise<AuthResponse> => {
     try {
       return await AuthAPI.resetPassword(accessToken, refreshToken, newPassword);
@@ -340,14 +352,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error("Reset password with token error:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Password reset failed"
+        error: error instanceof Error ? error.message : "Password reset failed",
       };
     }
   };
 
   const refreshAuth = async (): Promise<void> => {
-    if (!isAuthenticated) {return;}
-    
+    if (!isAuthenticated) return;
+
     try {
       const response = await AuthAPI.getCurrentUser();
       if (response.success && response.user) {
@@ -366,7 +378,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const verifyToken = async (): Promise<boolean> => {
     try {
       const token = localStorage.getItem("auth_token");
-      if (!token) {return false;}
+      if (!token) return false;
 
       const response = await AuthAPI.verifyToken(token);
       return response.valid === true;
@@ -378,7 +390,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Auto-refresh auth every 5 minutes if authenticated
   useEffect(() => {
-    if (!isAuthenticated) {return;}
+    if (!isAuthenticated) return;
 
     const interval = setInterval(() => {
       refreshAuth();
