@@ -675,7 +675,7 @@ export class LgpdService {
     );
   }
 
-  private static generateBreachRiskAssessment(incident: any): string {
+  private static generateBreachRiskAssessment(incident: Record<string, unknown>): string {
     return `Risk assessment for breach affecting ${incident.affectedUsers.length} users`;
   }
 

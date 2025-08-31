@@ -5,21 +5,21 @@
 
 interface TensorFlowInstance {
   ready: () => Promise<void>;
-  loadLayersModel: (url: string) => Promise<any>;
-  loadGraphModel: (url: string) => Promise<any>;
-  tensor: (values: any, shape?: number[]) => any;
-  dispose: (tensor: any) => void;
+  loadLayersModel: (url: string) => Promise<unknown>;
+  loadGraphModel: (url: string) => Promise<unknown>;
+  tensor: (values: unknown, shape?: number[]) => unknown;
+  dispose: (tensor: unknown) => void;
   setBackend: (backend: string) => Promise<boolean>;
   getBackend: () => string;
   browser: {
-    fromPixels: (pixels: any) => any;
+    fromPixels: (pixels: unknown) => unknown;
   };
-  sequential: (config?: any) => any;
-  layers: any;
-  train: any;
-  losses: any;
-  metrics: any;
-  optimizers: any;
+  sequential: (config?: Record<string, unknown>) => unknown;
+  layers: Record<string, unknown>;
+  train: Record<string, unknown>;
+  losses: Record<string, unknown>;
+  metrics: Record<string, unknown>;
+  optimizers: Record<string, unknown>;
   // Add other TensorFlow.js APIs as needed
 }
 
@@ -77,7 +77,7 @@ class TensorFlowLazyLoader {
   /**
    * Optimize TensorFlow.js for healthcare workflows
    */
-  private async optimizeForHealthcare(tf: any): Promise<void> {
+  private async optimizeForHealthcare(tf: Record<string, unknown>): Promise<void> {
     try {
       // Set optimal backend for browser performance
       if (typeof window !== "undefined") {
@@ -178,7 +178,7 @@ export class LazyTensorFlowOperations {
   /**
    * Create tensor with lazy loading
    */
-  static async createTensor(values: any, shape?: number[]): Promise<any> {
+  static async createTensor(values: unknown, shape?: number[]): Promise<unknown> {
     return this.withTensorFlow(async (tf) => tf.tensor(values, shape));
   }
 

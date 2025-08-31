@@ -26,7 +26,7 @@ export type { UseRealtimeConfig } from "../types/realtime.types";
 
 // Define missing RealtimePayload type
 export type RealtimePayload<
-  T extends { [key: string]: any; } = { [key: string]: any; },
+  T extends Record<string, unknown> = Record<string, unknown>,
 > = RealtimePostgresChangesPayload<T>;
 
 // LGPD compliance utilities

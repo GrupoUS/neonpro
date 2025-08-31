@@ -4,11 +4,11 @@
  * Complete Brazilian healthcare compliance automation system
  */
 
-import { ANVISAAdverseEventReporter } from './anvisa/automated-adverse-event-reporting';
-import type { AdverseEvent } from './anvisa/automated-adverse-event-reporting';
-import { CFMProfessionalValidator } from './cfm/professional-validation';
-import type { CFMProfessional } from './cfm/professional-validation';
 import type { ChatMessage } from "@/types/chat";
+import { ANVISAAdverseEventReporter } from "./anvisa/automated-adverse-event-reporting";
+import type { AdverseEvent } from "./anvisa/automated-adverse-event-reporting";
+import { CFMProfessionalValidator } from "./cfm/professional-validation";
+import type { CFMProfessional } from "./cfm/professional-validation";
 
 export interface ComplianceConfiguration {
   anvisa: {
@@ -84,17 +84,17 @@ export class AdvancedComplianceIntegration {
 
   constructor(config: ComplianceConfiguration) {
     this.config = config;
-    
+
     // Initialize ANVISA reporter
     this.anvisaReporter = new ANVISAAdverseEventReporter(
       config.anvisa.vigimed_credentials,
-      config.anvisa.notification_settings
+      config.anvisa.notification_settings,
     );
 
     // Initialize CFM validator
     this.cfmValidator = new CFMProfessionalValidator(
       config.cfm.api_credentials,
-      config.cfm.validation_cache
+      config.cfm.validation_cache,
     );
 
     this.initializeIntegration();
@@ -117,7 +117,7 @@ export class AdvancedComplianceIntegration {
         medications?: string[];
         timestamp: Date;
       };
-    }
+    },
   ): Promise<{
     compliance_status: "compliant" | "warning" | "violation";
     adverse_events_detected: {
@@ -140,12 +140,12 @@ export class AdvancedComplianceIntegration {
 
     try {
       // Step 1: Validate healthcare professional (if provided)
-      let professionalValidation: any = { valid: true };
-      
+      let professionalValidation: Record<string, unknown> = { valid: true };
+
       if (interaction.context.crm_number && interaction.context.crm_state) {
         professionalValidation = await this.cfmValidator.validateProfessional(
           interaction.context.crm_number,
-          interaction.context.crm_state
+          interaction.context.crm_state,
         );
 
         if (!professionalValidation.valid) {
@@ -154,10 +154,16 @@ export class AdvancedComplianceIntegration {
           actionsTaken.push("Professional validation failed - interaction flagged");
         } else if (professionalValidation.compliance_issues) {
           complianceStatus = "warning";
-          followUpRequired.push(`Professional compliance issues: ${professionalValidation.compliance_issues.join(", ")}`);
+          followUpRequired.push(
+            `Professional compliance issues: ${
+              professionalValidation.compliance_issues.join(", ")
+            }`,
+          );
         }
 
-        actionsTaken.push(`Professional validated via ${professionalValidation.validation_details.method_used}`);
+        actionsTaken.push(
+          `Professional validated via ${professionalValidation.validation_details.method_used}`,
+        );
       }
 
       // Step 2: Detect adverse events from interaction
@@ -169,7 +175,7 @@ export class AdvancedComplianceIntegration {
           procedure_type: interaction.context.procedure_type,
           medications: interaction.context.medications,
           healthcare_professional_id: interaction.context.healthcare_professional_id,
-        }
+        },
       );
 
       // Step 3: Cross-reference adverse events with professional validation
@@ -177,7 +183,7 @@ export class AdvancedComplianceIntegration {
         // Ensure professional is authorized for the procedure that caused adverse event
         const procedureAuthorization = await this.validateProcedureAuthorization(
           professionalValidation.professional_data,
-          adverseEventDetection.potential_events
+          adverseEventDetection.potential_events,
         );
 
         if (!procedureAuthorization.authorized) {
@@ -189,7 +195,10 @@ export class AdvancedComplianceIntegration {
         // Auto-populate adverse event with professional data
         if (this.config.integration.auto_validate_reporters) {
           for (const event of adverseEventDetection.potential_events) {
-            this.enrichAdverseEventWithProfessionalData(event, professionalValidation.professional_data);
+            this.enrichAdverseEventWithProfessionalData(
+              event,
+              professionalValidation.professional_data,
+            );
           }
           actionsTaken.push("Adverse events enriched with validated professional data");
         }
@@ -218,10 +227,9 @@ export class AdvancedComplianceIntegration {
         actions_taken: actionsTaken,
         follow_up_required: followUpRequired,
       };
-
     } catch (error) {
       console.error("Healthcare interaction processing failed:", error);
-      
+
       // Fail-safe: treat as compliance violation requiring manual review
       return {
         compliance_status: "violation",
@@ -245,14 +253,14 @@ export class AdvancedComplianceIntegration {
     try {
       // Get ANVISA compliance status
       const anvisaStatus = await this.anvisaReporter.monitorComplianceDeadlines();
-      
+
       // Calculate ANVISA metrics
-      const totalAnvisaReports = anvisaStatus.approaching_deadlines.length + 
-                                anvisaStatus.overdue_events.length + 
-                                10; // Assume 10 submitted reports for calculation
-      
-      const anvisaComplianceRate = totalAnvisaReports > 0 
-        ? ((totalAnvisaReports - anvisaStatus.overdue_events.length) / totalAnvisaReports) * 100 
+      const totalAnvisaReports = anvisaStatus.approaching_deadlines.length
+        + anvisaStatus.overdue_events.length
+        + 10; // Assume 10 submitted reports for calculation
+
+      const anvisaComplianceRate = totalAnvisaReports > 0
+        ? ((totalAnvisaReports - anvisaStatus.overdue_events.length) / totalAnvisaReports) * 100
         : 100;
 
       // Get CFM validation metrics (would be implemented in CFM validator)
@@ -275,13 +283,13 @@ export class AdvancedComplianceIntegration {
       }
 
       if (anvisaStatus.approaching_deadlines.length > 5) {
-        if (healthStatus !== "critical") {healthStatus = "warning";}
+        if (healthStatus !== "critical") healthStatus = "warning";
         issues.push(`${anvisaStatus.approaching_deadlines.length} ANVISA deadlines approaching`);
         recommendations.push("Prioritize ANVISA report submissions");
       }
 
       if (cfmMetrics.validation_rate < 90) {
-        if (healthStatus !== "critical") {healthStatus = "warning";}
+        if (healthStatus !== "critical") healthStatus = "warning";
         issues.push(`CFM validation rate below target: ${cfmMetrics.validation_rate}%`);
         recommendations.push("Review professional validation processes");
       }
@@ -301,10 +309,9 @@ export class AdvancedComplianceIntegration {
           recommendations,
         },
       };
-
     } catch (error) {
       console.error("Compliance monitoring failed:", error);
-      
+
       return {
         timestamp: new Date(),
         anvisa: {
@@ -333,26 +340,26 @@ export class AdvancedComplianceIntegration {
    */
   async generateMonthlyComplianceReport(
     month: number,
-    year: number
+    year: number,
   ): Promise<{
     report_id: string;
     period: string;
-    anvisa_summary: any;
-    cfm_summary: any;
-    integration_metrics: any;
+    anvisa_summary: Record<string, unknown>;
+    cfm_summary: Record<string, unknown>;
+    integration_metrics: Record<string, unknown>;
     executive_summary: string;
     action_plan: string[];
     next_review_date: Date;
   }> {
     const reportId = `COMPLIANCE_${year}${month.toString().padStart(2, "0")}_${Date.now()}`;
-    
+
     // Generate ANVISA compliance report
     const anvisaReport = await this.anvisaReporter.generateComplianceReport(
       {
         start_date: new Date(year, month - 1, 1),
         end_date: new Date(year, month, 0),
       },
-      "monthly"
+      "monthly",
     );
 
     // Generate CFM validation summary (would be implemented)
@@ -372,8 +379,12 @@ export class AdvancedComplianceIntegration {
     };
 
     // Executive summary
-    const executiveSummary = this.generateExecutiveSummary(anvisaReport, cfmSummary, integrationMetrics);
-    
+    const executiveSummary = this.generateExecutiveSummary(
+      anvisaReport,
+      cfmSummary,
+      integrationMetrics,
+    );
+
     // Action plan
     const actionPlan = [
       ...anvisaReport.action_items,
@@ -415,8 +426,8 @@ export class AdvancedComplianceIntegration {
 
   private async validateProcedureAuthorization(
     professional?: CFMProfessional,
-    events?: Partial<AdverseEvent>[]
-  ): Promise<{ authorized: boolean; reasons: string[] }> {
+    events?: Partial<AdverseEvent>[],
+  ): Promise<{ authorized: boolean; reasons: string[]; }> {
     if (!professional || !events) {
       return { authorized: false, reasons: ["Missing professional or event data"] };
     }
@@ -427,10 +438,10 @@ export class AdvancedComplianceIntegration {
     // Check if professional has aesthetic specialties for aesthetic events
     const aestheticEvents = events.filter(e => e.event_type === "aesthetic_complication");
     if (aestheticEvents.length > 0) {
-      const hasAestheticSpecialty = professional.specialties.some(s => 
+      const hasAestheticSpecialty = professional.specialties.some(s =>
         ["DERMATOLOGIA", "CIRURGIA_PLASTICA", "MEDICINA_ESTETICA"].includes(s.name)
       );
-      
+
       if (!hasAestheticSpecialty) {
         authorized = false;
         reasons.push("Professional not authorized for aesthetic procedures");
@@ -442,9 +453,9 @@ export class AdvancedComplianceIntegration {
 
   private enrichAdverseEventWithProfessionalData(
     event: Partial<AdverseEvent>,
-    professional?: CFMProfessional
+    professional?: CFMProfessional,
   ): void {
-    if (!professional) {return;}
+    if (!professional) return;
 
     // Add professional data to adverse event
     if (event.reporter_data) {
@@ -454,15 +465,15 @@ export class AdvancedComplianceIntegration {
     }
   }
 
-  private async createComplianceAuditTrail(data: any): Promise<void> {
+  private async createComplianceAuditTrail(data: Record<string, unknown>): Promise<void> {
     // Implementation would store audit trail in database
     console.log("Compliance audit trail created:", data);
   }
 
   private generateExecutiveSummary(
-    anvisaReport: any,
-    cfmSummary: any,
-    integrationMetrics: any
+    anvisaReport: Record<string, unknown>,
+    cfmSummary: Record<string, unknown>,
+    integrationMetrics: Record<string, unknown>,
   ): string {
     return `
 Monthly compliance summary: ${anvisaReport.summary.total_events} adverse events reported with ${anvisaReport.summary.compliance_rate}% compliance rate.
@@ -472,12 +483,12 @@ Overall system performance: Stable with recommended improvements in automated de
     `.trim();
   }
 
-  private async storeComplianceReport(report: any): Promise<void> {
+  private async storeComplianceReport(report: Record<string, unknown>): Promise<void> {
     // Implementation would store in database
     console.log("Compliance report stored:", report.report_id);
   }
 
-  private async distributeComplianceReport(report: any): Promise<void> {
+  private async distributeComplianceReport(report: Record<string, unknown>): Promise<void> {
     // Implementation would email/notify stakeholders
     console.log("Compliance report distributed:", report.report_id);
   }

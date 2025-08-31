@@ -26,9 +26,9 @@ import type {
  * Manages audit logging and trail validation for healthcare compliance
  */
 export class AuditService {
-  private readonly supabaseClient: any;
+  private readonly supabaseClient: unknown;
 
-  constructor(supabaseClient: any) {
+  constructor(supabaseClient: unknown) {
     this.supabaseClient = supabaseClient;
   }
 

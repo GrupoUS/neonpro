@@ -12,5 +12,11 @@ export { default as AntiNoShowDashboardExample } from "./anti-no-show-dashboard-
 // T2.4 - AI-First Component Patterns Example
 export { default as AIFirstPatternsExample } from "./ai-first-patterns-example";
 
+// T4.3 - Advanced Accessibility e Assistive Technology Integration Example
+export { 
+  AccessibilityIntegrationExample,
+  IndividualComponentsDemos 
+} from "../accessibility/accessibility-integration-example";
+
 // General Integration Example
 export { default as IntegrationExample } from "./IntegrationExample";

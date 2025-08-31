@@ -23,6 +23,13 @@ export { default as CriticalInfoDisplay } from './CriticalInfoDisplay';
 export { default as OfflineSyncManager } from './OfflineSyncManager';
 export { default as EmergencyModeInterface } from './EmergencyModeInterface';
 
+// Cross-Device Continuity Components - T3.3 Cross-Device Continuity e QR Handoff System
+export { default as QRHandoffGenerator } from './QRHandoffGenerator';
+export { default as SessionSyncManager } from './SessionSyncManager';
+export { default as ConflictResolver } from './ConflictResolver';
+export { default as OfflineQueueManager } from './OfflineQueueManager';
+export { default as CrossDeviceDemo } from './CrossDeviceDemo';
+
 // Mobile-specific types
 export interface MobileNavigationItem {
   label: string;
@@ -66,4 +73,43 @@ export interface TouchGesture {
   type: "tap" | "swipe" | "pinch" | "long-press";
   direction?: "left" | "right" | "up" | "down";
   callback: () => void;
+}
+
+// Cross-device continuity types
+export interface DeviceFingerprint {
+  userAgent: string;
+  screenResolution: string;
+  timezone: string;
+  language: string;
+  deviceType: 'mobile' | 'tablet' | 'desktop';
+}
+
+export interface HandoffSession {
+  sessionId: string;
+  deviceFingerprint: DeviceFingerprint;
+  sessionData: Record<string, any>;
+  expiresAt: number;
+  encrypted: boolean;
+}
+
+export interface SyncConflict {
+  id: string;
+  entityType: 'patient' | 'appointment' | 'treatment' | 'medication' | 'form_data';
+  entityId: string;
+  fieldName: string;
+  localValue: any;
+  remoteValue: any;
+  priority: 'critical' | 'high' | 'medium' | 'low';
+  canAutoResolve: boolean;
+}
+
+export interface QueuedAction {
+  id: string;
+  type: 'create' | 'update' | 'delete' | 'upload';
+  entityType: 'patient' | 'appointment' | 'treatment' | 'medication' | 'file' | 'form_data';
+  data: any;
+  priority: 'critical' | 'high' | 'medium' | 'low';
+  status: 'queued' | 'processing' | 'completed' | 'failed';
+  attempts: number;
+  maxAttempts: number;
 }

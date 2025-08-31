@@ -17,22 +17,22 @@ import { z } from "zod";
 
 // Placeholder implementations for template compilation
 const Logger = {
-  info: (message: string, meta?: any) => console.log(message, meta),
-  error: (message: string, meta?: any) => console.error(message, meta),
-  warn: (message: string, meta?: any) => console.warn(message, meta),
-  debug: (message: string, meta?: any) => console.debug(message, meta),
+  info: (message: string, meta?: Record<string, unknown>) => console.log(message, meta),
+  error: (message: string, meta?: Record<string, unknown>) => console.error(message, meta),
+  warn: (message: string, meta?: Record<string, unknown>) => console.warn(message, meta),
+  debug: (message: string, meta?: Record<string, unknown>) => console.debug(message, meta),
 };
 
 type EncryptionCategory = "sensitive" | "pii" | "medical" | "financial";
 
 const HealthcareEncryption = {
-  encrypt: (data: any, category: EncryptionCategory) => Promise.resolve(JSON.stringify(data)),
+  encrypt: (data: unknown, category: EncryptionCategory) => Promise.resolve(JSON.stringify(data)),
   decrypt: (encrypted: string, category: EncryptionCategory) =>
     Promise.resolve(JSON.parse(encrypted)),
 };
 
 const AuditService = {
-  log: (event: string, data: any) => Promise.resolve(),
+  log: (event: string, data: Record<string, unknown>) => Promise.resolve(),
   getAuditLog: (entityId: string) => Promise.resolve([]),
 };
 

@@ -16,15 +16,15 @@ import { HealthcareFeatureConfig } from "./healthcare-feature-template";
 
 // Placeholder Logger for template compilation
 const Logger = {
-  info: (message: string, meta?: any) => console.log(message, meta),
-  error: (message: string, meta?: any) => console.error(message, meta),
-  warn: (message: string, meta?: any) => console.warn(message, meta),
-  debug: (message: string, meta?: any) => console.debug(message, meta),
+  info: (message: string, meta?: Record<string, unknown>) => console.log(message, meta),
+  error: (message: string, meta?: Record<string, unknown>) => console.error(message, meta),
+  warn: (message: string, meta?: Record<string, unknown>) => console.warn(message, meta),
+  debug: (message: string, meta?: Record<string, unknown>) => console.debug(message, meta),
 };
 
 // Placeholder middleware for template compilation
-const healthcareSecurityMiddleware = async (c: any, next: any) => await next();
-const healthcareValidationMiddleware = async (c: any, next: any) => await next();
+const healthcareSecurityMiddleware = async (c: unknown, next: unknown) => await next();
+const healthcareValidationMiddleware = async (c: unknown, next: unknown) => await next();
 
 // Standard API response types
 export interface HealthcareApiResponse<T> {
@@ -259,7 +259,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   ): Promise<T[] | PaginatedResponse<T>>;
 
   // Extract healthcare context from request
-  private extractHealthcareContext(c: any): HealthcareContext {
+  private extractHealthcareContext(c: Record<string, unknown>): HealthcareContext {
     const user = c.get("user");
     const isEmergency = c.req.header("X-Emergency-Access") === "true";
     const lgpdConsent = c.req.header("X-LGPD-Consent") === "true";
@@ -275,7 +275,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   }
 
   // Extract pagination parameters
-  private extractPaginationParams(c: any): PaginationParams {
+  private extractPaginationParams(c: Record<string, unknown>): PaginationParams {
     const query = c.req.query();
 
     return {
@@ -302,7 +302,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   }
 
   // Handle errors with proper healthcare context
-  private handleError(c: any, error: any): Response {
+  private handleError(c: Record<string, unknown>, error: Record<string, unknown>): Response {
     let statusCode = 500;
     let errorCode = "HC_SYSTEM_001";
     let message = "Internal server error";
@@ -371,7 +371,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   protected addCustomRoute(
     method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
     path: string,
-    handler: (c: any) => Promise<Response> | Response,
+    handler: (c: Record<string, unknown>) => Promise<Response> | Response,
   ): void {
     const fullPath = path.startsWith("/") ? path : `/${path}`;
 

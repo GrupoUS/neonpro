@@ -4,7 +4,7 @@
 			"command": "bunx",
 			"args": ["exa-mcp-server@latest"],
 			"env": {
-				"EXA_API_KEY": "fae6582d-4562-45be-8ce9-f6c0c3518c66",
+				"EXA_API_KEY": "${env:EXA_API_KEY}",
 				"EXA_MAX_RESULTS": "10",
 				"EXA_TIMEOUT": "20000"
 			},
@@ -25,7 +25,7 @@
 			"command": "bunx",
 			"args": ["@mcptools/mcp-tavily@latest"],
 			"env": {
-				"TAVILY_API_KEY": "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",
+				"TAVILY_API_KEY": "${env:TAVILY_API_KEY}",
 				"TAVILY_MAX_RESULTS": "10",
 				"TAVILY_SEARCH_DEPTH": "advanced",
 				"TAVILY_TIMEOUT": "20000"
@@ -36,7 +36,7 @@
 			"command": "bunx",
 			"args": ["@upstash/context7-mcp@latest"],
 			"env": {
-				"UPSTASH_CONTEXT7_API_KEY": "ctx7_fzqcQNgU3AChDBMjNIVYg4zLQp4LgBjZnbA",
+				"UPSTASH_CONTEXT7_API_KEY": "${env:UPSTASH_CONTEXT7_API_KEY}",
 				"CONTEXT7_MAX_TOKENS": "10000",
 				"CONTEXT7_TIMEOUT": "15000"
 			},
@@ -44,17 +44,19 @@
 		},
 		"desktop-commander": {
 			"command": "bunx",
-			"args": ["@wonderwhy-er/desktop-commander@latest"]
+			"args": ["@wonderwhy-er/desktop-commander@latest"],
+			"type": "stdio"
 		},
 		"supabase": {
 			"command": "bunx",
-			"args": ["@supabase/mcp-server-supabase@latest", "--access-token", "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc"]
+			"args": ["@supabase/mcp-server-supabase@latest", "--access-token", "${env:SUPABASE_ACCESS_TOKEN}"],
+			"type": "stdio"
 		},
 		"shadcn-ui": {
 			"command": "bunx",
 			"args": ["@jpisnice/shadcn-ui-mcp-server@latest"],
 			"env": {
-				"GITHUB_PERSONAL_ACCESS_TOKEN": "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",
+				"GITHUB_PERSONAL_ACCESS_TOKEN": "${env:GITHUB_PERSONAL_ACCESS_TOKEN}",
 				"SHADCN_CACHE_COMPONENTS": "true",
 				"SHADCN_AUTO_INSTALL": "true"
 			},
@@ -66,7 +68,8 @@
 		},
 		"archon": {
 			"command": "bunx",
-			"args": ["mcp-remote", "http://localhost:8051/mcp"]
+			"args": ["mcp-remote", "http://localhost:8051/mcp"],
+			"type": "stdio"
 		},
         "serena": {
           "type": "stdio",
@@ -79,7 +82,7 @@
             "--context",
             "ide-assistant",
             "--project",
-            "/home/vibecoder/neonpro"
+            "${workspaceFolder}"
           ],
           "env": {}
         }
@@ -89,5 +92,5 @@
 		"globalTimeout": 30000,
 		"retryAttempts": 3,
 		"logLevel": "info"
-}
+	}
 }

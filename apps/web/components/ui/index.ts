@@ -151,6 +151,68 @@ export {
   VoiceState
 } from "./voice-interaction-ux";
 
+// Advanced Accessibility e Assistive Technology Integration (T4.3)
+export { 
+  SwitchNavigationProvider, 
+  SwitchNavigationSettings, 
+  SwitchNavigationDemo,
+  useSwitchNavigation
+} from "../accessibility/switch-navigation-controller";
+
+export { 
+  EyeTrackingProvider, 
+  EyeTrackingSettings, 
+  EyeTrackingDemo,
+  useEyeTracking
+} from "../accessibility/eye-tracking-interaction";
+
+export { 
+  TremorFriendlyProvider, 
+  TremorFriendlySettings, 
+  TremorFriendlyDemo,
+  useTremorFriendly
+} from "../accessibility/tremor-friendly-controls";
+
+export { 
+  VoiceMedicalProvider, 
+  VoiceMedicalSettings, 
+  VoiceMedicalDemo,
+  useVoiceMedical
+} from "../accessibility/voice-medical-controller";
+
+export { 
+  OneHandedOperationProvider, 
+  OneHandedOperationSettings, 
+  OneHandedOperationDemo,
+  useOneHandedOperation
+} from "../accessibility/one-handed-operation-mode";
+
+export { 
+  CognitiveAccessibilityProvider, 
+  CognitiveAccessibilitySettings, 
+  CognitiveAccessibilityDemo,
+  useCognitiveAccessibility
+} from "../accessibility/cognitive-accessibility-helper";
+
+export { 
+  VisualAccessibilityProvider, 
+  VisualAccessibilitySettings, 
+  VisualAccessibilityDemo,
+  useVisualAccessibility
+} from "../accessibility/visual-accessibility-enhancer";
+
+export { 
+  AssistiveTechnologyAPIProvider, 
+  AssistiveTechnologyAPISettings, 
+  AssistiveTechnologyAPIDemo,
+  useAssistiveTechnologyAPI
+} from "../accessibility/assistive-technology-api";
+
+export { 
+  AccessibilityIntegrationExample,
+  IndividualComponentsDemos
+} from "../accessibility/accessibility-integration-example";
+
 // Hooks
 export { useChatHandoff } from "../../hooks/use-chat-handoff";
 

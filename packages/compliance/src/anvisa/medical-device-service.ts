@@ -675,10 +675,10 @@ export class MedicalDeviceService {
    * Calculate Overall Device Compliance Score
    */
   private calculateDeviceComplianceScore(
-    constitutional: any,
-    anvisa: any,
-    quality: any,
-    professional: any,
+    constitutional: Record<string, unknown>,
+    anvisa: Record<string, unknown>,
+    quality: Record<string, unknown>,
+    professional: Record<string, unknown>,
   ): ComplianceScore {
     const weights = {
       constitutional: 0.4, // Constitutional compliance is highest priority
@@ -702,7 +702,7 @@ export class MedicalDeviceService {
     registration: MedicalDeviceRegistration,
   ): Promise<{
     summary: DeviceComplianceResult["complianceChecks"];
-    auditTrail: any[];
+    auditTrail: Record<string, unknown>[];
   }> {
     const auditTrail: unknown[] = [];
     const checks = {
@@ -792,7 +792,7 @@ export class MedicalDeviceService {
    */
   private async assessConstitutionalCompliance(
     registration: MedicalDeviceRegistration,
-    complianceChecks: any,
+    complianceChecks: Record<string, unknown>,
   ): Promise<DeviceComplianceResult["constitutionalCompliance"]> {
     let patientSafetyScore = 10;
     let regulatoryScore = 10;
@@ -945,8 +945,8 @@ export class MedicalDeviceService {
   ): Promise<void> {}
 
   private determineComplianceStatus(
-    assessment: any,
-    violations: any[],
+    assessment: Record<string, unknown>,
+    violations: Record<string, unknown>[],
   ): DeviceComplianceResult["complianceStatus"] {
     if (violations.some((v) => v.severity === "CRITICAL")) {
       return "CRITICAL_VIOLATION";
@@ -961,22 +961,22 @@ export class MedicalDeviceService {
   }
 
   private async identifyViolations(
-    _checks: any,
-    _assessment: any,
+    _checks: Record<string, unknown>,
+    _assessment: Record<string, unknown>,
   ): Promise<DeviceComplianceResult["violations"]> {
     return []; // Would implement violation identification logic
   }
 
   private async generateRecommendations(
-    _checks: any,
-    _assessment: any,
+    _checks: Record<string, unknown>,
+    _assessment: Record<string, unknown>,
   ): Promise<DeviceComplianceResult["recommendations"]> {
     return []; // Would implement recommendation generation logic
   }
 
   private async generateNextActions(
-    _violations: any[],
-    _recommendations: any[],
+    _violations: Record<string, unknown>[],
+    _recommendations: Record<string, unknown>[],
   ): Promise<DeviceComplianceResult["nextActions"]> {
     return {
       immediateActions: [],
@@ -988,8 +988,8 @@ export class MedicalDeviceService {
 
   private async createAuditEvent(
     action: string,
-    data: any,
-  ): Promise<any> {
+    data: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
     return {
       id: crypto.randomUUID(),
       eventType: "MEDICAL_DEVICE_COMPLIANCE",
