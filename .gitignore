@@ -1,7 +1,10 @@
 # =============================================================================
 # NEONPRO HEALTHCARE - COMPREHENSIVE SECURITY .GITIGNORE
 # =============================================================================
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# NeonPro AI Healthcare Platform - Turborepo Monorepo (2 Apps + 22 Packages)
+# Architecture: Next.js 15 + Hono.dev + Supabase + TypeScript + shadcn/ui
+# See: docs/architecture/source-tree.md for full architecture details
+# =============================================================================
 
 # =============================================================================
 # 🔒 CRITICAL SECURITY - ENVIRONMENT & SECRETS
@@ -21,6 +24,8 @@ mcp.json
 **/mcp.json
 .mcp.json
 **/.mcp.json
+.mcp.auggie.json
+**/.mcp.auggie.json
 
 # Secrets and credentials
 *.secrets.*
@@ -102,51 +107,209 @@ id_ed25519*
 **/.gnupg/*
 
 # =============================================================================
-# 🏗️ DEPLOYMENT & INFRASTRUCTURE
+# 🏗️ NEONPRO ARCHITECTURE - TURBOREPO MONOREPO
 # =============================================================================
 
-# Deployment Configurations
-*DEPLOYMENT*GUIDE*
-*deployment*guide*
-*DEPLOYMENT*STATUS*
-*deployment*status*
-**/deployment/**/*.secret*
-**/deployment/**/*.credential*
-**/deployment/**/*.key*
+# Turborepo cache and artifacts
+.turbo/
+**/.turbo/
+.turbo
+**/.turbo
 
-# Infrastructure as Code with secrets
-terraform.tfvars
-*.tfvars
-terraform.tfstate*
-*.tfstate*
-**/terraform/**/*.tfvars
+# Workspace and package manager
+node_modules/
+**/node_modules/
+.pnpm/
+**/.pnpm/
 
-# Kubernetes secrets
-**/k8s/**/*secret*
-**/kubernetes/**/*secret*
-*.kubeconfig
-*kubeconfig*
+# Lock files (security: can expose vulnerabilities in exact versions)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lockb
 
-# Docker secrets
-**/docker/**/*.secret*
-docker-compose.override.yml
-**/docker-compose.override.yml
+# Package-level build outputs (22 packages)
+packages/*/dist/
+packages/*/build/
+packages/*/lib/
+packages/*/.next/
+packages/*/out/
+packages/*/.turbo/
+packages/*/coverage/
+
+# Apps build outputs (web + api)
+apps/*/dist/
+apps/*/build/
+apps/*/.next/
+apps/*/out/
+apps/*/.turbo/
+apps/*/coverage/
 
 # =============================================================================
-# 📊 MONITORING & ANALYTICS CONFIGS
+# 🚀 NEONPRO SPECIFIC BUILD TOOLS & CONFIGS
 # =============================================================================
 
-# Sentry configurations (contain DSNs)
-sentry.server.config.ts
-sentry.edge.config.ts
-sentry.client.config.ts
-**/*sentry*config*.ts
-**/*sentry*config*.js
+# Bun specific
+bun.lockb
+.bun/
+**/.bun/
+bunfig.toml.local
 
-# DataDog, New Relic, etc.
-*datadog*config*
-*newrelic*config*
-*posthog*config*
+# TypeScript build cache
+*.tsbuildinfo
+**/*.tsbuildinfo
+next-env.d.ts
+**/next-env.d.ts
+
+# TypeScript compiled output (src directories)
+packages/*/src/**/*.js
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+packages/*/src/**/*.js.map
+apps/*/src/**/*.js
+apps/*/src/**/*.d.ts
+apps/*/src/**/*.d.ts.map
+apps/*/src/**/*.js.map
+
+# Additional build artifacts
+*.bundled_*.mjs
+
+# Oxlint (linting tool)
+.oxlint_cache/
+**/.oxlint_cache/
+.oxlint/
+**/.oxlint/
+
+# Dprint (formatting tool) 
+.dprint/
+**/.dprint/
+dprint.cache
+**/dprint.cache
+
+# Trigger.dev
+.trigger/
+**/.trigger/
+trigger.cache
+**/trigger.cache
+
+# Lighthouse CI
+lighthouse-ci-results/
+**/lighthouse-ci-results/
+.lighthouseci/
+**/.lighthouseci/
+
+# =============================================================================
+# 🎯 NEONPRO DEVELOPMENT & TEMPORARY FILES
+# =============================================================================
+
+# Development AI assistants and tools
+.claude/
+**/.claude/
+.ruler/
+**/.ruler/
+.augment/
+**/.augment/
+.bmad-core/
+**/.bmad-core/
+archon/
+**/archon/
+serena/
+**/serena/
+
+# Project cleanup and reports
+cleanup-reports/
+**/cleanup-reports/
+.backup/
+**/.backup/
+.backups/
+**/.backups/
+
+# Workspace configurations
+*.code-workspace
+**/*.code-workspace
+.vscode/settings.json
+.vscode/launch.json
+
+# Healthcare specific temporary files
+*patient*temp*
+*patient*test*
+*medical*temp*
+*medical*test*
+*compliance*temp*
+*compliance*test*
+*anvisa*temp*
+*cfm*temp*
+*lgpd*temp*
+
+# AI model artifacts (may contain training data)
+*.model
+*.weights
+**/models/**/*.bin
+**/models/**/*.safetensors
+*.safetensors
+ai-cache/
+**/ai-cache/
+
+# =============================================================================
+# 🧪 TESTING & QUALITY ASSURANCE
+# =============================================================================
+
+# Test results and coverage
+coverage/
+**/coverage/
+test-results/
+**/test-results/
+.nyc_output/
+**/.nyc_output/
+
+# Vitest
+vitest-results/
+**/vitest-results/
+
+# Playwright
+playwright-report/
+**/playwright-report/
+blob-report/
+**/blob-report/
+playwright/.cache/
+**/playwright/.cache/
+
+# Jest
+jest-results/
+**/jest-results/
+
+# Testing temporary files
+*.test.temp*
+**/*.test.temp*
+*test*temp*
+**/test-*/temp/*
+
+# =============================================================================
+# 📦 BUILD & COMPILATION OUTPUTS
+# =============================================================================
+
+# Next.js (Frontend)
+.next/
+**/.next/
+out/
+**/out/
+
+# Build directories
+build/
+**/build/
+dist/
+**/dist/
+lib/
+**/lib/
+
+# Production builds
+/build
+/dist
+/out
+
+# Hono.dev API builds
+.hono/
+**/.hono/
 
 # =============================================================================
 # 🗄️ DATABASE & STORAGE
@@ -161,85 +324,82 @@ sentry.client.config.ts
 **/backups/**
 **/dumps/**
 
+# Supabase local development
+supabase/.branches/
+**/supabase/.branches/
+supabase/.temp/
+**/supabase/.temp/
+
 # Database connection strings
 *database*url*
 *db*connection*
 
-# =============================================================================
-# 📦 DEPENDENCIES & PACKAGE MANAGEMENT
-# =============================================================================
-
-# dependencies
-node_modules/
-**/node_modules/
-/node_modules
-**/node-compile-cache/**
-
-# Lock files (exact versions, can expose vulnerabilities)
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
-bun.lockb
+# Migration artifacts
+*migration*temp*
+**/migrations/**/*.temp*
 
 # =============================================================================
-# 🚀 BUILD & COMPILATION
+# 🛡️ MONITORING & ANALYTICS CONFIGS
 # =============================================================================
 
-# Next.js
-.next/
-**/.next/
-/out/
-**/out/
+# Sentry configurations (contain DSNs)
+sentry.server.config.ts
+sentry.edge.config.ts
+sentry.client.config.ts
+**/*sentry*config*.ts
+**/*sentry*config*.js
+.sentry/
+**/.sentry/
 
-# Production builds
-/build
-build/
-**/build/
-dist/
-**/dist/
-out/
-**/out/
+# Performance monitoring
+.performance/
+**/.performance/
+performance-results/
+**/performance-results/
 
-# Turbo
-.turbo/**
-**/.turbo/**
-
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
+# Analytics and tracking
+*datadog*config*
+*newrelic*config*
+*posthog*config*
+*mixpanel*config*
 
 # =============================================================================
-# 🧪 TESTING & DEVELOPMENT
+# 🌐 DEPLOYMENT & INFRASTRUCTURE
 # =============================================================================
 
-# Test results and coverage
-/test-results/
-/blob-report/
-/playwright-report/
-/playwright/.cache/
-/coverage/
-**/coverage/
+# Vercel
+.vercel/
+**/.vercel/
+.vercel
 
-# IDE and tooling
-.vscode/settings.json
-.idea/
-**/.idea/
-*.swp
-*.swo
+# Docker secrets
+**/docker/**/*.secret*
+docker-compose.override.yml
+**/docker-compose.override.yml
 
-# Development tools that may contain secrets
-archon/
-/archon/
-*archon/*
-*serena/*
-*.serena
-*.serena/*
+# Kubernetes secrets
+**/k8s/**/*secret*
+**/kubernetes/**/*secret*
+*.kubeconfig
+*kubeconfig*
+
+# Terraform
+terraform.tfvars
+*.tfvars
+terraform.tfstate*
+*.tfstate*
+**/terraform/**/*.tfvars
+
+# Infrastructure as Code with secrets
+**/deployment/**/*.secret*
+**/deployment/**/*.credential*
+**/deployment/**/*.key*
 
 # =============================================================================
-# 📝 LOGS & TEMPORARY FILES
+# 📝 LOGS & TEMPORARY SYSTEM FILES
 # =============================================================================
 
-# Logs
+# Application logs
 *.log
 **/logs/**
 npm-debug.log*
@@ -248,7 +408,7 @@ yarn-error.log*
 .pnpm-debug.log*
 **/*.log
 
-# Temporary files
+# System temporary files
 *.tmp
 **/*.tmp
 .tmp/
@@ -256,7 +416,7 @@ yarn-error.log*
 *.temp
 **/*.temp
 
-# Temporary upload files (Google Drive sync)
+# Temporary upload/download files (Google Drive sync, etc.)
 .tmp.driveupload/
 **/.tmp.driveupload/
 tmp.driveupload/
@@ -270,6 +430,19 @@ tmp.drivedownload/
 .cache/
 **/.cache/
 *.cache
+**/*.cache
+
+# Node.js compilation cache
+node-compile-cache/
+**/node-compile-cache/
+
+# MCP Tool Caches
+.serena/
+**/.serena/
+.ruler/
+**/.ruler/
+.augment/
+**/.augment/
 
 # =============================================================================
 # 💾 BACKUP & ARCHIVE FILES
@@ -297,60 +470,27 @@ tmp.drivedownload/
 **/archives/**
 
 # =============================================================================
-# 🔧 CONFIGURATION FILES
+# 🔧 LOCAL CONFIGURATION OVERRIDES
 # =============================================================================
 
-# Local configuration overrides
-*local.config*
-*local.json
-*.local
+# Local environment configurations
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# User-specific configurations
-.user.ini
+# Local configuration overrides
+*local.config*
+*local.json
+*.local
 *user.config*
 *personal.config*
 
-# =============================================================================
-# 🌐 CLOUD & CDN
-# =============================================================================
-
-# Vercel
-.vercel
-**/.vercel/
-.vercel.json
-
-# Netlify
-.netlify/
-**/.netlify/
-
-# AWS
-.aws/
-**/.aws/
-*aws*credentials*
-*aws*config*
+# User-specific configurations
+.user.ini
 
 # =============================================================================
-# 🛠️ DEVELOPMENT TOOLS SPECIFIC
-# =============================================================================
-
-# Ruler Generated Files (may contain configs)
-*.bak
-.claude/agents/apex-dev.md.bak
-
-# Trae configurations
-.trae/
-**/.trae/
-
-# Dprint cache
-.dprint/
-**/.dprint/
-
-# =============================================================================
-# 📱 MOBILE & CROSS-PLATFORM
+# 📱 MOBILE & CROSS-PLATFORM (Future NeonPro Mobile)
 # =============================================================================
 
 # React Native
@@ -371,20 +511,71 @@ android/keystore.properties
 **/android/keystore.properties
 
 # =============================================================================
-# 🎯 PROJECT SPECIFIC
+# 🎯 NEONPRO PROJECT SPECIFIC
 # =============================================================================
 
-# START Ruler Generated Files
-.claude/agents/apex-dev.md
-# END Ruler Generated Files
+# Ruler Generated Files (AI Development Tools)
+*.bak
+.claude/agents/apex-dev.md.bak
+.claude/agents/*.md.bak
 
-# Healthcare specific temporary files
-*patient*temp*
-*medical*temp*
-*compliance*temp*
+# NeonPro Documentation Generation
+docs/generated/
+**/docs/generated/
+.docs-cache/
+**/.docs-cache/
 
-# AI model artifacts (may contain training data)
-*.model
-*.weights
-**/models/**/*.bin
-**/models/**/*.safetensors
+# Package interdependency analysis
+.dependency-graph/
+**/.dependency-graph/
+package-analysis/
+**/package-analysis/
+
+# Performance benchmarks
+benchmarks/results/
+**/benchmarks/results/
+.benchmark-cache/
+**/.benchmark-cache/
+
+# Healthcare compliance reports (temporary)
+compliance-reports/temp/
+**/compliance-reports/temp/
+audit-reports/temp/
+**/audit-reports/temp/
+
+# =============================================================================
+# 🚨 CRITICAL SECURITY PATTERNS (Healthcare Specific)
+# =============================================================================
+
+# Patient data patterns (should never be in code)
+*patient-data*
+*patient_data*
+*medical-records*
+*medical_records*
+*phi-data*
+*phi_data*
+*health-information*
+*health_information*
+
+# Brazilian healthcare system patterns
+*sus*dados*
+*prontuario*
+*cns*number*
+*cpf*data*
+
+# LGPD compliance test data
+*lgpd*test*data*
+*gdpr*test*data*
+*pii*test*data*
+
+# Financial healthcare data
+*payment*test*data*
+*billing*test*data*
+*insurance*test*data*
+
+# =============================================================================
+# END NEONPRO HEALTHCARE .GITIGNORE
+# =============================================================================
+# Last updated: 2025 - Based on NeonPro Healthcare Architecture v2025
+# Total packages: 22 | Apps: 2 (web, api) | Stack: Next.js 15 + Hono.dev + Supabase
+# =============================================================================

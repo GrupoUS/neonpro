@@ -33,7 +33,21 @@
       "@neonpro/config": ["./packages/config"],
       "@neonpro/config/*": ["./packages/config/*"],
       "@neonpro/shared": ["./packages/shared/src"],
-      "@neonpro/shared/*": ["./packages/shared/src/*"]
+      "@neonpro/shared/*": ["./packages/shared/src/*"],
+      "@neonpro/auth": ["./packages/auth/src"],
+      "@neonpro/auth/*": ["./packages/auth/src/*"],
+      "@neonpro/ai": ["./packages/ai/src"],
+      "@neonpro/ai/*": ["./packages/ai/src/*"],
+      "@neonpro/compliance": ["./packages/compliance/src"],
+      "@neonpro/compliance/*": ["./packages/compliance/src/*"],
+      "@neonpro/security": ["./packages/security/src"],
+      "@neonpro/security/*": ["./packages/security/src/*"],
+      "@neonpro/cache": ["./packages/cache/src"],
+      "@neonpro/cache/*": ["./packages/cache/src/*"],
+      "@neonpro/monitoring": ["./packages/monitoring/src"],
+      "@neonpro/monitoring/*": ["./packages/monitoring/src/*"],
+      "@neonpro/enterprise": ["./packages/enterprise/src"],
+      "@neonpro/enterprise/*": ["./packages/enterprise/src/*"]
     },
     "strictNullChecks": true,
     "plugins": [
@@ -42,12 +56,7 @@
       }
     ]
   },
-  "include": [
-    "vitest.d.ts",
-    ".next/types/**/*.ts",
-    "instrumentation.ts",
-    "instrumentation-client.ts"
-  ],
+  "include": ["vitest.d.ts", ".next/types/**/*.ts"],
   "exclude": [
     "node_modules",
     ".next",
@@ -99,6 +108,24 @@
     },
     {
       "path": "./packages/core-services"
+    },
+    {
+      "path": "./packages/ai"
+    },
+    {
+      "path": "./packages/compliance"
+    },
+    {
+      "path": "./packages/security"
+    },
+    {
+      "path": "./packages/cache"
+    },
+    {
+      "path": "./packages/monitoring"
+    },
+    {
+      "path": "./packages/enterprise"
     }
   ]
 }

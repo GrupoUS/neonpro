@@ -42,8 +42,8 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
 
   // Check LGPD consent for AI processing
   const hasAIConsent = useCallback(() => {
-    if (!requiresConsent) return true;
-    if (typeof window === "undefined") return false;
+    if (!requiresConsent) { return true; }
+    if (typeof window === "undefined") { return false; }
 
     const consent = localStorage.getItem("lgpd-consent-ai");
     const generalConsent = localStorage.getItem("lgpd-consent");
@@ -122,7 +122,7 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
 
   // Preload AI during browser idle time
   useEffect(() => {
-    if (!preloadOnIdle || state.isLoaded) return;
+    if (!preloadOnIdle || state.isLoaded) { return; }
 
     const idleCallback = (deadline: IdleDeadline) => {
       if (deadline.timeRemaining() > 100 && hasAIConsent()) {
@@ -138,7 +138,7 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
 
   // Preload on user interaction patterns
   useEffect(() => {
-    if (!preloadOnInteraction || state.isLoaded || !state.canLoad) return;
+    if (!preloadOnInteraction || state.isLoaded || !state.canLoad) { return; }
 
     const interactionEvents = ["mouseenter", "focus", "touchstart"];
     let preloadTriggered = false;
@@ -180,7 +180,7 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
 
   // Request AI consent for LGPD compliance
   const requestAIConsent = useCallback(() => {
-    if (typeof window === "undefined") return Promise.resolve(false);
+    if (typeof window === "undefined") { return Promise.resolve(false); }
 
     return new Promise<boolean>((resolve) => {
       const consent = window.confirm(
@@ -208,7 +208,7 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
   const triggerAILoad = useCallback(async () => {
     if (!hasAIConsent()) {
       const consent = await requestAIConsent();
-      if (!consent) return false;
+      if (!consent) { return false; }
     }
 
     await loadAI();

@@ -82,16 +82,16 @@ export enum BrazilianHealthInsurance {
  */
 export class CPFValidator {
   static validate(cpf: string): boolean {
-    if (!cpf) return false;
+    if (!cpf) { return false; }
 
     // Remove non-numeric characters
     const cleanCpf = cpf.replace(/[^\d]/g, "");
 
     // Check length
-    if (cleanCpf.length !== 11) return false;
+    if (cleanCpf.length !== 11) { return false; }
 
     // Check for known invalid CPFs (all same digits)
-    if (/^(\d)\1{10}$/.test(cleanCpf)) return false;
+    if (/^(\d)\1{10}$/.test(cleanCpf)) { return false; }
 
     // Validate check digits
     return this.validateCheckDigits(cleanCpf);
@@ -104,8 +104,8 @@ export class CPFValidator {
       sum += parseInt(cpf.charAt(i)) * (10 - i);
     }
     let remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cpf.charAt(9))) return false;
+    if (remainder === 10 || remainder === 11) { remainder = 0; }
+    if (remainder !== parseInt(cpf.charAt(9))) { return false; }
 
     // Second check digit
     sum = 0;
@@ -113,7 +113,7 @@ export class CPFValidator {
       sum += parseInt(cpf.charAt(i)) * (11 - i);
     }
     remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder === 10 || remainder === 11) { remainder = 0; }
     return remainder === parseInt(cpf.charAt(10));
   }
 
@@ -133,10 +133,10 @@ export class CPFValidator {
  */
 export class CNSValidator {
   static validate(cns: string): boolean {
-    if (!cns) return false;
+    if (!cns) { return false; }
 
     const cleanCns = cns.replace(/[^\d]/g, "");
-    if (cleanCns.length !== 15) return false;
+    if (cleanCns.length !== 15) { return false; }
 
     // CNS starting with 1 or 2 uses different validation
     const firstDigit = parseInt(cleanCns.charAt(0));
@@ -159,8 +159,8 @@ export class CNSValidator {
     const remainder = sum % 11;
     let dv = 11 - remainder;
 
-    if (dv === 11) dv = 0;
-    if (dv === 10) return false;
+    if (dv === 11) { dv = 0; }
+    if (dv === 10) { return false; }
 
     const calculatedCns = cns.slice(0, 11) + dv.toString().padStart(4, "0");
     return calculatedCns === cns;
@@ -189,7 +189,7 @@ export class HealthcareLicenseValidator {
     type: BrazilianHealthcareLicense,
     state: BrazilianState,
   ): boolean {
-    if (!license || !type || !state) return false;
+    if (!license || !type || !state) { return false; }
 
     const cleanLicense = license.replace(/[^\d]/g, "");
 
@@ -442,7 +442,7 @@ export class BrazilianHealthcareSanitizer {
    * Sanitize patient data according to LGPD requirements
    */
   static sanitizePatientData(data: unknown): unknown {
-    if (!data || typeof data !== "object") return data;
+    if (!data || typeof data !== "object") { return data; }
 
     const sanitized = { ...data };
 
@@ -482,7 +482,7 @@ export class BrazilianHealthcareSanitizer {
    * Remove sensitive data for logging (LGPD compliance)
    */
   static removeSensitiveDataForLogging(data: unknown): unknown {
-    if (!data || typeof data !== "object") return data;
+    if (!data || typeof data !== "object") { return data; }
 
     const sanitized = { ...data };
 

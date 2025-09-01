@@ -417,8 +417,8 @@ export class AccessibilityTestSuite {
   }
 
   private determineHealthcareImpact(ruleId: string): AccessibilityViolation["impact"] {
-    if (ruleId.includes("emergency") || ruleId.includes("critical")) return "emergency";
-    if (ruleId.includes("medical") || ruleId.includes("healthcare")) return "medical";
+    if (ruleId.includes("emergency") { || ruleId.includes("critical")) return "emergency"; }
+    if (ruleId.includes("medical") { || ruleId.includes("healthcare")) return "medical"; }
     return "standard";
   }
 
@@ -444,10 +444,10 @@ export class AccessibilityTestSuite {
     });
 
     // Bonus points for healthcare-specific compliance
-    if (results.emergencyCompliant) score += 0.5;
-    if (results.medicalTerminologyValid) score += 0.5;
-    if (results.keyboardNavigationValid) score += 0.5;
-    if (results.ariaImplementationValid) score += 0.5;
+    if (results.emergencyCompliant) { score += 0.5; }
+    if (results.medicalTerminologyValid) { score += 0.5; }
+    if (results.keyboardNavigationValid) { score += 0.5; }
+    if (results.ariaImplementationValid) { score += 0.5; }
 
     return Math.max(0, Math.min(10, score));
   }
@@ -456,8 +456,8 @@ export class AccessibilityTestSuite {
     const criticalViolations = results.violations.filter(v => v.severity === "critical").length;
     const seriousViolations = results.violations.filter(v => v.severity === "serious").length;
 
-    if (criticalViolations === 0 && seriousViolations === 0 && results.score >= 9.5) return "AAA";
-    if (criticalViolations === 0 && results.score >= 8.5) return "AA";
+    if (criticalViolations === 0 && seriousViolations === 0 && results.score >= 9.5) { return "AAA"; }
+    if (criticalViolations === 0 && results.score >= 8.5) { return "AA"; }
     return "A";
   }
 

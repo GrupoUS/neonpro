@@ -560,7 +560,7 @@ export const analyticsRoutes = new Hono()
           if (apt.status === "completed") {
             acc[date].completed += 1;
           }
-          if (apt.status === "cancelled") acc[date].cancelled += 1;
+          if (apt.status === "cancelled") { acc[date].cancelled += 1; }
           return acc;
         }, {} as Record<string, { total: number; completed: number; cancelled: number; }>);
 
@@ -714,17 +714,17 @@ export const analyticsRoutes = new Hono()
 
       // Calculate age demographics
       const ageGroups = patients?.reduce((acc, patient) => {
-        if (!patient.birth_date) return acc;
+        if (!patient.birth_date) { return acc; }
 
         const age = Math.floor(
           (Date.now() - new Date(patient.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000),
         );
         let range = "55+";
 
-        if (age >= 18 && age <= 25) { range = "18-25"; } {}
-        else if (age >= 26 && age <= 35) { range = "26-35"; } {}
-        else if (age >= 36 && age <= 45) { range = "36-45"; } {}
-        else if (age >= 46 && age <= 55) { range = "46-55"; } {}
+        if (age >= 18 && age <= 25) { range = "18-25"; }
+        else if (age >= 26 && age <= 35) { range = "26-35"; }
+        else if (age >= 36 && age <= 45) { range = "36-45"; }
+        else if (age >= 46 && age <= 55) { range = "46-55"; }
 
         acc[range] = (acc[range] || 0) + 1;
         return acc;
@@ -1233,7 +1233,7 @@ export const analyticsRoutes = new Hono()
             }
 
             const { data: revenueData, error } = await query;
-            if (error) throw error;
+            if (error) { throw error; }
 
             totalRecords = revenueData?.length || 0;
             const totalRevenue = revenueData?.reduce((sum, apt) => sum + (apt.total_amount || 0), 0)
@@ -1308,7 +1308,7 @@ export const analyticsRoutes = new Hono()
             }
 
             const { data: appointmentsData, error } = await query;
-            if (error) throw error;
+            if (error) { throw error; }
 
             totalRecords = appointmentsData?.length || 0;
             const statusCounts = appointmentsData?.reduce((acc, apt) => {
@@ -1349,7 +1349,7 @@ export const analyticsRoutes = new Hono()
               .lte("created_at", endDate.toISOString());
 
             const { data: patientsData, error } = await query;
-            if (error) throw error;
+            if (error) { throw error; }
 
             totalRecords = patientsData?.length || 0;
 
@@ -1393,7 +1393,7 @@ export const analyticsRoutes = new Hono()
               .gte("appointments.appointment_time", startDate.toISOString())
               .lte("appointments.appointment_time", endDate.toISOString());
 
-            if (error) throw error;
+            if (error) { throw error; }
 
             const serviceStats = servicesData?.map(service => {
               const completedAppointments = service.appointments?.filter(apt =>
@@ -1443,7 +1443,7 @@ export const analyticsRoutes = new Hono()
               .gte("appointments.appointment_time", startDate.toISOString())
               .lte("appointments.appointment_time", endDate.toISOString());
 
-            if (error) throw error;
+            if (error) { throw error; }
 
             const professionalStats = professionalsData?.map(professional => {
               const completedAppointments = professional.appointments?.filter(apt =>

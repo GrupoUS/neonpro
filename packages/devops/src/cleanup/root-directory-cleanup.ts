@@ -132,7 +132,6 @@ export class RootDirectoryCleanup {
       // Component and framework files
       /^components\.json$/,
       /^middleware\.ts$/,
-      /^instrumentation\.ts$/,
 
       // Database and infrastructure
       /^.*schema\.sql$/,
@@ -152,7 +151,6 @@ export class RootDirectoryCleanup {
       "components.json",
       "biome.jsonc",
       "middleware.ts",
-      "instrumentation.ts",
     ];
   }
 
