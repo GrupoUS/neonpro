@@ -34,8 +34,8 @@ const EMERGENCY_COMPONENTS = new Set([
 
 // Heavy library loaders with intelligent chunking
 export class HealthcareDynamicLoader {
-  private static preloadedComponents = new Map<string, Promise<any>>();
-  private static loadedLibraries = new Map<string, any>();
+  private static preloadedComponents = new Map<string, Promise<unknown>>();
+  private static loadedLibraries = new Map<string, unknown>();
 
   /**
    * Lazy load React PDF components for medical reports
@@ -130,7 +130,7 @@ export class HealthcareDynamicLoader {
   /**
    * Preload PDF libraries - returns the actual import promise
    */
-  static preloadPDFGenerator = (): Promise<any> => {
+  static preloadPDFGenerator = (): Promise<unknown> => {
     return Promise.all([
       import('@react-pdf/renderer'),
       import('jspdf')
@@ -140,21 +140,21 @@ export class HealthcareDynamicLoader {
   /**
    * Preload screenshot library - returns the actual import promise
    */
-  static preloadScreenshotLibrary = (): Promise<any> => {
+  static preloadScreenshotLibrary = (): Promise<unknown> => {
     return import('html2canvas');
   };
 
   /**
    * Preload charts library - returns the actual import promise
    */
-  static preloadChartsLibrary = (): Promise<any> => {
+  static preloadChartsLibrary = (): Promise<unknown> => {
     return import('recharts');
   };
 
   /**
    * Preload animation library - returns the actual import promise
    */
-  static preloadAnimationLibrary = (): Promise<any> => {
+  static preloadAnimationLibrary = (): Promise<unknown> => {
     return import('framer-motion');
   };
 
@@ -162,7 +162,7 @@ export class HealthcareDynamicLoader {
    * Preload critical healthcare components based on route
    */
   static preloadByRoute = async (route: string): Promise<void> => {
-    const preloadPromises: Promise<any>[] = [];
+    const preloadPromises: Promise<unknown>[] = [];
 
     // Emergency routes - preload immediately
     if (route.includes('/emergency') || route.includes('/ambulance')) {
@@ -199,7 +199,7 @@ export class HealthcareDynamicLoader {
   /**
    * Intelligent component loader with healthcare priorities
    */
-  static createHealthcareComponent = <T extends ComponentType<any>>(
+  static createHealthcareComponent = <T extends ComponentType<unknown>>(
     importFn: () => Promise<{ default: T }>,
     config: LoaderConfig
   ): LazyExoticComponent<T> => {

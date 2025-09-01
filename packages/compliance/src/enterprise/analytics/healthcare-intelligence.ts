@@ -34,8 +34,8 @@ const HealthcareIntelligenceQuerySchema = z.object({
   ]),
   patient_cohort: z.object({
     cohort_id: z.string().optional(),
-    inclusion_criteria: z.record(z.any()),
-    exclusion_criteria: z.record(z.any()).optional(),
+    inclusion_criteria: z.record(z.<unknown>()),
+    exclusion_criteria: z.record(z.<unknown>()).optional(),
     minimum_sample_size: z.number().min(10).max(10_000),
   }),
   analysis_parameters: z.object({
@@ -334,7 +334,7 @@ export class HealthcareIntelligenceService {
   private async applyPrivacyProtection(
     patientData: unknown[],
     privacyRequirements: unknown,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     let protectedData = [...patientData];
 
     // Apply anonymization based on level
@@ -758,7 +758,7 @@ export class HealthcareIntelligenceService {
   }
 
   // Helper methods for privacy protection
-  private async applyFullAnonymization(data: unknown[]): Promise<any[]> {
+  private async applyFullAnonymization(data: unknown[]): Promise<unknown[]> {
     return data.map((record) => ({
       ...record,
       id: crypto.randomUUID(), // Replace with new UUID
@@ -770,7 +770,7 @@ export class HealthcareIntelligenceService {
     }));
   }
 
-  private async applyAdvancedAnonymization(data: unknown[]): Promise<any[]> {
+  private async applyAdvancedAnonymization(data: unknown[]): Promise<unknown[]> {
     return data.map((record) => ({
       ...record,
       name: record.name
@@ -782,7 +782,7 @@ export class HealthcareIntelligenceService {
     }));
   }
 
-  private async applyBasicAnonymization(data: unknown[]): Promise<any[]> {
+  private async applyBasicAnonymization(data: unknown[]): Promise<unknown[]> {
     return data.map((record) => ({
       ...record,
       name: record.name ? `${record.name.slice(0, 2)}***` : undefined,
@@ -790,7 +790,7 @@ export class HealthcareIntelligenceService {
     }));
   }
 
-  private async applyDifferentialPrivacy(data: unknown[]): Promise<any[]> {
+  private async applyDifferentialPrivacy(data: unknown[]): Promise<unknown[]> {
     // Add Laplace noise for differential privacy
     return data.map((record) => {
       const noisyRecord = { ...record };
@@ -806,7 +806,7 @@ export class HealthcareIntelligenceService {
     });
   }
 
-  private async applyDataMinimization(data: unknown[]): Promise<any[]> {
+  private async applyDataMinimization(data: unknown[]): Promise<unknown[]> {
     // Remove unnecessary fields for analysis
     const essentialFields = [
       "id",

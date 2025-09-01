@@ -16,7 +16,7 @@ interface EmergencyRequest {
   patient_id: string;
   healthcare_provider_id?: string;
   geographic_region: string;
-  payload: any;
+  payload: unknown;
   context: {
     is_emergency: boolean;
     requires_immediate_response: boolean;
@@ -86,7 +86,7 @@ export function useEmergencyPerformance({
   });
 
   // Refs
-  const performanceOptimizerRef = useRef<any>(null);
+  const performanceOptimizerRef = useRef<unknown>(null);
   const performanceMonitoringRef = useRef<NodeJS.Timeout | null>(null);
   const emergencyRequestsRef = useRef<Map<string, EmergencyRequest>>(new Map());
 
@@ -174,7 +174,7 @@ export function useEmergencyPerformance({
           is_emergency_mode: performanceState.is_emergency_mode,
           current_performance: performanceState.current_performance,
           system_status: determineSystemStatus(systemStatus),
-          edge_nodes_available: systemStatus.edge_nodes.filter((n: any) => n.status === "active").length,
+          edge_nodes_available: systemStatus.edge_nodes.filter((n: unknown) => n.status === "active").length,
           queue_length: systemStatus.queue_status,
           cache_health: {
             emergency_protocols_cached: systemStatus.cache_status.emergency_protocols_loaded > 0,
@@ -225,7 +225,7 @@ export function useEmergencyPerformance({
     isEmergency: boolean = false,
     severity?: number
   ): Promise<{
-    response: any;
+    response: unknown;
     performance_metrics: PerformanceMetrics;
     emergency_protocols_activated: boolean;
   }> => {
@@ -371,8 +371,8 @@ export function useEmergencyPerformance({
 
   // Helper functions
   
-  const determineSystemStatus = (systemStatus: any): "optimal" | "degraded" | "critical" | "offline" => {
-    const activeEdgeNodes = systemStatus.edge_nodes.filter((n: any) => n.status === "active").length;
+  const determineSystemStatus = (systemStatus: unknown): "optimal" | "degraded" | "critical" | "offline" => {
+    const activeEdgeNodes = systemStatus.edge_nodes.filter((n: unknown) => n.status === "active").length;
     const averageResponseTime = systemStatus.performance_summary.average_response_time;
     const slaComplianceRate = systemStatus.performance_summary.sla_compliance_rate;
 

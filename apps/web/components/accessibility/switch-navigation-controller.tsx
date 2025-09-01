@@ -68,7 +68,7 @@ export interface SwitchNavigationContextType {
   stopNavigation: () => void;
   
   // Actions
-  registerElement: (id: string, element: HTMLElement, metadata?: any) => void;
+  registerElement: (id: string, element: HTMLElement, metadata?: unknown) => void;
   unregisterElement: (id: string) => void;
   navigateNext: () => void;
   navigatePrevious: () => void;
@@ -181,7 +181,7 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
   const [settings, setSettings] = useState<SwitchNavigationSettings>(DEFAULT_SETTINGS);
   const [currentElement, setCurrentElement] = useState<string | null>(null);
   const [navigationActive, setNavigationActive] = useState(false);
-  const [elements, setElements] = useState<Map<string, { element: HTMLElement; metadata?: any }>>(new Map());
+  const [elements, setElements] = useState<Map<string, { element: HTMLElement; metadata?: unknown }>>(new Map());
   
   // Refs for intervals and timeouts
   const navigationInterval = useRef<NodeJS.Timeout | null>(null);
@@ -256,7 +256,7 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
   // ELEMENT REGISTRATION & MANAGEMENT
   // ================================================================================
 
-  const registerElement = useCallback((id: string, element: HTMLElement, metadata?: any) => {
+  const registerElement = useCallback((id: string, element: HTMLElement, metadata?: unknown) => {
     setElements(prev => new Map(prev.set(id, { element, metadata })));
     
     // Enhanced ARIA attributes for switch navigation
@@ -540,7 +540,7 @@ export function useSwitchNavigation() {
   return context;
 }
 
-export function useSwitchElement(id: string, metadata?: any) {
+export function useSwitchElement(id: string, metadata?: unknown) {
   const { registerElement, unregisterElement } = useSwitchNavigation();
   const elementRef = useRef<HTMLElement | null>(null);
 

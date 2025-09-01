@@ -42,7 +42,7 @@ class EncryptionService {
     return Buffer.from(key, 'hex');
   }
 
-  static decrypt(encryptedData: string, ivHex: string, tagHex: string): any {
+  static decrypt(encryptedData: string, ivHex: string, tagHex: string): unknown {
     const key = this.getEncryptionKey();
     const iv = Buffer.from(ivHex, 'hex');
     const tag = Buffer.from(tagHex, 'hex');
@@ -60,7 +60,7 @@ class EncryptionService {
 
 // Token validation service
 class TokenValidationService {
-  static verifyAndDecodeToken(token: string): any {
+  static verifyAndDecodeToken(token: string): unknown {
     try {
       const tokenData = JSON.parse(Buffer.from(token, 'base64url').toString());
       const { encrypted, iv, tag, expiresAt } = tokenData;

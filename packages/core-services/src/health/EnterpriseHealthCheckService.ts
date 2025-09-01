@@ -45,7 +45,7 @@ export interface SystemHealthReport {
  * Enterprise Health Check Manager
  */
 export class EnterpriseHealthCheckService {
-  private readonly services: Map<string, any> = new Map();
+  private readonly services: Map<string, unknown> = new Map();
   private readonly healthHistory: Map<string, HealthCheckResult[]> = new Map();
   private readonly startTime: number = Date.now();
   private healthCheckInterval: NodeJS.Timeout | null = null;

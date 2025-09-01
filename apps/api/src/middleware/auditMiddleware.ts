@@ -59,9 +59,9 @@ export const auditMiddleware = (
     const originalJson = res.json;
     const originalEnd = res.end;
 
-    let responseBody: any;
-    let oldValues: any;
-    let newValues: any;
+    let responseBody: unknown;
+    let oldValues: unknown;
+    let newValues: unknown;
 
     // Capture request body for CREATE/UPDATE operations
     if (req.method === "POST" || req.method === "PUT" || req.method === "PATCH") {
@@ -69,17 +69,17 @@ export const auditMiddleware = (
     }
 
     // Override response methods to capture response data
-    res.send = function(body: any) {
+    res.send = function(body: unknown) {
       responseBody = body;
       return originalSend.call(this, body);
     };
 
-    res.json = function(body: any) {
+    res.json = function(body: unknown) {
       responseBody = body;
       return originalJson.call(this, body);
     };
 
-    res.end = function(chunk?: any, encoding?: any) {
+    res.end = function(chunk?: unknown, encoding?: unknown) {
       if (chunk) {
         responseBody = chunk;
       }
@@ -149,14 +149,14 @@ export const authAuditMiddleware = () => {
     const originalSend = res.send;
     const originalJson = res.json;
 
-    let responseBody: any;
+    let responseBody: unknown;
 
-    res.send = function(body: any) {
+    res.send = function(body: unknown) {
       responseBody = body;
       return originalSend.call(this, body);
     };
 
-    res.json = function(body: any) {
+    res.json = function(body: unknown) {
       responseBody = body;
       return originalJson.call(this, body);
     };

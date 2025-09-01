@@ -322,7 +322,7 @@ class WorkflowAutomationService {
     patientId: string,
     riskData: RiskScoreData,
     staffMembers: StaffMember[],
-  ): Promise<any> {
+  ): Promise<unknown> {
     switch (action.type) {
       case "send_alert":
         return this.sendStaffAlert(
@@ -366,7 +366,7 @@ class WorkflowAutomationService {
     patientId: string,
     riskData: RiskScoreData,
     staffMembers: StaffMember[],
-  ): Promise<any> {
+  ): Promise<unknown> {
     const alertType = action.config.alertType || "high_risk";
     const targetStaff = this.findTargetStaff(action.config, staffMembers);
 
@@ -410,7 +410,7 @@ class WorkflowAutomationService {
     appointmentId: string,
     patientId: string,
     riskData: RiskScoreData,
-  ): Promise<any> {
+  ): Promise<unknown> {
     // Integration point with existing intervention service
     const interventionType = action.config.interventionType || "sms";
     const delayMinutes = action.config.delayMinutes || 0;
@@ -433,7 +433,7 @@ class WorkflowAutomationService {
     action: WorkflowAction,
     appointmentId: string,
     staffMembers: StaffMember[],
-  ): Promise<any> {
+  ): Promise<unknown> {
     const targetStaff = this.findTargetStaff(action.config, staffMembers);
     if (targetStaff.length === 0) {
       throw new Error("No available staff members found for assignment");
@@ -455,7 +455,7 @@ class WorkflowAutomationService {
   private async updateAppointmentStatus(
     action: WorkflowAction,
     appointmentId: string,
-  ): Promise<any> {
+  ): Promise<unknown> {
     const newStatus = action.config.status || "flagged_for_intervention";
     console.log(
       `🔄 Updating appointment ${appointmentId} status to ${newStatus}`,
@@ -474,7 +474,7 @@ class WorkflowAutomationService {
     appointmentId: string,
     patientId: string,
     riskData: RiskScoreData,
-  ): Promise<any> {
+  ): Promise<unknown> {
     const event = {
       timestamp: new Date().toISOString(),
       type: "workflow_automation",

@@ -59,7 +59,7 @@ export interface TremorFriendlyElement {
   tremor_compensation: boolean;
   stabilized_position: { x: number; y: number } | null;
   interaction_history: InteractionEvent[];
-  metadata?: any;
+  metadata?: unknown;
 }
 
 export interface InteractionEvent {

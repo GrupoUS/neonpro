@@ -313,11 +313,11 @@ export function useAccessibilityPreferences() {
 
 // LGPD compliance hook for Brazilian healthcare requirements
 export function useLGPDCompliance() {
-  const { config, setConfig } = useHealthcareTheme() as any;
+  const { config, setConfig } = useHealthcareTheme() as unknown;
 
   return {
     isCompliant: config.lgpdCompliant,
-    enableCompliance: () => setConfig((prev: any) => ({ ...prev, lgpdCompliant: true })),
-    disableCompliance: () => setConfig((prev: any) => ({ ...prev, lgpdCompliant: false })),
+    enableCompliance: () => setConfig((prev: unknown) => ({ ...prev, lgpdCompliant: true })),
+    disableCompliance: () => setConfig((prev: unknown) => ({ ...prev, lgpdCompliant: false })),
   };
 }

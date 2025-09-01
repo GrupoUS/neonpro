@@ -32,7 +32,7 @@ const CSVProcessor = dynamic(
 // Interfaces
 interface ExcelData {
   headers: string[];
-  rows: any[][];
+  rows: unknown[][];
   metadata?: {
     fileName?: string;
     sheetName?: string;
@@ -132,7 +132,7 @@ export function useExcelProcessing() {
             
             const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
             const headers = jsonData[0] as string[];
-            const rows = jsonData.slice(1) as any[][];
+            const rows = jsonData.slice(1) as unknown[][];
             
             setProgress(90);
             

@@ -369,7 +369,7 @@ export class ReportScheduler {
   /**
    * Collect compliance data for report generation
    */
-  private async collectComplianceData(frameworks: ComplianceFramework[]): Promise<any> {
+  private async collectComplianceData(frameworks: ComplianceFramework[]): Promise<unknown> {
     const scores = [];
     const violations = [];
     const testResults = [];
@@ -413,7 +413,7 @@ export class ReportScheduler {
   /**
    * Check if compliance data passes schedule filters
    */
-  private passesFilters(data: any, filters?: ReportSchedule['filters']): boolean {
+  private passesFilters(data: unknown, filters?: ReportSchedule['filters']): boolean {
     if (!filters) {return true;}
 
     if (filters.minimumScore && data.summary.overallScore < filters.minimumScore) {
@@ -434,8 +434,8 @@ export class ReportScheduler {
   /**
    * Distribute report according to schedule configuration
    */
-  private async distributeReport(report: GeneratedReport, schedule: ReportSchedule): Promise<any> {
-    const results: any = {};
+  private async distributeReport(report: GeneratedReport, schedule: ReportSchedule): Promise<unknown> {
+    const results: unknown = {};
 
     // Email distribution
     if (schedule.distribution.email?.enabled) {
@@ -519,24 +519,24 @@ export class ReportScheduler {
   }
 
   // Helper methods for distribution (mock implementations)
-  private async sendEmailReport(report: GeneratedReport, config: any): Promise<void> {
+  private async sendEmailReport(report: GeneratedReport, config: unknown): Promise<void> {
     console.log(`📧 Sending email report to ${config.recipients.join(', ')}`);
     // Would implement actual email sending
   }
 
-  private async sendWebhookNotification(report: GeneratedReport, config: any): Promise<number> {
+  private async sendWebhookNotification(report: GeneratedReport, config: unknown): Promise<number> {
     console.log(`🔗 Sending webhook notification to ${config.url}`);
     // Would implement actual webhook call
     return 200;
   }
 
-  private async uploadToStorage(report: GeneratedReport, config: any): Promise<string> {
+  private async uploadToStorage(report: GeneratedReport, config: unknown): Promise<string> {
     console.log(`☁️ Uploading report to ${config.location}`);
     // Would implement actual storage upload
     return `${config.location}/${report.id}`;
   }
 
-  private async notifyDashboard(report: GeneratedReport, config: any): Promise<void> {
+  private async notifyDashboard(report: GeneratedReport, config: unknown): Promise<void> {
     console.log(`📊 Notifying dashboard about new report`);
     // Would implement dashboard notification
   }
@@ -556,12 +556,12 @@ export class ReportScheduler {
   }
 
   // Analysis helper methods
-  private identifyImprovementAreas(scores: any[], violations: any[]): string[] {
+  private identifyImprovementAreas(scores: unknown[], violations: unknown[]): string[] {
     // Would analyze data to identify improvement opportunities
     return ['WCAG Color Contrast', 'LGPD Consent Management'];
   }
 
-  private identifyAchievements(scores: any[], violations: any[]): string[] {
+  private identifyAchievements(scores: unknown[], violations: unknown[]): string[] {
     // Would analyze data to identify achievements
     return ['Zero Critical ANVISA Violations', 'CFM Ethics Score Above 90%'];
   }

@@ -41,7 +41,7 @@ describe("ActiveSessionsTable Security Tests", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Mock successful API response
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as unknown).mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ sessions: mockSessions }),
     });

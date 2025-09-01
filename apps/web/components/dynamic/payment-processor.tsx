@@ -69,7 +69,7 @@ interface StripePaymentFormProps {
 interface SubscriptionManagerProps {
   customerId?: string;
   priceId: string;
-  onSubscriptionCreated?: (subscription: any) => void;
+  onSubscriptionCreated?: (subscription: unknown) => void;
   onError?: (error: Error) => void;
 }
 
@@ -176,7 +176,7 @@ export function usePaymentProcessing() {
   }, []);
 
   // Process payment
-  const processPayment = useCallback(async (stripe: any, elements: any, paymentIntent: PaymentIntent) => {
+  const processPayment = useCallback(async (stripe: unknown, elements: unknown, paymentIntent: PaymentIntent) => {
     setIsProcessing(true);
     setError(null);
 

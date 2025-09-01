@@ -15,7 +15,7 @@ interface HealthCheckResult {
   status: "healthy" | "degraded" | "unhealthy";
   timestamp: string;
   response_time_ms: number;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   version: string;
 }
 
@@ -142,7 +142,7 @@ class HealthCheckService {
     }
   }
 
-  static getSystemInfo(): Record<string, any> {
+  static getSystemInfo(): Record<string, unknown> {
     return {
       uptime_ms: Date.now() - HealthCheckService.startTime,
       memory_usage: process.memoryUsage(),
@@ -183,7 +183,7 @@ class HealthCheckService {
 health.get("/", async (c) => {
   try {
     const healthResult = await handleHealthCheck();
-    c.status(healthResult.status as any);
+    c.status(healthResult.status as unknown);
     return c.json(healthResult.body);
   } catch (error) {
     console.error("Health check failed:", error);
@@ -201,7 +201,7 @@ health.get("/", async (c) => {
 health.get("/quick", async (c) => {
   try {
     const quickResult = await handleQuickHealthCheck();
-    c.status(quickResult.status as any);
+    c.status(quickResult.status as unknown);
     return c.json(quickResult.body);
   } catch (error) {
     console.error("Quick health check failed:", error);
@@ -245,7 +245,7 @@ health.get("/database", async (c) => {
 health.get("/security", async (c) => {
   try {
     const rlsResult = await handleRLSValidation();
-    c.status(rlsResult.status as any);
+    c.status(rlsResult.status as unknown);
     return c.json(rlsResult.body);
   } catch (error) {
     console.error("Security health check failed:", error);
@@ -336,7 +336,7 @@ health.get("/health/ai-services", async (c) => {
 
     const serviceResults = aiServiceChecks.map((result, index) => ({
       service: serviceNames[index],
-      status: result.status === "fulfilled" && (result.value as any)?.healthy
+      status: result.status === "fulfilled" && (result.value as unknown)?.healthy
         ? "healthy"
         : "unhealthy",
       details: result.status === "fulfilled"

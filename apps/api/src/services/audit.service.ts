@@ -252,7 +252,7 @@ export class AuditService {
         throw new Error(logsResponse.message || "Erro ao consultar logs para exportação");
       }
 
-      let exportData: any;
+      let exportData: unknown;
       let filename: string;
       let contentType: string;
 

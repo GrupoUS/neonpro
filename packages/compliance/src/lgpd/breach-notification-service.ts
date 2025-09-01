@@ -777,7 +777,7 @@ export class BreachNotificationService {
 
   private async getAffectedPatients(
     _detection: BreachDetection,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     return []; // Would query database for affected patients
   }
 

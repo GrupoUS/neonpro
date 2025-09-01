@@ -34,25 +34,25 @@ interface UseWorkflowAutomationReturn {
   toggleRule: (ruleId: string, active: boolean) => Promise<void>;
 
   // Execution operations
-  triggerRule: (ruleId: string, inputData?: any) => Promise<WorkflowExecution>;
+  triggerRule: (ruleId: string, inputData?: unknown) => Promise<WorkflowExecution>;
   cancelExecution: (executionId: string) => Promise<void>;
   retryExecution: (executionId: string) => Promise<WorkflowExecution>;
 
   // Template operations
   createFromTemplate: (
     templateId: string,
-    config: any,
+    config: unknown,
   ) => Promise<WorkflowRule>;
   getTemplates: (category?: string) => Promise<WorkflowTemplate[]>;
 
   // Monitoring and analytics
   getExecutionStats: (
     period: "hour" | "day" | "week" | "month",
-  ) => Promise<any>;
+  ) => Promise<unknown>;
   getQueueMetrics: () => Promise<WorkflowQueue[]>;
 
   // Testing and validation
-  testRule: (rule: Partial<WorkflowRule>, testData: any) => Promise<any>;
+  testRule: (rule: Partial<WorkflowRule>, testData: unknown) => Promise<unknown>;
   validateRule: (
     rule: Partial<WorkflowRule>,
   ) => Promise<{ isValid: boolean; errors: string[]; }>;
@@ -277,7 +277,7 @@ export function useWorkflowAutomation({
   );
 
   const triggerRule = useCallback(
-    async (ruleId: string, inputData: any = {}): Promise<WorkflowExecution> => {
+    async (ruleId: string, inputData: unknown = {}): Promise<WorkflowExecution> => {
       try {
         setError(null);
 
@@ -385,7 +385,7 @@ export function useWorkflowAutomation({
   );
 
   const createFromTemplate = useCallback(
-    async (templateId: string, config: any): Promise<WorkflowRule> => {
+    async (templateId: string, config: unknown): Promise<WorkflowRule> => {
       try {
         setError(null);
 
@@ -501,7 +501,7 @@ export function useWorkflowAutomation({
   }, [fetchQueues, queues]);
 
   const testRule = useCallback(
-    async (rule: Partial<WorkflowRule>, testData: any) => {
+    async (rule: Partial<WorkflowRule>, testData: unknown) => {
       try {
         setError(null);
 

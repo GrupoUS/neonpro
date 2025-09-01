@@ -157,8 +157,8 @@ export class FeedbackCollector {
     trigger: 'error' | 'task_completion' | 'time_spent' | 'session_end';
     page?: string;
     feature?: string;
-    sessionData?: any;
-    errorData?: any;
+    sessionData?: unknown;
+    errorData?: unknown;
   }): Promise<void> {
     console.log(`🎯 Triggering contextual feedback collection: ${context.trigger}`);
 
@@ -279,7 +279,7 @@ export class FeedbackCollector {
   /**
    * Check if feedback should be triggered
    */
-  private shouldTriggerFeedback(trigger: string, context: any): boolean {
+  private shouldTriggerFeedback(trigger: string, context: unknown): boolean {
     switch (trigger) {
       case 'error':
         return this.config.triggerConditions.errorOccurrence;
@@ -346,22 +346,22 @@ export class FeedbackCollector {
   }
 
   // UI trigger methods (would integrate with actual UI components)
-  private async showErrorFeedbackModal(context: any): Promise<void> {
+  private async showErrorFeedbackModal(context: unknown): Promise<void> {
     console.log('🔧 Showing error feedback modal');
     // Would show modal UI for error feedback
   }
 
-  private async showTaskCompletionRating(context: any): Promise<void> {
+  private async showTaskCompletionRating(context: unknown): Promise<void> {
     console.log('⭐ Showing task completion rating');
     // Would show rating UI after task completion
   }
 
-  private async showUsabilityFeedbackWidget(context: any): Promise<void> {
+  private async showUsabilityFeedbackWidget(context: unknown): Promise<void> {
     console.log('📋 Showing usability feedback widget');
     // Would show feedback widget
   }
 
-  private async showSessionEndSurvey(context: any): Promise<void> {
+  private async showSessionEndSurvey(context: unknown): Promise<void> {
     console.log('📊 Showing session end survey');
     // Would show end-of-session survey
   }
@@ -406,7 +406,7 @@ export class FeedbackCollector {
 
   private setupTaskCompletionTracking(): void {
     // Would integrate with task completion events from compliance workflows
-    document.addEventListener('compliance-task-completed', (event: any) => {
+    document.addEventListener('compliance-task-completed', (event: unknown) => {
       this.triggerContextualFeedback({
         trigger: 'task_completion',
         feature: event.detail?.taskType,

@@ -441,7 +441,7 @@ export class BrazilianHealthcareSanitizer {
   /**
    * Sanitize patient data according to LGPD requirements
    */
-  static sanitizePatientData(data: any): any {
+  static sanitizePatientData(data: unknown): unknown {
     if (!data || typeof data !== "object") {return data;}
 
     const sanitized = { ...data };
@@ -481,7 +481,7 @@ export class BrazilianHealthcareSanitizer {
   /**
    * Remove sensitive data for logging (LGPD compliance)
    */
-  static removeSensitiveDataForLogging(data: any): any {
+  static removeSensitiveDataForLogging(data: unknown): unknown {
     if (!data || typeof data !== "object") {return data;}
 
     const sanitized = { ...data };

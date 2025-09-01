@@ -173,7 +173,7 @@ export function useNoShowPrediction({
 /**
  * Enhanced hook that enriches appointments with risk predictions
  */
-export function useEnhancedAppointments(appointments: any[]) {
+export function useEnhancedAppointments(appointments: unknown[]) {
   const appointmentIds = appointments.map((apt) => apt.id);
   const { predictions, isLoading, error, getPredictionForAppointment } = useNoShowPrediction({
     appointmentIds,

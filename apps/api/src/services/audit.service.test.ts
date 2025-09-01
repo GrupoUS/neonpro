@@ -13,8 +13,8 @@ jest.unstable_mockModule("@supabase/supabase-js", () => ({
 
 // Mock the audit types module to provide runtime values and pass-through schemas
 // Adjust the relative path if your repo structure differs.
-const mockAuditEventSchema = { parse: (e: any) => e };
-const mockAuditFilterSchema = { parse: (f: any) => f };
+const mockAuditEventSchema = { parse: (e: unknown) => e };
+const mockAuditFilterSchema = { parse: (f: unknown) => f };
 enum MockAuditSeverity {
   LOW = "low",
   MEDIUM = "medium",
@@ -31,45 +31,45 @@ jest.unstable_mockModule("../types/audit", () => ({
 const { AuditService } = await import("./audit.service");
 const { AuditSeverity } = await import("../types/audit");
 
-type ThenableResult<T> = T & { then: (resolve: (v: any) => any, reject?: (e: any) => any) => any; };
+type ThenableResult<T> = T & { then: (resolve: (v: unknown) => any, reject?: (e: unknown) => any) => any; };
 
 function thenable<T extends object>(payload: T): ThenableResult<T> {
-  return Promise.resolve(payload) as any;
+  return Promise.resolve(payload) as unknown;
 }
 
-function makeSelectQueryBuilder(result: any) {
-  const qb: any = {};
+function makeSelectQueryBuilder(result: unknown) {
+  const qb: unknown = {};
   qb.gte = jest.fn(() => qb);
   qb.lte = jest.fn(() => qb);
   qb.eq = jest.fn(() => qb);
   qb.order = jest.fn(() => qb);
   qb.range = jest.fn(() => thenable(result));
-  const select = jest.fn((_sel?: any, _opts?: any) => qb);
+  const select = jest.fn((_sel?: unknown, _opts?: unknown) => qb);
   return { qb, select };
 }
 
-function makeInsertChain(result: { data: any; error: any; }, capture?: (payload: any) => void) {
+function makeInsertChain(result: { data: unknown; error: unknown; }, capture?: (payload: unknown) => void) {
   const single = jest.fn(() => Promise.resolve(result));
   const select = jest.fn(() => ({ single }));
-  const insert = jest.fn((payload: any) => {
+  const insert = jest.fn((payload: unknown) => {
     capture && capture(payload);
     return { select };
   });
   return { insert, select, single };
 }
 
-function makeDeleteChain(result: { count?: number | null; error?: any; }) {
+function makeDeleteChain(result: { count?: number | null; error?: unknown; }) {
   const lt = jest.fn((_col: string, _val: string) => Promise.resolve(result));
   const del = jest.fn(() => ({ lt }));
   return { del, lt };
 }
 
 function newSupabaseMock(options: {
-  insertResult?: { data: any; error: any; };
-  onInsertPayload?: (p: any) => void;
-  selectResult?: { data: any[]; error: any; count?: number | null; };
-  statsResult?: { data: any[]; error: any; };
-  deleteResult?: { count?: number | null; error?: any; };
+  insertResult?: { data: unknown; error: unknown; };
+  onInsertPayload?: (p: unknown) => void;
+  selectResult?: { data: unknown[]; error: unknown; count?: number | null; };
+  statsResult?: { data: unknown[]; error: unknown; };
+  deleteResult?: { count?: number | null; error?: unknown; };
 }) {
   const { insert, select, single } = makeInsertChain(
     options.insertResult ?? { data: null, error: null },
@@ -81,14 +81,14 @@ function newSupabaseMock(options: {
   const { del, lt } = makeDeleteChain(options.deleteResult ?? { count: 0, error: null });
 
   const selectStats = jest.fn(() => {
-    const qb2: any = {};
+    const qb2: unknown = {};
     qb2.gte = jest.fn(() => thenable(options.statsResult ?? { data: [], error: null }));
     return qb2;
   });
 
   const from = jest.fn((_table: string) => ({
     insert,
-    select: (sel?: any, opts?: any) => {
+    select: (sel?: unknown, opts?: unknown) => {
       // Route selects: when called in getStats it has only '*' argument and no count option
       if (opts && opts.count) {return selectFn(sel, opts);}
       return selectStats(sel);
@@ -100,7 +100,7 @@ function newSupabaseMock(options: {
   return { client, insert, select, single, qb, selectFn, del, lt, selectStats };
 }
 
-function sampleEvent(overrides: Partial<any> = {}) {
+function sampleEvent(overrides: Partial<unknown> = {}) {
   return {
     user_id: "u1",
     session_id: "s1",
@@ -123,7 +123,7 @@ function sampleEvent(overrides: Partial<any> = {}) {
 }
 
 describe("AuditService", () => {
-  let service: any;
+  let service: unknown;
   let supabaseMocks: ReturnType<typeof newSupabaseMock>;
   const originalWarn = console.warn;
   const originalError = console.error;
@@ -210,7 +210,7 @@ describe("AuditService", () => {
   });
 
   test("logEvent: truncates oversize details and annotates metadata before insert", async () => {
-    let captured: any;
+    let captured: unknown;
     supabaseMocks = newSupabaseMock({
       insertResult: {
         data: {
@@ -280,7 +280,7 @@ describe("AuditService", () => {
       limit: 50,
     };
 
-    const res = await service.getLogs(filters as any);
+    const res = await service.getLogs(filters as unknown);
     expect(res.success).toBe(true);
     expect(res.data).toHaveLength(2);
     expect(res.total).toBe(2);
@@ -311,7 +311,7 @@ describe("AuditService", () => {
       count: null,
     };
     // Return an error only after await
-    const qb: any = {};
+    const qb: unknown = {};
     qb.gte = jest.fn(() => qb);
     qb.order = jest.fn(() => qb);
     qb.range = jest.fn(() => Promise.resolve(selectResult));
@@ -320,7 +320,7 @@ describe("AuditService", () => {
 
     service = new AuditService();
     const res = await service.getLogs(
-      { sort_by: "timestamp", sort_order: "asc", offset: 0, limit: 10 } as any,
+      { sort_by: "timestamp", sort_order: "asc", offset: 0, limit: 10 } as unknown,
     );
     expect(res.success).toBe(false);
     expect(res.message).toMatch(/Erro ao consultar logs/);
@@ -392,7 +392,7 @@ describe("AuditService", () => {
     // Spy on getLogs to avoid DB
     const svc = new AuditService();
     const spy = jest
-      .spyOn(svc as any, "getLogs")
+      .spyOn(svc as unknown, "getLogs")
       .mockResolvedValue({
         success: true,
         data: [{ id: "1", timestamp: new Date("2025-08-01T12:00:00.000Z") }],
@@ -402,7 +402,7 @@ describe("AuditService", () => {
         timestamp: new Date(),
       });
 
-    const res = await (svc as any).exportLogs({
+    const res = await (svc as unknown).exportLogs({
       format: "json",
       include_details: false,
       filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10_000 },
@@ -444,7 +444,7 @@ describe("AuditService", () => {
     ];
 
     const svc = new AuditService();
-    jest.spyOn(svc as any, "getLogs").mockResolvedValue({
+    jest.spyOn(svc as unknown, "getLogs").mockResolvedValue({
       success: true,
       data: logs,
       total: 1,
@@ -453,12 +453,12 @@ describe("AuditService", () => {
       timestamp: new Date(),
     });
 
-    const resNo = await (svc as any).exportLogs({
+    const resNo = await (svc as unknown).exportLogs({
       format: "csv",
       include_details: false,
       filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10_000 },
     });
-    const resYes = await (svc as any).exportLogs({
+    const resYes = await (svc as unknown).exportLogs({
       format: "csv",
       include_details: true,
       filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10_000 },
@@ -472,7 +472,7 @@ describe("AuditService", () => {
 
   test("exportLogs: returns error for unsupported formats and unimplemented PDF", async () => {
     const svc = new AuditService();
-    jest.spyOn(svc as any, "getLogs").mockResolvedValue({
+    jest.spyOn(svc as unknown, "getLogs").mockResolvedValue({
       success: true,
       data: [],
       total: 0,
@@ -481,7 +481,7 @@ describe("AuditService", () => {
       timestamp: new Date(),
     });
 
-    const pdf = await (svc as any).exportLogs({
+    const pdf = await (svc as unknown).exportLogs({
       format: "pdf",
       include_details: false,
       filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10_000 },
@@ -491,8 +491,8 @@ describe("AuditService", () => {
       /PDF.*não implementada|PDF.*não implementado|PDF/i,
     );
 
-    const other = await (svc as any).exportLogs({
-      format: "xml" as any,
+    const other = await (svc as unknown).exportLogs({
+      format: "xml" as unknown,
       include_details: false,
       filters: { sort_by: "timestamp", sort_order: "desc", offset: 0, limit: 10_000 },
     });
@@ -507,7 +507,7 @@ describe("AuditService", () => {
     });
     mockCreateClient.mockReturnValue(supabaseMocks.client);
     const svc1 = new AuditService();
-    const n = await (svc1 as any).cleanupOldLogs();
+    const n = await (svc1 as unknown).cleanupOldLogs();
     expect(n).toBe(42);
     expect(supabaseMocks.del).toHaveBeenCalled();
     expect(supabaseMocks.lt).toHaveBeenCalledWith(
@@ -521,7 +521,7 @@ describe("AuditService", () => {
     });
     mockCreateClient.mockReturnValue(supabaseMocks.client);
     const svc2 = new AuditService();
-    const m = await (svc2 as any).cleanupOldLogs();
+    const m = await (svc2 as unknown).cleanupOldLogs();
     expect(m).toBe(0);
     expect(console.error).toHaveBeenCalledWith(
       "Erro ao limpar logs antigos:",

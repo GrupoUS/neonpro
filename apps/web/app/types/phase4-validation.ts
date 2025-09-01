@@ -78,7 +78,7 @@ export interface ValidationRequest {
   id: string;
   entity_type: ValidationType;
   entity_id: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   rules: string[];
   context: ValidationContext;
   initiated_by: string;
@@ -147,7 +147,7 @@ export interface ValidationSession {
 }
 
 export interface ValidationMetadata {
-  clinic_settings: Record<string, any>;
+  clinic_settings: Record<string, unknown>;
   regulatory_context: string[];
   data_sensitivity: "public" | "internal" | "confidential" | "restricted";
   audit_trail: AuditEntry[];
@@ -157,7 +157,7 @@ export interface AuditEntry {
   timestamp: Date;
   action: string;
   user: string;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
 }
 
 // Validation Statistics
@@ -236,7 +236,7 @@ export interface CustomRule {
 }
 
 export interface TestCase {
-  input: Record<string, any>;
+  input: Record<string, unknown>;
   expected_result: boolean;
   description: string;
 }

@@ -9,12 +9,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-import { 
-  Mic, 
-  Send, 
-  Search, 
-  Activity, 
-  ShieldCheck, 
+import {
+  Mic,
+  Send,
+  Search,
+  Activity,
+  ShieldCheck,
   Download,
   User,
   MessageSquare,
@@ -43,7 +43,7 @@ export interface QueryResult {
   timestamp: Date;
   userId: string;
   type: 'table' | 'chart' | 'text' | 'export';
-  data?: any;
+  data?: Record<string, unknown>;
   confidence: number;
 }
 
@@ -51,7 +51,7 @@ export interface InternalAssistantPanelProps {
   userRole: UserRole;
   activePatientId?: string;
   onQuerySubmit?: (query: string) => Promise<QueryResult>;
-  onExport?: (data: any, format: 'pdf' | 'excel' | 'csv') => void;
+  onExport?: (data: Record<string, unknown>, format: 'pdf' | 'excel' | 'csv') => void;
   className?: string;
 }
 
@@ -68,7 +68,7 @@ export function InternalAssistantPanel({
   const [queryHistory, setQueryHistory] = useState&lt;QueryResult[]&gt;([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
-  
+
   const inputRef = useRef&lt;HTMLInputElement&gt;(null);
   const recognitionRef = useRef&lt;SpeechRecognition | null&gt;(null);
 
@@ -88,7 +88,7 @@ export function InternalAssistantPanel({
         category: 'patient',
         confidence: 0.9
       },
-      // Analytics Suggestions  
+      // Analytics Suggestions
       {
         id: 'daily-metrics',
         text: 'Relatório de métricas diárias da clínica',
@@ -124,7 +124,7 @@ export function InternalAssistantPanel({
     ];
 
     if (!input.trim()) return suggestions.slice(0, 3);
-    
+
     return suggestions
       .filter(s => s.text.toLowerCase().includes(input.toLowerCase()))
       .sort((a, b) => b.confidence - a.confidence)
@@ -137,7 +137,7 @@ export function InternalAssistantPanel({
 
     setIsProcessing(true);
     setShowSuggestions(false);
-    
+
     try {
       const result = await onQuerySubmit?.(query) || {
         id: Date.now().toString(),
@@ -151,10 +151,10 @@ export function InternalAssistantPanel({
 
       setQueryHistory(prev => [result, ...prev.slice(0, 9)]);
       setQuery('');
-      
+
       // Log for LGPD compliance
       console.log(`[AUDIT] Query by ${userRole.name}: "${query}" at ${new Date().toISOString()}`);
-      
+
     } catch (error) {
       console.error('Query processing error:', error);
     } finally {
@@ -167,24 +167,24 @@ export function InternalAssistantPanel({
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
-      
+
       if (recognitionRef.current) {
         recognitionRef.current.lang = 'pt-BR';
         recognitionRef.current.continuous = false;
         recognitionRef.current.interimResults = false;
-        
+
         recognitionRef.current.onresult = (event) => {
           const transcript = event.results[0][0].transcript;
           setQuery(transcript);
           setVoiceEnabled(false);
         };
-        
+
         recognitionRef.current.onerror = () => {
           setVoiceEnabled(false);
         };
       }
     }
-    
+
     return () => {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
@@ -282,9 +282,9 @@ export function InternalAssistantPanel({
                 &lt;Mic className={cn('h-4 w-4', voiceEnabled && 'text-red-500')} /&gt;
               &lt;/Button&gt;
             &lt;/div&gt;
-            
-            &lt;Button 
-              onClick={handleQuerySubmit} 
+
+            &lt;Button
+              onClick={handleQuerySubmit}
               disabled={!query.trim() || isProcessing}
               className="min-w-[100px]"
             &gt;
@@ -316,8 +316,8 @@ export function InternalAssistantPanel({
                     &lt;div className="flex items-center justify-between w-full"&gt;
                       &lt;span className="text-sm"&gt;{suggestion.text}&lt;/span&gt;
                       &lt;div className="flex items-center gap-2"&gt;
-                        &lt;Badge 
-                          variant="secondary" 
+                        &lt;Badge
+                          variant="secondary"
                           className={cn('text-xs', getCategoryColor(suggestion.category))}
                         &gt;
                           {suggestion.category}
@@ -344,8 +344,8 @@ export function InternalAssistantPanel({
               Histórico de Consultas
             &lt;/h3&gt;
             {queryHistory.length > 0 && (
-              &lt;Button 
-                variant="outline" 
+              &lt;Button
+                variant="outline"
                 size="sm"
                 onClick={() =&gt; onExport?.(queryHistory, 'csv')}
               &gt;
@@ -378,15 +378,15 @@ export function InternalAssistantPanel({
                             {result.timestamp.toLocaleString('pt-BR')}
                           &lt;/p&gt;
                         &lt;/div&gt;
-                        &lt;Badge 
-                          variant="outline" 
+                        &lt;Badge
+                          variant="outline"
                           className="text-xs flex items-center gap-1"
                         &gt;
                           &lt;TrendingUp className="h-3 w-3" /&gt;
                           {Math.round(result.confidence * 100)}%
                         &lt;/Badge&gt;
                       &lt;/div&gt;
-                      
+
                       &lt;div className="bg-gray-50 rounded p-2 text-sm"&gt;
                         {result.response}
                       &lt;/div&gt;
@@ -396,9 +396,9 @@ export function InternalAssistantPanel({
                           &lt;Badge variant="secondary" className="text-xs"&gt;
                             {result.type.toUpperCase()}
                           &lt;/Badge&gt;
-                          &lt;Button 
-                            variant="ghost" 
-                            size="sm" 
+                          &lt;Button
+                            variant="ghost"
+                            size="sm"
                             className="h-6 text-xs"
                             onClick={() =&gt; onExport?.(result.data, 'pdf')}
                           &gt;
@@ -419,7 +419,7 @@ export function InternalAssistantPanel({
           &lt;div className="flex items-center gap-2 text-xs text-yellow-800"&gt;
             &lt;AlertCircle className="h-4 w-4" /&gt;
             &lt;span&gt;
-              &lt;strong&gt;LGPD Compliance:&lt;/strong&gt; Todas as consultas são registradas para auditoria. 
+              &lt;strong&gt;LGPD Compliance:&lt;/strong&gt; Todas as consultas são registradas para auditoria.
               Dados sensíveis são protegidos conforme legislação vigente.
             &lt;/span&gt;
           &lt;/div&gt;

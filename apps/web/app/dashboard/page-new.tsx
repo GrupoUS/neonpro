@@ -107,37 +107,37 @@ function useDashboardData() {
       const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
       const startOfWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-      const todayAppointments = appointments.filter((apt: any) => {
+      const todayAppointments = appointments.filter((apt: unknown) => {
         const aptDate = new Date(apt.start_time);
         return aptDate >= startOfToday && aptDate < endOfToday;
       });
 
-      const weekAppointments = appointments.filter((apt: any) => {
+      const weekAppointments = appointments.filter((apt: unknown) => {
         const aptDate = new Date(apt.start_time);
         return aptDate >= startOfWeek;
       });
 
-      const completedToday = todayAppointments.filter((apt: any) =>
+      const completedToday = todayAppointments.filter((apt: unknown) =>
         apt.status === "completed"
       ).length;
-      const noShowAppointments = appointments.filter((apt: any) => apt.status === "no_show").length;
+      const noShowAppointments = appointments.filter((apt: unknown) => apt.status === "no_show").length;
       const noShowRate = appointments.length > 0
         ? (noShowAppointments / appointments.length) * 100
         : 0;
 
-      const newPatientsThisMonth = patients.filter((patient: any) => {
+      const newPatientsThisMonth = patients.filter((patient: unknown) => {
         const createdDate = new Date(patient.created_at);
         return createdDate >= startOfMonth;
       }).length;
 
-      const lgpdCompliantPatients = patients.filter((patient: any) =>
+      const lgpdCompliantPatients = patients.filter((patient: unknown) =>
         patient.lgpd_consent_given === true
       ).length;
 
       const dashboardStats: DashboardStats = {
         patients: {
           total: patients.length,
-          active: patients.filter((p: any) => p.is_active).length,
+          active: patients.filter((p: unknown) => p.is_active).length,
           new_this_month: newPatientsThisMonth,
           lgpd_compliant: lgpdCompliantPatients,
         },
@@ -192,7 +192,7 @@ function StatsCard({
   title: string;
   value: string | number;
   description?: string;
-  icon: any;
+  icon: unknown;
   trend?: { value: number; label: string; };
   color?: "default" | "green" | "red" | "blue" | "yellow";
 }) {

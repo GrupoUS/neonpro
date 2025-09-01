@@ -31,7 +31,7 @@ const MotionSpring = dynamic(
 
 // Healthcare-specific animated components
 const PatientCardAnimated = dynamic(
-  () => import("../animations/patient-card-animated").then((mod) => mod.PatientCardAnimated),
+  () => import("../PatientCard").then((mod) => mod.PatientCardAnimated),
   {
     loading: () => <LoadingWithMessage variant="animation" message="Carregando animação do cartão..." />,
     ssr: false,

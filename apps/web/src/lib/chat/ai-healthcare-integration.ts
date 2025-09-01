@@ -83,9 +83,9 @@ export interface AIHealthcareResponse {
 
 export class AIHealthcareIntegration {
   private config: AIHealthcareConfig;
-  private medicalKnowledgeBase: Map<string, any> = new Map();
+  private medicalKnowledgeBase: Map<string, unknown> = new Map();
   private emergencyKeywords: Set<string> = new Set();
-  private medicalTermsDatabase: Map<string, any> = new Map();
+  private medicalTermsDatabase: Map<string, unknown> = new Map();
 
   constructor(config: AIHealthcareConfig) {
     this.config = config;
@@ -378,7 +378,7 @@ export class AIHealthcareIntegration {
     healthcareContext?: HealthcareContext,
     medicalAnalysis?: MedicalTermAnalysis,
     emergencyAnalysis?: EmergencyAnalysis,
-  ): Promise<any> {
+  ): Promise<unknown> {
     // Handle emergency responses first
     if (emergencyAnalysis?.is_emergency) {
       return {
@@ -490,7 +490,7 @@ export class AIHealthcareIntegration {
   /**
    * Call AI service for response generation
    */
-  private async callAIService(prompt: string): Promise<any> {
+  private async callAIService(prompt: string): Promise<unknown> {
     try {
       // This is a placeholder - implement actual AI service calls
       // Options: OpenAI GPT, Anthropic Claude, local healthcare models
@@ -517,7 +517,7 @@ export class AIHealthcareIntegration {
   /**
    * Placeholder for OpenAI integration
    */
-  private async callOpenAI(prompt: string): Promise<any> {
+  private async callOpenAI(prompt: string): Promise<unknown> {
     // Implement OpenAI API call
     return {
       text: "Resposta gerada pelo OpenAI (placeholder)",
@@ -529,7 +529,7 @@ export class AIHealthcareIntegration {
   /**
    * Placeholder for Anthropic integration
    */
-  private async callAnthropic(prompt: string): Promise<any> {
+  private async callAnthropic(prompt: string): Promise<unknown> {
     // Implement Anthropic Claude API call
     return {
       text: "Resposta gerada pelo Anthropic Claude (placeholder)",
@@ -541,7 +541,7 @@ export class AIHealthcareIntegration {
   /**
    * Placeholder for local model integration
    */
-  private async callLocalModel(prompt: string): Promise<any> {
+  private async callLocalModel(prompt: string): Promise<unknown> {
     // Implement local healthcare model call
     return {
       text:
@@ -555,7 +555,7 @@ export class AIHealthcareIntegration {
    * Validate compliance with Brazilian healthcare regulations
    */
   private async validateCompliance(
-    aiResponse: any,
+    aiResponse: unknown,
     medicalAnalysis: MedicalTermAnalysis,
   ): Promise<{ cfm_compliant: boolean; anvisa_compliant: boolean; lgpd_compliant: boolean; }> {
     const text = aiResponse.text.toLowerCase();

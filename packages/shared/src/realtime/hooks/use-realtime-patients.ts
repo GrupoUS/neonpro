@@ -125,7 +125,7 @@ export function useRealtimePatients(
   const handlePatientChange = useCallback(
     (payload: unknown) => {
       try {
-        const typedPayload = payload as any;
+        const typedPayload = payload as unknown;
         const realtimePayload: RealtimePatientPayload = {
           eventType: typedPayload.eventType,
           new: typedPayload.new as PatientRow,

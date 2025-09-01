@@ -185,7 +185,7 @@ export class LazyTensorFlowOperations {
   /**
    * Load model with lazy loading
    */
-  static async loadModel(modelUrl: string, type: "layers" | "graph" = "graph"): Promise<any> {
+  static async loadModel(modelUrl: string, type: "layers" | "graph" = "graph"): Promise<unknown> {
     return this.withTensorFlow(async (tf) => {
       if (type === "layers") {
         return tf.loadLayersModel(modelUrl);

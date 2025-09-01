@@ -8,7 +8,7 @@
 // ============================================================================
 //
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-<unknown> */
 
 describe("Batch Prediction Helper Functions - Refactored (unit tests)", () => {
   // Import functions from this same file scope (already defined above)
@@ -111,7 +111,7 @@ describe("Batch Prediction Helper Functions - Refactored (unit tests)", () => {
 
     beforeAll(() => {
       // Prefer Jest modern timers API; if using Vitest, a compat layer or vi.setSystemTime can be used.
-      const g: any = globalThis as any;
+      const g: unknown = globalThis as unknown;
       if (g.jest && typeof g.jest.useFakeTimers === "function") {
         g.jest.useFakeTimers();
         g.jest.setSystemTime(fixedDate);
@@ -122,7 +122,7 @@ describe("Batch Prediction Helper Functions - Refactored (unit tests)", () => {
     });
 
     afterAll(() => {
-      const g: any = globalThis as any;
+      const g: unknown = globalThis as unknown;
       if (g.jest && typeof g.jest.useRealTimers === "function") {
         g.jest.useRealTimers();
       } else if (g.vi && typeof g.vi.useRealTimers === "function") {
@@ -183,8 +183,8 @@ describe("Batch Prediction Helper Functions - Refactored (unit tests)", () => {
   describe("validateProcessingTimes", () => {
     it("filters invalid values (negatives, NaN, Infinity, non-numbers)", () => {
       const mixed = [-1, 0, 10, Number.NaN, Number.POSITIVE_INFINITY] as number[];
-      // Inject a non-number through 'any' cast to validate runtime guarding
-      (mixed as any).push("12ms");
+      // Inject a non-number through '<unknown>' cast to validate runtime guarding
+      (mixed as unknown).push("12ms");
       const valid = validateProcessingTimes(mixed as unknown as number[]);
       expect(valid).toStrictEqual([0, 10]);
     });

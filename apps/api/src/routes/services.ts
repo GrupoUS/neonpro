@@ -381,7 +381,7 @@ export const servicesRoutes = new Hono()
 
     try {
       // Build update object with only provided fields
-      const updateFields: Record<string, any> = {};
+      const updateFields: Record<string, unknown> = {};
 
       if (updateData.name !== undefined) {updateFields.name = updateData.name;}
       if (updateData.description !== undefined) {updateFields.description = updateData.description;}

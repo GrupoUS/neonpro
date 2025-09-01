@@ -64,7 +64,7 @@ class MemoryCacheLayer implements CacheLayer {
   name = "memory";
   priority = 1;
 
-  private readonly cache: LRUCache<string, any>;
+  private readonly cache: LRUCache<string, unknown>;
   private accessCount = 0;
   private hitCount = 0;
 

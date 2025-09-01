@@ -69,7 +69,7 @@ function calculateAge(birthDate: string): number {
 }
 
 function validateCPF(cpf: string): boolean {
-  // Remove any non-digit characters
+  // Remove unknown non-digit characters
   const cleanCPF = cpf.replace(/\D/g, "");
 
   // Check if it has 11 digits

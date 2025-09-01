@@ -319,7 +319,7 @@ export const professionalsRoutes = new Hono()
 
     try {
       // Build update object dynamically
-      const updateFields: Record<string, any> = {};
+      const updateFields: Record<string, unknown> = {};
 
       if (updateData.fullName !== undefined) {updateFields.full_name = updateData.fullName;}
       if (updateData.email !== undefined) {updateFields.email = updateData.email;}

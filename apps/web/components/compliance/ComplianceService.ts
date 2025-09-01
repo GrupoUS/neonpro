@@ -8,7 +8,7 @@ import type { ComplianceScore, ComplianceViolation, ComplianceFramework, Complia
 
 export class ComplianceService {
   private supabase = createClient();
-  private listeners: Map<string, Set<(data: any) => void>> = new Map();
+  private listeners: Map<string, Set<(data: unknown) => void>> = new Map();
 
   /**
    * Subscribe to real-time compliance updates
@@ -273,11 +273,11 @@ export class ComplianceService {
   /**
    * Transform database score data to application format
    */
-  private transformScoreData(data: any[]): ComplianceScore[] {
+  private transformScoreData(data: unknown[]): ComplianceScore[] {
     return data.map(item => this.transformSingleScore(item));
   }
 
-  private transformSingleScore(item: any): ComplianceScore {
+  private transformSingleScore(item: unknown): ComplianceScore {
     return {
       framework: item.framework,
       score: item.score,
@@ -292,11 +292,11 @@ export class ComplianceService {
   /**
    * Transform database violation data to application format
    */
-  private transformViolationData(data: any[]): ComplianceViolation[] {
+  private transformViolationData(data: unknown[]): ComplianceViolation[] {
     return data.map(item => this.transformSingleViolation(item));
   }
 
-  private transformSingleViolation(item: any): ComplianceViolation {
+  private transformSingleViolation(item: unknown): ComplianceViolation {
     return {
       id: item.id,
       framework: item.framework,

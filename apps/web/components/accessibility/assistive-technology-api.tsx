@@ -86,7 +86,7 @@ export interface AssistiveTechnologyDevice {
   medical_certified: boolean
   brazilian_certified: boolean
   last_connected: Date | null
-  settings: Record<string, any>
+  settings: Record<string, unknown>
 }
 
 export interface ATAPIEndpoint {
@@ -136,7 +136,7 @@ export interface ATCommand {
 export interface ATCommandResult {
   success: boolean
   message_pt: string
-  data?: any
+  data?: unknown
   error?: string
   execution_time_ms: number
   accessibility_impact: string
@@ -172,9 +172,9 @@ export interface ATContextValue {
   updateSettings: (settings: Partial<ATIntegrationSettings>) => void
   connectDevice: (device: AssistiveTechnologyDevice) => Promise<boolean>
   disconnectDevice: (deviceId: string) => Promise<boolean>
-  executeCommand: (commandId: string, params?: any) => Promise<ATCommandResult>
+  executeCommand: (commandId: string, params?: unknown) => Promise<ATCommandResult>
   registerCommand: (command: ATCommand) => void
-  broadcastToDevices: (message: any) => Promise<void>
+  broadcastToDevices: (message: unknown) => Promise<void>
   enableEmergencyMode: () => void
   disableEmergencyMode: () => void
   exportAnalytics: () => Promise<string>
@@ -604,7 +604,7 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
   }, [])
 
   // Execute AT command
-  const executeCommand = useCallback(async (commandId: string, params?: any): Promise<ATCommandResult> => {
+  const executeCommand = useCallback(async (commandId: string, params?: unknown): Promise<ATCommandResult> => {
     const command = availableCommands.find(c => c.id === commandId)
     if (!command) {
       return {
@@ -700,7 +700,7 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
   }, [])
 
   // Broadcast message to all connected devices
-  const broadcastToDevices = useCallback(async (message: any) => {
+  const broadcastToDevices = useCallback(async (message: unknown) => {
     const promises = connectedDevices
       .filter(d => d.status === 'connected')
       .map(async (device) => {
@@ -859,7 +859,7 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
 
   // Device discovery and connection monitoring
   useEffect(() => {
-    // Clear any existing interval first
+    // Clear unknown existing interval first
     if (devicePollingRef.current) {
       clearInterval(devicePollingRef.current)
       devicePollingRef.current = null

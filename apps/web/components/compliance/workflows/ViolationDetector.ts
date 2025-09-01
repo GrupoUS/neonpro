@@ -28,7 +28,7 @@ export interface ViolationDetectionRule {
 export interface ViolationContext {
   url?: string;
   element?: string;
-  data?: any;
+  data?: unknown;
   timestamp: number;
   userId?: string;
   sessionId?: string;
@@ -37,7 +37,7 @@ export interface ViolationContext {
 export interface ViolationResult {
   detected: boolean;
   details?: string;
-  evidence?: any;
+  evidence?: unknown;
   recommendation?: string;
   urgency: 'low' | 'medium' | 'high' | 'critical';
 }
@@ -491,11 +491,11 @@ export class ViolationDetector {
   }
 
   // Mock data methods (would be implemented with actual data sources)
-  private async getPageData(url: string): Promise<any> {
+  private async getPageData(url: string): Promise<unknown> {
     return { url, elements: [], metadata: {} };
   }
 
-  private async getActiveSessions(): Promise<any[]> {
+  private async getActiveSessions(): Promise<<unknown>[]> {
     return [
       { userId: 'user1', sessionId: 'sess1', data: {} },
       { userId: 'user2', sessionId: 'sess2', data: {} }
@@ -512,7 +512,7 @@ export class ViolationDetector {
     console.log(`🚨 Alert: ${violation.severity.toUpperCase()} violation detected - ${violation.rule}`);
   }
 
-  private async triggerAutoRemediation(violation: ComplianceViolation, remediation: any): Promise<void> {
+  private async triggerAutoRemediation(violation: ComplianceViolation, remediation: unknown): Promise<void> {
     // Would trigger automatic remediation actions
     console.log(`🔧 Auto-remediation triggered for: ${violation.rule}`);
   }

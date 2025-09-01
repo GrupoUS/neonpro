@@ -49,7 +49,7 @@ export interface StaffAlert {
     riskScore?: number;
     appointmentTime?: string;
     interventionsCount?: number;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -72,7 +72,7 @@ export interface StaffAlertSystemProps {
   alerts: StaffAlert[];
   currentUser: StaffMember;
   staffMembers: StaffMember[];
-  onAlertAction: (alertId: string, actionType: string, data?: any) => void;
+  onAlertAction: (alertId: string, actionType: string, data?: unknown) => void;
   onDismissAlert: (alertId: string) => void;
   onSnoozeAlert: (alertId: string, minutes: number) => void;
   soundEnabled?: boolean;
@@ -220,7 +220,7 @@ export function StaffAlertSystem({
 
   // Handle alert action
   const handleAlertAction = useCallback(
-    (alertId: string, actionType: string, data?: any) => {
+    (alertId: string, actionType: string, data?: unknown) => {
       onAlertAction(alertId, actionType, data);
     },
     [onAlertAction],
@@ -315,7 +315,7 @@ export function StaffAlertSystem({
                 key={filterOption.key}
                 size="sm"
                 variant={filter === filterOption.key ? "default" : "outline"}
-                onClick={() => setFilter(filterOption.key as any)}
+                onClick={() => setFilter(filterOption.key as unknown)}
               >
                 <Filter className="h-3 w-3 mr-1" />
                 {filterOption.label}

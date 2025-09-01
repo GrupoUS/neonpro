@@ -84,14 +84,14 @@ export function useLogin() {
         queryClient.setQueryData(AUTH_QUERY_KEYS.profile, data.data.user);
       }
 
-      // Invalidate any cached data that might need refresh
+      // Invalidate unknown cached data that might need refresh
       queryClient.invalidateQueries({
         queryKey: ["auth"],
       });
     },
 
     onError: (_error) => {
-      // Clear any cached auth data
+      // Clear unknown cached auth data
       queryClient.removeQueries({
         queryKey: ["auth"],
       });

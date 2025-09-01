@@ -143,7 +143,7 @@ export interface VoiceMedicalContextType {
   // LGPD Compliance
   requestConsent: () => Promise<boolean>;
   revokeConsent: () => void;
-  exportData: () => any;
+  exportData: () => unknown;
   deleteData: () => void;
 }
 

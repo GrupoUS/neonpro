@@ -552,7 +552,7 @@ function PatientForm({
     }
   };
 
-  const handleInputChange = (field: keyof PatientFormData, value: any) => {
+  const handleInputChange = (field: keyof PatientFormData, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: "" }));

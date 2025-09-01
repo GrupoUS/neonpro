@@ -108,7 +108,7 @@ export interface AuditTimelineEvent {
   timestamp: Date;
   user: string;
   description: string;
-  data?: any;
+  data?: unknown;
 }
 
 export interface AuditReadinessReport {
@@ -654,7 +654,7 @@ Gerado automaticamente pelo Sistema de Compliance NeonPro
     return preparation.readinessScore >= 80;
   }
 
-  private generateReadinessRecommendations(preparation: AuditPreparation, scores: any[], violations: any[]): string[] {
+  private generateReadinessRecommendations(preparation: AuditPreparation, scores: unknown[], violations: unknown[]): string[] {
     const recommendations = [];
 
     if (preparation.readinessScore < 70) {
@@ -672,7 +672,7 @@ Gerado automaticamente pelo Sistema de Compliance NeonPro
     return recommendations;
   }
 
-  private generateRiskMitigationRecommendations(riskFactors: any[]): string[] {
+  private generateRiskMitigationRecommendations(riskFactors: unknown[]): string[] {
     return riskFactors.map(factor => factor.mitigation);
   }
 }

@@ -104,8 +104,8 @@ const mockAnalyticsData: HealthcareAnalytics = {
       complicationRate: 3,
       recoveryTime: { average: 14, median: 12, range: [7, 28] },
       costEffectiveness: 87,
-      professionalPerformance: {} as any,
-      benchmarkComparison: {} as any,
+      professionalPerformance: {} as unknown,
+      benchmarkComparison: {} as unknown,
     },
     complianceMetrics: {
       cfmCompliance: {

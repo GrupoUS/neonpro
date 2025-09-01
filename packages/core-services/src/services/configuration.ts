@@ -586,7 +586,7 @@ export class ConfigurationService {
 
 export const config = ConfigurationService.getInstance();
 
-export async function getConfig<T = any>(
+export async function getConfig<T = unknown>(
   key: string,
   defaultValue?: T,
   context?: Partial<ConfigurationContext>,

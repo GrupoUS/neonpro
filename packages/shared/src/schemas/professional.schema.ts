@@ -587,7 +587,7 @@ export const ProfessionalResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.any()).optional(),
+      details: z.record(z.<unknown>()).optional(),
     })
     .optional(),
 });
@@ -621,7 +621,7 @@ export const ProfessionalsListResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.any()).optional(),
+      details: z.record(z.<unknown>()).optional(),
     })
     .optional(),
 });

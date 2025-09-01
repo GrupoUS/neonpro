@@ -71,7 +71,7 @@ interface HealthcareSecurityConfig {
   rateLimiting: {
     enabled: boolean;
     storage: "memory" | "redis";
-    redisClient?: any;
+    redisClient?: unknown;
     emergencyBypass: boolean;
     monitoring: boolean;
     alerting: boolean;
@@ -80,7 +80,7 @@ interface HealthcareSecurityConfig {
   inputValidation: {
     enabled: boolean;
     emergencyBypass: boolean;
-    auditLogger?: any;
+    auditLogger?: unknown;
     contexts: ValidationContext[];
   };
 
@@ -94,14 +94,14 @@ interface HealthcareSecurityConfig {
     enabled: boolean;
     policy: HealthcareCORSPolicy;
     emergencyBypass: boolean;
-    auditLogger?: any;
+    auditLogger?: unknown;
   };
 
   errorHandling: {
     enabled: boolean;
-    auditLogger?: any;
-    monitoringSystem?: any;
-    emergencyNotificationSystem?: any;
+    auditLogger?: unknown;
+    monitoringSystem?: unknown;
+    emergencyNotificationSystem?: unknown;
   };
 
   // Healthcare-specific settings
@@ -534,10 +534,10 @@ export function createHealthcareAPISecurityStack(
   endpointLevel: EndpointSecurityLevel = EndpointSecurityLevel.PUBLIC,
   options?: {
     jwtSecret?: string;
-    redisClient?: any;
-    auditLogger?: any;
-    monitoringSystem?: any;
-    emergencyNotificationSystem?: any;
+    redisClient?: unknown;
+    auditLogger?: unknown;
+    monitoringSystem?: unknown;
+    emergencyNotificationSystem?: unknown;
   },
 ): {
   middlewares: MiddlewareHandler[];

@@ -14,7 +14,7 @@ const _analyticsQuerySchema = z.object({
   metric: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  filters: z.record(z.any()).optional(),
+  filters: z.record(z.<unknown>()).optional(),
   userId: z.string().optional(),
   granularity: z.string().optional(),
 });
@@ -23,7 +23,7 @@ const _analyticsQuerySchema = z.object({
 const eventTrackingSchema = z.object({
   event_type: z.string(),
   user_id: z.string(),
-  properties: z.record(z.any()).optional(),
+  properties: z.record(z.<unknown>()).optional(),
   timestamp: z.string().optional(),
 });
 

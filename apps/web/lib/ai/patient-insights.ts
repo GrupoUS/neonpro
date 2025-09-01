@@ -13,7 +13,7 @@ export class PatientInsightsIntegration {
 
   async getComprehensiveInsights(patientId: string): Promise<unknown>;
   async getComprehensiveInsights(request: unknown): Promise<unknown>;
-  async getComprehensiveInsights(patientIdOrRequest: string | any) {
+  async getComprehensiveInsights(patientIdOrRequest: string | unknown) {
     // Mock implementation for build compatibility
     if (typeof patientIdOrRequest === "string") {
       return {

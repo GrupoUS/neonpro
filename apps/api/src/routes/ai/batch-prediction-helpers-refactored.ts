@@ -139,7 +139,7 @@ export function getTodayDateString(): string {
 // =============================================================================
 
 /**
- * Checks if error array contains any errors
+ * Checks if error array contains unknown errors
  * Type-safe error array validation
  */
 export function hasErrors(errors: readonly unknown[]): boolean {

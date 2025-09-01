@@ -9,7 +9,7 @@ export interface EmergencyCacheEntry {
   id: string;
   patientId: string;
   type: "patient" | "allergies" | "medications" | "contacts" | "protocols";
-  data: any;
+  data: Record<string, unknown>;
   priority: "critical" | "urgent" | "normal";
   lastUpdated: number;
   expiresAt: number;
@@ -152,7 +152,7 @@ class EmergencyCache {
 
   async set(
     key: string,
-    data: any,
+    data: Record<string, unknown>,
     options: {
       patientId: string;
       type: EmergencyCacheEntry["type"];

@@ -284,7 +284,7 @@ export class ImprovementEngine {
     return patterns;
   }
 
-  private async generateImprovementFromPattern(pattern: any): Promise<any> {
+  private async generateImprovementFromPattern(pattern: unknown): Promise<unknown> {
     const impactScore = this.calculatePatternImpact(pattern);
     const effortScore = this.estimateImplementationEffort(pattern);
     
@@ -324,7 +324,7 @@ export class ImprovementEngine {
     return 'low';
   }
 
-  private calculatePatternImpact(pattern: any): number {
+  private calculatePatternImpact(pattern: unknown): number {
     // Impact based on frequency, severity, and affected areas
     let score = 0;
     
@@ -335,7 +335,7 @@ export class ImprovementEngine {
     return Math.min(score, 10);
   }
 
-  private estimateImplementationEffort(pattern: any): number {
+  private estimateImplementationEffort(pattern: unknown): number {
     // Effort estimation based on category and theme complexity
     const categoryEffort = {
       dashboard: 3,
@@ -359,7 +359,7 @@ export class ImprovementEngine {
     return Math.min(effort, 10);
   }
 
-  private generateSuggestedSolution(pattern: any): string {
+  private generateSuggestedSolution(pattern: unknown): string {
     const solutions = {
       slow: 'Optimize performance and reduce loading times',
       confusing: 'Improve user interface clarity and add helpful hints',
@@ -397,7 +397,7 @@ export class ImprovementEngine {
     }, {} as Record<string, number>);
   }
 
-  private async calculateSuccessMetrics(initiatives: ImprovementInitiative[]): Promise<any[]> {
+  private async calculateSuccessMetrics(initiatives: ImprovementInitiative[]): Promise<<unknown>[]> {
     const metrics = [];
     const completedInitiatives = initiatives.filter(i => i.status === 'completed');
     
@@ -418,7 +418,7 @@ export class ImprovementEngine {
     return metrics;
   }
 
-  private async identifyTopAchievements(initiatives: ImprovementInitiative[]): Promise<any[]> {
+  private async identifyTopAchievements(initiatives: ImprovementInitiative[]): Promise<<unknown>[]> {
     return initiatives
       .filter(i => i.status === 'completed')
       .sort((a, b) => (b.businessValue.affectedUsers || 0) - (a.businessValue.affectedUsers || 0))
@@ -444,7 +444,7 @@ export class ImprovementEngine {
     return [...new Set(lessons)].slice(0, 10); // Unique lessons, top 10
   }
 
-  private getUpcomingInitiatives(): any[] {
+  private getUpcomingInitiatives(): unknown[] {
     const upcomingInitiatives = Array.from(this.initiatives.values())
       .filter(i => i.status === 'approved' && i.implementation.startDate)
       .sort((a, b) => (a.implementation.startDate!.getTime()) - (b.implementation.startDate!.getTime()));
@@ -456,7 +456,7 @@ export class ImprovementEngine {
     }));
   }
 
-  private async generateRecommendations(initiatives: ImprovementInitiative[]): Promise<any[]> {
+  private async generateRecommendations(initiatives: ImprovementInitiative[]): Promise<<unknown>[]> {
     const recommendations = [];
     
     // Analysis-based recommendations
@@ -486,7 +486,7 @@ export class ImprovementEngine {
       .map(i => i.id);
   }
 
-  private recommendResourceAllocation(initiatives: ImprovementInitiative[]): any[] {
+  private recommendResourceAllocation(initiatives: ImprovementInitiative[]): unknown[] {
     const categoryEffort = initiatives.reduce((acc, initiative) => {
       acc[initiative.category] = (acc[initiative.category] || 0) + initiative.estimatedEffort.hours;
       return acc;
@@ -499,7 +499,7 @@ export class ImprovementEngine {
     }));
   }
 
-  private identifyRisks(initiatives: ImprovementInitiative[]): any[] {
+  private identifyRisks(initiatives: ImprovementInitiative[]): unknown[] {
     const risks = [];
     
     const highEffortInitiatives = initiatives.filter(i => i.estimatedEffort.difficulty === 'expert');

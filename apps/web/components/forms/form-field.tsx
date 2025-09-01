@@ -29,8 +29,8 @@ export interface FormFieldProps {
     | "select"
     | "checkbox"
     | "password";
-  value?: any;
-  onChange?: (value: any) => void;
+  value?: unknown;
+  onChange?: (value: unknown) => void;
   onBlur?: () => void;
   error?: string;
   loading?: boolean;

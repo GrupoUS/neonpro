@@ -6,7 +6,7 @@ import { usePatients } from "@/hooks/usePatients";
 import { AppointmentsList } from "./components/dashboard/AppointmentsList";
 import { HeroSection } from "./components/dashboard/HeroSection";
 import { MetricsCards } from "./components/dashboard/MetricsCards";
-import { PatientsList } from "./components/dashboard/PatientsList";
+import { PatientsList } from "../components/PatientsList";
 
 interface Patient {
   id: string;

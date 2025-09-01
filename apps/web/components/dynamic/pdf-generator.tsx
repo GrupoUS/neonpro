@@ -33,7 +33,7 @@ const ReactPDFGenerator = dynamic(
 
 // Props interfaces
 interface PDFGeneratorProps {
-  data: any;
+  data: unknown;
   template: "patient-report" | "financial-report" | "appointment-summary" | "prescription";
   onGenerated?: (blob: Blob) => void;
   onError?: (error: Error) => void;
@@ -41,7 +41,7 @@ interface PDFGeneratorProps {
 
 interface JSPDFGeneratorProps {
   title: string;
-  content: string | any[];
+  content: string | unknown[];
   filename?: string;
   orientation?: "portrait" | "landscape";
 }

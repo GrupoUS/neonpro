@@ -207,7 +207,7 @@ export function useRealtimeNotifications(
   const handleNotificationChange = useCallback(
     (payload: unknown) => {
       try {
-        const typedPayload = payload as any;
+        const typedPayload = payload as unknown;
         const realtimePayload: RealtimeNotificationPayload = {
           eventType: typedPayload.eventType,
           new: typedPayload.new as ExtendedNotification,

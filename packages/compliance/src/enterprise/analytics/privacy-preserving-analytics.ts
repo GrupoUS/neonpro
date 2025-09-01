@@ -27,7 +27,7 @@ const PrivacyPreservingQuerySchema = z.object({
     "trend_analysis",
   ]),
   target_columns: z.array(z.string()).min(1),
-  filters: z.record(z.any()).optional(),
+  filters: z.record(z.<unknown>()).optional(),
   time_range: z
     .object({
       start_date: z.string().datetime(),
@@ -40,7 +40,7 @@ const PrivacyPreservingQuerySchema = z.object({
 
 const PrivacyPreservingAnalyticsResultsSchema = z.object({
   query_id: z.string().uuid(),
-  results: z.record(z.any()),
+  results: z.record(z.<unknown>()),
   privacy_metrics: z.object({
     epsilon_used: z.number(),
     k_anonymity_achieved: z.number(),
@@ -221,7 +221,7 @@ export class PrivacyPreservingAnalyticsService {
   private async applyHighPrivacyProtection(
     rawData: unknown[],
     query: PrivacyPreservingQuery,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Step 1: Apply k-anonymity
     let processedData = await this.applyKAnonymity(
       rawData,
@@ -251,7 +251,7 @@ export class PrivacyPreservingAnalyticsService {
   private async applyMediumPrivacyProtection(
     rawData: unknown[],
     query: PrivacyPreservingQuery,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Step 1: Apply k-anonymity
     let processedData = await this.applyKAnonymity(
       rawData,
@@ -275,7 +275,7 @@ export class PrivacyPreservingAnalyticsService {
   private async applyStandardPrivacyProtection(
     rawData: unknown[],
     query: PrivacyPreservingQuery,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     return await this.applyKAnonymity(
       rawData,
       query.target_columns,
@@ -290,9 +290,9 @@ export class PrivacyPreservingAnalyticsService {
     data: unknown[],
     columns: string[],
     k: number,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Group data by quasi-identifier combinations
-    const groups = new Map<string, any[]>();
+    const groups = new Map<string, unknown[]>();
 
     for (const row of data) {
       const key = columns
@@ -330,9 +330,9 @@ export class PrivacyPreservingAnalyticsService {
     data: unknown[],
     sensitiveColumns: string[],
     l: number,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Group by quasi-identifiers and check l-diversity for sensitive attributes
-    const groups = new Map<string, any[]>();
+    const groups = new Map<string, unknown[]>();
 
     for (const row of data) {
       const key = sensitiveColumns.map((col) => row[col]).join("|");
@@ -364,7 +364,7 @@ export class PrivacyPreservingAnalyticsService {
   private async applyDifferentialPrivacy(
     data: unknown[],
     epsilon: number,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     return data.map((row) => {
       const noisyRow = { ...row };
       // Add Laplace noise to numeric columns
@@ -596,7 +596,7 @@ export class PrivacyPreservingAnalyticsService {
       const values = data
         .map((row) => row[column])
         .filter((val) => val !== null && val !== undefined);
-      const valueFrequency = new Map<any, number>();
+      const valueFrequency = new Map<unknown, number>();
 
       // Count frequency of each value
       for (const value of values) {
@@ -635,7 +635,7 @@ export class PrivacyPreservingAnalyticsService {
         continue;
       }
 
-      const timeGroups = new Map<string, any[]>();
+      const timeGroups = new Map<string, unknown[]>();
 
       for (const row of data) {
         const timeKey = new Date(row[timeColumn]).toISOString().slice(0, 7); // YYYY-MM format

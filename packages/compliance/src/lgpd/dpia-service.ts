@@ -413,8 +413,8 @@ export class DPIAService {
    */
   private async createAuditEvent(
     action: string,
-    input: DPIAInput | any,
-  ): Promise<any> {
+    input: DPIAInput | unknown,
+  ): Promise<unknown> {
     return {
       id: crypto.randomUUID(),
       eventType: "COMPLIANCE_DPIA",

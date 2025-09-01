@@ -596,7 +596,7 @@ export const securityHeadersMiddlewares = {
 
   emergencyAccessProduction: () => createSecurityHeadersMiddleware("emergency_access_production"),
 
-  custom: (configName: string, options?: any) =>
+  custom: (configName: string, options?: unknown) =>
     createSecurityHeadersMiddleware(configName, options),
 };
 

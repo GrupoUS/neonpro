@@ -247,7 +247,7 @@ export interface SuggestedAction {
     | "follow_up_care";
   priority: "low" | "medium" | "high" | "urgent";
   description: string;
-  parameters?: Record<string, any>;
+  parameters?: Record<string, unknown>;
   estimated_time?: number;
   cost_estimate?: MonetaryAmount;
 }

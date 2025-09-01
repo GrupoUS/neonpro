@@ -59,8 +59,8 @@ export interface RouteConfig<TInput = unknown, TOutput = unknown> {
 }
 
 // Hono App Type inference helpers
-export type ExtractRouteInput<T> = T extends RouteConfig<infer I, any> ? I : never;
-export type ExtractRouteOutput<T> = T extends RouteConfig<any, infer O> ? O : never;
+export type ExtractRouteInput<T> = T extends RouteConfig<infer I, unknown> ? I : never;
+export type ExtractRouteOutput<T> = T extends RouteConfig<unknown, infer O> ? O : never;
 
 // RPC Client types for frontend
 export interface RpcClient {
@@ -446,9 +446,9 @@ export interface AuditLogsQuery {
 
 // Type utilities for Hono RPC
 export type InferRequestType<T> = T extends {
-  $post: (data: { json: infer R; }) => any;
+  $post: (data: { json: infer R; }) => unknown;
 } ? R
-  : T extends { $put: (data: { json: infer R; }) => any; } ? R
+  : T extends { $put: (data: { json: infer R; }) => unknown; } ? R
   : never;
 
 export type InferResponseType<T> = T extends { $get: () => Promise<infer R>; } ? R

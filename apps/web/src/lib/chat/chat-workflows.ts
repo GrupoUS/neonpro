@@ -76,7 +76,7 @@ export interface WorkflowExecution {
   conversation_id: string;
   user_id: string;
   current_step_id: string;
-  collected_data: Record<string, any>;
+  collected_data: Record<string, unknown>;
   started_at: Date;
   updated_at: Date;
   completed_at?: Date;
@@ -233,7 +233,7 @@ export class ChatWorkflowSystem {
   }
 
   /**
-   * Check if message triggers any workflow
+   * Check if message triggers unknown workflow
    */
   private async checkWorkflowTriggers(
     message: ChatMessage,
@@ -927,7 +927,7 @@ export class ChatWorkflowSystem {
     );
   }
 
-  private processTemplate(template: string, data: Record<string, any>): string {
+  private processTemplate(template: string, data: Record<string, unknown>): string {
     return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
       return data[key] || match;
     });
@@ -947,12 +947,12 @@ export class ChatWorkflowSystem {
   private async checkAvailability(
     date: string,
     specialty: string,
-  ): Promise<any[]> {
+  ): Promise<<unknown>[]> {
     // Mock availability - would integrate with actual scheduling system
     return [{ date: "15/12/2024", time: "14:00", specialty, available: true }];
   }
 
-  private async createAppointment(appointmentData: any): Promise<any> {
+  private async createAppointment(appointmentData: unknown): Promise<unknown> {
     // Mock appointment creation
     return { id: crypto.randomUUID(), ...appointmentData };
   }
@@ -964,7 +964,7 @@ export class ChatWorkflowSystem {
 
   private calculateSeverityScores(
     symptoms: string[],
-    data: Record<string, any>,
+    data: Record<string, unknown>,
   ): Record<string, number> {
     const scores: Record<string, number> = {};
     symptoms.forEach((symptom) => {
@@ -978,7 +978,7 @@ export class ChatWorkflowSystem {
 
   private calculateRiskLevel(
     symptoms: string[],
-    data: Record<string, any>,
+    data: Record<string, unknown>,
   ): "low" | "medium" | "high" | "critical" {
     const severity = parseInt(data["severity_score"]) || 5;
     const duration = data["symptom_duration"] || "";

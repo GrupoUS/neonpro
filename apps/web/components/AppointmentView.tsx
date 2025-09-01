@@ -35,27 +35,19 @@ import {
   XCircle,
 } from "lucide-react";
 import { useCallback, useState } from "react";
+import type { Appointment, Professional } from "./types/healthcare";
 
-interface Appointment {
-  id: string;
+// Extended interfaces for AppointmentView specific needs
+interface AppointmentViewData extends Omit<Appointment, 'patientId' | 'patient'> {
   patientName: string;
   patientEmail: string;
   patientPhone: string;
-  date: Date;
-  time: string;
-  duration: number;
   type: "consultation" | "followup" | "procedure" | "emergency";
   doctor: string;
   specialty: string;
-  status: "scheduled" | "confirmed" | "completed" | "cancelled" | "no-show";
-  notes?: string;
-  room?: string;
 }
 
-interface Doctor {
-  id: string;
-  name: string;
-  specialty: string;
+interface Doctor extends Professional {
   avatar?: string;
   availability: {
     [key: string]: string[]; // day: available times
@@ -96,7 +88,7 @@ const APPOINTMENT_TYPES = [
   { value: "emergency", label: "Emergência", duration: 45 },
 ];
 
-export default function AppointmentScheduler() {
+export default function AppointmentView() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);

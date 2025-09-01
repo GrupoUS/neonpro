@@ -217,7 +217,7 @@ export function PerformanceMonitoringDashboard({
             <div className="flex items-center gap-2">
               <Select
                 value={metrics.period.periodType}
-                onValueChange={(value) => onPeriodChange?.(value as any)}
+                onValueChange={(value) => onPeriodChange?.(value as unknown)}
               >
                 <SelectTrigger className="w-[120px]">
                   <Calendar className="h-4 w-4 mr-1" />

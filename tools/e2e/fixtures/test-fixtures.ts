@@ -321,7 +321,7 @@ export class TestHelpers {
   /**
    * Limpar dados de teste específicos
    */
-  static async cleanupTestData(supabase: any, testId: string) {
+  static async cleanupTestData(supabase: Record<string, unknown>, testId: string) {
     try {
       // Limpar dados relacionados ao teste específico
       const tables = [

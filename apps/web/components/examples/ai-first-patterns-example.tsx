@@ -20,7 +20,7 @@ import { VoiceInteractionUX, VoiceContext, VoiceMode, useVoiceInteraction } from
 const simulateAIOperation = async (type: string, shouldFail = false): Promise<{
   success: boolean;
   confidence?: number;
-  result?: any;
+  result?: unknown;
   error?: string;
 }> => {
   await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
@@ -69,7 +69,7 @@ const samplePatients = [
 function AIFirstWorkflow() {
   const [activeDemo, setActiveDemo] = useState<string>("patient-analysis");
   const [selectedPatient, setSelectedPatient] = useState(samplePatients[0]);
-  const [aiResults, setAiResults] = useState<any>(null);
+  const [aiResults, setAiResults] = useState<<unknown>>(null);
   const [shouldFail, setShouldFail] = useState(false);
   const [shouldThrow, setShouldThrow] = useState<string | null>(null);
   

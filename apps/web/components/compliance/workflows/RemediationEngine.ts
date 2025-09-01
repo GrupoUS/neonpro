@@ -91,7 +91,7 @@ export interface RemediationTimelineEvent {
   timestamp: Date;
   user: string;
   description: string;
-  data?: any;
+  data?: unknown;
 }
 
 export interface AutoRemediationResult {

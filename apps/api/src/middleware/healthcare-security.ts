@@ -156,7 +156,7 @@ interface SecurityAlert {
   level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   type: string;
   message: string;
-  metadata: any;
+  metadata: unknown;
   requiresImmediate: boolean;
 }
 
@@ -164,7 +164,7 @@ interface ComplianceAlert {
   level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   type: string;
   message: string;
-  metadata: any;
+  metadata: unknown;
   requiresImmediate: boolean;
 }
 
@@ -429,7 +429,7 @@ class ProfessionalLicenseValidator {
     }
   }
 
-  private static mapCFMResponseToLicense(cfmData: any): ProfessionalLicense {
+  private static mapCFMResponseToLicense(cfmData: unknown): ProfessionalLicense {
     return {
       licenseNumber: cfmData.numero_inscricao,
       licenseType: ProfessionalLicenseType.CRM,
@@ -696,7 +696,7 @@ async function getRedisClient() {
   // Implementation depends on your Redis setup
   // Example using ioredis:
   const Redis = await import("ioredis");
-  const config: any = {
+  const config: unknown = {
     host: process.env.REDIS_HOST || "localhost",
     port: parseInt(process.env.REDIS_PORT || "6379"),
     maxRetriesPerRequest: 3,
@@ -772,7 +772,7 @@ export class HealthcareAuthMiddleware {
       const clinicId = payload.clinicId as string;
       const clinicIds = payload.clinicIds as string[];
       const emergencyAccess = payload.emergencyAccess as boolean;
-      const licenseData = payload.license as any;
+      const licenseData = payload.license as unknown;
 
       // Validate required claims
       if (!userId || !email || !role) {

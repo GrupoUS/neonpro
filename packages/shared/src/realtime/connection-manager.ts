@@ -226,7 +226,7 @@ export class SupabaseRealtimeManager {
    * Subscribe to a realtime channel
    */
 
-  public subscribe<T = any>(
+  public subscribe<T = unknown>(
     channelName: string,
     config: {
       table?: string;
@@ -300,7 +300,7 @@ export class SupabaseRealtimeManager {
         (payload: unknown) => {
           callbacks.forEach((callback) => {
             try {
-              callback(payload as any);
+              callback(payload as unknown);
             } catch {}
           });
         },
@@ -313,7 +313,7 @@ export class SupabaseRealtimeManager {
         (payload: unknown) => {
           callbacks.forEach((callback) => {
             try {
-              callback(payload as any);
+              callback(payload as unknown);
             } catch {}
           });
         },

@@ -24,7 +24,7 @@ interface RealtimeProviderProps {
   children: ReactNode;
   tenantId: string;
   enableHealthcareMode?: boolean;
-  customConfig?: Partial<any>;
+  customConfig?: Partial<<unknown>>;
 } /**
  * MANDATORY Realtime Provider para NeonPro Healthcare
  * Deve envolver toda a aplicação para funcionalidade real-time

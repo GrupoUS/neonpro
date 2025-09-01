@@ -41,7 +41,7 @@ const sanitizeRealtimeData = (
   const sanitized = { ...data };
   sensitiveFields.forEach((field) => {
     if (field in sanitized) {
-      (sanitized as any)[field] = "***PROTECTED***";
+      (sanitized as unknown)[field] = "***PROTECTED***";
     }
   });
 
@@ -95,7 +95,7 @@ export function useRealtime<
           handler(payload as RealtimePayload<T>);
         }
 
-        // Clear any previous errors
+        // Clear unknown previous errors
         setError(undefined);
       } catch (error) {
         const errorInstance = error instanceof Error ? error : new Error("Realtime event error");

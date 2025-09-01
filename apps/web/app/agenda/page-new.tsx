@@ -774,7 +774,7 @@ function AppointmentForm({
     }
   };
 
-  const handleInputChange = (field: keyof AppointmentFormData, value: any) => {
+  const handleInputChange = (field: keyof AppointmentFormData, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: "" }));
@@ -1497,7 +1497,7 @@ export default function AgendaPage() {
               </div>
 
               {/* View Mode Selector */}
-              <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as any)}>
+              <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as unknown)}>
                 <TabsList>
                   <TabsTrigger value="month">Mês</TabsTrigger>
                   <TabsTrigger value="week">Semana</TabsTrigger>

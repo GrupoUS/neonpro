@@ -63,7 +63,7 @@ export class SupabaseCacheService implements CacheService {
     this.setupEventHandlers();
   }
 
-  async get<T = any>(key: string): Promise<T | null> {
+  async get<T = unknown>(key: string): Promise<T | null> {
     const startTime = Date.now();
 
     try {
@@ -114,7 +114,7 @@ export class SupabaseCacheService implements CacheService {
     }
   }
 
-  async set<T = any>(key: string, value: T, ttl?: number): Promise<void> {
+  async set<T = unknown>(key: string, value: T, ttl?: number): Promise<void> {
     const startTime = Date.now();
     const effectiveTTL = ttl ?? this.config.defaultTTL;
 

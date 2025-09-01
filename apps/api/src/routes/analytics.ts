@@ -246,10 +246,10 @@ export const analyticsRoutes = new Hono()
             acc[apt.professional_id].revenue += apt.total_amount || 0;
           }
           return acc;
-        }, {} as Record<string, any>);
+        }, {} as Record<string, unknown>);
 
         const professionalPerformance = Object.values(professionalStats || {})
-          .sort((a: any, b: any) => b.revenue - a.revenue)
+          .sort((a: unknown, b: unknown) => b.revenue - a.revenue)
           .slice(0, 5);
 
         const mockDashboard = {
@@ -1199,7 +1199,7 @@ export const analyticsRoutes = new Hono()
           endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         }
 
-        let reportData: any = {};
+        let reportData: unknown = {};
         let totalRecords = 0;
 
         switch (reportType) {
@@ -1270,7 +1270,7 @@ export const analyticsRoutes = new Hono()
               acc[key].value += apt.total_amount || 0;
               acc[key].count += 1;
               return acc;
-            }, {} as Record<string, any>) || {};
+            }, {} as Record<string, unknown>) || {};
 
             reportData = {
               totalRevenue,

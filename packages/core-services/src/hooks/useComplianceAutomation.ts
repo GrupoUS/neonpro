@@ -238,7 +238,7 @@ export const useDataSubjectRequests = () => {
 };
 
 export const useConsentStatus = (dataSubjectId: string) => {
-  const [consentData, setConsentData] = useState<any>();
+  const [consentData, setConsentData] = useState<unknown>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>();
 
@@ -331,7 +331,7 @@ export const useSoftwareValidation = () => {
 };
 
 export const useSoftwareLifecycle = (itemName: string) => {
-  const [lifecycleData, setLifecycleData] = useState<any>();
+  const [lifecycleData, setLifecycleData] = useState<unknown>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>();
 
@@ -424,7 +424,7 @@ export const useProfessionalValidation = () => {
 };
 
 export const useProfessionalStatus = (professionalId: string) => {
-  const [professionalData, setProfessionalData] = useState<any>();
+  const [professionalData, setProfessionalData] = useState<unknown>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>();
 

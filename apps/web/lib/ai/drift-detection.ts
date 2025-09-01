@@ -593,8 +593,8 @@ export class DriftDetectionSystem {
     return distribution;
   }
 
-  private groupByTimeSlots(predictions: unknown[]): Record<string, any[]> {
-    const slots: Record<string, any[]> = {};
+  private groupByTimeSlots(predictions: unknown[]): Record<string, unknown[]> {
+    const slots: Record<string, unknown[]> = {};
 
     predictions.forEach((pred) => {
       const hour = new Date(pred.created_at).getHours();

@@ -93,7 +93,8 @@
       "mcp__Sequential_Thinking__sequentialthinking",
       "mcp__Tavily__tavily-extract",
       "mcp__Tavily__tavily-search",
-      "mcp__archon__update_project"
+      "mcp__archon__update_project",
+      "mcp__serena__find_referencing_symbols"
     ],
     "deny": [
       "Edit",

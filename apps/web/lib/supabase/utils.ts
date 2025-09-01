@@ -21,7 +21,7 @@ interface CachedResult<T> {
 /**
  * Cache em memória para queries
  */
-const queryCache = new Map<string, CachedResult<any>>();
+const queryCache = new Map<string, CachedResult<unknown>>();
 
 /**
  * Configurações de cache por tipo de dados
@@ -274,7 +274,7 @@ export const groupByPeriod = <T>(
 /**
  * Debounce para otimizar queries em tempo real
  */
-export const debounce = <T extends (...args: unknown[]) => any>(
+export const debounce = <T extends (...args: unknown[]) => unknown>(
   func: T,
   waitMs: number,
 ): T => {
@@ -289,7 +289,7 @@ export const debounce = <T extends (...args: unknown[]) => any>(
 /**
  * Throttle para limitar frequência de execução
  */
-export const throttle = <T extends (...args: unknown[]) => any>(
+export const throttle = <T extends (...args: unknown[]) => unknown>(
   func: T,
   limitMs: number,
 ): T => {

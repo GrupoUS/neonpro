@@ -150,7 +150,7 @@ export function AIAssistantDashboardExample() {
   };
 
   // Handle export functions
-  const handleExportAssistantData = (data: any, format: 'pdf' | 'excel' | 'csv') => {
+  const handleExportAssistantData = (data: unknown, format: 'pdf' | 'excel' | 'csv') => {
     console.log(`[EXPORT] Assistant data as ${format}:`, data);
     alert(`Exportando dados do assistente em formato ${format.toUpperCase()}`);
   };
@@ -247,7 +247,7 @@ export function AIAssistantDashboardExample() {
             <PerformanceInsights
               userRole={userRole.name}
               timeRange={timeRange}
-              onTimeRangeChange={(range) => setTimeRange(range as any)}
+              onTimeRangeChange={(range) => setTimeRange(range as unknown)}
               onExportData={handleExportPerformanceData}
               onRefreshData={handleRefreshPerformanceData}
             />

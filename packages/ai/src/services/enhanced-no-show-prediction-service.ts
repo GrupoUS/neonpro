@@ -1168,7 +1168,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     features: AdvancedFeatures,
     patientProfile: PatientProfile,
     appointmentContext: AppointmentContext,
-  ): Promise<any[]> {
+  ): Promise<<unknown>[]> {
     const recommendations = [];
     const { calibrated_probability: probability } = prediction;
 

@@ -8,7 +8,7 @@
  */
 
 // Database type will be provided by the client
-type Database = any;
+type Database = unknown;
 
 import type { createClient } from "@supabase/supabase-js";
 

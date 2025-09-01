@@ -33,7 +33,7 @@ class EmergencyPerformanceMonitor {
   private static instance: EmergencyPerformanceMonitor;
   private metrics: PerformanceMetric[] = [];
   private config: EmergencyPerformanceConfig;
-  private preloadedData: Map<string, any> = new Map();
+  private preloadedData: Map<string, unknown> = new Map();
   private activeOperations: Map<string, number> = new Map();
 
   constructor() {
@@ -327,8 +327,8 @@ class EmergencyPerformanceMonitor {
     }, 0);
 
     // Request high priority for critical operations
-    if ("scheduler" in window && "postTask" in (window as any).scheduler) {
-      (window as any).scheduler.postTask(
+    if ("scheduler" in window && "postTask" in (window as unknown).scheduler) {
+      (window as unknown).scheduler.postTask(
         () => {
           // Critical operations get high priority
         },
@@ -381,7 +381,7 @@ class EmergencyPerformanceMonitor {
   generatePerformanceReport(): {
     timestamp: string;
     summary: string;
-    metrics: any;
+    metrics: unknown;
     recommendations: string[];
     lgpdCompliance: boolean;
   } {

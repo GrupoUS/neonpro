@@ -1,0 +1,311 @@
+/* 
+ * NEONPRO Healthcare Responsive Design System
+ * Mobile-First Patterns with Healthcare Context Optimization
+ * Following KISS/YAGNI Constitutional Principles
+ */
+
+:root {
+  /* Healthcare-Optimized Breakpoints */
+  --bp-mobile-small: 320px;    /* Emergency interface only */
+  --bp-mobile-standard: 375px; /* Full patient interface */
+  --bp-tablet: 768px;          /* Dual pane layouts */
+  --bp-desktop: 1024px;        /* Full dashboard with sidebar */
+  
+  /* Touch Target Optimization */
+  --touch-target-normal: 44px;    /* WCAG AA minimum */
+  --touch-target-emergency: 56px; /* Healthcare emergency context */
+  --touch-spacing-normal: 8px;    /* Standard spacing */
+  --touch-spacing-emergency: 12px; /* Enhanced spacing for stress/emergency */
+  
+  /* Healthcare Context Colors for Touch Feedback */
+  --touch-normal: oklch(0.7 0.05 200);      /* Subtle blue feedback */
+  --touch-emergency: oklch(0.6 0.15 25);    /* Orange emergency feedback */
+  --touch-critical: oklch(0.5 0.25 15);     /* Red critical feedback */
+  
+  /* Fluid Typography Base */
+  --font-size-base: clamp(1rem, 2.5vw, 1.125rem);
+  --font-size-small: clamp(0.875rem, 2.2vw, 1rem);
+  --font-size-large: clamp(1.125rem, 3vw, 1.25rem);
+  --font-size-xl: clamp(1.25rem, 3.5vw, 1.5rem);
+  --font-size-2xl: clamp(1.5rem, 4vw, 2rem);
+  
+  /* Line Height Optimization for Portuguese */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.65;  /* Optimized for Portuguese readability */
+  --line-height-relaxed: 1.8;
+}/* 
+ * NEONPRO Healthcare Responsive Design System
+ * Mobile-First Patterns with Healthcare Context Optimization
+ * Following KISS/YAGNI Constitutional Principles
+ */
+
+:root {
+  /* Healthcare-Optimized Breakpoints */
+  --bp-mobile-small: 320px;    /* Emergency interface only */
+  --bp-mobile-standard: 375px; /* Full patient interface */
+  --bp-tablet: 768px;          /* Dual pane layouts */
+  --bp-desktop: 1024px;        /* Full dashboard with sidebar */
+  
+  /* Touch Target Optimization */
+  --touch-target-normal: 44px;    /* WCAG AA minimum */
+  --touch-target-emergency: 56px; /* Healthcare emergency context */
+  --touch-spacing-normal: 8px;    /* Standard spacing */
+  --touch-spacing-emergency: 12px; /* Enhanced spacing for stress/emergency */
+  
+  /* Healthcare Context Colors for Touch Feedback */
+  --touch-normal: oklch(0.7 0.05 200);      /* Subtle blue feedback */
+  --touch-emergency: oklch(0.6 0.15 25);    /* Orange emergency feedback */
+  --touch-critical: oklch(0.5 0.25 15);     /* Red critical feedback */
+  
+  /* Fluid Typography Base */
+  --font-size-base: clamp(1rem, 2.5vw, 1.125rem);
+  --font-size-small: clamp(0.875rem, 2.2vw, 1rem);
+  --font-size-large: clamp(1.125rem, 3vw, 1.25rem);
+  --font-size-xl: clamp(1.25rem, 3.5vw, 1.5rem);
+  --font-size-2xl: clamp(1.5rem, 4vw, 2rem);
+  
+  /* Line Height Optimization for Portuguese */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.65;  /* Optimized for Portuguese readability */
+  --line-height-relaxed: 1.8;
+}
+
+/* =============================================================================
+   MOBILE-FIRST BASE STYLES (320px+)
+   Emergency interface with core functionality only
+   ============================================================================= */
+
+/* Base touch targets for mobile-first approach */
+.touch-target {
+  min-height: var(--touch-target-normal);
+  min-width: var(--touch-target-normal);
+  margin: var(--touch-spacing-normal);
+  border-radius: 8px;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+/* Emergency context touch optimization */
+.touch-target--emergency {
+  min-height: var(--touch-target-emergency);
+  min-width: var(--touch-target-emergency);
+  margin: var(--touch-spacing-emergency);
+  background-color: var(--touch-emergency);
+  font-weight: 600;
+}
+
+/* Critical action touch targets */
+.touch-target--critical {
+  background-color: var(--touch-critical);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Touch feedback for all interactive elements */
+.touch-target:active {
+  transform: scale(0.98);
+  background-color: var(--touch-normal);
+}
+
+/* =============================================================================
+   MOBILE STANDARD (375px+)
+   Full patient interface with enhanced features
+   ============================================================================= */
+
+@media (min-width: 375px) {
+  /* Enhanced spacing for larger screens */
+  .container {
+    padding-inline: 1rem;
+  }
+  
+  /* Improved typography scaling */
+  body {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+  }
+  
+  /* Two-column layouts for forms */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  /* Patient card layouts */
+  .patient-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* =============================================================================
+   TABLET (768px+)
+   Dual pane layouts for efficiency
+   ============================================================================= */
+
+@media (min-width: 768px) {
+  /* Dual pane layout for patient management */
+  .dual-pane {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 2rem;
+    height: 100vh;
+  }
+  
+  /* Enhanced patient grid */
+  .patient-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  /* Navigation improvements */
+  .nav-horizontal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Form improvements */
+  .form-row {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  
+  /* Touch targets can be slightly smaller on tablet */
+  .touch-target {
+    min-height: 40px;
+    min-width: 40px;
+  }
+}
+
+/* =============================================================================
+   DESKTOP (1024px+)
+   Full dashboard view with sidebar
+   ============================================================================= */
+
+@media (min-width: 1024px) {
+  /* Dashboard layout with sidebar */
+  .dashboard-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+      "sidebar header"
+      "sidebar main";
+    height: 100vh;
+  }
+  
+  .sidebar {
+    grid-area: sidebar;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+  }
+  
+  .header {
+    grid-area: header;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .main-content {
+    grid-area: main;
+    padding: 2rem;
+    overflow-y: auto;
+  }
+  
+  /* Enhanced patient grid for desktop */
+  .patient-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  
+  /* Four-column forms for efficiency */
+  .form-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* =============================================================================
+   HEALTHCARE-SPECIFIC ADAPTATIONS
+   ============================================================================= */
+
+/* High contrast mode for visual impairments */
+@media (prefers-contrast: high) {
+  .touch-target {
+    border: 2px solid currentColor;
+  }
+  
+  .touch-target--emergency {
+    border: 3px solid var(--emergency);
+  }
+  
+  .touch-target--critical {
+    border: 3px solid var(--critical);
+  }
+}
+
+/* Reduced motion for users with vestibular disorders */
+@media (prefers-reduced-motion: reduce) {
+  .touch-target {
+    transition: none;
+  }
+  
+  .touch-target:active {
+    transform: none;
+  }
+}
+
+/* One-handed operation patterns */
+.one-handed-mode .touch-target {
+  min-height: 48px;
+  margin-bottom: 1rem;
+}
+
+/* Post-procedure accessibility (larger targets) */
+.post-procedure-mode .touch-target {
+  min-height: var(--touch-target-emergency);
+  min-width: var(--touch-target-emergency);
+  font-size: 1.125rem;
+}
+
+/* =============================================================================
+   PROGRESSIVE ENHANCEMENT PATTERNS
+   ============================================================================= */
+
+/* Core functionality without JavaScript */
+.no-js .enhanced-only {
+  display: none;
+}
+
+.no-js .core-functionality {
+  display: block;
+}
+
+/* Network-aware patterns */
+@media (prefers-reduced-data: reduce) {
+  .high-bandwidth-content {
+    display: none;
+  }
+  
+  .low-bandwidth-alternative {
+    display: block;
+  }
+}
+
+/* Print optimizations for medical records */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+    color: black;
+    background: white;
+  }
+}

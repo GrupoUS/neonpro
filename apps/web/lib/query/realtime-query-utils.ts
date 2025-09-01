@@ -32,7 +32,7 @@ export interface RealtimeQueryConfig {
 export class RealtimeQueryManager {
   private readonly queryClient: QueryClient;
   private readonly supabaseClient: SupabaseClient;
-  private readonly activeChannels: Map<string, any> = new Map();
+  private readonly activeChannels: Map<string, unknown> = new Map();
 
   constructor(queryClient: QueryClient, supabaseClient: SupabaseClient) {
     this.queryClient = queryClient;

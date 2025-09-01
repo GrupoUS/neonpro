@@ -8,9 +8,9 @@ import type { MockedFunction } from "vitest";
 
 // CPF Validator Mock
 const mockCpfValidator: {
-  isValid: MockedFunction<any>;
-  format: MockedFunction<any>;
-  clean: MockedFunction<any>;
+  isValid: MockedFunction<unknown>;
+  format: MockedFunction<unknown>;
+  clean: MockedFunction<unknown>;
 } = {
   isValid: vi.fn().mockReturnValue(true),
   format: vi.fn().mockImplementation((cpf: string) => cpf),
@@ -49,7 +49,7 @@ const createMockQueryBuilder = () => {
 
       // If this is a select-only operation (no insert), return stored data
       if (!insertedData) {
-        const tableName = (mockBuilder as any).currentTable || "default";
+        const tableName = (mockBuilder as unknown).currentTable || "default";
         const storedRecords = insertedRecords.get(tableName) || [];
         insertedData = storedRecords.slice(0, 10); // Return up to 10 records for queries
       }
@@ -69,7 +69,7 @@ const createMockQueryBuilder = () => {
       }));
 
       // Check for duplicate key scenario by checking existing records
-      const tableName = (mockBuilder as any).currentTable || "default";
+      const tableName = (mockBuilder as unknown).currentTable || "default";
       const existingRecords = insertedRecords.get(tableName) || [];
       const hasDuplicate = insertedData.some((newItem: Record<string, unknown>) =>
         existingRecords.some((existing: Record<string, unknown>) =>
@@ -167,22 +167,22 @@ const createMockQueryBuilder = () => {
 };
 
 const mockSupabaseClient: {
-  from: MockedFunction<any>;
+  from: MockedFunction<unknown>;
   auth: {
-    getUser: MockedFunction<any>;
-    signInWithPassword: MockedFunction<any>;
-    signOut: MockedFunction<any>;
+    getUser: MockedFunction<unknown>;
+    signInWithPassword: MockedFunction<unknown>;
+    signOut: MockedFunction<unknown>;
   };
-  channel: MockedFunction<any>;
-  rpc: MockedFunction<any>;
+  channel: MockedFunction<unknown>;
+  rpc: MockedFunction<unknown>;
   storage: {
-    from: MockedFunction<any>;
+    from: MockedFunction<unknown>;
   };
 } = {
   from: vi.fn().mockImplementation((tableName: string) => {
     const builder = createMockQueryBuilder();
     // Set the current table for the builder
-    (builder as any).currentTable = tableName;
+    (builder as unknown).currentTable = tableName;
     return builder;
   }),
   auth: {
@@ -208,11 +208,11 @@ const mockSupabaseClient: {
 
 // LGPD Service Mock
 const mockLgpdService: {
-  validateConsent: MockedFunction<any>;
-  logDataAccess: MockedFunction<any>;
-  checkDataRetention: MockedFunction<any>;
-  anonymizeData: MockedFunction<any>;
-  generateConsentReport: MockedFunction<any>;
+  validateConsent: MockedFunction<unknown>;
+  logDataAccess: MockedFunction<unknown>;
+  checkDataRetention: MockedFunction<unknown>;
+  anonymizeData: MockedFunction<unknown>;
+  generateConsentReport: MockedFunction<unknown>;
 } = {
   validateConsent: vi.fn().mockReturnValue(true),
   logDataAccess: vi.fn().mockResolvedValue(true),
@@ -223,11 +223,11 @@ const mockLgpdService: {
 
 // Notification Service Mock
 const mockNotificationService: {
-  sendEmergencyAlert: MockedFunction<any>;
-  notifyCompliance: MockedFunction<any>;
-  logNotification: MockedFunction<any>;
-  notifyMedicalStaff: MockedFunction<any>;
-  logEmergencyNotification: MockedFunction<any>;
+  sendEmergencyAlert: MockedFunction<unknown>;
+  notifyCompliance: MockedFunction<unknown>;
+  logNotification: MockedFunction<unknown>;
+  notifyMedicalStaff: MockedFunction<unknown>;
+  logEmergencyNotification: MockedFunction<unknown>;
 } = {
   sendEmergencyAlert: vi.fn().mockResolvedValue({
     alert_sent: true,
@@ -250,10 +250,10 @@ const mockNotificationService: {
 
 // Compliance Service Mock
 const mockComplianceService: {
-  validateCompliance: MockedFunction<any>;
-  logComplianceEvent: MockedFunction<any>;
-  checkRequirements: MockedFunction<any>;
-  generateReport: MockedFunction<any>;
+  validateCompliance: MockedFunction<unknown>;
+  logComplianceEvent: MockedFunction<unknown>;
+  checkRequirements: MockedFunction<unknown>;
+  generateReport: MockedFunction<unknown>;
 } = {
   validateCompliance: vi.fn().mockReturnValue(true),
   logComplianceEvent: vi.fn().mockResolvedValue({}),
@@ -262,11 +262,11 @@ const mockComplianceService: {
 };
 
 // Assign to globalThis for access in tests
-(globalThis as any).mockCpfValidator = mockCpfValidator;
-(globalThis as any).mockSupabaseClient = mockSupabaseClient;
-(globalThis as any).mockLgpdService = mockLgpdService;
-(globalThis as any).mockNotificationService = mockNotificationService;
-(globalThis as any).mockComplianceService = mockComplianceService;
+(globalThis as unknown).mockCpfValidator = mockCpfValidator;
+(globalThis as unknown).mockSupabaseClient = mockSupabaseClient;
+(globalThis as unknown).mockLgpdService = mockLgpdService;
+(globalThis as unknown).mockNotificationService = mockNotificationService;
+(globalThis as unknown).mockComplianceService = mockComplianceService;
 
 // Export for direct imports if needed
 export {

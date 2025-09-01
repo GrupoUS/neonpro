@@ -113,8 +113,8 @@ export class CircuitBreakerManager {
   /**
    * Get all circuit breaker statuses
    */
-  getSystemHealth(): Record<string, any> {
-    const health: Record<string, any> = {};
+  getSystemHealth(): Record<string, unknown> {
+    const health: Record<string, unknown> = {};
 
     for (const [serviceName, circuitBreaker] of this.circuitBreakers) {
       health[serviceName] = {

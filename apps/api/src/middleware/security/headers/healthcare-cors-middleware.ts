@@ -538,7 +538,7 @@ export class HealthcareCORSManager {
 export function createHealthcareCORSMiddleware(
   policy: HealthcareCORSPolicy = HealthcareCORSPolicy.DEVELOPMENT,
   options: {
-    auditLogger?: any;
+    auditLogger?: unknown;
     emergencyBypass?: boolean;
   } = {},
 ): MiddlewareHandler {
@@ -610,25 +610,25 @@ export function createHealthcareCORSMiddleware(
  * Pre-configured CORS middlewares for different healthcare scenarios
  */
 export const healthcareCORSMiddlewares = {
-  strict: (auditLogger?: any) =>
+  strict: (auditLogger?: unknown) =>
     createHealthcareCORSMiddleware(HealthcareCORSPolicy.STRICT, { auditLogger }),
 
-  medical: (auditLogger?: any) =>
+  medical: (auditLogger?: unknown) =>
     createHealthcareCORSMiddleware(HealthcareCORSPolicy.MEDICAL, { auditLogger }),
 
-  patientPortal: (auditLogger?: any) =>
+  patientPortal: (auditLogger?: unknown) =>
     createHealthcareCORSMiddleware(HealthcareCORSPolicy.PATIENT_PORTAL, { auditLogger }),
 
-  telemedicine: (auditLogger?: any) =>
+  telemedicine: (auditLogger?: unknown) =>
     createHealthcareCORSMiddleware(HealthcareCORSPolicy.TELEMEDICINE, {
       auditLogger,
       emergencyBypass: true,
     }),
 
-  emergency: (auditLogger?: any) =>
+  emergency: (auditLogger?: unknown) =>
     createHealthcareCORSMiddleware(HealthcareCORSPolicy.EMERGENCY, { auditLogger }),
 
-  interoperability: (auditLogger?: any) =>
+  interoperability: (auditLogger?: unknown) =>
     createHealthcareCORSMiddleware(HealthcareCORSPolicy.INTEROPERABILITY, { auditLogger }),
 
   development: () => createHealthcareCORSMiddleware(HealthcareCORSPolicy.DEVELOPMENT),

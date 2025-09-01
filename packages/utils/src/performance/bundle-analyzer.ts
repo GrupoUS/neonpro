@@ -467,7 +467,7 @@ export class BundleAnalyzer {
           maximumWarning: "6kb",
         },
         {
-          type: "any",
+          type: "<unknown>",
           maximumWarning: "2mb",
         },
         // Brazilian healthcare specific budgets

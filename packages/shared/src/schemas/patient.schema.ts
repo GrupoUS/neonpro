@@ -420,7 +420,7 @@ export const PatientResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.any()).optional(),
+      details: z.record(z.<unknown>()).optional(),
     })
     .optional(),
 });
@@ -439,13 +439,13 @@ export const PatientsListResponseSchema = z.object({
         has_next: z.boolean(),
         has_prev: z.boolean(),
       }),
-      filters_applied: z.record(z.any()).optional(),
+      filters_applied: z.record(z.<unknown>()).optional(),
     })
     .optional(),
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.any()).optional(),
+      details: z.record(z.<unknown>()).optional(),
     })
     .optional(),
 });
@@ -496,7 +496,7 @@ export const PatientDataExportResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.any()).optional(),
+      details: z.record(z.<unknown>()).optional(),
     })
     .optional(),
 });

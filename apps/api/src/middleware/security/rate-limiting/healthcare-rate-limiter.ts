@@ -236,7 +236,7 @@ class MemoryRateLimitStorage implements RateLimitStorage {
 
 // Redis storage implementation (for production)
 class RedisRateLimitStorage implements RateLimitStorage {
-  constructor(private redisClient: any) {} // Redis client type
+  constructor(private redisClient: unknown) {} // Redis client type
 
   async get(key: string): Promise<number | null> {
     const value = await this.redisClient.get(key);
@@ -617,7 +617,7 @@ export function createHealthcareRateLimiter(
  * Create Redis-backed rate limiter for production
  */
 export function createRedisHealthcareRateLimiter(
-  redisClient: any,
+  redisClient: unknown,
   options?: {
     monitoring?: boolean;
     alerting?: boolean;

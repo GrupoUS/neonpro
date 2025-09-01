@@ -14,7 +14,7 @@ const updatePlanSchema = z.object({
   name: z.string().min(1).max(255).optional(),
   description: z.string().optional(),
   trial_period_days: z.number().min(0).max(365).optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.<unknown>()).optional(),
   active: z.boolean().optional(),
 });
 

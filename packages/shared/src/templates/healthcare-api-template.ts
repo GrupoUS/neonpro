@@ -34,7 +34,7 @@ export interface HealthcareApiResponse<T> {
   error?: {
     code: string;
     message: string;
-    details?: Record<string, any>;
+    details?: Record<string, unknown>;
   };
   metadata?: {
     timestamp: string;

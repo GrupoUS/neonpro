@@ -18,7 +18,7 @@ const signInWithGoogle = async () => {
 };
 
 export function useAuth() {
-  const [user, setUser] = useState<any>();
+  const [user, setUser] = useState<unknown>();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -47,7 +47,7 @@ export class EmergencyMedicalProtocolsService {
     action: string;
     emergencyId?: string;
     userId?: string;
-    details: Record<string, any>;
+    details: Record<string, unknown>;
   }[] = [];
 
   private constructor() {
@@ -1154,7 +1154,7 @@ export class EmergencyMedicalProtocolsService {
     action: string,
     emergencyId?: string,
     userId?: string,
-    details: Record<string, any> = {},
+    details: Record<string, unknown> = {},
   ): void {
     this.auditLog.push({
       timestamp: new Date(),
@@ -1171,7 +1171,7 @@ export class EmergencyMedicalProtocolsService {
     action: string;
     emergencyId?: string;
     userId?: string;
-    details: Record<string, any>;
+    details: Record<string, unknown>;
   }[] {
     return [...this.auditLog];
   }

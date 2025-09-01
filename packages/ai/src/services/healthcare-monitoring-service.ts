@@ -188,7 +188,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   > = new Map();
   private readonly activeAlerts: Map<string, HealthAlert> = new Map();
   private monitoringIntervals: NodeJS.Timeout[] = [];
-  private readonly dashboardClients: Set<any> = new Set(); // WebSocket clients for real-time updates
+  private readonly dashboardClients: Set<unknown> = new Set(); // WebSocket clients for real-time updates
 
   constructor(
     cache: CacheService,

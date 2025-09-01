@@ -3,7 +3,7 @@
 /**
  * Conflict Resolver Component
  * T3.3: Cross-Device Continuity e QR Handoff System
- * 
+ *
  * Handles concurrent edit conflicts across multiple devices
  * Features:
  * - Real-time conflict detection
@@ -15,76 +15,76 @@
  * - Healthcare-specific conflict handling (prioritize critical data)
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { 
-  AlertTriangle, 
-  CheckCircle, 
-  XCircle, 
-  RefreshCw, 
-  Clock, 
-  User, 
-  Smartphone, 
-  Tablet, 
-  Monitor, 
-  Merge, 
-  ArrowRight, 
-  Eye,
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import { createClient } from "@/utils/supabase/client";
+import {
   AlertCircle,
-  Shield
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
-import { createClient } from '@/utils/supabase/client';
+  AlertTriangle,
+  ArrowRight,
+  CheckCircle,
+  Clock,
+  Eye,
+  Merge,
+  Monitor,
+  RefreshCw,
+  Shield,
+  Smartphone,
+  Tablet,
+  User,
+  XCircle,
+} from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 // Types
 interface ConflictData {
   id: string;
-  entityType: 'patient' | 'appointment' | 'treatment' | 'medication' | 'form_data';
+  entityType: "patient" | "appointment" | "treatment" | "medication" | "form_data";
   entityId: string;
   fieldName: string;
-  conflictType: 'concurrent_edit' | 'version_mismatch' | 'delete_modified' | 'create_duplicate';
-  priority: 'critical' | 'high' | 'medium' | 'low';
-  
+  conflictType: "concurrent_edit" | "version_mismatch" | "delete_modified" | "create_duplicate";
+  priority: "critical" | "high" | "medium" | "low";
+
   // Conflict versions
-  baseVersion: any;
-  localVersion: any;
-  remoteVersion: any;
-  
+  baseVersion: Record<string, unknown>;
+  localVersion: Record<string, unknown>;
+  remoteVersion: Record<string, unknown>;
+
   // Device information
   localDevice: {
     id: string;
-    type: 'mobile' | 'tablet' | 'desktop';
+    type: "mobile" | "tablet" | "desktop";
     user: string;
     timestamp: number;
   };
   remoteDevice: {
     id: string;
-    type: 'mobile' | 'tablet' | 'desktop';
+    type: "mobile" | "tablet" | "desktop";
     user: string;
     timestamp: number;
   };
-  
+
   // Auto-resolution
   canAutoResolve: boolean;
-  suggestedResolution?: 'merge' | 'keep_local' | 'keep_remote' | 'manual';
+  suggestedResolution?: "merge" | "keep_local" | "keep_remote" | "manual";
   autoResolutionReason?: string;
-  
+
   // Status
-  status: 'pending' | 'resolving' | 'resolved' | 'failed';
+  status: "pending" | "resolving" | "resolved" | "failed";
   resolutionStrategy?: string;
   resolvedAt?: number;
   resolvedBy?: string;
 }
 
 interface ResolutionAction {
-  type: 'merge' | 'keep_local' | 'keep_remote' | 'manual_edit';
-  mergedData?: any;
+  type: "merge" | "keep_local" | "keep_remote" | "manual_edit";
+  mergedData?: Record<string, unknown>;
   reason: string;
 }
 
@@ -105,22 +105,22 @@ const useConflictDetection = (userId: string) => {
   const supabase = createClient();
 
   const fetchConflicts = useCallback(async () => {
-    if (!userId) {return;}
-    
+    if (!userId) return;
+
     setIsLoading(true);
     try {
       const { data: conflictData, error } = await supabase
-        .from('sync_conflicts')
+        .from("sync_conflicts")
         .select(`
           *,
           local_device:local_device_id(*),
           remote_device:remote_device_id(*)
         `)
-        .eq('user_id', userId)
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false });
+        .eq("user_id", userId)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false });
 
-      if (error) {throw error;}
+      if (error) throw error;
 
       const formattedConflicts: ConflictData[] = conflictData?.map(conflict => ({
         id: conflict.id,
@@ -135,14 +135,14 @@ const useConflictDetection = (userId: string) => {
         localDevice: {
           id: conflict.local_device.id,
           type: conflict.local_device.device_type,
-          user: conflict.local_device.user_name || 'Unknown',
-          timestamp: new Date(conflict.local_timestamp).getTime()
+          user: conflict.local_device.user_name || "Unknown",
+          timestamp: new Date(conflict.local_timestamp).getTime(),
         },
         remoteDevice: {
           id: conflict.remote_device.id,
           type: conflict.remote_device.device_type,
-          user: conflict.remote_device.user_name || 'Unknown',
-          timestamp: new Date(conflict.remote_timestamp).getTime()
+          user: conflict.remote_device.user_name || "Unknown",
+          timestamp: new Date(conflict.remote_timestamp).getTime(),
         },
         canAutoResolve: conflict.can_auto_resolve,
         suggestedResolution: conflict.suggested_resolution,
@@ -150,12 +150,12 @@ const useConflictDetection = (userId: string) => {
         status: conflict.status,
         resolutionStrategy: conflict.resolution_strategy,
         resolvedAt: conflict.resolved_at ? new Date(conflict.resolved_at).getTime() : undefined,
-        resolvedBy: conflict.resolved_by
+        resolvedBy: conflict.resolved_by,
       })) || [];
 
       setConflicts(formattedConflicts);
     } catch (error) {
-      console.error('Error fetching conflicts:', error);
+      console.error("Error fetching conflicts:", error);
     } finally {
       setIsLoading(false);
     }
@@ -168,25 +168,25 @@ const useConflictDetection = (userId: string) => {
   const resolveConflict = useCallback(async (conflictId: string, resolution: ResolutionAction) => {
     try {
       const { error } = await supabase
-        .from('sync_conflicts')
+        .from("sync_conflicts")
         .update({
-          status: 'resolved',
+          status: "resolved",
           resolution_strategy: resolution.type,
           resolution_data: resolution.mergedData || null,
           resolution_reason: resolution.reason,
           resolved_at: new Date().toISOString(),
-          resolved_by: userId
+          resolved_by: userId,
         })
-        .eq('id', conflictId);
+        .eq("id", conflictId);
 
-      if (error) {throw error;}
+      if (error) throw error;
 
       // Remove from local state
       setConflicts(prev => prev.filter(c => c.id !== conflictId));
-      
+
       return true;
     } catch (error) {
-      console.error('Error resolving conflict:', error);
+      console.error("Error resolving conflict:", error);
       return false;
     }
   }, [supabase, userId]);
@@ -195,7 +195,7 @@ const useConflictDetection = (userId: string) => {
     conflicts,
     isLoading,
     fetchConflicts,
-    resolveConflict
+    resolveConflict,
   };
 };
 
@@ -205,49 +205,56 @@ const useAutoResolution = (conflicts: ConflictData[], autoResolveEnabled: boolea
 
   const canAutoResolve = useCallback((conflict: ConflictData): boolean => {
     // Healthcare-specific auto-resolution rules
-    if (conflict.priority === 'critical') {return false;} // Never auto-resolve critical healthcare data
-    if (conflict.entityType === 'patient' && conflict.fieldName.includes('medical')) {return false;}
-    if (conflict.entityType === 'medication') {return false;}
-    
+    if (conflict.priority === "critical") return false; // Never auto-resolve critical healthcare data
+    if (conflict.entityType === "patient" && conflict.fieldName.includes("medical")) return false;
+    if (conflict.entityType === "medication") return false;
+
     return conflict.canAutoResolve;
   }, []);
 
-  const getAutoResolutionStrategy = useCallback((conflict: ConflictData): ResolutionAction | null => {
-    if (!canAutoResolve(conflict)) {return null;}
+  const getAutoResolutionStrategy = useCallback(
+    (conflict: ConflictData): ResolutionAction | null => {
+      if (!canAutoResolve(conflict)) return null;
 
-    // Time-based resolution (latest wins for low-priority fields)
-    if (conflict.localDevice.timestamp > conflict.remoteDevice.timestamp) {
-      return {
-        type: 'keep_local',
-        reason: `Auto-resolved: Local change is more recent (${new Date(conflict.localDevice.timestamp).toLocaleString()})`
-      };
-    } else {
-      return {
-        type: 'keep_remote',
-        reason: `Auto-resolved: Remote change is more recent (${new Date(conflict.remoteDevice.timestamp).toLocaleString()})`
-      };
-    }
-  }, [canAutoResolve]);
+      // Time-based resolution (latest wins for low-priority fields)
+      if (conflict.localDevice.timestamp > conflict.remoteDevice.timestamp) {
+        return {
+          type: "keep_local",
+          reason: `Auto-resolved: Local change is more recent (${
+            new Date(conflict.localDevice.timestamp).toLocaleString()
+          })`,
+        };
+      } else {
+        return {
+          type: "keep_remote",
+          reason: `Auto-resolved: Remote change is more recent (${
+            new Date(conflict.remoteDevice.timestamp).toLocaleString()
+          })`,
+        };
+      }
+    },
+    [canAutoResolve],
+  );
 
   const processAutoResolution = useCallback(async (
-    conflict: ConflictData, 
-    resolveFunction: (conflictId: string, resolution: ResolutionAction) => Promise<boolean>
+    conflict: ConflictData,
+    resolveFunction: (conflictId: string, resolution: ResolutionAction) => Promise<boolean>,
   ) => {
-    if (!autoResolveEnabled || !canAutoResolve(conflict)) {return false;}
+    if (!autoResolveEnabled || !canAutoResolve(conflict)) return false;
 
     const strategy = getAutoResolutionStrategy(conflict);
-    if (!strategy) {return false;}
+    if (!strategy) return false;
 
     // Simulate processing time for UX
     setAutoResolutionProgress(prev => ({ ...prev, [conflict.id]: 0 }));
-    
+
     for (let progress = 0; progress <= 100; progress += 20) {
       setAutoResolutionProgress(prev => ({ ...prev, [conflict.id]: progress }));
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
     const success = await resolveFunction(conflict.id, strategy);
-    
+
     setAutoResolutionProgress(prev => {
       const { [conflict.id]: _, ...rest } = prev;
       return rest;
@@ -260,51 +267,52 @@ const useAutoResolution = (conflicts: ConflictData[], autoResolveEnabled: boolea
     canAutoResolve,
     getAutoResolutionStrategy,
     processAutoResolution,
-    autoResolutionProgress
+    autoResolutionProgress,
   };
 };
 
 export default function ConflictResolver({
   className,
   emergencyMode = false,
-  userId = '',
+  userId = "",
   conflicts: externalConflicts,
   onConflictResolved,
   onConflictDismissed,
-  autoResolveEnabled = true
+  autoResolveEnabled = true,
 }: ConflictResolverProps) {
   const [selectedConflict, setSelectedConflict] = useState<ConflictData | null>(null);
   const [manualResolutionData, setManualResolutionData] = useState<any>(null);
   const [resolutionError, setResolutionError] = useState<string | null>(null);
 
   // Use internal conflict detection or external conflicts
-  const { 
-    conflicts: internalConflicts, 
-    isLoading, 
+  const {
+    conflicts: internalConflicts,
+    isLoading,
     resolveConflict: internalResolveConflict,
-    fetchConflicts 
+    fetchConflicts,
   } = useConflictDetection(userId);
 
   const conflicts = externalConflicts || internalConflicts;
-  const resolveConflict = onConflictResolved ? 
-    async (id: string, resolution: ResolutionAction) => {
+  const resolveConflict = onConflictResolved
+    ? async (id: string, resolution: ResolutionAction) => {
       onConflictResolved(id, resolution);
       return true;
-    } : internalResolveConflict;
+    }
+    : internalResolveConflict;
 
-  const { 
-    canAutoResolve, 
-    processAutoResolution, 
-    autoResolutionProgress 
+  const {
+    canAutoResolve,
+    processAutoResolution,
+    autoResolutionProgress,
   } = useAutoResolution(conflicts, autoResolveEnabled);
 
   // Group conflicts by priority and type
   const conflictGroups = useMemo(() => {
     const groups = {
-      critical: conflicts.filter(c => c.priority === 'critical'),
-      high: conflicts.filter(c => c.priority === 'high'),
-      medium: conflicts.filter(c => c.priority === 'medium'),
-      low: conflicts.filter(c => c.priority === 'low')
+      critical: conflicts.filter(c => c.priority === "critical"),
+      high: conflicts.filter(c => c.priority === "high"),
+      medium: conflicts.filter(c => c.priority === "medium"),
+      low: conflicts.filter(c => c.priority === "low"),
     };
     return groups;
   }, [conflicts]);
@@ -312,9 +320,7 @@ export default function ConflictResolver({
   // Auto-resolve eligible conflicts
   useEffect(() => {
     const autoResolveEligibleConflicts = async () => {
-      const eligibleConflicts = conflicts.filter(c => 
-        c.status === 'pending' && canAutoResolve(c)
-      );
+      const eligibleConflicts = conflicts.filter(c => c.status === "pending" && canAutoResolve(c));
 
       for (const conflict of eligibleConflicts) {
         await processAutoResolution(conflict, resolveConflict);
@@ -329,31 +335,34 @@ export default function ConflictResolver({
   }, [conflicts, canAutoResolve, processAutoResolution, resolveConflict, autoResolveEnabled]);
 
   // Manual resolution handlers
-  const handleManualResolution = async (conflict: ConflictData, strategy: 'keep_local' | 'keep_remote' | 'merge') => {
+  const handleManualResolution = async (
+    conflict: ConflictData,
+    strategy: "keep_local" | "keep_remote" | "merge",
+  ) => {
     let resolution: ResolutionAction;
 
     switch (strategy) {
-      case 'keep_local':
+      case "keep_local":
         resolution = {
-          type: 'keep_local',
-          reason: 'User chose to keep local version'
+          type: "keep_local",
+          reason: "User chose to keep local version",
         };
         break;
-      case 'keep_remote':
+      case "keep_remote":
         resolution = {
-          type: 'keep_remote', 
-          reason: 'User chose to keep remote version'
+          type: "keep_remote",
+          reason: "User chose to keep remote version",
         };
         break;
-      case 'merge':
+      case "merge":
         if (!manualResolutionData) {
-          setResolutionError('Please provide merged data for resolution');
+          setResolutionError("Please provide merged data for resolution");
           return;
         }
         resolution = {
-          type: 'manual_edit',
+          type: "manual_edit",
           mergedData: manualResolutionData,
-          reason: 'User manually merged versions'
+          reason: "User manually merged versions",
         };
         break;
       default:
@@ -370,27 +379,35 @@ export default function ConflictResolver({
   // Get device icon
   const getDeviceIcon = (type: string) => {
     switch (type) {
-      case 'mobile': return <Smartphone className="h-4 w-4" />;
-      case 'tablet': return <Tablet className="h-4 w-4" />;
-      default: return <Monitor className="h-4 w-4" />;
+      case "mobile":
+        return <Smartphone className="h-4 w-4" />;
+      case "tablet":
+        return <Tablet className="h-4 w-4" />;
+      default:
+        return <Monitor className="h-4 w-4" />;
     }
   };
 
   // Get priority color
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'destructive';
-      case 'high': return 'destructive';
-      case 'medium': return 'default';
-      case 'low': return 'secondary';
-      default: return 'secondary';
+      case "critical":
+        return "destructive";
+      case "high":
+        return "destructive";
+      case "medium":
+        return "default";
+      case "low":
+        return "secondary";
+      default:
+        return "secondary";
     }
   };
 
   // Render conflict summary
   const renderConflictSummary = (conflict: ConflictData) => {
     const progress = autoResolutionProgress[conflict.id];
-    
+
     return (
       <Card key={conflict.id} className="border-l-4 border-l-amber-500">
         <CardHeader className="pb-2">
@@ -401,7 +418,7 @@ export default function ConflictResolver({
                 {conflict.priority}
               </Badge>
               <span className="text-sm font-medium">
-                {conflict.entityType.replace('_', ' ')} conflict
+                {conflict.entityType.replace("_", " ")} conflict
               </span>
             </div>
             <div className="flex items-center gap-1">
@@ -411,7 +428,7 @@ export default function ConflictResolver({
                   Auto-resolve
                 </Badge>
               )}
-              {conflict.priority === 'critical' && (
+              {conflict.priority === "critical" && (
                 <Badge variant="destructive" className="text-xs">
                   <Shield className="h-3 w-3 mr-1" />
                   Manual only
@@ -423,14 +440,14 @@ export default function ConflictResolver({
 
         <CardContent className="space-y-2">
           {/* Auto-resolution progress */}
-          {typeof progress === 'number' && (
+          {typeof progress === "number" && (
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <RefreshCw className="h-3 w-3 animate-spin" />
                 Auto-resolving conflict...
               </div>
               <div className="w-full bg-gray-200 rounded-full h-1">
-                <div 
+                <div
                   className="bg-blue-600 h-1 rounded-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 />
@@ -475,20 +492,20 @@ export default function ConflictResolver({
               <Eye className="h-4 w-4 mr-1" />
               Review
             </Button>
-            
+
             {!canAutoResolve(conflict) && (
               <>
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => handleManualResolution(conflict, 'keep_local')}
+                  onClick={() => handleManualResolution(conflict, "keep_local")}
                 >
                   Keep Local
                 </Button>
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => handleManualResolution(conflict, 'keep_remote')}
+                  onClick={() => handleManualResolution(conflict, "keep_remote")}
                 >
                   Keep Remote
                 </Button>
@@ -515,11 +532,13 @@ export default function ConflictResolver({
   }
 
   return (
-    <Card className={cn(
-      "w-full",
-      emergencyMode && "border-2 border-red-500 shadow-lg",
-      className
-    )}>
+    <Card
+      className={cn(
+        "w-full",
+        emergencyMode && "border-2 border-red-500 shadow-lg",
+        className,
+      )}
+    >
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -556,7 +575,8 @@ export default function ConflictResolver({
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              {conflictGroups.critical.length} critical conflicts require immediate manual resolution.
+              {conflictGroups.critical.length}{" "}
+              critical conflicts require immediate manual resolution.
             </AlertDescription>
           </Alert>
         )}
@@ -582,16 +602,18 @@ export default function ConflictResolver({
             <TabsContent key={priority} value={priority} className="mt-4">
               <ScrollArea className="h-96">
                 <div className="space-y-3">
-                  {priorityConflicts.length === 0 ? (
-                    <div className="text-center py-8">
-                      <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">
-                        No {priority} priority conflicts
-                      </p>
-                    </div>
-                  ) : (
-                    priorityConflicts.map(renderConflictSummary)
-                  )}
+                  {priorityConflicts.length === 0
+                    ? (
+                      <div className="text-center py-8">
+                        <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">
+                          No {priority} priority conflicts
+                        </p>
+                      </div>
+                    )
+                    : (
+                      priorityConflicts.map(renderConflictSummary)
+                    )}
                 </div>
               </ScrollArea>
             </TabsContent>
@@ -607,11 +629,9 @@ export default function ConflictResolver({
             disabled={isLoading}
             className="flex-1"
           >
-            {isLoading ? (
-              <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-            ) : (
-              <RefreshCw className="h-4 w-4 mr-2" />
-            )}
+            {isLoading
+              ? <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+              : <RefreshCw className="h-4 w-4 mr-2" />}
             Refresh
           </Button>
         </div>

@@ -191,8 +191,8 @@ class AuditStore {
         severity: this.mapLevelToSeverity(log.level),
         requestMethod: log.method,
         requestPath: log.path,
-        requestBody: log.metadata?.requestBody as Record<string, any> || null,
-        responseBody: log.metadata?.responseBody as Record<string, any> || null,
+        requestBody: log.metadata?.requestBody as Record<string, unknown> || null,
+        responseBody: log.metadata?.responseBody as Record<string, unknown> || null,
         errorMessage: log.metadata?.error as string || null,
         errorStack: log.metadata?.errorStack as string || null,
         additionalData: {

@@ -144,7 +144,7 @@ export class InventoryService {
       performedBy: "system", // This should be the actual user ID
     });
 
-    // Check if this resolves any low stock alerts
+    // Check if this resolves unknown low stock alerts
     await this.checkAndResolveStockAlerts(data.productId);
 
     return stockItem;
@@ -213,7 +213,7 @@ export class InventoryService {
       remainingQuantity -= useFromThisItem;
     }
 
-    // Check if this triggers any low stock alerts
+    // Check if this triggers unknown low stock alerts
     await this.checkLowStock(productId);
 
     return movements;

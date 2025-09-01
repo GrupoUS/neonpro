@@ -197,19 +197,19 @@ export class LGPDDataSubjectRights {
     return { message: `Medical data for user ${userId}` };
   }
 
-  private async exportAppointmentData(userId: string): Promise<any[]> {
+  private async exportAppointmentData(userId: string): Promise<unknown[]> {
     return [{ message: `Appointment data for user ${userId}` }];
   }
 
-  private async exportTreatmentData(userId: string): Promise<any[]> {
+  private async exportTreatmentData(userId: string): Promise<<unknown>[]> {
     return [{ message: `Treatment data for user ${userId}` }];
   }
 
-  private async exportFinancialData(userId: string): Promise<any[]> {
+  private async exportFinancialData(userId: string): Promise<<unknown>[]> {
     return [{ message: `Financial data for user ${userId}` }];
   }
 
-  private async exportCommunicationData(userId: string): Promise<any[]> {
+  private async exportCommunicationData(userId: string): Promise<<unknown>[]> {
     return [{ message: `Communication data for user ${userId}` }];
   }
 

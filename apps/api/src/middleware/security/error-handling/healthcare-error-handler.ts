@@ -79,8 +79,8 @@ interface HealthcareError {
     stackTrace?: string;
     databaseQuery?: string; // Sanitized
     apiEndpoint?: string;
-    parameters?: Record<string, any>; // Sanitized
-    systemState?: Record<string, any>;
+    parameters?: Record<string, unknown>; // Sanitized
+    systemState?: Record<string, unknown>;
   };
 
   // Healthcare context
@@ -144,14 +144,14 @@ interface HealthcareErrorResponse {
  * Healthcare Error Handler Class
  */
 export class HealthcareErrorHandler {
-  private auditLogger: any;
-  private monitoringSystem: any;
-  private emergencyNotificationSystem: any;
+  private auditLogger: unknown;
+  private monitoringSystem: unknown;
+  private emergencyNotificationSystem: unknown;
 
   constructor(options: {
-    auditLogger?: any;
-    monitoringSystem?: any;
-    emergencyNotificationSystem?: any;
+    auditLogger?: unknown;
+    monitoringSystem?: unknown;
+    emergencyNotificationSystem?: unknown;
   } = {}) {
     this.auditLogger = options.auditLogger;
     this.monitoringSystem = options.monitoringSystem;
@@ -661,11 +661,11 @@ export class HealthcareErrorHandler {
     return 500; // Default to Internal Server Error
   }
 
-  private sanitizeParameters(context: Context): Record<string, any> {
+  private sanitizeParameters(context: Context): Record<string, unknown> {
     // Remove sensitive parameters from logging
     const sensitiveKeys = ["password", "token", "cpf", "rg", "cns", "email", "phone"];
     const params = context.get("requestParams") || {};
-    const sanitized: Record<string, any> = {};
+    const sanitized: Record<string, unknown> = {};
 
     for (const [key, value] of Object.entries(params)) {
       if (sensitiveKeys.some(sensitive => key.toLowerCase().includes(sensitive))) {
@@ -678,7 +678,7 @@ export class HealthcareErrorHandler {
     return sanitized;
   }
 
-  private getSystemState(context: Context): Record<string, any> {
+  private getSystemState(context: Context): Record<string, unknown> {
     return {
       timestamp: Date.now(),
       userAgent: context.req.header("User-Agent"),
@@ -783,9 +783,9 @@ export class HealthcareErrorHandler {
  */
 export function createHealthcareErrorHandler(
   options: {
-    auditLogger?: any;
-    monitoringSystem?: any;
-    emergencyNotificationSystem?: any;
+    auditLogger?: unknown;
+    monitoringSystem?: unknown;
+    emergencyNotificationSystem?: unknown;
   } = {},
 ): MiddlewareHandler {
   const errorHandler = new HealthcareErrorHandler(options);

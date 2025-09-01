@@ -738,7 +738,7 @@ export class AISchedulingService {
   private async getAppointmentsInRange(
     _timeRange: { start: Date; end: Date; },
     _tenantId: string,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Get appointments in date range
     return [];
   }

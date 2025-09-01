@@ -72,7 +72,7 @@ export class AestheticPredictionEngine {
       const inputTensor = tf.tensor2d([features]);
 
       // Make prediction
-      const prediction = model.predict(inputTensor) as any;
+      const prediction = model.predict(inputTensor) as unknown;
       const predictionData = await prediction.data();
 
       // Post-process results
@@ -137,7 +137,7 @@ export class AestheticPredictionEngine {
       const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as any;
+      const prediction = model.predict(inputTensor) as unknown;
       const predictionData = await prediction.data();
 
       const result = this.postProcessBotoxOptimization(
@@ -193,7 +193,7 @@ export class AestheticPredictionEngine {
       const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as any;
+      const prediction = model.predict(inputTensor) as unknown;
       const predictionData = await prediction.data();
 
       const result = this.postProcessFillerVolume(predictionData, targetAreas);
@@ -246,7 +246,7 @@ export class AestheticPredictionEngine {
       const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as any;
+      const prediction = model.predict(inputTensor) as unknown;
       const predictionData = await prediction.data();
 
       const result = this.postProcessLaserSettings(predictionData);
@@ -543,7 +543,7 @@ export class AestheticPredictionEngine {
       const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as any;
+      const prediction = model.predict(inputTensor) as unknown;
       const predictionData = await prediction.data();
 
       const result = this.postProcessRiskAssessment(
@@ -595,7 +595,7 @@ export class AestheticPredictionEngine {
       const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as any;
+      const prediction = model.predict(inputTensor) as unknown;
       const predictionData = await prediction.data();
 
       const result = this.postProcessDurationEstimation(
@@ -650,7 +650,7 @@ export class AestheticPredictionEngine {
       const tf = await tensorFlowLoader.getTensorFlow();
       const inputTensor = tf.tensor2d([features]);
 
-      const prediction = model.predict(inputTensor) as any;
+      const prediction = model.predict(inputTensor) as unknown;
       const predictionData = await prediction.data();
 
       const result = this.postProcessSuccessProbability(

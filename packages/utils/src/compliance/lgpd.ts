@@ -308,7 +308,7 @@ export const LGPDConsentRequestSchema = z.object({
 export const LGPDDataSubjectRequestSchema = z.object({
   patientId: z.string().uuid(),
   requestType: z.nativeEnum(LGPDDataSubjectRights),
-  requestData: z.any().optional(),
+  requestData: z.unknown().optional(),
 });
 
 export const LGPDBreachNotificationSchema = z.object({

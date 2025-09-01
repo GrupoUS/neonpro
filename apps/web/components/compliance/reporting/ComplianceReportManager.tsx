@@ -498,7 +498,7 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
               {/* Report Type */}
               <div className="space-y-3">
                 <Label htmlFor="report-type" className="text-sm font-medium">Tipo de Relatório</Label>
-                <Select value={reportType} onValueChange={(value: any) => setReportType(value)}>
+                <Select value={reportType} onValueChange={(value: unknown) => setReportType(value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -515,7 +515,7 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
               {/* Output Format */}
               <div className="space-y-3">
                 <Label htmlFor="output-format" className="text-sm font-medium">Formato de Saída</Label>
-                <Select value={outputFormat} onValueChange={(value: any) => setOutputFormat(value)}>
+                <Select value={outputFormat} onValueChange={(value: unknown) => setOutputFormat(value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

@@ -657,7 +657,7 @@ export default function RealTimeMonitoringDashboard({
     </Card>
   );
 
-  const renderAlertCard = (alert: any, index: number) => (
+  const renderAlertCard = (alert: unknown, index: number) => (
     <Card
       key={alert.id || index}
       className={cn(
@@ -1003,7 +1003,7 @@ export default function RealTimeMonitoringDashboard({
                 <div className="flex items-center space-x-2">
                   <Select
                     value={alertFilter}
-                    onValueChange={(value: any) => setAlertFilter(value)}
+                    onValueChange={(value: unknown) => setAlertFilter(value)}
                   >
                     <SelectTrigger className="w-[150px]">
                       <SelectValue />

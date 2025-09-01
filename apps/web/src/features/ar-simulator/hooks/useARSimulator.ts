@@ -254,7 +254,7 @@ export function useARSimulator(patientId: string) {
     [simulations],
   );
 
-  // Check if any simulation is processing
+  // Check if unknown simulation is processing
   const hasProcessingSimulation = simulations?.some(
     (s) => s.status === "initializing" || s.status === "processing",
   ) || false;

@@ -111,7 +111,7 @@ export class SupabaseRealtimeChat {
     callbacks: MessageSubscriptionCallback,
   ): Promise<void> {
     try {
-      // Unsubscribe from existing channel if any
+      // Unsubscribe from existing channel if unknown
       await this.unsubscribeFromConversation(conversationId);
 
       // Create message channel
@@ -126,7 +126,7 @@ export class SupabaseRealtimeChat {
             filter: `conversation_id=eq.${conversationId}`,
           },
           (payload) => {
-            const message = this.transformMessage(payload.new as any);
+            const message = this.transformMessage(payload.new as unknown);
             if (this.config.lgpdCompliance) {
               this.validateLGPDCompliance(message);
             }
@@ -142,7 +142,7 @@ export class SupabaseRealtimeChat {
             filter: `conversation_id=eq.${conversationId}`,
           },
           (payload) => {
-            const message = this.transformMessage(payload.new as any);
+            const message = this.transformMessage(payload.new as unknown);
             callbacks.onMessage(message);
           },
         );
@@ -159,7 +159,7 @@ export class SupabaseRealtimeChat {
         messageChannel.on("presence", { event: "sync" }, () => {
           const presenceState = messageChannel.presenceState();
           const users = Object.entries(presenceState).map(
-            ([key, values]: [string, any[]]) => ({
+            ([key, values]: [string, unknown[]]) => ({
               id: key,
               status: values[0]?.status || "offline",
             }),
@@ -171,7 +171,7 @@ export class SupabaseRealtimeChat {
           "presence",
           { event: "join" },
           ({ key, newPresences }) => {
-            const users = newPresences.map((presence: any) => ({
+            const users = newPresences.map((presence: Record<string, unknown>) => ({
               id: key,
               status: presence.status,
             }));
@@ -229,7 +229,7 @@ export class SupabaseRealtimeChat {
    */
   async sendMessage(
     conversationId: string,
-    content: any,
+    content: Record<string, unknown>,
     messageType = "text",
     healthcareContext?: HealthcareContext,
   ): Promise<ChatMessage> {
@@ -289,7 +289,7 @@ export class SupabaseRealtimeChat {
     readAt?: Date,
   ): Promise<void> {
     try {
-      const updateData: any = {
+      const updateData: Record<string, unknown> = {
         status,
         updated_at: new Date().toISOString(),
       };
@@ -541,7 +541,7 @@ export class SupabaseRealtimeChat {
     }
   }
 
-  private transformMessage(data: any): ChatMessage {
+  private transformMessage(data: Record<string, unknown>): ChatMessage {
     return {
       id: data.id,
       conversation_id: data.conversation_id,
@@ -561,7 +561,7 @@ export class SupabaseRealtimeChat {
     };
   }
 
-  private transformConversation(data: any): ChatConversation {
+  private transformConversation(data: Record<string, unknown>): ChatConversation {
     return {
       id: data.id,
       participant_ids: data.participant_ids,
@@ -584,7 +584,7 @@ export class SupabaseRealtimeChat {
     return "patient"; // Default to patient, can be enhanced with role detection
   }
 
-  private isEmergencyMessage(content: any): boolean {
+  private isEmergencyMessage(content: Record<string, unknown>): boolean {
     if (typeof content !== "object" || !content.text) {
       return false;
     }
@@ -635,13 +635,13 @@ export class SupabaseRealtimeChat {
     }
   }
 
-  private encryptContent(content: any): any {
+  private encryptContent(content: Record<string, unknown>): Record<string, unknown> {
     // Implement content encryption for LGPD compliance
     // This is a placeholder - implement actual encryption
     return content;
   }
 
-  private decryptContent(content: any): any {
+  private decryptContent(content: Record<string, unknown>): Record<string, unknown> {
     // Implement content decryption
     // This is a placeholder - implement actual decryption
     return content;

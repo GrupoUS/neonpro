@@ -38,7 +38,7 @@ interface AxeCheck {
 interface AxeNode {
   target: string[];
   html: string;
-  any: AxeCheckResult[];
+  unknown: AxeCheckResult[];
   all: AxeCheckResult[];
   none: AxeCheckResult[];
   failureSummary?: string;
@@ -48,7 +48,7 @@ interface AxeCheckResult {
   id: string;
   impact?: string;
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
 export interface WCAGTestConfig {

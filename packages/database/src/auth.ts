@@ -22,7 +22,7 @@ export const getUser = cache(async (): Promise<User | null> => {
       getAll: () => cookieStore.getAll(),
       setAll: (cookieList) => {
         cookieList.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options as any);
+          cookieStore.set(name, value, options as unknown);
         });
       },
     });
@@ -58,7 +58,7 @@ export const getSession = cache(async (): Promise<Session | null> => {
       getAll: () => cookieStore.getAll(),
       setAll: (cookieList) => {
         cookieList.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options as any);
+          cookieStore.set(name, value, options as unknown);
         });
       },
     });
@@ -105,7 +105,7 @@ export async function requireHealthcareProfessional(): Promise<User> {
     getAll: () => cookieStore.getAll(),
     setAll: (cookies) => {
       cookies.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options as any);
+        cookieStore.set(name, value, options as unknown);
       });
     },
   });
@@ -146,7 +146,7 @@ async function logHealthcareAccess(
       getAll: () => cookieStore.getAll(),
       setAll: (cookieList) => {
         cookieList.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options as any);
+          cookieStore.set(name, value, options as unknown);
         });
       },
     });
@@ -175,7 +175,7 @@ export async function signOut(): Promise<void> {
     getAll: () => cookieStore.getAll(),
     setAll: (cookies) => {
       cookies.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options as any);
+        cookieStore.set(name, value, options as unknown);
       });
     },
   });

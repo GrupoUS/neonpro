@@ -84,7 +84,7 @@ const HealthcareScreenshotConfig = {
 } as const;
 
 // Dynamic Screenshot Capture
-export function DynamicScreenshotCapture(props: any) {
+export function DynamicScreenshotCapture(props: unknown) {
   return (
     <Suspense fallback={<LoadingWithMessage variant="chart" message="Preparando captura..." />}>
       <ScreenshotCapture {...props} />
@@ -93,7 +93,7 @@ export function DynamicScreenshotCapture(props: any) {
 }
 
 // Dynamic Canvas Processor
-export function DynamicCanvasProcessor(props: any) {
+export function DynamicCanvasProcessor(props: unknown) {
   return (
     <Suspense fallback={<LoadingWithMessage variant="chart" message="Processando canvas..." />}>
       <CanvasProcessor {...props} />
@@ -102,7 +102,7 @@ export function DynamicCanvasProcessor(props: any) {
 }
 
 // Dynamic SVG Renderer
-export function DynamicSVGRenderer(props: any) {
+export function DynamicSVGRenderer(props: unknown) {
   return (
     <Suspense fallback={<LoadingWithMessage variant="chart" message="Renderizando SVG..." />}>
       <SVGRenderer {...props} />

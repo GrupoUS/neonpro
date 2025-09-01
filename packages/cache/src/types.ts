@@ -1,4 +1,4 @@
-export interface CacheEntry<T = any> {
+export interface CacheEntry<T = unknown> {
   value: T;
   timestamp: number;
   ttl: number;

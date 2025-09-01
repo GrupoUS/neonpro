@@ -522,7 +522,7 @@ export class AISchedulingEngine {
       return 0.5;
     }
 
-    // Check if slot falls within any preferred time range
+    // Check if slot falls within unknown preferred time range
     const isPreferred = request.preferredTimeRanges.some(
       (range) => slot.start >= range.start && slot.end <= range.end,
     );

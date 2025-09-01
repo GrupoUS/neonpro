@@ -70,7 +70,7 @@ const baseMetrics = (overrides: Partial<PerformanceMetrics> = {}): PerformanceMe
     monthlyROI: [],
     interventionSuccess: [],
   },
-  ...overrides as any,
+  ...overrides as unknown,
 });
 
 /**

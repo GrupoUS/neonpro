@@ -12,7 +12,7 @@ export interface AIContextMetadata {
 }
 
 export class AIContextCacheLayer implements CacheOperation {
-  private cache = new Map<string, any>();
+  private cache = new Map<string, unknown>();
   private contextMap = new Map<string, AIContextMetadata>();
   private stats: CacheStats = {
     hits: 0,
@@ -170,7 +170,7 @@ export class AIContextCacheLayer implements CacheOperation {
     });
   }
 
-  async getConversationContext(conversationId: string): Promise<any> {
+  async getConversationContext(conversationId: string): Promise<unknown> {
     return await this.get(`conversation:${conversationId}`);
   }
 
@@ -187,7 +187,7 @@ export class AIContextCacheLayer implements CacheOperation {
     });
   }
 
-  async getKnowledgeContext(knowledgeId: string): Promise<any> {
+  async getKnowledgeContext(knowledgeId: string): Promise<unknown> {
     return await this.get(`knowledge:${knowledgeId}`);
   }
 

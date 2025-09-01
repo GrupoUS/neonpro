@@ -41,7 +41,7 @@ export interface DwellTarget {
   current_dwell: number; // current dwell time
   gaze_history: GazePoint[];
   activated: boolean;
-  metadata?: any;
+  metadata?: unknown;
 }
 
 export interface GazePattern {

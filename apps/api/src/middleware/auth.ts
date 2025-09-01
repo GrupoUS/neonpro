@@ -310,9 +310,9 @@ class InMemoryTokenBlacklist implements TokenBlacklistStore {
  */
 /*
 class RedisTokenBlacklist implements TokenBlacklistStore {
-  private redis: any; // Redis client
+  private redis: unknown; // Redis client
 
-  constructor(redisClient: any) {
+  constructor(redisClient: unknown) {
     this.redis = redisClient;
   }
 
@@ -537,7 +537,7 @@ export const requireClinicAccess = (): MiddlewareHandler => {
     const userRole = c.get("userRole") as UserRole;
     const userClinicId = c.get("clinicId") as string;
 
-    // Admins can access any clinic
+    // Admins can access unknown clinic
     if (userRole === UserRole.ADMIN) {
       await next();
       return;
@@ -627,7 +627,7 @@ export const authUtils = {
     const userRole = c.get("userRole") as UserRole;
     const userClinicId = c.get("clinicId") as string;
 
-    // Admins can access any clinic
+    // Admins can access unknown clinic
     if (userRole === UserRole.ADMIN) {
       return true;
     }

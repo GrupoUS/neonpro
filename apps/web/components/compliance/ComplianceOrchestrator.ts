@@ -198,7 +198,7 @@ export class ComplianceOrchestrator {
    */
   async executeEmergencyResponse(trigger: {
     type: 'critical_violation' | 'audit_alert' | 'security_breach' | 'system_failure';
-    details: any;
+    details: unknown;
   }): Promise<void> {
     console.log(`🚨 Executing emergency compliance response: ${trigger.type}`);
 
@@ -223,7 +223,7 @@ export class ComplianceOrchestrator {
    */
   async generateComprehensiveReport(
     reportType: 'executive' | 'technical' | 'audit' = 'executive'
-  ): Promise<any> {
+  ): Promise<unknown> {
     console.log(`📊 Generating comprehensive ${reportType} compliance report`);
 
     // Collect data from all modules
@@ -403,7 +403,7 @@ export class ComplianceOrchestrator {
   }
 
   // Health monitoring methods
-  private async checkServiceHealth(serviceName: string, service: any): Promise<any> {
+  private async checkServiceHealth(serviceName: string, service: unknown): Promise<unknown> {
     // Mock health check - would implement actual service-specific checks
     return {
       connectivity: true,
@@ -412,7 +412,7 @@ export class ComplianceOrchestrator {
     };
   }
 
-  private async testInterServiceCommunication(): Promise<any[]> {
+  private async testInterServiceCommunication(): Promise<<unknown>[]> {
     // Test critical service interactions
     const tests = [
       {
@@ -479,22 +479,22 @@ export class ComplianceOrchestrator {
   }
 
   // Emergency response handlers
-  private async handleCriticalViolation(details: any): Promise<void> {
+  private async handleCriticalViolation(details: unknown): Promise<void> {
     console.log('🚨 Handling critical violation');
     // Immediate notification and remediation workflow
   }
 
-  private async handleAuditAlert(details: any): Promise<void> {
+  private async handleAuditAlert(details: unknown): Promise<void> {
     console.log('⚠️ Handling audit alert');
     // Audit preparation acceleration
   }
 
-  private async handleSecurityBreach(details: any): Promise<void> {
+  private async handleSecurityBreach(details: unknown): Promise<void> {
     console.log('🔒 Handling security breach');
     // Security incident response
   }
 
-  private async handleSystemFailure(details: any): Promise<void> {
+  private async handleSystemFailure(details: unknown): Promise<void> {
     console.log('💥 Handling system failure');
     // System recovery procedures
   }
@@ -524,7 +524,7 @@ export class ComplianceOrchestrator {
     console.log('📊 Setting up feedback analysis');
   }
 
-  private async generateSystemRecommendations(testSuite: any, scores: any[], violations: any[]): Promise<string[]> {
+  private async generateSystemRecommendations(testSuite: unknown, scores: unknown[], violations: unknown[]): Promise<string[]> {
     return [
       'Prioritize resolution of critical violations',
       'Enhance automated testing coverage',
@@ -532,7 +532,7 @@ export class ComplianceOrchestrator {
     ];
   }
 
-  private async prioritizeActions(testSuite: any, violations: any[]): Promise<any[]> {
+  private async prioritizeActions(testSuite: unknown, violations: unknown[]): Promise<<unknown>[]> {
     return [
       {
         priority: 'high' as const,

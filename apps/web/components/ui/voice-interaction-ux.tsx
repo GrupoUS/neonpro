@@ -1,33 +1,33 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { cn } from "@/lib/utils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ConfidencePatterns } from "./confidence-patterns";
 
 // Voice interaction modes
 export enum VoiceMode {
   PUSH_TO_TALK = "push_to_talk",
-  CONTINUOUS = "continuous", 
+  CONTINUOUS = "continuous",
   WAKE_WORD = "wake_word",
-  DISABLED = "disabled"
+  DISABLED = "disabled",
 }
 
 // Healthcare voice contexts
 export enum VoiceContext {
   GENERAL = "general",
   PATIENT_CONSULTATION = "patient_consultation",
-  PROCEDURE_NOTES = "procedure_notes", 
+  PROCEDURE_NOTES = "procedure_notes",
   EMERGENCY = "emergency",
   SCHEDULING = "scheduling",
   PRESCRIPTION = "prescription",
-  DOCUMENTATION = "documentation"
+  DOCUMENTATION = "documentation",
 }
 
 // Voice recognition states
@@ -37,37 +37,88 @@ export enum VoiceState {
   PROCESSING = "processing",
   SPEAKING = "speaking",
   ERROR = "error",
-  PAUSED = "paused"
+  PAUSED = "paused",
 }
 
 // Portuguese healthcare vocabulary for better recognition
 const HealthcareVocabulary = {
   [VoiceContext.GENERAL]: [
-    "paciente", "consulta", "agendamento", "prontuário", "medicação",
-    "sintomas", "diagnóstico", "tratamento", "procedimento", "receita"
+    "paciente",
+    "consulta",
+    "agendamento",
+    "prontuário",
+    "medicação",
+    "sintomas",
+    "diagnóstico",
+    "tratamento",
+    "procedimento",
+    "receita",
   ],
   [VoiceContext.PATIENT_CONSULTATION]: [
-    "botox", "preenchimento", "ácido hialurônico", "anestesia", "assepsia",
-    "alergia", "reação", "contraindicação", "consentimento informado",
-    "pós-operatório", "cicatrização", "edema", "hematoma", "inflamação"
+    "botox",
+    "preenchimento",
+    "ácido hialurônico",
+    "anestesia",
+    "assepsia",
+    "alergia",
+    "reação",
+    "contraindicação",
+    "consentimento informado",
+    "pós-operatório",
+    "cicatrização",
+    "edema",
+    "hematoma",
+    "inflamação",
   ],
   [VoiceContext.PROCEDURE_NOTES]: [
-    "aplicação", "unidades", "diluição", "técnica", "localização",
-    "quantidade", "resultado", "complicações", "intercorrências",
-    "orientações", "retorno", "avaliação", "satisfação"
+    "aplicação",
+    "unidades",
+    "diluição",
+    "técnica",
+    "localização",
+    "quantidade",
+    "resultado",
+    "complicações",
+    "intercorrências",
+    "orientações",
+    "retorno",
+    "avaliação",
+    "satisfação",
   ],
   [VoiceContext.EMERGENCY]: [
-    "urgência", "emergência", "prioridade", "crítico", "estável",
-    "instável", "choque", "anafilaxia", "parada", "reanimação"
+    "urgência",
+    "emergência",
+    "prioridade",
+    "crítico",
+    "estável",
+    "instável",
+    "choque",
+    "anafilaxia",
+    "parada",
+    "reanimação",
   ],
   [VoiceContext.SCHEDULING]: [
-    "agendar", "remarcar", "cancelar", "disponibilidade", "horário",
-    "data", "confirmação", "lista de espera", "preferência"
+    "agendar",
+    "remarcar",
+    "cancelar",
+    "disponibilidade",
+    "horário",
+    "data",
+    "confirmação",
+    "lista de espera",
+    "preferência",
   ],
   [VoiceContext.PRESCRIPTION]: [
-    "prescrever", "posologia", "dosagem", "via", "frequência",
-    "duração", "interações", "efeitos colaterais", "cuidados"
-  ]
+    "prescrever",
+    "posologia",
+    "dosagem",
+    "via",
+    "frequência",
+    "duração",
+    "interações",
+    "efeitos colaterais",
+    "cuidados",
+  ],
 } as const;
 
 // Voice commands for healthcare workflows
@@ -78,19 +129,19 @@ const VoiceCommands = {
     "emergência": { action: "emergency", params: [] },
     "ajuda": { action: "help", params: [] },
     "parar gravação": { action: "stopRecording", params: [] },
-    "repetir": { action: "repeat", params: [] }
+    "repetir": { action: "repeat", params: [] },
   },
   [VoiceContext.PATIENT_CONSULTATION]: {
     "iniciar consulta": { action: "startConsultation", params: [] },
     "adicionar sintoma": { action: "addSymptom", params: ["symptom"] },
     "prescrever medicamento": { action: "prescribeMedication", params: ["medication"] },
-    "agendar retorno": { action: "scheduleReturn", params: ["date"] }
+    "agendar retorno": { action: "scheduleReturn", params: ["date"] },
   },
   [VoiceContext.SCHEDULING]: {
     "próximo disponível": { action: "nextAvailable", params: [] },
     "agendar para": { action: "scheduleFor", params: ["date", "time"] },
-    "cancelar agendamento": { action: "cancelAppointment", params: ["id"] }
-  }
+    "cancelar agendamento": { action: "cancelAppointment", params: ["id"] },
+  },
 } as const;
 
 // Voice interaction hook
@@ -101,7 +152,7 @@ export function useVoiceInteraction(
     language?: string;
     continuous?: boolean;
     interimResults?: boolean;
-  } = {}
+  } = {},
 ) {
   const [isSupported, setIsSupported] = useState(false);
   const [state, setState] = useState<VoiceState>(VoiceState.IDLE);
@@ -118,25 +169,23 @@ export function useVoiceInteraction(
     mode = VoiceMode.PUSH_TO_TALK,
     language = "pt-BR",
     continuous = false,
-    interimResults = true
+    interimResults = true,
   } = options;
 
   // Check browser support
   useEffect(() => {
-    const SpeechRecognition = 
-      window.SpeechRecognition || 
-      (window as any).webkitSpeechRecognition;
-    
+    const SpeechRecognition = window.SpeechRecognition
+      || (window as any).webkitSpeechRecognition;
+
     setIsSupported(!!SpeechRecognition && !!window.speechSynthesis);
   }, []);
 
   // Initialize speech recognition
   useEffect(() => {
-    if (!isSupported) {return;}
+    if (!isSupported) return;
 
-    const SpeechRecognition = 
-      window.SpeechRecognition || 
-      (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition
+      || (window as any).webkitSpeechRecognition;
 
     const recognition = new SpeechRecognition();
     recognition.lang = language;
@@ -147,8 +196,11 @@ export function useVoiceInteraction(
     // Add healthcare vocabulary hints
     if (recognition.grammars && HealthcareVocabulary[context]) {
       const grammarList = new SpeechGrammarList();
-      const vocabulary = HealthcareVocabulary[context].join(' | ');
-      grammarList.addFromString(`#JSGF V1.0; grammar healthcare; public <healthcare> = ${vocabulary} ;`, 1);
+      const vocabulary = HealthcareVocabulary[context].join(" | ");
+      grammarList.addFromString(
+        `#JSGF V1.0; grammar healthcare; public <healthcare> = ${vocabulary} ;`,
+        1,
+      );
       recognition.grammars = grammarList;
     }
 
@@ -176,7 +228,7 @@ export function useVoiceInteraction(
         setTranscript(prev => prev + finalTranscript);
         setState(VoiceState.PROCESSING);
       }
-      
+
       setInterimTranscript(interimText);
     };
 
@@ -203,12 +255,12 @@ export function useVoiceInteraction(
   }, [isSupported, language, continuous, interimResults, context, state]);
 
   const startListening = useCallback(() => {
-    if (!recognitionRef.current || isListening) {return;}
-    
+    if (!recognitionRef.current || isListening) return;
+
     setTranscript("");
     setInterimTranscript("");
     setError(null);
-    
+
     try {
       recognitionRef.current.start();
     } catch (err) {
@@ -218,8 +270,8 @@ export function useVoiceInteraction(
   }, [isListening]);
 
   const stopListening = useCallback(() => {
-    if (!recognitionRef.current || !isListening) {return;}
-    
+    if (!recognitionRef.current || !isListening) return;
+
     recognitionRef.current.stop();
   }, [isListening]);
 
@@ -229,7 +281,7 @@ export function useVoiceInteraction(
     pitch?: number;
     volume?: number;
   }) => {
-    if (!window.speechSynthesis) {return;}
+    if (!window.speechSynthesis) return;
 
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
@@ -242,8 +294,8 @@ export function useVoiceInteraction(
 
     // Try to use Portuguese voice
     const voices = window.speechSynthesis.getVoices();
-    const portugueseVoice = voices.find(voice => 
-      voice.lang.startsWith('pt') || voice.name.includes('Portuguese')
+    const portugueseVoice = voices.find(voice =>
+      voice.lang.startsWith("pt") || voice.name.includes("Portuguese")
     );
     if (portugueseVoice) {
       utterance.voice = portugueseVoice;
@@ -259,7 +311,7 @@ export function useVoiceInteraction(
 
   const processCommand = useCallback((text: string) => {
     const lowerText = text.toLowerCase().trim();
-    
+
     // Check global commands first
     for (const [command, action] of Object.entries(VoiceCommands.global)) {
       if (lowerText.includes(command)) {
@@ -293,7 +345,7 @@ export function useVoiceInteraction(
     clearTranscript: () => {
       setTranscript("");
       setInterimTranscript("");
-    }
+    },
   };
 }
 
@@ -302,7 +354,7 @@ interface VoiceInteractionUXProps {
   context?: VoiceContext;
   mode?: VoiceMode;
   onTranscript?: (text: string, confidence: number) => void;
-  onCommand?: (command: string, action: any, text: string) => void;
+  onCommand?: (command: string, action: Record<string, unknown>, text: string) => void;
   onError?: (error: string) => void;
   className?: string;
   showConfidence?: boolean;
@@ -321,7 +373,7 @@ export function VoiceInteractionUX({
   showConfidence = true,
   showTranscript = true,
   enableCommands = true,
-  autoSpeak = false
+  autoSpeak = false,
 }: VoiceInteractionUXProps) {
   const [currentMode, setCurrentMode] = useState(mode);
   const [isEnabled, setIsEnabled] = useState(true);
@@ -330,7 +382,7 @@ export function VoiceInteractionUX({
   const voice = useVoiceInteraction(context, {
     mode: currentMode,
     continuous: currentMode === VoiceMode.CONTINUOUS,
-    interimResults: true
+    interimResults: true,
   });
 
   // Handle transcript updates
@@ -397,8 +449,8 @@ export function VoiceInteractionUX({
     return (
       <Alert>
         <AlertDescription>
-          Reconhecimento de voz não é suportado neste navegador. 
-          Recomendamos usar Chrome ou Edge para melhor experiência.
+          Reconhecimento de voz não é suportado neste navegador. Recomendamos usar Chrome ou Edge
+          para melhor experiência.
         </AlertDescription>
       </Alert>
     );
@@ -414,9 +466,9 @@ export function VoiceInteractionUX({
               <strong>Consentimento LGPD - Uso de Voz</strong>
             </div>
             <p className="text-sm">
-              O reconhecimento de voz processa áudio localmente no seu navegador. 
-              Nenhum dado de voz é enviado para servidores externos. 
-              Você pode revogar este consentimento a qualquer momento.
+              O reconhecimento de voz processa áudio localmente no seu navegador. Nenhum dado de voz
+              é enviado para servidores externos. Você pode revogar este consentimento a qualquer
+              momento.
             </p>
             <div className="flex gap-2">
               <Button
@@ -436,14 +488,20 @@ export function VoiceInteractionUX({
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={cn(
-                  "h-3 w-3 rounded-full",
-                  voice.state === VoiceState.LISTENING ? "bg-red-500 animate-pulse" :
-                  voice.state === VoiceState.PROCESSING ? "bg-yellow-500 animate-pulse" :
-                  voice.state === VoiceState.SPEAKING ? "bg-blue-500 animate-pulse" :
-                  voice.state === VoiceState.ERROR ? "bg-red-500" :
-                  "bg-gray-300"
-                )} />
+                <div
+                  className={cn(
+                    "h-3 w-3 rounded-full",
+                    voice.state === VoiceState.LISTENING
+                      ? "bg-red-500 animate-pulse"
+                      : voice.state === VoiceState.PROCESSING
+                      ? "bg-yellow-500 animate-pulse"
+                      : voice.state === VoiceState.SPEAKING
+                      ? "bg-blue-500 animate-pulse"
+                      : voice.state === VoiceState.ERROR
+                      ? "bg-red-500"
+                      : "bg-gray-300",
+                  )}
+                />
                 <div>
                   <CardTitle className="text-lg">
                     Interação por Voz
@@ -453,7 +511,7 @@ export function VoiceInteractionUX({
                   </CardDescription>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <Badge variant="outline">
                   pt-BR
@@ -482,7 +540,7 @@ export function VoiceInteractionUX({
                         onTouchEnd={voice.stopListening}
                         className={cn(
                           "h-16 w-16 rounded-full",
-                          voice.isListening ? "bg-red-500 hover:bg-red-600" : ""
+                          voice.isListening ? "bg-red-500 hover:bg-red-600" : "",
                         )}
                       >
                         🎤
@@ -502,7 +560,7 @@ export function VoiceInteractionUX({
                   onClick={voice.isListening ? voice.stopListening : voice.startListening}
                   className={cn(
                     "h-16 w-16 rounded-full",
-                    voice.isListening ? "bg-red-500 hover:bg-red-600" : ""
+                    voice.isListening ? "bg-red-500 hover:bg-red-600" : "",
                   )}
                 >
                   {voice.isListening ? "🛑" : "🎤"}
@@ -601,7 +659,7 @@ export function VoiceInteractionUX({
                       </Badge>
                     ))}
                   </div>
-                  
+
                   {VoiceCommands[context] && (
                     <div>
                       <strong>Comandos do Contexto:</strong>

@@ -55,5 +55,5 @@ export interface HealthCheckResult {
   responseTime: number;
   message: string;
   timestamp: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }

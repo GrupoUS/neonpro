@@ -68,7 +68,7 @@ export const SUBSTANCE_CLASS_CONFIG = {
   label: string;
   bg: string;
   text: string;
-  icon: any;
+  icon: unknown;
   description: string;
 }>;
 
@@ -102,7 +102,7 @@ export const STATUS_CONFIG = {
   label: string;
   bg: string;
   text: string;
-  icon: any;
+  icon: unknown;
 }>;
 
 // Helper functions for getting configuration

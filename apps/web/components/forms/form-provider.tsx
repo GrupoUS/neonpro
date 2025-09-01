@@ -5,7 +5,7 @@ import type { ValidationSchema } from "./validation";
 import { validateSchema, ValidationResult } from "./validation";
 
 export interface FormState {
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   errors: Record<string, string>;
   touched: Record<string, boolean>;
   loading: boolean;
@@ -16,7 +16,7 @@ export interface FormState {
 
 export interface FormContextType {
   state: FormState;
-  setValue: (name: string, value: any) => void;
+  setValue: (name: string, value: unknown) => void;
   setError: (name: string, error: string) => void;
   clearError: (name: string) => void;
   clearErrors: () => void;
@@ -25,15 +25,15 @@ export interface FormContextType {
   setSubmitting: (submitting: boolean) => void;
   validateField: (name: string) => void;
   validateForm: () => boolean;
-  resetForm: (initialData?: Record<string, any>) => void;
-  submitForm: (onSubmit: (data: Record<string, any>) => Promise<void> | void) => Promise<void>;
+  resetForm: (initialData?: Record<string, unknown>) => void;
+  submitForm: (onSubmit: (data: Record<string, unknown>) => Promise<void> | void) => Promise<void>;
 }
 
 const FormContext = createContext<FormContextType | null>(null);
 
 export interface FormProviderProps {
   children: React.ReactNode;
-  initialData?: Record<string, any>;
+  initialData?: Record<string, unknown>;
   validationSchema?: ValidationSchema;
   validateOnChange?: boolean;
   validateOnBlur?: boolean;
@@ -58,7 +58,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({
     isDirty: false,
   });
 
-  const setValue = useCallback((name: string, value: any) => {
+  const setValue = useCallback((name: string, value: unknown) => {
     setState(prev => {
       const newData = { ...prev.data, [name]: value };
       const isDirty = JSON.stringify(newData) !== JSON.stringify(initialData);
@@ -178,7 +178,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({
     return result.isValid;
   }, [state.data, validationSchema]);
 
-  const resetForm = useCallback((newInitialData?: Record<string, any>) => {
+  const resetForm = useCallback((newInitialData?: Record<string, unknown>) => {
     const resetData = newInitialData || initialData;
     setState({
       data: resetData,
@@ -192,7 +192,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   }, [initialData]);
 
   const submitForm = useCallback(async (
-    onSubmit: (data: Record<string, any>) => Promise<void> | void,
+    onSubmit: (data: Record<string, unknown>) => Promise<void> | void,
   ) => {
     setSubmitting(true);
 
@@ -256,7 +256,7 @@ export const useFormField = (name: string) => {
     value: state.data[name],
     error: state.errors[name],
     loading: state.loading,
-    onChange: (value: any) => setValue(name, value),
+    onChange: (value: unknown) => setValue(name, value),
     onBlur: () => {
       setTouched(name);
       validateField(name);
@@ -264,7 +264,7 @@ export const useFormField = (name: string) => {
   };
 
   const fieldHelpers = {
-    setValue: (value: any) => setValue(name, value),
+    setValue: (value: unknown) => setValue(name, value),
     setError: (error: string) => setError(name, error),
     clearError: () => clearError(name),
     setTouched: (touched = true) => setTouched(name, touched),

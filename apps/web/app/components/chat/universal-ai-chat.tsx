@@ -285,7 +285,7 @@ export function UniversalAIChat({
         id: `welcome-${Date.now()}`,
         role: "assistant",
         content: interfaceType === "external"
-          ? "Olá! Sou o assistente de IA da NeonPro. Como posso ajudá-lo hoje? Posso auxiliar com agendamentos, informações sobre <MedicalTerm term="tratamentos" context="medical" />, ou responder suas dúvidas médicas gerais."
+          ? "Olá! Sou o assistente de IA da NeonPro. Como posso ajudá-lo hoje? Posso auxiliar com agendamentos, informações sobre tratamentos, ou responder suas dúvidas médicas gerais."
           : "Olá! Assistente de IA interno da NeonPro. Posso ajudar com análises de pacientes, otimização de agenda, métricas da clínica e suporte operacional.",
         timestamp: new Date(),
         confidence: 1,
@@ -335,7 +335,7 @@ export function UniversalAIChat({
       setCurrentStreamingMessage("");
 
       try {
-        // Cancel any ongoing request
+        // Cancel unknown ongoing request
         if (abortControllerRef.current) {
           abortControllerRef.current.abort();
         }
@@ -1028,7 +1028,7 @@ export function UniversalAIChat({
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     if (!inputValue.trim() || isLoading) return;
-                    handleSubmit(e as any);
+                    handleSubmit(e as unknown);
                     announce("Mensagem enviada para análise médica.", "polite");
                   }
                 }}

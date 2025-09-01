@@ -36,7 +36,7 @@ declare global {
   ): Promise<unknown>;
 }
 
-export class MLPipelineManagementService extends EnhancedAIService<any, any> {
+export class MLPipelineManagementService extends EnhancedAIService<<unknown>, unknown> {
   private readonly SUPABASE_PROJECT_ID = "ownkoxryswokcdanrdgj";
 
   constructor(

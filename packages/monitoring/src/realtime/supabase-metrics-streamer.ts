@@ -81,7 +81,7 @@ export class SupabaseMetricsStreamer {
       this.flushTimer = null;
     }
 
-    // Flush any remaining metrics
+    // Flush unknown remaining metrics
     if (this.metricBuffer.length > 0) {
       await this.flushMetrics();
     }

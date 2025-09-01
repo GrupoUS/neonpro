@@ -610,7 +610,7 @@ export class CFMService {
   private async getProfessionalProcedures(
     _professionalId: string,
     _dateRange: { startDate: Date; endDate: Date; },
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Mock data - would query actual database
     return [];
   }
@@ -618,7 +618,7 @@ export class CFMService {
   private async getComplianceChecks(
     _professionalId: string,
     _dateRange: { startDate: Date; endDate: Date; },
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Mock data - would query actual database
     return [];
   }

@@ -24,10 +24,10 @@ import type { z } from "zod";
 
 // Placeholder implementations for template compilation
 const Logger = {
-  info: (message: string, meta?: any) => console.log(message, meta),
-  error: (message: string, meta?: any) => console.error(message, meta),
-  warn: (message: string, meta?: any) => console.warn(message, meta),
-  debug: (message: string, meta?: any) => console.debug(message, meta),
+  info: (message: string, meta?: unknown) => console.log(message, meta),
+  error: (message: string, meta?: unknown) => console.error(message, meta),
+  warn: (message: string, meta?: unknown) => console.warn(message, meta),
+  debug: (message: string, meta?: unknown) => console.debug(message, meta),
 };
 
 // Placeholder components for template compilation
@@ -136,7 +136,7 @@ const useLGPDConsent = () => ({
   grantConsent: async () => true,
 });
 
-const useHealthcareForm = (schema: any) => ({
+const useHealthcareForm = (schema: unknown) => ({
   // placeholder implementation
 });
 

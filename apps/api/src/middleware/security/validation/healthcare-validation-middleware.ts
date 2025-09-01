@@ -49,7 +49,7 @@ export enum ValidationSeverity {
 interface ValidationRule {
   context: ValidationContext;
   severity: ValidationSeverity;
-  schema: z.ZodSchema<any>;
+  schema: z.ZodSchema<unknown>;
   requiresLicense: boolean;
   emergencyBypass: boolean;
   lgpdSensitive: boolean;
@@ -62,13 +62,13 @@ interface ValidationErrorDetail {
   message: string;
   code: string;
   severity: ValidationSeverity;
-  value?: any;
+  value?: unknown;
 }
 
 // Validation result
 interface ValidationResult {
   success: boolean;
-  data?: any;
+  data?: unknown;
   errors?: ValidationErrorDetail[];
   warnings?: ValidationErrorDetail[];
   emergencyBypass?: boolean;
@@ -149,9 +149,9 @@ const HEALTHCARE_VALIDATION_RULES: ValidationRule[] = [
  * Healthcare Input Validator Class
  */
 export class HealthcareInputValidator {
-  private auditLogger: any; // Your audit logging implementation
+  private auditLogger: unknown; // Your audit logging implementation
 
-  constructor(auditLogger?: any) {
+  constructor(auditLogger?: unknown) {
     this.auditLogger = auditLogger;
   }
 
@@ -160,7 +160,7 @@ export class HealthcareInputValidator {
    */
   async validateInput(
     context: ValidationContext,
-    data: any,
+    data: unknown,
     options: {
       emergencyBypass?: boolean;
       userLicenses?: {
@@ -255,8 +255,8 @@ export class HealthcareInputValidator {
    */
   private async handleEmergencyBypass(
     rule: ValidationRule,
-    data: any,
-    options: any,
+    data: unknown,
+    options: unknown,
   ): Promise<ValidationResult> {
     // Relaxed validation for emergency situations
     const relaxedSchema = this.createRelaxedSchema(rule.schema);
@@ -281,7 +281,7 @@ export class HealthcareInputValidator {
   /**
    * Validate data against Zod schema
    */
-  private async validateSchema(schema: z.ZodSchema<any>, data: any): Promise<ValidationResult> {
+  private async validateSchema(schema: z.ZodSchema<unknown>, data: unknown): Promise<ValidationResult> {
     try {
       const validatedData = await schema.parseAsync(data);
       return {
@@ -313,7 +313,7 @@ export class HealthcareInputValidator {
    */
   private async performAdditionalValidations(
     context: ValidationContext,
-    data: any,
+    data: unknown,
   ): Promise<ValidationResult> {
     const warnings: ValidationErrorDetail[] = [];
 
@@ -503,18 +503,18 @@ export class HealthcareInputValidator {
   /**
    * Create relaxed schema for emergency situations
    */
-  private createRelaxedSchema(originalSchema: z.ZodSchema<any>): z.ZodSchema<any> {
+  private createRelaxedSchema(originalSchema: z.ZodSchema<unknown>): z.ZodSchema<unknown> {
     // For emergency situations, make most fields optional except critical ones
     if (originalSchema instanceof z.ZodObject) {
       const shape = originalSchema.shape;
-      const relaxedShape: any = {};
+      const relaxedShape: unknown = {};
 
       for (const [key, value] of Object.entries(shape)) {
         // Keep CPF and critical identifiers required
         if (["cpf", "fullName", "emergencyType", "justification"].includes(key)) {
           relaxedShape[key] = value;
         } else {
-          relaxedShape[key] = (value as z.ZodType<any>).optional();
+          relaxedShape[key] = (value as z.ZodType<unknown>).optional();
         }
       }
 
@@ -567,7 +567,7 @@ export class HealthcareInputValidator {
   private async logEmergencyBypass(
     context: ValidationContext,
     userId?: string,
-    data?: any,
+    data?: unknown,
   ): Promise<void> {
     const logEntry = {
       timestamp: new Date().toISOString(),
@@ -593,7 +593,7 @@ export class HealthcareInputValidator {
 export function createHealthcareValidationMiddleware(
   context: ValidationContext,
   options: {
-    auditLogger?: any;
+    auditLogger?: unknown;
     allowEmergencyBypass?: boolean;
   } = {},
 ): MiddlewareHandler {
@@ -668,31 +668,31 @@ export function createHealthcareValidationMiddleware(
  * Validation middleware factory for common contexts
  */
 export const validationMiddlewares = {
-  patientRegistration: (auditLogger?: any) =>
+  patientRegistration: (auditLogger?: unknown) =>
     createHealthcareValidationMiddleware(ValidationContext.PATIENT_REGISTRATION, {
       auditLogger,
       allowEmergencyBypass: true,
     }),
 
-  patientUpdate: (auditLogger?: any) =>
+  patientUpdate: (auditLogger?: unknown) =>
     createHealthcareValidationMiddleware(ValidationContext.PATIENT_UPDATE, {
       auditLogger,
       allowEmergencyBypass: true,
     }),
 
-  providerRegistration: (auditLogger?: any) =>
+  providerRegistration: (auditLogger?: unknown) =>
     createHealthcareValidationMiddleware(ValidationContext.PROVIDER_REGISTRATION, {
       auditLogger,
       allowEmergencyBypass: false,
     }),
 
-  appointmentBooking: (auditLogger?: any) =>
+  appointmentBooking: (auditLogger?: unknown) =>
     createHealthcareValidationMiddleware(ValidationContext.APPOINTMENT_BOOKING, {
       auditLogger,
       allowEmergencyBypass: true,
     }),
 
-  emergencyAccess: (auditLogger?: any) =>
+  emergencyAccess: (auditLogger?: unknown) =>
     createHealthcareValidationMiddleware(ValidationContext.EMERGENCY_ACCESS, {
       auditLogger,
       allowEmergencyBypass: true,

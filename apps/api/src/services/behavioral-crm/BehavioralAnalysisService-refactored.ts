@@ -187,7 +187,7 @@ export class BehavioralAnalysisService {
     const mostUsedChannel = Object.entries(channelCounts)
       .sort(([, a], [, b]) => b - a)[0]?.[0];
 
-    return (mostUsedChannel as any) || "whatsapp";
+    return (mostUsedChannel as unknown) || "whatsapp";
   }
 
   private analyzeAppointmentBehavior(

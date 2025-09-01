@@ -419,7 +419,7 @@ export const validateColorPalette = (
 };
 
 /**
- * Component wrapper that adds contrast validation to any element
+ * Component wrapper that adds contrast validation to unknown element
  */
 interface ContrastWrapperProps extends ContrastValidatorProps {
   element?: keyof React.JSX.IntrinsicElements;

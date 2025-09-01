@@ -42,7 +42,7 @@ export class LGPDConsentManagementService {
     timestamp: Date;
     action: string;
     userId?: string;
-    details: Record<string, any>;
+    details: Record<string, unknown>;
   }[] = [];
 
   private constructor() {
@@ -287,7 +287,7 @@ export class LGPDConsentManagementService {
    * Validate consent requirements
    */
   private validateConsentRequirements(
-    consentData: any,
+    consentData: unknown,
     activity: LGPDDataProcessingActivity,
   ): ValidationResponse<void> {
     const errors: string[] = [];
@@ -472,8 +472,8 @@ export class LGPDConsentManagementService {
   public async processDataSubjectRightsRequest(
     requestType: "access" | "portability" | "deletion" | "rectification",
     dataSubjectId: string,
-    requestDetails: any,
-  ): Promise<ValidationResponse<any>> {
+    requestDetails: unknown,
+  ): Promise<ValidationResponse<unknown>> {
     try {
       switch (requestType) {
         case "access":
@@ -516,8 +516,8 @@ export class LGPDConsentManagementService {
    */
   private async processDataAccessRequest(
     dataSubjectId: string,
-    requestDetails: any,
-  ): Promise<ValidationResponse<any>> {
+    requestDetails: unknown,
+  ): Promise<ValidationResponse<unknown>> {
     // Get all consent records
     const consents = await this.getConsentStatus(dataSubjectId);
 
@@ -784,7 +784,7 @@ export class LGPDConsentManagementService {
   private logActivity(
     action: string,
     userId?: string,
-    details: Record<string, any> = {},
+    details: Record<string, unknown> = {},
   ): void {
     this.auditLog.push({
       timestamp: new Date(),
@@ -799,7 +799,7 @@ export class LGPDConsentManagementService {
     timestamp: Date;
     action: string;
     userId?: string;
-    details: Record<string, any>;
+    details: Record<string, unknown>;
   }[] {
     return [...this.auditLog];
   }

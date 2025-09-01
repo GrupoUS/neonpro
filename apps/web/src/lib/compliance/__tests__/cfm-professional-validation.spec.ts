@@ -21,7 +21,7 @@ import CFMValidationService, {
 } from "../cfm-professional-validation.test";
 
 // Helpers
-type AnyObj = Record<string, any>;
+type AnyObj = Record<string, unknown>;
 
 function makeProfessional(partial: Partial<AnyObj> = {}): AnyObj {
   const base = {
@@ -88,7 +88,7 @@ describe("cfmUtils", () => {
 
   describe("getStateCouncilURL", () => {
     it("returns correct URL for a known state", () => {
-      expect(cfmUtils.getStateCouncilURL("SP" as any)).toBe("https://cremesp.org.br");
+      expect(cfmUtils.getStateCouncilURL("SP" as unknown)).toBe("https://cremesp.org.br");
     });
   });
 
@@ -115,27 +115,27 @@ describe("cfmUtils", () => {
 
   describe("getStatusColor", () => {
     it("maps statuses to the correct color and falls back to gray", () => {
-      expect(cfmUtils.getStatusColor("active" as any)).toBe("#059669");
-      expect(cfmUtils.getStatusColor("pending" as any)).toBe("#d97706");
-      expect(cfmUtils.getStatusColor("expired" as any)).toBe("#dc2626");
-      expect(cfmUtils.getStatusColor("suspended" as any)).toBe("#6b7280");
-      expect(cfmUtils.getStatusColor("cancelled" as any)).toBe("#ef4444");
+      expect(cfmUtils.getStatusColor("active" as unknown)).toBe("#059669");
+      expect(cfmUtils.getStatusColor("pending" as unknown)).toBe("#d97706");
+      expect(cfmUtils.getStatusColor("expired" as unknown)).toBe("#dc2626");
+      expect(cfmUtils.getStatusColor("suspended" as unknown)).toBe("#6b7280");
+      expect(cfmUtils.getStatusColor("cancelled" as unknown)).toBe("#ef4444");
       // unknown -> fallback to suspended gray
-      expect(cfmUtils.getStatusColor("unknown" as any)).toBe("#6b7280");
+      expect(cfmUtils.getStatusColor("unknown" as unknown)).toBe("#6b7280");
     });
   });
 
   describe("getSpecialtyDisplayName", () => {
     it("returns localized Portuguese names", () => {
-      expect(cfmUtils.getSpecialtyDisplayName("dermatologia" as any)).toBe("Dermatologia");
-      expect(cfmUtils.getSpecialtyDisplayName("medicina-estetica" as any)).toBe(
+      expect(cfmUtils.getSpecialtyDisplayName("dermatologia" as unknown)).toBe("Dermatologia");
+      expect(cfmUtils.getSpecialtyDisplayName("medicina-estetica" as unknown)).toBe(
         "Medicina Estética",
       );
-      expect(cfmUtils.getSpecialtyDisplayName("cirurgia-plastica" as any)).toBe(
+      expect(cfmUtils.getSpecialtyDisplayName("cirurgia-plastica" as unknown)).toBe(
         "Cirurgia Plástica",
       );
       // unknown -> echoes input
-      expect(cfmUtils.getSpecialtyDisplayName("foo" as any)).toBe("foo");
+      expect(cfmUtils.getSpecialtyDisplayName("foo" as unknown)).toBe("foo");
     });
   });
 });
@@ -263,7 +263,7 @@ describe("CFMValidationService", () => {
   describe("validateMultipleLicenses", () => {
     it("aggregates results and errors from multiple validations", async () => {
       vi.spyOn(svc as AnyObj, "callCFMAPI").mockImplementation(
-        async (_state: any, number: string) => {
+        async (_state: unknown, number: string) => {
           if (number === "000000") {return null;}
           return makeProfessional({ crmNumber: `CRM-SP ${number}` });
         },

@@ -114,7 +114,7 @@ interface CriticalSecurityAlert {
   level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   type: string;
   message: string;
-  metadata: any;
+  metadata: unknown;
   requiresImmediate: boolean;
   complianceRequired?: boolean;
 }
@@ -658,7 +658,7 @@ export const jwtAuthUtils = {
     const userClinicIds = c.get("clinicIds") as string[] | undefined;
     const userRole = c.get("userRole");
 
-    // Admins can access any clinic
+    // Admins can access unknown clinic
     if (userRole === HealthcareRole.ADMIN) {
       return true;
     }

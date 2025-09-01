@@ -258,13 +258,13 @@ export const CreateNotificationSchema = z.object({
   title: z.string().min(1).max(200),
   message: z.string().min(1),
   templateId: UUIDSchema.optional(),
-  templateData: z.record(z.any()).optional(),
+  templateData: z.record(z.<unknown>()).optional(),
   scheduledAt: DateSchema.optional(),
   priority: z
     .nativeEnum(NotificationPriority)
     .default(NotificationPriority.NORMAL),
   maxRetries: z.number().min(0).max(5).default(3),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.<unknown>()).optional(),
   campaignId: UUIDSchema.optional(),
   automationId: UUIDSchema.optional(),
   isAutomated: z.boolean().default(false),

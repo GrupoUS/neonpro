@@ -141,7 +141,7 @@ const baseStockAlertSchema = z.object({
   acknowledgedAt: z.date().optional(),
   resolvedBy: customUuid.optional(),
   resolvedAt: z.date().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.<unknown>()).optional(),
   createdAt: z.date().default(() => new Date()),
 });
 

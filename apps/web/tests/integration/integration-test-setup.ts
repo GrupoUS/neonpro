@@ -43,7 +43,7 @@ export const TEST_CONFIG = {
 // Test data factory for consistent test data
 // TODO: Convert to standalone functions
 export class TestDataFactory {
-  static createMockPatient(overrides: Partial<any> = {}) {
+  static createMockPatient(overrides: Partial<unknown> = {}) {
     return {
       id: `test-patient-${Date.now()}`,
       name: "João Silva Santos",
@@ -61,7 +61,7 @@ export class TestDataFactory {
     };
   }
 
-  static createMockDoctor(overrides: Partial<any> = {}) {
+  static createMockDoctor(overrides: Partial<unknown> = {}) {
     return {
       id: `test-doctor-${Date.now()}`,
       name: "Dr. Maria Silva",
@@ -75,7 +75,7 @@ export class TestDataFactory {
     };
   }
 
-  static createMockAppointment(overrides: Partial<any> = {}) {
+  static createMockAppointment(overrides: Partial<unknown> = {}) {
     return {
       id: `test-appointment-${Date.now()}`,
       patient_id: "test-patient-123",
@@ -88,7 +88,7 @@ export class TestDataFactory {
     };
   }
 
-  static createMockEmergencyAccess(overrides: Partial<any> = {}) {
+  static createMockEmergencyAccess(overrides: Partial<unknown> = {}) {
     return {
       id: `test-emergency-${Date.now()}`,
       patient_id: "test-patient-123",
@@ -195,7 +195,7 @@ export class TestPerformanceMonitor {
 export class TestLGPDCompliance {
   static validateConsentRequirement(testData: unknown): boolean {
     return (
-      (testData as any).lgpd_consent === true && (testData as any).lgpd_consent_date !== undefined
+      (testData as unknown).lgpd_consent === true && (testData as unknown).lgpd_consent_date !== undefined
     );
   }
 
@@ -215,7 +215,7 @@ export class TestLGPDCompliance {
       "resource",
       "legal_basis",
     ];
-    return requiredFields.every((field) => (auditEntry as any)[field] !== undefined);
+    return requiredFields.every((field) => (auditEntry as unknown)[field] !== undefined);
   }
 
   static mockCPFValidation(cpf: string): { valid: boolean; formatted: string; } {

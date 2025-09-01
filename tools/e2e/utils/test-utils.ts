@@ -192,7 +192,7 @@ export class TestUtils {
   static async mockApiResponse(
     page: Page,
     url: string | RegExp,
-    response: any,
+    response: Record<string, unknown>,
     status = 200,
   ): Promise<void> {
     await page.route(url, async (route) => {

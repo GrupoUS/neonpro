@@ -103,7 +103,7 @@ export interface WorkflowCondition {
   fieldPath: string; // JSON path to field (e.g., "patient.age", "prediction.riskScore")
 
   // Comparison values
-  value?: any;
+  value?: unknown;
   valueType?: "static" | "dynamic" | "calculated";
 
   // Pattern matching (for text fields)
@@ -153,7 +153,7 @@ export interface ActionConfig {
   notificationType?: "email" | "sms" | "whatsapp" | "push" | "slack" | "teams";
   recipients?: string[]; // user IDs, emails, or phone numbers
   template?: string; // message template ID or content
-  variables?: { [key: string]: any; }; // template variables
+  variables?: { [key: string]: unknown; }; // template variables
 
   // Intervention actions
   interventionType?: "call" | "message" | "email" | "reschedule" | "reminder";
@@ -163,18 +163,18 @@ export interface ActionConfig {
   // Data update actions
   entityType?: "appointment" | "patient" | "prediction";
   entityId?: string; // dynamic field path or static ID
-  updateFields?: { [fieldName: string]: any; };
+  updateFields?: { [fieldName: string]: unknown; };
 
   // External API actions
   apiUrl?: string;
   httpMethod?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   headers?: { [key: string]: string; };
-  body?: any;
+  body?: unknown;
   authentication?: ApiAuthentication;
 
   // Workflow actions (trigger other workflows)
   workflowId?: string;
-  workflowVariables?: { [key: string]: any; };
+  workflowVariables?: { [key: string]: unknown; };
 
   // Scheduling actions
   scheduleType?: "appointment" | "task" | "reminder";
@@ -231,12 +231,12 @@ export interface WorkflowExecution {
   duration?: number; // milliseconds
 
   // Input data
-  triggerData: any; // data that triggered the workflow
-  inputVariables: { [key: string]: any; };
+  triggerData: unknown; // data that triggered the workflow
+  inputVariables: { [key: string]: unknown; };
 
   // Execution results
   actionResults: ActionResult[];
-  outputVariables: { [key: string]: any; };
+  outputVariables: { [key: string]: unknown; };
 
   // Error handling
   error?: WorkflowError;
@@ -259,7 +259,7 @@ export interface ActionResult {
   duration?: number; // milliseconds
 
   // Results
-  output?: any;
+  output?: unknown;
   error?: string;
 
   // Metrics
@@ -299,7 +299,7 @@ export interface ComplianceCheck {
   status: "passed" | "failed" | "warning";
   details: string;
   checkedAt: Date;
-  evidence?: any; // proof of compliance
+  evidence?: unknown; // proof of compliance
 }
 
 export interface ExecutionMetrics {
@@ -365,9 +365,9 @@ export interface ConfigurableField {
   description: string;
   type: "string" | "number" | "boolean" | "array" | "object";
   required: boolean;
-  defaultValue?: any;
+  defaultValue?: unknown;
   validation?: ValidationRule;
-  options?: { label: string; value: any; }[]; // for dropdowns
+  options?: { label: string; value: unknown; }[]; // for dropdowns
 }
 
 export interface ValidationRule {
@@ -382,7 +382,7 @@ export interface ValidationRule {
 export interface UsageExample {
   title: string;
   description: string;
-  configuration: { [fieldPath: string]: any; };
+  configuration: { [fieldPath: string]: unknown; };
   expectedOutcome: string;
 }
 

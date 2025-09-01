@@ -73,7 +73,7 @@ export interface CollectedEvidence extends AuditEvidence {
   collectionMethod: 'manual_upload' | 'automated_capture' | 'system_export' | 'api_import';
   validationStatus: 'pending' | 'valid' | 'invalid' | 'warning';
   validationErrors: string[];
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   backupCopies?: string[];
   digitalSignature?: string;
   witnessedBy?: string;

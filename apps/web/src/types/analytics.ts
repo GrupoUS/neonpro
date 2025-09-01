@@ -492,7 +492,7 @@ export interface AutomatedAction {
   triggeredBy: string;
   executedAt: Date;
   status: "pending" | "executing" | "completed" | "failed";
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   result?: ActionResult;
   retryCount: number;
   maxRetries: number;
@@ -720,14 +720,14 @@ export interface MLModel {
   deploymentDate: Date;
   lastRetraining: Date;
   featureImportance: FeatureImportance[];
-  hyperparameters: Record<string, any>;
+  hyperparameters: Record<string, unknown>;
   trainingDataSize: number;
   validationMetrics: ValidationMetrics;
 }
 
 export interface PredictionResult {
   modelId: string;
-  prediction: any;
+  prediction: unknown;
   confidence: number; // 0-1
   probability?: number; // 0-1
   explanation: string;
@@ -746,7 +746,7 @@ export interface FeatureImportance {
 
 export interface FeatureContribution {
   feature: string;
-  value: any;
+  value: unknown;
   contribution: number; // -1 to 1
   explanation: string;
 }
@@ -814,7 +814,7 @@ export type Analytics = {
 
 export interface AnalyticsEvent {
   type: string;
-  data: any;
+  data: unknown;
   timestamp: Date;
   userId?: string;
   sessionId?: string;

@@ -8,7 +8,7 @@ import { NoShowPredictionService } from "./no-show-prediction-service";
 import { UniversalChatService } from "./universal-chat-service";
 
 export class AIServiceFactory {
-  private static instances = new Map<string, any>();
+  private static instances = new Map<string, unknown>();
 
   static getChatService(): UniversalChatService {
     if (!AIServiceFactory.instances.has("chat")) {

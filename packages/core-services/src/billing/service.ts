@@ -289,7 +289,7 @@ export class BillingService {
 
     const paymentPlan = await this.repository.createPaymentPlan(paymentPlanData);
 
-    // Process down payment if any
+    // Process down payment if unknown
     if (data.downPayment > 0) {
       await this.processPayment({
         invoiceId: data.invoiceId,

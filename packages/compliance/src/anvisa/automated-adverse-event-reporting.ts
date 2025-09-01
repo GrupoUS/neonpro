@@ -510,7 +510,7 @@ export class ANVISAAdverseEventReporter {
             discovery_date: new Date(),
             outcome: "unknown",
             causality_assessment: "possible",
-          } as any,
+          } as unknown,
           internal_tracking: {
             detected_by: "ai_analysis",
             detection_confidence: confidence,

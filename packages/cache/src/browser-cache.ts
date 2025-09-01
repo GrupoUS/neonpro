@@ -1,7 +1,7 @@
 import type { CacheOperation, CacheStats, HealthcareDataPolicy } from "./types";
 
 export class BrowserCacheLayer implements CacheOperation {
-  private cache = new Map<string, any>();
+  private cache = new Map<string, unknown>();
   private stats: CacheStats = {
     hits: 0,
     misses: 0,

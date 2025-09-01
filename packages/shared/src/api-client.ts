@@ -471,7 +471,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
   const finalConfig = { ...DEFAULT_CONFIG, ...config };
 
   // Create Hono RPC client
-  const client = hc<any>(finalConfig.baseUrl, {
+  const client = hc<unknown>(finalConfig.baseUrl, {
     fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
       const requestStart = Date.now();
       const requestId = ApiUtils.generateRequestId();

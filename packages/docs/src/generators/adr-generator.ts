@@ -472,7 +472,7 @@ export class ADRGenerator {
 
     if (content.healthcareCompliance) {
       adrContent = adrContent.replaceAll(
-        /\[If applicable: Include any healthcare-specific compliance[\s\S]*?\]/g,
+        /\[If applicable: Include unknown healthcare-specific compliance[\s\S]*?\]/g,
         content.healthcareCompliance,
       );
     }

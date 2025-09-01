@@ -75,8 +75,8 @@ export interface ReportData {
 }
 
 export class ComplianceReportGenerator {
-  private templateEngine: any; // Would be a real template engine like Handlebars
-  private chartGenerator: any; // Would be a charting library like Chart.js or D3
+  private templateEngine: unknown; // Would be a real template engine like Handlebars
+  private chartGenerator: unknown; // Would be a charting library like Chart.js or D3
 
   constructor() {
     // Initialize template engine and chart generator
@@ -218,8 +218,8 @@ export class ComplianceReportGenerator {
   /**
    * Prepare report content based on configuration
    */
-  private async prepareReportContent(data: ReportData, config: ReportGenerationConfig): Promise<any> {
-    const content: any = {
+  private async prepareReportContent(data: ReportData, config: ReportGenerationConfig): Promise<unknown> {
+    const content: unknown = {
       title: this.generateReportTitle(config),
       summary: data.summary,
       frameworks: config.frameworks,
@@ -259,7 +259,7 @@ export class ComplianceReportGenerator {
     framework: ComplianceFramework, 
     data: ReportData, 
     config: ReportGenerationConfig
-  ): Promise<any> {
+  ): Promise<unknown> {
     const frameworkData = {
       scores: data.scores.filter(s => s.framework === framework),
       violations: data.violations.filter(v => v.framework === framework),
@@ -302,7 +302,7 @@ export class ComplianceReportGenerator {
   /**
    * Generate violation analysis section
    */
-  private async generateViolationAnalysis(data: ReportData, config: ReportGenerationConfig): Promise<any> {
+  private async generateViolationAnalysis(data: ReportData, config: ReportGenerationConfig): Promise<unknown> {
     return {
       summary: {
         total: data.violations.length,
@@ -326,7 +326,7 @@ export class ComplianceReportGenerator {
   /**
    * Generate trend analysis section
    */
-  private async generateTrendAnalysis(trends: any[], config: ReportGenerationConfig): Promise<any> {
+  private async generateTrendAnalysis(trends: unknown[], config: ReportGenerationConfig): Promise<unknown> {
     return {
       overallTrend: this.calculateOverallTrend(trends),
       frameworkTrends: trends.map(trend => ({
@@ -342,8 +342,8 @@ export class ComplianceReportGenerator {
   /**
    * Generate visualizations for the report
    */
-  private async generateVisualizations(data: ReportData, config: ReportGenerationConfig): Promise<any> {
-    const visualizations: any = {};
+  private async generateVisualizations(data: ReportData, config: ReportGenerationConfig): Promise<unknown> {
+    const visualizations: unknown = {};
 
     // Compliance score overview chart
     visualizations.scoreOverview = await this.createScoreOverviewChart(data.summary);
@@ -366,8 +366,8 @@ export class ComplianceReportGenerator {
   /**
    * Generate recommendations based on compliance data
    */
-  private async generateRecommendations(data: ReportData, config: ReportGenerationConfig): Promise<any[]> {
-    const recommendations: any[] = [];
+  private async generateRecommendations(data: ReportData, config: ReportGenerationConfig): Promise<<unknown>[]> {
+    const recommendations: unknown[] = [];
 
     // Framework-specific recommendations
     for (const framework of config.frameworks) {
@@ -397,7 +397,7 @@ export class ComplianceReportGenerator {
   /**
    * Apply template to report content
    */
-  private async applyTemplate(content: any, config: ReportGenerationConfig): Promise<string> {
+  private async applyTemplate(content: unknown, config: ReportGenerationConfig): Promise<string> {
     const templateName = `${config.reportType}_${config.outputFormat}`;
     
     // Apply branding if provided
@@ -541,28 +541,28 @@ export class ComplianceReportGenerator {
   }
 
   // Mock analysis methods (would contain actual analysis logic)
-  private async generateWCAGAnalysis(data: any): Promise<any> {
+  private async generateWCAGAnalysis(data: unknown): Promise<unknown> {
     return { accessibilityScore: 85, topIssues: ['color-contrast', 'image-alt'] };
   }
 
-  private async generateLGPDAnalysis(data: any): Promise<any> {
+  private async generateLGPDAnalysis(data: unknown): Promise<unknown> {
     return { privacyScore: 92, dataProtectionLevel: 'high' };
   }
 
-  private async generateANVISAAnalysis(data: any): Promise<any> {
+  private async generateANVISAAnalysis(data: unknown): Promise<unknown> {
     return { healthcareComplianceScore: 78, auditReadiness: 'medium' };
   }
 
-  private async generateCFMAnalysis(data: any): Promise<any> {
+  private async generateCFMAnalysis(data: unknown): Promise<unknown> {
     return { ethicsScore: 88, professionalStandards: 'compliant' };
   }
 
   // Mock calculation methods
-  private calculateNewViolations(violations: ComplianceViolation[], dateRange?: any): number {
+  private calculateNewViolations(violations: ComplianceViolation[], dateRange?: unknown): number {
     return Math.floor(Math.random() * 10);
   }
 
-  private calculateResolvedViolations(violations: ComplianceViolation[], dateRange?: any): number {
+  private calculateResolvedViolations(violations: ComplianceViolation[], dateRange?: unknown): number {
     return Math.floor(Math.random() * 15);
   }
 
@@ -574,47 +574,47 @@ export class ComplianceReportGenerator {
     return ['Prioritize critical violations', 'Implement automated testing', 'Regular compliance audits'];
   }
 
-  private calculateOverallTrend(trends: any[]): string {
+  private calculateOverallTrend(trends: unknown[]): string {
     return Math.random() > 0.5 ? 'improving' : 'declining';
   }
 
-  private calculateScoreImprovement(scoreHistory: any[]): number {
+  private calculateScoreImprovement(scoreHistory: unknown[]): number {
     return Math.floor(Math.random() * 20) - 10; // -10 to +10
   }
 
-  private calculateViolationTrend(violationHistory: any[]): string {
+  private calculateViolationTrend(violationHistory: unknown[]): string {
     return Math.random() > 0.5 ? 'decreasing' : 'increasing';
   }
 
-  private projectFutureScore(scoreHistory: any[]): number {
+  private projectFutureScore(scoreHistory: unknown[]): number {
     return Math.floor(Math.random() * 20) + 80; // 80-100
   }
 
-  private generateTrendRecommendations(trend: any): string[] {
+  private generateTrendRecommendations(trend: unknown): string[] {
     return [`Focus on ${trend.framework} improvements`];
   }
 
-  private async createScoreOverviewChart(summary: any): Promise<any> {
+  private async createScoreOverviewChart(summary: unknown): Promise<unknown> {
     return { type: 'bar', data: summary.frameworkScores };
   }
 
-  private async createViolationDistributionChart(violations: ComplianceViolation[]): Promise<any> {
+  private async createViolationDistributionChart(violations: ComplianceViolation[]): Promise<unknown> {
     return { type: 'pie', data: this.groupViolationsBySeverity(violations) };
   }
 
-  private async createFrameworkComparisonChart(frameworkScores: Record<ComplianceFramework, number>): Promise<any> {
+  private async createFrameworkComparisonChart(frameworkScores: Record<ComplianceFramework, number>): Promise<unknown> {
     return { type: 'radar', data: frameworkScores };
   }
 
-  private async createScoreTrendsChart(trends: any[]): Promise<any> {
+  private async createScoreTrendsChart(trends: unknown[]): Promise<unknown> {
     return { type: 'line', data: trends.map(t => t.scoreHistory) };
   }
 
-  private async createViolationTrendsChart(trends: any[]): Promise<any> {
+  private async createViolationTrendsChart(trends: unknown[]): Promise<unknown> {
     return { type: 'line', data: trends.map(t => t.violationHistory) };
   }
 
-  private async getFrameworkRecommendations(framework: ComplianceFramework, violations: ComplianceViolation[]): Promise<any[]> {
+  private async getFrameworkRecommendations(framework: ComplianceFramework, violations: ComplianceViolation[]): Promise<<unknown>[]> {
     return [
       { 
         title: `Improve ${framework} compliance`,
@@ -626,7 +626,7 @@ export class ComplianceReportGenerator {
     ];
   }
 
-  private async getGeneralRecommendations(data: ReportData): Promise<any[]> {
+  private async getGeneralRecommendations(data: ReportData): Promise<<unknown>[]> {
     return [
       {
         title: 'Implement automated compliance monitoring',
@@ -638,7 +638,7 @@ export class ComplianceReportGenerator {
     ];
   }
 
-  private async getCriticalViolationRecommendations(violations: ComplianceViolation[]): Promise<any[]> {
+  private async getCriticalViolationRecommendations(violations: ComplianceViolation[]): Promise<<unknown>[]> {
     return [
       {
         title: 'Address critical compliance violations immediately',
@@ -650,7 +650,7 @@ export class ComplianceReportGenerator {
     ];
   }
 
-  private async generateCustomSection(section: string, data: ReportData, config: ReportGenerationConfig): Promise<any> {
+  private async generateCustomSection(section: string, data: ReportData, config: ReportGenerationConfig): Promise<unknown> {
     // Mock implementation for custom sections
     return { sectionName: section, content: `Custom content for ${section}` };
   }

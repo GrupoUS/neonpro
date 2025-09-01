@@ -316,7 +316,7 @@ export class ComplianceAuditor {
    * Framework-specific applicability checks
    */
   private isLGPDApplicable(event: AuditEvent): boolean {
-    // LGPD applies to any personal data processing
+    // LGPD applies to unknown personal data processing
     return !!(
       event.patientId
       || event.userId
@@ -932,7 +932,7 @@ export class ComplianceAuditor {
 
     const newStatus = allCompleted
       ? "RESOLVED"
-      : anyFailed
+      : unknownFailed
       ? "IN_PROGRESS"
       : "IN_PROGRESS";
     const resolvedAt = allCompleted ? new Date().toISOString() : undefined;

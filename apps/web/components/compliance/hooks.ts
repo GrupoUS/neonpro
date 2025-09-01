@@ -259,7 +259,7 @@ export const useComplianceCheck = () => {
   const [results, setResults] = useState<ComplianceCheckResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const runCheck = useCallback(async (framework: ComplianceFramework, config?: any) => {
+  const runCheck = useCallback(async (framework: ComplianceFramework, config?: unknown) => {
     try {
       setIsRunning(true);
       setError(null);
@@ -339,10 +339,10 @@ export const useComplianceCheck = () => {
  */
 export const useComplianceReports = () => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [reports, setReports] = useState<any[]>([]);
+  const [reports, setReports] = useState<<unknown>[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const generateReport = useCallback(async (frameworks: ComplianceFramework[], options?: any) => {
+  const generateReport = useCallback(async (frameworks: ComplianceFramework[], options?: unknown) => {
     try {
       setIsGenerating(true);
       setError(null);

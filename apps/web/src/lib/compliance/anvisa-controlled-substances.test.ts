@@ -5,39 +5,39 @@
  * If using Vitest, vi is available; if using Jest, jest is available.
  */
 
-const usingVitest = typeof (globalThis as any).vi !== "undefined";
-const usingJest = typeof (globalThis as any).jest !== "undefined";
+const usingVitest = typeof (globalThis as unknown).vi !== "undefined";
+const usingJest = typeof (globalThis as unknown).jest !== "undefined";
 
 // Aliases for timer and spy methods to avoid Biome hook detection
 const viFakeTimers = usingVitest
-  ? (globalThis as any).vi.useFakeTimers.bind((globalThis as any).vi)
+  ? (globalThis as unknown).vi.useFakeTimers.bind((globalThis as unknown).vi)
   : undefined;
 const jestFakeTimers = usingJest
-  ? (globalThis as any).jest.useFakeTimers.bind((globalThis as any).jest)
+  ? (globalThis as unknown).jest.useFakeTimers.bind((globalThis as unknown).jest)
   : undefined;
 const viSetSystemTime = usingVitest
-  ? (globalThis as any).vi.setSystemTime.bind((globalThis as any).vi)
+  ? (globalThis as unknown).vi.setSystemTime.bind((globalThis as unknown).vi)
   : undefined;
 const jestSetSystemTime = usingJest
-  ? (globalThis as any).jest.setSystemTime.bind((globalThis as any).jest)
+  ? (globalThis as unknown).jest.setSystemTime.bind((globalThis as unknown).jest)
   : undefined;
 const viRealTimers = usingVitest
-  ? (globalThis as any).vi.useRealTimers.bind((globalThis as any).vi)
+  ? (globalThis as unknown).vi.useRealTimers.bind((globalThis as unknown).vi)
   : undefined;
 const jestRealTimers = usingJest
-  ? (globalThis as any).jest.useRealTimers.bind((globalThis as any).jest)
+  ? (globalThis as unknown).jest.useRealTimers.bind((globalThis as unknown).jest)
   : undefined;
 const viSpy = usingVitest
-  ? (globalThis as any).vi.spyOn.bind((globalThis as any).vi)
+  ? (globalThis as unknown).vi.spyOn.bind((globalThis as unknown).vi)
   : undefined;
 const jestSpy = usingJest
-  ? (globalThis as any).jest.spyOn.bind((globalThis as any).jest)
+  ? (globalThis as unknown).jest.spyOn.bind((globalThis as unknown).jest)
   : undefined;
 const viFn = usingVitest
-  ? (globalThis as any).vi.fn.bind((globalThis as any).vi)
+  ? (globalThis as unknown).vi.fn.bind((globalThis as unknown).vi)
   : undefined;
 const jestFn = usingJest
-  ? (globalThis as any).jest.fn.bind((globalThis as any).jest)
+  ? (globalThis as unknown).jest.fn.bind((globalThis as unknown).jest)
   : undefined;
 
 const clock = {
@@ -53,9 +53,9 @@ const clock = {
     if (usingVitest) {viRealTimers?.();}
     else if (usingJest) {jestRealTimers?.();}
   },
-  spyOn(obj: any, method: string) {
-    if (usingVitest) {return viSpy?.(obj, method as any);}
-    return jestSpy?.(obj, method as any);
+  spyOn(obj: unknown, method: string) {
+    if (usingVitest) {return viSpy?.(obj, method as unknown);}
+    return jestSpy?.(obj, method as unknown);
   },
   fn() {
     if (usingVitest) {return viFn?.();}
@@ -173,7 +173,7 @@ describe("Prescription creation validations", () => {
     treatmentDays: 30,
     patientId: "patient-1",
     doctorCRM: "CRM-12345",
-  } as any; // Use any to avoid test compile-time dependency on internal types
+  } as unknown; // Use unknown to avoid test compile-time dependency on internal types
 
   test("fails when substance does not exist", async () => {
     const s = Service.getInstance();
@@ -232,7 +232,7 @@ describe("Dispensation flow", () => {
       treatmentDays: 30,
       patientId: "p-1",
       doctorCRM: "CRM-1",
-    } as any);
+    } as unknown);
     expect(res.isValid).toBe(true);
     return res.data!;
   }
@@ -312,12 +312,12 @@ describe("Queries: by patient/doctor, expiring, stats, audit trail, and complian
     const s = Service.getInstance();
     const res = await s.createControlledPrescription({
       substanceId: args.substanceId ?? "anvisa-001", // B1
-      prescriptionType: (args.type ?? "receituario-b") as any,
+      prescriptionType: (args.type ?? "receituario-b") as unknown,
       quantity: args.qty ?? 5,
       treatmentDays: args.tDays ?? 30,
       patientId: args.patientId ?? "p-1",
       doctorCRM: args.doctorCRM ?? "CRM-1",
-    } as any);
+    } as unknown);
     expect(res.isValid).toBe(true);
     return res.data!;
   }
@@ -416,7 +416,7 @@ describe("clearData resets state but keeps substances loaded", () => {
       treatmentDays: 30,
       patientId: "p-x",
       doctorCRM: "CRM-x",
-    } as any);
+    } as unknown);
     expect(res.isValid).toBe(true);
 
     // Sanity

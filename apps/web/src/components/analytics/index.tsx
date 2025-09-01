@@ -387,19 +387,19 @@ export const generateExportFilename = (
 /**
  * Sanitize data for export (remove sensitive information)
  */
-export const sanitizeExportData = (data: any): any => {
+export const sanitizeExportData = (data: unknown): unknown => {
   const sanitized = JSON.parse(JSON.stringify(data));
 
   // Remove or mask sensitive fields
   const sensitiveFields = ["password", "token", "cpf", "email", "phone"];
 
-  const removeSensitive = (obj: any): any => {
+  const removeSensitive = (obj: unknown): unknown => {
     if (Array.isArray(obj)) {
       return obj.map(removeSensitive);
     }
 
     if (obj && typeof obj === "object") {
-      const cleaned: any = {};
+      const cleaned: unknown = {};
       for (const [key, value] of Object.entries(obj)) {
         if (
           sensitiveFields.some((field) => key.toLowerCase().includes(field))

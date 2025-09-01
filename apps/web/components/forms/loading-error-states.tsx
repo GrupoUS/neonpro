@@ -230,7 +230,7 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
 
 // Empty States
 export interface EmptyStateProps {
-  icon?: React.ComponentType<any>;
+  icon?: React.ComponentType<<unknown>>;
   title: string;
   description?: string;
   action?: {

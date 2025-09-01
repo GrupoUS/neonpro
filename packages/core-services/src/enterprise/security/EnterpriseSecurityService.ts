@@ -26,7 +26,7 @@ interface PerformanceMetrics {
   uptime: number;
   errors: number;
   performance: Record<string, unknown>;
-  [key: string]: unknown; // Allow any additional properties
+  [key: string]: unknown; // Allow unknown additional properties
 }
 
 interface SecurityRule {

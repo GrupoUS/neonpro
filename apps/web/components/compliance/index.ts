@@ -116,7 +116,7 @@ export const triggerEmergencyResponse = async (
   orchestrator: ComplianceOrchestrator,
   trigger: {
     type: 'critical_violation' | 'audit_alert' | 'security_breach' | 'system_failure';
-    details: any;
+    details: unknown;
   }
 ) => {
   console.log(`🚨 Triggering emergency compliance response: ${trigger.type}`);

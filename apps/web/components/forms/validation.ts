@@ -8,7 +8,7 @@ export interface ValidationRule {
   minLength?: number;
   maxLength?: number;
   pattern?: RegExp;
-  custom?: (value: any) => string | null;
+  custom?: (value: unknown) => string | null;
   message?: string;
 }
 
@@ -190,7 +190,7 @@ export const healthcareValidators = {
 
 // Main validation function
 export const validateField = (
-  value: any,
+  value: unknown,
   rules: ValidationRule | ValidationRule[],
 ): string | null => {
   const ruleArray = Array.isArray(rules) ? rules : [rules];
@@ -230,7 +230,7 @@ export const validateField = (
 
 // Validate entire form schema
 export const validateSchema = (
-  data: Record<string, any>,
+  data: Record<string, unknown>,
   schema: ValidationSchema,
 ): ValidationResult => {
   const errors: ValidationErrors = {};

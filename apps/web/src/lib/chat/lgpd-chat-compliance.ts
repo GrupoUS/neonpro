@@ -73,7 +73,7 @@ export interface LGPDAuditLog {
   anonymization_applied: boolean;
   consent_validated: boolean;
   breach_detected: boolean;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 export interface PrivacyRights {
@@ -111,7 +111,7 @@ export class LGPDChatCompliance {
   private auditLogs: LGPDAuditLog[] = [];
   private consentRecords: Map<string, ConsentRecord[]> = new Map();
   private breachIncidents: DataBreachIncident[] = [];
-  private anonymizationMethods: Map<string, (data: any) => any> = new Map();
+  private anonymizationMethods: Map<string, (data: unknown) => unknown> = new Map();
 
   constructor(config: LGPDConfig) {
     this.config = {
@@ -633,7 +633,7 @@ export class LGPDChatCompliance {
    * Process right to access request
    */
   async processAccessRequest(userId: string): Promise<{
-    personal_data: any[];
+    personal_data: unknown[];
     processing_activities: LGPDAuditLog[];
     consent_records: ConsentRecord[];
     data_categories: string[];
@@ -849,7 +849,7 @@ export class LGPDChatCompliance {
     // Implement privacy officer notification
   }
 
-  private async getUserPersonalData(userId: string): Promise<any[]> {
+  private async getUserPersonalData(userId: string): Promise<<unknown>[]> {
     // Implement user data retrieval
     return [];
   }
@@ -863,7 +863,7 @@ export class LGPDChatCompliance {
 
   private async checkLegalRetentionRequirements(
     userId: string,
-  ): Promise<any[]> {
+  ): Promise<<unknown>[]> {
     // Implement legal retention check
     return [];
   }

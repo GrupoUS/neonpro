@@ -90,7 +90,7 @@ export function useRealtimeCompliance(
    */
   const determineComplianceType = useCallback(
     (payload: unknown): keyof ComplianceEventType => {
-      const typedPayload = payload as any;
+      const typedPayload = payload as unknown;
       const eventData = typedPayload.new || typedPayload.old;
 
       if (!eventData) {
@@ -143,7 +143,7 @@ export function useRealtimeCompliance(
    */
   const determineSeverity = useCallback(
     (payload: unknown): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" => {
-      const typedPayload = payload as any;
+      const typedPayload = payload as unknown;
       const eventData = typedPayload.new || typedPayload.old;
       const { eventType: eventType } = typedPayload;
 
@@ -319,7 +319,7 @@ export function useRealtimeCompliance(
         const severity = determineSeverity(payload);
         const requiresAction = severity === "HIGH" || severity === "CRITICAL";
 
-        const typedPayload = payload as any;
+        const typedPayload = payload as unknown;
         const realtimePayload: RealtimeCompliancePayload = {
           eventType: typedPayload.eventType,
           complianceType,

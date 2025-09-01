@@ -145,7 +145,7 @@ export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
   protected async logAuditEvent(
     operation: AuditMetadata["operation"],
     context: HealthcareContext,
-    additionalData?: Record<string, any>,
+    additionalData?: Record<string, unknown>,
   ): Promise<void> {
     const auditData: AuditMetadata = {
       featureName: this.config.featureName,

@@ -14,12 +14,12 @@ interface PatientRepository {
   getPatient(id: string): Promise<unknown>;
   getPatientByEmail(email: string): Promise<unknown>;
   updatePatient(id: string, data: unknown): Promise<unknown>;
-  getPatients(filters?: unknown): Promise<any[]>;
+  getPatients(filters?: unknown): Promise<unknown[]>;
   updateMedicalHistory(patientId: string, history: unknown): Promise<void>;
   getPatientStats(): Promise<unknown>;
   addConsentForm(patientId: string, form: unknown): Promise<void>;
-  getConsentForms(patientId: string): Promise<any[]>;
-  searchPatients(query: string): Promise<any[]>;
+  getConsentForms(patientId: string): Promise<unknown[]>;
+  searchPatients(query: string): Promise<unknown[]>;
 }
 
 interface PatientFilters {}
@@ -384,7 +384,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
    * Enhanced service health with patient-specific metrics
    */
   async getServiceHealth(): Promise<unknown> {
-    const baseHealth = (await super.getHealthMetrics()) as Record<string, any>;
+    const baseHealth = (await super.getHealthMetrics()) as Record<string, unknown>;
 
     // Add patient-specific metrics
     const patientStats = (await this.repository.getPatientStats()) as PatientStats;

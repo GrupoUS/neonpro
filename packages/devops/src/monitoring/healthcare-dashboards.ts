@@ -64,7 +64,7 @@ export class HealthcareDashboards {
           title: "Medical Ethics Violations",
           query: "sum(rate(medical_ethics_violations_total[5m]))",
           alertThreshold: 0,
-          description: "Alert on any medical ethics violations",
+          description: "Alert on unknown medical ethics violations",
         },
       ],
     };

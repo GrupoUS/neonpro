@@ -3,7 +3,7 @@ export type * from "@neonpro/database";
 export type * from "@neonpro/types";
 
 // Frontend-specific API types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;

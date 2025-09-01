@@ -152,7 +152,7 @@ class BrazilianConnectivityOptimizer {
       return "tier2_standard"; // Default for server-side
     }
 
-    const connection = (navigator as any).connection || (navigator as any).mozConnection;
+    const connection = (navigator as unknown).connection || (navigator as unknown).mozConnection;
 
     if (connection) {
       const effectiveType = connection.effectiveType;
@@ -357,8 +357,8 @@ class BrazilianConnectivityOptimizer {
   private enableFeature(featureName: string): void {
     // Feature flag management for progressive enhancement
     if (typeof window !== "undefined") {
-      (window as any).__NEONPRO_FEATURES = {
-        ...(window as any).__NEONPRO_FEATURES,
+      (window as unknown).__NEONPRO_FEATURES = {
+        ...(window as unknown).__NEONPRO_FEATURES,
         [featureName]: true,
       };
     }
@@ -489,7 +489,7 @@ class BrazilianConnectivityOptimizer {
         metrics,
         timestamp: Date.now(),
         userAgent: navigator.userAgent,
-        connection: (navigator as any).connection,
+        connection: (navigator as unknown).connection,
       });
 
       window.navigator.sendBeacon("/api/monitoring/performance", data);

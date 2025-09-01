@@ -235,7 +235,7 @@ test.describe("Login API Integration", () => {
     const credentials = TestUtils.getValidCredentials();
 
     // Intercept API call
-    let requestPayload: any;
+    let requestPayload: Record<string, unknown>;
     await page.route(
       TEST_CONSTANTS.API_ENDPOINTS.LOGIN,
       async (route, request) => {

@@ -36,7 +36,7 @@ interface UsePhase4ValidationReturn {
   validateEntity: (
     type: ValidationType,
     entityId: string,
-    data: Record<string, any>,
+    data: Record<string, unknown>,
   ) => Promise<ValidationSession>;
   getValidationResult: (sessionId: string) => ValidationSession | null;
   retryValidation: (sessionId: string) => Promise<ValidationSession>;
@@ -100,7 +100,7 @@ interface UsePhase4ValidationReturn {
   ) => Promise<Blob>;
   generateReport: (
     type: "compliance" | "performance" | "summary",
-    filters: any,
+    filters: unknown,
   ) => Promise<Blob>;
 
   // State
@@ -204,7 +204,7 @@ export function usePhase4Validation(
   }, [options.real_time_updates, options.clinic_id]);
 
   // Handle WebSocket messages
-  const handleWebSocketMessage = useCallback((data: any) => {
+  const handleWebSocketMessage = useCallback((data: unknown) => {
     switch (data.type) {
       case "session_update":
         updateSessionInState(data.session);
@@ -240,7 +240,7 @@ export function usePhase4Validation(
     async (
       type: ValidationType,
       entityId: string,
-      data: Record<string, any>,
+      data: Record<string, unknown>,
     ): Promise<ValidationSession> => {
       setLoading(true);
       setError(null);
@@ -668,7 +668,7 @@ export function usePhase4Validation(
   const generateReport = useCallback(
     async (
       type: "compliance" | "performance" | "summary",
-      filters: any,
+      filters: unknown,
     ): Promise<Blob> => {
       const response = await fetch("/api/validation/reports", {
         method: "POST",

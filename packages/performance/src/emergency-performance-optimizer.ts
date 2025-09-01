@@ -260,7 +260,7 @@ export class EmergencyPerformanceOptimizer {
     return strategy;
   }
 
-  private async processAtEdgeNode(request: EmergencyRequest, edgeNodeId: string): Promise<any> {
+  private async processAtEdgeNode(request: EmergencyRequest, edgeNodeId: string): Promise<unknown> {
     const edgeNode = this.edgeNodes.get(edgeNodeId);
     if (!edgeNode || edgeNode.status !== "active") {
       return null;
@@ -275,7 +275,7 @@ export class EmergencyPerformanceOptimizer {
     };
   }
 
-  private async processWithOfflineCache(request: EmergencyRequest): Promise<any> {
+  private async processWithOfflineCache(request: EmergencyRequest): Promise<unknown> {
     switch (request.type) {
       case "emergency_consultation":
         return this.getEmergencyProtocol(request.payload.symptoms || []);
@@ -292,7 +292,7 @@ export class EmergencyPerformanceOptimizer {
     }
   }
 
-  private async processEmergencyFallback(request: EmergencyRequest): Promise<any> {
+  private async processEmergencyFallback(request: EmergencyRequest): Promise<unknown> {
     return {
       emergency_response: {
         message: "Emergency detected. Immediate medical attention required.",
@@ -455,14 +455,14 @@ export class EmergencyPerformanceOptimizer {
     );
   }
 
-  private async processWithStandardPipeline(request: EmergencyRequest): Promise<any> {
+  private async processWithStandardPipeline(request: EmergencyRequest): Promise<unknown> {
     return {
       result: "Processed via standard pipeline",
       processing_method: "standard",
     };
   }
 
-  private async processWithFallback(request: EmergencyRequest): Promise<any> {
+  private async processWithFallback(request: EmergencyRequest): Promise<unknown> {
     return {
       result: "Processed via fallback method",
       processing_method: "fallback",

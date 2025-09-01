@@ -212,7 +212,7 @@ export class SupabaseCacheLayer implements CacheOperation {
     }
   }
 
-  async getHealthcareAuditTrail(patientId?: string): Promise<any[]> {
+  async getHealthcareAuditTrail(patientId?: string): Promise<unknown[]> {
     try {
       let query = this.supabase
         .from("cache_audit_log")

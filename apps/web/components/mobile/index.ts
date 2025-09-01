@@ -87,7 +87,7 @@ export interface DeviceFingerprint {
 export interface HandoffSession {
   sessionId: string;
   deviceFingerprint: DeviceFingerprint;
-  sessionData: Record<string, any>;
+  sessionData: Record<string, unknown>;
   expiresAt: number;
   encrypted: boolean;
 }
@@ -97,8 +97,8 @@ export interface SyncConflict {
   entityType: 'patient' | 'appointment' | 'treatment' | 'medication' | 'form_data';
   entityId: string;
   fieldName: string;
-  localValue: any;
-  remoteValue: any;
+  localValue: unknown;
+  remoteValue: unknown;
   priority: 'critical' | 'high' | 'medium' | 'low';
   canAutoResolve: boolean;
 }
@@ -107,7 +107,7 @@ export interface QueuedAction {
   id: string;
   type: 'create' | 'update' | 'delete' | 'upload';
   entityType: 'patient' | 'appointment' | 'treatment' | 'medication' | 'file' | 'form_data';
-  data: any;
+  data: unknown;
   priority: 'critical' | 'high' | 'medium' | 'low';
   status: 'queued' | 'processing' | 'completed' | 'failed';
   attempts: number;

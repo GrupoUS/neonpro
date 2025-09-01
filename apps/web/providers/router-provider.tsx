@@ -186,7 +186,7 @@ export function useRoutePermissions() {
         return false;
       }
 
-      // Clinic owners and managers can edit any patient
+      // Clinic owners and managers can edit unknown patient
       if (["clinic_owner", "clinic_manager"].includes(user.role)) {
         return true;
       }

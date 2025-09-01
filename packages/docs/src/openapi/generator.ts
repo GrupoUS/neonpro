@@ -139,11 +139,11 @@ export class OpenAPIGenerator {
 
         // Merge components
         if (parsed.components) {
-          Object.keys(parsed.components as any).forEach((componentType) => {
-            if ((components as any)[componentType]) {
+          Object.keys(parsed.components as unknown).forEach((componentType) => {
+            if ((components as unknown)[componentType]) {
               Object.assign(
-                (components as any)[componentType],
-                (parsed.components as any)[componentType],
+                (components as unknown)[componentType],
+                (parsed.components as unknown)[componentType],
               );
             }
           });
@@ -171,7 +171,7 @@ export class OpenAPIGenerator {
       }
 
       try {
-        const schema = this.parseInterfaceToSchema(interfaceBody) as any;
+        const schema = this.parseInterfaceToSchema(interfaceBody) as unknown;
         schemas[interfaceName] = {
           type: "object",
           properties: schema.properties,
@@ -221,7 +221,7 @@ export class OpenAPIGenerator {
       boolean: { type: "boolean" },
       Date: { type: "string", format: "date-time" },
       object: { type: "object" },
-      any: {
+      unknown: {
         type: "object",
         description: "Any type (consider improving type safety)",
       },
@@ -309,7 +309,7 @@ export class OpenAPIGenerator {
    */
   private async validateSpec(spec: unknown): Promise<void> {
     // Basic validation
-    if (!((spec as any).openapi && (spec as any).info && (spec as any).paths)) {
+    if (!((spec as unknown).openapi && (spec as unknown).info && (spec as unknown).paths)) {
       throw new Error("Invalid OpenAPI specification structure");
     }
 
@@ -326,15 +326,15 @@ export class OpenAPIGenerator {
     const warnings: string[] = [];
 
     // Check for security schemes
-    if (!(spec as any).components?.securitySchemes) {
+    if (!(spec as unknown).components?.securitySchemes) {
       warnings.push(
         "No security schemes defined - required for healthcare compliance",
       );
     }
 
     // Check for required healthcare tags
-    const healthcareTags = (spec as any).tags?.some((tag: any) =>
-      (tag as any).name.toLowerCase().includes("healthcare")
+    const healthcareTags = (spec as unknown).tags?.some((tag: unknown) =>
+      (tag as unknown).name.toLowerCase().includes("healthcare")
     );
     if (!healthcareTags) {
       warnings.push("No healthcare-specific tags found");

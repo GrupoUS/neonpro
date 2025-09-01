@@ -91,7 +91,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       mockJWT.sign.mockReturnValue(mockTokens.accessToken);
 
       // Mock request context
-      const mockContext = {
+      const _mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             email: "doctor@neonpro.com.br",
@@ -104,7 +104,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       } as unknown as Context;
 
       // Simulate login endpoint
-      const loginHandler = async (c: Context) => {
+      const _loginHandler = async (c: Context) => {
         const { email, password, tenantId } = await c.req.json();
 
         // Validate healthcare professional
@@ -150,7 +150,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       // Mock user not found
       mockPrisma.user.findUnique.mockResolvedValue();
 
-      const mockContext = {
+      const _mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             email: "invalid@example.com",
@@ -162,7 +162,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
         status: vi.fn(),
       } as unknown as Context;
 
-      const loginHandler = async (c: Context) => {
+      const _loginHandler = async (c: Context) => {
         const { email, tenantId } = await c.req.json();
 
         const user = await mockPrisma.user.findUnique({
@@ -215,7 +215,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
         reason: "NO_PROFESSIONAL_LICENSE",
       });
 
-      const mockContext = {
+      const _mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             email: "doctor@neonpro.com.br",
@@ -226,7 +226,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
         json: vi.fn(),
       } as unknown as Context;
 
-      const loginHandler = async (c: Context) => {
+      const _loginHandler = async (c: Context) => {
         const { email, password: _password, tenantId } = await c.req.json();
 
         const user = await mockPrisma.user.findUnique({
@@ -281,7 +281,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
         tokens: newTokens,
       });
 
-      const mockContext = {
+      const _mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             refreshToken: mockRefreshToken,
@@ -339,7 +339,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
 
       mockPrisma.session.findUnique.mockResolvedValue(); // Expired session not found
 
-      const mockContext = {
+      const _mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             refreshToken: expiredRefreshToken,
@@ -402,7 +402,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       });
       mockPrisma.session.delete.mockResolvedValue({ id: "session-123" });
 
-      const mockContext = {
+      const _mockContext = {
         req: {
           header: vi.fn().mockReturnValue(`Bearer ${accessToken}`),
         },

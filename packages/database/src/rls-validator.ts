@@ -127,7 +127,7 @@ async function validateTableRLS(
 
   try {
     // Check if RLS is enabled
-    const { data: rlsInfo, error } = await (adminClient as any)
+    const { data: rlsInfo, error } = await (adminClient as unknown)
       .rpc("check_table_rls", { table_name: tableName });
 
     if (error) {
@@ -143,7 +143,7 @@ async function validateTableRLS(
     }
 
     // Get policies for the table
-    const { data: policiesData, error: policiesError } = await (adminClient as any)
+    const { data: policiesData, error: policiesError } = await (adminClient as unknown)
       .rpc("get_table_policies", { table_name: tableName });
 
     if (policiesError) {
@@ -294,7 +294,7 @@ export async function quickRLSCheck(): Promise<{ status: string; criticalTablesS
 
     for (const tableName of CRITICAL_HEALTHCARE_TABLES.slice(0, 5)) { // Check first 5 for speed
       try {
-        const { data } = await (adminClient as any).rpc("check_table_rls", {
+        const { data } = await (adminClient as unknown).rpc("check_table_rls", {
           table_name: tableName,
         });
         const rlsInfo = data as { rls_enabled: boolean; } | null;

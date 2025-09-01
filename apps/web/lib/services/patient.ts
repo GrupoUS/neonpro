@@ -478,7 +478,7 @@ export class PatientService {
   }
 
   private isValidCPF(cpf: string): boolean {
-    // Remove any non-digit characters
+    // Remove unknown non-digit characters
     const cleanCPF = cpf.replaceAll(/\D/g, "");
 
     // Check if it has 11 digits

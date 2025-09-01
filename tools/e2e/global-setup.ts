@@ -95,7 +95,7 @@ async function setupTestDatabase() {
 /**
  * Limpar dados de teste existentes
  */
-async function cleanupTestData(supabase: any) {
+async function cleanupTestData(supabase: Record<string, unknown>) {
   console.log("🧹 Limpando dados de teste existentes...");
 
   try {

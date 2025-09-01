@@ -43,7 +43,7 @@ vi.mock("@supabase/supabase-js", () => {
 
   // RealtimeChannel mock with presence, broadcast, subscribe flows
   const makeChannel = (name: string) => {
-    const handlers: Record<string, any[]> = {
+    const handlers: Record<string, unknown[]> = {
       "postgres_changes": [],
       "broadcast:typing": [],
       "presence:sync": [],
@@ -104,7 +104,7 @@ vi.mock("@supabase/supabase-js", () => {
     return ch;
   };
 
-  const channels = new Map<string, any>();
+  const channels = new Map<string, unknown>();
 
   const client: Record<string, unknown> = {
     auth: {
@@ -157,7 +157,7 @@ describe("SupabaseRealtimeChat - initialization", () => {
 
   it("initializes successfully when user is authenticated and sets up global presence", async () => {
     const chat = new SupabaseRealtimeChat(baseConfig);
-    await expect(chat.initialize("u-123", { professional_info: { crm: "X" } } as any)).resolves
+    await expect(chat.initialize("u-123", { professional_info: { crm: "X" } } as unknown)).resolves
       .toBeUndefined();
 
     // global presence channel created and track called
@@ -229,7 +229,7 @@ describe("SupabaseRealtimeChat - subscribeToConversation", () => {
     ];
 
     mockClient.from.mockImplementationOnce((_table: string) => {
-      return (mockClient as any).__makeQuery({
+      return (mockClient as unknown).__makeQuery({
         select: vi.fn().mockImplementation(function() {
           return this;
         }),
@@ -291,14 +291,14 @@ describe("SupabaseRealtimeChat - subscribeToConversation", () => {
     // Arrange a channel whose subscribe first emits CLOSED, then SUBSCRIBED on next subscribe
     const chName = "conversation_c2";
     const ch = mockClient.channel(chName);
-    ch.subscribe.mockImplementationOnce(async (cb: any) => {
+    ch.subscribe.mockImplementationOnce(async (cb: unknown) => {
       cb && (await cb("CLOSED"));
       return ch;
     });
     mockClient.channel.mockReturnValueOnce(ch); // use our precreated channel
 
     // Next subscribe path (for reconnection)
-    ch.subscribe.mockImplementationOnce(async (cb: any) => {
+    ch.subscribe.mockImplementationOnce(async (cb: unknown) => {
       cb && (await cb("SUBSCRIBED"));
       return ch;
     });
@@ -312,7 +312,7 @@ describe("SupabaseRealtimeChat - subscribeToConversation", () => {
 
     // No recent messages needed; stub loadRecentMessages fetch to empty
     mockClient.from.mockImplementation((_table: string) =>
-      (mockClient as any).__makeQuery({
+      (mockClient as unknown).__makeQuery({
         select() {
           return this;
         },
@@ -334,7 +334,7 @@ describe("SupabaseRealtimeChat - subscribeToConversation", () => {
     await vi.runAllTimersAsync();
 
     await p;
-    expect(onError).toHaveBeenCalledWith(expect.any(Error)); // Connection closed
+    expect(onError).toHaveBeenCalledWith(expect.<unknown>(Error)); // Connection closed
     expect(ch.subscribe).toHaveBeenCalledTimes(2); // initial + reconnection
   });
 });
@@ -343,7 +343,7 @@ describe("SupabaseRealtimeChat - sendMessage", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("inserts message, handles emergency flow, updates conversation last message, returns transformed ChatMessage", async () => {
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: unknown = (createClient as unknown).mock.results[0].value;
 
     // Mock DB insert/select for message
     const inserted = {
@@ -362,7 +362,7 @@ describe("SupabaseRealtimeChat - sendMessage", () => {
     };
 
     mockClient.from.mockImplementationOnce((_table: string) =>
-      (mockClient as any).__makeQuery({
+      (mockClient as unknown).__makeQuery({
         insert() {
           return this;
         },
@@ -377,7 +377,7 @@ describe("SupabaseRealtimeChat - sendMessage", () => {
 
     // Mock conversation update
     mockClient.from.mockImplementationOnce((_table: string) =>
-      (mockClient as any).__makeQuery({
+      (mockClient as unknown).__makeQuery({
         update() {
           return this;
         },
@@ -403,10 +403,10 @@ describe("SupabaseRealtimeChat - sendMessage", () => {
   });
 
   it("propagates insert error", async () => {
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: unknown = (createClient as unknown).mock.results[0].value;
 
     mockClient.from.mockImplementationOnce((_table: string) =>
-      (mockClient as any).__makeQuery({
+      (mockClient as unknown).__makeQuery({
         insert() {
           return this;
         },
@@ -428,10 +428,10 @@ describe("SupabaseRealtimeChat - sendMessage", () => {
 
 describe("SupabaseRealtimeChat - updateMessageStatus", () => {
   it("updates status and read_at when provided", async () => {
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: unknown = (createClient as unknown).mock.results[0].value;
 
     mockClient.from.mockImplementationOnce((_table: string) =>
-      (mockClient as any).__makeQuery({
+      (mockClient as unknown).__makeQuery({
         update() {
           return this;
         },
@@ -445,7 +445,7 @@ describe("SupabaseRealtimeChat - updateMessageStatus", () => {
     await chat.initialize("u-123");
 
     const when = new Date("2025-01-01T00:00:00Z");
-    await chat.updateMessageStatus("m-1", "read" as any, when);
+    await chat.updateMessageStatus("m-1", "read" as unknown, when);
 
     expect(mockClient.from).toHaveBeenCalledWith("chat_messages");
   });
@@ -459,13 +459,13 @@ describe("SupabaseRealtimeChat - typing indicators", () => {
   afterEach(() => vi.useRealTimers());
 
   it("sends typing start and auto-stops after timeout; stop clears timer", async () => {
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: unknown = (createClient as unknown).mock.results[0].value;
 
     // Provide a channel map entry to the SUT's channels by actually subscribing
     const chat = new SupabaseRealtimeChat({ ...baseConfig, enableTypingIndicators: true });
     await chat.initialize("u-123");
     mockClient.from.mockImplementation((_table: string) =>
-      (mockClient as any).__makeQuery({
+      (mockClient as unknown).__makeQuery({
         select() {
           return this;
         },
@@ -517,13 +517,13 @@ describe("SupabaseRealtimeChat - typing indicators", () => {
 
 describe("SupabaseRealtimeChat - unsubscribe and disconnect", () => {
   it("unsubscribe removes channel and clears typing timers", async () => {
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: unknown = (createClient as unknown).mock.results[0].value;
     const chat = new SupabaseRealtimeChat(baseConfig);
     await chat.initialize("u-123");
 
     // create a channel via subscribeToConversation to populate internal maps
     mockClient.from.mockImplementation((_table: string) =>
-      (mockClient as any).__makeQuery({
+      (mockClient as unknown).__makeQuery({
         select() {
           return this;
         },
@@ -541,23 +541,23 @@ describe("SupabaseRealtimeChat - unsubscribe and disconnect", () => {
     await chat.subscribeToConversation("c-unsub", { onMessage: () => {} });
 
     // simulate a typing timer existing
-    // @ts-expect-error access private map for test via any
-    (chat as any).typingTimers.set("c-unsub", setTimeout(() => {}, 10_000));
+    // @ts-expect-error access private map for test via unknown
+    (chat as unknown).typingTimers.set("c-unsub", setTimeout(() => {}, 10_000));
 
     await chat.unsubscribeFromConversation("c-unsub");
     expect(mockClient.removeChannel).toHaveBeenCalled();
     // ensure timer cleared
     // @ts-expect-error
-    expect((chat as any).typingTimers.has("c-unsub")).toBe(false);
+    expect((chat as unknown).typingTimers.has("c-unsub")).toBe(false);
   });
 
   it("disconnect clears timers, unsubscribes, and removes all channels", async () => {
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: unknown = (createClient as unknown).mock.results[0].value;
     const chat = new SupabaseRealtimeChat(baseConfig);
     await chat.initialize("u-123");
 
     mockClient.from.mockImplementation((_table: string) =>
-      (mockClient as any).__makeQuery({
+      (mockClient as unknown).__makeQuery({
         select() {
           return this;
         },
@@ -577,9 +577,9 @@ describe("SupabaseRealtimeChat - unsubscribe and disconnect", () => {
 
     // add timers
     // @ts-expect-error
-    (chat as any).typingTimers.set("c-d1", setTimeout(() => {}, 10_000));
+    (chat as unknown).typingTimers.set("c-d1", setTimeout(() => {}, 10_000));
     // @ts-expect-error
-    (chat as any).typingTimers.set("c-d2", setTimeout(() => {}, 10_000));
+    (chat as unknown).typingTimers.set("c-d2", setTimeout(() => {}, 10_000));
 
     await chat.disconnect();
     expect(mockClient.removeAllChannels).toHaveBeenCalled();
@@ -590,7 +590,7 @@ describe("SupabaseRealtimeChat - queries: getActiveConversations and createConve
   beforeEach(() => vi.clearAllMocks());
 
   it("getActiveConversations maps rows and dates; filters by current user", async () => {
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: unknown = (createClient as unknown).mock.results[0].value;
 
     const rows = [{
       id: "c-1",
@@ -618,7 +618,7 @@ describe("SupabaseRealtimeChat - queries: getActiveConversations and createConve
     }];
 
     mockClient.from.mockImplementationOnce((_table: string) =>
-      (mockClient as any).__makeQuery({
+      (mockClient as unknown).__makeQuery({
         select() {
           return this;
         },
@@ -643,7 +643,7 @@ describe("SupabaseRealtimeChat - queries: getActiveConversations and createConve
   });
 
   it("createConversation inserts and returns mapped conversation", async () => {
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: unknown = (createClient as unknown).mock.results[0].value;
 
     const row = {
       id: "c-new",
@@ -656,7 +656,7 @@ describe("SupabaseRealtimeChat - queries: getActiveConversations and createConve
     };
 
     mockClient.from.mockImplementationOnce((_table: string) =>
-      (mockClient as any).__makeQuery({
+      (mockClient as unknown).__makeQuery({
         insert() {
           return this;
         },
@@ -681,7 +681,7 @@ describe("SupabaseRealtimeChat - queries: getActiveConversations and createConve
 describe("SupabaseRealtimeChat - helpers", () => {
   it("getSenderType returns healthcare_professional when professional_info present, otherwise patient", async () => {
     const chat1 = new SupabaseRealtimeChat(baseConfig);
-    await chat1.initialize("u-1", { professional_info: { specialty: "cardio" } } as any);
+    await chat1.initialize("u-1", { professional_info: { specialty: "cardio" } } as unknown);
     // @ts-expect-error
     expect(chat1["getSenderType"]()).toBe("healthcare_professional");
 

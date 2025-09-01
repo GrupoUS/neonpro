@@ -419,7 +419,7 @@ export function validateHealthcareMetrics(
 } {
   const budget = getHealthcarePerformanceBudget(pageType);
   const criticalMetrics = getCriticalHealthcareMetrics(pageType);
-  const failures: any[] = [];
+  const failures: Record<string, unknown>[] = [];
 
   // Check Core Web Vitals
   const coreVitals = [

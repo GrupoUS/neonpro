@@ -7,7 +7,7 @@
 import type { Database } from "@neonpro/database/types";
 
 // Base API response structure
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -85,9 +85,9 @@ export interface PatientResponse {
   phone?: string;
   birth_date: string;
   gender: "M" | "F" | "O";
-  address?: any;
-  emergency_contact?: any;
-  medical_history?: any;
+  address?: unknown;
+  emergency_contact?: unknown;
+  medical_history?: unknown;
   clinic_id: string;
   created_at: string;
   updated_at: string;
@@ -198,7 +198,7 @@ export interface HealthCheckResponse {
 export interface ApiError {
   code: string;
   message: string;
-  details?: any;
+  details?: unknown;
   timestamp: string;
   request_id?: string;
 }
@@ -247,7 +247,7 @@ export interface AuditLogEntry {
   action: string;
   resource_type: string;
   resource_id?: string;
-  details: any;
+  details: unknown;
   ip_address: string;
   user_agent: string;
   timestamp: string;
@@ -307,7 +307,7 @@ export const createSuccessResponse = <T>(data: T, message?: string): ApiResponse
   timestamp: new Date().toISOString(),
 });
 
-export const createErrorResponse = (error: string, details?: any): ApiResponse => ({
+export const createErrorResponse = (error: string, details?: unknown): ApiResponse => ({
   success: false,
   error,
   message: details,

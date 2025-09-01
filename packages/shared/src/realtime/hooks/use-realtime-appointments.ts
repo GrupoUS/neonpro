@@ -216,7 +216,7 @@ export function useRealtimeAppointments(
   const handleAppointmentChange = useCallback(
     (payload: unknown) => {
       try {
-        const typedPayload = payload as any;
+        const typedPayload = payload as unknown;
         const realtimePayload: RealtimeAppointmentPayload = {
           eventType: typedPayload.eventType,
           new: typedPayload.new as AppointmentRow,

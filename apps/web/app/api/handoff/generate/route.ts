@@ -26,7 +26,7 @@ interface DeviceFingerprint {
 }
 
 interface HandoffTokenPayload {
-  sessionData: Record<string, any>;
+  sessionData: Record<string, unknown>;
   deviceFingerprint: DeviceFingerprint;
   expiryMinutes: number;
 }
@@ -46,7 +46,7 @@ class EncryptionService {
     return Buffer.from(key, 'hex');
   }
 
-  static encrypt(data: any): { encrypted: string; iv: string; tag: string } {
+  static encrypt(data: unknown): { encrypted: string; iv: string; tag: string } {
     const key = this.getEncryptionKey();
     const iv = crypto.randomBytes(this.IV_LENGTH);
     const cipher = crypto.createCipheriv(this.ALGORITHM, key, iv);
@@ -65,7 +65,7 @@ class EncryptionService {
     };
   }
 
-  static decrypt(encryptedData: string, ivHex: string, tagHex: string): any {
+  static decrypt(encryptedData: string, ivHex: string, tagHex: string): unknown {
     const key = this.getEncryptionKey();
     const iv = Buffer.from(ivHex, 'hex');
     const tag = Buffer.from(tagHex, 'hex');
@@ -91,7 +91,7 @@ class TokenService {
     return crypto.randomBytes(16).toString('hex');
   }
 
-  static createHandoffToken(payload: any, deviceFingerprint: DeviceFingerprint, expiryMinutes: number = 5): string {
+  static createHandoffToken(payload: unknown, deviceFingerprint: DeviceFingerprint, expiryMinutes: number = 5): string {
     const sessionId = this.generateSessionId();
     const nonce = this.generateNonce();
     const issuedAt = Date.now();
@@ -120,7 +120,7 @@ class TokenService {
     return token;
   }
 
-  static verifyAndDecodeToken(token: string): any {
+  static verifyAndDecodeToken(token: string): unknown {
     try {
       const tokenData = JSON.parse(Buffer.from(token, 'base64url').toString());
       const { encrypted, iv, tag } = tokenData;

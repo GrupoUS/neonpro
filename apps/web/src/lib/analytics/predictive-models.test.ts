@@ -11,7 +11,7 @@
  *
  * Notes:
  * - We stub randomness (Math.random) and time-sensitive helpers to ensure determinism.
- * - We access private methods/properties via type casting to any; TS privacy is compile-time only.
+ * - We access private methods/properties via type casting to unknown; TS privacy is compile-time only.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -71,7 +71,7 @@ describe("PredictiveModelsService", () => {
   describe("retrainModel()", () => {
     it("updates lastRetraining, increases trainingDataSize, and slightly improves accuracy", async () => {
       const id = "neonpro-no-show-predictor-v1.5";
-      const before = (service as any).models.get(id);
+      const before = (service as unknown).models.get(id);
       expect(before).toBeDefined();
       const origSize = before.trainingDataSize;
       const origAcc = before.accuracy;
@@ -79,7 +79,7 @@ describe("PredictiveModelsService", () => {
       const ok = await service.retrainModel(id, [{ x: 1 }, { x: 2 }, { x: 3 }]);
       expect(ok).toBe(true);
 
-      const after = (service as any).models.get(id);
+      const after = (service as unknown).models.get(id);
       expect(after.trainingDataSize).toBe(origSize + 3);
       expect(after.lastRetraining).toBeInstanceOf(Date);
       // Accuracy improves by up to 0.005 but capped at 0.98
@@ -95,9 +95,9 @@ describe("PredictiveModelsService", () => {
   describe("predictNoShowProbability()", () => {
     it("uses fallback 0.12 when the model is missing", async () => {
       // Remove the no-show model to trigger fallback
-      (service as any).models.delete("neonpro-no-show-predictor-v1.5");
+      (service as unknown).models.delete("neonpro-no-show-predictor-v1.5");
 
-      const prob = await (service as any).predictNoShowProbability({
+      const prob = await (service as unknown).predictNoShowProbability({
         age: 40,
         appointmentHistory: [],
         distanceToClinic: 5,
@@ -117,7 +117,7 @@ describe("PredictiveModelsService", () => {
         distanceToClinic: 25, // > 20 increases
       };
 
-      const prob = await (service as any).predictNoShowProbability(patient);
+      const prob = await (service as unknown).predictNoShowProbability(patient);
       expect(prob).toBeGreaterThan(0.12);
       expect(prob).toBeLessThanOrEqual(0.6);
     });
@@ -131,7 +131,7 @@ describe("PredictiveModelsService", () => {
           health_factor: 0.8,
         },
       };
-      const timeline = await (service as any).generateTreatmentTimeline(features);
+      const timeline = await (service as unknown).generateTreatmentTimeline(features);
       // baseDuration = 21; adjusted = round(21 * (2 - ageFactor) * (2 - healthFactor))
       const expected = Math.round(21 * (2 - 1.2) * (2 - 0.8));
       expect(timeline.totalDuration).toBe(expected);
@@ -146,7 +146,7 @@ describe("PredictiveModelsService", () => {
       vi.spyOn(Math, "random").mockReturnValue(0.1);
 
       // Stub time-sensitive seasonal factors to deterministic values
-      vi.spyOn(service as any, "getSeasonalFactors").mockReturnValue({
+      vi.spyOn(service as unknown, "getSeasonalFactors").mockReturnValue({
         season_impact: 1,
         humidity: 1,
         uv_exposure: 1,
@@ -175,13 +175,13 @@ describe("PredictiveModelsService", () => {
       ];
       const mockNoShow = 0.22;
 
-      vi.spyOn(service as any, "generateOutcomePrediction").mockResolvedValue(mockOutcome);
-      vi.spyOn(service as any, "predictComplications").mockResolvedValue(mockComps);
-      vi.spyOn(service as any, "predictNoShowProbability").mockResolvedValue(mockNoShow);
-      vi.spyOn(service as any, "generateRecoveryTimeline").mockReturnValue([
+      vi.spyOn(service as unknown, "generateOutcomePrediction").mockResolvedValue(mockOutcome);
+      vi.spyOn(service as unknown, "predictComplications").mockResolvedValue(mockComps);
+      vi.spyOn(service as unknown, "predictNoShowProbability").mockResolvedValue(mockNoShow);
+      vi.spyOn(service as unknown, "generateRecoveryTimeline").mockReturnValue([
         { milestone: "X", expectedDay: 3, probability: 0.9, dependencies: [], criticalFactors: [] },
       ]);
-      vi.spyOn(service as any, "generateRecommendations").mockReturnValue({
+      vi.spyOn(service as unknown, "generateRecommendations").mockReturnValue({
         optimalTreatment: {
           id: "opt",
           name: "Opt",
@@ -223,7 +223,7 @@ describe("PredictiveModelsService", () => {
 
     it("wraps internal errors and rethrows with a clear message", async () => {
       // Force an internal method to throw
-      vi.spyOn(service as any, "extractFeatures").mockRejectedValue(new Error("boom"));
+      vi.spyOn(service as unknown, "extractFeatures").mockRejectedValue(new Error("boom"));
       await expect(
         service.predictPatientOutcome("p2", "t2", {}),
       ).rejects.toThrow(/Failed to generate prediction: /);
@@ -233,13 +233,13 @@ describe("PredictiveModelsService", () => {
   describe("Edge behaviors in complication prediction [private]", () => {
     it("only includes complications with adjusted probability above 0.05 and sorts descending", async () => {
       // Make getSeasonalFactors deterministic so features composition is stable
-      vi.spyOn(service as any, "getSeasonalFactors").mockReturnValue({
+      vi.spyOn(service as unknown, "getSeasonalFactors").mockReturnValue({
         season_impact: 1,
         humidity: 1,
         uv_exposure: 1,
       });
 
-      const features = await (service as any).extractFeatures(
+      const features = await (service as unknown).extractFeatures(
         {
           age: 30,
           skinType: "sensitive", // increases impact for 'skin_type'
@@ -254,7 +254,7 @@ describe("PredictiveModelsService", () => {
         "laser_facial",
       );
 
-      const comps = await (service as any).predictComplications(features, {});
+      const comps = await (service as unknown).predictComplications(features, {});
       expect(Array.isArray(comps)).toBe(true);
       expect(comps.length).toBeGreaterThan(0);
       // Ensure sorted by probability descending

@@ -201,7 +201,7 @@ const FEATURE_IMPORTANCE: Record<string, FeatureImportance> = {
 
 export class PredictiveModelsService {
   private models: Map<string, MLModel> = new Map();
-  private featureCache: Map<string, any> = new Map();
+  private featureCache: Map<string, unknown> = new Map();
 
   constructor() {
     this.initializeModels();
@@ -366,7 +366,7 @@ export class PredictiveModelsService {
    * Generate outcome prediction using ML model
    */
   private async generateOutcomePrediction(
-    features: Record<string, any>,
+    features: Record<string, unknown>,
     model: MLModel,
   ): Promise<OutcomePrediction> {
     // Simulate ML model prediction
@@ -488,7 +488,7 @@ export class PredictiveModelsService {
    * Generate recovery timeline milestones
    */
   private generateRecoveryTimeline(
-    features: Record<string, any>,
+    features: Record<string, unknown>,
     prediction: OutcomePrediction,
   ) {
     const milestones = [
@@ -614,7 +614,7 @@ export class PredictiveModelsService {
   private generateRecommendations(
     prediction: OutcomePrediction,
     complications: ComplicationPrediction[],
-    features: Record<string, any>,
+    features: Record<string, unknown>,
   ) {
     return {
       optimalTreatment: {
@@ -755,7 +755,7 @@ export class PredictiveModelsService {
   }
 
   private calculatePredictiveFactors(
-    features: Record<string, any>,
+    features: Record<string, unknown>,
   ): PredictiveFactor[] {
     return BRAZILIAN_HEALTH_FACTORS.map((factor) => ({
       ...factor,
@@ -764,7 +764,7 @@ export class PredictiveModelsService {
   }
 
   private generateTreatmentTimeline(
-    features: Record<string, any>,
+    features: Record<string, unknown>,
   ): TreatmentTimeline {
     const baseDuration = 21; // 21 days base recovery
     const ageFactor = features.recovery_factors?.age_factor || 1;
@@ -817,7 +817,7 @@ export class PredictiveModelsService {
   }
 
   private async generateAlternativeTreatments(
-    features: Record<string, any>,
+    features: Record<string, unknown>,
   ): Promise<AlternativeTreatment[]> {
     // Generate alternative treatment suggestions
     return [
@@ -842,7 +842,7 @@ export class PredictiveModelsService {
     ];
   }
 
-  private identifyRiskFactors(features: Record<string, any>): string[] {
+  private identifyRiskFactors(features: Record<string, unknown>): string[] {
     const riskFactors: string[] = [];
 
     if (features.patient_age > 60) {
@@ -934,7 +934,7 @@ export class PredictiveModelsService {
 
   private generatePreventiveMeasures(
     complications: ComplicationPrediction[],
-    features: Record<string, any>,
+    features: Record<string, unknown>,
   ) {
     const measures = [];
 
@@ -1013,7 +1013,7 @@ export class PredictiveModelsService {
     }));
   }
 
-  private generateResourceRecommendations(features: Record<string, any>) {
+  private generateResourceRecommendations(features: Record<string, unknown>) {
     const recommendations = [];
 
     // Standard recommendations

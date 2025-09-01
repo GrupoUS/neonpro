@@ -721,7 +721,7 @@ export function useComplianceAssessment() {
 
 // Consent Banner Hook (for public use)
 export function useConsentBanner() {
-  const [purposes, setPurposes] = useState<any[]>([]);
+  const [purposes, setPurposes] = useState<unknown[]>([]);
   const [userConsents, setUserConsents] = useState<ConsentRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>();

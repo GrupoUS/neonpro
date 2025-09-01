@@ -1,0 +1,393 @@
+/* ===============================================================
+   TweakCN NEONPRO - Accessibility Tokens & Semantic Colors
+   Healthcare Design System - WCAG 2.1 AA+ Compliance
+   =============================================================== */
+
+@layer base {
+  :root {
+    /* ===============================================================
+       ACCESSIBILITY FOCUS SYSTEM
+       =============================================================== */
+    
+    /* Focus Ring Tokens - WCAG 2.1 AA Compliant */
+    --focus-ring-width: 2px;
+    --focus-ring-offset: 2px;
+    --focus-ring-color: var(--ring);
+    --focus-ring-style: solid;
+    --focus-ring-opacity: 1;
+    
+    /* Enhanced Focus for Healthcare Contexts */
+    --focus-emergency-width: 3px;
+    --focus-emergency-color: var(--status-critical);
+    --focus-critical-width: 4px;
+    --focus-critical-offset: 1px;
+    
+    /* Focus Timing - Respect user preferences */
+    --focus-transition-duration: 150ms;
+    --focus-transition-timing: cubic-bezier(0.4, 0.0, 0.2, 1);
+
+    /* ===============================================================
+       CONTRAST RATIOS - WCAG 2.1 COMPLIANCE
+       =============================================================== */
+    
+    /* AA Level - 4.5:1 minimum contrast ratio */
+    --contrast-aa-normal: 4.5;
+    --contrast-aa-large-text: 3.0;
+    
+    /* AAA Level - 7:1 enhanced contrast ratio */
+    --contrast-aaa-normal: 7.0;
+    --contrast-aaa-large-text: 4.5;
+    
+    /* Healthcare Critical Text - Enhanced visibility */
+    --contrast-critical: 10.0;
+    --contrast-emergency: 8.5;
+
+    /* ===============================================================
+       TOUCH TARGET SYSTEM - WCAG 2.1 AA
+       =============================================================== */
+    
+    /* Minimum Touch Targets - 44px minimum */
+    --touch-target-min: 44px;
+    --touch-target-comfortable: 48px;
+    --touch-target-large: 56px;
+    --touch-target-xl: 64px;
+    
+    /* Healthcare Context Touch Targets */
+    --touch-target-emergency: 56px; /* Emergency mode */
+    --touch-target-post-procedure: 60px; /* Post-procedure accessibility */
+    --touch-target-tremor-friendly: 64px; /* Motor impairment support */
+    
+    /* Touch Target Spacing */
+    --touch-spacing-min: 8px;
+    --touch-spacing-comfortable: 12px;
+    --touch-spacing-large: 16px;
+    
+    /* Healthcare Spacing */
+    --touch-spacing-emergency: 12px;
+    --touch-spacing-post-procedure: 16px;
+
+    /* ===============================================================
+       SEMANTIC HEALTHCARE COLORS
+       =============================================================== */
+    
+    /* Vital Signs Color System */
+    --vital-normal: var(--status-normal);
+    --vital-elevated: 45 70% 55%; /* Slightly elevated vitals */
+    --vital-high: var(--status-warning);
+    --vital-critical: var(--status-critical);
+    --vital-dangerous: 0 95% 45%; /* Life-threatening vitals */
+    
+    /* Blood Pressure Semantic Colors */
+    --bp-normal: var(--vital-normal); /* <120/80 */
+    --bp-elevated: var(--vital-elevated); /* 120-129/<80 */
+    --bp-stage1: var(--vital-high); /* 130-139/80-89 */
+    --bp-stage2: var(--vital-critical); /* 140-179/90-119 */
+    --bp-crisis: var(--vital-dangerous); /* >180/>120 */
+    
+    /* Heart Rate Semantic Colors */
+    --hr-bradycardia: 217 91% 60%; /* <60 bpm - blue for slow */
+    --hr-normal: var(--vital-normal); /* 60-100 bpm */
+    --hr-tachycardia: var(--vital-high); /* 100-150 bpm */
+    --hr-severe-tachycardia: var(--vital-critical); /* >150 bpm */
+    
+    /* Temperature Semantic Colors */
+    --temp-hypothermia: 217 91% 60%; /* <36°C - blue for cold */
+    --temp-normal: var(--vital-normal); /* 36-37.5°C */
+    --temp-fever: var(--vital-high); /* 37.6-39°C */
+    --temp-high-fever: var(--vital-critical); /* >39°C */
+    
+    /* Oxygen Saturation Semantic Colors */
+    --spo2-critical: var(--vital-dangerous); /* <88% */
+    --spo2-low: var(--vital-critical); /* 88-94% */
+    --spo2-borderline: var(--vital-high); /* 95-97% */
+    --spo2-normal: var(--vital-normal); /* 98-100% */
+
+    /* ===============================================================
+       PAIN SCALE COLORS (0-10 Visual Analog Scale)
+       =============================================================== */
+    --pain-0: var(--vital-normal); /* No pain */
+    --pain-1-3: 142 60% 70%; /* Mild pain - light green */
+    --pain-4-6: var(--vital-high); /* Moderate pain - amber */
+    --pain-7-8: 15 90% 53%; /* Severe pain - orange */
+    --pain-9-10: var(--vital-critical); /* Worst pain - red */
+
+    /* ===============================================================
+       MEDICATION ALERT COLORS
+       =============================================================== */
+    --med-allergy: var(--status-critical); /* Life-threatening allergy */
+    --med-contraindication: 15 90% 53%; /* Contraindicated medication */
+    --med-interaction: var(--status-warning); /* Drug interaction */
+    --med-dosage-warning: 45 93% 47%; /* Dosage concerns */
+    --med-expired: 0 0% 63.9%; /* Expired medication */
+
+    /* ===============================================================
+       LGPD COMPLIANCE COLOR SYSTEM
+       =============================================================== */
+    --lgpd-compliant: var(--lgpd-compliant); /* Fully compliant */
+    --lgpd-partial: 45 93% 47%; /* Partial compliance */
+    --lgpd-warning: var(--lgpd-warning); /* Compliance warning */
+    --lgpd-violation: var(--lgpd-violation); /* Compliance violation */
+    --lgpd-audit: 285 85% 60%; /* Audit required */
+
+    /* ===============================================================
+       EMERGENCY DEPARTMENT TRIAGE COLORS (Manchester Triage System)
+       =============================================================== */
+    --triage-red: var(--vital-critical); /* Immediate - life-threatening */
+    --triage-orange: 15 90% 53%; /* Very urgent - 10 minutes */
+    --triage-yellow: var(--vital-high); /* Urgent - 60 minutes */
+    --triage-green: var(--vital-normal); /* Standard - 120 minutes */
+    --triage-blue: 217 91% 60%; /* Non-urgent - 240 minutes */
+
+    /* ===============================================================
+       ACCESSIBILITY ANIMATION TOKENS
+       =============================================================== */
+    --animation-reduced-motion: 0.01ms;
+    --animation-normal-motion: 300ms;
+    --animation-slow-motion: 500ms;
+    
+    /* Emergency Animations */
+    --animation-emergency-pulse: 1s;
+    --animation-critical-blink: 0.5s;
+    --animation-warning-fade: 2s;
+
+    /* ===============================================================
+       TYPOGRAPHY ACCESSIBILITY TOKENS
+       =============================================================== */
+    
+    /* Line Height for Portuguese Medical Content */
+    --line-height-medical: 1.65;
+    --line-height-patient-facing: 1.75; /* Patient documentation */
+    --line-height-emergency: 1.4; /* Emergency displays - tighter for space */
+    
+    /* Letter Spacing for Medical Terminology */
+    --letter-spacing-medical: 0.01em;
+    --letter-spacing-patient: 0.025em; /* Patient-facing text */
+    --letter-spacing-critical: 0.05em; /* Critical alerts */
+    
+    /* Font Weight Tokens */
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-emergency: 800; /* Emergency contexts */
+
+    /* ===============================================================
+       SPACING ACCESSIBILITY TOKENS
+       =============================================================== */
+    
+    /* Content Spacing for Reading Comfort */
+    --content-spacing-tight: 0.5rem;
+    --content-spacing-normal: 1rem;
+    --content-spacing-comfortable: 1.5rem;
+    --content-spacing-relaxed: 2rem;
+    
+    /* Form Element Spacing */
+    --form-spacing-compact: 0.75rem;
+    --form-spacing-normal: 1rem;
+    --form-spacing-comfortable: 1.25rem;
+    --form-spacing-accessible: 1.5rem;
+
+    /* ===============================================================
+       SHADOW ACCESSIBILITY TOKENS
+       =============================================================== */
+    
+    /* Focus Shadows */
+    --shadow-focus: 0 0 0 var(--focus-ring-width) hsl(var(--focus-ring-color) / 0.5);
+    --shadow-focus-visible: 0 0 0 var(--focus-ring-width) hsl(var(--focus-ring-color));
+    --shadow-focus-emergency: 0 0 0 var(--focus-emergency-width) hsl(var(--focus-emergency-color) / 0.7);
+    --shadow-focus-critical: 0 0 0 var(--focus-critical-width) hsl(var(--status-critical) / 0.8);
+    
+    /* Content Elevation Shadows */
+    --shadow-accessibility-low: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    --shadow-accessibility-medium: 0 3px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12);
+    --shadow-accessibility-high: 0 10px 20px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.10);
+    --shadow-accessibility-critical: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  }
+
+  /* ===============================================================
+     ACCESSIBILITY UTILITY CLASSES
+     =============================================================== */
+  
+  /* Screen Reader Only Content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
+  .sr-only-focusable:focus,
+  .sr-only-focusable:active {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* Focus Management */
+  .focus-visible-only:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
+  }
+
+  /* High Contrast Mode Support */
+  @media (prefers-contrast: high) {
+    :root {
+      --focus-ring-width: 3px;
+      --touch-target-min: 48px;
+      --contrast-aa-normal: 8.0;
+      --contrast-aaa-normal: 10.0;
+    }
+  }
+
+  /* Reduced Motion Support */
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --animation-emergency-pulse: 0.01ms;
+      --animation-critical-blink: 0.01ms;
+      --animation-warning-fade: 0.01ms;
+      --focus-transition-duration: 0.01ms;
+    }
+    
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Large Text Preferences */
+  @media (prefers-reduced-data: reduce) {
+    :root {
+      --shadow-accessibility-low: none;
+      --shadow-accessibility-medium: 0 1px 3px rgba(0, 0, 0, 0.2);
+      --shadow-accessibility-high: 0 2px 4px rgba(0, 0, 0, 0.3);
+      --shadow-accessibility-critical: 0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  /* Dark Mode Accessibility Adjustments */
+  .dark {
+    --shadow-accessibility-low: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.6);
+    --shadow-accessibility-medium: 0 3px 6px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+    --shadow-accessibility-high: 0 10px 20px rgba(0, 0, 0, 0.6), 0 3px 6px rgba(0, 0, 0, 0.4);
+    --shadow-accessibility-critical: 0 14px 28px rgba(0, 0, 0, 0.8), 0 10px 10px rgba(0, 0, 0, 0.6);
+  }
+
+  /* High Contrast Theme Accessibility */
+  .high-contrast {
+    --focus-ring-width: 4px;
+    --focus-ring-offset: 1px;
+    --touch-target-min: 48px;
+    --touch-spacing-min: 12px;
+    --line-height-medical: 1.75;
+    --letter-spacing-medical: 0.025em;
+    --font-weight-normal: 600;
+    --font-weight-medium: 700;
+    --font-weight-semibold: 800;
+    --font-weight-bold: 900;
+  }
+}
+
+/* ===============================================================
+   UTILITY CLASSES FOR HEALTHCARE ACCESSIBILITY
+   =============================================================== */
+
+@layer utilities {
+  /* Touch Target Utilities */
+  .touch-min { min-height: var(--touch-target-min); min-width: var(--touch-target-min); }
+  .touch-comfortable { min-height: var(--touch-target-comfortable); min-width: var(--touch-target-comfortable); }
+  .touch-large { min-height: var(--touch-target-large); min-width: var(--touch-target-large); }
+  .touch-xl { min-height: var(--touch-target-xl); min-width: var(--touch-target-xl); }
+  .touch-emergency { min-height: var(--touch-target-emergency); min-width: var(--touch-target-emergency); }
+  .touch-post-procedure { min-height: var(--touch-target-post-procedure); min-width: var(--touch-target-post-procedure); }
+  .touch-tremor-friendly { min-height: var(--touch-target-tremor-friendly); min-width: var(--touch-target-tremor-friendly); }
+
+  /* Medical Typography Utilities */
+  .text-medical-normal { line-height: var(--line-height-medical); letter-spacing: var(--letter-spacing-medical); }
+  .text-patient-facing { line-height: var(--line-height-patient-facing); letter-spacing: var(--letter-spacing-patient); }
+  .text-emergency { line-height: var(--line-height-emergency); letter-spacing: var(--letter-spacing-critical); font-weight: var(--font-weight-emergency); }
+
+  /* Vital Signs Color Utilities */
+  .vital-normal { color: hsl(var(--vital-normal)); }
+  .vital-elevated { color: hsl(var(--vital-elevated)); }
+  .vital-high { color: hsl(var(--vital-high)); }
+  .vital-critical { color: hsl(var(--vital-critical)); }
+  .vital-dangerous { color: hsl(var(--vital-dangerous)); }
+
+  /* Background Vital Signs Colors */
+  .bg-vital-normal { background-color: hsl(var(--vital-normal) / 0.1); }
+  .bg-vital-elevated { background-color: hsl(var(--vital-elevated) / 0.1); }
+  .bg-vital-high { background-color: hsl(var(--vital-high) / 0.1); }
+  .bg-vital-critical { background-color: hsl(var(--vital-critical) / 0.1); }
+  .bg-vital-dangerous { background-color: hsl(var(--vital-dangerous) / 0.1); }
+
+  /* Triage Color Utilities */
+  .triage-red { color: hsl(var(--triage-red)); }
+  .triage-orange { color: hsl(var(--triage-orange)); }
+  .triage-yellow { color: hsl(var(--triage-yellow)); }
+  .triage-green { color: hsl(var(--triage-green)); }
+  .triage-blue { color: hsl(var(--triage-blue)); }
+
+  /* Enhanced Focus Utilities */
+  .focus-emergency:focus-visible {
+    outline: var(--focus-emergency-width) solid hsl(var(--focus-emergency-color));
+    outline-offset: var(--focus-ring-offset);
+    box-shadow: var(--shadow-focus-emergency);
+  }
+  
+  .focus-critical:focus-visible {
+    outline: var(--focus-critical-width) solid hsl(var(--status-critical));
+    outline-offset: var(--focus-critical-offset);
+    box-shadow: var(--shadow-focus-critical);
+  }
+
+  /* Content Spacing Utilities */
+  .content-tight { gap: var(--content-spacing-tight); }
+  .content-normal { gap: var(--content-spacing-normal); }
+  .content-comfortable { gap: var(--content-spacing-comfortable); }
+  .content-relaxed { gap: var(--content-spacing-relaxed); }
+
+  /* Healthcare Shadow Utilities */
+  .shadow-accessibility-low { box-shadow: var(--shadow-accessibility-low); }
+  .shadow-accessibility-medium { box-shadow: var(--shadow-accessibility-medium); }
+  .shadow-accessibility-high { box-shadow: var(--shadow-accessibility-high); }
+  .shadow-accessibility-critical { box-shadow: var(--shadow-accessibility-critical); }
+
+  /* Emergency Animation Utilities */
+  .pulse-emergency { animation: pulse var(--animation-emergency-pulse) ease-in-out infinite; }
+  .blink-critical { animation: blink var(--animation-critical-blink) ease-in-out infinite; }
+  .fade-warning { animation: fadeInOut var(--animation-warning-fade) ease-in-out infinite; }
+}
+
+/* ===============================================================
+   KEYFRAMES FOR HEALTHCARE ANIMATIONS
+   =============================================================== */
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Emergency pulse animation */
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}

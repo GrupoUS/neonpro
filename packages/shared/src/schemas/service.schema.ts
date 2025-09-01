@@ -538,7 +538,7 @@ export const ServiceResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.any()).optional(),
+      details: z.record(z.<unknown>()).optional(),
     })
     .optional(),
 });
@@ -574,7 +574,7 @@ export const ServicesListResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.any()).optional(),
+      details: z.record(z.<unknown>()).optional(),
     })
     .optional(),
 });

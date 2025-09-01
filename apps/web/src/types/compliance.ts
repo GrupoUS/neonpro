@@ -505,8 +505,8 @@ export interface AuditTrailEntry {
     | "consent"
     | "insurance";
   entityId: string;
-  oldValue?: any;
-  newValue?: any;
+  oldValue?: unknown;
+  newValue?: unknown;
   ipAddress: string;
   userAgent: string;
   sessionId: string;
@@ -556,7 +556,7 @@ export interface ComplianceReport {
 // Utility Types
 // =============================================================================
 
-export interface ValidationResponse<T = any> {
+export interface ValidationResponse<T = unknown> {
   isValid: boolean;
   data?: T;
   errors: string[];
@@ -565,7 +565,7 @@ export interface ValidationResponse<T = any> {
   source: string;
 }
 
-export interface ComplianceAPIResponse<T = any> {
+export interface ComplianceAPIResponse<T = unknown> {
   success: boolean;
   data?: T;
   message: string;

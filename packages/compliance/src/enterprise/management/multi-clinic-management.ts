@@ -73,7 +73,7 @@ const ClinicOperationsSchema = z.object({
     "inventory_management",
     "financial_management",
   ]),
-  operation_parameters: z.record(z.any()),
+  operation_parameters: z.record(z.<unknown>()),
   privacy_requirements: z.object({
     patient_data_involved: z.boolean(),
     anonymization_required: z.boolean(),

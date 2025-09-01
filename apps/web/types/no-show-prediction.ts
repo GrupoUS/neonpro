@@ -142,7 +142,7 @@ export interface NoShowPredictionRequest {
   isFirstVisit: boolean;
   daysSinceLastAppointment?: number;
   weatherConditions?: WeatherConditions;
-  additionalContext?: Record<string, any>;
+  additionalContext?: Record<string, unknown>;
 }
 
 export interface WeatherConditions {
@@ -195,7 +195,7 @@ export interface NoShowPredictionApiResponse {
   error?: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
   };
   metadata?: {
     total?: number;
@@ -210,7 +210,7 @@ export interface NoShowPredictionEvent {
   type: "prediction_updated" | "intervention_triggered" | "outcome_recorded";
   appointmentId: string;
   patientId: string;
-  data: any;
+  data: unknown;
   timestamp: Date;
 }
 
@@ -268,7 +268,7 @@ export const INTERVENTION_ACTIONS_PT = {
 } as const;
 
 // Type guards
-export function isNoShowPrediction(obj: any): obj is NoShowPrediction {
+export function isNoShowPrediction(obj: unknown): obj is NoShowPrediction {
   return (
     typeof obj === "object"
     && obj !== null
@@ -279,7 +279,7 @@ export function isNoShowPrediction(obj: any): obj is NoShowPrediction {
   );
 }
 
-export function isRiskFactor(obj: any): obj is RiskFactor {
+export function isRiskFactor(obj: unknown): obj is RiskFactor {
   return (
     typeof obj === "object"
     && obj !== null

@@ -104,7 +104,7 @@ const ComplianceDashboardReportSchema = z.object({
     critical_issues: z.array(z.string()),
     recommendations: z.array(z.string()),
   }),
-  detailed_metrics: z.record(z.any()),
+  detailed_metrics: z.record(z.<unknown>()),
   constitutional_certification: z.object({
     privacy_officer_review: z.boolean(),
     regulatory_compliance_verified: z.boolean(),

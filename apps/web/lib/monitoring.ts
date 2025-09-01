@@ -28,7 +28,7 @@ export function reportWebVitals(metric: {
   name: string;
   value: number;
   delta: number;
-  entries: any[];
+  entries: unknown[];
 }) {
   if (process.env.NODE_ENV === "production") {
     // Console log for debugging (remove in production)
@@ -49,8 +49,8 @@ export function reportWebVitals(metric: {
     }
 
     // Send to Vercel Analytics
-    if (typeof window !== "undefined" && (window as any).va) {
-      (window as any).va("track", "Web Vitals", {
+    if (typeof window !== "undefined" && (window as unknown).va) {
+      (window as unknown).va("track", "Web Vitals", {
         metric: metric.name,
         value: metric.value,
         id: metric.id,
@@ -95,11 +95,11 @@ export class HealthcarePerformanceTracker {
     });
   }
 
-  private trackEvent(eventName: string, data: any) {
+  private trackEvent(eventName: string, data: unknown) {
     if (process.env.NODE_ENV === "production") {
       // Send to Vercel Analytics
-      if (typeof window !== "undefined" && (window as any).va) {
-        (window as any).va("track", eventName, data);
+      if (typeof window !== "undefined" && (window as unknown).va) {
+        (window as unknown).va("track", eventName, data);
       }
 
       // Console log for debugging
@@ -143,6 +143,6 @@ export function usePerformanceTiming() {
 // Global type declarations
 declare global {
   interface Window {
-    gtag?: (...args: any[]) => void;
+    gtag?: (...args: unknown[]) => void;
   }
 }

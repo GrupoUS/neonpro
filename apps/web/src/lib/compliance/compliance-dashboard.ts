@@ -945,7 +945,7 @@ export class ComplianceDashboardService {
 
   private generateComplianceMatrix(
     scores: Record<string, ComplianceScore>,
-  ): Record<string, any> {
+  ): Record<string, unknown> {
     return {
       cfm: {
         score: scores.cfm?.score || 0,
@@ -969,7 +969,7 @@ export class ComplianceDashboardService {
   private calculateRiskAssessment(
     overallScore: ComplianceScore,
     alerts: ComplianceAlert[],
-  ): any {
+  ): Record<string, unknown> {
     const criticalAlerts = alerts.filter(
       (a) => a.riskLevel === "critical",
     ).length;
@@ -988,13 +988,13 @@ export class ComplianceDashboardService {
   }
 
   // Additional helper methods
-  private calculateComplianceViolations(data: any): number {
+  private calculateComplianceViolations(data: Record<string, unknown>): number {
     return this.complianceAlerts.filter(
       (alert) => alert.severity === "critical" && !alert.resolved,
     ).length;
   }
 
-  private calculateRiskIndicators(data: any): number {
+  private calculateRiskIndicators(data: Record<string, unknown>): number {
     return this.complianceAlerts.filter(
       (alert) =>
         (alert.riskLevel === "high" || alert.riskLevel === "critical")
@@ -1015,9 +1015,9 @@ export class ComplianceDashboardService {
     return new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
   }
 
-  private getCertificationsExpiringSoon(data: any): number {
+  private getCertificationsExpiringSoon(data: Record<string, unknown>): number {
     return (
-      data.cfmValidations?.filter((v: any) => {
+      (data.cfmValidations as Record<string, unknown>[])?.filter((v: Record<string, unknown>) => {
         if (!v.validUntil) {
           return false;
         }
@@ -1033,7 +1033,7 @@ export class ComplianceDashboardService {
     return 3;
   }
 
-  private getComplianceBreaches(): any[] {
+  private getComplianceBreaches(): Record<string, unknown>[] {
     return this.complianceAlerts
       .filter((alert) => alert.severity === "critical")
       .map((alert) => ({
@@ -1044,7 +1044,7 @@ export class ComplianceDashboardService {
       .slice(0, 5);
   }
 
-  private getUpcomingDeadlines(): any[] {
+  private getUpcomingDeadlines(): Record<string, unknown>[] {
     return [
       {
         type: "Relatório ANVISA",
@@ -1080,7 +1080,7 @@ export class ComplianceDashboardService {
     ];
   }
 
-  private getComplianceContacts(): any[] {
+  private getComplianceContacts(): Record<string, unknown>[] {
     return [
       {
         role: "Data Protection Officer (DPO)",

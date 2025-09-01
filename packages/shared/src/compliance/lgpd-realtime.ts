@@ -110,9 +110,9 @@ export class LGPDDataProcessor {
    * Anonymize sensitive data in real-time payload
    */
   static anonymizePayload(
-    payload: RealtimePostgresChangesPayload<any>,
+    payload: RealtimePostgresChangesPayload<unknown>,
     config: LGPDRealtimeConfig,
-  ): RealtimePostgresChangesPayload<any> {
+  ): RealtimePostgresChangesPayload<unknown> {
     if (!config.anonymization) {
       return payload;
     }
@@ -130,7 +130,7 @@ export class LGPDDataProcessor {
       anonymized.old = LGPDDataProcessor.anonymizeFields(
         anonymized.old,
         config.sensitiveFields,
-      ) as any;
+      ) as unknown;
     }
 
     return anonymized;
@@ -140,9 +140,9 @@ export class LGPDDataProcessor {
    * Pseudonymize data for analytics while maintaining referential integrity
    */
   static pseudonymizePayload(
-    payload: RealtimePostgresChangesPayload<any>,
+    payload: RealtimePostgresChangesPayload<unknown>,
     config: LGPDRealtimeConfig,
-  ): RealtimePostgresChangesPayload<any> {
+  ): RealtimePostgresChangesPayload<unknown> {
     if (!config.pseudonymization) {
       return payload;
     }
@@ -160,7 +160,7 @@ export class LGPDDataProcessor {
       pseudonymized.old = LGPDDataProcessor.pseudonymizeFields(
         pseudonymized.old,
         config.sensitiveFields,
-      ) as any;
+      ) as unknown;
     }
 
     return pseudonymized;
@@ -170,9 +170,9 @@ export class LGPDDataProcessor {
    * Apply data minimization - only include necessary fields
    */
   static minimizeData(
-    payload: RealtimePostgresChangesPayload<any>,
+    payload: RealtimePostgresChangesPayload<unknown>,
     allowedFields: string[],
-  ): RealtimePostgresChangesPayload<any> {
+  ): RealtimePostgresChangesPayload<unknown> {
     const minimized = { ...payload };
 
     if (minimized.new) {
@@ -186,7 +186,7 @@ export class LGPDDataProcessor {
       minimized.old = LGPDDataProcessor.extractFields(
         minimized.old,
         allowedFields,
-      ) as any;
+      ) as unknown;
     }
 
     return minimized;
@@ -213,9 +213,9 @@ export class LGPDDataProcessor {
 
     fieldsToAnonymize.forEach((field) => {
       if (field in anonymized) {
-        (anonymized as any)[field] = LGPDDataProcessor.generateAnonymousValue(
+        (anonymized as unknown)[field] = LGPDDataProcessor.generateAnonymousValue(
           field,
-          (anonymized as any)[field],
+          (anonymized as unknown)[field],
         );
       }
     });
@@ -235,9 +235,9 @@ export class LGPDDataProcessor {
 
     sensitiveFields.forEach((field) => {
       if (field in pseudonymized) {
-        (pseudonymized as any)[field] = LGPDDataProcessor.generatePseudonym(
+        (pseudonymized as unknown)[field] = LGPDDataProcessor.generatePseudonym(
           field,
-          (pseudonymized as any)[field],
+          (pseudonymized as unknown)[field],
         );
       }
     });
@@ -257,7 +257,7 @@ export class LGPDDataProcessor {
 
     allowedFields.forEach((field) => {
       if (field in data) {
-        (extracted as any)[field] = (data as any)[field];
+        (extracted as unknown)[field] = (data as unknown)[field];
       }
     });
 

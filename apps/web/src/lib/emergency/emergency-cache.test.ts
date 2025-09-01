@@ -9,7 +9,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { EmergencyPatientCache } from "./emergency-cache";
 
-type IEmergencyCacheAny = any;
+type IEmergencyCacheAny = unknown;
 
 // Minimal in-memory Fake IndexedDB to satisfy the code paths used by EmergencyCache
 class InMemoryObjectStore<T extends { id: string; }> {
@@ -40,12 +40,12 @@ class InMemoryObjectStore<T extends { id: string; }> {
 }
 
 class InMemoryDB {
-  private stores = new Map<string, InMemoryObjectStore<any>>();
+  private stores = new Map<string, InMemoryObjectStore<unknown>>();
   objectStoreNames = {
     contains: (name: string) => this.stores.has(name),
   };
   createObjectStore(name: string) {
-    const s = new InMemoryObjectStore<any>();
+    const s = new InMemoryObjectStore<unknown>();
     this.stores.set(name, s);
     return s;
   }
@@ -54,14 +54,14 @@ class InMemoryDB {
     return {
       objectStore(name: string) {
         if (!self.stores.has(name)) {
-          self.stores.set(name, new InMemoryObjectStore<any>());
+          self.stores.set(name, new InMemoryObjectStore<unknown>());
         }
         return self.stores.get(name)!;
       },
     };
   }
   _getStore(name: string) {
-    if (!this.stores.has(name)) this.stores.set(name, new InMemoryObjectStore<any>());
+    if (!this.stores.has(name)) this.stores.set(name, new InMemoryObjectStore<unknown>());
     return this.stores.get(name)!;
   }
 }
@@ -104,9 +104,9 @@ describe("EmergencyCache", () => {
   beforeEach(() => {
     // Fresh in-memory DB per test
     db = new InMemoryDB();
-    (globalThis as any).indexedDB = { open: vi.fn(makeOpenSuccess(db)) };
-    (globalThis as any).performance = { now: vi.fn(() => 0) };
-    (globalThis as any).navigator = { userAgent: "vitest" };
+    (globalThis as unknown).indexedDB = { open: vi.fn(makeOpenSuccess(db)) };
+    (globalThis as unknown).performance = { now: vi.fn(() => 0) };
+    (globalThis as unknown).navigator = { userAgent: "vitest" };
 
     vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.spyOn(console, "log").mockImplementation(() => {});
@@ -118,9 +118,9 @@ describe("EmergencyCache", () => {
   afterEach(() => {
     // restore mocks
     vi.restoreAllMocks();
-    (globalThis as any).indexedDB = originalIndexedDB;
-    (globalThis as any).performance = originalPerformance;
-    (globalThis as any).navigator = originalNavigator;
+    (globalThis as unknown).indexedDB = originalIndexedDB;
+    (globalThis as unknown).performance = originalPerformance;
+    (globalThis as unknown).navigator = originalNavigator;
     console.warn = originalConsole.warn;
     console.log = originalConsole.log;
     console.error = originalConsole.error;
@@ -224,7 +224,7 @@ describe("EmergencyCache", () => {
 
     // Make performance.now simulate >100ms elapsed
     let t = 0;
-    (globalThis as any).performance.now = vi.fn(() => {
+    (globalThis as unknown).performance.now = vi.fn(() => {
       // first call returns 0, second returns 150 to simulate 150ms elapsed
       t += 150;
       return t - 150 === 0 ? 0 : 150;
@@ -421,7 +421,7 @@ describe("EmergencyCache", () => {
 
   it("handles IndexedDB open error without crashing (set persists only in memory)", async () => {
     // Make open fail (no indexedDB connection)
-    (globalThis as any).indexedDB = { open: vi.fn(makeOpenError(new Error("open failed"))) };
+    (globalThis as unknown).indexedDB = { open: vi.fn(makeOpenError(new Error("open failed"))) };
 
     const cache = newCacheInstance();
     await new Promise((r) => setTimeout(r, 5));

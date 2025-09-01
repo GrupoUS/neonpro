@@ -635,14 +635,14 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                       <div key={key} className="flex items-center space-x-2">
                         <Checkbox
                           id={key}
-                          checked={formData.dataCategories.includes(key as any)}
+                          checked={formData.dataCategories.includes(key as unknown)}
                           onCheckedChange={(checked) => {
                             if (checked) {
                               setFormData((prev) => ({
                                 ...prev,
                                 dataCategories: [
                                   ...prev.dataCategories,
-                                  key as any,
+                                  key as unknown,
                                 ],
                               }));
                             } else {
@@ -672,12 +672,12 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                       <div key={key} className="flex items-center space-x-2">
                         <Checkbox
                           id={key}
-                          checked={formData.purposes.includes(key as any)}
+                          checked={formData.purposes.includes(key as unknown)}
                           onCheckedChange={(checked) => {
                             if (checked) {
                               setFormData((prev) => ({
                                 ...prev,
-                                purposes: [...prev.purposes, key as any],
+                                purposes: [...prev.purposes, key as unknown],
                               }));
                             } else {
                               setFormData((prev) => ({
@@ -703,7 +703,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                   <h4 className="font-medium">Canal de Comunicação</h4>
                   <Select
                     value={formData.communicationChannel}
-                    onValueChange={(value: any) =>
+                    onValueChange={(value: unknown) =>
                       setFormData((prev) => ({
                         ...prev,
                         communicationChannel: value,

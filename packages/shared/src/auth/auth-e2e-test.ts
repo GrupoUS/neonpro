@@ -208,7 +208,7 @@ export async function testSessionPersistence(): Promise<boolean> {
     }
 
     // Simular reload da página criando nova instância
-    const newManager = new (authTokenManager.constructor as any)();
+    const newManager = new (authTokenManager.constructor as unknown)();
 
     // Verificar se tokens foram carregados
     const persistedToken = newManager.getAccessToken();

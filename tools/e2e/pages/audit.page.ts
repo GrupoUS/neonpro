@@ -278,7 +278,7 @@ export class AuditPage extends BasePage {
    */
   async exportAuditLog(
     format: "csv" | "json" | "pdf",
-    filters?: any,
+    filters?: Record<string, unknown>,
   ): Promise<void> {
     await this.auditLogExport.click();
 

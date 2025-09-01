@@ -44,12 +44,12 @@ export function validateStockAlertConfig(
   return (
     typeof config === "object"
     && config !== null
-    && typeof (config as any).id === "string"
-    && typeof (config as any).productId === "string"
-    && typeof (config as any).minimumThreshold === "number"
-    && typeof (config as any).criticalThreshold === "number"
-    && typeof (config as any).notificationEnabled === "boolean"
-    && Array.isArray((config as any).notificationEmails)
+    && typeof (config as unknown).id === "string"
+    && typeof (config as unknown).productId === "string"
+    && typeof (config as unknown).minimumThreshold === "number"
+    && typeof (config as unknown).criticalThreshold === "number"
+    && typeof (config as unknown).notificationEnabled === "boolean"
+    && Array.isArray((config as unknown).notificationEmails)
   );
 }
 
@@ -62,10 +62,10 @@ export function validateResolveAlert(
   return (
     typeof request === "object"
     && request !== null
-    && typeof (request as any).alertId === "string"
-    && typeof (request as any).resolvedBy === "string"
+    && typeof (request as unknown).alertId === "string"
+    && typeof (request as unknown).resolvedBy === "string"
     && ["restocked", "threshold_adjusted", "product_discontinued"].includes(
-      (request as any).action,
+      (request as unknown).action,
     )
   );
 }

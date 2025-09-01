@@ -21,7 +21,7 @@ interface PerformanceMonitorContextType {
   monitor: HealthcarePerformanceMonitor | null;
   isInitialized: boolean;
   setHealthcareContext: (context: HealthcareContext) => void;
-  getMetricsSummary: () => Promise<any>;
+  getMetricsSummary: () => Promise<<unknown>>;
   isMonitoringEnabled: boolean;
 }
 
@@ -286,7 +286,7 @@ export const useHealthcareWorkflow = () => {
 // Performance metrics hook
 export const usePerformanceMetrics = () => {
   const { getMetricsSummary, isMonitoringEnabled } = usePerformanceMonitor();
-  const [metrics, setMetrics] = useState<any>(null);
+  const [metrics, setMetrics] = useState<<unknown>>(null);
   const [loading, setLoading] = useState(false);
 
   const refreshMetrics = async () => {

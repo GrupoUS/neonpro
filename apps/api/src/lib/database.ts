@@ -40,7 +40,7 @@ export function getAdminDatabase(): ReturnType<typeof createAdminClient> {
  */
 export async function handleHealthCheck(): Promise<{
   status: number;
-  body: any;
+  body: unknown;
 }> {
   try {
     const healthResult = await performHealthCheck();
@@ -78,7 +78,7 @@ export async function handleHealthCheck(): Promise<{
  */
 export async function handleQuickHealthCheck(): Promise<{
   status: number;
-  body: any;
+  body: unknown;
 }> {
   try {
     const result = await quickHealthCheck();
@@ -108,7 +108,7 @@ export async function handleQuickHealthCheck(): Promise<{
  */
 export async function handleRLSValidation(): Promise<{
   status: number;
-  body: any;
+  body: unknown;
 }> {
   try {
     const validationResult = await validateRLSPolicies();

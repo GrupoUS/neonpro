@@ -297,13 +297,13 @@ export interface ComplianceHistoryRow {
 /**
  * API response interfaces
  */
-export interface ComplianceAPIResponse<T = any> {
+export interface ComplianceAPIResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
   };
   metadata?: {
     requestId: string;
@@ -367,7 +367,7 @@ export interface SystemHealthCheck {
     connectivity?: boolean;
     responseTime?: number;
     lastUpdate?: Date;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   error?: string;
 }
@@ -377,7 +377,7 @@ export interface IntegrationValidation {
   validations: {
     component: string;
     status: 'healthy' | 'warning' | 'error';
-    checks?: any;
+    checks?: unknown;
     error?: string;
   }[];
   timestamp: Date;

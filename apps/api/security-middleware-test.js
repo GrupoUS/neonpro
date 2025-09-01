@@ -86,7 +86,7 @@ securityMiddlewareStack.order.forEach(item => {
 console.log("\n📋 Test 2: Individual Middleware Component Testing");
 console.log("-------------------------------------------------");
 
-Object.entries(securityMiddlewareStack.components).forEach(([key, component]) => {
+Object.entries(securityMiddlewareStack.components).forEach(([_key, component]) => {
   console.log(`🛡️  ${component.name}:`);
   console.log(`   Purpose: ${component.purpose}`);
 

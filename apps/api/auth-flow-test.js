@@ -144,7 +144,7 @@ console.log("\n📋 Test 3: Role-Based Access Control");
 console.log("-------------------------------------");
 
 // Define role hierarchy and permissions
-const roleHierarchy = {
+const _roleHierarchy = {
   "ADMIN": ["ADMIN", "CLINIC_OWNER", "PROFESSIONAL", "STAFF", "PATIENT"],
   "CLINIC_OWNER": ["CLINIC_OWNER", "PROFESSIONAL", "STAFF", "PATIENT"],
   "PROFESSIONAL": ["PROFESSIONAL"],

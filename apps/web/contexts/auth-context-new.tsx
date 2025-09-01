@@ -30,7 +30,7 @@ interface Session {
 
 interface AuthResponse {
   success: boolean;
-  data?: any;
+  data?: unknown;
   error?: string;
   user?: User;
   session_id?: string;
@@ -86,7 +86,7 @@ interface AuthProviderProps {
 
 // API Helper functions
 class AuthAPI {
-  private static async makeRequest(endpoint: string, options: RequestInit = {}): Promise<any> {
+  private static async makeRequest(endpoint: string, options: RequestInit = {}): Promise<<unknown>> {
     const url = `${API_BASE_URL}/auth${endpoint}`;
 
     const defaultOptions: RequestInit = {
@@ -136,7 +136,7 @@ class AuthAPI {
     return response;
   }
 
-  static async register(userData: any): Promise<AuthResponse> {
+  static async register(userData: unknown): Promise<AuthResponse> {
     return await this.makeRequest("/register", {
       method: "POST",
       body: JSON.stringify(userData),
@@ -285,7 +285,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const signUp = async (userData: any): Promise<AuthResponse> => {
+  const signUp = async (userData: unknown): Promise<AuthResponse> => {
     try {
       setLoading(true);
 

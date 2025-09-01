@@ -235,8 +235,8 @@ export const useAIScheduling = (
         const adaptedResult = {
           ...result,
           confidenceScore: 0.8, // Default confidence score
-          appointmentSlot: result.recommendations?.[0] as any,
-          alternatives: result.recommendations?.slice(1) as any[],
+          appointmentSlot: result.recommendations?.[0] as unknown,
+          alternatives: result.recommendations?.slice(1) as unknown[],
         };
 
         setLastResult(adaptedResult);

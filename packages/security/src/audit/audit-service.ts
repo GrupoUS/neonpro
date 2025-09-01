@@ -159,7 +159,7 @@ export const auditEventSchema = z.object({
   resourceId: z.string().optional(),
   resourceType: z.string().optional(),
   description: z.string().min(1).max(MAX_DESCRIPTION_LENGTH),
-  details: z.record(z.any()).optional(),
+  details: z.record(z.<unknown>()).optional(),
   timestamp: z.date().default(() => new Date()),
   source: z.string().default("neonpro-api"),
 });

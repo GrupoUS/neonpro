@@ -415,7 +415,7 @@ class HealthcareWebVitals {
    */
   private detectNetworkConnection(): void {
     if ("connection" in navigator) {
-      const connection = (navigator as any).connection;
+      const connection = (navigator as unknown).connection;
       if (connection.effectiveType === "4g") {
         this.healthcareContext.networkConnection = "fast";
       } else if (connection.effectiveType === "3g") {

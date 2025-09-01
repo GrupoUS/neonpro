@@ -404,7 +404,7 @@ export class RealTimeComplianceMonitor {
       // Update monitor with latest assessment
       await this.updateMonitorAssessment(monitorId, monitoringResponse);
 
-      // Process alerts if any
+      // Process alerts if unknown
       if (activeAlerts.length > 0) {
         await this.processAlerts(activeAlerts, monitor.monitoring_config);
       }
@@ -598,7 +598,7 @@ export class RealTimeComplianceMonitor {
     intervalMinutes: number,
   ): Promise<void> {
     try {
-      // Clear existing interval if any
+      // Clear existing interval if unknown
       if (this.monitoringIntervals.has(monitorId)) {
         clearInterval(this.monitoringIntervals.get(monitorId)!);
       }
