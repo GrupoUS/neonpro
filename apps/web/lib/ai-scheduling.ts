@@ -4,7 +4,7 @@
  * Implements LGPD compliant scheduling with audit trails
  */
 
-import { createAuditLog } from "@neonpro/compliance/audit";
+import { UnifiedAuditService, AuditEventType, AuditSeverity } from '@neonpro/security';;
 import { validateHealthcareAccess } from "@neonpro/security/auth";
 import { z } from "zod";
 

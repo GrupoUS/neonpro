@@ -73,7 +73,6 @@ packages/ui/                 # @neonpro/ui component library
 #### **Development Rules**
 
 - **ARCHON-FIRST:** Always use Archon MCP for task management and knowledge base
-- **PNPM Only:** Use `pnpm dlx shadcn@latest add <component-name>`
 - **Server vs Client:**
   - Server Components by default for advanced aesthetic data display
   - Client Components for AI interactions, real-time updates, critical interfaces
@@ -856,7 +855,7 @@ export function AestheticStatusCard({ clientId, realTime = false }: {
           </Badge>
         )}
       </div>
-      
+
       {isLoading ? (
         <div className="space-y-3">
           <Skeleton className="h-4 w-full" />
@@ -884,17 +883,17 @@ export function AestheticStatusCard({ clientId, realTime = false }: {
 }
 
 // Critical Alert Component
-export function CriticalAlert({ 
-  message, 
+export function CriticalAlert({
+  message,
   severity = 'high',
-  onAcknowledge 
+  onAcknowledge
 }: {
   message: string;
   severity?: 'low' | 'medium' | 'high' | 'critical';
   onAcknowledge: () => void;
 }) {
   return (
-    <Alert 
+    <Alert
       className={cn(
         "border-destructive bg-destructive/10 animate-pulse",
         severity === 'critical' && "border-2 shadow-lg"
@@ -909,7 +908,7 @@ export function CriticalAlert({
       <AlertDescription className="text-base font-medium mb-3">
         {message}
       </AlertDescription>
-      <Button 
+      <Button
         onClick={onAcknowledge}
         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
         size="sm"
@@ -963,10 +962,10 @@ export function useLGPDCompliance(dataType: 'personal' | 'sensitive' | 'aestheti
 }
 
 // Data Protection Component
-export function DataProtectionWrapper({ 
-  children, 
+export function DataProtectionWrapper({
+  children,
   dataType,
-  purpose 
+  purpose
 }: {
   children: React.ReactNode;
   dataType: 'personal' | 'sensitive' | 'aesthetic';
@@ -985,11 +984,11 @@ export function DataProtectionWrapper({
               Consentimento LGPD
             </DialogTitle>
             <DialogDescription>
-              Para {purpose}, precisamos do seu consentimento para processar 
+              Para {purpose}, precisamos do seu consentimento para processar
               dados {dataType === 'aesthetic' ? 'estéticos sensíveis' : dataType}.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="bg-accent/20 p-3 rounded-md">
               <h4 className="font-medium text-sm mb-2">Seus direitos LGPD:</h4>
@@ -1001,16 +1000,16 @@ export function DataProtectionWrapper({
                 <li>• Revogação do consentimento</li>
               </ul>
             </div>
-            
+
             <div className="flex gap-2">
-              <Button 
+              <Button
                 onClick={() => requestConsent(purpose)}
                 className="flex-1"
               >
                 Aceitar
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setShowConsentModal(false)}
                 className="flex-1"
               >
@@ -1084,7 +1083,7 @@ export function useAdvancedAestheticPerformanceMonitoring() {
     if (duration > threshold) {
       // Alert aesthetic IT team
       console.error(`Critical aesthetic action '${action}' exceeded threshold: ${duration}ms`);
-      
+
       // Send to monitoring system
       fetch('/api/monitoring/performance-alert', {
         method: 'POST',
@@ -1127,7 +1126,7 @@ export function AdvancedAestheticAnalyticsDashboard() {
         icon={Users}
         className="bg-card border border-border"
       />
-      
+
       <MetricCard
         title="Consultas Hoje"
         value={metrics?.todayAppointments || 0}
@@ -1135,7 +1134,7 @@ export function AdvancedAestheticAnalyticsDashboard() {
         icon={Calendar}
         className="bg-card border border-border"
       />
-      
+
       <MetricCard
         title="Tempo Médio de Resposta"
         value={`${metrics?.avgResponseTime || 0}ms`}
@@ -1144,7 +1143,7 @@ export function AdvancedAestheticAnalyticsDashboard() {
         className="bg-card border border-border"
         critical={metrics?.avgResponseTime > 500}
       />
-      
+
       <MetricCard
         title="Conformidade LGPD"
         value={`${metrics?.lgpdCompliance || 100}%`}
@@ -1160,13 +1159,13 @@ export function AdvancedAestheticAnalyticsDashboard() {
 // Real-time System Health Monitor
 export function SystemHealthMonitor() {
   const [healthStatus, setHealthStatus] = useState<'healthy' | 'warning' | 'critical'>('healthy');
-  
+
   useEffect(() => {
     const checkSystemHealth = async () => {
       try {
         const response = await fetch('/api/health');
         const health = await response.json();
-        
+
         if (health.criticalSystemsOnline && health.responseTime < 100) {
           setHealthStatus('healthy');
         } else if (health.responseTime < 500) {
@@ -1190,7 +1189,7 @@ export function SystemHealthMonitor() {
       healthStatus === 'warning' && "bg-yellow-100 text-yellow-800",
       healthStatus === 'critical' && "bg-red-100 text-red-800 animate-pulse"
     )}>
-      Sistema: {healthStatus === 'healthy' ? '✅ Operacional' : 
+      Sistema: {healthStatus === 'healthy' ? '✅ Operacional' :
                healthStatus === 'warning' ? '⚠️ Atenção' : '🚨 Crítico'}
     </div>
   );
@@ -1235,22 +1234,15 @@ Este guia estabelece os padrões fundamentais para o desenvolvimento da **NeonPr
 4. **Monitoramento Contínuo:** Implementar alertas para performance e conformidade
 5. **Feedback Profissional:** Coletar feedback de profissionais de estética para refinamentos
 
-### **Recursos de Apoio**
-
-- **Documentação Técnica:** `/docs/technical/`
-- **Componentes de Exemplo:** `/examples/aesthetic/`
-- **Testes de Conformidade:** `/tests/compliance/`
-- **Guias de Acessibilidade:** `/docs/accessibility/`
-- **Templates LGPD:** `/templates/lgpd/`
 
 ---
 
-**NeonPro Advanced Aesthetic Design Guidelines v2.0.0**  
+**NeonPro Advanced Aesthetic Design Guidelines v2.0.0**
 *Construindo o futuro da estética digital no Brasil com excelência técnica e conformidade regulatória.*
 
-🏥 **Para clínicas estéticas brasileiras**  
-🤖 **Powered by AI**  
-🔒 **LGPD Compliant**  
+🏥 **Para clínicas estéticas brasileiras**
+🤖 **Powered by AI**
+🔒 **LGPD Compliant**
 ⚡ **Performance Crítica**
 
 ## Performance

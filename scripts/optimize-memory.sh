@@ -6,18 +6,18 @@
 echo "🔧 Configurando otimizações de memória para linters e formatters..."
 
 # Configurar variáveis de ambiente para Node.js
-export NODE_OPTIONS="--max-old-space-size=512 --max-semi-space-size=16"
+export NODE_OPTIONS="--max-old-space-size=4096 --max-semi-space-size=64"
 export UV_THREADPOOL_SIZE=1
 export MALLOC_ARENA_MAX=1
 
 # Configurar limites de processo (se disponível)
 if command -v ulimit &> /dev/null; then
-    # Limitar memória virtual para 1GB
-    ulimit -v 1048576
-    # Limitar memória física para 512MB
-    ulimit -m 524288
-    # Limitar número de processos
-    ulimit -u 128
+    # Limitar memória virtual para 8GB (mais adequado para builds complexos)
+    ulimit -v 8388608
+    # Limitar memória física para 4GB
+    ulimit -m 4194304
+    # Limitar número de processos (mais generoso para builds paralelos)
+    ulimit -u 256
     echo "✅ Limites de processo configurados"
 fi
 

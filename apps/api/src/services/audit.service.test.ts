@@ -155,7 +155,7 @@ describe("AuditService", () => {
     });
 
     mockCreateClient.mockReturnValue(supabaseMocks.client);
-    service = new AuditService();
+    service = new UnifiedAuditService();
 
     const result = await service.logEvent(
       sampleEvent({ severity: AuditSeverity.CRITICAL }),
@@ -185,7 +185,7 @@ describe("AuditService", () => {
       insertResult: { data: null, error: { message: "db error" } },
     });
     mockCreateClient.mockReturnValue(supabaseMocks.client);
-    service = new AuditService();
+    service = new UnifiedAuditService();
 
     const res = await service.logEvent(sampleEvent());
     expect(res).toBeNull();
@@ -200,7 +200,7 @@ describe("AuditService", () => {
       insertResult: { data: null, error: null },
     });
     mockCreateClient.mockReturnValue(supabaseMocks.client);
-    service = new AuditService();
+    service = new UnifiedAuditService();
 
     const res = await service.logEvent(
       sampleEvent({ endpoint: "/healthcheck" }),
@@ -225,7 +225,7 @@ describe("AuditService", () => {
       onInsertPayload: (p) => (captured = p),
     });
     mockCreateClient.mockReturnValue(supabaseMocks.client);
-    service = new AuditService();
+    service = new UnifiedAuditService();
 
     const big = "x".repeat(10_100);
     const evt = sampleEvent({
@@ -262,7 +262,7 @@ describe("AuditService", () => {
     const selectResult = { data, error: null, count: 2 };
     supabaseMocks = newSupabaseMock({ selectResult });
     mockCreateClient.mockReturnValue(supabaseMocks.client);
-    service = new AuditService();
+    service = new UnifiedAuditService();
 
     const filters = {
       start_date: "2025-08-27T00:00:00.000Z",
@@ -318,7 +318,7 @@ describe("AuditService", () => {
     const from = jest.fn(() => ({ select: jest.fn(() => qb) }));
     mockCreateClient.mockReturnValue({ from });
 
-    service = new AuditService();
+    service = new UnifiedAuditService();
     const res = await service.getLogs(
       { sort_by: "timestamp", sort_order: "asc", offset: 0, limit: 10 } as unknown,
     );
@@ -369,7 +369,7 @@ describe("AuditService", () => {
     const statsResult = { data: logs, error: null };
     supabaseMocks = newSupabaseMock({ statsResult });
     mockCreateClient.mockReturnValue(supabaseMocks.client);
-    service = new AuditService();
+    service = new UnifiedAuditService();
 
     const res = await service.getStats(3);
     expect(res.success).toBe(true);
@@ -390,7 +390,7 @@ describe("AuditService", () => {
 
   test("exportLogs: returns JSON export metadata", async () => {
     // Spy on getLogs to avoid DB
-    const svc = new AuditService();
+    const svc = new UnifiedAuditService();
     const spy = jest
       .spyOn(svc as unknown, "getLogs")
       .mockResolvedValue({
@@ -443,7 +443,7 @@ describe("AuditService", () => {
       },
     ];
 
-    const svc = new AuditService();
+    const svc = new UnifiedAuditService();
     jest.spyOn(svc as unknown, "getLogs").mockResolvedValue({
       success: true,
       data: logs,
@@ -471,7 +471,7 @@ describe("AuditService", () => {
   });
 
   test("exportLogs: returns error for unsupported formats and unimplemented PDF", async () => {
-    const svc = new AuditService();
+    const svc = new UnifiedAuditService();
     jest.spyOn(svc as unknown, "getLogs").mockResolvedValue({
       success: true,
       data: [],
@@ -506,7 +506,7 @@ describe("AuditService", () => {
       deleteResult: { count: 42, error: null },
     });
     mockCreateClient.mockReturnValue(supabaseMocks.client);
-    const svc1 = new AuditService();
+    const svc1 = new UnifiedAuditService();
     const n = await (svc1 as unknown).cleanupOldLogs();
     expect(n).toBe(42);
     expect(supabaseMocks.del).toHaveBeenCalled();
@@ -520,7 +520,7 @@ describe("AuditService", () => {
       deleteResult: { count: null, error: { message: "oops" } },
     });
     mockCreateClient.mockReturnValue(supabaseMocks.client);
-    const svc2 = new AuditService();
+    const svc2 = new UnifiedAuditService();
     const m = await (svc2 as unknown).cleanupOldLogs();
     expect(m).toBe(0);
     expect(console.error).toHaveBeenCalledWith(

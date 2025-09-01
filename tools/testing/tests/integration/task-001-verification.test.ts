@@ -124,33 +124,31 @@ describe("tASK-001 Infrastructure Verification", () => {
       import fs from "node:fs";
       import path from "node:path";
 
-      const routePath = path.join(
+      const routePath = join(
         process.cwd(),
         "app/api/monitoring/health/route.ts",
       );
-      expect(fs.existsSync(routePath)).toBeTruthy();
+      expect(existsSync(routePath)).toBeTruthy();
     });
 
     it("should have monitoring metrics API route file", () => {
       import fs from "node:fs";
       import path from "node:path";
 
-      const routePath = path.join(
+      const routePath = join(
         process.cwd(),
         "app/api/monitoring/metrics/route.ts",
       );
-      expect(fs.existsSync(routePath)).toBeTruthy();
+      expect(existsSync(routePath)).toBeTruthy();
     });
 
     it("should have monitoring feature-flags API route file", () => {
-      const fs = require("node:fs");
-      const path = require("node:path");
 
-      const routePath = path.join(
+      const routePath = join(
         process.cwd(),
         "app/api/monitoring/feature-flags/route.ts",
       );
-      expect(fs.existsSync(routePath)).toBeTruthy();
+      expect(existsSync(routePath)).toBeTruthy();
     });
   });
 

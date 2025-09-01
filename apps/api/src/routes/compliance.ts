@@ -1,5 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
-import { AuditService } from "@neonpro/audit-trail";
+import { UnifiedAuditService, AuditEventType, AuditSeverity } from '@neonpro/security';;
 import { Hono } from "hono";
 import { z } from "zod";
 import { HTTP_STATUS } from "../lib/constants";

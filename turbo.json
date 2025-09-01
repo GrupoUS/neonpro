@@ -83,21 +83,16 @@
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
     },
-    "@neonpro/audit-trail#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
-      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
+
     "@neonpro/compliance#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/audit-trail#build"],
+      "dependsOn": ["@neonpro/types#build"],
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
     },
     "@neonpro/constitutional-layer#build": {
       "dependsOn": [
         "@neonpro/types#build",
-        "@neonpro/compliance#build",
-        "@neonpro/audit-trail#build"
+        "@neonpro/compliance#build"
       ],
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
@@ -184,8 +179,7 @@
     "@neonpro/security#build": {
       "dependsOn": [
         "@neonpro/types#build",
-        "@neonpro/database#build",
-        "@neonpro/audit-trail#build"
+        "@neonpro/database#build"
       ],
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
@@ -248,13 +242,13 @@
       "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json"],
       "outputs": [],
       "outputLogs": "new-only",
-      "env": ["NODE_OPTIONS=--max-old-space-size=2048"]
+      "env": ["NODE_OPTIONS=--max-old-space-size=4096"]
     },
     "lint:fix": {
       "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json"],
       "outputs": [],
       "outputLogs": "new-only",
-      "env": ["NODE_OPTIONS=--max-old-space-size=2048"]
+      "env": ["NODE_OPTIONS=--max-old-space-size=4096"]
     },
     "type-check": {
       "dependsOn": ["^build"],

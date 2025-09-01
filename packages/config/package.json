@@ -4,6 +4,13 @@
   "description": "NeonPro shared configurations (Oxlint, Dprint, Tailwind, TypeScript)",
   "private": true,
   "main": "index.js",
+  "exports": {
+    "./base": "./base.json",
+    "./nextjs": "./nextjs.json",
+    "./react": "./react.json",
+    "./react-library": "./react-library.json",
+    "./tsconfig": "./tsconfig.json"
+  },
   "scripts": {
     "build": "echo 'Config package - no build needed' && exit 0"
   },

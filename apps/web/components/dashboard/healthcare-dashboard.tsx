@@ -6,7 +6,7 @@
 
 "use client";
 
-import { createAuditLog } from "@neonpro/compliance/audit";
+import { UnifiedAuditService, AuditEventType, AuditSeverity } from '@neonpro/security';;
 // ✅ Healthcare domain imports
 import { useHealthcarePermissions } from "@neonpro/domain/hooks";
 import { validateHealthcareAccess } from "@neonpro/security/auth";

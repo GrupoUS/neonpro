@@ -86,11 +86,5 @@
           ],
           "env": {}
         }
-	},
-	"inputs": [],
-	"settings": {
-		"globalTimeout": 30000,
-		"retryAttempts": 3,
-		"logLevel": "info"
 	}
 }

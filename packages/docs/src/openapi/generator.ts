@@ -138,12 +138,13 @@ export class OpenAPIGenerator {
         const parsed = yaml.parse(yamlContent.replaceAll(/\* ?/g, ""));
 
         // Merge components
-        if (parsed.components) {
-          Object.keys(parsed.components as unknown).forEach((componentType) => {
-            if ((components as unknown)[componentType]) {
+        if (parsed.components && typeof parsed.components === 'object') {
+          const parsedComponents = parsed.components as any;
+          Object.keys(parsedComponents).forEach((componentType) => {
+            if ((components as any)[componentType]) {
               Object.assign(
-                (components as unknown)[componentType],
-                (parsed.components as unknown)[componentType],
+                (components as any)[componentType],
+                parsedComponents[componentType],
               );
             }
           });
@@ -171,11 +172,11 @@ export class OpenAPIGenerator {
       }
 
       try {
-        const schema = this.parseInterfaceToSchema(interfaceBody) as unknown;
+        const schema = this.parseInterfaceToSchema(interfaceBody) as any;
         schemas[interfaceName] = {
           type: "object",
-          properties: schema.properties,
-          required: schema.required || [],
+          properties: schema?.properties || {},
+          required: schema?.required || [],
           description: `Generated from ${interfaceName} interface`,
         };
       } catch {}
@@ -309,7 +310,8 @@ export class OpenAPIGenerator {
    */
   private async validateSpec(spec: unknown): Promise<void> {
     // Basic validation
-    if (!((spec as unknown).openapi && (spec as unknown).info && (spec as unknown).paths)) {
+    const specObj = spec as any;
+    if (!(specObj?.openapi && specObj?.info && specObj?.paths)) {
       throw new Error("Invalid OpenAPI specification structure");
     }
 
@@ -324,17 +326,18 @@ export class OpenAPIGenerator {
    */
   private validateHealthcareCompliance(spec: unknown): void {
     const warnings: string[] = [];
+    const specObj = spec as any;
 
     // Check for security schemes
-    if (!(spec as unknown).components?.securitySchemes) {
+    if (!specObj?.components?.securitySchemes) {
       warnings.push(
         "No security schemes defined - required for healthcare compliance",
       );
     }
 
     // Check for required healthcare tags
-    const healthcareTags = (spec as unknown).tags?.some((tag: unknown) =>
-      (tag as unknown).name.toLowerCase().includes("healthcare")
+    const healthcareTags = specObj?.tags?.some((tag: any) =>
+      tag?.name?.toLowerCase().includes("healthcare")
     );
     if (!healthcareTags) {
       warnings.push("No healthcare-specific tags found");

@@ -61,7 +61,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@neonpro/typescript-config": "workspace:*",
+    "@neonpro/config": "workspace:*",
     "@types/node": "^20.11.0",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3",

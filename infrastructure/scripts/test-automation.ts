@@ -91,8 +91,8 @@ async function testEmailAutomation() {
 
 function existsFile(relativePath: string): boolean {
   try {
-    const fs = require("node:fs");
-    const path = require("node:path");
+    import fs from "node:fs";
+    import path from "node:path";
     return fs.existsSync(path.join(process.cwd(), relativePath));
   } catch {
     return false;

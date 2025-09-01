@@ -4,8 +4,8 @@
  * Fase 3.4 - Production Deployment Validation
  */
 
-const fs = require("node:fs");
-const path = require("node:path");
+import fs from "node:fs";
+import path from "node:path";
 
 class ComplianceValidator {
   constructor() {

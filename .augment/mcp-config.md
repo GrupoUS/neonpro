@@ -35,6 +35,44 @@ O Augment Agent agora reconhece e utiliza os servidores MCP configurados no arqu
 
 ## 🔧 Configuração Técnica
 
+### 📁 Configuração do Diretório de Trabalho
+
+**IMPORTANTE**: Configure a variável de ambiente `HOST_HOME` para seu sistema:
+
+#### Linux/macOS:
+```bash
+# Adicione ao seu ~/.bashrc ou ~/.zshrc
+export HOST_HOME="$HOME"
+
+# Ou para uso específico:
+export HOST_HOME="/home/seuusuario"  # Linux
+export HOST_HOME="/Users/seuusuario" # macOS
+```
+
+#### Windows:
+```cmd
+# PowerShell
+$env:HOST_HOME = $env:USERPROFILE
+
+# Command Prompt
+set HOST_HOME=%USERPROFILE%
+
+# Ou caminho específico:
+set HOST_HOME=C:\Users\SeuUsuario
+```
+
+#### Docker Compose (Recomendado):
+```yaml
+# docker-compose.yml
+services:
+  mcp-desktop-commander:
+    image: mcp/desktop-commander:latest
+    volumes:
+      - ${HOST_HOME}:/home/vibecoder
+    stdin_open: true
+    tty: true
+```
+
 ### Arquivos de Configuração Sincronizados
 1. **`.vscode/.mcp.json`** - Configuração principal (VS Code/Cursor)
 2. **`.ruler/ruler.toml`** - Configuração do sistema de agentes
@@ -49,13 +87,15 @@ O Augment Agent agora reconhece e utiliza os servidores MCP configurados no arqu
       "-i",
       "--rm",
       "-v",
-      "/home/vibecoder:/home/vibecoder",
+      "${HOST_HOME}:/home/vibecoder",
       "mcp/desktop-commander:latest"
     ],
     "type": "stdio"
   }
 }
 ```
+
+> **💡 Nota**: Certifique-se de definir a variável `HOST_HOME` conforme as instruções acima antes de usar esta configuração.
 
 ## 🔐 Variáveis de Ambiente
 
@@ -73,6 +113,39 @@ SUPABASE_ACCESS_TOKEN=your_supabase_access_token_here
 # GitHub (para Shadcn-UI)
 GITHUB_PERSONAL_ACCESS_TOKEN=your_github_personal_access_token_here
 ```
+
+## 🚨 Solução de Problemas
+
+### Volume Mount Issues
+Se você encontrar erros de volume mount:
+
+1. **Verifique se HOST_HOME está definido**:
+   ```bash
+   # Linux/macOS/WSL
+   echo $HOST_HOME
+   
+   # Windows PowerShell  
+   echo $env:HOST_HOME
+   ```
+
+2. **Teste o mount manualmente**:
+   ```bash
+   docker run --rm -v "${HOST_HOME}:/home/vibecoder" ubuntu:latest ls -la /home/vibecoder
+   ```
+
+3. **Alternativas se HOST_HOME não funcionar**:
+   ```json
+   // Use $HOME diretamente (Linux/macOS)
+   "-v", "$HOME:/home/vibecoder"
+   
+   // Use caminho absoluto específico
+   "-v", "/Users/seuusuario:/home/vibecoder"
+   ```
+
+4. **Windows com WSL**: Use o caminho do WSL:
+   ```bash
+   export HOST_HOME="/mnt/c/Users/SeuUsuario"
+   ```
 
 ## 🎯 Uso pelo Augment Agent
 

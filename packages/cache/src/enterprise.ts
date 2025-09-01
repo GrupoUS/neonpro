@@ -308,7 +308,7 @@ export class EnterpriseCacheService {
       key,
       success,
       executionTime,
-      metadata,
+      metadata: metadata || undefined,
     });
 
     // Maintain audit log size (keep last 10000 entries)

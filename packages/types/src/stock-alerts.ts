@@ -41,15 +41,18 @@ export interface ResolveAlert {
 export function validateStockAlertConfig(
   config: unknown,
 ): config is StockAlertConfig {
+  if (typeof config !== "object" || config === null) {
+    return false;
+  }
+
+  const obj = config as Record<string, unknown>;
   return (
-    typeof config === "object"
-    && config !== null
-    && typeof (config as unknown).id === "string"
-    && typeof (config as unknown).productId === "string"
-    && typeof (config as unknown).minimumThreshold === "number"
-    && typeof (config as unknown).criticalThreshold === "number"
-    && typeof (config as unknown).notificationEnabled === "boolean"
-    && Array.isArray((config as unknown).notificationEmails)
+    typeof obj.id === "string"
+    && typeof obj.productId === "string"
+    && typeof obj.minimumThreshold === "number"
+    && typeof obj.criticalThreshold === "number"
+    && typeof obj.notificationEnabled === "boolean"
+    && Array.isArray(obj.notificationEmails)
   );
 }
 
@@ -59,13 +62,16 @@ export function validateStockAlertConfig(
 export function validateResolveAlert(
   request: unknown,
 ): request is ResolveAlert {
+  if (typeof request !== "object" || request === null) {
+    return false;
+  }
+
+  const obj = request as Record<string, unknown>;
   return (
-    typeof request === "object"
-    && request !== null
-    && typeof (request as unknown).alertId === "string"
-    && typeof (request as unknown).resolvedBy === "string"
+    typeof obj.alertId === "string"
+    && typeof obj.resolvedBy === "string"
     && ["restocked", "threshold_adjusted", "product_discontinued"].includes(
-      (request as unknown).action,
+      obj.action as string,
     )
   );
 }

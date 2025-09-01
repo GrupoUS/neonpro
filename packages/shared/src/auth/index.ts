@@ -48,3 +48,15 @@ export {
   type LoginResponse,
   useAuthToken,
 } from "./use-auth-token";
+
+// Healthcare RBAC System (migrated from @neonpro/utils)
+export { HealthcareRBAC, type Permission, type Role } from "./rbac";
+
+// Healthcare Supabase Auth (migrated from @neonpro/utils)
+export {
+  type AuthConfig,
+  createSupabaseAdminClient,
+  createSupabaseClient,
+  HealthcareAuth,
+  type HealthcareUser,
+} from "./supabase";

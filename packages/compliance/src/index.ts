@@ -1,25 +1,19 @@
 /**
- * @fileoverview NeonPro Healthcare Compliance Package
- * Constitutional Brazilian Healthcare Compliance (LGPD + ANVISA + CFM)
+ * @fileoverview NeonPro Aesthetic Clinic Compliance Package
+ * LGPD Data Protection Compliance for Aesthetic Clinic SaaS
  *
- * This package provides comprehensive compliance utilities for Brazilian healthcare systems
- * with constitutional healthcare validation and ≥9.9/10 quality standards.
+ * This package provides essential compliance utilities for aesthetic clinic operations
+ * with focus on data protection and business validation.
  *
  * @version 0.1.0
- * @author NeonPro Healthcare Team
- * @license Proprietary - NeonPro Healthcare System
+ * @author NeonPro Development Team
+ * @license Proprietary - NeonPro Aesthetic Clinic Platform
  */
 
-// Privacy-Preserving Healthcare Analytics
+// Privacy-Preserving Analytics for Aesthetic Clinics
 export * from "./analytics";
 
-// ANVISA (Agência Nacional de Vigilância Sanitária) - Brazilian Health Regulatory Agency
-export * from "./anvisa";
-// Advanced Audit System for Constitutional Healthcare Compliance
-export * from "./audit";
-// CFM (Conselho Federal de Medicina) - Brazilian Federal Council of Medicine
-export * from "./cfm";
-// Enterprise Healthcare Integration Features
+// Enterprise Features for Multi-Clinic Operations
 export * from "./enterprise";
 // LGPD (Lei Geral de Proteção de Dados) - Brazilian Data Protection Law
 export * from "./lgpd";
@@ -33,12 +27,8 @@ export {
   DEFAULT_COMPLIANCE_CONFIG,
 } from "./services/compliance-automation-service";
 
-// Core Types and Interfaces (excluding audit types to avoid conflicts)
+// Core Types and Interfaces for Aesthetic Clinic Compliance
 export {
-  AdverseEventType,
-  ANVISADeviceCategory,
-  CFMLicenseStatus,
-  CFMProfessionalCategory,
   type ComplianceScore,
   ComplianceScoreSchema,
   ComplianceStatus,
@@ -50,7 +40,6 @@ export {
   type HealthcareAnalytics,
   HealthcareAnalyticsMetric,
   HealthcareAnalyticsSchema,
-  HealthcareRegulation,
   LGPDLegalBasis,
   PatientDataClassification,
   type ProfessionalValidation,
@@ -64,26 +53,25 @@ export * from "./utils/compliance-helpers";
 export * from "./utils/validation-helpers";
 
 /**
- * Constitutional Healthcare Compliance Configuration
+ * Aesthetic Clinic Compliance Configuration
  *
  * Core principles that guide all compliance implementations:
  * - Patient Privacy First: All operations prioritize patient data protection
- * - Medical Accuracy: ≥9.9/10 quality standard for medical-related features
- * - Regulatory Compliance: Constitutional adherence to Brazilian healthcare regulations
- * - AI Ethics: Explainable AI recommendations with medical ethics validation
- * - Transparency Mandate: Clear, accessible information to reduce patient anxiety
+ * - Business Quality: High quality standard for aesthetic clinic operations
+ * - LGPD Compliance: Adherence to Brazilian data protection regulations
+ * - Transparency: Clear, accessible information for aesthetic clinic patients
+ * - Professional Standards: Appropriate validation for aesthetic professionals
  */
-export const CONSTITUTIONAL_HEALTHCARE_CONFIG = {
-  QUALITY_STANDARD: 9.9,
+export const AESTHETIC_CLINIC_COMPLIANCE_CONFIG = {
+  QUALITY_STANDARD: 9.5,
   PATIENT_PRIVACY_FIRST: true,
-  REGULATORY_COMPLIANCE: ["LGPD", "ANVISA", "CFM"],
-  AI_ETHICS_REQUIRED: true,
+  REGULATORY_COMPLIANCE: ["LGPD"],
   TRANSPARENCY_MANDATE: true,
   BREACH_NOTIFICATION_HOURS: 72,
   AUDIT_RETENTION_YEARS: 7,
   CONSENT_GRANULARITY: "field-level",
   ENCRYPTION_STANDARD: "AES-256",
-  ACCESS_CONTROL: "RBAC-healthcare",
+  ACCESS_CONTROL: "RBAC-aesthetic-clinic",
 } as const;
 
 /**
@@ -92,9 +80,9 @@ export const CONSTITUTIONAL_HEALTHCARE_CONFIG = {
 export const COMPLIANCE_PACKAGE_INFO = {
   version: "0.1.0",
   name: "@neonpro/compliance",
-  description: "Constitutional Brazilian Healthcare Compliance Utilities",
-  regulations: ["LGPD", "ANVISA", "CFM"],
-  qualityStandard: "≥9.9/10",
+  description: "LGPD Data Protection Compliance for Aesthetic Clinic SaaS",
+  regulations: ["LGPD"],
+  qualityStandard: "≥9.5/10",
   lastUpdated: new Date().toISOString(),
-  maintainer: "NeonPro Healthcare Team",
+  maintainer: "NeonPro Development Team",
 } as const;

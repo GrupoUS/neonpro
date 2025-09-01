@@ -59,7 +59,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
   const [trends, setTrends] = useState<Record<string, ComplianceTrendData>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | "all">("all");
-  const [refreshInterval, setRefreshInterval] = useState<number>(30000); // 30 seconds
+  const [refreshInterval, setRefreshInterval] = useState<number>(30_000); // 30 seconds
 
   const complianceService = useMemo(() => new ComplianceService(), []);
 
@@ -175,8 +175,8 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
   };
 
   const getTrendIcon = (trend: ComplianceTrend) => {
-    if (trend === "up") return <TrendingUp className="h-4 w-4 text-green-500" />;
-    if (trend === "down") return <TrendingDown className="h-4 w-4 text-red-500" />;
+    if (trend === "up") {return <TrendingUp className="h-4 w-4 text-green-500" />;}
+    if (trend === "down") {return <TrendingDown className="h-4 w-4 text-red-500" />;}
     return <Minus className="h-4 w-4 text-gray-400" />;
   };
 

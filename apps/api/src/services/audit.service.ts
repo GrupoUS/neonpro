@@ -469,4 +469,4 @@ export class AuditService {
 }
 
 // Instância singleton
-export const auditService = new AuditService();
+export const auditService = new UnifiedAuditService();

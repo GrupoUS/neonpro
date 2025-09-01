@@ -1,463 +1,185 @@
 # 🚀 **NEONPRO CODING STANDARDS**
 
-## NeonPro AI Aestetic clinic Platform - Unified Developer Guide & Standards
+## AI-First Advanced Aesthetic Platform Development Standards
 
-> **Tier 1 Implementation** | Qualidade 9.8/10 | LGPD ✅ Healthcare ✅ | VIBECODER ✅ ARCHON ✅
+> **Quality Standard**: 9.8/10 | **Compliance**: LGPD ✅ ANVISA ✅ CFM ✅
 
-**Unified project-specific configuration for NeonPro AI Healthcare Platform with constitutional excellence, healthcare compliance, and architectural guidance.**
+**Streamlined coding standards for NeonPro AI Advanced Aesthetic Platform optimized for LLM consumption and efficient development.**
 
 ---
 
 ## 📋 **ESSENTIAL REFERENCES**
 
-**Primary Workflow**: [`../../.ruler/core-workflow.md`](../../.ruler/core-workflow.md)
-
-**Complete Documentation**:
-
-- **⚙️ Tech Stack**: [`tech-stack.md`](tech-stack.md) - AI-First Stack: Next.js 15, React 19, Vercel AI SDK 5.0, Hono.dev 4.x
-- **📁 Source Tree**: [`source-tree.md`](source-tree.md) - 32 AI-optimized packages with constitutional governance
-- **🎨 Coding Standards**: This document - Healthcare compliance built-in patterns
+- **⚙️ Tech Stack**: [`tech-stack.md`](tech-stack.md) - Next.js 15, React 19, Vercel AI SDK 5.0, Hono.dev 4.x, Supabase
+- **📁 Source Tree**: [`source-tree.md`](source-tree.md) - Monorepo structure and package organization
 
 ---
 
-## 📋 **ÍNDICE**
+## 🎯 **CORE PRINCIPLES**
 
-1. [🎯 Princípios Fundamentais](#-princípios-fundamentais)
-2. [🤖 Archon Integration & Task-Driven Development](#-archon-integration--task-driven-development)
-3. [🛠️ Environment Setup & Development](#️-environment-setup--development)
-4. [⚛️ Tech Stack & Architecture](#️-tech-stack--architecture)
-5. [🗄️ Database & API Patterns](#️-database--api-patterns)
-6. [🔒 Security & Healthcare Compliance](#-security--healthcare-compliance)
-7. [🧪 Quality Gates & Testing](#-quality-gates--testing)
-8. [🎯 AI Integration & Automation](#-ai-integration--automation)
-9. [🔧 Performance & Monitoring](#-performance--monitoring)
-10. [📚 Development Workflow & Daily Routines](#-development-workflow--daily-routines)
-11. [🧠 Session Management & Anti-Context Drift](#-session-management--anti-context-drift)
-12. [📚 Quick Reference](#-quick-reference)
+### **Development Philosophy**
 
----
+- **KISS Principle**: Keep implementations simple and maintainable
+- **YAGNI Principle**: Build only what current requirements specify
+- **Test-Driven**: Verify functionality through direct observation, not assumptions
+- **Quality Standard**: Maintain ≥9.8/10 code quality with advanced aesthetic compliance
+- **AI-First**: Native AI integration across all aesthetic treatment workflows
+- **Clean Code**: Remove deprecated code immediately
 
-## 🎯 **PRINCÍPIOS FUNDAMENTAIS**
+```yaml
+KISS_PRINCIPLE:
+  definition: "Keep It Simple, Stupid - Simplicity is key"
+  rules:
+    - Choose simplest solution that meets requirements
+    - Prefer readable code over clever optimizations
+    - Use clear, descriptive naming
+    - Avoid over-engineering
 
-### **NeonPro Core Principles**
+YAGNI_PRINCIPLE:
+  definition: "You Aren't Gonna Need It - Don't implement until needed"
+  rules:
+    - Build only what current requirements specify
+    - Resist 'just in case' features
+    - Remove unused code immediately
+    - Refactor when requirements emerge
+```
 
-#### **Technology & Development**
+### **Technology Stack**
 
-- **PNPM over NPM**: Use PNPM for all dependency management - faster, efficient, less disk space
-- **ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization
-- **Architecture Consistency**: Always follow technologies and structures defined in `docs/architecture/`
-- **Quality Standard**: Maintain ≥9.8/10 code quality standards with healthcare compliance
-- **AI-First Development**: Native AI integration across all layers with constitutional excellence
-- **Clean Development**: Remove deprecated code immediately, maintain system cleanliness
-- **Git Integration**: Auto-commit with clear messages when tasks are completed
+- **Package Manager**: pnpm (mandatory)
+- **Framework**: Next.js 15 + React 19 + TypeScript
+- **Backend**: Supabase + Hono.dev + PostgreSQL
+- **UI**: shadcn/ui + Tailwind CSS
+- **AI**: Vercel AI SDK 5.0 + OpenAI + Anthropic
+- **Testing**: Vitest + Playwright + Testing Library
+- **Quality**: Biome + TypeScript Strict
 
-#### **Development Philosophy**
-
-- **Test changes instead of assuming they work** - Verificar outputs com observação direta
-- **"Should work" ≠ "does work"** - Pattern matching não é suficiente para healthcare
-- **Detailed errors over graceful failures** - Identificar e corrigir problemas rapidamente
-- **No backwards compatibility** - Remover código deprecated imediatamente
-- **Focus on user experience and feature completeness** - Priorizar funcionalidade sobre padrões "production-ready"
-
-### **VIBECODER Core Engineering Principles**
+### **Code Quality Standards**
 
 ```typescript
-// KISS: Keep It Simple, Stupid - Simplicidade mantendo funcionalidade
+// ✅ KISS: Simple, maintainable aesthetic operations
 const updatePatient = async (id: string, data: PatientData) => {
   const encrypted = await encrypt(data);
   await db.patient.update({ where: { id }, data: encrypted });
   await auditLog("UPDATE_PATIENT", id);
 };
 
-// YAGNI: You Aren't Gonna Need It - Implementar apenas o necessário
+// ✅ YAGNI: Implement only required fields
 interface PatientData {
   name: string;
   email: string;
-  phone?: string;
-  // Adicionar campos conforme demanda real - não "just in case"
+  phone?: string; // Add fields as needed, not "just in case"
 }
 
-// CoT: Chain of Thought - Raciocínio explícito em decisões críticas
-const validateHealthcareAccess = async (
-  professionalId: string,
-  patientId: string,
-) => {
-  // 1. Verificar autenticação profissional
+// ✅ Advanced aesthetic validation with explicit reasoning
+const validateAestheticAccess = async (professionalId: string, patientId: string) => {
+  // 1. Verify professional authentication
   const professional = await validateProfessional(professionalId);
-  // 2. Verificar permissões específicas
+  // 2. Check specific permissions
   const hasAccess = await checkPatientAccess(professional.id, patientId);
-  // 3. Validar consentimento LGPD
+  // 3. Validate LGPD consent
   const consentValid = await validateLGPDConsent(patientId, "ACCESS");
 
   return professional && hasAccess && consentValid;
 };
 ```
 
-### **Arquitetura Base**
-
-- **Framework**: Next.js 15 + React 19 + TypeScript
-- **Backend**: Supabase + Hono RPC + tRPC
-- **UI**: shadcn/ui + Tailwind CSS + Framer Motion
-- **Database**: PostgreSQL + Prisma + RLS
-- **Testing**: Vitest + Playwright + Testing Library
-- **Quality**: Biome + Ultracite + TypeScript Strict
-- **Task Management**: Archon MCP (obrigatório)
-- **Package Manager**: PNPM (obrigatório)
-
-### **Frontend Architecture & State Management**
-
-```typescript
-// Zustand para estado global da aplicação
-interface AppState {
-  user: User | null;
-  theme: "light" | "dark";
-  notifications: Notification[];
-}
-
-// Context API para estado de componentes específicos
-const ChatContext = createContext<ChatContextType>();
-
-// TanStack Query para cache de dados do servidor
-const { data: patients } = useQuery({
-  queryKey: ["patients"],
-  queryFn: fetchPatients,
-});
-
-// React Hook Form para formulários
-const form = useForm<PatientFormData>({
-  resolver: zodResolver(patientSchema),
-});
-```
-
-### **Component Architecture**
-
-```typescript
-// Estrutura de componentes reutilizáveis
-components/
-├── ui/              # shadcn/ui base components
-├── forms/           # Formulários específicos
-├── layouts/         # Layouts da aplicação
-└── healthcare/      # Componentes específicos da saúde
-
-// Exemplo de componente healthcare
-export function PatientCard({ patient }: PatientCardProps) {
-  return (
-    <Card className="p-4">
-      <CardHeader>
-        <CardTitle>{patient.name}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <PatientInfo patient={patient} />
-        <AppointmentsList patientId={patient.id} />
-      </CardContent>
-    </Card>
-  )
-}
-```
-
-# Development Preferences
-
-> **⚠️ IMPORTANT:** These rules must ALWAYS be followed. They are mandatory guidelines for maintaining code quality and consistency across all projects.
-
-## Code Style
-
-- **High Confidence:** Only suggest code changes with 95%+ confidence in the solution
-- **Code Comments:** Self-documenting code, but old code deleted (not disabled with comments). Use `code-freeze.md` when necessary to prevent AI from editing a part that was difficult to implement.
-- **Modularization:** Split large files into smaller modules for better maintainability
-- **Package Manager:** pnpm
-- **State Patterns:** Avoid unnecessary useState + useEffect patterns
-- **Images:** Next.js `<Image>` for optimization
-- **Conditional Complexity:** Avoid chaining more than 3 nested if statements
-- **Cognitive Load:** Break down complex tasks into smaller, manageable functions
-- **Function Length:** Keep functions under 20 lines when possible
-- **Single Responsibility:** Each function should have one clear purpose
-- **Early Returns:** Use early returns to reduce nesting and improve readability
-- **Meaningful Names:** Use descriptive kebab-case names that clearly explain intent (e.g., `user-profile-data`, `calculate-total-price`)
-
-# Code Freeze
-
-Use `// CODE-FREEZE: [reason]` to protect critical code from AI modifications.
-
-## Syntax
-
-```javascript
-// CODE-FREEZE: Validated payment logic
-function processPayment(amount, cardData) {
-  return paymentGateway.charge(amount, cardData);
-}
-// END CODE-FREEZE
-```
-
-## Guidelines for AI
-
-- **NEVER** modify code between `// CODE-FREEZE` and `// END CODE-FREEZE`
-- **SUGGEST** alternatives instead of changing protected code
-- **DOCUMENT** any need to modify protected code
-
-## Architecture
+### Architecture
 
 - **Separation:** Frontend separated from backend (avoid monoliths)
 - **TypeScript:** Strict typing across all layers
   - Never use `any` explicitly
   - Remove unused variables, imports, and parameters
 
-## Performance & UX
+### Performance & UX
 
 - **Loading:** SSR + Skeletons as a fallback for instant display
 - **Loading States:** Avoid when possible, prefer cache/fallback
 - **Accessibility:** Always include `DialogTitle` in modals
 
-## Testing & Development
+### Testing & Development
 
 - **Test-Driven Development:** Write comprehensive Jest tests before generating code - use TDD to validate requirements
 - **Immediate Refactoring:** Refactor generated code immediately to align with SOLID principles and project architecture
 - **Technical Documentation:** Maintain updated and detailed technical documentation to guide both humans and future code generation
 
-## Version Control
 
-- **Commit Safety:** NEVER delete commits from history or delete the entire project - use revert only when user explicitly requests
+### **Code Style Requirements**
 
-## Linting
-
-- **Commands:** `npx next lint` and `npx tsc --noEmit`
-- **Fix Errors:** Fix errors instead of ignoring (do not comment out errors)
-  - `@typescript-eslint/no-explicit-any` - fix with proper types
-  - `@typescript-eslint/no-unused-vars` - remove unused items
-
----
-
-## 🤖 **ARCHON INTEGRATION & TASK-DRIVEN DEVELOPMENT**
-
-### **CRITICAL: Archon-First Rule**
-
-**MANDATORY: Always complete the full Archon task cycle before any coding:**
-
-1. **Check Current Task** → `archon:manage_task(action="get", task_id="...")`
-2. **Research for Task** → `archon:search_code_examples()` + `archon:perform_rag_query()`
-3. **Implement the Task** → Write code based on research
-4. **Update Task Status** → `archon:manage_task(action="update", task_id="...", update_fields={"status": "review"})`
-5. **Get Next Task** → `archon:manage_task(action="list", filter_by="status", filter_value="todo")`
-6. **Repeat Cycle**
-
-**NEVER skip task updates with the Archon MCP server. NEVER code without checking current tasks first.**
-
-### **Project Scenarios & Initialization**
-
-#### Scenario 1: New Project with Archon
-
-```bash
-# Create project container
-archon:manage_project(action="create", title="Project Name", github_repo="repo_url")
-# Research → Plan → Create Tasks
-```
-
-#### Scenario 2: Existing Project - Adding Archon
-
-```bash
-# Analyze existing codebase thoroughly first
-archon:manage_project(action="create", title="Existing Project Name")
-# Focus on what needs to be built, not what already exists
-```
-
-#### Scenario 3: Continuing Archon Project
-
-```bash
-# Check existing project status
-archon:manage_task(action="list", filter_by="project", filter_value="[project_id]")
-# Continue with standard development iteration workflow
-```
-
-### **Task-Specific Research Workflow**
-
-**For each task, conduct focused research:**
-
-```bash
-# High-level: Architecture, security, optimization patterns
-archon:perform_rag_query(query="healthcare architecture patterns", match_count=5)
-
-# Low-level: Specific API usage, syntax, configuration
-archon:perform_rag_query(query="Next.js 15 server components healthcare", match_count=3)
-
-# Implementation examples
-archon:search_code_examples(query="LGPD compliance React components", match_count=3)
-```
-
-### **Task Status Management**
-
-**Status Progression**: `todo` → `doing` → `review` → `done`
-
-```typescript
-// Exemplo de desenvolvimento orientado a tarefas
-const developFeature = async (taskId: string) => {
-  // 1. Obter detalhes da task
-  const task = await archon.getTask(taskId);
-
-  // 2. Marcar como em progresso
-  await archon.updateTask(taskId, { status: "doing" });
-
-  // 3. Pesquisar padrões e melhores práticas
-  const patterns = await archon.searchCodeExamples(task.feature);
-  const guidance = await archon.performRAGQuery(task.requirements);
-
-  // 4. Implementar com base na pesquisa
-  const implementation = await implementBasedOnResearch(patterns, guidance);
-
-  // 5. Marcar para revisão
-  await archon.updateTask(taskId, {
-    status: "review",
-    notes: "Implementation complete, ready for testing",
-  });
-
-  return implementation;
-};
-```
-
-```bash
-# Start task
-archon:manage_task(action="update", task_id="...", update_fields={"status": "doing"})
-
-# Complete for review
-archon:manage_task(action="update", task_id="...", update_fields={"status": "review"})
-
-# Final completion
-archon:manage_task(action="update", task_id="...", update_fields={"status": "done"})
-```
-
-### **Project Feature Integration**
-
-```bash
-# Get current project features
-archon:get_project_features(project_id="healthcare_project")
-
-# Create tasks aligned with features
-archon:manage_task(
-  action="create",
-  project_id="healthcare_project",
-  title="Implement LGPD consent management",
-  feature="Compliance",
-  task_order=10
-)
-```
+- **High Confidence**: Only suggest changes with 95%+ confidence
+- **Self-Documenting**: Clear code over comments, delete unused code
+- **Modularization**: Split large files into smaller modules
+- **Function Length**: Keep functions under 20 lines when possible
+- **Single Responsibility**: Each function has one clear purpose
+- **Early Returns**: Reduce nesting, improve readability
+- **TypeScript Strict**: No `any` types, remove unused imports/variables
 
 ---
+### React rules
 
-## 🛠️ **ENVIRONMENT SETUP & DEVELOPMENT**
+- Use functional components with hooks instead of class components
+- Use custom hooks for reusable logic
+- Use the Context API for state management when needed
+- Use proper prop validation with PropTypes
+- Use React.memo for performance optimization when necessary
+- Use fragments to avoid unnecessary DOM elements
+- Use proper list rendering with keys
+- Prefer composition over inheritance
+- Use React.lazy for code splitting
+- Use React.Suspense for loading states
+- Use React.useCallback for performance optimization
+- Use React.useMemo for performance optimization
+- Use React.useRef for performance optimization
+- Use React.useState for state management
+- Use React.useEffect for side effects
+- Use React.useContext for state management
+- Use React.useReducer for state management
+- Use React.useImperativeHandle for performance optimization
 
-### **Prerequisites**
+### Tailwind CSS rules
 
-- Node.js 18+
-- Access to NeonPro API credentials
-- Supabase project
+- Use responsive prefixes for mobile-first design:
 
-### **Essential Environment Variables**
-
-Create a `.env.local` file:
-
-```bash
-# API Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-
-# AI Services
-ANTHROPIC_API_KEY=your-anthropic-key
-OPENAI_API_KEY=your-openai-key
-
-# Application
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+```html
+<div class="w-full md:w-1/2 lg:w-1/3">
+  <!-- Full width on mobile, half on medium, one-third on large screens -->
+</div>
 ```
 
-### **PNPM Over NPM (Obrigatório)**
+- Use state variants for interactive elements:
 
-```bash
-# ✅ Use PNPM for all operations
-pnpm install
-pnpm dev
-pnpm build
-pnpm test
-
-# ❌ Never use NPM
-# npm install # NUNCA!
+```html
+<button class="bg-blue-500 hover:bg-blue-600 focus:ring-2">
+  Click me
+</button>
 ```
 
-### **Git & Version Control**
+- Use @apply for repeated patterns when necessary:
 
-```bash
-# Commit automático após completar task
-git add .
-git commit -m "feat(healthcare): implement LGPD consent management
-
-- Add consent validation middleware
-- Implement audit trail for consent changes
-- Add ANVISA compliance markers
-- Update patient access validation
-
-Closes: TASK-123"
-
-# Padrão de mensagens
-# feat(scope): description - novas features
-# fix(scope): description - correções
-# refactor(scope): description - refatoração
-# docs(scope): description - documentação
-# test(scope): description - testes
+```css
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600;
+  }
+}
 ```
 
-### **Development Setup**
+- Use arbitrary values for specific requirements:
 
-1. **Clone repository**
-
-   ```bash
-   git clone <repository-url>
-   cd neonpro
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   pnpm install
-   ```
-
-3. **Setup environment**
-
-   ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your credentials
-   ```
-
-4. **Run development server**
-   ```bash
-   pnpm dev
-   ```
-
-### **Clean Up Constantly**
-
-```typescript
-// ✅ Remover código morto imediatamente
-// ❌ Anti-pattern: Manter código "legacy" comentado
-
-// ✅ Padrão correto: Remover e documentar na funcionalidade atual
-const updatePatient = async (id: string, data: PatientData) => {
-  // Updated implementation with LGPD compliance
-  await auditLog("UPDATE_PATIENT", id);
-};
-
-// ✅ Verificar e corrigir imports não utilizados
-// import { unused } from './utils'; // REMOVER
-import { auditLog, encrypt } from "./utils"; // MANTER
+```html
+<div class="top-[117px] grid-cols-[1fr_2fr]">
+  <!-- Custom positioning and grid layout -->
+</div>
 ```
 
-### **Always Check Architecture Docs**
+- Use spacing utilities for consistent layout:
 
-```typescript
-// Sempre verificar docs/architecture/ antes de implementar
-const implementFeature = async () => {
-  // 1. Consultar tech-stack.md para tecnologias aprovadas
-  // 2. Verificar source-tree.md para estrutura correta
-  // 3. Seguir coding-standards.md para padrões
-  // 4. Validar contra compliance requirements
-};
+```html
+<div class="space-y-4">
+  <div>Item 1</div>
+  <div>Item 2</div>
+</div>
 ```
-
 ---
 
 ## ⚛️ **TECH STACK & ARCHITECTURE**
@@ -492,13 +214,13 @@ const token = data.session?.access_token;
 ### **Server Components for Sensitive Data**
 
 ```typescript
-// Server Component para dados sensíveis
+// Server Component for sensitive aesthetic data
 export default async function PatientProfile({ patientId }: { patientId: string; }) {
-  // ✅ Validação server-side obrigatória
+  // ✅ Server-side validation mandatory
   const session = await getSession();
   if (!session?.user) redirect("/auth");
 
-  // ✅ Dados criptografados permanecem no servidor
+  // ✅ Encrypted data stays on server
   const encryptedPatient = await getPatientSecure(patientId, session.user.id);
   const patient = await decrypt(encryptedPatient);
 
@@ -510,17 +232,17 @@ export default async function PatientProfile({ patientId }: { patientId: string;
   );
 }
 
-// Server Actions para operações críticas
+// Server Actions for critical operations
 export async function updatePatientAction(formData: FormData) {
   "use server";
 
   const session = await getSession();
   const data = Object.fromEntries(formData);
 
-  // Validação de esquema com Zod
+  // Schema validation with Zod
   const validatedData = PatientUpdateSchema.parse(data);
 
-  // Transação com auditoria
+  // Transaction with audit
   await db.$transaction(async (tx) => {
     await tx.patient.update({
       where: { id: validatedData.id },
@@ -543,111 +265,26 @@ export async function updatePatientAction(formData: FormData) {
 
 ---
 
-## 🗄️ **DATABASE & API PATTERNS**
-
-### **Database Schema (Tier 1 Implementation)**
-
-Execute this SQL in your Supabase project:
-
-```sql
--- AI Chat Sessions
-CREATE TABLE ai_chat_sessions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users(id),
-  clinic_id UUID,
-  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'ended')),
-  language TEXT DEFAULT 'pt-BR',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  expires_at TIMESTAMP WITH TIME ZONE DEFAULT (NOW() + INTERVAL '2 hours')
-);
-
--- AI Chat Messages
-CREATE TABLE ai_chat_messages (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  session_id UUID REFERENCES ai_chat_sessions(id) ON DELETE CASCADE,
-  role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
-  content TEXT NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Appointment No-Show Predictions
-CREATE TABLE no_show_predictions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  appointment_id UUID,
-  risk_score INTEGER NOT NULL CHECK (risk_score >= 0 AND risk_score <= 100),
-  risk_level TEXT NOT NULL CHECK (risk_level IN ('low', 'medium', 'high')),
-  confidence FLOAT NOT NULL CHECK (confidence >= 0 AND confidence <= 1),
-  recommended_actions TEXT[],
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Basic Feature Flags
-CREATE TABLE feature_flags (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  flag_name TEXT NOT NULL UNIQUE,
-  enabled BOOLEAN NOT NULL DEFAULT false,
-  description TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Row Level Security
-ALTER TABLE ai_chat_sessions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE ai_chat_messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE no_show_predictions ENABLE ROW LEVEL SECURITY;
-
--- Basic policies (authenticated users only)
-CREATE POLICY "authenticated_access" ON ai_chat_sessions FOR ALL TO authenticated USING (true);
-CREATE POLICY "authenticated_access" ON ai_chat_messages FOR ALL TO authenticated USING (true);
-CREATE POLICY "authenticated_access" ON no_show_predictions FOR ALL TO authenticated USING (true);
-
--- Insert basic feature flags
-INSERT INTO feature_flags (flag_name, description, enabled) VALUES
-('ai_chat', 'AI Chat System', true),
-('no_show_prediction', 'No-show prediction engine', true);
-```
-
-### **API Security Patterns**
-
-```typescript
-// Basic validation schemas
-export const PatientSchema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.string().email(),
-  phone: z.string().optional(),
-});
-
-// Basic rate limiting
-export const basicRateLimit = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // requests per window
-  message: "Too many requests",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-```
-
----
-
-## 🔒 **SECURITY & HEALTHCARE COMPLIANCE**
+## 🔒 **ADVANCED AESTHETIC COMPLIANCE**
 
 ### **Regulatory Framework**
 
 - **LGPD Compliance**: Automated patient consent management and data protection validation
-- **ANVISA Class IIa**: Medical device software compliance with audit trail requirements
-- **CFM Ethics**: Professional conduct validation and medical ethics compliance monitoring
+- **ANVISA Class IIa**: Advanced aesthetic device software compliance with audit trail requirements
+- **CFM Ethics**: Professional conduct validation and aesthetic medicine ethics compliance monitoring
 - **International Standards**: HIPAA compatibility for future expansion
 
 ### **Security Implementation**
 
-- **Encryption**: AES-256-GCM for all PHI (Protected Health Information)
-- **Authentication**: Multi-factor authentication mandatory for healthcare access
-- **Audit Trail**: Immutable logging for all patient data operations with blockchain verification
+- **Encryption**: AES-256-GCM for all aesthetic patient information
+- **Authentication**: Multi-factor authentication mandatory for advanced aesthetic access
+- **Audit Trail**: Immutable logging for all patient data operations
 - **Row Level Security**: Constitutional RLS patterns with real-time compliance validation
 
 ### **LGPD Core Implementation**
 
 ```typescript
-// LGPD-compliant data handling
+// LGPD-compliant aesthetic data handling
 export class LGPDManager {
   static async requestConsent(patientId: string, purpose: string) {
     const consent = await db.lgpdConsent.create({
@@ -683,7 +320,7 @@ export class LGPDManager {
 
 // Data encryption patterns
 export const encrypt = (data: string): Promise<string> => {
-  // Use AES-256-GCM for healthcare patient data
+  // Use AES-256-GCM for aesthetic patient data
   return crypto.subtle.encrypt(algorithm, key, Buffer.from(data));
 };
 
@@ -696,11 +333,7 @@ export const decrypt = (encryptedData: string): Promise<string> => {
 
 ```typescript
 // Authentication middleware
-export const authMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.replace("Bearer ", "");
 
   if (!token) {
@@ -730,9 +363,7 @@ export const auditLog = async (action: string, userId: string, data?: any) => {
 };
 ```
 
----
-
-## 🧪 **QUALITY GATES & TESTING**
+---## 🧪 **QUALITY GATES & TESTING**
 
 ### **The 30-Second Reality Check**
 
@@ -745,22 +376,9 @@ export const auditLog = async (action: string, userId: string, data?: any) => {
 - [ ] Did I check for error messages?
 - [ ] Did I verify no new warnings or errors appeared?
 - [ ] Did I check performance impact?
-- [ ] Did I validated accessibility requirements?
+- [ ] Did I validate accessibility requirements?
 - [ ] Did I review the code for style and consistency?
 - [ ] Did I ensure no security vulnerabilities were introduced?
-
-### **Ultracite Code Quality Standards**
-
-```bash
-# Initialize Ultracite in project
-npx ultracite init
-
-# Format and fix code automatically
-npx ultracite format
-
-# Check for issues without fixing
-npx ultracite lint
-```
 
 ### **Essential Rules**
 
@@ -793,95 +411,62 @@ npx ultracite lint
 - No component definitions inside other components
 - Proper prop types and validation
 
-#### **Code Quality & Performance**
-
-- Arrow functions over function expressions
-- Optional chaining over nested conditionals
-- Template literals for string interpolation
-- `for...of` loops over `Array.forEach()`
-- Modern array methods (`flatMap`, `at()`, etc.)
-- Const declarations for unchanging variables
-- Early returns over nested conditionals
-
-#### **Security & Correctness**
-
-- Input validation and sanitization
-- No hardcoded sensitive data
-- Secure communication protocols
-- Proper error handling with meaningful messages
-- No usage of `eval()`, `document.cookie`, or unsafe patterns
-- Prevent XSS through proper escaping
-
-#### **Next.js Specific**
-
-- Use `next/image` instead of `<img>` tags
-- Proper `next/head` usage (not in `_document.js`)
-- Correct import paths for Next.js modules
-- Static optimization considerations
-
-#### **Testing Standards**
-
-- Descriptive test names and structure
-- Proper assertion placement inside test functions
-- No focused or disabled tests in committed code
-- Comprehensive error case coverage
-
 ### **Testing Requirements**
 
 ```typescript
-// Utilitários para testes healthcare
-export class HealthcareTestUtils {
+// Utilities for advanced aesthetic tests
+export class AestheticTestUtils {
   static createTestPatient(): TestPatient {
     return {
       id: crypto.randomUUID(),
-      cpf: "00000000000", // CPF sintético
+      cpf: "00000000000", // Synthetic CPF
       name: "Test Patient",
       birthDate: "1990-01-01",
-      // ✅ Sempre dados sintéticos para testes
+      // ✅ Always synthetic data for tests
     };
   }
 
-  static async mockHealthcareSession() {
+  static async mockAestheticSession() {
     return {
       professional: {
         id: "test-professional-id",
         crm: "123456-SP",
-        role: "doctor",
+        role: "aesthetician",
         mfaVerified: true,
       },
     };
   }
 }
 
-// Testes de compliance obrigatórios
+// Compliance tests mandatory
 describe("LGPD Compliance", () => {
   test("should require consent for patient data access", async () => {
-    const patient = HealthcareTestUtils.createTestPatient();
+    const patient = AestheticTestUtils.createTestPatient();
 
-    // ❌ Sem consentimento deve falhar
+    // ❌ Without consent should fail
     await expect(
       PatientService.getData(patient.id, "test-professional"),
     ).rejects.toThrow("LGPD consent required");
 
-    // ✅ Com consentimento deve funcionar
+    // ✅ With consent should work
     await LGPDService.grantConsent(patient.id, "DATA_ACCESS");
     const data = await PatientService.getData(patient.id, "test-professional");
     expect(data).toBeDefined();
   });
 });
 
-// E2E para workflows críticos
+// E2E for critical workflows
 test("Emergency patient access workflow", async ({ page }) => {
   await page.goto("/emergency-access");
 
-  // Verificar MFA para emergência
+  // Verify MFA for emergency
   await page.fill("[data-testid=emergency-code]", "EMERGENCY123");
   await page.click("[data-testid=emergency-access]");
 
-  // Validar acesso aos dados críticos
+  // Validate access to critical data
   await expect(page.locator("[data-testid=patient-vitals]")).toBeVisible();
 
-  // Verificar auditoria de acesso de emergência
+  // Verify emergency access audit
   const auditLogs = await db.auditLog.findMany({
     where: { action: "EMERGENCY_ACCESS" },
   });
@@ -891,62 +476,30 @@ test("Emergency patient access workflow", async ({ page }) => {
 
 ### **Quality Metrics**
 
-- **Security**: 100% compliance (LGPD, healthcare sector)
+- **Security**: 100% compliance (LGPD, advanced aesthetic sector)
 - **Performance**: <200ms response, >95 Lighthouse
 - **Testing**: 95%+ coverage, E2E workflows
 - **Accessibility**: WCAG 2.1 AA compliant
 - **Type Safety**: TypeScript strict mode
 
-### **Error Handling Example**
-
-```typescript
-// ✅ Proper error handling
-async function fetchPatientData(id: string): Promise<ApiResponse> {
-  try {
-    const result = await api.getPatient(id);
-    return { success: true, data: result };
-  } catch (error) {
-    console.error("Patient data fetch failed:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
-    };
-  }
-}
-
-// ❌ Avoid error swallowing
-try {
-  return await fetchPatientData(id);
-} catch (e) {
-  console.log(e); // Silent failure - NUNCA em healthcare!
-}
-```
-
 ---
 
 ## 🎯 **AI INTEGRATION & AUTOMATION**
 
-### **AI-Powered Healthcare Features**
+### **AI-Powered Advanced Aesthetic Features**
 
-- **Privacy-First AI**: PHI sanitization before AI processing with compliance validation
-- **Medical Context**: Healthcare-specific AI prompts and validation patterns
+- **Privacy-First AI**: Patient data sanitization before AI processing with compliance validation
+- **Aesthetic Context**: Advanced aesthetic-specific AI prompts and validation patterns
 - **Compliance Automation**: AI-powered LGPD/ANVISA/CFM adherence monitoring
-- **Streaming Optimization**: Real-time AI responses with healthcare workflow integration
-
-### **Constitutional AI Patterns**
-
-- **Multi-Perspective Analysis**: Technical + Security + User + Future + Ethics viewpoints
-- **Progressive Quality Gates**: L1-L10 standards with healthcare domain overrides (≥9.9/10)
-- **Cognitive Enhancement**: Automatic thinking escalation for healthcare and compliance contexts
-- **Agent Coordination**: Specialized agent matrix with healthcare expertise and compliance focus
+- **Streaming Optimization**: Real-time AI responses with advanced aesthetic workflow integration
 
 ### **Privacy-Preserving AI**
 
 ```typescript
-// Sanitização antes de AI
-export class HealthcareAI {
+// Sanitization before AI
+export class AestheticAI {
   static async processPatientQuery(query: string, professionalId: string) {
-    // ✅ Remover PHI antes de enviar para AI
+    // ✅ Remove PHI before sending to AI
     const sanitized = await PHIDetector.sanitize(query);
 
     const aiResponse = await openai.chat.completions.create({
@@ -954,14 +507,14 @@ export class HealthcareAI {
       messages: [
         {
           role: "system",
-          content: "You are a healthcare AI assistant. Never store or log patient data.",
+          content: "You are an advanced aesthetic AI assistant. Never store or log patient data.",
         },
         { role: "user", content: sanitized },
       ],
     });
 
-    // ✅ Auditoria sem PHI
-    await AuditLogger.logAIInteraction("HEALTHCARE_AI_QUERY", professionalId, {
+    // ✅ Audit without PHI
+    await AuditLogger.logAIInteraction("AESTHETIC_AI_QUERY", professionalId, {
       query_length: sanitized.length,
       response_length: aiResponse.choices[0].message.content?.length,
       phi_detected: false,
@@ -970,13 +523,13 @@ export class HealthcareAI {
     return aiResponse.choices[0].message.content;
   }
 
-  // Análise de sintomas com privacy
-  static async analyzeSymptoms(symptoms: string[]) {
-    // Usar apenas sintomas codificados (ICD-10)
-    const codedSymptoms = symptoms.map((s) => ICD10.encode(s));
+  // Treatment analysis with privacy
+  static async analyzeTreatment(treatments: string[]) {
+    // Use only coded treatments (standardized codes)
+    const codedTreatments = treatments.map((t) => AestheticCodes.encode(t));
 
     return await this.processPatientQuery(
-      `Analyze these coded symptoms: ${codedSymptoms.join(", ")}`,
+      `Analyze these coded treatments: ${codedTreatments.join(", ")}`,
       "system",
     );
   }
@@ -987,67 +540,19 @@ export class HealthcareAI {
 
 ## 🔧 **PERFORMANCE & MONITORING**
 
-### **Healthcare Performance Targets**
+### **Advanced Aesthetic Performance Targets**
 
 - **Emergency Response**: <200ms for critical patient data access
-- **Healthcare Operations**: <2s response time guarantee for all medical workflows
+- **Aesthetic Operations**: <2s response time guarantee for all treatment workflows
 - **Compliance Validation**: Real-time LGPD/ANVISA checking with automatic remediation
-- **AI Response Times**: <500ms for healthcare AI interactions with streaming optimization
+- **AI Response Times**: <500ms for advanced aesthetic AI interactions with streaming optimization
 
 ### **Quality Gates & Standards**
 
-- **Progressive Quality**: L1-L10 standards with healthcare domain overrides
-- **Test Coverage**: ≥95% for healthcare features with compliance scenario testing
-- **Accessibility**: WCAG 2.1 AA+ compliance for medical accessibility requirements
+- **Progressive Quality**: L1-L10 standards with advanced aesthetic domain overrides
+- **Test Coverage**: ≥95% for advanced aesthetic features with compliance scenario testing
+- **Accessibility**: WCAG 2.1 AA+ compliance for aesthetic accessibility requirements
 - **Security Validation**: Zero high/critical vulnerabilities with continuous monitoring
-
-### **Sentry Integration & Monitoring**
-
-#### **Exception Handling**
-
-```javascript
-// Use Sentry.captureException(error) in try/catch blocks
-import * as Sentry from "@sentry/nextjs";
-
-try {
-  // healthcare operation
-} catch (error) {
-  Sentry.captureException(error);
-}
-```
-
-#### **Performance Tracing**
-
-```javascript
-// Custom span instrumentation for healthcare operations
-function HealthcareComponent() {
-  const handlePatientAccess = () => {
-    Sentry.startSpan(
-      {
-        op: "healthcare.patient.access",
-        name: "Patient Data Access",
-      },
-      (span) => {
-        span.setAttribute("compliance", "LGPD");
-        span.setAttribute("access_type", "emergency");
-        // healthcare operation
-      },
-    );
-  };
-}
-```
-
-#### **Structured Logging**
-
-```javascript
-const { logger } = Sentry;
-
-logger.info("Patient accessed", { patientId: 123, professionalId: 456 });
-logger.warn("LGPD consent expiring", { patientId: 123, expiresIn: "7days" });
-logger.error("ANVISA compliance violation", {
-  violation: "missing_audit_trail",
-});
-```
 
 ---
 
@@ -1063,121 +568,49 @@ logger.error("ANVISA compliance violation", {
 
 ### **Code Quality Enforcement**
 
-- **TypeScript**: Strict mode with healthcare data structures
-- **Testing**: Vitest + Playwright with healthcare scenario coverage
-- **Linting**: Constitutional linting rules with healthcare compliance checks
+- **TypeScript**: Strict mode with advanced aesthetic data structures
+- **Testing**: Vitest + Playwright with advanced aesthetic scenario coverage
+- **Linting**: Constitutional linting rules with advanced aesthetic compliance checks
 - **Architecture**: Constitutional service patterns with self-governance
 
-### **Start of Coding Session**
+### **Development Setup**
 
-1. Check available sources: `archon:get_available_sources()`
-2. Review project status: `archon:manage_task(action="list", filter_by="project", filter_value="...")`
-3. Identify next priority task: Find highest `task_order` in "todo" status
-4. Conduct task-specific research
-5. Begin implementation
+1. **Clone repository**
+   ```bash
+   git clone <repository-url>
+   cd neonpro
+   ```
 
-### **End of Coding Session**
+2. **Install dependencies**
+   ```bash
+   bun install
+   ```
 
-1. Update completed tasks to "done" status
-2. Update in-progress tasks with current status
-3. Create new tasks if scope becomes clearer
-4. Document any architectural decisions or important findings
+3. **Setup environment**
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your credentials
+   ```
 
-### **Task Completion Criteria**
+4. **Run development server**
+   ```bash
+   bun dev
+   ```
 
-**Every task must meet these criteria before marking "done":**
-
-- [ ] Implementation follows researched best practices
-- [ ] Code follows project style guidelines
-- [ ] Security considerations addressed
-- [ ] Basic functionality tested
-- [ ] Documentation updated if needed
-- [ ] All tests pass without errors
-
-### **Research-Driven Development**
-
-#### **Before Any Implementation**
-
-**Research checklist:**
-
-- [ ] Search for existing code examples of the pattern
-- [ ] Query documentation for best practices (high-level or specific API usage)
-- [ ] Understand security implications
-- [ ] Check for common pitfalls or antipatterns
+### **Essential Environment Variables**
 
 ```bash
-# High-level: Architecture, security, optimization patterns
-archon:perform_rag_query(
-  query="healthcare JWT authentication security best practices",
-  match_count=5
-)
+# API Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# Low-level: Specific API usage, syntax, configuration
-archon:perform_rag_query(
-  query="Next.js Server Actions LGPD compliance patterns",
-  match_count=3
-)
+# AI Services
+ANTHROPIC_API_KEY=your-anthropic-key
+OPENAI_API_KEY=your-openai-key
 
-# Implementation examples
-archon:search_code_examples(
-  query="React healthcare form validation Zod",
-  match_count=3
-)
-```
-
-#### **Knowledge Source Prioritization**
-
-**Query Strategy:**
-
-- Start with broad architectural queries, narrow to specific implementation
-- Use RAG for both strategic decisions and tactical "how-to" questions
-- Cross-reference multiple sources for validation
-- Keep match_count low (2-5) for focused results
-
-#### **Research Validation**
-
-**Always validate research findings:**
-
-- Cross-reference multiple sources
-- Verify recency of information
-- Test applicability to current project context
-- Document assumptions and limitations
-
----
-
-## 🧠 **SESSION MANAGEMENT & ANTI-CONTEXT DRIFT**
-
-### **Consistency Protocols**
-
-- **Session Management**: Maintain ≥9.8/10 quality standards throughout session
-- **Constitutional Relevance**: Score interactions for constitutional adherence (0-10)
-- **Think-First Enforcement**: Mandatory sequential-thinking for complexity ≥3
-- **Research Continuity**: Reference previous MCP research with constitutional context
-
-### **Recovery Mechanisms**
-
-- **Drift Detection**: Auto-detect when constitutional relevance drops below 8/10
-- **Context Refresh**: Automatic refresh with constitutional principle clarification
-- **Think-First Reset**: Return to sequential-thinking analysis when complexity increases
-- **Quality Escalation**: Increase quality thresholds if standards drop
-
-### **Quality Validation Patterns**
-
-```typescript
-// Validação contínua durante desenvolvimento
-const validateQuality = async (code: string, context: string) => {
-  const qualityScore = await assessCodeQuality(code);
-  const complianceScore = await assessHealthcareCompliance(code);
-  const architectureScore = await assessArchitecturalAlignment(code, context);
-
-  const overallScore = (qualityScore + complianceScore + architectureScore) / 3;
-
-  if (overallScore < 9.5) {
-    throw new QualityGateError(`Quality score ${overallScore} below threshold`);
-  }
-
-  return { score: overallScore, passed: true };
-};
+# Application
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 ---
@@ -1187,36 +620,31 @@ const validateQuality = async (code: string, context: string) => {
 ### **🚀 Pre-Production Checklist**
 
 - [ ] **Archon**: Tasks completed and marked as "review"
-- [ ] **Security**: MFA ativo, PHI criptografado, audit logs funcionando
+- [ ] **Security**: MFA active, PHI encrypted, audit logs functioning
 - [ ] **Performance**: <200ms response, Lighthouse >95, bundle <1MB
 - [ ] **Compliance**: LGPD consent, ANVISA audit, CFM ethics validated
 - [ ] **Testing**: 95%+ coverage, E2E workflows, accessibility tested
-- [ ] **Quality**: 30-second reality check passed, Ultracite clean, TypeScript strict
+- [ ] **Quality**: 30-second reality check passed, TypeScript strict
 - [ ] **Documentation**: Architecture docs updated, comments clear
 
 ### **⚡ Emergency Commands**
 
 ```bash
-# Validação completa pré-produção
-pnpm ci:check      # Full code validation (format + lint + type + test)
-pnpm security:audit # Security audit
-pnpm compliance:lgpd # LGPD validation
+# Complete code validation
+bun run ci:check      # Full code validation (format + lint + type + test)
+bun run security:audit # Security audit
+bun run compliance:validate # Advanced aesthetic compliance validation
 
 # Performance & Quality
-pnpm build && pnpm lighthouse # Build + performance analysis
-pnpm test:coverage # Test coverage
-pnpm format       # Format code automatically
-pnpm lint:fix     # Fix linting issues
+bun run build && bun run lighthouse # Build + performance analysis
+bun run test:coverage # Test coverage
+bun run format       # Format code automatically
+bun run lint:fix     # Fix linting issues
 
 # Archon Integration
 archon:get_available_sources() # Check knowledge base
 archon:manage_task(action="list") # List current tasks
-archon:perform_rag_query(query="healthcare patterns") # Research
-
-# Ultracite Commands
-npx ultracite init   # Initialize in project
-npx ultracite format # Format and fix code
-npx ultracite lint   # Check without fixing
+archon:perform_rag_query(query="advanced aesthetic patterns") # Research
 ```
 
 ### **Development Workflow**
@@ -1224,44 +652,44 @@ npx ultracite lint   # Check without fixing
 ```bash
 # Archon task management
 archon:manage_task(action="list", filter_by="status", filter_value="todo")
-archon:perform_rag_query(query="healthcare implementation patterns")
+archon:perform_rag_query(query="advanced aesthetic implementation patterns")
 
 # Quality validation
-pnpm ci:check          # Complete code validation
-pnpm compliance:lgpd   # LGPD compliance validation
-pnpm test:healthcare   # Healthcare scenario testing
+bun run ci:check          # Complete code validation
+bun run compliance:validate   # Advanced aesthetic compliance validation
+bun run test:aesthetic   # Advanced aesthetic scenario testing
 ```
 
-### **Healthcare Compliance**
+### **Advanced Aesthetic Compliance**
 
 ```bash
 # Compliance validation
-pnpm compliance:validate     # Validate healthcare compliance
-pnpm audit:trail            # Generate audit trail reports
-pnpm lgpd:check            # LGPD compliance validation
-pnpm anvisa:validate       # ANVISA compliance validation
+bun run compliance:validate     # Validate advanced aesthetic compliance
+bun run audit:trail            # Generate audit trail reports
+bun run lgpd:check            # LGPD compliance validation
+bun run anvisa:validate       # ANVISA compliance validation
 ```
 
-### **🏥 Healthcare-Specific Patterns**
+### **🏥 Advanced Aesthetic-Specific Patterns**
 
 ```typescript
-// Padrão para operações críticas
+// Pattern for critical operations
 const criticalOperation = async (data: CriticalData) => {
   await validateMFA(); // 1. Multi-factor auth
   await validateConsent(); // 2. LGPD consent
-  await auditStart(); // 3. Iniciar auditoria
+  await auditStart(); // 3. Start audit
 
   try {
     const result = await executeOperation(data);
-    await auditSuccess(result); // 4. Log sucesso
+    await auditSuccess(result); // 4. Log success
     return result;
   } catch (error) {
-    await auditFailure(error); // 5. Log falha
+    await auditFailure(error); // 5. Log failure
     throw error;
   }
 };
 
-// Minimização de dados
+// Data minimization
 const getMinimizedData = (data: PatientData, role: Role) => {
   const permissions = ROLE_PERMISSIONS[role];
   return Object.keys(data)
@@ -1277,7 +705,7 @@ const developWithArchon = async (feature: string) => {
   // 2. Research before implementation
   const patterns = await archon.searchCodeExamples(feature);
   const guidance = await archon.performRAGQuery(
-    `${feature} healthcare best practices`,
+    `${feature} advanced aesthetic best practices`,
   );
 
   // 3. Implement based on research
@@ -1290,142 +718,6 @@ const developWithArchon = async (feature: string) => {
 };
 ```
 
-### **📊 Sentry Integration Patterns**
-
-```typescript
-// Custom Span instrumentation for healthcare operations
-function HealthcareComponent() {
-  const handlePatientAccess = () => {
-    Sentry.startSpan(
-      {
-        op: "healthcare.patient.access",
-        name: "Patient Data Access",
-      },
-      (span) => {
-        span.setAttribute("compliance", "LGPD");
-        span.setAttribute("professional_role", userRole);
-        span.setAttribute("access_type", "routine");
-
-        accessPatientData();
-      },
-    );
-  };
-}
-
-// Healthcare API monitoring
-async function fetchPatientData(patientId: string) {
-  return Sentry.startSpan(
-    {
-      op: "http.client",
-      name: `GET /api/patients/${patientId}`,
-    },
-    async () => {
-      const response = await fetch(`/api/patients/${patientId}`);
-      const data = await response.json();
-      return data;
-    },
-  );
-}
-
-// Structured logging for healthcare
-const { logger } = Sentry;
-
-logger.info("Patient accessed", {
-  patientId: "hashed_id",
-  professionalId: "professional_id",
-  compliance: "LGPD_APPROVED",
-});
-
-logger.warn("LGPD consent expiring", {
-  patientId: "hashed_id",
-  expiresIn: "7days",
-  action_required: "renewal",
-});
-
-logger.error("ANVISA compliance violation", {
-  violation: "missing_audit_trail",
-  professional: "professional_id",
-  severity: "high",
-});
-```
-
 ---
 
-### **Database Patterns & RLS**
-
-```sql
--- Política RLS para pacientes
-CREATE POLICY "Users can only see their own patients" ON patients
-  FOR ALL USING (auth.uid() = user_id);
-
--- Política RLS para consultas
-CREATE POLICY "Users can only see their own appointments" ON appointments
-  FOR ALL USING (
-    auth.uid() IN (
-      SELECT user_id FROM patients WHERE id = patient_id
-    )
-  );
-```
-
-### **Schema Validation Patterns**
-
-```typescript
-// Zod schemas para validação
-export const patientSchema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.string().email(),
-  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/),
-  birth_date: z.date(),
-  cpf: z.string().regex(/^\d{11}$/),
-  lgpd_consent: z.boolean().refine((val) => val === true),
-});
-
-export const appointmentSchema = z.object({
-  patient_id: z.string().uuid(),
-  scheduled_at: z.date().min(new Date()),
-  type: z.enum(["consultation", "exam", "procedure"]),
-  notes: z.string().optional(),
-});
-```
-
-### **AI Integration Patterns**
-
-```typescript
-// Hook para chat AI
-export function useChatAI(patientId?: string) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-
-  const sendMessage = async (content: string) => {
-    const response = await fetch("/api/ai/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: content,
-        patient_id: patientId,
-      }),
-    });
-
-    const aiResponse = await response.json();
-    setMessages((prev) => [...prev, aiResponse]);
-  };
-
-  return { messages, sendMessage };
-}
-
-// Predição de faltas
-export async function predictNoShow(
-  appointmentId: string,
-): Promise<NoShowPrediction> {
-  const response = await fetch("/api/ai/predict-no-show", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ appointment_id: appointmentId }),
-  });
-
-  return response.json();
-}
-```
-
----
-
-> **🏥 Constitutional Healthcare Document**: This comprehensive document provides NeonPro-specific rules that complement the universal framework in [`../../.ruler/core-workflow.md`](../../.ruler/core-workflow.md) and complete architecture in [`docs/architecture/`](../). Unified coding standards integrados com VIBECODER principles, Archon workflow, e healthcare compliance. Mantém padrões de qualidade ≥9.8/10 com validação contínua e guidance completo para desenvolvimento healthcare-first. Última atualização: Agosto 2025.
+> **🏥 Constitutional Advanced Aesthetic Document**: This comprehensive document provides NeonPro-specific rules that complement the universal framework in [`../../.ruler/core-workflow.md`](../../.ruler/core-workflow.md) and complete architecture in [`docs/architecture/`](../). Unified coding standards integrated with VIBECODER principles, Archon workflow, and advanced aesthetic compliance. Maintains quality standards ≥9.8/10 with continuous validation and complete guidance for advanced aesthetic-first development. Last updated: January 2025.

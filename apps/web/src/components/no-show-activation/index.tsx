@@ -40,9 +40,9 @@ export type { StaffAlertSystemProps } from "./StaffAlertSystem";
 
 // Component collection for easy imports
 export const NoShowActivationComponents = {
-  RiskScoreIndicator: require("./RiskScoreIndicator").default,
-  AppointmentRiskList: require("./AppointmentRiskList").default,
-  StaffAlertSystem: require("./StaffAlertSystem").default,
+  RiskScoreIndicator: (await import("./RiskScoreIndicator")).default,
+  AppointmentRiskList: (await import("./AppointmentRiskList")).default,
+  StaffAlertSystem: (await import("./StaffAlertSystem")).default,
 } as const;
 
 // Utility constants

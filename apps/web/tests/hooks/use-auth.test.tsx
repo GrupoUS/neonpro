@@ -91,7 +91,7 @@ describe("useAuth Hook - NeonPro Healthcare Authentication", () => {
       // This test validates that our mock is working and doesn't throw
       expect(() => {
         // Import and use ApiHelpers
-        const { ApiHelpers } = require("@neonpro/shared/api-client");
+        const { ApiHelpers } = await import("@neonpro/shared/api-client");
         const formattedError = ApiHelpers.formatError("test error");
         expect(formattedError).toBe("test error");
       }).not.toThrow();

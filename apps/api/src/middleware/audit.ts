@@ -265,7 +265,7 @@ class AuditStore {
 
 // Global audit store
 const auditStore = new AuditStore();
-const auditService = new AuditService();
+const auditService = new UnifiedAuditService();
 
 /**
  * Extract user context from request
