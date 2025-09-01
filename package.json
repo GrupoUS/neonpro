@@ -57,9 +57,7 @@
     "deps:update": "bun update",
     "deps:check": "bun outdated",
     "oxlint:fix": "source scripts/optimize-memory.sh && run_oxlint_optimized --fix",
-    "prepare": "husky",
-    "install": "bun install",
-    "postinstall": "bun run build"
+    "prepare": "husky"
   },
   "devDependencies": {
     "@oxlint/win32-x64": "^1.13.0",
