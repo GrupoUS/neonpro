@@ -1,7 +1,7 @@
 /**
  * ANVISA Automated Adverse Event Reporting System
  * Integration with VigiMed (official ANVISA platform) - RDC N° 967/2025 compliance
- * 
+ *
  * Features:
  * - Automatic adverse event detection from chat/AI interactions
  * - 72-hour reporting compliance deadline management
@@ -17,19 +17,19 @@ import { z } from "zod";
 export const AdverseEventSchema = z.object({
   id: z.string().uuid(),
   event_type: z.enum([
-    "medication_reaction",     // Reação adversa medicamentosa
+    "medication_reaction", // Reação adversa medicamentosa
     "medical_device_incident", // Incidente com produto para saúde
-    "aesthetic_complication",  // Complicação estética
+    "aesthetic_complication", // Complicação estética
     "procedure_adverse_event", // Evento adverso de procedimento
-    "product_quality_defect",  // Defeito de qualidade do produto
-    "therapeutic_inefficacy",  // Ineficácia terapêutica
+    "product_quality_defect", // Defeito de qualidade do produto
+    "therapeutic_inefficacy", // Ineficácia terapêutica
   ]),
   severity: z.enum([
-    "mild",        // Leve
-    "moderate",    // Moderado
-    "severe",      // Grave
+    "mild", // Leve
+    "moderate", // Moderado
+    "severe", // Grave
     "life_threatening", // Risco de vida
-    "fatal"        // Óbito
+    "fatal", // Óbito
   ]),
   patient_data: z.object({
     age_range: z.enum(["0-17", "18-65", "65+"]),
@@ -44,18 +44,18 @@ export const AdverseEventSchema = z.object({
     onset_date: z.date(),
     discovery_date: z.date(),
     outcome: z.enum([
-      "recovered_no_sequelae",    // Recuperou sem sequelas
-      "recovered_with_sequelae",  // Recuperou com sequelas
-      "not_recovered",            // Não recuperou
-      "fatal",                    // Óbito
-      "unknown"                   // Desconhecido
+      "recovered_no_sequelae", // Recuperou sem sequelas
+      "recovered_with_sequelae", // Recuperou com sequelas
+      "not_recovered", // Não recuperou
+      "fatal", // Óbito
+      "unknown", // Desconhecido
     ]),
     causality_assessment: z.enum([
-      "certain",     // Certo
-      "probable",    // Provável
-      "possible",    // Possível
-      "unlikely",    // Improvável
-      "unrelated"    // Não relacionado
+      "certain", // Certo
+      "probable", // Provável
+      "possible", // Possível
+      "unlikely", // Improvável
+      "unrelated", // Não relacionado
     ]),
     dechallenge: z.boolean().optional(), // Retirada do produto
     rechallenge: z.boolean().optional(), // Reintrodução do produto
@@ -91,7 +91,12 @@ export const AdverseEventSchema = z.object({
     acknowledgment_number: z.string().optional(),
   }).optional(),
   internal_tracking: z.object({
-    detected_by: z.enum(["ai_analysis", "healthcare_professional", "patient_report", "routine_monitoring"]),
+    detected_by: z.enum([
+      "ai_analysis",
+      "healthcare_professional",
+      "patient_report",
+      "routine_monitoring",
+    ]),
     detection_confidence: z.number().min(0).max(1),
     auto_classification: z.boolean(),
     requires_manual_review: z.boolean(),
@@ -135,7 +140,7 @@ export class ANVISAAdverseEventReporter {
 
   constructor(
     vigimedCredentials: VigiMedAPICredentials,
-    notificationSettings: ComplianceNotificationSettings
+    notificationSettings: ComplianceNotificationSettings,
   ) {
     this.vigimedCredentials = vigimedCredentials;
     this.notificationSettings = notificationSettings;
@@ -154,7 +159,7 @@ export class ANVISAAdverseEventReporter {
       procedure_type?: string;
       medications?: string[];
       healthcare_professional_id?: string;
-    }
+    },
   ): Promise<{
     detected: boolean;
     confidence: number;
@@ -163,20 +168,20 @@ export class ANVISAAdverseEventReporter {
   }> {
     try {
       const detectionResult = await this.analyzeContentForAdverseEvents(content, context);
-      
+
       if (detectionResult.detected && detectionResult.confidence > 0.7) {
         // Create preliminary adverse event records
         const events = await Promise.all(
-          detectionResult.potential_events.map(event => 
+          detectionResult.potential_events.map(event =>
             this.createPreliminaryEvent(event, source, detectionResult.confidence)
-          )
+          ),
         );
 
         // Check if immediate attention is required
-        const requiresImmediateAttention = events.some(event => 
-          event.severity === "severe" || 
-          event.severity === "life_threatening" || 
-          event.severity === "fatal"
+        const requiresImmediateAttention = events.some(event =>
+          event.severity === "severe"
+          || event.severity === "life_threatening"
+          || event.severity === "fatal"
         );
 
         if (requiresImmediateAttention) {
@@ -199,7 +204,7 @@ export class ANVISAAdverseEventReporter {
       };
     } catch (error) {
       console.error("Adverse event detection failed:", error);
-      
+
       // Fail-safe: treat as potential event requiring manual review
       return {
         detected: true,
@@ -216,7 +221,7 @@ export class ANVISAAdverseEventReporter {
             deadline_72h: new Date(Date.now() + 72 * 60 * 60 * 1000), // 72 hours from now
             escalation_triggered: false,
             compliance_officer_notified: false,
-          }
+          },
         } as Partial<AdverseEvent>],
         requires_immediate_attention: true, // Err on side of caution
       };
@@ -270,12 +275,12 @@ export class ANVISAAdverseEventReporter {
       } else {
         // Handle submission failure
         const retryAfter = new Date(Date.now() + 60 * 60 * 1000); // Retry in 1 hour
-        
+
         // Update internal tracking
         event.internal_tracking.escalation_triggered = true;
-        
+
         await this.notifyComplianceTeam(event, "submission_failed", response.error_message);
-        
+
         return {
           success: false,
           error_message: response.error_message,
@@ -284,10 +289,13 @@ export class ANVISAAdverseEventReporter {
       }
     } catch (error) {
       console.error("VigiMed submission failed:", error);
-      
+
       // Critical failure - escalate immediately
-      await this.triggerCriticalEscalation(event, error instanceof Error ? error.message : "Unknown error");
-      
+      await this.triggerCriticalEscalation(
+        event,
+        error instanceof Error ? error.message : "Unknown error",
+      );
+
       return {
         success: false,
         error_message: error instanceof Error ? error.message : "Unknown submission error",
@@ -306,7 +314,7 @@ export class ANVISAAdverseEventReporter {
   }> {
     const now = new Date();
     const approaching_threshold = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours
-    
+
     const approachingDeadlines: AdverseEvent[] = [];
     const overdueEvents: AdverseEvent[] = [];
     const escalationsRequired: AdverseEvent[] = [];
@@ -318,7 +326,7 @@ export class ANVISAAdverseEventReporter {
         // Overdue - critical escalation
         overdueEvents.push(event);
         escalationsRequired.push(event);
-        
+
         if (!event.internal_tracking.compliance_officer_notified) {
           await this.notifyComplianceTeam(event, "deadline_exceeded");
           event.internal_tracking.compliance_officer_notified = true;
@@ -326,7 +334,7 @@ export class ANVISAAdverseEventReporter {
       } else if (deadline < approaching_threshold) {
         // Approaching deadline - warning
         approachingDeadlines.push(event);
-        
+
         if (!event.internal_tracking.escalation_triggered) {
           await this.notifyComplianceTeam(event, "deadline_approaching");
           event.internal_tracking.escalation_triggered = true;
@@ -345,11 +353,11 @@ export class ANVISAAdverseEventReporter {
    * Generate automated compliance reports
    */
   async generateComplianceReport(
-    period: { start_date: Date; end_date: Date },
-    report_type: "monthly" | "quarterly" | "annual" | "custom"
+    period: { start_date: Date; end_date: Date; },
+    report_type: "monthly" | "quarterly" | "annual" | "custom",
   ): Promise<{
     report_id: string;
-    period: { start_date: Date; end_date: Date };
+    period: { start_date: Date; end_date: Date; };
     summary: {
       total_events: number;
       by_severity: Record<string, number>;
@@ -363,10 +371,10 @@ export class ANVISAAdverseEventReporter {
     next_review_date: Date;
   }> {
     const reportId = crypto.randomUUID();
-    
+
     // Collect events from the specified period
     const events = await this.getEventsForPeriod(period);
-    
+
     // Calculate compliance metrics
     const totalEvents = events.length;
     const submittedEvents = events.filter(e => e.vigimed_submission?.status === "submitted").length;
@@ -376,7 +384,9 @@ export class ANVISAAdverseEventReporter {
     }).length;
 
     const submissionRate = totalEvents > 0 ? (submittedEvents / totalEvents) * 100 : 100;
-    const complianceRate = totalEvents > 0 ? ((totalEvents - overdueEvents) / totalEvents) * 100 : 100;
+    const complianceRate = totalEvents > 0
+      ? ((totalEvents - overdueEvents) / totalEvents) * 100
+      : 100;
 
     // Aggregate by severity and type
     const bySeverity = events.reduce((acc, event) => {
@@ -428,7 +438,7 @@ export class ANVISAAdverseEventReporter {
 
   private async analyzeContentForAdverseEvents(
     content: string,
-    context: any
+    context: Record<string, unknown>,
   ): Promise<{
     detected: boolean;
     confidence: number;
@@ -440,7 +450,7 @@ export class ANVISAAdverseEventReporter {
       /reação.{0,20}(adversa|alérgica|medicamento)/gi,
       /efeito.{0,15}colateral/gi,
       /alergia.{0,15}(medicamento|produto)/gi,
-      
+
       // Aesthetic complications
       /complicação.{0,20}(estética|procedimento)/gi,
       /resultado.{0,15}(inesperado|indesejado)/gi,
@@ -448,7 +458,7 @@ export class ANVISAAdverseEventReporter {
       /necrose.{0,10}tecidual/gi,
       /granuloma/gi,
       /assimetria.{0,15}facial/gi,
-      
+
       // Severe indicators
       /hospitalização|internação/gi,
       /risco.{0,10}vida/gi,
@@ -459,7 +469,11 @@ export class ANVISAAdverseEventReporter {
     const severityIndicators = {
       fatal: [/óbito|morte|fatal/gi, /parada.{0,10}(cardíaca|respiratória)/gi],
       life_threatening: [/risco.{0,10}vida/gi, /emergência|urgência/gi, /uti|uti/gi],
-      severe: [/hospitalização|internação/gi, /sequela.{0,15}permanente/gi, /cirurgia.{0,10}correção/gi],
+      severe: [
+        /hospitalização|internação/gi,
+        /sequela.{0,15}permanente/gi,
+        /cirurgia.{0,10}correção/gi,
+      ],
       moderate: [/tratamento.{0,10}médico/gi, /afastamento.{0,10}trabalho/gi],
       mild: [/desconforto.{0,10}leve/gi, /sintoma.{0,10}temporário/gi],
     };
@@ -503,7 +517,8 @@ export class ANVISAAdverseEventReporter {
             auto_classification: confidence > 0.8,
             requires_manual_review: confidence < 0.8,
             deadline_72h: new Date(Date.now() + 72 * 60 * 60 * 1000),
-            escalation_triggered: severity === "severe" || severity === "life_threatening" || severity === "fatal",
+            escalation_triggered: severity === "severe" || severity === "life_threatening"
+              || severity === "fatal",
             compliance_officer_notified: false,
           },
         });
@@ -517,7 +532,10 @@ export class ANVISAAdverseEventReporter {
     };
   }
 
-  private classifyEventType(content: string, context: any): AdverseEvent["event_type"] {
+  private classifyEventType(
+    content: string,
+    context: Record<string, unknown>,
+  ): AdverseEvent["event_type"] {
     const typePatterns = {
       medication_reaction: [/medicamento|remédio|droga|fármaco/gi],
       medical_device_incident: [/equipamento|dispositivo|aparelho/gi],
@@ -544,7 +562,7 @@ export class ANVISAAdverseEventReporter {
   private async createPreliminaryEvent(
     event: Partial<AdverseEvent>,
     source: string,
-    confidence: number
+    confidence: number,
   ): Promise<Partial<AdverseEvent>> {
     const completeEvent = {
       ...event,
@@ -564,7 +582,7 @@ export class ANVISAAdverseEventReporter {
   }
 
   private async triggerImmediateEscalation(events: Partial<AdverseEvent>[]): Promise<void> {
-    const criticalEvents = events.filter(e => 
+    const criticalEvents = events.filter(e =>
       e.severity === "severe" || e.severity === "life_threatening" || e.severity === "fatal"
     );
 
@@ -573,7 +591,7 @@ export class ANVISAAdverseEventReporter {
     }
   }
 
-  private validateEventForSubmission(event: AdverseEvent): { valid: boolean; errors: string[] } {
+  private validateEventForSubmission(event: AdverseEvent): { valid: boolean; errors: string[]; } {
     const errors: string[] = [];
 
     try {
@@ -599,7 +617,7 @@ export class ANVISAAdverseEventReporter {
     };
   }
 
-  private formatForVigiMed(event: AdverseEvent): any {
+  private formatForVigiMed(event: AdverseEvent): Record<string, unknown> {
     // Format according to VigiMed API specifications
     return {
       // Map internal structure to VigiMed format
@@ -616,7 +634,7 @@ export class ANVISAAdverseEventReporter {
     };
   }
 
-  private async callVigiMedAPI(payload: any): Promise<{
+  private async callVigiMedAPI(payload: Record<string, unknown>): Promise<{
     success: boolean;
     submission_id?: string;
     acknowledgment_number?: string;
@@ -627,7 +645,7 @@ export class ANVISAAdverseEventReporter {
     // 2. HTTPS POST to VigiMed endpoint
     // 3. Error handling and retries
     // 4. Response validation
-    
+
     // Placeholder implementation
     return {
       success: true,
@@ -648,7 +666,11 @@ export class ANVISAAdverseEventReporter {
     // Implementation for audit trail
   }
 
-  private async notifyComplianceTeam(event: AdverseEvent, type: string, message?: string): Promise<void> {
+  private async notifyComplianceTeam(
+    event: AdverseEvent,
+    type: string,
+    message?: string,
+  ): Promise<void> {
     // Implementation for notifications
   }
 
@@ -656,12 +678,17 @@ export class ANVISAAdverseEventReporter {
     // Implementation for critical escalations
   }
 
-  private async getEventsForPeriod(period: { start_date: Date; end_date: Date }): Promise<AdverseEvent[]> {
+  private async getEventsForPeriod(
+    period: { start_date: Date; end_date: Date; },
+  ): Promise<AdverseEvent[]> {
     // Implementation to fetch events from database
     return [];
   }
 
-  private generateRecommendations(events: AdverseEvent[], metrics: any): string[] {
+  private generateRecommendations(
+    events: AdverseEvent[],
+    metrics: Record<string, unknown>,
+  ): string[] {
     // Implementation to generate recommendations
     return [];
   }
@@ -676,11 +703,11 @@ export class ANVISAAdverseEventReporter {
     return new Date();
   }
 
-  private async storeComplianceReport(report: any): Promise<void> {
+  private async storeComplianceReport(report: Record<string, unknown>): Promise<void> {
     // Implementation to store report
   }
 
-  private async notifyStakeholders(report: any): Promise<void> {
+  private async notifyStakeholders(report: Record<string, unknown>): Promise<void> {
     // Implementation to notify stakeholders
   }
 }

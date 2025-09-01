@@ -307,7 +307,10 @@ export function AccessibilityIntegrationExample() {
   useEffect(() => {
     const interval = setInterval(() => {
       setScenarioProgress(prev => {
-        if (prev >= 100) {return 25} // Reset to beginning
+        if (prev >= 100) {
+          clearInterval(interval) // Stop cycling when complete
+          return 100
+        }
         return prev + 5
       })
     }, 2000)
@@ -486,13 +489,15 @@ export function AccessibilityIntegrationExample() {
                 }
 
                 const feature = featureNames[key]
-                if (!feature) {return null}
+                if (!feature) {
+                  console.warn(`Missing feature configuration for key: ${key}`)
+                }
 
                 return (
                   <div key={key} className={`p-3 border rounded-lg ${enabled ? 'bg-green-50 border-green-200' : 'bg-gray-50'}`}>
                     <div className="flex items-center gap-2 mb-1">
-                      {feature.icon}
-                      <span className="text-sm font-medium">{feature.name}</span>
+                      {feature?.icon || <Zap className="h-4 w-4" />}
+                      <span className="text-sm font-medium">{feature?.name || 'Unknown feature'}</span>
                     </div>
                     <Badge variant={enabled ? "default" : "secondary"} className="text-xs">
                       {enabled ? 'Ativo' : 'Inativo'}

@@ -116,7 +116,7 @@ class AIDBTestDataFactory {
 
 // Feature Flags Database Tests
 describe("aI Feature Flags Database", () => {
-  let supabaseClient: any;
+  let supabaseClient: unknown;
   let testFlagIds: string[] = [];
   let useMockMode = false;
 
@@ -239,7 +239,7 @@ describe("aI Feature Flags Database", () => {
 
 // Cache Management Database Tests
 describe("aI Cache Management Database", () => {
-  let supabaseClient: any;
+  let supabaseClient: unknown;
   let testCacheIds: string[] = [];
   let useMockMode = false;
 
@@ -357,7 +357,7 @@ describe("aI Cache Management Database", () => {
 
 // Audit Logging Database Tests
 describe("aI Audit Logging Database", () => {
-  let supabaseClient: any;
+  let supabaseClient: unknown;
   let testAuditIds: string[] = [];
   let useMockMode = false;
 
@@ -494,7 +494,7 @@ describe("aI Audit Logging Database", () => {
 
 // Monitoring and Metrics Database Tests
 describe("aI Monitoring Database", () => {
-  let supabaseClient: any;
+  let supabaseClient: unknown;
   let testMetricIds: string[] = [];
   let useMockMode = false;
 
@@ -638,7 +638,7 @@ describe("aI Monitoring Database", () => {
 
 // Chat Sessions and Messages Database Tests
 describe("aI Chat Database", () => {
-  let supabaseClient: any;
+  let supabaseClient: unknown;
   let testSessionIds: string[] = [];
   let testMessageIds: string[] = [];
   let useMockMode = false;
@@ -834,7 +834,7 @@ describe("aI Chat Database", () => {
 
 // Database Performance and Load Testing
 describe("aI Database Performance", () => {
-  let supabaseClient: any;
+  let supabaseClient: unknown;
   let useMockMode = false;
 
   beforeAll(async () => {

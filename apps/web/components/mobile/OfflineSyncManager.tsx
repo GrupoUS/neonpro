@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -67,6 +67,9 @@ const useOfflineSyncManager = () => {
 
   const [patientCache, setPatientCache] = useState<PatientCacheEntry[]>([])
   const [actionQueue, setActionQueue] = useState<SyncAction[]>([])
+
+  // Processing lock to prevent concurrent sync operations
+  const processingLock = useRef(false)
 
   // Network status detection
   useEffect(() => {
@@ -153,10 +156,17 @@ const useOfflineSyncManager = () => {
 
   // Process sync queue
   const processSyncQueue = useCallback(async () => {
+    // Check processing lock first
+    if (processingLock.current) {
+      return
+    }
+
     if (syncStats.networkStatus !== 'online' || actionQueue.length === 0) {
       return
     }
 
+    // Set processing lock
+    processingLock.current = true
     setSyncStats(prev => ({ ...prev, syncInProgress: true }))
 
     try {
@@ -199,6 +209,8 @@ const useOfflineSyncManager = () => {
     } catch (error) {
       console.error('Sync failed:', error)
     } finally {
+      // Clear processing lock and sync status
+      processingLock.current = false
       setSyncStats(prev => ({ ...prev, syncInProgress: false }))
     }
   }, [syncStats.networkStatus, actionQueue])

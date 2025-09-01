@@ -10,6 +10,30 @@ import type { AdverseEvent } from "./anvisa/automated-adverse-event-reporting";
 import { CFMProfessionalValidator } from "./cfm/professional-validation";
 import type { CFMProfessional } from "./cfm/professional-validation";
 
+// Type interfaces for executive summary generation
+export interface AnvisaReportSummary {
+  summary: {
+    total_events: number;
+    compliance_rate: number;
+  };
+  action_items: string[];
+}
+
+export interface CFMSummaryData {
+  professionals_validated: number;
+  compliance_rate: number;
+}
+
+export interface IntegrationMetrics {
+  cross_referenced_events: number;
+  compliance_violations_detected: number;
+}
+
+export interface ComplianceReport {
+  report_id: string;
+  [key: string]: unknown;
+}
+
 export interface ComplianceConfiguration {
   anvisa: {
     vigimed_credentials: {
@@ -283,13 +307,13 @@ export class AdvancedComplianceIntegration {
       }
 
       if (anvisaStatus.approaching_deadlines.length > 5) {
-        if (healthStatus !== "critical") healthStatus = "warning";
+        if (healthStatus !== "critical") {healthStatus = "warning";}
         issues.push(`${anvisaStatus.approaching_deadlines.length} ANVISA deadlines approaching`);
         recommendations.push("Prioritize ANVISA report submissions");
       }
 
       if (cfmMetrics.validation_rate < 90) {
-        if (healthStatus !== "critical") healthStatus = "warning";
+        if (healthStatus !== "critical") {healthStatus = "warning";}
         issues.push(`CFM validation rate below target: ${cfmMetrics.validation_rate}%`);
         recommendations.push("Review professional validation processes");
       }
@@ -363,19 +387,15 @@ export class AdvancedComplianceIntegration {
     );
 
     // Generate CFM validation summary (would be implemented)
-    const cfmSummary = {
+    const cfmSummary: CFMSummaryData = {
       professionals_validated: 25,
-      new_validations: 8,
-      expired_certifications: 2,
       compliance_rate: 92,
     };
 
     // Integration metrics
-    const integrationMetrics = {
+    const integrationMetrics: IntegrationMetrics = {
       cross_referenced_events: 12,
-      automated_professional_validations: 15,
       compliance_violations_detected: 2,
-      resolved_compliance_issues: 8,
     };
 
     // Executive summary
@@ -455,7 +475,7 @@ export class AdvancedComplianceIntegration {
     event: Partial<AdverseEvent>,
     professional?: CFMProfessional,
   ): void {
-    if (!professional) return;
+    if (!professional) {return;}
 
     // Add professional data to adverse event
     if (event.reporter_data) {
@@ -471,9 +491,9 @@ export class AdvancedComplianceIntegration {
   }
 
   private generateExecutiveSummary(
-    anvisaReport: Record<string, unknown>,
-    cfmSummary: Record<string, unknown>,
-    integrationMetrics: Record<string, unknown>,
+    anvisaReport: AnvisaReportSummary,
+    cfmSummary: CFMSummaryData,
+    integrationMetrics: IntegrationMetrics,
   ): string {
     return `
 Monthly compliance summary: ${anvisaReport.summary.total_events} adverse events reported with ${anvisaReport.summary.compliance_rate}% compliance rate.
@@ -483,12 +503,12 @@ Overall system performance: Stable with recommended improvements in automated de
     `.trim();
   }
 
-  private async storeComplianceReport(report: Record<string, unknown>): Promise<void> {
+  private async storeComplianceReport(report: ComplianceReport): Promise<void> {
     // Implementation would store in database
     console.log("Compliance report stored:", report.report_id);
   }
 
-  private async distributeComplianceReport(report: Record<string, unknown>): Promise<void> {
+  private async distributeComplianceReport(report: ComplianceReport): Promise<void> {
     // Implementation would email/notify stakeholders
     console.log("Compliance report distributed:", report.report_id);
   }

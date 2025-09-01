@@ -23,6 +23,21 @@ import {
 } from 'lucide-react';
 
 // ================================================================================
+// GLOBAL TYPE DECLARATIONS
+// ================================================================================
+
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+    AudioContext: typeof AudioContext;
+    webkitAudioContext: typeof AudioContext;
+  }
+}
+
+ // Keep this file as a module
+
+// ================================================================================
 // TYPES & INTERFACES
 // ================================================================================
 
@@ -550,7 +565,7 @@ export function VoiceMedicalProvider({ children }: { children: React.ReactNode }
     if (!synthesis.current || !settings.voice_feedback) {return;}
 
     // Stop current speech if higher priority
-    if (currentUtterance.current && (priority === 'emergency' || (priority === 'high' && currentUtterance.current.text !== text))) {
+    if (synthesis.current && currentUtterance.current && (priority === 'emergency' || (priority === 'high' && currentUtterance.current.text !== text))) {
       synthesis.current.cancel();
     }
 
@@ -573,7 +588,9 @@ export function VoiceMedicalProvider({ children }: { children: React.ReactNode }
     };
 
     currentUtterance.current = utterance;
-    synthesis.current.speak(utterance);
+    if (synthesis.current) {
+      synthesis.current.speak(utterance);
+    }
   }, [settings]);
 
   // ================================================================================

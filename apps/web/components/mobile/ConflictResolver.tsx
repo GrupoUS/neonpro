@@ -275,6 +275,7 @@ export default function ConflictResolver({
 }: ConflictResolverProps) {
   const [selectedConflict, setSelectedConflict] = useState<ConflictData | null>(null);
   const [manualResolutionData, setManualResolutionData] = useState<any>(null);
+  const [resolutionError, setResolutionError] = useState<string | null>(null);
 
   // Use internal conflict detection or external conflicts
   const { 
@@ -346,7 +347,7 @@ export default function ConflictResolver({
         break;
       case 'merge':
         if (!manualResolutionData) {
-          alert('Please provide merged data for resolution');
+          setResolutionError('Please provide merged data for resolution');
           return;
         }
         resolution = {
@@ -532,6 +533,24 @@ export default function ConflictResolver({
       </CardHeader>
 
       <CardContent className="space-y-4">
+        {/* Resolution error alert */}
+        {resolutionError && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {resolutionError}
+            </AlertDescription>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setResolutionError(null)}
+              className="ml-auto"
+            >
+              ×
+            </Button>
+          </Alert>
+        )}
+
         {/* Critical conflicts alert */}
         {conflictGroups.critical.length > 0 && (
           <Alert variant="destructive">

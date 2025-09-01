@@ -18,15 +18,15 @@ const mockCpfValidator: {
 };
 
 // Simplified and Working Supabase Client Mock
-const createSupabaseMockResponse = (data: any, error: any = null) => {
+const createSupabaseMockResponse = (data: unknown, error: unknown = null) => {
   return Promise.resolve({ data, error });
 };
 
 // Track inserted data to simulate database state
-const insertedRecords = new Map<string, any[]>();
+const insertedRecords = new Map<string, Record<string, unknown>[]>();
 
 // Helper functions to control mock behavior
-const setMockError = (error: any) => {
+const setMockError = (error: unknown) => {
   // Not used in simplified version
 };
 
@@ -39,7 +39,7 @@ const resetMockData = () => {
 };
 
 const createMockQueryBuilder = () => {
-  let insertedData: any = null;
+  let insertedData: Record<string, unknown>[] | null = null;
   let hasSelectAfterInsert = false;
   let shouldError = false;
 
@@ -60,7 +60,7 @@ const createMockQueryBuilder = () => {
       insertedData = Array.isArray(data) ? data : [data];
 
       // Add IDs to inserted data if missing and add timestamps
-      insertedData = insertedData.map((item: any) => ({
+      insertedData = insertedData.map((item: Record<string, unknown>) => ({
         ...item,
         id: item.id || `test-id-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
         created_at: item.created_at || new Date().toISOString(),
@@ -71,8 +71,8 @@ const createMockQueryBuilder = () => {
       // Check for duplicate key scenario by checking existing records
       const tableName = (mockBuilder as any).currentTable || "default";
       const existingRecords = insertedRecords.get(tableName) || [];
-      const hasDuplicate = insertedData.some((newItem: any) =>
-        existingRecords.some((existing: any) =>
+      const hasDuplicate = insertedData.some((newItem: Record<string, unknown>) =>
+        existingRecords.some((existing: Record<string, unknown>) =>
           existing.name && newItem.name && existing.name === newItem.name
         )
       );
@@ -136,7 +136,10 @@ const createMockQueryBuilder = () => {
   };
 
   // Add promise-like behavior for direct awaiting
-  (mockBuilder as any).then = function(onResolve: any, onReject?: any) {
+  (mockBuilder as Record<string, unknown>).then = function(
+    onResolve: (value: unknown) => unknown,
+    onReject?: (reason: unknown) => unknown,
+  ) {
     if (shouldError) {
       const result = {
         data: null,

@@ -1,19 +1,197 @@
+# =============================================================================
+# NEONPRO HEALTHCARE - COMPREHENSIVE SECURITY .GITIGNORE
+# =============================================================================
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# =============================================================================
+# 🔒 CRITICAL SECURITY - ENVIRONMENT & SECRETS
+# =============================================================================
+
+# All environment files (including templates with sensitive structure)
+.env*
+!.env.example
+*.env
+*.env.*
+**/environments/*.env
+**/config/*.env
+**/deployment/**/*.env
+
+# MCP and Claude configurations (may contain API keys)
+mcp.json
+**/mcp.json
+.mcp.json
+**/.mcp.json
+
+# Secrets and credentials
+*.secrets.*
+*secrets*
+*.credentials.*
+*credentials*
+*credential*
+*.private.*
+*private*
+
+# API Keys and Tokens
+*api-keys*
+*api_keys*
+*access-tokens*
+*access_tokens*
+*auth-token*
+*auth_token*
+*bearer-token*
+*bearer_token*
+
+# Service-specific secret patterns
+*sentry.dsn*
+*openai.key*
+*anthropic.key*
+*supabase.key*
+*stripe.secret*
+*twilio.token*
+*sendgrid.key*
+
+# =============================================================================
+# 🏥 HEALTHCARE & COMPLIANCE SECRETS
+# =============================================================================
+
+# Brazilian Healthcare Regulations
+*anvisa*secret*
+*cfm*credential*
+*ans*token*
+*lgpd*key*
+
+# Medical Data Protection
+*phi*key*
+*pii*credential*
+*patient*secret*
+*medical*key*
+
+# Healthcare Service Integrations
+*telemedicine*token*
+*healthcare*api*key*
+*medical*record*key*
+
+# =============================================================================
+# 🔐 CERTIFICATES & ENCRYPTION
+# =============================================================================
+
+# SSL/TLS Certificates
+*.pem
+*.key
+*.crt
+*.cert
+*.csr
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.truststore
+
+# SSH Keys
+id_rsa*
+id_ecdsa*
+id_ed25519*
+*.ssh
+**/ssh/*
+**/.ssh/*
+
+# GPG Keys
+*.gpg
+*.asc
+**/gnupg/*
+**/.gnupg/*
+
+# =============================================================================
+# 🏗️ DEPLOYMENT & INFRASTRUCTURE
+# =============================================================================
+
+# Deployment Configurations
+*DEPLOYMENT*GUIDE*
+*deployment*guide*
+*DEPLOYMENT*STATUS*
+*deployment*status*
+**/deployment/**/*.secret*
+**/deployment/**/*.credential*
+**/deployment/**/*.key*
+
+# Infrastructure as Code with secrets
+terraform.tfvars
+*.tfvars
+terraform.tfstate*
+*.tfstate*
+**/terraform/**/*.tfvars
+
+# Kubernetes secrets
+**/k8s/**/*secret*
+**/kubernetes/**/*secret*
+*.kubeconfig
+*kubeconfig*
+
+# Docker secrets
+**/docker/**/*.secret*
+docker-compose.override.yml
+**/docker-compose.override.yml
+
+# =============================================================================
+# 📊 MONITORING & ANALYTICS CONFIGS
+# =============================================================================
+
+# Sentry configurations (contain DSNs)
+sentry.server.config.ts
+sentry.edge.config.ts
+sentry.client.config.ts
+**/*sentry*config*.ts
+**/*sentry*config*.js
+
+# DataDog, New Relic, etc.
+*datadog*config*
+*newrelic*config*
+*posthog*config*
+
+# =============================================================================
+# 🗄️ DATABASE & STORAGE
+# =============================================================================
+
+# Database files
+*.db
+*.sqlite*
+*.dump
+*.sql
+**/backup/**
+**/backups/**
+**/dumps/**
+
+# Database connection strings
+*database*url*
+*db*connection*
+
+# =============================================================================
+# 📦 DEPENDENCIES & PACKAGE MANAGEMENT
+# =============================================================================
 
 # dependencies
 node_modules/
 **/node_modules/
 /node_modules
 **/node-compile-cache/**
-**/.turbo/**
 
-# next.js
+# Lock files (exact versions, can expose vulnerabilities)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lockb
+
+# =============================================================================
+# 🚀 BUILD & COMPILATION
+# =============================================================================
+
+# Next.js
 .next/
 **/.next/
 /out/
 **/out/
 
-# production
+# Production builds
 /build
 build/
 **/build/
@@ -21,10 +199,64 @@ dist/
 **/dist/
 out/
 **/out/
+
+# Turbo
 .turbo/**
 **/.turbo/**
 
-# temporary upload files (Google Drive sync)
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# =============================================================================
+# 🧪 TESTING & DEVELOPMENT
+# =============================================================================
+
+# Test results and coverage
+/test-results/
+/blob-report/
+/playwright-report/
+/playwright/.cache/
+/coverage/
+**/coverage/
+
+# IDE and tooling
+.vscode/settings.json
+.idea/
+**/.idea/
+*.swp
+*.swo
+
+# Development tools that may contain secrets
+archon/
+/archon/
+*archon/*
+*serena/*
+*.serena
+*.serena/*
+
+# =============================================================================
+# 📝 LOGS & TEMPORARY FILES
+# =============================================================================
+
+# Logs
+*.log
+**/logs/**
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+**/*.log
+
+# Temporary files
+*.tmp
+**/*.tmp
+.tmp/
+**/.tmp/
+*.temp
+**/*.temp
+
+# Temporary upload files (Google Drive sync)
 .tmp.driveupload/
 **/.tmp.driveupload/
 tmp.driveupload/
@@ -34,68 +266,125 @@ tmp.driveupload/
 tmp.drivedownload/
 **/tmp.drivedownload/
 
-# IDE and tooling
-archon/
-/archon/
-*archon/*
-*serena/*
-*.serena
-*.serena/*
+# Cache directories
+.cache/
+**/.cache/
+*.cache
 
+# =============================================================================
+# 💾 BACKUP & ARCHIVE FILES
+# =============================================================================
 
-# logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-**/*.log
-
-# env files
-.env*
-mcp.json
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# Playwright
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-
-# Security: Deployment files with secrets
-*DEPLOYMENT*GUIDE*
-*deployment*guide*
-*DEPLOYMENT*STATUS*
-*deployment*status*
-*.secrets.*
-*secrets*
-*.credentials.*
-*credentials*
-
-# Security: Prevent any files with common API key patterns
-*api-keys*
-*api_keys*
-*access-tokens*
-*access_tokens*
-# Sentry Config File
-.env.sentry-build-plugin
-
-# Backup Files Prevention
+# Backup files
 *.backup
+*.bak
 *.nuclear_backup
 *.corrupted
 *.removed
 *.old
 *.orig
 *~
-*.tmp
+*.swp
+*.swo
 
+# Archive files that might contain sensitive data
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tar.bz2
+**/archive/**
+**/archives/**
+
+# =============================================================================
+# 🔧 CONFIGURATION FILES
+# =============================================================================
+
+# Local configuration overrides
+*local.config*
+*local.json
+*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# User-specific configurations
+.user.ini
+*user.config*
+*personal.config*
+
+# =============================================================================
+# 🌐 CLOUD & CDN
+# =============================================================================
+
+# Vercel
+.vercel
+**/.vercel/
+.vercel.json
+
+# Netlify
+.netlify/
+**/.netlify/
+
+# AWS
+.aws/
+**/.aws/
+*aws*credentials*
+*aws*config*
+
+# =============================================================================
+# 🛠️ DEVELOPMENT TOOLS SPECIFIC
+# =============================================================================
+
+# Ruler Generated Files (may contain configs)
+*.bak
+.claude/agents/apex-dev.md.bak
+
+# Trae configurations
+.trae/
+**/.trae/
+
+# Dprint cache
+.dprint/
+**/.dprint/
+
+# =============================================================================
+# 📱 MOBILE & CROSS-PLATFORM
+# =============================================================================
+
+# React Native
+.expo/
+.expo-shared/
+**/.expo/
+
+# iOS
+ios/Pods/
+**/ios/Pods/
+ios/*.xcworkspace/xcuserdata/
+**/ios/*.xcworkspace/xcuserdata/
+
+# Android
+android/app/release/
+**/android/app/release/
+android/keystore.properties
+**/android/keystore.properties
+
+# =============================================================================
+# 🎯 PROJECT SPECIFIC
+# =============================================================================
 
 # START Ruler Generated Files
-*.bak
 .claude/agents/apex-dev.md
-.claude/agents/apex-dev.md.bak
 # END Ruler Generated Files
-.vercel
+
+# Healthcare specific temporary files
+*patient*temp*
+*medical*temp*
+*compliance*temp*
+
+# AI model artifacts (may contain training data)
+*.model
+*.weights
+**/models/**/*.bin
+**/models/**/*.safetensors

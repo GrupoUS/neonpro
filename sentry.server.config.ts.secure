@@ -1,0 +1,42 @@
+// This file configures the initialization of Sentry on the server.
+// The config you add here will be used whenever the server handles a request.
+// https://docs.sentry.io/platforms/javascript/guides/nextjs/
+
+import * as Sentry from "@sentry/nextjs";
+
+Sentry.init({
+  // 🔒 SECURITY: Use environment variable instead of hardcoding DSN
+  dsn: process.env.SENTRY_DSN,
+
+  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+  tracesSampleRate: parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || "0.1"),
+  
+  sendDefaultPii: process.env.SENTRY_SEND_DEFAULT_PII === "true",
+  
+  // Enable logs to be sent to Sentry
+  enableLogs: process.env.SENTRY_ENABLE_LOGS === "true",
+
+  // Setting this option to true will print useful information to the console while you're setting up Sentry.
+  debug: process.env.NODE_ENV === "development",
+
+  // Environment name
+  environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || "development",
+
+  integrations: [
+    // Add the Vercel AI SDK integration to config.server.(js/ts)
+    Sentry.vercelAIIntegration({
+      recordInputs: process.env.SENTRY_RECORD_AI_INPUTS === "true",
+      recordOutputs: process.env.SENTRY_RECORD_AI_OUTPUTS === "true",
+    }),
+  ],
+});
+
+// 🛡️ Security Note: 
+// Add these environment variables to your deployment environment:
+// SENTRY_DSN=https://your-dsn@sentry.io/project-id
+// SENTRY_ENVIRONMENT=production
+// SENTRY_TRACES_SAMPLE_RATE=0.1
+// SENTRY_SEND_DEFAULT_PII=false  
+// SENTRY_ENABLE_LOGS=true
+// SENTRY_RECORD_AI_INPUTS=false (for privacy)
+// SENTRY_RECORD_AI_OUTPUTS=false (for privacy)

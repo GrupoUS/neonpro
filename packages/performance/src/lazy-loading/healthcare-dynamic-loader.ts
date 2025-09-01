@@ -11,7 +11,7 @@ import React, { lazy } from 'react';
 export enum HealthcarePriority {
   EMERGENCY = 'emergency',     // <200ms - Critical medical situations
   URGENT = 'urgent',          // <500ms - Patient care
-  STANDARD = 'standard',      // <1s - General healthcare operations  
+  STANDARD = 'standard',      // <1s - General healthcare operations
   ADMINISTRATIVE = 'admin',   // <2s - Non-critical admin functions
 }
 
@@ -47,7 +47,7 @@ export class HealthcareDynamicLoader {
         import('@react-pdf/renderer'),
         import('jspdf')
       ]);
-      
+
       return {
         default: {
           PDFDocument: pdfRenderer.Document,
@@ -62,11 +62,11 @@ export class HealthcareDynamicLoader {
       console.error('PDF libraries failed to load:', error);
       return {
         default: {
-          PDFDocument: ({ children }: any) => React.createElement('div', { className: 'pdf-unavailable' }, 'PDF functionality unavailable'),
-          PDFPage: ({ children }: any) => React.createElement('div', { className: 'pdf-page' }, children),
-          PDFView: ({ children }: any) => React.createElement('div', { className: 'pdf-view' }, children),
-          PDFText: ({ children }: any) => React.createElement('span', { className: 'pdf-text' }, children),
-          PDFDownloadLink: ({ children }: any) => React.createElement('button', { disabled: true, className: 'pdf-download-disabled' }, 'PDF Download unavailable'),
+          PDFDocument: ({ children }: { children?: React.ReactNode }) => React.createElement('div', { className: 'pdf-unavailable' }, 'PDF functionality unavailable'),
+          PDFPage: ({ children }: { children?: React.ReactNode }) => React.createElement('div', { className: 'pdf-page' }, children),
+          PDFView: ({ children }: { children?: React.ReactNode }) => React.createElement('div', { className: 'pdf-view' }, children),
+          PDFText: ({ children }: { children?: React.ReactNode }) => React.createElement('span', { className: 'pdf-text' }, children),
+          PDFDownloadLink: ({ children }: { children?: React.ReactNode }) => React.createElement('button', { disabled: true, className: 'pdf-download-disabled' }, 'PDF Download unavailable'),
           jsPDF: undefined,
         }
       };
@@ -79,7 +79,7 @@ export class HealthcareDynamicLoader {
   static loadChartsLibrary() {
     return lazy(async () => {
     const recharts = await import('recharts');
-    
+
     return {
       default: {
         LineChart: recharts.LineChart,
@@ -102,7 +102,7 @@ export class HealthcareDynamicLoader {
   static loadAnimationLibrary() {
     return lazy(async () => {
     const framerMotion = await import('framer-motion');
-    
+
     return {
       default: {
         motion: framerMotion.motion,
@@ -120,7 +120,7 @@ export class HealthcareDynamicLoader {
   static loadScreenshotLibrary() {
     return lazy(async () => {
     const html2canvas = await import('html2canvas');
-    
+
     return {
       default: html2canvas.default
     };
@@ -171,7 +171,7 @@ export class HealthcareDynamicLoader {
         HealthcareDynamicLoader.preloadScreenshotLibrary()
       );
     }
-    
+
     // Patient dashboard - preload charts and animations
     else if (route.includes('/dashboard') || route.includes('/patient')) {
       preloadPromises.push(
@@ -179,7 +179,7 @@ export class HealthcareDynamicLoader {
         HealthcareDynamicLoader.preloadAnimationLibrary()
       );
     }
-    
+
     // Administrative routes - lazy load everything
     else if (route.includes('/admin') || route.includes('/reports')) {
       // Defer loading until user interaction
@@ -204,7 +204,7 @@ export class HealthcareDynamicLoader {
     config: LoaderConfig
   ): LazyExoticComponent<T> => {
     const componentKey = importFn.toString();
-    
+
     // Emergency components get immediate priority
     if (config.priority === HealthcarePriority.EMERGENCY) {
       if (!this.preloadedComponents.has(componentKey)) {
@@ -214,14 +214,14 @@ export class HealthcareDynamicLoader {
 
     return lazy(async () => {
       const startTime = performance.now();
-      
+
       try {
         // Use preloaded component if available
         const preloaded = this.preloadedComponents.get(componentKey);
         const result = preloaded ? await preloaded : await importFn();
-        
+
         const loadTime = performance.now() - startTime;
-        
+
         // Performance monitoring for healthcare compliance
         if (config.priority === HealthcarePriority.EMERGENCY && loadTime > 200) {
           console.warn(`Emergency component loaded slowly: ${loadTime}ms`);
@@ -241,7 +241,7 @@ export class HealthcareDynamicLoader {
   static preloadEmergencyComponents = (): void => {
     const executePreload = () => {
       // Preload PDF generation for emergency medical reports
-      this.preloadedComponents.set('pdf', 
+      this.preloadedComponents.set('pdf',
         Promise.all([
           import('@react-pdf/renderer'),
           import('jspdf')
@@ -250,12 +250,12 @@ export class HealthcareDynamicLoader {
           jsPdf: jsPdf.default || jsPdf
         }))
       );
-      
+
       // Preload screenshot capability for medical documentation
-      this.preloadedComponents.set('screenshot', 
+      this.preloadedComponents.set('screenshot',
         import('html2canvas').then(module => module.default || module)
       );
-      
+
       // Preload TensorFlow.js for medical AI features
       this.preloadedComponents.set('tensorflow',
         import('@neonpro/ai/ml').then(
@@ -281,7 +281,7 @@ export class HealthcareDynamicLoader {
   static warmUpHealthcareLibraries = async (): Promise<void> => {
     const criticalLibraries = [
       'date-fns/format',
-      'date-fns/parseISO', 
+      'date-fns/parseISO',
       'zod',
       '@supabase/supabase-js',
     ];

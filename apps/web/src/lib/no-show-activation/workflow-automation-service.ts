@@ -41,14 +41,14 @@ export interface WorkflowTrigger {
     timeBeforeAppointment?: number;
     schedulePattern?: string;
     behaviorPattern?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
 export interface WorkflowCondition {
   field: string;
   operator: "equals" | "greater_than" | "less_than" | "contains" | "not_equals";
-  value: any;
+  value: unknown;
   logicalOperator?: "AND" | "OR";
 }
 
@@ -66,7 +66,7 @@ export interface WorkflowAction {
     interventionType?: "sms" | "email" | "phone_call";
     delayMinutes?: number;
     template?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -89,14 +89,14 @@ export interface WorkflowStep {
   status: "pending" | "running" | "completed" | "failed" | "skipped";
   startedAt?: string;
   completedAt?: string;
-  result?: any;
+  result?: Record<string, unknown>;
   error?: string;
 }
 
 export interface WorkflowResult {
   stepId: string;
   success: boolean;
-  data?: any;
+  data?: Record<string, unknown>;
   message?: string;
   timestamp: string;
 }
@@ -514,7 +514,7 @@ class WorkflowAutomationService {
   }
 
   private findTargetStaff(
-    config: any,
+    config: Record<string, unknown>,
     staffMembers: StaffMember[],
   ): StaffMember[] {
     if (config.staffMember) {
@@ -570,7 +570,7 @@ class WorkflowAutomationService {
   private generateAlertActions(
     alertType: string,
     appointmentId: string,
-  ): any[] {
+  ): Record<string, unknown>[] {
     const baseActions = [
       {
         id: "acknowledge",

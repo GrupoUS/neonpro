@@ -675,10 +675,10 @@ export class MedicalDeviceService {
    * Calculate Overall Device Compliance Score
    */
   private calculateDeviceComplianceScore(
-    constitutional: Record<string, unknown>,
-    anvisa: Record<string, unknown>,
-    quality: Record<string, unknown>,
-    professional: Record<string, unknown>,
+    constitutional: { score: number; [key: string]: unknown },
+    anvisa: { score: number; [key: string]: unknown },
+    quality: { score: number; [key: string]: unknown },
+    professional: { score: number; [key: string]: unknown },
   ): ComplianceScore {
     const weights = {
       constitutional: 0.4, // Constitutional compliance is highest priority
@@ -704,7 +704,7 @@ export class MedicalDeviceService {
     summary: DeviceComplianceResult["complianceChecks"];
     auditTrail: Record<string, unknown>[];
   }> {
-    const auditTrail: unknown[] = [];
+    const auditTrail: Record<string, unknown>[] = [];
     const checks = {
       anvisaRegistrationValid: false,
       qualityAssuranceCurrent: false,
@@ -792,7 +792,7 @@ export class MedicalDeviceService {
    */
   private async assessConstitutionalCompliance(
     registration: MedicalDeviceRegistration,
-    complianceChecks: Record<string, unknown>,
+    complianceChecks: { summary: { [key: string]: boolean }; [key: string]: unknown },
   ): Promise<DeviceComplianceResult["constitutionalCompliance"]> {
     let patientSafetyScore = 10;
     let regulatoryScore = 10;
@@ -945,8 +945,8 @@ export class MedicalDeviceService {
   ): Promise<void> {}
 
   private determineComplianceStatus(
-    assessment: Record<string, unknown>,
-    violations: Record<string, unknown>[],
+    assessment: { overallScore: number; [key: string]: unknown },
+    violations: { severity: string; [key: string]: unknown }[],
   ): DeviceComplianceResult["complianceStatus"] {
     if (violations.some((v) => v.severity === "CRITICAL")) {
       return "CRITICAL_VIOLATION";

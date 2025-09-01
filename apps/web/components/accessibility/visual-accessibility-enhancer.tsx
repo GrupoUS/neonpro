@@ -38,7 +38,8 @@ import {
   Stethoscope,
   Clock,
   Users,
-  Home
+  Home,
+  Pill
 } from 'lucide-react'
 
 // ===============================
@@ -909,6 +910,16 @@ export function VisualAccessibilityProvider({ children }: { children: React.Reac
       }
     }
   }, [settings, currentMagnificationZone, activeColorFilter, appliedVisualCues])
+
+  // Dedicated cleanup effect to guarantee style element removal on unmount
+  useEffect(() => {
+    return () => {
+      if (styleElementRef.current) {
+        styleElementRef.current.remove()
+        styleElementRef.current = null
+      }
+    }
+  }, [])
 
   // Medical safety validation on settings change
   useEffect(() => {

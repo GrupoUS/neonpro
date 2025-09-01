@@ -179,7 +179,8 @@ export default function QRHandoffGenerator({
     if (handoffState.status === 'active' && handoffState.expiresAt) {
       intervalRef.current = setInterval(() => {
         const now = Date.now();
-        const remaining = Math.max(0, handoffState.expiresAt! - now);
+        const expires = handoffState.expiresAt ?? 0;
+        const remaining = Math.max(0, expires - now);
         
         if (remaining === 0) {
           setHandoffState(prev => ({ ...prev, status: 'expired' }));

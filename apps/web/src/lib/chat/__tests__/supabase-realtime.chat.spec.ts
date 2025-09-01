@@ -8,26 +8,26 @@ import type { SupabaseRealtimeConfig } from "../supabase-realtime";
 // Mock @supabase/supabase-js createClient to return a fully stubbed client
 vi.mock("@supabase/supabase-js", () => {
   // Minimal chainable query builder util
-  const makeQuery = (overrides: any = {}) => {
-    const qb: any = {
+  const makeQuery = (overrides: Record<string, unknown> = {}) => {
+    const qb: Record<string, unknown> = {
       __kind: "queryBuilder",
       __state: {},
-      select: vi.fn().mockImplementation(function(_sel?: any) {
+      select: vi.fn().mockImplementation(function(_sel?: unknown) {
         return this;
       }),
-      insert: vi.fn().mockImplementation(function(_data?: any) {
+      insert: vi.fn().mockImplementation(function(_data?: unknown) {
         return this;
       }),
-      update: vi.fn().mockImplementation(function(_data?: any) {
+      update: vi.fn().mockImplementation(function(_data?: unknown) {
         return this;
       }),
-      eq: vi.fn().mockImplementation(function(_col?: string, _val?: any) {
+      eq: vi.fn().mockImplementation(function(_col?: string, _val?: unknown) {
         return this;
       }),
-      contains: vi.fn().mockImplementation(function(_col?: string, _val?: any) {
+      contains: vi.fn().mockImplementation(function(_col?: string, _val?: unknown) {
         return this;
       }),
-      order: vi.fn().mockImplementation(function(_col?: string, _opts?: any) {
+      order: vi.fn().mockImplementation(function(_col?: string, _opts?: Record<string, unknown>) {
         return this;
       }),
       limit: vi.fn().mockImplementation(function(_n?: number) {
@@ -51,22 +51,24 @@ vi.mock("@supabase/supabase-js", () => {
       "presence:leave": [],
     };
 
-    const ch: any = {
+    const ch: Record<string, unknown> = {
       __name: name,
-      on: vi.fn().mockImplementation((type: string, filterOrOpts: any, cb?: any) => {
-        // Normalize arguments for different event types
-        if (type === "postgres_changes") {
-          handlers["postgres_changes"].push({ filter: filterOrOpts, cb });
-        } else if (type === "broadcast" && filterOrOpts?.event === "typing") {
-          handlers["broadcast:typing"].push(cb);
-        } else if (type === "presence") {
-          const ev = filterOrOpts?.event;
-          if (ev === "sync") {handlers["presence:sync"].push(cb);}
-          if (ev === "join") {handlers["presence:join"].push(cb);}
-          if (ev === "leave") {handlers["presence:leave"].push(cb);}
-        }
-        return ch;
-      }),
+      on: vi.fn().mockImplementation(
+        (type: string, filterOrOpts: Record<string, unknown>, cb?: (arg: unknown) => void) => {
+          // Normalize arguments for different event types
+          if (type === "postgres_changes") {
+            handlers["postgres_changes"].push({ filter: filterOrOpts, cb });
+          } else if (type === "broadcast" && filterOrOpts?.event === "typing") {
+            handlers["broadcast:typing"].push(cb);
+          } else if (type === "presence") {
+            const ev = filterOrOpts?.event;
+            if (ev === "sync") handlers["presence:sync"].push(cb);
+            if (ev === "join") handlers["presence:join"].push(cb);
+            if (ev === "leave") handlers["presence:leave"].push(cb);
+          }
+          return ch;
+        },
+      ),
       subscribe: vi.fn().mockImplementation(async (cb?: (status: string) => void) => {
         if (cb) {
           await cb("SUBSCRIBED");
@@ -80,22 +82,22 @@ vi.mock("@supabase/supabase-js", () => {
       track: vi.fn().mockResolvedValue({ ok: true }),
       send: vi.fn().mockResolvedValue({ ok: true }),
       // test helpers to trigger events
-      __emitBroadcastTyping(payload: any) {
+      __emitBroadcastTyping(payload: Record<string, unknown>) {
         handlers["broadcast:typing"].forEach((fn) => fn({ payload }));
       },
       __emitPresenceSync() {
         handlers["presence:sync"].forEach((fn) => fn());
       },
-      __emitPresenceJoin(arg: any) {
+      __emitPresenceJoin(arg: Record<string, unknown>) {
         handlers["presence:join"].forEach((fn) => fn(arg));
       },
-      __emitPresenceLeave(arg: any) {
+      __emitPresenceLeave(arg: Record<string, unknown>) {
         handlers["presence:leave"].forEach((fn) => fn(arg));
       },
-      __emitInsert(newRow: any) {
+      __emitInsert(newRow: Record<string, unknown>) {
         handlers["postgres_changes"].forEach((h) => h.cb({ new: newRow }));
       },
-      __emitUpdate(newRow: any) {
+      __emitUpdate(newRow: Record<string, unknown>) {
         handlers["postgres_changes"].forEach((h) => h.cb({ new: newRow }));
       },
     };
@@ -104,7 +106,7 @@ vi.mock("@supabase/supabase-js", () => {
 
   const channels = new Map<string, any>();
 
-  const client: any = {
+  const client: Record<string, unknown> = {
     auth: {
       getUser: vi.fn().mockResolvedValue({ data: { user: { id: "u-123" } } }),
     },
@@ -123,7 +125,7 @@ vi.mock("@supabase/supabase-js", () => {
     __makeQuery,
   };
 
-  function __makeQuery(overrides: any) {
+  function __makeQuery(overrides: Record<string, unknown>) {
     return makeQuery(overrides);
   }
 
@@ -159,7 +161,8 @@ describe("SupabaseRealtimeChat - initialization", () => {
       .toBeUndefined();
 
     // global presence channel created and track called
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: Record<string, unknown> =
+      (createClient as Record<string, unknown>).mock.results[0].value;
     expect(mockClient.channel).toHaveBeenCalledWith("global_presence");
 
     const globalCh = mockClient.__channels.get("global_presence");
@@ -170,7 +173,8 @@ describe("SupabaseRealtimeChat - initialization", () => {
   });
 
   it("throws if user is not authenticated", async () => {
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: Record<string, unknown> =
+      (createClient as Record<string, unknown>).mock.results[0].value;
     mockClient.auth.getUser.mockResolvedValueOnce({ data: { user: null } });
 
     const chat = new SupabaseRealtimeChat(baseConfig);
@@ -189,7 +193,8 @@ describe("SupabaseRealtimeChat - subscribeToConversation", () => {
   });
 
   it("subscribes, loads recent messages, and wires typing/presence handlers", async () => {
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: Record<string, unknown> =
+      (createClient as Record<string, unknown>).mock.results[0].value;
 
     // Mock recent messages query
     const messages = [
@@ -280,7 +285,8 @@ describe("SupabaseRealtimeChat - subscribeToConversation", () => {
   });
 
   it("handles channel CLOSED and attempts reconnection", async () => {
-    const mockClient: any = (createClient as any).mock.results[0].value;
+    const mockClient: Record<string, unknown> =
+      (createClient as Record<string, unknown>).mock.results[0].value;
 
     // Arrange a channel whose subscribe first emits CLOSED, then SUBSCRIBED on next subscribe
     const chName = "conversation_c2";

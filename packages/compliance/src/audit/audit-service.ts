@@ -25,10 +25,13 @@ import type {
  * Constitutional Audit Service
  * Manages audit logging and trail validation for healthcare compliance
  */
-export class AuditService {
-  private readonly supabaseClient: unknown;
 
-  constructor(supabaseClient: unknown) {
+import type { SupabaseClient } from '@supabase/supabase-js';
+
+export class AuditService {
+  private readonly supabaseClient: SupabaseClient;
+
+  constructor(supabaseClient: SupabaseClient) {
     this.supabaseClient = supabaseClient;
   }
 

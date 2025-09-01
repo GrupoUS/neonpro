@@ -676,7 +676,8 @@ export class LgpdService {
   }
 
   private static generateBreachRiskAssessment(incident: Record<string, unknown>): string {
-    return `Risk assessment for breach affecting ${incident.affectedUsers.length} users`;
+    const affected = Array.isArray((incident as any).affectedUsers) ? (incident as any).affectedUsers.length : 0;
+    return `Risk assessment for breach affecting ${affected} users`;
   }
 
   private static async scheduleAnpdNotification(

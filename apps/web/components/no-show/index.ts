@@ -34,9 +34,3 @@ export {
   type NoShowMetrics,
   type PerformanceMetricsProps,
 } from "./performance-metrics";
-
-// Re-export all components for convenience
-export * from "./risk-indicator";
-export * from "./risk-factor-breakdown"; 
-export * from "./intervention-dashboard";
-export * from "./performance-metrics";

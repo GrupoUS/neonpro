@@ -62,6 +62,23 @@ interface EmergencyPatient {
   emergencyNotes?: string
 }
 
+// Input patient type for conversion
+interface InputPatient {
+  id: string
+  name: string
+  cpf?: string
+  birthDate: string
+  bloodType?: string
+  allergies?: string[]
+  medications?: string[]
+  criticalConditions?: string[]
+  emergencyContact?: string | {
+    name: string
+    phone: string
+    relation?: string
+  }
+}
+
 interface EmergencyModeInterfaceProps {
   isOpen: boolean
   onClose: () => void
@@ -104,41 +121,66 @@ export function EmergencyModeInterface({
     }
   }, [isOpen])
 
-  const handlePatientSelect = (patient: any) => {
-    // Convert para EmergencyPatient format
+  const handlePatientSelect = (patient: InputPatient) => {
+    // Validate required fields
+    if (!patient.id || !patient.name || !patient.birthDate) {
+      throw new Error('Patient data is missing required fields: id, name, or birthDate');
+    }
+
+    // Safely calculate age
+    let age = 0;
+    try {
+      const birthDate = new Date(patient.birthDate);
+      if (!isNaN(birthDate.getTime())) {
+        age = new Date().getFullYear() - birthDate.getFullYear();
+      }
+    } catch (error) {
+      console.warn('Invalid birthDate format, using age 0');
+    }
+
+    // Convert para EmergencyPatient format with safe defaults
     const emergencyPatient: EmergencyPatient = {
-      id: patient.id,
-      name: patient.name,
-      cpf: patient.cpf,
+      id: String(patient.id),
+      name: String(patient.name),
+      cpf: patient.cpf || 'Não informado',
       birthDate: patient.birthDate,
-      age: new Date().getFullYear() - new Date(patient.birthDate).getFullYear(),
-      bloodType: patient.bloodType,
-      allergies: patient.allergies?.map((allergy: string) => ({
-        substance: allergy,
+      age,
+      bloodType: patient.bloodType || 'Não informado',
+      allergies: Array.isArray(patient.allergies) ? patient.allergies.map((allergy) => ({
+        substance: String(allergy),
         severity: 'moderate' as const
-      })) || [],
-      medications: patient.medications?.map((med: string) => ({
-        name: med,
+      })) : [],
+      medications: Array.isArray(patient.medications) ? patient.medications.map((med) => ({
+        name: String(med),
         dosage: '1x/dia',
         frequency: 'Diária',
         critical: true
-      })) || [],
-      medicalConditions: patient.criticalConditions?.map((condition: string) => ({
-        condition,
+      })) : [],
+      medicalConditions: Array.isArray(patient.criticalConditions) ? patient.criticalConditions.map((condition) => ({
+        condition: String(condition),
         severity: 'monitoring' as const
-      })) || [],
-      emergencyContact: {
-        name: patient.emergencyContact?.name || 'Não informado',
-        phone: patient.emergencyContact?.phone || patient.emergencyContact || '',
-        relation: patient.emergencyContact?.relation || 'Contato'
-      },
+      })) : [],
+      emergencyContact: (() => {
+        if (typeof patient.emergencyContact === 'object' && patient.emergencyContact !== null) {
+          return {
+            name: patient.emergencyContact.name || 'Não informado',
+            phone: patient.emergencyContact.phone || '',
+            relation: patient.emergencyContact.relation || 'Contato'
+          };
+        }
+        return {
+          name: 'Não informado',
+          phone: typeof patient.emergencyContact === 'string' ? patient.emergencyContact : '',
+          relation: 'Contato'
+        };
+      })(),
       lastVitalSigns: {
         heartRate: 72,
         bloodPressure: '120/80',
         temperature: 36.5,
         timestamp: new Date()
       },
-      emergencyNotes: patient.criticalConditions?.length > 0 
+      emergencyNotes: Array.isArray(patient.criticalConditions) && patient.criticalConditions.length > 0
         ? `Condições críticas: ${patient.criticalConditions.join(', ')}` 
         : undefined
     }
@@ -147,7 +189,10 @@ export function EmergencyModeInterface({
   }
 
   const handleEmergencyCall = () => {
-    console.log('Emergency call initiated for patient:', selectedPatient?.id)
+    // Log without exposing patient PII
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Emergency call initiated for patient:', selectedPatient?.id ? 'PATIENT_ID_SANITIZED' : 'NO_PATIENT_SELECTED')
+    }
     // Haptic feedback simulation
     if ('vibrate' in navigator) {
       navigator.vibrate([200, 100, 200])

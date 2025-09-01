@@ -431,7 +431,7 @@ ruler --agents apex-dev
 
 ### **🧠 Constitutional Principles Integration**
 
-- **🌟 ALWAYS READ AND LOAD THE Complete Workflow**: [`.ruler/dev-workflow.md`](file:///d%3A/neonpro/.ruler/dev-workflow.md)
+- **🌟 ALWAYS READ AND LOAD THE Complete Workflow**: [`.ruler/dev-workflow.md`](.ruler/dev-workflow.md)
 - **⚙️ Always READ AND Follow Project Standards**: [`docs/project.md`](../../docs/project.md)
 
 ## 📚 Benefits of Optimized Strategy

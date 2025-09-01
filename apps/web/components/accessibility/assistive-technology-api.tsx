@@ -859,7 +859,20 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
 
   // Device discovery and connection monitoring
   useEffect(() => {
-    if (!settings.enabled || !settings.auto_discovery) {return}
+    // Clear any existing interval first
+    if (devicePollingRef.current) {
+      clearInterval(devicePollingRef.current)
+      devicePollingRef.current = null
+    }
+
+    if (!settings.enabled || !settings.auto_discovery) {
+      return () => {
+        if (devicePollingRef.current) {
+          clearInterval(devicePollingRef.current)
+          devicePollingRef.current = null
+        }
+      }
+    }
 
     devicePollingRef.current = setInterval(() => {
       // Simulate device discovery
@@ -874,39 +887,41 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
     return () => {
       if (devicePollingRef.current) {
         clearInterval(devicePollingRef.current)
+        devicePollingRef.current = null
       }
     }
   }, [settings.enabled, settings.auto_discovery, connectedDevices])
 
   // WebSocket connection for real-time AT communication
   useEffect(() => {
-    if (!settings.enabled) {return}
-
-    try {
-      wsRef.current = new WebSocket('ws://localhost:8080/at-websocket')
-      
-      wsRef.current.onopen = () => {
-        console.log('AT WebSocket connected')
-      }
-      
-      wsRef.current.onmessage = (event) => {
-        const message = JSON.parse(event.data)
-        if (message.type === 'device_command') {
-          executeCommand(message.commandId, message.params)
+    if (settings.enabled) {
+      try {
+        wsRef.current = new WebSocket('ws://localhost:8080/at-websocket')
+        
+        wsRef.current.onopen = () => {
+          console.log('AT WebSocket connected')
         }
-      }
-      
-      wsRef.current.onerror = (error) => {
-        console.error('AT WebSocket error:', error)
-      }
+        
+        wsRef.current.onmessage = (event) => {
+          const message = JSON.parse(event.data)
+          if (message.type === 'device_command') {
+            executeCommand(message.commandId, message.params)
+          }
+        }
+        
+        wsRef.current.onerror = (error) => {
+          console.error('AT WebSocket error:', error)
+        }
 
-    } catch (error) {
-      console.warn('WebSocket connection failed - using fallback methods')
+      } catch (error) {
+        console.warn('WebSocket connection failed - using fallback methods')
+      }
     }
 
     return () => {
-      if (wsRef.current) {
+      if (wsRef.current && wsRef.current.readyState !== WebSocket.CLOSED) {
         wsRef.current.close()
+        wsRef.current = null
       }
     }
   }, [settings.enabled, executeCommand])

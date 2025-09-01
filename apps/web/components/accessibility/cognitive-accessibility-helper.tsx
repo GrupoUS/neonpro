@@ -442,9 +442,9 @@ export function CognitiveAccessibilityProvider({ children }: { children: React.R
   const [fatigueLevel, setFatigueLevel] = useState(0)
 
   // Timers and intervals
-  const fatigueMonitoringRef = useRef<NodeJS.Timeout>()
-  const memoryAidReminderRef = useRef<NodeJS.Timeout>()
-  const attentionTrackingRef = useRef<NodeJS.Timeout>()
+  const fatigueMonitoringRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const memoryAidReminderRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const attentionTrackingRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Update settings with cognitive profiling
   const updateSettings = useCallback((newSettings: Partial<CognitiveSettings>) => {
@@ -454,6 +454,7 @@ export function CognitiveAccessibilityProvider({ children }: { children: React.R
       // Auto-adjust based on cognitive profile changes
       if (newSettings.profile) {
         const profile = { ...prev.profile, ...newSettings.profile }
+        updated.profile = profile
         
         // Adjust support level based on impairment types
         if (profile.impairment_types.includes('post_anesthesia') || 
@@ -465,7 +466,7 @@ export function CognitiveAccessibilityProvider({ children }: { children: React.R
 
         // Increase support for multiple impairments
         if (profile.impairment_types.length >= 3) {
-          updated.profile.support_level = 'extensive'
+          profile.support_level = 'extensive'
           updated.visual_cues_intensity = Math.max(updated.visual_cues_intensity, 80)
         }
       }
@@ -609,6 +610,11 @@ export function CognitiveAccessibilityProvider({ children }: { children: React.R
 
   // Export analytics (LGPD compliant)
   const exportAnalytics = useCallback(async (): Promise<string> => {
+    // Check LGPD compliance requirements first
+    if (analytics.lgpd_data_points.consent_status !== 'granted' || !settings.lgpd_compliance_mode) {
+      throw new Error('Export blocked: LGPD consent not granted or compliance mode disabled')
+    }
+
     const sessionDuration = Date.now() - analytics.session_metrics.session_start.getTime()
     
     const exportData = {
@@ -821,9 +827,8 @@ export function CognitiveAccessibilitySettings() {
     if (randomAid) {
       addMemoryAid({
         ...randomAid,
-        trigger_conditions: ['manual_add'],
-        effectiveness_score: 0
-      } as Omit<MemoryAid, 'id' | 'created_at' | 'last_shown'>)
+        trigger_conditions: ['manual_add']
+      })
     }
   }
 

@@ -71,6 +71,7 @@ function AIFirstWorkflow() {
   const [selectedPatient, setSelectedPatient] = useState(samplePatients[0]);
   const [aiResults, setAiResults] = useState<any>(null);
   const [shouldFail, setShouldFail] = useState(false);
+  const [shouldThrow, setShouldThrow] = useState<string | null>(null);
   
   const { 
     isLoading, 
@@ -80,8 +81,18 @@ function AIFirstWorkflow() {
     LoadingComponent 
   } = useAILoadingState("patient-analysis", 4);
 
+  const [error, setError] = useState<Error | null>(null);
+
+  // Throw error during render if shouldThrow is set (for error boundary testing)
+  if (shouldThrow) {
+    const errorToThrow = new Error(`Simulated ${shouldThrow} error`);
+    setShouldThrow(null); // Reset for next time
+    throw errorToThrow;
+  }
+
   const handleAIAnalysis = async () => {
     setAiResults(null);
+    setError(null);
     startLoading();
     
     try {
@@ -90,8 +101,8 @@ function AIFirstWorkflow() {
       stopLoading();
     } catch (error) {
       stopLoading();
-      // Error will be caught by ErrorBoundaryAI
-      throw error;
+      setError(error instanceof Error ? error : new Error('Unknown error occurred'));
+      console.error('AI Analysis Error:', error);
     }
   };
 
@@ -366,8 +377,8 @@ function AIFirstWorkflow() {
                   key={errorType}
                   variant="outline"
                   onClick={() => {
-                    // Simulate error
-                    throw new Error(`Simulated ${errorType} error`);
+                    // Set state to trigger error on next render
+                    setShouldThrow(errorType);
                   }}
                 >
                   Simular {errorType}

@@ -17,10 +17,10 @@ class InMemoryObjectStore<T extends { id: string; }> {
 
   createIndex() {/* index not used in tests */}
   getAll() {
-    const request: any = {};
+    const request: Record<string, unknown> = {};
     setTimeout(() => {
       request.result = Array.from(this.store.values());
-      request.onsuccess && request.onsuccess();
+      request.onsuccess && (request.onsuccess as () => void)();
     }, 0);
     return request;
   }
@@ -61,22 +61,22 @@ class InMemoryDB {
     };
   }
   _getStore(name: string) {
-    if (!this.stores.has(name)) {this.stores.set(name, new InMemoryObjectStore<any>());}
+    if (!this.stores.has(name)) this.stores.set(name, new InMemoryObjectStore<any>());
     return this.stores.get(name)!;
   }
 }
 
 function makeOpenSuccess(db: InMemoryDB) {
   return () => {
-    const req: any = {};
+    const req: Record<string, unknown> = {};
     setTimeout(() => {
       // Upgrade if needed
       if (req.onupgradeneeded) {
-        const event: any = { target: { result: db } };
-        req.onupgradeneeded(event);
+        const event: Record<string, unknown> = { target: { result: db } };
+        (req.onupgradeneeded as (event: Record<string, unknown>) => void)(event);
       }
       req.result = db;
-      req.onsuccess && req.onsuccess();
+      req.onsuccess && (req.onsuccess as () => void)();
     }, 0);
     return req;
   };
@@ -84,18 +84,18 @@ function makeOpenSuccess(db: InMemoryDB) {
 
 function makeOpenError(err: Error) {
   return () => {
-    const req: any = { error: err };
+    const req: Record<string, unknown> = { error: err };
     setTimeout(() => {
-      req.onerror && req.onerror();
+      req.onerror && (req.onerror as () => void)();
     }, 0);
     return req;
   };
 }
 
 // Save original globals
-const originalIndexedDB: any = (globalThis as any).indexedDB;
-const originalPerformance: any = (globalThis as any).performance;
-const originalNavigator: any = (globalThis as any).navigator;
+const originalIndexedDB: unknown = (globalThis as Record<string, unknown>).indexedDB;
+const originalPerformance: unknown = (globalThis as Record<string, unknown>).performance;
+const originalNavigator: unknown = (globalThis as Record<string, unknown>).navigator;
 const originalConsole = { ...console };
 
 describe("EmergencyCache", () => {

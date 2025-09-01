@@ -1,16 +1,16 @@
 /**
  * CFM Professional Validation Service
- * 
+ *
  * This service handles validation of medical professionals through CFM (Conselho Federal de Medicina)
  * using multiple validation methods including CRM Digital, CFM API, and Atesta CFM.
- * 
+ *
  * Features:
  * - Multi-source validation (CRM Digital, CFM API, Atesta CFM)
  * - Caching with TTL for performance
  * - Background validation refresh
  * - Aesthetic procedure authorization validation
  * - Compliance checking and recommendations
- * 
+ *
  * @author NeonPro Development Team
  * @version 1.0.0
  */
@@ -20,9 +20,33 @@ import { z } from "zod";
 export const CFMProfessionalSchema = z.object({
   crm_number: z.string().regex(/^\d{4,6}$/, "CRM must be 4-6 digits"),
   crm_state: z.enum([
-    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", 
-    "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", 
-    "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MT",
+    "MS",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO",
   ]),
   full_name: z.string().min(2),
   cpf: z.string().regex(/^\d{11}$/, "CPF must be 11 digits"),
@@ -34,11 +58,11 @@ export const CFMProfessionalSchema = z.object({
     certificate_number: z.string().optional(),
   })),
   professional_status: z.enum([
-    "active",           // Ativo
-    "inactive",         // Inativo
-    "suspended",        // Suspenso
-    "cancelled",        // Cancelado
-    "transfer_pending"  // Transferência pendente
+    "active", // Ativo
+    "inactive", // Inativo
+    "suspended", // Suspenso
+    "cancelled", // Cancelado
+    "transfer_pending", // Transferência pendente
   ]),
   digital_certificate: z.object({
     certificate_type: z.enum(["ICP_BRASIL_A3", "CFM_DIGITAL", "OTHER"]),
@@ -52,10 +76,10 @@ export const CFMProfessionalSchema = z.object({
     is_validated: z.boolean(),
     validation_date: z.date().optional(),
     validation_method: z.enum([
-      "crm_digital",      // CRM Digital verification
-      "cfm_api",          // CFM API direct
-      "atesta_cfm",       // Atesta CFM platform
-      "manual_verification" // Manual verification
+      "crm_digital", // CRM Digital verification
+      "cfm_api", // CFM API direct
+      "atesta_cfm", // Atesta CFM platform
+      "manual_verification", // Manual verification
     ]),
     last_verification: z.date().optional(),
     next_verification_due: z.date().optional(),
@@ -79,7 +103,7 @@ export const AESTHETIC_SPECIALTIES = {
     aesthetic_procedures: ["botox", "preenchimento", "peeling", "laser"],
   },
   "CIRURGIA_PLASTICA": {
-    code: "162", 
+    code: "162",
     aesthetic_procedures: ["cirurgia_facial", "lifting", "blefaroplastia"],
   },
   "MEDICINA_ESTETICA": {
@@ -109,7 +133,7 @@ export interface ValidationCache {
 
 export class CFMProfessionalValidator {
   private cfmCredentials: CFMAPICredentials;
-  private validationCache: Map<string, { data: CFMProfessional; expires: Date }> = new Map();
+  private validationCache: Map<string, { data: CFMProfessional; expires: Date; }> = new Map();
   private cacheConfig: ValidationCache;
   private validationQueue: Set<string> = new Set();
 
@@ -119,7 +143,7 @@ export class CFMProfessionalValidator {
       ttl_minutes: 60,
       max_entries: 1000,
       enable_background_refresh: true,
-    }
+    },
   ) {
     this.cfmCredentials = cfmCredentials;
     this.cacheConfig = cacheConfig;
@@ -144,7 +168,7 @@ export class CFMProfessionalValidator {
   private async refreshExpiredCacheEntries(): Promise<void> {
     const now = new Date();
     const expiredEntries: string[] = [];
-    
+
     Array.from(this.validationCache.entries()).forEach(([key, entry]) => {
       if (entry.expires <= now) {
         expiredEntries.push(key);
@@ -155,7 +179,7 @@ export class CFMProfessionalValidator {
     for (const key of expiredEntries) {
       if (!this.validationQueue.has(key)) {
         try {
-          const [crm_number, crm_state] = key.split('_');
+          const [crm_number, crm_state] = key.split("_");
           await this.validateProfessional(crm_number, crm_state);
         } catch (error) {
           console.error(`Background refresh failed for ${key}:`, error);
@@ -170,7 +194,7 @@ export class CFMProfessionalValidator {
   async validateProfessional(
     crm_number: string,
     crm_state: string,
-    validation_method: "auto" | "crm_digital" | "cfm_api" | "atesta_cfm" = "auto"
+    validation_method: "auto" | "crm_digital" | "cfm_api" | "atesta_cfm" = "auto",
   ): Promise<{
     valid: boolean;
     professional_data?: CFMProfessional;
@@ -184,7 +208,7 @@ export class CFMProfessionalValidator {
     recommendations?: string[];
   }> {
     const cacheKey = `${crm_number}_${crm_state}`;
-    
+
     try {
       // Check cache first
       const cached = this.getCachedValidation(crm_number, crm_state);
@@ -220,7 +244,9 @@ export class CFMProfessionalValidator {
             validation_details: {
               method_used: "cache_retry",
               validation_date: new Date(),
-              next_verification_due: new Date(Date.now() + this.cacheConfig.ttl_minutes * 60 * 1000),
+              next_verification_due: new Date(
+                Date.now() + this.cacheConfig.ttl_minutes * 60 * 1000,
+              ),
               confidence_level: 0.9,
             },
           };
@@ -229,7 +255,7 @@ export class CFMProfessionalValidator {
 
       this.validationQueue.add(cacheKey);
 
-      let validationResult: { success: boolean; data?: CFMProfessional; error?: string };
+      let validationResult: { success: boolean; data?: CFMProfessional; error?: string; };
       let methodUsed: string;
       let confidenceLevel: number;
 
@@ -238,13 +264,13 @@ export class CFMProfessionalValidator {
         validationResult = await this.validateViaCRMDigital(crm_number, crm_state);
         methodUsed = "crm_digital";
         confidenceLevel = 0.98;
-        
+
         if (!validationResult.success && validation_method === "auto") {
           // Fallback to CFM API
           validationResult = await this.validateViaCFMAPI(crm_number, crm_state);
           methodUsed = "cfm_api";
           confidenceLevel = 0.95;
-          
+
           if (!validationResult.success) {
             // Final fallback to Atesta CFM
             validationResult = await this.validateViaAtestaCFM(crm_number, crm_state);
@@ -266,8 +292,10 @@ export class CFMProfessionalValidator {
 
       if (validationResult.success && validationResult.data) {
         // Validate aesthetic procedure authorization
-        const aestheticAuth = await this.validateAestheticProcedureAuthorization(validationResult.data);
-        
+        const aestheticAuth = await this.validateAestheticProcedureAuthorization(
+          validationResult.data,
+        );
+
         const professionalData: CFMProfessional = {
           ...validationResult.data,
           platform_permissions: {
@@ -308,11 +336,10 @@ export class CFMProfessionalValidator {
         compliance_issues: [validationResult.error || "Validation failed"],
         recommendations: ["Verify CRM number and state", "Contact CFM for manual validation"],
       };
-
     } catch (error) {
       this.validationQueue.delete(cacheKey);
       console.error("Professional validation failed:", error);
-      
+
       return {
         valid: false,
         validation_details: {
@@ -321,7 +348,9 @@ export class CFMProfessionalValidator {
           next_verification_due: new Date(Date.now() + 60 * 60 * 1000), // Retry in 1 hour
           confidence_level: 0,
         },
-        compliance_issues: [`Validation error: ${error instanceof Error ? error.message : "Unknown error"}`],
+        compliance_issues: [
+          `Validation error: ${error instanceof Error ? error.message : "Unknown error"}`,
+        ],
         recommendations: ["Contact support for manual validation", "Check system connectivity"],
       };
     }
@@ -333,16 +362,16 @@ export class CFMProfessionalValidator {
   private getCachedValidation(crm_number: string, crm_state: string): CFMProfessional | null {
     const cacheKey = `${crm_number}_${crm_state}`;
     const cached = this.validationCache.get(cacheKey);
-    
+
     if (cached && cached.expires > new Date()) {
       return cached.data;
     }
-    
+
     // Remove expired entry
     if (cached) {
       this.validationCache.delete(cacheKey);
     }
-    
+
     return null;
   }
 
@@ -352,7 +381,7 @@ export class CFMProfessionalValidator {
   private setCachedValidation(crm_number: string, crm_state: string, data: CFMProfessional): void {
     const cacheKey = `${crm_number}_${crm_state}`;
     const expires = new Date(Date.now() + this.cacheConfig.ttl_minutes * 60 * 1000);
-    
+
     // Check cache size limit
     if (this.validationCache.size >= this.cacheConfig.max_entries) {
       // Remove oldest entry
@@ -361,7 +390,7 @@ export class CFMProfessionalValidator {
         this.validationCache.delete(firstKey);
       }
     }
-    
+
     this.validationCache.set(cacheKey, { data, expires });
   }
 
@@ -369,22 +398,22 @@ export class CFMProfessionalValidator {
    * Validate if professional is authorized for aesthetic procedures
    */
   private async validateAestheticProcedureAuthorization(
-    professional: CFMProfessional
+    professional: CFMProfessional,
   ): Promise<boolean> {
     // Check if professional has aesthetic-related specialties
     const hasAestheticSpecialty = professional.specialties.some(specialty => {
-      return Object.values(AESTHETIC_SPECIALTIES).some(aestheticSpec => 
+      return Object.values(AESTHETIC_SPECIALTIES).some(aestheticSpec =>
         aestheticSpec.code === specialty.code
       );
     });
-    
+
     if (!hasAestheticSpecialty) {
       return false;
     }
-    
+
     // Additional checks for active status and valid certificates
-    return professional.professional_status === "active" && 
-           professional.validation_status.is_validated;
+    return professional.professional_status === "active"
+      && professional.validation_status.is_validated;
   }
 
   /**
@@ -392,17 +421,17 @@ export class CFMProfessionalValidator {
    */
   private checkComplianceIssues(professional: CFMProfessional): string[] {
     const issues: string[] = [];
-    
+
     // Check professional status
     if (professional.professional_status !== "active") {
       issues.push(`Professional status is ${professional.professional_status}`);
     }
-    
+
     // Check validation status
     if (!professional.validation_status.is_validated) {
       issues.push("Professional validation is pending");
     }
-    
+
     // Check certificate expiration
     if (professional.digital_certificate) {
       const now = new Date();
@@ -410,7 +439,7 @@ export class CFMProfessionalValidator {
         issues.push("Digital certificate has expired");
       }
     }
-    
+
     return issues;
   }
 
@@ -419,29 +448,31 @@ export class CFMProfessionalValidator {
    */
   private generateRecommendations(professional: CFMProfessional): string[] {
     const recommendations: string[] = [];
-    
+
     // Certificate renewal recommendations
     if (professional.digital_certificate) {
       const daysUntilExpiry = Math.floor(
-        (professional.digital_certificate.valid_until.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+        (professional.digital_certificate.valid_until.getTime() - Date.now())
+          / (1000 * 60 * 60 * 24),
       );
-      
+
       if (daysUntilExpiry <= 30) {
         recommendations.push("Renew digital certificate within 30 days");
       }
     }
-    
+
     // Validation recommendations
     if (professional.validation_status.next_verification_due) {
       const daysUntilVerification = Math.floor(
-        (professional.validation_status.next_verification_due.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+        (professional.validation_status.next_verification_due.getTime() - Date.now())
+          / (1000 * 60 * 60 * 24),
       );
-      
+
       if (daysUntilVerification <= 7) {
         recommendations.push("Schedule validation renewal within 7 days");
       }
     }
-    
+
     return recommendations;
   }
 
@@ -450,7 +481,7 @@ export class CFMProfessionalValidator {
    */
   private async validateViaCRMDigital(
     crm_number: string,
-    crm_state: string
+    crm_state: string,
   ): Promise<{
     success: boolean;
     data?: CFMProfessional;
@@ -459,14 +490,14 @@ export class CFMProfessionalValidator {
     try {
       // Implementation would use CFM's CRM Digital API
       // This includes ICP-Brasil A3 certificate authentication
-      
+
       const response = await this.callCFMAPI(
         this.cfmCredentials.api_endpoints.crm_validation,
         {
           crm_number,
           crm_state,
           validation_type: "crm_digital",
-        }
+        },
       );
 
       if (response.success && response.data) {
@@ -484,7 +515,9 @@ export class CFMProfessionalValidator {
     } catch (error) {
       return {
         success: false,
-        error: `CRM Digital validation error: ${error instanceof Error ? error.message : "Unknown error"}`,
+        error: `CRM Digital validation error: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
       };
     }
   }
@@ -494,7 +527,7 @@ export class CFMProfessionalValidator {
    */
   private async validateViaCFMAPI(
     crm_number: string,
-    crm_state: string
+    crm_state: string,
   ): Promise<{
     success: boolean;
     data?: CFMProfessional;
@@ -506,7 +539,7 @@ export class CFMProfessionalValidator {
         {
           crm_number,
           crm_state,
-        }
+        },
       );
 
       if (response.success && response.data) {
@@ -524,7 +557,9 @@ export class CFMProfessionalValidator {
     } catch (error) {
       return {
         success: false,
-        error: `CFM API validation error: ${error instanceof Error ? error.message : "Unknown error"}`,
+        error: `CFM API validation error: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
       };
     }
   }
@@ -534,7 +569,7 @@ export class CFMProfessionalValidator {
    */
   private async validateViaAtestaCFM(
     crm_number: string,
-    crm_state: string
+    crm_state: string,
   ): Promise<{
     success: boolean;
     data?: CFMProfessional;
@@ -546,7 +581,7 @@ export class CFMProfessionalValidator {
         {
           crm_number,
           crm_state,
-        }
+        },
       );
 
       if (response.success && response.data) {
@@ -564,7 +599,9 @@ export class CFMProfessionalValidator {
     } catch (error) {
       return {
         success: false,
-        error: `Atesta CFM validation error: ${error instanceof Error ? error.message : "Unknown error"}`,
+        error: `Atesta CFM validation error: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
       };
     }
   }
@@ -574,15 +611,15 @@ export class CFMProfessionalValidator {
    */
   private async callCFMAPI(
     endpoint: string,
-    params: Record<string, any>
-  ): Promise<{ success: boolean; data?: any; error?: string }> {
+    params: Record<string, unknown>,
+  ): Promise<{ success: boolean; data?: Record<string, unknown>; error?: string; }> {
     try {
       // This would implement the actual API call with ICP-Brasil A3 certificate
       // For now, return a mock response
-      
+
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock successful response for testing
       return {
         success: true,
@@ -596,7 +633,7 @@ export class CFMProfessionalValidator {
               code: "059",
               name: "Dermatologia",
               registration_date: new Date("2020-01-01"),
-            }
+            },
           ],
           status: "active",
         },
@@ -612,19 +649,19 @@ export class CFMProfessionalValidator {
   /**
    * Map CRM Digital API response to CFMProfessional
    */
-  private mapCRMDigitalResponse(data: any): CFMProfessional {
+  private mapCRMDigitalResponse(data: Record<string, unknown>): CFMProfessional {
     return {
       crm_number: data.crm_number,
       crm_state: data.crm_state,
       full_name: data.full_name,
       cpf: data.cpf,
       specialties: data.specialties || [],
-      professional_status: data.status || 'active',
+      professional_status: data.status || "active",
       digital_certificate: data.digital_certificate,
       validation_status: {
         is_validated: true,
         validation_date: new Date(),
-        validation_method: 'crm_digital',
+        validation_method: "crm_digital",
         last_verification: new Date(),
         next_verification_due: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       },
@@ -642,19 +679,19 @@ export class CFMProfessionalValidator {
   /**
    * Map CFM API response to CFMProfessional
    */
-  private mapCFMAPIResponse(data: any): CFMProfessional {
+  private mapCFMAPIResponse(data: Record<string, unknown>): CFMProfessional {
     return {
       crm_number: data.crm_number,
       crm_state: data.crm_state,
       full_name: data.full_name,
       cpf: data.cpf,
       specialties: data.specialties || [],
-      professional_status: data.status || 'active',
+      professional_status: data.status || "active",
       digital_certificate: data.digital_certificate,
       validation_status: {
         is_validated: true,
         validation_date: new Date(),
-        validation_method: 'cfm_api',
+        validation_method: "cfm_api",
         last_verification: new Date(),
         next_verification_due: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       },
@@ -672,19 +709,19 @@ export class CFMProfessionalValidator {
   /**
    * Map Atesta CFM response to CFMProfessional
    */
-  private mapAtestaCFMResponse(data: any): CFMProfessional {
+  private mapAtestaCFMResponse(data: Record<string, unknown>): CFMProfessional {
     return {
       crm_number: data.crm_number,
       crm_state: data.crm_state,
       full_name: data.full_name,
       cpf: data.cpf,
       specialties: data.specialties || [],
-      professional_status: data.status || 'active',
+      professional_status: data.status || "active",
       digital_certificate: data.digital_certificate,
       validation_status: {
         is_validated: true,
         validation_date: new Date(),
-        validation_method: 'atesta_cfm',
+        validation_method: "atesta_cfm",
         last_verification: new Date(),
         next_verification_due: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       },

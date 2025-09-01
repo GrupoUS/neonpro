@@ -252,7 +252,7 @@ export class PredictiveModelsService {
   async predictPatientOutcome(
     patientId: string,
     treatmentId: string,
-    patientData: any,
+    patientData: Record<string, unknown>,
     modelId = "neonpro-outcome-predictor-v2.1",
   ): Promise<PredictiveIntelligence> {
     try {
@@ -323,10 +323,10 @@ export class PredictiveModelsService {
    * Extract relevant features for prediction
    */
   private async extractFeatures(
-    patientData: any,
+    patientData: Record<string, unknown>,
     treatmentId: string,
-  ): Promise<Record<string, any>> {
-    const features: Record<string, any> = {
+  ): Promise<Record<string, unknown>> {
+    const features: Record<string, unknown> = {
       patient_age: patientData.age || 35,
       skin_type: patientData.skinType || "mixed",
       treatment_history: patientData.treatmentHistory?.length || 0,
@@ -391,7 +391,7 @@ export class PredictiveModelsService {
 
     // Brazilian factors impact
     const brazilianImpact = Object.values(features.brazilian_factors).reduce(
-      (sum: number, value: any) => sum + value * 0.1,
+      (sum: number, value: unknown) => sum + (typeof value === "number" ? value : 0) * 0.1,
       0,
     ) / Object.keys(features.brazilian_factors).length;
     adjustedScore += brazilianImpact;
@@ -420,8 +420,8 @@ export class PredictiveModelsService {
    * Predict potential complications
    */
   private async predictComplications(
-    features: Record<string, any>,
-    patientData: any,
+    features: Record<string, unknown>,
+    patientData: Record<string, unknown>,
   ): Promise<ComplicationPrediction[]> {
     const complications: ComplicationPrediction[] = [];
 
@@ -540,7 +540,7 @@ export class PredictiveModelsService {
   /**
    * Predict no-show probability
    */
-  private async predictNoShowProbability(patientData: any): Promise<number> {
+  private async predictNoShowProbability(patientData: Record<string, unknown>): Promise<number> {
     const model = this.models.get("neonpro-no-show-predictor-v1.5");
     if (!model) {
       return 0.12;
@@ -566,7 +566,7 @@ export class PredictiveModelsService {
 
     // History factor
     const noShowHistory = factors.appointmentHistory.filter(
-      (apt: any) => apt.status === "no_show",
+      (apt: Record<string, unknown>) => apt.status === "no_show",
     ).length;
     const totalAppointments = factors.appointmentHistory.length;
     if (totalAppointments > 0) {
@@ -696,7 +696,7 @@ export class PredictiveModelsService {
     return 0.7;
   }
 
-  private calculateHealthFactor(patientData: any): number {
+  private calculateHealthFactor(patientData: Record<string, unknown>): number {
     let healthScore = 1;
 
     // Reduce based on medical conditions
@@ -710,7 +710,7 @@ export class PredictiveModelsService {
     return Math.max(0.5, healthScore);
   }
 
-  private calculateLifestyleFactor(lifestyle: any): number {
+  private calculateLifestyleFactor(lifestyle: Record<string, unknown>): number {
     if (!lifestyle) {
       return 1;
     }
@@ -735,7 +735,7 @@ export class PredictiveModelsService {
 
   private evaluateBrazilianFactor(
     factor: PredictiveFactor,
-    patientData: any,
+    patientData: Record<string, unknown>,
   ): number {
     // Evaluate Brazilian-specific factors
     switch (factor.name) {
@@ -864,9 +864,9 @@ export class PredictiveModelsService {
     return riskFactors;
   }
 
-  private calculateFactorImpact(factor: string, value: any): number {
+  private calculateFactorImpact(factor: string, value: unknown): number {
     // Calculate how much a factor impacts complication probability
-    const impactMap: Record<string, (val: any) => number> = {
+    const impactMap: Record<string, (val: unknown) => number> = {
       skin_type: (val) => (val === "sensitive" ? 0.2 : 0),
       age: (val) => (val > 60 ? 0.15 : val < 25 ? 0.1 : 0),
       medical_conditions: (val) => val * 0.1,
@@ -1054,7 +1054,7 @@ export class PredictiveModelsService {
   /**
    * Get model accuracy and performance metrics
    */
-  getModelMetrics(modelId: string): any {
+  getModelMetrics(modelId: string): Record<string, unknown> | null {
     const model = this.models.get(modelId);
     return model
       ? {
@@ -1070,7 +1070,7 @@ export class PredictiveModelsService {
   /**
    * Update model with new training data
    */
-  async retrainModel(modelId: string, trainingData: any[]): Promise<boolean> {
+  async retrainModel(modelId: string, trainingData: Record<string, unknown>[]): Promise<boolean> {
     try {
       const model = this.models.get(modelId);
       if (!model) {

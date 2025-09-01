@@ -2,7 +2,7 @@
 	"mcpServers": {
 		"exa": {
 			"command": "bunx",
-			"args": ["exa-mcp-server@latest"],
+			"args": ["exa-mcp-server@1.0.3"],
 			"env": {
 				"EXA_API_KEY": "${env:EXA_API_KEY}",
 				"EXA_MAX_RESULTS": "10",
@@ -12,7 +12,7 @@
 		},
 		"sequential-thinking": {
 			"command": "bunx",
-			"args": ["@modelcontextprotocol/server-sequential-thinking@latest"],
+			"args": ["@modelcontextprotocol/server-sequential-thinking@0.6.0"],
 			"env": {
 				"DISABLE_THOUGHT_LOGGING": "false",
 				"SEQUENTIAL_THINKING_MAX_TOKENS": "16000",
@@ -23,7 +23,7 @@
 		},
 		"tavily": {
 			"command": "bunx",
-			"args": ["@mcptools/mcp-tavily@latest"],
+			"args": ["@mcptools/mcp-tavily@1.0.4"],
 			"env": {
 				"TAVILY_API_KEY": "${env:TAVILY_API_KEY}",
 				"TAVILY_MAX_RESULTS": "10",
@@ -34,7 +34,7 @@
 		},
 		"context7": {
 			"command": "bunx",
-			"args": ["@upstash/context7-mcp@latest"],
+			"args": ["@upstash/context7-mcp@1.0.0"],
 			"env": {
 				"UPSTASH_CONTEXT7_API_KEY": "${env:UPSTASH_CONTEXT7_API_KEY}",
 				"CONTEXT7_MAX_TOKENS": "10000",
@@ -44,17 +44,17 @@
 		},
 		"desktop-commander": {
 			"command": "bunx",
-			"args": ["@wonderwhy-er/desktop-commander@latest"],
+			"args": ["@wonderwhy-er/desktop-commander@1.5.0"],
 			"type": "stdio"
 		},
 		"supabase": {
 			"command": "bunx",
-			"args": ["@supabase/mcp-server-supabase@latest", "--access-token", "${env:SUPABASE_ACCESS_TOKEN}"],
+			"args": ["@supabase/mcp-server-supabase@0.3.8", "--access-token", "${env:SUPABASE_ACCESS_TOKEN}"],
 			"type": "stdio"
 		},
 		"shadcn-ui": {
 			"command": "bunx",
-			"args": ["@jpisnice/shadcn-ui-mcp-server@latest"],
+			"args": ["@jpisnice/shadcn-ui-mcp-server@1.0.2"],
 			"env": {
 				"GITHUB_PERSONAL_ACCESS_TOKEN": "${env:GITHUB_PERSONAL_ACCESS_TOKEN}",
 				"SHADCN_CACHE_COMPONENTS": "true",

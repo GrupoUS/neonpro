@@ -302,12 +302,17 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
         
         // Predict next position based on trend
         const recent = positions.slice(-3);
-        const velocityX = (recent[2].x - recent[0].x) / (recent[2].timestamp - recent[0].timestamp);
-        const velocityY = (recent[2].y - recent[0].y) / (recent[2].timestamp - recent[0].timestamp);
+        const dt = Math.max(recent[2].timestamp - recent[0].timestamp, 1); // Protect against identical timestamps
+        const velocityX = (recent[2].x - recent[0].x) / dt;
+        const velocityY = (recent[2].y - recent[0].y) / dt;
+        
+        // Clamp velocities to reasonable bounds
+        const clampedVelX = Math.max(-1000, Math.min(1000, velocityX));
+        const clampedVelY = Math.max(-1000, Math.min(1000, velocityY));
         
         const predicted = {
-          x: recent[2].x + velocityX * 16, // ~1 frame ahead
-          y: recent[2].y + velocityY * 16
+          x: recent[2].x + clampedVelX * 16, // ~1 frame ahead
+          y: recent[2].y + clampedVelY * 16
         };
         
         // Blend prediction with measurement
@@ -620,10 +625,13 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
       // Start dwell timer
       dwellTimeout.current = setTimeout(() => {
         const element = elements.find(e => e.id === elementId);
-        if (element && settings.dwell_confirmation) {
-          // Trigger activation
+        if (element && settings.dwell_confirmation && element.element.isConnected) {
+          // Trigger activation only if element is still in DOM
           element.element.click();
           setActiveElement(null);
+        } else if (element && !element.element.isConnected) {
+          // Clean up stale element reference
+          setElements(prev => prev.filter(e => e.id !== elementId));
         }
       }, settings.dwell_time);
     };
@@ -692,6 +700,25 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
       return () => clearInterval(detectionInterval);
     }
   }, [settings.enabled, detectTremor]);
+
+  // ================================================================================
+  // ELEMENT CLEANUP
+  // ================================================================================
+
+  // Periodically clean up stale element references
+  useEffect(() => {
+    const cleanupInterval = setInterval(() => {
+      setElements(prev => prev.filter(element => {
+        if (!element.element.isConnected) {
+          console.log(`Cleaning up stale element reference: ${element.id}`);
+          return false;
+        }
+        return true;
+      }));
+    }, 30_000); // Check every 30 seconds
+
+    return () => clearInterval(cleanupInterval);
+  }, []);
 
   // ================================================================================
   // SETTINGS UPDATE

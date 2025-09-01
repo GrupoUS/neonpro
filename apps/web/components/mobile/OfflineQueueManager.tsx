@@ -359,19 +359,25 @@ const useOfflineQueue = (userId: string, maxQueueSize: number = 1000) => {
       });
 
       // Simulate API call based on action type
-      const response = await fetch('/api/offline-sync/process', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId,
-          action: {
-            type: action.type,
-            entityType: action.entityType,
-            entityId: action.entityId,
-            data: action.data
-          }
-        })
-      });
+      let response;
+      try {
+        response = await fetch('/api/offline-sync/process', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            action: {
+              type: action.type,
+              entityType: action.entityType,
+              entityId: action.entityId,
+              data: action.data
+            }
+          })
+        });
+      } catch (networkError) {
+        // Handle network errors specifically
+        throw new Error(`Network error: ${networkError instanceof Error ? networkError.message : 'Connection failed'}`);
+      }
 
       if (!response.ok) {
         throw new Error(`API call failed: ${response.statusText}`);

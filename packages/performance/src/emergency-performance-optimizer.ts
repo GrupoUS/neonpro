@@ -2,7 +2,7 @@
  * Emergency Performance Optimizer for Healthcare Critical Scenarios
  * Implements priority queuing, offline emergency cache, and edge computing
  * for sub-second response times in medical emergencies
- * 
+ *
  * Performance Targets:
  * - Emergency messages: <200ms response time
  * - Critical data access: <100ms from cache
@@ -12,7 +12,12 @@
 
 interface EmergencyRequest {
   id: string;
-  type: "emergency_consultation" | "critical_vitals" | "medication_alert" | "adverse_event" | "emergency_chat";
+  type:
+    | "emergency_consultation"
+    | "critical_vitals"
+    | "medication_alert"
+    | "adverse_event"
+    | "emergency_chat";
   priority: "critical" | "urgent" | "high" | "normal";
   timestamp: Date;
   patient_id: string;
@@ -21,7 +26,7 @@ interface EmergencyRequest {
   payload: {
     message?: string;
     vital_signs?: Record<string, number>;
-    medication_data?: any;
+    medication_data?: Record<string, unknown>;
     symptoms?: string[];
     severity_score?: number;
   };
@@ -46,7 +51,7 @@ interface PerformanceMetrics {
 interface EdgeNode {
   id: string;
   region: string;
-  coordinates: { lat: number; lng: number };
+  coordinates: { lat: number; lng: number; };
   status: "active" | "degraded" | "offline";
   current_load: number;
   max_capacity: number;
@@ -70,9 +75,9 @@ export class EmergencyPerformanceOptimizer {
     ["high", []],
     ["normal", []],
   ]);
-  
+
   private edgeNodes: Map<string, EdgeNode> = new Map();
-  private offlineCache: any;
+  private offlineCache: Record<string, unknown>;
   private performanceMetrics: Map<string, PerformanceMetrics> = new Map();
   private performanceMonitoringInterval: NodeJS.Timeout | null = null;
 
@@ -86,7 +91,7 @@ export class EmergencyPerformanceOptimizer {
    * Process emergency request with optimized performance routing
    */
   async processEmergencyRequest(request: EmergencyRequest): Promise<{
-    response: any;
+    response: Record<string, unknown>;
     performance_metrics: PerformanceMetrics;
     edge_node_used: string;
     fallback_strategies_used: string[];
@@ -103,17 +108,17 @@ export class EmergencyPerformanceOptimizer {
 
       // Step 2: Determine optimal processing strategy
       const processingStrategy = await this.determineProcessingStrategy(request);
-      
+
       // Step 3: Route to optimal processing method
-      let response: any;
+      let response: Record<string, unknown>;
       let edgeProcessingTime = 0;
-      
+
       if (processingStrategy.use_edge_computing && processingStrategy.edge_node) {
         const edgeStartTime = performance.now();
         response = await this.processAtEdgeNode(request, processingStrategy.edge_node);
         edgeProcessingTime = performance.now() - edgeStartTime;
         edgeNodeUsed = processingStrategy.edge_node;
-        
+
         if (!response) {
           fallbackStrategies.push("edge_node_fallback");
           response = await this.processWithFallback(request);
@@ -146,10 +151,9 @@ export class EmergencyPerformanceOptimizer {
         edge_node_used: edgeNodeUsed,
         fallback_strategies_used: fallbackStrategies,
       };
-
     } catch (error) {
       console.error("Emergency request processing failed:", error);
-      
+
       // Emergency fallback
       const emergencyResponse = await this.processEmergencyFallback(request);
       const failsafeTime = performance.now() - startTime;
@@ -174,17 +178,19 @@ export class EmergencyPerformanceOptimizer {
   private async addToPriorityQueue(request: EmergencyRequest): Promise<void> {
     const enhancedPriority = this.calculateMedicalPriority(request);
     const priorityQueues = this.priorityQueue.get(enhancedPriority) || [];
-    
+
     if (enhancedPriority === "critical" && request.context.is_emergency) {
       priorityQueues.unshift(request); // Front of queue
     } else {
       priorityQueues.push(request);
     }
-    
+
     this.priorityQueue.set(enhancedPriority, priorityQueues);
   }
 
-  private calculateMedicalPriority(request: EmergencyRequest): "critical" | "urgent" | "high" | "normal" {
+  private calculateMedicalPriority(
+    request: EmergencyRequest,
+  ): "critical" | "urgent" | "high" | "normal" {
     let priorityScore = 0;
 
     const basePriority = { critical: 100, urgent: 75, high: 50, normal: 25 }[request.priority];
@@ -195,10 +201,14 @@ export class EmergencyPerformanceOptimizer {
 
     // Critical symptoms check
     const criticalSymptoms = [
-      "chest pain", "difficulty breathing", "loss of consciousness",
-      "severe bleeding", "stroke symptoms", "anaphylaxis"
+      "chest pain",
+      "difficulty breathing",
+      "loss of consciousness",
+      "severe bleeding",
+      "stroke symptoms",
+      "anaphylaxis",
     ];
-    
+
     if (request.payload.symptoms) {
       const hasCriticalSymptoms = request.payload.symptoms.some(symptom =>
         criticalSymptoms.some(critical => symptom.toLowerCase().includes(critical))
@@ -228,7 +238,7 @@ export class EmergencyPerformanceOptimizer {
     };
 
     const optimalEdgeNode = await this.findOptimalEdgeNode(request.geographic_region);
-    
+
     if (optimalEdgeNode && request.context.max_response_time_ms <= 300) {
       strategy.use_edge_computing = true;
       strategy.edge_node = optimalEdgeNode.id;
@@ -237,7 +247,10 @@ export class EmergencyPerformanceOptimizer {
     }
 
     if (request.priority === "critical" && request.context.offline_fallback_required) {
-      if (!strategy.use_edge_computing || strategy.estimated_processing_time_ms > request.context.max_response_time_ms) {
+      if (
+        !strategy.use_edge_computing
+        || strategy.estimated_processing_time_ms > request.context.max_response_time_ms
+      ) {
         strategy.use_offline_cache = true;
         strategy.use_standard_pipeline = false;
         strategy.estimated_processing_time_ms = 50;
@@ -286,9 +299,9 @@ export class EmergencyPerformanceOptimizer {
         emergency_number: "192", // Brazilian emergency number
         critical_actions: [
           "Call 192 immediately",
-          "Stay with the patient", 
+          "Stay with the patient",
           "Follow basic life support if trained",
-          "Provide patient information to emergency responders"
+          "Provide patient information to emergency responders",
         ],
       },
       system_status: "emergency_fallback_mode",
@@ -297,7 +310,7 @@ export class EmergencyPerformanceOptimizer {
     };
   }
 
-  private getEmergencyProtocol(symptoms: string[]): any {
+  private getEmergencyProtocol(symptoms: string[]): Record<string, unknown> {
     // Match symptoms to emergency protocols
     for (const symptom of symptoms) {
       const lowerSymptom = symptom.toLowerCase();
@@ -316,7 +329,7 @@ export class EmergencyPerformanceOptimizer {
         };
       }
     }
-    
+
     return {
       protocol: "General Emergency",
       steps: ["Assess patient", "Call 192", "Monitor vital signs"],
@@ -324,7 +337,7 @@ export class EmergencyPerformanceOptimizer {
     };
   }
 
-  private assessCriticalVitals(vitals: Record<string, number>): any {
+  private assessCriticalVitals(vitals: Record<string, number>): Record<string, unknown> {
     const assessment = {
       status: "stable",
       alerts: [] as string[],
@@ -348,19 +361,21 @@ export class EmergencyPerformanceOptimizer {
     return assessment;
   }
 
-  private getEmergencyChatResponse(message: string): any {
+  private getEmergencyChatResponse(message: string): Record<string, unknown> {
     const lowerMessage = message.toLowerCase();
-    
+
     if (lowerMessage.includes("emergency") || lowerMessage.includes("help")) {
       return {
-        response: "Emergency detected. Connecting you with emergency services. Call 192 if immediate help needed.",
+        response:
+          "Emergency detected. Connecting you with emergency services. Call 192 if immediate help needed.",
         emergency_activated: true,
         offline_mode: true,
       };
     }
 
     return {
-      response: "I understand you need assistance. Please call 192 for emergencies or wait for connection to be restored.",
+      response:
+        "I understand you need assistance. Please call 192 for emergencies or wait for connection to be restored.",
       offline_mode: true,
     };
   }
@@ -390,7 +405,11 @@ export class EmergencyPerformanceOptimizer {
   private initializeEdgeNodes(): void {
     const brazilianRegions = [
       { id: "SP_CENTRAL", region: "São Paulo Central", coords: { lat: -23.5505, lng: -46.6333 } },
-      { id: "RJ_CENTRAL", region: "Rio de Janeiro Central", coords: { lat: -22.9068, lng: -43.1729 } },
+      {
+        id: "RJ_CENTRAL",
+        region: "Rio de Janeiro Central",
+        coords: { lat: -22.9068, lng: -43.1729 },
+      },
       { id: "DF_CENTRAL", region: "Brasília Central", coords: { lat: -15.8267, lng: -47.9218 } },
     ];
 
@@ -425,13 +444,13 @@ export class EmergencyPerformanceOptimizer {
   }
 
   private async findOptimalEdgeNode(region: string): Promise<EdgeNode | null> {
-    const activeNodes = Array.from(this.edgeNodes.values()).filter(node => 
+    const activeNodes = Array.from(this.edgeNodes.values()).filter(node =>
       node.status === "active" && node.current_load < 0.8
     );
-    
+
     if (activeNodes.length === 0) {return null;}
-    
-    return activeNodes.reduce((best, current) => 
+
+    return activeNodes.reduce((best, current) =>
       current.response_times.p95 < best.response_times.p95 ? current : best
     );
   }
@@ -445,7 +464,7 @@ export class EmergencyPerformanceOptimizer {
 
   private async processWithFallback(request: EmergencyRequest): Promise<any> {
     return {
-      result: "Processed via fallback method", 
+      result: "Processed via fallback method",
       processing_method: "fallback",
     };
   }
@@ -455,7 +474,7 @@ export class EmergencyPerformanceOptimizer {
     for (const [id, node] of this.edgeNodes) {
       // Simulate dynamic load changes
       node.current_load = Math.max(0, Math.min(1, node.current_load + (Math.random() - 0.5) * 0.1));
-      
+
       // Update response times based on load
       const loadFactor = node.current_load;
       node.response_times.p50 = 45 * (1 + loadFactor);
@@ -476,8 +495,8 @@ export class EmergencyPerformanceOptimizer {
   public async getSystemStatus(): Promise<{
     edge_nodes: EdgeNode[];
     queue_status: Record<string, number>;
-    cache_status: any;
-    performance_summary: any;
+    cache_status: Record<string, unknown>;
+    performance_summary: Record<string, unknown>;
   }> {
     return {
       edge_nodes: Array.from(this.edgeNodes.values()),
@@ -493,9 +512,9 @@ export class EmergencyPerformanceOptimizer {
       },
       performance_summary: {
         average_response_time: Array.from(this.performanceMetrics.values())
-          .reduce((sum, m) => sum + m.response_time_ms, 0) / this.performanceMetrics.size || 0,
+              .reduce((sum, m) => sum + m.response_time_ms, 0) / this.performanceMetrics.size || 0,
         sla_compliance_rate: Array.from(this.performanceMetrics.values())
-          .filter(m => m.compliance_with_sla).length / this.performanceMetrics.size || 1,
+              .filter(m => m.compliance_with_sla).length / this.performanceMetrics.size || 1,
       },
     };
   }

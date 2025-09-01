@@ -29,21 +29,21 @@ import { ResultsVisualization, QueryResult as VizQueryResult, ChartData, TableDa
 
 export function AIAssistantDashboardExample() {
   // Current user state
-  const [userRole] = useState&lt;UserRole&gt;({
+  const [userRole] = useState<UserRole>({
     id: 'user-001',
     name: 'Admin',
     permissions: ['query_all', 'export_data', 'view_compliance', 'manage_users']
   });
 
   // Active patient context
-  const [activePatientId] = useState&lt;string | undefined&gt;('pac-12345678');
+  const [activePatientId] = useState<string | undefined>('pac-12345678');
   
   // Performance insights state
-  const [timeRange, setTimeRange] = useState&lt;'today' | 'week' | 'month' | 'quarter'&gt;('today');
+  const [timeRange, setTimeRange] = useState<'today' | 'week' | 'month' | 'quarter'>('today');
   
   // Results visualization state
-  const [queryResults, setQueryResults] = useState&lt;VizQueryResult[]&gt;([]);
-  const [selectedResult, setSelectedResult] = useState&lt;string | undefined&gt;();
+  const [queryResults, setQueryResults] = useState<VizQueryResult[]>([]);
+  const [selectedResult, setSelectedResult] = useState<string | undefined>();
 
   // Generate sample data for demonstration
   const generateSampleChartData = (): ChartData => ({
@@ -77,7 +77,7 @@ export function AIAssistantDashboardExample() {
   });
 
   // Handle query submission
-  const handleQuerySubmit = async (query: string): Promise&lt;QueryResult&gt; => {
+  const handleQuerySubmit = async (query: string): Promise<QueryResult> => {
     // Simulate API processing delay
     await new Promise(resolve => setTimeout(resolve, 1500));
     
@@ -188,133 +188,133 @@ export function AIAssistantDashboardExample() {
 
   return (
     &lt;div className="min-h-screen bg-gray-50 p-6"&gt;
-      &lt;div className="max-w-7xl mx-auto space-y-6"&gt;
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        &lt;div className="bg-white rounded-lg border p-6"&gt;
-          &lt;h1 className="text-2xl font-bold text-gray-900 mb-2"&gt;
+        <div className="bg-white rounded-lg border p-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
             🤖 AI Assistant Dashboard - Equipe Médica
-          &lt;/h1&gt;
-          &lt;p className="text-gray-600"&gt;
+          </h1>
+          <p className="text-gray-600">
             Sistema integrado de assistente IA com natural language queries, 
             performance insights, compliance monitoring e visualização de resultados.
-          &lt;/p&gt;
+          </p>
           
           {/* Context Info */}
-          &lt;div className="mt-4 flex items-center gap-4 text-sm"&gt;
-            &lt;div className="bg-blue-50 px-3 py-1 rounded-full border border-blue-200"&gt;
+          <div className="mt-4 flex items-center gap-4 text-sm">
+            <div className="bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
               👤 Usuário: {userRole.name} ({userRole.id})
-            &lt;/div&gt;
+            </div>
             {activePatientId && (
-              &lt;div className="bg-green-50 px-3 py-1 rounded-full border border-green-200"&gt;
+              <div className="bg-green-50 px-3 py-1 rounded-full border border-green-200">
                 🏥 Paciente Ativo: {activePatientId}
-              &lt;/div&gt;
+              </div>
             )}
-            &lt;div className="bg-yellow-50 px-3 py-1 rounded-full border border-yellow-200"&gt;
+            <div className="bg-yellow-50 px-3 py-1 rounded-full border border-yellow-200">
               📊 Período: {timeRange === 'today' ? 'Hoje' : timeRange === 'week' ? 'Esta Semana' : timeRange === 'month' ? 'Este Mês' : 'Este Trimestre'}
-            &lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
+            </div>
+          </div>
+        </div>
 
         {/* Main Content */}
-        &lt;Tabs defaultValue="assistant" className="w-full"&gt;
-          &lt;TabsList className="grid w-full grid-cols-4 mb-6"&gt;
-            &lt;TabsTrigger value="assistant" className="flex items-center gap-2"&gt;
+        <Tabs defaultValue="assistant" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 mb-6">
+            <TabsTrigger value="assistant" className="flex items-center gap-2">
               🤖 Assistente IA
-            &lt;/TabsTrigger&gt;
-            &lt;TabsTrigger value="performance" className="flex items-center gap-2"&gt;
+            </TabsTrigger>
+            <TabsTrigger value="performance" className="flex items-center gap-2">
               📊 Performance
-            &lt;/TabsTrigger&gt;
-            &lt;TabsTrigger value="compliance" className="flex items-center gap-2"&gt;
+            </TabsTrigger>
+            <TabsTrigger value="compliance" className="flex items-center gap-2">
               🛡️ Compliance
-            &lt;/TabsTrigger&gt;
-            &lt;TabsTrigger value="results" className="flex items-center gap-2"&gt;
+            </TabsTrigger>
+            <TabsTrigger value="results" className="flex items-center gap-2">
               📈 Resultados
-            &lt;/TabsTrigger&gt;
-          &lt;/TabsList&gt;
+            </TabsTrigger>
+          </TabsList>
 
           {/* AI Assistant Tab */}
-          &lt;TabsContent value="assistant" className="space-y-6"&gt;
-            &lt;InternalAssistantPanel
+          <TabsContent value="assistant" className="space-y-6">
+            <InternalAssistantPanel
               userRole={userRole}
               activePatientId={activePatientId}
               onQuerySubmit={handleQuerySubmit}
               onExport={handleExportAssistantData}
-            /&gt;
-          &lt;/TabsContent&gt;
+            />
+          </TabsContent>
 
           {/* Performance Insights Tab */}
-          &lt;TabsContent value="performance" className="space-y-6"&gt;
-            &lt;PerformanceInsights
+          <TabsContent value="performance" className="space-y-6">
+            <PerformanceInsights
               userRole={userRole.name}
               timeRange={timeRange}
               onTimeRangeChange={(range) => setTimeRange(range as any)}
               onExportData={handleExportPerformanceData}
               onRefreshData={handleRefreshPerformanceData}
-            /&gt;
-          &lt;/TabsContent&gt;
+            />
+          </TabsContent>
 
           {/* Compliance Monitor Tab */}
-          &lt;TabsContent value="compliance" className="space-y-6"&gt;
-            &lt;ComplianceMonitor
+          <TabsContent value="compliance" className="space-y-6">
+            <ComplianceMonitor
               userRole={userRole.name}
               onExportReport={handleExportComplianceReport}
               onRefreshData={handleRefreshComplianceData}
               onViewDetails={handleViewComplianceDetails}
-            /&gt;
-          &lt;/TabsContent&gt;
+            />
+          </TabsContent>
 
           {/* Results Visualization Tab */}
-          &lt;TabsContent value="results" className="space-y-6"&gt;
-            &lt;ResultsVisualization
+          <TabsContent value="results" className="space-y-6">
+            <ResultsVisualization
               results={queryResults}
               selectedResult={selectedResult}
               onResultSelect={setSelectedResult}
               onExport={handleExportResults}
-            /&gt;
+            />
             
             {queryResults.length === 0 && (
-              &lt;div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center"&gt;
-                &lt;p className="text-blue-800 font-medium mb-2"&gt;
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                <p className="text-blue-800 font-medium mb-2">
                   💡 Dica: Para ver resultados aqui
-                &lt;/p&gt;
-                &lt;p className="text-blue-700 text-sm"&gt;
+                </p>
+                <p className="text-blue-700 text-sm">
                   Vá para a aba "Assistente IA" e faça consultas como:
-                &lt;/p&gt;
-                &lt;ul className="mt-3 text-sm text-blue-600 space-y-1"&gt;
-                  &lt;li&gt;"Mostrar gráfico de pacientes atendidos"&lt;/li&gt;
-                  &lt;li&gt;"Gerar tabela de procedimentos realizados"&lt;/li&gt;
-                  &lt;li&gt;"Criar dashboard completo da clínica"&lt;/li&gt;
-                &lt;/ul&gt;
-              &lt;/div&gt;
+                </p>
+                <ul className="mt-3 text-sm text-blue-600 space-y-1">
+                  <li>"Mostrar gráfico de pacientes atendidos"</li>
+                  <li>"Gerar tabela de procedimentos realizados"</li>
+                  <li>"Criar dashboard completo da clínica"</li>
+                </ul>
+              </div>
             )}
-          &lt;/TabsContent&gt;
-        &lt;/Tabs&gt;
+          </TabsContent>
+        </Tabs>
 
         {/* Implementation Notes */}
-        &lt;div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm"&gt;
-          &lt;h3 className="font-medium text-green-800 mb-2"&gt;✅ T2.2 - Implementação Completa&lt;/h3&gt;
-          &lt;div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-green-700"&gt;
-            &lt;div&gt;
-              &lt;strong&gt;Funcionalidades Principais:&lt;/strong&gt;
-              &lt;ul className="mt-1 space-y-1 text-xs"&gt;
-                &lt;li&gt;• Natural language queries em português&lt;/li&gt;
-                &lt;li&gt;• Context-aware patient data&lt;/li&gt;
-                &lt;li&gt;• Role-based permissions&lt;/li&gt;
-                &lt;li&gt;• Voice input support (português brasileiro)&lt;/li&gt;
-              &lt;/ul&gt;
-            &lt;/div&gt;
-            &lt;div&gt;
-              &lt;strong&gt;Compliance &amp; Analytics:&lt;/strong&gt;
-              &lt;ul className="mt-1 space-y-1 text-xs"&gt;
-                &lt;li&gt;• LGPD/ANVISA/CFM monitoring&lt;/li&gt;
-                &lt;li&gt;• Real-time performance insights&lt;/li&gt;
-                &lt;li&gt;• Export options (PDF, Excel, CSV)&lt;/li&gt;
-                &lt;li&gt;• Audit logging integrado&lt;/li&gt;
-              &lt;/ul&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm">
+          <h3 className="font-medium text-green-800 mb-2">✅ T2.2 - Implementação Completa</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-green-700">
+            <div>
+              <strong>Funcionalidades Principais:</strong>
+              <ul className="mt-1 space-y-1 text-xs">
+                <li>• Natural language queries em português</li>
+                <li>• Context-aware patient data</li>
+                <li>• Role-based permissions</li>
+                <li>• Voice input support (português brasileiro)</li>
+              </ul>
+            </div>
+            <div>
+              <strong>Compliance & Analytics:</strong>
+              <ul className="mt-1 space-y-1 text-xs">
+                <li>• LGPD/ANVISA/CFM monitoring</li>
+                <li>• Real-time performance insights</li>
+                <li>• Export options (PDF, Excel, CSV)</li>
+                <li>• Audit logging integrado</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

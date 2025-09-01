@@ -288,7 +288,7 @@ const sampleCustomMetrics: PerformanceMetric[] = [
 export function AntiNoShowDashboardExample({
   className
 }: AntiNoShowDashboardExampleProps) {
-  const [timeRange, setTimeRange] = React.useState("month");
+  const [timeRange, setTimeRange] = React.useState<"today" | "week" | "month" | "quarter" | "year">("month");
   const [selectedPatient, setSelectedPatient] = React.useState<string | null>(null);
   const [interventions, setInterventions] = React.useState(sampleInterventions);
 
@@ -565,7 +565,7 @@ export function AntiNoShowDashboardExample({
             roiMetrics={sampleROIMetrics}
             noShowMetrics={sampleNoShowMetrics}
             customMetrics={sampleCustomMetrics}
-            timeRange={timeRange as any}
+            timeRange={timeRange}
             onTimeRangeChange={setTimeRange}
           />
         </TabsContent>

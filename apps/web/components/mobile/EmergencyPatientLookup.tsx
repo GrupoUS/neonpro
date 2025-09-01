@@ -40,7 +40,7 @@ const useEmergencyPatientCache = () => {
 
   // Simulate IndexedDB cached lookup <50ms
   const searchPatients = useCallback(async (query: string): Promise<EmergencyPatient[]> => {
-    if (!query || query.length < 2) return []
+    if (!query || query.length < 2) {return []}
     
     const startTime = performance.now()
     
@@ -182,7 +182,7 @@ export function EmergencyPatientLookup({
               "pl-10 pr-4"
             )}
             autoComplete="off"
-            autoFocus={emergencyMode}
+            
           />
           <Search className={cn(
             "absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4",
@@ -284,7 +284,7 @@ export function EmergencyPatientLookup({
                 {/* Performance indicator */}
                 <div className="text-xs text-green-600 flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  <50ms
+                  <span>50ms</span>
                 </div>
               </div>
             </CardContent>

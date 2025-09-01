@@ -49,7 +49,7 @@ class EncryptionService {
   static encrypt(data: any): { encrypted: string; iv: string; tag: string } {
     const key = this.getEncryptionKey();
     const iv = crypto.randomBytes(this.IV_LENGTH);
-    const cipher = crypto.createCipher(this.ALGORITHM, key);
+    const cipher = crypto.createCipheriv(this.ALGORITHM, key, iv);
     cipher.setAAD(Buffer.from('handoff-token'));
 
     const jsonData = JSON.stringify(data);
@@ -70,7 +70,7 @@ class EncryptionService {
     const iv = Buffer.from(ivHex, 'hex');
     const tag = Buffer.from(tagHex, 'hex');
     
-    const decipher = crypto.createDecipher(this.ALGORITHM, key);
+    const decipher = crypto.createDecipheriv(this.ALGORITHM, key, iv);
     decipher.setAAD(Buffer.from('handoff-token'));
     decipher.setAuthTag(tag);
 
@@ -91,11 +91,11 @@ class TokenService {
     return crypto.randomBytes(16).toString('hex');
   }
 
-  static createHandoffToken(payload: any, deviceFingerprint: DeviceFingerprint): string {
+  static createHandoffToken(payload: any, deviceFingerprint: DeviceFingerprint, expiryMinutes: number = 5): string {
     const sessionId = this.generateSessionId();
     const nonce = this.generateNonce();
     const issuedAt = Date.now();
-    const expiresAt = issuedAt + (5 * 60 * 1000); // 5 minutes
+    const expiresAt = issuedAt + (expiryMinutes * 60 * 1000);
 
     const tokenData = {
       sessionId,
@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Generate secure token
-    const token = TokenService.createHandoffToken(enhancedPayload, deviceFingerprint);
+    const token = TokenService.createHandoffToken(enhancedPayload, deviceFingerprint, expiryMinutes);
     const sessionId = JSON.parse(Buffer.from(token, 'base64url').toString()).sessionId;
 
     // Store token in Supabase for tracking and validation

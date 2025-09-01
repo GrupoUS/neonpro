@@ -4,6 +4,7 @@
  * with Brazilian regulatory compliance, LGPD audit logging, and proper error handling.
  */
 
+import type { Context, Next } from "hono";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
@@ -23,8 +24,8 @@ const Logger = {
 };
 
 // Placeholder middleware for template compilation
-const healthcareSecurityMiddleware = async (c: unknown, next: unknown) => await next();
-const healthcareValidationMiddleware = async (c: unknown, next: unknown) => await next();
+const healthcareSecurityMiddleware = async (c: Context, next: Next) => await next();
+const healthcareValidationMiddleware = async (c: Context, next: Next) => await next();
 
 // Standard API response types
 export interface HealthcareApiResponse<T> {
@@ -371,7 +372,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   protected addCustomRoute(
     method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
     path: string,
-    handler: (c: Record<string, unknown>) => Promise<Response> | Response,
+    handler: (c: Context) => Promise<Response> | Response,
   ): void {
     const fullPath = path.startsWith("/") ? path : `/${path}`;
 
