@@ -22,7 +22,7 @@ const BUNDLE_ANALYZER_CONFIG = {
 
 const PERFORMANCE_TARGETS = {
   LCP: 2500, // ms - Largest Contentful Paint
-  FID: 100, // ms - First Input Delay
+  INP: 200, // ms - Interaction to Next Paint
   CLS: 0.1, // score - Cumulative Layout Shift
   BUNDLE_SIZE_REDUCTION: 20, // % - Target reduction
 };
@@ -93,7 +93,7 @@ function generateOptimizationPlan(heavyDeps) {
 
   console.log("🎯 Performance Targets:");
   console.log(`   • LCP: <${PERFORMANCE_TARGETS.LCP}ms`);
-  console.log(`   • FID: <${PERFORMANCE_TARGETS.FID}ms`);
+  console.log(`   • INP: <${PERFORMANCE_TARGETS.INP}ms`);
   console.log(`   • CLS: <${PERFORMANCE_TARGETS.CLS}`);
   console.log(`   • Bundle Size: -${PERFORMANCE_TARGETS.BUNDLE_SIZE_REDUCTION}%\n`);
 
@@ -218,7 +218,7 @@ const nextConfig = {
 
 function main() {
   console.log("🚀 NeonPro Bundle Analysis - Core Web Vitals Optimization\n");
-  console.log("Target: LCP <2.5s | FID <100ms | CLS <0.1 | Bundle -20%\n");
+  console.log("Target: LCP <2.5s | INP <200ms | CLS <0.1 | Bundle -20%\n");
 
   const heavyDeps = analyzePackageJson();
   generateOptimizationPlan(heavyDeps);

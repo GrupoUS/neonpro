@@ -151,7 +151,7 @@ Core functionality works without JavaScript:
 
 ## Accessibility Features
 
-### WCAG 2.1 AA+ Compliance
+### WCAG 2.1 AA Compliance
 
 - Minimum 44px touch targets
 - 4.5:1 color contrast ratios (7:1 for critical elements)

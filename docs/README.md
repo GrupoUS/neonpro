@@ -45,7 +45,7 @@ docs/
 
 1. **User Personas**: Review personas and design patterns in [`frontend-comprehensive-guide.md`](./frontend-comprehensive-guide.md)
 2. **Design System**: Follow shadcn/ui + Tailwind CSS guidelines with healthcare-specific components
-3. **Accessibility**: Ensure WCAG 2.1 AA+ compliance for healthcare applications
+3. **Accessibility**: Ensure WCAG 2.1 AA compliance for healthcare applications
 
 ### For Project Managers
 

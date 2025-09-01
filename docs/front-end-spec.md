@@ -4,16 +4,17 @@
 
 **NeonPro** is an AI-First Brazilian Aesthetic Clinic Platform built with **Turborepo monorepo architecture**. This guide provides implementation patterns, security requirements, and development workflows for healthcare SaaS platform.
 
-**Target**: Frontend developers, full-stack developers, technical leads  
-**Stack**: Next.js 15 + React 19 with 20 specialized packages  
-**Focus**: Brazilian healthcare compliance + technical implementation  
+**Target**: Frontend developers, full-stack developers, technical leads\
+**Stack**: Next.js 15 + React 19 with 20 specialized packages\
+**Focus**: Brazilian healthcare compliance + technical implementation\
 **Quality**: 9.5/10 production-ready architecture
 
 ## Prerequisites
 
-**Essential Skills**: Next.js 15 App Router, TypeScript 5.3+, Turborepo workflow, shadcn/ui v4, Brazilian Healthcare UX, WCAG 2.1 AA+
+**Essential Skills**: Next.js 15 App Router, TypeScript 5.3+, Turborepo workflow, shadcn/ui v4, Brazilian Healthcare UX, WCAG 2.1 AA
 
 **Development Environment**:
+
 ```bash
 # Setup
 Node.js 20+ with pnpm
@@ -26,6 +27,7 @@ packages/     # 20 specialized packages
 ```
 
 **Key User**: Marina Silva - Technical Aesthetic Professional (35-45 years, moderate tech comfort 6/10)
+
 - **Needs**: Zero workflow disruption, <5% performance impact, 60% admin time reduction
 - **Requirements**: Mobile-first, Portuguese-optimized, healthcare-specific patterns
 
@@ -108,7 +110,7 @@ src/
 interface HealthcareComponentProps {
   readonly patientId: string;
   readonly lgpdCompliant: boolean;
-  readonly userRole: 'admin' | 'professional' | 'coordinator';
+  readonly userRole: "admin" | "professional" | "coordinator";
   readonly onAuditLog?: (action: string) => void;
 }
 
@@ -131,37 +133,39 @@ interface PatientStore {
 ```css
 :root {
   /* Professional healthcare colors */
-  --neon-primary: #2563eb;           /* Professional trust blue */
-  --neon-secondary: #7c3aed;         /* Sophisticated purple */
-  --neon-accent: #06b6d4;            /* Modern cyan */
-  
+  --neon-primary: #2563eb; /* Professional trust blue */
+  --neon-secondary: #7c3aed; /* Sophisticated purple */
+  --neon-accent: #06b6d4; /* Modern cyan */
+
   /* Brazilian healthcare compliance */
-  --compliance-valid: #16a34a;       /* LGPD compliant green */
-  --compliance-pending: #d97706;     /* Validation pending orange */
-  --compliance-error: #dc2626;       /* Compliance error red */
-  
+  --compliance-valid: #16a34a; /* LGPD compliant green */
+  --compliance-pending: #d97706; /* Validation pending orange */
+  --compliance-error: #dc2626; /* Compliance error red */
+
   /* Treatment status indicators */
-  --treatment-planning: #64748b;     /* Planning phase gray */
-  --treatment-active: #2563eb;       /* Active treatment blue */  
-  --treatment-recovery: #d97706;     /* Recovery period orange */
-  --treatment-complete: #16a34a;     /* Completed green */
-  
+  --treatment-planning: #64748b; /* Planning phase gray */
+  --treatment-active: #2563eb; /* Active treatment blue */
+  --treatment-recovery: #d97706; /* Recovery period orange */
+  --treatment-complete: #16a34a; /* Completed green */
+
   /* Portuguese typography optimization */
   --font-primary: "Inter", "Roboto", sans-serif;
   --font-healthcare-data: "JetBrains Mono", monospace;
-  --line-height-portuguese: 1.6;    /* Optimal Portuguese readability */
+  --line-height-portuguese: 1.6; /* Optimal Portuguese readability */
 }
 ```
 
 ### Healthcare Patient Component
 
 ```typescript
-export function HealthcarePatientCard({ patient, userRole, onViewDetails }: HealthcarePatientCardProps) {
-  const canViewFullData = ['admin', 'professional'].includes(userRole);
+export function HealthcarePatientCard(
+  { patient, userRole, onViewDetails }: HealthcarePatientCardProps,
+) {
+  const canViewFullData = ["admin", "professional"].includes(userRole);
   const { logPatientAccess } = useAuditLogging();
 
   const handleViewDetails = async () => {
-    await logPatientAccess(patient.id, 'VIEW_PATIENT_DETAILS');
+    await logPatientAccess(patient.id, "VIEW_PATIENT_DETAILS");
     onViewDetails(patient.id);
   };
 
@@ -187,8 +191,8 @@ export function HealthcarePatientCard({ patient, userRole, onViewDetails }: Heal
           </div>
         </div>
         <div className="text-sm space-y-1">
-          <p>Último: {patient.lastProcedure || 'Nenhum'}</p>
-          <p>Próximo: {patient.nextAppointment || 'Não agendado'}</p>
+          <p>Último: {patient.lastProcedure || "Nenhum"}</p>
+          <p>Próximo: {patient.nextAppointment || "Não agendado"}</p>
         </div>
       </CardHeader>
       <CardFooter>
@@ -204,17 +208,17 @@ export function HealthcarePatientCard({ patient, userRole, onViewDetails }: Heal
 ### Universal AI Chat System
 
 ```typescript
-export function UniversalAIChat({ context = 'general', patientId }: {
-  context?: 'patient' | 'appointment' | 'emergency' | 'general';
+export function UniversalAIChat({ context = "general", patientId }: {
+  context?: "patient" | "appointment" | "emergency" | "general";
   patientId?: string;
 }) {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/ai/chat',
-    body: { 
-      language: 'pt-BR',
-      context, 
+    api: "/api/ai/chat",
+    body: {
+      language: "pt-BR",
+      context,
       patientId,
-      features: ['scheduling', 'procedures', 'aftercare', 'emergency-detection']
+      features: ["scheduling", "procedures", "aftercare", "emergency-detection"],
     },
     onFinish: async (message) => {
       // Audit AI interactions for healthcare compliance
@@ -222,14 +226,14 @@ export function UniversalAIChat({ context = 'general', patientId }: {
         messageId: message.id,
         context,
         patientId,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
-      
+
       // Emergency detection handling
       if (message.metadata?.emergencyDetected) {
         await handleEmergencyAlert(message.metadata);
       }
-    }
+    },
   });
 
   return (
@@ -238,17 +242,17 @@ export function UniversalAIChat({ context = 'general', patientId }: {
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">Assistente NeonPro</h3>
           <div className="flex gap-2">
-            {context === 'emergency' && (
+            {context === "emergency" && (
               <Badge variant="destructive">
                 <AlertTriangle className="h-3 w-3 mr-1" />Emergência
               </Badge>
             )}
             <Badge variant="outline">
-              {context === 'patient' ? 'Contexto: Paciente' : 'Geral'}
+              {context === "patient" ? "Contexto: Paciente" : "Geral"}
             </Badge>
           </div>
         </div>
-        
+
         <Alert className="mt-2">
           <Shield className="h-4 w-4" />
           <AlertDescription className="text-xs">
@@ -262,15 +266,17 @@ export function UniversalAIChat({ context = 'general', patientId }: {
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              <div className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                message.role === 'user'
-                  ? 'bg-blue-600 text-white'
-                  : message.metadata?.emergencyDetected
-                  ? 'bg-red-100 border border-red-300 text-red-800'
-                  : 'bg-gray-100 text-gray-800'
-              }`}>
+              <div
+                className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                  message.role === "user"
+                    ? "bg-blue-600 text-white"
+                    : message.metadata?.emergencyDetected
+                    ? "bg-red-100 border border-red-300 text-red-800"
+                    : "bg-gray-100 text-gray-800"
+                }`}
+              >
                 <p>{message.content}</p>
                 {message.metadata?.confidence && (
                   <div className="mt-1 text-xs opacity-75">
@@ -288,7 +294,9 @@ export function UniversalAIChat({ context = 'general', patientId }: {
           <Input
             value={input}
             onChange={handleInputChange}
-            placeholder={context === 'emergency' ? "Descreva a situação de emergência..." : "Digite sua mensagem..."}
+            placeholder={context === "emergency"
+              ? "Descreva a situação de emergência..."
+              : "Digite sua mensagem..."}
             disabled={isLoading}
             className="flex-1"
           />
@@ -301,17 +309,18 @@ export function UniversalAIChat({ context = 'general', patientId }: {
   );
 }
 ```
+
 ### Anti-No-Show Prediction Engine
 
 ```typescript
-export function NoShowRiskPredictor({ appointmentId }: { appointmentId: string }) {
+export function NoShowRiskPredictor({ appointmentId }: { appointmentId: string; }) {
   const { data: prediction, isLoading } = useQuery({
-    queryKey: ['no-show-prediction', appointmentId],
+    queryKey: ["no-show-prediction", appointmentId],
     queryFn: async () => {
       const response = await fetch(`/api/ai/no-show-prediction/${appointmentId}`);
       return response.json();
     },
-    refetchInterval: 30000
+    refetchInterval: 30000,
   });
 
   const { logPredictionView } = useAuditLogging();
@@ -321,14 +330,21 @@ export function NoShowRiskPredictor({ appointmentId }: { appointmentId: string }
   }, [prediction, appointmentId, logPredictionView]);
 
   if (isLoading || !prediction) {
-    return <Card className="p-4"><div className="animate-pulse space-y-2">
-      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-      <div className="h-20 bg-gray-200 rounded"></div>
-    </div></Card>;
+    return (
+      <Card className="p-4">
+        <div className="animate-pulse space-y-2">
+          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-20 bg-gray-200 rounded"></div>
+        </div>
+      </Card>
+    );
   }
 
-  const riskColor = prediction.riskScore >= 70 ? 'destructive' : 
-                   prediction.riskScore >= 40 ? 'warning' : 'success';
+  const riskColor = prediction.riskScore >= 70
+    ? "destructive"
+    : prediction.riskScore >= 40
+    ? "warning"
+    : "success";
 
   return (
     <Card className="p-4 space-y-4">
@@ -384,7 +400,7 @@ export function NoShowRiskPredictor({ appointmentId }: { appointmentId: string }
       )}
 
       <div className="text-xs text-muted-foreground border-t pt-2">
-        Última atualização: {new Date(prediction.lastUpdated).toLocaleString('pt-BR')}
+        Última atualização: {new Date(prediction.lastUpdated).toLocaleString("pt-BR")}
       </div>
     </Card>
   );
@@ -401,52 +417,50 @@ export function SecurePatientManager() {
   const { logPatientAccess } = useAuditLogging();
 
   const handlePatientSelection = async (patient: Patient) => {
-    if (!hasPermission('patients', 'read')) {
-      toast.error('Acesso negado: permissão insuficiente');
+    if (!hasPermission("patients", "read")) {
+      toast.error("Acesso negado: permissão insuficiente");
       return;
     }
 
     try {
-      await logPatientAccess(patient.id, 'VIEW_PATIENT_PROFILE');
+      await logPatientAccess(patient.id, "VIEW_PATIENT_PROFILE");
       setSelectedPatient(patient);
-      
-      if (hasPermission('patients', 'read_phi')) {
+
+      if (hasPermission("patients", "read_phi")) {
         await loadPatientDetails(patient.id);
       }
     } catch (error) {
-      toast.error('Erro ao acessar dados do paciente');
+      toast.error("Erro ao acessar dados do paciente");
     }
   };
 
   const updatePatient = async (patientId: string, updates: Partial<Patient>) => {
-    if (!hasPermission('patients', 'write')) {
-      toast.error('Acesso negado: sem permissão para editar');
+    if (!hasPermission("patients", "write")) {
+      toast.error("Acesso negado: sem permissão para editar");
       return;
     }
 
     try {
       const validation = HealthcareValidator.validatePatientData(updates);
       if (!validation.valid) {
-        toast.error(`Dados inválidos: ${validation.errors.join(', ')}`);
+        toast.error(`Dados inválidos: ${validation.errors.join(", ")}`);
         return;
       }
 
-      await logPatientAccess(patientId, 'MODIFY_PATIENT_DATA');
+      await logPatientAccess(patientId, "MODIFY_PATIENT_DATA");
       const response = await fetch(`/api/patients/${patientId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
       });
 
       if (response.ok) {
         const updatedPatient = await response.json();
-        setPatients(prev => prev.map(p => 
-          p.id === patientId ? { ...p, ...updatedPatient } : p
-        ));
-        toast.success('Paciente atualizado com sucesso');
+        setPatients(prev => prev.map(p => p.id === patientId ? { ...p, ...updatedPatient } : p));
+        toast.success("Paciente atualizado com sucesso");
       }
     } catch (error) {
-      toast.error('Erro ao atualizar paciente');
+      toast.error("Erro ao atualizar paciente");
     }
   };
 
@@ -466,7 +480,7 @@ export function SecurePatientManager() {
                   <div
                     key={patient.id}
                     className={`p-3 rounded-lg border cursor-pointer transition-colors hover:bg-gray-50 ${
-                      selectedPatient?.id === patient.id ? 'border-blue-500 bg-blue-50' : ''
+                      selectedPatient?.id === patient.id ? "border-blue-500 bg-blue-50" : ""
                     }`}
                     onClick={() => handlePatientSelection(patient)}
                   >
@@ -493,20 +507,22 @@ export function SecurePatientManager() {
       </div>
 
       <div className="lg:col-span-2">
-        {selectedPatient ? (
-          <PatientDetailsPanel 
-            patient={selectedPatient} 
-            onUpdate={updatePatient}
-            userRole={userRole}
-          />
-        ) : (
-          <Card className="h-full flex items-center justify-center">
-            <div className="text-center text-muted-foreground">
-              <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Selecione um paciente para ver os detalhes</p>
-            </div>
-          </Card>
-        )}
+        {selectedPatient
+          ? (
+            <PatientDetailsPanel
+              patient={selectedPatient}
+              onUpdate={updatePatient}
+              userRole={userRole}
+            />
+          )
+          : (
+            <Card className="h-full flex items-center justify-center">
+              <div className="text-center text-muted-foreground">
+                <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Selecione um paciente para ver os detalhes</p>
+              </div>
+            </Card>
+          )}
       </div>
     </div>
   );
@@ -520,42 +536,50 @@ export function SecurePatientManager() {
 ```typescript
 export class PHIMasker {
   static maskCPF(cpf: string): string {
-    return cpf.replace(/(\d{3})\.(\d{3})\.(\d{3})-(\d{2})/, '***.***.***-**');
+    return cpf.replace(/(\d{3})\.(\d{3})\.(\d{3})-(\d{2})/, "***.***.***-**");
   }
 
   static maskPhone(phone: string): string {
-    return phone.replace(/(\(\d{2}\)\s*)(\d{4,5})-(\d{4})/, '$1*****-****');
+    return phone.replace(/(\(\d{2}\)\s*)(\d{4,5})-(\d{4})/, "$1*****-****");
   }
 
   static maskEmail(email: string): string {
-    const [username, domain] = email.split('@');
-    const maskedUsername = username[0] + '*'.repeat(username.length - 1);
+    const [username, domain] = email.split("@");
+    const maskedUsername = username[0] + "*".repeat(username.length - 1);
     return `${maskedUsername}@${domain}`;
   }
 
   static sanitizeForAI(content: string): string {
     return content
-      .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '[CPF_REMOVIDO]')
-      .replace(/\(\d{2}\)\s*\d{4,5}-\d{4}/g, '[TELEFONE_REMOVIDO]')
-      .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL_REMOVIDO]')
-      .replace(/\b\d{2}\.\d{3}\.\d{3}-\d\b/g, '[RG_REMOVIDO]')
-      .replace(/\b(cartão|cartao)?\s*\d{4}\s*\d{4}\s*\d{4}\s*\d{4}\b/gi, '[CARTAO_REMOVIDO]');
+      .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, "[CPF_REMOVIDO]")
+      .replace(/\(\d{2}\)\s*\d{4,5}-\d{4}/g, "[TELEFONE_REMOVIDO]")
+      .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, "[EMAIL_REMOVIDO]")
+      .replace(/\b\d{2}\.\d{3}\.\d{3}-\d\b/g, "[RG_REMOVIDO]")
+      .replace(/\b(cartão|cartao)?\s*\d{4}\s*\d{4}\s*\d{4}\s*\d{4}\b/gi, "[CARTAO_REMOVIDO]");
   }
 
-  static getDataClassification(field: string): 'public' | 'internal' | 'confidential' | 'restricted' {
+  static getDataClassification(
+    field: string,
+  ): "public" | "internal" | "confidential" | "restricted" {
     const classifications = {
-      name: 'confidential', cpf: 'restricted', email: 'confidential', 
-      phone: 'confidential', medicalHistory: 'restricted', treatmentNotes: 'restricted',
-      photos: 'restricted', id: 'internal', createdAt: 'internal'
+      name: "confidential",
+      cpf: "restricted",
+      email: "confidential",
+      phone: "confidential",
+      medicalHistory: "restricted",
+      treatmentNotes: "restricted",
+      photos: "restricted",
+      id: "internal",
+      createdAt: "internal",
     };
-    return classifications[field as keyof typeof classifications] || 'public';
+    return classifications[field as keyof typeof classifications] || "public";
   }
 }
 ```
 
 ### Unified Audit Service
 
-```typescript
+````typescript
 export class HealthcareAuditLogger {
   private static instance: HealthcareAuditLogger;
   static getInstance(): HealthcareAuditLogger {
@@ -746,38 +770,44 @@ export function LGPDConsentManager({ patientId }: { patientId: string }) {
     </Card>
   );
 }
-```
+````
 
 ## Accessibility & Performance
 
-### WCAG 2.1 AA+ Implementation
+### WCAG 2.1 AA Implementation
 
 ```typescript
 export const accessibilityHelpers = {
   skipToMain: {
     href: "#main-content",
-    className: "sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:border focus:rounded"
+    className:
+      "sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:border focus:rounded",
   },
   focusManagement: {
-    ring: "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-  }
+    ring: "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+  },
 };
 
 export function useHighContrast() {
   const [isHighContrast, setIsHighContrast] = useState(false);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-contrast: high)');
+    const mediaQuery = window.matchMedia("(prefers-contrast: high)");
     setIsHighContrast(mediaQuery.matches);
     const handler = (e: MediaQueryListEvent) => setIsHighContrast(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
-  const highContrastClasses = isHighContrast ? {
-    background: "bg-white", text: "text-black", border: "border-black border-2",
-    button: "bg-black text-white border-2 border-black", input: "bg-white text-black border-2 border-black"
-  } : {};
+  const highContrastClasses = isHighContrast
+    ? {
+      background: "bg-white",
+      text: "text-black",
+      border: "border-black border-2",
+      button: "bg-black text-white border-2 border-black",
+      input: "bg-white text-black border-2 border-black",
+    }
+    : {};
 
   return { isHighContrast, highContrastClasses };
 }
@@ -790,31 +820,48 @@ export function AccessiblePatientForm() {
   return (
     <form className="space-y-6" aria-labelledby="patient-form-title">
       <h2 id="patient-form-title" className="text-xl font-semibold">Cadastro de Paciente</h2>
-      
+
       <div className="space-y-4">
         <div>
-          <Label htmlFor="patient-name" className={`text-sm font-medium ${isHighContrast ? 'text-black' : ''}`}>
+          <Label
+            htmlFor="patient-name"
+            className={`text-sm font-medium ${isHighContrast ? "text-black" : ""}`}
+          >
             Nome Completo *
           </Label>
           <Input
-            id="patient-name" name="name" type="text" required
-            aria-required="true" aria-invalid={errors.name ? 'true' : 'false'}
-            aria-describedby={errors.name ? 'name-error' : undefined}
+            id="patient-name"
+            name="name"
+            type="text"
+            required
+            aria-required="true"
+            aria-invalid={errors.name ? "true" : "false"}
+            aria-describedby={errors.name ? "name-error" : undefined}
             className={`mt-1 ${highContrastClasses.input} ${accessibilityHelpers.focusManagement.ring}`}
-            value={formData.name || ''} onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+            value={formData.name || ""}
+            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
           />
           {errors.name && (
-            <div id="name-error" role="alert" className="mt-1 text-sm text-red-600">{errors.name}</div>
+            <div id="name-error" role="alert" className="mt-1 text-sm text-red-600">
+              {errors.name}
+            </div>
           )}
         </div>
       </div>
 
       <div className="flex gap-4">
-        <Button type="submit" className={`${highContrastClasses.button} ${accessibilityHelpers.focusManagement.ring}`}>
+        <Button
+          type="submit"
+          className={`${highContrastClasses.button} ${accessibilityHelpers.focusManagement.ring}`}
+        >
           <Shield className="h-4 w-4 mr-2" aria-hidden="true" />Cadastrar Paciente
         </Button>
-        <Button type="button" variant="outline" className={accessibilityHelpers.focusManagement.ring} 
-                onClick={() => setFormData({})}>
+        <Button
+          type="button"
+          variant="outline"
+          className={accessibilityHelpers.focusManagement.ring}
+          onClick={() => setFormData({})}
+        >
           Limpar Formulário
         </Button>
       </div>
@@ -823,11 +870,11 @@ export function AccessiblePatientForm() {
 }
 
 export function useScreenReaderAnnouncements() {
-  const announce = useCallback((message: string, priority: 'polite' | 'assertive' = 'polite') => {
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', priority);
-    announcement.setAttribute('aria-atomic', 'true');
-    announcement.className = 'sr-only';
+  const announce = useCallback((message: string, priority: "polite" | "assertive" = "polite") => {
+    const announcement = document.createElement("div");
+    announcement.setAttribute("aria-live", priority);
+    announcement.setAttribute("aria-atomic", "true");
+    announcement.className = "sr-only";
     announcement.textContent = message;
     document.body.appendChild(announcement);
     setTimeout(() => document.body.removeChild(announcement), 1000);
@@ -841,21 +888,23 @@ export function useScreenReaderAnnouncements() {
 ```typescript
 export const performanceConfig = {
   targets: { LCP: 2500, FID: 100, CLS: 0.1, TTFB: 600 },
-  bundleSize: { initial: 1024 * 1024, total: 2048 * 1024, packages: 512 * 1024 }
+  bundleSize: { initial: 1024 * 1024, total: 2048 * 1024, packages: 512 * 1024 },
 };
 
 export function usePerformanceMonitoring() {
   useEffect(() => {
     const observer = new PerformanceObserver((list) => {
       list.getEntries().forEach((entry) => {
-        if (entry.entryType === 'largest-contentful-paint') {
-          analytics.track('core_web_vitals', {
-            metric: 'LCP', value: entry.startTime, threshold: performanceConfig.targets.LCP
+        if (entry.entryType === "largest-contentful-paint") {
+          analytics.track("core_web_vitals", {
+            metric: "LCP",
+            value: entry.startTime,
+            threshold: performanceConfig.targets.LCP,
           });
         }
       });
     });
-    observer.observe({ entryTypes: ['largest-contentful-paint'] });
+    observer.observe({ entryTypes: ["largest-contentful-paint"] });
     return () => observer.disconnect();
   }, []);
 
@@ -869,26 +918,44 @@ export function usePerformanceMonitoring() {
   return { measureRender };
 }
 
-export function OptimizedHealthcareImage({ src, alt, width, height, priority = false, className = "" }: {
-  src: string; alt: string; width: number; height: number; priority?: boolean; className?: string;
-}) {
+export function OptimizedHealthcareImage(
+  { src, alt, width, height, priority = false, className = "" }: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+    priority?: boolean;
+    className?: string;
+  },
+) {
   return (
-    <Image src={src} alt={alt} width={width} height={height} priority={priority} className={className}
-           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" placeholder="blur"
-           loading={priority ? "eager" : "lazy"} decoding="async"
-           style={{ width: '100%', height: 'auto', objectFit: 'cover' }} />
+    <Image
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      priority={priority}
+      className={className}
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      placeholder="blur"
+      loading={priority ? "eager" : "lazy"}
+      decoding="async"
+      style={{ width: "100%", height: "auto", objectFit: "cover" }}
+    />
   );
 }
 
 export const LazyComponents = {
-  PatientDetailsPanel: lazy(() => import('./PatientDetailsPanel')),
-  AnalyticsDashboard: lazy(() => import('./AnalyticsDashboard')),
-  ComplianceReports: lazy(() => import('./ComplianceReports')),
-  AIInsightsDashboard: lazy(() => import('./AIInsightsDashboard'))
+  PatientDetailsPanel: lazy(() => import("./PatientDetailsPanel")),
+  AnalyticsDashboard: lazy(() => import("./AnalyticsDashboard")),
+  ComplianceReports: lazy(() => import("./ComplianceReports")),
+  AIInsightsDashboard: lazy(() => import("./AIInsightsDashboard")),
 };
 
 export function LazyComponentWrapper({ component: Component, fallback, ...props }: {
-  component: React.LazyExoticComponent<any>; fallback?: React.ReactNode; [key: string]: any;
+  component: React.LazyExoticComponent<any>;
+  fallback?: React.ReactNode;
+  [key: string]: any;
 }) {
   const defaultFallback = (
     <Card className="p-8">
@@ -912,13 +979,17 @@ export function LazyComponentWrapper({ component: Component, fallback, ...props 
 
 ```typescript
 export class HealthcareAPIClient {
-  private baseURL = process.env.NEXT_PUBLIC_API_URL || '/api';
+  private baseURL = process.env.NEXT_PUBLIC_API_URL || "/api";
 
   async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     const defaultOptions: RequestInit = {
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAuthToken()}`, ...options.headers },
-      ...options
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${getAuthToken()}`,
+        ...options.headers,
+      },
+      ...options,
     };
 
     try {
@@ -928,23 +999,29 @@ export class HealthcareAPIClient {
       }
       return await response.json();
     } catch (error) {
-      console.error('API request failed:', error);
+      console.error("API request failed:", error);
       throw error;
     }
   }
 
   patients = {
-    list: (params?: PatientListParams) => this.request<PatientListResponse>(`/patients?${new URLSearchParams(params)}`),
+    list: (params?: PatientListParams) =>
+      this.request<PatientListResponse>(`/patients?${new URLSearchParams(params)}`),
     get: (id: string) => this.request<Patient>(`/patients/${id}`),
-    create: (data: CreatePatientRequest) => this.request<Patient>('/patients', { method: 'POST', body: JSON.stringify(data) }),
-    update: (id: string, data: UpdatePatientRequest) => this.request<Patient>(`/patients/${id}`, { method: 'PATCH', body: JSON.stringify(data) })
+    create: (data: CreatePatientRequest) =>
+      this.request<Patient>("/patients", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: UpdatePatientRequest) =>
+      this.request<Patient>(`/patients/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   };
 
   ai = {
-    chat: (messages: ChatMessage[], context: string) => this.request<AIChatResponse>('/ai/chat', {
-      method: 'POST', body: JSON.stringify({ messages, context, language: 'pt-BR' })
-    }),
-    noShowPrediction: (appointmentId: string) => this.request<NoShowPrediction>(`/ai/no-show-prediction/${appointmentId}`)
+    chat: (messages: ChatMessage[], context: string) =>
+      this.request<AIChatResponse>("/ai/chat", {
+        method: "POST",
+        body: JSON.stringify({ messages, context, language: "pt-BR" }),
+      }),
+    noShowPrediction: (appointmentId: string) =>
+      this.request<NoShowPrediction>(`/ai/no-show-prediction/${appointmentId}`),
   };
 }
 
@@ -955,27 +1032,42 @@ export const api = new HealthcareAPIClient();
 
 ```typescript
 interface StandardHealthcareComponentProps {
-  className?: string; children?: React.ReactNode; userRole: UserRole; lgpdCompliant?: boolean;
-  'aria-label'?: string; 'aria-describedby'?: string; onAuditLog?: (action: string) => void;
+  className?: string;
+  children?: React.ReactNode;
+  userRole: UserRole;
+  lgpdCompliant?: boolean;
+  "aria-label"?: string;
+  "aria-describedby"?: string;
+  onAuditLog?: (action: string) => void;
 }
 
 export function StandardHealthcareComponent({
-  className = "", children, userRole, lgpdCompliant = true, onAuditLog, ...accessibilityProps
+  className = "",
+  children,
+  userRole,
+  lgpdCompliant = true,
+  onAuditLog,
+  ...accessibilityProps
 }: StandardHealthcareComponentProps) {
   const { logComponentView } = useAuditLogging();
   const { isHighContrast } = useHighContrast();
   const { measureRender } = usePerformanceMonitoring();
 
   useEffect(() => {
-    logComponentView('StandardHealthcareComponent');
-    onAuditLog?.('COMPONENT_VIEWED');
+    logComponentView("StandardHealthcareComponent");
+    onAuditLog?.("COMPONENT_VIEWED");
   }, [logComponentView, onAuditLog]);
 
-  return measureRender('StandardHealthcareComponent', () => (
+  return measureRender("StandardHealthcareComponent", () => (
     <div
-      className={cn("healthcare-component", "focus-within:ring-2 focus-within:ring-blue-500",
-                    isHighContrast && "high-contrast-mode", className)}
-      {...accessibilityProps} role="region"
+      className={cn(
+        "healthcare-component",
+        "focus-within:ring-2 focus-within:ring-blue-500",
+        isHighContrast && "high-contrast-mode",
+        className,
+      )}
+      {...accessibilityProps}
+      role="region"
     >
       {!lgpdCompliant && (
         <Alert variant="destructive" className="mb-4">
@@ -989,12 +1081,24 @@ export function StandardHealthcareComponent({
 }
 
 export const testUtils = {
-  createMockUser: (role: UserRole) => ({ id: 'test-user-id', role, permissions: getPermissionsForRole(role), clinicId: 'test-clinic-id' }),
-  createMockPatient: (overrides = {}) => ({ id: 'test-patient-id', name: 'João Silva', cpf: '123.456.789-01', lgpdCompliant: true, noShowRisk: 'low' as const, ...overrides }),
+  createMockUser: (role: UserRole) => ({
+    id: "test-user-id",
+    role,
+    permissions: getPermissionsForRole(role),
+    clinicId: "test-clinic-id",
+  }),
+  createMockPatient: (overrides = {}) => ({
+    id: "test-patient-id",
+    name: "João Silva",
+    cpf: "123.456.789-01",
+    lgpdCompliant: true,
+    noShowRisk: "low" as const,
+    ...overrides,
+  }),
   expectAccessible: async (component: ReactWrapper) => {
     const results = await axe(component.getDOMNode());
     expect(results).toHaveNoViolations();
-  }
+  },
 };
 ```
 
@@ -1003,6 +1107,7 @@ export const testUtils = {
 ### Common Issues & Solutions
 
 **Build Issues**:
+
 ```bash
 # Turborepo cache issues
 pnpm clean && pnpm install && pnpm build
@@ -1012,12 +1117,14 @@ pnpm install --frozen-lockfile && pnpm rebuild
 ```
 
 **UI Components**:
+
 ```typescript
 // shadcn/ui styles not loading - Check tailwind.config.ts includes package paths
 // TweakCN NEONPRO theme not applied - Verify theme provider and CSS custom properties
 ```
 
 **AI Integration**:
+
 ```typescript
 // Portuguese responses mixed with English - Ensure body.language: "pt-BR" in AI calls
 // Chat API timeout - Verify OpenAI API key, increase timeout to 30000ms
@@ -1025,12 +1132,14 @@ pnpm install --frozen-lockfile && pnpm rebuild
 ```
 
 **Performance**:
+
 ```typescript
 // Slow renders - Use React.memo, proper useMemo/useCallback, check bundle analyzer
 // Large bundles - Implement code splitting, dynamic imports, optimize package imports
 ```
 
 **Security & Compliance**:
+
 ```typescript
 // PHI exposure - Ensure all logging uses sanitized data: PHIMasker.sanitizeForAI(data)
 // Missing audits - Implement useAuditLogging in PHI-accessing components
@@ -1038,6 +1147,7 @@ pnpm install --frozen-lockfile && pnpm rebuild
 ```
 
 **Testing**:
+
 ```bash
 # Provider issues - Wrap components with required providers in test setup
 # Accessibility failures - Run axe-core testing: npm test -- --coverage --watchAll=false
@@ -1046,7 +1156,7 @@ pnpm install --frozen-lockfile && pnpm rebuild
 ## Related Documentation
 
 - **[Architecture Overview](./architecture/frontend-architecture.md)** - Complete architecture
-- **[Source Tree](./architecture/source-tree.md)** - Turborepo organization  
+- **[Source Tree](./architecture/source-tree.md)** - Turborepo organization
 - **[PRD Specifications](./prd.md)** - Product requirements
 - **[API Documentation](./apis/)** - Backend integration
 
@@ -1056,14 +1166,15 @@ pnpm install --frozen-lockfile && pnpm rebuild
 
 This guide consolidates NeonPro frontend development into a single technical resource with focus on:
 
-**✅ Brazilian Healthcare Specialization** - LGPD/ANVISA compliance + Portuguese optimization  
-**✅ AI-First Architecture** - Universal Chat + Anti-No-Show prediction systems  
-**✅ Security & PHI Protection** - Comprehensive data masking + audit logging  
-**✅ Accessibility Excellence** - WCAG 2.1 AA+ with Brazilian healthcare context  
-**✅ Performance Optimization** - Core Web Vitals + mobile-first patterns  
-**✅ Developer Experience** - Clear examples, troubleshooting, testing utilities  
+**✅ Brazilian Healthcare Specialization** - LGPD/ANVISA compliance + Portuguese optimization\
+**✅ AI-First Architecture** - Universal Chat + Anti-No-Show prediction systems\
+**✅ Security & PHI Protection** - Comprehensive data masking + audit logging\
+**✅ Accessibility Excellence** - WCAG 2.1 AA with Brazilian healthcare context\
+**✅ Performance Optimization** - Core Web Vitals + mobile-first patterns\
+**✅ Developer Experience** - Clear examples, troubleshooting, testing utilities
 
 **Development Commands**:
+
 ```bash
 pnpm dev          # All apps + packages
 pnpm build        # Production build  

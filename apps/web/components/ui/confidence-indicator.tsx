@@ -20,8 +20,8 @@ export function ConfidenceIndicator({
   const clampedConfidence = Math.min(100, Math.max(0, Math.round(confidence)));
 
   const getConfidenceLevel = (confidence: number) => {
-    if (confidence >= 85) return "high";
-    if (confidence >= 60) return "medium";
+    if (confidence >= 85) {return "high";}
+    if (confidence >= 60) {return "medium";}
     return "low";
   };
 

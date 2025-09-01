@@ -111,8 +111,12 @@
    - **Improvements:** Reduced false positives, better pattern matching
 
 9. **`packages/compliance/scripts/compliance-validator.js`** (326 lines)
-   - **Status:** FUNCTIONAL - Comprehensive LGPD/ANVISA/CFM compliance validation
+   - **Status:** FUNCTIONAL - Supports LGPD/ANVISA/CFM regulatory assessment and helps validate compliance controls
    - **Features:** Multi-framework validation, detailed reporting
+   - **Scope:** Covers technical implementation patterns and data handling procedures within development environments
+   - **Limitations:** Does not include legal review, operational controls, or third-party system assessments
+   - **Standards Referenced:** LGPD Articles 46-50 (data processing), ANVISA Resolution guidelines, CFM professional requirements
+   - **Note:** Final compliance determinations require legal or regulatory review before any external or official claim is made
 
 ## 🎯 YAGNI Principles Applied
 

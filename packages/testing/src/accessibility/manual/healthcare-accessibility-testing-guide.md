@@ -2,7 +2,7 @@
 
 ## 📋 Visão Geral
 
-Este manual orienta profissionais de saúde na validação das funcionalidades de acessibilidade do sistema NeonPro, garantindo compliance com WCAG 2.1 AA+ e otimização para cenários médicos de emergência.
+Este manual orienta profissionais de saúde na validação das funcionalidades de acessibilidade do sistema NeonPro, garantindo compliance com WCAG 2.1 AA e otimização para cenários médicos de emergência.
 
 ### 🎯 Objetivos dos Testes
 
@@ -442,4 +442,4 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 
 **Versão**: 1.0.0\
 **Última atualização**: Janeiro 2025\
-**Compliance**: WCAG 2.1 AA+ Healthcare
+**Compliance**: WCAG 2.1 AA Healthcare

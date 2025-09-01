@@ -105,7 +105,7 @@ const useConflictDetection = (userId: string) => {
   const supabase = createClient();
 
   const fetchConflicts = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {return;}
 
     setIsLoading(true);
     try {
@@ -120,7 +120,7 @@ const useConflictDetection = (userId: string) => {
         .eq("status", "pending")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       const formattedConflicts: ConflictData[] = conflictData?.map(conflict => ({
         id: conflict.id,
@@ -179,7 +179,7 @@ const useConflictDetection = (userId: string) => {
         })
         .eq("id", conflictId);
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       // Remove from local state
       setConflicts(prev => prev.filter(c => c.id !== conflictId));
@@ -205,16 +205,16 @@ const useAutoResolution = (conflicts: ConflictData[], autoResolveEnabled: boolea
 
   const canAutoResolve = useCallback((conflict: ConflictData): boolean => {
     // Healthcare-specific auto-resolution rules
-    if (conflict.priority === "critical") return false; // Never auto-resolve critical healthcare data
-    if (conflict.entityType === "patient" && conflict.fieldName.includes("medical")) return false;
-    if (conflict.entityType === "medication") return false;
+    if (conflict.priority === "critical") {return false;} // Never auto-resolve critical healthcare data
+    if (conflict.entityType === "patient" && conflict.fieldName.includes("medical")) {return false;}
+    if (conflict.entityType === "medication") {return false;}
 
     return conflict.canAutoResolve;
   }, []);
 
   const getAutoResolutionStrategy = useCallback(
     (conflict: ConflictData): ResolutionAction | null => {
-      if (!canAutoResolve(conflict)) return null;
+      if (!canAutoResolve(conflict)) {return null;}
 
       // Time-based resolution (latest wins for low-priority fields)
       if (conflict.localDevice.timestamp > conflict.remoteDevice.timestamp) {
@@ -240,10 +240,10 @@ const useAutoResolution = (conflicts: ConflictData[], autoResolveEnabled: boolea
     conflict: ConflictData,
     resolveFunction: (conflictId: string, resolution: ResolutionAction) => Promise<boolean>,
   ) => {
-    if (!autoResolveEnabled || !canAutoResolve(conflict)) return false;
+    if (!autoResolveEnabled || !canAutoResolve(conflict)) {return false;}
 
     const strategy = getAutoResolutionStrategy(conflict);
-    if (!strategy) return false;
+    if (!strategy) {return false;}
 
     // Simulate processing time for UX
     setAutoResolutionProgress(prev => ({ ...prev, [conflict.id]: 0 }));

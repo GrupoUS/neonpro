@@ -1,14 +1,14 @@
 # TweakCN NEONPRO Theme Foundation
 
 > **Healthcare Design System com Otimização Portuguesa**\
-> Sistema de design completo otimizado para aplicações healthcare seguindo princípios KISS de simplicidade e compliance WCAG 2.1 AA+.
+> Sistema de design completo otimizado para aplicações healthcare seguindo princípios KISS de simplicidade e compliance WCAG 2.1 AA.
 
 ## 🎯 **Visão Geral**
 
 O TweakCN NEONPRO Theme Foundation é um sistema de design abrangente desenvolvido especificamente para aplicações healthcare em ambiente brasileiro, combinando:
 
 - **Cores NEONPRO**: Paleta assinatura com `oklch(142, 71%, 78%)` como primary
-- **Acessibilidade Healthcare**: WCAG 2.1 AA+ com contrast ratios de 4.5:1 e 7:1
+- **Acessibilidade Healthcare**: WCAG 2.1 AA com contrast ratios de 4.5:1 e 7:1
 - **Tipografia Portuguesa**: Otimizada para terminologia médica com `line-height: 1.65`
 - **Componentes Healthcare**: Button, Card, Alert, Input customizados para contextos médicos
 - **Semantic Colors**: Sistema completo para vital signs, emergency, e compliance LGPD

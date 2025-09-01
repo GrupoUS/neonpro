@@ -537,7 +537,7 @@ export class CFMTester {
    * Calculate CFM compliance score
    */
   private calculateCFMScore(violations: ComplianceViolation[], totalChecks: number): number {
-    if (totalChecks === 0) return 100;
+    if (totalChecks === 0) {return 100;}
 
     const weightedViolations = violations.reduce((sum, violation) => {
       const weight = this.getViolationWeight(violation.severity);

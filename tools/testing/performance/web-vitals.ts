@@ -15,10 +15,10 @@ export const PERFORMANCE_THRESHOLDS = {
     GOOD: 2500, // <= 2.5s
     NEEDS_IMPROVEMENT: 4000, // 2.5s - 4.0s
   },
-  // First Input Delay - measures interactivity (being replaced by INP)
-  FID: {
-    GOOD: 100, // <= 100ms
-    NEEDS_IMPROVEMENT: 300, // 100ms - 300ms
+  // Interaction to Next Paint - measures interactivity (replaced FID in Mar 2024)
+  INP: {
+    GOOD: 200, // <= 200ms
+    NEEDS_IMPROVEMENT: 500, // 200ms - 500ms
   },
   // Cumulative Layout Shift - measures visual stability
   CLS: {

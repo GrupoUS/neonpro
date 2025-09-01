@@ -109,10 +109,19 @@ const exportToCSV = (
       headers
         .map((header) => {
           const value = row[header];
-          if (typeof value === "string") {
-            return `"${value}"`;
+          // Normalize null/undefined to empty string
+          const stringValue = value == null ? "" : String(value);
+
+          // Check if field needs quoting (contains comma, quote, or newline)
+          const needsQuoting = stringValue.includes(",") || stringValue.includes('"')
+            || stringValue.includes("\n");
+
+          if (needsQuoting) {
+            // Escape internal quotes by doubling them, then wrap in quotes
+            return `"${stringValue.replace(/"/g, '""')}"`;
           }
-          return String(value);
+
+          return stringValue;
         })
         .join(",")
     ),
@@ -122,15 +131,17 @@ const exportToCSV = (
 };
 
 /**
- * Export data to PDF format (placeholder)
+ * Export data to PDF format (not implemented)
  * @param {Record<string, unknown>[]} _data Data to export
  * @param {Record<string, unknown>} _options Export options
- * @returns {string} PDF export message
+ * @throws {Error} Always throws as this feature is not implemented
  */
 const exportToPDF = (
   _data: Record<string, unknown>[],
   _options?: Record<string, unknown>,
-): string => "PDF export not implemented yet";
+): never => {
+  throw new Error("exportToPDF not implemented");
+};
 
 export {
   type AnalyticsData,

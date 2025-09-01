@@ -84,8 +84,8 @@ const useDeviceFingerprint = (): DeviceFingerprint => {
     if (typeof window !== "undefined") {
       const getDeviceType = (): "mobile" | "tablet" | "desktop" => {
         const width = window.screen.width;
-        if (width < 768) return "mobile";
-        if (width < 1024) return "tablet";
+        if (width < 768) {return "mobile";}
+        if (width < 1024) {return "tablet";}
         return "desktop";
       };
 

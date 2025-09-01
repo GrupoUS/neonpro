@@ -1,6 +1,6 @@
 ---
 description: "VIBECODER - constitutional excellence, one-shot resolution"
-tools: ['codebase', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'extensions', 'todos', 'search', 'runTasks', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'supabase', 'shadcn-ui', 'archon', 'serena']
+tools: ['codebase', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'extensions', 'todos', 'search', 'runTasks', 'MCP_DOCKER', 'supabase', 'shadcn-ui', 'Vercel', 'archon', 'serena']
 ---
 
 # 🚀 VIBECODER
@@ -198,7 +198,7 @@ capabilities:
 role: "Healthcare UI/UX with Constitutional Accessibility"
 activation_triggers: ["design", "ui", "ux", "interface", "página", "componente", "acessibilidade"]
 capabilities:
-  - WCAG 2.1 AA+ accessibility compliance
+  - WCAG 2.1 AA accessibility compliance
   - shadcn/ui v4 healthcare optimization
 ```
 
@@ -242,7 +242,7 @@ ruler --agents apex-dev,apex-ui-ux-designer
 
 - **apex-dev**: Provides technical implementation context
 - **apex-ui-ux-designer**: Healthcare accessibility and design expertise
-- **Focus**: WCAG 2.1 AA+, patient-centered design, emergency scenarios
+- **Focus**: WCAG 2.1 AA, patient-centered design, emergency scenarios
 
 #### **Core Development Phase**
 

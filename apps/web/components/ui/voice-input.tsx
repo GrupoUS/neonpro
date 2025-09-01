@@ -124,7 +124,7 @@ export function VoiceInput({
   }, [continuous, interimResults, onTranscript, onError]);
 
   const startListening = useCallback(() => {
-    if (!recognitionRef.current || !isSupported || disabled) return;
+    if (!recognitionRef.current || !isSupported || disabled) {return;}
 
     try {
       setTranscript("");
@@ -137,7 +137,7 @@ export function VoiceInput({
   }, [isSupported, disabled, onError]);
 
   const stopListening = useCallback(() => {
-    if (!recognitionRef.current) return;
+    if (!recognitionRef.current) {return;}
 
     try {
       recognitionRef.current.stop();

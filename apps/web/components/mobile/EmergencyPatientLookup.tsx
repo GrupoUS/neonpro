@@ -40,7 +40,7 @@ const useEmergencyPatientCache = () => {
 
   // Simulate IndexedDB cached lookup <50ms
   const searchPatients = useCallback(async (query: string): Promise<EmergencyPatient[]> => {
-    if (!query || query.length < 2) return [];
+    if (!query || query.length < 2) {return [];}
 
     const startTime = performance.now();
 

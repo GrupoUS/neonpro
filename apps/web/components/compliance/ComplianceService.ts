@@ -57,7 +57,7 @@ export class ComplianceService {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       return this.transformScoreData(data || []);
     } catch (error) {
@@ -82,15 +82,15 @@ export class ComplianceService {
         .order("created_at", { ascending: false });
 
       if (filters) {
-        if (filters.framework) query = query.eq("framework", filters.framework);
-        if (filters.severity) query = query.eq("severity", filters.severity);
-        if (filters.status) query = query.eq("status", filters.status);
-        if (filters.page) query = query.ilike("page", `%${filters.page}%`);
+        if (filters.framework) {query = query.eq("framework", filters.framework);}
+        if (filters.severity) {query = query.eq("severity", filters.severity);}
+        if (filters.status) {query = query.eq("status", filters.status);}
+        if (filters.page) {query = query.ilike("page", `%${filters.page}%`);}
       }
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       return this.transformViolationData(data || []);
     } catch (error) {
@@ -113,7 +113,7 @@ export class ComplianceService {
         body: JSON.stringify({ framework, config }),
       });
 
-      if (!response.ok) throw new Error("Compliance check failed");
+      if (!response.ok) {throw new Error("Compliance check failed");}
 
       const result = await response.json();
       return this.transformSingleScore(result);
@@ -138,7 +138,7 @@ export class ComplianceService {
         body: JSON.stringify({ frameworks, ...options }),
       });
 
-      if (!response.ok) throw new Error("Report generation failed");
+      if (!response.ok) {throw new Error("Report generation failed");}
 
       return await response.json();
     } catch (error) {
@@ -166,7 +166,7 @@ export class ComplianceService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       return this.transformSingleViolation(data);
     } catch (error) {
@@ -195,7 +195,7 @@ export class ComplianceService {
         .lte("date", endDate.toISOString().split("T")[0])
         .order("date", { ascending: true });
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       return {
         dates: data?.map(d => d.date) || [],
@@ -233,7 +233,7 @@ export class ComplianceService {
         body: JSON.stringify({ url }),
       });
 
-      if (!response.ok) throw new Error("WCAG check failed");
+      if (!response.ok) {throw new Error("WCAG check failed");}
 
       return await response.json();
     } catch (error) {
@@ -275,7 +275,7 @@ export class ComplianceService {
         headers: { "Content-Type": "application/json" },
       });
 
-      if (!response.ok) throw new Error("LGPD check failed");
+      if (!response.ok) {throw new Error("LGPD check failed");}
 
       return await response.json();
     } catch (error) {
@@ -329,9 +329,9 @@ export class ComplianceService {
    * Get status based on score
    */
   private getStatusFromScore(score: number): "excellent" | "good" | "warning" | "critical" {
-    if (score >= 90) return "excellent";
-    if (score >= 75) return "good";
-    if (score >= 60) return "warning";
+    if (score >= 90) {return "excellent";}
+    if (score >= 75) {return "good";}
+    if (score >= 60) {return "warning";}
     return "critical";
   }
 
@@ -378,7 +378,7 @@ export class ComplianceService {
       },
     ];
 
-    if (framework === "all") return fallbackData;
+    if (framework === "all") {return fallbackData;}
     return fallbackData.filter(item => item.framework === framework);
   }
 }

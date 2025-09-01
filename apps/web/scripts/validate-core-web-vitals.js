@@ -11,7 +11,7 @@ const path = require("node:path");
 // Performance targets for healthcare application
 const PERFORMANCE_TARGETS = {
   LCP: 2500, // ms - Largest Contentful Paint
-  FID: 100, // ms - First Input Delay
+  INP: 200, // ms - Interaction to Next Paint (replaced FID as of March 2024)
   CLS: 0.1, // score - Cumulative Layout Shift
   BUNDLE_SIZE_REDUCTION: 20, // % - Target reduction
 };
@@ -30,7 +30,7 @@ console.log(`
 
 Performance Targets:
 • LCP (Largest Contentful Paint): < ${PERFORMANCE_TARGETS.LCP}ms
-• FID (First Input Delay): < ${PERFORMANCE_TARGETS.FID}ms  
+• INP (Interaction to Next Paint): < ${PERFORMANCE_TARGETS.INP}ms  
 • CLS (Cumulative Layout Shift): < ${PERFORMANCE_TARGETS.CLS}
 • Bundle Size Reduction: > ${PERFORMANCE_TARGETS.BUNDLE_SIZE_REDUCTION}%
 
@@ -164,7 +164,7 @@ ESTIMATED PERFORMANCE IMPROVEMENTS:
 
 • Bundle Size: ~25-35% reduction
 • LCP: ~40-50% improvement  
-• FID: ~60-70% improvement
+• INP: ~60-70% improvement
 • CLS: ~80-90% improvement
 • First Load JS: ~30-40% reduction
 

@@ -3,7 +3,7 @@
  *
  * Enforces performance budgets and monitors Core Web Vitals:
  * - LCP (Largest Contentful Paint) < 2.5s
- * - FID (First Input Delay) < 100ms
+ * - INP (Interaction to Next Paint) < 200ms
  * - CLS (Cumulative Layout Shift) < 0.1
  * - Bundle Size Reduction > 20%
  */
@@ -62,7 +62,7 @@ module.exports = {
       assertions: {
         // Core Web Vitals - PRIMARY TARGETS
         "largest-contentful-paint": ["error", { maxNumericValue: 2500 }], // 2.5s
-        "first-input-delay": ["error", { maxNumericValue: 100 }], // 100ms
+        "interaction-to-next-paint": ["error", { maxNumericValue: 200 }], // 200ms - Replaced FID as of March 2024
         "cumulative-layout-shift": ["error", { maxNumericValue: 0.1 }], // 0.1
 
         // Additional Performance Metrics
@@ -153,19 +153,19 @@ module.exports.healthcareConfig = {
   budgets: {
     dashboard: {
       lcp: 2000, // Dashboard should be faster
-      fid: 80,
+      inp: 160, // Updated from FID to INP
       cls: 0.05,
     },
 
     patients: {
       lcp: 2500,
-      fid: 100,
+      inp: 200, // Updated from FID to INP
       cls: 0.1,
     },
 
     emergency: {
       lcp: 1500, // Emergency pages must be very fast
-      fid: 50,
+      inp: 100, // Updated from FID to INP
       cls: 0.02,
     },
   },

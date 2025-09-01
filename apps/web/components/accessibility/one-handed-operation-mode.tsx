@@ -469,7 +469,7 @@ export function OneHandedOperationProvider({ children }: { children: React.React
 
   // Log interaction
   const logInteraction = useCallback((interaction: string) => {
-    if (!settings.lgpd_compliance_mode) return;
+    if (!settings.lgpd_compliance_mode) {return;}
 
     setAnalytics(prev => {
       const updated = {

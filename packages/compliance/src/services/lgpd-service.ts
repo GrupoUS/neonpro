@@ -101,11 +101,11 @@ export const dataSubjectRequestSchema = z.object({
  */
 export interface ConsentRecord extends z.infer<typeof consentSchema> {
   id: string;
-  timestamp: Date;
+  timestamp: string; // ISO string for database consistency
   ipAddress: string;
   userAgent?: string;
   isActive: boolean;
-  withdrawnAt?: Date;
+  withdrawnAt?: string; // ISO string for database consistency
   withdrawalReason?: string;
   auditTrail: ConsentAuditEntry[];
 }
@@ -115,7 +115,7 @@ export interface ConsentRecord extends z.infer<typeof consentSchema> {
  */
 export interface ConsentAuditEntry {
   id: string;
-  timestamp: Date;
+  timestamp: string; // ISO string for database consistency
   action: "given" | "withdrawn" | "modified" | "expired";
   userId: string;
   ipAddress: string;
@@ -133,9 +133,9 @@ export interface DataSubjectRequest extends z.infer<typeof dataSubjectRequestSch
     | "completed"
     | "rejected"
     | "partially_completed";
-  createdAt: Date;
-  updatedAt: Date;
-  completedAt?: Date;
+  createdAt: string; // ISO string for database consistency
+  updatedAt: string; // ISO string for database consistency
+  completedAt?: string; // ISO string for database consistency
   verificationStatus: "pending" | "verified" | "failed";
   response?: DataSubjectResponse;
   processingNotes?: string[];
@@ -149,8 +149,8 @@ export interface DataSubjectResponse {
   data?: unknown;
   format: "json" | "pdf" | "csv";
   fileUrl?: string;
-  deliveredAt?: Date;
-  expiresAt?: Date;
+  deliveredAt?: string; // ISO string for database consistency
+  expiresAt?: string; // ISO string for database consistency
   downloadCount: number;
   maxDownloads: number;
 }
@@ -173,7 +173,7 @@ export class LgpdService {
     const consent: ConsentRecord = {
       ...validated,
       id: crypto.randomUUID(),
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
       ipAddress,
       userAgent,
       isActive: true,
@@ -183,7 +183,7 @@ export class LgpdService {
     // Create initial audit entry
     const auditEntry: ConsentAuditEntry = {
       id: crypto.randomUUID(),
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
       action: "given",
       userId: consent.userId,
       ipAddress,
@@ -239,13 +239,13 @@ export class LgpdService {
 
       // Update consent record
       consent.isActive = false;
-      consent.withdrawnAt = new Date();
+      consent.withdrawnAt = new Date().toISOString();
       consent.withdrawalReason = reason;
 
       // Add audit entry
       const auditEntry: ConsentAuditEntry = {
         id: crypto.randomUUID(),
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         action: "withdrawn",
         userId,
         ipAddress,
@@ -290,8 +290,8 @@ export class LgpdService {
       ...validated,
       id: crypto.randomUUID(),
       status: "pending",
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       verificationStatus: "pending",
       processingNotes: [],
     };
@@ -334,8 +334,8 @@ export class LgpdService {
       requestId: request.id,
       data: formattedData,
       format: request.preferredFormat,
-      deliveredAt: new Date(),
-      expiresAt: addDays(new Date(), 30), // 30 days access
+      deliveredAt: new Date().toISOString(),
+      expiresAt: addDays(new Date(), 30).toISOString(), // 30 days access
       downloadCount: 0,
       maxDownloads: 5,
     };

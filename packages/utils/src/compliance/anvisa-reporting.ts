@@ -55,50 +55,90 @@ export class ANVISAComplianceReporter {
         procedures: this.buildProceduresReport(procedureData),
         products: this.buildProductsReport(productData, expiringSoon),
       };
-    } catch {
+    } catch (error) {
+      console.error("ANVISA compliance report generation failed:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        timestamp: new Date().toISOString(),
+      });
       return null;
     }
   }
 
   private async getProductsInPeriod(startDate: Date, endDate: Date) {
-    return this.supabase
-      .from("anvisa_products")
-      .select("*")
-      .gte("created_at", startDate.toISOString())
-      .lte("created_at", endDate.toISOString());
+    try {
+      return await this.supabase
+        .from("anvisa_products")
+        .select("*")
+        .gte("created_at", startDate.toISOString())
+        .lte("created_at", endDate.toISOString());
+    } catch (error) {
+      console.error("Failed to fetch ANVISA products by period:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        timestamp: new Date().toISOString(),
+      });
+      return { data: null, error };
+    }
   }
 
   private async getProceduresInPeriod(startDate: Date, endDate: Date) {
-    return this.supabase
-      .from("anvisa_procedures")
-      .select("*")
-      .gte("created_at", startDate.toISOString())
-      .lte("created_at", endDate.toISOString());
+    try {
+      return await this.supabase
+        .from("anvisa_procedures")
+        .select("*")
+        .gte("created_at", startDate.toISOString())
+        .lte("created_at", endDate.toISOString());
+    } catch (error) {
+      console.error("Failed to fetch ANVISA procedures by period:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        timestamp: new Date().toISOString(),
+      });
+      return { data: null, error };
+    }
   }
 
   private async getEventsInPeriod(startDate: Date, endDate: Date) {
-    return this.supabase
-      .from("adverse_events")
-      .select("*")
-      .gte("created_at", startDate.toISOString())
-      .lte("created_at", endDate.toISOString());
+    try {
+      return await this.supabase
+        .from("adverse_events")
+        .select("*")
+        .gte("created_at", startDate.toISOString())
+        .lte("created_at", endDate.toISOString());
+    } catch (error) {
+      console.error("Failed to fetch adverse events by period:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        timestamp: new Date().toISOString(),
+      });
+      return { data: null, error };
+    }
   }
 
   private async getExpiringSoonProducts(): Promise<ANVISAProduct[]> {
     try {
-      const futureDate = new Date();
+      const now = new Date();
       const DEFAULT_EXPIRY_DAYS = 30;
-      futureDate.setDate(futureDate.getDate() + DEFAULT_EXPIRY_DAYS);
+      const futureDate = new Date(now.getTime() + (DEFAULT_EXPIRY_DAYS * 24 * 60 * 60 * 1000));
 
       const { data } = await this.supabase
         .from("anvisa_products")
         .select("*")
         .lte("expiry_date", futureDate.toISOString())
-        .gte("expiry_date", new Date().toISOString())
+        .gte("expiry_date", now.toISOString())
         .eq("regulatory_status", "approved");
 
       return data || [];
-    } catch {
+    } catch (error) {
+      console.error("Failed to fetch expiring products:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+      });
       return [];
     }
   }
@@ -112,7 +152,11 @@ export class ANVISAComplianceReporter {
         .eq("status", "pending");
 
       return data || [];
-    } catch {
+    } catch (error) {
+      console.error("Failed to fetch pending ANVISA reports:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+      });
       return [];
     }
   }
@@ -203,16 +247,24 @@ export class ANVISAComplianceReporter {
   ): number {
     let score = INITIAL_SCORE;
     const ZERO_FALLBACK = 0;
+    const now = new Date();
 
-    // Deduct points for compliance issues
-    const expiredProducts = products.filter((product) => new Date(product.expiry_date) < new Date())
-      .length || ZERO_FALLBACK;
+    // Deduct points for compliance issues - UTC-safe date comparisons
+    const expiredProducts = products.filter((product) => {
+      if (!product.expiry_date) {return false;}
+      const expiryDate = new Date(product.expiry_date);
+      return expiryDate.getTime() < now.getTime();
+    }).length || ZERO_FALLBACK;
+
     const suspendedProducts =
       products.filter((product) => product.regulatory_status === "suspended")
         .length || ZERO_FALLBACK;
-    const overduePendingReports =
-      pendingReports.filter((report) => new Date(report.due_date) < new Date())
-        .length || ZERO_FALLBACK;
+
+    const overduePendingReports = pendingReports.filter((report) => {
+      if (!report.due_date) {return false;}
+      const dueDate = new Date(report.due_date);
+      return dueDate.getTime() < now.getTime();
+    }).length || ZERO_FALLBACK;
 
     score -= expiredProducts * EXPIRED_PRODUCT_PENALTY;
     score -= suspendedProducts * SUSPENDED_PRODUCT_PENALTY;

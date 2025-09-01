@@ -75,7 +75,7 @@ role: "Healthcare UI/UX with Constitutional Accessibility"
 activation_triggers:
   ["design", "ui", "ux", "interface", "página", "componente", "acessibilidade"]
 capabilities:
-  - WCAG 2.1 AA+ accessibility compliance
+  - WCAG 2.1 AA accessibility compliance
   - shadcn/ui v4 healthcare optimization
   - Patient-centered design patterns
   - Emergency scenario interface design
@@ -148,7 +148,7 @@ ruler --agents apex-dev,apex-ui-ux-designer
 
 - **apex-dev**: Provides technical implementation context
 - **apex-ui-ux-designer**: Healthcare accessibility and design expertise
-- **Focus**: WCAG 2.1 AA+, patient-centered design, emergency scenarios
+- **Focus**: WCAG 2.1 AA, patient-centered design, emergency scenarios
 
 #### **Core Development Phase**
 

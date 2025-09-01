@@ -218,7 +218,7 @@ export class WCAGTester {
    */
   private extractWCAGCriterion(tags: string[]): string {
     const wcagTag = tags.find(tag => tag.match(/wcag\d+/));
-    if (!wcagTag) return "WCAG";
+    if (!wcagTag) {return "WCAG";}
 
     // Extract criterion number from tag like "wcag143" -> "1.4.3"
     const match = wcagTag.match(/wcag(\d)(\d)(\d)/);
@@ -236,7 +236,7 @@ export class WCAGTester {
     const totalChecks = axeResult.violations.length + axeResult.passes.length
       + axeResult.incomplete.length;
 
-    if (totalChecks === 0) return 100;
+    if (totalChecks === 0) {return 100;}
 
     // Weight violations by impact
     const weightedViolations = axeResult.violations.reduce((sum, violation) => {
@@ -404,7 +404,7 @@ export class WCAGTester {
         const impactDiff = (impactOrder[b.impact as keyof typeof impactOrder] || 0)
           - (impactOrder[a.impact as keyof typeof impactOrder] || 0);
 
-        if (impactDiff !== 0) return impactDiff;
+        if (impactDiff !== 0) {return impactDiff;}
         return b.count - a.count;
       })
       .slice(0, 10) // Top 10 priority fixes

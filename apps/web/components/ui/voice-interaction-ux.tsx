@@ -182,7 +182,7 @@ export function useVoiceInteraction(
 
   // Initialize speech recognition
   useEffect(() => {
-    if (!isSupported) return;
+    if (!isSupported) {return;}
 
     const SpeechRecognition = window.SpeechRecognition
       || (window as any).webkitSpeechRecognition;
@@ -255,7 +255,7 @@ export function useVoiceInteraction(
   }, [isSupported, language, continuous, interimResults, context, state]);
 
   const startListening = useCallback(() => {
-    if (!recognitionRef.current || isListening) return;
+    if (!recognitionRef.current || isListening) {return;}
 
     setTranscript("");
     setInterimTranscript("");
@@ -270,7 +270,7 @@ export function useVoiceInteraction(
   }, [isListening]);
 
   const stopListening = useCallback(() => {
-    if (!recognitionRef.current || !isListening) return;
+    if (!recognitionRef.current || !isListening) {return;}
 
     recognitionRef.current.stop();
   }, [isListening]);
@@ -281,7 +281,7 @@ export function useVoiceInteraction(
     pitch?: number;
     volume?: number;
   }) => {
-    if (!window.speechSynthesis) return;
+    if (!window.speechSynthesis) {return;}
 
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();

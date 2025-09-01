@@ -148,7 +148,7 @@ neonpro/
 - **WhatsApp Business Integration**: Automated patient communication
 - **Real-time Notifications**: Instant updates across all devices
 - **Responsive Design**: Optimized for mobile aesthetic clinic workflows
-- **Accessibility Compliance**: WCAG 2.1 AA+ certified
+- **Accessibility Compliance**: WCAG 2.1 AA certified
 
 ## 🛡️ Conformidade Brasileira para Estética Avançada
 
@@ -291,7 +291,7 @@ pnpm run format             # Code formatting
 - **Compliance Validation**: Automated LGPD/ANVISA/CFM testing
 - **Performance Testing**: Aesthetic clinic-grade response time validation
 - **Security Testing**: Penetration testing for medical data protection
-- **Accessibility Testing**: WCAG 2.1 AA+ compliance verification
+- **Accessibility Testing**: WCAG 2.1 AA compliance verification
 
 ## 📱 Progressive Web App (PWA)
 

@@ -122,8 +122,8 @@ export function OptimizedImage({
 
   // Determine if image should be loaded eagerly
   const shouldLoadEager = useCallback(() => {
-    if (loadingStrategy === "eager") return true;
-    if (loadingStrategy === "lazy") return false;
+    if (loadingStrategy === "eager") {return true;}
+    if (loadingStrategy === "lazy") {return false;}
 
     // Auto strategy: load eagerly for critical medical images
     return medicalImageType === "xray" || medicalImageType === "scan" || priority;

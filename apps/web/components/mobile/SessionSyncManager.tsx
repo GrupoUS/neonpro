@@ -97,9 +97,9 @@ const useNetworkQuality = () => {
         const pingTime = end - start;
         setLatency(pingTime);
 
-        if (pingTime < 100) setQuality("excellent");
-        else if (pingTime < 300) setQuality("good");
-        else setQuality("poor");
+        if (pingTime < 100) {setQuality("excellent");}
+        else if (pingTime < 300) {setQuality("good");}
+        else {setQuality("poor");}
       } catch {
         setQuality("offline");
       }
@@ -134,7 +134,7 @@ const useRealTimeSync = (userId: string, enabled: boolean = true) => {
 
   // Initialize real-time subscription
   useEffect(() => {
-    if (!enabled || !userId) return;
+    if (!enabled || !userId) {return;}
 
     const setupRealTimeSync = async () => {
       // Subscribe to session changes
@@ -374,9 +374,9 @@ export default function SessionSyncManager({
     const minutes = Math.floor(diff / (1000 * 60));
     const hours = Math.floor(minutes / 60);
 
-    if (minutes < 1) return "Just now";
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
+    if (minutes < 1) {return "Just now";}
+    if (minutes < 60) {return `${minutes}m ago`;}
+    if (hours < 24) {return `${hours}h ago`;}
     return `${Math.floor(hours / 24)}d ago`;
   };
 

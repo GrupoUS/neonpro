@@ -188,7 +188,7 @@ COMPLIANCE_RESEARCH_MASTERY:
     expertise: "Telemedicine regulations, professional oversight requirements"
 
   accessibility_research:
-    focus: "WCAG 2.1 AA+ compliance for healthcare"
+    focus: "WCAG 2.1 AA compliance for healthcare"
     sources: "W3C guidelines, healthcare accessibility standards"
     expertise: "Medical interface accessibility, assistive technology support"
 ```

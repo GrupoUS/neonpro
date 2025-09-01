@@ -34,7 +34,7 @@ When you have ANY doubt during development:
 **Especialistas On-Demand** (Ativação por Contexto):
 
 - **🔬 @apex-researcher** - Pesquisa multi-fonte e validação constitucional
-- **🎨 @apex-ui-ux-designer** - Design healthcare com acessibilidade WCAG 2.1 AA+
+- **🎨 @apex-ui-ux-designer** - Design healthcare com acessibilidade WCAG 2.1 AA
 - **🏗️ @architect** - Arquitetura de sistemas e design patterns
 - **🔒 @audit** - Auditoria de segurança e vulnerabilidades
 - **📋 @prd** - Especificações de produto e roadmaps

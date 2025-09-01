@@ -7,7 +7,8 @@ This document provides comprehensive architectural guidance for developing the N
 **Target Audience**: Frontend developers, architects, and technical leads working on NeonPro
 
 **Core Principles**:
-- **Accessibility First**: WCAG 2.1 AA+ compliance mandatory
+
+- **Accessibility First**: WCAG 2.1 AA compliance mandatory
 - **Performance Optimized**: Core Web Vitals priority (<2s FCP, >90 Lighthouse)
 - **Security by Design**: Protection of sensitive healthcare data with Unified Audit Service
 - **Brazilian Compliance**: LGPD, ANVISA, and aesthetic healthcare regulatory compliance integrated
@@ -28,20 +29,20 @@ This document provides comprehensive architectural guidance for developing the N
 
 ## Tech Stack
 
-| Category | Technology | Purpose |
-|----------|------------|----------|
-| **Framework** | Next.js 15 + React 19 | SSR, App Router, Server Components |
-| **Language** | TypeScript 5.3+ | Type safety, strict mode |
-| **Styling** | Tailwind CSS + Healthcare Tokens | Responsive design, accessibility |
-| **Components** | shadcn/ui v4 | Consistent UI components |
-| **State** | Zustand + TanStack Query | Client state + server state |
-| **Database** | Supabase + Prisma | PostgreSQL with real-time subscriptions |
-| **AI Integration** | Vercel AI SDK + OpenAI GPT-4 | Universal chat, predictions |
-| **Real-time** | Supabase Realtime | Live updates, notifications |
-| **Testing** | Vitest + Testing Library + Playwright | Unit, integration, e2e testing |
-| **Monitoring** | Sentry + Vercel Analytics | Error tracking, performance |
-| **Compliance** | LGPD/ANVISA/Aesthetic Healthcare | Brazilian regulatory compliance |
-| **Monorepo** | Turborepo | Build orchestration, caching |
+| Category           | Technology                            | Purpose                                 |
+| ------------------ | ------------------------------------- | --------------------------------------- |
+| **Framework**      | Next.js 15 + React 19                 | SSR, App Router, Server Components      |
+| **Language**       | TypeScript 5.3+                       | Type safety, strict mode                |
+| **Styling**        | Tailwind CSS + Healthcare Tokens      | Responsive design, accessibility        |
+| **Components**     | shadcn/ui v4                          | Consistent UI components                |
+| **State**          | Zustand + TanStack Query              | Client state + server state             |
+| **Database**       | Supabase + Prisma                     | PostgreSQL with real-time subscriptions |
+| **AI Integration** | Vercel AI SDK + OpenAI GPT-4          | Universal chat, predictions             |
+| **Real-time**      | Supabase Realtime                     | Live updates, notifications             |
+| **Testing**        | Vitest + Testing Library + Playwright | Unit, integration, e2e testing          |
+| **Monitoring**     | Sentry + Vercel Analytics             | Error tracking, performance             |
+| **Compliance**     | LGPD/ANVISA/Aesthetic Healthcare      | Brazilian regulatory compliance         |
+| **Monorepo**       | Turborepo                             | Build orchestration, caching            |
 
 ## Monorepo Architecture
 
@@ -59,38 +60,46 @@ apps/
 ### Package Categories (20 packages)
 
 #### UI & Components (4 packages)
+
 - `@neonpro/ui` - shadcn/ui + healthcare components
 - `@neonpro/brazilian-healthcare-ui` - Brazilian healthcare UI library
 - `@neonpro/shared` - Shared utilities and helpers
 - `@neonpro/utils` - Common utility functions
 
 #### Data & Types (3 packages)
+
 - `@neonpro/database` - Primary database package (Supabase + Prisma)
 - `@neonpro/types` - TypeScript type definitions
 - `@neonpro/domain` - Business logic and domain models
 
 #### Core Services (2 packages)
+
 - `@neonpro/core-services` - Business logic services
 - `@neonpro/config` - Configuration management and TypeScript configs
 
 #### Healthcare & Compliance (2 packages)
+
 - `@neonpro/compliance` - LGPD compliance automation
 - `@neonpro/security` - Security utilities and Unified Audit Service
 
 #### AI & Intelligence (2 packages)
+
 - `@neonpro/ai` - AI services and integrations
 - `@neonpro/cache` - Advanced caching solutions
 
 #### Monitoring & Performance (2 packages)
+
 - `@neonpro/monitoring` - System monitoring and alerts
 - `@neonpro/health-dashboard` - System health visualization
 
 #### Infrastructure (3 packages)
+
 - `@neonpro/auth` - Authentication and authorization
 - `@neonpro/integrations` - External service integrations
 - `@neonpro/devops` - DevOps tooling and scripts
 
 #### Enterprise (2 packages)
+
 - `@neonpro/enterprise` - Enterprise features
 - `@neonpro/docs` - Documentation generation
 
@@ -171,7 +180,7 @@ apps/web/
 3. **Unified Dashboard**: Real-time clinic overview with role-based personalization
 4. **Intelligent Scheduling**: Automated appointment optimization with resource management
 5. **Compliance Automation**: LGPD, ANVISA compliance with Unified Audit Service
-6. **Accessibility**: WCAG 2.1 AA+ compliance with healthcare-specific requirements
+6. **Accessibility**: WCAG 2.1 AA compliance with healthcare-specific requirements
 7. **Performance Monitoring**: Real-time metrics and health dashboards
 
 ## Examples
@@ -180,19 +189,19 @@ apps/web/
 
 ```typescript
 // components/healthcare/ai-chat.tsx
-import { useChat } from 'ai/react'
-import { Card, Input, Button, Badge } from '@neonpro/ui'
-import { UnifiedAuditService } from '@neonpro/security'
+import { UnifiedAuditService } from "@neonpro/security";
+import { Badge, Button, Card, Input } from "@neonpro/ui";
+import { useChat } from "ai/react";
 
 interface UniversalChatProps {
-  context?: 'patient' | 'appointment' | 'emergency' | 'general'
-  patientId?: string
-  onEmergencyDetected?: (severity: 'low' | 'medium' | 'high') => void
+  context?: "patient" | "appointment" | "emergency" | "general";
+  patientId?: string;
+  onEmergencyDetected?: (severity: "low" | "medium" | "high") => void;
 }
 
 export function UniversalChat({ context, patientId, onEmergencyDetected }: UniversalChatProps) {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/ai/chat',
+    api: "/api/ai/chat",
     body: { context, patientId },
     onFinish: async (message) => {
       // Audit trail for healthcare compliance
@@ -201,30 +210,30 @@ export function UniversalChat({ context, patientId, onEmergencyDetected }: Unive
         patientId,
         context,
         messageId: message.id,
-        timestamp: new Date()
-      })
-      
+        timestamp: new Date(),
+      });
+
       // Emergency detection
       if (message.metadata?.emergencyDetected) {
-        onEmergencyDetected?.(message.metadata.severity)
+        onEmergencyDetected?.(message.metadata.severity);
       }
-    }
-  })
+    },
+  });
 
   return (
     <Card className="h-[600px] flex flex-col">
       <div className="flex items-center justify-between p-4 border-b">
         <h3 className="font-semibold">NeonPro AI Assistant</h3>
         {context && (
-          <Badge variant={context === 'emergency' ? 'destructive' : 'secondary'}>
+          <Badge variant={context === "emergency" ? "destructive" : "secondary"}>
             {context}
           </Badge>
         )}
       </div>
       <ScrollArea className="flex-1 p-4">
         {messages.map(message => (
-          <ChatMessage 
-            key={message.id} 
+          <ChatMessage
+            key={message.id}
             message={message}
             showPatientContext={!!patientId}
           />
@@ -235,11 +244,9 @@ export function UniversalChat({ context, patientId, onEmergencyDetected }: Unive
           <Input
             value={input}
             onChange={handleInputChange}
-            placeholder={
-              context === 'emergency' 
-                ? "Descreva a situação de emergência..." 
-                : "Como posso ajudar?"
-            }
+            placeholder={context === "emergency"
+              ? "Descreva a situação de emergência..."
+              : "Como posso ajudar?"}
             disabled={isLoading}
           />
           <Button type="submit" disabled={isLoading}>
@@ -248,7 +255,7 @@ export function UniversalChat({ context, patientId, onEmergencyDetected }: Unive
         </div>
       </form>
     </Card>
-  )
+  );
 }
 ```
 
@@ -256,37 +263,37 @@ export function UniversalChat({ context, patientId, onEmergencyDetected }: Unive
 
 ```typescript
 // components/healthcare/no-show-predictor.tsx
-import { useQuery } from '@tanstack/react-query'
-import { Card, Progress, Badge, Button } from '@neonpro/ui'
-import { AlertTriangle, Calendar, MessageSquare, Phone } from 'lucide-react'
+import { Badge, Button, Card, Progress } from "@neonpro/ui";
+import { useQuery } from "@tanstack/react-query";
+import { AlertTriangle, Calendar, MessageSquare, Phone } from "lucide-react";
 
 interface NoShowPredictorProps {
-  appointmentId: string
+  appointmentId: string;
 }
 
 export function NoShowPredictor({ appointmentId }: NoShowPredictorProps) {
   const { data: prediction, refetch } = useQuery({
-    queryKey: ['no-show-prediction', appointmentId],
+    queryKey: ["no-show-prediction", appointmentId],
     queryFn: async () => {
-      const response = await fetch(`/api/ai/no-show-prediction/${appointmentId}`)
-      return response.json()
+      const response = await fetch(`/api/ai/no-show-prediction/${appointmentId}`);
+      return response.json();
     },
-    refetchInterval: 30000 // Update every 30 seconds
-  })
+    refetchInterval: 30000, // Update every 30 seconds
+  });
 
-  if (!prediction) return null
+  if (!prediction) return null;
 
   const getRiskColor = (risk: number) => {
-    if (risk >= 70) return 'destructive'
-    if (risk >= 40) return 'warning'
-    return 'success'
-  }
+    if (risk >= 70) return "destructive";
+    if (risk >= 40) return "warning";
+    return "success";
+  };
 
   const getInterventionActions = (risk: number) => {
-    if (risk >= 70) return ['call', 'whatsapp', 'sms']
-    if (risk >= 40) return ['whatsapp', 'sms']
-    return ['reminder']
-  }
+    if (risk >= 70) return ["call", "whatsapp", "sms"];
+    if (risk >= 40) return ["whatsapp", "sms"];
+    return ["reminder"];
+  };
 
   return (
     <Card className="p-4 space-y-4">
@@ -305,8 +312,8 @@ export function NoShowPredictor({ appointmentId }: NoShowPredictorProps) {
           <span>Probabilidade de Falta</span>
           <span>{prediction.riskScore}%</span>
         </div>
-        <Progress 
-          value={prediction.riskScore} 
+        <Progress
+          value={prediction.riskScore}
           className={`h-2 ${getRiskColor(prediction.riskScore)}`}
         />
       </div>
@@ -326,19 +333,19 @@ export function NoShowPredictor({ appointmentId }: NoShowPredictorProps) {
       <div className="space-y-2">
         <h4 className="text-sm font-medium">Intervenções Sugeridas:</h4>
         <div className="flex gap-2">
-          {getInterventionActions(prediction.riskScore).includes('call') && (
+          {getInterventionActions(prediction.riskScore).includes("call") && (
             <Button size="sm" variant="outline">
               <Phone className="h-3 w-3 mr-1" />
               Ligar
             </Button>
           )}
-          {getInterventionActions(prediction.riskScore).includes('whatsapp') && (
+          {getInterventionActions(prediction.riskScore).includes("whatsapp") && (
             <Button size="sm" variant="outline">
               <MessageSquare className="h-3 w-3 mr-1" />
               WhatsApp
             </Button>
           )}
-          {getInterventionActions(prediction.riskScore).includes('reminder') && (
+          {getInterventionActions(prediction.riskScore).includes("reminder") && (
             <Button size="sm" variant="outline">
               <Calendar className="h-3 w-3 mr-1" />
               Lembrete
@@ -347,7 +354,7 @@ export function NoShowPredictor({ appointmentId }: NoShowPredictorProps) {
         </div>
       </div>
     </Card>
-  )
+  );
 }
 ```
 
@@ -355,17 +362,17 @@ export function NoShowPredictor({ appointmentId }: NoShowPredictorProps) {
 
 ```typescript
 // lib/audit.ts - Healthcare Compliance Audit Trail
-import { UnifiedAuditService } from '@neonpro/security'
+import { UnifiedAuditService } from "@neonpro/security";
 
 export const auditActions = {
   // Patient data access
-  async logPatientAccess(patientId: string, action: 'view' | 'edit' | 'delete') {
+  async logPatientAccess(patientId: string, action: "view" | "edit" | "delete") {
     await UnifiedAuditService.logPatientAccess(patientId, getCurrentUserId(), action, {
       ipAddress: getClientIP(),
       userAgent: navigator.userAgent,
       timestamp: new Date(),
-      lgpdConsent: await checkLGPDConsent(patientId)
-    })
+      lgpdConsent: await checkLGPDConsent(patientId),
+    });
   },
 
   // Appointment actions
@@ -373,8 +380,8 @@ export const auditActions = {
     await UnifiedAuditService.logAppointmentAction(appointmentId, getCurrentUserId(), action, {
       previousState: await getPreviousAppointmentState(appointmentId),
       changes: getAppointmentChanges(),
-      automaticAction: false
-    })
+      automaticAction: false,
+    });
   },
 
   // AI interactions
@@ -383,37 +390,37 @@ export const auditActions = {
       userId: getCurrentUserId(),
       chatId,
       context,
-      sensitiveDataAccess: context.includes('patient'),
-      complianceFlags: await checkComplianceFlags(context)
-    })
-  }
-}
+      sensitiveDataAccess: context.includes("patient"),
+      complianceFlags: await checkComplianceFlags(context),
+    });
+  },
+};
 ```
 
 ### State Management with Zustand
 
 ```typescript
 // stores/patient-store.ts
-import { create } from 'zustand'
-import { subscribeWithSelector } from 'zustand/middleware'
-import { Patient, Appointment } from '@neonpro/types'
+import { Appointment, Patient } from "@neonpro/types";
+import { create } from "zustand";
+import { subscribeWithSelector } from "zustand/middleware";
 
 interface PatientStore {
   // State
-  patients: Patient[]
-  selectedPatient: Patient | null
-  appointments: Appointment[]
-  isLoading: boolean
-  
+  patients: Patient[];
+  selectedPatient: Patient | null;
+  appointments: Appointment[];
+  isLoading: boolean;
+
   // Actions
-  setPatients: (patients: Patient[]) => void
-  selectPatient: (patient: Patient) => void
-  updatePatient: (patientId: string, updates: Partial<Patient>) => void
-  addAppointment: (appointment: Appointment) => void
-  
+  setPatients: (patients: Patient[]) => void;
+  selectPatient: (patient: Patient) => void;
+  updatePatient: (patientId: string, updates: Partial<Patient>) => void;
+  addAppointment: (appointment: Appointment) => void;
+
   // Real-time subscriptions
-  subscribeToPatientUpdates: () => void
-  subscribeToAppointmentUpdates: () => void
+  subscribeToPatientUpdates: () => void;
+  subscribeToAppointmentUpdates: () => void;
 }
 
 export const usePatientStore = create<PatientStore>()(
@@ -422,147 +429,143 @@ export const usePatientStore = create<PatientStore>()(
     selectedPatient: null,
     appointments: [],
     isLoading: false,
-    
+
     setPatients: (patients) => set({ patients }),
-    
+
     selectPatient: async (patient) => {
-      set({ selectedPatient: patient, isLoading: true })
-      
+      set({ selectedPatient: patient, isLoading: true });
+
       // Audit trail for patient selection
-      await auditActions.logPatientAccess(patient.id, 'view')
-      
+      await auditActions.logPatientAccess(patient.id, "view");
+
       // Load patient appointments
-      const appointments = await fetchPatientAppointments(patient.id)
-      set({ appointments, isLoading: false })
+      const appointments = await fetchPatientAppointments(patient.id);
+      set({ appointments, isLoading: false });
     },
-    
+
     updatePatient: async (patientId, updates) => {
-      const patients = get().patients.map(p => 
-        p.id === patientId ? { ...p, ...updates } : p
-      )
-      set({ patients })
-      
+      const patients = get().patients.map(p => p.id === patientId ? { ...p, ...updates } : p);
+      set({ patients });
+
       // Audit trail for patient updates
-      await auditActions.logPatientAccess(patientId, 'edit')
+      await auditActions.logPatientAccess(patientId, "edit");
     },
-    
+
     addAppointment: (appointment) => {
       set(state => ({
-        appointments: [...state.appointments, appointment]
-      }))
+        appointments: [...state.appointments, appointment],
+      }));
     },
-    
+
     subscribeToPatientUpdates: () => {
       // Supabase real-time subscription
       supabase
-        .channel('patients')
-        .on('postgres_changes', 
-          { event: '*', schema: 'public', table: 'patients' },
-          (payload) => {
-            const { eventType, new: newRecord, old: oldRecord } = payload
-            
-            if (eventType === 'UPDATE') {
-              get().updatePatient(newRecord.id, newRecord)
-            }
+        .channel("patients")
+        .on("postgres_changes", { event: "*", schema: "public", table: "patients" }, (payload) => {
+          const { eventType, new: newRecord, old: oldRecord } = payload;
+
+          if (eventType === "UPDATE") {
+            get().updatePatient(newRecord.id, newRecord);
           }
-        )
-        .subscribe()
+        })
+        .subscribe();
     },
-    
+
     subscribeToAppointmentUpdates: () => {
       supabase
-        .channel('appointments')
-        .on('postgres_changes',
-          { event: '*', schema: 'public', table: 'appointments' },
+        .channel("appointments")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "appointments" },
           (payload) => {
-            if (payload.eventType === 'INSERT') {
-              get().addAppointment(payload.new as Appointment)
+            if (payload.eventType === "INSERT") {
+              get().addAppointment(payload.new as Appointment);
             }
-          }
+          },
         )
-        .subscribe()
-    }
-  }))
-)
+        .subscribe();
+    },
+  })),
+);
 ```
 
 ### Custom Hooks
 
 ```typescript
 // lib/hooks/use-ai-chat.ts
-import { useState, useEffect, useCallback } from 'react'
-import { useChat } from 'ai/react'
-import { auditActions } from '../audit'
+import { useChat } from "ai/react";
+import { useCallback, useEffect, useState } from "react";
+import { auditActions } from "../audit";
 
 export function useAIChat(context: string, patientId?: string) {
-  const [emergencyDetected, setEmergencyDetected] = useState(false)
+  const [emergencyDetected, setEmergencyDetected] = useState(false);
   const [chatMetrics, setChatMetrics] = useState({
     responseTime: 0,
     messageCount: 0,
-    satisfaction: null as number | null
-  })
+    satisfaction: null as number | null,
+  });
 
   const chat = useChat({
-    api: '/api/ai/chat',
+    api: "/api/ai/chat",
     body: { context, patientId },
     onFinish: async (message) => {
       // Audit healthcare AI interaction
-      await auditActions.logAIInteraction(chat.id, context)
-      
+      await auditActions.logAIInteraction(chat.id, context);
+
       // Track performance metrics
       setChatMetrics(prev => ({
         ...prev,
         responseTime: message.metadata?.responseTime || 0,
-        messageCount: prev.messageCount + 1
-      }))
-      
+        messageCount: prev.messageCount + 1,
+      }));
+
       // Emergency detection
       if (message.metadata?.emergency) {
-        setEmergencyDetected(true)
+        setEmergencyDetected(true);
       }
     },
     onError: async (error) => {
       // Log AI errors for monitoring
-      await fetch('/api/monitoring/ai-error', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/monitoring/ai-error", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           error: error.message,
           context,
           patientId,
-          timestamp: new Date().toISOString()
-        })
-      })
-    }
-  })
+          timestamp: new Date().toISOString(),
+        }),
+      });
+    },
+  });
 
   const clearEmergency = useCallback(() => {
-    setEmergencyDetected(false)
-  }, [])
+    setEmergencyDetected(false);
+  }, []);
 
   const rateSatisfaction = useCallback(async (rating: number) => {
-    setChatMetrics(prev => ({ ...prev, satisfaction: rating }))
-    
+    setChatMetrics(prev => ({ ...prev, satisfaction: rating }));
+
     // Send satisfaction rating to analytics
-    await fetch('/api/analytics/chat-satisfaction', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("/api/analytics/chat-satisfaction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chatId: chat.id,
         rating,
         context,
-        messageCount: chatMetrics.messageCount
-      })
-    })
-  }, [chat.id, context, chatMetrics.messageCount])
+        messageCount: chatMetrics.messageCount,
+      }),
+    });
+  }, [chat.id, context, chatMetrics.messageCount]);
 
   return {
     ...chat,
     emergencyDetected,
     clearEmergency,
     chatMetrics,
-    rateSatisfaction
-  }
+    rateSatisfaction,
+  };
 }
 ```
 
@@ -577,68 +580,68 @@ const nextConfig = {
   // Performance optimizations
   compress: true,
   poweredByHeader: false,
-  
+
   // Bundle analyzer
-  bundleAnalyzer: process.env.ANALYZE === 'true',
-  
+  bundleAnalyzer: process.env.ANALYZE === "true",
+
   // Image optimization
   images: {
-    formats: ['image/webp', 'image/avif'],
+    formats: ["image/webp", "image/avif"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-  
+
   // Experimental features
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ['@neonpro/ui', 'lucide-react'],
-    serverComponentsExternalPackages: ['@neonpro/database'],
+    optimizePackageImports: ["@neonpro/ui", "lucide-react"],
+    serverComponentsExternalPackages: ["@neonpro/database"],
   },
-  
+
   // Headers for security and performance
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY'
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
-          }
-        ]
-      }
-    ]
-  }
-}
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+    ];
+  },
+};
 
-export default nextConfig
+export default nextConfig;
 ```
 
 ### Performance Targets
 
-| Metric | Target | Current |
-|--------|--------|---------|
-| **Lighthouse Score** | >90 | 94 |
-| **First Contentful Paint** | <2s | 1.4s |
-| **Time to Interactive** | <3s | 2.1s |
-| **Bundle Size** | <1MB | 847KB |
-| **API Response Time** | <200ms | 145ms |
-| **Database Query Time** | <50ms | 38ms |
+| Metric                     | Target | Current |
+| -------------------------- | ------ | ------- |
+| **Lighthouse Score**       | >90    | 94      |
+| **First Contentful Paint** | <2s    | 1.4s    |
+| **Time to Interactive**    | <3s    | 2.1s    |
+| **Bundle Size**            | <1MB   | 847KB   |
+| **API Response Time**      | <200ms | 145ms   |
+| **Database Query Time**    | <50ms  | 38ms    |
 
 ## Troubleshooting
 
 ### Common Issues
 
 - **Issue**: TypeScript compilation errors with strict mode → **Solution**: Enable `skipLibCheck: false` and fix type definitions in packages
-- **Issue**: SSR hydration mismatches in AI Chat → **Solution**: Use `useIsomorphicLayoutEffect` for client-side only effects  
+- **Issue**: SSR hydration mismatches in AI Chat → **Solution**: Use `useIsomorphicLayoutEffect` for client-side only effects
 - **Issue**: Slow initial page loads with many packages → **Solution**: Implement progressive loading and optimize Turborepo caching
 - **Issue**: AI chat response delays → **Solution**: Use streaming responses and optimize prompt engineering with context limiting
 - **Issue**: Healthcare compliance validation failures → **Solution**: Check LGPD consent flow and Unified Audit Service configuration
@@ -658,7 +661,7 @@ export default nextConfig
 
 - [Source Tree Architecture](./source-tree.md) - Complete monorepo structure and package details
 - [Tech Stack Guide](../tech-stack.md) - Detailed technology specifications
-- [Database Schema](../database-schema.md) - Data structure and relationships  
+- [Database Schema](../database-schema.md) - Data structure and relationships
 - [API Documentation](../apis/) - Backend integration patterns
 - [Compliance Guide](../compliance/) - Brazilian healthcare regulations
 - [Component Library](../components/) - shadcn/ui healthcare extensions
@@ -669,7 +672,7 @@ export default nextConfig
 
 ## Summary
 
-This comprehensive frontend architecture provides the foundation for building a scalable, accessible, and compliant healthcare SaaS platform using a sophisticated **Turborepo monorepo with 20 specialized packages**. 
+This comprehensive frontend architecture provides the foundation for building a scalable, accessible, and compliant healthcare SaaS platform using a sophisticated **Turborepo monorepo with 20 specialized packages**.
 
 ### Key Architectural Strengths:
 
@@ -684,6 +687,7 @@ This comprehensive frontend architecture provides the foundation for building a 
 The architecture balances technical excellence with healthcare domain requirements, ensuring both developer productivity and regulatory compliance for aesthetic healthcare professionals in Brazil.
 
 **Development Commands:**
+
 ```bash
 # Turborepo commands
 pnpm dev                    # Start all applications

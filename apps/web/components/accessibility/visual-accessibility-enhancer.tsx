@@ -734,7 +734,7 @@ export function VisualAccessibilityProvider({ children }: { children: React.Reac
 
   // Dynamic CSS injection for visual enhancements
   useEffect(() => {
-    if (!settings.enabled) return;
+    if (!settings.enabled) {return;}
 
     // Create or update style element
     if (!styleElementRef.current) {

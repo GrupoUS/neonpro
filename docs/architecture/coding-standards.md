@@ -381,7 +381,7 @@ export const auditLog = async (action: string, userId: string, data?: any) => {
 
 ### **Essential Rules**
 
-#### **Accessibility (WCAG 2.1 AA+)**
+#### **Accessibility (WCAG 2.1 AA)**
 
 - Proper ARIA labels and roles for all interactive elements
 - Semantic HTML structure over div-heavy layouts
@@ -550,7 +550,7 @@ export class AestheticAI {
 
 - **Progressive Quality**: L1-L10 standards with advanced aesthetic domain overrides
 - **Test Coverage**: ≥95% for advanced aesthetic features with compliance scenario testing
-- **Accessibility**: WCAG 2.1 AA+ compliance for aesthetic accessibility requirements
+- **Accessibility**: WCAG 2.1 AA compliance for aesthetic accessibility requirements
 - **Security Validation**: Zero high/critical vulnerabilities with continuous monitoring
 
 ---

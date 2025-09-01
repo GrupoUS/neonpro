@@ -72,16 +72,16 @@ const categoryConfig = {
 };
 
 const getImpactColor = (impact: number) => {
-  if (impact >= 70) return "text-red-600";
-  if (impact >= 40) return "text-orange-600";
-  if (impact >= 20) return "text-yellow-600";
+  if (impact >= 70) {return "text-red-600";}
+  if (impact >= 40) {return "text-orange-600";}
+  if (impact >= 20) {return "text-yellow-600";}
   return "text-green-600";
 };
 
 const getImpactLabel = (impact: number) => {
-  if (impact >= 70) return "Alto Impacto";
-  if (impact >= 40) return "Médio Impacto";
-  if (impact >= 20) return "Baixo Impacto";
+  if (impact >= 70) {return "Alto Impacto";}
+  if (impact >= 40) {return "Médio Impacto";}
+  if (impact >= 20) {return "Baixo Impacto";}
   return "Impacto Mínimo";
 };
 

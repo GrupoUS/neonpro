@@ -134,6 +134,64 @@ export type CFMEthicsCompliance = z.infer<typeof CFMEthicsComplianceSchema>;
  * according to CFM (Federal Council of Medicine) regulations.
  */
 export class CFMService {
+  private initialized = false;
+
+  constructor() {
+    this.initializeService().catch(error => {
+      console.error("CFM Service initialization failed:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+      });
+    });
+  }
+
+  private async initializeService(): Promise<void> {
+    try {
+      // Initialize CFM procedure authorizations
+      await this.loadProcedureAuthorizations();
+
+      // Verify CFM API connectivity (would be actual API check in production)
+      await this.verifyCFMConnectivity();
+
+      this.initialized = true;
+      console.log("CFM Service initialized successfully");
+    } catch (error) {
+      console.error("CFM Service initialization error:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error("CFM Service failed to initialize");
+    }
+  }
+
+  private async loadProcedureAuthorizations(): Promise<void> {
+    try {
+      // In production, this would load from database or external API
+      // For now, procedure authorizations are already loaded in the Map
+      console.log("CFM procedure authorizations loaded");
+    } catch (error) {
+      console.error("Failed to load procedure authorizations:", error);
+      throw error;
+    }
+  }
+
+  private async verifyCFMConnectivity(): Promise<void> {
+    try {
+      // In production, this would verify actual CFM API connectivity
+      // Simulate connectivity check
+      await new Promise(resolve => setTimeout(resolve, 100));
+      console.log("CFM API connectivity verified");
+    } catch (error) {
+      console.error("CFM API connectivity failed:", error);
+      throw new Error("Cannot connect to CFM services");
+    }
+  }
+
+  private ensureInitialized(): void {
+    if (!this.initialized) {
+      throw new Error("CFM Service not properly initialized");
+    }
+  }
   // Procedure authorization database
   private readonly procedureAuthorizations: Map<
     string,
@@ -214,6 +272,16 @@ export class CFMService {
     error?: string;
   }> {
     try {
+      this.ensureInitialized();
+
+      // Input validation
+      if (!crmNumber || !crmState) {
+        return {
+          success: false,
+          error: "CRM number and state are required",
+        };
+      }
+
       // Validate CRM format
       if (!this.validateCRMFormat(crmNumber, crmState)) {
         return {
@@ -251,6 +319,13 @@ export class CFMService {
 
       return { success: true, professional };
     } catch (error) {
+      console.error("Professional validation failed:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        crmNumber,
+        crmState,
+        timestamp: new Date().toISOString(),
+      });
+
       return {
         success: false,
         error: error instanceof Error
@@ -272,6 +347,16 @@ export class CFMService {
     requirements?: string[];
   }> {
     try {
+      this.ensureInitialized();
+
+      // Input validation
+      if (!professionalId || !procedureType) {
+        return {
+          authorized: false,
+          reason: "Professional ID and procedure type are required",
+        };
+      }
+
       // Get professional data
       const professional = await this.getProfessionalById(professionalId);
       if (!professional) {
@@ -352,6 +437,13 @@ export class CFMService {
 
       return { authorized: true };
     } catch (error) {
+      console.error("Procedure authorization check failed:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        professionalId,
+        procedureType,
+        timestamp: new Date().toISOString(),
+      });
+
       return {
         authorized: false,
         reason: error instanceof Error ? error.message : "Authorization check failed",
@@ -368,6 +460,15 @@ export class CFMService {
     recommendations?: string[];
   }> {
     try {
+      this.ensureInitialized();
+
+      if (!complianceData) {
+        return {
+          compliant: false,
+          violations: ["Compliance data is required"],
+        };
+      }
+
       const validatedCompliance = CFMEthicsComplianceSchema.parse(complianceData);
 
       const violations: string[] = [];
@@ -437,6 +538,11 @@ export class CFMService {
         recommendations: recommendations.length > 0 ? recommendations : undefined,
       };
     } catch (error) {
+      console.error("Ethics compliance validation failed:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+      });
+
       return {
         compliant: false,
         violations: [

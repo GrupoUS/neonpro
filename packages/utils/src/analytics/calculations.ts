@@ -75,7 +75,8 @@ const calculateMRR = (
   const mrr = subscriptions
     .filter((sub) => sub?.status === "active")
     .reduce((sum, sub) => {
-      const price = sub?.amount || sub?.price || ZERO;
+      // Price selection rule: prefer 'amount' over 'price' (amount is primary billing field)
+      const price = sub?.amount ?? sub?.price ?? ZERO;
       if (typeof price !== "number" || Number.isNaN(price)) {
         return sum;
       }
@@ -128,7 +129,31 @@ const calculateCLV = (
   averageOrderValue: number,
   purchaseFrequency: number,
   customerLifespan: number,
-): number => averageOrderValue * purchaseFrequency * customerLifespan;
+): number => {
+  // Validate that all inputs are numbers and finite
+  if (typeof averageOrderValue !== "number" || !Number.isFinite(averageOrderValue)) {
+    throw new TypeError("averageOrderValue must be a finite number");
+  }
+  if (typeof purchaseFrequency !== "number" || !Number.isFinite(purchaseFrequency)) {
+    throw new TypeError("purchaseFrequency must be a finite number");
+  }
+  if (typeof customerLifespan !== "number" || !Number.isFinite(customerLifespan)) {
+    throw new TypeError("customerLifespan must be a finite number");
+  }
+
+  // Validate that all inputs are greater than 0
+  if (averageOrderValue <= 0) {
+    throw new RangeError("averageOrderValue must be greater than 0");
+  }
+  if (purchaseFrequency <= 0) {
+    throw new RangeError("purchaseFrequency must be greater than 0");
+  }
+  if (customerLifespan <= 0) {
+    throw new RangeError("customerLifespan must be greater than 0");
+  }
+
+  return averageOrderValue * purchaseFrequency * customerLifespan;
+};
 
 export {
   calculateARR,

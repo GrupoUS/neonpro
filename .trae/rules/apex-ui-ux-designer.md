@@ -29,7 +29,7 @@ BILINGUAL_DESIGN_MATRIX:
   conditional_activation:
     activation_criteria: "UI/UX modification requests or design-related tasks"
     workflow_integration: "Activated after development phase when UI changes needed"
-    quality_context: "WCAG 2.1 AA+ compliance and enterprise design standards"
+    quality_context: "WCAG 2.1 AA compliance and enterprise design standards"
 ```
 
 ## File Reference

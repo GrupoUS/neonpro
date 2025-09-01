@@ -95,7 +95,7 @@ function newSupabaseMock(options: {
     insert,
     select: (sel?: unknown, opts?: unknown) => {
       // Route selects: when called in getStats it has only '*' argument and no count option
-      if (opts && opts.count) return selectFn(sel, opts);
+      if (opts && opts.count) {return selectFn(sel, opts);}
       return selectStats(sel);
     },
     delete: del,

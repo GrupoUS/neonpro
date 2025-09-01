@@ -111,7 +111,7 @@ export function CriticalInfoDisplay({
   };
 
   const formatVitalSigns = (vitals: typeof patient.lastVitalSigns) => {
-    if (!vitals) return null;
+    if (!vitals) {return null;}
 
     const isRecent = new Date().getTime() - vitals.timestamp.getTime() < 30 * 60 * 1000; // 30 min
 

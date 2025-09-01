@@ -134,7 +134,7 @@ class QueueStorageService {
   }
 
   async addAction(action: QueuedAction): Promise<void> {
-    if (!this.db) throw new Error("Database not initialized");
+    if (!this.db) {throw new Error("Database not initialized");}
 
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(["actions"], "readwrite");
@@ -147,7 +147,7 @@ class QueueStorageService {
   }
 
   async updateAction(action: QueuedAction): Promise<void> {
-    if (!this.db) throw new Error("Database not initialized");
+    if (!this.db) {throw new Error("Database not initialized");}
 
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(["actions"], "readwrite");
@@ -160,7 +160,7 @@ class QueueStorageService {
   }
 
   async getAllActions(): Promise<QueuedAction[]> {
-    if (!this.db) throw new Error("Database not initialized");
+    if (!this.db) {throw new Error("Database not initialized");}
 
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(["actions"], "readonly");
@@ -173,7 +173,7 @@ class QueueStorageService {
   }
 
   async getActionsByStatus(status: QueuedAction["status"]): Promise<QueuedAction[]> {
-    if (!this.db) throw new Error("Database not initialized");
+    if (!this.db) {throw new Error("Database not initialized");}
 
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(["actions"], "readonly");
@@ -187,7 +187,7 @@ class QueueStorageService {
   }
 
   async deleteAction(actionId: string): Promise<void> {
-    if (!this.db) throw new Error("Database not initialized");
+    if (!this.db) {throw new Error("Database not initialized");}
 
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(["actions"], "readwrite");
@@ -200,7 +200,7 @@ class QueueStorageService {
   }
 
   async clearCompleted(): Promise<void> {
-    if (!this.db) throw new Error("Database not initialized");
+    if (!this.db) {throw new Error("Database not initialized");}
 
     const completedActions = await this.getActionsByStatus("completed");
     const failedActions = await this.getActionsByStatus("failed");
@@ -342,7 +342,7 @@ const useOfflineQueue = (userId: string, maxQueueSize: number = 1000) => {
     async (actionId: string, updates: Partial<QueuedAction>) => {
       try {
         const actionIndex = actions.findIndex(a => a.id === actionId);
-        if (actionIndex === -1) return;
+        if (actionIndex === -1) {return;}
 
         const updatedAction = { ...actions[actionIndex], ...updates };
         await storageRef.current.updateAction(updatedAction);
@@ -424,7 +424,7 @@ const useOfflineQueue = (userId: string, maxQueueSize: number = 1000) => {
 
   // Process queue
   const processQueue = useCallback(async (networkInfo: NetworkInfo) => {
-    if (processingRef.current || !networkInfo.isOnline) return;
+    if (processingRef.current || !networkInfo.isOnline) {return;}
 
     processingRef.current = true;
     setIsProcessing(true);
@@ -535,10 +535,10 @@ export default function OfflineQueueManager({
 
   // Auto-process queue when online
   useEffect(() => {
-    if (!autoProcessEnabled || isPaused) return;
+    if (!autoProcessEnabled || isPaused) {return;}
 
     const startAutoProcessing = () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) {clearInterval(intervalRef.current);}
 
       intervalRef.current = setInterval(async () => {
         if (networkInfo.isOnline && stats.queued > 0 && !isProcessing) {
@@ -569,7 +569,7 @@ export default function OfflineQueueManager({
 
   // Handle manual sync
   const handleManualSync = useCallback(async () => {
-    if (!networkInfo.isOnline || isProcessing) return;
+    if (!networkInfo.isOnline || isProcessing) {return;}
 
     const result = await processQueue(networkInfo);
     if (result) {
@@ -579,15 +579,15 @@ export default function OfflineQueueManager({
 
   // Get queue status color
   const getQueueStatusColor = () => {
-    if (!networkInfo.isOnline) return "bg-red-500";
-    if (stats.failed > 0) return "bg-amber-500";
-    if (stats.queued > 0) return "bg-blue-500";
+    if (!networkInfo.isOnline) {return "bg-red-500";}
+    if (stats.failed > 0) {return "bg-amber-500";}
+    if (stats.queued > 0) {return "bg-blue-500";}
     return "bg-green-500";
   };
 
   // Get network quality indicator
   const getNetworkQualityIcon = () => {
-    if (!networkInfo.isOnline) return <WifiOff className="h-4 w-4" />;
+    if (!networkInfo.isOnline) {return <WifiOff className="h-4 w-4" />;}
 
     switch (networkInfo.effectiveType) {
       case "4g":

@@ -17,10 +17,10 @@ const slugify = (text: string): string =>
   text
     .toLowerCase()
     .normalize("NFD")
-    .replaceAll(/[\u0300-\u036F]/gu, "")
-    .replaceAll(/[^a-z0-9 -]/g, "")
-    .replaceAll(/\s+/g, "-")
-    .replaceAll(/-+/g, "-")
+    .replace(/[\u0300-\u036F]/gu, "")
+    .replace(/[^a-z0-9 -]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
     .trim();
 
 export { formatCurrency, formatPercentage, slugify };

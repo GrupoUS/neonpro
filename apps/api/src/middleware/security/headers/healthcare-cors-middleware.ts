@@ -499,8 +499,8 @@ export class HealthcareCORSManager {
    * Match origin against pattern (supports wildcards)
    */
   private matchOrigin(origin: string, pattern: string): boolean {
-    if (pattern === "*") return true;
-    if (pattern === origin) return true;
+    if (pattern === "*") {return true;}
+    if (pattern === origin) {return true;}
 
     // Handle wildcard patterns like "https://*.example.com"
     if (pattern.includes("*")) {
@@ -520,7 +520,7 @@ export class HealthcareCORSManager {
   getHonoCORSConfig() {
     return {
       origin: async (origin: string) => {
-        if (!origin) return false; // Reject requests without origin
+        if (!origin) {return false;} // Reject requests without origin
         return await this.validateOrigin(origin);
       },
       allowMethods: this.config.methods,

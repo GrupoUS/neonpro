@@ -73,7 +73,7 @@ export function GestureNavigation({
 
   // Handle touch start
   const handleTouchStart = useCallback((e: TouchEvent) => {
-    if (!enableSwipe && !enableLongPress && !enableDoubleTap) return;
+    if (!enableSwipe && !enableLongPress && !enableDoubleTap) {return;}
 
     const touch = e.touches[0];
     touchStartRef.current = {
@@ -109,7 +109,7 @@ export function GestureNavigation({
 
   // Handle touch end
   const handleTouchEnd = useCallback((e: TouchEvent) => {
-    if (!touchStartRef.current) return;
+    if (!touchStartRef.current) {return;}
 
     const touch = e.changedTouches[0];
     const startTouch = touchStartRef.current;
@@ -198,7 +198,7 @@ export function GestureNavigation({
 
   // Keyboard navigation support
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (!touchOptimized) return; // Only for touch devices
+    if (!touchOptimized) {return;} // Only for touch devices
 
     const direction: NavigationDirection | null = e.key === "ArrowLeft"
       ? "previous"
@@ -219,7 +219,7 @@ export function GestureNavigation({
   // Set up event listeners
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || !touchOptimized) return;
+    if (!container || !touchOptimized) {return;}
 
     container.addEventListener("touchstart", handleTouchStart, { passive: false });
     container.addEventListener("touchend", handleTouchEnd, { passive: false });
@@ -276,7 +276,7 @@ export function SwipeIndicators({
 }: SwipeIndicatorsProps) {
   const { healthcareContext, touchOptimized } = useResponsive();
 
-  if (!touchOptimized) return null;
+  if (!touchOptimized) {return null;}
 
   const indicatorClass = cn(
     "swipe-indicator",
@@ -340,7 +340,7 @@ export function MobileMenuDrawer({
     }
   }, [isOpen, onOpenChange]);
 
-  if (!isMobile) return null;
+  if (!isMobile) {return null;}
 
   const drawerClass = cn(
     "mobile-menu-drawer",
@@ -401,7 +401,7 @@ interface GestureHelpProps {
 export function GestureHelp({ isVisible, onDismiss }: GestureHelpProps) {
   const { healthcareContext, touchOptimized } = useResponsive();
 
-  if (!isVisible || !touchOptimized) return null;
+  if (!isVisible || !touchOptimized) {return null;}
 
   const gestures = [
     { gesture: "Swipe Left", action: "Go to next page/step" },

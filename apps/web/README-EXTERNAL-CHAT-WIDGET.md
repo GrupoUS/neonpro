@@ -11,7 +11,7 @@ Sistema de chat widget externo com IA, reconhecimento de voz em português e han
 - 🟢 **Verde (85-100%)**: Alta confiança
 - 🟡 **Amarelo (60-85%)**: Confiança média
 - 🔴 **Vermelho (0-60%)**: Baixa confiança
-- Suporte WCAG 2.1 AA+ com `aria-label` e indicadores visuais
+- Suporte WCAG 2.1 AA com `aria-label` e indicadores visuais
 
 #### 2. **VoiceInput** (`/components/ui/voice-input.tsx`)
 
@@ -22,7 +22,7 @@ Sistema de chat widget externo com IA, reconhecimento de voz em português e han
 
 #### 3. **MessageRenderer** (`/components/ui/message-renderer.tsx`)
 
-- 📱 Display unificado com WCAG 2.1 AA+
+- 📱 Display unificado com WCAG 2.1 AA
 - Avatares distintos (User/Assistant/System)
 - Indicadores de confiança, handoff e processamento
 - Suporte para high contrast mode
@@ -75,7 +75,7 @@ const config = {
 };
 ```
 
-#### **Acessibilidade WCAG 2.1 AA+**
+#### **Acessibilidade WCAG 2.1 AA**
 
 - 🎯 **Roles semânticos**: `dialog`, `article`, `status`
 - 🏷️ **ARIA labels**: Todos os elementos interativos
@@ -100,8 +100,8 @@ test("should maintain accuracy above 90%");
 // Handoff automático
 test("should trigger handoff when confidence is below 85%");
 
-// Acessibilidade WCAG 2.1 AA+
-test("should be accessible (WCAG 2.1 AA+)");
+// Acessibilidade WCAG 2.1 AA
+test("should be accessible (WCAG 2.1 AA)");
 
 // Responsivo mobile
 test("should be responsive on mobile viewport");
@@ -228,7 +228,7 @@ interface HandoffConfig {
 - ✅ **Response Time**: ~800ms (Meta: <2s)
 - ✅ **Voice Recognition**: >90% accuracy PT-BR
 - ✅ **Handoff Automation**: <85% confidence
-- ✅ **WCAG 2.1 AA+**: 100% compliance
+- ✅ **WCAG 2.1 AA**: 100% compliance
 - ✅ **Mobile Responsive**: Todos os viewports
 - ✅ **Error Handling**: Graceful fallbacks
 
@@ -268,7 +268,7 @@ O External AI Chat Widget está **100% funcional** com todos os requisitos atend
 - 🤖 IA com handoff inteligente
 - 🎤 Reconhecimento de voz em português
 - 📱 Mobile-first e responsivo
-- ♿ WCAG 2.1 AA+ acessível
+- ♿ WCAG 2.1 AA acessível
 - 🧪 Testes completos de performance
 
 ---

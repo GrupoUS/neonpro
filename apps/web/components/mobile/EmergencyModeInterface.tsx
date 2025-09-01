@@ -244,7 +244,7 @@ export function EmergencyModeInterface({
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <div className="fixed inset-0 bg-red-950 z-50 flex flex-col">

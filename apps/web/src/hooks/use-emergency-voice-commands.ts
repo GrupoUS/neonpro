@@ -221,7 +221,7 @@ export function useEmergencyVoiceCommands({
   // Setup Speech Recognition Event Handlers
   useEffect(() => {
     const recognitionInstance = recognitionRef.current;
-    if (!recognitionInstance) return;
+    if (!recognitionInstance) {return;}
 
     const handleResult = (event: SpeechRecognitionEvent) => {
       let interimTranscript = "";
@@ -373,7 +373,7 @@ export function useEmergencyVoiceCommands({
 
   // Start listening
   const startListening = useCallback(() => {
-    if (!recognitionRef.current || recognition.isListening) return;
+    if (!recognitionRef.current || recognition.isListening) {return;}
 
     try {
       setRecognition(prev => ({ ...prev, transcript: "", finalTranscript: "" }));
@@ -388,7 +388,7 @@ export function useEmergencyVoiceCommands({
 
   // Stop listening
   const stopListening = useCallback(() => {
-    if (!recognitionRef.current || !recognition.isListening) return;
+    if (!recognitionRef.current || !recognition.isListening) {return;}
 
     recognitionRef.current.stop();
   }, [recognition.isListening]);
@@ -413,7 +413,7 @@ export function useEmergencyVoiceCommands({
       volume?: number;
     } = {},
   ) => {
-    if (!synthRef.current || !synthesis.isSupported) return;
+    if (!synthRef.current || !synthesis.isSupported) {return;}
 
     const {
       priority = "medium",

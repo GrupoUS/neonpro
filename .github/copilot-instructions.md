@@ -23,99 +23,78 @@ When you have ANY doubt during development:
 - Review `docs/tech-stack.md` for technology guidelines
 - Look at `docs/apis.md` for API patterns
 - Check `docs/database-schema.md` for data structure
-- Consult specific guides in `/rules` or `/docs` for coding standards, best practices, and design patterns
+- Consult specific guides in `/ruler` or `/docs` for coding standards, best practices, and design patterns
 
-## 🤖 AGENT COORDINATION SYSTEM
+## 🤖 APEX AGENT COORDINATION SYSTEM
 
-**🎯 Filosofia de Coordenação**: _"Roteamento inteligente para o agente certo na hora certa"_
+**🎯 Filosofia de Coordenação**: _"Agentes APEX especializados com coordenação inteligente"_
 
-### **🔄 Sistema de Roteamento Inteligente**
+### **🔄 Sistema de Coordenação APEX Simplificado**
 
 **Coordenador Central** (Sempre Ativo):
 
-- **💻 @apex-dev** - Coordenador base + desenvolvimento full-stack healthcare
+- **💻 @apex-dev** - Coordenador unificado com modos: Desenvolvimento, Arquitetura, Auditoria de Segurança, Refatoração
 
 **Especialistas On-Demand** (Ativação por Contexto):
 
-- **🔬 @apex-researcher** - Pesquisa multi-fonte e validação constitucional
+- **🔬 @apex-researcher** - Pesquisa multi-fonte e validação constitucional  
 - **🎨 @apex-ui-ux-designer** - Design healthcare com acessibilidade WCAG 2.1 AA+
-- **🏗️ @architect** - Arquitetura de sistemas e design patterns
-- **🔒 @audit** - Auditoria de segurança e vulnerabilidades
-- **📋 @prd** - Especificações de produto e roadmaps
-- **🔧 @refactor** - Refatoração e otimização de código
-- **📢 @briefing** - Estratégia de marketing e posicionamento
-- **📚 @documentation** - Documentação técnica e guias
-- **⚖️ @rules** - Regras e padrões de desenvolvimento
 
-### **🎯 Comandos de Ativação**
+### **🎯 Comandos de Ativação APEX**
 
 ```bash
-# Agente Único
+# Agente Único APEX
 @apex-dev "implementar autenticação JWT"
-@architect "projetar arquitetura de microserviços"
-@apex-researcher "validar padrões de segurança LGPD"
+@apex-researcher "pesquisar padrões de segurança LGPD"  
+@apex-ui-ux-designer "projetar dashboard de pacientes"
 
-# Múltiplos Agentes
-@apex-dev,architect "implementar sistema de agendamento"
-@apex-ui-ux-designer,apex-dev "criar dashboard responsivo"
+# Combinações APEX
+@apex-dev,apex-researcher "pesquisar e implementar OAuth2"
+@apex-dev,apex-ui-ux-designer "projetar e desenvolver interface"
 
-# Equipes Completas
-@team-full "desenvolver plataforma de telemedicina completa"
-@team-audit "revisar segurança e compliance do sistema"
-@team-docs "criar documentação técnica e de usuário"
+# Equipe APEX Completa (casos complexos)
+@apex-dev,apex-researcher,apex-ui-ux-designer "desenvolver plataforma completa"
 ```
 
-### **🔄 Workflows de Colaboração Predefinidos**
+### **🔄 Workflows de Colaboração APEX**
 
 **🚀 Desenvolvimento Completo de Feature**:
 
 ```yaml
-sequence: architect → apex-researcher → apex-dev → apex-ui-ux-designer → audit → documentation
-output: "Production-ready healthcare feature with full documentation"
+sequence: apex-researcher → apex-dev → apex-ui-ux-designer
+output: "Production-ready healthcare feature com research fundamentado e design acessível"
 ```
 
 **🔬 Pesquisa e Implementação**:
 
 ```yaml
-sequence: apex-researcher → architect → apex-dev → audit
-output: "Evidence-based implementation with security validation"
+sequence: apex-researcher → apex-dev  
+output: "Implementação baseada em evidências com validação de segurança"
 ```
 
-**🔧 Refatoração Segura**:
+**🎨 Design e Desenvolvimento**:
 
 ```yaml
-sequence: audit → refactor → apex-dev → audit
-output: "Improved codebase with maintained security standards"
+sequence: apex-ui-ux-designer → apex-dev
+output: "Interface acessível com implementação técnica robusta"
 ```
 
-### **📋 MVP Completo**:
+### **🎯 Matriz de Decisão APEX Simplificada**
 
-```yaml
-sequence: prd → architect → apex-researcher → apex-dev → apex-ui-ux-designer → audit → documentation
-output: "Production-ready MVP with full compliance"
-```
+| Contexto/Trigger        | Agente Principal        | Agentes Colaboradores     | Workflow APEX               |
+| ----------------------- | ----------------------- | ------------------------ | --------------------------- |
+| 🔬 **Pesquisa/Análise** | @apex-researcher       | @apex-dev               | Research → Implementation    |
+| 💻 **Desenvolvimento**  | @apex-dev              | @apex-researcher        | Plan → Code → Validate      |
+| 🎨 **UI/UX Design**     | @apex-ui-ux-designer   | @apex-dev               | Design → Implement → Test   |
+| 🏗️ **Arquitetura**      | @apex-dev              | @apex-researcher        | Research → Design → Build    |
+| 🔒 **Segurança**        | @apex-dev              | @apex-researcher        | Audit → Fix → Re-audit      |
+| 🔧 **Refatoração**      | @apex-dev              | -                       | Analyze → Refactor → Test   |
 
-### **🎯 Matriz de Decisão para Seleção de Agentes**
-
-| Contexto/Trigger        | Agente Principal     | Agentes Colaboradores            | Workflow                      |
-| ----------------------- | -------------------- | -------------------------------- | ----------------------------- |
-| 🔬 **Pesquisa/Análise** | @apex-researcher     | @architect, @apex-dev            | Research → Implementation     |
-| 💻 **Desenvolvimento**  | @apex-dev            | @architect, @audit               | Plan → Code → Validate        |
-| 🎨 **UI/UX Design**     | @apex-ui-ux-designer | @apex-dev, @audit                | Design → Implement → Test     |
-| 🏗️ **Arquitetura**       | @architect           | @apex-researcher, @apex-dev      | Research → Design → Implement |
-| 🔒 **Segurança**        | @audit               | @apex-dev, @refactor             | Audit → Fix → Re-audit        |
-| 📋 **Produto**          | @prd                 | @architect, @apex-ui-ux-designer | Spec → Design → Develop       |
-| 🔧 **Refatoração**      | @refactor            | @audit, @apex-dev                | Audit → Refactor → Validate   |
-| 📚 **Documentação**     | @documentation       | @apex-dev, @architect            | Code → Document → Review      |
-| 📢 **Marketing**        | @briefing            | @apex-ui-ux-designer, @prd       | Strategy → Design → Content   |
-| ⚖️ **Padrões**           | @rules               | @audit, @apex-dev                | Define → Implement → Enforce  |
-
-**🔄 Regras de Ativação Automática**:
+**🔄 Regras de Ativação APEX Automática**:
 
 - **Complexidade ≥7**: Ativação automática de @apex-researcher
-- **UI/UX necessário**: Auto-inclusão de @apex-ui-ux-designer
-- **Segurança crítica**: Auto-inclusão de @audit
-- **Arquitetura nova**: Auto-inclusão de @architect
+- **UI/UX necessário**: Auto-inclusão de @apex-ui-ux-designer  
+- **Desenvolvimento**: Sempre @apex-dev como coordenador base
 
 ## 🎯 CORE PRINCIPLES & MISSION
 
@@ -125,7 +104,7 @@ CORE_STANDARDS:
   mission: "Research first, think systematically, implement flawlessly with cognitive intelligence"
   research_driven: "Multi-source validation for all complex implementations"
   research_excellence: "Context7 → Tavily → Archon → Sequential Thinking chain"
-  agent_coordination: "Intelligent routing with apex-dev as central coordinator"
+  agent_coordination: "Intelligent APEX routing with apex-dev as central coordinator"
   cognitive_authority: "Automated thinking activation with complexity-based routing"
   vibecoder_integration: "Constitutional excellence with one-shot resolution philosophy"
   core_principle: "Simple systems that work over complex systems that don't"
@@ -140,7 +119,6 @@ CORE_STANDARDS:
     mandatory_first_step: "Always begin with sequential-thinking tool"
     only_terminate_when: "User query COMPLETELY resolved and Problem 100% solved"
     complete_execution: "Execute entire workflow without interruption"
-
 WORKFLOW_MANAGEMENT_PRINCIPLES:
   preserve_context: "Maintain complete context across all agent and thinking transitions"
   incremental_excellence: "Build quality progressively through workflow phases with cognitive enhancement"
@@ -251,9 +229,7 @@ CONSTITUTIONAL_PRINCIPLES:
 - Requisitos de segurança/compliance
 - Necessidades de otimização de performance
 - Decisões arquiteturais
-- Regulamentações específicas de saúde (HIPAA, LGPD)
-
-**Comando de Ativação**:
+- Regulamentações específicas de saúde (HIPAA, LGPD)**Comando de Ativação APEX**:
 
 ```bash
 @apex-researcher "pesquisar [tecnologia/padrão/regulamentação]"
@@ -283,7 +259,7 @@ RESEARCH_EXECUTION_FRAMEWORK:
   quality_gate: "100% requirement clarity with multi-source validation and constitutional compliance"
 ```
 
-### 3. **Planning & Task List** 📋
+### 2. **Planning & Task List** 📋
 
 **🔧 MCP**: archon + serena
 
@@ -294,7 +270,7 @@ RESEARCH_EXECUTION_FRAMEWORK:
 - Mark tasks as in_progress when starting, completed when finished
 - **Follow:** [`docs/project.md`](../docs/project.md)
 
-**🎯 Ativação de Agentes por Contexto**:
+**🎯 Ativação de Agentes APEX por Contexto**:
 
 ```bash
 # Planejamento Técnico
@@ -303,11 +279,8 @@ RESEARCH_EXECUTION_FRAMEWORK:
 # Planejamento de UI/UX
 @apex-ui-ux-designer "projetar interface para [funcionalidade]"
 
-# Planejamento Arquitetural
-@architect "definir arquitetura para [sistema]"
-
-# Planejamento Colaborativo
-@apex-dev,architect "planejar sistema de [funcionalidade complexa]"
+# Planejamento com Pesquisa
+@apex-dev,apex-researcher "pesquisar e planejar sistema de [funcionalidade complexa]"
 ```
 
 - Follow the Planning & Design Framework below
@@ -344,9 +317,7 @@ phase_3_planning_design:
   1. **RED**: Write failing test first (describe expected behavior)
   2. **GREEN**: Write minimal code to pass the test
   3. **REFACTOR**: Improve code while keeping tests green
-  4. **REPEAT**: Continue cycle for next requirement
-
-- **Test Priority (from ttd-flow.md):**
+  4. **REPEAT**: Continue cycle for next requirement- **Test Priority (from ttd-flow.md):**
   - 🔥 **CRITICAL**: Business logic, AI agents, APIs, financial operations
   - ⚡ **IMPORTANT**: Complex hooks, utilities, data validation, integrations
   - ✅ **USEFUL**: UI components with logic, helpers
@@ -401,9 +372,7 @@ phase_3_planning_design:
   - Fix issues using `desktop-commander` for file operations
   - **Stuck >3x**: Use sequential-thinking to reassess
   - Return to **Step 4** and repeat cycle
-  - Continue until ALL quality checks pass
-
-```yaml
+  - Continue until ALL quality checks pass```yaml
 validation:
   vibecoder_integration: "Quality Validation & Testing with constitutional enforcement gates"
   architecture_analysis: "Always check architecture docs for best practices validation"
@@ -447,35 +416,26 @@ validation:
   - Any other relevant documentation folders
 - Use `desktop-commander` to create/update documentation files
 - Use `archon` to store documentation updates in knowledge base
-- **Suggest to User**: Recommend specific updates and ask user to review
+- **Suggest to User**: Recommend specific updates and ask user to review### 11. **Out-of-Scope Documentation**
 
-### 11. **Out-of-Scope Documentation**
-
-- **🔄 Ativação do @documentation**: Para documentação não coberta por protocolos existentes
+- **🔄 Ativação do @apex-researcher**: Para documentação não coberta por protocolos existentes
 
 ```bash
-@documentation "criar documentação para [conceito/padrão/integração]"
+@apex-researcher "criar documentação para [conceito/padrão/integração]"
 ```
 
-- Use o agente de documentação para criar documentação abrangente para:
+- Use o agente apex-researcher para criar documentação abrangente para:
   - Novos conceitos ou padrões introduzidos
   - Decisões arquiteturais complexas
   - Guias de integração ou tutoriais
   - Qualquer documentação fora dos protocolos padrão de memória e pastas
 
-## 📚 **Referências dos Agentes**
+## 📚 **Referências dos Agentes APEX**
 
 - **🤖 Sistema de Coordenação**: [`.ruler/agents/AGENT.md`](../.ruler/agents/AGENT.md)
-- **💻 @apex-dev**: [`.ruler/agents/apex-dev.md`](../.ruler/agents/apex-dev.md)
-- **🔬 @apex-researcher**: [`.ruler/agents/apex-researcher.md`](../.ruler/agents/apex-researcher.md)
-- **🎨 @apex-ui-ux-designer**: [`.ruler/agents/apex-ui-ux-designer.md`](../.ruler/agents/apex-ui-ux-designer.md)
-- **🏗️ @architect**: [`.ruler/agents/architect.md`](../.ruler/agents/architect.md)
-- **🔒 @audit**: [`.ruler/agents/audit.md`](../.ruler/agents/audit.md)
-- **📋 @prd**: [`.ruler/agents/prd.md`](../.ruler/agents/prd.md)
-- **🔧 @refactor**: [`.ruler/agents/refactor.md`](../.ruler/agents/refactor.md)
-- **📢 @briefing**: [`.ruler/agents/briefing.md`](../.ruler/agents/briefing.md)
-- **📚 @documentation**: [`.ruler/agents/documentation.md`](../.ruler/agents/documentation.md)
-- **⚖️ @rules**: [`.ruler/agents/rules.md`](../.ruler/agents/rules.md)
+- **💻 @apex-dev**: [`.ruler/agents/apex-dev.md`](../.ruler/agents/apex-dev.md) - Coordenador unificado com modos de Desenvolvimento, Arquitetura, Auditoria e Refatoração
+- **🔬 @apex-researcher**: [`.ruler/agents/apex-researcher.md`](../.ruler/agents/apex-researcher.md) - Pesquisa multi-fonte e validação constitucional
+- **🎨 @apex-ui-ux-designer**: [`.ruler/agents/apex-ui-ux-designer.md`](../.ruler/agents/apex-ui-ux-designer.md) - Design healthcare com acessibilidade WCAG 2.1 AA+
 
 ## Important Notes
 

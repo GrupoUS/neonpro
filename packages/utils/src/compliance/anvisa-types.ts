@@ -8,11 +8,11 @@ export interface ANVISAProduct {
   registration_number: string;
   category: "medical_device" | "cosmetic" | "medicine" | "procedure";
   manufacturer: string;
-  expiry_date: Date;
+  expiry_date: string; // ISO string from database
   batch_number?: string;
   regulatory_status: "approved" | "pending" | "suspended" | "recalled";
-  created_at: Date;
-  updated_at: Date;
+  created_at: string; // ISO string from database
+  updated_at: string; // ISO string from database
 }
 
 export interface ANVISAProcedure {
@@ -26,8 +26,8 @@ export interface ANVISAProcedure {
   pre_requirements: string[];
   post_care_instructions: string[];
   regulatory_notes: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string; // ISO string from database
+  updated_at: string; // ISO string from database
 }
 
 export interface AdverseEvent {
@@ -37,23 +37,23 @@ export interface AdverseEvent {
   product_id?: string;
   event_type: "mild" | "moderate" | "severe" | "life_threatening";
   description: string;
-  onset_date: Date;
-  resolution_date?: Date;
-  reported_date: Date;
+  onset_date: string; // ISO string from database
+  resolution_date?: string; // ISO string from database
+  reported_date: string; // ISO string from database
   reporter_name: string;
   reporter_qualification: string;
   actions_taken: string;
   outcome: "resolved" | "ongoing" | "permanent_damage" | "death";
   anvisa_reported: boolean;
   anvisa_report_number?: string;
-  created_at: Date;
+  created_at: string; // ISO string from database
 }
 
 export interface ComplianceTask {
   id: string;
   type: string;
   reference_id: string;
-  due_date: Date;
+  due_date: string; // ISO string from database
   status: "pending" | "completed" | "overdue";
   description: string;
 }

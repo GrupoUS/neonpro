@@ -192,7 +192,7 @@ const FormatBadge = ({ format }: { format: string; }) => {
 
 const formatFileSize = (bytes: number): string => {
   const sizes = ["Bytes", "KB", "MB", "GB"];
-  if (bytes === 0) return "0 Byte";
+  if (bytes === 0) {return "0 Byte";}
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)).toString());
   return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + " " + sizes[i];
 };
@@ -201,9 +201,9 @@ const formatRelativeTime = (date: Date): string => {
   const now = new Date();
   const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
-  if (diffInHours < 1) return "Há poucos minutos";
-  if (diffInHours < 24) return `Há ${Math.floor(diffInHours)} horas`;
-  if (diffInHours < 48) return "Ontem";
+  if (diffInHours < 1) {return "Há poucos minutos";}
+  if (diffInHours < 24) {return `Há ${Math.floor(diffInHours)} horas`;}
+  if (diffInHours < 48) {return "Ontem";}
   return `Há ${Math.floor(diffInHours / 24)} dias`;
 };
 

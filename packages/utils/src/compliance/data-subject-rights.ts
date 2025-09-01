@@ -8,29 +8,44 @@ export interface DataSubjectRequest {
   userId: string;
   requestType: "access" | "rectification" | "deletion" | "portability";
   status: "pending" | "processing" | "completed" | "rejected";
-  requestDate: Date;
-  completionDate?: Date;
+  requestDate: string; // ISO string for database consistency
+  completionDate?: string; // ISO string for database consistency
   details: string;
   ipAddress: string;
   verification: "pending" | "verified" | "rejected";
+  rejectionReason?: string;
+  verificationMethod?: "email" | "document" | "phone";
 }
 
 export interface PersonalDataExport {
   userId: string;
-  exportDate: Date;
+  exportDate: string; // ISO string for database consistency
   dataCategories: {
-    profile: unknown;
-    medical: unknown;
-    appointments: unknown[];
-    treatments: unknown[];
-    financial: unknown[];
-    communications: unknown[];
+    profile: Record<string, unknown>;
+    medical: Record<string, unknown>;
+    appointments: Record<string, unknown>[];
+    treatments: Record<string, unknown>[];
+    financial: Record<string, unknown>[];
+    communications: Record<string, unknown>[];
   };
   format: "json" | "csv" | "pdf";
+  fileSize?: number;
+  downloadUrl?: string;
 }
 
 export class LGPDDataSubjectRights {
   private static instance: LGPDDataSubjectRights;
+  private initialized = false;
+  private requests = new Map<string, DataSubjectRequest>(); // In-memory storage for demo
+
+  private constructor() {
+    this.initializeService().catch(error => {
+      console.error("LGPD Data Subject Rights service initialization failed:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+      });
+    });
+  }
 
   static getInstance(): LGPDDataSubjectRights {
     if (!LGPDDataSubjectRights.instance) {
@@ -39,25 +54,102 @@ export class LGPDDataSubjectRights {
     return LGPDDataSubjectRights.instance;
   }
 
+  private async initializeService(): Promise<void> {
+    try {
+      // Initialize data subject rights system
+      await this.validateDataRetentionPolicies();
+
+      // In production, this would initialize database connection
+      await this.loadPendingRequests();
+
+      this.initialized = true;
+      console.log("LGPD Data Subject Rights service initialized successfully");
+    } catch (error) {
+      console.error("LGPD Data Subject Rights initialization error:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error("LGPD Data Subject Rights service failed to initialize");
+    }
+  }
+
+  private async validateDataRetentionPolicies(): Promise<void> {
+    try {
+      // Validate that healthcare data retention policies are in place
+      console.log("Validating data retention policies");
+    } catch (error) {
+      console.error("Failed to validate data retention policies:", error);
+      throw error;
+    }
+  }
+
+  private async loadPendingRequests(): Promise<void> {
+    try {
+      // In production, this would load pending requests from database
+      console.log("Loading pending data subject requests");
+    } catch (error) {
+      console.error("Failed to load pending requests:", error);
+      throw error;
+    }
+  }
+
+  private ensureInitialized(): void {
+    if (!this.initialized) {
+      throw new Error("LGPD Data Subject Rights service not properly initialized");
+    }
+  }
+
   async requestDataAccess(
     userId: string,
     ipAddress: string,
     details: string,
   ): Promise<DataSubjectRequest> {
-    const request: DataSubjectRequest = {
-      id: this.generateRequestId(),
-      userId,
-      requestType: "access",
-      status: "pending",
-      requestDate: new Date(),
-      details,
-      ipAddress,
-      verification: "pending",
-    };
+    try {
+      this.ensureInitialized();
 
-    await this.storeDataSubjectRequest(request);
-    await this.notifyDataProtectionOfficer(request);
-    return request;
+      // Input validation
+      if (!userId || !ipAddress || !details) {
+        throw new Error("User ID, IP address, and details are required");
+      }
+
+      if (!this.isValidIPAddress(ipAddress)) {
+        throw new Error("Invalid IP address format");
+      }
+
+      if (details.length < 10) {
+        throw new Error("Details must be at least 10 characters long");
+      }
+
+      const request: DataSubjectRequest = {
+        id: this.generateRequestId(),
+        userId,
+        requestType: "access",
+        status: "pending",
+        requestDate: new Date().toISOString(),
+        details,
+        ipAddress,
+        verification: "pending",
+        verificationMethod: "email",
+      };
+
+      await this.storeDataSubjectRequest(request);
+      await this.notifyDataProtectionOfficer(request);
+
+      console.log("Data access request created:", {
+        requestId: request.id,
+        userId,
+        timestamp: request.requestDate,
+      });
+
+      return request;
+    } catch (error) {
+      console.error("Failed to create data access request:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        userId,
+        timestamp: new Date().toISOString(),
+      });
+      throw error;
+    }
   }
 
   async requestDataRectification(
@@ -181,12 +273,59 @@ export class LGPDDataSubjectRights {
   }
 
   private async storeDataSubjectRequest(
-    _request: DataSubjectRequest,
-  ): Promise<void> {}
+    request: DataSubjectRequest,
+  ): Promise<void> {
+    try {
+      // Store in in-memory map (would be database in production)
+      this.requests.set(request.id, request);
+
+      console.log("Data subject request stored:", {
+        requestId: request.id,
+        userId: request.userId,
+        type: request.requestType,
+        timestamp: request.requestDate,
+      });
+    } catch (error) {
+      console.error("Failed to store data subject request:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        requestId: request.id,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error("Failed to store data subject request");
+    }
+  }
 
   private async notifyDataProtectionOfficer(
-    _request: DataSubjectRequest,
-  ): Promise<void> {}
+    request: DataSubjectRequest,
+  ): Promise<void> {
+    try {
+      // In production, this would send notification to DPO
+      console.log("Notifying Data Protection Officer:", {
+        requestId: request.id,
+        type: request.requestType,
+        userId: request.userId,
+        timestamp: request.requestDate,
+      });
+    } catch (error) {
+      console.error("Failed to notify Data Protection Officer:", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        requestId: request.id,
+        timestamp: new Date().toISOString(),
+      });
+      // Don't throw error as this is notification only
+    }
+  }
+
+  private isValidIPAddress(ip: string): boolean {
+    // IPv4 regex
+    const ipv4Regex =
+      /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+
+    // IPv6 regex (simplified)
+    const ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::1$|^::$/;
+
+    return ipv4Regex.test(ip) || ipv6Regex.test(ip) || ip === "localhost" || ip === "127.0.0.1";
+  }
 
   // Data export methods
   private async exportProfileData(userId: string): Promise<unknown> {
@@ -205,11 +344,11 @@ export class LGPDDataSubjectRights {
     return [{ message: `Treatment data for user ${userId}` }];
   }
 
-  private async exportFinancialData(userId: string): Promise<<unknown>[]> {
+  private async exportFinancialData(userId: string): Promise<unknown[]> {
     return [{ message: `Financial data for user ${userId}` }];
   }
 
-  private async exportCommunicationData(userId: string): Promise<<unknown>[]> {
+  private async exportCommunicationData(userId: string): Promise<unknown[]> {
     return [{ message: `Communication data for user ${userId}` }];
   }
 

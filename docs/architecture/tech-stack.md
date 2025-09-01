@@ -2,6 +2,67 @@
 
 > **AI-First, Advanced Aesthetic-Optimized Architecture with Constitutional Service Layer**
 
+## Current Tech Stack (Updated 2025-09-01)
+
+This section reflects the actual, in-repo configuration and versions verified from package manifests and configs across apps and packages.
+
+- Monorepo & Build
+  - Turborepo: ^2.5.6 (turbo.json)
+  - Workspaces: pnpm 8.15.0 (packageManager), Bun used for scripts and audits (bunfig.toml, bun.lock)
+  - TypeScript: 5.9.x (apps/web, api), root pinned >=5.0
+  - Lint/Format: Oxlint ^1.13.0, OXC ^1.0.1, dprint ^0.50.x, Prettier ^3.6 (minimal)
+  - Monorepo structure: 2 applications in apps/ — web (Next.js) and api (Hono); the root docs/ folder contains documentation only and is not an application
+
+- Frontend (apps/web)
+  - Next.js: ^15.5.0 (App Router, RSC)
+  - React / React DOM: ^19.1.1
+  - Styling: Tailwind CSS ^3.3.0 (+ tailwind-merge ^2.2.0, class-variance-authority ^0.7.1)
+  - UI: Radix UI components, lucide-react icons, internal @neonpro/ui package
+  - Forms/Validation: react-hook-form ^7.62.0, zod ^3.23.8
+  - Auth: next-auth ^4.24.11; WebAuthn via @simplewebauthn/server
+  - Data/State: TanStack Query present in repo (root ^5.62.x), Router in web via @tanstack/react-router
+  - PDFs/Exports: @react-pdf/renderer, jspdf, xlsx
+  - Misc: framer-motion, stripe.js, resend, nodemailer
+
+- Backend API (apps/api)
+  - Framework: Hono ^4.5.8 with @hono/node-server ^1.12.0 and @hono/zod-validator
+  - Runtime/Build: tsx (dev), tsup (build)
+  - Validation/Security: zod, jose, bcryptjs
+
+- Database & Data Access
+  - Database: Supabase (PostgreSQL + Realtime) via @supabase/supabase-js (web ^2.38.5, api ^2.45.1), @supabase/ssr ^0.6.1 (web)
+  - ORM/Schema: Prisma (api ^5.18.0, web ^5.7.1) with shared schema in packages/database
+
+- AI Integration
+  - Vercel AI SDK: ai (web ^5.0.15, api ^5.0.23)
+  - Providers: @ai-sdk/openai ^2.0.15, @ai-sdk/anthropic ^2.0.4
+
+- Testing & QA
+  - Unit/Integration: Vitest (root ^3.2.x; api ^2.0.x) with happy-dom/jsdom, Testing Library (@testing-library/react ^16.3.0, jest-dom ^6.8.0, dom ^10.4.1), MSW ^2.10.5
+  - E2E: Playwright (root ^1.55.0; web ^1.49.0) with global config at repository root
+  - Linting/Type-check: turbo tasks lint, type-check; oxlint, tsc
+
+- Observability & Monitoring
+  - Sentry for Next.js: @sentry/nextjs ^10.5.0 (sentry.*.config.ts present)
+  - Optional: Vercel Analytics/Speed Insights (supported; not pinned in root deps)
+
+- Deployment & Infra
+  - Platform: Vercel (Node 20 runtime, region gru1). vercel.json targets apps/web (Next.js); API can be deployed as a Node service or serverless separately.
+  - Security headers configured in Next.js (apps/web/next.config.mjs) and vercel.json (CSP, HSTS, X-Frame-Options, etc.)
+
+- Development vs Production Tooling
+  - Development: Bun scripts (audit/update), Vitest for unit/integration, Playwright for E2E, Oxlint + dprint + Prettier, tsx (dev) and tsup (build) for API, Turbo dev pipelines.
+  - Production: Vercel deploy (Node 20, region gru1), Next standalone output, Prisma migrate deploy (web), Sentry monitoring, strict security headers (CSP, HSTS, XFO, etc.), Turbo remote cache enabled.
+
+- Internal Packages (selected)
+  - UI & Components: @neonpro/ui, @neonpro/brazilian-healthcare-ui
+  - Data & Types: @neonpro/types, @neonpro/database
+  - Core/Infra: @neonpro/auth, @neonpro/core-services, @neonpro/compliance, @neonpro/security, @neonpro/monitoring, @neonpro/devops, @neonpro/domain, @neonpro/utils, @neonpro/cache, @neonpro/integrations, @neonpro/enterprise, @neonpro/health-dashboard, @neonpro/docs
+
+Notes
+
+- Some sections below describe forward-looking capabilities (e.g., AR/VR, constitutional layers). The list above captures the currently implemented stack and exact versions from the repository as of this update.
+
 ## 🏗️ **Core Architecture & Philosophy**
 
 ### **Constitutional Architecture Principles**

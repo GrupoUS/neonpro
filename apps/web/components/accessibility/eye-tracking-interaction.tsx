@@ -438,7 +438,7 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode; }
   // ================================================================================
 
   const startCalibration = useCallback(() => {
-    if (!isTracking) return;
+    if (!isTracking) {return;}
 
     setCalibrationStatus("calibrating");
     calibrationPoints.current = [
@@ -474,7 +474,7 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode; }
 
       // Remove previous dot
       const prevDot = document.getElementById("eye-calibration-dot");
-      if (prevDot) prevDot.remove();
+      if (prevDot) {prevDot.remove();}
 
       document.body.append(calibrationDot);
 
@@ -488,7 +488,7 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode; }
 
     // Remove calibration dot
     const calibrationDot = document.getElementById("eye-calibration-dot");
-    if (calibrationDot) calibrationDot.remove();
+    if (calibrationDot) {calibrationDot.remove();}
 
     // Update device calibration status
     setDevices(prev =>
@@ -505,7 +505,7 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode; }
   // ================================================================================
 
   const startTracking = useCallback(() => {
-    if (isTracking || !settings.device_id) return;
+    if (isTracking || !settings.device_id) {return;}
 
     setIsTracking(true);
 
@@ -519,7 +519,7 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode; }
   }, [isTracking, settings.device_id, settings.enabled, simulateGazePoint, processGazePoint]);
 
   const stopTracking = useCallback(() => {
-    if (!isTracking) return;
+    if (!isTracking) {return;}
 
     setIsTracking(false);
     setCurrentGaze(null);
@@ -614,7 +614,7 @@ export function useEyeTrackingTarget(
 // ================================================================================
 
 function GazeCursor({ gaze }: { gaze: GazePoint | null; }) {
-  if (!gaze) return null;
+  if (!gaze) {return null;}
 
   return (
     <div
