@@ -2,9 +2,7 @@
 
 # Story Draft Checklist
 
-The Scrum Master should use this checklist to validate that each story contains sufficient context
-for a developer agent to implement it successfully, while assuming the dev agent has reasonable
-capabilities to figure things out.
+The Scrum Master should use this checklist to validate that each story contains sufficient context for a developer agent to implement it successfully, while assuming the dev agent has reasonable capabilities to figure things out.
 
 [[LLM: INITIALIZATION INSTRUCTIONS - STORY DRAFT VALIDATION
 
@@ -140,8 +138,7 @@ Generate a concise validation report:
    - What questions would you have?
    - What might cause delays or rework?
 
-Be pragmatic - perfect documentation doesn't exist, but it must be enough to provide the extreme
-context a dev agent needs to get the work down and not create a mess.]]
+Be pragmatic - perfect documentation doesn't exist, but it must be enough to provide the extreme context a dev agent needs to get the work down and not create a mess.]]
 
 | Category                             | Status | Issues |
 | ------------------------------------ | ------ | ------ |

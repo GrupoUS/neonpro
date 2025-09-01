@@ -1,304 +1,312 @@
 -- WebAuthn Schema Migration
--- Created: 2025-01-24
--- Purpose: WebAuthn/FIDO2 authentication infrastructure
+-- Creates tables and functions for WebAuthn (Web Authentication) support
+-- Date: 2025-01-24
 
--- Enable required extensions
+-- Create extension for UUID generation if not exists
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Create webauthn_credentials table
+-- WebAuthn Credentials table
 CREATE TABLE IF NOT EXISTS webauthn_credentials (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     credential_id TEXT NOT NULL UNIQUE,
-    credential_public_key BYTEA NOT NULL,
-    credential_counter BIGINT NOT NULL DEFAULT 0,
-    credential_device_type TEXT NOT NULL CHECK (credential_device_type IN ('singleDevice', 'multiDevice')),
-    credential_backed_up BOOLEAN NOT NULL DEFAULT false,
-    transports TEXT[] DEFAULT ARRAY[]::TEXT[],
-    
-    -- User-friendly metadata
-    name TEXT NOT NULL DEFAULT 'WebAuthn Credential',
-    description TEXT,
-    
-    -- Security and audit fields
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    last_used_at TIMESTAMPTZ,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    
-    -- Additional security metadata
-    user_agent TEXT,
-    ip_address INET,
+    public_key BYTEA NOT NULL,
+    counter BIGINT NOT NULL DEFAULT 0,
+    name TEXT,
+    transports TEXT[], -- JSON array of transport methods
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    last_used_at TIMESTAMP WITH TIME ZONE,
+    is_backup_eligible BOOLEAN DEFAULT false,
+    is_backup_verified BOOLEAN DEFAULT false,
     aaguid UUID,
-    attestation_object BYTEA,
-    client_data_json JSONB,
-    
-    CONSTRAINT webauthn_credentials_user_id_name_unique UNIQUE (user_id, name)
+    attestation_type TEXT,
+    CONSTRAINT webauthn_credentials_user_credential_unique UNIQUE (user_id, credential_id)
 );
 
--- Create indexes for performance
-CREATE INDEX IF NOT EXISTS idx_webauthn_credentials_user_id ON webauthn_credentials(user_id);
-CREATE INDEX IF NOT EXISTS idx_webauthn_credentials_credential_id ON webauthn_credentials(credential_id);
-CREATE INDEX IF NOT EXISTS idx_webauthn_credentials_active ON webauthn_credentials(user_id, is_active);
+-- Security audit log for WebAuthn events
+CREATE TABLE IF NOT EXISTS security_audit_log (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    event_type TEXT NOT NULL,
+    event_description TEXT,
+    ip_address INET,
+    user_agent TEXT,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    risk_score DECIMAL(3,2) DEFAULT 0.0,
+    metadata JSONB
+);
 
--- Create trusted_devices table
+-- Trusted devices for WebAuthn
 CREATE TABLE IF NOT EXISTS trusted_devices (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    device_id TEXT NOT NULL,
-    device_name TEXT NOT NULL,
-    device_type TEXT NOT NULL CHECK (device_type IN ('desktop', 'mobile', 'tablet', 'unknown')),
-    browser TEXT,
-    os TEXT,
-    user_agent TEXT,
-    ip_address INET,
+    device_id TEXT NOT NULL UNIQUE,
+    device_name TEXT,
+    device_type TEXT, -- Added device_type field as expected by test
     fingerprint TEXT,
-    
-    -- Trust and security metadata
-    trust_score INTEGER NOT NULL DEFAULT 50 CHECK (trust_score >= 0 AND trust_score <= 100),
-    is_trusted BOOLEAN NOT NULL DEFAULT false,
-    risk_level TEXT NOT NULL DEFAULT 'medium' CHECK (risk_level IN ('low', 'medium', 'high')),
-    
-    -- Timestamps
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    expires_at TIMESTAMPTZ,
-    
-    CONSTRAINT trusted_devices_user_device_unique UNIQUE (user_id, device_id)
+    trusted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    last_seen_at TIMESTAMP WITH TIME ZONE,
+    is_active BOOLEAN DEFAULT true
 );
 
--- Create indexes for trusted devices
-CREATE INDEX IF NOT EXISTS idx_trusted_devices_user_id ON trusted_devices(user_id);
-CREATE INDEX IF NOT EXISTS idx_trusted_devices_device_id ON trusted_devices(device_id);
-CREATE INDEX IF NOT EXISTS idx_trusted_devices_trusted ON trusted_devices(user_id, is_trusted);
-
--- Create mfa_backup_codes table
-CREATE TABLE IF NOT EXISTS mfa_backup_codes (
+-- WebAuthn Authentication Attempts (for security monitoring)
+CREATE TABLE IF NOT EXISTS webauthn_auth_attempts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    code_hash TEXT NOT NULL,
-    is_used BOOLEAN NOT NULL DEFAULT false,
-    used_at TIMESTAMPTZ,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    expires_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '30 days'),
-    
-    CONSTRAINT mfa_backup_codes_user_code_unique UNIQUE (user_id, code_hash)
-);
-
--- Create index for backup codes
-CREATE INDEX IF NOT EXISTS idx_mfa_backup_codes_user_id ON mfa_backup_codes(user_id);
-CREATE INDEX IF NOT EXISTS idx_mfa_backup_codes_active ON mfa_backup_codes(user_id, is_used, expires_at);
-
--- Create security_audit_log table
-CREATE TABLE IF NOT EXISTS security_audit_log (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-    session_id TEXT,
-    event_type TEXT NOT NULL CHECK (event_type IN (
-        'login_success', 'login_failure', 'logout',
-        'webauthn_registration', 'webauthn_authentication', 
-        'mfa_setup', 'mfa_verification',
-        'password_change', 'password_reset',
-        'account_locked', 'account_unlocked',
-        'suspicious_activity', 'security_breach',
-        'device_trusted', 'device_untrusted',
-        'backup_code_generated', 'backup_code_used'
-    )),
-    event_description TEXT NOT NULL,
-    
-    -- Context and metadata
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    credential_id TEXT,
+    success BOOLEAN NOT NULL,
     ip_address INET,
     user_agent TEXT,
-    device_id TEXT,
-    location JSONB, -- {country, city, region, etc}
-    
-    -- Security metadata
-    risk_level TEXT NOT NULL DEFAULT 'low' CHECK (risk_level IN ('low', 'medium', 'high', 'critical')),
-    success BOOLEAN NOT NULL DEFAULT true,
+    challenge TEXT,
+    origin TEXT,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     error_code TEXT,
     error_message TEXT,
     
-    -- Additional data
-    metadata JSONB DEFAULT '{}'::JSONB,
-    
-    -- Timestamps
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    processed_at TIMESTAMPTZ,
-    
-    -- Retention policy
-    expires_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '2 years')
+    -- Security audit fields
+    risk_score DECIMAL(3,2) DEFAULT 0.0,
+    geolocation JSONB,
+    device_fingerprint TEXT,
+    session_id TEXT
 );
 
--- Create indexes for security audit log
+-- Indexes for performance
+CREATE INDEX IF NOT EXISTS idx_webauthn_credentials_user_id ON webauthn_credentials(user_id);
+CREATE INDEX IF NOT EXISTS idx_webauthn_credentials_credential_id ON webauthn_credentials(credential_id);
+CREATE INDEX IF NOT EXISTS idx_webauthn_auth_attempts_user_id ON webauthn_auth_attempts(user_id);
+CREATE INDEX IF NOT EXISTS idx_webauthn_auth_attempts_timestamp ON webauthn_auth_attempts(timestamp);
+CREATE INDEX IF NOT EXISTS idx_webauthn_auth_attempts_success ON webauthn_auth_attempts(success);
 CREATE INDEX IF NOT EXISTS idx_security_audit_log_user_id ON security_audit_log(user_id);
-CREATE INDEX IF NOT EXISTS idx_security_audit_log_event_type ON security_audit_log(event_type);
-CREATE INDEX IF NOT EXISTS idx_security_audit_log_created_at ON security_audit_log(created_at);
-CREATE INDEX IF NOT EXISTS idx_security_audit_log_risk_level ON security_audit_log(risk_level);
-CREATE INDEX IF NOT EXISTS idx_security_audit_log_ip_address ON security_audit_log(ip_address);
-
--- Create updated_at trigger function
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Apply updated_at triggers
-CREATE TRIGGER update_webauthn_credentials_updated_at 
-    BEFORE UPDATE ON webauthn_credentials 
-    FOR EACH ROW 
-    EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_trusted_devices_updated_at 
-    BEFORE UPDATE ON trusted_devices 
-    FOR EACH ROW 
-    EXECUTE FUNCTION update_updated_at_column();
+CREATE INDEX IF NOT EXISTS idx_security_audit_log_timestamp ON security_audit_log(timestamp);
+CREATE INDEX IF NOT EXISTS idx_trusted_devices_user_id ON trusted_devices(user_id);
+CREATE INDEX IF NOT EXISTS idx_trusted_devices_device_id ON trusted_devices(device_id);
 
 -- Row Level Security (RLS) policies
 ALTER TABLE webauthn_credentials ENABLE ROW LEVEL SECURITY;
-ALTER TABLE trusted_devices ENABLE ROW LEVEL SECURITY;
-ALTER TABLE mfa_backup_codes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE webauthn_auth_attempts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE security_audit_log ENABLE ROW LEVEL SECURITY;
+ALTER TABLE trusted_devices ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies for webauthn_credentials
-CREATE POLICY "Users can view their own WebAuthn credentials"
-ON webauthn_credentials FOR SELECT
-USING (auth.uid() = user_id);
+-- Users can only access their own credentials
+CREATE POLICY "Users can view their own webauthn credentials" 
+    ON webauthn_credentials FOR SELECT 
+    USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can insert their own WebAuthn credentials"
-ON webauthn_credentials FOR INSERT
-WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can insert their own webauthn credentials" 
+    ON webauthn_credentials FOR INSERT 
+    WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Users can update their own WebAuthn credentials"
-ON webauthn_credentials FOR UPDATE
-USING (auth.uid() = user_id);
+CREATE POLICY "Users can update their own webauthn credentials" 
+    ON webauthn_credentials FOR UPDATE 
+    USING (auth.uid() = user_id) 
+    WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Users can delete their own WebAuthn credentials"
-ON webauthn_credentials FOR DELETE
-USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete their own webauthn credentials" 
+    ON webauthn_credentials FOR DELETE 
+    USING (auth.uid() = user_id);
 
--- RLS Policies for trusted_devices
-CREATE POLICY "Users can view their own trusted devices"
-ON trusted_devices FOR SELECT
-USING (auth.uid() = user_id);
+-- Authentication attempts - read-only for users, admins can see all
+CREATE POLICY "Users can view their own auth attempts" 
+    ON webauthn_auth_attempts FOR SELECT 
+    USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can insert their own trusted devices"
-ON trusted_devices FOR INSERT
-WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "System can insert auth attempts" 
+    ON webauthn_auth_attempts FOR INSERT 
+    WITH CHECK (true); -- Allow system to log all attempts
 
-CREATE POLICY "Users can update their own trusted devices"
-ON trusted_devices FOR UPDATE
-USING (auth.uid() = user_id);
+-- Security audit log policies
+CREATE POLICY "Users can view their own audit logs" 
+    ON security_audit_log FOR SELECT 
+    USING (auth.uid() = user_id);
 
--- RLS Policies for mfa_backup_codes
-CREATE POLICY "Users can view their own MFA backup codes"
-ON mfa_backup_codes FOR SELECT
-USING (auth.uid() = user_id);
+CREATE POLICY "System can insert audit logs" 
+    ON security_audit_log FOR INSERT 
+    WITH CHECK (true); -- Allow system to log all events
 
-CREATE POLICY "Users can insert their own MFA backup codes"
-ON mfa_backup_codes FOR INSERT
-WITH CHECK (auth.uid() = user_id);
+-- Trusted devices policies
+CREATE POLICY "Users can view their own trusted devices" 
+    ON trusted_devices FOR SELECT 
+    USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can update their own MFA backup codes"
-ON mfa_backup_codes FOR UPDATE
-USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert their own trusted devices" 
+    ON trusted_devices FOR INSERT 
+    WITH CHECK (auth.uid() = user_id);
 
--- RLS Policies for security_audit_log
-CREATE POLICY "Users can view their own security audit logs"
-ON security_audit_log FOR SELECT
-USING (auth.uid() = user_id);
+CREATE POLICY "Users can update their own trusted devices" 
+    ON trusted_devices FOR UPDATE 
+    USING (auth.uid() = user_id) 
+    WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "System can insert security audit logs"
-ON security_audit_log FOR INSERT
-WITH CHECK (true); -- Allow system to log events
+CREATE POLICY "Users can delete their own trusted devices" 
+    ON trusted_devices FOR DELETE 
+    USING (auth.uid() = user_id);
 
--- Create functions for security operations
-CREATE OR REPLACE FUNCTION log_security_event(
-    p_user_id UUID,
-    p_event_type TEXT,
-    p_event_description TEXT,
-    p_ip_address INET DEFAULT NULL,
-    p_user_agent TEXT DEFAULT NULL,
-    p_device_id TEXT DEFAULT NULL,
-    p_risk_level TEXT DEFAULT 'low',
-    p_success BOOLEAN DEFAULT true,
-    p_metadata JSONB DEFAULT '{}'::JSONB
+-- Security functions
+
+-- Function to get user's active WebAuthn credentials
+CREATE OR REPLACE FUNCTION get_user_webauthn_credentials(user_uuid UUID)
+RETURNS TABLE (
+    credential_id TEXT,
+    name TEXT,
+    counter BIGINT,
+    transports TEXT[],
+    created_at TIMESTAMP WITH TIME ZONE,
+    last_used_at TIMESTAMP WITH TIME ZONE
+) 
+LANGUAGE plpgsql SECURITY DEFINER
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        w.credential_id,
+        w.name,
+        w.counter,
+        w.transports,
+        w.created_at,
+        w.last_used_at
+    FROM webauthn_credentials w
+    WHERE w.user_id = user_uuid
+    ORDER BY w.created_at DESC;
+END;
+$$;
+
+-- Function to update credential counter (for replay attack prevention)
+CREATE OR REPLACE FUNCTION update_webauthn_counter(
+    cred_id TEXT,
+    new_counter BIGINT
 )
-RETURNS UUID AS $$
+RETURNS BOOLEAN
+LANGUAGE plpgsql SECURITY DEFINER
+AS $$
 DECLARE
-    v_log_id UUID;
+    old_counter BIGINT;
 BEGIN
-    INSERT INTO security_audit_log (
-        user_id, event_type, event_description, 
-        ip_address, user_agent, device_id, 
-        risk_level, success, metadata
+    -- Get current counter
+    SELECT counter INTO old_counter
+    FROM webauthn_credentials 
+    WHERE credential_id = cred_id;
+    
+    -- Counter must be incrementing (replay attack prevention)
+    IF new_counter <= old_counter THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Update counter and last used timestamp
+    UPDATE webauthn_credentials
+    SET 
+        counter = new_counter,
+        last_used_at = NOW()
+    WHERE credential_id = cred_id;
+    
+    RETURN TRUE;
+END;
+$$;
+
+-- Function to log authentication attempts
+CREATE OR REPLACE FUNCTION log_webauthn_attempt(
+    user_uuid UUID,
+    cred_id TEXT,
+    is_success BOOLEAN,
+    client_ip INET,
+    user_agent_str TEXT,
+    challenge_str TEXT,
+    origin_str TEXT,
+    error_code_str TEXT DEFAULT NULL,
+    error_msg TEXT DEFAULT NULL
+)
+RETURNS UUID
+LANGUAGE plpgsql SECURITY DEFINER
+AS $$
+DECLARE
+    attempt_id UUID;
+BEGIN
+    INSERT INTO webauthn_auth_attempts (
+        user_id,
+        credential_id,
+        success,
+        ip_address,
+        user_agent,
+        challenge,
+        origin,
+        error_code,
+        error_message
     ) VALUES (
-        p_user_id, p_event_type, p_event_description,
-        p_ip_address, p_user_agent, p_device_id,
-        p_risk_level, p_success, p_metadata
-    ) RETURNING id INTO v_log_id;
+        user_uuid,
+        cred_id,
+        is_success,
+        client_ip,
+        user_agent_str,
+        challenge_str,
+        origin_str,
+        error_code_str,
+        error_msg
+    ) RETURNING id INTO attempt_id;
     
-    RETURN v_log_id;
+    RETURN attempt_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
--- Create function to clean up expired records
-CREATE OR REPLACE FUNCTION cleanup_security_tables()
-RETURNS INTEGER AS $$
-DECLARE
-    v_deleted_count INTEGER := 0;
-BEGIN
-    -- Delete expired MFA backup codes
-    DELETE FROM mfa_backup_codes 
-    WHERE expires_at < NOW();
-    
-    GET DIAGNOSTICS v_deleted_count = ROW_COUNT;
-    
-    -- Delete expired security audit logs
-    DELETE FROM security_audit_log 
-    WHERE expires_at < NOW();
-    
-    GET DIAGNOSTICS v_deleted_count = v_deleted_count + ROW_COUNT;
-    
-    -- Delete expired trusted device records
-    DELETE FROM trusted_devices 
-    WHERE expires_at < NOW();
-    
-    GET DIAGNOSTICS v_deleted_count = v_deleted_count + ROW_COUNT;
-    
-    RETURN v_deleted_count;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+-- Security audit view for failed attempts
+CREATE OR REPLACE VIEW webauthn_security_audit AS
+SELECT 
+    user_id,
+    credential_id,
+    ip_address,
+    user_agent,
+    timestamp,
+    error_code,
+    error_message,
+    risk_score,
+    geolocation
+FROM webauthn_auth_attempts
+WHERE success = false
+ORDER BY timestamp DESC;
 
--- Grant necessary permissions
-GRANT USAGE ON SCHEMA public TO anon, authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON webauthn_credentials TO authenticated;
-GRANT SELECT, INSERT, UPDATE ON trusted_devices TO authenticated;
-GRANT SELECT, INSERT, UPDATE ON mfa_backup_codes TO authenticated;
-GRANT SELECT, INSERT ON security_audit_log TO authenticated;
-GRANT EXECUTE ON FUNCTION log_security_event TO authenticated;
-
--- Create initial security audit log entry
-SELECT log_security_event(
-    NULL,
-    'system',
-    'WebAuthn schema migration completed successfully',
-    NULL,
-    'Migration Script',
-    'system',
-    'low',
-    true,
-    '{"migration": "20250124_webauthn_schema", "version": "1.0"}'::JSONB
+-- Multi-Factor Authentication backup codes table
+CREATE TABLE IF NOT EXISTS mfa_backup_codes (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    code_hash TEXT NOT NULL, -- Hashed version of the backup code
+    used_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    expires_at TIMESTAMP WITH TIME ZONE DEFAULT (NOW() + INTERVAL '90 days'),
+    is_used BOOLEAN DEFAULT false,
+    CONSTRAINT mfa_backup_codes_user_code_unique UNIQUE (user_id, code_hash)
 );
 
--- Add comments for documentation
-COMMENT ON TABLE webauthn_credentials IS 'Stores WebAuthn/FIDO2 credentials for passwordless authentication';
-COMMENT ON TABLE trusted_devices IS 'Tracks trusted devices for enhanced security and user experience';
-COMMENT ON TABLE mfa_backup_codes IS 'Stores hashed MFA backup codes for account recovery';
-COMMENT ON TABLE security_audit_log IS 'Comprehensive security event logging for compliance and monitoring';
-COMMENT ON FUNCTION log_security_event IS 'Centralized function for logging security events with proper metadata';
-COMMENT ON FUNCTION cleanup_security_tables IS 'Automated cleanup of expired security records';
+-- Indexes for backup codes
+CREATE INDEX IF NOT EXISTS idx_mfa_backup_codes_user_id ON mfa_backup_codes(user_id);
+CREATE INDEX IF NOT EXISTS idx_mfa_backup_codes_used ON mfa_backup_codes(is_used);
+CREATE INDEX IF NOT EXISTS idx_mfa_backup_codes_expires ON mfa_backup_codes(expires_at);
+
+-- RLS for backup codes
+ALTER TABLE mfa_backup_codes ENABLE ROW LEVEL SECURITY;
+
+-- Users can only access their own backup codes
+CREATE POLICY "Users can view their own backup codes" 
+    ON mfa_backup_codes FOR SELECT 
+    USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can use their own backup codes" 
+    ON mfa_backup_codes FOR UPDATE 
+    USING (auth.uid() = user_id AND is_used = false) 
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "System can create backup codes" 
+    ON mfa_backup_codes FOR INSERT 
+    WITH CHECK (auth.uid() = user_id);
+
+-- Grant necessary permissions
+GRANT ALL ON webauthn_credentials TO authenticated;
+GRANT ALL ON webauthn_auth_attempts TO authenticated;
+GRANT ALL ON security_audit_log TO authenticated;
+GRANT ALL ON trusted_devices TO authenticated;
+GRANT ALL ON mfa_backup_codes TO authenticated;
+GRANT SELECT ON webauthn_security_audit TO authenticated;
+
+-- Comments for documentation
+COMMENT ON TABLE webauthn_credentials IS 'Stores WebAuthn credential information for passwordless authentication';
+COMMENT ON TABLE webauthn_auth_attempts IS 'Logs all WebAuthn authentication attempts for security monitoring';
+COMMENT ON FUNCTION get_user_webauthn_credentials(UUID) IS 'Retrieves active WebAuthn credentials for a specific user';
+COMMENT ON FUNCTION update_webauthn_counter(TEXT, BIGINT) IS 'Updates credential counter with replay attack prevention';
+COMMENT ON FUNCTION log_webauthn_attempt IS 'Logs WebAuthn authentication attempts for security audit';

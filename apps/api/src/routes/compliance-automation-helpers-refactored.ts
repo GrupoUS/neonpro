@@ -27,7 +27,7 @@ import type {
 // =============================================================================
 
 function calculateAverage(numbers: readonly number[]): number {
-  if (numbers.length === 0) return 0;
+  if (numbers.length === 0) { return 0; }
   return numbers.reduce((sum, num) => sum + num, 0) / numbers.length;
 }
 
@@ -42,14 +42,14 @@ function calculateComplianceConsistency(scores: readonly number[]): number {
 }
 
 function determineTrend(scores: readonly number[]): "improving" | "stable" | "declining" {
-  if (scores.length < 2) return "stable";
+  if (scores.length < 2) { return "stable"; }
 
   const firstScore = scores[0];
   const lastScore = scores[scores.length - 1];
   const trendPercentage = ((lastScore - firstScore) / firstScore) * MAGIC_NUMBERS.HUNDRED;
 
-  if (trendPercentage > MAGIC_NUMBERS.ONE) return "improving";
-  if (trendPercentage < MAGIC_NUMBERS.NEGATIVE_ONE) return "declining";
+  if (trendPercentage > MAGIC_NUMBERS.ONE) { return "improving"; }
+  if (trendPercentage < MAGIC_NUMBERS.NEGATIVE_ONE) { return "declining"; }
   return "stable";
 }
 

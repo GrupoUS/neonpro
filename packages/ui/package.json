@@ -27,7 +27,12 @@
       "import": "./dist/src/themes/neonpro/components/index.js",
       "require": "./dist/src/themes/neonpro/components/index.js"
     },
-    "./themes/neonpro/styles": "./dist/src/themes/neonpro/styles.css"
+    "./themes/neonpro/styles": "./dist/src/themes/neonpro/styles.css",
+    "./themes/brazilian-healthcare": {
+      "types": "./dist/src/themes/brazilian-healthcare/index.d.ts",
+      "import": "./dist/src/themes/brazilian-healthcare/index.js",
+      "require": "./dist/src/themes/brazilian-healthcare/index.js"
+    }
   },
   "files": [
     "dist"

@@ -39,3 +39,6 @@ export * from "./types";
 // Theme exports - TweakCN NEONPRO Healthcare Theme System
 export * from "./themes/neonpro";
 export * from "./themes/neonpro/components";
+
+// Brazilian Healthcare Theme - Consolidated from @neonpro/brazilian-healthcare-ui
+export * from "./themes/brazilian-healthcare";

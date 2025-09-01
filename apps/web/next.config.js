@@ -5,16 +5,15 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    transpilePackages: [
-      "@neonpro/ui",
-      "@neonpro/brazilian-healthcare-ui",
-      "@neonpro/types",
-      "@neonpro/utils",
-      "@neonpro/auth",
-      "@neonpro/core-services",
-    ],
-  },
+  transpilePackages: [
+    "@neonpro/ui",
+    "@neonpro/brazilian-healthcare-ui",
+    "@neonpro/types",
+    "@neonpro/utils",
+    "@neonpro/auth",
+    "@neonpro/core-services",
+  ],
+  experimental: {},
   images: {
     domains: ["ownkoxryswokcdanrdgj.supabase.co"],
     formats: ["image/webp", "image/avif"],

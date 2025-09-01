@@ -8,7 +8,7 @@ Quick NFR validation focused on the core four: security, performance, reliabilit
 
 ```yaml
 required:
-  - story_id: "{epic}.{story}" # e.g., "1.3"
+  - story_id: '{epic}.{story}' # e.g., "1.3"
   - story_path: `bmad-core/core-config.yaml` for the `devStoryLocation`
 
 optional:
@@ -36,8 +36,8 @@ If story_path or story file can't be found:
 
 ### 1. Elicit Scope
 
-**Interactive mode:** Ask which NFRs to assess **Non-interactive mode:** Default to core four
-(security, performance, reliability, maintainability)
+**Interactive mode:** Ask which NFRs to assess
+**Non-interactive mode:** Default to core four (security, performance, reliability, maintainability)
 
 ```text
 Which NFRs should I assess? (Enter numbers or press Enter for default)
@@ -61,8 +61,8 @@ Look for NFR requirements in:
 - `docs/architecture/*.md` files
 - `docs/technical-preferences.md`
 
-**Interactive mode:** Ask for missing thresholds **Non-interactive mode:** Mark as CONCERNS with
-"Target unknown"
+**Interactive mode:** Ask for missing thresholds
+**Non-interactive mode:** Mark as CONCERNS with "Target unknown"
 
 ```text
 No performance requirements found. What's your target response time?
@@ -72,8 +72,7 @@ No security requirements found. Required auth method?
 > JWT with refresh tokens
 ```
 
-**Unknown targets policy:** If a target is missing and not provided, mark status as CONCERNS with
-notes: "Target unknown"
+**Unknown targets policy:** If a target is missing and not provided, mark status as CONCERNS with notes: "Target unknown"
 
 ### 3. Quick Assessment
 
@@ -95,16 +94,16 @@ nfr_validation:
   _assessed: [security, performance, reliability, maintainability]
   security:
     status: CONCERNS
-    notes: "No rate limiting on auth endpoints"
+    notes: 'No rate limiting on auth endpoints'
   performance:
     status: PASS
-    notes: "Response times < 200ms verified"
+    notes: 'Response times < 200ms verified'
   reliability:
     status: PASS
-    notes: "Error handling and retries implemented"
+    notes: 'Error handling and retries implemented'
   maintainability:
     status: CONCERNS
-    notes: "Test coverage at 65%, target is 80%"
+    notes: 'Test coverage at 65%, target is 80%'
 ```
 
 ## Deterministic Status Rules
@@ -131,7 +130,8 @@ If `technical-preferences.md` defines custom weights, use those instead.
 ```markdown
 # NFR Assessment: {epic}.{story}
 
-Date: {date} Reviewer: Quinn
+Date: {date}
+Reviewer: Quinn
 
 <!-- Note: Source story not found (if applicable) -->
 
@@ -333,10 +333,10 @@ performance_deep_dive:
     p99: 350ms
   database:
     slow_queries: 2
-    missing_indexes: ["users.email", "orders.user_id"]
+    missing_indexes: ['users.email', 'orders.user_id']
   caching:
     hit_rate: 0%
-    recommendation: "Add Redis for session data"
+    recommendation: 'Add Redis for session data'
   load_test:
     max_rps: 150
     breaking_point: 200 rps

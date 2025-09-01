@@ -421,7 +421,7 @@ export const AppointmentResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.<unknown>()).optional(),
+      details: z.record(z.unknown()).optional(),
     })
     .optional(),
 });
@@ -454,7 +454,7 @@ export const AppointmentsListResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.<unknown>()).optional(),
+      details: z.record(z.unknown()).optional(),
     })
     .optional(),
 });

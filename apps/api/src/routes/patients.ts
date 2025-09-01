@@ -73,10 +73,10 @@ function validateCPF(cpf: string): boolean {
   const cleanCPF = cpf.replace(/\D/g, "");
 
   // Check if it has 11 digits
-  if (cleanCPF.length !== 11) return false;
+  if (cleanCPF.length !== 11) { return false; }
 
   // Check if all digits are the same
-  if (/^(\d)\1{10}$/.test(cleanCPF)) return false;
+  if (/^(\d)\1{10}$/.test(cleanCPF)) { return false; }
 
   // Validate check digits
   let sum = 0;
@@ -84,16 +84,16 @@ function validateCPF(cpf: string): boolean {
     sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
   }
   let checkDigit = 11 - (sum % 11);
-  if (checkDigit === 10 || checkDigit === 11) checkDigit = 0;
-  if (checkDigit !== parseInt(cleanCPF.charAt(9))) return false;
+  if (checkDigit === 10 || checkDigit === 11) { checkDigit = 0; }
+  if (checkDigit !== parseInt(cleanCPF.charAt(9))) { return false; }
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
     sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
   }
   checkDigit = 11 - (sum % 11);
-  if (checkDigit === 10 || checkDigit === 11) checkDigit = 0;
-  if (checkDigit !== parseInt(cleanCPF.charAt(10))) return false;
+  if (checkDigit === 10 || checkDigit === 11) { checkDigit = 0; }
+  if (checkDigit !== parseInt(cleanCPF.charAt(10))) { return false; }
 
   return true;
 }
@@ -152,8 +152,8 @@ patients.get("/", zValidator("query", patientListSchema), async (c) => {
     if (params.age_min !== undefined || params.age_max !== undefined) {
       filteredData = filteredData.filter((patient) => {
         const age = calculateAge(patient.birth_date);
-        if (params.age_min !== undefined && age < params.age_min) return false;
-        if (params.age_max !== undefined && age > params.age_max) return false;
+        if (params.age_min !== undefined && age < params.age_min) { return false; }
+        if (params.age_max !== undefined && age > params.age_max) { return false; }
         return true;
       });
     }

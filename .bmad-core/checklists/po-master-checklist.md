@@ -2,13 +2,12 @@
 
 # Product Owner (PO) Master Validation Checklist
 
-This checklist serves as a comprehensive framework for the Product Owner to validate project plans
-before development execution. It adapts intelligently based on project type (greenfield vs
-brownfield) and includes UI/UX considerations when applicable.
+This checklist serves as a comprehensive framework for the Product Owner to validate project plans before development execution. It adapts intelligently based on project type (greenfield vs brownfield) and includes UI/UX considerations when applicable.
 
 [[LLM: INITIALIZATION INSTRUCTIONS - PO MASTER CHECKLIST
 
-PROJECT TYPE DETECTION: First, determine the project type by checking:
+PROJECT TYPE DETECTION:
+First, determine the project type by checking:
 
 1. Is this a GREENFIELD project (new from scratch)?
    - Look for: New project initialization, no existing codebase references
@@ -22,7 +21,8 @@ PROJECT TYPE DETECTION: First, determine the project type by checking:
    - Check for: frontend-architecture.md, UI/UX specifications, design files
    - Look for: Frontend stories, component specifications, user interface mentions
 
-DOCUMENT REQUIREMENTS: Based on project type, ensure you have access to:
+DOCUMENT REQUIREMENTS:
+Based on project type, ensure you have access to:
 
 For GREENFIELD projects:
 
@@ -53,15 +53,15 @@ VALIDATION APPROACH:
 3. Critical Thinking - Question assumptions and identify gaps
 4. Risk Assessment - Consider what could go wrong with each decision
 
-EXECUTION MODE: Ask the user if they want to work through the checklist:
+EXECUTION MODE:
+Ask the user if they want to work through the checklist:
 
 - Section by section (interactive mode) - Review each section, get confirmation before proceeding
 - All at once (comprehensive mode) - Complete full analysis and present report at end]]
 
 ## 1. PROJECT SETUP & INITIALIZATION
 
-[[LLM: Project setup is the foundation. For greenfield, ensure clean start. For brownfield, ensure
-safe integration with existing system. Verify setup matches project type.]]
+[[LLM: Project setup is the foundation. For greenfield, ensure clean start. For brownfield, ensure safe integration with existing system. Verify setup matches project type.]]
 
 ### 1.1 Project Scaffolding [[GREENFIELD ONLY]]
 
@@ -97,8 +97,7 @@ safe integration with existing system. Verify setup matches project type.]]
 
 ## 2. INFRASTRUCTURE & DEPLOYMENT
 
-[[LLM: Infrastructure must exist before use. For brownfield, must integrate with existing
-infrastructure without breaking it.]]
+[[LLM: Infrastructure must exist before use. For brownfield, must integrate with existing infrastructure without breaking it.]]
 
 ### 2.1 Database & Data Store Setup
 
@@ -137,8 +136,7 @@ infrastructure without breaking it.]]
 
 ## 3. EXTERNAL DEPENDENCIES & INTEGRATIONS
 
-[[LLM: External dependencies often block progress. For brownfield, ensure new dependencies don't
-conflict with existing ones.]]
+[[LLM: External dependencies often block progress. For brownfield, ensure new dependencies don't conflict with existing ones.]]
 
 ### 3.1 Third-Party Services
 
@@ -167,8 +165,7 @@ conflict with existing ones.]]
 
 ## 4. UI/UX CONSIDERATIONS [[UI/UX ONLY]]
 
-[[LLM: Only evaluate this section if the project includes user interface components. Skip entirely
-for backend-only projects.]]
+[[LLM: Only evaluate this section if the project includes user interface components. Skip entirely for backend-only projects.]]
 
 ### 4.1 Design System Setup
 
@@ -196,8 +193,7 @@ for backend-only projects.]]
 
 ## 5. USER/AGENT RESPONSIBILITY
 
-[[LLM: Clear ownership prevents confusion. Ensure tasks are assigned appropriately based on what
-only humans can do.]]
+[[LLM: Clear ownership prevents confusion. Ensure tasks are assigned appropriately based on what only humans can do.]]
 
 ### 5.1 User Actions
 
@@ -215,8 +211,7 @@ only humans can do.]]
 
 ## 6. FEATURE SEQUENCING & DEPENDENCIES
 
-[[LLM: Dependencies create the critical path. For brownfield, ensure new features don't break
-existing ones.]]
+[[LLM: Dependencies create the critical path. For brownfield, ensure new features don't break existing ones.]]
 
 ### 6.1 Functional Dependencies
 
@@ -244,8 +239,7 @@ existing ones.]]
 
 ## 7. RISK MANAGEMENT [[BROWNFIELD ONLY]]
 
-[[LLM: This section is CRITICAL for brownfield projects. Think pessimistically about what could
-break.]]
+[[LLM: This section is CRITICAL for brownfield projects. Think pessimistically about what could break.]]
 
 ### 7.1 Breaking Change Risks
 
@@ -301,8 +295,7 @@ break.]]
 
 ## 9. DOCUMENTATION & HANDOFF
 
-[[LLM: Good documentation enables smooth development. For brownfield, documentation of integration
-points is critical.]]
+[[LLM: Good documentation enables smooth development. For brownfield, documentation of integration points is critical.]]
 
 ### 9.1 Developer Documentation
 
@@ -329,8 +322,7 @@ points is critical.]]
 
 ## 10. POST-MVP CONSIDERATIONS
 
-[[LLM: Planning for success prevents technical debt. For brownfield, ensure enhancements don't limit
-future growth.]]
+[[LLM: Planning for success prevents technical debt. For brownfield, ensure enhancements don't limit future growth.]]
 
 ### 10.1 Future Enhancements
 

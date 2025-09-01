@@ -249,12 +249,12 @@ export const AuditLogSchema = z.object({
   changes: z
     .record(
       z.object({
-        old_value: z.<unknown>().optional(),
-        new_value: z.<unknown>().optional(),
+        old_value: z.unknown().optional(),
+        new_value: z.unknown().optional(),
       }),
     )
     .optional(),
-  metadata: z.record(z.<unknown>()).optional(),
+  metadata: z.record(z.unknown()).optional(),
   risk_level: RiskLevelSchema.default("low"),
   compliance_flags: z.array(z.string()).default([]),
   retention_date: z.string().datetime(),

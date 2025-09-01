@@ -140,7 +140,7 @@ export const LoginResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.<unknown>()).optional(),
+      details: z.record(z.unknown()).optional(),
     })
     .optional(),
 });
@@ -215,7 +215,7 @@ export const RegisterResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.<unknown>()).optional(),
+      details: z.record(z.unknown()).optional(),
     })
     .optional(),
 });
@@ -240,7 +240,7 @@ export const RefreshTokenResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.<unknown>()).optional(),
+      details: z.record(z.unknown()).optional(),
     })
     .optional(),
 });
@@ -352,7 +352,7 @@ export const UpdateProfileResponseSchema = z.object({
   error: z
     .object({
       code: z.string(),
-      details: z.record(z.<unknown>()).optional(),
+      details: z.record(z.unknown()).optional(),
     })
     .optional(),
 });

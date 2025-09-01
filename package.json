@@ -90,14 +90,13 @@
     "typescript": "^5.0.0",
     "vitest": "^3.2.4"
   },
-  "packageManager": "bun@1.2.21",
+  "packageManager": "pnpm@8.15.0",
   "engines": {
     "node": ">=18"
   },
   "workspaces": [
     "apps/*",
     "packages/*",
-    "packages/typescript-config",
     "tools/*"
   ],
   "dependencies": {

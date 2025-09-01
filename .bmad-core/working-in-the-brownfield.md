@@ -2,19 +2,14 @@
 
 > **HIGHLY RECOMMENDED: Use Gemini Web or Gemini CLI for Brownfield Documentation Generation!**
 >
-> Gemini Web's 1M+ token context window or Gemini CLI (when it's working) can analyze your ENTIRE
-> codebase, or critical sections of it, all at once (obviously within reason):
+> Gemini Web's 1M+ token context window or Gemini CLI (when it's working) can analyze your ENTIRE codebase, or critical sections of it, all at once (obviously within reason):
 >
 > - Upload via GitHub URL or use gemini cli in the project folder
-> - If working in the web: use `npx bmad-method flatten` to flatten your project into a single file,
->   then upload that file to your web agent.
+> - If working in the web: use `npx bmad-method flatten` to flatten your project into a single file, then upload that file to your web agent.
 
 ## What is Brownfield Development?
 
-Brownfield development refers to adding features, fixing bugs, or modernizing existing software
-projects. Unlike greenfield (new) projects, brownfield work requires understanding existing code,
-respecting constraints, and ensuring new changes integrate seamlessly without breaking existing
-functionality.
+Brownfield development refers to adding features, fixing bugs, or modernizing existing software projects. Unlike greenfield (new) projects, brownfield work requires understanding existing code, respecting constraints, and ensuring new changes integrate seamlessly without breaking existing functionality.
 
 ## When to Use BMad for Brownfield
 
@@ -27,14 +22,11 @@ functionality.
 
 ## When NOT to use a Brownfield Flow
 
-If you have just completed an MVP with BMad, and you want to continue with post-MVP, its easier to
-just talk to the PM and ask it to work with you to create a new epic to add into the PRD, shard out
-the epic, update any architecture documents with the architect, and just go from there.
+If you have just completed an MVP with BMad, and you want to continue with post-MVP, its easier to just talk to the PM and ask it to work with you to create a new epic to add into the PRD, shard out the epic, update any architecture documents with the architect, and just go from there.
 
 ## The Complete Brownfield Workflow
 
-1. **Follow the [<ins>User Guide - Installation</ins>](user-guide.md#installation) steps to setup
-   your agent in the web.**
+1. **Follow the [<ins>User Guide - Installation</ins>](user-guide.md#installation) steps to setup your agent in the web.**
 2. **Generate a 'flattened' single file of your entire codebase** run: `npx bmad-method flatten`
 
 ### Choose Your Approach
@@ -73,8 +65,7 @@ The PM will:
 - **Identify affected areas** that need documentation
 - **Create focused PRD** with clear scope
 
-**Key Advantage**: The PRD identifies which parts of your monorepo/large codebase actually need
-documentation!
+**Key Advantage**: The PRD identifies which parts of your monorepo/large codebase actually need documentation!
 
 #### Phase 2: Focused Documentation
 
@@ -214,9 +205,12 @@ The PO ensures:
 
 ### Phase 4: Save and Shard Documents
 
-1. Save your PRD and Architecture as: docs/prd.md docs/architecture.md (Note: You can optionally
-   prefix with 'brownfield-' if managing multiple versions)
-2. Shard your docs: In your IDE
+1. Save your PRD and Architecture as:
+   docs/prd.md
+   docs/architecture.md
+   (Note: You can optionally prefix with 'brownfield-' if managing multiple versions)
+2. Shard your docs:
+   In your IDE
 
    ```bash
    @po
@@ -264,9 +258,7 @@ Brownfield changes should:
 
 #### Why the Test Architect is Critical for Brownfield
 
-In brownfield projects, the Test Architect (Quinn) becomes your safety net against breaking existing
-functionality. Unlike greenfield where you're building fresh, brownfield requires careful validation
-that new changes don't destabilize what already works.
+In brownfield projects, the Test Architect (Quinn) becomes your safety net against breaking existing functionality. Unlike greenfield where you're building fresh, brownfield requires careful validation that new changes don't destabilize what already works.
 
 #### Brownfield-Specific Testing Challenges
 
@@ -520,8 +512,7 @@ Document:
 
 ### "Integration points unclear"
 
-**Solution**: Provide more context during PRD creation, specifically highlighting integration
-systems
+**Solution**: Provide more context during PRD creation, specifically highlighting integration systems
 
 ## Quick Reference
 
@@ -546,8 +537,7 @@ systems
 
 ### Test Architect Commands for Brownfield
 
-Note: Short forms shown below. Full commands: `*risk-profile`, `*test-design`, `*nfr-assess`,
-`*trace-requirements`
+Note: Short forms shown below. Full commands: `*risk-profile`, `*test-design`, `*nfr-assess`, `*trace-requirements`
 
 ```bash
 # BEFORE DEVELOPMENT (Planning)
@@ -593,9 +583,7 @@ Does the change touch legacy code?
 
 ## Conclusion
 
-Brownfield development with BMad Method provides structure and safety when modifying existing
-systems. The Test Architect becomes your critical safety net, using risk assessment, regression
-testing, and continuous validation to ensure new changes don't destabilize existing functionality.
+Brownfield development with BMad Method provides structure and safety when modifying existing systems. The Test Architect becomes your critical safety net, using risk assessment, regression testing, and continuous validation to ensure new changes don't destabilize existing functionality.
 
 **The Brownfield Success Formula:**
 
@@ -606,5 +594,4 @@ testing, and continuous validation to ensure new changes don't destabilize exist
 5. **Review Comprehensively** - Deep analysis before committing
 6. **Gate Decisively** - Document quality decisions
 
-Remember: **In brownfield, the Test Architect isn't optional - it's your insurance policy against
-breaking production.**
+Remember: **In brownfield, the Test Architect isn't optional - it's your insurance policy against breaking production.**

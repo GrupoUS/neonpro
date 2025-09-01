@@ -201,7 +201,7 @@ export class LGPDDataSubjectRights {
     return [{ message: `Appointment data for user ${userId}` }];
   }
 
-  private async exportTreatmentData(userId: string): Promise<<unknown>[]> {
+  private async exportTreatmentData(userId: string): Promise<unknown[]> {
     return [{ message: `Treatment data for user ${userId}` }];
   }
 

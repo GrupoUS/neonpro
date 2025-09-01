@@ -557,7 +557,9 @@ export const analyticsRoutes = new Hono()
             acc[date] = { total: 0, completed: 0, cancelled: 0 };
           }
           acc[date].total += 1;
-          if (apt.status === "completed") acc[date].completed += 1;
+          if (apt.status === "completed") {
+            acc[date].completed += 1;
+          }
           if (apt.status === "cancelled") acc[date].cancelled += 1;
           return acc;
         }, {} as Record<string, { total: number; completed: number; cancelled: number; }>);
@@ -719,10 +721,10 @@ export const analyticsRoutes = new Hono()
         );
         let range = "55+";
 
-        if (age >= 18 && age <= 25) range = "18-25";
-        else if (age >= 26 && age <= 35) range = "26-35";
-        else if (age >= 36 && age <= 45) range = "36-45";
-        else if (age >= 46 && age <= 55) range = "46-55";
+        if (age >= 18 && age <= 25) { range = "18-25"; } {}
+        else if (age >= 26 && age <= 35) { range = "26-35"; } {}
+        else if (age >= 36 && age <= 45) { range = "36-45"; } {}
+        else if (age >= 46 && age <= 55) { range = "46-55"; } {}
 
         acc[range] = (acc[range] || 0) + 1;
         return acc;

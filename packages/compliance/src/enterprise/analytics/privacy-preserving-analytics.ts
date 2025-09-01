@@ -27,7 +27,7 @@ const PrivacyPreservingQuerySchema = z.object({
     "trend_analysis",
   ]),
   target_columns: z.array(z.string()).min(1),
-  filters: z.record(z.<unknown>()).optional(),
+  filters: z.record(z.unknown()).optional(),
   time_range: z
     .object({
       start_date: z.string().datetime(),
@@ -40,7 +40,7 @@ const PrivacyPreservingQuerySchema = z.object({
 
 const PrivacyPreservingAnalyticsResultsSchema = z.object({
   query_id: z.string().uuid(),
-  results: z.record(z.<unknown>()),
+  results: z.record(z.unknown()),
   privacy_metrics: z.object({
     epsilon_used: z.number(),
     k_anonymity_achieved: z.number(),

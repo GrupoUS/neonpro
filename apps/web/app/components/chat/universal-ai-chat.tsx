@@ -1,39 +1,39 @@
 "use client";
 
+import { MedicalTerm } from "@/components/accessibility/medical-term";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
+import { useEmergencyPerformance } from "@/hooks/use-emergency-performance";
+import { useEmergencyVoiceCommands } from "@/hooks/use-emergency-voice-commands";
 import { cn } from "@/lib/utils";
+import { useKeyboardNavigation } from "@/src/hooks/accessibility/use-keyboard-navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertTriangle,
   Bot,
   Clock,
+  Gauge,
   Loader2,
   MessageSquare,
   Mic,
   MicOff,
   Minimize2,
+  Phone,
+  PhoneCall,
   Send,
   Shield,
+  TrendingUp,
   User,
   Volume2,
   VolumeX,
-  Phone,
-  PhoneCall,
   Zap,
-  TrendingUp,
-  Gauge,
 } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useEmergencyVoiceCommands } from "@/hooks/use-emergency-voice-commands";
-import { useEmergencyPerformance } from "@/hooks/use-emergency-performance";
-import { MedicalTerm } from "@/components/accessibility/medical-term";
-import { useKeyboardNavigation } from "@/src/hooks/accessibility/use-keyboard-navigation";
 
 interface ChatMessage {
   id: string;
@@ -126,23 +126,24 @@ export function UniversalAIChat({
   } = useEmergencyVoiceCommands({
     onEmergencyDetected: (intent, transcript) => {
       setEmergencyMode(true);
-      
+
       // Activate emergency performance optimization
       activatePerformanceMode();
-      
+
       // Immediately notify parent components
       if (intent === "emergency") {
         onEmergencyDetected?.(true);
-        
+
         // Send emergency message automatically
         const emergencyMessage = `🚨 EMERGÊNCIA DETECTADA: ${transcript}`;
         sendMessage(emergencyMessage);
-        
+
         // Announce emergency protocol with performance status
         const performanceStatus = getPerformanceStatus();
-        const announcement = `Emergência detectada. Modo alta performance ativado. Conectando com equipe médica imediatamente. Tempo de resposta otimizado para ${performanceStatus.targetLatency}ms.`;
+        const announcement =
+          `Emergência detectada. Modo alta performance ativado. Conectando com equipe médica imediatamente. Tempo de resposta otimizado para ${performanceStatus.targetLatency}ms.`;
         announceEmergency(announcement);
-        
+
         toast({
           title: "⚡ Emergency Performance Activated",
           description: `Modo de emergência ativo. Latência otimizada: ${currentLatency}ms`,
@@ -222,10 +223,10 @@ export function UniversalAIChat({
       if (isVoiceSupported) {
         toggleListening();
         announce(
-          isVoiceActive 
-            ? "Reconhecimento de voz desativado." 
+          isVoiceActive
+            ? "Reconhecimento de voz desativado."
             : "Reconhecimento de voz ativado.",
-          "polite"
+          "polite",
         );
       }
     },
@@ -486,12 +487,12 @@ export function UniversalAIChat({
           }
         } finally {
           reader.releaseLock();
-          
+
           // Performance monitoring and metrics collection
           if (isEmergencyModeActive) {
             const performanceEndTime = Date.now();
             const actualLatency = performanceEndTime - performanceStartTime;
-            
+
             // Validate emergency response time SLA (<200ms target)
             if (actualLatency > 200) {
               toast({
@@ -596,12 +597,19 @@ export function UniversalAIChat({
       startListening();
       toast({
         title: "🎤 Comandos de Voz Ativados",
-        description: interfaceType === "external" 
+        description: interfaceType === "external"
           ? "Diga 'emergência', 'socorro', ou 'ajuda' para ativar protocolo de emergência."
           : "Sistema de reconhecimento de voz ativo para profissionais.",
       });
     }
-  }, [isVoiceSupported, recognition.isListening, startListening, stopListening, interfaceType, toast]);
+  }, [
+    isVoiceSupported,
+    recognition.isListening,
+    startListening,
+    stopListening,
+    interfaceType,
+    toast,
+  ]);
 
   const handleSpeechToggle = useCallback(() => {
     if (!isVoiceSupported) {
@@ -623,7 +631,7 @@ export function UniversalAIChat({
       const testMessage = interfaceType === "external"
         ? "Olá! Sistema de voz ativo. Em caso de emergência, diga 'emergência' ou 'socorro'."
         : "Sistema de voz profissional ativado. Comandos de voz disponíveis para operações internas.";
-      
+
       speakText(testMessage);
       toast({
         title: "🔊 Áudio Ativado",
@@ -666,33 +674,33 @@ export function UniversalAIChat({
       initial={{ scale: 0.95, opacity: 0 }}
     >
       {/* ARIA Live Region for Keyboard Navigation Announcements */}
-      <div 
-        id="keyboard-announcements" 
-        className="sr-only" 
-        aria-live="assertive" 
+      <div
+        id="keyboard-announcements"
+        className="sr-only"
+        aria-live="assertive"
         aria-atomic="true"
         role="status"
       >
         {announcementText}
       </div>
-      
+
       {/* Skip Links for Chat Navigation */}
       <nav className="sr-only" aria-label="Navegação rápida do chat">
-        <a 
-          href="#chat-messages" 
+        <a
+          href="#chat-messages"
           className="skip-link focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded focus:font-medium"
         >
           Pular para mensagens do chat
         </a>
-        <a 
-          href="#chat-input" 
+        <a
+          href="#chat-input"
           className="skip-link focus:not-sr-only focus:absolute focus:top-4 focus:left-36 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded focus:font-medium"
         >
           Pular para entrada de mensagem
         </a>
         {emergencyMode && (
-          <a 
-            href="#emergency-actions" 
+          <a
+            href="#emergency-actions"
             className="skip-link focus:not-sr-only focus:absolute focus:top-16 focus:left-4 focus:z-50 focus:bg-destructive focus:text-white focus:px-4 focus:py-2 focus:rounded focus:font-bold"
           >
             Pular para ações de emergência
@@ -700,7 +708,7 @@ export function UniversalAIChat({
         )}
       </nav>
 
-      <Card 
+      <Card
         className="flex h-full flex-col border-2"
         role="region"
         aria-label="Chat de IA médica NeonPro"
@@ -719,36 +727,40 @@ export function UniversalAIChat({
                 )}
               />
               <CardTitle className="flex items-center gap-2">
-                <Bot 
-                  className="h-5 w-5 text-primary" 
+                <Bot
+                  className="h-5 w-5 text-primary"
                   aria-hidden="true"
                 />
                 <span id="chat-title">Chat AI NeonPro</span>
                 <Badge
                   variant={interfaceType === "internal" ? "default" : "secondary"}
-                  aria-label={interfaceType === "internal" 
-                    ? "Interface interna para profissionais de saúde" 
-                    : "Interface externa para pacientes"
-                  }
+                  aria-label={interfaceType === "internal"
+                    ? "Interface interna para profissionais de saúde"
+                    : "Interface externa para pacientes"}
                 >
-                  {interfaceType === "internal" ? "Interno" : <MedicalTerm term="paciente" context="medical" />}
+                  {interfaceType === "internal"
+                    ? "Interno"
+                    : <MedicalTerm term="paciente" context="medical" />}
                 </Badge>
               </CardTitle>
             </div>
             <div className="flex items-center gap-1">
               {session?.status === "active" && (
                 <Badge className="text-xs" variant="outline">
-                  <Shield 
-                    className="mr-1 h-3 w-3" 
+                  <Shield
+                    className="mr-1 h-3 w-3"
                     aria-label="Proteção LGPD ativa"
                   />
                   <MedicalTerm term="lgpd" context="compliance" />
                 </Badge>
               )}
               {emergencyMode && (
-                <Badge className="emergency-status-indicator animate-pulse text-xs" variant="destructive">
-                  <AlertTriangle 
-                    className="mr-1 h-3 w-3" 
+                <Badge
+                  className="emergency-status-indicator animate-pulse text-xs"
+                  variant="destructive"
+                >
+                  <AlertTriangle
+                    className="mr-1 h-3 w-3"
                     aria-label="Ícone de emergência médica"
                   />
                   <MedicalTerm term="emergência" context="emergency" />
@@ -756,8 +768,8 @@ export function UniversalAIChat({
               )}
               {recognition.isListening && (
                 <Badge className="text-xs" variant="secondary">
-                  <Mic 
-                    className="mr-1 h-3 w-3" 
+                  <Mic
+                    className="mr-1 h-3 w-3"
                     aria-label="Reconhecimento de voz ativo"
                   />
                   VOZ ATIVA
@@ -765,8 +777,8 @@ export function UniversalAIChat({
               )}
               {isEmergencyModeActive && (
                 <Badge className="animate-pulse text-xs" variant="default">
-                  <Zap 
-                    className="mr-1 h-3 w-3" 
+                  <Zap
+                    className="mr-1 h-3 w-3"
                     aria-label="Modo de performance de emergência ativo"
                   />
                   PERFORMANCE {currentLatency}ms
@@ -774,8 +786,8 @@ export function UniversalAIChat({
               )}
               {isOptimized && emergencyQueuePosition !== null && (
                 <Badge className="text-xs" variant="outline">
-                  <TrendingUp 
-                    className="mr-1 h-3 w-3" 
+                  <TrendingUp
+                    className="mr-1 h-3 w-3"
                     aria-label="Posição na fila de emergência"
                   />
                   FILA #{emergencyQueuePosition}
@@ -783,8 +795,8 @@ export function UniversalAIChat({
               )}
               {isOfflineReady && emergencyMode && (
                 <Badge className="text-xs" variant="secondary">
-                  <Gauge 
-                    className="mr-1 h-3 w-3" 
+                  <Gauge
+                    className="mr-1 h-3 w-3"
                     aria-label="Modo offline disponível"
                   />
                   OFFLINE OK
@@ -797,28 +809,28 @@ export function UniversalAIChat({
                 variant={recognition.isListening ? "default" : "ghost"}
                 className={cn(
                   recognition.isListening && "bg-red-500 hover:bg-red-600 text-white",
-                  emergencyMode && "animate-pulse focus-emergency"
+                  emergencyMode && "animate-pulse focus-emergency",
                 )}
-                title={recognition.isListening 
-                  ? "Desativar comandos de voz" 
-                  : "Ativar comandos de voz para emergências"
-                }
-                aria-label={recognition.isListening 
+                title={recognition.isListening
+                  ? "Desativar comandos de voz"
+                  : "Ativar comandos de voz para emergências"}
+                aria-label={recognition.isListening
                   ? "Desativar comandos de voz para emergências"
-                  : "Ativar comandos de voz para detecção de emergências"
-                }
+                  : "Ativar comandos de voz para detecção de emergências"}
               >
-                {recognition.isListening ? (
-                  <MicOff 
-                    className="h-4 w-4" 
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <Mic 
-                    className="h-4 w-4" 
-                    aria-hidden="true"
-                  />
-                )}
+                {recognition.isListening
+                  ? (
+                    <MicOff
+                      className="h-4 w-4"
+                      aria-hidden="true"
+                    />
+                  )
+                  : (
+                    <Mic
+                      className="h-4 w-4"
+                      aria-hidden="true"
+                    />
+                  )}
               </Button>
               <Button
                 disabled={isLoading}
@@ -826,26 +838,26 @@ export function UniversalAIChat({
                 size="sm"
                 variant={synthesis.isSpeaking ? "default" : "ghost"}
                 className="focus-enhanced"
-                title={synthesis.isSpeaking 
-                  ? "Desativar áudio" 
-                  : "Ativar síntese de voz"
-                }
-                aria-label={synthesis.isSpeaking 
+                title={synthesis.isSpeaking
+                  ? "Desativar áudio"
+                  : "Ativar síntese de voz"}
+                aria-label={synthesis.isSpeaking
                   ? "Desativar síntese de voz"
-                  : "Ativar síntese de voz para anúncios médicos"
-                }
+                  : "Ativar síntese de voz para anúncios médicos"}
               >
-                {synthesis.isSpeaking ? (
-                  <VolumeX 
-                    className="h-4 w-4" 
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <Volume2 
-                    className="h-4 w-4" 
-                    aria-hidden="true"
-                  />
-                )}
+                {synthesis.isSpeaking
+                  ? (
+                    <VolumeX
+                      className="h-4 w-4"
+                      aria-hidden="true"
+                    />
+                  )
+                  : (
+                    <Volume2
+                      className="h-4 w-4"
+                      aria-hidden="true"
+                    />
+                  )}
               </Button>
               {emergencyMode && (
                 <Button
@@ -867,16 +879,20 @@ export function UniversalAIChat({
                       e.preventDefault();
                       onEscalationTriggered?.(true);
                       announceEmergency("Conectando com médico de plantão.");
-                      announce("Emergência ativada via teclado. Conectando com médico.", "assertive");
+                      announce(
+                        "Emergência ativada via teclado. Conectando com médico.",
+                        "assertive",
+                      );
                     }
                   }}
                 >
-                  <PhoneCall 
-                    className="h-4 w-4" 
+                  <PhoneCall
+                    className="h-4 w-4"
                     aria-hidden="true"
                   />
                   <span className="sr-only">
-                    Conectar com <MedicalTerm term="médico" context="emergency" /> de <MedicalTerm term="plantão" context="medical" /> imediatamente
+                    Conectar com <MedicalTerm term="médico" context="emergency" /> de{" "}
+                    <MedicalTerm term="plantão" context="medical" /> imediatamente
                   </span>
                 </Button>
               )}
@@ -894,7 +910,7 @@ export function UniversalAIChat({
         </CardHeader>
 
         <CardContent className="flex min-h-0 flex-1 flex-col p-0">
-          <ScrollArea 
+          <ScrollArea
             id="chat-messages"
             className="flex-1 px-4"
             role="log"
@@ -944,7 +960,7 @@ export function UniversalAIChat({
 
           {/* Emergency Performance Status Display */}
           {(emergencyMode || isEmergencyModeActive) && (
-            <div 
+            <div
               id="emergency-actions"
               className="flex-shrink-0 border-t bg-red-50 p-3"
               role="region"
@@ -979,14 +995,14 @@ export function UniversalAIChat({
             </div>
           )}
 
-          <div 
-            id="chat-input" 
+          <div
+            id="chat-input"
             className="flex-shrink-0 border-t p-4"
             role="region"
             aria-label="Área de entrada de mensagem"
           >
-            <form 
-              className="flex gap-2" 
+            <form
+              className="flex gap-2"
               onSubmit={handleSubmit}
               aria-label="Enviar mensagem para o assistente médico de IA"
             >
@@ -1003,8 +1019,7 @@ export function UniversalAIChat({
                 value={inputValue}
                 aria-label={interfaceType === "external"
                   ? "Digite sua mensagem para o assistente médico"
-                  : "Digite sua consulta interna para análise médica"
-                }
+                  : "Digite sua consulta interna para análise médica"}
                 aria-describedby="input-help"
                 role="textbox"
                 aria-multiline="false"
@@ -1019,8 +1034,7 @@ export function UniversalAIChat({
                 type="submit"
                 aria-label={isLoading
                   ? "Processando mensagem médica..."
-                  : "Enviar mensagem para assistente médico"
-                }
+                  : "Enviar mensagem para assistente médico"}
                 className="focus-enhanced"
                 tabIndex={2}
                 data-medical="true"
@@ -1033,17 +1047,19 @@ export function UniversalAIChat({
                   }
                 }}
               >
-                {isLoading ? (
-                  <Loader2 
-                    className="h-4 w-4 animate-spin" 
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <Send 
-                    className="h-4 w-4" 
-                    aria-hidden="true"
-                  />
-                )}
+                {isLoading
+                  ? (
+                    <Loader2
+                      className="h-4 w-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                  )
+                  : (
+                    <Send
+                      className="h-4 w-4"
+                      aria-hidden="true"
+                    />
+                  )}
                 <span className="sr-only">
                   {isLoading ? "Processando" : "Enviar"}
                 </span>
@@ -1053,21 +1069,28 @@ export function UniversalAIChat({
             {/* Input Help Text for Screen Readers */}
             <div id="input-help" className="sr-only">
               {interfaceType === "external"
-                ? "Descreva seus sintomas, dúvidas sobre <MedicalTerm term=\"procedimentos\" context=\"medical\" /> estéticos ou agende <MedicalTerm term=\"consultas\" context=\"medical\" />. Para emergências, diga 'emergência' ou 'socorro'."
-                : "Consulte dados de pacientes, métricas da clínica ou solicite análises médicas. Use termos específicos como 'paciente', 'agenda' ou 'relatório'."
-              }
+                ? 'Descreva seus sintomas, dúvidas sobre <MedicalTerm term="procedimentos" context="medical" /> estéticos ou agende <MedicalTerm term="consultas" context="medical" />. Para emergências, diga \'emergência\' ou \'socorro\'.'
+                : "Consulte dados de pacientes, métricas da clínica ou solicite análises médicas. Use termos específicos como 'paciente', 'agenda' ou 'relatório'."}
             </div>
 
             {/* Medical Terminology Context */}
             <div id="medical-context" className="sr-only">
-              Assistente médico com conhecimento em: dermatologia estética, <MedicalTerm term="procedimentos" context="medical" /> com <MedicalTerm term="botox" context="procedure" />, <MedicalTerm term="preenchimentos" context="procedure" />, lasers, <MedicalTerm term="lgpd" context="compliance" />, <MedicalTerm term="anvisa" context="compliance" /> e <MedicalTerm term="cfm" context="compliance" /> compliance.
+              Assistente médico com conhecimento em: dermatologia estética,{" "}
+              <MedicalTerm term="procedimentos" context="medical" /> com{" "}
+              <MedicalTerm term="botox" context="procedure" />,{" "}
+              <MedicalTerm term="preenchimentos" context="procedure" />, lasers,{" "}
+              <MedicalTerm term="lgpd" context="compliance" />,{" "}
+              <MedicalTerm term="anvisa" context="compliance" /> e{" "}
+              <MedicalTerm term="cfm" context="compliance" /> compliance.
             </div>
 
             {/* Emergency Action Warning for Screen Readers */}
             <div id="emergency-action-warning" className="sr-only" aria-live="polite">
-              Ação de <MedicalTerm term="emergência" context="emergency" /> médica crítica. Conectará imediatamente com <MedicalTerm term="médico" context="emergency" /> de <MedicalTerm term="plantão" context="medical" />.
+              Ação de <MedicalTerm term="emergência" context="emergency" />{" "}
+              médica crítica. Conectará imediatamente com{" "}
+              <MedicalTerm term="médico" context="emergency" /> de{" "}
+              <MedicalTerm term="plantão" context="medical" />.
             </div>
-            </form>
 
             {/* Keyboard Shortcuts Help Dialog */}
             {isHelpVisible && (
@@ -1099,25 +1122,37 @@ export function UniversalAIChat({
                       <span className="text-muted-foreground">
                         {shortcut.modifiers.length > 0 && (
                           <span className="font-mono bg-muted px-1 rounded mr-1">
-                            {shortcut.modifiers.join('+')}
+                            {shortcut.modifiers.join("+")}
                           </span>
                         )}
                         <span className="font-mono bg-muted px-1 rounded">
                           {shortcut.key}
                         </span>
                       </span>
-                      <span className={`text-right flex-1 ml-2 ${
-                        shortcut.priority === 'emergency' ? 'text-destructive font-medium' :
-                        shortcut.priority === 'medical' ? 'text-primary' : 'text-foreground'
-                      }`}>
+                      <span
+                        className={`text-right flex-1 ml-2 ${
+                          shortcut.priority === "emergency"
+                            ? "text-destructive font-medium"
+                            : shortcut.priority === "medical"
+                            ? "text-primary"
+                            : "text-foreground"
+                        }`}
+                      >
                         {shortcut.description}
                       </span>
                     </div>
                   ))}
                 </div>
                 <div className="mt-3 pt-2 border-t text-xs text-muted-foreground">
-                  <p>Pressione <span className="font-mono bg-muted px-1 rounded">Escape</span> para fechar</p>
-                  <p>🚨 Atalhos de <span className="text-destructive font-medium">emergência</span> têm prioridade máxima</p>
+                  <p>
+                    Pressione <span className="font-mono bg-muted px-1 rounded">Escape</span>{" "}
+                    para fechar
+                  </p>
+                  <p>
+                    🚨 Atalhos de <span className="text-destructive font-medium">emergência</span>
+                    {" "}
+                    têm prioridade máxima
+                  </p>
                 </div>
               </motion.div>
             )}
@@ -1143,7 +1178,9 @@ function ChatMessageComponent({ message }: { message: ChatMessage; }) {
       className={cn("flex gap-3", isUser && "flex-row-reverse")}
       initial={{ opacity: 0, y: 20 }}
       role="article"
-      aria-label={`Mensagem de ${isUser ? "paciente" : "assistente médico"} às ${message.timestamp.toLocaleTimeString("pt-BR")}`}
+      aria-label={`Mensagem de ${isUser ? "paciente" : "assistente médico"} às ${
+        message.timestamp.toLocaleTimeString("pt-BR")
+      }`}
     >
       <div
         className={cn(
@@ -1152,17 +1189,19 @@ function ChatMessageComponent({ message }: { message: ChatMessage; }) {
         )}
         aria-label={isUser ? "Avatar do paciente" : "Avatar do assistente médico"}
       >
-        {isUser ? (
-          <User 
-            className="h-4 w-4" 
-            aria-hidden="true"
-          />
-        ) : (
-          <Bot 
-            className="h-4 w-4 text-primary" 
-            aria-hidden="true"
-          />
-        )}
+        {isUser
+          ? (
+            <User
+              className="h-4 w-4"
+              aria-hidden="true"
+            />
+          )
+          : (
+            <Bot
+              className="h-4 w-4 text-primary"
+              aria-hidden="true"
+            />
+          )}
       </div>
 
       <div className="max-w-[80%] flex-1">
@@ -1189,23 +1228,25 @@ function ChatMessageComponent({ message }: { message: ChatMessage; }) {
           </span>
 
           {message.confidence !== undefined && !isUser && (
-            <Badge 
-              className="text-xs" 
+            <Badge
+              className="text-xs"
               variant="outline"
-              aria-label={`Nível de confiança da resposta médica: ${Math.round(message.confidence * 100)} por cento`}
+              aria-label={`Nível de confiança da resposta médica: ${
+                Math.round(message.confidence * 100)
+              } por cento`}
             >
               {Math.round(message.confidence * 100)}% confiança
             </Badge>
           )}
 
           {message.emergencyDetected && (
-            <Badge 
-              className="text-xs" 
+            <Badge
+              className="text-xs"
               variant="destructive"
               aria-label="Situação de emergência médica detectada nesta mensagem"
             >
-              <AlertTriangle 
-                className="mr-1 h-3 w-3" 
+              <AlertTriangle
+                className="mr-1 h-3 w-3"
                 aria-hidden="true"
               />
               Emergência
@@ -1213,13 +1254,13 @@ function ChatMessageComponent({ message }: { message: ChatMessage; }) {
           )}
 
           {message.escalationTriggered && (
-            <Badge 
-              className="text-xs" 
+            <Badge
+              className="text-xs"
               variant="secondary"
               aria-label="Mensagem escalada para atendimento médico humano"
             >
-              <Clock 
-                className="mr-1 h-3 w-3" 
+              <Clock
+                className="mr-1 h-3 w-3"
                 aria-hidden="true"
               />
               Escalado
@@ -1227,13 +1268,13 @@ function ChatMessageComponent({ message }: { message: ChatMessage; }) {
           )}
 
           {message.complianceFlags && message.complianceFlags.length > 0 && (
-            <Badge 
-              className="text-xs" 
+            <Badge
+              className="text-xs"
               variant="outline"
               aria-label={`${message.complianceFlags.length} avisos de conformidade LGPD detectados`}
             >
-              <Shield 
-                className="mr-1 h-3 w-3" 
+              <Shield
+                className="mr-1 h-3 w-3"
                 aria-hidden="true"
               />
               {message.complianceFlags.length} flags

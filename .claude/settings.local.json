@@ -94,7 +94,11 @@
       "mcp__Tavily__tavily-extract",
       "mcp__Tavily__tavily-search",
       "mcp__archon__update_project",
-      "mcp__serena__find_referencing_symbols"
+      "mcp__serena__find_referencing_symbols",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__get_project",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__execute_sql"
     ],
     "deny": [
       "Edit",

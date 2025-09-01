@@ -383,12 +383,12 @@ export const servicesRoutes = new Hono()
       // Build update object with only provided fields
       const updateFields: Record<string, unknown> = {};
 
-      if (updateData.name !== undefined) updateFields.name = updateData.name;
-      if (updateData.description !== undefined) updateFields.description = updateData.description;
-      if (updateData.category !== undefined) updateFields.category = updateData.category;
-      if (updateData.duration !== undefined) updateFields.duration = updateData.duration;
-      if (updateData.price !== undefined) updateFields.price = updateData.price;
-      if (updateData.isActive !== undefined) updateFields.is_active = updateData.isActive;
+      if (updateData.name !== undefined) { updateFields.name = updateData.name; }
+      if (updateData.description !== undefined) { updateFields.description = updateData.description; }
+      if (updateData.category !== undefined) { updateFields.category = updateData.category; }
+      if (updateData.duration !== undefined) { updateFields.duration = updateData.duration; }
+      if (updateData.price !== undefined) { updateFields.price = updateData.price; }
+      if (updateData.isActive !== undefined) { updateFields.is_active = updateData.isActive; }
       if (updateData.anvisaCategory !== undefined) {
         updateFields.anvisa_category = updateData.anvisaCategory;
       }

@@ -34,8 +34,8 @@ const HealthcareIntelligenceQuerySchema = z.object({
   ]),
   patient_cohort: z.object({
     cohort_id: z.string().optional(),
-    inclusion_criteria: z.record(z.<unknown>()),
-    exclusion_criteria: z.record(z.<unknown>()).optional(),
+    inclusion_criteria: z.record(z.unknown()),
+    exclusion_criteria: z.record(z.unknown()).optional(),
     minimum_sample_size: z.number().min(10).max(10_000),
   }),
   analysis_parameters: z.object({
