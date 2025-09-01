@@ -19,7 +19,7 @@ trap "rm -rf $TEMP_DIR" EXIT
 
 # 1. TypeScript compilation check on staged files
 echo "🔍 Checking TypeScript compilation..."
-if ! npx tsc --noEmit --skipLibCheck > "$TEMP_DIR/tsc-output.txt" 2>&1; then
+if ! bunx tsc --noEmit --skipLibCheck > "$TEMP_DIR/tsc-output.txt" 2>&1; then
   echo "❌ TypeScript compilation failed:"
   cat "$TEMP_DIR/tsc-output.txt"
   echo ""
@@ -33,7 +33,7 @@ echo "🔍 Running oxlint on staged files..."
 LINT_ERRORS=0
 for file in $STAGED_FILES; do
   if [ -f "$file" ]; then
-    if ! npx oxlint "$file" > "$TEMP_DIR/lint-$file.txt" 2>&1; then
+    if ! bunx oxlint "$file" > "$TEMP_DIR/lint-$file.txt" 2>&1; then
       echo "❌ Linting errors in $file:"
       cat "$TEMP_DIR/lint-$file.txt"
       LINT_ERRORS=$((LINT_ERRORS + 1))

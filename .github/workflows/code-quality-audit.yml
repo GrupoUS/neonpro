@@ -2,14 +2,14 @@ name: Code Quality Audit
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
     paths:
       - '**/*.ts'
       - '**/*.tsx'
       - '**/*.js'
       - '**/*.jsx'
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - '**/*.ts'
       - '**/*.tsx'
@@ -20,46 +20,45 @@ jobs:
   code-quality-audit:
     name: Automated Code Quality Audit
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: '20'
-          cache: 'npm'
+          bun-version: latest
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Run oxlint quality scan
         id: oxlint-scan
         run: |
           echo "Running comprehensive oxlint scan..."
-          
+
           # Run oxlint and capture output
-          if npx oxlint --quiet 2>&1 | tee oxlint-output.txt; then
+          if bunx oxlint --quiet 2>&1 | tee oxlint-output.txt; then
             echo "✅ Oxlint scan completed successfully"
             OXLINT_EXIT_CODE=0
           else
             echo "❌ Oxlint scan found issues"
             OXLINT_EXIT_CODE=1
           fi
-          
+
           # Count violations by type
           TOTAL_VIOLATIONS=$(grep -c "typescript-eslint\|eslint" oxlint-output.txt || echo "0")
           ANY_VIOLATIONS=$(grep -c "typescript-eslint(no-explicit-any)" oxlint-output.txt || echo "0")
           SECURITY_VIOLATIONS=$(grep -c "security" oxlint-output.txt || echo "0")
-          
+
           echo "total_violations=$TOTAL_VIOLATIONS" >> $GITHUB_OUTPUT
           echo "any_violations=$ANY_VIOLATIONS" >> $GITHUB_OUTPUT
           echo "security_violations=$SECURITY_VIOLATIONS" >> $GITHUB_OUTPUT
           echo "exit_code=$OXLINT_EXIT_CODE" >> $GITHUB_OUTPUT
-          
+
           # Create quality report
           echo "## 📊 Code Quality Audit Report" > quality-report.md
           echo "" >> quality-report.md
@@ -68,19 +67,19 @@ jobs:
           echo "- **Type Safety Issues**: $ANY_VIOLATIONS" >> quality-report.md
           echo "- **Security Issues**: $SECURITY_VIOLATIONS" >> quality-report.md
           echo "" >> quality-report.md
-          
+
           if [ $SECURITY_VIOLATIONS -gt 0 ]; then
             echo "### 🚨 Critical Security Issues Found" >> quality-report.md
             echo "Security violations must be resolved before merging." >> quality-report.md
             echo "" >> quality-report.md
           fi
-          
+
           if [ $ANY_VIOLATIONS -gt 0 ]; then
             echo "### ⚠️ Type Safety Issues" >> quality-report.md
             echo "Found $ANY_VIOLATIONS explicit 'any' type violations." >> quality-report.md
             echo "" >> quality-report.md
           fi
-          
+
           echo "### 📋 Detailed Report" >> quality-report.md
           echo "\`\`\`" >> quality-report.md
           head -50 oxlint-output.txt >> quality-report.md
@@ -89,23 +88,23 @@ jobs:
       - name: Quality Gates Enforcement
         run: |
           echo "🔍 Enforcing quality gates..."
-          
+
           TOTAL_VIOLATIONS=${{ steps.oxlint-scan.outputs.total_violations }}
           SECURITY_VIOLATIONS=${{ steps.oxlint-scan.outputs.security_violations }}
-          
+
           # Critical: Block on security violations
           if [ $SECURITY_VIOLATIONS -gt 0 ]; then
             echo "❌ CRITICAL: Security violations detected ($SECURITY_VIOLATIONS)"
             echo "::error::Security violations must be resolved before merging"
             exit 1
           fi
-          
+
           # Warning: High violation count
           if [ $TOTAL_VIOLATIONS -gt 100 ]; then
             echo "⚠️ WARNING: High violation count ($TOTAL_VIOLATIONS)"
             echo "::warning::Consider addressing violations to maintain code quality"
           fi
-          
+
           echo "✅ Quality gates passed"
 
       - name: Comment PR with quality report
@@ -115,7 +114,7 @@ jobs:
           script: |
             const fs = require('fs');
             const report = fs.readFileSync('quality-report.md', 'utf8');
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,

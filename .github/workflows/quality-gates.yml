@@ -2,40 +2,39 @@ name: Quality Gates
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   quality-gates:
     name: Quality Gates Enforcement
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: '20'
-          cache: 'npm'
+          bun-version: latest
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Comprehensive quality assessment
         id: quality-assessment
         run: |
           echo "📊 Running comprehensive quality assessment..."
-          
+
           # Initialize counters
           TOTAL_SCORE=0
           MAX_SCORE=100
-          
+
           # 1. TypeScript Compilation (25 points)
           echo "🔍 Checking TypeScript compilation..."
-          if npx tsc --noEmit --skipLibCheck > /dev/null 2>&1; then
+          if bunx tsc --noEmit --skipLibCheck > /dev/null 2>&1; then
             TSC_SCORE=25
             echo "✅ TypeScript compilation: 25/25 points"
           else
@@ -43,10 +42,10 @@ jobs:
             echo "❌ TypeScript compilation: 0/25 points"
           fi
           TOTAL_SCORE=$((TOTAL_SCORE + TSC_SCORE))
-          
+
           # 2. Linting Quality (25 points)
           echo "🔍 Checking linting quality..."
-          LINT_VIOLATIONS=$(npx oxlint --quiet 2>/dev/null | wc -l || echo "0")
+          LINT_VIOLATIONS=$(bunx oxlint --quiet 2>/dev/null | wc -l || echo "0")
           if [ $LINT_VIOLATIONS -eq 0 ]; then
             LINT_SCORE=25
           elif [ $LINT_VIOLATIONS -le 50 ]; then
@@ -60,7 +59,7 @@ jobs:
           fi
           echo "📋 Linting violations: $LINT_VIOLATIONS (Score: $LINT_SCORE/25)"
           TOTAL_SCORE=$((TOTAL_SCORE + LINT_SCORE))
-          
+
           # 3. Type Safety (25 points)
           echo "🔍 Checking type safety..."
           ANY_FILES=$(find . -name "*.ts" -o -name "*.tsx" | grep -v node_modules | grep -v .next | grep -v dist | xargs grep -l ": any" 2>/dev/null | wc -l || echo "0")
@@ -77,10 +76,10 @@ jobs:
           fi
           echo "🔒 Files with 'any' types: $ANY_FILES (Score: $TYPE_SCORE/25)"
           TOTAL_SCORE=$((TOTAL_SCORE + TYPE_SCORE))
-          
+
           # 4. Security & Best Practices (25 points)
           echo "🔍 Checking security and best practices..."
-          SECURITY_ISSUES=$(npx oxlint --quiet 2>/dev/null | grep -c "security\|dangerous" || echo "0")
+          SECURITY_ISSUES=$(bunx oxlint --quiet 2>/dev/null | grep -c "security\|dangerous" || echo "0")
           if [ $SECURITY_ISSUES -eq 0 ]; then
             SECURITY_SCORE=25
           elif [ $SECURITY_ISSUES -le 5 ]; then
@@ -90,10 +89,10 @@ jobs:
           fi
           echo "🛡️ Security issues: $SECURITY_ISSUES (Score: $SECURITY_SCORE/25)"
           TOTAL_SCORE=$((TOTAL_SCORE + SECURITY_SCORE))
-          
+
           # Calculate final quality score
           QUALITY_SCORE=$(echo "scale=1; $TOTAL_SCORE / 10" | bc)
-          
+
           echo "total_score=$TOTAL_SCORE" >> $GITHUB_OUTPUT
           echo "quality_score=$QUALITY_SCORE" >> $GITHUB_OUTPUT
           echo "tsc_score=$TSC_SCORE" >> $GITHUB_OUTPUT
@@ -103,7 +102,7 @@ jobs:
           echo "lint_violations=$LINT_VIOLATIONS" >> $GITHUB_OUTPUT
           echo "any_files=$ANY_FILES" >> $GITHUB_OUTPUT
           echo "security_issues=$SECURITY_ISSUES" >> $GITHUB_OUTPUT
-          
+
           # Create quality gates report
           echo "## 🎯 Quality Gates Report" > quality-gates-report.md
           echo "" >> quality-gates-report.md
@@ -116,7 +115,7 @@ jobs:
           echo "| Type Safety | $TYPE_SCORE | 25 | $([ $TYPE_SCORE -ge 20 ] && echo "✅" || echo "⚠️") |" >> quality-gates-report.md
           echo "| Security & Best Practices | $SECURITY_SCORE | 25 | $([ $SECURITY_SCORE -eq 25 ] && echo "✅" || echo "❌") |" >> quality-gates-report.md
           echo "" >> quality-gates-report.md
-          
+
           if (( $(echo "$QUALITY_SCORE >= 9.5" | bc -l) )); then
             echo "✅ **Quality gates PASSED** - Excellent code quality!" >> quality-gates-report.md
           elif (( $(echo "$QUALITY_SCORE >= 8.0" | bc -l) )); then
@@ -128,33 +127,33 @@ jobs:
       - name: Enforce quality gates
         run: |
           echo "🚪 Enforcing quality gates..."
-          
+
           QUALITY_SCORE=${{ steps.quality-assessment.outputs.quality_score }}
           TSC_SCORE=${{ steps.quality-assessment.outputs.tsc_score }}
           SECURITY_SCORE=${{ steps.quality-assessment.outputs.security_score }}
-          
+
           echo "Quality Score: $QUALITY_SCORE/10.0"
-          
+
           # Critical gates (must pass)
           if [ $TSC_SCORE -ne 25 ]; then
             echo "❌ CRITICAL: TypeScript compilation must succeed"
             echo "::error::Fix TypeScript compilation errors before merging"
             exit 1
           fi
-          
+
           if [ $SECURITY_SCORE -ne 25 ]; then
             echo "❌ CRITICAL: Security issues detected"
             echo "::error::Resolve security issues before merging"
             exit 1
           fi
-          
+
           # Quality threshold gate
           if (( $(echo "$QUALITY_SCORE < 9.5" | bc -l) )); then
             echo "❌ QUALITY GATE FAILED: Score $QUALITY_SCORE < 9.5 required"
             echo "::error::Quality score must be ≥9.5/10 for merging"
             exit 1
           fi
-          
+
           echo "✅ All quality gates passed!"
 
       - name: Comment PR with quality gates report
@@ -164,7 +163,7 @@ jobs:
           script: |
             const fs = require('fs');
             const report = fs.readFileSync('quality-gates-report.md', 'utf8');
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,

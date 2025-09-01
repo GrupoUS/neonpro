@@ -5,7 +5,7 @@ echo "🚀 Running pre-push quality validation..."
 
 # 1. Full TypeScript compilation check
 echo "🔍 Running full TypeScript compilation check..."
-if ! npx tsc --noEmit --skipLibCheck; then
+if ! bunx tsc --noEmit --skipLibCheck; then
   echo "❌ TypeScript compilation failed"
   echo "💡 Fix all TypeScript errors before pushing"
   exit 1
@@ -16,9 +16,9 @@ echo "✅ TypeScript compilation passed"
 echo "🔍 Running comprehensive quality assessment..."
 
 # Count total violations
-TOTAL_VIOLATIONS=$(npx oxlint --quiet 2>/dev/null | wc -l || echo "0")
-ANY_VIOLATIONS=$(npx oxlint --quiet 2>/dev/null | grep -c "typescript-eslint(no-explicit-any)" || echo "0")
-SECURITY_VIOLATIONS=$(npx oxlint --quiet 2>/dev/null | grep -c "security" || echo "0")
+TOTAL_VIOLATIONS=$(bunx oxlint --quiet 2>/dev/null | wc -l || echo "0")
+ANY_VIOLATIONS=$(bunx oxlint --quiet 2>/dev/null | grep -c "typescript-eslint(no-explicit-any)" || echo "0")
+SECURITY_VIOLATIONS=$(bunx oxlint --quiet 2>/dev/null | grep -c "security" || echo "0")
 
 echo "📊 Quality Metrics:"
 echo "   - Total violations: $TOTAL_VIOLATIONS"

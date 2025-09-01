@@ -2,14 +2,14 @@ name: Type Safety Check
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
     paths:
       - '**/*.ts'
       - '**/*.tsx'
       - 'tsconfig*.json'
       - 'package*.json'
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - '**/*.ts'
       - '**/*.tsx'
@@ -20,27 +20,26 @@ jobs:
   type-safety-check:
     name: TypeScript Compilation & Type Safety
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: '20'
-          cache: 'npm'
+          bun-version: latest
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: TypeScript compilation check
         id: tsc-check
         run: |
           echo "🔍 Running TypeScript compilation check..."
-          
+
           # Run TypeScript compilation
-          if npx tsc --noEmit --skipLibCheck 2>&1 | tee tsc-output.txt; then
+          if bunx tsc --noEmit --skipLibCheck 2>&1 | tee tsc-output.txt; then
             echo "✅ TypeScript compilation successful"
             TSC_EXIT_CODE=0
             COMPILATION_STATUS="success"
@@ -49,20 +48,20 @@ jobs:
             TSC_EXIT_CODE=1
             COMPILATION_STATUS="failed"
           fi
-          
+
           # Count errors
           ERROR_COUNT=$(grep -c "error TS" tsc-output.txt || echo "0")
-          
+
           echo "exit_code=$TSC_EXIT_CODE" >> $GITHUB_OUTPUT
           echo "error_count=$ERROR_COUNT" >> $GITHUB_OUTPUT
           echo "status=$COMPILATION_STATUS" >> $GITHUB_OUTPUT
-          
+
           # Create type safety report
           echo "## 🔒 Type Safety Check Report" > type-safety-report.md
           echo "" >> type-safety-report.md
           echo "### Compilation Status: **$COMPILATION_STATUS**" >> type-safety-report.md
           echo "" >> type-safety-report.md
-          
+
           if [ $TSC_EXIT_CODE -eq 0 ]; then
             echo "✅ **All TypeScript files compiled successfully**" >> type-safety-report.md
             echo "" >> type-safety-report.md
@@ -83,33 +82,33 @@ jobs:
       - name: Type safety enforcement
         run: |
           echo "🛡️ Enforcing type safety requirements..."
-          
+
           TSC_EXIT_CODE=${{ steps.tsc-check.outputs.exit_code }}
           ERROR_COUNT=${{ steps.tsc-check.outputs.error_count }}
-          
+
           # Critical: Block on compilation errors
           if [ $TSC_EXIT_CODE -ne 0 ]; then
             echo "❌ CRITICAL: TypeScript compilation failed with $ERROR_COUNT errors"
             echo "::error::TypeScript compilation must succeed before merging"
             exit 1
           fi
-          
+
           echo "✅ Type safety requirements met"
 
       - name: Run additional type checks
         run: |
           echo "🔍 Running additional type safety checks..."
-          
+
           # Check for any remaining explicit 'any' types
           ANY_COUNT=$(find . -name "*.ts" -o -name "*.tsx" | grep -v node_modules | grep -v .next | grep -v dist | xargs grep -c ": any" 2>/dev/null | grep -v ":0" | wc -l || echo "0")
-          
+
           echo "Found $ANY_COUNT files with explicit 'any' types"
-          
+
           if [ $ANY_COUNT -gt 60 ]; then
             echo "⚠️ WARNING: High number of explicit 'any' types ($ANY_COUNT files)"
             echo "::warning::Consider improving type safety by reducing 'any' usage"
           fi
-          
+
           echo "any_files_count=$ANY_COUNT" >> $GITHUB_ENV
 
       - name: Comment PR with type safety report
@@ -119,7 +118,7 @@ jobs:
           script: |
             const fs = require('fs');
             const report = fs.readFileSync('type-safety-report.md', 'utf8');
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
