@@ -89,14 +89,7 @@
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
     },
-    "@neonpro/constitutional-layer#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/compliance#build"
-      ],
-      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
+
     "@neonpro/auth#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
@@ -151,8 +144,7 @@
     "@neonpro/ai#build": {
       "dependsOn": [
         "@neonpro/types#build",
-        "@neonpro/cache#build",
-        "@neonpro/constitutional-layer#build"
+        "@neonpro/cache#build"
       ],
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]

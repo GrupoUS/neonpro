@@ -25,7 +25,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock Brazilian validation functions
-vi.mock<typeof import("@neonpro/utils/validation")>(
+vi.mock(
   "@neonpro/utils/validation",
   () => ({
     validateCPF: vi.fn(),

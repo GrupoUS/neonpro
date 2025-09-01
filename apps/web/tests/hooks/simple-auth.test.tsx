@@ -5,7 +5,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 // Mock the API client module
-vi.mock<typeof import("@neonpro/shared/api-client")>(
+vi.mock(
   "@neonpro/shared/api-client",
   () => ({
     ApiHelpers: {

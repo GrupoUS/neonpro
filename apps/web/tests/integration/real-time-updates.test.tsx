@@ -53,14 +53,14 @@ const mockRealtimeHook = {
   error: undefined,
 };
 
-vi.mock<typeof import("@supabase/supabase-js")>(
+vi.mock(
   "@supabase/supabase-js",
   () => ({
     createClient: () => mockSupabaseClient,
   }),
 );
 
-vi.mock<typeof import("../../hooks/enhanced/use-realtime")>(
+vi.mock(
   "../../hooks/enhanced/use-realtime",
   () => ({
     useRealtime: () => mockRealtimeHook,

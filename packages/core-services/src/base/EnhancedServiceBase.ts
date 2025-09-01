@@ -72,7 +72,7 @@ export abstract class EnhancedServiceBase {
   protected readonly cache: ICacheService;
   protected readonly analytics: IAnalyticsService;
   protected readonly security: ISecurityService;
-  protected readonly audit: EnterpriseAuditService;
+  protected readonly audit: UnifiedAuditService;
   protected readonly healthCheck: EnterpriseHealthCheckService;
 
   // Internal services
@@ -131,7 +131,7 @@ export abstract class EnhancedServiceBase {
       allowedOrigins: process.env.ALLOWED_ORIGINS?.split(",") || ["*"],
     });
 
-    this.audit = new EnterpriseAuditService();
+    this.audit = new UnifiedAuditService();
     this.healthCheck = new EnterpriseHealthCheckService();
 
     // Initialize integrated service interfaces

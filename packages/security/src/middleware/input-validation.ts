@@ -746,7 +746,7 @@ export const auditLogSchema = z.object({
       `Description must not exceed ${MAX_AUDIT_DESCRIPTION_LENGTH} characters`,
     )
     .optional(),
-  metadata: z.record(z.<unknown>()).optional(),
+  metadata: z.record(z.unknown()).optional(),
   severity: z.enum(["info", "warning", "error", "critical"]).default("info"),
   timestamp: z.string().datetime("Invalid timestamp format"),
 });

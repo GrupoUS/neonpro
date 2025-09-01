@@ -3,9 +3,9 @@
  * Validates build time improvements and healthcare compliance maintenance
  */
 
-const { execSync } = require("node:child_process");
-const fs = require("node:fs");
-const path = require("node:path");
+import { execSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 
 const PERFORMANCE_TARGETS = {
   BUILD_TIME_REDUCTION: 0.6, // 60% reduction target

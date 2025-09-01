@@ -24,7 +24,7 @@ interface PatientDetailRequest {
 // GET /api/patients/[id]?action=profile - Get patient profile
 // GET /api/patients/[id]?action=insights - Get patient insights
 // GET /api/patients/[id]?action=timeline - Get patient timeline
-// GET /api/patients/[id]?action=lgpd-consent - Get LGPD consent status
+// GET /api/patients/[id]?action=data-consent - Get data consent status
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string; }; },
@@ -51,8 +51,8 @@ export async function GET(
       case "timeline":
         return handlePatientTimeline(patientId);
 
-      case "lgpd-consent":
-        return handleLGPDConsent(patientId);
+      case "data-consent":
+        return handleDataConsent(patientId);
 
       default:
         return handlePatientDetails(patientId);
@@ -116,10 +116,9 @@ async function handlePatientDetails(patientId: string) {
     medicalHistory: ["Hipertensão", "Diabetes tipo 2"],
     allergies: ["Penicilina"],
     medications: ["Losartana 50mg", "Metformina 850mg"],
-    lgpdConsent: {
+    dataConsent: {
       dataProcessing: true,
       marketing: false,
-      thirdPartySharing: false,
       consentDate: "2024-01-15T10:00:00Z",
       ipAddress: "192.168.1.1",
     },
@@ -248,9 +247,9 @@ async function handlePatientTimeline(patientId: string) {
   });
 }
 
-async function handleLGPDConsent(patientId: string) {
-  // Mock LGPD consent data
-  const mockLGPDStatus = {
+async function handleDataConsent(patientId: string) {
+  // Mock data consent data
+  const mockConsentStatus = {
     patientId,
     compliant: true,
     lastUpdate: "2024-01-15T10:00:00Z",
@@ -265,11 +264,7 @@ async function handleLGPDConsent(patientId: string) {
         date: "2024-01-15T10:00:00Z",
         ipAddress: "192.168.1.1",
       },
-      thirdPartySharing: {
-        granted: false,
-        date: "2024-01-15T10:00:00Z",
-        ipAddress: "192.168.1.1",
-      },
+
     },
     requiredActions: [],
     dataRetentionPolicy: {
@@ -281,8 +276,8 @@ async function handleLGPDConsent(patientId: string) {
 
   return NextResponse.json({
     success: true,
-    action: "lgpd-consent",
-    data: { lgpdStatus: mockLGPDStatus },
+    action: "data-consent",
+    data: { consentStatus: mockConsentStatus },
   });
 }
 

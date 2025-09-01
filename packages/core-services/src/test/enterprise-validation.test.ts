@@ -5,7 +5,7 @@
 
 import { EnhancedServiceBase } from "../base/EnhancedServiceBase";
 import { EnterpriseAnalyticsService } from "../enterprise/analytics/EnterpriseAnalyticsService";
-import { EnterpriseAuditService } from "../enterprise/audit/EnterpriseAuditService";
+import { UnifiedAuditService as EnterpriseAuditService } from '@neonpro/security';;
 import { EnterpriseCacheService } from "../enterprise/cache/EnterpriseCacheService";
 import { EnterpriseSecurityService } from "../enterprise/security/EnterpriseSecurityService";
 import { EnterpriseHealthCheckService } from "../health/EnterpriseHealthCheckService";
@@ -76,7 +76,7 @@ async function testEnterpriseServices() {
       properties: { test: true },
     });
     const securityService = new EnterpriseSecurityService();
-    const auditService = new EnterpriseAuditService();
+    const auditService = new UnifiedAuditService();
 
     await auditService.logEvent({
       id: `test-audit-${Date.now()}`,

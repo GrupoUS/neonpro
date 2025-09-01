@@ -6,7 +6,7 @@
 import { vi } from "vitest";
 
 // Mock Supabase client for API tests
-vi.mock<typeof import("@supabase/supabase-js")>(
+vi.mock(
   "@supabase/supabase-js",
   () => ({
     createClient: vi.fn(() => ({

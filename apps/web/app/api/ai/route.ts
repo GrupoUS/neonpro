@@ -6,7 +6,7 @@
  * For aesthetic clinic AI-powered features and automation
  */
 
-import type { NextRequest} from "next/server";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 interface AIRequest {
@@ -82,6 +82,29 @@ interface ChatResponse {
   timestamp: string;
 }
 
+interface AIOverview {
+  noShowPredictions: {
+    totalPredictions: number;
+    accuracy: number;
+    activeModels: number;
+  };
+  modelManagement: {
+    deployedModels: number;
+    trainingModels: number;
+    averageAccuracy: number;
+  };
+  driftDetection: {
+    activeAlerts: number;
+    modelsMonitored: number;
+    lastCheck: string;
+  };
+  universalChat: {
+    totalConversations: number;
+    averageResponseTime: number;
+    satisfactionScore: number;
+  };
+}
+
 interface AIResponse {
   success: boolean;
   action?: string;
@@ -92,6 +115,7 @@ interface AIResponse {
     model?: ModelInfo;
     driftAlerts?: DriftAlert[];
     chatResponse?: ChatResponse;
+    overview?: AIOverview;
     stats?: {
       totalPredictions: number;
       accuracy: number;
@@ -215,7 +239,7 @@ async function handleAIOverview(request: AIRequest): Promise<NextResponse<AIResp
 
   return NextResponse.json({
     success: true,
-    data: { stats: overview },
+    data: { overview },
   });
 }
 

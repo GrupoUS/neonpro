@@ -1,4 +1,4 @@
-import type { CacheOperation, CacheStats } from "./types";
+import type { CacheOperation, CacheStats, CacheEntry } from "./types";
 
 export class EdgeCacheLayer implements CacheOperation {
   private cache = new Map<string, unknown>();
@@ -104,7 +104,7 @@ export class EdgeCacheLayer implements CacheOperation {
 
   async invalidateByTags(tags: string[]): Promise<void> {
     for (const [key, entry] of this.cache.entries()) {
-      const typedEntry = entry as any;
+      const typedEntry = entry as CacheEntry;
       if (typedEntry.tags?.some((tag: string) => tags.includes(tag))) {
         this.cache.delete(key);
       }
@@ -206,7 +206,7 @@ export class EdgeCacheLayer implements CacheOperation {
     let oldestTime = Date.now();
 
     for (const [key, entry] of this.cache.entries()) {
-      const typedEntry = entry as any;
+      const typedEntry = entry as CacheEntry;
       if (typedEntry.lastAccessed < oldestTime) {
         oldestTime = typedEntry.lastAccessed;
         oldestKey = key;

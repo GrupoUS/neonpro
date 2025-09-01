@@ -4,8 +4,8 @@
  */
 
 const { execSync } = require("node:child_process");
-const fs = require("node:fs");
-const path = require("node:path");
+import fs from "node:fs";
+import path from "node:path";
 
 const COMPLIANCE_FRAMEWORKS = {
   LGPD: {

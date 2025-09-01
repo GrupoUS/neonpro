@@ -194,10 +194,9 @@ async function handlePatientList(params: {
       createdAt: "2024-01-15T10:00:00Z",
       updatedAt: "2024-01-20T14:30:00Z",
       lastVisit: "2024-01-20T14:30:00Z",
-      lgpdConsent: {
+      dataConsent: {
         dataProcessing: true,
         marketing: false,
-        thirdPartySharing: false,
         consentDate: "2024-01-15T10:00:00Z",
         ipAddress: "192.168.1.1",
       },
@@ -214,10 +213,9 @@ async function handlePatientList(params: {
       createdAt: "2024-01-10T09:00:00Z",
       updatedAt: "2024-01-18T16:45:00Z",
       lastVisit: "2024-01-18T16:45:00Z",
-      lgpdConsent: {
+      dataConsent: {
         dataProcessing: true,
         marketing: true,
-        thirdPartySharing: false,
         consentDate: "2024-01-10T09:00:00Z",
         ipAddress: "192.168.1.2",
       },
@@ -257,10 +255,9 @@ async function handlePatientSearch(params: {
         status: "active",
         createdAt: "2024-01-12T11:00:00Z",
         updatedAt: "2024-01-19T13:20:00Z",
-        lgpdConsent: {
+        dataConsent: {
           dataProcessing: true,
           marketing: false,
-          thirdPartySharing: false,
           consentDate: "2024-01-12T11:00:00Z",
           ipAddress: "192.168.1.3",
         },
@@ -310,8 +307,8 @@ async function handlePatientUpdate(
     status: "active",
     createdAt: "2024-01-15T10:00:00Z", // Would come from database
     updatedAt: new Date().toISOString(),
-    lgpdConsent: {
-      ...body.lgpdConsent!,
+    dataConsent: {
+      ...body.dataConsent,
       ipAddress: "192.168.1.100", // Would get from request
     },
   };

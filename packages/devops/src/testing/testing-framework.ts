@@ -268,7 +268,7 @@ export class HealthcareTestFramework {
     process.env.LGPD_COMPLIANCE_MODE = "strict";
 
     // Mock LGPD services
-    vi.mock<typeof import("@/lib/lgpd/data-protection")>(
+    import * as dataProtection from "@/lib/lgpd/data-protection"; vi.mock(
       "@/lib/lgpd/data-protection",
       () => ({
         validateDataProtection: vi.fn().mockResolvedValue(true),
@@ -282,7 +282,7 @@ export class HealthcareTestFramework {
     process.env.ANVISA_COMPLIANCE_MODE = "strict";
 
     // Mock ANVISA services
-    vi.mock<typeof import("@/lib/anvisa/medical-device")>(
+    import * as medicalDevice from "@/lib/anvisa/medical-device"; vi.mock(
       "@/lib/anvisa/medical-device",
       () => ({
         validateMedicalDevice: vi.fn().mockResolvedValue(true),
@@ -296,7 +296,7 @@ export class HealthcareTestFramework {
     process.env.CFM_COMPLIANCE_MODE = "strict";
 
     // Mock CFM services
-    vi.mock<typeof import("@/lib/cfm/professional-validation")>(
+    import * as professionalValidation from "@/lib/cfm/professional-validation"; vi.mock(
       "@/lib/cfm/professional-validation",
       () => ({
         validateProfessionalLicense: vi.fn().mockResolvedValue(true),

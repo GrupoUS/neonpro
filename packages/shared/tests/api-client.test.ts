@@ -13,7 +13,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock external dependencies
-vi.mock<typeof import("hono/client")>("hono/client", () => ({
+vi.mock("hono/client", () => ({
   hc: vi.fn(() => ({
     api: {
       v1: {

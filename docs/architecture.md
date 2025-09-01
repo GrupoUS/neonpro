@@ -20,6 +20,7 @@ Complete system architecture for **NeonPro AI-First Advanced Aesthetic Platform*
 ## Quick Start
 
 ### System Architecture Overview
+
 ```mermaid
 graph TB
     subgraph "Frontend Layer"
@@ -64,6 +65,7 @@ graph TB
 ### Technology Stack
 
 **Frontend (Next.js 15)**:
+
 - **Framework**: Next.js 15 with App Router + React 19
 - **UI Library**: shadcn/ui components + Tailwind CSS
 - **State Management**: React Server Components + Zustand for client state
@@ -71,6 +73,7 @@ graph TB
 - **Language**: TypeScript with strict type checking
 
 **Backend (Supabase)**:
+
 - **Database**: PostgreSQL with Row Level Security (RLS)
 - **Authentication**: Supabase Auth with role-based access
 - **Real-time**: WebSocket subscriptions for live updates
@@ -78,11 +81,13 @@ graph TB
 - **Storage**: File storage for procedure images and documents
 
 **AI Integration**:
+
 - **LLM**: OpenAI GPT-4 optimized for Brazilian Portuguese
 - **Use Cases**: Natural language appointment scheduling, FAQ automation
 - **Processing**: Streaming responses for real-time chat experience
 
 **External Integrations**:
+
 - **Communication**: WhatsApp Business API + Brazilian SMS providers
 - **Compliance**: ANVISA API for equipment validation
 - **Analytics**: Custom analytics with LGPD compliance
@@ -132,6 +137,7 @@ sequenceDiagram
 ```
 
 **Key Features**:
+
 - Brazilian Portuguese natural conversation
 - Aesthetic procedure recognition (botox, preenchimento, harmonização, laser)
 - Automatic professional assignment based on specialization
@@ -148,25 +154,26 @@ flowchart TD
     C -->|High Risk 70%+| D[Proactive Intervention]
     C -->|Medium Risk 30-70%| E[Standard Reminder]
     C -->|Low Risk <30%| F[Basic Confirmation]
-    
+
     D --> G[WhatsApp + SMS + Call]
     E --> H[SMS + Email]
     F --> I[Email Only]
-    
+
     G --> J[Monitor Response]
     H --> J
     I --> J
-    
+
     J --> K[Update ML Model]
     K --> B
 ```
 
 **Implementation**:
+
 ```typescript
 interface NoShowPrediction {
   appointmentId: string;
   clientId: string;
-  riskScore: number;        // 0-100 percentage
+  riskScore: number; // 0-100 percentage
   interventions: {
     whatsapp: boolean;
     sms: boolean;
@@ -191,7 +198,7 @@ sequenceDiagram
     C->>S: Access aesthetic data request
     S->>LGPD: Check consent status
     LGPD->>S: Validate data processing purpose
-    
+
     alt Consent Valid
         S->>C: Provide requested data
         S->>A: Log data access
@@ -208,6 +215,7 @@ sequenceDiagram
 ### Aesthetic Healthcare Professionals
 
 **Supported Professional Types**:
+
 - Dermatologists (medical doctors)
 - Certified aestheticians
 - Registered nurses specializing in aesthetics
@@ -219,9 +227,9 @@ interface AestheticProfessional {
   id: string;
   name: string;
   email: string;
-  professionalType: 'dermatologist' | 'aesthetician' | 'nurse' | 'cosmetologist' | 'other';
-  licenseNumber?: string;        // Professional license (when applicable)
-  specializations: string[];     // ['botox', 'fillers', 'laser', 'peeling']
+  professionalType: "dermatologist" | "aesthetician" | "nurse" | "cosmetologist" | "other";
+  licenseNumber?: string; // Professional license (when applicable)
+  specializations: string[]; // ['botox', 'fillers', 'laser', 'peeling']
   clinicId: string;
   isActive: boolean;
   certifications: {
@@ -233,12 +241,13 @@ interface AestheticProfessional {
 ```
 
 **Role-Based Access Control**:
+
 ```typescript
 const professionalPermissions = {
-  'dermatologist': ['all_procedures', 'prescriptions', 'medical_history'],
-  'aesthetician': ['basic_procedures', 'skincare', 'non_invasive'],
-  'nurse': ['injections', 'laser', 'medical_support'],
-  'cosmetologist': ['skincare', 'basic_treatments', 'consultations']
+  "dermatologist": ["all_procedures", "prescriptions", "medical_history"],
+  "aesthetician": ["basic_procedures", "skincare", "non_invasive"],
+  "nurse": ["injections", "laser", "medical_support"],
+  "cosmetologist": ["skincare", "basic_treatments", "consultations"],
 };
 ```
 
@@ -247,69 +256,84 @@ const professionalPermissions = {
 ### Core Tables
 
 ```sql
--- Aesthetic clients (LGPD compliant)
-CREATE TABLE aesthetic_clients (
+-- Patients (healthcare compliant with LGPD)
+CREATE TABLE patients (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(255) NOT NULL,
+  full_name VARCHAR(255) NOT NULL,
   email VARCHAR(255),
-  phone VARCHAR(20),
-  cpf_hash VARCHAR(64), -- Hashed CPF for privacy
+  phone_primary VARCHAR(20),
+  cpf_encrypted BYTEA, -- Encrypted CPF for privacy
+  rg_encrypted BYTEA,  -- Encrypted RG 
   birth_date DATE,
-  aesthetic_history JSONB,
-  lgpd_consent JSONB NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
-
--- Aesthetic professionals
-CREATE TABLE aesthetic_professionals (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  professional_type VARCHAR(50) NOT NULL,
-  license_number VARCHAR(50),
-  specializations TEXT[],
-  clinic_id UUID NOT NULL,
+  data_consent JSONB NOT NULL, -- Standardized consent management
   is_active BOOLEAN DEFAULT true,
-  created_at TIMESTAMP DEFAULT NOW()
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Appointments for aesthetic procedures
-CREATE TABLE aesthetic_appointments (
+-- Healthcare professionals
+CREATE TABLE professionals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  client_id UUID REFERENCES aesthetic_clients(id),
-  professional_id UUID REFERENCES aesthetic_professionals(id),
+  user_id UUID REFERENCES auth.users(id),
+  full_name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  professional_type professional_type NOT NULL,
+  license_number VARCHAR(50),
+  license_status license_status DEFAULT 'pending',
+  specializations TEXT[],
+  clinic_id UUID NOT NULL REFERENCES clinics(id),
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Appointments with healthcare compliance
+CREATE TABLE appointments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id UUID REFERENCES patients(id),
+  professional_id UUID REFERENCES professionals(id),
+  clinic_id UUID NOT NULL REFERENCES clinics(id),
   procedure_type VARCHAR(100) NOT NULL,
   procedure_area VARCHAR(100),
-  scheduled_at TIMESTAMP NOT NULL,
-  duration_minutes INTEGER DEFAULT 60,
-  status VARCHAR(50) DEFAULT 'scheduled',
-  no_show_risk_score FLOAT DEFAULT 0,
+  start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+  end_time TIMESTAMP WITH TIME ZONE NOT NULL,
+  status appointment_status DEFAULT 'scheduled',
+  no_show_risk_score INTEGER DEFAULT 0,
   notes TEXT,
-  created_at TIMESTAMP DEFAULT NOW()
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- AI chat sessions
+-- AI chat sessions with compliance tracking
 CREATE TABLE ai_chat_sessions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  client_id UUID REFERENCES aesthetic_clients(id),
-  professional_id UUID REFERENCES aesthetic_professionals(id),
+  patient_id UUID REFERENCES patients(id),
+  professional_id UUID REFERENCES professionals(id),
+  clinic_id UUID NOT NULL REFERENCES clinics(id),
   status VARCHAR(50) DEFAULT 'active',
   language VARCHAR(10) DEFAULT 'pt-BR',
-  created_at TIMESTAMP DEFAULT NOW()
+  phi_detected BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- LGPD audit trail
-CREATE TABLE lgpd_audit_log (
+-- Comprehensive audit trail for healthcare compliance
+CREATE TABLE audit_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  client_id UUID REFERENCES aesthetic_clients(id),
-  professional_id UUID REFERENCES aesthetic_professionals(id),
-  action_type VARCHAR(50) NOT NULL,
-  data_accessed JSONB,
-  purpose VARCHAR(255),
-  timestamp TIMESTAMP DEFAULT NOW(),
+  action audit_action NOT NULL,
+  table_name VARCHAR(50) NOT NULL,
+  record_id UUID,
+  old_values JSONB,
+  new_values JSONB,
+  user_id UUID REFERENCES auth.users(id),
+  session_id VARCHAR(255),
   ip_address INET,
-  user_agent TEXT
+  user_agent TEXT,
+  risk_score INTEGER DEFAULT 0,
+  emergency_access BOOLEAN DEFAULT false,
+  phi_accessed BOOLEAN DEFAULT false,
+  success BOOLEAN DEFAULT true,
+  timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ```
 
@@ -326,8 +350,8 @@ CREATE POLICY "professionals_clinic_access" ON aesthetic_clients
   FOR SELECT TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM aesthetic_professionals 
-      WHERE user_id = auth.uid() 
+      SELECT 1 FROM aesthetic_professionals
+      WHERE user_id = auth.uid()
       AND clinic_id = (SELECT clinic_id FROM aesthetic_appointments WHERE client_id = aesthetic_clients.id LIMIT 1)
     )
   );
@@ -336,9 +360,11 @@ CREATE POLICY "professionals_clinic_access" ON aesthetic_clients
 ## Implementation Phases
 
 ### Fase 1: Fundação (4-6 semanas)
+
 **Objetivo**: Establish solid foundation with optimized performance
 
 **Deliverables**:
+
 - Next.js 15 architecture with mobile-first design
 - Professional authentication and authorization system
 - Basic client and appointment CRUD operations
@@ -346,10 +372,12 @@ CREATE POLICY "professionals_clinic_access" ON aesthetic_clients
 - Basic LGPD compliance implementation
 - Core database schema with RLS policies
 
-### Fase 2: Arquitetura Inteligente (6-8 semanas)  
+### Fase 2: Arquitetura Inteligente (6-8 semanas)
+
 **Objetivo**: Prepare intelligent infrastructure for AI and integrations
 
 **Deliverables**:
+
 - Data pipeline for analytics and ML predictions
 - WhatsApp Business API and SMS integration
 - Intelligent notification system
@@ -358,9 +386,11 @@ CREATE POLICY "professionals_clinic_access" ON aesthetic_clients
 - Anti-no-show prediction model foundation
 
 ### Fase 3: Integração de IA (8-12 semanas)
+
 **Objetivo**: Implement advanced AI-powered features
 
 **Deliverables**:
+
 - Universal AI Chat with GPT-4 Portuguese optimization
 - Anti-No-Show Engine with machine learning
 - Administrative process automation
@@ -370,34 +400,39 @@ CREATE POLICY "professionals_clinic_access" ON aesthetic_clients
 ## Security & Compliance
 
 ### LGPD (Brazilian Data Protection)
+
 - **Granular Consent Management**: Separate consent for different data processing purposes
 - **Data Minimization**: Collect only necessary information for aesthetic treatments
 - **Right to Deletion**: Automated data erasure after legal retention period
 - **Audit Trail**: Complete logging of data access and modifications
 - **Data Portability**: Export client data in structured format
 
-### ANVISA (Medical Device Compliance)  
+### ANVISA (Medical Device Compliance)
+
 - **Equipment Registration**: Validation of aesthetic device registration numbers
 - **Safety Protocol Integration**: Implementation of mandatory safety procedures
 - **Adverse Event Reporting**: Automated reporting system for treatment complications
 - **Device Maintenance Tracking**: Monitoring of calibration and maintenance schedules
 
 ### Professional Standards
+
 - **License Verification**: Professional credential validation when applicable
 - **Specialization Matching**: Procedure authorization based on professional qualifications
 - **Continuing Education**: Optional tracking of professional development requirements
 - **Insurance Validation**: Professional liability insurance verification
 
 ### WCAG 2.1 AA (Web Accessibility)
+
 - **Keyboard Navigation**: Full system accessibility via keyboard
 - **Screen Reader Optimization**: Portuguese language support with proper ARIA labels
-- **Color Contrast**: 4.5:1 minimum for text, 3:1 for UI components  
+- **Color Contrast**: 4.5:1 minimum for text, 3:1 for UI components
 - **Touch Targets**: Minimum 44px for interactive elements
 - **Focus Management**: Visible focus indicators throughout interface
 
 ## Examples
 
 ### AI Chat Integration
+
 ```typescript
 // ✅ Portuguese AI Chat for Aesthetic Procedures
 export async function handleAestheticChat(message: string, clientId: string) {
@@ -409,22 +444,23 @@ export async function handleAestheticChat(message: string, clientId: string) {
         content: `Você é assistente especializado em clínica estética brasileira.
         Procedimentos: botox, preenchimento facial, harmonização orofacial, depilação laser.
         Use português brasileiro natural e profissional.
-        Foque em agendamentos e informações sobre tratamentos estéticos.`
+        Foque em agendamentos e informações sobre tratamentos estéticos.`,
       },
-      { role: "user", content: message }
+      { role: "user", content: message },
     ],
-    temperature: 0.3
+    temperature: 0.3,
   });
 
   return {
     reply: response.choices[0].message.content,
     suggestedActions: parseAestheticActions(message),
-    language: 'pt-BR'
+    language: "pt-BR",
   };
 }
 ```
 
 ### Professional Authentication
+
 ```typescript
 // ✅ Generic Aesthetic Professional Authentication
 export async function authenticateProfessional(credentials: {
@@ -432,22 +468,22 @@ export async function authenticateProfessional(credentials: {
   password: string;
 }) {
   const { data: user } = await supabase.auth.signInWithPassword(credentials);
-  
+
   if (user) {
     const { data: professional } = await supabase
-      .from('aesthetic_professionals')
-      .select('*')
-      .eq('user_id', user.user.id)
+      .from("aesthetic_professionals")
+      .select("*")
+      .eq("user_id", user.user.id)
       .single();
-      
+
     return {
       user,
       professional,
-      permissions: getProfessionalPermissions(professional.professional_type)
+      permissions: getProfessionalPermissions(professional.professional_type),
     };
   }
-  
-  throw new Error('Invalid credentials');
+
+  throw new Error("Invalid credentials");
 }
 ```
 
@@ -456,38 +492,35 @@ export async function authenticateProfessional(credentials: {
 ### Common Issues
 
 **Authentication Problems**:
+
 - **Issue**: Professional login fails → **Solution**: Verify professional record exists and is active
 - **Issue**: Permission denied → **Solution**: Check professional type and specialization requirements
 
 **AI Chat Issues**:
+
 - **Issue**: Portuguese responses not natural → **Solution**: Update system prompt with Brazilian aesthetic terminology
 - **Issue**: Procedure not recognized → **Solution**: Add procedure to AI training context and specialization database
 
 **LGPD Compliance**:
+
 - **Issue**: Consent validation failing → **Solution**: Check consent version and client consent timestamp
 - **Issue**: Data export not working → **Solution**: Verify client permissions and data retention policies
 
 **Performance Issues**:
+
 - **Issue**: Slow AI responses → **Solution**: Implement response caching and optimize prompts
 - **Issue**: Database queries slow → **Solution**: Check RLS policies and database indexes
 - **Issue**: Real-time updates delayed → **Solution**: Verify Supabase subscription configuration
 
 **Accessibility Issues**:
+
 - **Issue**: Screen reader not working → **Solution**: Add proper ARIA labels with lang="pt-BR"
 - **Issue**: Keyboard navigation broken → **Solution**: Check focus management and tabindex values
 - **Issue**: Touch targets too small → **Solution**: Ensure minimum 44px height and width
 
-## Related Documentation
-
-- [`docs/prd.md`](prd.md) - Complete product requirements for aesthetic platform
-- [`docs/accessibility/accessibility-standards.md`](accessibility/accessibility-standards.md) - WCAG 2.1 AA implementation
-- [`docs/app-flows/aesthetic-platform-flows.md`](app-flows/aesthetic-platform-flows.md) - Detailed workflow documentation
-- [`docs/architecture/tech-stack.md`](architecture/tech-stack.md) - Technology stack details
-- [`.ruler/agents/apex-dev.md`](../.ruler/agents/apex-dev.md) - Development principles
-
 ---
 
-**Architecture Stack**: Next.js 15 + Supabase + OpenAI GPT-4 + shadcn/ui  
-**Quality Validated**: ✅ 9.5/10 KISS + YAGNI + Constitutional Principles Applied  
-**Target Market**: Brazilian Aesthetic Clinics with All Professional Types  
+**Architecture Stack**: Next.js 15 + Supabase + OpenAI GPT-4 + shadcn/ui
+**Quality Validated**: ✅ 9.5/10 KISS + YAGNI + Constitutional Principles Applied
+**Target Market**: Brazilian Aesthetic Clinics with All Professional Types
 **Status**: Ready for Implementation

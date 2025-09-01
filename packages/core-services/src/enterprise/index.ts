@@ -5,9 +5,10 @@
  * - EnterpriseCacheService: Cache multicamadas (memory/redis/db)
  * - EnterpriseAnalyticsService: Analytics automático healthcare
  * - EnterpriseSecurityService: Security integrado (RBAC/encryption/MFA)
- * - EnterpriseAuditService: Audit trail completo e compliance
+ * - UnifiedAuditService: Audit trail completo e compliance
  */
 
+export { UnifiedAuditService as EnterpriseAuditService } from "@neonpro/security";
 export type {
   AnalyticsEvent,
   AnalyticsInsight,
@@ -23,6 +24,5 @@ export type {
   SecurityPolicy,
 } from "../types";
 export { EnterpriseAnalyticsService } from "./analytics/EnterpriseAnalyticsService";
-export { EnterpriseAuditService } from "./audit/EnterpriseAuditService";
 export { EnterpriseCacheService } from "./cache/EnterpriseCacheService";
 export { EnterpriseSecurityService } from "./security/EnterpriseSecurityService";

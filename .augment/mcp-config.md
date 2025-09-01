@@ -5,6 +5,7 @@
 O Augment Agent agora reconhece e utiliza os servidores MCP configurados no arquivo `.vscode/.mcp.json`.
 
 ### ✅ Verificação Completa Realizada
+
 - Desktop Commander Docker: **FUNCIONANDO**
 - Imagem Docker baixada: **SUCESSO**
 - Configurações sincronizadas: **COMPLETO**
@@ -13,21 +14,25 @@ O Augment Agent agora reconhece e utiliza os servidores MCP configurados no arqu
 ## 📋 Servidores MCP Disponíveis
 
 ### 🖥️ Desktop Commander (Docker)
+
 - **Status**: ✅ ATIVO
-- **Comando**: `docker run -i --rm -v /home/vibecoder:/home/vibecoder mcp/desktop-commander:latest`
+- **Comando**: `docker run -i --rm -v "${MCP_WORKSPACE}:/workspace" mcp/desktop-commander:latest`
 - **Funcionalidade**: Operações de sistema e gerenciamento de arquivos
 - **Configuração**: Docker-based para melhor isolamento
 
 ### 🔍 Servidores de Pesquisa
+
 - **Exa**: ✅ Pesquisa web avançada
 - **Tavily**: ✅ Pesquisa com análise profunda
 - **Context7**: ✅ Contexto inteligente da Upstash
 
 ### 🧠 Servidores de Raciocínio
+
 - **Sequential Thinking**: ✅ Decomposição de problemas complexos
 - **Serena**: ✅ Assistente IDE inteligente
 
 ### 🛠️ Servidores de Desenvolvimento
+
 - **Supabase**: ✅ Gerenciamento de banco de dados
 - **Shadcn-UI**: ✅ Componentes UI
 - **Vercel**: ✅ Deploy e hosting
@@ -37,47 +42,57 @@ O Augment Agent agora reconhece e utiliza os servidores MCP configurados no arqu
 
 ### 📁 Configuração do Diretório de Trabalho
 
-**IMPORTANTE**: Configure a variável de ambiente `HOST_HOME` para seu sistema:
+**IMPORTANTE**: Para segurança, crie um diretório de trabalho dedicado e configure a variável de ambiente `MCP_WORKSPACE`:
 
 #### Linux/macOS:
+
 ```bash
+# Crie o diretório de trabalho dedicado
+mkdir -p "$HOME/mcp-workspace"
+
 # Adicione ao seu ~/.bashrc ou ~/.zshrc
-export HOST_HOME="$HOME"
+export MCP_WORKSPACE="$HOME/mcp-workspace"
 
 # Ou para uso específico:
-export HOST_HOME="/home/seuusuario"  # Linux
-export HOST_HOME="/Users/seuusuario" # macOS
+export MCP_WORKSPACE="/home/seuusuario/mcp-workspace"  # Linux
+export MCP_WORKSPACE="/Users/seuusuario/mcp-workspace" # macOS
 ```
 
 #### Windows:
+
 ```cmd
-# PowerShell
-$env:HOST_HOME = $env:USERPROFILE
+# PowerShell - Crie o diretório primeiro
+New-Item -ItemType Directory -Path "$env:USERPROFILE\mcp-workspace" -Force
+$env:MCP_WORKSPACE = "$env:USERPROFILE\mcp-workspace"
 
 # Command Prompt
-set HOST_HOME=%USERPROFILE%
+mkdir %USERPROFILE%\mcp-workspace
+set MCP_WORKSPACE=%USERPROFILE%\mcp-workspace
 
 # Ou caminho específico:
-set HOST_HOME=C:\Users\SeuUsuario
+set MCP_WORKSPACE=C:\Users\SeuUsuario\mcp-workspace
 ```
 
 #### Docker Compose (Recomendado):
+
 ```yaml
 # docker-compose.yml
 services:
   mcp-desktop-commander:
     image: mcp/desktop-commander:latest
     volumes:
-      - ${HOST_HOME}:/home/vibecoder
+      - ${MCP_WORKSPACE}:/workspace
     stdin_open: true
     tty: true
 ```
 
 ### Arquivos de Configuração Sincronizados
+
 1. **`.vscode/.mcp.json`** - Configuração principal (VS Code/Cursor)
 2. **`.ruler/ruler.toml`** - Configuração do sistema de agentes
 
 ### Docker Desktop Commander
+
 ```json
 {
   "desktop-commander": {
@@ -87,7 +102,7 @@ services:
       "-i",
       "--rm",
       "-v",
-      "${HOST_HOME}:/home/vibecoder",
+      "${MCP_WORKSPACE}:/workspace",
       "mcp/desktop-commander:latest"
     ],
     "type": "stdio"
@@ -95,7 +110,7 @@ services:
 }
 ```
 
-> **💡 Nota**: Certifique-se de definir a variável `HOST_HOME` conforme as instruções acima antes de usar esta configuração.
+> **💡 Nota**: Certifique-se de definir a variável `MCP_WORKSPACE` conforme as instruções acima antes de usar esta configuração.
 
 ## 🔐 Variáveis de Ambiente
 
@@ -117,34 +132,35 @@ GITHUB_PERSONAL_ACCESS_TOKEN=your_github_personal_access_token_here
 ## 🚨 Solução de Problemas
 
 ### Volume Mount Issues
+
 Se você encontrar erros de volume mount:
 
-1. **Verifique se HOST_HOME está definido**:
+1. **Verifique se MCP_WORKSPACE está definido**:
    ```bash
    # Linux/macOS/WSL
-   echo $HOST_HOME
-   
+   echo $MCP_WORKSPACE
+
    # Windows PowerShell  
-   echo $env:HOST_HOME
+   echo $env:MCP_WORKSPACE
    ```
 
 2. **Teste o mount manualmente**:
    ```bash
-   docker run --rm -v "${HOST_HOME}:/home/vibecoder" ubuntu:latest ls -la /home/vibecoder
+   docker run --rm -v "${MCP_WORKSPACE}:/workspace" ubuntu:latest ls -la /workspace
    ```
 
-3. **Alternativas se HOST_HOME não funcionar**:
+3. **Alternativas se MCP_WORKSPACE não funcionar**:
    ```json
-   // Use $HOME diretamente (Linux/macOS)
-   "-v", "$HOME:/home/vibecoder"
-   
-   // Use caminho absoluto específico
-   "-v", "/Users/seuusuario:/home/vibecoder"
+   // Use caminho absoluto específico para workspace
+   "-v", "/home/seuusuario/mcp-workspace:/workspace"
+
+   // Use caminho do usuário específico
+   "-v", "/Users/seuusuario/mcp-workspace:/workspace"
    ```
 
 4. **Windows com WSL**: Use o caminho do WSL:
    ```bash
-   export HOST_HOME="/mnt/c/Users/SeuUsuario"
+   export MCP_WORKSPACE="/mnt/c/Users/SeuUsuario/mcp-workspace"
    ```
 
 ## 🎯 Uso pelo Augment Agent
@@ -169,6 +185,7 @@ reasoning_engine: "sequential-thinking (complex problem decomposition)"
 ## ✅ Verificação de Status
 
 Execute o script de verificação:
+
 ```bash
 node scripts/sync-mcp-config.js
 ```

@@ -10,7 +10,7 @@ significant portions of a frontend application.
 
 ## Inputs
 
-- Completed UI/UX Specification (`front-end-spec.md`)
+- Completed UI/UX Specification (`frontend-comprehensive-guide.md`)
 - Completed Frontend Architecture Document (`front-end-architecture`) or a full stack combined
   architecture such as `architecture.md`
 - Main System Architecture Document (`architecture` - for API contracts and tech stack to give

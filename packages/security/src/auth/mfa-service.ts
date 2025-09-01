@@ -206,7 +206,7 @@ function generateHotp(secret: string, counter: number): string {
 
   // Dynamic truncation
   // oxlint-disable-next-line no-bitwise
-  const offset = digest.at(-1) & 0x0F;
+  const offset = (digest.at(-1) ?? 0) & 0x0F;
   // HOTP dynamic truncation algorithm (RFC 4226) requires bitwise operations
   // oxlint-disable-next-line no-bitwise
   const code = ((digest[offset] & HOTP_MASK) << 24)

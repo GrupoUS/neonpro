@@ -6,7 +6,7 @@
  * For aesthetic clinic financial management and business intelligence
  */
 
-import type { NextRequest} from "next/server";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 interface FinancialRequest {
@@ -58,6 +58,24 @@ interface FinancialMetrics {
   };
 }
 
+interface CashFlowAnalysis {
+  current: {
+    inflow: number;
+    outflow: number;
+    balance: number;
+  };
+  projected: {
+    nextMonth: number;
+    nextQuarter: number;
+    nextYear: number;
+  };
+  scenarios: {
+    name: string;
+    probability: number;
+    projectedBalance: number;
+  }[];
+}
+
 interface FinancialResponse {
   success: boolean;
   action?: string;
@@ -91,6 +109,7 @@ interface FinancialResponse {
       alerts: number;
       lastUpdate: string;
     };
+    cashFlow?: CashFlowAnalysis;
   };
   message?: string;
 }
@@ -106,15 +125,54 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get("action");
-    const dateRange = {
-      startDate: searchParams.get("startDate")
-        || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-      endDate: searchParams.get("endDate") || new Date().toISOString(),
-    };
+
+    // Get raw date parameters
+    const startDateParam = searchParams.get("startDate");
+    const endDateParam = searchParams.get("endDate");
+
+    // Validate dates
+    let startDate: string;
+    let endDate: string;
+
+    // Validate startDate
+    if (startDateParam === null) {
+      startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    } else {
+      const parsedStartDate = Date.parse(startDateParam);
+      if (isNaN(parsedStartDate)) {
+        return NextResponse.json(
+          { success: false, message: "Invalid startDate format. Expected ISO string." },
+          { status: 400 },
+        );
+      }
+      startDate = new Date(parsedStartDate).toISOString();
+    }
+
+    // Validate endDate
+    if (endDateParam === null) {
+      endDate = new Date().toISOString();
+    } else {
+      const parsedEndDate = Date.parse(endDateParam);
+      if (isNaN(parsedEndDate)) {
+        return NextResponse.json(
+          { success: false, message: "Invalid endDate format. Expected ISO string." },
+          { status: 400 },
+        );
+      }
+      endDate = new Date(parsedEndDate).toISOString();
+    }
+
+    // Ensure startDate <= endDate
+    if (new Date(startDate) > new Date(endDate)) {
+      return NextResponse.json(
+        { success: false, message: "startDate must be less than or equal to endDate." },
+        { status: 400 },
+      );
+    }
 
     const requestData: FinancialRequest = {
       action: action as FinancialRequest["action"],
-      dateRange,
+      dateRange: { startDate, endDate },
       timeframe: (searchParams.get("timeframe") as FinancialRequest["timeframe"]) || "monthly",
     };
 

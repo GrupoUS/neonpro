@@ -2,17 +2,17 @@
  * Professional Validation Middleware
  * Simple validation for aesthetic clinic professionals
  * Appropriate for SaaS platform serving advanced aesthetic clinics
- * 
+ *
  * For aesthetic clinic professional verification without regulatory overreach
  */
 
-import type { NextRequest} from "next/server";
-import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 interface ProfessionalValidationRequest {
@@ -45,20 +45,20 @@ interface ProfessionalValidationResponse {
  */
 async function validateAestheticProfessional(
   professionalId: string,
-  clinicId?: string
+  clinicId?: string,
 ): Promise<ProfessionalValidationResponse> {
   try {
     // Query professional from database
     let query = supabase
-      .from('professionals')
-      .select('*')
-      .eq('id', professionalId)
-      .eq('status', 'active')
+      .from("professionals")
+      .select("*")
+      .eq("id", professionalId)
+      .eq("status", "active")
       .single();
 
     // Add clinic filter if provided
     if (clinicId) {
-      query = query.eq('clinic_id', clinicId);
+      query = query.eq("clinic_id", clinicId);
     }
 
     const { data: professional, error } = await query;
@@ -66,27 +66,27 @@ async function validateAestheticProfessional(
     if (error || !professional) {
       return {
         valid: false,
-        reason: "Professional not found or inactive"
+        reason: "Professional not found or inactive",
       };
     }
 
     // Check if professional is active
-    if (professional.status !== 'active') {
+    if (professional.status !== "active") {
       return {
         valid: false,
-        reason: "Professional account is inactive"
+        reason: "Professional account is inactive",
       };
     }
 
     return {
       valid: true,
-      professional: professional as AestheticProfessional
+      professional: professional as AestheticProfessional,
     };
   } catch (error) {
     console.error("Professional validation error:", error);
     return {
       valid: false,
-      reason: "Validation service error"
+      reason: "Validation service error",
     };
   }
 }
@@ -98,14 +98,14 @@ async function validateAestheticProfessional(
 export async function validateProcedureAuthorization(
   professionalId: string,
   procedureType: string,
-  clinicId?: string
-): Promise<{ authorized: boolean; reason?: string }> {
+  clinicId?: string,
+): Promise<{ authorized: boolean; reason?: string; }> {
   const validation = await validateAestheticProfessional(professionalId, clinicId);
-  
+
   if (!validation.valid) {
-    return { 
-      authorized: false, 
-      reason: validation.reason 
+    return {
+      authorized: false,
+      reason: validation.reason,
     };
   }
 
@@ -116,16 +116,16 @@ export async function validateProcedureAuthorization(
     "owner": ["all"], // Clinic owners can authorize all procedures
     "manager": ["consultation", "basic_facial", "advanced_facial", "body_treatment"],
     "aesthetician": ["consultation", "basic_facial", "advanced_facial", "body_treatment"],
-    "assistant": ["consultation", "basic_facial"]
+    "assistant": ["consultation", "basic_facial"],
   };
 
   const allowedProcedures = rolePermissions[professional.role] || [];
-  
+
   // Check if procedure is allowed for this role
   if (!allowedProcedures.includes("all") && !allowedProcedures.includes(procedureType)) {
     return {
       authorized: false,
-      reason: `Role '${professional.role}' not authorized for procedure '${procedureType}'`
+      reason: `Role '${professional.role}' not authorized for procedure '${procedureType}'`,
     };
   }
 
@@ -134,7 +134,7 @@ export async function validateProcedureAuthorization(
     "advanced_facial": ["Advanced Facial Treatments", "Dermatology Aesthetics"],
     "chemical_peel": ["Chemical Peels", "Advanced Facial Treatments"],
     "microneedling": ["Microneedling", "Advanced Treatments"],
-    "laser_treatment": ["Laser Treatments", "Advanced Equipment"]
+    "laser_treatment": ["Laser Treatments", "Advanced Equipment"],
   };
 
   const requiredSpecializations = specializationRequirements[procedureType];
@@ -146,7 +146,7 @@ export async function validateProcedureAuthorization(
     if (!hasRequiredSpecialization) {
       return {
         authorized: false,
-        reason: `Specialization required: ${requiredSpecializations.join(" or ")}`
+        reason: `Specialization required: ${requiredSpecializations.join(" or ")}`,
       };
     }
   }
@@ -161,45 +161,61 @@ export async function validateProcedureAuthorization(
 export function withProfessionalValidation(handler: Function) {
   return async (request: NextRequest) => {
     try {
-      const body = await request.json();
-      const { professionalId, clinicId } = body as ProfessionalValidationRequest;
+      // Clone request to avoid consuming original body stream
+      const cloned = request.clone();
+      let body: ProfessionalValidationRequest | null = null;
+
+      try {
+        body = await cloned.json();
+      } catch (error) {
+        // Handle empty body or non-JSON requests gracefully
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Invalid or missing JSON body",
+          },
+          { status: 400 },
+        );
+      }
+
+      const { professionalId, clinicId } = body;
 
       if (!professionalId) {
         return NextResponse.json(
-          { 
-            success: false, 
-            error: "Professional ID required" 
+          {
+            success: false,
+            error: "Professional ID required",
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       // Validate professional
       const validation = await validateAestheticProfessional(professionalId, clinicId);
-      
+
       if (!validation.valid) {
         return NextResponse.json(
-          { 
-            success: false, 
+          {
+            success: false,
             error: "Professional validation failed",
-            details: validation.reason
+            details: validation.reason,
           },
-          { status: 403 }
+          { status: 403 },
         );
       }
 
       // Add professional context to request
       (request as any).professional = validation.professional;
-      
+
       return handler(request);
     } catch (error) {
       console.error("Professional validation middleware error:", error);
       return NextResponse.json(
-        { 
-          success: false, 
-          error: "Professional validation service error"
+        {
+          success: false,
+          error: "Professional validation service error",
         },
-        { status: 503 }
+        { status: 503 },
       );
     }
   };
@@ -211,21 +227,21 @@ export function withProfessionalValidation(handler: Function) {
  */
 export async function validateClinicAccess(
   professionalId: string,
-  clinicId: string
-): Promise<{ hasAccess: boolean; reason?: string }> {
+  clinicId: string,
+): Promise<{ hasAccess: boolean; reason?: string; }> {
   try {
     const { data: access, error } = await supabase
-      .from('clinic_professionals')
-      .select('*')
-      .eq('professional_id', professionalId)
-      .eq('clinic_id', clinicId)
-      .eq('status', 'active')
+      .from("clinic_professionals")
+      .select("*")
+      .eq("professional_id", professionalId)
+      .eq("clinic_id", clinicId)
+      .eq("status", "active")
       .single();
 
     if (error || !access) {
       return {
         hasAccess: false,
-        reason: "Professional does not have access to this clinic"
+        reason: "Professional does not have access to this clinic",
       };
     }
 
@@ -234,7 +250,7 @@ export async function validateClinicAccess(
     console.error("Clinic access validation error:", error);
     return {
       hasAccess: false,
-      reason: "Access validation service error"
+      reason: "Access validation service error",
     };
   }
 }
@@ -244,22 +260,29 @@ export async function validateClinicAccess(
  * Returns list of procedures the professional can perform
  */
 export async function getProfessionalAuthorizations(
-  professionalId: string
+  professionalId: string,
 ): Promise<string[]> {
   const validation = await validateAestheticProfessional(professionalId);
-  
+
   if (!validation.valid || !validation.professional) {
     return [];
   }
 
   const professional = validation.professional;
-  
+
   // Base procedures by role
   const rolePermissions: Record<string, string[]> = {
-    "owner": ["consultation", "basic_facial", "advanced_facial", "body_treatment", "chemical_peel", "microneedling"],
+    "owner": [
+      "consultation",
+      "basic_facial",
+      "advanced_facial",
+      "body_treatment",
+      "chemical_peel",
+      "microneedling",
+    ],
     "manager": ["consultation", "basic_facial", "advanced_facial", "body_treatment"],
     "aesthetician": ["consultation", "basic_facial", "advanced_facial", "body_treatment"],
-    "assistant": ["consultation", "basic_facial"]
+    "assistant": ["consultation", "basic_facial"],
   };
 
   let authorizedProcedures = rolePermissions[professional.role] || [];
@@ -278,8 +301,8 @@ export async function getProfessionalAuthorizations(
   return [...new Set(authorizedProcedures)]; // Remove duplicates
 }
 
-export type { 
-  ProfessionalValidationRequest, 
-  ProfessionalValidationResponse, 
-  AestheticProfessional 
+export type {
+  AestheticProfessional,
+  ProfessionalValidationRequest,
+  ProfessionalValidationResponse,
 };

@@ -71,9 +71,9 @@ CREATE POLICY "professional_clinic_access" ON table_name
 
 ```sql
 CREATE OR REPLACE FUNCTION encrypt_patient_data(data_text text, encryption_key text)
-RETURNS text AS $$
+RETURNS bytea AS $$
 BEGIN
-  RETURN encode(encrypt(data_text::bytea, encryption_key, 'aes'), 'base64');
+  RETURN pgp_sym_encrypt(data_text::text, encryption_key, 'cipher-algo=aes256');
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
@@ -81,10 +81,10 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 #### decrypt_patient_data
 
 ```sql
-CREATE OR REPLACE FUNCTION decrypt_patient_data(encrypted_data text, encryption_key text)
+CREATE OR REPLACE FUNCTION decrypt_patient_data(encrypted_data bytea, encryption_key text)
 RETURNS text AS $$
 BEGIN
-  RETURN convert_from(decrypt(decode(encrypted_data, 'base64'), encryption_key, 'aes'), 'UTF8');
+  RETURN convert_from(pgp_sym_decrypt(encrypted_data, encryption_key), 'UTF8');
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
@@ -223,6 +223,711 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+```
+
+### Healthcare Data Processing Functions
+
+#### encrypt_patient_sensitive_fields
+
+```sql
+CREATE OR REPLACE FUNCTION encrypt_patient_sensitive_fields()
+RETURNS trigger AS $$
+DECLARE
+  encryption_key text := current_setting('app.encryption_key', true);
+BEGIN
+  -- Encrypt CPF if provided and changed
+  IF NEW.cpf IS NOT NULL AND (TG_OP = 'INSERT' OR NEW.cpf != OLD.cpf) THEN
+    NEW.cpf_encrypted = encrypt_patient_data(NEW.cpf, encryption_key);
+    NEW.cpf = NULL; -- Clear plaintext
+  END IF;
+
+  -- Encrypt RG if provided and changed
+  IF NEW.rg IS NOT NULL AND (TG_OP = 'INSERT' OR NEW.rg != OLD.rg) THEN
+    NEW.rg_encrypted = encrypt_patient_data(NEW.rg, encryption_key);
+    NEW.rg = NULL; -- Clear plaintext
+  END IF;
+
+  -- Log PHI access for compliance
+  PERFORM create_audit_log(
+    'ENCRYPT_PHI',
+    TG_TABLE_NAME,
+    NEW.id,
+    NULL,
+    jsonb_build_object('fields_encrypted', array['cpf', 'rg'])
+  );
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+#### validate_patient_consent
+
+```sql
+CREATE OR REPLACE FUNCTION validate_patient_consent()
+RETURNS trigger AS $$
+DECLARE
+  consent_valid boolean := false;
+  processing_purpose text;
+BEGIN
+  -- Determine processing purpose based on table and operation
+  CASE TG_TABLE_NAME
+    WHEN 'medical_records' THEN processing_purpose := 'medical_treatment';
+    WHEN 'ai_chat_messages' THEN processing_purpose := 'ai_assistance';
+    WHEN 'appointment_reminders' THEN processing_purpose := 'communication';
+    ELSE processing_purpose := 'general_processing';
+  END CASE;
+
+  -- Check if patient has valid consent for this purpose
+  SELECT validate_lgpd_consent(NEW.patient_id, processing_purpose) INTO consent_valid;
+
+  IF NOT consent_valid THEN
+    RAISE EXCEPTION 'LGPD_CONSENT_REQUIRED: Patient % has not provided valid consent for %', 
+      NEW.patient_id, processing_purpose
+      USING ERRCODE = 'P0001';
+  END IF;
+
+  -- Log consent validation for audit trail
+  PERFORM create_audit_log(
+    'CONSENT_VALIDATED',
+    TG_TABLE_NAME,
+    NEW.patient_id,
+    NULL,
+    jsonb_build_object(
+      'purpose', processing_purpose,
+      'consent_valid', consent_valid
+    )
+  );
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+#### validate_professional_license
+
+```sql
+CREATE OR REPLACE FUNCTION validate_professional_license()
+RETURNS trigger AS $$
+DECLARE
+  license_valid boolean := false;
+  required_license_type text;
+BEGIN
+  -- Determine required license based on professional type
+  CASE NEW.professional_type
+    WHEN 'doctor' THEN required_license_type := 'CRM';
+    WHEN 'dentist' THEN required_license_type := 'CRO';
+    WHEN 'nurse' THEN required_license_type := 'COREN';
+    WHEN 'aesthetician' THEN required_license_type := 'CERTIFICATION';
+    ELSE required_license_type := 'NONE';
+  END CASE;
+
+  -- Validate license if required
+  IF required_license_type != 'NONE' THEN
+    -- Check license number format and expiration
+    IF NEW.license_number IS NULL OR LENGTH(NEW.license_number) < 4 THEN
+      RAISE EXCEPTION 'INVALID_LICENSE: % license number required for %', 
+        required_license_type, NEW.professional_type
+        USING ERRCODE = 'P0002';
+    END IF;
+
+    -- Check license expiration
+    IF NEW.license_expires_at IS NOT NULL AND NEW.license_expires_at <= NOW() THEN
+      RAISE EXCEPTION 'EXPIRED_LICENSE: % license expired on %', 
+        required_license_type, NEW.license_expires_at
+        USING ERRCODE = 'P0003';
+    END IF;
+
+    license_valid := true;
+  END IF;
+
+  -- Update license status
+  NEW.license_status := CASE 
+    WHEN license_valid THEN 'valid'::license_status
+    ELSE 'invalid'::license_status
+  END;
+
+  -- Log license validation
+  PERFORM create_audit_log(
+    'LICENSE_VALIDATED',
+    TG_TABLE_NAME,
+    NEW.id,
+    NULL,
+    jsonb_build_object(
+      'license_type', required_license_type,
+      'license_valid', license_valid,
+      'professional_type', NEW.professional_type
+    )
+  );
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+### AI Integration Functions
+
+#### sanitize_phi_content
+
+```sql
+CREATE OR REPLACE FUNCTION sanitize_phi_content()
+RETURNS trigger AS $$
+DECLARE
+  phi_detected boolean := false;
+  sanitized_content text;
+BEGIN
+  -- Apply PHI sanitization to content
+  sanitized_content := sanitize_for_ai(NEW.content);
+  
+  -- Check if PHI was detected and removed
+  phi_detected := (sanitized_content != NEW.content);
+  
+  -- Update content with sanitized version
+  NEW.content := sanitized_content;
+  
+  -- Mark message for PHI audit if detected
+  NEW.phi_detected := phi_detected;
+  NEW.sanitized_at := CASE WHEN phi_detected THEN NOW() ELSE NULL END;
+
+  -- Log PHI sanitization event
+  IF phi_detected THEN
+    PERFORM create_audit_log(
+      'PHI_SANITIZED',
+      TG_TABLE_NAME,
+      NEW.id,
+      jsonb_build_object('original_length', LENGTH(NEW.content)),
+      jsonb_build_object(
+        'phi_detected', phi_detected,
+        'sanitized_length', LENGTH(sanitized_content)
+      )
+    );
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+#### update_no_show_prediction
+
+```sql
+CREATE OR REPLACE FUNCTION update_no_show_prediction()
+RETURNS trigger AS $$
+DECLARE
+  risk_score integer;
+  prediction_id uuid;
+BEGIN
+  -- Calculate no-show risk for new/updated appointments
+  IF TG_OP IN ('INSERT', 'UPDATE') AND NEW.status = 'scheduled' THEN
+    risk_score := calculate_no_show_risk(NEW.id);
+    
+    -- Insert or update prediction record
+    INSERT INTO ai_no_show_predictions (
+      id, appointment_id, risk_score, predicted_at,
+      model_version, confidence_level
+    ) VALUES (
+      gen_random_uuid(), NEW.id, risk_score, NOW(),
+      'no_show_v2.1', CASE 
+        WHEN risk_score >= 70 THEN 'high'
+        WHEN risk_score >= 40 THEN 'medium'
+        ELSE 'low'
+      END
+    )
+    ON CONFLICT (appointment_id) DO UPDATE SET
+      risk_score = EXCLUDED.risk_score,
+      predicted_at = EXCLUDED.predicted_at,
+      confidence_level = EXCLUDED.confidence_level
+    RETURNING id INTO prediction_id;
+
+    -- Log prediction update
+    PERFORM create_audit_log(
+      'NO_SHOW_PREDICTION_UPDATED',
+      'ai_no_show_predictions',
+      prediction_id,
+      NULL,
+      jsonb_build_object(
+        'appointment_id', NEW.id,
+        'risk_score', risk_score,
+        'confidence_level', CASE 
+          WHEN risk_score >= 70 THEN 'high'
+          WHEN risk_score >= 40 THEN 'medium'
+          ELSE 'low'
+        END
+      )
+    );
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+### Business Logic Functions
+
+#### prevent_appointment_conflicts
+
+```sql
+CREATE OR REPLACE FUNCTION prevent_appointment_conflicts()
+RETURNS trigger AS $$
+DECLARE
+  conflict_count integer := 0;
+  conflict_appointment_id uuid;
+BEGIN
+  -- Check for professional availability conflicts
+  SELECT COUNT(*), MIN(id) 
+  INTO conflict_count, conflict_appointment_id
+  FROM appointments
+  WHERE professional_id = NEW.professional_id
+    AND id != COALESCE(NEW.id, '00000000-0000-0000-0000-000000000000')
+    AND status NOT IN ('cancelled', 'no_show', 'completed')
+    AND (
+      -- New appointment overlaps with existing
+      (NEW.start_time >= start_time AND NEW.start_time < end_time) OR
+      (NEW.end_time > start_time AND NEW.end_time <= end_time) OR
+      -- New appointment encompasses existing
+      (NEW.start_time <= start_time AND NEW.end_time >= end_time)
+    );
+
+  IF conflict_count > 0 THEN
+    RAISE EXCEPTION 'APPOINTMENT_CONFLICT: Professional % already has appointment % during % - %',
+      NEW.professional_id, conflict_appointment_id, NEW.start_time, NEW.end_time
+      USING ERRCODE = 'P0004';
+  END IF;
+
+  -- Check for room/resource conflicts if specified
+  IF NEW.room_id IS NOT NULL THEN
+    SELECT COUNT(*) INTO conflict_count
+    FROM appointments
+    WHERE room_id = NEW.room_id
+      AND id != COALESCE(NEW.id, '00000000-0000-0000-0000-000000000000')
+      AND status NOT IN ('cancelled', 'no_show', 'completed')
+      AND (
+        (NEW.start_time >= start_time AND NEW.start_time < end_time) OR
+        (NEW.end_time > start_time AND NEW.end_time <= end_time) OR
+        (NEW.start_time <= start_time AND NEW.end_time >= end_time)
+      );
+
+    IF conflict_count > 0 THEN
+      RAISE EXCEPTION 'ROOM_CONFLICT: Room % is already booked during % - %',
+        NEW.room_id, NEW.start_time, NEW.end_time
+        USING ERRCODE = 'P0005';
+    END IF;
+  END IF;
+
+  -- Log successful conflict check
+  PERFORM create_audit_log(
+    'APPOINTMENT_CONFLICT_CHECK',
+    TG_TABLE_NAME,
+    NEW.id,
+    NULL,
+    jsonb_build_object(
+      'professional_id', NEW.professional_id,
+      'room_id', NEW.room_id,
+      'time_slot', jsonb_build_object(
+        'start_time', NEW.start_time,
+        'end_time', NEW.end_time
+      )
+    )
+  );
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+#### check_data_retention_policy
+
+```sql
+CREATE OR REPLACE FUNCTION check_data_retention_policy()
+RETURNS trigger AS $$
+DECLARE
+  retention_years integer := 20; -- CFM requirement: 20-year retention
+  archive_threshold date;
+  should_archive boolean := false;
+BEGIN
+  -- Calculate archive threshold (20 years from last update)
+  archive_threshold := (NEW.updated_at - INTERVAL '20 years')::date;
+  
+  -- Check if record should be archived
+  IF NEW.updated_at::date <= archive_threshold THEN
+    should_archive := true;
+  END IF;
+
+  -- Archive old records if policy requires it
+  IF should_archive AND NEW.archived_at IS NULL THEN
+    -- Mark as archived but preserve for compliance
+    UPDATE medical_records 
+    SET 
+      archived_at = NOW(),
+      archive_reason = 'DATA_RETENTION_POLICY',
+      compliance_retention_until = NOW() + INTERVAL '25 years' -- Extra 5 years for safety
+    WHERE id = NEW.id;
+
+    -- Log archival action
+    PERFORM create_audit_log(
+      'RECORD_ARCHIVED',
+      TG_TABLE_NAME,
+      NEW.id,
+      NULL,
+      jsonb_build_object(
+        'archive_reason', 'DATA_RETENTION_POLICY',
+        'retention_years', retention_years,
+        'compliance_retention_until', NOW() + INTERVAL '25 years'
+      )
+    );
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+### Healthcare Compliance Functions
+
+#### assess_medical_device_risk
+
+```sql
+CREATE OR REPLACE FUNCTION assess_medical_device_risk()
+RETURNS trigger AS $$
+DECLARE
+  risk_level text := 'low';
+  risk_score integer := 0;
+  device_classification text;
+BEGIN
+  -- Assess risk based on medical record content and procedures
+  
+  -- High-risk procedures (Class IIb/III devices)
+  IF NEW.procedure_notes ~* 'laser|injectable|implant|surgery|anesthesia' THEN
+    risk_score := risk_score + 30;
+    risk_level := 'high';
+  END IF;
+
+  -- Medium-risk procedures (Class IIa devices)
+  IF NEW.procedure_notes ~* 'radiofrequency|ultrasound|led|microneedling' THEN
+    risk_score := risk_score + 15;
+    risk_level := CASE WHEN risk_level != 'high' THEN 'medium' ELSE risk_level END;
+  END IF;
+
+  -- Patient risk factors
+  IF NEW.patient_allergies IS NOT NULL OR NEW.patient_conditions IS NOT NULL THEN
+    risk_score := risk_score + 10;
+  END IF;
+
+  -- Update medical record with risk assessment
+  NEW.device_risk_level := risk_level;
+  NEW.device_risk_score := risk_score;
+  NEW.anvisa_compliance_checked := true;
+
+  -- Log ANVISA compliance assessment
+  PERFORM create_audit_log(
+    'ANVISA_RISK_ASSESSMENT',
+    TG_TABLE_NAME,
+    NEW.id,
+    NULL,
+    jsonb_build_object(
+      'risk_level', risk_level,
+      'risk_score', risk_score,
+      'assessment_date', NOW(),
+      'compliance_standard', 'ANVISA_RDC_185_2001'
+    )
+  );
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+#### monitor_ai_software_quality
+
+```sql
+CREATE OR REPLACE FUNCTION monitor_ai_software_quality()
+RETURNS trigger AS $$
+DECLARE
+  quality_score integer := 100;
+  quality_issues text[] := '{}';
+  compliance_level text := 'compliant';
+BEGIN
+  -- Monitor AI response quality for ANVISA Class IIa software compliance
+  
+  -- Check response time (should be reasonable for healthcare)
+  IF NEW.response_time_ms > 5000 THEN
+    quality_score := quality_score - 10;
+    quality_issues := array_append(quality_issues, 'SLOW_RESPONSE_TIME');
+  END IF;
+
+  -- Check for inappropriate medical advice (AI should not diagnose)
+  IF NEW.content ~* 'you have|diagnosis|prescribe|medication|treatment plan' THEN
+    quality_score := quality_score - 30;
+    quality_issues := array_append(quality_issues, 'INAPPROPRIATE_MEDICAL_ADVICE');
+    compliance_level := 'non_compliant';
+  END IF;
+
+  -- Check for proper disclaimers in AI responses
+  IF NEW.role = 'assistant' AND NEW.content !~* 'not a substitute for professional|consult.*healthcare' THEN
+    quality_score := quality_score - 15;
+    quality_issues := array_append(quality_issues, 'MISSING_MEDICAL_DISCLAIMER');
+  END IF;
+
+  -- Update message with quality metrics
+  NEW.quality_score := quality_score;
+  NEW.quality_issues := quality_issues;
+  NEW.anvisa_compliant := (compliance_level = 'compliant');
+
+  -- Alert if quality issues detected
+  IF array_length(quality_issues, 1) > 0 THEN
+    PERFORM create_audit_log(
+      'AI_QUALITY_ALERT',
+      TG_TABLE_NAME,
+      NEW.id,
+      NULL,
+      jsonb_build_object(
+        'quality_score', quality_score,
+        'quality_issues', quality_issues,
+        'compliance_level', compliance_level,
+        'anvisa_standard', 'CLASS_IIA_SOFTWARE'
+      )
+    );
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+#### require_professional_signature
+
+```sql
+CREATE OR REPLACE FUNCTION require_professional_signature()
+RETURNS trigger AS $$
+DECLARE
+  professional_record professionals%ROWTYPE;
+  signature_valid boolean := false;
+BEGIN
+  -- Get professional details for signature validation
+  SELECT * INTO professional_record
+  FROM professionals
+  WHERE id = NEW.professional_id;
+
+  -- Check if professional can create medical records
+  IF professional_record.professional_type NOT IN ('doctor', 'dentist', 'nurse') THEN
+    RAISE EXCEPTION 'UNAUTHORIZED_PROFESSIONAL: Only licensed healthcare professionals can create medical records'
+      USING ERRCODE = 'P0006';
+  END IF;
+
+  -- Validate digital signature requirements (CFM Resolution 1821/2007)
+  IF NEW.digital_signature IS NULL OR LENGTH(NEW.digital_signature) < 10 THEN
+    RAISE EXCEPTION 'MISSING_DIGITAL_SIGNATURE: CFM requires digital signature for all medical records'
+      USING ERRCODE = 'P0007';
+  END IF;
+
+  -- Validate signature timestamp (must be recent)
+  IF NEW.signed_at IS NULL OR NEW.signed_at < NOW() - INTERVAL '5 minutes' THEN
+    RAISE EXCEPTION 'INVALID_SIGNATURE_TIMESTAMP: Digital signature must be current'
+      USING ERRCODE = 'P0008';
+  END IF;
+
+  -- Mark record as properly signed
+  NEW.cfm_compliant := true;
+  NEW.signature_validated_at := NOW();
+
+  -- Log CFM compliance validation
+  PERFORM create_audit_log(
+    'CFM_SIGNATURE_VALIDATED',
+    TG_TABLE_NAME,
+    NEW.id,
+    NULL,
+    jsonb_build_object(
+      'professional_id', NEW.professional_id,
+      'professional_type', professional_record.professional_type,
+      'license_number', professional_record.license_number,
+      'signature_validation', 'CFM_RESOLUTION_1821_2007'
+    )
+  );
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+#### validate_cfm_license
+
+```sql
+CREATE OR REPLACE FUNCTION validate_cfm_license()
+RETURNS trigger AS $$
+DECLARE
+  license_format_valid boolean := false;
+  crm_pattern text := '^\d{4,6}-[A-Z]{2}$'; -- Format: 123456-SP
+  license_api_response jsonb;
+BEGIN
+  -- Only validate CFM licenses for doctors
+  IF NEW.professional_type != 'doctor' THEN
+    RETURN NEW;
+  END IF;
+
+  -- Validate CRM license format
+  IF NEW.license_number ~ crm_pattern THEN
+    license_format_valid := true;
+  ELSE
+    RAISE EXCEPTION 'INVALID_CRM_FORMAT: CRM license must follow format NNNNNN-UF (e.g., 123456-SP)'
+      USING ERRCODE = 'P0009';
+  END IF;
+
+  -- Update CFM validation status
+  NEW.cfm_validated := true;
+  NEW.cfm_validated_at := NOW();
+  NEW.license_status := 'valid'::license_status;
+
+  -- Log CFM license validation
+  PERFORM create_audit_log(
+    'CFM_LICENSE_VALIDATED',
+    TG_TABLE_NAME,
+    NEW.id,
+    NULL,
+    jsonb_build_object(
+      'license_number', NEW.license_number,
+      'license_format_valid', license_format_valid,
+      'validation_standard', 'CFM_REGULATION',
+      'professional_type', NEW.professional_type
+    )
+  );
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+### Security Functions
+
+#### send_security_alert
+
+```sql
+CREATE OR REPLACE FUNCTION send_security_alert()
+RETURNS trigger AS $$
+DECLARE
+  alert_message text;
+  alert_severity text;
+  notification_payload jsonb;
+BEGIN
+  -- Determine alert severity and message
+  IF NEW.risk_score >= 90 THEN
+    alert_severity := 'CRITICAL';
+    alert_message := 'Critical security event detected requiring immediate attention';
+  ELSIF NEW.risk_score >= 80 THEN
+    alert_severity := 'HIGH';
+    alert_message := 'High-risk security event detected';
+  ELSIF NEW.emergency_access = true THEN
+    alert_severity := 'MEDIUM';
+    alert_message := 'Emergency access to patient data granted';
+  ELSE
+    alert_severity := 'LOW';
+    alert_message := 'Security event logged for monitoring';
+  END IF;
+
+  -- Create notification payload
+  notification_payload := jsonb_build_object(
+    'alert_id', gen_random_uuid(),
+    'severity', alert_severity,
+    'message', alert_message,
+    'audit_log_id', NEW.id,
+    'user_id', NEW.user_id,
+    'table_name', NEW.table_name,
+    'action', NEW.action,
+    'risk_score', NEW.risk_score,
+    'timestamp', NEW.timestamp,
+    'ip_address', NEW.ip_address,
+    'requires_immediate_action', (alert_severity IN ('CRITICAL', 'HIGH'))
+  );
+
+  -- Insert into security alerts table for dashboard
+  INSERT INTO security_alerts (
+    id, audit_log_id, severity, message, payload, 
+    requires_action, created_at, resolved_at
+  ) VALUES (
+    (notification_payload->>'alert_id')::uuid,
+    NEW.id,
+    alert_severity,
+    alert_message,
+    notification_payload,
+    (alert_severity IN ('CRITICAL', 'HIGH')),
+    NOW(),
+    NULL
+  );
+
+  -- Send real-time notification (this would integrate with your notification system)
+  PERFORM pg_notify(
+    'security_alerts',
+    notification_payload::text
+  );
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+#### log_emergency_access
+
+```sql
+CREATE OR REPLACE FUNCTION log_emergency_access(patient_uuid uuid)
+RETURNS boolean AS $$
+DECLARE
+  current_user_id uuid;
+  professional_record professionals%ROWTYPE;
+  emergency_justified boolean := false;
+BEGIN
+  -- Get current user
+  current_user_id := auth.uid();
+  
+  IF current_user_id IS NULL THEN
+    RAISE EXCEPTION 'UNAUTHORIZED_ACCESS: Emergency access requires authenticated user'
+      USING ERRCODE = 'P0010';
+  END IF;
+
+  -- Get professional details
+  SELECT * INTO professional_record
+  FROM professionals
+  WHERE user_id = current_user_id
+    AND is_active = true;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'UNAUTHORIZED_EMERGENCY_ACCESS: Only active healthcare professionals can use emergency access'
+      USING ERRCODE = 'P0011';
+  END IF;
+
+  -- Log emergency access event with high risk score
+  PERFORM create_audit_log(
+    'EMERGENCY_DATA_ACCESS',
+    'patients',
+    patient_uuid,
+    NULL,
+    jsonb_build_object(
+      'accessing_professional', professional_record.id,
+      'professional_type', professional_record.professional_type,
+      'license_number', professional_record.license_number,
+      'justification_required', true,
+      'emergency_access', true
+    )
+  );
+
+  -- Create emergency access record requiring justification
+  INSERT INTO emergency_access_logs (
+    id, patient_id, professional_id, access_timestamp,
+    justification_provided, justification_deadline,
+    compliance_status, created_at
+  ) VALUES (
+    gen_random_uuid(),
+    patient_uuid,
+    professional_record.id,
+    NOW(),
+    false, -- Requires subsequent justification
+    NOW() + INTERVAL '24 hours', -- Must justify within 24 hours
+    'PENDING_JUSTIFICATION',
+    NOW()
+  );
+
+  -- Always allow emergency access but log it heavily
+  RETURN true;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
 ## Database Triggers
@@ -472,6 +1177,248 @@ CREATE TYPE payment_method_type AS ENUM (
   'cash',
   'insurance'
 );
+```
+
+## Missing Table Definitions
+
+### AI Integration Tables
+
+#### ai_no_show_predictions
+
+```sql
+CREATE TABLE ai_no_show_predictions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  appointment_id uuid REFERENCES appointments(id) ON DELETE CASCADE UNIQUE,
+  risk_score integer NOT NULL CHECK (risk_score >= 0 AND risk_score <= 100),
+  confidence_level text NOT NULL CHECK (confidence_level IN ('low', 'medium', 'high')),
+  model_version text NOT NULL DEFAULT 'no_show_v2.1',
+  predicted_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  features_used jsonb,
+  created_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  updated_at timestamp with time zone NOT NULL DEFAULT NOW()
+);
+
+-- Indexes for performance
+CREATE INDEX idx_no_show_predictions_risk ON ai_no_show_predictions (risk_score DESC);
+CREATE INDEX idx_no_show_predictions_appointment ON ai_no_show_predictions (appointment_id);
+CREATE INDEX idx_no_show_predictions_predicted_at ON ai_no_show_predictions (predicted_at);
+
+-- RLS Policy
+ALTER TABLE ai_no_show_predictions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "professionals_clinic_predictions" ON ai_no_show_predictions
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM appointments a
+      JOIN professionals p ON p.id = a.professional_id
+      WHERE a.id = ai_no_show_predictions.appointment_id
+      AND p.user_id = auth.uid()
+    )
+  );
+```
+
+### Security Tables
+
+#### security_alerts
+
+```sql
+CREATE TABLE security_alerts (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  audit_log_id uuid REFERENCES audit_logs(id) ON DELETE RESTRICT,
+  severity text NOT NULL CHECK (severity IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
+  message text NOT NULL,
+  payload jsonb NOT NULL,
+  requires_action boolean NOT NULL DEFAULT false,
+  assigned_to uuid REFERENCES professionals(id) ON DELETE SET NULL,
+  resolved_at timestamp with time zone,
+  resolution_notes text,
+  created_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  updated_at timestamp with time zone NOT NULL DEFAULT NOW()
+);
+
+-- Indexes for security monitoring
+CREATE INDEX idx_security_alerts_severity ON security_alerts (severity, created_at DESC);
+CREATE INDEX idx_security_alerts_unresolved ON security_alerts (requires_action, resolved_at) WHERE resolved_at IS NULL;
+CREATE INDEX idx_security_alerts_audit_log ON security_alerts (audit_log_id);
+
+-- RLS Policy - Only security professionals can view
+ALTER TABLE security_alerts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "security_professionals_only" ON security_alerts
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM professionals p
+      WHERE p.user_id = auth.uid()
+      AND p.role IN ('admin', 'security_officer', 'clinic_manager')
+      AND p.is_active = true
+    )
+  );
+```
+
+#### emergency_access_logs
+
+```sql
+CREATE TABLE emergency_access_logs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id uuid REFERENCES patients(id) ON DELETE CASCADE,
+  professional_id uuid REFERENCES professionals(id) ON DELETE RESTRICT,
+  access_timestamp timestamp with time zone NOT NULL DEFAULT NOW(),
+  justification_provided boolean NOT NULL DEFAULT false,
+  justification_text text,
+  justification_deadline timestamp with time zone NOT NULL,
+  compliance_status text NOT NULL DEFAULT 'PENDING_JUSTIFICATION' 
+    CHECK (compliance_status IN ('PENDING_JUSTIFICATION', 'JUSTIFIED', 'VIOLATION', 'EXPIRED')),
+  reviewed_by uuid REFERENCES professionals(id) ON DELETE SET NULL,
+  reviewed_at timestamp with time zone,
+  review_notes text,
+  created_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  updated_at timestamp with time zone NOT NULL DEFAULT NOW()
+);
+
+-- Indexes for compliance monitoring
+CREATE INDEX idx_emergency_access_compliance ON emergency_access_logs (compliance_status, justification_deadline);
+CREATE INDEX idx_emergency_access_patient ON emergency_access_logs (patient_id, access_timestamp DESC);
+CREATE INDEX idx_emergency_access_professional ON emergency_access_logs (professional_id, access_timestamp DESC);
+
+-- RLS Policy - Restricted to compliance officers
+ALTER TABLE emergency_access_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "compliance_officers_only" ON emergency_access_logs
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM professionals p
+      WHERE p.user_id = auth.uid()
+      AND p.role IN ('admin', 'compliance_officer', 'clinic_manager')
+      AND p.is_active = true
+    )
+  );
+
+-- Trigger to update compliance status when deadline expires
+CREATE OR REPLACE FUNCTION update_emergency_access_compliance()
+RETURNS void AS $$
+BEGIN
+  UPDATE emergency_access_logs
+  SET compliance_status = 'EXPIRED',
+      updated_at = NOW()
+  WHERE justification_deadline < NOW()
+    AND compliance_status = 'PENDING_JUSTIFICATION'
+    AND justification_provided = false;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Schedule compliance check (would need to be run periodically)
+CREATE OR REPLACE FUNCTION schedule_emergency_access_compliance_check()
+RETURNS void AS $$
+BEGIN
+  -- This function should be called by a scheduled job
+  PERFORM update_emergency_access_compliance();
+  
+  -- Alert on compliance violations
+  INSERT INTO security_alerts (severity, message, payload, requires_action)
+  SELECT 
+    'HIGH',
+    'Emergency access violation: Justification deadline expired',
+    jsonb_build_object(
+      'emergency_access_id', id,
+      'patient_id', patient_id,
+      'professional_id', professional_id,
+      'access_timestamp', access_timestamp,
+      'deadline_expired', justification_deadline
+    ),
+    true
+  FROM emergency_access_logs
+  WHERE compliance_status = 'EXPIRED'
+    AND created_at > NOW() - INTERVAL '1 hour'; -- Only alert on recent violations
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+### Enhanced Table Updates
+
+#### Update patients table for encryption fields
+
+```sql
+-- Add encryption fields to patients table
+ALTER TABLE patients 
+ADD COLUMN IF NOT EXISTS cpf_encrypted bytea,
+ADD COLUMN IF NOT EXISTS rg_encrypted bytea,
+ADD COLUMN IF NOT EXISTS phi_encrypted_at timestamp with time zone;
+
+-- Add indexes for encrypted fields
+CREATE INDEX IF NOT EXISTS idx_patients_encrypted_phi ON patients (phi_encrypted_at) WHERE phi_encrypted_at IS NOT NULL;
+```
+
+#### Update medical_records table for compliance fields
+
+```sql
+-- Add compliance and risk assessment fields to medical_records
+ALTER TABLE medical_records 
+ADD COLUMN IF NOT EXISTS digital_signature text,
+ADD COLUMN IF NOT EXISTS signed_at timestamp with time zone,
+ADD COLUMN IF NOT EXISTS cfm_compliant boolean DEFAULT false,
+ADD COLUMN IF NOT EXISTS signature_validated_at timestamp with time zone,
+ADD COLUMN IF NOT EXISTS device_risk_level text CHECK (device_risk_level IN ('low', 'medium', 'high')),
+ADD COLUMN IF NOT EXISTS device_risk_score integer CHECK (device_risk_score >= 0 AND device_risk_score <= 100),
+ADD COLUMN IF NOT EXISTS anvisa_compliance_checked boolean DEFAULT false,
+ADD COLUMN IF NOT EXISTS patient_allergies text,
+ADD COLUMN IF NOT EXISTS patient_conditions text,
+ADD COLUMN IF NOT EXISTS procedure_notes text,
+ADD COLUMN IF NOT EXISTS archived_at timestamp with time zone,
+ADD COLUMN IF NOT EXISTS archive_reason text,
+ADD COLUMN IF NOT EXISTS compliance_retention_until timestamp with time zone;
+
+-- Add indexes for compliance queries
+CREATE INDEX IF NOT EXISTS idx_medical_records_cfm_compliance ON medical_records (cfm_compliant, signed_at);
+CREATE INDEX IF NOT EXISTS idx_medical_records_anvisa_risk ON medical_records (device_risk_level, anvisa_compliance_checked);
+CREATE INDEX IF NOT EXISTS idx_medical_records_archived ON medical_records (archived_at) WHERE archived_at IS NOT NULL;
+```
+
+#### Update ai_chat_messages table for quality monitoring
+
+```sql
+-- Add quality monitoring fields to ai_chat_messages
+ALTER TABLE ai_chat_messages 
+ADD COLUMN IF NOT EXISTS quality_score integer CHECK (quality_score >= 0 AND quality_score <= 100),
+ADD COLUMN IF NOT EXISTS quality_issues text[],
+ADD COLUMN IF NOT EXISTS anvisa_compliant boolean DEFAULT true,
+ADD COLUMN IF NOT EXISTS phi_detected boolean DEFAULT false,
+ADD COLUMN IF NOT EXISTS sanitized_at timestamp with time zone,
+ADD COLUMN IF NOT EXISTS response_time_ms integer;
+
+-- Add indexes for AI quality monitoring
+CREATE INDEX IF NOT EXISTS idx_ai_messages_quality ON ai_chat_messages (quality_score, anvisa_compliant);
+CREATE INDEX IF NOT EXISTS idx_ai_messages_phi ON ai_chat_messages (phi_detected, sanitized_at) WHERE phi_detected = true;
+```
+
+#### Update professionals table for license validation
+
+```sql
+-- Add CFM validation fields to professionals
+ALTER TABLE professionals 
+ADD COLUMN IF NOT EXISTS cfm_validated boolean DEFAULT false,
+ADD COLUMN IF NOT EXISTS cfm_validated_at timestamp with time zone,
+ADD COLUMN IF NOT EXISTS license_expires_at timestamp with time zone,
+ADD COLUMN IF NOT EXISTS license_status license_status DEFAULT 'pending';
+
+-- Add indexes for license management
+CREATE INDEX IF NOT EXISTS idx_professionals_license_status ON professionals (license_status, license_expires_at);
+CREATE INDEX IF NOT EXISTS idx_professionals_cfm_validation ON professionals (cfm_validated, cfm_validated_at);
+```
+
+#### Update audit_logs table for security monitoring
+
+```sql
+-- Add security monitoring fields to audit_logs
+ALTER TABLE audit_logs 
+ADD COLUMN IF NOT EXISTS risk_score integer DEFAULT 0 CHECK (risk_score >= 0 AND risk_score <= 100),
+ADD COLUMN IF NOT EXISTS emergency_access boolean DEFAULT false,
+ADD COLUMN IF NOT EXISTS phi_accessed boolean DEFAULT false,
+ADD COLUMN IF NOT EXISTS success boolean DEFAULT true;
+
+-- Add indexes for security monitoring
+CREATE INDEX IF NOT EXISTS idx_audit_logs_risk_score ON audit_logs (risk_score DESC, timestamp DESC) WHERE risk_score > 0;
+CREATE INDEX IF NOT EXISTS idx_audit_logs_emergency ON audit_logs (emergency_access, timestamp DESC) WHERE emergency_access = true;
+CREATE INDEX IF NOT EXISTS idx_audit_logs_phi_access ON audit_logs (phi_accessed, timestamp DESC) WHERE phi_accessed = true;
 ```
 
 ## Supabase Integration

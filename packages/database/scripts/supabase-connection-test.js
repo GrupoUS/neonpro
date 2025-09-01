@@ -1,6 +1,6 @@
 // Teste de conectividade Supabase
-const { createClient } = require("@supabase/supabase-js");
-require("dotenv").config({ path: "./apps/web/.env.local" });
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv"; dotenv.config({ path: "./apps/web/.env.local" });
 
 async function testSupabaseConnection() {
   // Configuração

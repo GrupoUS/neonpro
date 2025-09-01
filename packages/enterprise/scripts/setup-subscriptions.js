@@ -8,8 +8,8 @@
  * - Valida configuração Stripe
  */
 
-const { execSync } = require("node:child_process");
-const fs = require("node:fs");
+import { execSync } from "node:child_process";
+import fs from "node:fs";
 let setupSteps = 0;
 let completedSteps = 0;
 const errors = [];
@@ -54,7 +54,7 @@ async function checkEnvironmentVariables() {
   }
 
   // Carregar variáveis
-  require("dotenv").config({ path: envPath });
+  import dotenv from "dotenv"; dotenv.config({ path: envPath });
 
   const requiredVars = [
     "NEXT_PUBLIC_SUPABASE_URL",
@@ -81,7 +81,7 @@ async function checkEnvironmentVariables() {
 // 3. Verificar conexão com Supabase
 async function checkSupabaseConnection() {
   try {
-    const { createClient } = require("@supabase/supabase-js");
+    import { createClient } from "@supabase/supabase-js";
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY,
@@ -111,7 +111,7 @@ async function applyDatabaseMigration() {
 
   try {
     // Ler conteúdo da migration
-    const { createClient } = require("@supabase/supabase-js");
+    import { createClient } from "@supabase/supabase-js";
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY,

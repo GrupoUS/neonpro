@@ -1,8 +1,8 @@
 async function validateEnterpriseStructure() {
   const results = [];
   try {
-    const fs = require("node:fs");
-    const path = require("node:path");
+    import fs from "node:fs";
+    import path from "node:path";
 
     const cacheServicePath = path.join(
       __dirname,
@@ -27,8 +27,8 @@ async function validateEnterpriseStructure() {
     results.push({ service: "cache", status: "error" });
   }
   try {
-    const fs = require("node:fs");
-    const path = require("node:path");
+    import fs from "node:fs";
+    import path from "node:path";
 
     const analyticsPath = path.join(
       __dirname,
@@ -53,8 +53,8 @@ async function validateEnterpriseStructure() {
     results.push({ service: "analytics", status: "error" });
   }
   try {
-    const fs = require("node:fs");
-    const path = require("node:path");
+    import fs from "node:fs";
+    import path from "node:path";
 
     const securityPath = path.join(
       __dirname,
@@ -79,8 +79,8 @@ async function validateEnterpriseStructure() {
     results.push({ service: "security", status: "error" });
   }
   try {
-    const fs = require("node:fs");
-    const path = require("node:path");
+    import fs from "node:fs";
+    import path from "node:path";
 
     const auditPath = path.join(
       __dirname,
@@ -105,8 +105,8 @@ async function validateEnterpriseStructure() {
     results.push({ service: "audit", status: "error" });
   }
   try {
-    const fs = require("node:fs");
-    const path = require("node:path");
+    import fs from "node:fs";
+    import path from "node:path";
 
     const healthPath = path.join(
       __dirname,
@@ -130,8 +130,8 @@ async function validateEnterpriseStructure() {
     results.push({ service: "health", status: "error" });
   }
   try {
-    const fs = require("node:fs");
-    const path = require("node:path");
+    import fs from "node:fs";
+    import path from "node:path";
 
     const basePath = path.join(__dirname, "../base/EnhancedServiceBase.ts");
     if (fs.existsSync(basePath)) {

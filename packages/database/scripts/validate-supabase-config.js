@@ -4,8 +4,8 @@
  * Project: https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt
  */
 
-const fs = require("node:fs");
-const path = require("node:path");
+import fs from "node:fs";
+import path from "node:path";
 // Target Supabase project configuration
 const TARGET_CONFIG = {
   project_id: "gfkskrkbnawkuppazkpt",

@@ -1,5 +1,5 @@
 // Sincronização Schema Prisma → Supabase
-require("dotenv").config({ path: "./apps/web/.env.local" });
+import dotenv from "dotenv"; dotenv.config({ path: "./apps/web/.env.local" });
 
 async function syncPrismaToSupabase() {
   // Verificar configuração atual  const dbPassword = process.env.SUPABASE_DB_PASSWORD;

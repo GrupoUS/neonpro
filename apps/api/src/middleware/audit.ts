@@ -6,10 +6,10 @@
  * completo de operações sensíveis e logs estruturados.
  */
 
+import { UnifiedAuditService } from "@neonpro/security";
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "../lib/logger";
 import { createRouteRegex, extractResourceIds } from "../lib/regex-constants";
-import { AuditService } from "../services/AuditService";
 
 // Safe regex for request ID validation - only alphanumeric, hyphens, underscores
 const SAFE_REQUEST_ID_REGEX = /^[a-zA-Z0-9\-_]{1,64}$/;

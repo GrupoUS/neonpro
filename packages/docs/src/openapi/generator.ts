@@ -336,7 +336,7 @@ export class OpenAPIGenerator {
     }
 
     // Check for required healthcare tags
-    const healthcareTags = specObj?.tags?.some((tag: any) =>
+    const healthcareTags = specObj?.tags?.some((tag: { name: string }) =>
       tag?.name?.toLowerCase().includes("healthcare")
     );
     if (!healthcareTags) {

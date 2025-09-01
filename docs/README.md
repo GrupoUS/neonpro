@@ -8,19 +8,29 @@
 ### Core Documentation Files
 
 - **[`architecture.md`](./architecture.md)** - Complete system architecture, data models, and technical specifications
-- **[`front-end-spec.md`](./front-end-spec.md)** - UI/UX specifications, user personas, and design guidelines
-- **[`project_rules.md`](./project_rules.md)** - Project rules, tech stack standards, and development guidelines
+- **[`frontend-comprehensive-guide.md`](./frontend-comprehensive-guide.md)** - Frontend development guide with UI/UX specifications and design patterns
+- **[`project.md`](./project.md)** - Project configuration, tech stack standards, and development guidelines
 
 ### Documentation Categories
 
 ```
 docs/
-├── README.md              # This file - documentation overview
-├── architecture.md        # System architecture and technical specs
-├── front-end-spec.md     # UI/UX specifications and design system
-├── project_rules.md      # Development rules and standards
-└── shards/               # Modular architecture components
-    └── architecture/     # Architecture shards and modules
+├── README.md                           # This file - documentation overview
+├── architecture.md                     # System architecture and technical specs
+├── frontend-comprehensive-guide.md     # Frontend development guide and UI/UX specs
+├── project.md                          # Project configuration and development standards
+├── prd.md                             # Product Requirements Document
+├── ttd-flow.md                        # Test-Driven Development workflow
+├── memory.md                          # Memory management guidelines
+├── brief.md                           # Project brief and overview
+├── architecture/                      # Architecture documentation
+│   └── source-tree.md                 # Monorepo structure and organization
+├── database-schema/                   # Database documentation
+│   └── database-schema-consolidated.md # Complete database schema
+├── prd/                               # Product requirements documentation
+├── testing/                           # Testing documentation
+├── qa/                                # Quality assurance documentation
+└── mistakes/                          # Learning and mistake documentation
 ```
 
 ## 🚀 Quick Start Guide
@@ -28,20 +38,21 @@ docs/
 ### For Developers
 
 1. **Read the Architecture**: Start with [`architecture.md`](./architecture.md) to understand the system design
-2. **Review UI/UX Specs**: Check [`front-end-spec.md`](./front-end-spec.md) for design guidelines
-3. **Follow Project Rules**: Use [`project_rules.md`](./project_rules.md) for development standards
+2. **Review Frontend Guide**: Check [`frontend-comprehensive-guide.md`](./frontend-comprehensive-guide.md) for development patterns and UI/UX guidelines
+3. **Follow Project Standards**: Use [`project.md`](./project.md) for project configuration and development standards
 
 ### For Designers
 
-1. **User Personas**: Review personas in [`front-end-spec.md`](./front-end-spec.md)
-2. **Design System**: Follow shadcn/ui + Tailwind CSS guidelines
-3. **Accessibility**: Ensure WCAG 2.1 AA compliance for healthcare applications
+1. **User Personas**: Review personas and design patterns in [`frontend-comprehensive-guide.md`](./frontend-comprehensive-guide.md)
+2. **Design System**: Follow shadcn/ui + Tailwind CSS guidelines with healthcare-specific components
+3. **Accessibility**: Ensure WCAG 2.1 AA+ compliance for healthcare applications
 
 ### For Project Managers
 
-1. **Business Requirements**: Review business logic in [`architecture.md`](./architecture.md)
-2. **Compliance**: Check LGPD/ANVISA/CFM requirements in [`project_rules.md`](./project_rules.md)
-3. **Quality Gates**: Monitor quality metrics defined in project rules
+1. **Business Requirements**: Review business logic and system architecture in [`architecture.md`](./architecture.md)
+2. **Product Requirements**: Check feature specifications and compliance requirements in [`prd.md`](./prd.md)
+3. **Project Configuration**: Review project setup and quality gates in [`project.md`](./project.md)
+4. **Quality Standards**: Monitor development workflow and testing in [`ttd-flow.md`](./ttd-flow.md)
 
 ## 🏥 Healthcare Compliance
 
@@ -102,15 +113,16 @@ docs/
 
 ## 🔧 Configuration
 
-### Trae AI Configuration
+### Development Configuration
 
-The project includes a `.traeconfig` file in the root directory that configures:
+The project follows a systematic development approach configured through:
 
-- **Project Rules**: Automatic loading of `docs/project_rules.md`
-- **Context Engineering**: Intelligent context loading and optimization
+- **Project Configuration**: Comprehensive setup in `docs/project.md`
+- **Context Engineering**: Intelligent context loading and optimization via Archon MCP
 - **Healthcare Compliance**: LGPD, ANVISA, and CFM compliance settings
-- **Quality Gates**: Automated quality checks and standards
+- **Quality Gates**: Automated quality checks and constitutional principles
 - **Performance Targets**: Healthcare-specific performance requirements
+- **Workflow Management**: TDD workflow defined in `docs/ttd-flow.md`
 
 ### Environment Setup
 
@@ -167,8 +179,9 @@ npm run build
 ### Development Team
 
 - **Architecture Questions**: Refer to [`architecture.md`](./architecture.md)
-- **UI/UX Questions**: Refer to [`front-end-spec.md`](./front-end-spec.md)
-- **Development Standards**: Refer to [`project_rules.md`](./project_rules.md)
+- **Frontend Development**: Refer to [`frontend-comprehensive-guide.md`](./frontend-comprehensive-guide.md)
+- **Project Configuration**: Refer to [`project.md`](./project.md)
+- **Database Schema**: Refer to [`database-schema/database-schema-consolidated.md`](./database-schema/database-schema-consolidated.md)
 
 ### Compliance & Legal
 

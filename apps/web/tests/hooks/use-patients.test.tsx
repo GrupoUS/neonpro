@@ -23,7 +23,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { usePatientManagement } from "../../hooks/enhanced/use-patients";
 
 // Mock the API client following TanStack Query best practices
-vi.mock<typeof import("@neonpro/shared/api-client")>(
+vi.mock(
   "@neonpro/shared/api-client",
   () => ({
     apiClient: {

@@ -67,7 +67,7 @@ Object.defineProperty(global, "fetch", {
   configurable: true,
 });
 
-vi.mock<typeof import("../../lib/api/hono-client")>(
+vi.mock(
   "../../lib/api/hono-client",
   () => ({
     honoClient: mockHonoClient,

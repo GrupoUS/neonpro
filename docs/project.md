@@ -397,7 +397,7 @@ neonpro/
 
 - **Product Requirements:** [`docs/prd.md`](prd.md)
 - **Architecture Guide:** [`docs/architecture.md`](architecture.md)
-- **Front-end-spec:** [`docs/front-end-spec.md`](front-end-spec.md)
+- **Frontend Guide:** [`docs/frontend-comprehensive-guide.md`](frontend-comprehensive-guide.md)
 - **Memory Guidelines:** [`docs/memory.md`](memory.md)
 
 ### API Documentation

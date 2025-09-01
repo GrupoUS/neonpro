@@ -9,7 +9,7 @@
  */
 
 import { EnterpriseAnalyticsService } from "../enterprise/analytics/EnterpriseAnalyticsService";
-import { EnterpriseAuditService } from "../enterprise/audit/EnterpriseAuditService";
+import { UnifiedAuditService as EnterpriseAuditService } from '@neonpro/security';;
 import { EnterpriseCacheService } from "../enterprise/cache/EnterpriseCacheService";
 import { EnterpriseSecurityService } from "../enterprise/security/EnterpriseSecurityService";
 
@@ -114,7 +114,7 @@ export class EnterpriseHealthCheckService {
       }),
     );
 
-    this.services.set("audit", new EnterpriseAuditService());
+    this.services.set("audit", new UnifiedAuditService());
 
     // Initialize health history
     for (const serviceName of this.services.keys()) {
@@ -389,7 +389,7 @@ export class EnterpriseHealthCheckService {
    * Test audit service health
    */
   private async testAuditService(
-    auditService: EnterpriseAuditService,
+    auditService: UnifiedAuditService,
     result: HealthCheckResult,
   ): Promise<void> {
     // Test audit logging

@@ -3,8 +3,8 @@
  * Verifies the MCP configuration and connectivity
  */
 
-const fs = require("node:fs");
-const path = require("node:path");
+import fs from "node:fs";
+import path from "node:path";
 
 // Check MCP configuration file
 const mcpConfigPath = path.join(__dirname, "../../../.cursor/mcp.json");

@@ -3,8 +3,8 @@
  * Tests all package integrations with enterprise services
  */
 
-const fs = require("node:fs");
-const path = require("node:path");
+import fs from "node:fs";
+import path from "node:path";
 
 const PACKAGES_DIR = path.join(__dirname, "..", "..", "..");
 const COLORS = {

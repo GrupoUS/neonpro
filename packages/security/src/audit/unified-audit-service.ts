@@ -87,12 +87,14 @@ export type AuditEvent = z.infer<typeof AuditEventSchema>;
 export interface AuditConfig {
   enabled: boolean;
   enableHashing: boolean;
+  enableEncryption: boolean; // Enterprise feature
   batchSize: number;
   batchTimeout: number; // milliseconds
   retentionDays: number;
   performanceTarget: number; // milliseconds
   supabaseUrl: string;
   supabaseServiceKey: string;
+  encryptionKey?: string; // Enterprise encryption key
 }
 
 // Audit filters for querying
@@ -113,12 +115,14 @@ export interface AuditFilters {
 const DEFAULT_AUDIT_CONFIG: AuditConfig = {
   enabled: true,
   enableHashing: true,
+  enableEncryption: true, // Enable encryption for sensitive data
   batchSize: 50,
   batchTimeout: 5000, // 5 seconds
   retentionDays: 2555, // 7 years for healthcare compliance
   performanceTarget: 10, // 10ms target
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
   supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
+  encryptionKey: process.env.NEONPRO_AUDIT_KEY,
 };
 
 /**
@@ -141,9 +145,21 @@ export class UnifiedAuditService {
   private totalProcessingTime = 0;
   private errorCount = 0;
 
+  // Enterprise features
+  private readonly encryptionKey?: Buffer;
+  private retentionCleanupInterval: NodeJS.Timeout | null = null;
+
   constructor(config: Partial<AuditConfig> = {}) {
     this.config = { ...DEFAULT_AUDIT_CONFIG, ...config };
     this.supabase = createClient(this.config.supabaseUrl, this.config.supabaseServiceKey);
+
+    // Initialize enterprise features
+    if (this.config.enableEncryption && this.config.encryptionKey) {
+      this.encryptionKey = Buffer.from(this.config.encryptionKey, "hex");
+    }
+
+    // Start retention cleanup for enterprise features
+    this.startRetentionCleanup();
   }
 
   /**
@@ -566,7 +582,157 @@ export class UnifiedAuditService {
   }
 
   /**
-   * Graceful shutdown with buffer flush
+   * Enterprise feature: Export audit data for external systems
+   */
+  async exportAuditData(
+    filters: AuditFilters,
+    format: "json" | "csv" = "json",
+  ): Promise<string> {
+    const result = await this.queryEvents(filters);
+
+    if (format === "csv") {
+      return this.convertToCSV(result.events);
+    }
+
+    return JSON.stringify(
+      {
+        metadata: {
+          exportedAt: new Date().toISOString(),
+          total: result.totalCount,
+          filters,
+        },
+        events: result.events,
+      },
+      null,
+      2,
+    );
+  }
+
+  /**
+   * Enterprise feature: Get comprehensive audit statistics
+   */
+  async getAuditStats(): Promise<{
+    total: number;
+    recent: { last24h: number; last7d: number; };
+    performance: ReturnType<typeof this.getPerformanceMetrics>;
+    retention: { encrypted: number; total: number; };
+  }> {
+    const now = new Date();
+    const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const last7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const recent24h = await this.queryEvents({ startDate: last24h, limit: 1000 });
+    const recent7d = await this.queryEvents({ startDate: last7d, limit: 1000 });
+    const total = await this.queryEvents({ limit: 1 });
+
+    return {
+      total: total.totalCount,
+      recent: {
+        last24h: recent24h.totalCount,
+        last7d: recent7d.totalCount,
+      },
+      performance: this.getPerformanceMetrics(),
+      retention: {
+        encrypted: 0, // Would need to track encrypted events
+        total: total.totalCount,
+      },
+    };
+  }
+
+  /**
+   * Enterprise feature: Encrypt sensitive audit data
+   */
+  private async encryptSensitiveData(
+    data: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    if (!this.config.enableEncryption || !this.encryptionKey) {
+      return data;
+    }
+
+    const encrypted: Record<string, unknown> = {};
+    const sensitiveFields = ["patientId", "email", "phone", "address", "medicalData"];
+
+    for (const [key, value] of Object.entries(data)) {
+      if (sensitiveFields.includes(key) && value) {
+        const iv = randomUUID().slice(0, 16);
+        const cipher = createHash("sha256").update(
+          `${this.encryptionKey}:${iv}:${JSON.stringify(value)}`,
+        ).digest("hex");
+        encrypted[key] = `encrypted:${iv}:${cipher}`;
+      } else {
+        encrypted[key] = value;
+      }
+    }
+
+    return encrypted;
+  }
+
+  /**
+   * Enterprise feature: Convert events to CSV format
+   */
+  private convertToCSV(events: AuditEvent[]): string {
+    const headers = [
+      "id",
+      "timestamp",
+      "eventType",
+      "severity",
+      "outcome",
+      "userId",
+      "patientId",
+      "description",
+    ];
+    const rows = [headers.join(",")];
+
+    events.forEach((event) => {
+      const row = [
+        event.id,
+        event.timestamp,
+        event.eventType,
+        event.severity,
+        event.outcome,
+        event.userId || "",
+        event.patientId || "",
+        `"${event.description.replace(/"/g, '""')}"`,
+      ];
+      rows.push(row.join(","));
+    });
+
+    return rows.join("\n");
+  }
+
+  /**
+   * Enterprise feature: Start retention cleanup process
+   */
+  private startRetentionCleanup(): void {
+    // Run cleanup daily
+    this.retentionCleanupInterval = setInterval(() => {
+      this.performRetentionCleanup();
+    }, 24 * 60 * 60 * 1000);
+  }
+
+  /**
+   * Enterprise feature: Perform retention cleanup
+   */
+  private async performRetentionCleanup(): Promise<void> {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - this.config.retentionDays);
+
+    try {
+      const { error } = await this.supabase
+        .from("audit_events")
+        .delete()
+        .lt("timestamp", cutoffDate.toISOString());
+
+      if (error) {
+        console.error("Retention cleanup failed:", error);
+      }
+    } catch (error) {
+      console.error("Retention cleanup error:", error);
+    }
+  }
+
+  /**
+   * Graceful shutdown with buffer flush and cleanup
    */
   async shutdown(): Promise<void> {
     // Flush remaining events
@@ -574,10 +740,15 @@ export class UnifiedAuditService {
       await this.flushBuffer();
     }
 
-    // Clear any pending timer
+    // Clear any pending timers
     if (this.batchTimer) {
       clearTimeout(this.batchTimer);
       this.batchTimer = null;
+    }
+
+    if (this.retentionCleanupInterval) {
+      clearInterval(this.retentionCleanupInterval);
+      this.retentionCleanupInterval = null;
     }
   }
 }

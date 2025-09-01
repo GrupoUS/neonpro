@@ -6,7 +6,7 @@
 
 "use client";
 
-import { UnifiedAuditService, AuditEventType, AuditSeverity } from '@neonpro/security';;
+import { AuditEventType, AuditSeverity, UnifiedAuditService } from "@neonpro/security";
 // ✅ Healthcare domain imports
 import { useHealthcarePermissions } from "@neonpro/domain/hooks";
 import { validateHealthcareAccess } from "@neonpro/security/auth";
@@ -110,11 +110,14 @@ export function HealthcareDashboard({
         setSelectedPeriod(period);
 
         // ✅ MANDATORY audit log for healthcare compliance
-        await createAuditLog({
-          action: "VIEW_DASHBOARD_DATA",
-          resourceId: clinicId,
+        await UnifiedAuditService.log({
+          eventType: AuditEventType.DATA_ACCESS,
+          severity: AuditSeverity.LOW,
           userId: professionalId,
-          details: { period, dataType: "healthcare_dashboard" },
+          resourceType: "healthcare_dashboard",
+          resourceId: clinicId,
+          action: "VIEW_DASHBOARD_DATA",
+          additionalData: { period, dataType: "healthcare_dashboard" },
         });
       } catch {
       } finally {
