@@ -1,0 +1,101 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit quality checks..."
+
+# Get list of staged TypeScript/JavaScript files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx|js|jsx)$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+  echo "✅ No TypeScript/JavaScript files to check"
+  exit 0
+fi
+
+echo "📁 Checking $(echo "$STAGED_FILES" | wc -l) staged files..."
+
+# Create temporary directory for checks
+TEMP_DIR=$(mktemp -d)
+trap "rm -rf $TEMP_DIR" EXIT
+
+# 1. TypeScript compilation check on staged files
+echo "🔍 Checking TypeScript compilation..."
+if ! npx tsc --noEmit --skipLibCheck > "$TEMP_DIR/tsc-output.txt" 2>&1; then
+  echo "❌ TypeScript compilation failed:"
+  cat "$TEMP_DIR/tsc-output.txt"
+  echo ""
+  echo "💡 Fix TypeScript errors before committing"
+  exit 1
+fi
+echo "✅ TypeScript compilation passed"
+
+# 2. Run oxlint on staged files
+echo "🔍 Running oxlint on staged files..."
+LINT_ERRORS=0
+for file in $STAGED_FILES; do
+  if [ -f "$file" ]; then
+    if ! npx oxlint "$file" > "$TEMP_DIR/lint-$file.txt" 2>&1; then
+      echo "❌ Linting errors in $file:"
+      cat "$TEMP_DIR/lint-$file.txt"
+      LINT_ERRORS=$((LINT_ERRORS + 1))
+    fi
+  fi
+done
+
+if [ $LINT_ERRORS -gt 0 ]; then
+  echo ""
+  echo "❌ Found linting errors in $LINT_ERRORS file(s)"
+  echo "💡 Fix linting errors or use 'bun run oxlint:fix' to auto-fix"
+  exit 1
+fi
+echo "✅ Linting passed"
+
+# 3. Check for security issues in staged files
+echo "🔍 Checking for security issues..."
+SECURITY_ISSUES=0
+for file in $STAGED_FILES; do
+  if [ -f "$file" ]; then
+    # Check for dangerous patterns
+    if grep -q "javascript:" "$file" 2>/dev/null; then
+      echo "❌ Security issue in $file: javascript: URL detected"
+      SECURITY_ISSUES=$((SECURITY_ISSUES + 1))
+    fi
+    if grep -q "eval(" "$file" 2>/dev/null; then
+      echo "❌ Security issue in $file: eval() usage detected"
+      SECURITY_ISSUES=$((SECURITY_ISSUES + 1))
+    fi
+    if grep -q "innerHTML.*=" "$file" 2>/dev/null; then
+      echo "⚠️ Warning in $file: innerHTML usage detected (potential XSS risk)"
+    fi
+  fi
+done
+
+if [ $SECURITY_ISSUES -gt 0 ]; then
+  echo ""
+  echo "❌ Found $SECURITY_ISSUES security issue(s)"
+  echo "💡 Remove dangerous patterns before committing"
+  exit 1
+fi
+echo "✅ Security check passed"
+
+# 4. Check for explicit 'any' types in staged files
+echo "🔍 Checking for explicit 'any' types..."
+ANY_VIOLATIONS=0
+for file in $STAGED_FILES; do
+  if [ -f "$file" ] && echo "$file" | grep -q '\.tsx\?$'; then
+    ANY_COUNT=$(grep -c ": any" "$file" 2>/dev/null || echo "0")
+    if [ $ANY_COUNT -gt 0 ]; then
+      echo "⚠️ Warning: $file contains $ANY_COUNT explicit 'any' type(s)"
+      ANY_VIOLATIONS=$((ANY_VIOLATIONS + ANY_COUNT))
+    fi
+  fi
+done
+
+if [ $ANY_VIOLATIONS -gt 0 ]; then
+  echo "⚠️ Found $ANY_VIOLATIONS explicit 'any' type(s) in staged files"
+  echo "💡 Consider improving type safety by replacing 'any' with specific types"
+  echo "   This is a warning - commit will proceed"
+fi
+
+echo ""
+echo "✅ All pre-commit quality checks passed!"
+echo "🚀 Ready to commit"
