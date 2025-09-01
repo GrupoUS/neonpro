@@ -3,10 +3,10 @@
 import { useAppointments } from "@/hooks/useAppointments";
 import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
 import { usePatients } from "@/hooks/usePatients";
+import { PatientsList } from "../components/PatientsList";
 import { AppointmentsList } from "./components/dashboard/AppointmentsList";
 import { HeroSection } from "./components/dashboard/HeroSection";
 import { MetricsCards } from "./components/dashboard/MetricsCards";
-import { PatientsList } from "../components/PatientsList";
 
 interface Patient {
   id: string;

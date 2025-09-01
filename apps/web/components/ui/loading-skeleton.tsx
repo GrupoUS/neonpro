@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 interface LoadingSkeletonProps {
   className?: string;
@@ -26,7 +26,7 @@ export function LoadingSkeleton({ className, variant = "default" }: LoadingSkele
             </div>
           </div>
         );
-        
+
       case "excel":
         return (
           <div className="space-y-4 p-4">
@@ -36,13 +36,11 @@ export function LoadingSkeleton({ className, variant = "default" }: LoadingSkele
               <Skeleton className="h-10 w-32" />
             </div>
             <div className="grid grid-cols-5 gap-2">
-              {Array(20).fill(0).map((_, i) => (
-                <Skeleton key={i} className="h-8 w-full" />
-              ))}
+              {Array(20).fill(0).map((_, i) => <Skeleton key={i} className="h-8 w-full" />)}
             </div>
           </div>
         );
-        
+
       case "chart":
         return (
           <div className="space-y-4 p-4">
@@ -63,7 +61,7 @@ export function LoadingSkeleton({ className, variant = "default" }: LoadingSkele
             </div>
           </div>
         );
-        
+
       case "payment":
         return (
           <div className="space-y-4 p-6">
@@ -87,7 +85,7 @@ export function LoadingSkeleton({ className, variant = "default" }: LoadingSkele
             </div>
           </div>
         );
-        
+
       case "animation":
         return (
           <div className="space-y-4 p-4">
@@ -105,7 +103,7 @@ export function LoadingSkeleton({ className, variant = "default" }: LoadingSkele
             </div>
           </div>
         );
-        
+
       default:
         return (
           <div className="space-y-3 p-4">
@@ -135,7 +133,7 @@ export const LoadingMessages = {
   chart: "Carregando visualização...",
   payment: "Carregando sistema de pagamento...",
   animation: "Carregando animações...",
-  default: "Carregando componente..."
+  default: "Carregando componente...",
 } as const;
 
 // Loading component with message
@@ -144,14 +142,14 @@ interface LoadingWithMessageProps extends LoadingSkeletonProps {
   showMessage?: boolean;
 }
 
-export function LoadingWithMessage({ 
-  variant = "default", 
-  message, 
+export function LoadingWithMessage({
+  variant = "default",
+  message,
   showMessage = true,
-  className 
+  className,
 }: LoadingWithMessageProps) {
   const displayMessage = message || LoadingMessages[variant];
-  
+
   return (
     <div className={cn("flex flex-col items-center justify-center min-h-32", className)}>
       <LoadingSkeleton variant={variant} />

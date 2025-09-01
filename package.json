@@ -96,7 +96,6 @@
   },
   "workspaces": [
     "apps/*",
-    "apps/docs",
     "packages/*",
     "packages/typescript-config",
     "tools/*"

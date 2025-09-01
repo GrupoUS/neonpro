@@ -233,7 +233,8 @@ export class ApiRateLimitingService {
   private readonly auditTrail: ApiRateLimitingAudit[] = [];
 
   // Rate limiting tracking
-  private readonly requestCounters: Map<string, { requests: number[]; concurrent: number }> = new Map();
+  private readonly requestCounters: Map<string, { requests: number[]; concurrent: number; }> =
+    new Map();
   private readonly blacklistedIps: Set<string> = new Set();
   private readonly whitelistedIps: Set<string> = new Set();
   private readonly emergencyBypassTokens: Set<string> = new Set();

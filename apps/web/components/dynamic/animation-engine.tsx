@@ -1,7 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { LoadingWithMessage } from "@/components/ui/loading-skeleton";
+import dynamic from "next/dynamic";
 import { Suspense, useCallback, useState } from "react";
 
 // Dynamic imports for Framer Motion
@@ -10,7 +10,7 @@ const MotionDiv = dynamic(
   {
     loading: () => <div className="animate-pulse bg-gray-200 rounded" />,
     ssr: false, // Animations são client-side only
-  }
+  },
 );
 
 const AnimatePresence = dynamic(
@@ -18,7 +18,7 @@ const AnimatePresence = dynamic(
   {
     loading: () => <div className="opacity-0" />,
     ssr: false,
-  }
+  },
 );
 
 const MotionSpring = dynamic(
@@ -26,16 +26,18 @@ const MotionSpring = dynamic(
   {
     loading: () => <div className="animate-pulse" />,
     ssr: false,
-  }
+  },
 );
 
 // Healthcare-specific animated components
 const PatientCardAnimated = dynamic(
   () => import("../PatientCard").then((mod) => mod.PatientCardAnimated),
   {
-    loading: () => <LoadingWithMessage variant="animation" message="Carregando animação do cartão..." />,
+    loading: () => (
+      <LoadingWithMessage variant="animation" message="Carregando animação do cartão..." />
+    ),
     ssr: false,
-  }
+  },
 );
 
 const AppointmentTransitions = dynamic(
@@ -43,15 +45,17 @@ const AppointmentTransitions = dynamic(
   {
     loading: () => <LoadingWithMessage variant="animation" message="Carregando transições..." />,
     ssr: false,
-  }
+  },
 );
 
 const DashboardAnimations = dynamic(
   () => import("../animations/dashboard-animations").then((mod) => mod.DashboardAnimations),
   {
-    loading: () => <LoadingWithMessage variant="animation" message="Carregando animações do dashboard..." />,
+    loading: () => (
+      <LoadingWithMessage variant="animation" message="Carregando animações do dashboard..." />
+    ),
     ssr: false,
-  }
+  },
 );
 
 // Animation configurations para healthcare
@@ -61,19 +65,19 @@ const HealthcareAnimations = {
     duration: 0.6,
     ease: [0.23, 1, 0.32, 1], // easeOutQuint - smooth and calming
   },
-  
+
   // Quick feedback animations
   feedback: {
     duration: 0.2,
     ease: "easeOut",
   },
-  
+
   // Emergency mode - minimal animations
   emergency: {
     duration: 0.1,
     ease: "linear",
   },
-  
+
   // Accessibility-friendly (respects prefers-reduced-motion)
   accessible: {
     duration: 0,
@@ -181,7 +185,7 @@ export function DynamicLoadingAnimation({
 
 // Define proper prop types for healthcare components
 type PatientCardProps = React.ComponentProps<typeof PatientCardAnimated>;
-type AppointmentTransitionsProps = React.ComponentProps<typeof AppointmentTransitions>;  
+type AppointmentTransitionsProps = React.ComponentProps<typeof AppointmentTransitions>;
 type DashboardAnimationsProps = React.ComponentProps<typeof DashboardAnimations>;
 
 // Healthcare-specific animated components exports
@@ -212,14 +216,16 @@ export function DynamicDashboardAnimations(props: DashboardAnimationsProps) {
 // Hook para animation management
 export function useHealthcareAnimations() {
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [animationMode, setAnimationMode] = useState<"normal" | "gentle" | "emergency" | "off">("normal");
+  const [animationMode, setAnimationMode] = useState<"normal" | "gentle" | "emergency" | "off">(
+    "normal",
+  );
 
   // Check user preference for reduced motion
   const checkMotionPreference = useCallback(() => {
     if (typeof window !== "undefined") {
       const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       setReducedMotion(prefersReduced);
-      
+
       if (prefersReduced) {
         setAnimationMode("off");
       }
@@ -227,15 +233,19 @@ export function useHealthcareAnimations() {
   }, []);
 
   // Get animation config based on current mode
-  const getAnimationConfig = useCallback((override?: Partial<typeof HealthcareAnimations.gentle>) => {
-    const base = HealthcareAnimations[animationMode as keyof typeof HealthcareAnimations] || HealthcareAnimations.gentle;
-    
-    if (reducedMotion || animationMode === "off") {
-      return { duration: 0, ease: "linear" };
-    }
-    
-    return { ...base, ...override };
-  }, [animationMode, reducedMotion]);
+  const getAnimationConfig = useCallback(
+    (override?: Partial<typeof HealthcareAnimations.gentle>) => {
+      const base = HealthcareAnimations[animationMode as keyof typeof HealthcareAnimations]
+        || HealthcareAnimations.gentle;
+
+      if (reducedMotion || animationMode === "off") {
+        return { duration: 0, ease: "linear" };
+      }
+
+      return { ...base, ...override };
+    },
+    [animationMode, reducedMotion],
+  );
 
   return {
     reducedMotion,

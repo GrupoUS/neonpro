@@ -3,7 +3,7 @@
 // T2.2 - Internal AI Assistant Panel Example
 export { default as AIAssistantDashboardExample } from "./ai-assistant-dashboard-example";
 
-// T2.1 - External AI Chat Widget Example  
+// T2.1 - External AI Chat Widget Example
 export { default as ExternalChatExample } from "./external-chat-example";
 
 // T2.3 - Engine Anti-No-Show Risk Visualization System Example
@@ -13,9 +13,9 @@ export { default as AntiNoShowDashboardExample } from "./anti-no-show-dashboard-
 export { default as AIFirstPatternsExample } from "./ai-first-patterns-example";
 
 // T4.3 - Advanced Accessibility e Assistive Technology Integration Example
-export { 
+export {
   AccessibilityIntegrationExample,
-  IndividualComponentsDemos 
+  IndividualComponentsDemos,
 } from "../accessibility/accessibility-integration-example";
 
 // General Integration Example

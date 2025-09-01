@@ -4,9 +4,12 @@
  * and healthcare workflow priorities
  */
 
-import { useEffect, useCallback, useRef } from 'react';
-import { useRouter, Router } from 'next/router';
-import { HealthcareDynamicLoader, HealthcarePriority } from '../lazy-loading/healthcare-dynamic-loader';
+import { Router, useRouter } from "next/router";
+import { useCallback, useEffect, useRef } from "react";
+import {
+  HealthcareDynamicLoader,
+  HealthcarePriority,
+} from "../lazy-loading/healthcare-dynamic-loader";
 
 interface PreloaderOptions {
   enableIdleCallback?: boolean;
@@ -23,7 +26,7 @@ interface PreloaderStats {
 
 // Helper to check if we're in a pages router environment
 const isPagesRouter = () => {
-  return typeof Router !== 'undefined' && Router.events;
+  return typeof Router !== "undefined" && Router.events;
 };
 
 export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
@@ -40,7 +43,7 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
     averageLoadTime: 0,
     failedLoads: 0,
   });
-  
+
   const loadTimes = useRef<number[]>([]);
 
   /**
@@ -48,12 +51,14 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
    */
   const trackLoadTime = useCallback((loadTime: number, priority: HealthcarePriority) => {
     loadTimes.current.push(loadTime);
-    statsRef.current.averageLoadTime = 
-      loadTimes.current.reduce((a, b) => a + b, 0) / loadTimes.current.length;
+    statsRef.current.averageLoadTime = loadTimes.current.reduce((a, b) => a + b, 0)
+      / loadTimes.current.length;
 
     // Alert if emergency components load too slowly
     if (priority === HealthcarePriority.EMERGENCY && loadTime > emergencyThreshold) {
-      console.warn(`🚨 Emergency component exceeded threshold: ${loadTime}ms > ${emergencyThreshold}ms`);
+      console.warn(
+        `🚨 Emergency component exceeded threshold: ${loadTime}ms > ${emergencyThreshold}ms`,
+      );
     }
   }, [emergencyThreshold]);
 
@@ -67,14 +72,14 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
     try {
       await HealthcareDynamicLoader.preloadByRoute(currentPath);
       const loadTime = performance.now() - startTime;
-      
+
       // Determine priority based on route
       let priority = HealthcarePriority.STANDARD;
-      if (currentPath.includes('/emergency')) {
+      if (currentPath.includes("/emergency")) {
         priority = HealthcarePriority.EMERGENCY;
-      } else if (currentPath.includes('/urgent')) {
+      } else if (currentPath.includes("/urgent")) {
         priority = HealthcarePriority.URGENT;
-      } else if (currentPath.includes('/admin')) {
+      } else if (currentPath.includes("/admin")) {
         priority = HealthcarePriority.ADMINISTRATIVE;
       }
 
@@ -82,7 +87,7 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
       statsRef.current.preloadedComponents++;
     } catch (error) {
       statsRef.current.failedLoads++;
-      console.error('Healthcare preloading failed:', error);
+      console.error("Healthcare preloading failed:", error);
     }
   }, [router.asPath, trackLoadTime]);
 
@@ -91,22 +96,22 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
    */
   const predictivePreload = useCallback((targetRoute: string) => {
     // Emergency routes get highest priority
-    if (targetRoute.includes('/emergency') || targetRoute.includes('/ambulance')) {
-      HealthcareDynamicLoader.preloadByRoute('/emergency');
+    if (targetRoute.includes("/emergency") || targetRoute.includes("/ambulance")) {
+      HealthcareDynamicLoader.preloadByRoute("/emergency");
       return;
     }
 
     // Patient care routes
-    if (targetRoute.includes('/patient') || targetRoute.includes('/vital')) {
-      HealthcareDynamicLoader.preloadByRoute('/dashboard');
+    if (targetRoute.includes("/patient") || targetRoute.includes("/vital")) {
+      HealthcareDynamicLoader.preloadByRoute("/dashboard");
       return;
     }
 
     // Administrative routes load lazily
-    if (targetRoute.includes('/admin') || targetRoute.includes('/report')) {
+    if (targetRoute.includes("/admin") || targetRoute.includes("/report")) {
       // Only preload if user shows strong intent (e.g., multiple hovers)
       setTimeout(() => {
-        HealthcareDynamicLoader.preloadByRoute('/admin');
+        HealthcareDynamicLoader.preloadByRoute("/admin");
       }, 1000);
     }
   }, []);
@@ -116,20 +121,20 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
    */
   const preloadEmergency = useCallback(async () => {
     const startTime = performance.now();
-    
+
     try {
       await Promise.all([
-        HealthcareDynamicLoader.preloadByRoute('/emergency'),
-        import('@react-pdf/renderer'),
-        import('html2canvas'),
+        HealthcareDynamicLoader.preloadByRoute("/emergency"),
+        import("@react-pdf/renderer"),
+        import("html2canvas"),
       ]);
 
       const loadTime = performance.now() - startTime;
       trackLoadTime(loadTime, HealthcarePriority.EMERGENCY);
-      
+
       console.log(`🚨 Emergency components preloaded in ${loadTime}ms`);
     } catch (error) {
-      console.error('🚨 Emergency preloading failed:', error);
+      console.error("🚨 Emergency preloading failed:", error);
       statsRef.current.failedLoads++;
     }
   }, [trackLoadTime]);
@@ -138,25 +143,25 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
    * Warm up healthcare libraries during idle time
    */
   const warmUpLibraries = useCallback(async () => {
-    if (!enableIdleCallback || !('requestIdleCallback' in window)) {
+    if (!enableIdleCallback || !("requestIdleCallback" in window)) {
       return HealthcareDynamicLoader.warmUpHealthcareLibraries();
     }
 
     return new Promise<void>((resolve) => {
       requestIdleCallback(async () => {
         const startTime = performance.now();
-        
+
         try {
           await HealthcareDynamicLoader.warmUpHealthcareLibraries();
           const loadTime = performance.now() - startTime;
-          
+
           statsRef.current.loadedLibraries++;
           console.log(`📚 Healthcare libraries warmed up in ${loadTime}ms`);
         } catch (error) {
-          console.error('Library warm-up failed:', error);
+          console.error("Library warm-up failed:", error);
           statsRef.current.failedLoads++;
         }
-        
+
         resolve();
       });
     });
@@ -178,7 +183,7 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
   useEffect(() => {
     // Guard to only run in pages router environment
     if (!isPagesRouter()) {
-      console.warn('Healthcare preloader: Router events not available in App Router environment');
+      console.warn("Healthcare preloader: Router events not available in App Router environment");
       return;
     }
 
@@ -186,9 +191,9 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
       predictivePreload(url);
     };
 
-    Router.events.on('routeChangeStart', handleRouteChangeStart);
+    Router.events.on("routeChangeStart", handleRouteChangeStart);
     return () => {
-      Router.events.off('routeChangeStart', handleRouteChangeStart);
+      Router.events.off("routeChangeStart", handleRouteChangeStart);
     };
   }, [predictivePreload]);
 
@@ -205,16 +210,16 @@ export const useHealthcarePreloader = (options: PreloaderOptions = {}) => {
     preloadEmergency,
     predictivePreload,
     warmUpLibraries,
-    
+
     // Performance monitoring
     getStats,
-    
+
     // Utility functions
     trackLoadTime,
-    
+
     // Healthcare-specific preloaders
-    preloadForPatientDashboard: () => HealthcareDynamicLoader.preloadByRoute('/dashboard'),
-    preloadForEmergencyRoom: () => HealthcareDynamicLoader.preloadByRoute('/emergency'),
-    preloadForAdmin: () => HealthcareDynamicLoader.preloadByRoute('/admin'),
+    preloadForPatientDashboard: () => HealthcareDynamicLoader.preloadByRoute("/dashboard"),
+    preloadForEmergencyRoom: () => HealthcareDynamicLoader.preloadByRoute("/emergency"),
+    preloadForAdmin: () => HealthcareDynamicLoader.preloadByRoute("/admin"),
   };
 };

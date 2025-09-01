@@ -229,14 +229,14 @@ const useOfflineSyncManager = () => {
 
   // LRU cache management
   const optimizeCache = useCallback(() => {
-    if (patientCache.length <= syncStats.maxPatients) {return;}
+    if (patientCache.length <= syncStats.maxPatients) return;
 
     // Sort by priority and last accessed
     const sorted = [...patientCache].sort((a, b) => {
       const priorityOrder = { critical: 0, high: 1, normal: 2, low: 3 };
       const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
 
-      if (priorityDiff !== 0) {return priorityDiff;}
+      if (priorityDiff !== 0) return priorityDiff;
 
       return b.lastAccessed.getTime() - a.lastAccessed.getTime(); // Most recent first
     });
@@ -311,7 +311,7 @@ export function OfflineSyncManager({ className, emergencyMode = false }: Offline
   };
 
   const formatBytes = (bytes: number) => {
-    if (bytes === 0) {return "0 B";}
+    if (bytes === 0) return "0 B";
     const k = 1024;
     const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));

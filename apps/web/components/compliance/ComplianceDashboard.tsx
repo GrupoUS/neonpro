@@ -175,8 +175,8 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
   };
 
   const getTrendIcon = (trend: ComplianceTrend) => {
-    if (trend === "up") {return <TrendingUp className="h-4 w-4 text-green-500" />;}
-    if (trend === "down") {return <TrendingDown className="h-4 w-4 text-red-500" />;}
+    if (trend === "up") return <TrendingUp className="h-4 w-4 text-green-500" />;
+    if (trend === "down") return <TrendingDown className="h-4 w-4 text-red-500" />;
     return <Minus className="h-4 w-4 text-gray-400" />;
   };
 

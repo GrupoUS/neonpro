@@ -5,8 +5,20 @@ export { Button } from "./button";
 export { Calendar } from "./calendar";
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./card";
 export { Checkbox } from "./checkbox";
-export { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./dialog";
-export { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
+export {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./dialog";
+export {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./dropdown-menu";
 export { Form } from "./form";
 export { Input } from "./input";
 export { Label } from "./label";
@@ -22,17 +34,17 @@ export { Switch } from "./switch";
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 export { Textarea } from "./textarea";
+export { Toaster } from "./toaster";
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 export { useToast } from "./use-toast";
 export { toast } from "./use-toast";
-export { Toaster } from "./toaster";
 
 // Alert Components
 export { Alert } from "./alert";
 
 // Loading & State Components
-export { LoadingSpinner } from "./loading-spinner";
 export { EmptyState } from "./empty-state";
+export { LoadingSpinner } from "./loading-spinner";
 export { NotFound } from "./not-found";
 
 // Error Handling
@@ -59,166 +71,162 @@ export * from "./icons";
 
 // External AI Chat Widget Components
 export { ConfidenceIndicator } from "./confidence-indicator";
-export { VoiceInput } from "./voice-input";
-export { MessageRenderer, type Message } from "./message-renderer";
 export { ExternalChatWidget } from "./external-chat-widget";
+export { type Message, MessageRenderer } from "./message-renderer";
+export { VoiceInput } from "./voice-input";
 
 // Internal AI Assistant Panel Components (T2.2)
-export { 
+export {
   InternalAssistantPanel,
-  type UserRole,
-  type QuerySuggestion,
+  type InternalAssistantPanelProps,
   type QueryResult,
-  type InternalAssistantPanelProps 
+  type QuerySuggestion,
+  type UserRole,
 } from "./internal-assistant-panel";
 
-export { 
+export {
   PerformanceInsights,
+  type PerformanceInsightsProps,
   type PerformanceMetric,
-  type PerformanceInsightsProps 
 } from "./performance-insights";
 
-export { 
-  ComplianceMonitor,
+export {
   type ComplianceItem,
+  ComplianceMonitor,
+  type ComplianceMonitorProps,
   type DataProcessingActivity,
-  type ComplianceMonitorProps 
 } from "./compliance-monitor";
 
-export { 
-  ResultsVisualization,
-  type DataPoint,
+export {
   type ChartData,
-  type TableData,
+  type DataPoint,
   type QueryResult as VizQueryResult,
-  type ResultsVisualizationProps 
+  ResultsVisualization,
+  type ResultsVisualizationProps,
+  type TableData,
 } from "./results-visualization";
 
 // AI-First Component Patterns (T2.4) - Loading States
-export { 
+export {
   AILoadingStates,
-  PatientAnalysisLoading,
   MedicalQueryLoading,
+  PatientAnalysisLoading,
+  useAILoadingState,
   VoiceProcessingLoading,
-  useAILoadingState
 } from "./ai-loading-states";
 
 // AI-First Component Patterns (T2.4) - Confidence Visualization
-export { 
+export {
+  type ConfidenceCategory,
   ConfidencePatterns,
-  DiagnosisConfidence,
-  TreatmentConfidence,
-  RiskAssessmentConfidence,
-  VoiceRecognitionConfidence,
-  MultiConfidence,
-  ConfidenceTrend,
-  getConfidenceLevel,
   ConfidenceThresholds,
+  ConfidenceTrend,
+  DiagnosisConfidence,
+  getConfidenceLevel,
   HealthcareConfidenceCategories,
-  type ConfidenceCategory
+  MultiConfidence,
+  RiskAssessmentConfidence,
+  TreatmentConfidence,
+  VoiceRecognitionConfidence,
 } from "./confidence-patterns";
 
 // AI-First Component Patterns (T2.4) - Error Boundaries
-export { 
+export {
   AIErrorBoundary,
-  withAIErrorBoundary,
-  classifyAIError,
-  AIErrorType,
   AIErrorClassification,
-  RecoveryActions
+  AIErrorType,
+  classifyAIError,
+  RecoveryActions,
+  withAIErrorBoundary,
 } from "./error-boundary-ai";
 
 // AI-First Component Patterns (T2.4) - Context Switching
-export { 
+export {
+  type ContextState,
   ContextSwitching,
-  useContextSwitching,
   ContextSwitchingProvider,
-  useContextSwitchingContext,
-  QuickContextSwitcher,
   ContextType,
   Department,
-  UserRole,
+  QuickContextSwitcher,
   SwitchReason,
-  type ContextState
+  useContextSwitching,
+  useContextSwitchingContext,
+  UserRole,
 } from "./context-switching";
 
 // AI-First Component Patterns (T2.4) - Voice Interaction
-export { 
-  VoiceInteractionUX,
+export {
   useVoiceInteraction,
-  VoiceMode,
   VoiceContext,
-  VoiceState
+  VoiceInteractionUX,
+  VoiceMode,
+  VoiceState,
 } from "./voice-interaction-ux";
 
 // Advanced Accessibility e Assistive Technology Integration (T4.3)
-export { 
-  SwitchNavigationProvider, 
-  SwitchNavigationSettings, 
+export {
   SwitchNavigationDemo,
-  useSwitchNavigation
+  SwitchNavigationProvider,
+  SwitchNavigationSettings,
+  useSwitchNavigation,
 } from "../accessibility/switch-navigation-controller";
 
-export { 
-  EyeTrackingProvider, 
-  EyeTrackingSettings, 
+export {
   EyeTrackingDemo,
-  useEyeTracking
+  EyeTrackingProvider,
+  EyeTrackingSettings,
+  useEyeTracking,
 } from "../accessibility/eye-tracking-interaction";
 
-export { 
-  TremorFriendlyProvider, 
-  TremorFriendlySettings, 
+export {
   TremorFriendlyDemo,
-  useTremorFriendly
+  TremorFriendlyProvider,
+  TremorFriendlySettings,
+  useTremorFriendly,
 } from "../accessibility/tremor-friendly-controls";
 
-export { 
-  VoiceMedicalProvider, 
-  VoiceMedicalSettings, 
+export {
+  useVoiceMedical,
   VoiceMedicalDemo,
-  useVoiceMedical
+  VoiceMedicalProvider,
+  VoiceMedicalSettings,
 } from "../accessibility/voice-medical-controller";
 
-export { 
-  OneHandedOperationProvider, 
-  OneHandedOperationSettings, 
+export {
   OneHandedOperationDemo,
-  useOneHandedOperation
+  OneHandedOperationProvider,
+  OneHandedOperationSettings,
+  useOneHandedOperation,
 } from "../accessibility/one-handed-operation-mode";
 
-export { 
-  CognitiveAccessibilityProvider, 
-  CognitiveAccessibilitySettings, 
+export {
   CognitiveAccessibilityDemo,
-  useCognitiveAccessibility
+  CognitiveAccessibilityProvider,
+  CognitiveAccessibilitySettings,
+  useCognitiveAccessibility,
 } from "../accessibility/cognitive-accessibility-helper";
 
-export { 
-  VisualAccessibilityProvider, 
-  VisualAccessibilitySettings, 
+export {
+  useVisualAccessibility,
   VisualAccessibilityDemo,
-  useVisualAccessibility
+  VisualAccessibilityProvider,
+  VisualAccessibilitySettings,
 } from "../accessibility/visual-accessibility-enhancer";
 
-export { 
-  AssistiveTechnologyAPIProvider, 
-  AssistiveTechnologyAPISettings, 
+export {
   AssistiveTechnologyAPIDemo,
-  useAssistiveTechnologyAPI
+  AssistiveTechnologyAPIProvider,
+  AssistiveTechnologyAPISettings,
+  useAssistiveTechnologyAPI,
 } from "../accessibility/assistive-technology-api";
 
-export { 
+export {
   AccessibilityIntegrationExample,
-  IndividualComponentsDemos
+  IndividualComponentsDemos,
 } from "../accessibility/accessibility-integration-example";
 
 // Hooks
 export { useChatHandoff } from "../../hooks/use-chat-handoff";
 
 // Types
-export type {
-  HandoffConfig,
-  HandoffState,
-  ChatMessage
-} from "../../hooks/use-chat-handoff";
+export type { ChatMessage, HandoffConfig, HandoffState } from "../../hooks/use-chat-handoff";

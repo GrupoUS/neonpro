@@ -4,7 +4,7 @@
  * Implements Archon ≥9.5/10 quality standards for healthcare applications
  */
 
-import { UnifiedAuditService, AuditEventType, AuditSeverity } from '@neonpro/security';;
+import { AuditEventType, AuditSeverity, UnifiedAuditService } from "@neonpro/security";
 
 // ✅ LGPD Compliance Patterns
 export interface LGPDComplianceCheck {

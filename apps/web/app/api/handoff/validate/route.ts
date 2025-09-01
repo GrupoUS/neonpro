@@ -1,7 +1,7 @@
 /**
  * Handoff Token Validation API
  * T3.3: Cross-Device Continuity e QR Handoff System
- * 
+ *
  * Validates tokens and facilitates secure cross-device session transfer
  * Features:
  * - Token signature verification
@@ -11,18 +11,18 @@
  * - LGPD compliant audit logging
  */
 
-import type { NextRequest} from 'next/server';
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
-import crypto from 'node:crypto';
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import crypto from "node:crypto";
 
 interface DeviceFingerprint {
   userAgent: string;
   screenResolution: string;
   timezone: string;
   language: string;
-  deviceType: 'mobile' | 'tablet' | 'desktop';
+  deviceType: "mobile" | "tablet" | "desktop";
 }
 
 interface TokenValidationRequest {
@@ -32,27 +32,27 @@ interface TokenValidationRequest {
 
 // Reuse encryption service from generate route
 class EncryptionService {
-  private static readonly ALGORITHM = 'aes-256-gcm';
+  private static readonly ALGORITHM = "aes-256-gcm";
 
   private static getEncryptionKey(): Buffer {
     const key = process.env.HANDOFF_ENCRYPTION_KEY;
     if (!key) {
-      throw new Error('HANDOFF_ENCRYPTION_KEY environment variable is required');
+      throw new Error("HANDOFF_ENCRYPTION_KEY environment variable is required");
     }
-    return Buffer.from(key, 'hex');
+    return Buffer.from(key, "hex");
   }
 
   static decrypt(encryptedData: string, ivHex: string, tagHex: string): unknown {
     const key = this.getEncryptionKey();
-    const iv = Buffer.from(ivHex, 'hex');
-    const tag = Buffer.from(tagHex, 'hex');
-    
+    const iv = Buffer.from(ivHex, "hex");
+    const tag = Buffer.from(tagHex, "hex");
+
     const decipher = crypto.createDecipher(this.ALGORITHM, key);
-    decipher.setAAD(Buffer.from('handoff-token'));
+    decipher.setAAD(Buffer.from("handoff-token"));
     decipher.setAuthTag(tag);
 
-    let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
+    let decrypted = decipher.update(encryptedData, "hex", "utf8");
+    decrypted += decipher.final("utf8");
 
     return JSON.parse(decrypted);
   }
@@ -62,22 +62,27 @@ class EncryptionService {
 class TokenValidationService {
   static verifyAndDecodeToken(token: string): unknown {
     try {
-      const tokenData = JSON.parse(Buffer.from(token, 'base64url').toString());
+      const tokenData = JSON.parse(Buffer.from(token, "base64url").toString());
       const { encrypted, iv, tag, expiresAt } = tokenData;
 
       // Quick expiry check
       if (Date.now() > expiresAt) {
-        throw new Error('Token has expired');
+        throw new Error("Token has expired");
       }
 
       // Decrypt and return payload
       return EncryptionService.decrypt(encrypted, iv, tag);
     } catch (error) {
-      throw new Error(`Token validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Token validation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
-  static validateDeviceFingerprint(sourceDevice: DeviceFingerprint, targetDevice: DeviceFingerprint): {
+  static validateDeviceFingerprint(
+    sourceDevice: DeviceFingerprint,
+    targetDevice: DeviceFingerprint,
+  ): {
     isValid: boolean;
     isDifferentDevice: boolean;
     riskScore: number;
@@ -87,40 +92,44 @@ class TokenValidationService {
     let riskScore = 0;
 
     // Check if devices are different (required for security)
-    const isDifferentDevice = sourceDevice.userAgent !== targetDevice.userAgent ||
-                             sourceDevice.screenResolution !== targetDevice.screenResolution;
+    const isDifferentDevice = sourceDevice.userAgent !== targetDevice.userAgent
+      || sourceDevice.screenResolution !== targetDevice.screenResolution;
 
     if (!isDifferentDevice) {
-      reasons.push('Same device fingerprint detected - potential security risk');
+      reasons.push("Same device fingerprint detected - potential security risk");
       riskScore += 50;
     }
 
     // Check for suspicious patterns
     if (sourceDevice.timezone !== targetDevice.timezone) {
       const timezoneRisk = Math.abs(
-        new Date().getTimezoneOffset() - 
-        parseInt(targetDevice.timezone.split('GMT')[1] || '0') * 60
+        new Date().getTimezoneOffset()
+          - parseInt(targetDevice.timezone.split("GMT")[1] || "0") * 60,
       );
       if (timezoneRisk > 720) { // More than 12 hours difference
-        reasons.push('Significant timezone difference detected');
+        reasons.push("Significant timezone difference detected");
         riskScore += 20;
       }
     }
 
     // Device type transition validation
     const validTransitions = [
-      ['mobile', 'tablet'], ['mobile', 'desktop'],
-      ['tablet', 'mobile'], ['tablet', 'desktop'],
-      ['desktop', 'mobile'], ['desktop', 'tablet']
+      ["mobile", "tablet"],
+      ["mobile", "desktop"],
+      ["tablet", "mobile"],
+      ["tablet", "desktop"],
+      ["desktop", "mobile"],
+      ["desktop", "tablet"],
     ];
 
     const transition = [sourceDevice.deviceType, targetDevice.deviceType];
     const isValidTransition = validTransitions.some(
-      validTransition => validTransition[0] === transition[0] && validTransition[1] === transition[1]
+      validTransition =>
+        validTransition[0] === transition[0] && validTransition[1] === transition[1],
     );
 
     if (!isValidTransition && isDifferentDevice) {
-      reasons.push('Unusual device type transition');
+      reasons.push("Unusual device type transition");
       riskScore += 10;
     }
 
@@ -128,7 +137,7 @@ class TokenValidationService {
       isValid: riskScore < 70, // Allow some risk but block high-risk transfers
       isDifferentDevice,
       riskScore,
-      reasons
+      reasons,
     };
   }
 }
@@ -145,8 +154,8 @@ export async function POST(request: NextRequest) {
     // Validate input
     if (!token || !targetDevice) {
       return NextResponse.json(
-        { error: 'Missing required fields: token, targetDevice' },
-        { status: 400 }
+        { error: "Missing required fields: token, targetDevice" },
+        { status: 400 },
       );
     }
 
@@ -156,17 +165,17 @@ export async function POST(request: NextRequest) {
       decodedToken = TokenValidationService.verifyAndDecodeToken(token);
     } catch (error) {
       await supabase
-        .from('handoff_audit_log')
+        .from("handoff_audit_log")
         .insert({
-          action: 'validation_failed',
+          action: "validation_failed",
           target_device_fingerprint: targetDevice,
           success: false,
-          error_message: error instanceof Error ? error.message : 'Unknown error'
+          error_message: error instanceof Error ? error.message : "Unknown error",
         });
 
       return NextResponse.json(
-        { error: 'Invalid or expired token' },
-        { status: 400 }
+        { error: "Invalid or expired token" },
+        { status: 400 },
       );
     }
 
@@ -174,83 +183,83 @@ export async function POST(request: NextRequest) {
 
     // Check if token exists and is still active in database
     const { data: tokenRecord, error: tokenError } = await supabase
-      .from('handoff_tokens')
-      .select('*')
-      .eq('id', sessionId)
-      .eq('is_active', true)
+      .from("handoff_tokens")
+      .select("*")
+      .eq("id", sessionId)
+      .eq("is_active", true)
       .single();
 
     if (tokenError || !tokenRecord) {
       await supabase
-        .from('handoff_audit_log')
+        .from("handoff_audit_log")
         .insert({
           token_id: sessionId,
-          action: 'validation_failed',
+          action: "validation_failed",
           target_device_fingerprint: targetDevice,
           success: false,
-          error_message: 'Token not found or already used'
+          error_message: "Token not found or already used",
         });
 
       return NextResponse.json(
-        { error: 'Token not found or already used' },
-        { status: 400 }
+        { error: "Token not found or already used" },
+        { status: 400 },
       );
     }
 
     // Validate device fingerprints
     const deviceValidation = TokenValidationService.validateDeviceFingerprint(
       sourceDevice,
-      targetDevice
+      targetDevice,
     );
 
     if (!deviceValidation.isValid) {
       await supabase
-        .from('handoff_audit_log')
+        .from("handoff_audit_log")
         .insert({
           token_id: sessionId,
-          action: 'validation_failed',
+          action: "validation_failed",
           source_device_fingerprint: sourceDevice,
           target_device_fingerprint: targetDevice,
           success: false,
-          error_message: `Device validation failed: ${deviceValidation.reasons.join(', ')}`
+          error_message: `Device validation failed: ${deviceValidation.reasons.join(", ")}`,
         });
 
       return NextResponse.json(
-        { 
-          error: 'Device validation failed',
+        {
+          error: "Device validation failed",
           reasons: deviceValidation.reasons,
-          riskScore: deviceValidation.riskScore
+          riskScore: deviceValidation.riskScore,
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     // Mark token as used (one-time use enforcement)
     const { error: updateError } = await supabase
-      .from('handoff_tokens')
-      .update({ 
+      .from("handoff_tokens")
+      .update({
         is_active: false,
-        used_at: new Date().toISOString()
+        used_at: new Date().toISOString(),
       })
-      .eq('id', sessionId);
+      .eq("id", sessionId);
 
     if (updateError) {
-      console.error('Failed to mark token as used:', updateError);
+      console.error("Failed to mark token as used:", updateError);
       return NextResponse.json(
-        { error: 'Token processing failed' },
-        { status: 500 }
+        { error: "Token processing failed" },
+        { status: 500 },
       );
     }
 
     // Create success audit log
     await supabase
-      .from('handoff_audit_log')
+      .from("handoff_audit_log")
       .insert({
         token_id: sessionId,
-        action: 'validated',
+        action: "validated",
         source_device_fingerprint: sourceDevice,
         target_device_fingerprint: targetDevice,
-        success: true
+        success: true,
       });
 
     // Return session data for restoration
@@ -262,30 +271,29 @@ export async function POST(request: NextRequest) {
       transferredAt: new Date().toISOString(),
       sourceDevice: {
         type: sourceDevice.deviceType,
-        fingerprint: sourceDevice
+        fingerprint: sourceDevice,
       },
       targetDevice: {
         type: targetDevice.deviceType,
-        fingerprint: targetDevice
+        fingerprint: targetDevice,
       },
       deviceValidation: {
         riskScore: deviceValidation.riskScore,
-        isDifferentDevice: deviceValidation.isDifferentDevice
+        isDifferentDevice: deviceValidation.isDifferentDevice,
       },
-      message: 'Session transferred successfully'
+      message: "Session transferred successfully",
     };
 
     return NextResponse.json(response);
-
   } catch (error) {
-    console.error('Handoff token validation error:', error);
-    
+    console.error("Handoff token validation error:", error);
+
     return NextResponse.json(
-      { 
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

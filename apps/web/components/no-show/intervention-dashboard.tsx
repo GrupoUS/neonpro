@@ -4,9 +4,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -133,9 +145,9 @@ export function InterventionDashboard({
       const matchesStatus = filterStatus === "all" || action.status === filterStatus;
       const matchesPriority = filterPriority === "all" || action.priority === filterPriority;
       const matchesType = filterType === "all" || action.type === filterType;
-      const matchesSearch = !searchQuery || 
-        action.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        action.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = !searchQuery
+        || action.patientName.toLowerCase().includes(searchQuery.toLowerCase())
+        || action.description.toLowerCase().includes(searchQuery.toLowerCase());
 
       return matchesStatus && matchesPriority && matchesType && matchesSearch;
     });
@@ -146,7 +158,7 @@ export function InterventionDashboard({
     const pending = actions.filter(a => a.status === "pending").length;
     const critical = actions.filter(a => a.priority === "critical").length;
     const automated = actions.filter(a => a.automated).length;
-    const overdue = actions.filter(a => 
+    const overdue = actions.filter(a =>
       a.status === "pending" && new Date(a.dueDate) < new Date()
     ).length;
 
@@ -191,7 +203,7 @@ export function InterventionDashboard({
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -235,12 +247,12 @@ export function InterventionDashboard({
             <CardTitle className="text-xl font-semibold">
               Fila de Intervenções
             </CardTitle>
-            
+
             {/* Ações em massa */}
             {selectedActions.size > 0 && (
               <div className="flex items-center gap-2">
                 <Badge variant="outline">
-                  {selectedActions.size} selecionada{selectedActions.size !== 1 ? 's' : ''}
+                  {selectedActions.size} selecionada{selectedActions.size !== 1 ? "s" : ""}
                 </Badge>
                 <Button
                   size="sm"
@@ -267,7 +279,7 @@ export function InterventionDashboard({
                 />
               </div>
             </div>
-            
+
             <div className="flex gap-2">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
                 <SelectTrigger className="w-32">
@@ -315,10 +327,8 @@ export function InterventionDashboard({
           <div className="px-4 py-3 border-b bg-muted/50">
             <div className="flex items-center gap-3">
               <Checkbox
-                checked={
-                  filteredActions.length > 0 && 
-                  selectedActions.size === filteredActions.length
-                }
+                checked={filteredActions.length > 0
+                  && selectedActions.size === filteredActions.length}
                 onCheckedChange={handleSelectAll}
               />
               <div className="text-sm font-medium">
@@ -335,14 +345,15 @@ export function InterventionDashboard({
               const status = statusConfig[action.status];
               const ActionIcon = actionType.icon;
               const StatusIcon = status.icon;
-              const isOverdue = action.status === "pending" && new Date(action.dueDate) < new Date();
+              const isOverdue = action.status === "pending"
+                && new Date(action.dueDate) < new Date();
 
               return (
                 <div
                   key={action.id}
                   className={cn(
                     "p-4 hover:bg-muted/50 transition-colors",
-                    isOverdue && "bg-red-50 border-l-4 border-red-400"
+                    isOverdue && "bg-red-50 border-l-4 border-red-400",
                   )}
                 >
                   <div className="flex items-start gap-3">
@@ -367,16 +378,16 @@ export function InterventionDashboard({
                               </Badge>
                             )}
                           </div>
-                          
+
                           <div className="text-sm text-muted-foreground">
                             {action.description}
                           </div>
-                          
+
                           <div className="text-xs text-muted-foreground">
                             Consulta: {action.appointmentDate} às {action.appointmentTime}
                             {action.attempts && action.attempts > 0 && (
                               <span className="ml-2">
-                                • {action.attempts} tentativa{action.attempts !== 1 ? 's' : ''}
+                                • {action.attempts} tentativa{action.attempts !== 1 ? "s" : ""}
                               </span>
                             )}
                           </div>
@@ -397,7 +408,7 @@ export function InterventionDashboard({
                               {actionType.label}
                             </Badge>
                           </div>
-                          
+
                           <div className="flex items-center gap-2">
                             <StatusIcon className="h-3 w-3" />
                             <Badge
@@ -411,7 +422,7 @@ export function InterventionDashboard({
                           <div className="text-xs text-muted-foreground">
                             Risco: {action.riskScore}%
                           </div>
-                          
+
                           {isOverdue && (
                             <div className="text-xs text-red-600 font-medium">
                               Atrasada
@@ -431,7 +442,7 @@ export function InterventionDashboard({
                             <Check className="w-3 h-3 mr-1" />
                             Aprovar
                           </Button>
-                          
+
                           <Button
                             size="sm"
                             variant="outline"
@@ -461,7 +472,8 @@ export function InterventionDashboard({
                         </div>
                       )}
 
-                      {(action.status === "scheduled" || action.status === "completed") && action.notes && (
+                      {(action.status === "scheduled" || action.status === "completed")
+                        && action.notes && (
                         <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
                           <strong>Notas:</strong> {action.notes}
                         </div>
@@ -503,12 +515,12 @@ export function InterventionDashboard({
           <DialogHeader>
             <DialogTitle>Nova Intervenção</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="text-sm text-muted-foreground">
               Crie uma nova intervenção manual para prevenir no-shows.
             </div>
-            
+
             {/* Formulário simplificado */}
             <div className="space-y-4">
               <div>
@@ -551,8 +563,8 @@ export function InterventionDashboard({
             </div>
 
             <div className="flex justify-end gap-3">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setIsCreateDialogOpen(false)}
               >
                 Cancelar

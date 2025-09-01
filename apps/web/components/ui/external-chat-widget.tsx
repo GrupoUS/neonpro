@@ -1,30 +1,30 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { 
-  MessageCircle, 
-  X, 
-  Send, 
-  Minimize2, 
+import { cn } from "@/lib/utils";
+import {
   Maximize2,
+  MessageCircle,
+  Minimize2,
   Phone,
   PhoneOff,
+  Send,
   Settings,
   Volume2,
-  VolumeX
+  VolumeX,
+  X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { MessageRenderer } from './message-renderer';
-import type { Message } from './message-renderer';
-import { VoiceInput } from "./voice-input";
 import { ConfidenceIndicator } from "./confidence-indicator";
+import { MessageRenderer } from "./message-renderer";
+import type { Message } from "./message-renderer";
+import { VoiceInput } from "./voice-input";
 
 interface ExternalChatWidgetProps {
   className?: string;
@@ -59,7 +59,7 @@ export function ExternalChatWidget({
   maxMessages = 50,
   autoMinimize = true,
   enableVoice = true,
-  enableHandoff = true
+  enableHandoff = true,
 }: ExternalChatWidgetProps) {
   // Estados principais
   const [isOpen, setIsOpen] = useState(false);
@@ -70,7 +70,7 @@ export function ExternalChatWidget({
   const [isConnected, setIsConnected] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  
+
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -112,11 +112,11 @@ export function ExternalChatWidget({
   }, [soundEnabled]);
 
   // Adicionar mensagem
-  const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
+  const addMessage = useCallback((message: Omit<Message, "id" | "timestamp">) => {
     const newMessage: Message = {
       ...message,
       id: `msg-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     setMessages(prev => {
@@ -128,7 +128,7 @@ export function ExternalChatWidget({
     });
 
     // Incrementar contador de não lidas se widget fechado
-    if (!isOpen && message.role !== 'user') {
+    if (!isOpen && message.role !== "user") {
       setUnreadCount(prev => prev + 1);
       playNotificationSound();
     }
@@ -138,12 +138,12 @@ export function ExternalChatWidget({
 
   // Enviar mensagem
   const handleSendMessage = useCallback(async (content: string) => {
-    if (!content || !content.trim() || isLoading) {return;}
+    if (!content || !content.trim() || isLoading) return;
 
     // Adicionar mensagem do usuário
     addMessage({
       content: content.trim(),
-      role: 'user'
+      role: "user",
     });
 
     setInputValue("");
@@ -152,27 +152,28 @@ export function ExternalChatWidget({
     try {
       if (onMessage) {
         const response = await onMessage(content.trim());
-        
+
         // Adicionar resposta do assistente
         const messageId = addMessage({
           content: response.response,
-          role: 'assistant',
+          role: "assistant",
           confidence: response.confidence,
           metadata: {
             requiresHumanHandoff: response.requiresHumanHandoff,
-            processed: true
-          }
+            processed: true,
+          },
         });
 
         // Verificar se requer atendimento humano
         if (response.requiresHumanHandoff && enableHandoff) {
           setTimeout(() => {
             addMessage({
-              content: "Esta conversa foi encaminhada para atendimento humano. Um agente entrará em contato em breve.",
-              role: 'system',
+              content:
+                "Esta conversa foi encaminhada para atendimento humano. Um agente entrará em contato em breve.",
+              role: "system",
               metadata: {
-                requiresHumanHandoff: true
-              }
+                requiresHumanHandoff: true,
+              },
             });
             onHumanHandoffRequest?.();
           }, 1000);
@@ -181,12 +182,12 @@ export function ExternalChatWidget({
     } catch (error) {
       addMessage({
         content: "Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.",
-        role: 'assistant',
+        role: "assistant",
         confidence: 0,
         metadata: {
           error: true,
-          errorMessage: error instanceof Error ? error.message : "Erro desconhecido"
-        }
+          errorMessage: error instanceof Error ? error.message : "Erro desconhecido",
+        },
       });
     } finally {
       setIsLoading(false);
@@ -205,7 +206,7 @@ export function ExternalChatWidget({
     setIsOpen(true);
     setIsMinimized(false);
     setUnreadCount(0);
-    
+
     // Focus no input após abrir
     setTimeout(() => {
       inputRef.current?.focus();
@@ -231,14 +232,16 @@ export function ExternalChatWidget({
     if (messages.length === 0) {
       addMessage({
         content: "Olá! Sou seu assistente virtual. Como posso ajudá-lo hoje?",
-        role: 'assistant',
-        confidence: 100
+        role: "assistant",
+        confidence: 100,
       });
     }
 
     // Inicializar áudio
-    if (typeof window !== 'undefined') {
-      audioRef.current = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+TiuWkgBSSG0O/AdzEGJ4TB7+OZURE=');
+    if (typeof window !== "undefined") {
+      audioRef.current = new Audio(
+        "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+TiuWkgBSSG0O/AdzEGJ4TB7+OZURE=",
+      );
     }
   }, [messages.length, addMessage]);
 
@@ -254,17 +257,17 @@ export function ExternalChatWidget({
               "h-14 w-14 rounded-full shadow-lg hover:shadow-xl",
               "transition-all duration-200 hover:scale-110",
               "bg-blue-600 hover:bg-blue-700 text-white",
-              isHighContrast && "ring-2 ring-blue-800"
+              isHighContrast && "ring-2 ring-blue-800",
             )}
             aria-label={`Abrir ${title}`}
           >
             <MessageCircle className="h-6 w-6" />
             {unreadCount > 0 && (
-              <Badge 
+              <Badge
                 className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 flex items-center justify-center bg-red-500"
                 aria-label={`${unreadCount} mensagens não lidas`}
               >
-                {unreadCount > 99 ? '99+' : unreadCount}
+                {unreadCount > 99 ? "99+" : unreadCount}
               </Badge>
             )}
           </Button>
@@ -276,11 +279,11 @@ export function ExternalChatWidget({
   // Render do widget aberto
   return (
     <div className={cn(getPositionClasses(), className)}>
-      <Card 
+      <Card
         className={cn(
           "w-80 h-96 sm:w-96 sm:h-[500px] flex flex-col shadow-xl",
           isHighContrast && "ring-2 ring-gray-400",
-          isMinimized && "h-12"
+          isMinimized && "h-12",
         )}
         role="dialog"
         aria-label={title}
@@ -290,13 +293,15 @@ export function ExternalChatWidget({
         <CardHeader className="flex-shrink-0 p-4 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className={cn(
-                "w-2 h-2 rounded-full",
-                isConnected ? "bg-green-500" : "bg-red-500"
-              )} />
+              <div
+                className={cn(
+                  "w-2 h-2 rounded-full",
+                  isConnected ? "bg-green-500" : "bg-red-500",
+                )}
+              />
               <CardTitle className="text-sm font-medium">{title}</CardTitle>
             </div>
-            
+
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
@@ -305,12 +310,11 @@ export function ExternalChatWidget({
                 className="h-8 w-8 p-0"
                 aria-label={soundEnabled ? "Desativar som" : "Ativar som"}
               >
-                {soundEnabled ? 
-                  <Volume2 className="h-4 w-4" /> : 
-                  <VolumeX className="h-4 w-4" />
-                }
+                {soundEnabled
+                  ? <Volume2 className="h-4 w-4" />
+                  : <VolumeX className="h-4 w-4" />}
               </Button>
-              
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -318,12 +322,11 @@ export function ExternalChatWidget({
                 className="h-8 w-8 p-0"
                 aria-label={isMinimized ? "Maximizar" : "Minimizar"}
               >
-                {isMinimized ? 
-                  <Maximize2 className="h-4 w-4" /> : 
-                  <Minimize2 className="h-4 w-4" />
-                }
+                {isMinimized
+                  ? <Maximize2 className="h-4 w-4" />
+                  : <Minimize2 className="h-4 w-4" />}
               </Button>
-              
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -335,15 +338,13 @@ export function ExternalChatWidget({
               </Button>
             </div>
           </div>
-          {!isMinimized && subtitle && (
-            <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
-          )}
+          {!isMinimized && subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
         </CardHeader>
 
         {!isMinimized && (
           <>
             <Separator />
-            
+
             {/* Messages Area */}
             <CardContent className="flex-1 p-0 overflow-hidden">
               <ScrollArea className="h-full px-4 py-2">
@@ -387,14 +388,14 @@ export function ExternalChatWidget({
                   className="mb-2"
                 />
               )}
-              
+
               <div className="flex gap-2">
                 <Input
                   ref={inputRef}
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
+                    if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
                       handleSendMessage(inputValue);
                     }

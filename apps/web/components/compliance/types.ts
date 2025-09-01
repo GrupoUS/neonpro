@@ -4,22 +4,22 @@
  */
 
 // Core compliance frameworks supported
-export type ComplianceFramework = 'WCAG' | 'LGPD' | 'ANVISA' | 'CFM';
+export type ComplianceFramework = "WCAG" | "LGPD" | "ANVISA" | "CFM";
 
 // Compliance score status indicators
-export type ComplianceStatus = 'excellent' | 'good' | 'warning' | 'critical';
+export type ComplianceStatus = "excellent" | "good" | "warning" | "critical";
 
 // Trend indicators for compliance scores
-export type ComplianceTrend = 'up' | 'down' | 'stable';
+export type ComplianceTrend = "up" | "down" | "stable";
 
 // Violation severity levels
-export type ViolationSeverity = 'low' | 'medium' | 'high' | 'critical';
+export type ViolationSeverity = "low" | "medium" | "high" | "critical";
 
 // Violation status tracking
-export type ViolationStatus = 'open' | 'in_progress' | 'resolved';
+export type ViolationStatus = "open" | "in_progress" | "resolved";
 
 // Report generation status
-export type ReportStatus = 'generating' | 'ready' | 'error';
+export type ReportStatus = "generating" | "ready" | "error";
 
 /**
  * Main compliance score interface
@@ -81,7 +81,7 @@ export interface ComplianceReport {
 export interface ComplianceConfig {
   // WCAG Configuration
   wcag?: {
-    level: 'A' | 'AA' | 'AAA';
+    level: "A" | "AA" | "AAA";
     tags?: string[]; // specific axe tags to check
     excludeSelectors?: string[]; // CSS selectors to exclude
     includeRules?: string[]; // specific rules to include
@@ -203,13 +203,13 @@ export interface ComplianceTrendData {
 /**
  * WCAG-specific interfaces
  */
-export interface WCAGViolation extends Omit<ComplianceViolation, 'framework'> {
-  framework: 'WCAG';
-  wcagLevel: 'A' | 'AA' | 'AAA';
+export interface WCAGViolation extends Omit<ComplianceViolation, "framework"> {
+  framework: "WCAG";
+  wcagLevel: "A" | "AA" | "AAA";
   wcagCriterion: string; // e.g., '1.4.3'
   wcagTechnique?: string; // specific technique
   axeRule: string; // axe-core rule ID
-  impact: 'minor' | 'moderate' | 'serious' | 'critical';
+  impact: "minor" | "moderate" | "serious" | "critical";
   nodes: {
     target: string[]; // CSS selector path
     html: string; // problematic HTML
@@ -220,21 +220,21 @@ export interface WCAGViolation extends Omit<ComplianceViolation, 'framework'> {
 /**
  * LGPD-specific interfaces
  */
-export interface LGPDViolation extends Omit<ComplianceViolation, 'framework'> {
-  framework: 'LGPD';
+export interface LGPDViolation extends Omit<ComplianceViolation, "framework"> {
+  framework: "LGPD";
   lgpdArticle: string; // e.g., 'Art. 9'
   dataCategory: string; // type of personal data involved
   processingPurpose?: string;
   legalBasis?: string;
-  consentStatus?: 'missing' | 'invalid' | 'expired' | 'withdrawn';
+  consentStatus?: "missing" | "invalid" | "expired" | "withdrawn";
   retentionPeriod?: string;
 }
 
 /**
  * ANVISA-specific interfaces
  */
-export interface ANVISAViolation extends Omit<ComplianceViolation, 'framework'> {
-  framework: 'ANVISA';
+export interface ANVISAViolation extends Omit<ComplianceViolation, "framework"> {
+  framework: "ANVISA";
   regulation: string; // e.g., 'RDC 11/2014'
   requirement: string; // specific requirement
   medicalRecordId?: string;
@@ -247,8 +247,8 @@ export interface ANVISAViolation extends Omit<ComplianceViolation, 'framework'> 
 /**
  * CFM-specific interfaces
  */
-export interface CFMViolation extends Omit<ComplianceViolation, 'framework'> {
-  framework: 'CFM';
+export interface CFMViolation extends Omit<ComplianceViolation, "framework"> {
+  framework: "CFM";
   ethicsCode: string; // e.g., 'CEM Art. 73'
   professionalDuty: string;
   patientRights?: string[];
@@ -316,7 +316,7 @@ export interface ComplianceAPIResponse<T = unknown> {
  * Webhook payload interfaces
  */
 export interface ComplianceWebhookPayload {
-  event: 'violation_detected' | 'score_changed' | 'check_completed';
+  event: "violation_detected" | "score_changed" | "check_completed";
   framework: ComplianceFramework;
   data: ComplianceViolation | ComplianceScore | ComplianceCheckResult;
   timestamp: number;
@@ -326,7 +326,11 @@ export interface ComplianceWebhookPayload {
 /**
  * Export utility types
  */
-export type ComplianceViolationUnion = WCAGViolation | LGPDViolation | ANVISAViolation | CFMViolation;
+export type ComplianceViolationUnion =
+  | WCAGViolation
+  | LGPDViolation
+  | ANVISAViolation
+  | CFMViolation;
 
 export type ComplianceMetrics = {
   [K in ComplianceFramework]: {
@@ -341,19 +345,19 @@ export type ComplianceMetrics = {
  * Type guards
  */
 export const isWCAGViolation = (violation: ComplianceViolation): violation is WCAGViolation => {
-  return violation.framework === 'WCAG';
+  return violation.framework === "WCAG";
 };
 
 export const isLGPDViolation = (violation: ComplianceViolation): violation is LGPDViolation => {
-  return violation.framework === 'LGPD';
+  return violation.framework === "LGPD";
 };
 
 export const isANVISAViolation = (violation: ComplianceViolation): violation is ANVISAViolation => {
-  return violation.framework === 'ANVISA';
+  return violation.framework === "ANVISA";
 };
 
 export const isCFMViolation = (violation: ComplianceViolation): violation is CFMViolation => {
-  return violation.framework === 'CFM';
+  return violation.framework === "CFM";
 };
 
 /**
@@ -361,7 +365,7 @@ export const isCFMViolation = (violation: ComplianceViolation): violation is CFM
  */
 export interface SystemHealthCheck {
   service: string;
-  status: 'healthy' | 'warning' | 'error';
+  status: "healthy" | "warning" | "error";
   lastCheck: Date;
   metrics?: {
     connectivity?: boolean;
@@ -373,10 +377,10 @@ export interface SystemHealthCheck {
 }
 
 export interface IntegrationValidation {
-  status: 'healthy' | 'warning' | 'error';
+  status: "healthy" | "warning" | "error";
   validations: {
     component: string;
-    status: 'healthy' | 'warning' | 'error';
+    status: "healthy" | "warning" | "error";
     checks?: unknown;
     error?: string;
   }[];

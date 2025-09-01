@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
-import { useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { useCallback, useState } from "react";
 
 // Base props shared by both fill and sized variants
 interface BaseOptimizedImageProps {
@@ -24,18 +24,20 @@ interface BaseOptimizedImageProps {
 }
 
 // Discriminated union to prevent width/height with fill=true
-type OptimizedImageProps = BaseOptimizedImageProps & (
-  | {
+type OptimizedImageProps =
+  & BaseOptimizedImageProps
+  & (
+    | {
       fill: true;
       width?: never;
       height?: never;
     }
-  | {
+    | {
       fill?: false;
       width?: number;
       height?: number;
     }
-);
+  );
 
 // Healthcare image configurations
 const HealthcareImageConfig = {
@@ -84,11 +86,11 @@ function generateBlurPlaceholder(width: number, height: number): string {
       <rect width="100%" height="100%" fill="url(#grad)" />
     </svg>
   `;
-  
+
   // Browser-safe base64 encoding with Unicode support
-  const base64 = typeof window !== 'undefined' 
+  const base64 = typeof window !== "undefined"
     ? window.btoa(unescape(encodeURIComponent(svg)))
-    : '';
+    : "";
   return `data:image/svg+xml;base64,${base64}`;
 }
 
@@ -114,15 +116,15 @@ export function OptimizedImage({
 }: OptimizedImageProps) {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Get healthcare-specific config
   const config = HealthcareImageConfig[medicalImageType];
-  
+
   // Determine if image should be loaded eagerly
   const shouldLoadEager = useCallback(() => {
-    if (loadingStrategy === "eager") {return true;}
-    if (loadingStrategy === "lazy") {return false;}
-    
+    if (loadingStrategy === "eager") return true;
+    if (loadingStrategy === "lazy") return false;
+
     // Auto strategy: load eagerly for critical medical images
     return medicalImageType === "xray" || medicalImageType === "scan" || priority;
   }, [loadingStrategy, medicalImageType, priority]);
@@ -141,9 +143,9 @@ export function OptimizedImage({
   }, [onError]);
 
   // Generate blur placeholder if not provided
-  const finalBlurDataURL = blurDataURL || 
-    (placeholder === "blur" && width && height 
-      ? generateBlurPlaceholder(width, height) 
+  const finalBlurDataURL = blurDataURL
+    || (placeholder === "blur" && width && height
+      ? generateBlurPlaceholder(width, height)
       : undefined);
 
   // Use fallback image if error occurred
@@ -151,10 +153,10 @@ export function OptimizedImage({
 
   // Loading skeleton
   const LoadingSkeleton = () => (
-    <div 
+    <div
       className={cn(
         "animate-pulse bg-gradient-to-br from-gray-200 to-gray-300 rounded",
-        className
+        className,
       )}
       style={{ width, height }}
     />
@@ -163,25 +165,25 @@ export function OptimizedImage({
   // Error fallback
   if (imageError && !fallbackSrc) {
     return (
-      <div 
+      <div
         className={cn(
           "flex items-center justify-center bg-gray-100 text-gray-400 rounded border-2 border-dashed border-gray-300",
-          className
+          className,
         )}
         style={{ width, height }}
       >
         <div className="text-center p-4">
-          <svg 
-            className="w-8 h-8 mx-auto mb-2" 
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            className="w-8 h-8 mx-auto mb-2"
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
           <p className="text-sm">Imagem não disponível</p>
@@ -194,7 +196,7 @@ export function OptimizedImage({
     <div className={cn("relative", className)}>
       {/* Loading skeleton */}
       {isLoading && showSkeleton && <LoadingSkeleton />}
-      
+
       {/* Optimized Image */}
       <Image
         src={finalSrc}
@@ -211,7 +213,7 @@ export function OptimizedImage({
           "transition-opacity duration-300",
           isLoading ? "opacity-0" : "opacity-100",
           imageError && fallbackSrc ? "opacity-75" : "",
-          className
+          className,
         )}
         onLoad={handleLoadingComplete}
         onError={handleError}
@@ -220,7 +222,7 @@ export function OptimizedImage({
         decoding="async"
         {...props}
       />
-      
+
       {/* Medical image overlay indicators */}
       {(medicalImageType === "xray" || medicalImageType === "scan") && (
         <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">

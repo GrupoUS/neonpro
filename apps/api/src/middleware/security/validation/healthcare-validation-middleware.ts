@@ -281,7 +281,10 @@ export class HealthcareInputValidator {
   /**
    * Validate data against Zod schema
    */
-  private async validateSchema(schema: z.ZodSchema<unknown>, data: unknown): Promise<ValidationResult> {
+  private async validateSchema(
+    schema: z.ZodSchema<unknown>,
+    data: unknown,
+  ): Promise<ValidationResult> {
     try {
       const validatedData = await schema.parseAsync(data);
       return {

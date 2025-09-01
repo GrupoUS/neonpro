@@ -465,7 +465,9 @@ export class MultiLayerCacheManager {
     averageResponseTime: number;
   }> {
     const supabaseHealth = (await (
-      this.supabase as SupabaseCacheLayer & { getHealthMetrics?: () => Promise<{ healthcareEntries: number }> }
+      this.supabase as SupabaseCacheLayer & {
+        getHealthMetrics?: () => Promise<{ healthcareEntries: number; }>;
+      }
     ).getHealthMetrics?.()) || {
       healthcareEntries: 0,
     };

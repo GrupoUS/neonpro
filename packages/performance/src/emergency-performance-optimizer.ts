@@ -196,8 +196,8 @@ export class EmergencyPerformanceOptimizer {
     const basePriority = { critical: 100, urgent: 75, high: 50, normal: 25 }[request.priority];
     priorityScore += basePriority;
 
-    if (request.context.is_emergency) {priorityScore += 50;}
-    if (request.payload.severity_score && request.payload.severity_score >= 8) {priorityScore += 40;}
+    if (request.context.is_emergency) priorityScore += 50;
+    if (request.payload.severity_score && request.payload.severity_score >= 8) priorityScore += 40;
 
     // Critical symptoms check
     const criticalSymptoms = [
@@ -213,12 +213,12 @@ export class EmergencyPerformanceOptimizer {
       const hasCriticalSymptoms = request.payload.symptoms.some(symptom =>
         criticalSymptoms.some(critical => symptom.toLowerCase().includes(critical))
       );
-      if (hasCriticalSymptoms) {priorityScore += 30;}
+      if (hasCriticalSymptoms) priorityScore += 30;
     }
 
-    if (priorityScore >= 130) {return "critical";}
-    if (priorityScore >= 100) {return "urgent";}
-    if (priorityScore >= 70) {return "high";}
+    if (priorityScore >= 130) return "critical";
+    if (priorityScore >= 100) return "urgent";
+    if (priorityScore >= 70) return "high";
     return "normal";
   }
 
@@ -448,7 +448,7 @@ export class EmergencyPerformanceOptimizer {
       node.status === "active" && node.current_load < 0.8
     );
 
-    if (activeNodes.length === 0) {return null;}
+    if (activeNodes.length === 0) return null;
 
     return activeNodes.reduce((best, current) =>
       current.response_times.p95 < best.response_times.p95 ? current : best

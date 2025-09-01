@@ -18,17 +18,17 @@ export {
 export { MobileBottomNavigation, MobileNavigation } from "./MobileNavigation";
 
 // Emergency Interface Components - T3.2 Mobile Emergency Interface <100ms Response
-export { default as EmergencyPatientLookup } from './EmergencyPatientLookup';
-export { default as CriticalInfoDisplay } from './CriticalInfoDisplay'; 
-export { default as OfflineSyncManager } from './OfflineSyncManager';
-export { default as EmergencyModeInterface } from './EmergencyModeInterface';
+export { default as CriticalInfoDisplay } from "./CriticalInfoDisplay";
+export { default as EmergencyModeInterface } from "./EmergencyModeInterface";
+export { default as EmergencyPatientLookup } from "./EmergencyPatientLookup";
+export { default as OfflineSyncManager } from "./OfflineSyncManager";
 
 // Cross-Device Continuity Components - T3.3 Cross-Device Continuity e QR Handoff System
-export { default as QRHandoffGenerator } from './QRHandoffGenerator';
-export { default as SessionSyncManager } from './SessionSyncManager';
-export { default as ConflictResolver } from './ConflictResolver';
-export { default as OfflineQueueManager } from './OfflineQueueManager';
-export { default as CrossDeviceDemo } from './CrossDeviceDemo';
+export { default as ConflictResolver } from "./ConflictResolver";
+export { default as CrossDeviceDemo } from "./CrossDeviceDemo";
+export { default as OfflineQueueManager } from "./OfflineQueueManager";
+export { default as QRHandoffGenerator } from "./QRHandoffGenerator";
+export { default as SessionSyncManager } from "./SessionSyncManager";
 
 // Mobile-specific types
 export interface MobileNavigationItem {
@@ -81,7 +81,7 @@ export interface DeviceFingerprint {
   screenResolution: string;
   timezone: string;
   language: string;
-  deviceType: 'mobile' | 'tablet' | 'desktop';
+  deviceType: "mobile" | "tablet" | "desktop";
 }
 
 export interface HandoffSession {
@@ -94,22 +94,22 @@ export interface HandoffSession {
 
 export interface SyncConflict {
   id: string;
-  entityType: 'patient' | 'appointment' | 'treatment' | 'medication' | 'form_data';
+  entityType: "patient" | "appointment" | "treatment" | "medication" | "form_data";
   entityId: string;
   fieldName: string;
   localValue: unknown;
   remoteValue: unknown;
-  priority: 'critical' | 'high' | 'medium' | 'low';
+  priority: "critical" | "high" | "medium" | "low";
   canAutoResolve: boolean;
 }
 
 export interface QueuedAction {
   id: string;
-  type: 'create' | 'update' | 'delete' | 'upload';
-  entityType: 'patient' | 'appointment' | 'treatment' | 'medication' | 'file' | 'form_data';
+  type: "create" | "update" | "delete" | "upload";
+  entityType: "patient" | "appointment" | "treatment" | "medication" | "file" | "form_data";
   data: unknown;
-  priority: 'critical' | 'high' | 'medium' | 'low';
-  status: 'queued' | 'processing' | 'completed' | 'failed';
+  priority: "critical" | "high" | "medium" | "low";
+  status: "queued" | "processing" | "completed" | "failed";
   attempts: number;
   maxAttempts: number;
 }

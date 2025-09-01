@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import { usePerformanceMonitor } from "@/providers/performance-monitor-provider";
+import { useCallback, useEffect, useState } from "react";
 
 interface AILoadingState {
   isLoading: boolean;
@@ -42,12 +42,12 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
 
   // Check LGPD consent for AI processing
   const hasAIConsent = useCallback(() => {
-    if (!requiresConsent) {return true;}
-    if (typeof window === "undefined") {return false;}
-    
+    if (!requiresConsent) return true;
+    if (typeof window === "undefined") return false;
+
     const consent = localStorage.getItem("lgpd-consent-ai");
     const generalConsent = localStorage.getItem("lgpd-consent");
-    
+
     return consent === "accepted" || generalConsent === "all-accepted";
   }, [requiresConsent]);
 
@@ -88,7 +88,7 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
 
       // Initialize TensorFlow.js with healthcare optimizations
       await tfModule.tensorFlowLoader.getTensorFlow();
-      
+
       setState(prev => ({ ...prev, loadingProgress: 90 }));
 
       // Initialize prediction engine
@@ -102,7 +102,6 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
       }));
 
       console.log("✅ AI services loaded and ready for healthcare predictions");
-
     } catch (error) {
       console.error("❌ AI loading failed:", error);
       setState(prev => ({
@@ -112,11 +111,18 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
         loadingProgress: 0,
       }));
     }
-  }, [state.isLoaded, state.isLoading, state.canLoad, requiresConsent, hasAIConsent, setHealthcareContext]);
+  }, [
+    state.isLoaded,
+    state.isLoading,
+    state.canLoad,
+    requiresConsent,
+    hasAIConsent,
+    setHealthcareContext,
+  ]);
 
   // Preload AI during browser idle time
   useEffect(() => {
-    if (!preloadOnIdle || state.isLoaded) {return;}
+    if (!preloadOnIdle || state.isLoaded) return;
 
     const idleCallback = (deadline: IdleDeadline) => {
       if (deadline.timeRemaining() > 100 && hasAIConsent()) {
@@ -124,7 +130,7 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
       }
     };
 
-    if ('requestIdleCallback' in window) {
+    if ("requestIdleCallback" in window) {
       const idleId = window.requestIdleCallback(idleCallback, { timeout: 5000 });
       return () => window.cancelIdleCallback(idleId);
     }
@@ -132,15 +138,15 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
 
   // Preload on user interaction patterns
   useEffect(() => {
-    if (!preloadOnInteraction || state.isLoaded || !state.canLoad) {return;}
+    if (!preloadOnInteraction || state.isLoaded || !state.canLoad) return;
 
-    const interactionEvents = ['mouseenter', 'focus', 'touchstart'];
+    const interactionEvents = ["mouseenter", "focus", "touchstart"];
     let preloadTriggered = false;
 
     const handleInteraction = () => {
       if (!preloadTriggered && hasAIConsent()) {
         preloadTriggered = true;
-        
+
         // Delay slightly to avoid blocking user interaction
         setTimeout(() => {
           loadAI();
@@ -150,12 +156,12 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
 
     // Listen for interactions with AI-related elements
     const aiElements = document.querySelectorAll([
-      '[data-ai-feature]',
-      '[data-prediction]',
-      '.ai-chat',
-      '.prediction-panel',
-      '.treatment-recommendation',
-    ].join(','));
+      "[data-ai-feature]",
+      "[data-prediction]",
+      ".ai-chat",
+      ".prediction-panel",
+      ".treatment-recommendation",
+    ].join(","));
 
     aiElements.forEach(element => {
       interactionEvents.forEach(event => {
@@ -174,12 +180,12 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
 
   // Request AI consent for LGPD compliance
   const requestAIConsent = useCallback(() => {
-    if (typeof window === "undefined") {return Promise.resolve(false);}
+    if (typeof window === "undefined") return Promise.resolve(false);
 
     return new Promise<boolean>((resolve) => {
       const consent = window.confirm(
-        "Para utilizar recursos de IA preditiva, precisamos processar dados clínicos com algoritmos de aprendizado de máquina. " +
-        "Os dados são processados localmente no seu dispositivo. Autoriza o uso de IA para predições clínicas?"
+        "Para utilizar recursos de IA preditiva, precisamos processar dados clínicos com algoritmos de aprendizado de máquina. "
+          + "Os dados são processados localmente no seu dispositivo. Autoriza o uso de IA para predições clínicas?",
       );
 
       if (consent) {
@@ -187,10 +193,10 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
         setState(prev => ({ ...prev, canLoad: true, error: null }));
       } else {
         localStorage.setItem("lgpd-consent-ai", "denied");
-        setState(prev => ({ 
-          ...prev, 
-          canLoad: false, 
-          error: "AI consent denied - required for predictions" 
+        setState(prev => ({
+          ...prev,
+          canLoad: false,
+          error: "AI consent denied - required for predictions",
         }));
       }
 
@@ -202,9 +208,9 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
   const triggerAILoad = useCallback(async () => {
     if (!hasAIConsent()) {
       const consent = await requestAIConsent();
-      if (!consent) {return false;}
+      if (!consent) return false;
     }
-    
+
     await loadAI();
     return state.isLoaded;
   }, [hasAIConsent, requestAIConsent, loadAI, state.isLoaded]);
@@ -235,8 +241,14 @@ export function useAIFeature(featureType: "prediction" | "chat" | "recommendatio
     ...aiLoading,
     isFeatureReady,
     needsLoading,
-    loadingMessage: aiLoading.isLoading 
-      ? `Carregando IA ${featureType === "prediction" ? "preditiva" : featureType === "chat" ? "conversacional" : "de recomendações"}...`
+    loadingMessage: aiLoading.isLoading
+      ? `Carregando IA ${
+        featureType === "prediction"
+          ? "preditiva"
+          : featureType === "chat"
+          ? "conversacional"
+          : "de recomendações"
+      }...`
       : null,
   };
 }

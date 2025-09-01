@@ -9,11 +9,10 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-card shadow-neonpro-card hover:shadow-neonpro-glow/20 border-border",
+        default: "bg-card shadow-neonpro-card hover:shadow-neonpro-glow/20 border-border",
         neonpro:
           "bg-gradient-neonpro shadow-neonpro-glow border-primary/20 hover:shadow-neonpro-glow hover:border-primary/30",
-        
+
         // Healthcare-specific card variants
         patient:
           "bg-card shadow-healthcare-sm border-primary/30 hover:shadow-healthcare-md hover:border-primary/50",
@@ -27,7 +26,7 @@ const cardVariants = cva(
           "bg-warning/5 shadow-healthcare-sm border-warning/40 hover:shadow-healthcare-md hover:border-warning/60",
         critical:
           "bg-status-critical/10 shadow-emergency-glow border-status-critical/50 hover:shadow-emergency-glow border-2 pulse-healthcare",
-        
+
         // Status-based variants
         normal: "bg-card shadow-healthcare-sm border-status-normal/30",
         inactive: "bg-muted/50 shadow-healthcare-xs border-status-inactive/20 opacity-75",
@@ -37,7 +36,7 @@ const cardVariants = cva(
         sm: "py-4",
         lg: "py-8",
         xl: "py-10",
-        
+
         // Healthcare-optimized sizes
         compact: "py-3 gap-3", // For dense medical information
         comfortable: "py-8 gap-8", // For patient forms
@@ -48,7 +47,7 @@ const cardVariants = cva(
         medium: "border-2",
         high: "border-2 shadow-lg",
         critical: "border-4 shadow-2xl animate-pulse-healthcare",
-      }
+      },
     },
     defaultVariants: {
       variant: "default",
@@ -89,10 +88,11 @@ function Card({
   srAnnouncement,
   children,
   ...props
-}: React.ComponentProps<"div"> & 
-  VariantProps<typeof cardVariants> & 
-  HealthcareCardProps) {
-  
+}:
+  & React.ComponentProps<"div">
+  & VariantProps<typeof cardVariants>
+  & HealthcareCardProps)
+{
   // Auto-resolve variant based on medical context
   let resolvedVariant = variant;
   if (!variant && medicalContext) {
@@ -197,10 +197,10 @@ function Card({
   return (
     <div
       className={cn(
-        cardVariants({ 
-          variant: resolvedVariant, 
-          size: resolvedSize, 
-          priority: resolvedPriority 
+        cardVariants({
+          variant: resolvedVariant,
+          size: resolvedSize,
+          priority: resolvedPriority,
         }),
         // Emergency mode enhancements
         emergencyMode && "shadow-emergency-glow border-2 border-status-critical/50",
@@ -220,23 +220,23 @@ function Card({
       // Enhanced accessibility for healthcare contexts
       role={urgency === "critical" || status === "critical" ? "alert" : undefined}
       aria-label={medicalContext ? `Cartão médico: ${medicalContext}` : undefined}
-      aria-describedby={urgency === "critical" || status === "critical" 
-        ? "healthcare-critical-card-warning" 
+      aria-describedby={urgency === "critical" || status === "critical"
+        ? "healthcare-critical-card-warning"
         : undefined}
       onClick={handleClick}
       {...props}
     >
       {/* Status indicators */}
       {lgpdSensitive && (
-        <div 
+        <div
           className="absolute -top-1 -right-1 w-3 h-3 bg-lgpd-compliant rounded-full shadow-sm"
           title="Dados protegidos pela LGPD"
           aria-label="Dados sensíveis LGPD"
         />
       )}
-      
+
       {patientSafe && (
-        <div 
+        <div
           className="absolute -top-1 -left-1 w-3 h-3 bg-success rounded-full shadow-sm"
           title="Aprovado para segurança do paciente"
           aria-label="Seguro para o paciente"
@@ -244,7 +244,7 @@ function Card({
       )}
 
       {urgency === "critical" && (
-        <div 
+        <div
           className="absolute top-2 right-2 w-2 h-2 bg-status-critical rounded-full animate-pulse"
           title="Atenção crítica necessária"
           aria-label="Urgência crítica"
@@ -267,11 +267,11 @@ function Card({
   );
 }
 
-function CardHeader({ 
-  className, 
+function CardHeader({
+  className,
   variant,
   children,
-  ...props 
+  ...props
 }: React.ComponentProps<"div"> & {
   variant?: "default" | "emergency" | "compact";
 }) {
@@ -279,7 +279,8 @@ function CardHeader({
     <div
       className={cn(
         "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
-        variant === "emergency" && "bg-status-critical/10 -mx-6 px-6 py-3 rounded-t-xl border-b border-status-critical/20",
+        variant === "emergency"
+          && "bg-status-critical/10 -mx-6 px-6 py-3 rounded-t-xl border-b border-status-critical/20",
         variant === "compact" && "gap-1 py-2",
         className,
       )}
@@ -292,11 +293,11 @@ function CardHeader({
   );
 }
 
-function CardTitle({ 
-  className, 
+function CardTitle({
+  className,
   urgency,
   children,
-  ...props 
+  ...props
 }: React.ComponentProps<"div"> & {
   urgency?: "low" | "medium" | "high" | "critical";
 }) {
@@ -307,7 +308,7 @@ function CardTitle({
         urgency === "critical" && "text-status-critical font-bold",
         urgency === "high" && "text-warning font-semibold",
         urgency === "medium" && "text-amber-600 font-medium",
-        className
+        className,
       )}
       data-slot="card-title"
       data-urgency={urgency}
@@ -318,11 +319,11 @@ function CardTitle({
   );
 }
 
-function CardDescription({ 
-  className, 
+function CardDescription({
+  className,
   medicalTerm = false,
   children,
-  ...props 
+  ...props
 }: React.ComponentProps<"div"> & {
   medicalTerm?: boolean;
 }) {
@@ -331,7 +332,7 @@ function CardDescription({
       className={cn(
         "text-muted-foreground text-sm",
         medicalTerm && "medical-term font-medium text-foreground/80",
-        className
+        className,
       )}
       data-slot="card-description"
       data-medical-term={medicalTerm}
@@ -342,11 +343,11 @@ function CardDescription({
   );
 }
 
-function CardAction({ 
-  className, 
+function CardAction({
+  className,
   urgent = false,
   children,
-  ...props 
+  ...props
 }: React.ComponentProps<"div"> & {
   urgent?: boolean;
 }) {
@@ -366,11 +367,11 @@ function CardAction({
   );
 }
 
-function CardContent({ 
-  className, 
+function CardContent({
+  className,
   spacing = "default",
   children,
-  ...props 
+  ...props
 }: React.ComponentProps<"div"> & {
   spacing?: "compact" | "default" | "comfortable";
 }) {
@@ -380,7 +381,7 @@ function CardContent({
         "px-6",
         spacing === "compact" && "py-2",
         spacing === "comfortable" && "py-4",
-        className
+        className,
       )}
       data-slot="card-content"
       data-spacing={spacing}
@@ -391,11 +392,11 @@ function CardContent({
   );
 }
 
-function CardFooter({ 
-  className, 
+function CardFooter({
+  className,
   variant,
   children,
-  ...props 
+  ...props
 }: React.ComponentProps<"div"> & {
   variant?: "default" | "actions" | "status";
 }) {
@@ -404,8 +405,9 @@ function CardFooter({
       className={cn(
         "flex items-center px-6 [.border-t]:pt-6",
         variant === "actions" && "justify-end gap-2",
-        variant === "status" && "justify-between items-center bg-muted/30 -mx-6 px-6 py-3 rounded-b-xl border-t",
-        className
+        variant === "status"
+          && "justify-between items-center bg-muted/30 -mx-6 px-6 py-3 rounded-b-xl border-t",
+        className,
       )}
       data-slot="card-footer"
       data-variant={variant}
@@ -416,13 +418,13 @@ function CardFooter({
   );
 }
 
-export { 
-  Card, 
-  CardAction, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
+export {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
   CardTitle,
-  type HealthcareCardProps
+  type HealthcareCardProps,
 };

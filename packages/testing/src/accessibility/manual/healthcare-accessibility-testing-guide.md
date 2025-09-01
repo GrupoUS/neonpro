@@ -7,7 +7,7 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 ### 🎯 Objetivos dos Testes
 
 - ✅ Validar acessibilidade em cenários de emergência médica
-- ✅ Verificar terminologia médica em português brasileiro  
+- ✅ Verificar terminologia médica em português brasileiro
 - ✅ Testar navegação por teclado para profissionais com deficiência
 - ✅ Validar contrast ratios para diferentes condições visuais
 - ✅ Verificar compatibilidade com tecnologias assistivas
@@ -29,8 +29,9 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 **Pré-requisitos**: Sistema carregado, chat disponível
 
 #### ✅ Teste 1.1: Atalho Ctrl+E
+
 1. **Ação**: Pressione `Ctrl + E`
-2. **Resultado esperado**: 
+2. **Resultado esperado**:
    - Modo emergência ativa imediatamente
    - Botão de emergência aparece com foco
    - Screen reader anuncia: "Modo de emergência ativado via teclado"
@@ -38,13 +39,15 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 4. **Notas**: _______________________
 
 #### ✅ Teste 1.2: Atalho Alt+E (Alternativo)
-1. **Ação**: Pressione `Alt + E`  
+
+1. **Ação**: Pressione `Alt + E`
 2. **Resultado esperado**:
    - Modo emergência ativa
    - Anúncio: "Emergência médica ativada via teclado"
 3. **Validação**: ⬜ Passou ⬜ Falhou
 
 #### ✅ Teste 1.3: Botão de Emergência
+
 1. **Ação**: Clique no botão vermelho de emergência
 2. **Resultado esperado**:
    - Conexão imediata com médico
@@ -53,10 +56,11 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 3. **Validação**: ⬜ Passou ⬜ Falhou
 
 #### ✅ Teste 1.4: Escape de Emergência
+
 1. **Ação**: Pressione `Escape` no modo emergência
 2. **Resultado esperado**:
    - Sai do modo emergência
-   - Anúncio: "Saindo do modo de emergência"  
+   - Anúncio: "Saindo do modo de emergência"
 3. **Validação**: ⬜ Passou ⬜ Falhou
 
 **Score Emergência**: ___/4 ✅ Aprovado (4/4) ⚠️ Atenção (3/4) ❌ Reprovado (<3/4)
@@ -70,15 +74,17 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 **Pré-requisitos**: Screen reader ativo (NVDA, JAWS ou VoiceOver)
 
 #### ✅ Teste 2.1: Termos de Emergência
+
 1. **Teste cada termo**:
    - "emergência" → Pronúncia: "e-mer-gên-ci-a"
-   - "médico" → Pronúncia: "mé-di-co"  
+   - "médico" → Pronúncia: "mé-di-co"
    - "plantão" → Pronúncia: "plan-tão"
 
 2. **Validação por termo**:
    - ⬜ emergência ⬜ médico ⬜ plantão
 
 #### ✅ Teste 2.2: Termos de Procedimentos
+
 1. **Teste cada termo**:
    - "botox" → Pronúncia: "bó-tocs"
    - "preenchimentos" → Pronúncia: "pre-en-chi-men-tos"
@@ -88,15 +94,17 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
    - ⬜ botox ⬜ preenchimentos ⬜ procedimentos
 
 #### ✅ Teste 2.3: Termos de Compliance
+
 1. **Teste cada termo**:
    - "LGPD" → Pronúncia: "éle-gê-pê-dê"
-   - "ANVISA" → Pronúncia: "an-vi-sa" 
+   - "ANVISA" → Pronúncia: "an-vi-sa"
    - "CFM" → Pronúncia: "cê-efe-eme"
 
 2. **Validação por termo**:
    - ⬜ LGPD ⬜ ANVISA ⬜ CFM
 
 #### ✅ Teste 2.4: Termos Médicos Gerais
+
 1. **Teste cada termo**:
    - "paciente" → Contexto médico claro
    - "consultas" → Contexto de agendamento
@@ -116,8 +124,9 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 **Pré-requisitos**: Mouse desconectado ou ignorado, usar apenas teclado
 
 #### ✅ Teste 3.1: Atalhos Básicos
+
 1. **Ctrl + M**: ⬜ Alterna reconhecimento de voz
-2. **Ctrl + L**: ⬜ Limpa histórico do chat  
+2. **Ctrl + L**: ⬜ Limpa histórico do chat
 3. **Ctrl + ?**: ⬜ Mostra ajuda de atalhos
 4. **?** (simples): ⬜ Mostra menu de ajuda
 5. **Tab**: ⬜ Navega entre elementos focáveis
@@ -125,11 +134,12 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 **Validação**: ___/5 atalhos funcionais
 
 #### ✅ Teste 3.2: Ordem de Tabulação (Tab Order)
+
 1. **Sequência esperada**:
    1. Skip links (invisíveis até Tab)
    2. Elementos de emergência (prioridade alta)
    3. Campo de entrada de texto
-   4. Botão enviar  
+   4. Botão enviar
    5. Controles de voz
    6. Botões de interface
 
@@ -140,6 +150,7 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
    - ⬜ Sem elementos inacessíveis
 
 #### ✅ Teste 3.3: Elementos Focáveis
+
 1. **Contagem mínima**: Pelo menos 6 elementos focáveis
 2. **Indicadores de foco**: Visíveis em todos os elementos
 3. **Contraste de foco**: 3:1 mínimo para indicadores
@@ -147,6 +158,7 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 **Validação**: ⬜ ≥6 elementos ⬜ Foco visível ⬜ Contraste 3:1
 
 #### ✅ Teste 3.4: Help Dialog (Ajuda de Atalhos)
+
 1. **Abrir**: `Ctrl + ?` ou `?`
 2. **Conteúdo esperado**:
    - Lista completa de 7 atalhos
@@ -166,9 +178,10 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 ### Cenário: Validação Visual para Diferentes Condições
 
 #### ✅ Teste 4.1: Elementos de Emergência (Ratio 7:1)
+
 1. **Elementos a testar**:
    - Botão de emergência vermelho
-   - Badges de status de emergência  
+   - Badges de status de emergência
    - Alertas críticos
    - Textos de emergência
 
@@ -179,6 +192,7 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 **Validação**: ⬜ Todos os elementos ≥7:1
 
 #### ✅ Teste 4.2: Interface Médica Normal (Ratio 4.5:1)
+
 1. **Elementos a testar**:
    - Texto do chat
    - Labels de formulário
@@ -188,12 +202,14 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 **Validação**: ⬜ Todos os elementos ≥4.5:1
 
 #### ✅ Teste 4.3: Indicadores de Foco (Ratio 3:1)
+
 1. **Teste**: Tab pelos elementos e observe o contorno de foco
 2. **Validação**: Contorno visível em todos os elementos focáveis
 
 **Validação**: ⬜ Foco visível ⬜ Contraste ≥3:1
 
 #### ✅ Teste 4.4: Teste de Daltonismo
+
 1. **Ferramenta**: Use simulador de daltonismo ou filtros
 2. **Validação**: Interface utilizável sem dependência apenas de cor
 
@@ -203,23 +219,25 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 
 ---
 
-## 🔗 TESTE 5: Skip Links e Navegação Rápida  
+## 🔗 TESTE 5: Skip Links e Navegação Rápida
 
 ### Cenário: Usuário com Leitor de Tela
 
 #### ✅ Teste 5.1: Skip Links Implementados
+
 1. **Pressione Tab** na primeira carga da página
 2. **Links esperados** (devem aparecer):
    - "Pular para mensagens do chat" → #chat-messages
-   - "Pular para entrada de mensagem" → #chat-input  
+   - "Pular para entrada de mensagem" → #chat-input
    - "Pular para ações de emergência" → #emergency-actions (se emergência ativa)
 
 3. **Validação por link**:
    - ⬜ Skip para mensagens
-   - ⬜ Skip para entrada  
+   - ⬜ Skip para entrada
    - ⬜ Skip para emergência (se aplicável)
 
 #### ✅ Teste 5.2: Funcionamento dos Skips
+
 1. **Teste cada skip link**: Pressione Enter
 2. **Validação**: Foco move para o elemento correto
 
@@ -234,20 +252,23 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 ### Cenário: Teste em Dispositivo Móvel
 
 #### ✅ Teste 6.1: Touch e Gestos
+
 1. **Elementos tocáveis**: Mínimo 44px × 44px
-2. **Gestos de acessibilidade**: 
+2. **Gestos de acessibilidade**:
    - iOS: VoiceOver habilitado
    - Android: TalkBack habilitado
 
 **Validação**: ⬜ Elementos adequados ⬜ Screen reader funcional
 
 #### ✅ Teste 6.2: Orientação da Tela
+
 1. **Teste**: Gire o dispositivo
 2. **Validação**: Interface adaptada e funcional
 
 **Validação**: ⬜ Portrait ⬜ Landscape
 
 #### ✅ Teste 6.3: Zoom e Ampliação
+
 1. **Teste**: Zoom até 200% e 400%
 2. **Validação**: Conteúdo permanece acessível
 
@@ -262,25 +283,29 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 ### Cenário: Validação com Diferentes Screen Readers
 
 #### ✅ Teste 7.1: NVDA (Windows)
+
 1. **Funcionalidades**:
    - ⬜ Lê todos os elementos corretamente
    - ⬜ Anuncia mudanças de estado
    - ⬜ Pronuncia termos médicos corretamente
    - ⬜ Navega por regiões/landmarks
 
-#### ✅ Teste 7.2: JAWS (Windows) 
+#### ✅ Teste 7.2: JAWS (Windows)
+
 1. **Funcionalidades**:
    - ⬜ Compatibilidade total
    - ⬜ Shortcuts funcionais
    - ⬜ Formulários acessíveis
 
 #### ✅ Teste 7.3: VoiceOver (Mac/iOS)
+
 1. **Funcionalidades**:
    - ⬜ Rotor de navegação funcional
    - ⬜ Gestos de navegação
    - ⬜ Leitura contínua
 
 #### ✅ Teste 7.4: TalkBack (Android)
+
 1. **Funcionalidades**:
    - ⬜ Navegação por exploração
    - ⬜ Gestos globais
@@ -295,6 +320,7 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 ### Cenário: Simulação de Uso Real por Profissionais
 
 #### ✅ Teste 8.1: Emergência - Médico com Deficiência Visual
+
 **Situação**: Profissional cego precisa ativar emergência rapidamente
 
 1. **Passos**:
@@ -309,6 +335,7 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
    - ⬜ Confirmação de conexão
 
 #### ✅ Teste 8.2: Consulta - Profissional com Deficiência Motora
+
 **Situação**: Uso apenas do teclado para registrar consulta
 
 1. **Passos**:
@@ -319,10 +346,11 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 
 2. **Critérios de sucesso**:
    - ⬜ Acesso a todos os campos
-   - ⬜ Navegação eficiente  
+   - ⬜ Navegação eficiente
    - ⬜ Ações executáveis por teclado
 
 #### ✅ Teste 8.3: Análise - Profissional com Baixa Visão
+
 **Situação**: Uso com zoom 400% e alto contraste
 
 1. **Passos**:
@@ -344,22 +372,23 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 
 ### Pontuação por Categoria
 
-| Categoria | Score | Status |
-|-----------|-------|--------|
-| 🚨 Emergência | ___/4 | ✅⚠️❌ |
-| 🩺 Terminologia | ___/12 | ✅⚠️❌ |
-| ⌨️ Navegação | ___/13 | ✅⚠️❌ |  
-| 🎨 Contraste | ___/4 | ✅⚠️❌ |
-| 🔗 Skip Links | ___/4 | ✅⚠️❌ |
-| 📱 Mobile | ___/4 | ✅⚠️❌ |
-| 📊 Screen Readers | ___/12 | ✅⚠️❌ |
-| 🏥 Cenários Clínicos | ___/9 | ✅⚠️❌ |
+| Categoria            | Score  | Status |
+| -------------------- | ------ | ------ |
+| 🚨 Emergência        | ___/4  | ✅⚠️❌  |
+| 🩺 Terminologia      | ___/12 | ✅⚠️❌  |
+| ⌨️ Navegação          | ___/13 | ✅⚠️❌  |
+| 🎨 Contraste         | ___/4  | ✅⚠️❌  |
+| 🔗 Skip Links        | ___/4  | ✅⚠️❌  |
+| 📱 Mobile            | ___/4  | ✅⚠️❌  |
+| 📊 Screen Readers    | ___/12 | ✅⚠️❌  |
+| 🏥 Cenários Clínicos | ___/9  | ✅⚠️❌  |
 
 ### Score Total: ___/62
 
 ### Classificação Final
+
 - **✅ APROVADO**: ≥53/62 (85%+)
-- **⚠️ ATENÇÃO**: 47-52/62 (75-84%)  
+- **⚠️ ATENÇÃO**: 47-52/62 (75-84%)
 - **❌ REPROVADO**: <47/62 (<75%)
 
 ---
@@ -369,21 +398,25 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 ### Se Score < 85%
 
 #### Emergência (Crítico)
+
 - [ ] Corrigir atalhos de teclado não funcionais
 - [ ] Ajustar contraste de botões de emergência
 - [ ] Melhorar anúncios de screen reader
 
-#### Terminologia (Importante)  
+#### Terminologia (Importante)
+
 - [ ] Adicionar pronúncias faltantes
 - [ ] Corrigir contextos médicos
 - [ ] Atualizar componente MedicalTerm
 
 #### Navegação (Importante)
+
 - [ ] Corrigir ordem de tabulação
 - [ ] Adicionar indicadores de foco faltantes
 - [ ] Implementar atalhos ausentes
 
 #### Contraste (Importante)
+
 - [ ] Ajustar cores que não atendem ratios
 - [ ] Melhorar indicadores de foco
 - [ ] Testar com diferentes condições visuais
@@ -395,7 +428,7 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 ### Contatos para Dúvidas
 
 - **Acessibilidade**: acessibilidade@neonpro.com.br
-- **Suporte Técnico**: suporte@neonpro.com.br  
+- **Suporte Técnico**: suporte@neonpro.com.br
 - **Documentação**: docs.neonpro.com.br/accessibility
 
 ### Ferramentas Recomendadas
@@ -407,6 +440,6 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 
 ---
 
-**Versão**: 1.0.0  
-**Última atualização**: Janeiro 2025  
+**Versão**: 1.0.0\
+**Última atualização**: Janeiro 2025\
 **Compliance**: WCAG 2.1 AA+ Healthcare

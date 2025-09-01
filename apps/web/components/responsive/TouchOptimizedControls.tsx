@@ -1,39 +1,42 @@
-import React, { forwardRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { useResponsive } from './ResponsiveLayout';
-import { cn } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import React, { forwardRef, useState } from "react";
+import { useResponsive } from "./ResponsiveLayout";
 
 // Touch-optimized button with healthcare context awareness
 interface TouchButtonProps extends React.ComponentProps<typeof Button> {
-  priority?: 'normal' | 'emergency' | 'critical';
+  priority?: "normal" | "emergency" | "critical";
   hapticFeedback?: boolean;
 }
 
 export const TouchButton = forwardRef<HTMLButtonElement, TouchButtonProps>(
-  ({ className, priority = 'normal', hapticFeedback = true, onClick, children, ...props }, ref) => {
+  ({ className, priority = "normal", hapticFeedback = true, onClick, children, ...props }, ref) => {
     const { healthcareContext, touchOptimized } = useResponsive();
-    
+
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       // Haptic feedback for supported devices
-      if (hapticFeedback && 'vibrate' in navigator) {
-        const pattern = priority === 'critical' ? [100, 50, 100] : 
-                        priority === 'emergency' ? [80] : [40];
+      if (hapticFeedback && "vibrate" in navigator) {
+        const pattern = priority === "critical"
+          ? [100, 50, 100]
+          : priority === "emergency"
+          ? [80]
+          : [40];
         navigator.vibrate(pattern);
       }
-      
+
       onClick?.(e);
     };
 
     const buttonClass = cn(
-      'touch-target',
-      priority === 'emergency' && 'touch-target--emergency',
-      priority === 'critical' && 'touch-target--critical',
-      healthcareContext === 'post-procedure' && 'text-lg font-semibold',
-      healthcareContext === 'one-handed' && 'min-h-12 mb-4',
-      className
+      "touch-target",
+      priority === "emergency" && "touch-target--emergency",
+      priority === "critical" && "touch-target--critical",
+      healthcareContext === "post-procedure" && "text-lg font-semibold",
+      healthcareContext === "one-handed" && "min-h-12 mb-4",
+      className,
     );
 
     return (
@@ -46,10 +49,10 @@ export const TouchButton = forwardRef<HTMLButtonElement, TouchButtonProps>(
         {children}
       </Button>
     );
-  }
+  },
 );
 
-TouchButton.displayName = 'TouchButton';
+TouchButton.displayName = "TouchButton";
 
 // Touch-optimized input with enhanced targets
 interface TouchInputProps extends React.ComponentProps<typeof Input> {
@@ -64,22 +67,22 @@ export const TouchInput = forwardRef<HTMLInputElement, TouchInputProps>(
     const inputId = id || `input-${Math.random().toString(36).slice(2, 9)}`;
 
     const inputClass = cn(
-      'touch-target',
-      healthcareContext === 'post-procedure' && 'text-lg h-14',
-      healthcareContext === 'high-contrast' && 'border-2',
-      touchOptimized && 'min-h-11',
-      className
+      "touch-target",
+      healthcareContext === "post-procedure" && "text-lg h-14",
+      healthcareContext === "high-contrast" && "border-2",
+      touchOptimized && "min-h-11",
+      className,
     );
 
     return (
       <div className="touch-input-group">
         {label && (
-          <Label 
+          <Label
             htmlFor={inputId}
             className={cn(
-              'touch-input-label',
-              healthcareContext === 'post-procedure' && 'text-lg font-medium',
-              required && 'after:content-["*"] after:text-red-500 after:ml-1'
+              "touch-input-label",
+              healthcareContext === "post-procedure" && "text-lg font-medium",
+              required && 'after:content-["*"] after:text-red-500 after:ml-1',
             )}
           >
             {label}
@@ -93,7 +96,7 @@ export const TouchInput = forwardRef<HTMLInputElement, TouchInputProps>(
           {...props}
         />
         {helperText && (
-          <p 
+          <p
             id={`${inputId}-help`}
             className="text-sm text-muted-foreground mt-1"
           >
@@ -102,10 +105,10 @@ export const TouchInput = forwardRef<HTMLInputElement, TouchInputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
-TouchInput.displayName = 'TouchInput';
+TouchInput.displayName = "TouchInput";
 
 // Touch-optimized textarea
 interface TouchTextareaProps extends React.ComponentProps<typeof Textarea> {
@@ -120,22 +123,22 @@ export const TouchTextarea = forwardRef<HTMLTextAreaElement, TouchTextareaProps>
     const textareaId = id || `textarea-${Math.random().toString(36).slice(2, 9)}`;
 
     const textareaClass = cn(
-      'touch-target',
-      healthcareContext === 'post-procedure' && 'text-lg',
-      healthcareContext === 'high-contrast' && 'border-2',
-      'min-h-24',
-      className
+      "touch-target",
+      healthcareContext === "post-procedure" && "text-lg",
+      healthcareContext === "high-contrast" && "border-2",
+      "min-h-24",
+      className,
     );
 
     return (
       <div className="touch-textarea-group">
         {label && (
-          <Label 
+          <Label
             htmlFor={textareaId}
             className={cn(
-              'touch-textarea-label',
-              healthcareContext === 'post-procedure' && 'text-lg font-medium',
-              required && 'after:content-["*"] after:text-red-500 after:ml-1'
+              "touch-textarea-label",
+              healthcareContext === "post-procedure" && "text-lg font-medium",
+              required && 'after:content-["*"] after:text-red-500 after:ml-1',
             )}
           >
             {label}
@@ -149,7 +152,7 @@ export const TouchTextarea = forwardRef<HTMLTextAreaElement, TouchTextareaProps>
           {...props}
         />
         {helperText && (
-          <p 
+          <p
             id={`${textareaId}-help`}
             className="text-sm text-muted-foreground mt-1"
           >
@@ -158,10 +161,10 @@ export const TouchTextarea = forwardRef<HTMLTextAreaElement, TouchTextareaProps>
         )}
       </div>
     );
-  }
+  },
 );
 
-TouchTextarea.displayName = 'TouchTextarea';
+TouchTextarea.displayName = "TouchTextarea";
 
 // Touch-optimized select/dropdown
 interface TouchSelectOption {
@@ -182,36 +185,36 @@ interface TouchSelectProps {
   id?: string;
 }
 
-export function TouchSelect({ 
-  label, 
-  helperText, 
-  required, 
-  options, 
-  value, 
-  onValueChange, 
+export function TouchSelect({
+  label,
+  helperText,
+  required,
+  options,
+  value,
+  onValueChange,
   placeholder,
   className,
-  id 
+  id,
 }: TouchSelectProps) {
   const { healthcareContext, touchOptimized } = useResponsive();
   const selectId = id || `select-${Math.random().toString(36).slice(2, 9)}`;
 
   const selectClass = cn(
-    'touch-target w-full p-3 border rounded-md bg-background',
-    healthcareContext === 'post-procedure' && 'text-lg h-14',
-    healthcareContext === 'high-contrast' && 'border-2',
-    className
+    "touch-target w-full p-3 border rounded-md bg-background",
+    healthcareContext === "post-procedure" && "text-lg h-14",
+    healthcareContext === "high-contrast" && "border-2",
+    className,
   );
 
   return (
     <div className="touch-select-group">
       {label && (
-        <Label 
+        <Label
           htmlFor={selectId}
           className={cn(
-            'touch-select-label',
-            healthcareContext === 'post-procedure' && 'text-lg font-medium',
-            required && 'after:content-["*"] after:text-red-500 after:ml-1'
+            "touch-select-label",
+            healthcareContext === "post-procedure" && "text-lg font-medium",
+            required && 'after:content-["*"] after:text-red-500 after:ml-1',
           )}
         >
           {label}
@@ -220,7 +223,7 @@ export function TouchSelect({
       <select
         id={selectId}
         className={selectClass}
-        value={value || ''}
+        value={value || ""}
         onChange={(e) => onValueChange?.(e.target.value)}
         aria-describedby={helperText ? `${selectId}-help` : undefined}
       >
@@ -236,7 +239,7 @@ export function TouchSelect({
         ))}
       </select>
       {helperText && (
-        <p 
+        <p
           id={`${selectId}-help`}
           className="text-sm text-muted-foreground mt-1"
         >
@@ -265,21 +268,21 @@ export function TouchCheckbox({
   helperText,
   required,
   className,
-  id
+  id,
 }: TouchCheckboxProps) {
   const { healthcareContext } = useResponsive();
   const checkboxId = id || `checkbox-${Math.random().toString(36).slice(2, 9)}`;
 
   const containerClass = cn(
-    'touch-checkbox-container touch-target flex items-start gap-3 p-3 rounded-md cursor-pointer',
-    'hover:bg-muted/50 transition-colors',
-    checked && 'bg-primary/5',
-    className
+    "touch-checkbox-container touch-target flex items-start gap-3 p-3 rounded-md cursor-pointer",
+    "hover:bg-muted/50 transition-colors",
+    checked && "bg-primary/5",
+    className,
   );
 
   const checkboxClass = cn(
-    'w-5 h-5 mt-0.5 flex-shrink-0',
-    healthcareContext === 'post-procedure' && 'w-6 h-6'
+    "w-5 h-5 mt-0.5 flex-shrink-0",
+    healthcareContext === "post-procedure" && "w-6 h-6",
   );
 
   return (
@@ -294,17 +297,17 @@ export function TouchCheckbox({
           aria-describedby={helperText ? `${checkboxId}-help` : undefined}
         />
         <div className="flex-1">
-          <span 
+          <span
             className={cn(
-              'font-medium',
-              healthcareContext === 'post-procedure' && 'text-lg',
-              required && 'after:content-["*"] after:text-red-500 after:ml-1'
+              "font-medium",
+              healthcareContext === "post-procedure" && "text-lg",
+              required && 'after:content-["*"] after:text-red-500 after:ml-1',
             )}
           >
             {label}
           </span>
           {helperText && (
-            <p 
+            <p
               id={`${checkboxId}-help`}
               className="text-sm text-muted-foreground mt-1"
             >
@@ -342,19 +345,19 @@ export function TouchRadioGroup({
   onValueChange,
   required,
   className,
-  name
+  name,
 }: TouchRadioGroupProps) {
   const { healthcareContext } = useResponsive();
   const groupName = name || `radio-group-${Math.random().toString(36).slice(2, 9)}`;
 
   return (
-    <div className={cn('touch-radio-group', className)}>
+    <div className={cn("touch-radio-group", className)}>
       {label && (
-        <div 
+        <div
           className={cn(
-            'touch-radio-group-label font-medium mb-3',
-            healthcareContext === 'post-procedure' && 'text-lg',
-            required && 'after:content-["*"] after:text-red-500 after:ml-1'
+            "touch-radio-group-label font-medium mb-3",
+            healthcareContext === "post-procedure" && "text-lg",
+            required && 'after:content-["*"] after:text-red-500 after:ml-1',
           )}
           role="group"
           aria-label={label}
@@ -365,16 +368,16 @@ export function TouchRadioGroup({
       <div className="space-y-2">
         {options.map((option) => {
           const radioId = `${groupName}-${option.value}`;
-          
+
           return (
             <label
               key={option.value}
               htmlFor={radioId}
               className={cn(
-                'touch-radio-option touch-target flex items-start gap-3 p-3 rounded-md cursor-pointer',
-                'hover:bg-muted/50 transition-colors',
-                value === option.value && 'bg-primary/5',
-                option.disabled && 'opacity-50 cursor-not-allowed'
+                "touch-radio-option touch-target flex items-start gap-3 p-3 rounded-md cursor-pointer",
+                "hover:bg-muted/50 transition-colors",
+                value === option.value && "bg-primary/5",
+                option.disabled && "opacity-50 cursor-not-allowed",
               )}
             >
               <input
@@ -386,15 +389,15 @@ export function TouchRadioGroup({
                 onChange={() => onValueChange?.(option.value)}
                 disabled={option.disabled}
                 className={cn(
-                  'w-4 h-4 mt-0.5 flex-shrink-0',
-                  healthcareContext === 'post-procedure' && 'w-5 h-5'
+                  "w-4 h-4 mt-0.5 flex-shrink-0",
+                  healthcareContext === "post-procedure" && "w-5 h-5",
                 )}
               />
               <div className="flex-1">
-                <span 
+                <span
                   className={cn(
-                    'font-medium',
-                    healthcareContext === 'post-procedure' && 'text-lg'
+                    "font-medium",
+                    healthcareContext === "post-procedure" && "text-lg",
                   )}
                 >
                   {option.label}

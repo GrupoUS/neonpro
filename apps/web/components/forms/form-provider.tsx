@@ -136,7 +136,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   }, []);
 
   const validateField = useCallback((name: string) => {
-    if (!validationSchema?.[name]) {return;}
+    if (!validationSchema?.[name]) return;
 
     const result = validateSchema(state.data, { [name]: validationSchema[name] });
 
@@ -161,7 +161,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   }, [state.data, validationSchema]);
 
   const validateForm = useCallback((): boolean => {
-    if (!validationSchema) {return true;}
+    if (!validationSchema) return true;
 
     const result = validateSchema(state.data, validationSchema);
 

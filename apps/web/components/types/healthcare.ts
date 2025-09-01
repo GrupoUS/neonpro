@@ -14,7 +14,7 @@ export interface Patient {
   medicalHistory?: string[];
 }
 
-export type PatientStatus = 'active' | 'inactive' | 'pending';
+export type PatientStatus = "active" | "inactive" | "pending";
 
 export interface Appointment {
   id: string;
@@ -30,7 +30,7 @@ export interface Appointment {
   notes?: string;
 }
 
-export type AppointmentStatus = 'confirmed' | 'pending' | 'completed' | 'cancelled' | 'no-show';
+export type AppointmentStatus = "confirmed" | "pending" | "completed" | "cancelled" | "no-show";
 
 export interface Treatment {
   id: string;
@@ -53,7 +53,7 @@ export interface Professional {
 // Component Props Interfaces
 export interface BaseComponentProps {
   className?: string;
-  'data-testid'?: string;
+  "data-testid"?: string;
 }
 
 export interface ListComponentProps<T> extends BaseComponentProps {
@@ -65,7 +65,7 @@ export interface ListComponentProps<T> extends BaseComponentProps {
 }
 
 export interface CardComponentProps extends BaseComponentProps {
-  variant?: 'default' | 'compact' | 'animated';
+  variant?: "default" | "compact" | "animated";
 }
 
 export interface ModalComponentProps extends BaseComponentProps {
@@ -73,7 +73,7 @@ export interface ModalComponentProps extends BaseComponentProps {
   onClose: () => void;
   title?: string;
   description?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: "sm" | "md" | "lg" | "xl";
   preventClose?: boolean;
 }
 

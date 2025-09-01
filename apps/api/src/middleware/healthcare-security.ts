@@ -712,7 +712,7 @@ async function getRedisClient() {
 // Helper function to parse time window strings
 function parseTimeWindow(window: string): number {
   const match = window.match(/^(\d+)([smhd])$/);
-  if (!match) {throw new Error(`Invalid time window format: ${window}`);}
+  if (!match) throw new Error(`Invalid time window format: ${window}`);
 
   const value = parseInt(match[1]);
   const unit = match[2];

@@ -1,7 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { LoadingWithMessage } from "@/components/ui/loading-skeleton";
+import dynamic from "next/dynamic";
 import { Suspense, useCallback, useState } from "react";
 
 // Dynamic import for PDF generation libraries
@@ -10,16 +10,16 @@ const PDFGenerator = dynamic(
   {
     loading: () => <LoadingWithMessage variant="pdf" />,
     ssr: false, // PDFs são gerados client-side
-  }
+  },
 );
 
-// Dynamic import for jsPDF specifically  
+// Dynamic import for jsPDF specifically
 const JSPDFGenerator = dynamic(
   () => import("../pdf/jspdf-generator").then((mod) => mod.JSPDFGenerator),
   {
     loading: () => <LoadingWithMessage variant="pdf" message="Carregando jsPDF..." />,
     ssr: false,
-  }
+  },
 );
 
 // Dynamic import for React-PDF
@@ -28,7 +28,7 @@ const ReactPDFGenerator = dynamic(
   {
     loading: () => <LoadingWithMessage variant="pdf" message="Carregando React-PDF..." />,
     ssr: false,
-  }
+  },
 );
 
 // Props interfaces
@@ -86,7 +86,7 @@ export function usePDFGeneration() {
   const generatePDF = useCallback(async (config: PDFGeneratorProps) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Lazy load PDF library based on template complexity
       if (config.template === "financial-report") {

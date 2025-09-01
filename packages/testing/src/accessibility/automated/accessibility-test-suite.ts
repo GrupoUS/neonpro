@@ -1,7 +1,7 @@
 /**
  * Comprehensive WCAG 2.1 AA+ Accessibility Test Suite
  * Healthcare-specific accessibility validation for NeonPro
- * 
+ *
  * Tests all implemented accessibility features:
  * - Color contrast ratios (7:1 emergency, 4.5:1 normal, 3:1 focus)
  * - ARIA labels and live regions (18+ implementations)
@@ -11,15 +11,15 @@
  * - Screen reader optimization
  */
 
-import type { AxeResults} from 'axe-core';
-import { axe } from 'axe-core';
-import { WCAG21AA_RULES, EMERGENCY_CONTRAST_RULES, MEDICAL_TERMINOLOGY_RULES } from './wcag-rules';
+import type { AxeResults } from "axe-core";
+import { axe } from "axe-core";
+import { EMERGENCY_CONTRAST_RULES, MEDICAL_TERMINOLOGY_RULES, WCAG21AA_RULES } from "./wcag-rules";
 
 export interface AccessibilityTestResult {
   component: string;
   passed: boolean;
   score: number; // 0-10
-  wcagLevel: 'A' | 'AA' | 'AAA';
+  wcagLevel: "A" | "AA" | "AAA";
   violations: AccessibilityViolation[];
   warnings: AccessibilityWarning[];
   emergencyCompliant: boolean;
@@ -30,10 +30,10 @@ export interface AccessibilityTestResult {
 
 export interface AccessibilityViolation {
   rule: string;
-  severity: 'critical' | 'serious' | 'moderate' | 'minor';
+  severity: "critical" | "serious" | "moderate" | "minor";
   description: string;
   element: string;
-  impact: 'emergency' | 'medical' | 'standard';
+  impact: "emergency" | "medical" | "standard";
   wcagCriterion: string;
   suggestedFix: string;
 }
@@ -62,12 +62,14 @@ export class AccessibilityTestSuite {
    * @param element - DOM element or document to test
    * @returns Complete accessibility test results
    */
-  async runComprehensiveTests(element: Element | Document = document): Promise<AccessibilityTestResult> {
+  async runComprehensiveTests(
+    element: Element | Document = document,
+  ): Promise<AccessibilityTestResult> {
     const results: AccessibilityTestResult = {
-      component: element === document ? 'Full Application' : element.tagName,
+      component: element === document ? "Full Application" : element.tagName,
       passed: false,
       score: 0,
-      wcagLevel: 'A',
+      wcagLevel: "A",
       violations: [],
       warnings: [],
       emergencyCompliant: false,
@@ -101,32 +103,33 @@ export class AccessibilityTestSuite {
       const skipLinksValid = await this.testSkipLinks(element);
       if (!skipLinksValid) {
         results.violations.push({
-          rule: 'skip-links-required',
-          severity: 'serious',
-          description: 'Skip links are missing or not functioning properly',
-          element: 'navigation',
-          impact: 'standard',
-          wcagCriterion: '2.4.1',
-          suggestedFix: 'Implement proper skip links for main content areas'
+          rule: "skip-links-required",
+          severity: "serious",
+          description: "Skip links are missing or not functioning properly",
+          element: "navigation",
+          impact: "standard",
+          wcagCriterion: "2.4.1",
+          suggestedFix: "Implement proper skip links for main content areas",
         });
       }
 
       // Calculate overall score and compliance level
       results.score = this.calculateAccessibilityScore(results);
       results.wcagLevel = this.determineWcagLevel(results);
-      results.passed = results.score >= 8.5 && results.violations.filter(v => v.severity === 'critical').length === 0;
+      results.passed = results.score >= 8.5
+        && results.violations.filter(v => v.severity === "critical").length === 0;
 
       return results;
     } catch (error) {
-      console.error('Accessibility testing failed:', error);
+      console.error("Accessibility testing failed:", error);
       results.violations.push({
-        rule: 'test-execution-error',
-        severity: 'critical',
+        rule: "test-execution-error",
+        severity: "critical",
         description: `Testing framework error: ${error.message}`,
-        element: 'test-suite',
-        impact: 'standard',
-        wcagCriterion: 'N/A',
-        suggestedFix: 'Check test setup and DOM structure'
+        element: "test-suite",
+        impact: "standard",
+        wcagCriterion: "N/A",
+        suggestedFix: "Check test setup and DOM structure",
       });
       return results;
     }
@@ -140,37 +143,37 @@ export class AccessibilityTestSuite {
     let allPassed = true;
 
     // Test emergency button accessibility
-    const emergencyButtons = emergencyElements.filter(el => 
-      el.getAttribute('data-emergency') === 'true' ||
-      el.getAttribute('aria-label')?.includes('EMERGÊNCIA')
+    const emergencyButtons = emergencyElements.filter(el =>
+      el.getAttribute("data-emergency") === "true"
+      || el.getAttribute("aria-label")?.includes("EMERGÊNCIA")
     );
 
     for (const button of emergencyButtons) {
       // Check tabindex priority
-      const tabIndex = button.getAttribute('tabIndex');
+      const tabIndex = button.getAttribute("tabIndex");
       if (!tabIndex || parseInt(tabIndex) > 0) {
         // Emergency elements should have tabIndex 0 or be naturally focusable
         allPassed = false;
       }
 
       // Check keyboard accessibility
-      if (!button.hasAttribute('onKeyDown') && !button.onclick) {
+      if (!button.hasAttribute("onKeyDown") && !button.onclick) {
         allPassed = false;
       }
 
       // Check ARIA labeling
-      const ariaLabel = button.getAttribute('aria-label');
-      if (!ariaLabel || !ariaLabel.includes('EMERGÊNCIA')) {
+      const ariaLabel = button.getAttribute("aria-label");
+      if (!ariaLabel || !ariaLabel.includes("EMERGÊNCIA")) {
         allPassed = false;
       }
     }
 
     // Test emergency mode focus management
     if (this.emergencyMode) {
-      const focusableEmergencyElements = emergencyElements.filter(el => 
-        el.tabIndex >= 0 || el.tagName === 'BUTTON' || el.tagName === 'INPUT'
+      const focusableEmergencyElements = emergencyElements.filter(el =>
+        el.tabIndex >= 0 || el.tagName === "BUTTON" || el.tagName === "INPUT"
       );
-      
+
       if (focusableEmergencyElements.length === 0) {
         allPassed = false;
       }
@@ -184,8 +187,18 @@ export class AccessibilityTestSuite {
    */
   private async testMedicalTerminology(element: Element | Document): Promise<boolean> {
     const medicalTerms = [
-      'emergência', 'médico', 'paciente', 'lgpd', 'anvisa', 'cfm',
-      'botox', 'preenchimentos', 'procedimentos', 'consultas', 'tratamentos', 'plantão'
+      "emergência",
+      "médico",
+      "paciente",
+      "lgpd",
+      "anvisa",
+      "cfm",
+      "botox",
+      "preenchimentos",
+      "procedimentos",
+      "consultas",
+      "tratamentos",
+      "plantão",
     ];
 
     let termsFound = 0;
@@ -195,12 +208,12 @@ export class AccessibilityTestSuite {
       const elements = element.querySelectorAll(`[data-term="${term}"], [aria-label*="${term}"]`);
       if (elements.length > 0) {
         termsFound++;
-        
+
         // Check if MedicalTerm component is used (has pronunciation guide)
-        const hasContextAttribute = Array.from(elements).some(el => 
-          el.hasAttribute('data-context') || el.hasAttribute('data-pronunciation')
+        const hasContextAttribute = Array.from(elements).some(el =>
+          el.hasAttribute("data-context") || el.hasAttribute("data-pronunciation")
         );
-        
+
         if (hasContextAttribute) {
           termsWithPronunciation++;
         }
@@ -216,13 +229,13 @@ export class AccessibilityTestSuite {
    */
   private async testKeyboardNavigation(element: Element | Document): Promise<boolean> {
     const requiredShortcuts = [
-      { key: 'e', modifiers: ['ctrlKey'], priority: 'emergency' },
-      { key: 'E', modifiers: ['altKey'], priority: 'emergency' },
-      { key: 'm', modifiers: ['ctrlKey'], priority: 'medical' },
-      { key: 'l', modifiers: ['ctrlKey'], priority: 'standard' },
-      { key: '/', modifiers: ['ctrlKey'], priority: 'standard' },
-      { key: '?', modifiers: [], priority: 'standard' },
-      { key: 'Escape', modifiers: [], priority: 'emergency' }
+      { key: "e", modifiers: ["ctrlKey"], priority: "emergency" },
+      { key: "E", modifiers: ["altKey"], priority: "emergency" },
+      { key: "m", modifiers: ["ctrlKey"], priority: "medical" },
+      { key: "l", modifiers: ["ctrlKey"], priority: "standard" },
+      { key: "/", modifiers: ["ctrlKey"], priority: "standard" },
+      { key: "?", modifiers: [], priority: "standard" },
+      { key: "Escape", modifiers: [], priority: "emergency" },
     ];
 
     // Check if keyboard shortcuts are documented
@@ -232,13 +245,13 @@ export class AccessibilityTestSuite {
     // Check if emergency elements have proper tabindex
     const emergencyElements = element.querySelectorAll('[data-emergency="true"]');
     const emergencyTabIndexValid = Array.from(emergencyElements).every(el => {
-      const tabIndex = el.getAttribute('tabIndex');
-      return tabIndex === '0' || el.tagName === 'BUTTON' || el.tagName === 'INPUT';
+      const tabIndex = el.getAttribute("tabIndex");
+      return tabIndex === "0" || el.tagName === "BUTTON" || el.tagName === "INPUT";
     });
 
     // Check if there are sufficient focusable elements
     const focusableElements = element.querySelectorAll(
-      'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
     );
     const hasSufficientFocusableElements = focusableElements.length >= 3;
 
@@ -250,13 +263,13 @@ export class AccessibilityTestSuite {
    */
   private async testAriaImplementation(element: Element | Document): Promise<boolean> {
     const requiredAriaElements = [
-      '[aria-live]',
-      '[aria-label]', 
+      "[aria-live]",
+      "[aria-label]",
       '[role="dialog"]',
       '[role="button"]',
       '[role="textbox"]',
-      '[aria-describedby]',
-      '[aria-atomic]'
+      "[aria-describedby]",
+      "[aria-atomic]",
     ];
 
     let foundAriaElements = 0;
@@ -268,15 +281,20 @@ export class AccessibilityTestSuite {
     }
 
     // Check for specific healthcare ARIA implementations
-    const emergencyAriaElements = element.querySelectorAll('[aria-label*="EMERGÊNCIA"], [aria-label*="emergência"]');
-    const medicalAriaElements = element.querySelectorAll('[aria-label*="médico"], [aria-label*="assistente médico"]');
+    const emergencyAriaElements = element.querySelectorAll(
+      '[aria-label*="EMERGÊNCIA"], [aria-label*="emergência"]',
+    );
+    const medicalAriaElements = element.querySelectorAll(
+      '[aria-label*="médico"], [aria-label*="assistente médico"]',
+    );
     const liveRegions = element.querySelectorAll('[aria-live="assertive"], [aria-live="polite"]');
 
     const hasEmergencyAria = emergencyAriaElements.length > 0;
     const hasMedicalAria = medicalAriaElements.length > 0;
     const hasLiveRegions = liveRegions.length > 0;
 
-    return foundAriaElements >= totalRequiredElements && hasEmergencyAria && hasMedicalAria && hasLiveRegions;
+    return foundAriaElements >= totalRequiredElements && hasEmergencyAria && hasMedicalAria
+      && hasLiveRegions;
   }
 
   /**
@@ -285,13 +303,13 @@ export class AccessibilityTestSuite {
   private async runAxeTests(element: Element | Document): Promise<AxeResults> {
     const config = {
       rules: WCAG21AA_RULES,
-      tags: ['wcag2a', 'wcag2aa', 'wcag21aa'],
+      tags: ["wcag2a", "wcag2aa", "wcag21aa"],
       options: {
         runOnly: {
-          type: 'tag',
-          values: ['wcag21aa', 'best-practice']
-        }
-      }
+          type: "tag",
+          values: ["wcag21aa", "best-practice"],
+        },
+      },
     };
 
     return await axe.run(element, config);
@@ -305,12 +323,12 @@ export class AccessibilityTestSuite {
       rule: violation.id,
       severity: this.mapAxeSeverity(violation.impact),
       description: violation.description,
-      element: violation.nodes[0]?.target?.join(', ') || 'unknown',
+      element: violation.nodes[0]?.target?.join(", ") || "unknown",
       impact: this.determineHealthcareImpact(violation.id),
       wcagCriterion: violation.tags
-        .filter(tag => tag.startsWith('wcag'))
-        .join(', ') || 'N/A',
-      suggestedFix: violation.help
+        .filter(tag => tag.startsWith("wcag"))
+        .join(", ") || "N/A",
+      suggestedFix: violation.help,
     }));
   }
 
@@ -325,24 +343,28 @@ export class AccessibilityTestSuite {
     let emergencyCompliant = true;
 
     // Test emergency elements (should have 7:1 contrast)
-    const emergencyElements = element.querySelectorAll('[data-emergency="true"], .emergency-button');
+    const emergencyElements = element.querySelectorAll(
+      '[data-emergency="true"], .emergency-button',
+    );
     for (const el of emergencyElements) {
       const styles = window.getComputedStyle(el as Element);
       const contrast = this.calculateContrastRatio(
         styles.color,
-        styles.backgroundColor
+        styles.backgroundColor,
       );
-      
+
       if (contrast < 7) {
         emergencyCompliant = false;
         violations.push({
-          rule: 'emergency-contrast-ratio',
-          severity: 'critical',
-          description: `Emergency element has insufficient contrast ratio: ${contrast.toFixed(2)}:1 (required: 7:1)`,
+          rule: "emergency-contrast-ratio",
+          severity: "critical",
+          description: `Emergency element has insufficient contrast ratio: ${
+            contrast.toFixed(2)
+          }:1 (required: 7:1)`,
           element: el.tagName,
-          impact: 'emergency',
-          wcagCriterion: '1.4.6',
-          suggestedFix: 'Increase color contrast to at least 7:1 for emergency elements'
+          impact: "emergency",
+          wcagCriterion: "1.4.6",
+          suggestedFix: "Increase color contrast to at least 7:1 for emergency elements",
         });
       }
     }
@@ -355,7 +377,7 @@ export class AccessibilityTestSuite {
    */
   private async testSkipLinks(element: Element | Document): Promise<boolean> {
     const skipLinks = element.querySelectorAll('.skip-link, a[href^="#"][class*="skip"]');
-    
+
     if (skipLinks.length < 3) {
       return false; // We implemented 3 skip links
     }
@@ -363,9 +385,9 @@ export class AccessibilityTestSuite {
     // Verify skip links have proper targets
     for (const link of skipLinks) {
       const href = (link as HTMLAnchorElement).href;
-      const targetId = href.split('#')[1];
+      const targetId = href.split("#")[1];
       const target = element.querySelector(`#${targetId}`);
-      
+
       if (!target) {
         return false;
       }
@@ -377,54 +399,66 @@ export class AccessibilityTestSuite {
   // Utility methods
   private findEmergencyElements(element: Element | Document): Element[] {
     return Array.from(element.querySelectorAll(
-      '[data-emergency="true"], .emergency-button, [aria-label*="EMERGÊNCIA"]'
+      '[data-emergency="true"], .emergency-button, [aria-label*="EMERGÊNCIA"]',
     ));
   }
 
-  private mapAxeSeverity(impact: string): AccessibilityViolation['severity'] {
+  private mapAxeSeverity(impact: string): AccessibilityViolation["severity"] {
     switch (impact) {
-      case 'critical': return 'critical';
-      case 'serious': return 'serious';
-      case 'moderate': return 'moderate';
-      default: return 'minor';
+      case "critical":
+        return "critical";
+      case "serious":
+        return "serious";
+      case "moderate":
+        return "moderate";
+      default:
+        return "minor";
     }
   }
 
-  private determineHealthcareImpact(ruleId: string): AccessibilityViolation['impact'] {
-    if (ruleId.includes('emergency') || ruleId.includes('critical')) {return 'emergency';}
-    if (ruleId.includes('medical') || ruleId.includes('healthcare')) {return 'medical';}
-    return 'standard';
+  private determineHealthcareImpact(ruleId: string): AccessibilityViolation["impact"] {
+    if (ruleId.includes("emergency") || ruleId.includes("critical")) return "emergency";
+    if (ruleId.includes("medical") || ruleId.includes("healthcare")) return "medical";
+    return "standard";
   }
 
   private calculateAccessibilityScore(results: AccessibilityTestResult): number {
     let score = 10;
-    
+
     // Deduct points for violations
     results.violations.forEach(violation => {
       switch (violation.severity) {
-        case 'critical': score -= 2; break;
-        case 'serious': score -= 1; break;
-        case 'moderate': score -= 0.5; break;
-        case 'minor': score -= 0.25; break;
+        case "critical":
+          score -= 2;
+          break;
+        case "serious":
+          score -= 1;
+          break;
+        case "moderate":
+          score -= 0.5;
+          break;
+        case "minor":
+          score -= 0.25;
+          break;
       }
     });
 
     // Bonus points for healthcare-specific compliance
-    if (results.emergencyCompliant) {score += 0.5;}
-    if (results.medicalTerminologyValid) {score += 0.5;}
-    if (results.keyboardNavigationValid) {score += 0.5;}
-    if (results.ariaImplementationValid) {score += 0.5;}
+    if (results.emergencyCompliant) score += 0.5;
+    if (results.medicalTerminologyValid) score += 0.5;
+    if (results.keyboardNavigationValid) score += 0.5;
+    if (results.ariaImplementationValid) score += 0.5;
 
     return Math.max(0, Math.min(10, score));
   }
 
-  private determineWcagLevel(results: AccessibilityTestResult): 'A' | 'AA' | 'AAA' {
-    const criticalViolations = results.violations.filter(v => v.severity === 'critical').length;
-    const seriousViolations = results.violations.filter(v => v.severity === 'serious').length;
-    
-    if (criticalViolations === 0 && seriousViolations === 0 && results.score >= 9.5) {return 'AAA';}
-    if (criticalViolations === 0 && results.score >= 8.5) {return 'AA';}
-    return 'A';
+  private determineWcagLevel(results: AccessibilityTestResult): "A" | "AA" | "AAA" {
+    const criticalViolations = results.violations.filter(v => v.severity === "critical").length;
+    const seriousViolations = results.violations.filter(v => v.severity === "serious").length;
+
+    if (criticalViolations === 0 && seriousViolations === 0 && results.score >= 9.5) return "AAA";
+    if (criticalViolations === 0 && results.score >= 8.5) return "AA";
+    return "A";
   }
 
   private calculateContrastRatio(color1: string, color2: string): number {
@@ -432,13 +466,13 @@ export class AccessibilityTestSuite {
     // In a real implementation, you'd use a proper color parsing library
     const rgb1 = this.parseRgb(color1);
     const rgb2 = this.parseRgb(color2);
-    
+
     const l1 = this.getLuminance(rgb1);
     const l2 = this.getLuminance(rgb2);
-    
+
     const lighter = Math.max(l1, l2);
     const darker = Math.min(l1, l2);
-    
+
     return (lighter + 0.05) / (darker + 0.05);
   }
 

@@ -33,8 +33,8 @@ export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
 }) => {
   const getClassBadgeVariant = (controlledClass: ControlledSubstanceClass) => {
     // Map classes to badge variants based on severity
-    if (controlledClass === "A1" || controlledClass === "A2") {return "destructive";}
-    if (controlledClass === "A3" || controlledClass === "B1") {return "default";}
+    if (controlledClass === "A1" || controlledClass === "A2") return "destructive";
+    if (controlledClass === "A3" || controlledClass === "B1") return "default";
     return "secondary";
   };
 

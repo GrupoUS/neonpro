@@ -174,7 +174,8 @@ describe("HealthcareSecurityOrchestrator - createSecurityMiddleware ordering and
     expect(rateArgs.monitoring).toBe(true);
     expect(rateArgs.alerting).toBe(true);
 
-    const headerArgs = (middlewares.find((mw: unknown) => mw.__name === "headers") as unknown).__args;
+    const headerArgs =
+      (middlewares.find((mw: unknown) => mw.__name === "headers") as unknown).__args;
     expect(headerArgs.configName).toBe("medical_records_production");
   });
 
@@ -358,7 +359,8 @@ describe("createHealthcareAPISecurityStack", () => {
       EndpointSecurityLevel.PATIENT_PORTAL,
       { jwtSecret, redisClient },
     );
-    const authArgs = (middlewares.find((mw: unknown) => (mw as unknown).__name === "auth") as unknown).__args;
+    const authArgs =
+      (middlewares.find((mw: unknown) => (mw as unknown).__name === "auth") as unknown).__args;
     expect(authArgs.jwtSecret).toBe(jwtSecret);
 
     // Because redis client provided and storage preset is 'redis', rate limiter should prefer redis

@@ -4,13 +4,18 @@
  * Provides real-time performance monitoring and optimization for critical scenarios
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // Import the Emergency Performance Optimizer (would be from actual package)
 interface EmergencyRequest {
   id: string;
-  type: "emergency_consultation" | "critical_vitals" | "medication_alert" | "adverse_event" | "emergency_chat";
+  type:
+    | "emergency_consultation"
+    | "critical_vitals"
+    | "medication_alert"
+    | "adverse_event"
+    | "emergency_chat";
   priority: "critical" | "urgent" | "high" | "normal";
   timestamp: Date;
   patient_id: string;
@@ -69,7 +74,7 @@ export function useEmergencyPerformance({
   onPerformanceDegraded,
 }: UseEmergencyPerformanceProps = {}) {
   const { toast } = useToast();
-  
+
   // State management
   const [performanceState, setPerformanceState] = useState<EmergencyPerformanceState>({
     is_emergency_mode: false,
@@ -97,7 +102,7 @@ export function useEmergencyPerformance({
         // In real implementation, would import from @neonpro/performance
         // const { EmergencyPerformanceOptimizer } = await import("@neonpro/performance");
         // performanceOptimizerRef.current = new EmergencyPerformanceOptimizer();
-        
+
         // Mock initialization for now
         performanceOptimizerRef.current = {
           processEmergencyRequest: async (request: EmergencyRequest) => ({
@@ -136,10 +141,9 @@ export function useEmergencyPerformance({
 
         // Initialize cache health check
         await updateCacheHealth();
-
       } catch (error) {
         console.error("Failed to initialize Emergency Performance Optimizer:", error);
-        
+
         setPerformanceState(prev => ({
           ...prev,
           system_status: "critical",
@@ -165,16 +169,18 @@ export function useEmergencyPerformance({
   // Start performance monitoring
   const startPerformanceMonitoring = useCallback(() => {
     performanceMonitoringRef.current = setInterval(async () => {
-      if (!performanceOptimizerRef.current) {return;}
+      if (!performanceOptimizerRef.current) return;
 
       try {
         const systemStatus = await performanceOptimizerRef.current.getSystemStatus();
-        
+
         const newState: EmergencyPerformanceState = {
           is_emergency_mode: performanceState.is_emergency_mode,
           current_performance: performanceState.current_performance,
           system_status: determineSystemStatus(systemStatus),
-          edge_nodes_available: systemStatus.edge_nodes.filter((n: unknown) => n.status === "active").length,
+          edge_nodes_available: systemStatus.edge_nodes.filter((n: unknown) =>
+            n.status === "active"
+          ).length,
           queue_length: systemStatus.queue_status,
           cache_health: {
             emergency_protocols_cached: systemStatus.cache_status.emergency_protocols_loaded > 0,
@@ -197,19 +203,20 @@ export function useEmergencyPerformance({
             geographic_latency_ms: 50,
             compliance_with_sla: false,
           };
-          
+
           onPerformanceDegraded?.(degradedMetrics);
-          
+
           toast({
             title: "⚠️ Performance Degradada",
-            description: `Tempo de resposta: ${Math.round(degradedMetrics.response_time_ms)}ms (SLA: ${performance_sla_ms}ms)`,
+            description: `Tempo de resposta: ${
+              Math.round(degradedMetrics.response_time_ms)
+            }ms (SLA: ${performance_sla_ms}ms)`,
             variant: "destructive",
           });
         }
-
       } catch (error) {
         console.error("Performance monitoring failed:", error);
-        
+
         setPerformanceState(prev => ({
           ...prev,
           system_status: "offline",
@@ -223,7 +230,7 @@ export function useEmergencyPerformance({
     message: string,
     messageType: "chat" | "consultation" | "vitals" | "medication",
     isEmergency: boolean = false,
-    severity?: number
+    severity?: number,
   ): Promise<{
     response: unknown;
     performance_metrics: PerformanceMetrics;
@@ -236,13 +243,20 @@ export function useEmergencyPerformance({
     const requestId = crypto.randomUUID();
     const emergencyRequest: EmergencyRequest = {
       id: requestId,
-      type: messageType === "chat" ? "emergency_chat" :
-            messageType === "consultation" ? "emergency_consultation" :
-            messageType === "vitals" ? "critical_vitals" :
-            "medication_alert",
-      priority: isEmergency ? "critical" : 
-               severity && severity >= 8 ? "urgent" :
-               severity && severity >= 5 ? "high" : "normal",
+      type: messageType === "chat"
+        ? "emergency_chat"
+        : messageType === "consultation"
+        ? "emergency_consultation"
+        : messageType === "vitals"
+        ? "critical_vitals"
+        : "medication_alert",
+      priority: isEmergency
+        ? "critical"
+        : severity && severity >= 8
+        ? "urgent"
+        : severity && severity >= 5
+        ? "high"
+        : "normal",
       timestamp: new Date(),
       patient_id: patient_id || `anonymous_${Date.now()}`,
       healthcare_provider_id,
@@ -255,9 +269,11 @@ export function useEmergencyPerformance({
       context: {
         is_emergency: isEmergency,
         requires_immediate_response: isEmergency || (severity && severity >= 8),
-        max_response_time_ms: isEmergency ? 100 : 
-                             severity && severity >= 8 ? 200 : 
-                             performance_sla_ms,
+        max_response_time_ms: isEmergency
+          ? 100
+          : severity && severity >= 8
+          ? 200
+          : performance_sla_ms,
         offline_fallback_required: enable_offline_mode,
       },
     };
@@ -266,8 +282,10 @@ export function useEmergencyPerformance({
     emergencyRequestsRef.current.set(requestId, emergencyRequest);
 
     try {
-      const result = await performanceOptimizerRef.current.processEmergencyRequest(emergencyRequest);
-      
+      const result = await performanceOptimizerRef.current.processEmergencyRequest(
+        emergencyRequest,
+      );
+
       // Update performance state
       setPerformanceState(prev => ({
         ...prev,
@@ -284,7 +302,8 @@ export function useEmergencyPerformance({
       if (isEmergency) {
         toast({
           title: "🚨 Modo Emergência Ativo",
-          description: `Resposta em ${result.performance_metrics.response_time_ms}ms via ${result.edge_node_used}`,
+          description:
+            `Resposta em ${result.performance_metrics.response_time_ms}ms via ${result.edge_node_used}`,
           variant: result.performance_metrics.compliance_with_sla ? "default" : "destructive",
         });
       }
@@ -292,12 +311,12 @@ export function useEmergencyPerformance({
       return {
         response: result.response,
         performance_metrics: result.performance_metrics,
-        emergency_protocols_activated: isEmergency && result.performance_metrics.offline_fallback_used,
+        emergency_protocols_activated: isEmergency
+          && result.performance_metrics.offline_fallback_used,
       };
-
     } catch (error) {
       console.error("Emergency message processing failed:", error);
-      
+
       // Emergency fallback
       const fallbackResponse = {
         emergency_response: {
@@ -347,7 +366,8 @@ export function useEmergencyPerformance({
 
     toast({
       title: "🚨 Modo Emergência Ativado",
-      description: "Sistema otimizado para respostas críticas. Protocolos de emergência carregados.",
+      description:
+        "Sistema otimizado para respostas críticas. Protocolos de emergência carregados.",
     });
   }, [toast]);
 
@@ -370,28 +390,49 @@ export function useEmergencyPerformance({
   }, [performanceState.current_performance]);
 
   // Helper functions
-  
-  const determineSystemStatus = (systemStatus: unknown): "optimal" | "degraded" | "critical" | "offline" => {
-    const activeEdgeNodes = systemStatus.edge_nodes.filter((n: unknown) => n.status === "active").length;
+
+  const determineSystemStatus = (
+    systemStatus: unknown,
+  ): "optimal" | "degraded" | "critical" | "offline" => {
+    const activeEdgeNodes =
+      systemStatus.edge_nodes.filter((n: unknown) => n.status === "active").length;
     const averageResponseTime = systemStatus.performance_summary.average_response_time;
     const slaComplianceRate = systemStatus.performance_summary.sla_compliance_rate;
 
-    if (activeEdgeNodes === 0) {return "offline";}
-    if (slaComplianceRate < 0.8 || averageResponseTime > performance_sla_ms * 2) {return "critical";}
-    if (slaComplianceRate < 0.9 || averageResponseTime > performance_sla_ms * 1.5) {return "degraded";}
+    if (activeEdgeNodes === 0) return "offline";
+    if (slaComplianceRate < 0.8 || averageResponseTime > performance_sla_ms * 2) return "critical";
+    if (slaComplianceRate < 0.9 || averageResponseTime > performance_sla_ms * 1.5) {
+      return "degraded";
+    }
     return "optimal";
   };
 
   const extractSymptoms = (message: string): string[] => {
     const symptoms: string[] = [];
     const lowerMessage = message.toLowerCase();
-    
+
     const symptomPatterns = [
-      "chest pain", "difficulty breathing", "shortness of breath",
-      "dizziness", "nausea", "vomiting", "fever", "bleeding",
-      "unconscious", "seizure", "stroke", "heart attack",
-      "dor no peito", "falta de ar", "tontura", "náusea",
-      "vômito", "febre", "sangramento", "desmaio", "convulsão"
+      "chest pain",
+      "difficulty breathing",
+      "shortness of breath",
+      "dizziness",
+      "nausea",
+      "vomiting",
+      "fever",
+      "bleeding",
+      "unconscious",
+      "seizure",
+      "stroke",
+      "heart attack",
+      "dor no peito",
+      "falta de ar",
+      "tontura",
+      "náusea",
+      "vômito",
+      "febre",
+      "sangramento",
+      "desmaio",
+      "convulsão",
     ];
 
     for (const pattern of symptomPatterns) {
@@ -422,13 +463,13 @@ export function useEmergencyPerformance({
     isEmergencyMode: performanceState.is_emergency_mode,
     systemStatus: performanceState.system_status,
     currentMetrics: performanceState.current_performance,
-    
+
     // Actions
     processEmergencyMessage,
     activateEmergencyMode,
     deactivateEmergencyMode,
     getCurrentMetrics,
-    
+
     // Status checks
     isSystemHealthy: performanceState.system_status === "optimal",
     isOfflineModeActive: performanceState.system_status === "offline",

@@ -1,132 +1,150 @@
-"use client"
+"use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Switch } from '@/components/ui/switch'
-import { Slider } from '@/components/ui/slider'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Progress } from '@/components/ui/progress'
-import { 
-  Hand, 
-  Smartphone, 
-  MousePointer, 
-  Accessibility, 
-  Settings,
-  AlertCircle,
-  CheckCircle,
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Accessibility,
   Activity,
-  Heart,
-  Stethoscope,
-  Clock,
-  Target,
-  Gauge,
-  Shield,
-  Users,
-  FileText,
+  AlertCircle,
   Calendar,
-  Phone
-} from 'lucide-react'
+  CheckCircle,
+  Clock,
+  FileText,
+  Gauge,
+  Hand,
+  Heart,
+  MousePointer,
+  Phone,
+  Settings,
+  Shield,
+  Smartphone,
+  Stethoscope,
+  Target,
+  Users,
+} from "lucide-react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 // ===============================
 // TYPES & INTERFACES
 // ===============================
 
-export type HandDominance = 'left' | 'right' | 'ambidextrous'
-export type OperationModeType = 'post_procedure' | 'temporary_limitation' | 'permanent_adaptation' | 'preference_based'
-export type LayoutOrientation = 'portrait' | 'landscape'
-export type InteractionMethod = 'touch' | 'stylus' | 'voice_assist' | 'switch_assist'
+export type HandDominance = "left" | "right" | "ambidextrous";
+export type OperationModeType =
+  | "post_procedure"
+  | "temporary_limitation"
+  | "permanent_adaptation"
+  | "preference_based";
+export type LayoutOrientation = "portrait" | "landscape";
+export type InteractionMethod = "touch" | "stylus" | "voice_assist" | "switch_assist";
 
 export interface TouchTargetOptimization {
-  minimum_size: number
-  spacing_multiplier: number
-  edge_avoidance: number
-  priority_sizing: boolean
-  thumb_zone_optimization: boolean
-  medical_priority_targets: string[]
+  minimum_size: number;
+  spacing_multiplier: number;
+  edge_avoidance: number;
+  priority_sizing: boolean;
+  thumb_zone_optimization: boolean;
+  medical_priority_targets: string[];
 }
 
 export interface OneHandedSettings {
-  enabled: boolean
-  hand_dominance: HandDominance
-  operation_mode: OperationModeType
-  layout_orientation: LayoutOrientation
-  interaction_methods: InteractionMethod[]
-  touch_optimization: TouchTargetOptimization
-  medical_context_awareness: boolean
-  emergency_mode_enabled: boolean
-  auto_adaptation: boolean
-  feedback_enabled: boolean
-  lgpd_compliance_mode: boolean
+  enabled: boolean;
+  hand_dominance: HandDominance;
+  operation_mode: OperationModeType;
+  layout_orientation: LayoutOrientation;
+  interaction_methods: InteractionMethod[];
+  touch_optimization: TouchTargetOptimization;
+  medical_context_awareness: boolean;
+  emergency_mode_enabled: boolean;
+  auto_adaptation: boolean;
+  feedback_enabled: boolean;
+  lgpd_compliance_mode: boolean;
 }
 
 export interface GestureAdaptation {
-  gesture_id: string
-  original_gesture: string
-  adapted_gesture: string
-  difficulty_level: number
-  medical_safety_rating: number
-  post_procedure_safe: boolean
-  description_pt: string
+  gesture_id: string;
+  original_gesture: string;
+  adapted_gesture: string;
+  difficulty_level: number;
+  medical_safety_rating: number;
+  post_procedure_safe: boolean;
+  description_pt: string;
 }
 
 export interface MedicalLayoutConfig {
-  scenario: string
-  name_pt: string
+  scenario: string;
+  name_pt: string;
   layout_adjustments: {
-    sidebar_position: 'left' | 'right' | 'collapsed'
-    primary_actions_zone: 'thumb_reach' | 'index_reach' | 'bottom_edge'
-    secondary_actions_position: 'contextual' | 'dedicated_area' | 'hidden'
-    emergency_access_method: 'corner_tap' | 'edge_swipe' | 'voice_trigger'
-  }
+    sidebar_position: "left" | "right" | "collapsed";
+    primary_actions_zone: "thumb_reach" | "index_reach" | "bottom_edge";
+    secondary_actions_position: "contextual" | "dedicated_area" | "hidden";
+    emergency_access_method: "corner_tap" | "edge_swipe" | "voice_trigger";
+  };
   target_adjustments: {
-    minimum_target_size: number
-    spacing_factor: number
-    priority_boost: boolean
-  }
+    minimum_target_size: number;
+    spacing_factor: number;
+    priority_boost: boolean;
+  };
   content_adaptations: {
-    single_column_threshold: number
-    text_scaling_factor: number
-    media_positioning: 'center' | 'dominant_side' | 'non_dominant_side'
-  }
+    single_column_threshold: number;
+    text_scaling_factor: number;
+    media_positioning: "center" | "dominant_side" | "non_dominant_side";
+  };
 }
 
 export interface OneHandedAnalytics {
-  session_start: Date
-  total_interactions: number
-  gesture_adaptations_used: number
-  layout_switches: number
-  medical_mode_activations: number
-  emergency_triggers: number
-  efficiency_score: number
+  session_start: Date;
+  total_interactions: number;
+  gesture_adaptations_used: number;
+  layout_switches: number;
+  medical_mode_activations: number;
+  emergency_triggers: number;
+  efficiency_score: number;
   user_satisfaction_indicators: {
-    successful_interactions: number
-    failed_interactions: number
-    abandoned_tasks: number
-    completion_time_average: number
-  }
+    successful_interactions: number;
+    failed_interactions: number;
+    abandoned_tasks: number;
+    completion_time_average: number;
+  };
   lgpd_data_points: {
-    interaction_patterns_anonymized: boolean
-    medical_data_encrypted: boolean
-    user_consent_status: string
-    data_retention_period: number
-  }
+    interaction_patterns_anonymized: boolean;
+    medical_data_encrypted: boolean;
+    user_consent_status: string;
+    data_retention_period: number;
+  };
 }
 
 export interface OneHandedContextValue {
-  settings: OneHandedSettings
-  analytics: OneHandedAnalytics
-  updateSettings: (settings: Partial<OneHandedSettings>) => void
-  adaptLayout: (scenario: string) => void
-  registerMedicalContext: (context: string) => void
-  getOptimizedLayout: () => MedicalLayoutConfig
-  triggerEmergencyMode: () => void
-  logInteraction: (interaction: string) => void
-  exportAnalytics: () => Promise<string>
-  resetToDefaults: () => void
+  settings: OneHandedSettings;
+  analytics: OneHandedAnalytics;
+  updateSettings: (settings: Partial<OneHandedSettings>) => void;
+  adaptLayout: (scenario: string) => void;
+  registerMedicalContext: (context: string) => void;
+  getOptimizedLayout: () => MedicalLayoutConfig;
+  triggerEmergencyMode: () => void;
+  logInteraction: (interaction: string) => void;
+  exportAnalytics: () => Promise<string>;
+  resetToDefaults: () => void;
 }
 
 // ===============================
@@ -135,187 +153,187 @@ export interface OneHandedContextValue {
 
 const DEFAULT_SETTINGS: OneHandedSettings = {
   enabled: false,
-  hand_dominance: 'right',
-  operation_mode: 'preference_based',
-  layout_orientation: 'portrait',
-  interaction_methods: ['touch'],
+  hand_dominance: "right",
+  operation_mode: "preference_based",
+  layout_orientation: "portrait",
+  interaction_methods: ["touch"],
   touch_optimization: {
     minimum_size: 44,
     spacing_multiplier: 1.5,
     edge_avoidance: 16,
     priority_sizing: true,
     thumb_zone_optimization: true,
-    medical_priority_targets: ['emergency', 'pain_scale', 'medication', 'call_nurse']
+    medical_priority_targets: ["emergency", "pain_scale", "medication", "call_nurse"],
   },
   medical_context_awareness: true,
   emergency_mode_enabled: true,
   auto_adaptation: false,
   feedback_enabled: true,
-  lgpd_compliance_mode: true
-}
+  lgpd_compliance_mode: true,
+};
 
 const MEDICAL_LAYOUT_CONFIGS: Record<string, MedicalLayoutConfig> = {
-  'post_botox': {
-    scenario: 'post_botox',
-    name_pt: 'Pós-Aplicação de Botox',
+  "post_botox": {
+    scenario: "post_botox",
+    name_pt: "Pós-Aplicação de Botox",
     layout_adjustments: {
-      sidebar_position: 'collapsed',
-      primary_actions_zone: 'thumb_reach',
-      secondary_actions_position: 'contextual',
-      emergency_access_method: 'corner_tap'
+      sidebar_position: "collapsed",
+      primary_actions_zone: "thumb_reach",
+      secondary_actions_position: "contextual",
+      emergency_access_method: "corner_tap",
     },
     target_adjustments: {
       minimum_target_size: 56,
       spacing_factor: 2,
-      priority_boost: true
+      priority_boost: true,
     },
     content_adaptations: {
       single_column_threshold: 768,
       text_scaling_factor: 1.25,
-      media_positioning: 'center'
-    }
+      media_positioning: "center",
+    },
   },
-  'bandaged_hand': {
-    scenario: 'bandaged_hand',
-    name_pt: 'Mão Enfaixada/Curativo',
+  "bandaged_hand": {
+    scenario: "bandaged_hand",
+    name_pt: "Mão Enfaixada/Curativo",
     layout_adjustments: {
-      sidebar_position: 'collapsed',
-      primary_actions_zone: 'index_reach',
-      secondary_actions_position: 'dedicated_area',
-      emergency_access_method: 'edge_swipe'
+      sidebar_position: "collapsed",
+      primary_actions_zone: "index_reach",
+      secondary_actions_position: "dedicated_area",
+      emergency_access_method: "edge_swipe",
     },
     target_adjustments: {
       minimum_target_size: 64,
       spacing_factor: 2.5,
-      priority_boost: true
+      priority_boost: true,
     },
     content_adaptations: {
       single_column_threshold: 640,
       text_scaling_factor: 1.4,
-      media_positioning: 'dominant_side'
-    }
+      media_positioning: "dominant_side",
+    },
   },
-  'iv_drip': {
-    scenario: 'iv_drip',
-    name_pt: 'Com Soro/Medicação IV',
+  "iv_drip": {
+    scenario: "iv_drip",
+    name_pt: "Com Soro/Medicação IV",
     layout_adjustments: {
-      sidebar_position: 'left',
-      primary_actions_zone: 'bottom_edge',
-      secondary_actions_position: 'hidden',
-      emergency_access_method: 'voice_trigger'
+      sidebar_position: "left",
+      primary_actions_zone: "bottom_edge",
+      secondary_actions_position: "hidden",
+      emergency_access_method: "voice_trigger",
     },
     target_adjustments: {
       minimum_target_size: 48,
       spacing_factor: 1.8,
-      priority_boost: false
+      priority_boost: false,
     },
     content_adaptations: {
       single_column_threshold: 896,
       text_scaling_factor: 1.15,
-      media_positioning: 'non_dominant_side'
-    }
+      media_positioning: "non_dominant_side",
+    },
   },
-  'tremor_management': {
-    scenario: 'tremor_management',
-    name_pt: 'Gerenciamento de Tremor',
+  "tremor_management": {
+    scenario: "tremor_management",
+    name_pt: "Gerenciamento de Tremor",
     layout_adjustments: {
-      sidebar_position: 'right',
-      primary_actions_zone: 'thumb_reach',
-      secondary_actions_position: 'contextual',
-      emergency_access_method: 'corner_tap'
+      sidebar_position: "right",
+      primary_actions_zone: "thumb_reach",
+      secondary_actions_position: "contextual",
+      emergency_access_method: "corner_tap",
     },
     target_adjustments: {
       minimum_target_size: 72,
       spacing_factor: 3,
-      priority_boost: true
+      priority_boost: true,
     },
     content_adaptations: {
       single_column_threshold: 512,
       text_scaling_factor: 1.5,
-      media_positioning: 'center'
-    }
-  }
-}
+      media_positioning: "center",
+    },
+  },
+};
 
 const GESTURE_ADAPTATIONS: GestureAdaptation[] = [
   {
-    gesture_id: 'double_tap',
-    original_gesture: 'Toque duplo rápido',
-    adapted_gesture: 'Toque único prolongado (800ms)',
+    gesture_id: "double_tap",
+    original_gesture: "Toque duplo rápido",
+    adapted_gesture: "Toque único prolongado (800ms)",
     difficulty_level: 2,
     medical_safety_rating: 9,
     post_procedure_safe: true,
-    description_pt: 'Evita movimentos repetitivos que podem causar desconforto pós-procedimento'
+    description_pt: "Evita movimentos repetitivos que podem causar desconforto pós-procedimento",
   },
   {
-    gesture_id: 'pinch_zoom',
-    original_gesture: 'Pinça com dois dedos',
-    adapted_gesture: 'Toque + botão de zoom',
+    gesture_id: "pinch_zoom",
+    original_gesture: "Pinça com dois dedos",
+    adapted_gesture: "Toque + botão de zoom",
     difficulty_level: 1,
     medical_safety_rating: 10,
     post_procedure_safe: true,
-    description_pt: 'Interface adaptada para operação com um dedo apenas'
+    description_pt: "Interface adaptada para operação com um dedo apenas",
   },
   {
-    gesture_id: 'long_press_menu',
-    original_gesture: 'Pressionar e manter pressionado',
-    adapted_gesture: 'Toque + confirmação visual',
+    gesture_id: "long_press_menu",
+    original_gesture: "Pressionar e manter pressionado",
+    adapted_gesture: "Toque + confirmação visual",
     difficulty_level: 1,
     medical_safety_rating: 8,
     post_procedure_safe: true,
-    description_pt: 'Menu contextual ativado sem necessidade de pressão prolongada'
+    description_pt: "Menu contextual ativado sem necessidade de pressão prolongada",
   },
   {
-    gesture_id: 'edge_swipe',
-    original_gesture: 'Deslizar da borda da tela',
-    adapted_gesture: 'Botão de navegação fixo',
+    gesture_id: "edge_swipe",
+    original_gesture: "Deslizar da borda da tela",
+    adapted_gesture: "Botão de navegação fixo",
     difficulty_level: 1,
     medical_safety_rating: 9,
     post_procedure_safe: true,
-    description_pt: 'Navegação sem movimentos de alcance completo da tela'
+    description_pt: "Navegação sem movimentos de alcance completo da tela",
   },
   {
-    gesture_id: 'multi_finger_tap',
-    original_gesture: 'Toque com múltiplos dedos',
-    adapted_gesture: 'Sequência de toques únicos',
+    gesture_id: "multi_finger_tap",
+    original_gesture: "Toque com múltiplos dedos",
+    adapted_gesture: "Sequência de toques únicos",
     difficulty_level: 2,
     medical_safety_rating: 7,
     post_procedure_safe: false,
-    description_pt: 'Gestos complexos substituídos por sequências simples'
-  }
-]
+    description_pt: "Gestos complexos substituídos por sequências simples",
+  },
+];
 
 const MEDICAL_SCENARIOS_PT = {
-  'post_procedure': 'Pós-Procedimento',
-  'temporary_limitation': 'Limitação Temporária',
-  'permanent_adaptation': 'Adaptação Permanente',
-  'preference_based': 'Por Preferência'
-}
+  "post_procedure": "Pós-Procedimento",
+  "temporary_limitation": "Limitação Temporária",
+  "permanent_adaptation": "Adaptação Permanente",
+  "preference_based": "Por Preferência",
+};
 
 // ===============================
 // CONTEXT CREATION
 // ===============================
 
-const OneHandedOperationContext = createContext<OneHandedContextValue | undefined>(undefined)
+const OneHandedOperationContext = createContext<OneHandedContextValue | undefined>(undefined);
 
 // ===============================
 // HOOK FOR CONSUMING CONTEXT
 // ===============================
 
 export function useOneHandedOperation() {
-  const context = useContext(OneHandedOperationContext)
+  const context = useContext(OneHandedOperationContext);
   if (context === undefined) {
-    throw new Error('useOneHandedOperation must be used within a OneHandedOperationProvider')
+    throw new Error("useOneHandedOperation must be used within a OneHandedOperationProvider");
   }
-  return context
+  return context;
 }
 
 // ===============================
 // MAIN PROVIDER COMPONENT
 // ===============================
 
-export function OneHandedOperationProvider({ children }: { children: React.ReactNode }) {
-  const [settings, setSettings] = useState<OneHandedSettings>(DEFAULT_SETTINGS)
+export function OneHandedOperationProvider({ children }: { children: React.ReactNode; }) {
+  const [settings, setSettings] = useState<OneHandedSettings>(DEFAULT_SETTINGS);
   const [analytics, setAnalytics] = useState<OneHandedAnalytics>(() => ({
     session_start: new Date(),
     total_interactions: 0,
@@ -328,139 +346,145 @@ export function OneHandedOperationProvider({ children }: { children: React.React
       successful_interactions: 0,
       failed_interactions: 0,
       abandoned_tasks: 0,
-      completion_time_average: 0
+      completion_time_average: 0,
     },
     lgpd_data_points: {
       interaction_patterns_anonymized: true,
       medical_data_encrypted: true,
-      user_consent_status: 'pending',
-      data_retention_period: 90
-    }
-  }))
+      user_consent_status: "pending",
+      data_retention_period: 90,
+    },
+  }));
 
-  const [currentMedicalContext, setCurrentMedicalContext] = useState<string>('preference_based')
-  const [emergencyModeActive, setEmergencyModeActive] = useState(false)
-  const [layoutAdaptationsActive, setLayoutAdaptationsActive] = useState<string[]>([])
+  const [currentMedicalContext, setCurrentMedicalContext] = useState<string>("preference_based");
+  const [emergencyModeActive, setEmergencyModeActive] = useState(false);
+  const [layoutAdaptationsActive, setLayoutAdaptationsActive] = useState<string[]>([]);
 
   // Analytics tracking
-  const analyticsRef = useRef<NodeJS.Timeout>()
+  const analyticsRef = useRef<NodeJS.Timeout>();
 
   // Update settings with analytics tracking
   const updateSettings = useCallback((newSettings: Partial<OneHandedSettings>) => {
     setSettings(prev => {
-      const updated = { ...prev, ...newSettings }
-      
+      const updated = { ...prev, ...newSettings };
+
       // Track significant changes
       if (newSettings.hand_dominance && newSettings.hand_dominance !== prev.hand_dominance) {
         setAnalytics(prevAnalytics => ({
           ...prevAnalytics,
           layout_switches: prevAnalytics.layout_switches + 1,
-          total_interactions: prevAnalytics.total_interactions + 1
-        }))
+          total_interactions: prevAnalytics.total_interactions + 1,
+        }));
       }
 
-      if (newSettings.medical_context_awareness !== undefined && 
-          newSettings.medical_context_awareness !== prev.medical_context_awareness) {
+      if (
+        newSettings.medical_context_awareness !== undefined
+        && newSettings.medical_context_awareness !== prev.medical_context_awareness
+      ) {
         setAnalytics(prevAnalytics => ({
           ...prevAnalytics,
-          medical_mode_activations: prevAnalytics.medical_mode_activations + 1
-        }))
+          medical_mode_activations: prevAnalytics.medical_mode_activations + 1,
+        }));
       }
 
-      return updated
-    })
-  }, [])
+      return updated;
+    });
+  }, []);
 
   // Adapt layout based on medical scenario
   const adaptLayout = useCallback((scenario: string) => {
     if (MEDICAL_LAYOUT_CONFIGS[scenario]) {
-      setCurrentMedicalContext(scenario)
+      setCurrentMedicalContext(scenario);
       setLayoutAdaptationsActive(prev => {
         if (!prev.includes(scenario)) {
-          return [...prev, scenario]
+          return [...prev, scenario];
         }
-        return prev
-      })
+        return prev;
+      });
 
       setAnalytics(prev => ({
         ...prev,
         layout_switches: prev.layout_switches + 1,
         medical_mode_activations: prev.medical_mode_activations + 1,
-        total_interactions: prev.total_interactions + 1
-      }))
+        total_interactions: prev.total_interactions + 1,
+      }));
     }
-  }, [])
+  }, []);
 
   // Register medical context
   const registerMedicalContext = useCallback((context: string) => {
-    setCurrentMedicalContext(context)
-    
+    setCurrentMedicalContext(context);
+
     // Auto-adapt settings based on medical context
     if (settings.auto_adaptation) {
-      if (context.includes('post') || context.includes('bandaged')) {
+      if (context.includes("post") || context.includes("bandaged")) {
         updateSettings({
           touch_optimization: {
             ...settings.touch_optimization,
             minimum_size: Math.max(settings.touch_optimization.minimum_size, 56),
-            spacing_multiplier: Math.max(settings.touch_optimization.spacing_multiplier, 2)
-          }
-        })
+            spacing_multiplier: Math.max(settings.touch_optimization.spacing_multiplier, 2),
+          },
+        });
       }
     }
-  }, [settings, updateSettings])
+  }, [settings, updateSettings]);
 
   // Get optimized layout configuration
   const getOptimizedLayout = useCallback((): MedicalLayoutConfig => {
-    const config = MEDICAL_LAYOUT_CONFIGS[currentMedicalContext] || MEDICAL_LAYOUT_CONFIGS['post_procedure']
-    
+    const config = MEDICAL_LAYOUT_CONFIGS[currentMedicalContext]
+      || MEDICAL_LAYOUT_CONFIGS["post_procedure"];
+
     // Apply hand dominance modifications
-    if (settings.hand_dominance === 'left') {
+    if (settings.hand_dominance === "left") {
       return {
         ...config,
         layout_adjustments: {
           ...config.layout_adjustments,
-          sidebar_position: config.layout_adjustments.sidebar_position === 'left' ? 'right' : 
-                           config.layout_adjustments.sidebar_position === 'right' ? 'left' : 'collapsed'
-        }
-      }
+          sidebar_position: config.layout_adjustments.sidebar_position === "left"
+            ? "right"
+            : config.layout_adjustments.sidebar_position === "right"
+            ? "left"
+            : "collapsed",
+        },
+      };
     }
 
-    return config
-  }, [currentMedicalContext, settings.hand_dominance])
+    return config;
+  }, [currentMedicalContext, settings.hand_dominance]);
 
   // Trigger emergency mode
   const triggerEmergencyMode = useCallback(() => {
-    setEmergencyModeActive(true)
+    setEmergencyModeActive(true);
     setAnalytics(prev => ({
       ...prev,
       emergency_triggers: prev.emergency_triggers + 1,
-      total_interactions: prev.total_interactions + 1
-    }))
+      total_interactions: prev.total_interactions + 1,
+    }));
 
     // Auto-disable emergency mode after 5 minutes
     setTimeout(() => {
-      setEmergencyModeActive(false)
-    }, 300_000)
-  }, [])
+      setEmergencyModeActive(false);
+    }, 300_000);
+  }, []);
 
   // Log interaction
   const logInteraction = useCallback((interaction: string) => {
-    if (!settings.lgpd_compliance_mode) {return}
+    if (!settings.lgpd_compliance_mode) return;
 
     setAnalytics(prev => {
       const updated = {
         ...prev,
-        total_interactions: prev.total_interactions + 1
-      }
+        total_interactions: prev.total_interactions + 1,
+      };
 
       // Track gesture adaptations
       if (GESTURE_ADAPTATIONS.some(g => interaction.includes(g.gesture_id))) {
-        updated.gesture_adaptations_used = prev.gesture_adaptations_used + 1
+        updated.gesture_adaptations_used = prev.gesture_adaptations_used + 1;
       }
 
-      return updated
-    })
-  }, [settings.lgpd_compliance_mode])
+      return updated;
+    });
+  }, [settings.lgpd_compliance_mode]);
 
   // Export analytics (LGPD compliant)
   const exportAnalytics = useCallback(async (): Promise<string> => {
@@ -470,68 +494,70 @@ export function OneHandedOperationProvider({ children }: { children: React.React
         total: analytics.total_interactions,
         gesture_adaptations: analytics.gesture_adaptations_used,
         layout_switches: analytics.layout_switches,
-        emergency_activations: analytics.emergency_triggers
+        emergency_activations: analytics.emergency_triggers,
       },
       efficiency_metrics: {
         score: analytics.efficiency_score,
-        successful_rate: analytics.user_satisfaction_indicators.successful_interactions / 
-                        Math.max(analytics.total_interactions, 1)
+        successful_rate: analytics.user_satisfaction_indicators.successful_interactions
+          / Math.max(analytics.total_interactions, 1),
       },
       accessibility_data: {
         hand_dominance: settings.hand_dominance,
         operation_mode: settings.operation_mode,
-        adaptations_used: layoutAdaptationsActive.length
+        adaptations_used: layoutAdaptationsActive.length,
       },
       lgpd_compliance: {
         data_anonymized: true,
         medical_data_encrypted: analytics.lgpd_data_points.medical_data_encrypted,
         consent_status: analytics.lgpd_data_points.user_consent_status,
-        retention_period_days: analytics.lgpd_data_points.data_retention_period
+        retention_period_days: analytics.lgpd_data_points.data_retention_period,
       },
-      export_timestamp: new Date().toISOString()
-    }
+      export_timestamp: new Date().toISOString(),
+    };
 
-    return JSON.stringify(exportData, null, 2)
-  }, [analytics, settings, layoutAdaptationsActive])
+    return JSON.stringify(exportData, null, 2);
+  }, [analytics, settings, layoutAdaptationsActive]);
 
   // Reset to defaults
   const resetToDefaults = useCallback(() => {
-    setSettings(DEFAULT_SETTINGS)
-    setCurrentMedicalContext('preference_based')
-    setLayoutAdaptationsActive([])
-    setEmergencyModeActive(false)
-  }, [])
+    setSettings(DEFAULT_SETTINGS);
+    setCurrentMedicalContext("preference_based");
+    setLayoutAdaptationsActive([]);
+    setEmergencyModeActive(false);
+  }, []);
 
   // Calculate efficiency score
   useEffect(() => {
     if (analyticsRef.current) {
-      clearInterval(analyticsRef.current)
+      clearInterval(analyticsRef.current);
     }
 
     analyticsRef.current = setInterval(() => {
       setAnalytics(prev => {
-        const successRate = prev.user_satisfaction_indicators.successful_interactions / 
-                           Math.max(prev.total_interactions, 1)
-        const adaptationUtilization = prev.gesture_adaptations_used / Math.max(prev.total_interactions, 1)
-        const emergencyFrequency = prev.emergency_triggers / Math.max(prev.total_interactions / 100, 1)
+        const successRate = prev.user_satisfaction_indicators.successful_interactions
+          / Math.max(prev.total_interactions, 1);
+        const adaptationUtilization = prev.gesture_adaptations_used
+          / Math.max(prev.total_interactions, 1);
+        const emergencyFrequency = prev.emergency_triggers
+          / Math.max(prev.total_interactions / 100, 1);
 
         const efficiency_score = Math.round(
-          (successRate * 0.5 + adaptationUtilization * 0.3 + (1 - emergencyFrequency) * 0.2) * 100
-        )
+          (successRate * 0.5 + adaptationUtilization * 0.3 + (1 - emergencyFrequency) * 0.2) * 100,
+        );
 
         return {
           ...prev,
-          efficiency_score: Math.min(100, Math.max(0, efficiency_score))
-        }
-      })
-    }, 10_000) // Update every 10 seconds
+          efficiency_score: Math.min(100, Math.max(0, efficiency_score)),
+        };
+      });
+    }, 10_000); // Update every 10 seconds
 
     return () => {
       if (analyticsRef.current) {
-        clearInterval(analyticsRef.current)
+        clearInterval(analyticsRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
   const contextValue: OneHandedContextValue = useMemo(() => ({
     settings,
@@ -543,7 +569,7 @@ export function OneHandedOperationProvider({ children }: { children: React.React
     triggerEmergencyMode,
     logInteraction,
     exportAnalytics,
-    resetToDefaults
+    resetToDefaults,
   }), [
     settings,
     analytics,
@@ -554,14 +580,14 @@ export function OneHandedOperationProvider({ children }: { children: React.React
     triggerEmergencyMode,
     logInteraction,
     exportAnalytics,
-    resetToDefaults
-  ])
+    resetToDefaults,
+  ]);
 
   return (
     <OneHandedOperationContext.Provider value={contextValue}>
       {children}
     </OneHandedOperationContext.Provider>
-  )
+  );
 }
 
 // ===============================
@@ -577,28 +603,28 @@ export function OneHandedOperationSettings() {
     triggerEmergencyMode,
     exportAnalytics,
     resetToDefaults,
-    getOptimizedLayout
-  } = useOneHandedOperation()
+    getOptimizedLayout,
+  } = useOneHandedOperation();
 
-  const [activeTab, setActiveTab] = useState('basic')
-  const [showAdvanced, setShowAdvanced] = useState(false)
+  const [activeTab, setActiveTab] = useState("basic");
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const currentLayout = getOptimizedLayout()
+  const currentLayout = getOptimizedLayout();
 
   const handleExportAnalytics = async () => {
     try {
-      const data = await exportAnalytics()
-      const blob = new Blob([data], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `one-handed-analytics-${Date.now()}.json`
-      a.click()
-      URL.revokeObjectURL(url)
+      const data = await exportAnalytics();
+      const blob = new Blob([data], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `one-handed-analytics-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Erro ao exportar analytics:', error)
+      console.error("Erro ao exportar analytics:", error);
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-4xl">
@@ -608,13 +634,17 @@ export function OneHandedOperationSettings() {
           <CardTitle>Modo de Operação com Uma Mão</CardTitle>
           {settings.enabled && (
             <Badge variant="secondary" className="ml-auto">
-              {settings.hand_dominance === 'left' ? 'Canhoto' : 
-               settings.hand_dominance === 'right' ? 'Destro' : 'Ambidestro'}
+              {settings.hand_dominance === "left"
+                ? "Canhoto"
+                : settings.hand_dominance === "right"
+                ? "Destro"
+                : "Ambidestro"}
             </Badge>
           )}
         </div>
         <CardDescription>
-          Otimização de interface para uso com uma mão apenas - ideal para cenários médicos pós-procedimento
+          Otimização de interface para uso com uma mão apenas - ideal para cenários médicos
+          pós-procedimento
         </CardDescription>
       </CardHeader>
 
@@ -647,7 +677,7 @@ export function OneHandedOperationSettings() {
                   <label className="text-sm font-medium">Dominância da Mão</label>
                   <Select
                     value={settings.hand_dominance}
-                    onValueChange={(hand_dominance: HandDominance) => 
+                    onValueChange={(hand_dominance: HandDominance) =>
                       updateSettings({ hand_dominance })}
                   >
                     <SelectTrigger>
@@ -665,7 +695,7 @@ export function OneHandedOperationSettings() {
                   <label className="text-sm font-medium">Modo de Operação</label>
                   <Select
                     value={settings.operation_mode}
-                    onValueChange={(operation_mode: OperationModeType) => 
+                    onValueChange={(operation_mode: OperationModeType) =>
                       updateSettings({ operation_mode })}
                   >
                     <SelectTrigger>
@@ -685,12 +715,12 @@ export function OneHandedOperationSettings() {
                   </label>
                   <Slider
                     value={[settings.touch_optimization.minimum_size]}
-                    onValueChange={([minimum_size]) => 
+                    onValueChange={([minimum_size]) =>
                       updateSettings({
                         touch_optimization: {
                           ...settings.touch_optimization,
-                          minimum_size
-                        }
+                          minimum_size,
+                        },
                       })}
                     min={32}
                     max={96}
@@ -705,12 +735,12 @@ export function OneHandedOperationSettings() {
                   </label>
                   <Slider
                     value={[settings.touch_optimization.spacing_multiplier]}
-                    onValueChange={([spacing_multiplier]) => 
+                    onValueChange={([spacing_multiplier]) =>
                       updateSettings({
                         touch_optimization: {
                           ...settings.touch_optimization,
-                          spacing_multiplier
-                        }
+                          spacing_multiplier,
+                        },
                       })}
                     min={1}
                     max={3}
@@ -733,13 +763,16 @@ export function OneHandedOperationSettings() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Object.entries(MEDICAL_LAYOUT_CONFIGS).map(([key, config]) => (
-                <Card key={key} className="cursor-pointer hover:bg-accent/50"
-                      onClick={() => adaptLayout(key)}>
+                <Card
+                  key={key}
+                  className="cursor-pointer hover:bg-accent/50"
+                  onClick={() => adaptLayout(key)}
+                >
                   <CardContent className="p-4">
                     <h4 className="font-medium">{config.name_pt}</h4>
                     <div className="text-xs text-muted-foreground mt-1">
-                      Target: {config.target_adjustments.minimum_target_size}px • 
-                      Espaçamento: {config.target_adjustments.spacing_factor}x
+                      Target: {config.target_adjustments.minimum_target_size}px • Espaçamento:{" "}
+                      {config.target_adjustments.spacing_factor}x
                     </div>
                     <div className="flex gap-2 mt-2">
                       <Badge variant="outline" className="text-xs">
@@ -763,7 +796,7 @@ export function OneHandedOperationSettings() {
               </div>
               <Switch
                 checked={settings.medical_context_awareness}
-                onCheckedChange={(medical_context_awareness) => 
+                onCheckedChange={(medical_context_awareness) =>
                   updateSettings({ medical_context_awareness })}
               />
             </div>
@@ -778,7 +811,7 @@ export function OneHandedOperationSettings() {
               <div className="flex gap-2">
                 <Switch
                   checked={settings.emergency_mode_enabled}
-                  onCheckedChange={(emergency_mode_enabled) => 
+                  onCheckedChange={(emergency_mode_enabled) =>
                     updateSettings({ emergency_mode_enabled })}
                 />
                 <Button
@@ -903,8 +936,7 @@ export function OneHandedOperationSettings() {
                   </div>
                   <div className="text-2xl font-bold">{analytics.emergency_triggers}</div>
                   <div className="text-xs text-muted-foreground">
-                    Última sessão iniciada em{' '}
-                    {analytics.session_start.toLocaleDateString('pt-BR')}
+                    Última sessão iniciada em {analytics.session_start.toLocaleDateString("pt-BR")}
                   </div>
                 </CardContent>
               </Card>
@@ -964,7 +996,7 @@ export function OneHandedOperationSettings() {
         </Tabs>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 // ===============================
@@ -977,15 +1009,15 @@ export function OneHandedOperationDemo() {
     adaptLayout,
     logInteraction,
     triggerEmergencyMode,
-    getOptimizedLayout
-  } = useOneHandedOperation()
+    getOptimizedLayout,
+  } = useOneHandedOperation();
 
-  const currentLayout = getOptimizedLayout()
+  const currentLayout = getOptimizedLayout();
 
   const handleMedicalAction = (action: string) => {
-    logInteraction(`medical_action_${action}`)
-    console.log(`Ação médica executada: ${action}`)
-  }
+    logInteraction(`medical_action_${action}`);
+    console.log(`Ação médica executada: ${action}`);
+  };
 
   if (!settings.enabled) {
     return (
@@ -998,7 +1030,7 @@ export function OneHandedOperationDemo() {
           </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -1010,7 +1042,8 @@ export function OneHandedOperationDemo() {
             Interface Adaptada - {currentLayout.name_pt}
           </CardTitle>
           <CardDescription>
-            Layout otimizado para {settings.hand_dominance === 'left' ? 'mão esquerda' : 'mão direita'}
+            Layout otimizado para{" "}
+            {settings.hand_dominance === "left" ? "mão esquerda" : "mão direita"}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -1020,15 +1053,17 @@ export function OneHandedOperationDemo() {
         {/* Área de Ações Primárias */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm">Ações Rápidas (Zona {currentLayout.layout_adjustments.primary_actions_zone})</CardTitle>
+            <CardTitle className="text-sm">
+              Ações Rápidas (Zona {currentLayout.layout_adjustments.primary_actions_zone})
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-3">
-              <Button 
-                onClick={() => handleMedicalAction('pain_scale')}
+              <Button
+                onClick={() => handleMedicalAction("pain_scale")}
                 style={{
                   minHeight: `${currentLayout.target_adjustments.minimum_target_size}px`,
-                  fontSize: `${currentLayout.content_adaptations.text_scaling_factor}rem`
+                  fontSize: `${currentLayout.content_adaptations.text_scaling_factor}rem`,
                 }}
                 className="flex items-center gap-2"
               >
@@ -1036,10 +1071,10 @@ export function OneHandedOperationDemo() {
                 Escala de Dor
               </Button>
               <Button
-                onClick={() => handleMedicalAction('call_nurse')}
+                onClick={() => handleMedicalAction("call_nurse")}
                 style={{
                   minHeight: `${currentLayout.target_adjustments.minimum_target_size}px`,
-                  fontSize: `${currentLayout.content_adaptations.text_scaling_factor}rem`
+                  fontSize: `${currentLayout.content_adaptations.text_scaling_factor}rem`,
                 }}
                 className="flex items-center gap-2"
                 variant="secondary"
@@ -1055,13 +1090,15 @@ export function OneHandedOperationDemo() {
         {settings.emergency_mode_enabled && (
           <Card className="border-red-200">
             <CardContent className="p-4">
-              <Button 
+              <Button
                 onClick={triggerEmergencyMode}
                 variant="destructive"
                 size="lg"
                 className="w-full"
                 style={{
-                  minHeight: `${Math.max(currentLayout.target_adjustments.minimum_target_size, 64)}px`
+                  minHeight: `${
+                    Math.max(currentLayout.target_adjustments.minimum_target_size, 64)
+                  }px`,
                 }}
               >
                 <AlertCircle className="h-6 w-6 mr-2" />
@@ -1097,14 +1134,25 @@ export function OneHandedOperationDemo() {
         <Card className="bg-muted/50">
           <CardContent className="p-3">
             <div className="text-xs space-y-1">
-              <div><strong>Target Size:</strong> {currentLayout.target_adjustments.minimum_target_size}px</div>
-              <div><strong>Spacing:</strong> {currentLayout.target_adjustments.spacing_factor}x</div>
-              <div><strong>Text Scale:</strong> {currentLayout.content_adaptations.text_scaling_factor}x</div>
-              <div><strong>Emergency:</strong> {currentLayout.layout_adjustments.emergency_access_method}</div>
+              <div>
+                <strong>Target Size:</strong>{" "}
+                {currentLayout.target_adjustments.minimum_target_size}px
+              </div>
+              <div>
+                <strong>Spacing:</strong> {currentLayout.target_adjustments.spacing_factor}x
+              </div>
+              <div>
+                <strong>Text Scale:</strong>{" "}
+                {currentLayout.content_adaptations.text_scaling_factor}x
+              </div>
+              <div>
+                <strong>Emergency:</strong>{" "}
+                {currentLayout.layout_adjustments.emergency_access_method}
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }

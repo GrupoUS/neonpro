@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import React, { useEffect, useState } from "react";
 
 // AI-specific loading states for healthcare workflows
 interface AILoadingStatesProps {
   className?: string;
-  variant?: 
-    | "patient-analysis" 
-    | "medical-query" 
-    | "diagnosis-assistance" 
+  variant?:
+    | "patient-analysis"
+    | "medical-query"
+    | "diagnosis-assistance"
     | "treatment-suggestion"
     | "voice-processing"
     | "document-analysis"
@@ -31,50 +31,50 @@ const ProcessingMessages = {
     "Analisando histórico do paciente...",
     "Processando dados médicos...",
     "Calculando fatores de risco...",
-    "Gerando insights clínicos..."
+    "Gerando insights clínicos...",
   ],
   "medical-query": [
     "Interpretando consulta médica...",
     "Buscando informações relevantes...",
     "Processando terminologia médica...",
-    "Preparando resposta..."
+    "Preparando resposta...",
   ],
   "diagnosis-assistance": [
     "Analisando sintomas reportados...",
     "Comparando com base de dados médica...",
     "Calculando probabilidades diagnósticas...",
-    "Formatando sugestões..."
+    "Formatando sugestões...",
   ],
   "treatment-suggestion": [
     "Avaliando protocolo de tratamento...",
     "Verificando contraindicações...",
     "Personalizando recomendações...",
-    "Validando segurança..."
+    "Validando segurança...",
   ],
   "voice-processing": [
     "Processando áudio em português...",
     "Reconhecendo terminologia médica...",
     "Convertendo para texto...",
-    "Aplicando contexto clínico..."
+    "Aplicando contexto clínico...",
   ],
   "document-analysis": [
     "Lendo documento médico...",
     "Extraindo informações relevantes...",
     "Validando conformidade LGPD...",
-    "Organizando resultados..."
+    "Organizando resultados...",
   ],
   "compliance-check": [
     "Verificando conformidade regulatória...",
     "Analisando requisitos ANVISA/CFM...",
     "Validando proteção de dados...",
-    "Gerando relatório..."
+    "Gerando relatório...",
   ],
   "default": [
     "Processando solicitação...",
     "Aplicando inteligência artificial...",
     "Analisando dados...",
-    "Preparando resultados..."
-  ]
+    "Preparando resultados...",
+  ],
 } as const;
 
 // Confidence estimation patterns for different AI operations
@@ -86,7 +86,7 @@ const ConfidencePatterns = {
   "voice-processing": { min: 88, max: 96, label: "Processamento de Voz" },
   "document-analysis": { min: 90, max: 98, label: "Análise Documental" },
   "compliance-check": { min: 95, max: 99, label: "Verificação de Conformidade" },
-  "default": { min: 80, max: 90, label: "Processamento IA" }
+  "default": { min: 80, max: 90, label: "Processamento IA" },
 } as const;
 
 export function AILoadingStates({
@@ -97,7 +97,7 @@ export function AILoadingStates({
   showTimeEstimate = true,
   estimatedSeconds = 3,
   processingSteps,
-  onComplete
+  onComplete,
 }: AILoadingStatesProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -121,11 +121,9 @@ export function AILoadingStates({
         onComplete?.();
         return prev;
       });
-      
+
       setProgress((prev) => Math.min(prev + progressIncrement, 100));
-      setConfidence((prev) => 
-        Math.min(prev + confidenceIncrement, confidencePattern.max)
-      );
+      setConfidence((prev) => Math.min(prev + confidenceIncrement, confidencePattern.max));
       setTimeRemaining((prev) => Math.max(prev - (stepDuration / 1000), 0));
     }, stepDuration);
 
@@ -148,7 +146,7 @@ export function AILoadingStates({
                 <Skeleton className="h-3 w-32" />
               </div>
             </div>
-            
+
             {/* Analysis sections */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -160,7 +158,7 @@ export function AILoadingStates({
                 <Skeleton className="h-16 w-full rounded" />
               </div>
             </div>
-            
+
             {/* Risk factors */}
             <div className="space-y-3">
               <Skeleton className="h-4 w-32" />
@@ -182,7 +180,7 @@ export function AILoadingStates({
               <Skeleton className="h-4 w-64 mb-2" />
               <Skeleton className="h-8 w-full" />
             </div>
-            
+
             {/* Response sections */}
             <div className="space-y-3">
               <Skeleton className="h-6 w-48" />
@@ -192,7 +190,7 @@ export function AILoadingStates({
                 <Skeleton className="h-4 w-5/6" />
               </div>
             </div>
-            
+
             {/* Medical references */}
             <div className="border-t pt-4">
               <Skeleton className="h-4 w-28 mb-3" />
@@ -216,21 +214,21 @@ export function AILoadingStates({
                 <div className="absolute inset-0 rounded-full border-4 border-blue-200 animate-ping" />
               </div>
             </div>
-            
+
             {/* Sound waves */}
             <div className="flex justify-center items-center gap-1">
               {Array(7).fill(0).map((_, i) => (
-                <Skeleton 
-                  key={i} 
+                <Skeleton
+                  key={i}
                   className={cn(
                     "w-1 animate-pulse",
-                    i % 2 === 0 ? "h-8" : "h-12"
+                    i % 2 === 0 ? "h-8" : "h-12",
                   )}
                   style={{ animationDelay: `${i * 0.1}s` }}
                 />
               ))}
             </div>
-            
+
             {/* Transcription preview */}
             <div className="p-4 bg-blue-50 rounded-lg">
               <Skeleton className="h-4 w-40 mx-auto mb-2" />
@@ -260,7 +258,7 @@ export function AILoadingStates({
   };
 
   return (
-    <div 
+    <div
       className={cn("space-y-4 p-6", className)}
       role="status"
       aria-live="polite"
@@ -268,7 +266,7 @@ export function AILoadingStates({
     >
       {/* Main skeleton content */}
       {getSkeletonLayout()}
-      
+
       {/* Current processing step */}
       <div className="space-y-3 border-t pt-4">
         <div className="flex items-center justify-between">
@@ -278,7 +276,7 @@ export function AILoadingStates({
               {messages[currentStep]}
             </span>
           </div>
-          
+
           {/* Time estimate */}
           {showTimeEstimate && (
             <span className="text-xs text-gray-500">
@@ -286,7 +284,7 @@ export function AILoadingStates({
             </span>
           )}
         </div>
-        
+
         {/* Progress bar */}
         {showProgress && (
           <div className="space-y-1">
@@ -297,18 +295,23 @@ export function AILoadingStates({
             </div>
           </div>
         )}
-        
+
         {/* Confidence estimation */}
         {showConfidenceEstimation && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Confiança da IA:</span>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
-                <div className={cn(
-                  "h-2 w-2 rounded-full",
-                  confidence >= 90 ? "bg-green-500" :
-                  confidence >= 80 ? "bg-yellow-500" : "bg-red-500"
-                )} />
+                <div
+                  className={cn(
+                    "h-2 w-2 rounded-full",
+                    confidence >= 90
+                      ? "bg-green-500"
+                      : confidence >= 80
+                      ? "bg-yellow-500"
+                      : "bg-red-500",
+                  )}
+                />
                 <span className="font-medium">
                   {Math.round(confidence)}%
                 </span>
@@ -320,18 +323,20 @@ export function AILoadingStates({
           </div>
         )}
       </div>
-      
+
       {/* Screen reader announcements */}
       <div className="sr-only">
-        Processando {confidencePattern.label} com {Math.round(confidence)}% de confiança. 
-        Etapa {currentStep + 1} de {messages.length}: {messages[currentStep]}
+        Processando {confidencePattern.label} com {Math.round(confidence)}% de confiança. Etapa{" "}
+        {currentStep + 1} de {messages.length}: {messages[currentStep]}
       </div>
     </div>
   );
 }
 
 // Specialized AI loading components for common healthcare scenarios
-export function PatientAnalysisLoading({ className, ...props }: Omit<AILoadingStatesProps, 'variant'>) {
+export function PatientAnalysisLoading(
+  { className, ...props }: Omit<AILoadingStatesProps, "variant">,
+) {
   return (
     <AILoadingStates
       variant="patient-analysis"
@@ -341,7 +346,9 @@ export function PatientAnalysisLoading({ className, ...props }: Omit<AILoadingSt
   );
 }
 
-export function MedicalQueryLoading({ className, ...props }: Omit<AILoadingStatesProps, 'variant'>) {
+export function MedicalQueryLoading(
+  { className, ...props }: Omit<AILoadingStatesProps, "variant">,
+) {
   return (
     <AILoadingStates
       variant="medical-query"
@@ -351,7 +358,9 @@ export function MedicalQueryLoading({ className, ...props }: Omit<AILoadingState
   );
 }
 
-export function VoiceProcessingLoading({ className, ...props }: Omit<AILoadingStatesProps, 'variant'>) {
+export function VoiceProcessingLoading(
+  { className, ...props }: Omit<AILoadingStatesProps, "variant">,
+) {
   return (
     <AILoadingStates
       variant="voice-processing"
@@ -363,8 +372,8 @@ export function VoiceProcessingLoading({ className, ...props }: Omit<AILoadingSt
 
 // Hook for managing AI loading states
 export function useAILoadingState(
-  variant: AILoadingStatesProps['variant'] = 'default',
-  estimatedSeconds: number = 3
+  variant: AILoadingStatesProps["variant"] = "default",
+  estimatedSeconds: number = 3,
 ) {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -392,9 +401,9 @@ export function useAILoadingState(
     startLoading,
     stopLoading,
     updateProgress,
-    LoadingComponent: (props: Omit<AILoadingStatesProps, 'variant'>) => (
+    LoadingComponent: (props: Omit<AILoadingStatesProps, "variant">) => (
       <AILoadingStates variant={variant} {...props} />
-    )
+    ),
   };
 }
 

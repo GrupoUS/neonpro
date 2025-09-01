@@ -1,120 +1,126 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Progress } from '@/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Slider } from '@/components/ui/slider'
-import { 
-  Accessibility, 
-  Heart, 
-  Stethoscope, 
-  Activity, 
-  AlertCircle, 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Accessibility,
+  Activity,
+  AlertCircle,
+  Bell,
+  Brain,
   CheckCircle2,
-  User,
+  ChevronRight,
+  Clock,
+  Eye,
+  FileText,
+  Hand,
+  Heart,
+  Home,
+  Pause,
+  Phone,
+  Play,
+  RotateCcw,
+  Save,
   Settings,
   Shield,
-  Eye,
-  Hand,
-  Brain,
+  Stethoscope,
+  Target,
+  User,
   Volume2,
   Zap,
-  Target,
-  Phone,
-  Clock,
-  FileText,
-  Bell,
-  Home,
-  ChevronRight,
-  Play,
-  Pause,
-  RotateCcw,
-  Save
-} from 'lucide-react'
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 
 // Import all accessibility components
-import { 
-  SwitchNavigationProvider, 
-  SwitchNavigationSettings, 
-  SwitchNavigationDemo 
-} from './switch-navigation-controller'
-import { 
-  EyeTrackingProvider, 
-  EyeTrackingSettings, 
-  EyeTrackingDemo 
-} from './eye-tracking-interaction'
-import { 
-  TremorFriendlyProvider, 
-  TremorFriendlySettings, 
-  TremorFriendlyDemo 
-} from './tremor-friendly-controls'
-import { 
-  VoiceMedicalProvider, 
-  VoiceMedicalSettings, 
-  VoiceMedicalDemo 
-} from './voice-medical-controller'
-import { 
-  OneHandedOperationProvider, 
-  OneHandedOperationSettings, 
-  OneHandedOperationDemo 
-} from './one-handed-operation-mode'
-import { 
-  CognitiveAccessibilityProvider, 
-  CognitiveAccessibilitySettings, 
-  CognitiveAccessibilityDemo 
-} from './cognitive-accessibility-helper'
-import { 
-  VisualAccessibilityProvider, 
-  VisualAccessibilitySettings, 
-  VisualAccessibilityDemo 
-} from './visual-accessibility-enhancer'
-import { 
-  AssistiveTechnologyAPIProvider, 
-  AssistiveTechnologyAPISettings, 
-  AssistiveTechnologyAPIDemo 
-} from './assistive-technology-api'
+import {
+  AssistiveTechnologyAPIDemo,
+  AssistiveTechnologyAPIProvider,
+  AssistiveTechnologyAPISettings,
+} from "./assistive-technology-api";
+import {
+  CognitiveAccessibilityDemo,
+  CognitiveAccessibilityProvider,
+  CognitiveAccessibilitySettings,
+} from "./cognitive-accessibility-helper";
+import {
+  EyeTrackingDemo,
+  EyeTrackingProvider,
+  EyeTrackingSettings,
+} from "./eye-tracking-interaction";
+import {
+  OneHandedOperationDemo,
+  OneHandedOperationProvider,
+  OneHandedOperationSettings,
+} from "./one-handed-operation-mode";
+import {
+  SwitchNavigationDemo,
+  SwitchNavigationProvider,
+  SwitchNavigationSettings,
+} from "./switch-navigation-controller";
+import {
+  TremorFriendlyDemo,
+  TremorFriendlyProvider,
+  TremorFriendlySettings,
+} from "./tremor-friendly-controls";
+import {
+  VisualAccessibilityDemo,
+  VisualAccessibilityProvider,
+  VisualAccessibilitySettings,
+} from "./visual-accessibility-enhancer";
+import {
+  VoiceMedicalDemo,
+  VoiceMedicalProvider,
+  VoiceMedicalSettings,
+} from "./voice-medical-controller";
 
 // ===============================
 // TYPES & INTERFACES
 // ===============================
 
-export type HealthcareScenario = 
-  | 'post_botox'
-  | 'bandaged_hand'
-  | 'post_cataract'
-  | 'post_anesthesia'
-  | 'tremor_management'
-  | 'cognitive_recovery'
-  | 'emergency_situation'
+export type HealthcareScenario =
+  | "post_botox"
+  | "bandaged_hand"
+  | "post_cataract"
+  | "post_anesthesia"
+  | "tremor_management"
+  | "cognitive_recovery"
+  | "emergency_situation";
 
 export interface PatientProfile {
-  id: string
-  name: string
-  age: number
-  medical_conditions: string[]
-  accessibility_needs: string[]
-  preferred_language: string
-  emergency_contact: string
-  current_scenario: HealthcareScenario
-  last_procedure: string
-  recovery_stage: 'acute' | 'intermediate' | 'advanced'
+  id: string;
+  name: string;
+  age: number;
+  medical_conditions: string[];
+  accessibility_needs: string[];
+  preferred_language: string;
+  emergency_contact: string;
+  current_scenario: HealthcareScenario;
+  last_procedure: string;
+  recovery_stage: "acute" | "intermediate" | "advanced";
 }
 
 export interface AccessibilityConfiguration {
-  switch_navigation: boolean
-  eye_tracking: boolean
-  tremor_friendly: boolean
-  voice_medical: boolean
-  one_handed_operation: boolean
-  cognitive_accessibility: boolean
-  visual_accessibility: boolean
-  assistive_technology_api: boolean
-  emergency_mode: boolean
+  switch_navigation: boolean;
+  eye_tracking: boolean;
+  tremor_friendly: boolean;
+  voice_medical: boolean;
+  one_handed_operation: boolean;
+  cognitive_accessibility: boolean;
+  visual_accessibility: boolean;
+  assistive_technology_api: boolean;
+  emergency_mode: boolean;
 }
 
 // ===============================
@@ -122,113 +128,113 @@ export interface AccessibilityConfiguration {
 // ===============================
 
 const HEALTHCARE_SCENARIOS = {
-  'post_botox': {
-    name_pt: 'Pós-Aplicação de Botox',
-    description_pt: 'Paciente com limitações de movimento facial e possível sensibilidade',
-    recommended_features: ['voice_medical', 'visual_accessibility', 'cognitive_accessibility'],
+  "post_botox": {
+    name_pt: "Pós-Aplicação de Botox",
+    description_pt: "Paciente com limitações de movimento facial e possível sensibilidade",
+    recommended_features: ["voice_medical", "visual_accessibility", "cognitive_accessibility"],
     duration_hours: 4,
-    priority_level: 'medium'
+    priority_level: "medium",
   },
-  'bandaged_hand': {
-    name_pt: 'Mão Enfaixada/Curativo',
-    description_pt: 'Paciente com uma das mãos imobilizada',
-    recommended_features: ['one_handed_operation', 'voice_medical', 'eye_tracking'],
+  "bandaged_hand": {
+    name_pt: "Mão Enfaixada/Curativo",
+    description_pt: "Paciente com uma das mãos imobilizada",
+    recommended_features: ["one_handed_operation", "voice_medical", "eye_tracking"],
     duration_hours: 24,
-    priority_level: 'high'
+    priority_level: "high",
   },
-  'post_cataract': {
-    name_pt: 'Pós-Cirurgia de Catarata',
-    description_pt: 'Paciente com limitações visuais temporárias',
-    recommended_features: ['visual_accessibility', 'voice_medical', 'assistive_technology_api'],
+  "post_cataract": {
+    name_pt: "Pós-Cirurgia de Catarata",
+    description_pt: "Paciente com limitações visuais temporárias",
+    recommended_features: ["visual_accessibility", "voice_medical", "assistive_technology_api"],
     duration_hours: 72,
-    priority_level: 'high'
+    priority_level: "high",
   },
-  'post_anesthesia': {
-    name_pt: 'Pós-Anestesia',
-    description_pt: 'Paciente com capacidades cognitivas reduzidas temporariamente',
-    recommended_features: ['cognitive_accessibility', 'visual_accessibility', 'voice_medical'],
+  "post_anesthesia": {
+    name_pt: "Pós-Anestesia",
+    description_pt: "Paciente com capacidades cognitivas reduzidas temporariamente",
+    recommended_features: ["cognitive_accessibility", "visual_accessibility", "voice_medical"],
     duration_hours: 8,
-    priority_level: 'high'
+    priority_level: "high",
   },
-  'tremor_management': {
-    name_pt: 'Controle de Tremor',
-    description_pt: 'Paciente com tremor essencial ou induzido por medicação',
-    recommended_features: ['tremor_friendly', 'switch_navigation', 'voice_medical'],
+  "tremor_management": {
+    name_pt: "Controle de Tremor",
+    description_pt: "Paciente com tremor essencial ou induzido por medicação",
+    recommended_features: ["tremor_friendly", "switch_navigation", "voice_medical"],
     duration_hours: 168, // 1 week
-    priority_level: 'medium'
+    priority_level: "medium",
   },
-  'cognitive_recovery': {
-    name_pt: 'Recuperação Cognitiva',
-    description_pt: 'Paciente em reabilitação cognitiva após procedimento',
-    recommended_features: ['cognitive_accessibility', 'visual_accessibility', 'voice_medical'],
+  "cognitive_recovery": {
+    name_pt: "Recuperação Cognitiva",
+    description_pt: "Paciente em reabilitação cognitiva após procedimento",
+    recommended_features: ["cognitive_accessibility", "visual_accessibility", "voice_medical"],
     duration_hours: 336, // 2 weeks
-    priority_level: 'medium'
+    priority_level: "medium",
   },
-  'emergency_situation': {
-    name_pt: 'Situação de Emergência',
-    description_pt: 'Situação crítica que requer acesso imediato a cuidados',
-    recommended_features: ['assistive_technology_api', 'voice_medical', 'visual_accessibility'],
+  "emergency_situation": {
+    name_pt: "Situação de Emergência",
+    description_pt: "Situação crítica que requer acesso imediato a cuidados",
+    recommended_features: ["assistive_technology_api", "voice_medical", "visual_accessibility"],
     duration_hours: 1,
-    priority_level: 'emergency'
-  }
-}
+    priority_level: "emergency",
+  },
+};
 
 const SAMPLE_PATIENTS: PatientProfile[] = [
   {
-    id: 'patient_001',
-    name: 'Maria Silva Santos',
+    id: "patient_001",
+    name: "Maria Silva Santos",
     age: 45,
-    medical_conditions: ['Rugas de Expressão', 'Estresse'],
-    accessibility_needs: ['Movimento Facial Limitado', 'Sensibilidade à Luz'],
-    preferred_language: 'pt-BR',
-    emergency_contact: '+55 11 99999-0001',
-    current_scenario: 'post_botox',
-    last_procedure: 'Aplicação de Botox na Testa',
-    recovery_stage: 'acute'
+    medical_conditions: ["Rugas de Expressão", "Estresse"],
+    accessibility_needs: ["Movimento Facial Limitado", "Sensibilidade à Luz"],
+    preferred_language: "pt-BR",
+    emergency_contact: "+55 11 99999-0001",
+    current_scenario: "post_botox",
+    last_procedure: "Aplicação de Botox na Testa",
+    recovery_stage: "acute",
   },
   {
-    id: 'patient_002',
-    name: 'João Oliveira Costa',
+    id: "patient_002",
+    name: "João Oliveira Costa",
     age: 32,
-    medical_conditions: ['Corte na Mão', 'Ansiedade'],
-    accessibility_needs: ['Mão Direita Imobilizada', 'Dificuldade de Concentração'],
-    preferred_language: 'pt-BR',
-    emergency_contact: '+55 11 99999-0002',
-    current_scenario: 'bandaged_hand',
-    last_procedure: 'Sutura de Corte Profundo',
-    recovery_stage: 'intermediate'
+    medical_conditions: ["Corte na Mão", "Ansiedade"],
+    accessibility_needs: ["Mão Direita Imobilizada", "Dificuldade de Concentração"],
+    preferred_language: "pt-BR",
+    emergency_contact: "+55 11 99999-0002",
+    current_scenario: "bandaged_hand",
+    last_procedure: "Sutura de Corte Profundo",
+    recovery_stage: "intermediate",
   },
   {
-    id: 'patient_003',
-    name: 'Ana Pereira Lima',
+    id: "patient_003",
+    name: "Ana Pereira Lima",
     age: 68,
-    medical_conditions: ['Catarata', 'Diabetes'],
-    accessibility_needs: ['Visão Reduzida', 'Sensibilidade à Luz'],
-    preferred_language: 'pt-BR',
-    emergency_contact: '+55 11 99999-0003',
-    current_scenario: 'post_cataract',
-    last_procedure: 'Facoemulsificação com IOL',
-    recovery_stage: 'acute'
+    medical_conditions: ["Catarata", "Diabetes"],
+    accessibility_needs: ["Visão Reduzida", "Sensibilidade à Luz"],
+    preferred_language: "pt-BR",
+    emergency_contact: "+55 11 99999-0003",
+    current_scenario: "post_cataract",
+    last_procedure: "Facoemulsificação com IOL",
+    recovery_stage: "acute",
   },
   {
-    id: 'patient_004',
-    name: 'Carlos Rodrigues Souza',
+    id: "patient_004",
+    name: "Carlos Rodrigues Souza",
     age: 55,
-    medical_conditions: ['Tremor Essencial', 'Hipertensão'],
-    accessibility_needs: ['Tremor nas Mãos', 'Dificuldade Motora Fina'],
-    preferred_language: 'pt-BR',
-    emergency_contact: '+55 11 99999-0004',
-    current_scenario: 'tremor_management',
-    last_procedure: 'Ajuste de Medicação para Tremor',
-    recovery_stage: 'advanced'
-  }
-]
+    medical_conditions: ["Tremor Essencial", "Hipertensão"],
+    accessibility_needs: ["Tremor nas Mãos", "Dificuldade Motora Fina"],
+    preferred_language: "pt-BR",
+    emergency_contact: "+55 11 99999-0004",
+    current_scenario: "tremor_management",
+    last_procedure: "Ajuste de Medicação para Tremor",
+    recovery_stage: "advanced",
+  },
+];
 
 // ===============================
 // COMPREHENSIVE PROVIDER WRAPPER
 // ===============================
 
-function AccessibilityProvidersWrapper({ children }: { children: React.ReactNode }) {
+function AccessibilityProvidersWrapper({ children }: { children: React.ReactNode; }) {
   return (
     <SwitchNavigationProvider>
       <EyeTrackingProvider>
@@ -247,7 +253,7 @@ function AccessibilityProvidersWrapper({ children }: { children: React.ReactNode
         </TremorFriendlyProvider>
       </EyeTrackingProvider>
     </SwitchNavigationProvider>
-  )
+  );
 }
 
 // ===============================
@@ -255,7 +261,7 @@ function AccessibilityProvidersWrapper({ children }: { children: React.ReactNode
 // ===============================
 
 export function AccessibilityIntegrationExample() {
-  const [currentPatient, setCurrentPatient] = useState<PatientProfile>(SAMPLE_PATIENTS[0])
+  const [currentPatient, setCurrentPatient] = useState<PatientProfile>(SAMPLE_PATIENTS[0]);
   const [accessibilityConfig, setAccessibilityConfig] = useState<AccessibilityConfiguration>({
     switch_navigation: false,
     eye_tracking: false,
@@ -265,15 +271,15 @@ export function AccessibilityIntegrationExample() {
     cognitive_accessibility: false,
     visual_accessibility: false,
     assistive_technology_api: false,
-    emergency_mode: false
-  })
-  const [scenarioProgress, setScenarioProgress] = useState(25)
-  const [currentStep, setCurrentStep] = useState(1)
-  const [isEmergencyActive, setIsEmergencyActive] = useState(false)
+    emergency_mode: false,
+  });
+  const [scenarioProgress, setScenarioProgress] = useState(25);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isEmergencyActive, setIsEmergencyActive] = useState(false);
 
   // Auto-configure accessibility based on patient scenario
   const configureForScenario = useCallback((scenario: HealthcareScenario) => {
-    const scenarioConfig = HEALTHCARE_SCENARIOS[scenario]
+    const scenarioConfig = HEALTHCARE_SCENARIOS[scenario];
     const newConfig: AccessibilityConfiguration = {
       switch_navigation: false,
       eye_tracking: false,
@@ -283,69 +289,69 @@ export function AccessibilityIntegrationExample() {
       cognitive_accessibility: false,
       visual_accessibility: false,
       assistive_technology_api: false,
-      emergency_mode: scenario === 'emergency_situation'
-    }
+      emergency_mode: scenario === "emergency_situation",
+    };
 
     // Enable recommended features
     scenarioConfig.recommended_features.forEach(feature => {
-      newConfig[feature as keyof AccessibilityConfiguration] = true
-    })
+      newConfig[feature as keyof AccessibilityConfiguration] = true;
+    });
 
     // Always enable AT API for medical scenarios
-    newConfig.assistive_technology_api = true
+    newConfig.assistive_technology_api = true;
 
-    setAccessibilityConfig(newConfig)
-    setIsEmergencyActive(scenario === 'emergency_situation')
-  }, [])
+    setAccessibilityConfig(newConfig);
+    setIsEmergencyActive(scenario === "emergency_situation");
+  }, []);
 
   // Auto-configure when patient changes
   useEffect(() => {
-    configureForScenario(currentPatient.current_scenario)
-  }, [currentPatient, configureForScenario])
+    configureForScenario(currentPatient.current_scenario);
+  }, [currentPatient, configureForScenario]);
 
   // Simulate scenario progress
   useEffect(() => {
     const interval = setInterval(() => {
       setScenarioProgress(prev => {
         if (prev >= 100) {
-          clearInterval(interval) // Stop cycling when complete
-          return 100
+          clearInterval(interval); // Stop cycling when complete
+          return 100;
         }
-        return prev + 5
-      })
-    }, 2000)
+        return prev + 5;
+      });
+    }, 2000);
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
   const handlePatientChange = (patientId: string) => {
-    const patient = SAMPLE_PATIENTS.find(p => p.id === patientId)
+    const patient = SAMPLE_PATIENTS.find(p => p.id === patientId);
     if (patient) {
-      setCurrentPatient(patient)
-      setCurrentStep(1)
+      setCurrentPatient(patient);
+      setCurrentStep(1);
     }
-  }
+  };
 
   const handleEmergencyActivation = () => {
     const emergencyPatient = {
       ...currentPatient,
-      current_scenario: 'emergency_situation' as HealthcareScenario
-    }
-    setCurrentPatient(emergencyPatient)
-    setIsEmergencyActive(true)
-    configureForScenario('emergency_situation')
-  }
+      current_scenario: "emergency_situation" as HealthcareScenario,
+    };
+    setCurrentPatient(emergencyPatient);
+    setIsEmergencyActive(true);
+    configureForScenario("emergency_situation");
+  };
 
   const handleScenarioStep = (step: number) => {
-    setCurrentStep(step)
+    setCurrentStep(step);
     // Adjust accessibility configuration based on recovery progress
-    if (step >= 3 && currentPatient.recovery_stage === 'acute') {
-      setCurrentPatient(prev => ({ ...prev, recovery_stage: 'intermediate' }))
+    if (step >= 3 && currentPatient.recovery_stage === "acute") {
+      setCurrentPatient(prev => ({ ...prev, recovery_stage: "intermediate" }));
     }
-    if (step >= 5 && currentPatient.recovery_stage === 'intermediate') {
-      setCurrentPatient(prev => ({ ...prev, recovery_stage: 'advanced' }))
+    if (step >= 5 && currentPatient.recovery_stage === "intermediate") {
+      setCurrentPatient(prev => ({ ...prev, recovery_stage: "advanced" }));
     }
-  }
+  };
 
   return (
     <AccessibilityProvidersWrapper>
@@ -392,13 +398,24 @@ export function AccessibilityIntegrationExample() {
               </Select>
 
               <div className="space-y-2 text-sm">
-                <div><strong>Idade:</strong> {currentPatient.age} anos</div>
-                <div><strong>Cenário:</strong> {HEALTHCARE_SCENARIOS[currentPatient.current_scenario].name_pt}</div>
-                <div><strong>Último Procedimento:</strong> {currentPatient.last_procedure}</div>
-                <div><strong>Estágio de Recuperação:</strong> 
+                <div>
+                  <strong>Idade:</strong> {currentPatient.age} anos
+                </div>
+                <div>
+                  <strong>Cenário:</strong>{" "}
+                  {HEALTHCARE_SCENARIOS[currentPatient.current_scenario].name_pt}
+                </div>
+                <div>
+                  <strong>Último Procedimento:</strong> {currentPatient.last_procedure}
+                </div>
+                <div>
+                  <strong>Estágio de Recuperação:</strong>
                   <Badge variant="outline" className="ml-1">
-                    {currentPatient.recovery_stage === 'acute' ? 'Agudo' : 
-                     currentPatient.recovery_stage === 'intermediate' ? 'Intermediário' : 'Avançado'}
+                    {currentPatient.recovery_stage === "acute"
+                      ? "Agudo"
+                      : currentPatient.recovery_stage === "intermediate"
+                      ? "Intermediário"
+                      : "Avançado"}
                   </Badge>
                 </div>
               </div>
@@ -439,7 +456,11 @@ export function AccessibilityIntegrationExample() {
                     <Button
                       key={step}
                       size="sm"
-                      variant={step === currentStep ? "default" : step < currentStep ? "secondary" : "outline"}
+                      variant={step === currentStep
+                        ? "default"
+                        : step < currentStep
+                        ? "secondary"
+                        : "outline"}
                       onClick={() => handleScenarioStep(step)}
                       className="w-8 h-8 p-0"
                     >
@@ -449,14 +470,14 @@ export function AccessibilityIntegrationExample() {
                 </div>
               </div>
 
-              <Button 
+              <Button
                 onClick={handleEmergencyActivation}
                 variant="destructive"
                 className="w-full"
                 disabled={isEmergencyActive}
               >
                 <AlertCircle className="h-4 w-4 mr-2" />
-                {isEmergencyActive ? 'EMERGÊNCIA ATIVA' : 'Simular Emergência'}
+                {isEmergencyActive ? "EMERGÊNCIA ATIVA" : "Simular Emergência"}
               </Button>
             </CardContent>
           </Card>
@@ -476,34 +497,59 @@ export function AccessibilityIntegrationExample() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {Object.entries(accessibilityConfig).map(([key, enabled]) => {
-                const featureNames: Record<string, { name: string; icon: React.ReactNode }> = {
-                  'switch_navigation': { name: 'Navegação por Botão', icon: <Hand className="h-4 w-4" /> },
-                  'eye_tracking': { name: 'Rastreamento Ocular', icon: <Eye className="h-4 w-4" /> },
-                  'tremor_friendly': { name: 'Anti-Tremor', icon: <Target className="h-4 w-4" /> },
-                  'voice_medical': { name: 'Voz Médica', icon: <Volume2 className="h-4 w-4" /> },
-                  'one_handed_operation': { name: 'Uma Mão', icon: <Hand className="h-4 w-4" /> },
-                  'cognitive_accessibility': { name: 'Suporte Cognitivo', icon: <Brain className="h-4 w-4" /> },
-                  'visual_accessibility': { name: 'Melhorias Visuais', icon: <Eye className="h-4 w-4" /> },
-                  'assistive_technology_api': { name: 'API de AT', icon: <Zap className="h-4 w-4" /> },
-                  'emergency_mode': { name: 'Modo Emergência', icon: <AlertCircle className="h-4 w-4" /> }
-                }
+                const featureNames: Record<string, { name: string; icon: React.ReactNode; }> = {
+                  "switch_navigation": {
+                    name: "Navegação por Botão",
+                    icon: <Hand className="h-4 w-4" />,
+                  },
+                  "eye_tracking": {
+                    name: "Rastreamento Ocular",
+                    icon: <Eye className="h-4 w-4" />,
+                  },
+                  "tremor_friendly": { name: "Anti-Tremor", icon: <Target className="h-4 w-4" /> },
+                  "voice_medical": { name: "Voz Médica", icon: <Volume2 className="h-4 w-4" /> },
+                  "one_handed_operation": { name: "Uma Mão", icon: <Hand className="h-4 w-4" /> },
+                  "cognitive_accessibility": {
+                    name: "Suporte Cognitivo",
+                    icon: <Brain className="h-4 w-4" />,
+                  },
+                  "visual_accessibility": {
+                    name: "Melhorias Visuais",
+                    icon: <Eye className="h-4 w-4" />,
+                  },
+                  "assistive_technology_api": {
+                    name: "API de AT",
+                    icon: <Zap className="h-4 w-4" />,
+                  },
+                  "emergency_mode": {
+                    name: "Modo Emergência",
+                    icon: <AlertCircle className="h-4 w-4" />,
+                  },
+                };
 
-                const feature = featureNames[key]
+                const feature = featureNames[key];
                 if (!feature) {
-                  console.warn(`Missing feature configuration for key: ${key}`)
+                  console.warn(`Missing feature configuration for key: ${key}`);
                 }
 
                 return (
-                  <div key={key} className={`p-3 border rounded-lg ${enabled ? 'bg-green-50 border-green-200' : 'bg-gray-50'}`}>
+                  <div
+                    key={key}
+                    className={`p-3 border rounded-lg ${
+                      enabled ? "bg-green-50 border-green-200" : "bg-gray-50"
+                    }`}
+                  >
                     <div className="flex items-center gap-2 mb-1">
                       {feature?.icon || <Zap className="h-4 w-4" />}
-                      <span className="text-sm font-medium">{feature?.name || 'Unknown feature'}</span>
+                      <span className="text-sm font-medium">
+                        {feature?.name || "Unknown feature"}
+                      </span>
                     </div>
                     <Badge variant={enabled ? "default" : "secondary"} className="text-xs">
-                      {enabled ? 'Ativo' : 'Inativo'}
+                      {enabled ? "Ativo" : "Inativo"}
                     </Badge>
                   </div>
-                )
+                );
               })}
             </div>
           </CardContent>
@@ -591,32 +637,44 @@ export function AccessibilityIntegrationExample() {
 
                 <div className="space-y-3">
                   {[
-                    { name: 'Dipirona 500mg', time: '14:00', status: 'pending' },
-                    { name: 'Omeprazol 20mg', time: '18:00', status: 'completed' },
-                    { name: 'Ibuprofeno 600mg', time: '22:00', status: 'scheduled' }
+                    { name: "Dipirona 500mg", time: "14:00", status: "pending" },
+                    { name: "Omeprazol 20mg", time: "18:00", status: "completed" },
+                    { name: "Ibuprofeno 600mg", time: "22:00", status: "scheduled" },
                   ].map((med, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div className="flex items-center gap-3">
-                        <div className={`w-3 h-3 rounded-full ${
-                          med.status === 'completed' ? 'bg-green-500' :
-                          med.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-300'
-                        }`} />
+                        <div
+                          className={`w-3 h-3 rounded-full ${
+                            med.status === "completed"
+                              ? "bg-green-500"
+                              : med.status === "pending"
+                              ? "bg-yellow-500"
+                              : "bg-gray-300"
+                          }`}
+                        />
                         <div>
                           <div className="font-medium">{med.name}</div>
                           <div className="text-sm text-muted-foreground">Horário: {med.time}</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge variant={
-                          med.status === 'completed' ? 'default' :
-                          med.status === 'pending' ? 'secondary' : 'outline'
-                        }>
-                          {med.status === 'completed' ? 'Tomado' :
-                           med.status === 'pending' ? 'Pendente' : 'Agendado'}
+                        <Badge
+                          variant={med.status === "completed"
+                            ? "default"
+                            : med.status === "pending"
+                            ? "secondary"
+                            : "outline"}
+                        >
+                          {med.status === "completed"
+                            ? "Tomado"
+                            : med.status === "pending"
+                            ? "Pendente"
+                            : "Agendado"}
                         </Badge>
-                        {med.status === 'pending' && (
-                          <Button size="sm">Confirmar</Button>
-                        )}
+                        {med.status === "pending" && <Button size="sm">Confirmar</Button>}
                       </div>
                     </div>
                   ))}
@@ -764,7 +822,8 @@ export function AccessibilityIntegrationExample() {
                 <AlertTitle>Configurações de Emergência Aplicadas</AlertTitle>
                 <AlertDescription>
                   Todos os recursos de acessibilidade foram otimizados para situação crítica:
-                  contraste máximo, texto grande, navegação simplificada, comandos de voz prioritários.
+                  contraste máximo, texto grande, navegação simplificada, comandos de voz
+                  prioritários.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -831,7 +890,7 @@ export function AccessibilityIntegrationExample() {
         </Card>
       </div>
     </AccessibilityProvidersWrapper>
-  )
+  );
 }
 
 // ===============================
@@ -839,7 +898,7 @@ export function AccessibilityIntegrationExample() {
 // ===============================
 
 export function IndividualComponentsDemos() {
-  const [activeComponent, setActiveComponent] = useState<string>('overview')
+  const [activeComponent, setActiveComponent] = useState<string>("overview");
 
   return (
     <AccessibilityProvidersWrapper>
@@ -875,17 +934,57 @@ export function IndividualComponentsDemos() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { key: 'switch', name: 'Navegação por Botão', icon: <Hand className="h-5 w-5" />, color: 'bg-blue-50' },
-                  { key: 'eye', name: 'Rastreamento Ocular', icon: <Eye className="h-5 w-5" />, color: 'bg-green-50' },
-                  { key: 'tremor', name: 'Controle de Tremor', icon: <Target className="h-5 w-5" />, color: 'bg-purple-50' },
-                  { key: 'voice', name: 'Voz Médica', icon: <Volume2 className="h-5 w-5" />, color: 'bg-orange-50' },
-                  { key: 'hand', name: 'Uma Mão', icon: <Hand className="h-5 w-5" />, color: 'bg-pink-50' },
-                  { key: 'cognitive', name: 'Suporte Cognitivo', icon: <Brain className="h-5 w-5" />, color: 'bg-indigo-50' },
-                  { key: 'visual', name: 'Melhorias Visuais', icon: <Eye className="h-5 w-5" />, color: 'bg-teal-50' },
-                  { key: 'api', name: 'API de AT', icon: <Zap className="h-5 w-5" />, color: 'bg-red-50' }
+                  {
+                    key: "switch",
+                    name: "Navegação por Botão",
+                    icon: <Hand className="h-5 w-5" />,
+                    color: "bg-blue-50",
+                  },
+                  {
+                    key: "eye",
+                    name: "Rastreamento Ocular",
+                    icon: <Eye className="h-5 w-5" />,
+                    color: "bg-green-50",
+                  },
+                  {
+                    key: "tremor",
+                    name: "Controle de Tremor",
+                    icon: <Target className="h-5 w-5" />,
+                    color: "bg-purple-50",
+                  },
+                  {
+                    key: "voice",
+                    name: "Voz Médica",
+                    icon: <Volume2 className="h-5 w-5" />,
+                    color: "bg-orange-50",
+                  },
+                  {
+                    key: "hand",
+                    name: "Uma Mão",
+                    icon: <Hand className="h-5 w-5" />,
+                    color: "bg-pink-50",
+                  },
+                  {
+                    key: "cognitive",
+                    name: "Suporte Cognitivo",
+                    icon: <Brain className="h-5 w-5" />,
+                    color: "bg-indigo-50",
+                  },
+                  {
+                    key: "visual",
+                    name: "Melhorias Visuais",
+                    icon: <Eye className="h-5 w-5" />,
+                    color: "bg-teal-50",
+                  },
+                  {
+                    key: "api",
+                    name: "API de AT",
+                    icon: <Zap className="h-5 w-5" />,
+                    color: "bg-red-50",
+                  },
                 ].map(component => (
-                  <Card 
-                    key={component.key} 
+                  <Card
+                    key={component.key}
                     className={`cursor-pointer hover:shadow-md transition-shadow ${component.color}`}
                     onClick={() => setActiveComponent(component.key)}
                   >
@@ -962,11 +1061,11 @@ export function IndividualComponentsDemos() {
         </CardContent>
       </Card>
     </AccessibilityProvidersWrapper>
-  )
+  );
 }
 
 // ===============================
 // EXPORT MAIN COMPONENT
 // ===============================
 
-export default AccessibilityIntegrationExample
+export default AccessibilityIntegrationExample;

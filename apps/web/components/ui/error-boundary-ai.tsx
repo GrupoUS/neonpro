@@ -1,24 +1,24 @@
 "use client";
 
-import type { ReactNode, ErrorInfo } from "react";
-import React, { Component } from "react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import type { ErrorInfo, ReactNode } from "react";
+import React, { Component } from "react";
 
 // AI-specific error types for healthcare contexts
 export enum AIErrorType {
   API_UNAVAILABLE = "api_unavailable",
-  TIMEOUT = "timeout", 
+  TIMEOUT = "timeout",
   LOW_CONFIDENCE = "low_confidence",
   PROCESSING_ERROR = "processing_error",
   CONTEXT_LOST = "context_lost",
   RATE_LIMIT = "rate_limit",
   VALIDATION_ERROR = "validation_error",
   SAFETY_FILTER = "safety_filter",
-  UNKNOWN = "unknown"
+  UNKNOWN = "unknown",
 }
 
 // AI error classification with healthcare-specific context
@@ -32,7 +32,7 @@ export const AIErrorClassification = {
     textColor: "text-red-700",
     borderColor: "border-red-200",
     fallbackEnabled: true,
-    medicalImpact: "Alto - Funcionalidades críticas podem estar limitadas"
+    medicalImpact: "Alto - Funcionalidades críticas podem estar limitadas",
   },
   [AIErrorType.TIMEOUT]: {
     severity: "medium" as const,
@@ -40,10 +40,10 @@ export const AIErrorClassification = {
     description: "A análise da IA demorou mais que o esperado.",
     icon: "⏱️",
     color: "bg-yellow-50",
-    textColor: "text-yellow-700", 
+    textColor: "text-yellow-700",
     borderColor: "border-yellow-200",
     fallbackEnabled: true,
-    medicalImpact: "Médio - Resultados podem estar incompletos"
+    medicalImpact: "Médio - Resultados podem estar incompletos",
   },
   [AIErrorType.LOW_CONFIDENCE]: {
     severity: "low" as const,
@@ -52,9 +52,9 @@ export const AIErrorClassification = {
     icon: "⚠️",
     color: "bg-orange-50",
     textColor: "text-orange-700",
-    borderColor: "border-orange-200", 
+    borderColor: "border-orange-200",
     fallbackEnabled: true,
-    medicalImpact: "Médio - Requer validação profissional obrigatória"
+    medicalImpact: "Médio - Requer validação profissional obrigatória",
   },
   [AIErrorType.PROCESSING_ERROR]: {
     severity: "medium" as const,
@@ -65,7 +65,7 @@ export const AIErrorClassification = {
     textColor: "text-red-700",
     borderColor: "border-red-200",
     fallbackEnabled: true,
-    medicalImpact: "Médio - Análise precisa ser refeita"
+    medicalImpact: "Médio - Análise precisa ser refeita",
   },
   [AIErrorType.CONTEXT_LOST]: {
     severity: "medium" as const,
@@ -76,7 +76,7 @@ export const AIErrorClassification = {
     textColor: "text-blue-700",
     borderColor: "border-blue-200",
     fallbackEnabled: true,
-    medicalImpact: "Médio - Informações do paciente podem precisar ser reinseridas"
+    medicalImpact: "Médio - Informações do paciente podem precisar ser reinseridas",
   },
   [AIErrorType.RATE_LIMIT]: {
     severity: "low" as const,
@@ -87,7 +87,7 @@ export const AIErrorClassification = {
     textColor: "text-purple-700",
     borderColor: "border-purple-200",
     fallbackEnabled: false,
-    medicalImpact: "Baixo - Aguarde alguns minutos antes de tentar novamente"
+    medicalImpact: "Baixo - Aguarde alguns minutos antes de tentar novamente",
   },
   [AIErrorType.VALIDATION_ERROR]: {
     severity: "medium" as const,
@@ -98,7 +98,7 @@ export const AIErrorClassification = {
     textColor: "text-gray-700",
     borderColor: "border-gray-200",
     fallbackEnabled: true,
-    medicalImpact: "Médio - Verifique a qualidade e formato dos dados"
+    medicalImpact: "Médio - Verifique a qualidade e formato dos dados",
   },
   [AIErrorType.SAFETY_FILTER]: {
     severity: "medium" as const,
@@ -109,7 +109,7 @@ export const AIErrorClassification = {
     textColor: "text-indigo-700",
     borderColor: "border-indigo-200",
     fallbackEnabled: false,
-    medicalImpact: "Médio - Revise o conteúdo para garantir conformidade"
+    medicalImpact: "Médio - Revise o conteúdo para garantir conformidade",
   },
   [AIErrorType.UNKNOWN]: {
     severity: "critical" as const,
@@ -120,8 +120,8 @@ export const AIErrorClassification = {
     textColor: "text-gray-700",
     borderColor: "border-gray-200",
     fallbackEnabled: true,
-    medicalImpact: "Alto - Contate o suporte técnico"
-  }
+    medicalImpact: "Alto - Contate o suporte técnico",
+  },
 } as const;
 
 // Recovery actions for different error types
@@ -129,52 +129,52 @@ export const RecoveryActions = {
   [AIErrorType.API_UNAVAILABLE]: [
     { label: "Usar Modo Manual", action: "fallback", primary: true },
     { label: "Tentar Novamente", action: "retry", primary: false },
-    { label: "Reportar Problema", action: "report", primary: false }
+    { label: "Reportar Problema", action: "report", primary: false },
   ],
   [AIErrorType.TIMEOUT]: [
     { label: "Tentar com Dados Simplificados", action: "simplify", primary: true },
     { label: "Tentar Novamente", action: "retry", primary: false },
-    { label: "Continuar Sem IA", action: "fallback", primary: false }
+    { label: "Continuar Sem IA", action: "fallback", primary: false },
   ],
   [AIErrorType.LOW_CONFIDENCE]: [
     { label: "Validação Profissional", action: "human_review", primary: true },
     { label: "Refinar Dados", action: "refine", primary: false },
-    { label: "Continuar com Cautela", action: "proceed_cautious", primary: false }
+    { label: "Continuar com Cautela", action: "proceed_cautious", primary: false },
   ],
   [AIErrorType.PROCESSING_ERROR]: [
     { label: "Tentar Novamente", action: "retry", primary: true },
     { label: "Usar Modo Manual", action: "fallback", primary: false },
-    { label: "Reportar Bug", action: "report", primary: false }
+    { label: "Reportar Bug", action: "report", primary: false },
   ],
   [AIErrorType.CONTEXT_LOST]: [
     { label: "Reiniciar Sessão", action: "restart", primary: true },
     { label: "Fornecer Contexto", action: "provide_context", primary: false },
-    { label: "Continuar Sem Contexto", action: "proceed", primary: false }
+    { label: "Continuar Sem Contexto", action: "proceed", primary: false },
   ],
   [AIErrorType.RATE_LIMIT]: [
     { label: "Aguardar e Tentar", action: "wait_retry", primary: true },
-    { label: "Usar Modo Manual", action: "fallback", primary: false }
+    { label: "Usar Modo Manual", action: "fallback", primary: false },
   ],
   [AIErrorType.VALIDATION_ERROR]: [
     { label: "Corrigir Dados", action: "fix_data", primary: true },
     { label: "Verificar Formato", action: "check_format", primary: false },
-    { label: "Pular Validação", action: "skip_validation", primary: false }
+    { label: "Pular Validação", action: "skip_validation", primary: false },
   ],
   [AIErrorType.SAFETY_FILTER]: [
     { label: "Revisar Conteúdo", action: "review_content", primary: true },
-    { label: "Usar Termos Alternativos", action: "rephrase", primary: false }
+    { label: "Usar Termos Alternativos", action: "rephrase", primary: false },
   ],
   [AIErrorType.UNKNOWN]: [
     { label: "Tentar Novamente", action: "retry", primary: true },
     { label: "Usar Modo Manual", action: "fallback", primary: false },
-    { label: "Contatar Suporte", action: "support", primary: false }
-  ]
+    { label: "Contatar Suporte", action: "support", primary: false },
+  ],
 } as const;
 
 // AI Error detection and classification
 export function classifyAIError(error: Error): AIErrorType {
   const message = error.message.toLowerCase();
-  
+
   if (message.includes("network") || message.includes("fetch")) {
     return AIErrorType.API_UNAVAILABLE;
   } else if (message.includes("timeout") || message.includes("time")) {
@@ -192,7 +192,7 @@ export function classifyAIError(error: Error): AIErrorType {
   } else if (message.includes("processing") || message.includes("analysis")) {
     return AIErrorType.PROCESSING_ERROR;
   }
-  
+
   return AIErrorType.UNKNOWN;
 }
 
@@ -229,17 +229,17 @@ export class AIErrorBoundary extends Component<AIErrorBoundaryProps, AIErrorBoun
 
   static getDerivedStateFromError(error: Error): Partial<AIErrorBoundaryState> {
     const errorType = classifyAIError(error);
-    return { 
-      hasError: true, 
+    return {
+      hasError: true,
       error,
-      errorType
+      errorType,
     };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     const errorType = classifyAIError(error);
     this.props.onError?.(error, errorType);
-    
+
     // Log AI errors for analytics
     console.group(`🤖 AI Error: ${errorType}`);
     console.error("Error:", error);
@@ -260,16 +260,16 @@ export class AIErrorBoundary extends Component<AIErrorBoundaryProps, AIErrorBoun
     switch (action) {
       case "retry":
         if (retryCount < maxRetries) {
-          this.setState({ 
+          this.setState({
             retryCount: retryCount + 1,
-            lastRetryTime: Date.now()
+            lastRetryTime: Date.now(),
           });
-          
+
           this.retryTimeout = setTimeout(() => {
-            this.setState({ 
-              hasError: false, 
-              error: undefined, 
-              errorType: undefined 
+            this.setState({
+              hasError: false,
+              error: undefined,
+              errorType: undefined,
             });
           }, retryDelay);
         }
@@ -282,11 +282,11 @@ export class AIErrorBoundary extends Component<AIErrorBoundaryProps, AIErrorBoun
 
       case "restart":
         // Clear all state and restart
-        this.setState({ 
-          hasError: false, 
-          error: undefined, 
+        this.setState({
+          hasError: false,
+          error: undefined,
           errorType: undefined,
-          retryCount: 0 
+          retryCount: 0,
         });
         onRecovery?.("restart_session");
         break;
@@ -316,13 +316,15 @@ export class AIErrorBoundary extends Component<AIErrorBoundaryProps, AIErrorBoun
     const isRetrying = lastRetryTime && (Date.now() - lastRetryTime) < 3000;
 
     return (
-      <Card className={cn(
-        "max-w-2xl mx-auto m-4",
-        errorInfo.color,
-        errorInfo.borderColor,
-        "border-2",
-        this.props.className
-      )}>
+      <Card
+        className={cn(
+          "max-w-2xl mx-auto m-4",
+          errorInfo.color,
+          errorInfo.borderColor,
+          "border-2",
+          this.props.className,
+        )}
+      >
         <CardHeader>
           <div className="flex items-start gap-3">
             <span className="text-2xl" role="img" aria-label="Error icon">
@@ -333,21 +335,27 @@ export class AIErrorBoundary extends Component<AIErrorBoundaryProps, AIErrorBoun
                 <CardTitle className={cn("text-lg", errorInfo.textColor)}>
                   {errorInfo.title}
                 </CardTitle>
-                <Badge variant={
-                  errorInfo.severity === "critical" ? "destructive" :
-                  errorInfo.severity === "medium" ? "secondary" : "outline"
-                }>
-                  {errorInfo.severity === "critical" ? "Crítico" :
-                   errorInfo.severity === "medium" ? "Moderado" : "Baixo"}
+                <Badge
+                  variant={errorInfo.severity === "critical"
+                    ? "destructive"
+                    : errorInfo.severity === "medium"
+                    ? "secondary"
+                    : "outline"}
+                >
+                  {errorInfo.severity === "critical"
+                    ? "Crítico"
+                    : errorInfo.severity === "medium"
+                    ? "Moderado"
+                    : "Baixo"}
                 </Badge>
               </div>
-              
+
               {context && (
                 <CardDescription className="text-sm font-medium mb-2">
                   Contexto: {context}
                 </CardDescription>
               )}
-              
+
               <CardDescription className={errorInfo.textColor}>
                 {errorInfo.description}
               </CardDescription>
@@ -370,10 +378,18 @@ export class AIErrorBoundary extends Component<AIErrorBoundaryProps, AIErrorBoun
               Detalhes Técnicos
             </summary>
             <div className="mt-2 p-3 bg-gray-50 rounded text-xs space-y-1">
-              <div><strong>Erro:</strong> {this.state.error?.message}</div>
-              <div><strong>Tipo:</strong> {this.state.errorType}</div>
-              <div><strong>Tentativas:</strong> {retryCount}/{maxRetries}</div>
-              <div><strong>Timestamp:</strong> {new Date().toISOString()}</div>
+              <div>
+                <strong>Erro:</strong> {this.state.error?.message}
+              </div>
+              <div>
+                <strong>Tipo:</strong> {this.state.errorType}
+              </div>
+              <div>
+                <strong>Tentativas:</strong> {retryCount}/{maxRetries}
+              </div>
+              <div>
+                <strong>Timestamp:</strong> {new Date().toISOString()}
+              </div>
             </div>
           </details>
 
@@ -382,28 +398,28 @@ export class AIErrorBoundary extends Component<AIErrorBoundaryProps, AIErrorBoun
             <h4 className="font-semibold text-sm text-gray-700">
               Ações de Recuperação:
             </h4>
-            
+
             <div className="grid gap-2">
               {recoveryActions.map((recoveryAction, index) => (
                 <Button
                   key={index}
                   variant={recoveryAction.primary ? "default" : "outline"}
                   size="sm"
-                  disabled={
-                    isRetrying ||
-                    (recoveryAction.action === "retry" && !canRetry)
-                  }
+                  disabled={isRetrying
+                    || (recoveryAction.action === "retry" && !canRetry)}
                   onClick={() => this.handleRecoveryAction(recoveryAction.action)}
                   className="justify-start"
                 >
-                  {isRetrying && recoveryAction.action === "retry" ? (
-                    <>
-                      <span className="animate-spin mr-2">⟳</span>
-                      Tentando novamente...
-                    </>
-                  ) : (
-                    recoveryAction.label
-                  )}
+                  {isRetrying && recoveryAction.action === "retry"
+                    ? (
+                      <>
+                        <span className="animate-spin mr-2">⟳</span>
+                        Tentando novamente...
+                      </>
+                    )
+                    : (
+                      recoveryAction.label
+                    )}
                 </Button>
               ))}
             </div>
@@ -424,8 +440,8 @@ export class AIErrorBoundary extends Component<AIErrorBoundaryProps, AIErrorBoun
                 Modo Alternativo:
               </h4>
               <p className="text-sm text-gray-600 mb-3">
-                Continue sem IA utilizando controles manuais. 
-                Funcionalidade completa disponível, sem análise automatizada.
+                Continue sem IA utilizando controles manuais. Funcionalidade completa disponível,
+                sem análise automatizada.
               </p>
               <Button
                 variant="secondary"
@@ -444,7 +460,7 @@ export class AIErrorBoundary extends Component<AIErrorBoundaryProps, AIErrorBoun
 // Higher-order component for wrapping with AI error boundary
 export function withAIErrorBoundary<P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<AIErrorBoundaryProps, "children">
+  errorBoundaryProps?: Omit<AIErrorBoundaryProps, "children">,
 ) {
   const WithAIErrorBoundaryComponent = (props: P) => (
     <AIErrorBoundary {...errorBoundaryProps}>

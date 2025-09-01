@@ -70,7 +70,7 @@ function useDashboardData() {
   const { user } = useAuth();
 
   const fetchDashboardData = async () => {
-    if (!user) {return;}
+    if (!user) return;
 
     try {
       setLoading(true);
@@ -120,7 +120,9 @@ function useDashboardData() {
       const completedToday = todayAppointments.filter((apt: unknown) =>
         apt.status === "completed"
       ).length;
-      const noShowAppointments = appointments.filter((apt: unknown) => apt.status === "no_show").length;
+      const noShowAppointments = appointments.filter((apt: unknown) =>
+        apt.status === "no_show"
+      ).length;
       const noShowRate = appointments.length > 0
         ? (noShowAppointments / appointments.length) * 100
         : 0;
@@ -130,9 +132,8 @@ function useDashboardData() {
         return createdDate >= startOfMonth;
       }).length;
 
-      const lgpdCompliantPatients = patients.filter((patient: unknown) =>
-        patient.lgpd_consent_given === true
-      ).length;
+      const lgpdCompliantPatients =
+        patients.filter((patient: unknown) => patient.lgpd_consent_given === true).length;
 
       const dashboardStats: DashboardStats = {
         patients: {

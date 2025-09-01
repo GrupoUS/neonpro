@@ -289,7 +289,9 @@ function extractRegionFromUrl(url: string): string {
     const urlObj = new URL(url);
     const subdomain = urlObj.hostname.split(".")[0];
     // Extract region from subdomain pattern: projectid.supabase.co
-    return subdomain && subdomain.includes("-") ? subdomain.split("-").pop() || "unknown" : "unknown";
+    return subdomain && subdomain.includes("-")
+      ? subdomain.split("-").pop() || "unknown"
+      : "unknown";
   } catch {
     return "unknown";
   }

@@ -352,6 +352,7 @@ CREATE TABLE compliance_tracking (
 ### LGPD (Lei Geral de Proteção de Dados) Requirements
 
 **Data Classification System:**
+
 - **Public**: Identifiers, metadata (id, created_at)
 - **Personal Data**: Names, contact info, demographics
 - **Sensitive Personal Data**: CPF, RG, passport numbers (encrypted)
@@ -359,6 +360,7 @@ CREATE TABLE compliance_tracking (
 - **Special Category Data**: Requires enhanced protection (medical_records)
 
 **Patient Rights Implementation:**
+
 - **Right to Access**: RLS policies + patient portal access
 - **Right to Rectification**: Audit trail for all data modifications
 - **Right to Erasure**: CASCADE DELETE relationships + anonymization
@@ -367,6 +369,7 @@ CREATE TABLE compliance_tracking (
 ### ANVISA (Medical Device Software) Requirements
 
 **Class IIa Compliance:**
+
 - Quality management system audit trails
 - Risk management logging (ISO 14971)
 - Post-market surveillance monitoring
@@ -375,6 +378,7 @@ CREATE TABLE compliance_tracking (
 ### CFM (Federal Council of Medicine) Requirements
 
 **Medical Record Standards (CFM Resolution 1821/2007):**
+
 - Digital signature requirements for professionals
 - 20-year retention for advanced aesthetic records
 - Professional accountability tracking
@@ -520,16 +524,19 @@ CREATE TRIGGER ai_safety_monitor
 ### Common Issues
 
 **RLS Policy Not Working:**
+
 - Verify `auth.uid()` returns expected user ID
 - Check professional/patient relationship in junction tables
 - Ensure `is_active = true` conditions are met
 
 **LGPD Consent Validation Failing:**
+
 - Verify consent records exist with status 'granted'
 - Check consent expiration dates
 - Validate processing purpose matches consent scope
 
 **Audit Logs Not Generated:**
+
 - Ensure audit triggers are installed on all healthcare tables
 - Verify `create_audit_log()` function exists and has correct permissions
 - Check audit_logs table permissions for INSERT operations
@@ -537,11 +544,13 @@ CREATE TRIGGER ai_safety_monitor
 ### Performance Issues
 
 **Slow Patient Queries:**
+
 - Add composite index: `(clinic_id, is_active, created_at)`
 - Use LIMIT clauses for large result sets
 - Consider patient data archival for old records
 
 **RLS Policy Overhead:**
+
 - Cache professional-clinic relationships in application layer
 - Use prepared statements for repeated RLS queries
 - Monitor query execution plans for policy efficiency

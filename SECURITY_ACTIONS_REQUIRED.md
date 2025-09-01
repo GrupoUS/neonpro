@@ -3,18 +3,21 @@
 ## ✅ COMPLETADO:
 
 ### 1. **Atualização do .gitignore**
+
 - ✅ `.gitignore` expandido com proteções abrangentes
 - ✅ Cobertura para healthcare, compliance, secrets, certificados
 - ✅ Proteção de arquivos de deployment e infraestrutura
 
 ### 2. **Templates Seguros Criados**
+
 - ✅ `production.env.example` - Template seguro sem valores reais
 - ✅ `sentry.server.config.ts.secure` - Configuração usando env vars
 - ✅ `sentry.edge.config.ts.secure` - Configuração edge segura
 
 ### 3. **Arquivos Sensíveis Identificados**
+
 - 🚨 `packages/devops/src/deployment/environments/production.env`
-- 🚨 `sentry.server.config.ts` (DSN hardcoded)  
+- 🚨 `sentry.server.config.ts` (DSN hardcoded)
 - 🚨 `sentry.edge.config.ts` (DSN hardcoded)
 
 ---
@@ -22,6 +25,7 @@
 ## 🔥 AÇÕES IMEDIATAS NECESSÁRIAS:
 
 ### 1. **REMOVER Arquivos Sensíveis do Git**
+
 ```bash
 cd /home/vibecoder/neonpro
 
@@ -40,7 +44,9 @@ rm sentry.server.config.ts.secure sentry.edge.config.ts.secure
 ```
 
 ### 2. **Configurar Variáveis de Ambiente**
+
 Adicionar ao Vercel/deployment:
+
 ```env
 SENTRY_DSN=https://35734fdad8e1c17f62ae3e547dd787d2@o4509529416728576.ingest.us.sentry.io/4509529439797248
 SENTRY_ENVIRONMENT=production
@@ -52,6 +58,7 @@ SENTRY_RECORD_AI_OUTPUTS=false
 ```
 
 ### 3. **Verificar Histórico do Git**
+
 ```bash
 # Procurar por leaks anteriores
 git log --all --grep="password\|secret\|key\|token" --oneline
@@ -66,8 +73,9 @@ git log --follow --patch -- packages/devops/src/deployment/environments/producti
 ## 🛡️ PROTEÇÕES IMPLEMENTADAS:
 
 ### Novos Padrões no .gitignore:
+
 - ✅ Todos arquivos `.env*` (exceto `.env.example`)
-- ✅ Configurações MCP e Claude  
+- ✅ Configurações MCP e Claude
 - ✅ Certificados, chaves privadas, tokens
 - ✅ Arquivos específicos de healthcare (ANVISA, CFM, LGPD)
 - ✅ Configurações de deployment e infraestrutura
@@ -76,6 +84,7 @@ git log --follow --patch -- packages/devops/src/deployment/environments/producti
 - ✅ Configurações cloud (AWS, Vercel, etc.)
 
 ### Templates Seguros:
+
 - ✅ `production.env.example` - Estrutura sem valores sensíveis
 - ✅ Configurações Sentry usando variáveis de ambiente
 - ✅ Instruções claras de segurança
@@ -95,6 +104,7 @@ git log --follow --patch -- packages/devops/src/deployment/environments/producti
 ## 🔍 VERIFICAÇÃO FINAL:
 
 Após executar as ações:
+
 ```bash
 # Verificar que não há mais arquivos sensíveis
 git ls-files | grep -E "\.(env|key|pem|secret|credential)$"

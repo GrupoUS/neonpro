@@ -1,6 +1,5 @@
 // TensorFlow.js now lazy-loaded to reduce bundle size by ~10MB
 // import * as tf from "@tensorflow/tfjs"; // ❌ Removed static import
-import { tensorFlowLoader, LazyTensorFlowOperations } from "./tensorflow-lazy-loader";
 import type {
   BotoxOptimization,
   DurationEstimation,
@@ -19,6 +18,7 @@ import type {
 import { AestheticFeatureExtractor } from "./feature-extractor";
 import { aiModelManager } from "./model-manager";
 import { AestheticPostProcessor } from "./post-processor";
+import { LazyTensorFlowOperations, tensorFlowLoader } from "./tensorflow-lazy-loader";
 
 /**
  * Core AI Prediction Engine for NeonPro Aesthetic Treatments

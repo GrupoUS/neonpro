@@ -1,8 +1,8 @@
-import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
-import { Button } from './ui/button';
-import { X } from 'lucide-react';
-import type { ModalComponentProps } from './types/healthcare';
+import { X } from "lucide-react";
+import React from "react";
+import type { ModalComponentProps } from "./types/healthcare";
+import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
 
 export interface StandardModalProps extends ModalComponentProps {
   children: React.ReactNode;
@@ -16,24 +16,24 @@ export function StandardModal({
   title,
   description,
   children,
-  size = 'md',
+  size = "md",
   showCloseButton = true,
   preventClose = false,
-  footer
+  footer,
 }: StandardModalProps) {
   const sizeClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md', 
-    lg: 'max-w-lg',
-    xl: 'max-w-xl'
+    sm: "max-w-sm",
+    md: "max-w-md",
+    lg: "max-w-lg",
+    xl: "max-w-xl",
   };
 
   return (
-    <Dialog 
-      open={isOpen} 
+    <Dialog
+      open={isOpen}
       onOpenChange={preventClose ? undefined : onClose}
     >
-      <DialogContent 
+      <DialogContent
         className={`${sizeClasses[size]} max-h-[85vh] overflow-y-auto`}
         onPointerDownOutside={preventClose ? (e) => e.preventDefault() : undefined}
         onEscapeKeyDown={preventClose ? (e) => e.preventDefault() : undefined}
@@ -49,18 +49,18 @@ export function StandardModal({
             <span className="sr-only">Close</span>
           </Button>
         )}
-        
+
         {(title || description) && (
           <DialogHeader>
             {title && <DialogTitle>{title}</DialogTitle>}
             {description && <DialogDescription>{description}</DialogDescription>}
           </DialogHeader>
         )}
-        
+
         <div className="flex-1 overflow-y-auto">
           {children}
         </div>
-        
+
         {footer && (
           <div className="flex justify-end gap-2 pt-4 border-t">
             {footer}

@@ -7,13 +7,13 @@
 
 ### **Applications (3/4 esperados)**
 
-| App               | Status      | Observação                  |
-| ----------------- | ----------- | --------------------------- |
-| apps/web          | ✅ Conforme | Main Next.js app presente   |
-| apps/api          | ✅ Conforme | Hono.dev backend presente   |
-| apps/admin        | ❌ Faltando | App admin não encontrado    |
-| apps/ai-dashboard | ❌ Faltando | Dashboard AI não encontrado |
-| apps/docs         | ❓ Extra    | Não esperado na arquitetura |
+| App               | Status      | Observação                             |
+| ----------------- | ----------- | -------------------------------------- |
+| apps/web          | ✅ Conforme | Main Next.js app presente              |
+| apps/api          | ✅ Conforme | Hono.dev backend presente              |
+| apps/admin        | ❌ Faltando | App admin não encontrado               |
+| apps/ai-dashboard | ❌ Faltando | Dashboard AI não encontrado            |
+| apps/docs         | ✅ Removed  | Redundant documentation app eliminated |
 
 ### **Packages (24/32 esperados)**
 
@@ -38,7 +38,7 @@
 
 ```
 - biome.json.backup
-- playwright.config.ts.backup  
+- playwright.config.ts.backup
 - vitest.config.ts.backup
 - apps/web/tests/hooks/use-auth.test.tsx.backup
 - tools/developer/healthcare-dev-tools.ts.bak

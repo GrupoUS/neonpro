@@ -182,7 +182,10 @@ export class HealthcareRbacService {
   private readonly users: Map<string, HealthcareUser> = new Map();
   private readonly accessRequests: Map<string, AccessRequest> = new Map();
   private readonly auditTrail: HealthcareRbacAudit[] = [];
-  private readonly activeSessions: Map<string, { userId: string; startTime: number; lastActivity: number }> = new Map();
+  private readonly activeSessions: Map<
+    string,
+    { userId: string; startTime: number; lastActivity: number; }
+  > = new Map();
 
   constructor(config: RbacConfig) {
     this.config = RbacConfigSchema.parse(config);

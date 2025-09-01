@@ -4,10 +4,10 @@
     {
       "label": "✨ Format Code",
       "type": "shell",
-      "command": "bun",
-      "args": ["run", "format"],
+      "command": "npx",
+      "args": ["dprint", "fmt"],
       "group": "build",
-      "detail": "Format all code using dprint",
+      "detail": "Format all code using dprint (bypasses Turbo)",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -17,10 +17,10 @@
     {
       "label": "🔍 Lint Code",
       "type": "shell",
-      "command": "bun",
-      "args": ["run", "lint"],
+      "command": "npx",
+      "args": ["oxlint", "."],
       "group": "build",
-      "detail": "Run oxlint to check for linting issues",
+      "detail": "Run oxlint to check for linting issues (bypasses Turbo)",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -30,10 +30,10 @@
     {
       "label": "🔧 Fix Lint Issues",
       "type": "shell",
-      "command": "bun",
-      "args": ["run", "oxlint:fix"],
+      "command": "npx",
+      "args": ["oxlint", "--fix", "."],
       "group": "build",
-      "detail": "Automatically fix linting issues with oxlint",
+      "detail": "Automatically fix linting issues with oxlint (bypasses Turbo)",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -43,13 +43,13 @@
     {
       "label": "✅ Full Code Check",
       "type": "shell",
-      "command": "bun",
-      "args": ["run", "ci:check"],
+      "command": "bash",
+      "args": ["-c", "npx dprint check && npx oxlint . && npx tsc --noEmit --skipLibCheck"],
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "detail": "Run complete code validation (format check + lint + type check)",
+      "detail": "Run complete code validation (format check + lint + type check) - bypasses Turbo",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -100,25 +100,12 @@
       }
     },
     {
-      "label": "🔧 Build Project",
-      "type": "shell",
-      "command": "bun",
-      "args": ["run", "build"],
-      "group": "build",
-      "detail": "Build the entire project",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
       "label": "🚀 Type Check",
       "type": "shell",
-      "command": "bun",
-      "args": ["run", "type-check"],
+      "command": "npx",
+      "args": ["tsc", "--noEmit", "--skipLibCheck"],
       "group": "build",
-      "detail": "Run TypeScript type checking",
+      "detail": "Run TypeScript type checking (bypasses Turbo)",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -132,6 +119,32 @@
       "args": ["install"],
       "group": "build",
       "detail": "Install dependencies via Bun",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "📊 Lint Error Count",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "npx oxlint . 2>&1 | grep -E '^  x ' | wc -l && echo 'Total lint errors found'"],
+      "group": "build",
+      "detail": "Count total lint errors for progress tracking",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🔍 Lint Error Summary",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "npx oxlint . 2>&1 | grep -E '^  x ' | awk -F'(' '{print $2}' | awk -F')' '{print $1}' | sort | uniq -c | sort -nr | head -10"],
+      "group": "build",
+      "detail": "Show top 10 most common lint error types",
       "presentation": {
         "echo": true,
         "reveal": "always",

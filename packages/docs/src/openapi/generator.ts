@@ -138,7 +138,7 @@ export class OpenAPIGenerator {
         const parsed = yaml.parse(yamlContent.replaceAll(/\* ?/g, ""));
 
         // Merge components
-        if (parsed.components && typeof parsed.components === 'object') {
+        if (parsed.components && typeof parsed.components === "object") {
           const parsedComponents = parsed.components as any;
           Object.keys(parsedComponents).forEach((componentType) => {
             if ((components as any)[componentType]) {
@@ -336,7 +336,7 @@ export class OpenAPIGenerator {
     }
 
     // Check for required healthcare tags
-    const healthcareTags = specObj?.tags?.some((tag: { name: string }) =>
+    const healthcareTags = specObj?.tags?.some((tag: { name: string; }) =>
       tag?.name?.toLowerCase().includes("healthcare")
     );
     if (!healthcareTags) {

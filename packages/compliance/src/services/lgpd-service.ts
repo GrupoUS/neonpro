@@ -676,7 +676,9 @@ export class LgpdService {
   }
 
   private static generateBreachRiskAssessment(incident: Record<string, unknown>): string {
-    const affected = Array.isArray((incident as unknown).affectedUsers) ? (incident as unknown).affectedUsers.length : 0;
+    const affected = Array.isArray((incident as unknown).affectedUsers)
+      ? (incident as unknown).affectedUsers.length
+      : 0;
     return `Risk assessment for breach affecting ${affected} users`;
   }
 

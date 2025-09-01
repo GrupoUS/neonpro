@@ -1,13 +1,22 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Slider } from '@/components/ui/slider';
-import { Progress } from '@/components/ui/progress';
-import { Eye, Target, Clock, Settings, Zap, AlertTriangle, CheckCircle2, Crosshair } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Crosshair,
+  Eye,
+  Settings,
+  Target,
+  Zap,
+} from "lucide-react";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 // ================================================================================
 // TYPES & INTERFACES
@@ -23,7 +32,7 @@ export interface GazePoint {
 export interface EyeTrackingDevice {
   id: string;
   name: string;
-  type: 'webcam' | 'dedicated' | 'medical-grade';
+  type: "webcam" | "dedicated" | "medical-grade";
   connected: boolean;
   accuracy: number; // pixels deviation
   frequency: number; // Hz
@@ -36,8 +45,8 @@ export interface DwellTarget {
   element: HTMLElement;
   area: DOMRect;
   dwell_time: number; // milliseconds required
-  activation_type: 'click' | 'hover' | 'focus' | 'medical-action';
-  healthcare_priority: 'emergency' | 'high' | 'normal' | 'low';
+  activation_type: "click" | "hover" | "focus" | "medical-action";
+  healthcare_priority: "emergency" | "high" | "normal" | "low";
   current_dwell: number; // current dwell time
   gaze_history: GazePoint[];
   activated: boolean;
@@ -48,7 +57,7 @@ export interface GazePattern {
   id: string;
   name: string;
   description: string;
-  pattern_type: 'fixation' | 'saccade' | 'smooth_pursuit' | 'medical_scan';
+  pattern_type: "fixation" | "saccade" | "smooth_pursuit" | "medical_scan";
   medical_context: boolean;
   activation_threshold: number; // confidence threshold
 }
@@ -57,27 +66,27 @@ export interface EyeTrackingSettings {
   enabled: boolean;
   device_id: string | null;
   calibrated: boolean;
-  
+
   // Dwell Settings
   default_dwell_time: number; // milliseconds
   emergency_dwell_time: number; // milliseconds for emergency actions
   medical_dwell_time: number; // milliseconds for medical actions
-  
+
   // Accuracy Settings
   gaze_accuracy: number; // pixels
   confidence_threshold: number; // 0-1
   smoothing_factor: number; // 0-1
-  
+
   // Visual Feedback
   show_gaze_cursor: boolean;
   show_dwell_progress: boolean;
   highlight_targets: boolean;
-  
+
   // Healthcare Mode
   healthcare_mode: boolean;
   medical_safety_mode: boolean; // extra confirmation for critical actions
   patient_monitoring: boolean;
-  
+
   // Interaction Modes
   dwell_activation: boolean;
   blink_activation: boolean;
@@ -89,21 +98,21 @@ export interface EyeTrackingContextType {
   devices: EyeTrackingDevice[];
   settings: EyeTrackingSettings;
   updateSettings: (settings: Partial<EyeTrackingSettings>) => void;
-  
+
   // Tracking State
   current_gaze: GazePoint | null;
   is_tracking: boolean;
-  calibration_status: 'not_calibrated' | 'calibrating' | 'calibrated' | 'error';
-  
+  calibration_status: "not_calibrated" | "calibrating" | "calibrated" | "error";
+
   // Target Management
   targets: DwellTarget[];
   registerTarget: (id: string, element: HTMLElement, config?: Partial<DwellTarget>) => void;
   unregisterTarget: (id: string) => void;
-  
+
   // Calibration
   startCalibration: () => void;
   completeCalibration: () => void;
-  
+
   // Tracking Control
   startTracking: () => void;
   stopTracking: () => void;
@@ -115,52 +124,52 @@ export interface EyeTrackingContextType {
 
 const MEDICAL_GAZE_PATTERNS: GazePattern[] = [
   {
-    id: 'patient_scan',
-    name: 'Varredura de Paciente',
-    description: 'Padrão de visualização para exame de paciente',
-    pattern_type: 'medical_scan',
+    id: "patient_scan",
+    name: "Varredura de Paciente",
+    description: "Padrão de visualização para exame de paciente",
+    pattern_type: "medical_scan",
     medical_context: true,
-    activation_threshold: 0.8
+    activation_threshold: 0.8,
   },
   {
-    id: 'emergency_focus',
-    name: 'Foco de Emergência',
-    description: 'Padrão de fixação para situações de emergência',
-    pattern_type: 'fixation',
+    id: "emergency_focus",
+    name: "Foco de Emergência",
+    description: "Padrão de fixação para situações de emergência",
+    pattern_type: "fixation",
     medical_context: true,
-    activation_threshold: 0.9
+    activation_threshold: 0.9,
   },
   {
-    id: 'procedure_follow',
-    name: 'Acompanhamento de Procedimento',
-    description: 'Padrão de seguimento suave durante procedimentos',
-    pattern_type: 'smooth_pursuit',
+    id: "procedure_follow",
+    name: "Acompanhamento de Procedimento",
+    description: "Padrão de seguimento suave durante procedimentos",
+    pattern_type: "smooth_pursuit",
     medical_context: true,
-    activation_threshold: 0.75
-  }
+    activation_threshold: 0.75,
+  },
 ];
 
 const HEALTHCARE_TARGET_TYPES = {
-  'patient-critical': {
+  "patient-critical": {
     dwell_time: 2000,
-    priority: 'emergency' as const,
-    confirmation_required: true
+    priority: "emergency" as const,
+    confirmation_required: true,
   },
-  'procedure-action': {
+  "procedure-action": {
     dwell_time: 1500,
-    priority: 'high' as const,
-    confirmation_required: true
+    priority: "high" as const,
+    confirmation_required: true,
   },
-  'navigation': {
+  "navigation": {
     dwell_time: 800,
-    priority: 'normal' as const,
-    confirmation_required: false
+    priority: "normal" as const,
+    confirmation_required: false,
   },
-  'information': {
+  "information": {
     dwell_time: 600,
-    priority: 'low' as const,
-    confirmation_required: false
-  }
+    priority: "low" as const,
+    confirmation_required: false,
+  },
 } as const;
 
 const DEFAULT_SETTINGS: EyeTrackingSettings = {
@@ -181,7 +190,7 @@ const DEFAULT_SETTINGS: EyeTrackingSettings = {
   patient_monitoring: false,
   dwell_activation: true,
   blink_activation: false,
-  gesture_activation: false
+  gesture_activation: false,
 };
 
 // ================================================================================
@@ -190,19 +199,21 @@ const DEFAULT_SETTINGS: EyeTrackingSettings = {
 
 const EyeTrackingContext = createContext<EyeTrackingContextType | null>(null);
 
-export function EyeTrackingProvider({ children }: { children: React.ReactNode }) {
+export function EyeTrackingProvider({ children }: { children: React.ReactNode; }) {
   // State Management
   const [devices, setDevices] = useState<EyeTrackingDevice[]>([]);
   const [settings, setSettings] = useState<EyeTrackingSettings>(DEFAULT_SETTINGS);
   const [currentGaze, setCurrentGaze] = useState<GazePoint | null>(null);
   const [isTracking, setIsTracking] = useState(false);
-  const [calibrationStatus, setCalibrationStatus] = useState<'not_calibrated' | 'calibrating' | 'calibrated' | 'error'>('not_calibrated');
+  const [calibrationStatus, setCalibrationStatus] = useState<
+    "not_calibrated" | "calibrating" | "calibrated" | "error"
+  >("not_calibrated");
   const [targets, setTargets] = useState<DwellTarget[]>([]);
-  
+
   // Refs
   const trackingInterval = useRef<NodeJS.Timeout | null>(null);
   const gazeHistory = useRef<GazePoint[]>([]);
-  const calibrationPoints = useRef<{ x: number; y: number }[]>([]);
+  const calibrationPoints = useRef<{ x: number; y: number; }[]>([]);
 
   // ================================================================================
   // DEVICE DETECTION & MANAGEMENT
@@ -212,37 +223,37 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
     // Simulated eye-tracking device detection
     const detectedDevices: EyeTrackingDevice[] = [
       {
-        id: 'webcam_basic',
-        name: 'Webcam Básica',
-        type: 'webcam',
+        id: "webcam_basic",
+        name: "Webcam Básica",
+        type: "webcam",
         connected: true,
         accuracy: 80,
         frequency: 30,
         calibrated: false,
-        supports_medical_use: false
+        supports_medical_use: false,
       },
       {
-        id: 'tobii_medical',
-        name: 'Tobii Eye Tracker Médico',
-        type: 'medical-grade',
+        id: "tobii_medical",
+        name: "Tobii Eye Tracker Médico",
+        type: "medical-grade",
         connected: true,
         accuracy: 15,
         frequency: 120,
         calibrated: false,
-        supports_medical_use: true
+        supports_medical_use: true,
       },
       {
-        id: 'eyetech_pro',
-        name: 'EyeTech TM5 Pro',
-        type: 'dedicated',
+        id: "eyetech_pro",
+        name: "EyeTech TM5 Pro",
+        type: "dedicated",
         connected: false,
         accuracy: 25,
         frequency: 60,
         calibrated: false,
-        supports_medical_use: true
-      }
+        supports_medical_use: true,
+      },
     ];
-    
+
     setDevices(detectedDevices);
   }, []);
 
@@ -254,24 +265,24 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
     // Simulate realistic gaze data with some noise
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
-    
+
     // Add realistic eye movement patterns
     const time = Date.now();
     const waveX = Math.sin(time / 1000) * 100;
     const waveY = Math.cos(time / 1500) * 80;
-    
+
     // Add noise based on device accuracy
     const currentDevice = devices.find(d => d.id === settings.device_id);
     const accuracy = currentDevice?.accuracy || 50;
-    
+
     const noiseX = (Math.random() - 0.5) * accuracy;
     const noiseY = (Math.random() - 0.5) * accuracy;
-    
+
     return {
       x: Math.max(0, Math.min(window.innerWidth, centerX + waveX + noiseX)),
       y: Math.max(0, Math.min(window.innerHeight, centerY + waveY + noiseY)),
       timestamp: time,
-      confidence: Math.random() * 0.3 + 0.7 // 0.7-1.0 range
+      confidence: Math.random() * 0.3 + 0.7, // 0.7-1.0 range
     };
   }, [devices, settings.device_id]);
 
@@ -280,35 +291,35 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
   // ================================================================================
 
   const registerTarget = useCallback((
-    id: string, 
-    element: HTMLElement, 
-    config?: Partial<DwellTarget>
+    id: string,
+    element: HTMLElement,
+    config?: Partial<DwellTarget>,
   ) => {
     const rect = element.getBoundingClientRect();
-    
+
     // Enhance element for eye-tracking
-    element.setAttribute('data-eye-tracking-target', 'true');
-    element.setAttribute('data-target-id', id);
-    
+    element.setAttribute("data-eye-tracking-target", "true");
+    element.setAttribute("data-target-id", id);
+
     // Add healthcare-specific attributes
     if (settings.healthcare_mode && config?.healthcare_priority) {
-      element.setAttribute('data-healthcare-priority', config.healthcare_priority);
-      element.setAttribute('aria-describedby', `${id}_eye_tracking_description`);
+      element.setAttribute("data-healthcare-priority", config.healthcare_priority);
+      element.setAttribute("aria-describedby", `${id}_eye_tracking_description`);
     }
-    
+
     const newTarget: DwellTarget = {
       id,
       element,
       area: rect,
       dwell_time: config?.dwell_time || settings.default_dwell_time,
-      activation_type: config?.activation_type || 'click',
-      healthcare_priority: config?.healthcare_priority || 'normal',
+      activation_type: config?.activation_type || "click",
+      healthcare_priority: config?.healthcare_priority || "normal",
       current_dwell: 0,
       gaze_history: [],
       activated: false,
-      metadata: config?.metadata
+      metadata: config?.metadata,
     };
-    
+
     setTargets(prev => [...prev.filter(t => t.id !== id), newTarget]);
   }, [settings.healthcare_mode, settings.default_dwell_time]);
 
@@ -316,8 +327,8 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
     setTargets(prev => {
       const target = prev.find(t => t.id === id);
       if (target) {
-        target.element.removeAttribute('data-eye-tracking-target');
-        target.element.removeAttribute('data-target-id');
+        target.element.removeAttribute("data-eye-tracking-target");
+        target.element.removeAttribute("data-target-id");
       }
       return prev.filter(t => t.id !== id);
     });
@@ -330,36 +341,36 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
   const processGazePoint = useCallback((gazePoint: GazePoint) => {
     setCurrentGaze(gazePoint);
     gazeHistory.current.push(gazePoint);
-    
+
     // Keep only recent gaze history (last 2 seconds)
     const cutoffTime = gazePoint.timestamp - 2000;
     gazeHistory.current = gazeHistory.current.filter(p => p.timestamp > cutoffTime);
-    
+
     // Update target states
-    setTargets(prevTargets => 
+    setTargets(prevTargets =>
       prevTargets.map(target => {
         const { area } = target;
-        const isGazing = gazePoint.x >= area.left && 
-                          gazePoint.x <= area.right && 
-                          gazePoint.y >= area.top && 
-                          gazePoint.y <= area.bottom &&
-                          gazePoint.confidence >= settings.confidence_threshold;
-        
+        const isGazing = gazePoint.x >= area.left
+          && gazePoint.x <= area.right
+          && gazePoint.y >= area.top
+          && gazePoint.y <= area.bottom
+          && gazePoint.confidence >= settings.confidence_threshold;
+
         if (isGazing) {
           // Add to gaze history for this target
           const newGazeHistory = [...target.gaze_history, gazePoint];
-          
+
           // Calculate dwell time
           const dwellStart = newGazeHistory[0]?.timestamp || gazePoint.timestamp;
           const currentDwell = gazePoint.timestamp - dwellStart;
-          
+
           // Check for activation
           let shouldActivate = false;
           if (settings.dwell_activation && currentDwell >= target.dwell_time && !target.activated) {
             // Healthcare safety check
-            if (settings.medical_safety_mode && target.healthcare_priority === 'emergency') {
+            if (settings.medical_safety_mode && target.healthcare_priority === "emergency") {
               // Require extra confirmation for emergency actions
-              const steadyGaze = newGazeHistory.slice(-10).every(p => 
+              const steadyGaze = newGazeHistory.slice(-10).every(p =>
                 Math.abs(p.x - gazePoint.x) < 20 && Math.abs(p.y - gazePoint.y) < 20
               );
               shouldActivate = steadyGaze;
@@ -367,46 +378,46 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
               shouldActivate = true;
             }
           }
-          
+
           if (shouldActivate) {
             // Activate target
             setTimeout(() => {
               switch (target.activation_type) {
-                case 'click':
+                case "click":
                   target.element.click();
                   break;
-                case 'hover':
-                  target.element.dispatchEvent(new MouseEvent('mouseenter'));
+                case "hover":
+                  target.element.dispatchEvent(new MouseEvent("mouseenter"));
                   break;
-                case 'focus':
+                case "focus":
                   target.element.focus();
                   break;
-                case 'medical-action':
+                case "medical-action":
                   // Special handling for medical actions
-                  const medicalEvent = new CustomEvent('medical-eye-activation', {
-                    detail: { 
-                      targetId: target.id, 
+                  const medicalEvent = new CustomEvent("medical-eye-activation", {
+                    detail: {
+                      targetId: target.id,
                       priority: target.healthcare_priority,
-                      dwellTime: currentDwell
-                    }
+                      dwellTime: currentDwell,
+                    },
                   });
                   target.element.dispatchEvent(medicalEvent);
                   break;
               }
             }, 0);
-            
+
             return {
               ...target,
               current_dwell: currentDwell,
               gaze_history: newGazeHistory,
-              activated: true
+              activated: true,
             };
           } else {
             return {
               ...target,
               current_dwell: currentDwell,
               gaze_history: newGazeHistory,
-              activated: false
+              activated: false,
             };
           }
         } else {
@@ -415,7 +426,7 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
             ...target,
             current_dwell: 0,
             gaze_history: [],
-            activated: false
+            activated: false,
           };
         }
       })
@@ -427,17 +438,17 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
   // ================================================================================
 
   const startCalibration = useCallback(() => {
-    if (!isTracking) {return;}
-    
-    setCalibrationStatus('calibrating');
+    if (!isTracking) return;
+
+    setCalibrationStatus("calibrating");
     calibrationPoints.current = [
       { x: window.innerWidth * 0.1, y: window.innerHeight * 0.1 },
       { x: window.innerWidth * 0.9, y: window.innerHeight * 0.1 },
       { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 },
       { x: window.innerWidth * 0.1, y: window.innerHeight * 0.9 },
-      { x: window.innerWidth * 0.9, y: window.innerHeight * 0.9 }
+      { x: window.innerWidth * 0.9, y: window.innerHeight * 0.9 },
     ];
-    
+
     // Simulate calibration process
     let currentPoint = 0;
     const calibrationInterval = setInterval(() => {
@@ -446,45 +457,47 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
         completeCalibration();
         return;
       }
-      
+
       // Show calibration point at current position
       const point = calibrationPoints.current[currentPoint];
-      const calibrationDot = document.createElement('div');
-      calibrationDot.style.position = 'fixed';
+      const calibrationDot = document.createElement("div");
+      calibrationDot.style.position = "fixed";
       calibrationDot.style.left = `${point.x - 10}px`;
       calibrationDot.style.top = `${point.y - 10}px`;
-      calibrationDot.style.width = '20px';
-      calibrationDot.style.height = '20px';
-      calibrationDot.style.borderRadius = '50%';
-      calibrationDot.style.backgroundColor = '#ff0000';
-      calibrationDot.style.zIndex = '9999';
-      calibrationDot.style.animation = 'pulse 1s infinite';
-      calibrationDot.id = 'eye-calibration-dot';
-      
+      calibrationDot.style.width = "20px";
+      calibrationDot.style.height = "20px";
+      calibrationDot.style.borderRadius = "50%";
+      calibrationDot.style.backgroundColor = "#ff0000";
+      calibrationDot.style.zIndex = "9999";
+      calibrationDot.style.animation = "pulse 1s infinite";
+      calibrationDot.id = "eye-calibration-dot";
+
       // Remove previous dot
-      const prevDot = document.getElementById('eye-calibration-dot');
-      if (prevDot) {prevDot.remove();}
-      
+      const prevDot = document.getElementById("eye-calibration-dot");
+      if (prevDot) prevDot.remove();
+
       document.body.append(calibrationDot);
-      
+
       currentPoint++;
     }, 3000);
   }, [isTracking]);
 
   const completeCalibration = useCallback(() => {
-    setCalibrationStatus('calibrated');
+    setCalibrationStatus("calibrated");
     setSettings(prev => ({ ...prev, calibrated: true }));
-    
+
     // Remove calibration dot
-    const calibrationDot = document.getElementById('eye-calibration-dot');
-    if (calibrationDot) {calibrationDot.remove();}
-    
+    const calibrationDot = document.getElementById("eye-calibration-dot");
+    if (calibrationDot) calibrationDot.remove();
+
     // Update device calibration status
-    setDevices(prev => prev.map(device => 
-      device.id === settings.device_id 
-        ? { ...device, calibrated: true }
-        : device
-    ));
+    setDevices(prev =>
+      prev.map(device =>
+        device.id === settings.device_id
+          ? { ...device, calibrated: true }
+          : device
+      )
+    );
   }, [settings.device_id]);
 
   // ================================================================================
@@ -492,10 +505,10 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
   // ================================================================================
 
   const startTracking = useCallback(() => {
-    if (isTracking || !settings.device_id) {return;}
-    
+    if (isTracking || !settings.device_id) return;
+
     setIsTracking(true);
-    
+
     // Start gaze simulation/tracking
     trackingInterval.current = setInterval(() => {
       if (settings.enabled) {
@@ -506,23 +519,25 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
   }, [isTracking, settings.device_id, settings.enabled, simulateGazePoint, processGazePoint]);
 
   const stopTracking = useCallback(() => {
-    if (!isTracking) {return;}
-    
+    if (!isTracking) return;
+
     setIsTracking(false);
     setCurrentGaze(null);
-    
+
     if (trackingInterval.current) {
       clearInterval(trackingInterval.current);
       trackingInterval.current = null;
     }
-    
+
     // Reset all targets
-    setTargets(prev => prev.map(target => ({
-      ...target,
-      current_dwell: 0,
-      gaze_history: [],
-      activated: false
-    })));
+    setTargets(prev =>
+      prev.map(target => ({
+        ...target,
+        current_dwell: 0,
+        gaze_history: [],
+        activated: false,
+      }))
+    );
   }, [isTracking]);
 
   // ================================================================================
@@ -550,7 +565,7 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
     startCalibration,
     completeCalibration,
     startTracking,
-    stopTracking
+    stopTracking,
   };
 
   return (
@@ -567,14 +582,14 @@ export function EyeTrackingProvider({ children }: { children: React.ReactNode })
 export function useEyeTracking() {
   const context = useContext(EyeTrackingContext);
   if (!context) {
-    throw new Error('useEyeTracking must be used within EyeTrackingProvider');
+    throw new Error("useEyeTracking must be used within EyeTrackingProvider");
   }
   return context;
 }
 
 export function useEyeTrackingTarget(
-  id: string, 
-  config?: Partial<DwellTarget>
+  id: string,
+  config?: Partial<DwellTarget>,
 ) {
   const { registerTarget, unregisterTarget, settings } = useEyeTracking();
   const elementRef = useRef<HTMLElement | null>(null);
@@ -583,7 +598,7 @@ export function useEyeTrackingTarget(
     if (elementRef.current && settings.enabled) {
       registerTarget(id, elementRef.current, config);
     }
-    
+
     return () => {
       if (settings.enabled) {
         unregisterTarget(id);
@@ -598,23 +613,23 @@ export function useEyeTrackingTarget(
 // GAZE CURSOR OVERLAY
 // ================================================================================
 
-function GazeCursor({ gaze }: { gaze: GazePoint | null }) {
-  if (!gaze) {return null;}
-  
+function GazeCursor({ gaze }: { gaze: GazePoint | null; }) {
+  if (!gaze) return null;
+
   return (
     <div
       style={{
-        position: 'fixed',
+        position: "fixed",
         left: gaze.x - 10,
         top: gaze.y - 10,
         width: 20,
         height: 20,
-        borderRadius: '50%',
+        borderRadius: "50%",
         backgroundColor: `rgba(59, 130, 246, ${gaze.confidence})`,
-        border: '2px solid #3b82f6',
-        pointerEvents: 'none',
+        border: "2px solid #3b82f6",
+        pointerEvents: "none",
         zIndex: 9998,
-        transition: 'all 0.1s ease'
+        transition: "all 0.1s ease",
       }}
     >
       <Crosshair className="w-4 h-4 text-white" />
@@ -626,7 +641,7 @@ function GazeCursor({ gaze }: { gaze: GazePoint | null }) {
 // DWELL PROGRESS INDICATORS
 // ================================================================================
 
-function DwellProgressOverlay({ targets }: { targets: DwellTarget[] }) {
+function DwellProgressOverlay({ targets }: { targets: DwellTarget[]; }) {
   return (
     <>
       {targets
@@ -634,28 +649,28 @@ function DwellProgressOverlay({ targets }: { targets: DwellTarget[] }) {
         .map(target => {
           const progress = (target.current_dwell / target.dwell_time) * 100;
           const rect = target.area;
-          
+
           return (
             <div
               key={target.id}
               style={{
-                position: 'fixed',
+                position: "fixed",
                 left: rect.left,
                 top: rect.top - 8,
                 width: rect.width,
                 height: 4,
-                pointerEvents: 'none',
-                zIndex: 9997
+                pointerEvents: "none",
+                zIndex: 9997,
               }}
             >
               <div className="w-full bg-gray-200 rounded-full h-full">
-                <div 
+                <div
                   className={`h-full rounded-full transition-all duration-100 ${
-                    target.healthcare_priority === 'emergency' 
-                      ? 'bg-red-500' 
-                      : target.healthcare_priority === 'high'
-                      ? 'bg-orange-500'
-                      : 'bg-blue-500'
+                    target.healthcare_priority === "emergency"
+                      ? "bg-red-500"
+                      : target.healthcare_priority === "high"
+                      ? "bg-orange-500"
+                      : "bg-blue-500"
                   }`}
                   style={{ width: `${Math.min(progress, 100)}%` }}
                 />
@@ -684,7 +699,7 @@ export function EyeTrackingInteraction({
   onSettingsChange,
   healthcareMode = true,
   medicalSafetyMode = true,
-  initialSettings
+  initialSettings,
 }: EyeTrackingInteractionProps) {
   const {
     devices,
@@ -696,7 +711,7 @@ export function EyeTrackingInteraction({
     targets,
     startCalibration,
     startTracking,
-    stopTracking
+    stopTracking,
   } = useEyeTracking();
 
   // Initialize settings
@@ -705,7 +720,7 @@ export function EyeTrackingInteraction({
       updateSettings({
         ...initialSettings,
         healthcare_mode: healthcareMode,
-        medical_safety_mode: medicalSafetyMode
+        medical_safety_mode: medicalSafetyMode,
       });
     }
   }, [initialSettings, healthcareMode, medicalSafetyMode, updateSettings]);
@@ -724,14 +739,10 @@ export function EyeTrackingInteraction({
   return (
     <>
       {/* Gaze Cursor Overlay */}
-      {settings.show_gaze_cursor && is_tracking && (
-        <GazeCursor gaze={current_gaze} />
-      )}
-      
+      {settings.show_gaze_cursor && is_tracking && <GazeCursor gaze={current_gaze} />}
+
       {/* Dwell Progress Overlay */}
-      {settings.show_dwell_progress && is_tracking && (
-        <DwellProgressOverlay targets={targets} />
-      )}
+      {settings.show_dwell_progress && is_tracking && <DwellProgressOverlay targets={targets} />}
 
       <Card className={`w-full max-w-4xl ${className}`}>
         <CardContent className="p-6 space-y-6">
@@ -746,19 +757,21 @@ export function EyeTrackingInteraction({
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <Badge variant={is_tracking ? "default" : "secondary"}>
                 {is_tracking ? "Rastreando" : "Parado"}
               </Badge>
-              
-              <Badge 
-                variant={calibration_status === 'calibrated' ? "default" : "outline"}
-                className={calibration_status === 'calibrated' ? "text-green-600 border-green-200" : ""}
+
+              <Badge
+                variant={calibration_status === "calibrated" ? "default" : "outline"}
+                className={calibration_status === "calibrated"
+                  ? "text-green-600 border-green-200"
+                  : ""}
               >
-                {calibration_status === 'calibrated' ? "Calibrado" : "Não Calibrado"}
+                {calibration_status === "calibrated" ? "Calibrado" : "Não Calibrado"}
               </Badge>
-              
+
               {settings.healthcare_mode && (
                 <Badge variant="outline" className="text-green-600 border-green-200">
                   Modo Médico
@@ -774,45 +787,51 @@ export function EyeTrackingInteraction({
                 <Target className="h-4 w-4 mr-2" />
                 Dispositivos Detectados
               </h4>
-              
-              {connectedDevices.length === 0 ? (
-                <div className="flex items-center text-amber-600">
-                  <AlertTriangle className="h-4 w-4 mr-2" />
-                  <span className="text-sm">Nenhum dispositivo conectado</span>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {connectedDevices.map(device => (
-                    <div key={device.id} className="p-2 border rounded">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <div className={`w-2 h-2 rounded-full ${device.connected ? 'bg-green-500' : 'bg-gray-400'}`} />
-                          <span className="text-sm font-medium">{device.name}</span>
+
+              {connectedDevices.length === 0
+                ? (
+                  <div className="flex items-center text-amber-600">
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    <span className="text-sm">Nenhum dispositivo conectado</span>
+                  </div>
+                )
+                : (
+                  <div className="space-y-2">
+                    {connectedDevices.map(device => (
+                      <div key={device.id} className="p-2 border rounded">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <div
+                              className={`w-2 h-2 rounded-full ${
+                                device.connected ? "bg-green-500" : "bg-gray-400"
+                              }`}
+                            />
+                            <span className="text-sm font-medium">{device.name}</span>
+                          </div>
+
+                          <div className="flex items-center space-x-1">
+                            <Badge variant="outline" className="text-xs">
+                              {device.type}
+                            </Badge>
+                            {device.supports_medical_use && (
+                              <CheckCircle2 className="h-3 w-3 text-green-600" />
+                            )}
+                          </div>
                         </div>
-                        
-                        <div className="flex items-center space-x-1">
-                          <Badge variant="outline" className="text-xs">
-                            {device.type}
-                          </Badge>
-                          {device.supports_medical_use && (
-                            <CheckCircle2 className="h-3 w-3 text-green-600" />
-                          )}
+
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Precisão: ±{device.accuracy}px • {device.frequency}Hz
+                          {device.calibrated && " • Calibrado"}
                         </div>
                       </div>
-                      
-                      <div className="text-xs text-muted-foreground mt-1">
-                        Precisão: ±{device.accuracy}px • {device.frequency}Hz
-                        {device.calibrated && " • Calibrado"}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
             </div>
 
             <div className="space-y-2">
               <h4 className="font-medium">Status do Rastreamento</h4>
-              
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Estado</span>
@@ -820,14 +839,14 @@ export function EyeTrackingInteraction({
                     {is_tracking ? "Ativo" : "Inativo"}
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Alvos Ativos</span>
                   <span className="text-sm font-mono">
                     {activeTargets.length}/{targets.length}
                   </span>
                 </div>
-                
+
                 {current_gaze && (
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Confiança</span>
@@ -841,9 +860,9 @@ export function EyeTrackingInteraction({
 
             <div className="space-y-2">
               <h4 className="font-medium">Controles</h4>
-              
+
               <div className="space-y-2">
-                {calibration_status !== 'calibrated' && (
+                {calibration_status !== "calibrated" && (
                   <Button
                     size="sm"
                     onClick={startCalibration}
@@ -854,24 +873,26 @@ export function EyeTrackingInteraction({
                     Calibrar
                   </Button>
                 )}
-                
+
                 <Button
                   size="sm"
                   onClick={is_tracking ? stopTracking : startTracking}
                   disabled={!settings.enabled || connectedDevices.length === 0}
                   className="w-full"
                 >
-                  {is_tracking ? (
-                    <>
-                      <Eye className="h-4 w-4 mr-2" />
-                      Parar
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="h-4 w-4 mr-2" />
-                      Iniciar
-                    </>
-                  )}
+                  {is_tracking
+                    ? (
+                      <>
+                        <Eye className="h-4 w-4 mr-2" />
+                        Parar
+                      </>
+                    )
+                    : (
+                      <>
+                        <Zap className="h-4 w-4 mr-2" />
+                        Iniciar
+                      </>
+                    )}
                 </Button>
               </div>
             </div>
@@ -881,7 +902,7 @@ export function EyeTrackingInteraction({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t">
             <div className="space-y-4">
               <h4 className="font-medium">Configurações Básicas</h4>
-              
+
               <div className="flex items-center justify-between">
                 <span className="text-sm">Habilitar Eye Tracking</span>
                 <Switch
@@ -917,7 +938,7 @@ export function EyeTrackingInteraction({
               <div className="space-y-2">
                 <span className="text-sm">Dispositivo Primário</span>
                 <select
-                  value={settings.device_id || ''}
+                  value={settings.device_id || ""}
                   onChange={(e) => updateSettings({ device_id: e.target.value || null })}
                   className="w-full p-2 border rounded text-sm"
                 >
@@ -933,7 +954,7 @@ export function EyeTrackingInteraction({
 
             <div className="space-y-4">
               <h4 className="font-medium">Configurações de Permanência</h4>
-              
+
               <div className="space-y-2">
                 <span className="text-sm">Tempo Padrão: {settings.default_dwell_time}ms</span>
                 <Slider
@@ -971,7 +992,9 @@ export function EyeTrackingInteraction({
               </div>
 
               <div className="space-y-2">
-                <span className="text-sm">Limiar de Confiança: {Math.round(settings.confidence_threshold * 100)}%</span>
+                <span className="text-sm">
+                  Limiar de Confiança: {Math.round(settings.confidence_threshold * 100)}%
+                </span>
                 <Slider
                   value={[settings.confidence_threshold]}
                   onValueChange={([value]) => updateSettings({ confidence_threshold: value })}
@@ -991,7 +1014,7 @@ export function EyeTrackingInteraction({
                 <CheckCircle2 className="h-4 w-4 mr-2" />
                 Configurações Médicas
               </h4>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Modo Segurança Médica</span>
@@ -1025,11 +1048,12 @@ export function EyeTrackingInteraction({
                   />
                 </div>
               </div>
-              
+
               <div className="mt-4 p-3 bg-green-50 rounded-lg">
                 <p className="text-sm text-green-700">
-                  <strong>Modo Médico Ativo:</strong> Ações críticas requerem confirmação adicional. 
-                  Tempos de permanência ajustados para contexto hospitalar.
+                  <strong>Modo Médico Ativo:</strong>{" "}
+                  Ações críticas requerem confirmação adicional. Tempos de permanência ajustados
+                  para contexto hospitalar.
                 </p>
               </div>
             </div>

@@ -38,7 +38,7 @@ import { useCallback, useState } from "react";
 import type { Appointment, Professional } from "./types/healthcare";
 
 // Extended interfaces for AppointmentView specific needs
-interface AppointmentViewData extends Omit<Appointment, 'patientId' | 'patient'> {
+interface AppointmentViewData extends Omit<Appointment, "patientId" | "patient"> {
   patientName: string;
   patientEmail: string;
   patientPhone: string;

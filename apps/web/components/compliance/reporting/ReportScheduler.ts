@@ -3,17 +3,17 @@
  * Handles recurring report generation, email distribution, and webhook notifications
  */
 
-import type { ComplianceFramework } from '../types';
-import type { ReportGenerationConfig, GeneratedReport } from './ComplianceReportGenerator';
-import { ComplianceReportGenerator } from './ComplianceReportGenerator';
-import { complianceService } from '../ComplianceService';
+import { complianceService } from "../ComplianceService";
+import type { ComplianceFramework } from "../types";
+import type { GeneratedReport, ReportGenerationConfig } from "./ComplianceReportGenerator";
+import { ComplianceReportGenerator } from "./ComplianceReportGenerator";
 
 export interface ReportSchedule {
   id: string;
   name: string;
   description?: string;
   enabled: boolean;
-  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+  frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
   cronExpression?: string; // For custom schedules
   reportConfig: ReportGenerationConfig;
   distribution: {
@@ -62,10 +62,10 @@ export interface ScheduleExecutionResult {
   success: boolean;
   report?: GeneratedReport;
   distributionResults: {
-    email?: { success: boolean; recipients: string[]; error?: string };
-    webhook?: { success: boolean; statusCode?: number; error?: string };
-    storage?: { success: boolean; location?: string; error?: string };
-    dashboard?: { success: boolean; error?: string };
+    email?: { success: boolean; recipients: string[]; error?: string; };
+    webhook?: { success: boolean; statusCode?: number; error?: string; };
+    storage?: { success: boolean; location?: string; error?: string; };
+    dashboard?: { success: boolean; error?: string; };
   };
   error?: string;
 }
@@ -83,30 +83,35 @@ export class ReportScheduler {
   /**
    * Create a new report schedule
    */
-  async createSchedule(schedule: Omit<ReportSchedule, 'id' | 'createdAt' | 'updatedAt' | 'isRunning'>): Promise<ReportSchedule> {
+  async createSchedule(
+    schedule: Omit<ReportSchedule, "id" | "createdAt" | "updatedAt" | "isRunning">,
+  ): Promise<ReportSchedule> {
     const newSchedule: ReportSchedule = {
       ...schedule,
       id: `schedule_${Date.now()}`,
       createdAt: new Date(),
       updatedAt: new Date(),
       isRunning: false,
-      nextRun: this.calculateNextRun(schedule.frequency, schedule.cronExpression)
+      nextRun: this.calculateNextRun(schedule.frequency, schedule.cronExpression),
     };
 
     this.schedules.set(newSchedule.id, newSchedule);
-    
+
     console.log(`📅 Created report schedule: ${newSchedule.name} (${newSchedule.frequency})`);
-    
+
     // Save to database (would be implemented with actual DB)
     await this.saveSchedule(newSchedule);
-    
+
     return newSchedule;
   }
 
   /**
    * Update an existing schedule
    */
-  async updateSchedule(scheduleId: string, updates: Partial<ReportSchedule>): Promise<ReportSchedule> {
+  async updateSchedule(
+    scheduleId: string,
+    updates: Partial<ReportSchedule>,
+  ): Promise<ReportSchedule> {
     const schedule = this.schedules.get(scheduleId);
     if (!schedule) {
       throw new Error(`Schedule not found: ${scheduleId}`);
@@ -116,15 +121,17 @@ export class ReportScheduler {
       ...schedule,
       ...updates,
       updatedAt: new Date(),
-      nextRun: updates.frequency ? this.calculateNextRun(updates.frequency, updates.cronExpression) : schedule.nextRun
+      nextRun: updates.frequency
+        ? this.calculateNextRun(updates.frequency, updates.cronExpression)
+        : schedule.nextRun,
     };
 
     this.schedules.set(scheduleId, updatedSchedule);
-    
+
     console.log(`📝 Updated report schedule: ${updatedSchedule.name}`);
-    
+
     await this.saveSchedule(updatedSchedule);
-    
+
     return updatedSchedule;
   }
 
@@ -138,9 +145,9 @@ export class ReportScheduler {
     }
 
     this.schedules.delete(scheduleId);
-    
+
     console.log(`🗑️ Deleted report schedule: ${schedule.name}`);
-    
+
     await this.removeSchedule(scheduleId);
   }
 
@@ -155,24 +162,31 @@ export class ReportScheduler {
 
     schedule.enabled = enabled;
     schedule.updatedAt = new Date();
-    
+
     if (enabled) {
       schedule.nextRun = this.calculateNextRun(schedule.frequency, schedule.cronExpression);
     } else {
       schedule.nextRun = undefined;
     }
 
-    console.log(`${enabled ? '✅' : '⏸️'} ${enabled ? 'Enabled' : 'Disabled'} report schedule: ${schedule.name}`);
-    
+    console.log(
+      `${enabled ? "✅" : "⏸️"} ${
+        enabled ? "Enabled" : "Disabled"
+      } report schedule: ${schedule.name}`,
+    );
+
     await this.saveSchedule(schedule);
-    
+
     return schedule;
   }
 
   /**
    * Execute a schedule immediately
    */
-  async executeSchedule(scheduleId: string, force: boolean = false): Promise<ScheduleExecutionResult> {
+  async executeSchedule(
+    scheduleId: string,
+    force: boolean = false,
+  ): Promise<ScheduleExecutionResult> {
     const schedule = this.schedules.get(scheduleId);
     if (!schedule) {
       throw new Error(`Schedule not found: ${scheduleId}`);
@@ -198,11 +212,19 @@ export class ReportScheduler {
       // Check filters before generating report
       if (!this.passesFilters(complianceData, schedule.filters)) {
         console.log(`⏭️ Skipping report generation - filters not met for ${schedule.name}`);
-        return this.createSkippedExecutionResult(scheduleId, executionId, startTime, 'Filters not met');
+        return this.createSkippedExecutionResult(
+          scheduleId,
+          executionId,
+          startTime,
+          "Filters not met",
+        );
       }
 
       // Generate report
-      const report = await this.reportGenerator.generateReport(complianceData, schedule.reportConfig);
+      const report = await this.reportGenerator.generateReport(
+        complianceData,
+        schedule.reportConfig,
+      );
 
       // Distribute report
       const distributionResults = await this.distributeReport(report, schedule);
@@ -225,9 +247,8 @@ export class ReportScheduler {
         duration,
         success: true,
         report,
-        distributionResults
+        distributionResults,
       };
-
     } catch (error) {
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -242,9 +263,8 @@ export class ReportScheduler {
         duration,
         success: false,
         distributionResults: {},
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : "Unknown error",
       };
-
     } finally {
       schedule.isRunning = false;
       this.runningExecutions.delete(executionId);
@@ -271,10 +291,11 @@ export class ReportScheduler {
   getDueSchedules(): ReportSchedule[] {
     const now = new Date();
     return Array.from(this.schedules.values()).filter(
-      schedule => schedule.enabled && 
-                 schedule.nextRun && 
-                 schedule.nextRun <= now && 
-                 !schedule.isRunning
+      schedule =>
+        schedule.enabled
+        && schedule.nextRun
+        && schedule.nextRun <= now
+        && !schedule.isRunning,
     );
   }
 
@@ -282,8 +303,8 @@ export class ReportScheduler {
    * Start the scheduler daemon
    */
   startScheduler(): void {
-    console.log('🕒 Starting report scheduler daemon');
-    
+    console.log("🕒 Starting report scheduler daemon");
+
     // Check for due schedules every minute
     setInterval(async () => {
       await this.processDueSchedules();
@@ -294,7 +315,7 @@ export class ReportScheduler {
    * Stop the scheduler daemon
    */
   stopScheduler(): void {
-    console.log('⏹️ Stopping report scheduler daemon');
+    console.log("⏹️ Stopping report scheduler daemon");
     // Would clear intervals and stop processing
   }
 
@@ -303,7 +324,7 @@ export class ReportScheduler {
    */
   private async processDueSchedules(): Promise<void> {
     const dueSchedules = this.getDueSchedules();
-    
+
     if (dueSchedules.length === 0) {
       return;
     }
@@ -315,7 +336,7 @@ export class ReportScheduler {
     for (let i = 0; i < dueSchedules.length; i += maxConcurrent) {
       const batch = dueSchedules.slice(i, i + maxConcurrent);
       const executions = batch.map(schedule => this.executeSchedule(schedule.id));
-      
+
       await Promise.allSettled(executions);
     }
   }
@@ -327,39 +348,38 @@ export class ReportScheduler {
     try {
       // Load schedules from database
       const savedSchedules = await this.loadSchedules();
-      
+
       for (const schedule of savedSchedules) {
         this.schedules.set(schedule.id, schedule);
       }
-      
+
       console.log(`📋 Loaded ${savedSchedules.length} report schedules`);
-      
     } catch (error) {
-      console.error('Error initializing scheduler:', error);
+      console.error("Error initializing scheduler:", error);
     }
   }
 
   /**
    * Calculate next run time based on frequency
    */
-  private calculateNextRun(frequency: ReportSchedule['frequency'], cronExpression?: string): Date {
+  private calculateNextRun(frequency: ReportSchedule["frequency"], cronExpression?: string): Date {
     const now = new Date();
-    
+
     if (cronExpression) {
       // Would use a cron library like node-cron to calculate next run
       return new Date(now.getTime() + 24 * 60 * 60 * 1000); // Mock: next day
     }
 
     switch (frequency) {
-      case 'daily':
+      case "daily":
         return new Date(now.getTime() + 24 * 60 * 60 * 1000);
-      case 'weekly':
+      case "weekly":
         return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-      case 'monthly':
+      case "monthly":
         return new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
-      case 'quarterly':
+      case "quarterly":
         return new Date(now.getFullYear(), now.getMonth() + 3, now.getDate());
-      case 'yearly':
+      case "yearly":
         return new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
       default:
         return new Date(now.getTime() + 24 * 60 * 60 * 1000);
@@ -377,19 +397,24 @@ export class ReportScheduler {
     for (const framework of frameworks) {
       const frameworkScores = await complianceService.fetchComplianceScores(framework);
       const frameworkViolations = await complianceService.fetchViolations({ framework });
-      
+
       scores.push(...frameworkScores);
       violations.push(...frameworkViolations);
     }
 
     // Calculate summary
-    const overallScore = scores.length ? 
-      Math.round(scores.reduce((sum, s) => sum + s.score, 0) / scores.length) : 0;
-    
+    const overallScore = scores.length
+      ? Math.round(scores.reduce((sum, s) => sum + s.score, 0) / scores.length)
+      : 0;
+
     const frameworkScores = frameworks.reduce((acc, framework) => {
       const frameworkScoresForFramework = scores.filter(s => s.framework === framework);
-      acc[framework] = frameworkScoresForFramework.length ?
-        Math.round(frameworkScoresForFramework.reduce((sum, s) => sum + s.score, 0) / frameworkScoresForFramework.length) : 0;
+      acc[framework] = frameworkScoresForFramework.length
+        ? Math.round(
+          frameworkScoresForFramework.reduce((sum, s) => sum + s.score, 0)
+            / frameworkScoresForFramework.length,
+        )
+        : 0;
       return acc;
     }, {} as Record<ComplianceFramework, number>);
 
@@ -401,20 +426,20 @@ export class ReportScheduler {
         overallScore,
         frameworkScores,
         totalViolations: violations.length,
-        criticalViolations: violations.filter(v => v.severity === 'critical').length,
-        openViolations: violations.filter(v => v.status === 'open').length,
-        resolvedViolations: violations.filter(v => v.status === 'resolved').length,
+        criticalViolations: violations.filter(v => v.severity === "critical").length,
+        openViolations: violations.filter(v => v.status === "open").length,
+        resolvedViolations: violations.filter(v => v.status === "resolved").length,
         improvementAreas: this.identifyImprovementAreas(scores, violations),
-        achievements: this.identifyAchievements(scores, violations)
-      }
+        achievements: this.identifyAchievements(scores, violations),
+      },
     };
   }
 
   /**
    * Check if compliance data passes schedule filters
    */
-  private passesFilters(data: unknown, filters?: ReportSchedule['filters']): boolean {
-    if (!filters) {return true;}
+  private passesFilters(data: unknown, filters?: ReportSchedule["filters"]): boolean {
+    if (!filters) return true;
 
     if (filters.minimumScore && data.summary.overallScore < filters.minimumScore) {
       return false;
@@ -434,22 +459,25 @@ export class ReportScheduler {
   /**
    * Distribute report according to schedule configuration
    */
-  private async distributeReport(report: GeneratedReport, schedule: ReportSchedule): Promise<unknown> {
+  private async distributeReport(
+    report: GeneratedReport,
+    schedule: ReportSchedule,
+  ): Promise<unknown> {
     const results: unknown = {};
 
     // Email distribution
     if (schedule.distribution.email?.enabled) {
       try {
         await this.sendEmailReport(report, schedule.distribution.email);
-        results.email = { 
-          success: true, 
-          recipients: schedule.distribution.email.recipients 
+        results.email = {
+          success: true,
+          recipients: schedule.distribution.email.recipients,
         };
       } catch (error) {
-        results.email = { 
-          success: false, 
+        results.email = {
+          success: false,
           recipients: schedule.distribution.email.recipients,
-          error: error instanceof Error ? error.message : 'Email sending failed'
+          error: error instanceof Error ? error.message : "Email sending failed",
         };
       }
     }
@@ -457,12 +485,15 @@ export class ReportScheduler {
     // Webhook notification
     if (schedule.distribution.webhook?.enabled) {
       try {
-        const statusCode = await this.sendWebhookNotification(report, schedule.distribution.webhook);
+        const statusCode = await this.sendWebhookNotification(
+          report,
+          schedule.distribution.webhook,
+        );
         results.webhook = { success: true, statusCode };
       } catch (error) {
-        results.webhook = { 
-          success: false, 
-          error: error instanceof Error ? error.message : 'Webhook failed'
+        results.webhook = {
+          success: false,
+          error: error instanceof Error ? error.message : "Webhook failed",
         };
       }
     }
@@ -473,9 +504,9 @@ export class ReportScheduler {
         const location = await this.uploadToStorage(report, schedule.distribution.storage);
         results.storage = { success: true, location };
       } catch (error) {
-        results.storage = { 
-          success: false, 
-          error: error instanceof Error ? error.message : 'Storage upload failed'
+        results.storage = {
+          success: false,
+          error: error instanceof Error ? error.message : "Storage upload failed",
         };
       }
     }
@@ -486,9 +517,9 @@ export class ReportScheduler {
         await this.notifyDashboard(report, schedule.distribution.dashboard);
         results.dashboard = { success: true };
       } catch (error) {
-        results.dashboard = { 
-          success: false, 
-          error: error instanceof Error ? error.message : 'Dashboard notification failed'
+        results.dashboard = {
+          success: false,
+          error: error instanceof Error ? error.message : "Dashboard notification failed",
         };
       }
     }
@@ -500,10 +531,10 @@ export class ReportScheduler {
    * Create execution result for skipped schedules
    */
   private createSkippedExecutionResult(
-    scheduleId: string, 
-    executionId: string, 
-    startTime: Date, 
-    reason: string
+    scheduleId: string,
+    executionId: string,
+    startTime: Date,
+    reason: string,
   ): ScheduleExecutionResult {
     const endTime = new Date();
     return {
@@ -514,13 +545,13 @@ export class ReportScheduler {
       duration: endTime.getTime() - startTime.getTime(),
       success: true,
       distributionResults: {},
-      error: `Skipped: ${reason}`
+      error: `Skipped: ${reason}`,
     };
   }
 
   // Helper methods for distribution (mock implementations)
   private async sendEmailReport(report: GeneratedReport, config: unknown): Promise<void> {
-    console.log(`📧 Sending email report to ${config.recipients.join(', ')}`);
+    console.log(`📧 Sending email report to ${config.recipients.join(", ")}`);
     // Would implement actual email sending
   }
 
@@ -558,12 +589,12 @@ export class ReportScheduler {
   // Analysis helper methods
   private identifyImprovementAreas(scores: unknown[], violations: unknown[]): string[] {
     // Would analyze data to identify improvement opportunities
-    return ['WCAG Color Contrast', 'LGPD Consent Management'];
+    return ["WCAG Color Contrast", "LGPD Consent Management"];
   }
 
   private identifyAchievements(scores: unknown[], violations: unknown[]): string[] {
     // Would analyze data to identify achievements
-    return ['Zero Critical ANVISA Violations', 'CFM Ethics Score Above 90%'];
+    return ["Zero Critical ANVISA Violations", "CFM Ethics Score Above 90%"];
   }
 }
 

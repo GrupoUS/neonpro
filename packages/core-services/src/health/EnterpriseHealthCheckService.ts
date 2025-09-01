@@ -8,8 +8,8 @@
  * - Alertas automáticos
  */
 
+import { UnifiedAuditService as EnterpriseAuditService } from "@neonpro/security";
 import { EnterpriseAnalyticsService } from "../enterprise/analytics/EnterpriseAnalyticsService";
-import { UnifiedAuditService as EnterpriseAuditService } from '@neonpro/security';;
 import { EnterpriseCacheService } from "../enterprise/cache/EnterpriseCacheService";
 import { EnterpriseSecurityService } from "../enterprise/security/EnterpriseSecurityService";
 

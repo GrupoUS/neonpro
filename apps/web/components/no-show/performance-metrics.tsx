@@ -4,7 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import {
@@ -75,10 +81,10 @@ export interface NoShowMetrics {
   interventionsExecuted: number;
   preventedNoShows: number;
   byRiskLevel: {
-    low: { total: number; noShows: number; rate: number };
-    medium: { total: number; noShows: number; rate: number };
-    high: { total: number; noShows: number; rate: number };
-    critical: { total: number; noShows: number; rate: number };
+    low: { total: number; noShows: number; rate: number; };
+    medium: { total: number; noShows: number; rate: number; };
+    high: { total: number; noShows: number; rate: number; };
+    critical: { total: number; noShows: number; rate: number; };
   };
 }
 
@@ -130,7 +136,11 @@ export function PerformanceMetrics({
   isLoading = false,
 }: PerformanceMetricsProps) {
   // Calcular métricas derivadas
-  const mlAccuracyTrend = mlMetrics.accuracy >= 85 ? "up" : mlMetrics.accuracy >= 70 ? "stable" : "down";
+  const mlAccuracyTrend = mlMetrics.accuracy >= 85
+    ? "up"
+    : mlMetrics.accuracy >= 70
+    ? "stable"
+    : "down";
   const roiTrend = roiMetrics.roiPercentage > 0 ? "up" : "down";
   const noShowTrend = noShowMetrics.reductionPercentage > 0 ? "up" : "down";
 
@@ -189,8 +199,11 @@ export function PerformanceMetrics({
                   <span className="text-xs text-muted-foreground">
                     Meta: {noShowMetrics.targetReduction}%
                   </span>
-                  <Progress 
-                    value={Math.min((noShowMetrics.reductionPercentage / noShowMetrics.targetReduction) * 100, 100)}
+                  <Progress
+                    value={Math.min(
+                      (noShowMetrics.reductionPercentage / noShowMetrics.targetReduction) * 100,
+                      100,
+                    )}
                     className="w-16 h-1"
                   />
                 </div>
@@ -232,10 +245,12 @@ export function PerformanceMetrics({
                   ROI Total
                 </p>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className={cn(
-                    "text-2xl font-bold",
-                    roiMetrics.netROI >= 0 ? "text-green-600" : "text-red-600"
-                  )}>
+                  <span
+                    className={cn(
+                      "text-2xl font-bold",
+                      roiMetrics.netROI >= 0 ? "text-green-600" : "text-red-600",
+                    )}
+                  >
                     {formatValue(roiMetrics.netROI, "currency")}
                   </span>
                   {getTrendIcon(roiTrend)}
@@ -299,7 +314,7 @@ export function PerformanceMetrics({
                     <span>Redução No-Show (Meta: 25%)</span>
                     <span>{noShowMetrics.reductionPercentage.toFixed(1)}%</span>
                   </div>
-                  <Progress 
+                  <Progress
                     value={Math.min((noShowMetrics.reductionPercentage / 25) * 100, 100)}
                     className="h-2"
                   />
@@ -310,7 +325,7 @@ export function PerformanceMetrics({
                     <span>Precisão ML (Meta: 90%)</span>
                     <span>{mlMetrics.accuracy.toFixed(1)}%</span>
                   </div>
-                  <Progress 
+                  <Progress
                     value={(mlMetrics.accuracy / 90) * 100}
                     className="h-2"
                   />
@@ -321,7 +336,7 @@ export function PerformanceMetrics({
                     <span>ROI Mensal (Meta: R$ {roiMetrics.monthlyTarget.toLocaleString()})</span>
                     <span>{formatValue(roiMetrics.netROI, "currency")}</span>
                   </div>
-                  <Progress 
+                  <Progress
                     value={Math.min((roiMetrics.netROI / roiMetrics.monthlyTarget) * 100, 100)}
                     className="h-2"
                   />
@@ -389,21 +404,21 @@ export function PerformanceMetrics({
                     </div>
                     <div className="text-sm text-muted-foreground">Acurácia</div>
                   </div>
-                  
+
                   <div className="text-center p-4 rounded-lg bg-muted/50">
                     <div className="text-2xl font-bold text-green-600">
                       {mlMetrics.precision.toFixed(1)}%
                     </div>
                     <div className="text-sm text-muted-foreground">Precisão</div>
                   </div>
-                  
+
                   <div className="text-center p-4 rounded-lg bg-muted/50">
                     <div className="text-2xl font-bold text-orange-600">
                       {mlMetrics.recall.toFixed(1)}%
                     </div>
                     <div className="text-sm text-muted-foreground">Recall</div>
                   </div>
-                  
+
                   <div className="text-center p-4 rounded-lg bg-muted/50">
                     <div className="text-2xl font-bold text-purple-600">
                       {mlMetrics.f1Score.toFixed(1)}%
@@ -438,7 +453,7 @@ export function PerformanceMetrics({
                     </div>
                     <div className="text-sm text-green-600">Predições Corretas</div>
                   </div>
-                  
+
                   <div className="text-center p-4 rounded-lg bg-red-50 border border-red-200">
                     <div className="text-xl font-bold text-red-700">
                       {mlMetrics.falsePositives.toLocaleString()}
@@ -455,8 +470,9 @@ export function PerformanceMetrics({
                 </div>
 
                 <div className="text-xs text-muted-foreground text-center">
-                  Versão do modelo: {mlMetrics.modelVersion}<br/>
-                  Última atualização: {new Date(mlMetrics.lastUpdated).toLocaleString('pt-BR')}
+                  Versão do modelo: {mlMetrics.modelVersion}
+                  <br />
+                  Última atualização: {new Date(mlMetrics.lastUpdated).toLocaleString("pt-BR")}
                 </div>
               </CardContent>
             </Card>
@@ -482,39 +498,43 @@ export function PerformanceMetrics({
                       {formatValue(roiMetrics.totalRevenue, "currency")}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between">
                     <span className="text-sm">Receita Protegida</span>
                     <span className="font-semibold text-green-600">
                       {formatValue(roiMetrics.revenueProtected, "currency")}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between">
                     <span className="text-sm">Custo Intervenções</span>
                     <span className="font-semibold text-red-600">
                       -{formatValue(roiMetrics.interventionCosts, "currency")}
                     </span>
                   </div>
-                  
+
                   <hr />
-                  
+
                   <div className="flex justify-between">
                     <span className="font-medium">ROI Líquido</span>
-                    <span className={cn(
-                      "font-bold text-lg",
-                      roiMetrics.netROI >= 0 ? "text-green-600" : "text-red-600"
-                    )}>
+                    <span
+                      className={cn(
+                        "font-bold text-lg",
+                        roiMetrics.netROI >= 0 ? "text-green-600" : "text-red-600",
+                      )}
+                    >
                       {formatValue(roiMetrics.netROI, "currency")}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between">
                     <span className="text-sm">Percentual de ROI</span>
-                    <span className={cn(
-                      "font-semibold",
-                      roiMetrics.roiPercentage >= 0 ? "text-green-600" : "text-red-600"
-                    )}>
+                    <span
+                      className={cn(
+                        "font-semibold",
+                        roiMetrics.roiPercentage >= 0 ? "text-green-600" : "text-red-600",
+                      )}
+                    >
                       {roiMetrics.roiPercentage.toFixed(1)}%
                     </span>
                   </div>
@@ -538,21 +558,21 @@ export function PerformanceMetrics({
                       {roiMetrics.appointmentsProtected.toLocaleString()}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between">
                     <span className="text-sm">Taxa de Sucesso</span>
                     <span className="font-semibold text-green-600">
                       {roiMetrics.interventionSuccessRate.toFixed(1)}%
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between">
                     <span className="text-sm">Valor Médio Consulta</span>
                     <span className="font-semibold">
                       {formatValue(roiMetrics.averageAppointmentValue, "currency")}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between">
                     <span className="text-sm">Custo por Intervenção</span>
                     <span className="font-semibold">
@@ -566,7 +586,7 @@ export function PerformanceMetrics({
                     <span>Meta Mensal</span>
                     <span>{formatValue(roiMetrics.monthlyTarget, "currency")}</span>
                   </div>
-                  <Progress 
+                  <Progress
                     value={Math.min((roiMetrics.netROI / roiMetrics.monthlyTarget) * 100, 100)}
                     className="h-2"
                   />
@@ -590,8 +610,14 @@ export function PerformanceMetrics({
                 {Object.entries(noShowMetrics.byRiskLevel).map(([level, data]) => {
                   const levelConfig = {
                     low: { label: "Baixo", color: "bg-green-100 text-green-800 border-green-200" },
-                    medium: { label: "Médio", color: "bg-yellow-100 text-yellow-800 border-yellow-200" },
-                    high: { label: "Alto", color: "bg-orange-100 text-orange-800 border-orange-200" },
+                    medium: {
+                      label: "Médio",
+                      color: "bg-yellow-100 text-yellow-800 border-yellow-200",
+                    },
+                    high: {
+                      label: "Alto",
+                      color: "bg-orange-100 text-orange-800 border-orange-200",
+                    },
                     critical: { label: "Crítico", color: "bg-red-100 text-red-800 border-red-200" },
                   }[level as keyof typeof noShowMetrics.byRiskLevel];
 
@@ -604,7 +630,7 @@ export function PerformanceMetrics({
                         >
                           Risco {levelConfig?.label}
                         </Badge>
-                        
+
                         <div>
                           <div className="text-2xl font-bold">
                             {data.rate.toFixed(1)}%
@@ -613,7 +639,7 @@ export function PerformanceMetrics({
                             Taxa de No-Show
                           </div>
                         </div>
-                        
+
                         <div className="text-xs text-muted-foreground">
                           {data.noShows} de {data.total} consultas
                         </div>

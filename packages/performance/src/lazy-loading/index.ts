@@ -3,4 +3,4 @@
  * Export all lazy loading utilities and components
  */
 
-export * from './healthcare-dynamic-loader';
+export * from "./healthcare-dynamic-loader";

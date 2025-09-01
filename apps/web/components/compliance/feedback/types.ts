@@ -2,14 +2,19 @@
 
 export interface UserFeedback {
   id: string;
-  type: 'bug_report' | 'feature_request' | 'improvement_suggestion' | 'usability_issue' | 'performance_concern';
-  category: 'dashboard' | 'reporting' | 'testing' | 'workflows' | 'audit_prep' | 'general';
+  type:
+    | "bug_report"
+    | "feature_request"
+    | "improvement_suggestion"
+    | "usability_issue"
+    | "performance_concern";
+  category: "dashboard" | "reporting" | "testing" | "workflows" | "audit_prep" | "general";
   framework?: ComplianceFramework;
   title: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'submitted' | 'triaged' | 'in_progress' | 'resolved' | 'closed';
+  severity: "low" | "medium" | "high" | "critical";
+  priority: "low" | "medium" | "high" | "urgent";
+  status: "submitted" | "triaged" | "in_progress" | "resolved" | "closed";
   submittedBy: string;
   submittedAt: Date;
   context?: {
@@ -22,8 +27,8 @@ export interface UserFeedback {
   };
   impact?: {
     affectedUsers?: number;
-    businessImpact?: 'minimal' | 'moderate' | 'significant' | 'critical';
-    frequencyOfOccurrence?: 'rare' | 'occasional' | 'frequent' | 'constant';
+    businessImpact?: "minimal" | "moderate" | "significant" | "critical";
+    frequencyOfOccurrence?: "rare" | "occasional" | "frequent" | "constant";
   };
   resolution?: {
     resolvedBy?: string;
@@ -49,27 +54,32 @@ export interface FeedbackComment {
   authorName: string;
   content: string;
   createdAt: Date;
-  type: 'comment' | 'status_update' | 'resolution_note';
+  type: "comment" | "status_update" | "resolution_note";
 }
 
 export interface ImprovementInitiative {
   id: string;
   title: string;
   description: string;
-  type: 'feature_enhancement' | 'bug_fix' | 'performance_optimization' | 'user_experience' | 'process_improvement';
-  category: 'dashboard' | 'reporting' | 'testing' | 'workflows' | 'audit_prep' | 'system';
+  type:
+    | "feature_enhancement"
+    | "bug_fix"
+    | "performance_optimization"
+    | "user_experience"
+    | "process_improvement";
+  category: "dashboard" | "reporting" | "testing" | "workflows" | "audit_prep" | "system";
   framework?: ComplianceFramework;
-  status: 'proposed' | 'approved' | 'in_development' | 'testing' | 'deployed' | 'completed';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  status: "proposed" | "approved" | "in_development" | "testing" | "deployed" | "completed";
+  priority: "low" | "medium" | "high" | "critical";
   initiatedBy: string;
   initiatedAt: Date;
   estimatedEffort: {
     hours: number;
-    difficulty: 'trivial' | 'easy' | 'moderate' | 'hard' | 'expert';
+    difficulty: "trivial" | "easy" | "moderate" | "hard" | "expert";
     resources: string[];
   };
   businessValue: {
-    impact: 'low' | 'medium' | 'high' | 'critical';
+    impact: "low" | "medium" | "high" | "critical";
     affectedUsers: number;
     expectedBenefit: string;
   };
@@ -96,7 +106,7 @@ export interface ImprovementMilestone {
   id: string;
   title: string;
   description: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'blocked';
+  status: "pending" | "in_progress" | "completed" | "blocked";
   dueDate: Date;
   completedDate?: Date;
   deliverables: string[];
@@ -107,15 +117,15 @@ export interface ImprovementMetric {
   id: string;
   name: string;
   description: string;
-  type: 'performance' | 'usability' | 'satisfaction' | 'adoption' | 'efficiency';
+  type: "performance" | "usability" | "satisfaction" | "adoption" | "efficiency";
   baselineValue: number;
   targetValue: number;
   currentValue?: number;
   unit: string;
   measurementMethod: string;
-  measurementFrequency: 'daily' | 'weekly' | 'monthly' | 'quarterly';
+  measurementFrequency: "daily" | "weekly" | "monthly" | "quarterly";
   collectionDate?: Date[];
-  values?: { date: Date; value: number }[];
+  values?: { date: Date; value: number; }[];
 }
 
 export interface FeedbackAnalysis {
@@ -124,33 +134,33 @@ export interface FeedbackAnalysis {
     endDate: Date;
   };
   totalFeedback: number;
-  feedbackByType: Record<UserFeedback['type'], number>;
-  feedbackByCategory: Record<UserFeedback['category'], number>;
-  feedbackBySeverity: Record<UserFeedback['severity'], number>;
-  feedbackByStatus: Record<UserFeedback['status'], number>;
+  feedbackByType: Record<UserFeedback["type"], number>;
+  feedbackByCategory: Record<UserFeedback["category"], number>;
+  feedbackBySeverity: Record<UserFeedback["severity"], number>;
+  feedbackByStatus: Record<UserFeedback["status"], number>;
   topIssues: {
     issue: string;
     count: number;
     category: string;
     averageSeverity: string;
-    trends: 'increasing' | 'decreasing' | 'stable';
+    trends: "increasing" | "decreasing" | "stable";
   }[];
   satisfactionScore: {
     overall: number;
-    byCategory: Record<UserFeedback['category'], number>;
-    trend: 'improving' | 'declining' | 'stable';
+    byCategory: Record<UserFeedback["category"], number>;
+    trend: "improving" | "declining" | "stable";
     trendValue: number;
   };
   resolutionMetrics: {
     averageResolutionTime: number; // in hours
     resolutionRate: number; // percentage
-    resolutionTimeByCategory: Record<UserFeedback['category'], number>;
+    resolutionTimeByCategory: Record<UserFeedback["category"], number>;
   };
   improvementOpportunities: {
     area: string;
     category: string;
-    impact: 'high' | 'medium' | 'low';
-    effort: 'low' | 'medium' | 'high';
+    impact: "high" | "medium" | "low";
+    effort: "low" | "medium" | "high";
     priority: number;
     relatedFeedback: string[];
   }[];
@@ -174,13 +184,13 @@ export interface ContinuousImprovementReport {
     proposedInitiatives: number;
     totalValueDelivered: number;
   };
-  initiativesByStatus: Record<ImprovementInitiative['status'], number>;
-  initiativesByCategory: Record<ImprovementInitiative['category'], number>;
+  initiativesByStatus: Record<ImprovementInitiative["status"], number>;
+  initiativesByCategory: Record<ImprovementInitiative["category"], number>;
   successMetrics: {
     metricName: string;
     improvement: number;
     unit: string;
-    trend: 'improving' | 'declining' | 'stable';
+    trend: "improving" | "declining" | "stable";
   }[];
   topAchievements: {
     title: string;
@@ -197,7 +207,7 @@ export interface ContinuousImprovementReport {
   recommendations: {
     area: string;
     recommendation: string;
-    priority: 'high' | 'medium' | 'low';
+    priority: "high" | "medium" | "low";
     estimatedEffort: string;
   }[];
 }
@@ -226,11 +236,11 @@ export interface FeedbackCollectionConfig {
       intervalDays: number;
     };
   };
-  categories: UserFeedback['category'][];
-  severityLevels: UserFeedback['severity'][];
+  categories: UserFeedback["category"][];
+  severityLevels: UserFeedback["severity"][];
   customFields: {
     name: string;
-    type: 'text' | 'number' | 'select' | 'multiselect' | 'boolean';
+    type: "text" | "number" | "select" | "multiselect" | "boolean";
     options?: string[];
     required: boolean;
   }[];
@@ -238,7 +248,7 @@ export interface FeedbackCollectionConfig {
     enabled: boolean;
     rules: {
       condition: string;
-      action: 'assign' | 'prioritize' | 'escalate' | 'auto_close';
+      action: "assign" | "prioritize" | "escalate" | "auto_close";
       value: string;
     }[];
   };
@@ -248,8 +258,8 @@ export interface UserSatisfactionSurvey {
   id: string;
   title: string;
   description: string;
-  type: 'nps' | 'csat' | 'ces' | 'custom';
-  status: 'draft' | 'active' | 'completed' | 'archived';
+  type: "nps" | "csat" | "ces" | "custom";
+  status: "draft" | "active" | "completed" | "archived";
   createdAt: Date;
   targetAudience: {
     allUsers: boolean;
@@ -258,7 +268,7 @@ export interface UserSatisfactionSurvey {
     frameworks?: ComplianceFramework[];
   };
   schedule: {
-    frequency: 'one_time' | 'weekly' | 'monthly' | 'quarterly' | 'annually';
+    frequency: "one_time" | "weekly" | "monthly" | "quarterly" | "annually";
     startDate: Date;
     endDate?: Date;
     triggerEvents?: string[];
@@ -270,7 +280,7 @@ export interface UserSatisfactionSurvey {
 
 export interface SurveyQuestion {
   id: string;
-  type: 'rating' | 'text' | 'multiple_choice' | 'single_choice' | 'matrix' | 'ranking';
+  type: "rating" | "text" | "multiple_choice" | "single_choice" | "matrix" | "ranking";
   question: string;
   description?: string;
   required: boolean;
@@ -312,14 +322,14 @@ export interface SurveyAnalysis {
       average?: number;
       median?: number;
       mode?: string | number;
-      distribution?: { value: string | number; count: number; percentage: number }[];
-      sentiment?: 'positive' | 'neutral' | 'negative';
+      distribution?: { value: string | number; count: number; percentage: number; }[];
+      sentiment?: "positive" | "neutral" | "negative";
       themes?: string[];
     };
   }[];
   overallSatisfaction: {
     score: number;
-    trend: 'improving' | 'declining' | 'stable';
+    trend: "improving" | "declining" | "stable";
     benchmark: number;
   };
   segmentAnalysis?: {
@@ -328,7 +338,7 @@ export interface SurveyAnalysis {
     insights: string[];
   }[];
   actionItems: {
-    priority: 'high' | 'medium' | 'low';
+    priority: "high" | "medium" | "low";
     area: string;
     recommendation: string;
     expectedImpact: string;
@@ -336,4 +346,4 @@ export interface SurveyAnalysis {
 }
 
 // Import types from other compliance modules
-export type { ComplianceFramework, ViolationSeverity } from '../types';
+export type { ComplianceFramework, ViolationSeverity } from "../types";

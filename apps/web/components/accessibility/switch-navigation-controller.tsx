@@ -1,12 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Slider } from '@/components/ui/slider';
-import { AlertCircle, Zap, Settings, Play, Pause, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { AlertCircle, CheckCircle2, Pause, Play, RotateCcw, Settings, Zap } from "lucide-react";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 // ================================================================================
 // TYPES & INTERFACES
@@ -15,7 +15,7 @@ import { AlertCircle, Zap, Settings, Play, Pause, RotateCcw, CheckCircle2 } from
 export interface SwitchDevice {
   id: string;
   name: string;
-  type: 'single' | 'dual' | 'joystick' | 'sip-puff' | 'head-switch';
+  type: "single" | "dual" | "joystick" | "sip-puff" | "head-switch";
   connected: boolean;
   batteryLevel?: number;
   sensitivity: number;
@@ -26,7 +26,7 @@ export interface SwitchAction {
   name: string;
   description: string;
   key: string;
-  category: 'navigation' | 'selection' | 'medical' | 'emergency';
+  category: "navigation" | "selection" | "medical" | "emergency";
   healthcare_context: boolean;
 }
 
@@ -34,8 +34,8 @@ export interface NavigationPattern {
   id: string;
   name: string;
   description: string;
-  pattern: 'sequential' | 'grid' | 'tree' | 'custom';
-  direction: 'horizontal' | 'vertical' | 'both';
+  pattern: "sequential" | "grid" | "tree" | "custom";
+  direction: "horizontal" | "vertical" | "both";
   wrap_around: boolean;
   auto_repeat: boolean;
   dwell_time: number; // milliseconds
@@ -60,13 +60,13 @@ export interface SwitchNavigationContextType {
   devices: SwitchDevice[];
   settings: SwitchNavigationSettings;
   updateSettings: (settings: Partial<SwitchNavigationSettings>) => void;
-  
+
   // Navigation State
   current_element: string | null;
   navigation_active: boolean;
   startNavigation: () => void;
   stopNavigation: () => void;
-  
+
   // Actions
   registerElement: (id: string, element: HTMLElement, metadata?: unknown) => void;
   unregisterElement: (id: string) => void;
@@ -81,84 +81,84 @@ export interface SwitchNavigationContextType {
 
 const HEALTHCARE_ACTIONS: SwitchAction[] = [
   {
-    id: 'patient_next',
-    name: 'Próximo Paciente',
-    description: 'Navegar para próximo paciente na lista',
-    key: 'ArrowRight',
-    category: 'navigation',
-    healthcare_context: true
+    id: "patient_next",
+    name: "Próximo Paciente",
+    description: "Navegar para próximo paciente na lista",
+    key: "ArrowRight",
+    category: "navigation",
+    healthcare_context: true,
   },
   {
-    id: 'patient_select',
-    name: 'Selecionar Paciente',
-    description: 'Abrir prontuário do paciente selecionado',
-    key: 'Enter',
-    category: 'selection',
-    healthcare_context: true
+    id: "patient_select",
+    name: "Selecionar Paciente",
+    description: "Abrir prontuário do paciente selecionado",
+    key: "Enter",
+    category: "selection",
+    healthcare_context: true,
   },
   {
-    id: 'emergency_alert',
-    name: 'Alerta Emergência',
-    description: 'Acionar alerta de emergência médica',
-    key: 'Escape',
-    category: 'emergency',
-    healthcare_context: true
+    id: "emergency_alert",
+    name: "Alerta Emergência",
+    description: "Acionar alerta de emergência médica",
+    key: "Escape",
+    category: "emergency",
+    healthcare_context: true,
   },
   {
-    id: 'procedure_complete',
-    name: 'Procedimento Concluído',
-    description: 'Marcar procedimento como concluído',
-    key: 'Space',
-    category: 'medical',
-    healthcare_context: true
+    id: "procedure_complete",
+    name: "Procedimento Concluído",
+    description: "Marcar procedimento como concluído",
+    key: "Space",
+    category: "medical",
+    healthcare_context: true,
   },
   {
-    id: 'voice_activation',
-    name: 'Ativar Controle por Voz',
-    description: 'Iniciar reconhecimento de voz médico',
-    key: 'v',
-    category: 'medical',
-    healthcare_context: true
-  }
+    id: "voice_activation",
+    name: "Ativar Controle por Voz",
+    description: "Iniciar reconhecimento de voz médico",
+    key: "v",
+    category: "medical",
+    healthcare_context: true,
+  },
 ];
 
 const NAVIGATION_PATTERNS: NavigationPattern[] = [
   {
-    id: 'sequential',
-    name: 'Sequencial',
-    description: 'Navegação linear pelos elementos',
-    pattern: 'sequential',
-    direction: 'horizontal',
+    id: "sequential",
+    name: "Sequencial",
+    description: "Navegação linear pelos elementos",
+    pattern: "sequential",
+    direction: "horizontal",
     wrap_around: true,
     auto_repeat: false,
-    dwell_time: 1500
+    dwell_time: 1500,
   },
   {
-    id: 'grid_2d',
-    name: 'Grade 2D',
-    description: 'Navegação em grade bidimensional',
-    pattern: 'grid',
-    direction: 'both',
+    id: "grid_2d",
+    name: "Grade 2D",
+    description: "Navegação em grade bidimensional",
+    pattern: "grid",
+    direction: "both",
     wrap_around: true,
     auto_repeat: false,
-    dwell_time: 2000
+    dwell_time: 2000,
   },
   {
-    id: 'tree_medical',
-    name: 'Árvore Médica',
-    description: 'Navegação hierárquica por categorias médicas',
-    pattern: 'tree',
-    direction: 'vertical',
+    id: "tree_medical",
+    name: "Árvore Médica",
+    description: "Navegação hierárquica por categorias médicas",
+    pattern: "tree",
+    direction: "vertical",
     wrap_around: false,
     auto_repeat: false,
-    dwell_time: 2500
-  }
+    dwell_time: 2500,
+  },
 ];
 
 const DEFAULT_SETTINGS: SwitchNavigationSettings = {
   enabled: false,
   primary_device: null,
-  navigation_pattern: 'sequential',
+  navigation_pattern: "sequential",
   activation_delay: 500,
   repeat_rate: 300,
   audio_feedback: true,
@@ -166,7 +166,7 @@ const DEFAULT_SETTINGS: SwitchNavigationSettings = {
   emergency_mode: false,
   healthcare_mode: true,
   dwell_activation: true,
-  sensitivity: 5
+  sensitivity: 5,
 };
 
 // ================================================================================
@@ -175,14 +175,16 @@ const DEFAULT_SETTINGS: SwitchNavigationSettings = {
 
 const SwitchNavigationContext = createContext<SwitchNavigationContextType | null>(null);
 
-export function SwitchNavigationProvider({ children }: { children: React.ReactNode }) {
+export function SwitchNavigationProvider({ children }: { children: React.ReactNode; }) {
   // State Management
   const [devices, setDevices] = useState<SwitchDevice[]>([]);
   const [settings, setSettings] = useState<SwitchNavigationSettings>(DEFAULT_SETTINGS);
   const [currentElement, setCurrentElement] = useState<string | null>(null);
   const [navigationActive, setNavigationActive] = useState(false);
-  const [elements, setElements] = useState<Map<string, { element: HTMLElement; metadata?: unknown }>>(new Map());
-  
+  const [elements, setElements] = useState<
+    Map<string, { element: HTMLElement; metadata?: unknown; }>
+  >(new Map());
+
   // Refs for intervals and timeouts
   const navigationInterval = useRef<NodeJS.Timeout | null>(null);
   const dwellTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -196,30 +198,30 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
     // Simulated device detection - in real implementation, would use HID API or similar
     const detectedDevices: SwitchDevice[] = [
       {
-        id: 'switch_single_1',
-        name: 'Switch Simples USB',
-        type: 'single',
+        id: "switch_single_1",
+        name: "Switch Simples USB",
+        type: "single",
         connected: true,
         batteryLevel: 85,
-        sensitivity: 5
+        sensitivity: 5,
       },
       {
-        id: 'switch_dual_1',
-        name: 'Switch Duplo Adaptado',
-        type: 'dual',
+        id: "switch_dual_1",
+        name: "Switch Duplo Adaptado",
+        type: "dual",
         connected: false,
-        sensitivity: 7
+        sensitivity: 7,
       },
       {
-        id: 'head_switch_1',
-        name: 'Switch de Cabeça Hospitalar',
-        type: 'head-switch',
+        id: "head_switch_1",
+        name: "Switch de Cabeça Hospitalar",
+        type: "head-switch",
         connected: true,
         batteryLevel: 92,
-        sensitivity: 8
-      }
+        sensitivity: 8,
+      },
     ];
-    
+
     setDevices(detectedDevices);
   }, []);
 
@@ -234,20 +236,23 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
   }, []);
 
   const playFeedbackSound = useCallback((frequency: number, duration: number = 100) => {
-    if (!settings.audio_feedback || !audioContext.current) {return;}
-    
+    if (!settings.audio_feedback || !audioContext.current) return;
+
     const oscillator = audioContext.current.createOscillator();
     const gainNode = audioContext.current.createGain();
-    
+
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.current.destination);
-    
+
     oscillator.frequency.value = frequency;
-    oscillator.type = 'sine';
-    
+    oscillator.type = "sine";
+
     gainNode.gain.setValueAtTime(0.1, audioContext.current.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.current.currentTime + duration / 1000);
-    
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.01,
+      audioContext.current.currentTime + duration / 1000,
+    );
+
     oscillator.start(audioContext.current.currentTime);
     oscillator.stop(audioContext.current.currentTime + duration / 1000);
   }, [settings.audio_feedback]);
@@ -258,17 +263,17 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
 
   const registerElement = useCallback((id: string, element: HTMLElement, metadata?: unknown) => {
     setElements(prev => new Map(prev.set(id, { element, metadata })));
-    
+
     // Enhanced ARIA attributes for switch navigation
-    element.setAttribute('data-switch-navigable', 'true');
-    element.setAttribute('data-switch-id', id);
-    element.setAttribute('role', element.getAttribute('role') || 'button');
-    element.setAttribute('tabindex', element.getAttribute('tabindex') || '0');
-    
+    element.setAttribute("data-switch-navigable", "true");
+    element.setAttribute("data-switch-id", id);
+    element.setAttribute("role", element.getAttribute("role") || "button");
+    element.setAttribute("tabindex", element.getAttribute("tabindex") || "0");
+
     // Healthcare-specific attributes
     if (settings.healthcare_mode && metadata?.healthcare_context) {
-      element.setAttribute('data-healthcare-priority', metadata.priority || 'normal');
-      element.setAttribute('aria-describedby', `${id}_healthcare_description`);
+      element.setAttribute("data-healthcare-priority", metadata.priority || "normal");
+      element.setAttribute("aria-describedby", `${id}_healthcare_description`);
     }
   }, [settings.healthcare_mode]);
 
@@ -276,10 +281,10 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
     const elementData = elements.get(id);
     if (elementData) {
       const { element } = elementData;
-      element.removeAttribute('data-switch-navigable');
-      element.removeAttribute('data-switch-id');
+      element.removeAttribute("data-switch-navigable");
+      element.removeAttribute("data-switch-id");
     }
-    
+
     setElements(prev => {
       const newMap = new Map(prev);
       newMap.delete(id);
@@ -295,23 +300,23 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
     return Array.from(elements.keys()).sort((a, b) => {
       const aElement = elements.get(a)?.element;
       const bElement = elements.get(b)?.element;
-      
-      if (!aElement || !bElement) {return 0;}
-      
+
+      if (!aElement || !bElement) return 0;
+
       // Healthcare priority sorting
       if (settings.healthcare_mode) {
-        const aPriority = aElement.getAttribute('data-healthcare-priority') || 'normal';
-        const bPriority = bElement.getAttribute('data-healthcare-priority') || 'normal';
-        
-        const priorityOrder = { 'emergency': 0, 'high': 1, 'normal': 2, 'low': 3 };
+        const aPriority = aElement.getAttribute("data-healthcare-priority") || "normal";
+        const bPriority = bElement.getAttribute("data-healthcare-priority") || "normal";
+
+        const priorityOrder = { "emergency": 0, "high": 1, "normal": 2, "low": 3 };
         const aPriorityNum = priorityOrder[aPriority as keyof typeof priorityOrder] || 2;
         const bPriorityNum = priorityOrder[bPriority as keyof typeof priorityOrder] || 2;
-        
+
         if (aPriorityNum !== bPriorityNum) {
           return aPriorityNum - bPriorityNum;
         }
       }
-      
+
       // DOM order fallback
       return aElement.compareDocumentPosition(bElement) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
     });
@@ -319,68 +324,68 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
 
   const navigateNext = useCallback(() => {
     const navigableIds = getNavigableElements();
-    if (navigableIds.length === 0) {return;}
-    
+    if (navigableIds.length === 0) return;
+
     const currentIndex = currentElement ? navigableIds.indexOf(currentElement) : -1;
     const nextIndex = (currentIndex + 1) % navigableIds.length;
-    
+
     setCurrentElement(navigableIds[nextIndex]);
     playFeedbackSound(800, 80);
-    
+
     // Visual feedback
     if (settings.visual_feedback) {
       const element = elements.get(navigableIds[nextIndex])?.element;
       if (element) {
         element.focus();
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
   }, [currentElement, elements, getNavigableElements, playFeedbackSound, settings.visual_feedback]);
 
   const navigatePrevious = useCallback(() => {
     const navigableIds = getNavigableElements();
-    if (navigableIds.length === 0) {return;}
-    
+    if (navigableIds.length === 0) return;
+
     const currentIndex = currentElement ? navigableIds.indexOf(currentElement) : 0;
     const prevIndex = currentIndex === 0 ? navigableIds.length - 1 : currentIndex - 1;
-    
+
     setCurrentElement(navigableIds[prevIndex]);
     playFeedbackSound(600, 80);
-    
+
     // Visual feedback
     if (settings.visual_feedback) {
       const element = elements.get(navigableIds[prevIndex])?.element;
       if (element) {
         element.focus();
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
   }, [currentElement, elements, getNavigableElements, playFeedbackSound, settings.visual_feedback]);
 
   const activateCurrent = useCallback(() => {
-    if (!currentElement) {return;}
-    
+    if (!currentElement) return;
+
     const elementData = elements.get(currentElement);
-    if (!elementData) {return;}
-    
+    if (!elementData) return;
+
     const { element } = elementData;
-    
+
     // Play activation sound
     playFeedbackSound(1000, 150);
-    
+
     // Trigger click event
     element.click();
-    
+
     // Healthcare-specific activation handling
     if (settings.healthcare_mode) {
-      const healthcarePriority = element.getAttribute('data-healthcare-priority');
-      
-      if (healthcarePriority === 'emergency') {
+      const healthcarePriority = element.getAttribute("data-healthcare-priority");
+
+      if (healthcarePriority === "emergency") {
         // Emergency activation - additional feedback
         playFeedbackSound(1200, 300);
-        
+
         // Vibration feedback if available
-        if ('vibrate' in navigator) {
+        if ("vibrate" in navigator) {
           navigator.vibrate([200, 100, 200]);
         }
       }
@@ -392,11 +397,11 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
   // ================================================================================
 
   const startNavigation = useCallback(() => {
-    if (navigationActive) {return;}
-    
+    if (navigationActive) return;
+
     setNavigationActive(true);
     initAudioContext();
-    
+
     // Start with first element if none selected
     if (!currentElement) {
       const navigableIds = getNavigableElements();
@@ -404,26 +409,26 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
         setCurrentElement(navigableIds[0]);
       }
     }
-    
+
     playFeedbackSound(440, 200); // Start sound
   }, [navigationActive, currentElement, getNavigableElements, initAudioContext, playFeedbackSound]);
 
   const stopNavigation = useCallback(() => {
-    if (!navigationActive) {return;}
-    
+    if (!navigationActive) return;
+
     setNavigationActive(false);
     setCurrentElement(null);
-    
+
     if (navigationInterval.current) {
       clearInterval(navigationInterval.current);
       navigationInterval.current = null;
     }
-    
+
     if (dwellTimeout.current) {
       clearTimeout(dwellTimeout.current);
       dwellTimeout.current = null;
     }
-    
+
     playFeedbackSound(220, 300); // Stop sound
   }, [navigationActive, playFeedbackSound]);
 
@@ -432,27 +437,27 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
   // ================================================================================
 
   useEffect(() => {
-    if (!settings.enabled || !navigationActive) {return;}
-    
+    if (!settings.enabled || !navigationActive) return;
+
     const handleKeyDown = (event: KeyboardEvent) => {
       // Switch navigation keys
       switch (event.key) {
-        case 'ArrowRight':
-        case 'Tab':
+        case "ArrowRight":
+        case "Tab":
           event.preventDefault();
           navigateNext();
           break;
-        case 'ArrowLeft':
-        case 'ArrowUp':
+        case "ArrowLeft":
+        case "ArrowUp":
           event.preventDefault();
           navigatePrevious();
           break;
-        case 'Enter':
-        case ' ':
+        case "Enter":
+        case " ":
           event.preventDefault();
           activateCurrent();
           break;
-        case 'Escape':
+        case "Escape":
           if (settings.healthcare_mode && settings.emergency_mode) {
             // Emergency stop
             stopNavigation();
@@ -461,17 +466,17 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
           break;
       }
     };
-    
+
     // Switch device simulation - would integrate with actual device API
     const handleSwitchInput = (switchType: string, action: string) => {
       switch (action) {
-        case 'single_press':
+        case "single_press":
           navigateNext();
           break;
-        case 'double_press':
+        case "double_press":
           activateCurrent();
           break;
-        case 'long_press':
+        case "long_press":
           if (settings.emergency_mode) {
             stopNavigation();
           }
@@ -479,20 +484,36 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    
+    document.addEventListener("keydown", handleKeyDown);
+
     // Custom event listeners for switch devices
-    document.addEventListener('switch-input', ((event: CustomEvent) => {
-      handleSwitchInput(event.detail.switchType, event.detail.action);
-    }) as EventListener);
+    document.addEventListener(
+      "switch-input",
+      ((event: CustomEvent) => {
+        handleSwitchInput(event.detail.switchType, event.detail.action);
+      }) as EventListener,
+    );
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('switch-input', ((event: CustomEvent) => {
-        handleSwitchInput(event.detail.switchType, event.detail.action);
-      }) as EventListener);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener(
+        "switch-input",
+        ((event: CustomEvent) => {
+          handleSwitchInput(event.detail.switchType, event.detail.action);
+        }) as EventListener,
+      );
     };
-  }, [settings.enabled, navigationActive, navigateNext, navigatePrevious, activateCurrent, stopNavigation, settings.healthcare_mode, settings.emergency_mode, playFeedbackSound]);
+  }, [
+    settings.enabled,
+    navigationActive,
+    navigateNext,
+    navigatePrevious,
+    activateCurrent,
+    stopNavigation,
+    settings.healthcare_mode,
+    settings.emergency_mode,
+    playFeedbackSound,
+  ]);
 
   // ================================================================================
   // SETTINGS UPDATE
@@ -518,7 +539,7 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
     unregisterElement,
     navigateNext,
     navigatePrevious,
-    activateCurrent
+    activateCurrent,
   };
 
   return (
@@ -535,7 +556,7 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
 export function useSwitchNavigation() {
   const context = useContext(SwitchNavigationContext);
   if (!context) {
-    throw new Error('useSwitchNavigation must be used within SwitchNavigationProvider');
+    throw new Error("useSwitchNavigation must be used within SwitchNavigationProvider");
   }
   return context;
 }
@@ -548,7 +569,7 @@ export function useSwitchElement(id: string, metadata?: unknown) {
     if (elementRef.current) {
       registerElement(id, elementRef.current, metadata);
     }
-    
+
     return () => {
       unregisterElement(id);
     };
@@ -574,7 +595,7 @@ export function SwitchNavigationController({
   onSettingsChange,
   healthcareMode = true,
   emergencyMode = false,
-  initialSettings
+  initialSettings,
 }: SwitchNavigationControllerProps) {
   const {
     devices,
@@ -583,7 +604,7 @@ export function SwitchNavigationController({
     navigation_active,
     startNavigation,
     stopNavigation,
-    current_element
+    current_element,
   } = useSwitchNavigation();
 
   // Initialize settings
@@ -592,7 +613,7 @@ export function SwitchNavigationController({
       updateSettings({
         ...initialSettings,
         healthcare_mode: healthcareMode,
-        emergency_mode: emergencyMode
+        emergency_mode: emergencyMode,
       });
     }
   }, [initialSettings, healthcareMode, emergencyMode, updateSettings]);
@@ -621,18 +642,18 @@ export function SwitchNavigationController({
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             <Badge variant={settings.enabled ? "default" : "secondary"}>
               {settings.enabled ? "Ativo" : "Inativo"}
             </Badge>
-            
+
             {settings.healthcare_mode && (
               <Badge variant="outline" className="text-green-600 border-green-200">
                 Modo Médico
               </Badge>
             )}
-            
+
             {settings.emergency_mode && (
               <Badge variant="destructive">
                 Emergência
@@ -648,35 +669,40 @@ export function SwitchNavigationController({
               <Settings className="h-4 w-4 mr-2" />
               Dispositivos Conectados
             </h4>
-            
-            {connectedDevices.length === 0 ? (
-              <div className="flex items-center text-amber-600">
-                <AlertCircle className="h-4 w-4 mr-2" />
-                <span className="text-sm">Nenhum switch conectado</span>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {connectedDevices.map(device => (
-                  <div key={device.id} className="flex items-center justify-between p-2 border rounded">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full" />
-                      <span className="text-sm font-medium">{device.name}</span>
+
+            {connectedDevices.length === 0
+              ? (
+                <div className="flex items-center text-amber-600">
+                  <AlertCircle className="h-4 w-4 mr-2" />
+                  <span className="text-sm">Nenhum switch conectado</span>
+                </div>
+              )
+              : (
+                <div className="space-y-2">
+                  {connectedDevices.map(device => (
+                    <div
+                      key={device.id}
+                      className="flex items-center justify-between p-2 border rounded"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full" />
+                        <span className="text-sm font-medium">{device.name}</span>
+                      </div>
+
+                      {device.batteryLevel && (
+                        <span className="text-xs text-muted-foreground">
+                          {device.batteryLevel}%
+                        </span>
+                      )}
                     </div>
-                    
-                    {device.batteryLevel && (
-                      <span className="text-xs text-muted-foreground">
-                        {device.batteryLevel}%
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
           </div>
 
           <div className="space-y-2">
             <h4 className="font-medium">Status de Navegação</h4>
-            
+
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm">Estado</span>
@@ -684,7 +710,7 @@ export function SwitchNavigationController({
                   {navigation_active ? "Navegando" : "Parado"}
                 </Badge>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <span className="text-sm">Elemento Atual</span>
                 <span className="text-xs font-mono">
@@ -696,7 +722,7 @@ export function SwitchNavigationController({
 
           <div className="space-y-2">
             <h4 className="font-medium">Controles</h4>
-            
+
             <div className="flex space-x-2">
               <Button
                 size="sm"
@@ -704,19 +730,21 @@ export function SwitchNavigationController({
                 disabled={!settings.enabled || connectedDevices.length === 0}
                 className="flex-1"
               >
-                {navigation_active ? (
-                  <>
-                    <Pause className="h-4 w-4 mr-2" />
-                    Parar
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-4 w-4 mr-2" />
-                    Iniciar
-                  </>
-                )}
+                {navigation_active
+                  ? (
+                    <>
+                      <Pause className="h-4 w-4 mr-2" />
+                      Parar
+                    </>
+                  )
+                  : (
+                    <>
+                      <Play className="h-4 w-4 mr-2" />
+                      Iniciar
+                    </>
+                  )}
               </Button>
-              
+
               <Button
                 size="sm"
                 variant="outline"
@@ -736,7 +764,7 @@ export function SwitchNavigationController({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t">
           <div className="space-y-4">
             <h4 className="font-medium">Configurações Básicas</h4>
-            
+
             <div className="flex items-center justify-between">
               <span className="text-sm">Habilitar Controle Switch</span>
               <Switch
@@ -772,7 +800,7 @@ export function SwitchNavigationController({
 
           <div className="space-y-4">
             <h4 className="font-medium">Configurações Avançadas</h4>
-            
+
             <div className="space-y-2">
               <span className="text-sm">Sensibilidade: {settings.sensitivity}</span>
               <Slider
@@ -818,7 +846,7 @@ export function SwitchNavigationController({
               <CheckCircle2 className="h-4 w-4 mr-2" />
               Configurações Médicas
             </h4>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm">Modo Emergência</span>
@@ -836,11 +864,12 @@ export function SwitchNavigationController({
                 />
               </div>
             </div>
-            
+
             <div className="mt-4 p-3 bg-green-50 rounded-lg">
               <p className="text-sm text-green-700">
-                <strong>Modo Médico Ativo:</strong> Elementos serão priorizados por importância clínica. 
-                Tecla ESC aciona parada de emergência quando habilitada.
+                <strong>Modo Médico Ativo:</strong>{" "}
+                Elementos serão priorizados por importância clínica. Tecla ESC aciona parada de
+                emergência quando habilitada.
               </p>
             </div>
           </div>

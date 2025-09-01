@@ -7,7 +7,7 @@ Healthcare Performance Optimization Package with intelligent lazy loading and Co
 - **Bundle Size Reduction**: 25MB+ → 15MB (-40% initial bundle)
 - **TensorFlow.js**: 10MB moved to lazy loading
 - **React-PDF**: 8MB lazy loaded for reports
-- **Charts/Analytics**: 3MB+ lazy loaded  
+- **Charts/Analytics**: 3MB+ lazy loaded
 - **Emergency Response**: <200ms for critical components
 - **Core Web Vitals**: Optimized LCP, FID, CLS scores
 
@@ -17,10 +17,10 @@ Healthcare Performance Optimization Package with intelligent lazy loading and Co
 
 ```typescript
 enum HealthcarePriority {
-  EMERGENCY = 'emergency',     // <200ms - Critical medical situations
-  URGENT = 'urgent',          // <500ms - Patient care
-  STANDARD = 'standard',      // <1s - General healthcare operations
-  ADMINISTRATIVE = 'admin',   // <2s - Non-critical admin functions
+  EMERGENCY = "emergency", // <200ms - Critical medical situations
+  URGENT = "urgent", // <500ms - Patient care
+  STANDARD = "standard", // <1s - General healthcare operations
+  ADMINISTRATIVE = "admin", // <2s - Non-critical admin functions
 }
 ```
 
@@ -43,15 +43,15 @@ import { useHealthcarePreloader, LazyPDFGenerator } from '@neonpro/performance';
 
 ```typescript
 // apps/web/app/emergency/page.tsx
-'use client'
+"use client";
 
-import { useHealthcarePreloader } from '@neonpro/performance';
-import { Suspense, useEffect } from 'react';
+import { useHealthcarePreloader } from "@neonpro/performance";
+import { Suspense, useEffect } from "react";
 
 export default function EmergencyDashboard() {
-  const { 
-    preloadEmergency, 
-    getStats 
+  const {
+    preloadEmergency,
+    getStats,
   } = useHealthcarePreloader({
     emergencyThreshold: 150, // Strict 150ms for emergencies
     warmUpOnMount: true,
@@ -65,11 +65,11 @@ export default function EmergencyDashboard() {
   return (
     <div>
       <h1>🚨 Emergency Dashboard</h1>
-      
+
       {/* Critical components load immediately */}
       <PatientVitalsMonitor />
       <AmbulanceTracker />
-      
+
       {/* Heavy components lazy loaded */}
       <Suspense fallback={<ChartSkeleton />}>
         <EmergencyAnalytics />
@@ -83,17 +83,17 @@ export default function EmergencyDashboard() {
 
 ```typescript
 // apps/web/app/patient/[id]/reports/page.tsx
-import { LazyPDFGenerator } from '@neonpro/performance';
-import { Suspense } from 'react';
+import { LazyPDFGenerator } from "@neonpro/performance";
+import { Suspense } from "react";
 
-function PatientReports({ patientId }: { patientId: string }) {
+function PatientReports({ patientId }: { patientId: string; }) {
   return (
     <div>
       <h2>Medical Reports</h2>
-      
+
       {/* PDF generator loads only when needed */}
       <Suspense fallback={<div>Loading PDF generator...</div>}>
-        <LazyPDFGenerator 
+        <LazyPDFGenerator
           patientId={patientId}
           priority="urgent"
         />
@@ -104,7 +104,7 @@ function PatientReports({ patientId }: { patientId: string }) {
 
 // LazyPDFGenerator automatically includes:
 // - @react-pdf/renderer (~8MB)
-// - jsPDF (~2MB) 
+// - jsPDF (~2MB)
 // Total: ~10MB lazy loaded
 ```
 
@@ -112,8 +112,8 @@ function PatientReports({ patientId }: { patientId: string }) {
 
 ```typescript
 // apps/web/app/dashboard/analytics/page.tsx
-import { LazyHealthcareCharts, useHealthcarePreloader } from '@neonpro/performance';
-import { Suspense } from 'react';
+import { LazyHealthcareCharts, useHealthcarePreloader } from "@neonpro/performance";
+import { Suspense } from "react";
 
 function AnalyticsDashboard() {
   const { preloadForPatientDashboard } = useHealthcarePreloader();
@@ -121,19 +121,19 @@ function AnalyticsDashboard() {
   return (
     <div>
       <h1>📊 Healthcare Analytics</h1>
-      
+
       {/* Charts load lazily with skeleton */}
       <Suspense fallback={<AnalyticsSkeleton />}>
-        <LazyHealthcareCharts 
+        <LazyHealthcareCharts
           data={analyticsData}
           type="patient-trends"
         />
       </Suspense>
-      
+
       {/* Preload charts when user hovers */}
-      <button 
+      <button
         onMouseEnter={preloadForPatientDashboard}
-        onClick={() => router.push('/dashboard')}
+        onClick={() => router.push("/dashboard")}
       >
         View Patient Dashboard
       </button>
@@ -152,28 +152,25 @@ function AnalyticsDashboard() {
 ### Custom Component Lazy Loading
 
 ```typescript
-import { 
-  HealthcareDynamicLoader, 
-  HealthcarePriority 
-} from '@neonpro/performance';
+import { HealthcareDynamicLoader, HealthcarePriority } from "@neonpro/performance";
 
 // Create emergency-priority component
 const EmergencyAlert = HealthcareDynamicLoader.createHealthcareComponent(
-  () => import('./components/EmergencyAlert'),
-  { 
+  () => import("./components/EmergencyAlert"),
+  {
     priority: HealthcarePriority.EMERGENCY,
     preload: true,
     timeout: 200,
-  }
+  },
 );
 
 // Create admin component (lazy loading only)
 const AdminReports = HealthcareDynamicLoader.createHealthcareComponent(
-  () => import('./components/AdminReports'),
-  { 
+  () => import("./components/AdminReports"),
+  {
     priority: HealthcarePriority.ADMINISTRATIVE,
     preload: false,
-  }
+  },
 );
 ```
 
@@ -182,18 +179,18 @@ const AdminReports = HealthcareDynamicLoader.createHealthcareComponent(
 ```typescript
 function PerformanceMonitor() {
   const { getStats, trackLoadTime } = useHealthcarePreloader();
-  
+
   useEffect(() => {
     const stats = getStats();
-    console.log('Performance Stats:', {
+    console.log("Performance Stats:", {
       preloadedComponents: stats.preloadedComponents,
       averageLoadTime: stats.averageLoadTime,
       failedLoads: stats.failedLoads,
     });
-    
+
     // Alert if emergency components are slow
     if (stats.averageLoadTime > 200) {
-      console.warn('🚨 Emergency performance degradation detected');
+      console.warn("🚨 Emergency performance degradation detected");
     }
   }, []);
 
@@ -205,13 +202,13 @@ function PerformanceMonitor() {
 
 ```typescript
 // app/layout.tsx - Global preloading strategy
-import { HealthcareDynamicLoader } from '@neonpro/performance';
+import { HealthcareDynamicLoader } from "@neonpro/performance";
 
 export default function RootLayout({ children }) {
   useEffect(() => {
     // Preload emergency components during idle time
     HealthcareDynamicLoader.preloadEmergencyComponents();
-    
+
     // Warm up critical healthcare libraries
     HealthcareDynamicLoader.warmUpHealthcareLibraries();
   }, []);
@@ -229,6 +226,7 @@ export default function RootLayout({ children }) {
 ## 📊 Bundle Analysis
 
 ### Before Optimization
+
 ```
 Initial Bundle: 25.3MB
 ├── @tensorflow/tfjs: 10.2MB
@@ -239,7 +237,8 @@ Initial Bundle: 25.3MB
 └── Other libraries: 0.8MB
 ```
 
-### After Optimization  
+### After Optimization
+
 ```
 Initial Bundle: 14.8MB (-40%)
 ├── Core healthcare: 8.2MB
@@ -260,7 +259,7 @@ Lazy Loaded (on-demand):
 ### Core Web Vitals Compliance
 
 - **LCP (Largest Contentful Paint)**: <2.5s
-- **FID (First Input Delay)**: <100ms  
+- **FID (First Input Delay)**: <100ms
 - **CLS (Cumulative Layout Shift)**: <0.1
 
 ### Healthcare-Specific Targets
@@ -301,12 +300,14 @@ When emergency conditions are detected, the system automatically:
 ## 💡 Best Practices
 
 ### ✅ Do
+
 - Preload emergency components on app startup
-- Use priority-based loading for healthcare workflows  
+- Use priority-based loading for healthcare workflows
 - Monitor performance metrics continuously
 - Test lazy loading with slow network conditions
 
 ### ❌ Don't
+
 - Load heavy libraries (PDF, Charts) on initial bundle
 - Skip emergency component preloading
 - Ignore performance thresholds in healthcare contexts
@@ -317,16 +318,18 @@ When emergency conditions are detected, the system automatically:
 ### Common Issues
 
 **Emergency components loading slowly (>200ms)**
+
 ```typescript
 // Check preloader configuration
 const { getStats } = useHealthcarePreloader();
-console.log('Stats:', getStats());
+console.log("Stats:", getStats());
 
 // Verify emergency preloading
 HealthcareDynamicLoader.preloadEmergencyComponents();
 ```
 
 **Bundle size not reduced**
+
 ```bash
 # Verify TensorFlow.js removed from web package
 grep -r "@tensorflow/tfjs" apps/web/package.json
@@ -337,7 +340,8 @@ ANALYZE=true npm run build
 ```
 
 **Performance degradation**
-```typescript  
+
+```typescript
 // Monitor load times
 const { trackLoadTime } = useHealthcarePreloader();
 trackLoadTime(loadTime, HealthcarePriority.EMERGENCY);
@@ -346,8 +350,9 @@ trackLoadTime(loadTime, HealthcarePriority.EMERGENCY);
 ## 📈 Performance Metrics
 
 This package automatically tracks:
+
 - Component load times by priority
-- Bundle size reductions  
+- Bundle size reductions
 - Preloading success/failure rates
 - Core Web Vitals compliance
 - Healthcare-specific performance thresholds
@@ -356,4 +361,4 @@ This package automatically tracks:
 
 **Healthcare Performance First** 🏥⚡
 
-*Optimized for patient safety and emergency response times.*
+_Optimized for patient safety and emergency response times._

@@ -1,16 +1,16 @@
 "use client";
 
-import React from "react";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import React from "react";
 
 // Confidence thresholds for healthcare AI operations
 export const ConfidenceThresholds = {
   HIGH: 85,
   MEDIUM: 70,
-  LOW: 0
+  LOW: 0,
 } as const;
 
 // Healthcare-specific confidence categories with different thresholds
@@ -23,7 +23,7 @@ export const HealthcareConfidenceCategories = {
   "voice-recognition": { high: 90, medium: 80, label: "Reconhecimento de Voz", icon: "🎤" },
   "document-analysis": { high: 93, medium: 85, label: "Análise Documental", icon: "📄" },
   "compliance-check": { high: 98, medium: 95, label: "Verificação de Conformidade", icon: "✅" },
-  "general": { high: 85, medium: 70, label: "Geral", icon: "🤖" }
+  "general": { high: 85, medium: 70, label: "Geral", icon: "🤖" },
 } as const;
 
 export type ConfidenceCategory = keyof typeof HealthcareConfidenceCategories;
@@ -40,11 +40,11 @@ interface ConfidenceLevel {
 
 // Get confidence level based on score and category
 export function getConfidenceLevel(
-  score: number, 
-  category: ConfidenceCategory = "general"
+  score: number,
+  category: ConfidenceCategory = "general",
 ): ConfidenceLevel {
   const thresholds = HealthcareConfidenceCategories[category];
-  
+
   if (score >= thresholds.high) {
     return {
       level: "high",
@@ -53,7 +53,8 @@ export function getConfidenceLevel(
       textColor: "text-green-700",
       icon: "✅",
       label: "Alta Confiança",
-      description: "A IA tem alta confiança nesta análise. Resultados são confiáveis para uso clínico."
+      description:
+        "A IA tem alta confiança nesta análise. Resultados são confiáveis para uso clínico.",
     };
   } else if (score >= thresholds.medium) {
     return {
@@ -63,7 +64,8 @@ export function getConfidenceLevel(
       textColor: "text-yellow-700",
       icon: "⚠️",
       label: "Confiança Moderada",
-      description: "A IA tem confiança moderada. Recomenda-se revisão profissional antes de usar clinicamente."
+      description:
+        "A IA tem confiança moderada. Recomenda-se revisão profissional antes de usar clinicamente.",
     };
   } else {
     return {
@@ -73,7 +75,7 @@ export function getConfidenceLevel(
       textColor: "text-red-700",
       icon: "❌",
       label: "Baixa Confiança",
-      description: "A IA tem baixa confiança. Resultado requer validação profissional obrigatória."
+      description: "A IA tem baixa confiança. Resultado requer validação profissional obrigatória.",
     };
   }
 }
@@ -104,31 +106,31 @@ export function ConfidencePatterns({
   showDescription = false,
   className,
   size = "md",
-  context
+  context,
 }: ConfidencePatternsProps) {
   const confidenceLevel = getConfidenceLevel(score, category);
   const categoryInfo = HealthcareConfidenceCategories[category];
-  
+
   // Size-based styling
   const sizeClasses = {
     sm: {
       text: "text-xs",
       padding: "px-2 py-1",
       icon: "text-xs",
-      progress: "h-1"
+      progress: "h-1",
     },
     md: {
       text: "text-sm",
       padding: "px-3 py-2",
       icon: "text-sm",
-      progress: "h-2"
+      progress: "h-2",
     },
     lg: {
       text: "text-base",
       padding: "px-4 py-3",
       icon: "text-base",
-      progress: "h-3"
-    }
+      progress: "h-3",
+    },
   };
 
   const currentSize = sizeClasses[size];
@@ -138,20 +140,24 @@ export function ConfidencePatterns({
     switch (variant) {
       case "compact":
         return (
-          <div className={cn(
-            "flex items-center gap-2",
-            currentSize.text,
-            className
-          )}>
+          <div
+            className={cn(
+              "flex items-center gap-2",
+              currentSize.text,
+              className,
+            )}
+          >
             {showIcon && (
               <span className={currentSize.icon}>
                 {confidenceLevel.icon}
               </span>
             )}
-            <div className={cn(
-              "flex items-center gap-1",
-              confidenceLevel.textColor
-            )}>
+            <div
+              className={cn(
+                "flex items-center gap-1",
+                confidenceLevel.textColor,
+              )}
+            >
               {showPercentage && (
                 <span className="font-medium">
                   {Math.round(score)}%
@@ -168,31 +174,35 @@ export function ConfidencePatterns({
 
       case "detailed":
         return (
-          <div className={cn(
-            "space-y-3 p-4 rounded-lg border",
-            confidenceLevel.bgColor,
-            className
-          )}>
+          <div
+            className={cn(
+              "space-y-3 p-4 rounded-lg border",
+              confidenceLevel.bgColor,
+              className,
+            )}
+          >
             {/* Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-lg">{categoryInfo.icon}</span>
                 <div>
-                  <h4 className={cn(
-                    "font-semibold",
-                    confidenceLevel.textColor
-                  )}>
+                  <h4
+                    className={cn(
+                      "font-semibold",
+                      confidenceLevel.textColor,
+                    )}
+                  >
                     {categoryInfo.label}
                   </h4>
-                  {context && (
-                    <p className="text-xs text-gray-600 mt-1">{context}</p>
-                  )}
+                  {context && <p className="text-xs text-gray-600 mt-1">{context}</p>}
                 </div>
               </div>
-              <div className={cn(
-                "text-right",
-                confidenceLevel.textColor
-              )}>
+              <div
+                className={cn(
+                  "text-right",
+                  confidenceLevel.textColor,
+                )}
+              >
                 <div className="text-2xl font-bold">
                   {Math.round(score)}%
                 </div>
@@ -204,8 +214,8 @@ export function ConfidencePatterns({
 
             {/* Progress bar */}
             <div className="space-y-2">
-              <Progress 
-                value={score} 
+              <Progress
+                value={score}
                 className={cn("h-3", confidenceLevel.color)}
               />
               <div className="flex justify-between text-xs text-gray-500">
@@ -216,11 +226,13 @@ export function ConfidencePatterns({
 
             {/* Description */}
             {showDescription && (
-              <p className={cn(
-                "text-sm",
-                confidenceLevel.textColor,
-                "bg-white/50 p-2 rounded"
-              )}>
+              <p
+                className={cn(
+                  "text-sm",
+                  confidenceLevel.textColor,
+                  "bg-white/50 p-2 rounded",
+                )}
+              >
                 {confidenceLevel.description}
               </p>
             )}
@@ -229,12 +241,14 @@ export function ConfidencePatterns({
 
       case "inline":
         return (
-          <span className={cn(
-            "inline-flex items-center gap-1",
-            currentSize.text,
-            confidenceLevel.textColor,
-            className
-          )}>
+          <span
+            className={cn(
+              "inline-flex items-center gap-1",
+              currentSize.text,
+              confidenceLevel.textColor,
+              className,
+            )}
+          >
             {showIcon && (
               <span className={currentSize.icon}>
                 {confidenceLevel.icon}
@@ -245,23 +259,22 @@ export function ConfidencePatterns({
                 {Math.round(score)}%
               </span>
             )}
-            {showLabel && (
-              <span>confiança</span>
-            )}
+            {showLabel && <span>confiança</span>}
           </span>
         );
 
       case "badge":
         return (
-          <Badge 
-            variant={
-              confidenceLevel.level === "high" ? "default" :
-              confidenceLevel.level === "medium" ? "secondary" : "destructive"
-            }
+          <Badge
+            variant={confidenceLevel.level === "high"
+              ? "default"
+              : confidenceLevel.level === "medium"
+              ? "secondary"
+              : "destructive"}
             className={cn(
               "flex items-center gap-1",
               currentSize.text,
-              className
+              className,
             )}
           >
             {showIcon && (
@@ -269,12 +282,8 @@ export function ConfidencePatterns({
                 {confidenceLevel.icon}
               </span>
             )}
-            {showPercentage && (
-              <span>{Math.round(score)}%</span>
-            )}
-            {showLabel && (
-              <span>{confidenceLevel.label}</span>
-            )}
+            {showPercentage && <span>{Math.round(score)}%</span>}
+            {showLabel && <span>{confidenceLevel.label}</span>}
           </Badge>
         );
 
@@ -289,27 +298,31 @@ export function ConfidencePatterns({
                   </span>
                 )}
                 {showLabel && (
-                  <span className={cn(
-                    "font-medium",
-                    currentSize.text,
-                    confidenceLevel.textColor
-                  )}>
+                  <span
+                    className={cn(
+                      "font-medium",
+                      currentSize.text,
+                      confidenceLevel.textColor,
+                    )}
+                  >
                     {confidenceLevel.label}
                   </span>
                 )}
               </div>
               {showPercentage && (
-                <span className={cn(
-                  "font-bold",
-                  currentSize.text,
-                  confidenceLevel.textColor
-                )}>
+                <span
+                  className={cn(
+                    "font-bold",
+                    currentSize.text,
+                    confidenceLevel.textColor,
+                  )}
+                >
                   {Math.round(score)}%
                 </span>
               )}
             </div>
-            <Progress 
-              value={score} 
+            <Progress
+              value={score}
               className={cn(currentSize.progress)}
             />
           </div>
@@ -343,7 +356,7 @@ export function ConfidencePatterns({
               <div className="text-xs text-gray-400 border-t pt-2">
                 <div>Limites para {categoryInfo.label}:</div>
                 <div>• Alta: ≥{categoryInfo.high}%</div>
-                <div>• Moderada: {categoryInfo.medium}-{categoryInfo.high-1}%</div>
+                <div>• Moderada: {categoryInfo.medium}-{categoryInfo.high - 1}%</div>
                 <div>• Baixa: &lt;{categoryInfo.medium}%</div>
               </div>
             </div>
@@ -357,7 +370,9 @@ export function ConfidencePatterns({
 }
 
 // Specialized confidence components for common healthcare scenarios
-export function DiagnosisConfidence({ score, ...props }: Omit<ConfidencePatternsProps, 'category'>) {
+export function DiagnosisConfidence(
+  { score, ...props }: Omit<ConfidencePatternsProps, "category">,
+) {
   return (
     <ConfidencePatterns
       score={score}
@@ -367,7 +382,9 @@ export function DiagnosisConfidence({ score, ...props }: Omit<ConfidencePatterns
   );
 }
 
-export function TreatmentConfidence({ score, ...props }: Omit<ConfidencePatternsProps, 'category'>) {
+export function TreatmentConfidence(
+  { score, ...props }: Omit<ConfidencePatternsProps, "category">,
+) {
   return (
     <ConfidencePatterns
       score={score}
@@ -377,7 +394,9 @@ export function TreatmentConfidence({ score, ...props }: Omit<ConfidencePatterns
   );
 }
 
-export function RiskAssessmentConfidence({ score, ...props }: Omit<ConfidencePatternsProps, 'category'>) {
+export function RiskAssessmentConfidence(
+  { score, ...props }: Omit<ConfidencePatternsProps, "category">,
+) {
   return (
     <ConfidencePatterns
       score={score}
@@ -387,7 +406,9 @@ export function RiskAssessmentConfidence({ score, ...props }: Omit<ConfidencePat
   );
 }
 
-export function VoiceRecognitionConfidence({ score, ...props }: Omit<ConfidencePatternsProps, 'category'>) {
+export function VoiceRecognitionConfidence(
+  { score, ...props }: Omit<ConfidencePatternsProps, "category">,
+) {
   return (
     <ConfidencePatterns
       score={score}
@@ -409,13 +430,13 @@ interface MultiConfidenceProps {
   variant?: "horizontal" | "vertical";
 }
 
-export function MultiConfidence({ 
-  confidenceScores, 
-  className, 
-  variant = "vertical" 
+export function MultiConfidence({
+  confidenceScores,
+  className,
+  variant = "vertical",
 }: MultiConfidenceProps) {
-  const layoutClasses = variant === "horizontal" 
-    ? "flex gap-4 flex-wrap" 
+  const layoutClasses = variant === "horizontal"
+    ? "flex gap-4 flex-wrap"
     : "space-y-3";
 
   return (
@@ -452,7 +473,7 @@ interface ConfidenceTrendProps {
 export function ConfidenceTrend({ trends, category = "general", className }: ConfidenceTrendProps) {
   const latestScore = trends[trends.length - 1]?.score || 0;
   const confidenceLevel = getConfidenceLevel(latestScore, category);
-  
+
   return (
     <div className={cn("space-y-3", className)}>
       <div className="flex items-center justify-between">
@@ -467,16 +488,18 @@ export function ConfidenceTrend({ trends, category = "general", className }: Con
           showTooltip={false}
         />
       </div>
-      
+
       <div className="space-y-1">
         {trends.slice(-5).map((trend, index) => (
           <div key={index} className="flex items-center justify-between text-xs">
             <span className="text-gray-500">{trend.timestamp}</span>
             <div className="flex items-center gap-2">
-              <div className={cn(
-                "h-2 w-8 rounded",
-                getConfidenceLevel(trend.score, category).color
-              )} />
+              <div
+                className={cn(
+                  "h-2 w-8 rounded",
+                  getConfidenceLevel(trend.score, category).color,
+                )}
+              />
               <span className="font-medium">{Math.round(trend.score)}%</span>
             </div>
           </div>

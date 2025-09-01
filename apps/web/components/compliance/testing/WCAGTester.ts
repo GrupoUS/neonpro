@@ -3,7 +3,7 @@
  * Tests against WCAG 2.1 Level A, AA, and AAA guidelines
  */
 
-import type { ComplianceTestResult, ComplianceViolation } from '../types';
+import type { ComplianceTestResult, ComplianceViolation } from "../types";
 
 // axe-core result types
 interface AxeResult {
@@ -17,7 +17,7 @@ interface AxeResult {
 
 interface AxeViolation {
   id: string;
-  impact: 'minor' | 'moderate' | 'serious' | 'critical';
+  impact: "minor" | "moderate" | "serious" | "critical";
   tags: string[];
   description: string;
   help: string;
@@ -52,7 +52,7 @@ interface AxeCheckResult {
 }
 
 export interface WCAGTestConfig {
-  level: 'A' | 'AA' | 'AAA';
+  level: "A" | "AA" | "AAA";
   tags?: string[];
   rules?: {
     include?: string[];
@@ -68,10 +68,10 @@ export interface WCAGTestConfig {
 
 export class WCAGTester {
   private defaultConfig: WCAGTestConfig = {
-    level: 'AA',
-    tags: ['wcag2a', 'wcag2aa'],
+    level: "AA",
+    tags: ["wcag2a", "wcag2aa"],
     timeout: 30_000,
-    screenshot: true
+    screenshot: true,
   };
 
   /**
@@ -83,16 +83,16 @@ export class WCAGTester {
 
     try {
       console.log(`🔍 Running WCAG test for: ${url}`);
-      
+
       // Run axe-core test
       const axeResult = await this.runAxeTest(url, testConfig);
-      
+
       // Transform axe results to our format
       const violations = this.transformViolations(axeResult.violations, url);
       const score = this.calculateScore(axeResult);
-      
+
       const result: ComplianceTestResult = {
-        framework: 'WCAG',
+        framework: "WCAG",
         page: url,
         score,
         violations,
@@ -100,17 +100,20 @@ export class WCAGTester {
         incomplete: axeResult.incomplete.length,
         duration: Date.now() - startTime,
         timestamp: startTime,
-        status: violations.filter(v => v.severity === 'critical' || v.severity === 'high').length === 0 ? 'passed' : 'failed'
+        status: violations.filter(v =>
+            v.severity === "critical" || v.severity === "high"
+          ).length === 0
+          ? "passed"
+          : "failed",
       };
 
       console.log(`✅ WCAG test completed - Score: ${score}%, Violations: ${violations.length}`);
       return result;
-
     } catch (error) {
       console.error(`❌ WCAG test failed for ${url}:`, error);
-      
+
       return {
-        framework: 'WCAG',
+        framework: "WCAG",
         page: url,
         score: 0,
         violations: [],
@@ -118,8 +121,8 @@ export class WCAGTester {
         incomplete: 0,
         duration: Date.now() - startTime,
         timestamp: startTime,
-        status: 'error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        status: "error",
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -130,20 +133,20 @@ export class WCAGTester {
   private async runAxeTest(url: string, config: WCAGTestConfig): Promise<AxeResult> {
     // In a real implementation, this would use Playwright or Puppeteer with axe-core
     // For now, we'll simulate the axe-core API call
-    
-    const response = await fetch('/api/compliance/wcag/test', {
-      method: 'POST',
+
+    const response = await fetch("/api/compliance/wcag/test", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         url,
         config: {
           tags: this.getAxeTags(config.level),
           rules: config.rules,
-          selectors: config.selectors
-        }
-      })
+          selectors: config.selectors,
+        },
+      }),
     });
 
     if (!response.ok) {
@@ -157,20 +160,20 @@ export class WCAGTester {
   /**
    * Get axe-core tags based on WCAG level
    */
-  private getAxeTags(level: 'A' | 'AA' | 'AAA'): string[] {
-    const baseTags = ['wcag2a'];
-    
-    if (level === 'AA' || level === 'AAA') {
-      baseTags.push('wcag2aa');
+  private getAxeTags(level: "A" | "AA" | "AAA"): string[] {
+    const baseTags = ["wcag2a"];
+
+    if (level === "AA" || level === "AAA") {
+      baseTags.push("wcag2aa");
     }
-    
-    if (level === 'AAA') {
-      baseTags.push('wcag2aaa');
+
+    if (level === "AAA") {
+      baseTags.push("wcag2aaa");
     }
-    
+
     // Add additional useful tags
-    baseTags.push('section508', 'best-practice');
-    
+    baseTags.push("section508", "best-practice");
+
     return baseTags;
   }
 
@@ -180,33 +183,33 @@ export class WCAGTester {
   private transformViolations(axeViolations: AxeViolation[], url: string): ComplianceViolation[] {
     return axeViolations.map((violation, index) => ({
       id: `wcag_${Date.now()}_${index}`,
-      framework: 'WCAG' as const,
+      framework: "WCAG" as const,
       severity: this.mapImpactToSeverity(violation.impact),
       rule: `${violation.id} - ${this.extractWCAGCriterion(violation.tags)}`,
       description: violation.description,
-      element: violation.nodes[0]?.target.join(' > '),
+      element: violation.nodes[0]?.target.join(" > "),
       page: url,
       timestamp: Date.now(),
-      status: 'open' as const,
-      notes: `Help: ${violation.help}\nURL: ${violation.helpUrl}`
+      status: "open" as const,
+      notes: `Help: ${violation.help}\nURL: ${violation.helpUrl}`,
     }));
   }
 
   /**
    * Map axe impact to our severity levels
    */
-  private mapImpactToSeverity(impact: string): 'low' | 'medium' | 'high' | 'critical' {
+  private mapImpactToSeverity(impact: string): "low" | "medium" | "high" | "critical" {
     switch (impact) {
-      case 'minor':
-        return 'low';
-      case 'moderate':
-        return 'medium';
-      case 'serious':
-        return 'high';
-      case 'critical':
-        return 'critical';
+      case "minor":
+        return "low";
+      case "moderate":
+        return "medium";
+      case "serious":
+        return "high";
+      case "critical":
+        return "critical";
       default:
-        return 'medium';
+        return "medium";
     }
   }
 
@@ -215,14 +218,14 @@ export class WCAGTester {
    */
   private extractWCAGCriterion(tags: string[]): string {
     const wcagTag = tags.find(tag => tag.match(/wcag\d+/));
-    if (!wcagTag) {return 'WCAG';}
-    
+    if (!wcagTag) return "WCAG";
+
     // Extract criterion number from tag like "wcag143" -> "1.4.3"
     const match = wcagTag.match(/wcag(\d)(\d)(\d)/);
     if (match) {
       return `WCAG ${match[1]}.${match[2]}.${match[3]}`;
     }
-    
+
     return wcagTag.toUpperCase();
   }
 
@@ -230,20 +233,21 @@ export class WCAGTester {
    * Calculate WCAG compliance score
    */
   private calculateScore(axeResult: AxeResult): number {
-    const totalChecks = axeResult.violations.length + axeResult.passes.length + axeResult.incomplete.length;
-    
-    if (totalChecks === 0) {return 100;}
-    
+    const totalChecks = axeResult.violations.length + axeResult.passes.length
+      + axeResult.incomplete.length;
+
+    if (totalChecks === 0) return 100;
+
     // Weight violations by impact
     const weightedViolations = axeResult.violations.reduce((sum, violation) => {
       const weight = this.getViolationWeight(violation.impact);
       return sum + (violation.nodes.length * weight);
     }, 0);
-    
+
     // Calculate score (higher weights reduce score more)
     const maxPossibleScore = 100;
     const penaltyFactor = Math.min(weightedViolations * 2, maxPossibleScore);
-    
+
     return Math.max(0, Math.round(maxPossibleScore - penaltyFactor));
   }
 
@@ -252,13 +256,13 @@ export class WCAGTester {
    */
   private getViolationWeight(impact: string): number {
     switch (impact) {
-      case 'critical':
+      case "critical":
         return 10;
-      case 'serious':
+      case "serious":
         return 5;
-      case 'moderate':
+      case "moderate":
         return 2;
-      case 'minor':
+      case "minor":
         return 1;
       default:
         return 1;
@@ -284,13 +288,15 @@ export class WCAGTester {
       solution: string;
     }[];
   }> {
-    const wcagResults = results.filter(r => r.framework === 'WCAG');
-    
+    const wcagResults = results.filter(r => r.framework === "WCAG");
+
     const summary = {
       totalPages: wcagResults.length,
-      averageScore: Math.round(wcagResults.reduce((sum, r) => sum + r.score, 0) / wcagResults.length),
+      averageScore: Math.round(
+        wcagResults.reduce((sum, r) => sum + r.score, 0) / wcagResults.length,
+      ),
       totalViolations: wcagResults.reduce((sum, r) => sum + r.violations.length, 0),
-      violationsByLevel: this.countViolationsByLevel(wcagResults)
+      violationsByLevel: this.countViolationsByLevel(wcagResults),
     };
 
     const recommendations = this.generateRecommendations(wcagResults);
@@ -299,7 +305,7 @@ export class WCAGTester {
     return {
       summary,
       recommendations,
-      priorityFixes
+      priorityFixes,
     };
   }
 
@@ -311,7 +317,7 @@ export class WCAGTester {
       critical: 0,
       high: 0,
       medium: 0,
-      low: 0
+      low: 0,
     };
 
     results.forEach(result => {
@@ -331,7 +337,9 @@ export class WCAGTester {
     const violationCounts = this.countViolationsByLevel(results);
 
     if (violationCounts.critical > 0) {
-      recommendations.push(`Address ${violationCounts.critical} critical accessibility issues immediately`);
+      recommendations.push(
+        `Address ${violationCounts.critical} critical accessibility issues immediately`,
+      );
     }
 
     if (violationCounts.high > 0) {
@@ -340,12 +348,14 @@ export class WCAGTester {
 
     const averageScore = Math.round(results.reduce((sum, r) => sum + r.score, 0) / results.length);
     if (averageScore < 80) {
-      recommendations.push('Consider implementing automated accessibility testing in CI/CD pipeline');
-      recommendations.push('Provide accessibility training for development team');
+      recommendations.push(
+        "Consider implementing automated accessibility testing in CI/CD pipeline",
+      );
+      recommendations.push("Provide accessibility training for development team");
     }
 
     if (violationCounts.medium + violationCounts.low > 10) {
-      recommendations.push('Establish regular accessibility audit schedule');
+      recommendations.push("Establish regular accessibility audit schedule");
     }
 
     return recommendations;
@@ -377,10 +387,10 @@ export class WCAGTester {
             pages: new Set(),
             impact: violation.severity,
             description: violation.description,
-            count: 0
+            count: 0,
           });
         }
-        
+
         const entry = violationMap.get(key)!;
         entry.pages.add(result.page);
         entry.count++;
@@ -391,10 +401,10 @@ export class WCAGTester {
     return Array.from(violationMap.entries())
       .sort(([, a], [, b]) => {
         const impactOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-        const impactDiff = (impactOrder[b.impact as keyof typeof impactOrder] || 0) - 
-                          (impactOrder[a.impact as keyof typeof impactOrder] || 0);
-        
-        if (impactDiff !== 0) {return impactDiff;}
+        const impactDiff = (impactOrder[b.impact as keyof typeof impactOrder] || 0)
+          - (impactOrder[a.impact as keyof typeof impactOrder] || 0);
+
+        if (impactDiff !== 0) return impactDiff;
         return b.count - a.count;
       })
       .slice(0, 10) // Top 10 priority fixes
@@ -403,7 +413,7 @@ export class WCAGTester {
         pages: Array.from(data.pages),
         impact: data.impact,
         description: data.description,
-        solution: this.getSolutionForRule(rule)
+        solution: this.getSolutionForRule(rule),
       }));
   }
 
@@ -413,19 +423,20 @@ export class WCAGTester {
   private getSolutionForRule(rule: string): string {
     // This would contain specific solutions for common WCAG violations
     const solutions: Record<string, string> = {
-      'color-contrast': 'Increase color contrast ratio to at least 4.5:1 for normal text and 3:1 for large text',
-      'image-alt': 'Add descriptive alt text to images or mark decorative images with alt=""',
-      'label': 'Ensure form inputs have associated labels using <label> elements or aria-label',
-      'heading-order': 'Use heading elements (h1-h6) in logical hierarchical order',
-      'link-name': 'Provide descriptive text for links, avoid generic text like "click here"',
-      'button-name': 'Ensure buttons have accessible names via text content or aria-label',
-      'landmark-one-main': 'Include exactly one main landmark per page using <main> element',
-      'page-has-heading-one': 'Include exactly one h1 element per page for the main heading'
+      "color-contrast":
+        "Increase color contrast ratio to at least 4.5:1 for normal text and 3:1 for large text",
+      "image-alt": 'Add descriptive alt text to images or mark decorative images with alt=""',
+      "label": "Ensure form inputs have associated labels using <label> elements or aria-label",
+      "heading-order": "Use heading elements (h1-h6) in logical hierarchical order",
+      "link-name": 'Provide descriptive text for links, avoid generic text like "click here"',
+      "button-name": "Ensure buttons have accessible names via text content or aria-label",
+      "landmark-one-main": "Include exactly one main landmark per page using <main> element",
+      "page-has-heading-one": "Include exactly one h1 element per page for the main heading",
     };
 
     // Extract rule ID from full rule string
-    const ruleId = rule.split(' - ')[0]?.toLowerCase();
-    
-    return solutions[ruleId] || 'Review WCAG documentation for specific guidance on this violation';
+    const ruleId = rule.split(" - ")[0]?.toLowerCase();
+
+    return solutions[ruleId] || "Review WCAG documentation for specific guidance on this violation";
   }
 }

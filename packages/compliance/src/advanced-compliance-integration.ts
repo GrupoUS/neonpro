@@ -307,13 +307,13 @@ export class AdvancedComplianceIntegration {
       }
 
       if (anvisaStatus.approaching_deadlines.length > 5) {
-        if (healthStatus !== "critical") {healthStatus = "warning";}
+        if (healthStatus !== "critical") healthStatus = "warning";
         issues.push(`${anvisaStatus.approaching_deadlines.length} ANVISA deadlines approaching`);
         recommendations.push("Prioritize ANVISA report submissions");
       }
 
       if (cfmMetrics.validation_rate < 90) {
-        if (healthStatus !== "critical") {healthStatus = "warning";}
+        if (healthStatus !== "critical") healthStatus = "warning";
         issues.push(`CFM validation rate below target: ${cfmMetrics.validation_rate}%`);
         recommendations.push("Review professional validation processes");
       }
@@ -475,7 +475,7 @@ export class AdvancedComplianceIntegration {
     event: Partial<AdverseEvent>,
     professional?: CFMProfessional,
   ): void {
-    if (!professional) {return;}
+    if (!professional) return;
 
     // Add professional data to adverse event
     if (event.reporter_data) {

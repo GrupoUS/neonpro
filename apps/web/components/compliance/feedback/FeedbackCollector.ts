@@ -1,16 +1,19 @@
 // User feedback collection system for compliance components
-import { createClient } from '@supabase/supabase-js';
-import type { 
-  UserFeedback, 
-  FeedbackComment, 
+import { createClient } from "@supabase/supabase-js";
+import type {
+  ComplianceFramework,
   FeedbackCollectionConfig,
-  UserSatisfactionSurvey,
+  FeedbackComment,
   SurveyResponse,
-  ComplianceFramework 
-} from './types';
+  UserFeedback,
+  UserSatisfactionSurvey,
+} from "./types";
 
 export class FeedbackCollector {
-  private supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+  private supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
   private config: FeedbackCollectionConfig;
   private activeListeners: Map<string, () => void> = new Map();
 
@@ -22,16 +25,18 @@ export class FeedbackCollector {
   /**
    * Submit user feedback
    */
-  async submitFeedback(feedback: Omit<UserFeedback, 'id' | 'submittedAt' | 'status' | 'votes' | 'comments'>): Promise<UserFeedback> {
+  async submitFeedback(
+    feedback: Omit<UserFeedback, "id" | "submittedAt" | "status" | "votes" | "comments">,
+  ): Promise<UserFeedback> {
     console.log(`📝 Submitting feedback: ${feedback.title} (${feedback.type})`);
 
     const newFeedback: UserFeedback = {
       ...feedback,
       id: `feedback_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       submittedAt: new Date(),
-      status: 'submitted',
+      status: "submitted",
       votes: { upvotes: 0, downvotes: 0, voters: [] },
-      comments: []
+      comments: [],
     };
 
     try {
@@ -44,7 +49,7 @@ export class FeedbackCollector {
       }
 
       // Send notifications for critical feedback
-      if (newFeedback.severity === 'critical' || newFeedback.priority === 'urgent') {
+      if (newFeedback.severity === "critical" || newFeedback.priority === "urgent") {
         await this.sendCriticalFeedbackAlert(newFeedback);
       }
 
@@ -53,9 +58,8 @@ export class FeedbackCollector {
 
       console.log(`✅ Feedback submitted successfully: ${newFeedback.id}`);
       return newFeedback;
-
     } catch (error) {
-      console.error('❌ Error submitting feedback:', error);
+      console.error("❌ Error submitting feedback:", error);
       throw error;
     }
   }
@@ -63,16 +67,19 @@ export class FeedbackCollector {
   /**
    * Add comment to existing feedback
    */
-  async addComment(feedbackId: string, comment: Omit<FeedbackComment, 'id' | 'feedbackId' | 'createdAt'>): Promise<FeedbackComment> {
+  async addComment(
+    feedbackId: string,
+    comment: Omit<FeedbackComment, "id" | "feedbackId" | "createdAt">,
+  ): Promise<FeedbackComment> {
     const newComment: FeedbackComment = {
       ...comment,
       id: `comment_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       feedbackId,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     await this.storeComment(newComment);
-    
+
     console.log(`💬 Comment added to feedback ${feedbackId}`);
     return newComment;
   }
@@ -80,7 +87,11 @@ export class FeedbackCollector {
   /**
    * Vote on feedback (upvote/downvote)
    */
-  async voteFeedback(feedbackId: string, userId: string, voteType: 'upvote' | 'downvote'): Promise<UserFeedback> {
+  async voteFeedback(
+    feedbackId: string,
+    userId: string,
+    voteType: "upvote" | "downvote",
+  ): Promise<UserFeedback> {
     const feedback = await this.getFeedback(feedbackId);
     if (!feedback) {
       throw new Error(`Feedback not found: ${feedbackId}`);
@@ -100,14 +111,14 @@ export class FeedbackCollector {
 
     // Add new vote
     feedback.votes.voters.push(userId);
-    if (voteType === 'upvote') {
+    if (voteType === "upvote") {
       feedback.votes.upvotes++;
     } else {
       feedback.votes.downvotes++;
     }
 
     await this.updateFeedback(feedback);
-    
+
     console.log(`👍 ${voteType} added to feedback ${feedbackId}`);
     return feedback;
   }
@@ -115,18 +126,20 @@ export class FeedbackCollector {
   /**
    * Create and deploy satisfaction survey
    */
-  async createSatisfactionSurvey(survey: Omit<UserSatisfactionSurvey, 'id' | 'createdAt' | 'responses' | 'analysis'>): Promise<UserSatisfactionSurvey> {
+  async createSatisfactionSurvey(
+    survey: Omit<UserSatisfactionSurvey, "id" | "createdAt" | "responses" | "analysis">,
+  ): Promise<UserSatisfactionSurvey> {
     const newSurvey: UserSatisfactionSurvey = {
       ...survey,
       id: `survey_${Date.now()}`,
       createdAt: new Date(),
-      responses: []
+      responses: [],
     };
 
     await this.storeSurvey(newSurvey);
-    
+
     // Deploy survey to target audience
-    if (newSurvey.status === 'active') {
+    if (newSurvey.status === "active") {
       await this.deploySurvey(newSurvey);
     }
 
@@ -137,15 +150,17 @@ export class FeedbackCollector {
   /**
    * Submit survey response
    */
-  async submitSurveyResponse(response: Omit<SurveyResponse, 'id' | 'submittedAt'>): Promise<SurveyResponse> {
+  async submitSurveyResponse(
+    response: Omit<SurveyResponse, "id" | "submittedAt">,
+  ): Promise<SurveyResponse> {
     const newResponse: SurveyResponse = {
       ...response,
       id: `response_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-      submittedAt: new Date()
+      submittedAt: new Date(),
     };
 
     await this.storeSurveyResponse(newResponse);
-    
+
     console.log(`📝 Survey response submitted for survey ${response.surveyId}`);
     return newResponse;
   }
@@ -154,7 +169,7 @@ export class FeedbackCollector {
    * Trigger contextual feedback collection
    */
   async triggerContextualFeedback(context: {
-    trigger: 'error' | 'task_completion' | 'time_spent' | 'session_end';
+    trigger: "error" | "task_completion" | "time_spent" | "session_end";
     page?: string;
     feature?: string;
     sessionData?: unknown;
@@ -170,16 +185,16 @@ export class FeedbackCollector {
 
     // Show appropriate feedback collection UI
     switch (context.trigger) {
-      case 'error':
+      case "error":
         await this.showErrorFeedbackModal(context);
         break;
-      case 'task_completion':
+      case "task_completion":
         await this.showTaskCompletionRating(context);
         break;
-      case 'time_spent':
+      case "time_spent":
         await this.showUsabilityFeedbackWidget(context);
         break;
-      case 'session_end':
+      case "session_end":
         await this.showSessionEndSurvey(context);
         break;
     }
@@ -194,7 +209,7 @@ export class FeedbackCollector {
       // For now, return mock data or null
       return null;
     } catch (error) {
-      console.error('Error fetching feedback:', error);
+      console.error("Error fetching feedback:", error);
       return null;
     }
   }
@@ -203,22 +218,22 @@ export class FeedbackCollector {
    * Get all feedback with filters
    */
   async getFeedbackList(filters?: {
-    type?: UserFeedback['type'];
-    category?: UserFeedback['category'];
-    status?: UserFeedback['status'];
-    severity?: UserFeedback['severity'];
+    type?: UserFeedback["type"];
+    category?: UserFeedback["category"];
+    status?: UserFeedback["status"];
+    severity?: UserFeedback["severity"];
     submittedBy?: string;
-    dateRange?: { start: Date; end: Date };
+    dateRange?: { start: Date; end: Date; };
     framework?: ComplianceFramework;
     tags?: string[];
     limit?: number;
     offset?: number;
-  }): Promise<{ feedback: UserFeedback[]; total: number }> {
+  }): Promise<{ feedback: UserFeedback[]; total: number; }> {
     try {
       // Mock implementation - would query database with filters
       return { feedback: [], total: 0 };
     } catch (error) {
-      console.error('Error fetching feedback list:', error);
+      console.error("Error fetching feedback list:", error);
       return { feedback: [], total: 0 };
     }
   }
@@ -227,9 +242,9 @@ export class FeedbackCollector {
    * Update feedback status
    */
   async updateFeedbackStatus(
-    feedbackId: string, 
-    status: UserFeedback['status'],
-    resolution?: UserFeedback['resolution']
+    feedbackId: string,
+    status: UserFeedback["status"],
+    resolution?: UserFeedback["resolution"],
   ): Promise<UserFeedback> {
     const feedback = await this.getFeedback(feedbackId);
     if (!feedback) {
@@ -242,7 +257,7 @@ export class FeedbackCollector {
     }
 
     await this.updateFeedback(feedback);
-    
+
     console.log(`🔄 Feedback status updated: ${feedbackId} → ${status}`);
     return feedback;
   }
@@ -251,7 +266,7 @@ export class FeedbackCollector {
    * Initialize feedback collection listeners
    */
   private initializeFeedbackCollection(): void {
-    console.log('🚀 Initializing feedback collection system');
+    console.log("🚀 Initializing feedback collection system");
 
     // Error tracking listener
     if (this.config.triggerConditions.errorOccurrence) {
@@ -273,7 +288,7 @@ export class FeedbackCollector {
       this.setupTaskCompletionTracking();
     }
 
-    console.log('✅ Feedback collection listeners initialized');
+    console.log("✅ Feedback collection listeners initialized");
   }
 
   /**
@@ -281,13 +296,13 @@ export class FeedbackCollector {
    */
   private shouldTriggerFeedback(trigger: string, context: unknown): boolean {
     switch (trigger) {
-      case 'error':
+      case "error":
         return this.config.triggerConditions.errorOccurrence;
-      case 'task_completion':
+      case "task_completion":
         return this.config.triggerConditions.taskCompletion;
-      case 'time_spent':
+      case "time_spent":
         return context.timeSpent >= this.config.triggerConditions.timeSpent;
-      case 'session_end':
+      case "session_end":
         return this.config.triggerConditions.sessionEnd;
       default:
         return false;
@@ -310,14 +325,14 @@ export class FeedbackCollector {
    */
   private evaluateTriagingRule(condition: string, feedback: UserFeedback): boolean {
     // Mock evaluation logic - would implement actual rule parsing
-    if (condition.includes('severity=critical')) {
-      return feedback.severity === 'critical';
+    if (condition.includes("severity=critical")) {
+      return feedback.severity === "critical";
     }
-    if (condition.includes('type=bug_report')) {
-      return feedback.type === 'bug_report';
+    if (condition.includes("type=bug_report")) {
+      return feedback.type === "bug_report";
     }
-    if (condition.includes('category=dashboard')) {
-      return feedback.category === 'dashboard';
+    if (condition.includes("category=dashboard")) {
+      return feedback.category === "dashboard";
     }
     return false;
   }
@@ -325,21 +340,25 @@ export class FeedbackCollector {
   /**
    * Execute triaging action
    */
-  private async executeTriagingAction(action: string, value: string, feedback: UserFeedback): Promise<void> {
+  private async executeTriagingAction(
+    action: string,
+    value: string,
+    feedback: UserFeedback,
+  ): Promise<void> {
     switch (action) {
-      case 'assign':
+      case "assign":
         // Would assign to specific team member
         console.log(`🎯 Auto-assigned feedback ${feedback.id} to ${value}`);
         break;
-      case 'prioritize':
-        feedback.priority = value as UserFeedback['priority'];
+      case "prioritize":
+        feedback.priority = value as UserFeedback["priority"];
         console.log(`⚡ Auto-prioritized feedback ${feedback.id} as ${value}`);
         break;
-      case 'escalate':
+      case "escalate":
         console.log(`🚨 Auto-escalated feedback ${feedback.id} to ${value}`);
         break;
-      case 'auto_close':
-        feedback.status = 'closed';
+      case "auto_close":
+        feedback.status = "closed";
         console.log(`✅ Auto-closed feedback ${feedback.id}`);
         break;
     }
@@ -347,22 +366,22 @@ export class FeedbackCollector {
 
   // UI trigger methods (would integrate with actual UI components)
   private async showErrorFeedbackModal(context: unknown): Promise<void> {
-    console.log('🔧 Showing error feedback modal');
+    console.log("🔧 Showing error feedback modal");
     // Would show modal UI for error feedback
   }
 
   private async showTaskCompletionRating(context: unknown): Promise<void> {
-    console.log('⭐ Showing task completion rating');
+    console.log("⭐ Showing task completion rating");
     // Would show rating UI after task completion
   }
 
   private async showUsabilityFeedbackWidget(context: unknown): Promise<void> {
-    console.log('📋 Showing usability feedback widget');
+    console.log("📋 Showing usability feedback widget");
     // Would show feedback widget
   }
 
   private async showSessionEndSurvey(context: unknown): Promise<void> {
-    console.log('📊 Showing session end survey');
+    console.log("📊 Showing session end survey");
     // Would show end-of-session survey
   }
 
@@ -371,8 +390,8 @@ export class FeedbackCollector {
     const originalError = window.onerror;
     window.onerror = (message, filename, lineno, colno, error) => {
       this.triggerContextualFeedback({
-        trigger: 'error',
-        errorData: { message, filename, lineno, colno, error }
+        trigger: "error",
+        errorData: { message, filename, lineno, colno, error },
       });
       if (originalError) {
         return originalError(message, filename, lineno, colno, error);
@@ -387,8 +406,8 @@ export class FeedbackCollector {
       const timeSpent = (Date.now() - startTime) / (1000 * 60); // minutes
       if (timeSpent >= this.config.triggerConditions.timeSpent) {
         this.triggerContextualFeedback({
-          trigger: 'time_spent',
-          sessionData: { timeSpent }
+          trigger: "time_spent",
+          sessionData: { timeSpent },
         });
         startTime = Date.now(); // Reset timer
       }
@@ -396,21 +415,21 @@ export class FeedbackCollector {
   }
 
   private setupSessionEndTracking(): void {
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener("beforeunload", () => {
       this.triggerContextualFeedback({
-        trigger: 'session_end',
-        sessionData: { endTime: new Date() }
+        trigger: "session_end",
+        sessionData: { endTime: new Date() },
       });
     });
   }
 
   private setupTaskCompletionTracking(): void {
     // Would integrate with task completion events from compliance workflows
-    document.addEventListener('compliance-task-completed', (event: unknown) => {
+    document.addEventListener("compliance-task-completed", (event: unknown) => {
       this.triggerContextualFeedback({
-        trigger: 'task_completion',
+        trigger: "task_completion",
         feature: event.detail?.taskType,
-        sessionData: event.detail
+        sessionData: event.detail,
       });
     });
   }

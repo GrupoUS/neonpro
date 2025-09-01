@@ -1,7 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { LoadingWithMessage } from "@/components/ui/loading-skeleton";
+import dynamic from "next/dynamic";
 import { Suspense, useCallback, useState } from "react";
 
 // Dynamic imports for Excel libraries
@@ -10,7 +10,7 @@ const ExcelImporter = dynamic(
   {
     loading: () => <LoadingWithMessage variant="excel" message="Carregando importador Excel..." />,
     ssr: false,
-  }
+  },
 );
 
 const ExcelExporter = dynamic(
@@ -18,7 +18,7 @@ const ExcelExporter = dynamic(
   {
     loading: () => <LoadingWithMessage variant="excel" message="Carregando exportador Excel..." />,
     ssr: false,
-  }
+  },
 );
 
 const CSVProcessor = dynamic(
@@ -26,7 +26,7 @@ const CSVProcessor = dynamic(
   {
     loading: () => <LoadingWithMessage variant="excel" message="Carregando processador CSV..." />,
     ssr: false,
-  }
+  },
 );
 
 // Interfaces
@@ -98,77 +98,82 @@ export function useExcelProcessing() {
   const [error, setError] = useState<Error | null>(null);
 
   // Import Excel file
-  const importExcel = useCallback(async (file: File, template?: string, maxFileSize?: number): Promise<ExcelData> => {
-    setIsProcessing(true);
-    setProgress(0);
-    setError(null);
+  const importExcel = useCallback(
+    async (file: File, template?: string, maxFileSize?: number): Promise<ExcelData> => {
+      setIsProcessing(true);
+      setProgress(0);
+      setError(null);
 
-    try {
-      // Check file size before processing
-      if (maxFileSize && file.size > maxFileSize) {
-        const errorMsg = `Arquivo muito grande (${Math.round(file.size / 1024 / 1024)}MB). Tamanho máximo permitido: ${Math.round(maxFileSize / 1024 / 1024)}MB`;
-        setError(new Error(errorMsg));
+      try {
+        // Check file size before processing
+        if (maxFileSize && file.size > maxFileSize) {
+          const errorMsg = `Arquivo muito grande (${
+            Math.round(file.size / 1024 / 1024)
+          }MB). Tamanho máximo permitido: ${Math.round(maxFileSize / 1024 / 1024)}MB`;
+          setError(new Error(errorMsg));
+          setIsProcessing(false);
+          setProgress(0);
+          throw new Error(errorMsg);
+        }
+
+        // Lazy load xlsx library
+        const XLSX = await import("xlsx");
+
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = (e) => {
+            try {
+              setProgress(30);
+
+              const data = new Uint8Array(e.target?.result as ArrayBuffer);
+              const workbook = XLSX.read(data, { type: "array" });
+              const sheetName = workbook.SheetNames[0];
+              const worksheet = workbook.Sheets[sheetName];
+
+              setProgress(60);
+
+              const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+              const headers = jsonData[0] as string[];
+              const rows = jsonData.slice(1) as unknown[][];
+
+              setProgress(90);
+
+              const result: ExcelData = {
+                headers,
+                rows,
+                metadata: {
+                  fileName: file.name,
+                  sheetName,
+                  totalRows: rows.length,
+                  processedAt: new Date(),
+                },
+              };
+
+              setProgress(100);
+              resolve(result);
+            } catch (err) {
+              reject(new Error(`Erro ao processar arquivo Excel: ${(err as Error).message}`));
+            }
+          };
+
+          reader.onerror = () => {
+            reject(new Error("Erro ao ler arquivo"));
+          };
+
+          reader.readAsArrayBuffer(file);
+        });
+      } catch (err) {
+        const error = err as Error;
+        setError(error);
+        throw error;
+      } finally {
         setIsProcessing(false);
         setProgress(0);
-        throw new Error(errorMsg);
       }
-
-      // Lazy load xlsx library
-      const XLSX = await import("xlsx");
-      
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        
-        reader.onload = (e) => {
-          try {
-            setProgress(30);
-            
-            const data = new Uint8Array(e.target?.result as ArrayBuffer);
-            const workbook = XLSX.read(data, { type: "array" });
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
-            
-            setProgress(60);
-            
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-            const headers = jsonData[0] as string[];
-            const rows = jsonData.slice(1) as unknown[][];
-            
-            setProgress(90);
-            
-            const result: ExcelData = {
-              headers,
-              rows,
-              metadata: {
-                fileName: file.name,
-                sheetName,
-                totalRows: rows.length,
-                processedAt: new Date(),
-              },
-            };
-            
-            setProgress(100);
-            resolve(result);
-          } catch (err) {
-            reject(new Error(`Erro ao processar arquivo Excel: ${(err as Error).message}`));
-          }
-        };
-        
-        reader.onerror = () => {
-          reject(new Error("Erro ao ler arquivo"));
-        };
-        
-        reader.readAsArrayBuffer(file);
-      });
-    } catch (err) {
-      const error = err as Error;
-      setError(error);
-      throw error;
-    } finally {
-      setIsProcessing(false);
-      setProgress(0);
-    }
-  }, []);
+    },
+    [],
+  );
 
   // Export to Excel
   const exportToExcel = useCallback(async (data: ExcelData, filename = "export.xlsx") => {
@@ -178,14 +183,13 @@ export function useExcelProcessing() {
     try {
       // Lazy load xlsx library
       const XLSX = await import("xlsx");
-      
+
       const ws = XLSX.utils.aoa_to_sheet([data.headers, ...data.rows]);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Data");
-      
+
       // Generate file and trigger download
       XLSX.writeFile(wb, filename);
-      
     } catch (err) {
       const error = err as Error;
       setError(error);
@@ -203,16 +207,16 @@ export function useExcelProcessing() {
     try {
       // Lazy load csv-parse library
       const { parse } = await import("csv-parse/sync");
-      
+
       const records = parse(csvData, {
         delimiter,
         skip_empty_lines: true,
         trim: true,
       });
-      
+
       const headers = records[0];
       const rows = records.slice(1);
-      
+
       return {
         headers,
         rows,
@@ -247,7 +251,7 @@ export const ExcelTemplates = {
     optionalHeaders: ["data_nascimento", "endereco", "observacoes"],
     validation: (data: ExcelData) => {
       // Validate patient data structure - ensure all required headers are present
-      if (!data.headers) {return false;}
+      if (!data.headers) return false;
       const requiredHeaders = ["nome", "cpf"];
       const normalizedHeaders = new Set(data.headers.map(h => h.toLowerCase().trim()));
       return requiredHeaders.every(h => normalizedHeaders.has(h));
@@ -258,7 +262,7 @@ export const ExcelTemplates = {
     optionalHeaders: ["observacoes", "valor", "status"],
     validation: (data: ExcelData) => {
       // Validate appointment data structure - ensure all required headers are present
-      if (!data.headers) {return false;}
+      if (!data.headers) return false;
       const requiredHeaders = ["data", "horario", "paciente", "procedimento"];
       const normalizedHeaders = new Set(data.headers.map(h => h.toLowerCase().trim()));
       return requiredHeaders.every(h => normalizedHeaders.has(h));
@@ -269,7 +273,7 @@ export const ExcelTemplates = {
     optionalHeaders: ["categoria", "observacoes", "paciente"],
     validation: (data: ExcelData) => {
       // Validate financial data structure - ensure all required headers are present
-      if (!data.headers) {return false;}
+      if (!data.headers) return false;
       const requiredHeaders = ["descricao", "valor", "data", "tipo"];
       const normalizedHeaders = new Set(data.headers.map(h => h.toLowerCase().trim()));
       return requiredHeaders.every(h => normalizedHeaders.has(h));

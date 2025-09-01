@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface ConfidenceIndicatorProps {
   confidence: number;
@@ -14,14 +14,14 @@ export function ConfidenceIndicator({
   confidence,
   className,
   showPercentage = true,
-  size = "md"
+  size = "md",
 }: ConfidenceIndicatorProps) {
   // Clamp confidence to [0,100] range and round it
   const clampedConfidence = Math.min(100, Math.max(0, Math.round(confidence)));
-  
+
   const getConfidenceLevel = (confidence: number) => {
-    if (confidence >= 85) {return "high";}
-    if (confidence >= 60) {return "medium";}
+    if (confidence >= 85) return "high";
+    if (confidence >= 60) return "medium";
     return "low";
   };
 
@@ -73,17 +73,17 @@ export function ConfidenceIndicator({
         "inline-flex items-center gap-2 border font-medium transition-colors",
         colorClass,
         sizeClass,
-        className
+        className,
       )}
       role="status"
-      aria-label={`Nível de confiança: ${text}${showPercentage ? `, ${clampedConfidence}%` : ''}`}
+      aria-label={`Nível de confiança: ${text}${showPercentage ? `, ${clampedConfidence}%` : ""}`}
     >
       <div
         className={cn(
           "w-2 h-2 rounded-full",
           level === "high" && "bg-green-600",
-          level === "medium" && "bg-yellow-600", 
-          level === "low" && "bg-red-600"
+          level === "medium" && "bg-yellow-600",
+          level === "low" && "bg-red-600",
         )}
         aria-hidden="true"
       />

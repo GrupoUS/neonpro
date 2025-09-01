@@ -195,7 +195,8 @@ export class TestPerformanceMonitor {
 export class TestLGPDCompliance {
   static validateConsentRequirement(testData: unknown): boolean {
     return (
-      (testData as unknown).lgpd_consent === true && (testData as unknown).lgpd_consent_date !== undefined
+      (testData as unknown).lgpd_consent === true
+      && (testData as unknown).lgpd_consent_date !== undefined
     );
   }
 

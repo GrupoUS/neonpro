@@ -154,7 +154,7 @@ const Input = forwardRef<
 
   // Determine input type based on healthcare type
   const getInputType = () => {
-    if (type) {return type;}
+    if (type) return type;
 
     switch (healthcareType) {
       case "medical-date":
@@ -203,7 +203,7 @@ const Input = forwardRef<
 
   // Enhanced placeholder text for healthcare contexts
   const getPlaceholder = () => {
-    if (props.placeholder) {return props.placeholder;}
+    if (props.placeholder) return props.placeholder;
 
     switch (healthcareType) {
       case "cpf":

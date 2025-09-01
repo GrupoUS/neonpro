@@ -4,8 +4,8 @@
  * WCAG 2.1 AA+ compliance for accessibility in critical medical situations
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface EmergencyVoicePattern {
   commands: string[];
@@ -73,18 +73,36 @@ export function useEmergencyVoiceCommands({
   const emergencyPatterns: EmergencyVoicePattern[] = [
     {
       commands: [
-        "emergência", "emergency", "socorro", "help", "ajuda", "urgente", 
-        "não consigo respirar", "can't breathe", "dor no peito", "chest pain",
-        "desmaiei", "fainted", "tonteira", "dizzy", "sangramento", "bleeding"
+        "emergência",
+        "emergency",
+        "socorro",
+        "help",
+        "ajuda",
+        "urgente",
+        "não consigo respirar",
+        "can't breathe",
+        "dor no peito",
+        "chest pain",
+        "desmaiei",
+        "fainted",
+        "tonteira",
+        "dizzy",
+        "sangramento",
+        "bleeding",
       ],
       intent: "emergency",
       priority: "critical",
-      response: "Situação de emergência detectada. Acionando protocolo de emergência. Mantenha-se calmo, ajuda está a caminho.",
+      response:
+        "Situação de emergência detectada. Acionando protocolo de emergência. Mantenha-se calmo, ajuda está a caminho.",
     },
     {
       commands: [
-        "chamar médico", "call doctor", "quero falar com médico", 
-        "preciso de médico", "médico urgente", "doctor please"
+        "chamar médico",
+        "call doctor",
+        "quero falar com médico",
+        "preciso de médico",
+        "médico urgente",
+        "doctor please",
       ],
       intent: "call_doctor",
       priority: "high",
@@ -92,26 +110,50 @@ export function useEmergencyVoiceCommands({
     },
     {
       commands: [
-        "dor", "pain", "está doendo", "hurts", "sintomas", "symptoms",
-        "não me sinto bem", "don't feel well", "mal estar", "nausea"
+        "dor",
+        "pain",
+        "está doendo",
+        "hurts",
+        "sintomas",
+        "symptoms",
+        "não me sinto bem",
+        "don't feel well",
+        "mal estar",
+        "nausea",
       ],
       intent: "symptoms",
       priority: "high",
-      response: "Entendo que você está sentindo desconforto. Vou registrar seus sintomas e conectar você com nossa equipe médica.",
+      response:
+        "Entendo que você está sentindo desconforto. Vou registrar seus sintomas e conectar você com nossa equipe médica.",
     },
     {
       commands: [
-        "medicamento", "medication", "remédio", "medicine", "comprimido", "pill",
-        "tomar medicação", "take medication", "dose", "dosagem"
+        "medicamento",
+        "medication",
+        "remédio",
+        "medicine",
+        "comprimido",
+        "pill",
+        "tomar medicação",
+        "take medication",
+        "dose",
+        "dosagem",
       ],
       intent: "medication",
       priority: "medium",
-      response: "Vou ajudá-lo com informações sobre medicação. Conectando com farmacêutico ou médico.",
+      response:
+        "Vou ajudá-lo com informações sobre medicação. Conectando com farmacêutico ou médico.",
     },
     {
       commands: [
-        "dor severa", "severe pain", "dor insuportável", "unbearable pain",
-        "dor 10", "pain level 10", "agonia", "agony"
+        "dor severa",
+        "severe pain",
+        "dor insuportável",
+        "unbearable pain",
+        "dor 10",
+        "pain level 10",
+        "agonia",
+        "agony",
       ],
       intent: "pain",
       priority: "critical",
@@ -123,7 +165,7 @@ export function useEmergencyVoiceCommands({
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      
+
       if (SpeechRecognition) {
         const recognitionInstance = new SpeechRecognition();
         recognitionInstance.continuous = enableContinuousListening;
@@ -133,44 +175,44 @@ export function useEmergencyVoiceCommands({
 
         // Configure for emergency scenarios - more sensitive
         recognitionInstance.grammars = undefined; // Allow all speech
-        
+
         recognitionRef.current = recognitionInstance;
         setRecognition(prev => ({ ...prev, isSupported: true }));
       } else {
-        setRecognition(prev => ({ 
-          ...prev, 
-          isSupported: false, 
-          error: "Speech recognition not supported in this browser" 
+        setRecognition(prev => ({
+          ...prev,
+          isSupported: false,
+          error: "Speech recognition not supported in this browser",
         }));
       }
 
       // Initialize Speech Synthesis
-      if ('speechSynthesis' in window) {
+      if ("speechSynthesis" in window) {
         synthRef.current = window.speechSynthesis;
         setSynthesis(prev => ({ ...prev, isSupported: true }));
-        
+
         // Load available voices
         const loadVoices = () => {
           const voices = window.speechSynthesis.getVoices();
-          const portugueseVoices = voices.filter(voice => 
-            voice.lang.startsWith('pt') || voice.lang.startsWith('en')
+          const portugueseVoices = voices.filter(voice =>
+            voice.lang.startsWith("pt") || voice.lang.startsWith("en")
           );
-          
+
           setSynthesis(prev => ({
             ...prev,
             voices: portugueseVoices,
-            selectedVoice: portugueseVoices.find(v => v.lang === 'pt-BR') || 
-                          portugueseVoices.find(v => v.lang.startsWith('pt')) ||
-                          voices[0] || null
+            selectedVoice: portugueseVoices.find(v => v.lang === "pt-BR")
+              || portugueseVoices.find(v => v.lang.startsWith("pt"))
+              || voices[0] || null,
           }));
         };
 
         // Load voices immediately and on voiceschanged event
         loadVoices();
-        window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+        window.speechSynthesis.addEventListener("voiceschanged", loadVoices);
 
         return () => {
-          window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+          window.speechSynthesis.removeEventListener("voiceschanged", loadVoices);
         };
       }
     }
@@ -179,11 +221,11 @@ export function useEmergencyVoiceCommands({
   // Setup Speech Recognition Event Handlers
   useEffect(() => {
     const recognitionInstance = recognitionRef.current;
-    if (!recognitionInstance) {return;}
+    if (!recognitionInstance) return;
 
     const handleResult = (event: SpeechRecognitionEvent) => {
-      let interimTranscript = '';
-      let finalTranscript = '';
+      let interimTranscript = "";
+      let finalTranscript = "";
       let maxConfidence = 0;
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -215,7 +257,7 @@ export function useEmergencyVoiceCommands({
 
     const handleError = (event: SpeechRecognitionErrorEvent) => {
       let errorMessage = "Erro no reconhecimento de voz";
-      
+
       switch (event.error) {
         case "no-speech":
           errorMessage = "Nenhuma fala detectada. Tente falar mais alto.";
@@ -251,7 +293,7 @@ export function useEmergencyVoiceCommands({
 
     const handleStart = () => {
       setRecognition(prev => ({ ...prev, isListening: true, error: null }));
-      
+
       // Set emergency timeout - if continuous listening for emergencies
       if (enableContinuousListening) {
         emergencyTimeoutRef.current = setTimeout(() => {
@@ -266,48 +308,48 @@ export function useEmergencyVoiceCommands({
 
     const handleEnd = () => {
       setRecognition(prev => ({ ...prev, isListening: false }));
-      
+
       if (emergencyTimeoutRef.current) {
         clearTimeout(emergencyTimeoutRef.current);
         emergencyTimeoutRef.current = null;
       }
-      
+
       // Restart if continuous mode and no error
       if (enableContinuousListening && !recognition.error) {
         setTimeout(() => startListening(), 1000);
       }
     };
 
-    recognitionInstance.addEventListener('result', handleResult);
-    recognitionInstance.addEventListener('error', handleError);
-    recognitionInstance.addEventListener('start', handleStart);
-    recognitionInstance.addEventListener('end', handleEnd);
+    recognitionInstance.addEventListener("result", handleResult);
+    recognitionInstance.addEventListener("error", handleError);
+    recognitionInstance.addEventListener("start", handleStart);
+    recognitionInstance.addEventListener("end", handleEnd);
 
     return () => {
-      recognitionInstance.removeEventListener('result', handleResult);
-      recognitionInstance.removeEventListener('error', handleError);
-      recognitionInstance.removeEventListener('start', handleStart);
-      recognitionInstance.removeEventListener('end', handleEnd);
+      recognitionInstance.removeEventListener("result", handleResult);
+      recognitionInstance.removeEventListener("error", handleError);
+      recognitionInstance.removeEventListener("start", handleStart);
+      recognitionInstance.removeEventListener("end", handleEnd);
     };
   }, [recognition.error, enableContinuousListening, toast]);
 
   // Process emergency commands
   const processEmergencyCommand = useCallback((transcript: string, confidence: number) => {
     const lowerTranscript = transcript.toLowerCase();
-    
+
     for (const pattern of emergencyPatterns) {
-      const matchedCommand = pattern.commands.find(cmd => 
+      const matchedCommand = pattern.commands.find(cmd =>
         lowerTranscript.includes(cmd.toLowerCase())
       );
-      
+
       if (matchedCommand && confidence >= emergencyThreshold) {
         // Emergency detected
         if (pattern.priority === "critical") {
           onEmergencyDetected(pattern.intent, transcript);
-          
+
           // Immediate audio feedback for critical emergencies
           speakText(pattern.response, { priority: "critical", interrupt: true });
-          
+
           toast({
             title: "🚨 EMERGÊNCIA MÉDICA DETECTADA",
             description: pattern.response,
@@ -317,13 +359,13 @@ export function useEmergencyVoiceCommands({
           // High/Medium priority
           onCommandExecuted(matchedCommand, pattern.intent);
           speakText(pattern.response, { priority: pattern.priority });
-          
+
           toast({
             title: "Comando de Voz Reconhecido",
             description: `Executando: ${pattern.response}`,
           });
         }
-        
+
         break; // Only process first match
       }
     }
@@ -331,7 +373,7 @@ export function useEmergencyVoiceCommands({
 
   // Start listening
   const startListening = useCallback(() => {
-    if (!recognitionRef.current || recognition.isListening) {return;}
+    if (!recognitionRef.current || recognition.isListening) return;
 
     try {
       setRecognition(prev => ({ ...prev, transcript: "", finalTranscript: "" }));
@@ -346,7 +388,7 @@ export function useEmergencyVoiceCommands({
 
   // Stop listening
   const stopListening = useCallback(() => {
-    if (!recognitionRef.current || !recognition.isListening) {return;}
+    if (!recognitionRef.current || !recognition.isListening) return;
 
     recognitionRef.current.stop();
   }, [recognition.isListening]);
@@ -362,23 +404,23 @@ export function useEmergencyVoiceCommands({
 
   // Speak text with emergency prioritization
   const speakText = useCallback((
-    text: string, 
+    text: string,
     options: {
       priority?: "critical" | "high" | "medium";
       interrupt?: boolean;
       rate?: number;
       pitch?: number;
       volume?: number;
-    } = {}
+    } = {},
   ) => {
-    if (!synthRef.current || !synthesis.isSupported) {return;}
+    if (!synthRef.current || !synthesis.isSupported) return;
 
-    const { 
-      priority = "medium", 
-      interrupt = false, 
-      rate = 1, 
-      pitch = 1, 
-      volume = 1 
+    const {
+      priority = "medium",
+      interrupt = false,
+      rate = 1,
+      pitch = 1,
+      volume = 1,
     } = options;
 
     // Stop current speech if interrupting (for emergencies)
@@ -387,7 +429,7 @@ export function useEmergencyVoiceCommands({
     }
 
     const utterance = new SpeechSynthesisUtterance(text);
-    
+
     // Configure voice settings based on priority
     utterance.voice = synthesis.selectedVoice;
     utterance.rate = priority === "critical" ? 0.9 : rate; // Slightly slower for critical messages
@@ -425,14 +467,14 @@ export function useEmergencyVoiceCommands({
 
   // Emergency announcement
   const announceEmergency = useCallback((message?: string) => {
-    const emergencyMessage = message || 
-      "Situação de emergência detectada. Conectando com equipe médica. Mantenha-se calmo.";
-    
-    speakText(emergencyMessage, { 
-      priority: "critical", 
+    const emergencyMessage = message
+      || "Situação de emergência detectada. Conectando com equipe médica. Mantenha-se calmo.";
+
+    speakText(emergencyMessage, {
+      priority: "critical",
       interrupt: true,
       rate: 0.8, // Slower for clarity in emergency
-      volume: 1 // Full volume
+      volume: 1, // Full volume
     });
   }, [speakText]);
 
@@ -454,13 +496,13 @@ export function useEmergencyVoiceCommands({
     startListening,
     stopListening,
     toggleListening,
-    
+
     // Speech Synthesis
     synthesis,
     speakText,
     stopSpeaking,
     announceEmergency,
-    
+
     // Utilities
     isVoiceSupported: recognition.isSupported && synthesis.isSupported,
     isActive: recognition.isListening || synthesis.isSpeaking,

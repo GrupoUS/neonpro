@@ -3,7 +3,7 @@
  * Tests Brazilian data privacy law compliance including consent, data processing, and retention
  */
 
-import type { ComplianceTestResult, ComplianceViolation } from '../types';
+import type { ComplianceTestResult, ComplianceViolation } from "../types";
 
 export interface LGPDTestConfig {
   checkConsent?: boolean;
@@ -20,7 +20,7 @@ interface LGPDCheck {
   article: string; // LGPD Article reference
   requirement: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   dataCategory?: string;
   legalBasis?: string;
 }
@@ -35,7 +35,7 @@ interface ConsentRecord {
   consentDate: Date;
   expiryDate?: Date;
   withdrawalDate?: Date;
-  processingStatus: 'active' | 'suspended' | 'terminated';
+  processingStatus: "active" | "suspended" | "terminated";
 }
 
 interface DataProcessingActivity {
@@ -62,83 +62,83 @@ export class LGPDTester {
     checkDataMinimization: true,
     checkUserRights: true,
     auditDataCollection: true,
-    timeout: 30_000
+    timeout: 30_000,
   };
 
   private lgpdChecks: LGPDCheck[] = [
     {
-      id: 'lgpd_consent_explicit',
-      article: 'Art. 8º',
-      requirement: 'Explicit Consent',
-      description: 'Consent must be provided by clear and affirmative act',
-      severity: 'critical',
-      legalBasis: 'consent'
+      id: "lgpd_consent_explicit",
+      article: "Art. 8º",
+      requirement: "Explicit Consent",
+      description: "Consent must be provided by clear and affirmative act",
+      severity: "critical",
+      legalBasis: "consent",
     },
     {
-      id: 'lgpd_consent_specific',
-      article: 'Art. 8º, §4º',
-      requirement: 'Specific Consent',
-      description: 'Consent must be for specific purposes',
-      severity: 'high',
-      legalBasis: 'consent'
+      id: "lgpd_consent_specific",
+      article: "Art. 8º, §4º",
+      requirement: "Specific Consent",
+      description: "Consent must be for specific purposes",
+      severity: "high",
+      legalBasis: "consent",
     },
     {
-      id: 'lgpd_consent_informed',
-      article: 'Art. 9º',
-      requirement: 'Informed Consent',
-      description: 'Data subject must be informed about processing purposes',
-      severity: 'critical'
+      id: "lgpd_consent_informed",
+      article: "Art. 9º",
+      requirement: "Informed Consent",
+      description: "Data subject must be informed about processing purposes",
+      severity: "critical",
     },
     {
-      id: 'lgpd_data_minimization',
-      article: 'Art. 6º, III',
-      requirement: 'Data Minimization',
-      description: 'Process only necessary data for stated purposes',
-      severity: 'medium'
+      id: "lgpd_data_minimization",
+      article: "Art. 6º, III",
+      requirement: "Data Minimization",
+      description: "Process only necessary data for stated purposes",
+      severity: "medium",
     },
     {
-      id: 'lgpd_purpose_limitation',
-      article: 'Art. 6º, I',
-      requirement: 'Purpose Limitation',
-      description: 'Process data only for legitimate, specific purposes',
-      severity: 'high'
+      id: "lgpd_purpose_limitation",
+      article: "Art. 6º, I",
+      requirement: "Purpose Limitation",
+      description: "Process data only for legitimate, specific purposes",
+      severity: "high",
     },
     {
-      id: 'lgpd_retention_limitation',
-      article: 'Art. 15',
-      requirement: 'Storage Limitation',
-      description: 'Keep data only for necessary period',
-      severity: 'medium'
+      id: "lgpd_retention_limitation",
+      article: "Art. 15",
+      requirement: "Storage Limitation",
+      description: "Keep data only for necessary period",
+      severity: "medium",
     },
     {
-      id: 'lgpd_data_security',
-      article: 'Art. 46',
-      requirement: 'Data Security',
-      description: 'Implement appropriate security measures',
-      severity: 'critical'
+      id: "lgpd_data_security",
+      article: "Art. 46",
+      requirement: "Data Security",
+      description: "Implement appropriate security measures",
+      severity: "critical",
     },
     {
-      id: 'lgpd_data_subject_rights',
-      article: 'Art. 18',
-      requirement: 'Data Subject Rights',
-      description: 'Enable exercise of data subject rights',
-      severity: 'high'
+      id: "lgpd_data_subject_rights",
+      article: "Art. 18",
+      requirement: "Data Subject Rights",
+      description: "Enable exercise of data subject rights",
+      severity: "high",
     },
     {
-      id: 'lgpd_privacy_notice',
-      article: 'Art. 9º',
-      requirement: 'Privacy Notice',
-      description: 'Provide clear information about data processing',
-      severity: 'high'
+      id: "lgpd_privacy_notice",
+      article: "Art. 9º",
+      requirement: "Privacy Notice",
+      description: "Provide clear information about data processing",
+      severity: "high",
     },
     {
-      id: 'lgpd_children_protection',
-      article: 'Art. 14',
-      requirement: 'Children Data Protection',
-      description: 'Special protection for children\'s data',
-      severity: 'critical',
-      dataCategory: 'children'
-    }
+      id: "lgpd_children_protection",
+      article: "Art. 14",
+      requirement: "Children Data Protection",
+      description: "Special protection for children's data",
+      severity: "critical",
+      dataCategory: "children",
+    },
   ];
 
   /**
@@ -192,9 +192,9 @@ export class LGPDTester {
       }
 
       const score = this.calculateLGPDScore(violations, totalChecks);
-      
+
       const result: ComplianceTestResult = {
-        framework: 'LGPD',
+        framework: "LGPD",
         page: url,
         score,
         violations,
@@ -202,17 +202,18 @@ export class LGPDTester {
         incomplete: 0,
         duration: Date.now() - startTime,
         timestamp: startTime,
-        status: violations.filter(v => v.severity === 'critical').length === 0 ? 'passed' : 'failed'
+        status: violations.filter(v => v.severity === "critical").length === 0
+          ? "passed"
+          : "failed",
       };
 
       console.log(`✅ LGPD test completed - Score: ${score}%, Violations: ${violations.length}`);
       return result;
-
     } catch (error) {
       console.error(`❌ LGPD test failed for ${url}:`, error);
-      
+
       return {
-        framework: 'LGPD',
+        framework: "LGPD",
         page: url,
         score: 0,
         violations: [],
@@ -220,8 +221,8 @@ export class LGPDTester {
         incomplete: 0,
         duration: Date.now() - startTime,
         timestamp: startTime,
-        status: 'error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        status: "error",
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -237,12 +238,12 @@ export class LGPDTester {
       const hasConsentInterface = await this.checkForConsentInterface(url);
       if (!hasConsentInterface) {
         violations.push(this.createViolation(
-          'lgpd_consent_interface',
-          'Art. 8º',
-          'Missing consent interface',
-          'No consent banner or modal found for data collection',
+          "lgpd_consent_interface",
+          "Art. 8º",
+          "Missing consent interface",
+          "No consent banner or modal found for data collection",
           url,
-          'critical'
+          "critical",
         ));
       }
 
@@ -250,12 +251,12 @@ export class LGPDTester {
       const consentOptions = await this.checkConsentGranularity(url);
       if (!consentOptions.hasGranularOptions) {
         violations.push(this.createViolation(
-          'lgpd_consent_granular',
-          'Art. 8º, §4º',
-          'Non-granular consent',
-          'Consent must allow users to choose specific purposes',
+          "lgpd_consent_granular",
+          "Art. 8º, §4º",
+          "Non-granular consent",
+          "Consent must allow users to choose specific purposes",
           url,
-          'high'
+          "high",
         ));
       }
 
@@ -263,17 +264,16 @@ export class LGPDTester {
       const consentPersistence = await this.checkConsentPersistence(url);
       if (!consentPersistence.isPersistent) {
         violations.push(this.createViolation(
-          'lgpd_consent_persistence',
-          'Art. 8º',
-          'Consent not properly stored',
-          'Consent decisions are not properly recorded and stored',
+          "lgpd_consent_persistence",
+          "Art. 8º",
+          "Consent not properly stored",
+          "Consent decisions are not properly recorded and stored",
           url,
-          'medium'
+          "medium",
         ));
       }
-
     } catch (error) {
-      console.error('Error checking consent compliance:', error);
+      console.error("Error checking consent compliance:", error);
     }
 
     return violations;
@@ -290,21 +290,21 @@ export class LGPDTester {
       const privacyNotice = await this.checkPrivacyNotice(url);
       if (!privacyNotice.exists) {
         violations.push(this.createViolation(
-          'lgpd_privacy_notice',
-          'Art. 9º',
-          'Missing privacy notice',
-          'Privacy policy or notice not found or not accessible',
+          "lgpd_privacy_notice",
+          "Art. 9º",
+          "Missing privacy notice",
+          "Privacy policy or notice not found or not accessible",
           url,
-          'critical'
+          "critical",
         ));
       } else if (!privacyNotice.isComplete) {
         violations.push(this.createViolation(
-          'lgpd_privacy_notice_incomplete',
-          'Art. 9º',
-          'Incomplete privacy notice',
-          'Privacy notice missing required information about data processing',
+          "lgpd_privacy_notice_incomplete",
+          "Art. 9º",
+          "Incomplete privacy notice",
+          "Privacy notice missing required information about data processing",
           url,
-          'high'
+          "high",
         ));
       }
 
@@ -312,12 +312,12 @@ export class LGPDTester {
       const legalBasis = await this.checkLegalBasisSpecification(url);
       if (!legalBasis.isSpecified) {
         violations.push(this.createViolation(
-          'lgpd_legal_basis',
-          'Art. 7º',
-          'Legal basis not specified',
-          'Legal basis for data processing is not clearly specified',
+          "lgpd_legal_basis",
+          "Art. 7º",
+          "Legal basis not specified",
+          "Legal basis for data processing is not clearly specified",
           url,
-          'high'
+          "high",
         ));
       }
 
@@ -325,12 +325,12 @@ export class LGPDTester {
       const purposeSpec = await this.checkPurposeSpecification(url);
       if (!purposeSpec.isSpecific) {
         violations.push(this.createViolation(
-          'lgpd_purpose_vague',
-          'Art. 6º, I',
-          'Vague processing purposes',
-          'Data processing purposes are not sufficiently specific',
+          "lgpd_purpose_vague",
+          "Art. 6º, I",
+          "Vague processing purposes",
+          "Data processing purposes are not sufficiently specific",
           url,
-          'medium'
+          "medium",
         ));
       }
 
@@ -338,17 +338,16 @@ export class LGPDTester {
       const dataMinimization = await this.checkDataMinimization(url);
       if (!dataMinimization.isMinimized) {
         violations.push(this.createViolation(
-          'lgpd_data_excess',
-          'Art. 6º, III',
-          'Excessive data collection',
-          'Collecting more personal data than necessary for stated purposes',
+          "lgpd_data_excess",
+          "Art. 6º, III",
+          "Excessive data collection",
+          "Collecting more personal data than necessary for stated purposes",
           url,
-          'medium'
+          "medium",
         ));
       }
-
     } catch (error) {
-      console.error('Error checking data processing compliance:', error);
+      console.error("Error checking data processing compliance:", error);
     }
 
     return violations;
@@ -365,29 +364,28 @@ export class LGPDTester {
       const retentionPolicy = await this.checkRetentionPolicy(url);
       if (!retentionPolicy.isSpecified) {
         violations.push(this.createViolation(
-          'lgpd_retention_unspecified',
-          'Art. 15',
-          'Retention period not specified',
-          'Data retention periods are not clearly specified',
+          "lgpd_retention_unspecified",
+          "Art. 15",
+          "Retention period not specified",
+          "Data retention periods are not clearly specified",
           url,
-          'medium'
+          "medium",
         ));
       }
 
       // Check retention justification
       if (!retentionPolicy.isJustified) {
         violations.push(this.createViolation(
-          'lgpd_retention_unjustified',
-          'Art. 15',
-          'Retention period not justified',
-          'Data retention periods are not justified by processing purposes',
+          "lgpd_retention_unjustified",
+          "Art. 15",
+          "Retention period not justified",
+          "Data retention periods are not justified by processing purposes",
           url,
-          'medium'
+          "medium",
         ));
       }
-
     } catch (error) {
-      console.error('Error checking retention compliance:', error);
+      console.error("Error checking retention compliance:", error);
     }
 
     return violations;
@@ -404,42 +402,41 @@ export class LGPDTester {
       const rightsInterface = await this.checkDataSubjectRightsInterface(url);
       if (!rightsInterface.exists) {
         violations.push(this.createViolation(
-          'lgpd_rights_interface',
-          'Art. 18',
-          'Missing data subject rights interface',
-          'No interface provided for exercising data subject rights',
+          "lgpd_rights_interface",
+          "Art. 18",
+          "Missing data subject rights interface",
+          "No interface provided for exercising data subject rights",
           url,
-          'high'
+          "high",
         ));
       }
 
       // Check specific rights implementation
       const rightsImplementation = await this.checkRightsImplementation(url);
-      
+
       if (!rightsImplementation.hasAccessRight) {
         violations.push(this.createViolation(
-          'lgpd_access_right',
-          'Art. 18, II',
-          'Right of access not implemented',
-          'Users cannot access their personal data',
+          "lgpd_access_right",
+          "Art. 18, II",
+          "Right of access not implemented",
+          "Users cannot access their personal data",
           url,
-          'high'
+          "high",
         ));
       }
 
       if (!rightsImplementation.hasPortabilityRight) {
         violations.push(this.createViolation(
-          'lgpd_portability_right',
-          'Art. 18, V',
-          'Right of portability not implemented',
-          'Users cannot port their data to another service provider',
+          "lgpd_portability_right",
+          "Art. 18, V",
+          "Right of portability not implemented",
+          "Users cannot port their data to another service provider",
           url,
-          'medium'
+          "medium",
         ));
       }
-
     } catch (error) {
-      console.error('Error checking user rights compliance:', error);
+      console.error("Error checking user rights compliance:", error);
     }
 
     return violations;
@@ -456,12 +453,12 @@ export class LGPDTester {
       const hiddenCollection = await this.checkHiddenDataCollection(url);
       if (hiddenCollection.detected) {
         violations.push(this.createViolation(
-          'lgpd_hidden_collection',
-          'Art. 6º, V',
-          'Hidden data collection detected',
-          'Data is being collected without clear notice to users',
+          "lgpd_hidden_collection",
+          "Art. 6º, V",
+          "Hidden data collection detected",
+          "Data is being collected without clear notice to users",
           url,
-          'critical'
+          "critical",
         ));
       }
 
@@ -469,17 +466,16 @@ export class LGPDTester {
       const thirdPartySharing = await this.checkThirdPartyDataSharing(url);
       if (thirdPartySharing.undisclosedSharing) {
         violations.push(this.createViolation(
-          'lgpd_undisclosed_sharing',
-          'Art. 9º, II',
-          'Undisclosed third-party sharing',
-          'Data is shared with third parties without proper disclosure',
+          "lgpd_undisclosed_sharing",
+          "Art. 9º, II",
+          "Undisclosed third-party sharing",
+          "Data is shared with third parties without proper disclosure",
           url,
-          'high'
+          "high",
         ));
       }
-
     } catch (error) {
-      console.error('Error auditing data collection:', error);
+      console.error("Error auditing data collection:", error);
     }
 
     return violations;
@@ -494,17 +490,17 @@ export class LGPDTester {
     rule: string,
     description: string,
     page: string,
-    severity: 'low' | 'medium' | 'high' | 'critical'
+    severity: "low" | "medium" | "high" | "critical",
   ): ComplianceViolation {
     return {
       id: `${id}_${Date.now()}`,
-      framework: 'LGPD',
+      framework: "LGPD",
       severity,
       rule: `${rule} (${article})`,
       description,
       page,
       timestamp: Date.now(),
-      status: 'open'
+      status: "open",
     };
   }
 
@@ -512,7 +508,7 @@ export class LGPDTester {
    * Calculate LGPD compliance score
    */
   private calculateLGPDScore(violations: ComplianceViolation[], totalChecks: number): number {
-    if (totalChecks === 0) {return 100;}
+    if (totalChecks === 0) return 100;
 
     const weightedViolations = violations.reduce((sum, violation) => {
       const weight = this.getViolationWeight(violation.severity);
@@ -521,7 +517,7 @@ export class LGPDTester {
 
     const maxPossiblePenalty = totalChecks * 10; // Max weight for critical violations
     const penaltyFactor = (weightedViolations / maxPossiblePenalty) * 100;
-    
+
     return Math.max(0, Math.round(100 - penaltyFactor));
   }
 
@@ -530,13 +526,13 @@ export class LGPDTester {
    */
   private getViolationWeight(severity: string): number {
     switch (severity) {
-      case 'critical':
+      case "critical":
         return 10;
-      case 'high':
+      case "high":
         return 5;
-      case 'medium':
+      case "medium":
         return 2;
-      case 'low':
+      case "low":
         return 1;
       default:
         return 1;
@@ -549,59 +545,63 @@ export class LGPDTester {
     return Math.random() > 0.3;
   }
 
-  private async checkConsentGranularity(url: string): Promise<{hasGranularOptions: boolean}> {
+  private async checkConsentGranularity(url: string): Promise<{ hasGranularOptions: boolean; }> {
     return { hasGranularOptions: Math.random() > 0.4 };
   }
 
-  private async checkConsentPersistence(url: string): Promise<{isPersistent: boolean}> {
+  private async checkConsentPersistence(url: string): Promise<{ isPersistent: boolean; }> {
     return { isPersistent: Math.random() > 0.2 };
   }
 
-  private async checkPrivacyNotice(url: string): Promise<{exists: boolean, isComplete: boolean}> {
-    return { 
-      exists: Math.random() > 0.1, 
-      isComplete: Math.random() > 0.3 
+  private async checkPrivacyNotice(
+    url: string,
+  ): Promise<{ exists: boolean; isComplete: boolean; }> {
+    return {
+      exists: Math.random() > 0.1,
+      isComplete: Math.random() > 0.3,
     };
   }
 
-  private async checkLegalBasisSpecification(url: string): Promise<{isSpecified: boolean}> {
+  private async checkLegalBasisSpecification(url: string): Promise<{ isSpecified: boolean; }> {
     return { isSpecified: Math.random() > 0.3 };
   }
 
-  private async checkPurposeSpecification(url: string): Promise<{isSpecific: boolean}> {
+  private async checkPurposeSpecification(url: string): Promise<{ isSpecific: boolean; }> {
     return { isSpecific: Math.random() > 0.4 };
   }
 
-  private async checkDataMinimization(url: string): Promise<{isMinimized: boolean}> {
+  private async checkDataMinimization(url: string): Promise<{ isMinimized: boolean; }> {
     return { isMinimized: Math.random() > 0.5 };
   }
 
-  private async checkRetentionPolicy(url: string): Promise<{isSpecified: boolean, isJustified: boolean}> {
-    return { 
-      isSpecified: Math.random() > 0.4, 
-      isJustified: Math.random() > 0.5 
+  private async checkRetentionPolicy(
+    url: string,
+  ): Promise<{ isSpecified: boolean; isJustified: boolean; }> {
+    return {
+      isSpecified: Math.random() > 0.4,
+      isJustified: Math.random() > 0.5,
     };
   }
 
-  private async checkDataSubjectRightsInterface(url: string): Promise<{exists: boolean}> {
+  private async checkDataSubjectRightsInterface(url: string): Promise<{ exists: boolean; }> {
     return { exists: Math.random() > 0.3 };
   }
 
   private async checkRightsImplementation(url: string): Promise<{
-    hasAccessRight: boolean,
-    hasPortabilityRight: boolean
+    hasAccessRight: boolean;
+    hasPortabilityRight: boolean;
   }> {
-    return { 
+    return {
       hasAccessRight: Math.random() > 0.4,
-      hasPortabilityRight: Math.random() > 0.6
+      hasPortabilityRight: Math.random() > 0.6,
     };
   }
 
-  private async checkHiddenDataCollection(url: string): Promise<{detected: boolean}> {
+  private async checkHiddenDataCollection(url: string): Promise<{ detected: boolean; }> {
     return { detected: Math.random() < 0.1 };
   }
 
-  private async checkThirdPartyDataSharing(url: string): Promise<{undisclosedSharing: boolean}> {
+  private async checkThirdPartyDataSharing(url: string): Promise<{ undisclosedSharing: boolean; }> {
     return { undisclosedSharing: Math.random() < 0.2 };
   }
 }

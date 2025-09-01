@@ -1,6 +1,7 @@
 {
   "extends": "../typescript-config/react.json",
   "compilerOptions": {
+    "composite": true,
     "rootDir": "./src"
   },
   "references": [

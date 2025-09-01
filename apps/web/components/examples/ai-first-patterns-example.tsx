@@ -1,20 +1,50 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import React, { useEffect, useState } from "react";
 
 // Import all AI-First components
-import { AILoadingStates, PatientAnalysisLoading, MedicalQueryLoading, useAILoadingState } from "../ui/ai-loading-states";
-import { ConfidencePatterns, DiagnosisConfidence, TreatmentConfidence, MultiConfidence, ConfidenceTrend } from "../ui/confidence-patterns";
-import { AIErrorBoundary, AIErrorType, classifyAIError, withAIErrorBoundary } from "../ui/error-boundary-ai";
-import { ContextSwitching, useContextSwitching, ContextSwitchingProvider, QuickContextSwitcher, ContextType, Department, UserRole, SwitchReason } from "../ui/context-switching";
-import { VoiceInteractionUX, VoiceContext, VoiceMode, useVoiceInteraction } from "../ui/voice-interaction-ux";
+import {
+  AILoadingStates,
+  MedicalQueryLoading,
+  PatientAnalysisLoading,
+  useAILoadingState,
+} from "../ui/ai-loading-states";
+import {
+  ConfidencePatterns,
+  ConfidenceTrend,
+  DiagnosisConfidence,
+  MultiConfidence,
+  TreatmentConfidence,
+} from "../ui/confidence-patterns";
+import {
+  ContextSwitching,
+  ContextSwitchingProvider,
+  ContextType,
+  Department,
+  QuickContextSwitcher,
+  SwitchReason,
+  useContextSwitching,
+  UserRole,
+} from "../ui/context-switching";
+import {
+  AIErrorBoundary,
+  AIErrorType,
+  classifyAIError,
+  withAIErrorBoundary,
+} from "../ui/error-boundary-ai";
+import {
+  useVoiceInteraction,
+  VoiceContext,
+  VoiceInteractionUX,
+  VoiceMode,
+} from "../ui/voice-interaction-ux";
 
 // Simulated AI operations
 const simulateAIOperation = async (type: string, shouldFail = false): Promise<{
@@ -24,11 +54,11 @@ const simulateAIOperation = async (type: string, shouldFail = false): Promise<{
   error?: string;
 }> => {
   await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
-  
+
   if (shouldFail) {
     throw new Error(`AI processing failed for ${type}`);
   }
-  
+
   const confidence = 70 + Math.random() * 25; // 70-95%
   return {
     success: true,
@@ -45,15 +75,15 @@ const samplePatients = [
     age: 45,
     procedure: "Aplicação de Botox",
     lastVisit: "2024-08-15",
-    riskLevel: "baixo"
+    riskLevel: "baixo",
   },
   {
-    id: "P002", 
+    id: "P002",
     name: "João Carlos Oliveira",
     age: 52,
     procedure: "Preenchimento Facial",
     lastVisit: "2024-08-20",
-    riskLevel: "médio"
+    riskLevel: "médio",
   },
   {
     id: "P003",
@@ -61,24 +91,24 @@ const samplePatients = [
     age: 38,
     procedure: "Harmonização Orofacial",
     lastVisit: "2024-08-25",
-    riskLevel: "alto"
-  }
+    riskLevel: "alto",
+  },
 ];
 
 // AI-First Workflow Component
 function AIFirstWorkflow() {
   const [activeDemo, setActiveDemo] = useState<string>("patient-analysis");
   const [selectedPatient, setSelectedPatient] = useState(samplePatients[0]);
-  const [aiResults, setAiResults] = useState<<unknown>>(null);
+  const [aiResults, setAiResults] = useState << unknown >> (null);
   const [shouldFail, setShouldFail] = useState(false);
   const [shouldThrow, setShouldThrow] = useState<string | null>(null);
-  
-  const { 
-    isLoading, 
-    progress, 
-    startLoading, 
+
+  const {
+    isLoading,
+    progress,
+    startLoading,
     stopLoading,
-    LoadingComponent 
+    LoadingComponent,
   } = useAILoadingState("patient-analysis", 4);
 
   const [error, setError] = useState<Error | null>(null);
@@ -94,15 +124,15 @@ function AIFirstWorkflow() {
     setAiResults(null);
     setError(null);
     startLoading();
-    
+
     try {
       const result = await simulateAIOperation("patient-analysis", shouldFail);
       setAiResults(result);
       stopLoading();
     } catch (error) {
       stopLoading();
-      setError(error instanceof Error ? error : new Error('Unknown error occurred'));
-      console.error('AI Analysis Error:', error);
+      setError(error instanceof Error ? error : new Error("Unknown error occurred"));
+      console.error("AI Analysis Error:", error);
     }
   };
 
@@ -172,9 +202,9 @@ function AIFirstWorkflow() {
                       key={patient.id}
                       className={cn(
                         "cursor-pointer transition-all",
-                        selectedPatient.id === patient.id 
-                          ? "border-blue-500 bg-blue-50" 
-                          : "hover:bg-gray-50"
+                        selectedPatient.id === patient.id
+                          ? "border-blue-500 bg-blue-50"
+                          : "hover:bg-gray-50",
                       )}
                       onClick={() => setSelectedPatient(patient)}
                     >
@@ -185,11 +215,12 @@ function AIFirstWorkflow() {
                             {patient.age} anos • {patient.procedure}
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge 
-                              variant={
-                                patient.riskLevel === "alto" ? "destructive" :
-                                patient.riskLevel === "médio" ? "secondary" : "default"
-                              }
+                            <Badge
+                              variant={patient.riskLevel === "alto"
+                                ? "destructive"
+                                : patient.riskLevel === "médio"
+                                ? "secondary"
+                                : "default"}
                               className="text-xs"
                             >
                               Risco {patient.riskLevel}
@@ -267,18 +298,18 @@ function AIFirstWorkflow() {
                         {
                           label: "Avaliação de Risco",
                           score: aiResults.confidence - 5,
-                          category: "risk-assessment"
+                          category: "risk-assessment",
                         },
                         {
-                          label: "Sugestão de Tratamento", 
+                          label: "Sugestão de Tratamento",
                           score: aiResults.confidence + 3,
-                          category: "treatment-suggestion"
+                          category: "treatment-suggestion",
                         },
                         {
                           label: "Análise Geral",
                           score: aiResults.confidence,
-                          category: "general"
-                        }
+                          category: "general",
+                        },
                       ]}
                       variant="horizontal"
                     />
@@ -289,7 +320,7 @@ function AIFirstWorkflow() {
                         { timestamp: "10:00", score: aiResults.confidence - 10 },
                         { timestamp: "10:15", score: aiResults.confidence - 5 },
                         { timestamp: "10:30", score: aiResults.confidence - 2 },
-                        { timestamp: "10:45", score: aiResults.confidence }
+                        { timestamp: "10:45", score: aiResults.confidence },
                       ]}
                       category="patient-analysis"
                     />
@@ -340,7 +371,7 @@ function AIFirstWorkflow() {
             userRole: UserRole.DOCTOR,
             patientId: selectedPatient.id,
             activeWorkflow: "patient-consultation",
-            aiConfidence: 87
+            aiConfidence: 87,
           }}
         >
           <div className="space-y-6">
@@ -355,7 +386,7 @@ function AIFirstWorkflow() {
                 <QuickContextSwitcher className="mb-4" />
               </CardContent>
             </Card>
-            
+
             <ContextSwitchingDemo />
           </div>
         </ContextSwitchingProvider>
@@ -385,7 +416,7 @@ function AIFirstWorkflow() {
                 </Button>
               ))}
             </div>
-            
+
             <AIErrorBoundary
               context="Demonstração de Erros"
               enableFallback
@@ -412,7 +443,7 @@ function ContextSwitchingDemo() {
   const { context, switchContext, isTransitioning } = useContextSwitching({
     type: ContextType.AI_ASSISTED,
     department: Department.AESTHETIC,
-    userRole: UserRole.DOCTOR
+    userRole: UserRole.DOCTOR,
   });
 
   return (
@@ -425,7 +456,7 @@ function ContextSwitchingDemo() {
         }}
         showTransitionAnimation
       />
-      
+
       {isTransitioning && (
         <Alert>
           <AlertDescription>
@@ -470,9 +501,9 @@ export default function AIFirstPatternsExample() {
           🤖 AI-First Component Patterns
         </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Sistema completo de padrões AI-first para healthcare, incluindo 
-          loading states inteligentes, visualização de confiança, tratamento 
-          de erros, mudança de contexto e interação por voz.
+          Sistema completo de padrões AI-first para healthcare, incluindo loading states
+          inteligentes, visualização de confiança, tratamento de erros, mudança de contexto e
+          interação por voz.
         </p>
       </div>
 
@@ -511,7 +542,9 @@ function ComponentsShowcase() {
       <Card>
         <CardHeader>
           <CardTitle>🤖 AILoadingStates</CardTitle>
-          <CardDescription>Loading states inteligentes com estimativa de tempo e confiança</CardDescription>
+          <CardDescription>
+            Loading states inteligentes com estimativa de tempo e confiança
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -557,8 +590,9 @@ function IntegrationExamples() {
     <div className="space-y-6">
       <Alert>
         <AlertDescription>
-          <strong>Exemplos de Integração AI-First</strong> - Demonstra como todos os componentes
-          trabalham juntos para criar uma experiência seamless.
+          <strong>Exemplos de Integração AI-First</strong>{" "}
+          - Demonstra como todos os componentes trabalham juntos para criar uma experiência
+          seamless.
         </AlertDescription>
       </Alert>
 
@@ -568,11 +602,22 @@ function IntegrationExamples() {
         </CardHeader>
         <CardContent>
           <ol className="list-decimal list-inside space-y-2 text-sm">
-            <li><strong>AILoadingStates:</strong> Mostra progresso durante análise do paciente</li>
-            <li><strong>ConfidencePatterns:</strong> Visualiza confiança dos resultados da IA</li>
-            <li><strong>ErrorBoundaryAI:</strong> Trata erros com recovery inteligente</li>
-            <li><strong>ContextSwitching:</strong> Alterna entre IA e controle humano conforme necessário</li>
-            <li><strong>VoiceInteractionUX:</strong> Permite documentação por voz durante a consulta</li>
+            <li>
+              <strong>AILoadingStates:</strong> Mostra progresso durante análise do paciente
+            </li>
+            <li>
+              <strong>ConfidencePatterns:</strong> Visualiza confiança dos resultados da IA
+            </li>
+            <li>
+              <strong>ErrorBoundaryAI:</strong> Trata erros com recovery inteligente
+            </li>
+            <li>
+              <strong>ContextSwitching:</strong>{" "}
+              Alterna entre IA e controle humano conforme necessário
+            </li>
+            <li>
+              <strong>VoiceInteractionUX:</strong> Permite documentação por voz durante a consulta
+            </li>
           </ol>
         </CardContent>
       </Card>
@@ -586,28 +631,48 @@ function ComponentDocumentation() {
     {
       name: "AILoadingStates",
       description: "Loading states inteligentes com estimativa de tempo",
-      features: ["7 variantes healthcare", "Confidence estimation", "Portuguese messages", "Accessibility WCAG 2.1 AA+"]
+      features: [
+        "7 variantes healthcare",
+        "Confidence estimation",
+        "Portuguese messages",
+        "Accessibility WCAG 2.1 AA+",
+      ],
     },
     {
       name: "ConfidencePatterns",
       description: "Visualização consistente de confiança da IA",
-      features: ["9 categorias healthcare", "5 variants (compact/detailed/badge/etc)", "Multi-confidence support", "Trend analysis"]
+      features: [
+        "9 categorias healthcare",
+        "5 variants (compact/detailed/badge/etc)",
+        "Multi-confidence support",
+        "Trend analysis",
+      ],
     },
     {
       name: "ErrorBoundaryAI",
       description: "Tratamento de erros específico para IA",
-      features: ["9 tipos de erro AI", "Recovery actions", "Medical impact assessment", "Fallback mechanisms"]
+      features: [
+        "9 tipos de erro AI",
+        "Recovery actions",
+        "Medical impact assessment",
+        "Fallback mechanisms",
+      ],
     },
     {
       name: "ContextSwitching",
       description: "Mudanças inteligentes de contexto",
-      features: ["6 context types", "Transition rules", "Auto-switching", "Quick switcher"]
+      features: ["6 context types", "Transition rules", "Auto-switching", "Quick switcher"],
     },
     {
       name: "VoiceInteractionUX",
       description: "Interação por voz otimizada para healthcare",
-      features: ["Portuguese optimization", "Medical vocabulary", "Voice commands", "LGPD compliance"]
-    }
+      features: [
+        "Portuguese optimization",
+        "Medical vocabulary",
+        "Voice commands",
+        "LGPD compliance",
+      ],
+    },
   ];
 
   return (

@@ -1,4 +1,4 @@
-import type { CacheOperation, CacheStats, CacheEntry } from "./types";
+import type { CacheEntry, CacheOperation, CacheStats } from "./types";
 
 export class EdgeCacheLayer implements CacheOperation {
   private cache = new Map<string, unknown>();

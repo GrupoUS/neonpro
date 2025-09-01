@@ -1,6 +1,6 @@
 # TweakCN NEONPRO Theme Foundation
 
-> **Healthcare Design System com Otimização Portuguesa**  
+> **Healthcare Design System com Otimização Portuguesa**\
 > Sistema de design completo otimizado para aplicações healthcare seguindo princípios KISS de simplicidade e compliance WCAG 2.1 AA+.
 
 ## 🎯 **Visão Geral**
@@ -21,62 +21,65 @@ O TweakCN NEONPRO Theme Foundation é um sistema de design abrangente desenvolvi
 
 ```css
 /* Cores Primárias NEONPRO */
---primary: 142 71% 78%;           /* NEONPRO signature green */
---primary-light: 142 60% 85%;     /* Variante clara */
---primary-dark: 142 80% 65%;      /* Variante escura */
+--primary: 142 71% 78%; /* NEONPRO signature green */
+--primary-light: 142 60% 85%; /* Variante clara */
+--primary-dark: 142 80% 65%; /* Variante escura */
 
 /* Cores de Emergência Healthcare */
---status-critical: 0 84% 60%;     /* Emergency red */
---status-urgent: 15 90% 53%;      /* Orange urgente */
---status-warning: 45 93% 47%;     /* Amber warning */
---status-normal: 142 71% 78%;     /* NEONPRO para normal */
+--status-critical: 0 84% 60%; /* Emergency red */
+--status-urgent: 15 90% 53%; /* Orange urgente */
+--status-warning: 45 93% 47%; /* Amber warning */
+--status-normal: 142 71% 78%; /* NEONPRO para normal */
 
 /* LGPD Compliance */
---lgpd-compliant: 160 95% 30%;    /* Legal compliance green */
---lgpd-warning: 45 93% 47%;       /* Compliance warning */
---lgpd-violation: 0 84% 60%;      /* Compliance violation */
+--lgpd-compliant: 160 95% 30%; /* Legal compliance green */
+--lgpd-warning: 45 93% 47%; /* Compliance warning */
+--lgpd-violation: 0 84% 60%; /* Compliance violation */
 ```
 
 ### **Healthcare Semantic Colors**
 
 #### **Vital Signs System**
+
 ```css
 /* Pressão Arterial */
---bp-normal: var(--vital-normal);     /* <120/80 */
---bp-elevated: 45 70% 55%;            /* 120-129/<80 */
---bp-stage1: var(--vital-high);       /* 130-139/80-89 */
---bp-stage2: var(--vital-critical);   /* 140-179/90-119 */
---bp-crisis: 0 95% 45%;               /* >180/>120 */
+--bp-normal: var(--vital-normal); /* <120/80 */
+--bp-elevated: 45 70% 55%; /* 120-129/<80 */
+--bp-stage1: var(--vital-high); /* 130-139/80-89 */
+--bp-stage2: var(--vital-critical); /* 140-179/90-119 */
+--bp-crisis: 0 95% 45%; /* >180/>120 */
 
 /* Frequência Cardíaca */
---hr-bradycardia: 217 91% 60%;        /* <60 bpm */
---hr-normal: var(--vital-normal);     /* 60-100 bpm */
---hr-tachycardia: var(--vital-high);  /* 100-150 bpm */
---hr-severe: var(--vital-critical);   /* >150 bpm */
+--hr-bradycardia: 217 91% 60%; /* <60 bpm */
+--hr-normal: var(--vital-normal); /* 60-100 bpm */
+--hr-tachycardia: var(--vital-high); /* 100-150 bpm */
+--hr-severe: var(--vital-critical); /* >150 bpm */
 
 /* Temperatura */
---temp-hypothermia: 217 91% 60%;      /* <36°C */
---temp-normal: var(--vital-normal);   /* 36-37.5°C */
---temp-fever: var(--vital-high);      /* 37.6-39°C */
+--temp-hypothermia: 217 91% 60%; /* <36°C */
+--temp-normal: var(--vital-normal); /* 36-37.5°C */
+--temp-fever: var(--vital-high); /* 37.6-39°C */
 --temp-high-fever: var(--vital-critical); /* >39°C */
 ```
 
 #### **Pain Scale (0-10)**
+
 ```css
---pain-0: var(--vital-normal);        /* Sem dor */
---pain-1-3: 142 60% 70%;              /* Dor leve */
---pain-4-6: var(--vital-high);        /* Dor moderada */
---pain-7-8: 15 90% 53%;               /* Dor severa */
---pain-9-10: var(--vital-critical);   /* Dor máxima */
+--pain-0: var(--vital-normal); /* Sem dor */
+--pain-1-3: 142 60% 70%; /* Dor leve */
+--pain-4-6: var(--vital-high); /* Dor moderada */
+--pain-7-8: 15 90% 53%; /* Dor severa */
+--pain-9-10: var(--vital-critical); /* Dor máxima */
 ```
 
 #### **Triage Manchester System**
+
 ```css
---triage-red: var(--vital-critical);     /* Imediato */
---triage-orange: 15 90% 53%;             /* Muito urgente - 10min */
---triage-yellow: var(--vital-high);      /* Urgente - 60min */
---triage-green: var(--vital-normal);     /* Padrão - 120min */
---triage-blue: 217 91% 60%;              /* Não urgente - 240min */
+--triage-red: var(--vital-critical); /* Imediato */
+--triage-orange: 15 90% 53%; /* Muito urgente - 10min */
+--triage-yellow: var(--vital-high); /* Urgente - 60min */
+--triage-green: var(--vital-normal); /* Padrão - 120min */
+--triage-blue: 217 91% 60%; /* Não urgente - 240min */
 ```
 
 ---
@@ -84,6 +87,7 @@ O TweakCN NEONPRO Theme Foundation é um sistema de design abrangente desenvolvi
 ## 🎭 **Sistema de Temas**
 
 ### **Light Theme (Padrão)**
+
 ```css
 :root {
   --background: 0 0% 100%;
@@ -94,6 +98,7 @@ O TweakCN NEONPRO Theme Foundation é um sistema de design abrangente desenvolvi
 ```
 
 ### **Dark Theme**
+
 ```css
 .dark {
   --background: 0 0% 3.9%;
@@ -104,6 +109,7 @@ O TweakCN NEONPRO Theme Foundation é um sistema de design abrangente desenvolvi
 ```
 
 ### **High Contrast Theme (WCAG 2.1 AAA)**
+
 ```css
 .high-contrast {
   --background: 0 0% 100%;
@@ -116,6 +122,7 @@ O TweakCN NEONPRO Theme Foundation é um sistema de design abrangente desenvolvi
 ```
 
 #### **Ativação de Temas**
+
 ```typescript
 // Tema automático baseado em preferências do sistema
 <html className="dark"> // ou "high-contrast"
@@ -126,20 +133,22 @@ O TweakCN NEONPRO Theme Foundation é um sistema de design abrangente desenvolvi
 ## 📝 **Tipografia Portuguesa**
 
 ### **Configuração Otimizada**
+
 ```css
 :root {
   --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
   --font-serif: "Lora", Georgia, serif;
   --font-mono: "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
-  
+
   /* Otimização para português */
-  --line-height-base: 1.65;           /* Melhor readability */
-  --text-scale-medical: 1.1;          /* 10% maior para terminologia médica */
-  --letter-spacing-medical: 0.01em;    /* Claridade em termos médicos */
+  --line-height-base: 1.65; /* Melhor readability */
+  --text-scale-medical: 1.1; /* 10% maior para terminologia médica */
+  --letter-spacing-medical: 0.01em; /* Claridade em termos médicos */
 }
 ```
 
 ### **Classes Utilitárias**
+
 ```css
 .text-medical-normal     /* Line height e spacing otimizados */
 .text-patient-facing     /* Para conteúdo voltado ao paciente */
@@ -154,6 +163,7 @@ O TweakCN NEONPRO Theme Foundation é um sistema de design abrangente desenvolvi
 ### **Button Healthcare**
 
 #### **Variantes Médicas**
+
 ```tsx
 // Variantes healthcare específicas
 <Button variant="medical">Salvar Prontuário</Button>
@@ -164,6 +174,7 @@ O TweakCN NEONPRO Theme Foundation é um sistema de design abrangente desenvolvi
 ```
 
 #### **Touch Targets WCAG**
+
 ```tsx
 // Sizes otimizados para healthcare
 <Button size="touch">44px mínimo</Button>
@@ -173,6 +184,7 @@ O TweakCN NEONPRO Theme Foundation é um sistema de design abrangente desenvolvi
 ```
 
 #### **Props Healthcare**
+
 ```tsx
 interface HealthcareButtonProps {
   urgency?: "low" | "medium" | "high" | "critical";
@@ -186,6 +198,7 @@ interface HealthcareButtonProps {
 ### **Card Healthcare**
 
 #### **Variantes Contextuais**
+
 ```tsx
 <Card variant="patient">Cartão do Paciente</Card>
 <Card variant="emergency">Emergência</Card>
@@ -195,6 +208,7 @@ interface HealthcareButtonProps {
 ```
 
 #### **Props Healthcare**
+
 ```tsx
 interface HealthcareCardProps {
   urgency?: "low" | "medium" | "high" | "critical";
@@ -209,6 +223,7 @@ interface HealthcareCardProps {
 ### **Alert Healthcare**
 
 #### **Tipos Médicos**
+
 ```tsx
 <Alert variant="vital-critical">Sinais vitais críticos</Alert>
 <Alert variant="emergency">Emergência médica</Alert>
@@ -217,6 +232,7 @@ interface HealthcareCardProps {
 ```
 
 #### **Props Especializadas**
+
 ```tsx
 interface HealthcareAlertProps {
   urgency?: "low" | "medium" | "high" | "critical";
@@ -230,6 +246,7 @@ interface HealthcareAlertProps {
 ### **Input Healthcare**
 
 #### **Tipos Brasileiros**
+
 ```tsx
 <Input healthcareType="cpf" autoFormat />
 <Input healthcareType="cns" /> {/* Cartão Nacional de Saúde */}
@@ -240,13 +257,14 @@ interface HealthcareAlertProps {
 ```
 
 #### **Contextos Médicos**
+
 ```tsx
-<Input 
-  medicalContext="emergency" 
+<Input
+  medicalContext="emergency"
   urgency="critical"
   lgpdSensitive
   validationState="critical"
-/>
+/>;
 ```
 
 ---
@@ -254,30 +272,34 @@ interface HealthcareAlertProps {
 ## ♿ **Acessibilidade & Tokens**
 
 ### **Touch Targets WCAG 2.1**
+
 ```css
---touch-target-min: 44px;              /* Mínimo WCAG AA */
---touch-target-emergency: 56px;        /* Modo emergência */
---touch-target-post-procedure: 60px;   /* Pós-procedimento */
---touch-target-tremor-friendly: 64px;  /* Deficiência motora */
+--touch-target-min: 44px; /* Mínimo WCAG AA */
+--touch-target-emergency: 56px; /* Modo emergência */
+--touch-target-post-procedure: 60px; /* Pós-procedimento */
+--touch-target-tremor-friendly: 64px; /* Deficiência motora */
 ```
 
 ### **Contrast Ratios**
+
 ```css
---contrast-aa-normal: 4.5;     /* WCAG 2.1 AA */
---contrast-aaa-normal: 7.0;    /* WCAG 2.1 AAA */
---contrast-critical: 10.0;     /* Healthcare crítico */
---contrast-emergency: 8.5;     /* Emergência */
+--contrast-aa-normal: 4.5; /* WCAG 2.1 AA */
+--contrast-aaa-normal: 7.0; /* WCAG 2.1 AAA */
+--contrast-critical: 10.0; /* Healthcare crítico */
+--contrast-emergency: 8.5; /* Emergência */
 ```
 
 ### **Focus System**
+
 ```css
---focus-ring-width: 2px;           /* Padrão */
---focus-emergency-width: 3px;      /* Emergência */
---focus-critical-width: 4px;       /* Crítico */
---focus-critical-offset: 1px;      /* Offset crítico */
+--focus-ring-width: 2px; /* Padrão */
+--focus-emergency-width: 3px; /* Emergência */
+--focus-critical-width: 4px; /* Crítico */
+--focus-critical-offset: 1px; /* Offset crítico */
 ```
 
 ### **Classes Utilitárias de Acessibilidade**
+
 ```css
 .touch-min            /* 44px touch target */
 .touch-emergency      /* 56px emergency touch */
@@ -293,6 +315,7 @@ interface HealthcareAlertProps {
 ## 🎬 **Sistema de Animações**
 
 ### **Animações Healthcare**
+
 ```css
 .pulse-emergency      /* Pulse de emergência */
 .pulse-healthcare     /* Pulse healthcare padrão */
@@ -302,6 +325,7 @@ interface HealthcareAlertProps {
 ```
 
 ### **Reduced Motion Support**
+
 ```css
 @media (prefers-reduced-motion: reduce) {
   :root {
@@ -319,12 +343,14 @@ interface HealthcareAlertProps {
 ### **Implementação Básica**
 
 1. **Importar Estilos**
+
 ```tsx
-import './styles/globals.css'
+import "./styles/globals.css";
 // accessibility-tokens.css é importado automaticamente
 ```
 
 2. **Configurar Tema**
+
 ```tsx
 // Tema automático
 <html className="dark"> // ou "high-contrast"
@@ -334,8 +360,9 @@ document.documentElement.className = theme;
 ```
 
 3. **Usar Componentes**
+
 ```tsx
-import { Button, Card, Alert, Input } from '@/components/ui'
+import { Alert, Button, Card, Input } from "@/components/ui";
 
 function EmergencyInterface() {
   return (
@@ -352,6 +379,7 @@ function EmergencyInterface() {
 ```
 
 ### **Exemplo Completo: Formulário do Paciente**
+
 ```tsx
 function PatientForm() {
   return (
@@ -362,25 +390,25 @@ function PatientForm() {
           Informações protegidas pela LGPD
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent spacing="comfortable">
-        <Input 
+        <Input
           healthcareType="patient-name"
           medicalContext="patient-registration"
           lgpdSensitive
           placeholder="Nome completo do paciente"
         />
-        <Input 
+        <Input
           healthcareType="cpf"
           autoFormat
           lgpdSensitive
         />
-        <Input 
+        <Input
           healthcareType="cns"
           medicalDescription="Cartão Nacional de Saúde do paciente"
         />
       </CardContent>
-      
+
       <CardFooter variant="actions">
         <Button variant="lgpd" lgpdCompliant>
           Salvar com Consentimento
@@ -395,13 +423,14 @@ function PatientForm() {
 ```
 
 ### **Exemplo: Interface de Emergência**
+
 ```tsx
 function EmergencyInterface() {
   return (
     <div className="emergency-mode p-6">
-      <Alert 
-        variant="emergency" 
-        urgency="critical" 
+      <Alert
+        variant="emergency"
+        urgency="critical"
         emergencyMode
         clinicalAlert
         announcementLevel="assertive"
@@ -412,19 +441,19 @@ function EmergencyInterface() {
           Paciente com sinais vitais críticos
         </AlertDescription>
       </Alert>
-      
+
       <div className="grid grid-cols-2 gap-4 mt-6">
-        <Button 
-          variant="critical" 
-          size="emergency-mode" 
+        <Button
+          variant="critical"
+          size="emergency-mode"
           urgency="critical"
           srAnnouncement="Chamando equipe de emergência"
         >
           🚨 CHAMAR EQUIPE
         </Button>
-        
-        <Button 
-          variant="emergency" 
+
+        <Button
+          variant="emergency"
           size="touch-lg"
           urgency="high"
         >
@@ -441,6 +470,7 @@ function EmergencyInterface() {
 ## 📊 **Métricas de Conformidade**
 
 ### **WCAG 2.1 Compliance**
+
 - ✅ **AA Level**: 4.5:1 contrast ratio mínimo
 - ✅ **AAA Level**: 7:1 contrast ratio para elementos críticos
 - ✅ **Touch Targets**: 44px mínimo, 56px emergência
@@ -448,12 +478,14 @@ function EmergencyInterface() {
 - ✅ **Screen Readers**: Suporte completo com aria-labels
 
 ### **Performance Healthcare**
+
 - ✅ **Touch Response**: <100ms para ações críticas
 - ✅ **Animation**: Respeita prefers-reduced-motion
 - ✅ **Loading States**: Feedback visual imediato
 - ✅ **Error Handling**: Estados de erro claros
 
 ### **Compliance Brasileiro**
+
 - ✅ **LGPD**: Indicadores visuais para dados sensíveis
 - ✅ **ANVISA**: Cores de alerta médico conforme regulamentação
 - ✅ **CFM**: Padrões de interface para sistemas médicos
@@ -463,6 +495,7 @@ function EmergencyInterface() {
 ## 🔧 **Customização Avançada**
 
 ### **Extendendo Cores**
+
 ```css
 :root {
   /* Custom healthcare colors */
@@ -473,6 +506,7 @@ function EmergencyInterface() {
 ```
 
 ### **Componentes Personalizados**
+
 ```tsx
 // Extender com variantes customizadas
 const customButtonVariants = cva(
@@ -482,14 +516,15 @@ const customButtonVariants = cva(
       ...buttonVariants.variants,
       variant: {
         ...buttonVariants.variants.variant,
-        "custom-specialty": "bg-specialty-cardiology text-white"
-      }
-    }
-  }
+        "custom-specialty": "bg-specialty-cardiology text-white",
+      },
+    },
+  },
 );
 ```
 
 ### **Temas Personalizados**
+
 ```css
 .custom-hospital-theme {
   --primary: 200 80% 60%; /* Hospital blue */
@@ -504,17 +539,20 @@ const customButtonVariants = cva(
 ## 📚 **Recursos Adicionais**
 
 ### **Documentação Técnica**
+
 - [`globals.css`](./globals.css) - Sistema base de temas
 - [`accessibility-tokens.css`](./accessibility-tokens.css) - Tokens de acessibilidade
 - [`responsive.css`](./responsive.css) - Sistema responsivo mobile-first
 
 ### **Componentes**
+
 - [`button.tsx`](../components/ui/button.tsx) - Button healthcare
 - [`card.tsx`](../components/ui/card.tsx) - Card system
 - [`alert.tsx`](../components/ui/alert.tsx) - Alert system
 - [`input.tsx`](../components/ui/input.tsx) - Input brasileiro
 
 ### **Storybook (Planejado)**
+
 ```bash
 npm run storybook
 # Acesse http://localhost:6006
@@ -525,24 +563,28 @@ npm run storybook
 ## 🏥 **Casos de Uso Healthcare**
 
 ### **1. Prontuário Eletrônico**
+
 - Cards de paciente com status vital
 - Inputs formatados para dados brasileiros
 - Alertas de medicação e alergias
 - Compliance LGPD automático
 
 ### **2. Interface de Emergência**
+
 - Temas de alto contraste
 - Touch targets aumentados
 - Animações de alerta crítico
 - Navegação por voz planejada
 
 ### **3. Telemedicina**
+
 - Responsive design mobile-first
 - Indicadores de qualidade de conexão
 - Interfaces otimizadas para tablet
 - Acessibilidade para idosos
 
 ### **4. Gestão Hospitalar**
+
 - Dashboards executivos
 - Métricas em tempo real
 - Relatórios de conformidade
@@ -553,6 +595,7 @@ npm run storybook
 ## 🤝 **Contribuindo**
 
 ### **Adicionando Novas Variantes**
+
 1. Definir tokens de cor no `globals.css`
 2. Criar variantes nos componentes
 3. Adicionar utilitários CSS
@@ -560,6 +603,7 @@ npm run storybook
 5. Testar acessibilidade
 
 ### **Testando Acessibilidade**
+
 ```bash
 # Testes automatizados
 npm run test:a11y
@@ -576,12 +620,14 @@ npm run test:a11y
 ## 📈 **Roadmap**
 
 ### **v1.1 (Próximo)**
+
 - [ ] Storybook documentation
 - [ ] Mais variantes de Input healthcare
 - [ ] Sistema de ícones médicos
 - [ ] Temas de especialidades médicas
 
 ### **v1.2 (Futuro)**
+
 - [ ] Componentes de dados vitais
 - [ ] Integração com voice navigation
 - [ ] Mais idiomas (EN, ES)
@@ -591,10 +637,10 @@ npm run test:a11y
 
 ## 📄 **Licença**
 
-Copyright © 2024 NeonPro Healthcare Solutions  
+Copyright © 2024 NeonPro Healthcare Solutions\
 Sistema proprietário - Uso restrito a aplicações healthcare aprovadas.
 
 ---
 
-**🩺 TweakCN NEONPRO Theme Foundation**  
-*Healthcare Design System com Acessibilidade Constitucional*
+**🩺 TweakCN NEONPRO Theme Foundation**\
+_Healthcare Design System com Acessibilidade Constitucional_

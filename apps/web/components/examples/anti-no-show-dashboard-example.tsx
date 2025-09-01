@@ -25,7 +25,7 @@ import React from "react";
 // Import dos componentes T2.3
 import type { InterventionAction } from "../no-show/intervention-dashboard";
 import InterventionDashboard from "../no-show/intervention-dashboard";
-import type { 
+import type {
   MLModelMetrics,
   NoShowMetrics,
   PerformanceMetric,
@@ -34,7 +34,7 @@ import type {
 import PerformanceMetrics from "../no-show/performance-metrics";
 import type { RiskFactor } from "../no-show/risk-factor-breakdown";
 import RiskFactorBreakdown from "../no-show/risk-factor-breakdown";
-import RiskIndicator, { RiskLevel, RiskIndicatorList } from "../no-show/risk-indicator";
+import RiskIndicator, { RiskIndicatorList, RiskLevel } from "../no-show/risk-indicator";
 
 interface AntiNoShowDashboardExampleProps {
   className?: string;
@@ -53,13 +53,13 @@ const sampleRiskyPatients = [
         "3 não comparecimentos anteriores",
         "Consulta agendada para segunda-feira",
         "Paciente sem plano de saúde",
-        "Mais de 180 dias desde última consulta"
+        "Mais de 180 dias desde última consulta",
       ],
-      recommendation: "Contato obrigatório 24h antes + confirmação no dia"
-    }
+      recommendation: "Contato obrigatório 24h antes + confirmação no dia",
+    },
   },
   {
-    id: "2", 
+    id: "2",
     patientName: "João Carlos Oliveira",
     appointmentDate: "2025-09-02 16:00",
     risk: {
@@ -68,10 +68,10 @@ const sampleRiskyPatients = [
       factors: [
         "1 não comparecimento anterior",
         "Horário final do dia",
-        "Paciente jovem (22 anos)"
+        "Paciente jovem (22 anos)",
       ],
-      recommendation: "Contato de confirmação 48h antes da consulta"
-    }
+      recommendation: "Contato de confirmação 48h antes da consulta",
+    },
   },
   {
     id: "3",
@@ -82,10 +82,10 @@ const sampleRiskyPatients = [
       score: 42,
       factors: [
         "Primeira consulta na clínica",
-        "Horário matinal"
+        "Horário matinal",
       ],
-      recommendation: "Lembrete automático 24h antes"
-    }
+      recommendation: "Lembrete automático 24h antes",
+    },
   },
   {
     id: "4",
@@ -96,11 +96,11 @@ const sampleRiskyPatients = [
       score: 18,
       factors: [
         "Paciente regular há 2 anos",
-        "Nunca perdeu consulta"
+        "Nunca perdeu consulta",
       ],
-      recommendation: "Acompanhamento padrão"
-    }
-  }
+      recommendation: "Acompanhamento padrão",
+    },
+  },
 ];
 
 const sampleRiskFactors: RiskFactor[] = [
@@ -158,7 +158,7 @@ const sampleRiskFactors: RiskFactor[] = [
     category: "behavioral",
     trend: "stable",
     confidence: 65,
-  }
+  },
 ];
 
 const sampleInterventions: InterventionAction[] = [
@@ -213,8 +213,8 @@ const sampleInterventions: InterventionAction[] = [
     automated: true,
     estimatedMinutes: 1,
     tags: ["automated", "whatsapp"],
-    notes: "Mensagem entregue e visualizada"
-  }
+    notes: "Mensagem entregue e visualizada",
+  },
 ];
 
 const sampleMLMetrics: MLModelMetrics = {
@@ -228,7 +228,7 @@ const sampleMLMetrics: MLModelMetrics = {
   falsePositives: 156,
   falseNegatives: 168,
   lastUpdated: "2025-08-31T10:30:00Z",
-  modelVersion: "v2.3.1"
+  modelVersion: "v2.3.1",
 };
 
 const sampleROIMetrics: ROIMetrics = {
@@ -241,7 +241,7 @@ const sampleROIMetrics: ROIMetrics = {
   interventionSuccessRate: 73.2,
   averageAppointmentValue: 401.18,
   costPerIntervention: 12.45,
-  monthlyTarget: 75_000
+  monthlyTarget: 75_000,
 };
 
 const sampleNoShowMetrics: NoShowMetrics = {
@@ -257,8 +257,8 @@ const sampleNoShowMetrics: NoShowMetrics = {
     low: { total: 523, noShows: 31, rate: 5.9 },
     medium: { total: 398, noShows: 67, rate: 16.8 },
     high: { total: 246, noShows: 89, rate: 36.2 },
-    critical: { total: 80, noShows: 46, rate: 57.5 }
-  }
+    critical: { total: 80, noShows: 46, rate: 57.5 },
+  },
 };
 
 const sampleCustomMetrics: PerformanceMetric[] = [
@@ -271,68 +271,78 @@ const sampleCustomMetrics: PerformanceMetric[] = [
     format: "percentage",
     trend: "up",
     period: "Este mês",
-    description: "Conversão de agendamentos em consultas efetivas"
+    description: "Conversão de agendamentos em consultas efetivas",
   },
   {
-    id: "2", 
+    id: "2",
     name: "Tempo Médio Resposta",
     value: 1.2,
     previousValue: 1.8,
     format: "decimal",
     trend: "down",
     period: "Últimos 7 dias",
-    description: "Tempo médio de resposta das intervenções (horas)"
-  }
+    description: "Tempo médio de resposta das intervenções (horas)",
+  },
 ];
 
 export function AntiNoShowDashboardExample({
-  className
+  className,
 }: AntiNoShowDashboardExampleProps) {
-  const [timeRange, setTimeRange] = React.useState<"today" | "week" | "month" | "quarter" | "year">("month");
+  const [timeRange, setTimeRange] = React.useState<"today" | "week" | "month" | "quarter" | "year">(
+    "month",
+  );
   const [selectedPatient, setSelectedPatient] = React.useState<string | null>(null);
   const [interventions, setInterventions] = React.useState(sampleInterventions);
 
   // Handlers para ações de intervenção
   const handleActionApprove = (actionId: string, notes?: string) => {
-    setInterventions(prev => prev.map(action => 
-      action.id === actionId
-        ? { ...action, status: "scheduled" as const, notes }
-        : action
-    ));
+    setInterventions(prev =>
+      prev.map(action =>
+        action.id === actionId
+          ? { ...action, status: "scheduled" as const, notes }
+          : action
+      )
+    );
   };
 
   const handleActionReject = (actionId: string, reason: string) => {
-    setInterventions(prev => prev.map(action => 
-      action.id === actionId
-        ? { ...action, status: "cancelled" as const, notes: reason }
-        : action
-    ));
+    setInterventions(prev =>
+      prev.map(action =>
+        action.id === actionId
+          ? { ...action, status: "cancelled" as const, notes: reason }
+          : action
+      )
+    );
   };
 
   const handleActionComplete = (actionId: string, result: "success" | "failed", notes?: string) => {
-    setInterventions(prev => prev.map(action => 
-      action.id === actionId
-        ? { 
-            ...action, 
+    setInterventions(prev =>
+      prev.map(action =>
+        action.id === actionId
+          ? {
+            ...action,
             status: result === "success" ? "completed" as const : "failed" as const,
-            notes 
+            notes,
           }
-        : action
-    ));
+          : action
+      )
+    );
   };
 
   const handleBulkApprove = (actionIds: string[]) => {
-    setInterventions(prev => prev.map(action => 
-      actionIds.includes(action.id)
-        ? { ...action, status: "scheduled" as const }
-        : action
-    ));
+    setInterventions(prev =>
+      prev.map(action =>
+        actionIds.includes(action.id)
+          ? { ...action, status: "scheduled" as const }
+          : action
+      )
+    );
   };
 
   const handleCreateAction = (action: Omit<InterventionAction, "id">) => {
     const newAction: InterventionAction = {
       ...action,
-      id: Date.now().toString()
+      id: Date.now().toString(),
     };
     setInterventions(prev => [newAction, ...prev]);
   };
@@ -345,7 +355,8 @@ export function AntiNoShowDashboardExample({
           Engine Anti-No-Show Risk Visualization System
         </h1>
         <p className="text-muted-foreground">
-          Sistema completo de predição e prevenção de faltas com interface inteligente para reduzir no-shows em 25%
+          Sistema completo de predição e prevenção de faltas com interface inteligente para reduzir
+          no-shows em 25%
         </p>
       </div>
 
@@ -488,7 +499,7 @@ export function AntiNoShowDashboardExample({
                     </div>
                     <span className="font-semibold">23</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -496,7 +507,7 @@ export function AntiNoShowDashboardExample({
                     </div>
                     <span className="font-semibold">178</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <RefreshCw className="h-4 w-4 text-blue-600" />
@@ -504,7 +515,7 @@ export function AntiNoShowDashboardExample({
                     </div>
                     <span className="font-semibold">89%</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Zap className="h-4 w-4 text-purple-600" />
@@ -537,7 +548,7 @@ export function AntiNoShowDashboardExample({
             </Card>
 
             {/* Breakdown detalhado dos fatores */}
-            <RiskFactorBreakdown 
+            <RiskFactorBreakdown
               factors={sampleRiskFactors}
               totalRiskScore={85}
               defaultExpanded
@@ -579,7 +590,7 @@ export function AntiNoShowDashboardExample({
             <CardContent className="space-y-6">
               <div className="prose max-w-none">
                 <h3>Componentes Implementados:</h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 not-prose">
                   <div className="p-4 border rounded-lg">
                     <h4 className="font-semibold text-green-600 mb-2">✓ NoShowRiskIndicator</h4>
@@ -588,37 +599,39 @@ export function AntiNoShowDashboardExample({
                       e tooltip detalhado com fatores e recomendações.
                     </p>
                   </div>
-                  
+
                   <div className="p-4 border rounded-lg">
                     <h4 className="font-semibold text-green-600 mb-2">✓ RiskFactorBreakdown</h4>
                     <p className="text-sm text-muted-foreground">
-                      Análise expandível de fatores de risco categorizados com confidence score
-                      do modelo ML e filtros por categoria.
+                      Análise expandível de fatores de risco categorizados com confidence score do
+                      modelo ML e filtros por categoria.
                     </p>
                   </div>
-                  
+
                   <div className="p-4 border rounded-lg">
                     <h4 className="font-semibold text-green-600 mb-2">✓ InterventionDashboard</h4>
                     <p className="text-sm text-muted-foreground">
-                      Dashboard completo para gerenciar fila de intervenções com aprovação
-                      one-click e ações em massa.
+                      Dashboard completo para gerenciar fila de intervenções com aprovação one-click
+                      e ações em massa.
                     </p>
                   </div>
-                  
+
                   <div className="p-4 border rounded-lg">
                     <h4 className="font-semibold text-green-600 mb-2">✓ PerformanceMetrics</h4>
                     <p className="text-sm text-muted-foreground">
-                      Métricas em tempo real de ROI, accuracy do ML e progress tracking
-                      das metas de redução.
+                      Métricas em tempo real de ROI, accuracy do ML e progress tracking das metas de
+                      redução.
                     </p>
                   </div>
                 </div>
 
                 <h3>Acceptance Criteria Atendidos:</h3>
-                
+
                 <ul className="text-sm space-y-1">
                   <li>✓ Risk indicator visual: score 0-100 com cores Verde/Amarelo/Vermelho</li>
-                  <li>✓ Calendar integration: appointments color-coded por risk level (estruturado)</li>
+                  <li>
+                    ✓ Calendar integration: appointments color-coded por risk level (estruturado)
+                  </li>
                   <li>✓ Intervention queue: pending actions com one-click approval</li>
                   <li>✓ Performance metrics: accuracy e ROI tracking em tempo real</li>
                   <li>✓ Mobile responsiveness: all components funcionam mobile-first</li>

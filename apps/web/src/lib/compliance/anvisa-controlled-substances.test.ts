@@ -42,23 +42,23 @@ const jestFn = usingJest
 
 const clock = {
   fakeTimers() {
-    if (usingVitest) {viFakeTimers?.();}
-    else if (usingJest) {jestFakeTimers?.();}
+    if (usingVitest) viFakeTimers?.();
+    else if (usingJest) jestFakeTimers?.();
   },
   setSystemTime(d: Date | number) {
-    if (usingVitest) {viSetSystemTime?.(d);}
-    else if (usingJest) {jestSetSystemTime?.(d);}
+    if (usingVitest) viSetSystemTime?.(d);
+    else if (usingJest) jestSetSystemTime?.(d);
   },
   realTimers() {
-    if (usingVitest) {viRealTimers?.();}
-    else if (usingJest) {jestRealTimers?.();}
+    if (usingVitest) viRealTimers?.();
+    else if (usingJest) jestRealTimers?.();
   },
   spyOn(obj: unknown, method: string) {
-    if (usingVitest) {return viSpy?.(obj, method as unknown);}
+    if (usingVitest) return viSpy?.(obj, method as unknown);
     return jestSpy?.(obj, method as unknown);
   },
   fn() {
-    if (usingVitest) {return viFn?.();}
+    if (usingVitest) return viFn?.();
     return jestFn?.();
   },
 };

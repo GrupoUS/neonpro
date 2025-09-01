@@ -3,9 +3,9 @@
  * Tests all FASE 2 enterprise services functionality
  */
 
+import { UnifiedAuditService as EnterpriseAuditService } from "@neonpro/security";
 import { EnhancedServiceBase } from "../base/EnhancedServiceBase";
 import { EnterpriseAnalyticsService } from "../enterprise/analytics/EnterpriseAnalyticsService";
-import { UnifiedAuditService as EnterpriseAuditService } from '@neonpro/security';;
 import { EnterpriseCacheService } from "../enterprise/cache/EnterpriseCacheService";
 import { EnterpriseSecurityService } from "../enterprise/security/EnterpriseSecurityService";
 import { EnterpriseHealthCheckService } from "../health/EnterpriseHealthCheckService";

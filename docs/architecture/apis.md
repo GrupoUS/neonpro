@@ -22,7 +22,7 @@ Validation: Zod + TypeScript strict
 ### Performance Targets
 
 - **AI Chat First Token**: <200ms
-- **Patient Record Access**: <500ms  
+- **Patient Record Access**: <500ms
 - **Appointment Scheduling**: <300ms
 - **No-Show Prediction**: <100ms
 - **API Availability**: 99.9% uptime
@@ -64,14 +64,14 @@ const aestheticTools = {
     inputSchema: z.object({ patient_id: z.string() }),
     execute: async ({ patient_id }) => {
       const { data } = await supabase
-        .from('treatments')
-        .select('procedure_type, treatment_date, notes')
-        .eq('patient_id', patient_id)
-        .order('treatment_date', { ascending: false });
+        .from("treatments")
+        .select("procedure_type, treatment_date, notes")
+        .eq("patient_id", patient_id)
+        .order("treatment_date", { ascending: false });
       return data;
     },
   }),
-  
+
   schedule_consultation: tool({
     description: "Schedule aesthetic consultation appointment",
     inputSchema: z.object({
@@ -96,13 +96,13 @@ type AestheticUIMessage = UIMessage<AestheticMetadata, AestheticDataParts, Aesth
 // app/api/chat/route.ts
 export async function POST(request: Request) {
   const { messages, patient_id } = await request.json();
-  
+
   const result = await streamText({
     model: openai("gpt-4o"),
     messages: [
-      { 
-        role: "system", 
-        content: "AI assistant for advanced aesthetic clinics. Prioritize patient safety." 
+      {
+        role: "system",
+        content: "AI assistant for advanced aesthetic clinics. Prioritize patient safety.",
       },
       ...convertToModelMessages(messages),
     ],
@@ -122,12 +122,13 @@ export async function POST(request: Request) {
 }
 
 // Client implementation
-export function AestheticChat({ patient_id }: { patient_id: string }) {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = 
-    useChat<AestheticUIMessage>({
-      api: "/api/chat",
-      body: { patient_id },
-    });
+export function AestheticChat({ patient_id }: { patient_id: string; }) {
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat<
+    AestheticUIMessage
+  >({
+    api: "/api/chat",
+    body: { patient_id },
+  });
 
   return (
     <div>
@@ -145,7 +146,7 @@ export function AestheticChat({ patient_id }: { patient_id: string }) {
           </div>
         ))}
       </div>
-      
+
       <form onSubmit={handleSubmit}>
         <input
           value={input}
@@ -167,22 +168,22 @@ export function AestheticChat({ patient_id }: { patient_id: string }) {
 ### Authentication Setup
 
 ```typescript
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
 // Auth middleware
 export function withAuth(handler: Function) {
   return async (req: Request) => {
-    const token = req.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    
+    const token = req.headers.get("authorization")?.replace("Bearer ", "");
+    if (!token) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
     const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error || !user) return Response.json({ error: 'Invalid token' }, { status: 401 });
-    
+    if (error || !user) return Response.json({ error: "Invalid token" }, { status: 401 });
+
     req.user = user;
     return handler(req);
   };
@@ -203,9 +204,9 @@ const CreatePatientSchema = z.object({
 
 export const POST = withAuth(async (req: Request) => {
   const data = CreatePatientSchema.parse(await req.json());
-  
+
   const { data: patient, error } = await supabase
-    .from('patients')
+    .from("patients")
     .insert({ ...data, id: crypto.randomUUID(), created_by: req.user.id })
     .select()
     .single();
@@ -216,19 +217,19 @@ export const POST = withAuth(async (req: Request) => {
 
 // GET /api/patients/[id]
 export const GET = withAuth(async (req: Request) => {
-  const patient_id = new URL(req.url).pathname.split('/').pop();
-  
+  const patient_id = new URL(req.url).pathname.split("/").pop();
+
   const { data, error } = await supabase
-    .from('patients')
+    .from("patients")
     .select(`
       *, 
       appointments(id, scheduled_at, procedure_type, status),
       treatments(procedure_type, treatment_date)
     `)
-    .eq('id', patient_id)
+    .eq("id", patient_id)
     .single();
 
-  if (error) return Response.json({ error: 'Not found' }, { status: 404 });
+  if (error) return Response.json({ error: "Not found" }, { status: 404 });
   return Response.json({ data });
 });
 ```
@@ -242,34 +243,39 @@ const AppointmentSchema = z.object({
   professional_id: z.string().uuid(),
   scheduled_at: z.string().datetime(),
   procedure_type: z.enum([
-    'consultation', 
-    'botox_treatment', 
-    'dermal_filler', 
-    'facial_harmonization'
+    "consultation",
+    "botox_treatment",
+    "dermal_filler",
+    "facial_harmonization",
   ]),
   duration_minutes: z.number().min(15).max(240).default(60),
 });
 
 export const POST = withAuth(async (req: Request) => {
   const data = AppointmentSchema.parse(await req.json());
-  
+
   // Check conflicts
   const { data: conflicts } = await supabase
-    .from('appointments')
-    .select('id')
-    .eq('professional_id', data.professional_id)
-    .eq('status', 'scheduled')
-    .overlaps('time_slot', `[${data.scheduled_at}, ${new Date(
-      new Date(data.scheduled_at).getTime() + data.duration_minutes * 60000
-    ).toISOString()})`);
+    .from("appointments")
+    .select("id")
+    .eq("professional_id", data.professional_id)
+    .eq("status", "scheduled")
+    .overlaps(
+      "time_slot",
+      `[${data.scheduled_at}, ${
+        new Date(
+          new Date(data.scheduled_at).getTime() + data.duration_minutes * 60000,
+        ).toISOString()
+      })`,
+    );
 
   if (conflicts?.length) {
-    return Response.json({ error: 'Time slot unavailable' }, { status: 409 });
+    return Response.json({ error: "Time slot unavailable" }, { status: 409 });
   }
 
   const { data: appointment } = await supabase
-    .from('appointments')
-    .insert({ ...data, id: crypto.randomUUID(), status: 'scheduled' })
+    .from("appointments")
+    .insert({ ...data, id: crypto.randomUUID(), status: "scheduled" })
     .select()
     .single();
 
@@ -279,26 +285,30 @@ export const POST = withAuth(async (req: Request) => {
 // GET /api/appointments
 export const GET = withAuth(async (req: Request) => {
   const { searchParams } = new URL(req.url);
-  const page = parseInt(searchParams.get('page') || '1');
-  const per_page = Math.min(parseInt(searchParams.get('per_page') || '20'), 50);
+  const page = parseInt(searchParams.get("page") || "1");
+  const per_page = Math.min(parseInt(searchParams.get("per_page") || "20"), 50);
 
   const from = (page - 1) * per_page;
   const { data, count } = await supabase
-    .from('appointments')
-    .select(`
+    .from("appointments")
+    .select(
+      `
       *, 
       patient:patients(name, email),
       professional:professionals(name, specialization)
-    `, { count: 'exact' })
+    `,
+      { count: "exact" },
+    )
     .range(from, from + per_page - 1);
 
   return Response.json({
     data,
     pagination: {
-      page, per_page,
+      page,
+      per_page,
       total_count: count || 0,
       has_next: (count || 0) > from + per_page,
-    }
+    },
   });
 });
 ```
@@ -311,20 +321,20 @@ export const POST = withAuth(async (req: Request) => {
   const { appointment_id } = await req.json();
 
   const { data: appointment } = await supabase
-    .from('appointments')
-    .select('*, patient:patients(birth_date)')
-    .eq('id', appointment_id)
+    .from("appointments")
+    .select("*, patient:patients(birth_date)")
+    .eq("id", appointment_id)
     .single();
 
   if (!appointment) {
-    return Response.json({ error: 'Not found' }, { status: 404 });
+    return Response.json({ error: "Not found" }, { status: 404 });
   }
 
   // Extract ML features
   const features = {
     patient_age: calculateAge(appointment.patient.birth_date),
     days_until: Math.ceil(
-      (new Date(appointment.scheduled_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+      (new Date(appointment.scheduled_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
     ),
     appointment_hour: new Date(appointment.scheduled_at).getHours(),
     procedure_cost: getProcedureCost(appointment.procedure_type),
@@ -336,10 +346,13 @@ export const POST = withAuth(async (req: Request) => {
     data: {
       appointment_id,
       no_show_probability: prediction.probability,
-      risk_level: prediction.probability > 0.7 ? 'high' : 
-                  prediction.probability > 0.4 ? 'medium' : 'low',
+      risk_level: prediction.probability > 0.7
+        ? "high"
+        : prediction.probability > 0.4
+        ? "medium"
+        : "low",
       contributing_factors: prediction.factors,
-    }
+    },
   });
 });
 ```
@@ -354,25 +367,26 @@ export const POST = withAuth(async (req: Request) => {
 // GET /api/health
 export async function GET() {
   const startTime = Date.now();
-  
+
   // Test database
   const { error: dbError } = await supabase
-    .from('patients').select('id').limit(1);
-  
+    .from("patients").select("id").limit(1);
+
   // Test AI service
   const aiStart = Date.now();
-  await openai('gpt-4o').generateText({
-    prompt: 'Health check', maxTokens: 1
+  await openai("gpt-4o").generateText({
+    prompt: "Health check",
+    maxTokens: 1,
   });
   const aiTime = Date.now() - aiStart;
 
   return Response.json({
-    status: dbError || aiTime > 5000 ? 'degraded' : 'healthy',
+    status: dbError || aiTime > 5000 ? "degraded" : "healthy",
     response_time_ms: Date.now() - startTime,
     services: {
-      database: { status: dbError ? 'unhealthy' : 'healthy' },
-      ai_service: { status: aiTime > 5000 ? 'degraded' : 'healthy' },
-    }
+      database: { status: dbError ? "unhealthy" : "healthy" },
+      ai_service: { status: aiTime > 5000 ? "degraded" : "healthy" },
+    },
   });
 }
 ```
@@ -386,9 +400,9 @@ export class DataPrivacy {
     return encrypt(data, process.env.ENCRYPTION_KEY!);
   }
 
-  static maskPII(data: string, type: 'email' | 'phone'): string {
-    if (type === 'email') {
-      const [user, domain] = data.split('@');
+  static maskPII(data: string, type: "email" | "phone"): string {
+    if (type === "email") {
+      const [user, domain] = data.split("@");
       return `${user[0]}***@${domain}`;
     }
     return `***-***-${data.slice(-4)}`;
@@ -399,21 +413,21 @@ export class DataPrivacy {
 export function withConsent(handler: Function) {
   return async (req: Request) => {
     const { patient_id } = await req.json();
-    
+
     if (patient_id) {
       const { data } = await supabase
-        .from('patients')
-        .select('consent_given')
-        .eq('id', patient_id)
+        .from("patients")
+        .select("consent_given")
+        .eq("id", patient_id)
         .single();
-      
+
       if (!data?.consent_given) {
-        return Response.json({ 
-          error: 'Patient consent required' 
+        return Response.json({
+          error: "Patient consent required",
         }, { status: 403 });
       }
     }
-    
+
     return handler(req);
   };
 }
@@ -423,10 +437,13 @@ export async function logAccess(
   user_id: string,
   resource: string,
   action: string,
-  resource_id: string
+  resource_id: string,
 ) {
-  await supabase.from('audit_logs').insert({
-    user_id, resource, action, resource_id,
+  await supabase.from("audit_logs").insert({
+    user_id,
+    resource,
+    action,
+    resource_id,
     timestamp: new Date().toISOString(),
   });
 }
@@ -437,18 +454,18 @@ export async function logAccess(
 ```typescript
 export function handleAPIError(error: any): Response {
   const requestId = crypto.randomUUID();
-  
-  console.error('API Error:', { requestId, error: error.message });
 
-  if (error.name === 'ValidationError') {
+  console.error("API Error:", { requestId, error: error.message });
+
+  if (error.name === "ValidationError") {
     return Response.json({
-      error: 'Validation failed',
+      error: "Validation failed",
       request_id: requestId,
     }, { status: 400 });
   }
 
   return Response.json({
-    error: 'Internal server error',
+    error: "Internal server error",
     request_id: requestId,
   }, { status: 500 });
 }
@@ -460,15 +477,15 @@ export function handleAPIError(error: any): Response {
 
 ### Essential Endpoints
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/patients` | GET | List patients |
-| `/api/patients` | POST | Create patient |
-| `/api/patients/[id]` | GET | Get patient |
-| `/api/appointments` | GET/POST | Manage appointments |
-| `/api/chat` | POST | AI consultation |
-| `/api/ml/no-show-prediction` | POST | Predict no-show |
-| `/api/health` | GET | System health |
+| Endpoint                     | Method   | Purpose             |
+| ---------------------------- | -------- | ------------------- |
+| `/api/patients`              | GET      | List patients       |
+| `/api/patients`              | POST     | Create patient      |
+| `/api/patients/[id]`         | GET      | Get patient         |
+| `/api/appointments`          | GET/POST | Manage appointments |
+| `/api/chat`                  | POST     | AI consultation     |
+| `/api/ml/no-show-prediction` | POST     | Predict no-show     |
+| `/api/health`                | GET      | System health       |
 
 ### Environment Setup
 
@@ -502,19 +519,19 @@ const PatientSchema = z.object({
 const AppointmentSchema = z.object({
   patient_id: z.string().uuid(),
   scheduled_at: z.string().datetime(),
-  procedure_type: z.enum(['consultation', 'botox_treatment']),
+  procedure_type: z.enum(["consultation", "botox_treatment"]),
 });
 ```
 
 ### Error Codes
 
-| Code | Status | Meaning |
-|------|--------|---------|
-| `VALIDATION_ERROR` | 400 | Invalid input |
-| `UNAUTHORIZED` | 401 | Missing token |
-| `CONSENT_REQUIRED` | 403 | Need consent |
-| `NOT_FOUND` | 404 | Resource missing |
-| `CONFLICT` | 409 | Scheduling conflict |
+| Code               | Status | Meaning             |
+| ------------------ | ------ | ------------------- |
+| `VALIDATION_ERROR` | 400    | Invalid input       |
+| `UNAUTHORIZED`     | 401    | Missing token       |
+| `CONSENT_REQUIRED` | 403    | Need consent        |
+| `NOT_FOUND`        | 404    | Resource missing    |
+| `CONFLICT`         | 409    | Scheduling conflict |
 
 ### Performance Tips
 
@@ -532,12 +549,12 @@ const AppointmentSchema = z.object({
 
 ```typescript
 // AI service not responding
-const health = await fetch('/api/health');
+const health = await fetch("/api/health");
 console.log(await health.json());
 
 // Database connection
-const { error } = await supabase.from('patients').select('count').limit(1);
-if (error) console.error('DB failed:', error);
+const { error } = await supabase.from("patients").select("count").limit(1);
+if (error) console.error("DB failed:", error);
 ```
 
 ### Production Checklist
@@ -550,4 +567,4 @@ if (error) console.error('DB failed:', error);
 
 ---
 
-*NeonPro Advanced Aesthetic Clinics API - Built with Next.js 15, Bun, and Vercel AI SDK 5.0*
+_NeonPro Advanced Aesthetic Clinics API - Built with Next.js 15, Bun, and Vercel AI SDK 5.0_

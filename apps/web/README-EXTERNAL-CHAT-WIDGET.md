@@ -7,18 +7,21 @@ Sistema de chat widget externo com IA, reconhecimento de voz em português e han
 ### ✅ Componentes Implementados
 
 #### 1. **ConfidenceIndicator** (`/components/ui/confidence-indicator.tsx`)
+
 - 🟢 **Verde (85-100%)**: Alta confiança
-- 🟡 **Amarelo (60-85%)**: Confiança média  
+- 🟡 **Amarelo (60-85%)**: Confiança média
 - 🔴 **Vermelho (0-60%)**: Baixa confiança
 - Suporte WCAG 2.1 AA+ com `aria-label` e indicadores visuais
 
 #### 2. **VoiceInput** (`/components/ui/voice-input.tsx`)
+
 - 🎤 Web Speech API com reconhecimento em português (`pt-BR`)
 - Accuracy > 85% para português
 - Estados visuais: Gravando, Processando, Transcrição
 - Tratamento de erros e fallbacks
 
 #### 3. **MessageRenderer** (`/components/ui/message-renderer.tsx`)
+
 - 📱 Display unificado com WCAG 2.1 AA+
 - Avatares distintos (User/Assistant/System)
 - Indicadores de confiança, handoff e processamento
@@ -26,6 +29,7 @@ Sistema de chat widget externo com IA, reconhecimento de voz em português e han
 - Timestamps e metadata completa
 
 #### 4. **ExternalChatWidget** (`/components/ui/external-chat-widget.tsx`)
+
 - 📱 Mobile-first responsive design
 - ⚡ Load time < 500ms
 - 🔄 Estados: Minimizado, Aberto, Fechado
@@ -34,6 +38,7 @@ Sistema de chat widget externo com IA, reconhecimento de voz em português e han
 - Integração completa com VoiceInput e MessageRenderer
 
 #### 5. **useChatHandoff Hook** (`/hooks/use-chat-handoff.ts`)
+
 - 🤖 Handoff automático quando confidence < 85%
 - 📝 Detecção de palavras-chave de escalação
 - ⏰ Delay configurável (2s default)
@@ -43,32 +48,35 @@ Sistema de chat widget externo com IA, reconhecimento de voz em português e han
 ### 🎯 Funcionalidades Core
 
 #### **Performance Garantida**
+
 - ⚡ **Load Time**: < 500ms
-- ⚡ **Response Time**: < 2s  
+- ⚡ **Response Time**: < 2s
 - 🎯 **Accuracy**: > 90% para mensagens comuns
 - 📱 **Mobile-First**: Responsivo em todos os viewports
 
 #### **Handoff Inteligente**
+
 ```typescript
 // Triggers automáticos de handoff
 const autoHandoffKeywords = [
-  'falar com atendente',
-  'atendimento humano', 
-  'não entendi',
-  'problema urgente',
-  'emergência',
-  'reclamação'
+  "falar com atendente",
+  "atendimento humano",
+  "não entendi",
+  "problema urgente",
+  "emergência",
+  "reclamação",
 ];
 
 // Thresholds configuráveis
 const config = {
-  confidenceThreshold: 85,  // < 85% = handoff
-  maxRetries: 3,            // 3 falhas = handoff
-  handoffDelay: 2000        // 2s delay antes do handoff
+  confidenceThreshold: 85, // < 85% = handoff
+  maxRetries: 3, // 3 falhas = handoff
+  handoffDelay: 2000, // 2s delay antes do handoff
 };
 ```
 
 #### **Acessibilidade WCAG 2.1 AA+**
+
 - 🎯 **Roles semânticos**: `dialog`, `article`, `status`
 - 🏷️ **ARIA labels**: Todos os elementos interativos
 - ⌨️ **Navegação por teclado**: Tab, Enter, Escape
@@ -78,47 +86,47 @@ const config = {
 ### 🧪 Testes Implementados
 
 #### **Performance Tests** (`/tests/external-chat-widget.test.ts`)
+
 ```typescript
 // Load time < 500ms
-test('should load widget in under 500ms')
+test("should load widget in under 500ms");
 
-// Response time < 2s  
-test('should respond to messages within 2 seconds')
+// Response time < 2s
+test("should respond to messages within 2 seconds");
 
 // Accuracy > 90%
-test('should maintain accuracy above 90%')
+test("should maintain accuracy above 90%");
 
 // Handoff automático
-test('should trigger handoff when confidence is below 85%')
+test("should trigger handoff when confidence is below 85%");
 
 // Acessibilidade WCAG 2.1 AA+
-test('should be accessible (WCAG 2.1 AA+)')
+test("should be accessible (WCAG 2.1 AA+)");
 
 // Responsivo mobile
-test('should be responsive on mobile viewport')
+test("should be responsive on mobile viewport");
 
 // Error handling
-test('should handle errors gracefully')
+test("should handle errors gracefully");
 
 // Benchmark múltiplas mensagens
-test('performance benchmark: multiple rapid messages')
+test("performance benchmark: multiple rapid messages");
 ```
 
 ### 🎮 Como Usar
 
 #### **1. Importação Simples**
+
 ```typescript
-import { 
-  ExternalChatWidget,
-  useChatHandoff 
-} from '@/components/ui';
+import { ExternalChatWidget, useChatHandoff } from "@/components/ui";
 ```
 
 #### **2. Implementação Básica**
+
 ```typescript
 export function MyPage() {
   const { processAIResponse, getHandoffMessage } = useChatHandoff({
-    confidenceThreshold: 85
+    confidenceThreshold: 85,
   });
 
   const handleMessage = async (message: string) => {
@@ -130,7 +138,7 @@ export function MyPage() {
     <ExternalChatWidget
       position="bottom-right"
       onMessage={handleMessage}
-      onHumanHandoffRequest={() => console.log('Handoff requested')}
+      onHumanHandoffRequest={() => console.log("Handoff requested")}
       title="Assistente NeonPro"
       enableVoice={true}
       enableHandoff={true}
@@ -140,7 +148,9 @@ export function MyPage() {
 ```
 
 #### **3. Exemplo Completo**
+
 Ver `/components/examples/external-chat-example.tsx` para implementação completa com:
+
 - Simulação de API calls
 - Métricas em tempo real
 - Interface de controle de testes
@@ -152,17 +162,17 @@ Ver `/components/examples/external-chat-example.tsx` para implementação comple
 interface ExternalChatWidgetProps {
   // Posicionamento
   position?: "bottom-right" | "bottom-left" | "top-right" | "top-left";
-  
+
   // Handlers
   onMessage?: (message: string) => Promise<AIResponse>;
   onHumanHandoffRequest?: () => void;
-  
+
   // Personalização
   title?: string;
   subtitle?: string;
   avatar?: string;
   theme?: "light" | "dark" | "auto";
-  
+
   // Funcionalidades
   enableVoice?: boolean;
   enableHandoff?: boolean;
@@ -176,17 +186,18 @@ interface ExternalChatWidgetProps {
 
 ```typescript
 interface HandoffConfig {
-  confidenceThreshold: number;    // Default: 85
-  maxRetries: number;             // Default: 3
-  handoffDelay: number;           // Default: 2000ms
-  autoHandoffKeywords: string[];  // Palavras-chave de escalação
-  escalationReasons: string[];    // Motivos de escalação
+  confidenceThreshold: number; // Default: 85
+  maxRetries: number; // Default: 3
+  handoffDelay: number; // Default: 2000ms
+  autoHandoffKeywords: string[]; // Palavras-chave de escalação
+  escalationReasons: string[]; // Motivos de escalação
 }
 ```
 
 ### 🎯 Casos de Uso de Teste
 
 #### **✅ Alta Confiança (85-100%)**
+
 ```
 "Olá"
 "Como você funciona?" 
@@ -195,6 +206,7 @@ interface HandoffConfig {
 ```
 
 #### **⚠️ Média Confiança (60-85%)**
+
 ```
 "Como fazer backup"
 "Preciso de um tutorial"
@@ -202,6 +214,7 @@ interface HandoffConfig {
 ```
 
 #### **🚨 Baixa Confiança + Handoff (<85%)**
+
 ```
 "Problema técnico complexo"
 "Erro específico de sistema"
@@ -212,7 +225,7 @@ interface HandoffConfig {
 ### 📊 Métricas de Performance Atingidas
 
 - ✅ **Load Time**: ~300ms (Meta: <500ms)
-- ✅ **Response Time**: ~800ms (Meta: <2s)  
+- ✅ **Response Time**: ~800ms (Meta: <2s)
 - ✅ **Voice Recognition**: >90% accuracy PT-BR
 - ✅ **Handoff Automation**: <85% confidence
 - ✅ **WCAG 2.1 AA+**: 100% compliance
@@ -252,7 +265,7 @@ apps/web/
 O External AI Chat Widget está **100% funcional** com todos os requisitos atendidos:
 
 - 🚀 Performance otimizada
-- 🤖 IA com handoff inteligente  
+- 🤖 IA com handoff inteligente
 - 🎤 Reconhecimento de voz em português
 - 📱 Mobile-first e responsivo
 - ♿ WCAG 2.1 AA+ acessível
@@ -260,6 +273,6 @@ O External AI Chat Widget está **100% funcional** com todos os requisitos atend
 
 ---
 
-**Desenvolvido por**: NeonPro Team  
-**Data**: Janeiro 2025  
+**Desenvolvido por**: NeonPro Team\
+**Data**: Janeiro 2025\
 **Versão**: 1.0.0

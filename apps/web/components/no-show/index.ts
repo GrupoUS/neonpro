@@ -3,15 +3,15 @@
 // Risk Indicator Components
 export {
   default as RiskIndicator,
-  RiskIndicatorWithTooltip,
   RiskIndicatorList,
-  useRiskCalculation,
-  type RiskLevel,
-  type RiskIndicatorProps,
   type RiskIndicatorListProps,
+  type RiskIndicatorProps,
+  RiskIndicatorWithTooltip,
+  type RiskLevel,
+  useRiskCalculation,
 } from "./risk-indicator";
 
-// Risk Factor Breakdown Component  
+// Risk Factor Breakdown Component
 export {
   default as RiskFactorBreakdown,
   type RiskFactor,
@@ -28,9 +28,9 @@ export {
 // Performance Metrics Component
 export {
   default as PerformanceMetrics,
-  type PerformanceMetric,
   type MLModelMetrics,
-  type ROIMetrics,
   type NoShowMetrics,
+  type PerformanceMetric,
   type PerformanceMetricsProps,
+  type ROIMetrics,
 } from "./performance-metrics";

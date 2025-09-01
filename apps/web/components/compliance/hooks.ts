@@ -3,22 +3,22 @@
  * Provides real-time data and state management for compliance components
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { complianceService } from './ComplianceService';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { complianceService } from "./ComplianceService";
 import type {
-  ComplianceScore,
-  ComplianceViolation,
-  ComplianceFramework,
+  ComplianceCheckResult,
   ComplianceFilters,
+  ComplianceFramework,
+  ComplianceScore,
   ComplianceTrendData,
+  ComplianceViolation,
   MonitoringConfig,
-  ComplianceCheckResult
-} from './types';
+} from "./types";
 
 /**
  * Main hook for compliance dashboard data
  */
-export const useCompliance = (framework: ComplianceFramework | 'all' = 'all') => {
+export const useCompliance = (framework: ComplianceFramework | "all" = "all") => {
   const [scores, setScores] = useState<ComplianceScore[]>([]);
   const [violations, setViolations] = useState<ComplianceViolation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,18 +31,18 @@ export const useCompliance = (framework: ComplianceFramework | 'all' = 'all') =>
       try {
         setIsLoading(true);
         setError(null);
-        
+
         const [scoresData, violationsData] = await Promise.all([
           complianceService.fetchComplianceScores(framework),
-          complianceService.fetchViolations(framework !== 'all' ? { framework } : {})
+          complianceService.fetchViolations(framework !== "all" ? { framework } : {}),
         ]);
-        
+
         setScores(scoresData);
         setViolations(violationsData);
         setLastUpdated(Date.now());
       } catch (err) {
-        console.error('Error loading compliance data:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load compliance data');
+        console.error("Error loading compliance data:", err);
+        setError(err instanceof Error ? err.message : "Failed to load compliance data");
       } finally {
         setIsLoading(false);
       }
@@ -66,18 +66,18 @@ export const useCompliance = (framework: ComplianceFramework | 'all' = 'all') =>
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const [scoresData, violationsData] = await Promise.all([
         complianceService.fetchComplianceScores(framework),
-        complianceService.fetchViolations(framework !== 'all' ? { framework } : {})
+        complianceService.fetchViolations(framework !== "all" ? { framework } : {}),
       ]);
-      
+
       setScores(scoresData);
       setViolations(violationsData);
       setLastUpdated(Date.now());
     } catch (err) {
-      console.error('Error refreshing compliance data:', err);
-      setError(err instanceof Error ? err.message : 'Failed to refresh data');
+      console.error("Error refreshing compliance data:", err);
+      setError(err instanceof Error ? err.message : "Failed to refresh data");
     } finally {
       setIsLoading(false);
     }
@@ -85,20 +85,25 @@ export const useCompliance = (framework: ComplianceFramework | 'all' = 'all') =>
 
   // Calculate overall metrics
   const overallScore = useMemo(() => {
-    if (!scores.length) {return 0;}
+    if (!scores.length) return 0;
     return Math.round(scores.reduce((sum, score) => sum + score.score, 0) / scores.length);
   }, [scores]);
 
   const overallStatus = useMemo(() => {
-    if (overallScore >= 90) {return 'excellent';}
-    if (overallScore >= 75) {return 'good';}
-    if (overallScore >= 60) {return 'warning';}
-    return 'critical';
+    if (overallScore >= 90) return "excellent";
+    if (overallScore >= 75) return "good";
+    if (overallScore >= 60) return "warning";
+    return "critical";
   }, [overallScore]);
 
   const totalViolations = useMemo(() => violations.length, [violations]);
-  const openViolations = useMemo(() => violations.filter(v => v.status === 'open').length, [violations]);
-  const criticalViolations = useMemo(() => violations.filter(v => v.severity === 'critical').length, [violations]);
+  const openViolations = useMemo(() => violations.filter(v => v.status === "open").length, [
+    violations,
+  ]);
+  const criticalViolations = useMemo(
+    () => violations.filter(v => v.severity === "critical").length,
+    [violations],
+  );
 
   return {
     scores,
@@ -112,8 +117,8 @@ export const useCompliance = (framework: ComplianceFramework | 'all' = 'all') =>
       overallStatus,
       totalViolations,
       openViolations,
-      criticalViolations
-    }
+      criticalViolations,
+    },
   };
 };
 
@@ -131,17 +136,17 @@ export const useComplianceViolations = (filters?: ComplianceFilters) => {
       try {
         setIsLoading(true);
         setError(null);
-        
+
         const violationsData = await complianceService.fetchViolations({
           framework: filters?.frameworks?.[0],
           severity: filters?.violationSeverity?.[0],
-          status: filters?.violationStatus?.[0]
+          status: filters?.violationStatus?.[0],
         });
-        
+
         setViolations(violationsData);
       } catch (err) {
-        console.error('Error loading violations:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load violations');
+        console.error("Error loading violations:", err);
+        setError(err instanceof Error ? err.message : "Failed to load violations");
       } finally {
         setIsLoading(false);
       }
@@ -152,37 +157,43 @@ export const useComplianceViolations = (filters?: ComplianceFilters) => {
 
   // Update violation status
   const updateViolation = useCallback(async (violationId: string, updates: {
-    status?: 'open' | 'in_progress' | 'resolved';
+    status?: "open" | "in_progress" | "resolved";
     assignedTo?: string;
     notes?: string;
   }) => {
     try {
       const updatedViolation = await complianceService.updateViolation(violationId, updates);
-      
-      setViolations(prev => prev.map(v => 
-        v.id === violationId ? updatedViolation : v
-      ));
-      
+
+      setViolations(prev => prev.map(v => v.id === violationId ? updatedViolation : v));
+
       return updatedViolation;
     } catch (err) {
-      console.error('Error updating violation:', err);
+      console.error("Error updating violation:", err);
       throw err;
     }
   }, []);
 
   // Filter violations
   const filteredViolations = useMemo(() => {
-    if (!filters) {return violations;}
-    
+    if (!filters) return violations;
+
     return violations.filter(violation => {
-      if (filters.frameworks && !filters.frameworks.includes(violation.framework)) {return false;}
-      if (filters.violationStatus && !filters.violationStatus.includes(violation.status)) {return false;}
-      if (filters.violationSeverity && !filters.violationSeverity.includes(violation.severity)) {return false;}
-      if (filters.assignedTo && filters.assignedTo.length && 
-          (!violation.assignedTo || !filters.assignedTo.includes(violation.assignedTo))) {return false;}
-      if (filters.pages && filters.pages.length && 
-          !filters.pages.some(page => violation.page.includes(page))) {return false;}
-      
+      if (filters.frameworks && !filters.frameworks.includes(violation.framework)) return false;
+      if (filters.violationStatus && !filters.violationStatus.includes(violation.status)) {
+        return false;
+      }
+      if (filters.violationSeverity && !filters.violationSeverity.includes(violation.severity)) {
+        return false;
+      }
+      if (
+        filters.assignedTo && filters.assignedTo.length
+        && (!violation.assignedTo || !filters.assignedTo.includes(violation.assignedTo))
+      ) return false;
+      if (
+        filters.pages && filters.pages.length
+        && !filters.pages.some(page => violation.page.includes(page))
+      ) return false;
+
       return true;
     });
   }, [violations, filters]);
@@ -193,7 +204,7 @@ export const useComplianceViolations = (filters?: ComplianceFilters) => {
     error,
     updateViolation,
     totalCount: violations.length,
-    filteredCount: filteredViolations.length
+    filteredCount: filteredViolations.length,
   };
 };
 
@@ -210,32 +221,37 @@ export const useComplianceTrends = (framework: ComplianceFramework, days: number
       try {
         setIsLoading(true);
         setError(null);
-        
+
         const trends = await complianceService.getComplianceTrends(framework, days);
-        
+
         const data: ComplianceTrendData = {
           framework,
           data: trends.dates.map((date, index) => ({
             date,
             score: trends.scores[index],
-            violations: trends.violations[index]
+            violations: trends.violations[index],
           })),
           summary: {
             averageScore: trends.scores.reduce((a, b) => a + b, 0) / trends.scores.length || 0,
-            scoreImprovement: trends.scores.length >= 2 ? 
-              ((trends.scores[trends.scores.length - 1] - trends.scores[0]) / trends.scores[0]) * 100 : 0,
+            scoreImprovement: trends.scores.length >= 2
+              ? ((trends.scores[trends.scores.length - 1] - trends.scores[0]) / trends.scores[0])
+                * 100
+              : 0,
             totalViolations: trends.violations.reduce((a, b) => a + b, 0),
-            violationTrend: trends.violations.length >= 2 ?
-              trends.violations[trends.violations.length - 1] > trends.violations[0] ? 'up' :
-              trends.violations[trends.violations.length - 1] < trends.violations[0] ? 'down' : 'stable'
-              : 'stable'
-          }
+            violationTrend: trends.violations.length >= 2
+              ? trends.violations[trends.violations.length - 1] > trends.violations[0]
+                ? "up"
+                : trends.violations[trends.violations.length - 1] < trends.violations[0]
+                ? "down"
+                : "stable"
+              : "stable",
+          },
         };
-        
+
         setTrendData(data);
       } catch (err) {
-        console.error('Error loading trends:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load trend data');
+        console.error("Error loading trends:", err);
+        setError(err instanceof Error ? err.message : "Failed to load trend data");
       } finally {
         setIsLoading(false);
       }
@@ -247,7 +263,7 @@ export const useComplianceTrends = (framework: ComplianceFramework, days: number
   return {
     trendData,
     isLoading,
-    error
+    error,
   };
 };
 
@@ -263,9 +279,9 @@ export const useComplianceCheck = () => {
     try {
       setIsRunning(true);
       setError(null);
-      
+
       const result = await complianceService.runComplianceCheck(framework, config);
-      
+
       // Transform to full result format
       const checkResult: ComplianceCheckResult = {
         framework,
@@ -277,15 +293,15 @@ export const useComplianceCheck = () => {
         metadata: {
           checkDurationMs: 0, // Would be measured
           pagesChecked: 1,
-          rulesEvaluated: 0 // Would be counted
-        }
+          rulesEvaluated: 0, // Would be counted
+        },
       };
-      
+
       setResults(checkResult);
       return checkResult;
     } catch (err) {
-      console.error('Error running compliance check:', err);
-      setError(err instanceof Error ? err.message : 'Compliance check failed');
+      console.error("Error running compliance check:", err);
+      setError(err instanceof Error ? err.message : "Compliance check failed");
       throw err;
     } finally {
       setIsRunning(false);
@@ -296,12 +312,12 @@ export const useComplianceCheck = () => {
     try {
       setIsRunning(true);
       setError(null);
-      
+
       const result = await complianceService.runWCAGCheck(url);
       return result;
     } catch (err) {
-      console.error('Error running WCAG check:', err);
-      setError(err instanceof Error ? err.message : 'WCAG check failed');
+      console.error("Error running WCAG check:", err);
+      setError(err instanceof Error ? err.message : "WCAG check failed");
       throw err;
     } finally {
       setIsRunning(false);
@@ -312,12 +328,12 @@ export const useComplianceCheck = () => {
     try {
       setIsRunning(true);
       setError(null);
-      
+
       const result = await complianceService.runLGPDCheck();
       return result;
     } catch (err) {
-      console.error('Error running LGPD check:', err);
-      setError(err instanceof Error ? err.message : 'LGPD check failed');
+      console.error("Error running LGPD check:", err);
+      setError(err instanceof Error ? err.message : "LGPD check failed");
       throw err;
     } finally {
       setIsRunning(false);
@@ -330,7 +346,7 @@ export const useComplianceCheck = () => {
     runLGPDCheck,
     isRunning,
     results,
-    error
+    error,
   };
 };
 
@@ -339,41 +355,44 @@ export const useComplianceCheck = () => {
  */
 export const useComplianceReports = () => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [reports, setReports] = useState<<unknown>[]>([]);
+  const [reports, setReports] = useState << unknown > [] > [];
   const [error, setError] = useState<string | null>(null);
 
-  const generateReport = useCallback(async (frameworks: ComplianceFramework[], options?: unknown) => {
-    try {
-      setIsGenerating(true);
-      setError(null);
-      
-      const result = await complianceService.generateReport(frameworks, options);
-      
-      const newReport = {
-        id: result.reportId,
-        title: `Relatório de Compliance - ${new Date().toLocaleDateString('pt-BR')}`,
-        frameworks,
-        generatedAt: Date.now(),
-        status: 'ready' as const,
-        downloadUrl: result.downloadUrl
-      };
-      
-      setReports(prev => [...prev, newReport]);
-      return newReport;
-    } catch (err) {
-      console.error('Error generating report:', err);
-      setError(err instanceof Error ? err.message : 'Report generation failed');
-      throw err;
-    } finally {
-      setIsGenerating(false);
-    }
-  }, []);
+  const generateReport = useCallback(
+    async (frameworks: ComplianceFramework[], options?: unknown) => {
+      try {
+        setIsGenerating(true);
+        setError(null);
+
+        const result = await complianceService.generateReport(frameworks, options);
+
+        const newReport = {
+          id: result.reportId,
+          title: `Relatório de Compliance - ${new Date().toLocaleDateString("pt-BR")}`,
+          frameworks,
+          generatedAt: Date.now(),
+          status: "ready" as const,
+          downloadUrl: result.downloadUrl,
+        };
+
+        setReports(prev => [...prev, newReport]);
+        return newReport;
+      } catch (err) {
+        console.error("Error generating report:", err);
+        setError(err instanceof Error ? err.message : "Report generation failed");
+        throw err;
+      } finally {
+        setIsGenerating(false);
+      }
+    },
+    [],
+  );
 
   return {
     generateReport,
     reports,
     isGenerating,
-    error
+    error,
   };
 };
 
@@ -394,26 +413,26 @@ export const useMonitoringConfig = () => {
         const defaultConfig: MonitoringConfig = {
           enabled: true,
           interval: 30,
-          frameworks: ['WCAG', 'LGPD', 'ANVISA', 'CFM'],
+          frameworks: ["WCAG", "LGPD", "ANVISA", "CFM"],
           alertThresholds: {
             scoreDropPercent: 5,
-            newViolationSeverity: 'high'
+            newViolationSeverity: "high",
           },
           notifications: {
             email: {
               enabled: true,
-              recipients: []
+              recipients: [],
             },
             dashboard: {
               enabled: true,
-              showToasts: true
-            }
-          }
+              showToasts: true,
+            },
+          },
         };
-        
+
         setConfig(defaultConfig);
       } catch (err) {
-        setError('Failed to load monitoring configuration');
+        setError("Failed to load monitoring configuration");
       } finally {
         setIsLoading(false);
       }
@@ -423,20 +442,20 @@ export const useMonitoringConfig = () => {
   }, []);
 
   const updateConfig = useCallback(async (newConfig: Partial<MonitoringConfig>) => {
-    if (!config) {return;}
-    
+    if (!config) return;
+
     try {
       setIsSaving(true);
       setError(null);
-      
+
       const updatedConfig = { ...config, ...newConfig };
-      
+
       // This would typically save to an API
       // await saveMonitoringConfig(updatedConfig);
-      
+
       setConfig(updatedConfig);
     } catch (err) {
-      setError('Failed to save monitoring configuration');
+      setError("Failed to save monitoring configuration");
       throw err;
     } finally {
       setIsSaving(false);
@@ -448,7 +467,7 @@ export const useMonitoringConfig = () => {
     updateConfig,
     isLoading,
     isSaving,
-    error
+    error,
   };
 };
 
@@ -458,7 +477,7 @@ export const useMonitoringConfig = () => {
 export const useComplianceAlerts = () => {
   const [alerts, setAlerts] = useState<{
     id: string;
-    type: 'score_drop' | 'new_violation' | 'system_error';
+    type: "score_drop" | "new_violation" | "system_error";
     framework: ComplianceFramework;
     message: string;
     timestamp: number;
@@ -466,9 +485,7 @@ export const useComplianceAlerts = () => {
   }[]>([]);
 
   const markAsRead = useCallback((alertId: string) => {
-    setAlerts(prev => prev.map(alert => 
-      alert.id === alertId ? { ...alert, read: true } : alert
-    ));
+    setAlerts(prev => prev.map(alert => alert.id === alertId ? { ...alert, read: true } : alert));
   }, []);
 
   const dismissAlert = useCallback((alertId: string) => {
@@ -481,6 +498,6 @@ export const useComplianceAlerts = () => {
     alerts,
     markAsRead,
     dismissAlert,
-    unreadCount
+    unreadCount,
   };
 };

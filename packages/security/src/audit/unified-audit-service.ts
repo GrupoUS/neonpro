@@ -650,10 +650,10 @@ export class UnifiedAuditService {
     }
 
     const encrypted: Record<string, unknown> = {};
-    const sensitiveFields = ["patientId", "email", "phone", "address", "medicalData"];
+    const sensitiveFields = new Set(["patientId", "email", "phone", "address", "medicalData"]);
 
     for (const [key, value] of Object.entries(data)) {
-      if (sensitiveFields.includes(key) && value) {
+      if (sensitiveFields.has(key) && value) {
         const iv = randomUUID().slice(0, 16);
         const cipher = createHash("sha256").update(
           `${this.encryptionKey}:${iv}:${JSON.stringify(value)}`,

@@ -6,7 +6,7 @@
  * For aesthetic clinic patient details and consultation management
  */
 
-import type { NextRequest} from "next/server";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 interface PatientDetailRequest {
@@ -264,7 +264,6 @@ async function handleDataConsent(patientId: string) {
         date: "2024-01-15T10:00:00Z",
         ipAddress: "192.168.1.1",
       },
-
     },
     requiredActions: [],
     dataRetentionPolicy: {

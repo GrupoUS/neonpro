@@ -31,7 +31,9 @@ jest.unstable_mockModule("../types/audit", () => ({
 const { AuditService } = await import("./audit.service");
 const { AuditSeverity } = await import("../types/audit");
 
-type ThenableResult<T> = T & { then: (resolve: (v: unknown) => any, reject?: (e: unknown) => any) => any; };
+type ThenableResult<T> = T & {
+  then: (resolve: (v: unknown) => any, reject?: (e: unknown) => any) => any;
+};
 
 function thenable<T extends object>(payload: T): ThenableResult<T> {
   return Promise.resolve(payload) as unknown;
@@ -48,7 +50,10 @@ function makeSelectQueryBuilder(result: unknown) {
   return { qb, select };
 }
 
-function makeInsertChain(result: { data: unknown; error: unknown; }, capture?: (payload: unknown) => void) {
+function makeInsertChain(
+  result: { data: unknown; error: unknown; },
+  capture?: (payload: unknown) => void,
+) {
   const single = jest.fn(() => Promise.resolve(result));
   const select = jest.fn(() => ({ single }));
   const insert = jest.fn((payload: unknown) => {
@@ -90,7 +95,7 @@ function newSupabaseMock(options: {
     insert,
     select: (sel?: unknown, opts?: unknown) => {
       // Route selects: when called in getStats it has only '*' argument and no count option
-      if (opts && opts.count) {return selectFn(sel, opts);}
+      if (opts && opts.count) return selectFn(sel, opts);
       return selectStats(sel);
     },
     delete: del,

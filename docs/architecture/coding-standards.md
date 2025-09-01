@@ -103,7 +103,6 @@ const validateAestheticAccess = async (professionalId: string, patientId: string
 - **Immediate Refactoring:** Refactor generated code immediately to align with SOLID principles and project architecture
 - **Technical Documentation:** Maintain updated and detailed technical documentation to guide both humans and future code generation
 
-
 ### **Code Style Requirements**
 
 - **High Confidence**: Only suggest changes with 95%+ confidence

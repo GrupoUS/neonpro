@@ -1,43 +1,43 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, createContext, useContext } from "react";
-import { cn } from "@/lib/utils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 // Context types for healthcare AI system
 export enum ContextType {
-  AI_AUTONOMOUS = "ai_autonomous",          // Pure AI processing
-  AI_ASSISTED = "ai_assisted",              // AI with human oversight
-  HUMAN_PRIMARY = "human_primary",          // Human with AI suggestions
-  MANUAL_ONLY = "manual_only",              // No AI assistance
-  EMERGENCY = "emergency",                  // Emergency protocols
-  COMPLIANCE_MODE = "compliance_mode"       // LGPD/ANVISA compliance mode
+  AI_AUTONOMOUS = "ai_autonomous", // Pure AI processing
+  AI_ASSISTED = "ai_assisted", // AI with human oversight
+  HUMAN_PRIMARY = "human_primary", // Human with AI suggestions
+  MANUAL_ONLY = "manual_only", // No AI assistance
+  EMERGENCY = "emergency", // Emergency protocols
+  COMPLIANCE_MODE = "compliance_mode", // LGPD/ANVISA compliance mode
 }
 
 // Healthcare departments/specialties
 export enum Department {
   GENERAL = "general",
   AESTHETIC = "aesthetic",
-  DERMATOLOGY = "dermatology", 
+  DERMATOLOGY = "dermatology",
   SURGERY = "surgery",
   EMERGENCY = "emergency",
   PEDIATRICS = "pediatrics",
-  GERIATRICS = "geriatrics"
+  GERIATRICS = "geriatrics",
 }
 
 // User roles in healthcare system
 export enum UserRole {
   ADMIN = "admin",
   DOCTOR = "doctor",
-  NURSE = "nurse", 
+  NURSE = "nurse",
   RECEPTIONIST = "receptionist",
   TECHNICIAN = "technician",
-  PATIENT = "patient"
+  PATIENT = "patient",
 }
 
 // Context switching reasons
@@ -48,7 +48,7 @@ export enum SwitchReason {
   COMPLIANCE_REQUIRED = "compliance_required",
   ERROR_RECOVERY = "error_recovery",
   WORKFLOW_CHANGE = "workflow_change",
-  PATIENT_ESCALATION = "patient_escalation"
+  PATIENT_ESCALATION = "patient_escalation",
 }
 
 // Context state definition
@@ -73,70 +73,70 @@ const TransitionRules = {
       ContextType.AI_ASSISTED,
       ContextType.HUMAN_PRIMARY,
       ContextType.MANUAL_ONLY,
-      ContextType.EMERGENCY
+      ContextType.EMERGENCY,
     ],
     requiresConfirmation: [ContextType.MANUAL_ONLY],
     autoSwitchTriggers: {
       [ContextType.AI_ASSISTED]: { minConfidence: 70 },
       [ContextType.EMERGENCY]: { emergencyDetected: true },
-      [ContextType.COMPLIANCE_MODE]: { complianceRequired: true }
-    }
+      [ContextType.COMPLIANCE_MODE]: { complianceRequired: true },
+    },
   },
   [ContextType.AI_ASSISTED]: {
     canSwitchTo: [
       ContextType.AI_AUTONOMOUS,
-      ContextType.HUMAN_PRIMARY, 
+      ContextType.HUMAN_PRIMARY,
       ContextType.MANUAL_ONLY,
-      ContextType.EMERGENCY
+      ContextType.EMERGENCY,
     ],
     requiresConfirmation: [],
     autoSwitchTriggers: {
       [ContextType.AI_AUTONOMOUS]: { minConfidence: 90 },
-      [ContextType.HUMAN_PRIMARY]: { minConfidence: 50 }
-    }
+      [ContextType.HUMAN_PRIMARY]: { minConfidence: 50 },
+    },
   },
   [ContextType.HUMAN_PRIMARY]: {
     canSwitchTo: [
       ContextType.AI_AUTONOMOUS,
       ContextType.AI_ASSISTED,
       ContextType.MANUAL_ONLY,
-      ContextType.EMERGENCY
+      ContextType.EMERGENCY,
     ],
     requiresConfirmation: [ContextType.AI_AUTONOMOUS],
-    autoSwitchTriggers: {}
+    autoSwitchTriggers: {},
   },
   [ContextType.MANUAL_ONLY]: {
     canSwitchTo: [
       ContextType.AI_AUTONOMOUS,
       ContextType.AI_ASSISTED,
       ContextType.HUMAN_PRIMARY,
-      ContextType.EMERGENCY
+      ContextType.EMERGENCY,
     ],
     requiresConfirmation: [ContextType.AI_AUTONOMOUS, ContextType.AI_ASSISTED],
     autoSwitchTriggers: {
-      [ContextType.EMERGENCY]: { emergencyDetected: true }
-    }
+      [ContextType.EMERGENCY]: { emergencyDetected: true },
+    },
   },
   [ContextType.EMERGENCY]: {
     canSwitchTo: [
       ContextType.AI_ASSISTED,
       ContextType.HUMAN_PRIMARY,
-      ContextType.MANUAL_ONLY
+      ContextType.MANUAL_ONLY,
     ],
     requiresConfirmation: [],
     autoSwitchTriggers: {},
-    priority: true
+    priority: true,
   },
   [ContextType.COMPLIANCE_MODE]: {
     canSwitchTo: [
       ContextType.AI_ASSISTED,
       ContextType.HUMAN_PRIMARY,
-      ContextType.MANUAL_ONLY
+      ContextType.MANUAL_ONLY,
     ],
     requiresConfirmation: [],
     autoSwitchTriggers: {},
-    priority: true
-  }
+    priority: true,
+  },
 } as const;
 
 // Context descriptions for UI
@@ -147,15 +147,15 @@ const ContextDescriptions = {
     icon: "🤖",
     color: "bg-blue-50",
     textColor: "text-blue-700",
-    borderColor: "border-blue-200"
+    borderColor: "border-blue-200",
   },
   [ContextType.AI_ASSISTED]: {
-    title: "IA Assistida", 
+    title: "IA Assistida",
     description: "IA com supervisão profissional ativa",
     icon: "🤝",
     color: "bg-green-50",
-    textColor: "text-green-700", 
-    borderColor: "border-green-200"
+    textColor: "text-green-700",
+    borderColor: "border-green-200",
   },
   [ContextType.HUMAN_PRIMARY]: {
     title: "Profissional Principal",
@@ -163,7 +163,7 @@ const ContextDescriptions = {
     icon: "👨‍⚕️",
     color: "bg-purple-50",
     textColor: "text-purple-700",
-    borderColor: "border-purple-200"
+    borderColor: "border-purple-200",
   },
   [ContextType.MANUAL_ONLY]: {
     title: "Modo Manual",
@@ -171,7 +171,7 @@ const ContextDescriptions = {
     icon: "✋",
     color: "bg-gray-50",
     textColor: "text-gray-700",
-    borderColor: "border-gray-200"
+    borderColor: "border-gray-200",
   },
   [ContextType.EMERGENCY]: {
     title: "Emergência Médica",
@@ -179,7 +179,7 @@ const ContextDescriptions = {
     icon: "🚨",
     color: "bg-red-50",
     textColor: "text-red-700",
-    borderColor: "border-red-200"
+    borderColor: "border-red-200",
   },
   [ContextType.COMPLIANCE_MODE]: {
     title: "Modo Conformidade",
@@ -187,8 +187,8 @@ const ContextDescriptions = {
     icon: "🛡️",
     color: "bg-indigo-50",
     textColor: "text-indigo-700",
-    borderColor: "border-indigo-200"
-  }
+    borderColor: "border-indigo-200",
+  },
 } as const;
 
 // Context switching hook
@@ -201,7 +201,7 @@ export function useContextSwitching(initialContext: Partial<ContextState> = {}) 
     permissions: [],
     metadata: {},
     lastSwitchTime: Date.now(),
-    ...initialContext
+    ...initialContext,
   });
 
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -209,12 +209,12 @@ export function useContextSwitching(initialContext: Partial<ContextState> = {}) 
 
   // Switch to new context with transition
   const switchContext = useCallback(async (
-    newType: ContextType, 
+    newType: ContextType,
     reason: SwitchReason = SwitchReason.USER_REQUEST,
-    preserveData: Record<string, any> = {}
+    preserveData: Record<string, any> = {},
   ) => {
     const currentRules = TransitionRules[context.type];
-    
+
     // Check if transition is allowed
     if (!currentRules.canSwitchTo.includes(newType)) {
       console.warn(`Cannot switch from ${context.type} to ${newType}`);
@@ -227,10 +227,10 @@ export function useContextSwitching(initialContext: Partial<ContextState> = {}) 
     // Simulate transition process
     const transitionSteps = [
       "Salvando contexto atual...",
-      "Validando permissões...", 
+      "Validando permissões...",
       "Preparando novo contexto...",
       "Aplicando configurações...",
-      "Finalizando transição..."
+      "Finalizando transição...",
     ];
 
     for (let i = 0; i < transitionSteps.length; i++) {
@@ -244,7 +244,7 @@ export function useContextSwitching(initialContext: Partial<ContextState> = {}) 
       type: newType,
       lastSwitchTime: Date.now(),
       switchReason: reason,
-      metadata: { ...prev.metadata, ...preserveData }
+      metadata: { ...prev.metadata, ...preserveData },
     }));
 
     setTransitionProgress(100);
@@ -259,21 +259,21 @@ export function useContextSwitching(initialContext: Partial<ContextState> = {}) 
   // Auto-switch based on conditions
   const checkAutoSwitch = useCallback((conditions: Record<string, any>) => {
     const currentRules = TransitionRules[context.type];
-    
+
     for (const [targetType, triggers] of Object.entries(currentRules.autoSwitchTriggers)) {
       let shouldSwitch = true;
-      
+
       for (const [key, value] of Object.entries(triggers)) {
         if (conditions[key] !== value) {
           shouldSwitch = false;
           break;
         }
       }
-      
+
       if (shouldSwitch) {
         switchContext(
-          targetType as ContextType, 
-          SwitchReason.AI_CONFIDENCE_LOW
+          targetType as ContextType,
+          SwitchReason.AI_CONFIDENCE_LOW,
         );
         break;
       }
@@ -285,7 +285,7 @@ export function useContextSwitching(initialContext: Partial<ContextState> = {}) 
     switchContext,
     checkAutoSwitch,
     isTransitioning,
-    transitionProgress
+    transitionProgress,
   };
 }
 
@@ -303,19 +303,19 @@ export function ContextSwitching({
   onContextSwitch,
   showTransitionAnimation = true,
   allowedSwitches,
-  className
+  className,
 }: ContextSwitchingProps) {
   const [selectedContext, setSelectedContext] = useState<ContextType | null>(null);
   const [isConfirmationRequired, setIsConfirmationRequired] = useState(false);
-  
+
   const currentDesc = ContextDescriptions[currentContext.type];
   const currentRules = TransitionRules[currentContext.type];
-  
+
   const availableSwitches = allowedSwitches || currentRules.canSwitchTo;
 
   const handleContextSwitch = async (newType: ContextType) => {
     const requiresConfirmation = currentRules.requiresConfirmation.includes(newType);
-    
+
     if (requiresConfirmation && !isConfirmationRequired) {
       setSelectedContext(newType);
       setIsConfirmationRequired(true);
@@ -337,11 +337,13 @@ export function ContextSwitching({
   return (
     <div className={cn("space-y-4", className)}>
       {/* Current Context Display */}
-      <Card className={cn(
-        "border-2",
-        currentDesc.color,
-        currentDesc.borderColor
-      )}>
+      <Card
+        className={cn(
+          "border-2",
+          currentDesc.color,
+          currentDesc.borderColor,
+        )}
+      >
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -357,7 +359,7 @@ export function ContextSwitching({
                 </CardDescription>
               </div>
             </div>
-            
+
             <div className="text-right">
               <Badge variant="outline" className="mb-2">
                 {currentContext.department}
@@ -392,12 +394,12 @@ export function ContextSwitching({
         <h4 className="font-semibold text-sm text-gray-700">
           Alternar para:
         </h4>
-        
+
         <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
           {availableSwitches.map((switchType) => {
             const switchDesc = ContextDescriptions[switchType];
             const requiresConfirmation = currentRules.requiresConfirmation.includes(switchType);
-            
+
             return (
               <TooltipProvider key={switchType}>
                 <Tooltip>
@@ -408,7 +410,7 @@ export function ContextSwitching({
                       onClick={() => handleContextSwitch(switchType)}
                       className={cn(
                         "h-auto p-3 flex flex-col items-start gap-1 text-left",
-                        "hover:bg-gray-50"
+                        "hover:bg-gray-50",
                       )}
                     >
                       <div className="flex items-center gap-2 w-full">
@@ -485,27 +487,31 @@ export function ContextSwitching({
 }
 
 // Context provider for app-wide context management
-const ContextSwitchingContext = createContext<{
-  context: ContextState;
-  switchContext: (type: ContextType, reason?: SwitchReason) => Promise<boolean>;
-  isTransitioning: boolean;
-} | null>(null);
+const ContextSwitchingContext = createContext<
+  {
+    context: ContextState;
+    switchContext: (type: ContextType, reason?: SwitchReason) => Promise<boolean>;
+    isTransitioning: boolean;
+  } | null
+>(null);
 
-export function ContextSwitchingProvider({ 
+export function ContextSwitchingProvider({
   children,
-  initialContext = {}
-}: { 
+  initialContext = {},
+}: {
   children: React.ReactNode;
   initialContext?: Partial<ContextState>;
 }) {
   const { context, switchContext, isTransitioning } = useContextSwitching(initialContext);
 
   return (
-    <ContextSwitchingContext.Provider value={{
-      context,
-      switchContext,
-      isTransitioning
-    }}>
+    <ContextSwitchingContext.Provider
+      value={{
+        context,
+        switchContext,
+        isTransitioning,
+      }}
+    >
       {children}
     </ContextSwitchingContext.Provider>
   );
@@ -520,7 +526,7 @@ export function useContextSwitchingContext() {
 }
 
 // Quick switch buttons for common transitions
-export function QuickContextSwitcher({ className }: { className?: string }) {
+export function QuickContextSwitcher({ className }: { className?: string; }) {
   const { context, switchContext, isTransitioning } = useContextSwitchingContext();
 
   const quickSwitches = [
@@ -529,22 +535,22 @@ export function QuickContextSwitcher({ className }: { className?: string }) {
       label: "Emergência",
       icon: "🚨",
       variant: "destructive" as const,
-      hotkey: "Ctrl+E"
+      hotkey: "Ctrl+E",
     },
     {
       type: ContextType.AI_AUTONOMOUS,
       label: "IA Auto",
-      icon: "🤖", 
+      icon: "🤖",
       variant: "default" as const,
-      hotkey: "Ctrl+A"
+      hotkey: "Ctrl+A",
     },
     {
       type: ContextType.MANUAL_ONLY,
       label: "Manual",
       icon: "✋",
       variant: "outline" as const,
-      hotkey: "Ctrl+M"
-    }
+      hotkey: "Ctrl+M",
+    },
   ];
 
   return (

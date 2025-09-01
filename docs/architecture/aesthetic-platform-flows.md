@@ -18,6 +18,7 @@ Workflow documentation for **NeonPro IA-First Platform** - Brazilian aesthetic c
 ## Quick Start
 
 ### Core Aesthetic Workflow
+
 ```mermaid
 sequenceDiagram
     participant C as Client
@@ -41,14 +42,14 @@ sequenceDiagram
 ```typescript
 // ✅ AI Chat Implementation
 interface AestheticChatRequest {
-  message: string;              // "Preciso remarcar minha sessão de botox"
+  message: string; // "Preciso remarcar minha sessão de botox"
   clientId: string;
-  context: 'scheduling' | 'inquiry' | 'emergency';
-  language: 'pt-BR';
+  context: "scheduling" | "inquiry" | "emergency";
+  language: "pt-BR";
 }
 
 interface AestheticChatResponse {
-  reply: string;                // AI response in Portuguese
+  reply: string; // AI response in Portuguese
   actions?: {
     scheduleAppointment?: boolean;
     transferToHuman?: boolean;
@@ -59,6 +60,7 @@ interface AestheticChatResponse {
 ```
 
 **Key Features**:
+
 - Natural Portuguese conversation
 - Automatic procedure recognition
 - Handoff to professionals when needed
@@ -82,18 +84,19 @@ flowchart LR
 ```
 
 **Implementation**:
+
 ```typescript
 interface NoShowPrediction {
   appointmentId: string;
   clientId: string;
-  riskScore: number;           // 0-100 risk percentage
+  riskScore: number; // 0-100 risk percentage
   interventions: {
     sms: boolean;
     whatsapp: boolean;
     call: boolean;
     reschedule: boolean;
   };
-  timing: number;              // Hours before appointment
+  timing: number; // Hours before appointment
 }
 ```
 
@@ -122,10 +125,10 @@ sequenceDiagram
 interface AestheticLGPDConsent {
   clientId: string;
   consents: {
-    dataProcessing: boolean;     // Basic treatment data
-    photography: boolean;        // Before/after photos
-    marketing: boolean;          // Treatment promotion
-    research: boolean;           // Aesthetic research
+    dataProcessing: boolean; // Basic treatment data
+    photography: boolean; // Before/after photos
+    marketing: boolean; // Treatment promotion
+    research: boolean; // Aesthetic research
   };
   withdrawalDate?: Date;
   version: string;
@@ -135,6 +138,7 @@ interface AestheticLGPDConsent {
 ## Technical Architecture
 
 ### Core Stack
+
 - **Frontend**: Next.js 15 + React 19 + TypeScript
 - **Database**: Supabase PostgreSQL + Real-time
 - **AI**: OpenAI GPT-4 optimized for Portuguese
@@ -142,6 +146,7 @@ interface AestheticLGPDConsent {
 - **Communication**: WhatsApp Business API
 
 ### Essential Components
+
 ```typescript
 // Core aesthetic platform structure
 apps/
@@ -157,6 +162,7 @@ packages/
 ```
 
 ### Database Schema (Essential Tables)
+
 ```sql
 -- Core aesthetic clinic tables
 CREATE TABLE aesthetic_professionals (
@@ -188,22 +194,26 @@ CREATE TABLE aesthetic_appointments (
 ## Compliance Implementation
 
 ### LGPD (Brazilian Data Protection)
+
 - **Consent Management**: Granular consent for each data processing purpose
 - **Data Minimization**: Collect only necessary treatment information
 - **Right to Deletion**: Automated data erasure after retention period
 - **Audit Trail**: Complete log of data access and modifications
 
 ### ANVISA (Medical Device Compliance)
+
 - **Device Registration**: Validation of aesthetic equipment registration
 - **Safety Protocols**: Implementation of mandatory safety procedures
 - **Adverse Event Reporting**: Automated reporting system for complications
 
 ### CFM (Professional Oversight)
+
 - **License Validation**: Real-time CFM license status verification
 - **Specialization Matching**: Procedure authorization based on qualifications
 - **Continuing Education**: Tracking of required CE hours
 
 ### WCAG 2.1 AA (Web Accessibility)
+
 - **Keyboard Navigation**: All functionality accessible via keyboard
 - **Screen Reader Support**: Portuguese language optimization with proper ARIA labels
 - **Color Contrast**: 4.5:1 for text, 3:1 for UI components
@@ -214,6 +224,7 @@ CREATE TABLE aesthetic_appointments (
 ## Examples
 
 ### Accessible AI Chat Interface
+
 ```typescript
 // ✅ WCAG 2.1 AA Compliant AI Chat for Aesthetic Procedures
 export function AestheticAIChat() {
@@ -274,33 +285,34 @@ export async function handleAestheticChat(message: string, clientId: string) {
         role: "system",
         content: `Você é assistente de clínica estética brasileira. 
         Procedimentos: botox, preenchimento, harmonização, laser.
-        Use português brasileiro natural e acessível.`
+        Use português brasileiro natural e acessível.`,
       },
-      { role: "user", content: message }
+      { role: "user", content: message },
     ],
-    temperature: 0.3
+    temperature: 0.3,
   });
 
   return {
     reply: response.choices[0].message.content,
-    suggestedActions: parseAestheticActions(response.choices[0].message.content)
+    suggestedActions: parseAestheticActions(response.choices[0].message.content),
   };
 }
 ```
 
 ### Accessible Appointment Scheduling
+
 ```typescript
 // ✅ Accessible Aesthetic Appointment Form
 export function AestheticAppointmentForm() {
   return (
     <form className="appointment-form" role="form" aria-labelledby="form-title">
       <h2 id="form-title">Agendamento de Procedimento Estético</h2>
-      
+
       {/* Procedure selection with Portuguese terms */}
       <div className="form-group">
         <label htmlFor="procedure-select">Procedimento Desejado</label>
-        <select 
-          id="procedure-select" 
+        <select
+          id="procedure-select"
           aria-describedby="procedure-help"
           className="min-h-[44px]"
         >
@@ -355,7 +367,7 @@ export function AestheticAppointmentForm() {
 // Backend scheduling with accessibility considerations
 interface AestheticAppointment {
   clientId: string;
-  procedure: 'botox' | 'preenchimento' | 'harmonização' | 'laser';
+  procedure: "botox" | "preenchimento" | "harmonização" | "laser";
   professionalId: string;
   scheduledAt: Date;
   duration: number;
@@ -364,20 +376,21 @@ interface AestheticAppointment {
 
 export async function scheduleAestheticProcedure(appointment: AestheticAppointment) {
   const professional = await validateProfessionalForProcedure(
-    appointment.professionalId, 
-    appointment.procedure
+    appointment.professionalId,
+    appointment.procedure,
   );
-  
+
   const riskScore = await calculateNoShowRisk(appointment.clientId);
-  
+
   return await createAppointmentWithPrevention({
     ...appointment,
-    noShowRisk: riskScore
+    noShowRisk: riskScore,
   });
 }
 ```
 
 ### Portuguese Accessibility Standards
+
 ```css
 /* ✅ Essential accessibility styles */
 .aesthetic-platform {
@@ -385,7 +398,7 @@ export async function scheduleAestheticProcedure(appointment: AestheticAppointme
   --text-primary: #1a1a1a;
   --text-secondary: #4a4a4a;
   --background: #ffffff;
-  
+
   /* Focus indicators - 3:1 contrast minimum */
   --focus-ring: 2px solid #0066cc;
   --focus-offset: 2px;
@@ -439,22 +452,27 @@ export async function scheduleAestheticProcedure(appointment: AestheticAppointme
 ### Common Issues
 
 **Authentication Problems**:
+
 - **Issue**: CFM license validation fails → **Solution**: Verify active registration in CFM database
 - **Issue**: Specialization mismatch → **Solution**: Check professional qualifications for procedure
 
 **AI Chat Issues**:
+
 - **Issue**: Portuguese responses not natural → **Solution**: Update system prompt with Brazilian expressions
 - **Issue**: Procedure not recognized → **Solution**: Add procedure to AI training context
 
 **LGPD Compliance**:
+
 - **Issue**: Consent validation failing → **Solution**: Check consent version and client consent status
 - **Issue**: Data export not working → **Solution**: Verify client permissions and data retention rules
 
 **Performance Issues**:
+
 - **Issue**: Slow AI responses → **Solution**: Optimize OpenAI prompts and use caching
 - **Issue**: Database queries slow → **Solution**: Check Supabase RLS policies and indexes
 
 **Accessibility Issues**:
+
 - **Issue**: Screen reader not reading content → **Solution**: Add proper aria-labels and lang="pt-BR"
 - **Issue**: Keyboard navigation broken → **Solution**: Check tabindex and focus management
 - **Issue**: Color contrast failing → **Solution**: Use 4.5:1 ratio for text, 3:1 for UI components
@@ -469,6 +487,6 @@ export async function scheduleAestheticProcedure(appointment: AestheticAppointme
 
 ---
 
-**Architecture**: Next.js 15 + Supabase + OpenAI GPT-4 + shadcn/ui  
-**Quality**: ✅ 9.5/10 KISS + YAGNI Principles Applied  
+**Architecture**: Next.js 15 + Supabase + OpenAI GPT-4 + shadcn/ui\
+**Quality**: ✅ 9.5/10 KISS + YAGNI Principles Applied\
 **Status**: Ready for Brazilian Aesthetic Clinic Implementation
