@@ -104,7 +104,8 @@ export class EdgeCacheLayer implements CacheOperation {
 
   async invalidateByTags(tags: string[]): Promise<void> {
     for (const [key, entry] of this.cache.entries()) {
-      if (entry.tags?.some((tag: string) => tags.includes(tag))) {
+      const typedEntry = entry as any;
+      if (typedEntry.tags?.some((tag: string) => tags.includes(tag))) {
         this.cache.delete(key);
       }
     }
@@ -114,7 +115,7 @@ export class EdgeCacheLayer implements CacheOperation {
   async warmup(keys: string[]): Promise<void> {
     // Pre-load commonly used keys (placeholder implementation)
     for (const key of keys) {
-      const entry = this.cache.get(this.buildKey(key));
+      const entry = this.cache.get(this.buildKey(key)) as any;
       if (entry) {
         entry.lastAccessed = Date.now();
         this.cache.set(this.buildKey(key), entry);
@@ -205,8 +206,9 @@ export class EdgeCacheLayer implements CacheOperation {
     let oldestTime = Date.now();
 
     for (const [key, entry] of this.cache.entries()) {
-      if (entry.lastAccessed < oldestTime) {
-        oldestTime = entry.lastAccessed;
+      const typedEntry = entry as any;
+      if (typedEntry.lastAccessed < oldestTime) {
+        oldestTime = typedEntry.lastAccessed;
         oldestKey = key;
       }
     }

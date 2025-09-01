@@ -652,7 +652,7 @@ export class MultiLayerCacheManager {
       audit: {
         totalEntries: this.auditTrail.length,
         ...(this.auditTrail.length > 0 && {
-          lastOperation: this.auditTrail[this.auditTrail.length - 1].timestamp,
+          lastOperation: this.auditTrail[this.auditTrail.length - 1]?.timestamp,
         }),
       },
     };

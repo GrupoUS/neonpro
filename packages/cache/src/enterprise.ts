@@ -179,7 +179,7 @@ export class EnterpriseCacheService {
         ...this.metrics,
         successRate,
       },
-      cache: cacheStats as CacheMetrics,
+      cache: cacheStats as unknown as CacheMetrics,
       audit: {
         totalEntries: this.auditLog.length,
         recentEntries: this.auditLog.slice(-10), // Last 10 entries
