@@ -93,15 +93,15 @@ jobs:
           # Calculate final quality score
           QUALITY_SCORE=$(echo "scale=1; $TOTAL_SCORE / 10" | bc)
 
-          echo "total_score=$TOTAL_SCORE" >> $GITHUB_OUTPUT
-          echo "quality_score=$QUALITY_SCORE" >> $GITHUB_OUTPUT
-          echo "tsc_score=$TSC_SCORE" >> $GITHUB_OUTPUT
-          echo "lint_score=$LINT_SCORE" >> $GITHUB_OUTPUT
-          echo "type_score=$TYPE_SCORE" >> $GITHUB_OUTPUT
-          echo "security_score=$SECURITY_SCORE" >> $GITHUB_OUTPUT
-          echo "lint_violations=$LINT_VIOLATIONS" >> $GITHUB_OUTPUT
-          echo "any_files=$ANY_FILES" >> $GITHUB_OUTPUT
-          echo "security_issues=$SECURITY_ISSUES" >> $GITHUB_OUTPUT
+          echo "total_score=${TOTAL_SCORE}" >> $GITHUB_OUTPUT
+          echo "quality_score=${QUALITY_SCORE}" >> $GITHUB_OUTPUT
+          echo "tsc_score=${TSC_SCORE}" >> $GITHUB_OUTPUT
+          echo "lint_score=${LINT_SCORE}" >> $GITHUB_OUTPUT
+          echo "type_score=${TYPE_SCORE}" >> $GITHUB_OUTPUT
+          echo "security_score=${SECURITY_SCORE}" >> $GITHUB_OUTPUT
+          echo "lint_violations=${LINT_VIOLATIONS}" >> $GITHUB_OUTPUT
+          echo "any_files=${ANY_FILES}" >> $GITHUB_OUTPUT
+          echo "security_issues=${SECURITY_ISSUES}" >> $GITHUB_OUTPUT
 
           # Create quality gates report
           echo "## 🎯 Quality Gates Report" > quality-gates-report.md

@@ -54,10 +54,10 @@ jobs:
           ANY_VIOLATIONS=$(grep -c "typescript-eslint(no-explicit-any)" oxlint-output.txt || echo "0")
           SECURITY_VIOLATIONS=$(grep -c "security" oxlint-output.txt || echo "0")
 
-          echo "total_violations=$TOTAL_VIOLATIONS" >> $GITHUB_OUTPUT
-          echo "any_violations=$ANY_VIOLATIONS" >> $GITHUB_OUTPUT
-          echo "security_violations=$SECURITY_VIOLATIONS" >> $GITHUB_OUTPUT
-          echo "exit_code=$OXLINT_EXIT_CODE" >> $GITHUB_OUTPUT
+          echo "total_violations=${TOTAL_VIOLATIONS}" >> $GITHUB_OUTPUT
+          echo "any_violations=${ANY_VIOLATIONS}" >> $GITHUB_OUTPUT
+          echo "security_violations=${SECURITY_VIOLATIONS}" >> $GITHUB_OUTPUT
+          echo "exit_code=${OXLINT_EXIT_CODE}" >> $GITHUB_OUTPUT
 
           # Create quality report
           echo "## 📊 Code Quality Audit Report" > quality-report.md

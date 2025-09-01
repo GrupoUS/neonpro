@@ -52,9 +52,9 @@ jobs:
           # Count errors
           ERROR_COUNT=$(grep -c "error TS" tsc-output.txt || echo "0")
 
-          echo "exit_code=$TSC_EXIT_CODE" >> $GITHUB_OUTPUT
-          echo "error_count=$ERROR_COUNT" >> $GITHUB_OUTPUT
-          echo "status=$COMPILATION_STATUS" >> $GITHUB_OUTPUT
+          echo "exit_code=${TSC_EXIT_CODE}" >> $GITHUB_OUTPUT
+          echo "error_count=${ERROR_COUNT}" >> $GITHUB_OUTPUT
+          echo "status=${COMPILATION_STATUS}" >> $GITHUB_OUTPUT
 
           # Create type safety report
           echo "## 🔒 Type Safety Check Report" > type-safety-report.md
