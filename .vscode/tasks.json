@@ -150,6 +150,92 @@
         "reveal": "always",
         "panel": "shared"
       }
+    },
+    {
+      "label": "🧪 Integration Tests (Vitest)",
+      "type": "shell",
+      "command": "bunx",
+      "args": ["vitest", "run", "tools/tests/integration", "--reporter=verbose"],
+      "group": "test",
+      "detail": "Run integration tests in tests/integration using Vitest",
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "🧪 Unit Tests + Coverage",
+      "type": "shell",
+      "command": "bunx",
+      "args": ["vitest", "run", "--coverage", "--reporter=verbose"],
+      "group": "test",
+      "detail": "Run unit tests with coverage report",
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "🎭 E2E Tests (Headless)",
+      "type": "shell",
+      "command": "bunx",
+      "args": ["playwright", "test"],
+      "group": "test",
+      "detail": "Run Playwright E2E tests headless",
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "♿ Accessibility Audit (E2E)",
+      "type": "shell",
+      "command": "bunx",
+      "args": ["playwright", "test", "a11y.spec.ts"],
+      "group": "test",
+      "detail": "Run only accessibility E2E suite (WCAG 2.1 AA)",
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "📱 E2E Mobile (Smoke)",
+      "type": "shell",
+      "command": "bunx",
+      "args": ["playwright", "test", "--project=mobile-chrome", "--project=mobile-safari"],
+      "group": "test",
+      "detail": "Run Playwright mobile projects smoke tests",
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "🔗 Realtime Integration Tests",
+      "type": "shell",
+      "command": "bunx",
+      "args": ["vitest", "run", "tools/tests/integration/realtime", "--reporter=verbose"],
+      "group": "test",
+      "detail": "Run realtime subscriptions integration tests",
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "🔒 Compliance Check (LGPD)",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "compliance:check"],
+      "group": "test",
+      "detail": "Run LGPD/Healthcare compliance checks (requires script)",
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "📈 Coverage: Verify",
+      "type": "shell",
+      "command": "bun",
+      "args": ["run", "coverage:verify"],
+      "group": "test",
+      "detail": "Verify coverage thresholds per coverage-policy.md (requires script)",
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "🧪 Test: All (Unit → Integration)",
+      "dependsOn": ["🧪 Run Tests", "🧪 Integration Tests (Vitest)"],
+      "dependsOrder": "sequence",
+      "group": "test",
+      "detail": "Run unit tests then integration tests in sequence"
+    },
+    {
+      "label": "🧪 Test: Full (Unit → Integration → E2E)",
+      "dependsOn": ["🧪 Run Tests", "🧪 Integration Tests (Vitest)", "🎭 E2E Tests (Headless)"],
+      "dependsOrder": "sequence",
+      "group": { "kind": "test", "isDefault": false },
+      "detail": "Run full local CI-style suite in sequence"
     }
   ]
 }

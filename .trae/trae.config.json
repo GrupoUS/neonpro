@@ -104,7 +104,7 @@
 	},
 	"workflows": {
 		"coreWorkflow": ".ruler/core-workflow.md",
-		"devWorkflow": ".ruler/dev-workflow.md",
+		"devWorkflow": "docs/AGENTS.md",
 		"mandatory": {
 			"sequentialThinking": true,
 			"archonFirst": true,

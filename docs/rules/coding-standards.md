@@ -719,4 +719,4 @@ const developWithArchon = async (feature: string) => {
 
 ---
 
-> **🏥 Constitutional Advanced Aesthetic Document**: This comprehensive document provides NeonPro-specific rules that complement the universal framework in [`../../.ruler/dev-workflow.md`](../../.ruler/dev-workflow.md) and complete architecture in [`docs/architecture/`](../). Unified coding standards integrated with VIBECODER principles, Archon workflow, and advanced aesthetic compliance. Maintains quality standards ≥9.8/10 with continuous validation and complete guidance for advanced aesthetic-first development. Last updated: January 2025.
+> **🏥 Constitutional Advanced Aesthetic Document**: This comprehensive document provides NeonPro-specific rules that complement the universal framework in [`../../docs/AGENTS.md`](../../docs/AGENTS.md) and complete architecture in [`docs/architecture/`](../). Unified coding standards integrated with VIBECODER principles, Archon workflow, and advanced aesthetic compliance. Maintains quality standards ≥9.8/10 with continuous validation and complete guidance for advanced aesthetic-first development. Last updated: January 2025.

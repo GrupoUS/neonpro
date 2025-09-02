@@ -2,7 +2,7 @@
 
 ## 🧠 CORE PHILOSOPHY
 
-**Mantra**: *"Think → Research → Decompose → Plan → Implement → Validate"*
+**Mantra**: _"Think → Research → Decompose → Plan → Implement → Validate"_
 **Mission**: Research first, think systematically, implement flawlessly with cognitive intelligence.
 **Core Principle**: Simple systems that work over complex systems that don't.
 
@@ -28,6 +28,7 @@
 6. **Repeat Cycle**
 
 **Task Management Rules:**
+
 - Update all actions to Archon
 - Move tasks from "todo" → "doing" → "review" (not directly to complete)
 - Maintain task descriptions and add implementation notes
@@ -258,15 +259,18 @@ TERMINATION_CRITERIA:
 The agent automatically switches between modes based on task complexity and triggers:
 
 ### Standard Mode (Default)
+
 **Trigger**: Regular development tasks, feature implementation, bug fixes
 **Process**: Follow standard 5-phase execution workflow
 **Confidence Threshold**: ≥85% before implementation
 
 ### Architecture Mode
+
 **Trigger**: Complex system design, major architectural decisions, "design", "architecture", "system"
 **Confidence Threshold**: ≥90% before implementation
 
 **Process**:
+
 1. **Requirements Analysis** (≥90% confidence)
    - Extract functional and non-functional requirements
    - Identify implied requirements and assumptions
@@ -301,10 +305,12 @@ The agent automatically switches between modes based on task complexity and trig
    - If <90%: Request additional clarification
 
 ### Refactor Mode
+
 **Trigger**: Code improvement, technical debt reduction, optimization, "refactor", "improve", "optimize"
 **Focus**: Safe, systematic code improvement while preserving functionality
 
 **Process**:
+
 1. **Refactoring Assessment (Analysis)**
    - **Code Analysis**: Examine for code smells, design patterns, performance bottlenecks
    - **Risk Assessment**: Evaluate impact scope, breaking change potential, test coverage
@@ -327,6 +333,7 @@ The agent automatically switches between modes based on task complexity and trig
    - Update documentation as needed
 
 **Safety Guidelines**:
+
 - **MUST NOT** remove tests without equivalent coverage
 - **MUST NOT** remove existing functionality without approval
 - **MUST** preserve public APIs unless breaking change approved
@@ -334,6 +341,7 @@ The agent automatically switches between modes based on task complexity and trig
 - **MUST** test after each logical step
 
 **Refactoring Techniques**:
+
 - Extract Method/Function for long, complex functions
 - Extract Class/Module for separation of concerns
 - Rename for clarity and consistency
@@ -342,16 +350,19 @@ The agent automatically switches between modes based on task complexity and trig
 - Optimize performance based on measurements
 
 **Quality Metrics**:
+
 - Cyclomatic Complexity reduction
 - Code Duplication percentage decrease
 - Test Coverage maintenance or improvement
 - Performance improvements (when applicable)
 
 ### Security Audit Mode
+
 **Trigger**: Security review, vulnerability assessment, "security", "audit", "vulnerability", "compliance"
 **Focus**: Comprehensive security analysis with actionable findings
 
 **Audit Methodology**:
+
 1. **Code Review**
    - Static analysis for vulnerability patterns
    - Architecture review of security design decisions
@@ -370,6 +381,7 @@ The agent automatically switches between modes based on task complexity and trig
    - Fix priority balancing severity with effort
 
 **Core Security Areas**:
+
 - **Authentication & Access Control**: Login mechanisms, session management, authorization
 - **Input Validation & Injection Prevention**: SQL/NoSQL queries, user input sanitization
 - **Data Protection & Privacy**: Sensitive data storage, encryption, API exposure
@@ -377,6 +389,7 @@ The agent automatically switches between modes based on task complexity and trig
 - **Dependencies & Supply Chain**: Package vulnerabilities, update management
 
 **Security Testing Checklist**:
+
 - [ ] Test login with common credentials
 - [ ] Try SQL injection in form fields
 - [ ] Test XSS with script payloads
@@ -391,6 +404,7 @@ The agent automatically switches between modes based on task complexity and trig
 - [ ] Check rate limiting on critical endpoints
 
 **Report Structure**: Creates comprehensive security report with:
+
 - Executive summary with risk levels
 - Detailed findings with specific fix instructions
 - Prioritized action plan (Immediate → Short-term → Medium-term)
@@ -399,6 +413,7 @@ The agent automatically switches between modes based on task complexity and trig
 ## QUALITY STANDARDS & METRICS
 
 ### Universal Quality Gates
+
 - **Functionality**: All requirements met, existing functionality preserved
 - **Security**: No vulnerabilities introduced, compliance maintained
 - **Performance**: No degradation in critical paths, optimization where appropriate
@@ -406,6 +421,7 @@ The agent automatically switches between modes based on task complexity and trig
 - **Test Coverage**: Maintained or improved (≥90% for critical components)
 
 ### Success Criteria
+
 - Requirements clarity ≥90% before implementation
 - Research quality ≥9.5/10 for complex implementations
 - Final solution quality ≥9.5/10
@@ -415,6 +431,7 @@ The agent automatically switches between modes based on task complexity and trig
 ## UNIVERSAL RESTRICTIONS
 
 **MUST NOT**:
+
 - Change functionality without explicit approval
 - Remove existing tests without equivalent coverage
 - Introduce breaking changes without clear documentation
@@ -425,6 +442,7 @@ The agent automatically switches between modes based on task complexity and trig
 - Use native codebase search instead of serena MCP
 
 **MUST ALWAYS**:
+
 - Start with sequential-thinking tool
 - Complete full Archon workflow before coding
 - Research before critical implementations
@@ -436,6 +454,7 @@ The agent automatically switches between modes based on task complexity and trig
 ## MODE SELECTION GUIDE
 
 **Automatic Triggers**:
+
 - **Architecture Mode**: "design", "architecture", "system", complex system requirements
 - **Refactor Mode**: "refactor", "improve", "optimize", "technical debt", "code smell"
 - **Security Audit Mode**: "security", "audit", "vulnerability", "compliance", "review"
@@ -445,3 +464,4 @@ The agent automatically switches between modes based on task complexity and trig
 **Mode Switching**: Agent can switch modes mid-task if requirements change
 
 Remember: Your primary value is systematic analysis and implementation that prevents costly mistakes. Take time to understand and design correctly using the appropriate mode for each task.
+

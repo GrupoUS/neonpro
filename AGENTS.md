@@ -1,15 +1,11 @@
----
-applyTo: "**/*"
----
-
 # Development Workflow
 
 > **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
 
 ## 📚 ALWAYS READ AND LOAD References
 
-- **🌟 Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
-- **⚙️ Always Read the Project Memory**: [`docs/memory.md`](../docs/memory.md)
+- **🌟 Complete Workflow**: [`docs/AGENTS.md`](docs/AGENTS.md)
+- **⚙️ Always Read the Project Memory**: [`docs/memory.md`](docs/memory.md)
 
 ## Pre-Development Guidelines
 
@@ -27,7 +23,7 @@ When you have ANY doubt during development:
 ## 🤖 APEX AGENT COORDINATION SYSTEM
 
 **🎯 Filosofia de Coordenação**: _"Agentes especializados com coordenação inteligente"_
-**🌟 Complete Workflow**: [`docs/agents/AGENTS.md`](../docs/agents/AGENTS.md)
+**🌟 Complete Workflow**: [`docs/agents/AGENTS.md`](docs/agents/AGENTS.md)
 
 ## 🎯 CORE PRINCIPLES & MISSION
 
@@ -160,7 +156,9 @@ CONSTITUTIONAL_PRINCIPLES:
 - Requisitos de segurança/compliance
 - Necessidades de otimização de performance
 - Decisões arquiteturais
-- Regulamentações específicas de saúde (HIPAA, LGPD)**Comando de Ativação APEX**:
+- Regulamentações específicas de saúde (HIPAA, LGPD)
+
+**Comando de Ativação APEX**:
 
 ```bash
 @apex-researcher "pesquisar [tecnologia/padrão/regulamentação]"
@@ -248,7 +246,9 @@ phase_3_planning_design:
   1. **RED**: Write failing test first (describe expected behavior)
   2. **GREEN**: Write minimal code to pass the test
   3. **REFACTOR**: Improve code while keeping tests green
-  4. **REPEAT**: Continue cycle for next requirement- **Test Priority (from ttd-flow.md):**
+  4. **REPEAT**: Continue cycle for next requirement
+
+  **Test Priority (from ttd-flow.md):**
   - 🔥 **CRITICAL**: Business logic, AI agents, APIs, financial operations
   - ⚡ **IMPORTANT**: Complex hooks, utilities, data validation, integrations
   - ✅ **USEFUL**: UI components with logic, helpers
@@ -303,7 +303,9 @@ phase_3_planning_design:
   - Fix issues using `desktop-commander` for file operations
   - **Stuck >3x**: Use sequential-thinking to reassess
   - Return to **Step 4** and repeat cycle
-  - Continue until ALL quality checks pass```yaml
+  - Continue until ALL quality checks pass
+
+```yaml
 validation:
   vibecoder_integration: "Quality Validation & Testing with constitutional enforcement gates"
   architecture_analysis: "Always check architecture docs for best practices validation"
@@ -347,7 +349,9 @@ validation:
   - Any other relevant documentation folders
 - Use `desktop-commander` to create/update documentation files
 - Use `archon` to store documentation updates in knowledge base
-- **Suggest to User**: Recommend specific updates and ask user to review### 11. **Out-of-Scope Documentation**
+- **Suggest to User**: Recommend specific updates and ask user to review
+
+### 11. **Out-of-Scope Documentation**
 
 - **🔄 Ativação do @apex-researcher**: Para documentação não coberta por protocolos existentes
 

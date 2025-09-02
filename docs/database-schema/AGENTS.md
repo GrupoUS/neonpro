@@ -1,216 +1,155 @@
-# Database Schema Documentation Guide
+# 📚 Database Schema Orchestrator (docs/database-schema)
 
-This folder contains the structured database schema documentation.
+Purpose: single source of truth for how to use, extend, and maintain the database schema docs. Follow this guide end‑to‑end before editing any file here.
 
-## Instructions
+## What lives here (inventory)
 
-The generation and organization of all files in this folder must strictly follow the guidelines of this file for templates, documentation rules, and best practices.
+Current files:
+- `AGENTS.md` (this file) — orchestrator and rules
+- `database-schema-consolidated.md` — full architecture, functions, triggers, RLS patterns
+- `tables/README.md` — table docs purpose and conventions
+- `tables/tables-consolidated.md` — table reference (schemas, RLS, indexes)
 
-## Structure
+Planned-but-missing (create when needed):
+- `functions.md` — custom SQL/PLpgSQL functions (SECURITY DEFINER/INVOKER, params, returns)
+- `triggers.md` — trigger catalog with table, event, timing, function
+- `relationships.md` — FK map and cascade rules
+- `enums.md` — enum types and allowed values
 
-- `tables/` - Individual documentation for each table
-- `functions.md` - Custom database functions
-- `triggers.md` - Database triggers
-- `relationships.md` - Table relationships
-- `enums.md` - Custom enum types
+## How to work here (Archon-first)
 
-## Database Schema Instructions
+1) Check Current Task
+- Use Archon MCP → find or create a task for your schema change.
+- Move to "doing" before edits.
 
-### File Organization Structure Example
+2) Research for Task
+- If unsure, read:
+  - `database-schema-consolidated.md` for patterns
+  - `tables/tables-consolidated.md` for table baselines
+  - Rules in `docs/rules/` (see below)
 
-```
-docs/database-schema/
-├── tables/
-│   ├── users.md
-│   ├── events.md
-│   ├── registrations.md
-│   └── [other-tables].md
-├── functions.md
-├── triggers.md
-├── relationships.md
-└── enums.md
-```
+3) Implement the Task (docs first)
+- Update the relevant doc(s) in this folder first (KISS/YAGNI).
+- For DB changes, prepare a migration (Supabase MCP) and link it from docs.
 
-### Required Files
+4) Update Task Status
+- Move task to "review" with notes and affected files.
 
-#### 1. Tables Folder (`tables/`)
-- **Purpose**: Each table gets its own file
-- **Naming**: Use table name as filename (e.g., `users.md`, `events.md`)
-- **Content**: Schema, relationships, and RLS policies for that specific table
+5) Get Next Task
+- Repeat the cycle. No direct "done" without review.
 
-#### 2. Functions (`functions.md`)
-- **Purpose**: Document all custom database functions
-- **Content**: Function signatures, parameters, return types, purpose
+## Mandatory rules to apply
 
-#### 3. Triggers (`triggers.md`)
-- **Purpose**: Document all database triggers
-- **Content**: Trigger name, table, event, function called
+Always follow these rules from `docs/rules`:
+- `coding-standards.md` — KISS/YAGNI, TypeScript strict, quality ≥9.5/10
+- `supabase-best-practices.md` — client factories, RLS, SRK usage boundaries
+- `supabase-auth-guidelines.md` — auth patterns (client/server/SSR)
+- `supabase-realtime-usage.md` — use wrapper, not direct channel in UI
+- `variables-configuration.md` — required envs, never hardcode secrets
+- `supabase-consolidation.md` — single source under packages/database/supabase
 
-#### 4. Relationships (`relationships.md`)
-- **Purpose**: Document foreign key relationships
-- **Content**: Simple list of FK relationships and cascade actions
+Compliance checkpoints (LGPD/ANVISA/Professional Councils):
+- RLS enabled on sensitive tables; consent validation when applicable
+- Audit trail present for sensitive operations
+- Data retention policies documented where relevant (e.g., medical_records)
 
-#### 5. Enums (`enums.md`)
-- **Purpose**: Document custom enum types
-- **Content**: Enum name and possible values
+## Authoring standards (concise, actionable)
 
-### How to Document Each Component
+- Keep docs factual (current state). Avoid speculation/future ideas.
+- Prefer tables, lists, and minimal SQL blocks over long prose.
+- Link to migrations and code paths (services/repositories) when useful.
+- Remove stale content immediately when schema changes.
 
-#### Table Documentation Template
+## File templates
+
+Table file (example structure):
 ```markdown
-# Table Name
+# <table_name>
 
 ## Schema
 | Column | Type | Constraints | Default | Description |
-|--------|------|-------------|---------|-------------|
-| id | uuid | PRIMARY KEY | - | Primary identifier |
-| name | text | NOT NULL | - | Display name |
+|-------|------|-------------|---------|-------------|
 
 ## Relationships
-- `other_table.table_id` → `table_name.id`
+- <fk_table>.<fk_col> → <table_name>.<pk>
 
 ## Row Level Security (RLS)
-**Status**: ✅/❌ **Enabled/Disabled** (Risk level if disabled)
+Status: ✅/❌ (risk if disabled)
 
-### Current Policies
-- Policy name and description (if RLS is enabled)
-
-### Required Policies (if RLS is disabled)
+### Policies
 ```sql
--- Enable RLS
-ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "policy_name" ON table_name
-  FOR operation USING (condition);
+-- enable RLS/policies here
 ```
 ```
 
-#### Functions Documentation Template
+Functions file:
 ```markdown
 # Database Functions
 
-## Function Name
-**Purpose**: What the function does
-**Parameters**: Input parameters and types
-**Returns**: Return type and description
-**Usage**: When and how to use it
+## <function_name>
+Purpose: ...  
+Parameters: ...  
+Returns: ...  
+Usage: ...
 
 ```sql
-CREATE OR REPLACE FUNCTION function_name(param1 type1)
-RETURNS return_type AS $$
--- Function body
-$$ LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION ...
 ```
 ```
 
-#### Triggers Documentation Template
+Triggers file:
 ```markdown
 # Database Triggers
 
-## Trigger Name
-**Table**: Which table the trigger is on
-**Event**: INSERT/UPDATE/DELETE
-**Timing**: BEFORE/AFTER
-**Function**: Which function it calls
-**Purpose**: What it accomplishes
+## <trigger_name>
+Table: ...  
+Event: INSERT/UPDATE/DELETE  
+Timing: BEFORE/AFTER  
+Function: ...  
+Purpose: ...
 
 ```sql
-CREATE TRIGGER trigger_name
-  AFTER INSERT ON table_name
-  FOR EACH ROW
-  EXECUTE FUNCTION function_name();
+CREATE TRIGGER ...
 ```
 ```
 
-### Documentation Rules
-
-1. **Keep it Simple**: Only document what currently exists
-2. **No Speculation**: Don't include recommendations or future plans
-3. **Current State**: Focus on the actual database state
-4. **Concise Format**: Use tables and lists, avoid long paragraphs
-5. **Consistent Structure**: Follow the templates exactly
-
-### Best Practices
-
-1. **Update Documentation First**: Before making database changes, update the relevant documentation file
-2. **Test Changes**: Always test schema changes in development before applying to production
-3. **Version Control**: Commit documentation changes with database migrations
-4. **Review Security**: Check RLS policies when adding new tables or modifying existing ones
-5. **Keep Current**: Remove documentation for deleted tables/functions immediately
-
-### Example Documentation
-
-#### Example Table File (`tables/users.md`)
+Enums file:
 ```markdown
-# Users Table
+# Enum Types
 
-## Schema
-| Column | Type | Constraints | Default | Description |
-|--------|------|-------------|---------|-------------|
-| id | text | PRIMARY KEY, NOT NULL | - | Unique user identifier |
-| email | text | NOT NULL, UNIQUE | - | User email address |
-| name | text | NULL | - | User display name |
-| created_at | timestamp | NOT NULL | CURRENT_TIMESTAMP | Record creation time |
-
-## Relationships
-- `accounts.user_id` → `users.id` (CASCADE DELETE)
-- `events.organizer_id` → `users.id`
-
-## Row Level Security (RLS)
-**Status**: ✅ **Enabled** (overly permissive - allows all operations)
-
-### Current Policies
-- "Allow all access to users" - Allows all operations for public role
-
-### Recommended Policies
-```sql
--- Drop overly permissive policy
-DROP POLICY "Allow all access to users" ON users;
-
--- Users can only access their own profile
-CREATE POLICY "Users manage own profile" ON users
-  FOR ALL USING (auth.uid()::text = id);
-```
+## <enum_name>
+Values: a | b | c
 ```
 
-#### Example Functions File (`functions.md`)
-```markdown
-# Database Functions
+## When to edit which file
 
-## generate_user_id
-**Purpose**: Generate unique user identifier
-**Parameters**: None
-**Returns**: text
-**Usage**: Called automatically on user creation
+- Broad patterns, architecture, common SQL templates → `database-schema-consolidated.md`
+- Concrete table details (columns, RLS, indexes) → `tables/<table>.md` and update `tables-consolidated.md` if the baseline changes
+- New PL/pgSQL functions → add to `functions.md` and reference from consolidated doc
+- New triggers/policies → document under `triggers.md` and cross-link to affected tables
+- Relationships changes → `relationships.md` and reflect on each table file
+- New enums → `enums.md` and list usage sites
 
-```sql
-CREATE OR REPLACE FUNCTION generate_user_id()
-RETURNS text AS $$
-BEGIN
-  RETURN 'usr_' || substr(md5(random()::text), 1, 12);
-END;
-$$ LANGUAGE plpgsql;
-```
-```
+## Using Supabase MCP (required)
 
-#### Example Triggers File (`triggers.md`)
-```markdown
-# Database Triggers
+- Schema read/list: list tables, check RLS, verify extensions
+- DDL changes: use migrations (apply_migration). Do not hardcode IDs in data migrations
+- Validation: run advisors (security/performance) after structural changes
+- Types: regenerate TS types when columns/enums change
 
-## update_user_timestamp
-**Table**: users
-**Event**: UPDATE
-**Timing**: BEFORE
-**Function**: update_timestamp()
-**Purpose**: Automatically update updated_at column
+## Minimal PR checklist (quality gates)
 
-```sql
-CREATE TRIGGER update_user_timestamp
-  BEFORE UPDATE ON users
-  FOR EACH ROW
-  EXECUTE FUNCTION update_timestamp();
-```
-```
+- [ ] Docs updated first (this folder) and consistent
+- [ ] Migration created/applied in branch DB (no drift)
+- [ ] RLS, consent, audit policies verified as needed
+- [ ] Supabase advisors checked (security + performance)
+- [ ] TS types regenerated and compile passes
+- [ ] Links added to tasks; task moved to review
 
-This structure keeps documentation simple, current, and easy to maintain.
+## Quick links
+
+- Architecture: `./database-schema-consolidated.md`
+- Tables reference: `./tables/tables-consolidated.md`
+- Rules: `../rules/`
+
+Notes: Keep this orchestrator short. Expand details in the consolidated docs and per-table files.

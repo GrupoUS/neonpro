@@ -1,294 +1,189 @@
-# Development Workflow
+# 📚 Orquestrador de Documentação (docs/)
 
-> **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
+Guia central para navegar toda a documentação do projeto. Use este arquivo como ponto de partida para encontrar rapidamente o documento certo, com links diretos e explicação sucinta do propósito de cada pasta e arquivo.
 
-## Pre-Development Guidelines
+## 🧭 Mini Sumário
+- Visão: [Como Usar](#como-usar) • [Navegação Rápida](#navegacao-rapida)
+- Inventário por pasta: [Mapa da Pasta docs](#mapa-da-pasta-docs)
+  - [agents/](#agents) · [architecture/](#architecture) · [database-schema/](#database-schema) · [apis/](#apis)
+  - [rules/](#rules) · [testing/](#testing) · [prd/](#prd) · [mistakes/](#mistakes) · [shards/](#shards) · [Raiz](#raiz-de-docs)
+- Listão: [Inventário Completo](#inventario-completo)
+- Referência: [Convenções de Navegação](#convencoes) • [Observação](#observacao)
 
-**📚 Documentation Consultation:**
-⚠️ **IMPORTANT**: Only consult documentation when you have specific questions or uncertainties. Avoid loading unnecessary context.
+---
 
-When you have ANY doubt during development:
+<a id="como-usar"></a>
+## 🔎 Como Usar
 
-- First consult the `/docs` folder for relevant documentation
-- Check `docs/architecture.md` for architectural decisions
-- Review `docs/tech-stack.md` for technology guidelines
-- Look at `docs/apis.md` for API patterns
-- Check `docs/database-schema.md` for data structure
-- Consult specific guides in `/docs` for coding standards, best practices, and design patterns
+1) Comece pelos orquestradores por área (links abaixo)
+2) Abra o guia específico da pasta antes de editar qualquer arquivo
+3) Volte aqui quando precisar descobrir “onde fica” determinado conteúdo
 
-## 🤖 AGENT COORDINATION SYSTEM
+---
 
-**Orchestrator** [`/agents/AGENTS.md`](/agents/AGENTS.md) is always active and coordinates the team. Other agents are activated on-demand based on context triggers.
+<a id="navegacao-rapida"></a>
+## 🧭 Navegação Rápida (Orquestradores por Pasta)
 
-## 🎯 CORE PRINCIPLES & MISSION
-```yaml
-CORE_STANDARDS:
-  mantra: "Think → Research → Decompose → Plan → Implement → Validate"
-  mission: "Research first, think systematically, implement flawlessly with cognitive intelligence"
-  research_driven: "Multi-source validation for all complex implementations"
-  research_excellence: "Context7 → Tavily → Archon → Sequential Thinking chain"
-  agent_coordination: "Intelligent routing with apex-dev as central coordinator"
-  cognitive_authority: "Automated thinking activation with complexity-based routing"
-  vibecoder_integration: "Constitutional excellence with one-shot resolution philosophy"
-  core_principle: "Simple systems that work over complex systems that don't"
-  archon_first_rule: "MANDATORY Archon MCP integration for all task management"
-  mandatory_execution_rules:
-    right_tool_for_job: "Understand full context before implementation and choose the right mcp and agent for the job"
-    serena_mcp: "MANDATORY use of serena mcp to search codebase, *DO NOT USE* `NATIVE SEARCH CODEBASE`"
-    serena_mcp_integration: "MANDATORY use of serena mcp for semantic code analysis"
-    supabase_integration: "MANDATORY use of supabase mcp for database operations"
-    shadcn-ui_integration: "MANDATORY use of shadcn-ui mcp to manage ui components"
-    no_interruptions: "Continue through ALL steps until problem fully solved"
-    mandatory_first_step: "Always begin with sequential-thinking tool"
-    only_terminate_when: "User query COMPLETELY resolved and Problem 100% solved"
-    complete_execution: "Execute entire workflow without interruption"
+- Architecture: `docs/architecture/AGENTS.md` → Arquitetura do sistema e do frontend, árvore de fontes e stack
+  - Link: [./architecture/AGENTS.md](./architecture/AGENTS.md)
+- Database Schema: `docs/database-schema/AGENTS.md` → Regras e inventário de schema, tabelas e RLS
+  - Link: [./database-schema/AGENTS.md](./database-schema/AGENTS.md)
+- APIs: `docs/apis/AGENTS.md` → Padrões e organização de documentação de endpoints + AI SDK
+  - Link: [./apis/AGENTS.md](./apis/AGENTS.md)
+- Agents: `docs/agents/AGENTS.md` → Sistema de agentes (apex-dev, researcher, ui-ux, test, etc.)
+  - Link: [./agents/AGENTS.md](./agents/AGENTS.md)
 
-WORKFLOW_MANAGEMENT_PRINCIPLES:
-  preserve_context: "Maintain complete context across all agent and thinking transitions"
-  incremental_excellence: "Build quality progressively through workflow phases with cognitive enhancement"
-  pattern_optimization: "Learn from successful workflows and apply cognitive improvements"
-  scalable_coordination: "Scale from single-agent to multi-agent based on complexity requirements"
-  adaptive_routing: "Dynamic agent and thinking selection based on task requirements and domain"
-  quality_consistency: "Maintain consistent progressive standards across all agents and thinking levels"
-  recovery_protocols: "Comprehensive error handling with mcp research and multiple errors fail and cognitive recovery procedures"
-```
-## 🧠 META-COGNITIVE & CONSTITUTIONAL FRAMEWORK
+Documentos fundamentais:
+- Memória do Projeto: [./memory.md](./memory.md) — protocolo de consulta e atualização de conhecimento
+- Padrões de Código: [./rules/coding-standards.md](./rules/coding-standards.md) — normas e preferências do projeto
 
-```yaml
-COGNITIVE_ARCHITECTURE:
-  meta_cognition: "Think about the thinking process, identify biases, apply constitutional analysis"
-  multi_perspective_analysis:
-    - "user_perspective: Understanding user intent and constraints"
-    - "developer_perspective: Technical implementation and architecture considerations"
-    - "business_perspective: Cost, timeline, and stakeholder impact analysis"
-    - "security_perspective: Risk assessment and compliance requirements"
-    - "quality_perspective: Standards enforcement and continuous improvement"
+---
 
-VIBECODER_ENGINEERING_PRINCIPLES:
-  kiss_principle:
-    definition: "Keep It Simple, Stupid - Simplicity is key"
-    core_rules: ["Choose simplest solution that meets requirements", "Prefer readable code over clever optimizations", "Reduce cognitive load", "Does this solve the core problem without unnecessary complexity?", "Use clear, descriptive naming and avoid Over-Engineering"]
+<a id="mapa-da-pasta-docs"></a>
+## 🗂️ Mapa da Pasta docs
 
-  yagni_principle:
-    definition: "You Aren't Gonna Need It - Don't implement until needed"
-    core_rules: ["Build only what current requirements specify", "Resist 'just in case' features", "Refactor when requirements emerge", "Focus on current user stories", "Remove unused code immediately"]
+<a id="agents"></a>
+### agents/ — Agentes e papéis
+- Orquestrador: [./agents/AGENTS.md](./agents/AGENTS.md)
+- Principais documentos:
+  - [./agents/apex-dev.md](./agents/apex-dev.md) — agente de desenvolvimento e coordenação
+  - [./agents/apex-researcher.md](./agents/apex-researcher.md) — pesquisa multi‑fonte com compliance
+  - [./agents/apex-ui-ux-designer.md](./agents/apex-ui-ux-designer.md) — design healthcare com acessibilidade
+  - [./agents/test.md](./agents/test.md) — orquestração de testes (linka docs/testing)
+  - [./agents/prd.md](./agents/prd.md) — geração e organização de PRD
+  - [./agents/briefing.md](./agents/briefing.md) — briefing de marketing
+  - [./agents/documentation.md](./agents/documentation.md) — templates e padrões de documentação
 
-  chain_of_thought:
-    definition: "Explicit step-by-step reasoning for accuracy"
-    core_rules: ["Break problems into sequential steps", "Verbalize reasoning process", "Show intermediate decisions", "Question assumptions", "Validate against requirements", "Each step follows logically from previous steps", "Final solution traced back to requirements"]
+<a id="architecture"></a>
+### architecture/ — Arquitetura do sistema e frontend
+- Orquestrador: [./architecture/AGENTS.md](./architecture/AGENTS.md)
+- Principais documentos:
+  - [./architecture/architecture.md](./architecture/architecture.md) — visão end‑to‑end e diagramas
+  - [./architecture/source-tree.md](./architecture/source-tree.md) — estrutura real do monorepo
+  - [./architecture/frontend-architecture.md](./architecture/frontend-architecture.md) — camadas e práticas frontend
+  - [./architecture/front-end-spec.md](./architecture/front-end-spec.md) — guia de desenvolvimento frontend
+  - [./architecture/tech-stack.md](./architecture/tech-stack.md) — tecnologias e versões
+  - [./architecture/aesthetic-platform-flows.md](./architecture/aesthetic-platform-flows.md) — fluxos da plataforma
 
-CONSTITUTIONAL_PRINCIPLES:
-  principle_based_design: "Align with software engineering excellence"
-  constraint_satisfaction: "Balance competing requirements optimally"
-  risk_assessment: "Multi-dimensional risk analysis"
-  quality_gates: "Define success criteria and validation checkpoints"
-  continuous_improvement: "Iterate based on feedback and metrics"
-  relentless_persistence: "Continue until absolute completion"
-  complete_execution: "Execute entire workflow without interruption"
-  right_tool_selection: "Understand full context before implementation"
-```
+<a id="database-schema"></a>
+### database-schema/ — Esquema de banco (Supabase)
+- Orquestrador: [./database-schema/AGENTS.md](./database-schema/AGENTS.md)
+- Principais documentos:
+  - [./database-schema/database-schema-consolidated.md](./database-schema/database-schema-consolidated.md) — arquitetura e padrões (RLS, funções, triggers)
+  - [./database-schema/tables/README.md](./database-schema/tables/README.md) — convenções por tabela
+  - [./database-schema/tables/tables-consolidated.md](./database-schema/tables/tables-consolidated.md) — referência de tabelas
 
-## Mandatory Development Steps
+<a id="apis"></a>
+### apis/ — Documentação de APIs e AI SDK
+- Orquestrador: [./apis/AGENTS.md](./apis/AGENTS.md)
+- Principais documentos:
+  - [./apis/apis.md](./apis/apis.md) — instruções para escrever docs de endpoints
+  - [./apis/ai-sdk-v5.0.md](./apis/ai-sdk-v5.0.md) — melhores práticas AI SDK v5.0
+  - [./apis/ai-sdk-v4.0.md](./apis/ai-sdk-v4.0.md) — melhores práticas AI SDK v4.0 (legado/migração)
 
-### 1. **Research & Decomposition**
+<a id="rules"></a>
+### rules/ — Regras e padrões do projeto
+- [./rules/coding-standards.md](./rules/coding-standards.md) — padrões de código (referência principal)
+- [./rules/supabase-best-practices.md](./rules/supabase-best-practices.md) — práticas com Supabase
+- [./rules/supabase-auth-guidelines.md](./rules/supabase-auth-guidelines.md) — diretrizes de autenticação
+- [./rules/supabase-realtime-usage.md](./rules/supabase-realtime-usage.md) — uso do Realtime
+- [./rules/supabase-consolidation.md](./rules/supabase-consolidation.md) — consolidação de pastas Supabase
+- [./rules/variables-configuration.md](./rules/variables-configuration.md) — variáveis de ambiente
 
-- Always begin with the `sequential-thinking` tool to analyze and understand the feature requirements
-- Use systematic thinking to break down the feature into smaller components
-- Identify potential complexities, dependencies, and constraints
-- Conduct thorough research on the feature requirements and constraints
-- Decompose the feature into smaller, manageable tasks
-- Identify potential complexities and dependencies
-- If tried more than 3 times to fix something and still stuck, start a new research cycle.
+<a id="testing"></a>
+### testing/ — Testes e qualidade
+- [./testing/react-test-patterns.md](./testing/react-test-patterns.md) — padrões de teste para React
+- [./testing/e2e-testing.md](./testing/e2e-testing.md) — guia Playwright E2E
+- [./testing/integration-testing.md](./testing/integration-testing.md) — integração (APIs, DB, Realtime, AI)
+- [./testing/coverage-policy.md](./testing/coverage-policy.md) — política de cobertura
+- [./testing/ci-pipelines.md](./testing/ci-pipelines.md) — pipelines de CI/CD para testes
 
-**🔬 Ativação Automática do @apex-researcher**:
-- Implementações técnicas complexas
-- Integração de novos frameworks/bibliotecas
-- Requisitos de segurança/compliance
-- Necessidades de otimização de performance
-- Decisões arquiteturais
-- Regulamentações específicas de saúde (HIPAA, LGPD)
+<a id="prd"></a>
+### prd/ — Documentos de produto
+- [./prd/prd.md](./prd/prd.md) — PRD geral do produto
+- [./prd/01-executive-summary-and-analysis.md](./prd/01-executive-summary-and-analysis.md) — sumário executivo e análise
+- [./prd/02-functional-and-technical-specs.md](./prd/02-functional-and-technical-specs.md) — requisitos funcionais e técnicos
+- [./prd/03-success-metrics-and-implementation.md](./prd/03-success-metrics-and-implementation.md) — métricas de sucesso e implementação
+- Pastas auxiliares previstas: `./prd/epics/` (épicos por arquivo)
 
-**Comando de Ativação**:
-```bash
-@apex-researcher "pesquisar [tecnologia/padrão/regulamentação]"
-```
+<a id="mistakes"></a>
+### mistakes/ — Erros e correções
+- [./mistakes/dprint-windows-dependency.md](./mistakes/dprint-windows-dependency.md) — dependência do dprint no Windows (resolvido)
 
-- Follow the Research Execution Framework below
+<a id="shards"></a>
+### shards/ — Planejamento granular (backlog/épicos/histórias)
+- Pastas: `./shards/`, `./shards/epics/`, `./shards/stories/` (sem arquivos no momento)
 
-```yaml
-RESEARCH_EXECUTION_FRAMEWORK:
-    vibecoder_integration: "Think & Analyze - ALWAYS before any action - NO EXCEPTIONS"
-    primary_tool: "sequential-thinking + native think tool (MANDATORY FIRST STEP)"
-    purpose: "Comprehensive requirement analysis with context understanding and complexity assessment"
-    intelligence: "Dynamic complexity scoring (L1-L10) with automatic cognitive and agent routing"
-    thinking_activation: "Auto-scaled based on complexity detection and domain triggers"
-    routing: "Intelligent MCP selection based on complexity, domain, and requirements analysis"
-    agent_coordination: "Sequential thinking primary, potential apex_researcher_agent for complex analysis"
-    process:
-      - "Understand requirements completely with constitutional analysis"
-      - "Identify constraints and dependencies with multi-perspective evaluation"
-      - "Assess complexity level (1-10) with domain-specific triggers"
-      - "Define strategic approach with agent coordination planning"
-      - "Break down into manageable components with quality gate definition"
-    deliverables: "Complete requirements with execution plan, cognitive activation, and agent assignments"
-    purpose: "Knowledge acquisition and validation for informed implementation with multi-source validation"
-    intelligence: "Multi-source research orchestration with authority validation and cross-referencing"
-    routing: "Context7 → Tavily → Archon → Exa chain for complexity, with sequential thinking integration"
-    quality_gate: "100% requirement clarity with multi-source validation and constitutional compliance"
-```
+<a id="raiz-de-docs"></a>
+### Raiz de docs
+- [./memory.md](./memory.md) — protocolo de memória (consulta e atualização)
 
-### 3. **Planning & Task List**
+---
 
-- Create a detailed task list using the todo tool to implement the feature
-- Break down complex features into manageable subtasks, always make atomic tasks on archon and then subtasks on native todos task lists
-- Mark tasks as in_progress when starting, completed when finished
-- **Follow the Project Context Guide:** [`docs/AGENTS.md`](../docs/AGENTS.md)
-- Follow the Planning & Design Framework below
+<a id="inventario-completo"></a>
+## 📒 Inventário Completo com Descrições Curtas
 
-```yaml
-  phase_3_planning_design:
-    vibecoder_integration: "Context Engineering & Planning with ONE-SHOT template methodology"
-    contextual_loading: "UI/UX agent loaded automatically when design tasks detected"
-    purpose: "Solution architecture and strategic implementation planning with systematic design approach"
-    intelligence: "Risk assessment with comprehensive mitigation strategies and architectural validation"
-    routing: "Sequential Thinking integration with architectural pattern analysis and validation"
-    one_shot_template:
-      role: "[Specific: Frontend Developer | Backend Engineer | Full-Stack | UI/UX Designer]"
-      context: "#workspace + #codebase search with serena mcp + [archon knowledge base + relevant files]"
-      task: "[Specific, measurable, actionable requirement]"
-      constraints: "[Technical limitations, performance requirements]"
-      output: "[Code | Documentation | Architecture | Analysis | Design]"
-      success_criteria: "[Measurable outcomes, quality thresholds]"
-    task_planning:
-      structure:
-        - "Break down into atomic executable tasks with agent assignment"
-        - "Assign optimal tools and agents for each task with specialization matching"
-        - "Define validation checkpoints with quality gates"
-        - "Create dependency mapping with agent coordination requirements"
-        - "Set measurable success criteria with progressive quality standards"
-    deliverables: "Detailed execution plan with quality gates, agent coordination, and architectural specifications"
-    quality_gate: "Architecture review ≥9.5/10 with scalability validation and security compliance"
-```
+> Dica: caso um arquivo não tenha heading H1, a descrição usa o nome do arquivo.
 
-### 3. **TDD Implementation (Red-Green-Refactor)**
+- ./agents/AGENTS.md — Orquestrador dos agentes do projeto
+- ./agents/apex-dev.md — UNIFIED DEVELOPMENT AGENT (coordenação + dev)
+- ./agents/apex-researcher.md — APEX RESEARCHER AGENT (pesquisa multi‑fonte)
+- ./agents/apex-ui-ux-designer.md — APEX UI/UX DESIGNER AGENT (acessibilidade + shadcn/ui)
+- ./agents/test.md — Test Agent Orchestration Guide (links para docs/testing)
+- ./agents/prd.md — PRD Generation Instructions (estrutura e divisão de arquivos)
+- ./agents/briefing.md — Marketing Briefing Agent Mode (template e processo)
+- ./agents/documentation.md — Documentation Architect Mode (templates universais)
 
-- **MANDATORY**: Follow the TDD process as described in `docs/ttd-flow.md`
-- **TDD Cycle for each feature component:**
-  1. **RED**: Write failing test first (describe expected behavior)
-  2. **GREEN**: Write minimal code to pass the test
-  3. **REFACTOR**: Improve code while keeping tests green
-  4. **REPEAT**: Continue cycle for next requirement
+- ./architecture/AGENTS.md — Architecture Orchestration Guide (roteamento de docs de arquitetura)
+- ./architecture/architecture.md — NeonPro Architecture (visão end‑to‑end)
+- ./architecture/source-tree.md — Source Tree Architecture (monorepo real)
+- ./architecture/frontend-architecture.md — Frontend Architecture (camadas e práticas)
+- ./architecture/front-end-spec.md — Frontend Development Guide (padrões e fluxo)
+- ./architecture/tech-stack.md — Tech Stack (versões e componentes do stack)
+- ./architecture/aesthetic-platform-flows.md — Aesthetic Platform Flows (fluxos da plataforma)
 
-- **Test Priority (from ttd-flow.md):**
-  - 🔥 **CRITICAL**: Business logic, AI agents, APIs, financial operations
-  - ⚡ **IMPORTANT**: Complex hooks, utilities, data validation, integrations
-  - ✅ **USEFUL**: UI components with logic, helpers
+- ./database-schema/AGENTS.md — Database Schema Orchestrator (regras de trabalho)
+- ./database-schema/database-schema-consolidated.md — Database Schema Architecture (padrões Supabase)
+- ./database-schema/tables/README.md — Tables Documentation (convenções por tabela)
+- ./database-schema/tables/tables-consolidated.md — Database Tables Reference (tabelas + RLS)
 
-- **Implementation Guidelines:**
-  - **MANDATORY**: Execute following ALL guidelines from `/.ruler` and `/docs` directories
-  - **ALWAYS**: Consult documentation when uncertain about patterns, conventions, or approaches
-  - Follow established code patterns, naming conventions, and project standards
-  - If tried more than 3 times to fix something and still stuck, start a new research cycle.
-  - Use Native `think` tool every 5 steps to ensure alignment with requirements and quality
-  - Implement comprehensive error handling following project patterns
-  - **Test Categories Required**: Success cases, error cases, edge cases, business logic
-  - **Documentation First**: Check existing patterns before creating new ones
+- ./apis/AGENTS.md — API Docs Orchestrator (padrões de documentação)
+- ./apis/apis.md — NEONPRO API Documentation (estrutura e exemplos)
+- ./apis/ai-sdk-v5.0.md — Vercel AI SDK v5.0 Best Practices
+- ./apis/ai-sdk-v4.0.md — Vercel AI SDK Best Practices (v4.0)
 
-### 4. **Test Execution & Validation**
+- ./rules/coding-standards.md — NEONPRO CODING STANDARDS (padrões de código)
+- ./rules/supabase-best-practices.md — Supabase Best Practices
+- ./rules/supabase-auth-guidelines.md — Supabase Authentication Guidelines
+- ./rules/supabase-realtime-usage.md — Supabase Realtime Usage Guidelines
+- ./rules/supabase-consolidation.md — Supabase Folder Consolidation Report
+- ./rules/variables-configuration.md — Variables Configuration (variáveis de ambiente)
 
-- Run `pnpm format:check` to check for formatting issues
-- Run `npx oxlint apps packages --fix` to fix linter issues (Note: dprint formatting requires platform-specific dependency)
-- Run `pnpm format && pnpm lint:fix && pnpm type-check` to format code
-- Run `pnpm test` and all task tests to execute all unit tests
-- **Correction Loop**: If tests fail:
-  - Fix the issues following TDD principles
-  - Run `pnpm test` and tasks tests again
-  - Repeat until ALL tests pass
-- **Coverage Requirements** (from ttd-flow.md):
-  - Critical business logic: 100%
-  - AI agents/services: 90%+
-  - Complex hooks: 85%+
-  - Utilities/validators: 80%+
-- Only proceed when all unit tests are green and coverage meets requirements
-- Use Tasks tests to complement unit tests
-- Run `run tasks:test` to execute all task tests
+- ./testing/react-test-patterns.md — Padrões de Teste para Componentes React
+- ./testing/e2e-testing.md — Playwright E2E Testing Guide
+- ./testing/integration-testing.md — Integration Testing Guide
+- ./testing/coverage-policy.md — Coverage Policy
+- ./testing/ci-pipelines.md — CI/CD Testing Pipelines
 
-### 5. **Code Quality Check**
+- ./prd/prd.md — Product Requirements Document (visão geral)
+- ./prd/01-executive-summary-and-analysis.md — Executive Summary and Analysis
+- ./prd/02-functional-and-technical-specs.md — Functional and Technical Specifications
+- ./prd/03-success-metrics-and-implementation.md — Success Metrics and Implementation
 
-- Run `pnpx next lint` to check for linting issues
-- Run `pnpx tsc --noEmit` to verify TypeScript compilation
-- Fix any errors or warnings before proceeding
-- **Correction Loop**: If issues are found:
-  - Fix the reported issues
-  - Return to **Step 4** (Unit Testing) and repeat the entire cycle
-  - Continue until ALL quality checks pass
-  - Only proceed when linting and type checks are clean
+- ./mistakes/dprint-windows-dependency.md — dprint Windows Dependency Issue (resolvido)
 
-```yaml
-  validation:
-    vibecoder_integration: "Quality Validation & Testing with constitutional enforcement gates"
-    architecture_analysis: "Always check architecture docs for best practices validation"
-    technology_excellence: "Framework best practices compliance and performance optimization"
-    qa_mandatory:
-      post_modification_checks:
-        - "Syntax errors verification with zero tolerance policy"
-        - "Duplicates/orphans detection with cleanup protocols"
-        - "Feature validation against requirements with completeness verification"
-        - "Requirements compliance with constitutional principles validation"
-        - "Security vulnerabilities assessment with compliance verification"
-        - "Test coverage ≥90% with comprehensive testing protocols"
-    verification_rule: "Never assume changes complete without explicit verification"
-```
+- ./memory.md — Memory Management Protocol (consulta e atualização de conhecimento)
 
-### 6. **Memory Documentation Protocol**
+---
 
-- **MANDATORY**: Follow the Proactive Update Protocol from `docs/memory.md`:
-  - Create `mistakes/[error-category].md` if any mistake was made and corrected
-  - Create `features/[feature-name].md` for new features or modified behavior
-  - **TDD Documentation**: Include test coverage metrics, test patterns used, and any TDD-specific decisions
-  - Update `docs\project.md` if new project standards were established
-  - Update `.ruler\code-preferences.md` if coding preferences were clarified
-- Update relevant README files if needed
-- **Test Documentation**: Document any new test patterns, mocks, or testing utilities created during TDD process
+<a id="convencoes"></a>
+## ✅ Convenções de Navegação
+- Links são relativos a este arquivo (pasta `docs/`)
+- Sempre leia o orquestrador da pasta antes de editar arquivos internos
+- Para padrões gerais, consulte também: [./rules/coding-standards.md](./rules/coding-standards.md)
 
-### 10. **Documentation Folder Updates**
+---
 
-- **Evaluate and Suggest**: Assess if the following documentation folders need updates based on the implemented feature:
-  - Application flows (`docs/app-flows/`) - if user flows were modified
-  - API documentation (`docs/apis/`) - if endpoints were created/modified
-  - Database schemas (`docs/database-schema/`) - if database structure changed
-  - Any other relevant documentation folders
-- **Suggest to User**: Recommend specific updates needed and ask user to review/update the identified documentation folders
-
-### 11. **Out-of-Scope Documentation**
-
-- **🔄 Ativação do @documentation**: Para documentação não coberta por protocolos existentes
-```bash
-@documentation "criar documentação para [conceito/padrão/integração]"
-```
-
-- Use o agente de documentação para criar documentação abrangente para:
-  - Novos conceitos ou padrões introduzidos
-  - Decisões arquiteturais complexas
-  - Guias de integração ou tutoriais
-  - Qualquer documentação fora dos protocolos padrão de memória e pastas
-
-## 📚 **Referências dos Agentes**
-
-- **🤖 Sistema de Coordenação**: [`docs/agents/AGENTS.md`](./agents/AGENTS.md)
-- **💻 @apex-dev**: [`docs/agents/apex-dev.md`](./agents/apex-dev.md)
-- **🔬 @apex-researcher**: [`docs/agents/apex-researcher.md`](./agents/apex-researcher.md)
-- **🎨 @apex-ui-ux-designer**: [`docs/agents/apex-ui-ux-designer.md`](./agents/apex-ui-ux-designer.md)
-- **📋 @prd**: [`docs/agents/prd.md`](./agents/prd.md)
-- **📢 @briefing**: [`docs/agents/briefing.md`](./agents/briefing.md)
-- **📚 @documentation**: [`docs/agents/documentation.md`](./agents/documentation.md)
-- **🧪 @test**: [`docs/agents/test.md`](./agents/test.md)
-- **⚖️ @rules**: [`docs/agents/rules.md`](./agents/rules.md)
-
-## Important Notes
-
-- **🚫 Never skip steps** unless explicitly told by the user
-- **📖 Always consult `/docs`** when uncertain
-- **✅ Complete each step** before moving to the next
-- **🔄 Iterate** until all quality checks pass
-- **📝 Document everything** for future reference
+<a id="observacao"></a>
+## 📌 Observação
+O conteúdo de “orquestração de agentes” que antes ficava aqui foi consolidado em [./agents/AGENTS.md](./agents/AGENTS.md), mantendo este arquivo como guia orquestrador da pasta `docs/` inteira.

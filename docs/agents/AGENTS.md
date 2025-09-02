@@ -13,6 +13,7 @@
 **Coordenador Central** (Sempre Ativo):
 
 - **💻 apex-dev** - Coordenador base + desenvolvimento full-stack healthcare + refatoração + auditoria de segurança
+- **APEX Development**: [`docs/agents/apex-dev.md`](./apex-dev.md)
 
 **Especialistas On-Demand** (Ativação por Contexto):
 
@@ -261,7 +262,7 @@ output: "Production-ready MVP with full compliance"
 
 ### **🌟 SEMPRE CARREGAR E SEGUIR**
 
-- **Complete Workflow**: [`.ruler/dev-workflow.md`](../../.ruler/dev-workflow.md)
+- **Complete Workflow**: [`docs/AGENTS.md`](../../docs/AGENTS.md)
 - **Project Standards**: [`docs/project.md`](../../docs/project.md)
 - **Source Tree Architecture**: [`docs/architecture/source-tree.md`](../../docs/architecture/source-tree.md)
 

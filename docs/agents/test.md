@@ -22,6 +22,54 @@
     outputs: ["test structure", "mocks/fixtures", "a11y checks", "performance tests"]
     ```
 
+### End-to-End (E2E) Testing
+
+- **🎭 @e2e-testing**: [docs/testing/e2e-testing.md](../testing/e2e-testing.md)
+  - One‑line: Playwright patterns for patient workflows, appointments, AI chat, a11y, and mobile
+  - Use when: Validating cross-layer user flows with accessibility and mobile responsiveness
+  - Metadata:
+    ```yaml
+    role: "Playwright E2E Testing"
+    triggers: ["e2e", "playwright", "flows", "a11y", "mobile"]
+    outputs: ["end-to-end flows", "a11y checks", "device coverage"]
+    ```
+
+### Integration Testing
+
+- **🔗 @integration-testing**: [docs/testing/integration-testing.md](../testing/integration-testing.md)
+  - One‑line: Integration test strategy for APIs, database, realtime, and AI integrations
+  - Use when: Validating contracts between modules and external systems
+  - Metadata:
+    ```yaml
+    role: "Integration Testing Strategy"
+    triggers: ["integration", "api", "database", "realtime", "ai"]
+    outputs: ["contracts", "data integrity", "auth/RLS validation"]
+    ```
+
+### CI Pipelines
+
+- **⚙️ @ci-pipelines**: [docs/testing/ci-pipelines.md](../testing/ci-pipelines.md)
+  - One‑line: CI/CD pipeline stages, quality gates, artifacts, and failure criteria
+  - Use when: Configuring automated testing workflows and enforcement
+  - Metadata:
+    ```yaml
+    role: "CI/CD Testing Pipeline"
+    triggers: ["ci", "pipeline", "quality gates", "github actions"]
+    outputs: ["stages", "artifacts", "failure criteria"]
+    ```
+
+### Coverage Policy
+
+- **📈 @coverage-policy**: [docs/testing/coverage-policy.md](../testing/coverage-policy.md)
+  - One‑line: Coverage thresholds by component type with healthcare compliance
+  - Use when: Enforcing coverage in CI and during PR reviews
+  - Metadata:
+    ```yaml
+    role: "Coverage Requirements & Enforcement"
+    triggers: ["coverage", "thresholds", "policy", "compliance"]
+    outputs: ["targets", "reporting", "exemptions"]
+    ```
+
 ### Code Review & Quality Gates
 
 - **🧰 @code-review**: [docs/testing/code-review-checklist.md](../testing/code-review-checklist.md)
@@ -33,6 +81,15 @@
     triggers: ["review", "checklist", "security", "compliance", "coverage"]
     outputs: ["review steps", "security checks", "coverage targets"]
     ```
+
+## 📚 References (correct link format)
+
+- **⚛️ @react-tests**: [docs/testing/react-test-patterns.md](../testing/react-test-patterns.md)
+- **🎭 @e2e-testing**: [docs/testing/e2e-testing.md](../testing/e2e-testing.md)
+- **🔗 @integration-testing**: [docs/testing/integration-testing.md](../testing/integration-testing.md)
+- **⚙️ @ci-pipelines**: [docs/testing/ci-pipelines.md](../testing/ci-pipelines.md)
+- **📈 @coverage-policy**: [docs/testing/coverage-policy.md](../testing/coverage-policy.md)
+- **🧰 @code-review**: [docs/testing/code-review-checklist.md](../testing/code-review-checklist.md)
 
 ## 🔄 Orchestrated Testing Workflows
 
