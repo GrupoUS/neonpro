@@ -300,21 +300,21 @@ phase_3_planning_design:
   - **Stuck >3x**: Use sequential-thinking to reassess
   - Return to **Step 4** and repeat cycle
   - Continue until ALL quality checks pass```yaml
-validation:
-  vibecoder_integration: "Quality Validation & Testing with constitutional enforcement gates"
-  architecture_analysis: "Always check architecture docs for best practices validation"
-  technology_excellence: "Framework best practices compliance and performance optimization"
-  qa_mandatory:
+    validation:
+    vibecoder_integration: "Quality Validation & Testing with constitutional enforcement gates"
+    architecture_analysis: "Always check architecture docs for best practices validation"
+    technology_excellence: "Framework best practices compliance and performance optimization"
+    qa_mandatory:
     post_modification_checks:
-      - "Syntax errors verification with zero tolerance policy"
-      - "Duplicates/orphans detection with cleanup protocols"
-      - "Feature validation against requirements with completeness verification"
-      - "Requirements compliance with constitutional principles validation"
-      - "Security vulnerabilities assessment with compliance verification"
-      - "Test coverage ≥90% with comprehensive testing protocols"
-  verification_rule: "Never assume changes complete without explicit verification"
-```
+    - "Syntax errors verification with zero tolerance policy"
+    - "Duplicates/orphans detection with cleanup protocols"
+    - "Feature validation against requirements with completeness verification"
+    - "Requirements compliance with constitutional principles validation"
+    - "Security vulnerabilities assessment with compliance verification"
+    - "Test coverage ≥90% with comprehensive testing protocols"
+      verification_rule: "Never assume changes complete without explicit verification"
 
+````
 ### 6. **Memory Documentation Protocol** 📝
 
 **🔧 MCP**: desktop-commander + archon
@@ -349,7 +349,7 @@ validation:
 
 ```bash
 @apex-researcher "criar documentação para [conceito/padrão/integração]"
-```
+````
 
 - Use o agente apex-researcher para criar documentação abrangente para:
   - Novos conceitos ou padrões introduzidos

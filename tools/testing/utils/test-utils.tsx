@@ -205,8 +205,8 @@ export const createMockResponse = (data: unknown, status = 200) => ({
   status,
   json: async () => data,
   text: async () => {
-    if (typeof data === "string") {return data;}
-    if (data === null || data === undefined) {return "";}
+    if (typeof data === "string") return data;
+    if (data === null || data === undefined) return "";
     return JSON.stringify(data);
   },
 });

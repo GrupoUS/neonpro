@@ -169,7 +169,7 @@ export function useEmergencyPerformance({
   // Start performance monitoring
   const startPerformanceMonitoring = useCallback(() => {
     performanceMonitoringRef.current = setInterval(async () => {
-      if (!performanceOptimizerRef.current) {return;}
+      if (!performanceOptimizerRef.current) return;
 
       try {
         const systemStatus = await performanceOptimizerRef.current.getSystemStatus();
@@ -399,8 +399,8 @@ export function useEmergencyPerformance({
     const averageResponseTime = systemStatus.performance_summary.average_response_time;
     const slaComplianceRate = systemStatus.performance_summary.sla_compliance_rate;
 
-    if (activeEdgeNodes === 0) {return "offline";}
-    if (slaComplianceRate < 0.8 || averageResponseTime > performance_sla_ms * 2) {return "critical";}
+    if (activeEdgeNodes === 0) return "offline";
+    if (slaComplianceRate < 0.8 || averageResponseTime > performance_sla_ms * 2) return "critical";
     if (slaComplianceRate < 0.9 || averageResponseTime > performance_sla_ms * 1.5) {
       return "degraded";
     }

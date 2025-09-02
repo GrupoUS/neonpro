@@ -80,8 +80,8 @@ export function LGPDComplianceDashboard({
         <div className="no-consent-message">
           <h3>Consentimento LGPD Necessário</h3>
           <p>
-            Para continuar, é necessário obter o consentimento do paciente
-            conforme a Lei Geral de Proteção de Dados (LGPD).
+            Para continuar, é necessário obter o consentimento do paciente conforme a Lei Geral de
+            Proteção de Dados (LGPD).
           </p>
         </div>
       </div>
@@ -113,14 +113,12 @@ export function LGPDComplianceDashboard({
             <input
               type="checkbox"
               checked={consent.dataProcessing}
-              onChange={(e) =>
-                handleConsentChange("dataProcessing", e.target.checked)
-              }
+              onChange={(e) => handleConsentChange("dataProcessing", e.target.checked)}
               disabled={isUpdating}
             />
             <span className="checkbox-label">
-              Autorizo o processamento dos meus dados pessoais para fins de
-              atendimento médico e gestão de saúde.
+              Autorizo o processamento dos meus dados pessoais para fins de atendimento médico e
+              gestão de saúde.
             </span>
           </label>
         </div>
@@ -131,15 +129,12 @@ export function LGPDComplianceDashboard({
             <input
               type="checkbox"
               checked={consent.dataSharing}
-              onChange={(e) =>
-                handleConsentChange("dataSharing", e.target.checked)
-              }
+              onChange={(e) => handleConsentChange("dataSharing", e.target.checked)}
               disabled={isUpdating}
             />
             <span className="checkbox-label">
-              Autorizo o compartilhamento dos meus dados com profissionais de
-              saúde e laboratórios parceiros quando necessário para o
-              tratamento.
+              Autorizo o compartilhamento dos meus dados com profissionais de saúde e laboratórios
+              parceiros quando necessário para o tratamento.
             </span>
           </label>
         </div>
@@ -154,8 +149,8 @@ export function LGPDComplianceDashboard({
               disabled={isUpdating}
             />
             <span className="checkbox-label">
-              Autorizo o recebimento de comunicações sobre novos serviços,
-              promoções e informações de saúde.
+              Autorizo o recebimento de comunicações sobre novos serviços, promoções e informações
+              de saúde.
             </span>
           </label>
         </div>

@@ -1,3 +1,37 @@
+---
+title: "Agents Orchestrator (docs/agents) — v2"
+version: 2.0.0
+last_updated: 2025-09-02
+language: en
+applyTo:
+  - "docs/agents/**"
+llm:
+  mandatory_sequence:
+    - sequential-thinking
+    - task-management
+    - codebase-analysis
+  pre_read:
+    - path: "docs/AGENTS.md"
+      reason: "Root docs orchestrator"
+    - path: "docs/memory.md"
+      reason: "Memory protocol"
+  retrieval_hints:
+    prefer:
+      - "docs/agents/AGENTS.md"
+      - "docs/agents/**/README.md"
+    avoid:
+      - "images/**"
+      - "*.pdf"
+  guardrails:
+    tone: "concise, professional, English"
+    formatting: "Markdown with clear headings and short lists"
+    stop_criteria: "finish only when the task is 100% resolved"
+  output_preferences:
+    - "Use short bullets"
+    - "Include relative paths in backticks"
+    - "Provide shell commands in fenced code blocks when applicable"
+---
+
 # 🤖 NeonPro Agent Orchestration System
 
 ## 🧠 COORDENAÇÃO CENTRAL INTELIGENTE

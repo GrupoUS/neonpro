@@ -212,7 +212,7 @@ function useAppointmentsAPI() {
     professionalId?: string,
     status?: string,
   ) => {
-    if (!user) {return;}
+    if (!user) return;
 
     try {
       setLoading(true);
@@ -224,10 +224,10 @@ function useAppointmentsAPI() {
         limit: "1000",
       });
 
-      if (startDate) {params.append("start_date", startDate);}
-      if (endDate) {params.append("end_date", endDate);}
-      if (professionalId) {params.append("professional_id", professionalId);}
-      if (status) {params.append("status", status);}
+      if (startDate) params.append("start_date", startDate);
+      if (endDate) params.append("end_date", endDate);
+      if (professionalId) params.append("professional_id", professionalId);
+      if (status) params.append("status", status);
 
       const response = await fetch(
         `${API_BASE_URL}/appointments?${params.toString()}`,
@@ -249,7 +249,7 @@ function useAppointmentsAPI() {
   }, [user]);
 
   const fetchPatients = useCallback(async () => {
-    if (!user) {return;}
+    if (!user) return;
 
     try {
       const clinicId = "mock-clinic-id";
@@ -744,11 +744,11 @@ function AppointmentForm({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.patient_id) {newErrors.patient_id = "Paciente é obrigatório";}
-    if (!formData.professional_id) {newErrors.professional_id = "Profissional é obrigatório";}
-    if (!formData.service_type_id) {newErrors.service_type_id = "Serviço é obrigatório";}
-    if (!formData.start_time) {newErrors.start_time = "Data e hora de início são obrigatórias";}
-    if (!formData.end_time) {newErrors.end_time = "Data e hora de término são obrigatórias";}
+    if (!formData.patient_id) newErrors.patient_id = "Paciente é obrigatório";
+    if (!formData.professional_id) newErrors.professional_id = "Profissional é obrigatório";
+    if (!formData.service_type_id) newErrors.service_type_id = "Serviço é obrigatório";
+    if (!formData.start_time) newErrors.start_time = "Data e hora de início são obrigatórias";
+    if (!formData.end_time) newErrors.end_time = "Data e hora de término são obrigatórias";
 
     if (formData.start_time && formData.end_time) {
       const start = new Date(formData.start_time);
@@ -1023,7 +1023,7 @@ function AppointmentDetailsDialog({
   onUpdateStatus: (appointment: Appointment, status: string) => void;
   onCancel: (appointment: Appointment) => void;
 }) {
-  if (!appointment) {return null;}
+  if (!appointment) return null;
 
   const statusConfig = STATUS_CONFIG[appointment.status];
   const StatusIcon = statusConfig.icon;
@@ -1343,7 +1343,7 @@ export default function AgendaPage() {
   };
 
   const handleUpdateAppointment = async (data: AppointmentFormData) => {
-    if (!selectedAppointment) {return;}
+    if (!selectedAppointment) return;
 
     try {
       setSubmitting(true);
@@ -1660,7 +1660,7 @@ export default function AgendaPage() {
           open={showDetailsDialog}
           onOpenChange={(open) => {
             setShowDetailsDialog(open);
-            if (!open) {setSelectedAppointment(null);}
+            if (!open) setSelectedAppointment(null);
           }}
           onEdit={(appointment) => {
             setSelectedAppointment(appointment);

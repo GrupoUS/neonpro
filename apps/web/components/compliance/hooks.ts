@@ -85,14 +85,14 @@ export const useCompliance = (framework: ComplianceFramework | "all" = "all") =>
 
   // Calculate overall metrics
   const overallScore = useMemo(() => {
-    if (!scores.length) {return 0;}
+    if (!scores.length) return 0;
     return Math.round(scores.reduce((sum, score) => sum + score.score, 0) / scores.length);
   }, [scores]);
 
   const overallStatus = useMemo(() => {
-    if (overallScore >= 90) {return "excellent";}
-    if (overallScore >= 75) {return "good";}
-    if (overallScore >= 60) {return "warning";}
+    if (overallScore >= 90) return "excellent";
+    if (overallScore >= 75) return "good";
+    if (overallScore >= 60) return "warning";
     return "critical";
   }, [overallScore]);
 
@@ -175,10 +175,10 @@ export const useComplianceViolations = (filters?: ComplianceFilters) => {
 
   // Filter violations
   const filteredViolations = useMemo(() => {
-    if (!filters) {return violations;}
+    if (!filters) return violations;
 
     return violations.filter(violation => {
-      if (filters.frameworks && !filters.frameworks.includes(violation.framework)) {return false;}
+      if (filters.frameworks && !filters.frameworks.includes(violation.framework)) return false;
       if (filters.violationStatus && !filters.violationStatus.includes(violation.status)) {
         return false;
       }
@@ -188,11 +188,11 @@ export const useComplianceViolations = (filters?: ComplianceFilters) => {
       if (
         filters.assignedTo && filters.assignedTo.length
         && (!violation.assignedTo || !filters.assignedTo.includes(violation.assignedTo))
-      ) {return false;}
+      ) return false;
       if (
         filters.pages && filters.pages.length
         && !filters.pages.some(page => violation.page.includes(page))
-      ) {return false;}
+      ) return false;
 
       return true;
     });
@@ -442,7 +442,7 @@ export const useMonitoringConfig = () => {
   }, []);
 
   const updateConfig = useCallback(async (newConfig: Partial<MonitoringConfig>) => {
-    if (!config) {return;}
+    if (!config) return;
 
     try {
       setIsSaving(true);

@@ -18,16 +18,16 @@
  * @returns boolean indicating if CPF is valid
  */
 export function validateCPF(cpf: string): boolean {
-  if (!cpf) { return false; }
+  if (!cpf) return false;
 
   // Remove non-numeric characters
   const cleanCPF = cpf.replace(/\D/g, "");
 
   // Check if has 11 digits
-  if (cleanCPF.length !== 11) { return false; }
+  if (cleanCPF.length !== 11) return false;
 
   // Check for known invalid patterns
-  if (/^(\d)\1{10}$/.test(cleanCPF)) { return false; }
+  if (/^(\d)\1{10}$/.test(cleanCPF)) return false;
 
   // Validate check digits
   let sum = 0;
@@ -35,16 +35,16 @@ export function validateCPF(cpf: string): boolean {
     sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
   }
   let remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) { remainder = 0; }
-  if (remainder !== parseInt(cleanCPF.charAt(9))) { return false; }
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  if (remainder !== parseInt(cleanCPF.charAt(9))) return false;
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
     sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
   }
   remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) { remainder = 0; }
-  if (remainder !== parseInt(cleanCPF.charAt(10))) { return false; }
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  if (remainder !== parseInt(cleanCPF.charAt(10))) return false;
 
   return true;
 }
@@ -56,7 +56,7 @@ export function validateCPF(cpf: string): boolean {
  * @returns boolean indicating if phone is valid
  */
 export function validatePhone(phone: string): boolean {
-  if (!phone) { return false; }
+  if (!phone) return false;
 
   // Remove non-numeric characters
   const cleanPhone = phone.replace(/\D/g, "");
@@ -89,16 +89,16 @@ export function validatePhone(phone: string): boolean {
  * @returns boolean indicating if CEP is valid
  */
 export function validateCEP(cep: string): boolean {
-  if (!cep) { return false; }
+  if (!cep) return false;
 
   // Remove non-numeric characters
   const cleanCEP = cep.replace(/\D/g, "");
 
   // Check if has 8 digits
-  if (cleanCEP.length !== 8) { return false; }
+  if (cleanCEP.length !== 8) return false;
 
   // Check for known invalid patterns (all zeros, all same digit)
-  if (/^0{8}$/.test(cleanCEP) || /^(\d)\1{7}$/.test(cleanCEP)) { return false; }
+  if (/^0{8}$/.test(cleanCEP) || /^(\d)\1{7}$/.test(cleanCEP)) return false;
 
   return true;
 }
@@ -109,12 +109,12 @@ export function validateCEP(cep: string): boolean {
  * @returns boolean indicating if email is valid
  */
 export function validateEmail(email: string): boolean {
-  if (!email) { return false; }
+  if (!email) return false;
 
   // Basic email regex pattern
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!emailRegex.test(email)) { return false; }
+  if (!emailRegex.test(email)) return false;
 
   // Additional validation for healthcare domains
   const healthcareDomains = [
@@ -139,7 +139,7 @@ export function validateEmail(email: string): boolean {
  */
 export function formatCPF(cpf: string): string {
   const cleanCPF = cpf.replace(/\D/g, "");
-  if (cleanCPF.length !== 11) { return cpf; }
+  if (cleanCPF.length !== 11) return cpf;
 
   return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
 }
@@ -172,7 +172,7 @@ export function formatPhone(phone: string): string {
  */
 export function formatCEP(cep: string): string {
   const cleanCEP = cep.replace(/\D/g, "");
-  if (cleanCEP.length !== 8) { return cep; }
+  if (cleanCEP.length !== 8) return cep;
 
   return cleanCEP.replace(/(\d{5})(\d{3})/, "$1-$2");
 }

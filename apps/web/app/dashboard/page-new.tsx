@@ -70,7 +70,7 @@ function useDashboardData() {
   const { user } = useAuth();
 
   const fetchDashboardData = async () => {
-    if (!user) {return;}
+    if (!user) return;
 
     try {
       setLoading(true);

@@ -59,8 +59,9 @@
     {
       "label": "🧪 Run Tests",
       "type": "shell",
-      "command": "bunx",
+      "command": "pnpm",
       "args": ["vitest", "run", "--reporter=verbose"],
+      "options": { "cwd": "${workspaceFolder}" },
       "group": {
         "kind": "test",
         "isDefault": true
@@ -75,8 +76,9 @@
     {
       "label": "🧪 Watch Tests",
       "type": "shell",
-      "command": "bunx",
+      "command": "pnpm",
       "args": ["vitest", "--watch", "--reporter=verbose"],
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "detail": "Watch and run tests using Vitest",
       "isBackground": true,
@@ -89,8 +91,9 @@
     {
       "label": "🎭 E2E Tests (Debug)",
       "type": "shell",
-      "command": "bunx",
-      "args": ["playwright", "test", "--debug"],
+      "command": "pnpm",
+      "args": ["exec", "playwright", "test", "--debug"],
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "detail": "Run E2E tests in debug mode",
       "presentation": {
@@ -102,10 +105,10 @@
     {
       "label": "🚀 Type Check",
       "type": "shell",
-      "command": "npx",
-      "args": ["tsc", "--noEmit", "--skipLibCheck"],
+      "command": "bun",
+      "args": ["run", "type-check"],
       "group": "build",
-      "detail": "Run TypeScript type checking (bypasses Turbo)",
+      "detail": "Run monorepo type-check via Turbo (pnpm-first)",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -113,12 +116,12 @@
       }
     },
     {
-      "label": "🔧 Bun Install",
+      "label": "📦 Install (pnpm)",
       "type": "shell",
-      "command": "bun",
-      "args": ["install"],
+      "command": "pnpm",
+      "args": ["install", "--frozen-lockfile", "--prefer-offline"],
       "group": "build",
-      "detail": "Install dependencies via Bun",
+      "detail": "Install dependencies via pnpm (monorepo-aware)",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -154,8 +157,9 @@
     {
       "label": "🧪 Integration Tests (Vitest)",
       "type": "shell",
-      "command": "bunx",
-      "args": ["vitest", "run", "tools/tests/integration", "--reporter=verbose"],
+      "command": "pnpm",
+      "args": ["vitest", "run", "--project", "integration", "--reporter=verbose"],
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "detail": "Run integration tests in tests/integration using Vitest",
       "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
@@ -163,8 +167,9 @@
     {
       "label": "🧪 Unit Tests + Coverage",
       "type": "shell",
-      "command": "bunx",
-      "args": ["vitest", "run", "--coverage", "--reporter=verbose"],
+      "command": "pnpm",
+      "args": ["vitest", "run", "--project", "unit", "--coverage", "--reporter=verbose"],
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "detail": "Run unit tests with coverage report",
       "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
@@ -172,8 +177,9 @@
     {
       "label": "🎭 E2E Tests (Headless)",
       "type": "shell",
-      "command": "bunx",
-      "args": ["playwright", "test"],
+      "command": "pnpm",
+      "args": ["exec", "playwright", "test"],
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "detail": "Run Playwright E2E tests headless",
       "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
@@ -181,8 +187,9 @@
     {
       "label": "♿ Accessibility Audit (E2E)",
       "type": "shell",
-      "command": "bunx",
-      "args": ["playwright", "test", "a11y.spec.ts"],
+      "command": "pnpm",
+      "args": ["exec", "playwright", "test", "-g", "@a11y"],
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "detail": "Run only accessibility E2E suite (WCAG 2.1 AA)",
       "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
@@ -190,8 +197,9 @@
     {
       "label": "📱 E2E Mobile (Smoke)",
       "type": "shell",
-      "command": "bunx",
-      "args": ["playwright", "test", "--project=mobile-chrome", "--project=mobile-safari"],
+      "command": "pnpm",
+      "args": ["exec", "playwright", "test", "--project=mobile-android", "--project=webkit-desktop"],
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "detail": "Run Playwright mobile projects smoke tests",
       "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
@@ -199,8 +207,9 @@
     {
       "label": "🔗 Realtime Integration Tests",
       "type": "shell",
-      "command": "bunx",
-      "args": ["vitest", "run", "tools/tests/integration/realtime", "--reporter=verbose"],
+      "command": "pnpm",
+      "args": ["vitest", "run", "--project", "integration", "--reporter=verbose", "--filter", "real-time|realtime"],
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "detail": "Run realtime subscriptions integration tests",
       "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
@@ -208,8 +217,9 @@
     {
       "label": "🔒 Compliance Check (LGPD)",
       "type": "shell",
-      "command": "bun",
+      "command": "pnpm",
       "args": ["run", "compliance:check"],
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "detail": "Run LGPD/Healthcare compliance checks (requires script)",
       "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
@@ -217,8 +227,9 @@
     {
       "label": "📈 Coverage: Verify",
       "type": "shell",
-      "command": "bun",
+      "command": "pnpm",
       "args": ["run", "coverage:verify"],
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "detail": "Verify coverage thresholds per coverage-policy.md (requires script)",
       "presentation": { "echo": true, "reveal": "always", "panel": "shared" }

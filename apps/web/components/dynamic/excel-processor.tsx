@@ -251,7 +251,7 @@ export const ExcelTemplates = {
     optionalHeaders: ["data_nascimento", "endereco", "observacoes"],
     validation: (data: ExcelData) => {
       // Validate patient data structure - ensure all required headers are present
-      if (!data.headers) {return false;}
+      if (!data.headers) return false;
       const requiredHeaders = ["nome", "cpf"];
       const normalizedHeaders = new Set(data.headers.map(h => h.toLowerCase().trim()));
       return requiredHeaders.every(h => normalizedHeaders.has(h));
@@ -262,7 +262,7 @@ export const ExcelTemplates = {
     optionalHeaders: ["observacoes", "valor", "status"],
     validation: (data: ExcelData) => {
       // Validate appointment data structure - ensure all required headers are present
-      if (!data.headers) {return false;}
+      if (!data.headers) return false;
       const requiredHeaders = ["data", "horario", "paciente", "procedimento"];
       const normalizedHeaders = new Set(data.headers.map(h => h.toLowerCase().trim()));
       return requiredHeaders.every(h => normalizedHeaders.has(h));
@@ -273,7 +273,7 @@ export const ExcelTemplates = {
     optionalHeaders: ["categoria", "observacoes", "paciente"],
     validation: (data: ExcelData) => {
       // Validate financial data structure - ensure all required headers are present
-      if (!data.headers) {return false;}
+      if (!data.headers) return false;
       const requiredHeaders = ["descricao", "valor", "data", "tipo"];
       const normalizedHeaders = new Set(data.headers.map(h => h.toLowerCase().trim()));
       return requiredHeaders.every(h => normalizedHeaders.has(h));

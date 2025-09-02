@@ -1,4 +1,6 @@
 import type { FullConfig } from "@playwright/test";
+import "dotenv/config";
+
 import { chromium } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
@@ -43,23 +45,25 @@ async function globalSetup(config: FullConfig) {
 async function validateEnvironmentVariables() {
   console.log("🔍 Validando variáveis de ambiente...");
 
-  const requiredEnvVars = [
+  const baseVars = [
     "NEXT_PUBLIC_SUPABASE_URL",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY",
   ];
+  const missingBase = baseVars.filter((v) => !process.env[v]);
 
-  const missingVars = requiredEnvVars.filter(
-    (varName) => !process.env[varName],
-  );
-
-  if (missingVars.length > 0) {
+  if (missingBase.length > 0) {
     throw new Error(
-      `Variáveis de ambiente obrigatórias não encontradas: ${missingVars.join(", ")}`,
+      `Variáveis de ambiente obrigatórias não encontradas: ${missingBase.join(", ")}`,
     );
   }
 
-  console.log("✅ Variáveis de ambiente validadas");
+  if (!process.env["SUPABASE_SERVICE_ROLE_KEY"]) {
+    console.warn(
+      "⚠️ SUPABASE_SERVICE_ROLE_KEY ausente. Pulando setup de banco/seed de dados. Os testes E2E ainda podem rodar com mock/dados existentes.",
+    );
+  } else {
+    console.log("✅ Variáveis de ambiente validadas");
+  }
 }
 
 /**

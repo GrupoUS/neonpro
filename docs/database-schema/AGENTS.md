@@ -1,3 +1,37 @@
+---
+title: "Database Schema Orchestrator (docs/database-schema) — v2"
+version: 2.0.0
+last_updated: 2025-09-02
+language: en
+applyTo:
+  - "docs/database-schema/**"
+llm:
+  mandatory_sequence:
+    - sequential-thinking
+    - task-management
+    - codebase-analysis
+  pre_read:
+    - path: "docs/AGENTS.md"
+      reason: "Root docs orchestrator"
+    - path: "docs/memory.md"
+      reason: "Memory protocol"
+  retrieval_hints:
+    prefer:
+      - "docs/database-schema/AGENTS.md"
+      - "docs/database-schema/**/README.md"
+    avoid:
+      - "images/**"
+      - "*.pdf"
+  guardrails:
+    tone: "concise, professional, English"
+    formatting: "Markdown with clear headings and short lists"
+    stop_criteria: "finish only when the task is 100% resolved"
+  output_preferences:
+    - "Use short bullets"
+    - "Include relative paths in backticks"
+    - "Provide shell commands in fenced code blocks when applicable"
+---
+
 # 📚 Database Schema Orchestrator (docs/database-schema)
 
 Purpose: single source of truth for how to use, extend, and maintain the database schema docs. Follow this guide end‑to‑end before editing any file here.
@@ -5,12 +39,14 @@ Purpose: single source of truth for how to use, extend, and maintain the databas
 ## What lives here (inventory)
 
 Current files:
+
 - `AGENTS.md` (this file) — orchestrator and rules
 - `database-schema-consolidated.md` — full architecture, functions, triggers, RLS patterns
 - `tables/README.md` — table docs purpose and conventions
 - `tables/tables-consolidated.md` — table reference (schemas, RLS, indexes)
 
 Planned-but-missing (create when needed):
+
 - `functions.md` — custom SQL/PLpgSQL functions (SECURITY DEFINER/INVOKER, params, returns)
 - `triggers.md` — trigger catalog with table, event, timing, function
 - `relationships.md` — FK map and cascade rules
@@ -18,29 +54,35 @@ Planned-but-missing (create when needed):
 
 ## How to work here (Archon-first)
 
-1) Check Current Task
+1. Check Current Task
+
 - Use Archon MCP → find or create a task for your schema change.
 - Move to "doing" before edits.
 
-2) Research for Task
+2. Research for Task
+
 - If unsure, read:
   - `database-schema-consolidated.md` for patterns
   - `tables/tables-consolidated.md` for table baselines
   - Rules in `docs/rules/` (see below)
 
-3) Implement the Task (docs first)
+3. Implement the Task (docs first)
+
 - Update the relevant doc(s) in this folder first (KISS/YAGNI).
 - For DB changes, prepare a migration (Supabase MCP) and link it from docs.
 
-4) Update Task Status
+4. Update Task Status
+
 - Move task to "review" with notes and affected files.
 
-5) Get Next Task
+5. Get Next Task
+
 - Repeat the cycle. No direct "done" without review.
 
 ## Mandatory rules to apply
 
 Always follow these rules from `docs/rules`:
+
 - `coding-standards.md` — KISS/YAGNI, TypeScript strict, quality ≥9.5/10
 - `supabase-best-practices.md` — client factories, RLS, SRK usage boundaries
 - `supabase-auth-guidelines.md` — auth patterns (client/server/SSR)
@@ -49,6 +91,7 @@ Always follow these rules from `docs/rules`:
 - `supabase-consolidation.md` — single source under packages/database/supabase
 
 Compliance checkpoints (LGPD/ANVISA/Professional Councils):
+
 - RLS enabled on sensitive tables; consent validation when applicable
 - Audit trail present for sensitive operations
 - Data retention policies documented where relevant (e.g., medical_records)
@@ -63,25 +106,31 @@ Compliance checkpoints (LGPD/ANVISA/Professional Councils):
 ## File templates
 
 Table file (example structure):
-```markdown
+
+````markdown
 # <table_name>
 
 ## Schema
+
 | Column | Type | Constraints | Default | Description |
-|-------|------|-------------|---------|-------------|
+| ------ | ---- | ----------- | ------- | ----------- |
 
 ## Relationships
+
 - <fk_table>.<fk_col> → <table_name>.<pk>
 
 ## Row Level Security (RLS)
+
 Status: ✅/❌ (risk if disabled)
 
 ### Policies
+
 ```sql
 -- enable RLS/policies here
 ```
-```
+````
 
+````
 Functions file:
 ```markdown
 # Database Functions
@@ -94,9 +143,9 @@ Usage: ...
 
 ```sql
 CREATE OR REPLACE FUNCTION ...
-```
-```
+````
 
+````
 Triggers file:
 ```markdown
 # Database Triggers
@@ -110,16 +159,16 @@ Purpose: ...
 
 ```sql
 CREATE TRIGGER ...
-```
-```
+````
 
+````
 Enums file:
 ```markdown
 # Enum Types
 
 ## <enum_name>
 Values: a | b | c
-```
+````
 
 ## When to edit which file
 

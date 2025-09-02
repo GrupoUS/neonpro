@@ -156,9 +156,9 @@ export function useKeyboardNavigation({
 
     // Filter out shortcuts without handlers
     shortcutsRef.current = shortcuts.filter(shortcut => {
-      if (shortcut.priority === "emergency" && !onEmergencyTrigger) {return false;}
-      if (shortcut.key === "m" && !onVoiceToggle) {return false;}
-      if (shortcut.key === "l" && !onClearChat) {return false;}
+      if (shortcut.priority === "emergency" && !onEmergencyTrigger) return false;
+      if (shortcut.key === "m" && !onVoiceToggle) return false;
+      if (shortcut.key === "l" && !onClearChat) return false;
       return true;
     });
   }, [
@@ -200,7 +200,7 @@ export function useKeyboardNavigation({
       const found = Array.from(document.querySelectorAll(selector)) as HTMLElement[];
       found.forEach(element => {
         // Skip if already added
-        if (elements.some(el => el.element === element)) {return;}
+        if (elements.some(el => el.element === element)) return;
 
         let priority: "emergency" | "medical" | "standard" = "standard";
         let context = "";
@@ -226,7 +226,7 @@ export function useKeyboardNavigation({
 
   // Handle keyboard events
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (disabled) {return;}
+    if (disabled) return;
 
     // Don't interfere with input fields unless it's an emergency shortcut
     const isInputFocused = document.activeElement?.tagName === "INPUT"
@@ -320,7 +320,7 @@ export function useKeyboardNavigation({
 
   // Add global keyboard listener
   useEffect(() => {
-    if (disabled) {return;}
+    if (disabled) return;
 
     document.addEventListener("keydown", handleKeyDown, { passive: false });
 

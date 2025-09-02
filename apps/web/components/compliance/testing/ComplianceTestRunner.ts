@@ -348,7 +348,7 @@ export class ComplianceTestRunner {
    * Calculate overall score across all tests
    */
   private calculateOverallScore(results: ComplianceTestResult[]): number {
-    if (!results.length) {return 0;}
+    if (!results.length) return 0;
 
     const totalScore = results.reduce((sum, result) => sum + result.score, 0);
     return Math.round(totalScore / results.length);
@@ -362,7 +362,7 @@ export class ComplianceTestRunner {
     config: ComplianceTestConfig,
   ): "passed" | "failed" | "error" {
     const errorResults = results.filter(r => r.status === "error");
-    if (errorResults.length > 0) {return "error";}
+    if (errorResults.length > 0) return "error";
 
     const overallScore = this.calculateOverallScore(results);
     const totalViolations = results.reduce((sum, r) => sum + r.violations.length, 0);
@@ -414,7 +414,7 @@ export class ComplianceTestRunner {
    * Send notifications based on test results
    */
   private async sendNotifications(suite: ComplianceTestSuite): Promise<void> {
-    if (suite.status !== "failed") {return;}
+    if (suite.status !== "failed") return;
 
     console.log("📧 Sending failure notifications");
 

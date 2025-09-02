@@ -1,6 +1,6 @@
 ---
 description: "VIBECODER - constitutional excellence, one-shot resolution"
-tools: ['codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'extensions', 'todos', 'search', 'runTasks', 'sequential-thinking', 'tavily', 'context7', 'create_directory', 'edit_block', 'force_terminate', 'get_config', 'get_file_info', 'get_more_search_results', 'interact_with_process', 'kill_process', 'list_directory', 'list_processes', 'list_searches', 'list_sessions', 'move_file', 'read_file', 'read_multiple_files', 'read_process_output', 'set_config_value', 'start_process', 'start_search', 'stop_search', 'write_file', 'apply_migration', 'create_branch', 'create_project', 'delete_branch', 'deploy_edge_function', 'execute_sql', 'generate_typescript_types', 'get_advisors', 'get_anon_key', 'get_cost', 'get_logs', 'get_organization', 'get_project', 'get_project_url', 'list_branches', 'list_edge_functions', 'list_extensions', 'list_migrations', 'list_organizations', 'list_projects', 'list_tables', 'merge_branch', 'pause_project', 'rebase_branch', 'reset_branch', 'restore_project', 'search_docs', 'shadcn-ui', 'get_project', 'list_projects', 'archon', 'serena']
+tools: ['extensions', 'codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'todos', 'runTasks', 'search', 'sequential-thinking', 'tavily', 'context7', 'create_directory', 'edit_block', 'force_terminate', 'get_config', 'get_file_info', 'get_more_search_results', 'interact_with_process', 'kill_process', 'list_directory', 'list_processes', 'list_searches', 'list_sessions', 'move_file', 'read_file', 'read_multiple_files', 'read_process_output', 'set_config_value', 'start_process', 'start_search', 'stop_search', 'write_file', 'apply_migration', 'create_branch', 'create_project', 'delete_branch', 'deploy_edge_function', 'execute_sql', 'generate_typescript_types', 'get_advisors', 'get_anon_key', 'get_cost', 'get_logs', 'get_organization', 'get_project', 'get_project_url', 'list_branches', 'list_edge_functions', 'list_extensions', 'list_migrations', 'list_organizations', 'list_projects', 'list_tables', 'merge_branch', 'pause_project', 'rebase_branch', 'reset_branch', 'restore_project', 'search_docs', 'shadcn-ui', 'get_project', 'list_projects', 'archon', 'serena']
 ---
 
 # 🤖 NeonPro Agent Orchestration System
@@ -18,7 +18,7 @@ tools: ['codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'op
 **Coordenador Central** (Sempre Ativo):
 
 - **💻 apex-dev** - Coordenador base + desenvolvimento full-stack healthcare + refatoração + auditoria de segurança
-- **APEX Development**: [`docs/agents/apex-dev.md`](docs/agents/apex-dev.md)
+- **APEX Development**: [`docs/agents/apex-dev.md`](../../docs/agents/apex-dev.md)
 
 **Especialistas On-Demand** (Ativação por Contexto):
 
@@ -275,7 +275,7 @@ output: "Production-ready MVP with full compliance"
 ```markdown
 # Formato de Referência para Agentes
 
-- **APEX Development**: [`docs/agents/apex-dev.md`](docs/agents/apex-dev.md)
+- **APEX Development**: [`docs/agents/apex-dev.md`](../../docs/agents/apex-dev.md)
 - **APEX Research**: [`docs/agents/apex-researcher.md`](../../docs/agents/apex-researcher.md)
 - **APEX UI/UX**: [`docs/agents/apex-ui-ux-designer.md`](../../docs/agents/apex-ui-ux-designer.md)
 - **Product Requirements**: [`docs/agents/prd.md`](../../docs/agents/prd.md)

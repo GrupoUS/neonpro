@@ -513,7 +513,7 @@ export function CognitiveAccessibilityProvider({ children }: { children: React.R
 
   // Trigger attention cue
   const triggerAttentionCue = useCallback((cue: AttentionCue) => {
-    if (!settings.attention_management) {return;}
+    if (!settings.attention_management) return;
 
     setActiveAttentionCues(prev => {
       // Remove existing cue for same element
@@ -557,14 +557,14 @@ export function CognitiveAccessibilityProvider({ children }: { children: React.R
     loadScore += metrics.current_fatigue_level * 0.25;
 
     // Factor 5: Profile-based adjustments
-    if (profile.impairment_types.includes("attention")) {loadScore += 10;}
-    if (profile.impairment_types.includes("executive_function")) {loadScore += 15;}
-    if (profile.support_level === "maximum") {loadScore += 10;}
+    if (profile.impairment_types.includes("attention")) loadScore += 10;
+    if (profile.impairment_types.includes("executive_function")) loadScore += 15;
+    if (profile.support_level === "maximum") loadScore += 10;
 
     // Classify load level
-    if (loadScore >= 80) {return "overload";}
-    if (loadScore >= 60) {return "high";}
-    if (loadScore >= 35) {return "medium";}
+    if (loadScore >= 80) return "overload";
+    if (loadScore >= 60) return "high";
+    if (loadScore >= 35) return "medium";
     return "low";
   }, [analytics.session_metrics, settings.profile]);
 
@@ -603,7 +603,7 @@ export function CognitiveAccessibilityProvider({ children }: { children: React.R
 
   // Log interaction
   const logInteraction = useCallback((interaction: string, success: boolean) => {
-    if (!settings.lgpd_compliance_mode) {return;}
+    if (!settings.lgpd_compliance_mode) return;
 
     setAnalytics(prev => {
       const newMetrics = { ...prev.session_metrics };
@@ -708,7 +708,7 @@ export function CognitiveAccessibilityProvider({ children }: { children: React.R
 
   // Fatigue monitoring
   useEffect(() => {
-    if (!settings.enabled || !settings.cognitive_load_monitoring) {return;}
+    if (!settings.enabled || !settings.cognitive_load_monitoring) return;
 
     if (fatigueMonitoringRef.current) {
       clearInterval(fatigueMonitoringRef.current);
@@ -742,7 +742,7 @@ export function CognitiveAccessibilityProvider({ children }: { children: React.R
 
   // Memory aid reminders
   useEffect(() => {
-    if (!settings.enabled || !settings.memory_aids_enabled) {return;}
+    if (!settings.enabled || !settings.memory_aids_enabled) return;
 
     if (memoryAidReminderRef.current) {
       clearInterval(memoryAidReminderRef.current);

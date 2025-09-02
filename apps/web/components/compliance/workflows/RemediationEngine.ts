@@ -550,12 +550,12 @@ export class RemediationEngine {
    * Select best remediation action based on criteria
    */
   private selectBestAction(actions: RemediationAction[]): RemediationAction | undefined {
-    if (actions.length === 0) {return undefined;}
+    if (actions.length === 0) return undefined;
 
     // Priority: automated > low effort > high impact
     return actions.sort((a, b) => {
-      if (a.type === "automated" && b.type !== "automated") {return -1;}
-      if (b.type === "automated" && a.type !== "automated") {return 1;}
+      if (a.type === "automated" && b.type !== "automated") return -1;
+      if (b.type === "automated" && a.type !== "automated") return 1;
 
       const effortWeight = { low: 3, medium: 2, high: 1 };
       return effortWeight[a.estimatedEffort] - effortWeight[b.estimatedEffort];
@@ -726,9 +726,9 @@ export class RemediationEngine {
 
   private categorizeViolation(violation: ComplianceViolation): string {
     // Mock categorization - would use more sophisticated logic
-    if (violation.rule.toLowerCase().includes("contrast")) {return "accessibility";}
-    if (violation.rule.toLowerCase().includes("consent")) {return "privacy";}
-    if (violation.rule.toLowerCase().includes("signature")) {return "medical_records";}
+    if (violation.rule.toLowerCase().includes("contrast")) return "accessibility";
+    if (violation.rule.toLowerCase().includes("consent")) return "privacy";
+    if (violation.rule.toLowerCase().includes("signature")) return "medical_records";
     return "general";
   }
 

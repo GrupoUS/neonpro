@@ -236,7 +236,7 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
   }, []);
 
   const playFeedbackSound = useCallback((frequency: number, duration: number = 100) => {
-    if (!settings.audio_feedback || !audioContext.current) {return;}
+    if (!settings.audio_feedback || !audioContext.current) return;
 
     const oscillator = audioContext.current.createOscillator();
     const gainNode = audioContext.current.createGain();
@@ -301,7 +301,7 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
       const aElement = elements.get(a)?.element;
       const bElement = elements.get(b)?.element;
 
-      if (!aElement || !bElement) {return 0;}
+      if (!aElement || !bElement) return 0;
 
       // Healthcare priority sorting
       if (settings.healthcare_mode) {
@@ -324,7 +324,7 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
 
   const navigateNext = useCallback(() => {
     const navigableIds = getNavigableElements();
-    if (navigableIds.length === 0) {return;}
+    if (navigableIds.length === 0) return;
 
     const currentIndex = currentElement ? navigableIds.indexOf(currentElement) : -1;
     const nextIndex = (currentIndex + 1) % navigableIds.length;
@@ -344,7 +344,7 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
 
   const navigatePrevious = useCallback(() => {
     const navigableIds = getNavigableElements();
-    if (navigableIds.length === 0) {return;}
+    if (navigableIds.length === 0) return;
 
     const currentIndex = currentElement ? navigableIds.indexOf(currentElement) : 0;
     const prevIndex = currentIndex === 0 ? navigableIds.length - 1 : currentIndex - 1;
@@ -363,10 +363,10 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
   }, [currentElement, elements, getNavigableElements, playFeedbackSound, settings.visual_feedback]);
 
   const activateCurrent = useCallback(() => {
-    if (!currentElement) {return;}
+    if (!currentElement) return;
 
     const elementData = elements.get(currentElement);
-    if (!elementData) {return;}
+    if (!elementData) return;
 
     const { element } = elementData;
 
@@ -397,7 +397,7 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
   // ================================================================================
 
   const startNavigation = useCallback(() => {
-    if (navigationActive) {return;}
+    if (navigationActive) return;
 
     setNavigationActive(true);
     initAudioContext();
@@ -414,7 +414,7 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
   }, [navigationActive, currentElement, getNavigableElements, initAudioContext, playFeedbackSound]);
 
   const stopNavigation = useCallback(() => {
-    if (!navigationActive) {return;}
+    if (!navigationActive) return;
 
     setNavigationActive(false);
     setCurrentElement(null);
@@ -437,7 +437,7 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
   // ================================================================================
 
   useEffect(() => {
-    if (!settings.enabled || !navigationActive) {return;}
+    if (!settings.enabled || !navigationActive) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // Switch navigation keys

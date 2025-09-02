@@ -411,15 +411,15 @@ export class SecurityHeadersManager {
   private applyHSTS(c: Context): void {
     if (this.config.hsts.enabled && c.req.url.startsWith("https://")) {
       let hstsValue = `max-age=${this.config.hsts.maxAge}`;
-      if (this.config.hsts.includeSubDomains) { hstsValue += "; includeSubDomains"; }
-      if (this.config.hsts.preload) { hstsValue += "; preload"; }
+      if (this.config.hsts.includeSubDomains) hstsValue += "; includeSubDomains";
+      if (this.config.hsts.preload) hstsValue += "; preload";
 
       c.header("Strict-Transport-Security", hstsValue);
     }
   }
 
   private applyCSP(c: Context): void {
-    if (!this.config.csp.enabled) { return; }
+    if (!this.config.csp.enabled) return;
 
     const directives: string[] = [];
 
@@ -441,7 +441,7 @@ export class SecurityHeadersManager {
   }
 
   private applyFrameProtection(c: Context): void {
-    if (!this.config.frameProtection.enabled) { return; }
+    if (!this.config.frameProtection.enabled) return;
 
     let value = this.config.frameProtection.policy;
     if (
@@ -455,7 +455,7 @@ export class SecurityHeadersManager {
   }
 
   private applyXSSProtection(c: Context): void {
-    if (!this.config.xssProtection.enabled) { return; }
+    if (!this.config.xssProtection.enabled) return;
 
     let value = "1";
     if (this.config.xssProtection.mode === "block") {
@@ -478,7 +478,7 @@ export class SecurityHeadersManager {
   }
 
   private applyPermissionsPolicy(c: Context): void {
-    if (!this.config.permissionsPolicy.enabled) { return; }
+    if (!this.config.permissionsPolicy.enabled) return;
 
     const policies: string[] = [];
     for (const [feature, allowlist] of Object.entries(this.config.permissionsPolicy.policies)) {
@@ -491,7 +491,7 @@ export class SecurityHeadersManager {
   }
 
   private applyLGPDHeaders(c: Context): void {
-    if (!this.config.lgpdCompliance.enabled) { return; }
+    if (!this.config.lgpdCompliance.enabled) return;
 
     // Custom LGPD compliance headers
     c.header("X-LGPD-Compliant", "true");
@@ -510,7 +510,7 @@ export class SecurityHeadersManager {
   }
 
   private applyEmergencyAccessHeaders(c: Context): void {
-    if (!this.config.emergencyAccess.enabled) { return; }
+    if (!this.config.emergencyAccess.enabled) return;
 
     // Emergency access context headers
     const emergencyContext = c.req.header("X-Emergency-Access");

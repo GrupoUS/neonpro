@@ -13,25 +13,25 @@ This rule defines the standard practices for implementing user authentication ch
 ### Client-Side Session Management (Client Components)
 
 - **MUST** use the following pattern in Client Components (`'use client'`) to check and react to user authentication state:
-    - Import `useState`, `useEffect` from `react`.
-    - Import `createClient` from `@/lib/supabase/client`.
-    - Import `Session` type from `@supabase/supabase-js`.
-    - Initialize state for the session: `const [session, setSession] = useState<Session | null>(null);`
-    - Create a Supabase client instance: `const supabase = createClient();`
-    - Use `useEffect` to:
-        - Fetch the initial session using `supabase.auth.getSession()`.
-        - Subscribe to auth state changes using `supabase.auth.onAuthStateChange()`.
-        - Update the local `session` state within the callbacks.
-        - Return a cleanup function to unsubscribe from `onAuthStateChange`.
+  - Import `useState`, `useEffect` from `react`.
+  - Import `createClient` from `@/lib/supabase/client`.
+  - Import `Session` type from `@supabase/supabase-js`.
+  - Initialize state for the session: `const [session, setSession] = useState<Session | null>(null);`
+  - Create a Supabase client instance: `const supabase = createClient();`
+  - Use `useEffect` to:
+    - Fetch the initial session using `supabase.auth.getSession()`.
+    - Subscribe to auth state changes using `supabase.auth.onAuthStateChange()`.
+    - Update the local `session` state within the callbacks.
+    - Return a cleanup function to unsubscribe from `onAuthStateChange`.
 - **MUST** use the `session` state variable to conditionally render UI elements based on whether the user is logged in or out.
 
 ```typescript
 // ✅ DO: Example Client Component Auth Check
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import type { Session } from '@supabase/supabase-js';
+import { createClient } from "@/lib/supabase/client";
+import type { Session } from "@supabase/supabase-js";
+import React, { useEffect, useState } from "react";
 // ... other imports
 
 export function MyClientComponent() {
@@ -52,11 +52,7 @@ export function MyClientComponent() {
 
   return (
     <div>
-      {session ? (
-        <p>Welcome, User!</p>
-      ) : (
-        <p>Please log in.</p>
-      )}
+      {session ? <p>Welcome, User!</p> : <p>Please log in.</p>}
       {/* Rest of component */}
     </div>
   );
@@ -74,8 +70,8 @@ export function MyClientComponent() {
 
 ```typescript
 // ✅ DO: Example Server Component Auth Check
-import { createClient } from '@/lib/supabase/server' // Assuming server client factory
-import { redirect } from 'next/navigation'
+import { createClient } from "@/lib/supabase/server"; // Assuming server client factory
+import { redirect } from "next/navigation";
 // ... other imports
 
 export default async function ProtectedPage() {
@@ -84,7 +80,7 @@ export default async function ProtectedPage() {
   const { data, error } = await supabase.auth.getUser();
 
   if (error || !data?.user) {
-    redirect('/login'); // Or your login page path
+    redirect("/login"); // Or your login page path
   }
 
   return (
@@ -101,7 +97,7 @@ export default async function ProtectedPage() {
 ```
 
 ## Related Rules
+
 - `@supabase-best-practices.md`: General Supabase interaction guidelines (client creation, RLS, etc.).
 - `@/lib/supabase/client.ts`: Contains the factory for the client-side Supabase client.
 - `@/lib/supabase/server.ts` (or similar): Should contain the factory for the server-side Supabase client compatible with SSR/Server Components.
-

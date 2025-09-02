@@ -259,7 +259,7 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
     x: number,
     y: number,
   ): { x: number; y: number; } => {
-    if (!settings.enabled) {return { x, y };}
+    if (!settings.enabled) return { x, y };
 
     const now = Date.now();
     const windowMs = settings.stabilization_window;
@@ -315,7 +315,7 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
       case 8: // High sensitivity - Kalman-like filtering
         // Simple Kalman filter implementation
         const positions = movementHistory.current;
-        if (positions.length < 3) {return { x, y };}
+        if (positions.length < 3) return { x, y };
 
         // Predict next position based on trend
         const recent = positions.slice(-3);
@@ -342,7 +342,7 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
       case 9:
       case 10: // Maximum sensitivity - Heavy smoothing
         // Exponential moving average with strong smoothing
-        if (movementHistory.current.length < 5) {return { x, y };}
+        if (movementHistory.current.length < 5) return { x, y };
 
         const alpha = 0.1; // Very strong smoothing
         let smoothedX = movementHistory.current[0].x;
@@ -587,7 +587,7 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
   // ================================================================================
 
   useEffect(() => {
-    if (!settings.enabled) {return;}
+    if (!settings.enabled) return;
 
     const handleMouseMove = (event: MouseEvent) => {
       const stabilized = stabilizePosition(event.clientX, event.clientY);
@@ -632,13 +632,13 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
 
     // Dwell activation handler
     const handleMouseEnter = (event: MouseEvent) => {
-      if (!settings.dwell_confirmation) {return;}
+      if (!settings.dwell_confirmation) return;
 
       const target = event.target as HTMLElement;
-      if (!target.getAttribute("data-tremor-friendly")) {return;}
+      if (!target.getAttribute("data-tremor-friendly")) return;
 
       const elementId = target.getAttribute("data-element-id");
-      if (!elementId) {return;}
+      if (!elementId) return;
 
       setActiveElement(elementId);
 
@@ -829,7 +829,7 @@ function StabilizedCursorOverlay({
   position: { x: number; y: number; } | null;
   originalPosition: { x: number; y: number; } | null;
 }) {
-  if (!position) {return null;}
+  if (!position) return null;
 
   return (
     <>
@@ -936,7 +936,7 @@ export function TremorFriendlyControls({
 
   // Track original cursor position for overlay
   useEffect(() => {
-    if (!settings.enabled) {return;}
+    if (!settings.enabled) return;
 
     const handleMouseMove = (event: MouseEvent) => {
       setOriginalCursor({ x: event.clientX, y: event.clientY });

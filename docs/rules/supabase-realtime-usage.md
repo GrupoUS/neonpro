@@ -26,20 +26,20 @@ This rule outlines the best practices for subscribing to and handling Supabase R
 ### Leveraging Built-in Features of `realtime.ts`
 
 - The `subscribeToChannel` function and the underlying `realtime.ts` service automatically handle:
-    - Intelligent reconnection with exponential backoff.
-    - Token refresh for expired JWTs.
-    - Pausing/resuming connections based on page visibility and user activity (via `activity-detector.ts`).
+  - Intelligent reconnection with exponential backoff.
+  - Token refresh for expired JWTs.
+  - Pausing/resuming connections based on page visibility and user activity (via `activity-detector.ts`).
 - **DO NOT** implement custom reconnection logic or activity detection when using `subscribeToChannel`, as this is already handled.
 
 ### Examples
 
 ```typescript
 // src/components/MyRealtimeComponent.tsx
-'use client';
+"use client";
 
-import React, { useEffect, useCallback, useState } from 'react';
-import { subscribeToChannel } from '@/lib/supabase/realtime';
-import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import { subscribeToChannel } from "@/lib/supabase/realtime";
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+import React, { useCallback, useEffect, useState } from "react";
 
 interface MyDataItem {
   id: string;
@@ -54,24 +54,31 @@ interface MyRealtimeComponentProps {
 export function MyRealtimeComponent({ userId }: MyRealtimeComponentProps) {
   const [items, setItems] = useState<MyDataItem[]>([]);
 
-  const handleRealtimeUpdate = useCallback((payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
-    console.log('Realtime Payload:', payload);
-    const newRecord = payload.new as MyDataItem;
-    const oldRecordId = (payload.old as { id: string })?.id;
+  const handleRealtimeUpdate = useCallback(
+    (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
+      console.log("Realtime Payload:", payload);
+      const newRecord = payload.new as MyDataItem;
+      const oldRecordId = (payload.old as { id: string; })?.id;
 
-    setItems(currentItems => {
-      switch (payload.eventType) {
-        case 'INSERT':
-          return newRecord ? [...currentItems, newRecord] : currentItems;
-        case 'UPDATE':
-          return newRecord ? currentItems.map(item => item.id === newRecord.id ? newRecord : item) : currentItems;
-        case 'DELETE':
-          return oldRecordId ? currentItems.filter(item => item.id !== oldRecordId) : currentItems;
-        default:
-          return currentItems;
-      }
-    });
-  }, []); // Empty dependency array if setItems is stable and no other dependencies
+      setItems(currentItems => {
+        switch (payload.eventType) {
+          case "INSERT":
+            return newRecord ? [...currentItems, newRecord] : currentItems;
+          case "UPDATE":
+            return newRecord
+              ? currentItems.map(item => item.id === newRecord.id ? newRecord : item)
+              : currentItems;
+          case "DELETE":
+            return oldRecordId
+              ? currentItems.filter(item => item.id !== oldRecordId)
+              : currentItems;
+          default:
+            return currentItems;
+        }
+      });
+    },
+    [],
+  ); // Empty dependency array if setItems is stable and no other dependencies
 
   useEffect(() => {
     if (!userId) {
@@ -82,17 +89,17 @@ export function MyRealtimeComponent({ userId }: MyRealtimeComponentProps) {
 
     // console.log(`Setting up realtime subscription for MyRealtimeComponent, user: ${userId}`);
     const channelName = `my-data-items-${userId}`;
-    
+
     const subscription = subscribeToChannel({
       channelName: channelName,
-      tableName: 'my_table', // Replace with your actual table name
+      tableName: "my_table", // Replace with your actual table name
       filter: `user_id=eq.${userId}`, // Example filter
-      event: '*', // Or 'INSERT', 'UPDATE', 'DELETE'
+      event: "*", // Or 'INSERT', 'UPDATE', 'DELETE'
       callback: handleRealtimeUpdate,
       onSubscriptionError: (error) => {
         console.error(`Subscription error for ${channelName}:`, error);
         // Optionally, show a toast or update UI
-      }
+      },
     });
 
     return () => {
@@ -105,9 +112,7 @@ export function MyRealtimeComponent({ userId }: MyRealtimeComponentProps) {
     <div>
       <h2>Realtime Items for User: {userId}</h2>
       <ul>
-        {items.map(item => (
-          <li key={item.id}>{item.content}</li>
-        ))}
+        {items.map(item => <li key={item.id}>{item.content}</li>)}
       </ul>
       {items.length === 0 && <p>No items yet, or waiting for realtime updates...</p>}
     </div>
@@ -124,12 +129,15 @@ export function MyRealtimeComponent({ userId }: MyRealtimeComponentProps) {
 ```
 
 ### Restrictions
+
 - **MUST NOT** directly call `supabase.channel()` in components for Realtime features. Always use the `subscribeToChannel` wrapper.
 - **AVOID** creating multiple subscriptions to the exact same channel (same name, table, filter) within the same component or closely related components without a clear need.
 
 ## Conventions
+
 - Channel names should be descriptive and typically include the table name and any key identifiers (e.g., `chats-user-${userId}`, `document-updates-${documentId}`).
 
 ## Related Rules
+
 - `@supabase-best-practices.md`: General guidelines for Supabase interactions.
 - `docs/realtime-connection-improvements.md`: Detailed documentation of the realtime service enhancements.

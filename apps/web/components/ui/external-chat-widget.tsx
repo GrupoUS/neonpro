@@ -138,7 +138,7 @@ export function ExternalChatWidget({
 
   // Enviar mensagem
   const handleSendMessage = useCallback(async (content: string) => {
-    if (!content || !content.trim() || isLoading) {return;}
+    if (!content || !content.trim() || isLoading) return;
 
     // Adicionar mensagem do usuário
     addMessage({

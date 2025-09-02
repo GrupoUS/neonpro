@@ -59,13 +59,17 @@ backup_obrigatório:
   - "pnpm-lock.yaml → backup-dependencies/ (se existe)"
   - "package-lock.json → backup-dependencies/ (se existe)"
   - "yarn.lock → backup-dependencies/ (se existe)"
-  - "node_modules → node_modules.backup_[timestamp]"
+  - "node_modules → node_modules.backup_[timestamp] (opcional se muito grande)"
 sequência_por_manager:
-  pnpm: "store prune → prune → dedupe → install"
-  npm: "cache clean → rm node_modules → ci → audit fix"
-  yarn: "cache clean → rm node_modules → install --frozen → audit"
-validação_planejada: "Build + testes funcionais após cada etapa"
+  pnpm: "store prune → prune (root + -r) → dedupe (root + -r) → install --frozen-lockfile --prefer-offline --ignore-scripts → rebuild"
+  npm: "cache verify|clean → rm node_modules → ci --ignore-scripts → audit (informativo)"
+  yarn: "cache clean → rm node_modules → install --frozen-lockfile --ignore-scripts → audit (informativo)"
+validação_planejada: "Build + type-check (root e workspaces) e prisma generate"
+notas:
+  - "Evitar misturar gerenciadores; seguir packageManager do root"
+  - "Preferir pnpm -r para operações em workspaces"
 ```
+
 
 ### **T - TEST (Validação Contínua)**
 ```yaml
@@ -105,32 +109,56 @@ relatório_final:
 
 ### **FASE 0: DETECÇÃO DE AMBIENTE**
 ```bash
-# Comandos de detecção automática
-echo "🔍 Detectando package managers..."
-[[ -f pnpm-lock.yaml ]] && echo "✅ PNPM detectado" || echo "❌ PNPM não encontrado"
-[[ -f package-lock.json ]] && echo "✅ NPM detectado" || echo "❌ NPM não encontrado"
-[[ -f yarn.lock ]] && echo "✅ Yarn detectado" || echo "❌ Yarn não encontrado"
+# Comandos de detecção automática (Monorepo-aware)
+echo "🔍 Detectando package manager e monorepo..."
 
-# Verificar versões instaladas
-which pnpm npm yarn 2>/dev/null || echo "Package manager verification"
+# Detecta lockfiles e workspaces
+[[ -f pnpm-lock.yaml ]] && echo "✅ PNPM lockfile detectado" || echo "❌ PNPM lockfile não encontrado"
+[[ -f package-lock.json ]] && echo "✅ NPM lockfile detectado" || echo "❌ NPM lockfile não encontrado"
+[[ -f yarn.lock ]] && echo "✅ Yarn lockfile detectado" || echo "❌ Yarn lockfile não encontrado"
+[[ -f pnpm-workspace.yaml ]] && echo "✅ Monorepo PNPM detectado (pnpm-workspace.yaml)" || echo "ℹ️ pnpm-workspace.yaml não encontrado"
+
+# Verifica manager configurado em package.json
+if grep -q '"packageManager"\s*:\s*"pnpm@' package.json 2>/dev/null; then
+  echo "✅ packageManager=pnpm configurado (enforce PNPM)"
+fi
+
+# Verificar ferramentas instaladas
+which pnpm >/dev/null 2>&1 && pnpm -v || echo "ℹ️ pnpm não encontrado no PATH"
+which npm >/dev/null 2>&1 && npm -v || true
+which yarn >/dev/null 2>&1 && yarn -v || true
 node -v && echo "Node.js OK"
 
-# Medir estado inicial
-echo "📊 Estado inicial:"
-du -sh node_modules 2>/dev/null || Get-ChildItem node_modules -Recurse | Measure-Object -Property Length -Sum
+# Checagem de mistura perigosa de managers
+if [[ -f pnpm-lock.yaml ]] && ([[ -f package-lock.json ]] || [[ -f yarn.lock ]]); then
+  echo "⚠️ Detectada presença de múltiplos lockfiles. Evite misturar gerenciadores nesta limpeza."
+fi
+
+# Medir estado inicial (monorepo root)
+echo "📊 Estado inicial do root:"
+[[ -d node_modules ]] && du -sh node_modules || echo "(sem node_modules no root)"
+
+# Métricas caches comuns
+[[ -d .turbo ]] && du -sh .turbo || true
+find apps -maxdepth 2 -type d -name cache -path '*/.next/cache' -exec du -sh {} + 2>/dev/null || true
 ```
+
 
 ### **FASE 1: ANÁLISE ARQUITETURAL UNIVERSAL**
 ```bash
-# Mapeamento completo de dependências
+# Mapeamento completo de dependências (root + workspaces)
 echo "📋 Analisando dependências..."
 
 # Para PNPM (se detectado)
 if [[ -f pnpm-lock.yaml ]]; then
-  echo "🔍 Análise PNPM:"
-  pnpm list --depth=0 > deps_pnpm.txt
-  pnpm outdated > outdated_pnpm.txt 2>/dev/null || true
-  pnpm audit --json > audit_pnpm.json 2>/dev/null || true
+  echo "🔍 Análise PNPM (root):"
+  pnpm list --depth=0 > deps_pnpm_root.txt
+  pnpm outdated > outdated_pnpm_root.txt 2>/dev/null || true
+  pnpm audit --json > audit_pnpm_root.json 2>/dev/null || true
+
+  echo "🔍 Análise PNPM (workspaces):"
+  pnpm -r list --depth=0 > deps_pnpm_workspaces.txt
+  pnpm -r outdated > outdated_pnpm_workspaces.txt 2>/dev/null || true
 fi
 
 # Para NPM (se detectado)
@@ -149,10 +177,17 @@ if [[ -f yarn.lock ]]; then
   yarn audit --json > audit_yarn.json 2>/dev/null || true
 fi
 
-# Análise de uso real no código
+# Análise de uso real no código (ignora caches e build outputs)
 echo "🔎 Mapeando uso real de dependências..."
-grep -r "import\|require" --include="*.js" --include="*.ts" --include="*.tsx" --include="*.jsx" . --exclude-dir=node_modules > used_deps.txt 2>/dev/null || true
+grep -r "import\|require" \
+  --include="*.{js,ts,tsx,jsx}" \
+  --exclude-dir=node_modules \
+  --exclude-dir=.next \
+  --exclude-dir=dist \
+  --exclude-dir=.turbo \
+  . > used_deps.txt 2>/dev/null || true
 ```
+
 
 ### **FASE 2: BACKUP E SEGURANÇA UNIVERSAL**
 ```bash
@@ -176,59 +211,65 @@ echo "✅ Backup completo criado em backup-dependencies/"
 
 ### **FASE 3: OTIMIZAÇÃO SISTEMÁTICA UNIVERSAL**
 ```bash
-# Estratégia PNPM (se detectado)
+# Estratégia PNPM (preferencial para este monorepo)
 if [[ -f pnpm-lock.yaml ]]; then
-  echo "🧹 Executando limpeza PNPM..."
-  echo "  1/4 Limpando store global..."
+  echo "🧹 Executando limpeza PNPM (root + workspaces)..."
+
+  echo "  1/6 Limpando store global..."
   pnpm store prune
-  
-  echo "  2/4 Removendo packages não utilizados..."
-  pnpm prune
-  
-  echo "  3/4 Resolvendo duplicatas..."
-  pnpm dedupe
-  
-  echo "  4/4 Reinstalando dependências..."
-  pnpm install --frozen-lockfile --ignore-scripts --include=optional
-  
-  echo "🔧 Corrigindo vulnerabilidades..."
-  pnpm audit fix --prod || true
-  
+
+  echo "  2/6 Prune de dependências não referenciadas (root + workspaces)..."
+  pnpm prune || true
+  pnpm -r prune || true
+
+  echo "  3/6 Deduplicando versões (root + workspaces)..."
+  pnpm dedupe || true
+  pnpm -r dedupe || true
+
+  echo "  4/6 Reinstalando dependências (modo seguro CI)..."
+  pnpm install --frozen-lockfile --prefer-offline --ignore-scripts
+
+  echo "  5/6 Rebuild de binários nativos quando necessário (esbuild/sharp/prisma)..."
+  pnpm rebuild || true
+
+  echo "  6/6 Auditoria (informativa)"
+  pnpm audit --json > audit_pnpm_post.json 2>/dev/null || true
+
   echo "✅ Otimização PNPM concluída"
 fi
 
-# Estratégia NPM (se detectado)
+# Estratégia NPM (se e somente se pnpm não for detectado)
 if [[ -f package-lock.json && ! -f pnpm-lock.yaml ]]; then
   echo "🧹 Executando limpeza NPM..."
-  echo "  1/3 Limpando cache..."
-  npm cache clean --force
+  echo "  1/4 Limpando cache..."
+  npm cache verify || npm cache clean --force
   
-  echo "  2/3 Removendo node_modules..."
+  echo "  2/4 Removendo node_modules..."
   rm -rf node_modules
   
-  echo "  3/3 Reinstalando com npm ci..."
-  npm ci --ignore-scripts --include=optional
+  echo "  3/4 Reinstalando com npm ci..."
+  npm ci --ignore-scripts
   
-  echo "🔧 Corrigindo vulnerabilidades..."
-  npm audit fix --production-only || true
+  echo "  4/4 Auditoria (informativa)"
+  npm audit --json > audit_npm_post.json 2>/dev/null || true
   
   echo "✅ Otimização NPM concluída"
 fi
 
-# Estratégia Yarn (se detectado)
+# Estratégia Yarn (fallback)
 if [[ -f yarn.lock && ! -f pnpm-lock.yaml && ! -f package-lock.json ]]; then
   echo "🧹 Executando limpeza Yarn..."
-  echo "  1/3 Limpando cache..."
+  echo "  1/4 Limpando cache..."
   yarn cache clean
   
-  echo "  2/3 Removendo node_modules..."
+  echo "  2/4 Removendo node_modules..."
   rm -rf node_modules
   
-  echo "  3/3 Reinstalando com yarn..."
-  yarn install --frozen-lockfile --ignore-scripts --include=optional
-  
-  echo "🔧 Corrigindo vulnerabilidades..."
-  yarn audit --fix || true
+  echo "  3/4 Reinstalando com yarn..."
+  yarn install --frozen-lockfile --ignore-scripts
+
+  echo "  4/4 Auditoria (informativa)"
+  yarn npm audit --json > audit_yarn_post.json 2>/dev/null || true
   
   echo "✅ Otimização Yarn concluída"
 fi
@@ -236,14 +277,25 @@ fi
 
 ### **FASE 4: LIMPEZA UNIVERSAL FINAL**
 ```bash
-# Limpeza de cache e arquivos temporários
+# Limpeza de cache e arquivos temporários (inclui Next.js/Turbo/Playwright)
 echo "🗑️ Limpeza universal de cache e temporários..."
 
-# Remover cache folders
-find node_modules -name ".cache" -type d -exec rm -rf {} + 2>/dev/null || true
+# Remover caches dentro de node_modules (geralmente seguros)
+find node_modules -name ".cache" -type d -prune -exec rm -rf {} + 2>/dev/null || true
 find node_modules -name "*.tmp" -type f -delete 2>/dev/null || true
 find node_modules -name "*.log" -type f -delete 2>/dev/null || true
 find node_modules -name ".DS_Store" -type f -delete 2>/dev/null || true
+
+# Next.js caches (apps/*/ .next/cache)
+find apps -maxdepth 2 -type d -name cache -path '*/.next/cache' -exec rm -rf {} + 2>/dev/null || true
+
+# Turborepo cache (root)
+[[ -d .turbo ]] && rm -rf .turbo || true
+
+# Playwright browsers cache (opcional: limpa binários baixados)
+if command -v npx >/dev/null 2>&1; then
+  npx --yes playwright install-deps 2>/dev/null || true
+fi
 
 # Limpar symlinks quebrados
 find node_modules/.bin -type l ! -exec test -e {} \; -delete 2>/dev/null || true
@@ -251,43 +303,65 @@ find node_modules/.bin -type l ! -exec test -e {} \; -delete 2>/dev/null || true
 echo "🧹 Limpeza universal concluída"
 ```
 
+
+### **FASE 4B: HEAVY CLEAN (OPCIONAL E DESTRUTIVO)**
+
+Aviso: use apenas se a limpeza padrão não resolveu problemas. Irá remover módulos e caches reconstruíveis.
+
+```bash
+read -p "Confirma HEAVY CLEAN? (y/N) " ans; [[ "$ans" == "y" || "$ans" == "Y" ]] || { echo "Cancelado."; exit 0; }
+
+# Remover módulos e caches reconstruíveis
+rm -rf node_modules .turbo
+find apps -maxdepth 2 -type d -name cache -path '*/.next/cache' -exec rm -rf {} + 2>/dev/null || true
+
+# Pré-aquecer store e reinstalar de forma determinística
+pnpm fetch
+pnpm install --frozen-lockfile --prefer-offline
+
+# Regenerar Prisma e rebuild nativos se necessário
+(pnpm -r exec prisma --version >/dev/null 2>&1 && pnpm -r prisma generate) || true
+pnpm rebuild || true
+```
+
 ### **FASE 5: VALIDAÇÃO FINAL UNIVERSAL**
 ```bash
 # Validação completa pós-otimização
 echo "✅ Executando validação final..."
 
-# Teste de build (tentar detectar automaticamente)
-if [[ -f package.json ]]; then
-  if grep -q '"build"' package.json; then
-    echo "🔨 Testando build..."
-    if command -v pnpm >/dev/null && [[ -f pnpm-lock.yaml ]]; then
-      pnpm build || echo "⚠️ Build falhou com PNPM"
-    elif command -v npm >/dev/null; then
-      npm run build || echo "⚠️ Build falhou com NPM"
-    elif command -v yarn >/dev/null; then
-      yarn build || echo "⚠️ Build falhou com Yarn"
+# Preferir tasks do monorepo quando disponíveis (PNPM workspaces)
+if command -v pnpm >/dev/null && [[ -f pnpm-lock.yaml ]]; then
+  # Prisma: regenerar clientes (evita erros de engine em Next/Hono)
+  (pnpm -r exec prisma --version >/dev/null 2>&1 && pnpm -r prisma generate) || true
+
+  # Builds dos workspaces
+  echo "🛠 Testando build dos workspaces..."
+  pnpm -r run build || echo "⚠️ Algumas builds falharam"
+
+  # Type-check nos workspaces
+  echo "🔍 Verificando types no monorepo..."
+  pnpm -r run type-check || echo "⚠️ Alguns type-checks falharam"
+else
+  # Fallback por package.json no root
+  if [[ -f package.json ]]; then
+    if grep -q '"build"' package.json; then
+      echo "🛠 Testando build..."
+      npm run build || yarn build || true
     fi
-  fi
-  
-  # Teste de type-check
-  if grep -q '"type-check"' package.json; then
-    echo "🔍 Verificando tipos..."
-    if command -v pnpm >/dev/null && [[ -f pnpm-lock.yaml ]]; then
-      pnpm type-check || echo "⚠️ Type-check falhou com PNPM"
-    elif command -v npm >/dev/null; then
-      npm run type-check || echo "⚠️ Type-check falhou com NPM"
-    elif command -v yarn >/dev/null; then
-      yarn type-check || echo "⚠️ Type-check falhou com Yarn"
+    if grep -q '"type-check"' package.json; then
+      echo "🔍 Verificando tipos..."
+      npm run type-check || yarn type-check || true
     fi
   fi
 fi
 
 # Métricas finais
 echo "📊 Métricas finais:"
-du -sh node_modules 2>/dev/null || Get-ChildItem node_modules -Recurse | Measure-Object -Property Length -Sum
+[[ -d node_modules ]] && du -sh node_modules || echo "(sem node_modules no root)"
 
 echo "✅ Validação final concluída"
 ```
+
 
 ## 🔒 SALVAGUARDAS CRÍTICAS
 
@@ -437,19 +511,20 @@ Restaurar estado exato anterior à limpeza.
 ```
 @copilot Execute limpeza de dependências para projeto healthcare NEONPRO:
 
-**CONTEXTO HEALTHCARE:**
-- Preservar dependências críticas: @supabase/supabase-js, next, react, typescript
-- Manter compliance: dependências de LGPD e regulamentação
-- Detectar automaticamente PNPM como manager principal
-- Validar build + type-check obrigatoriamente
+**CONTEXTO HEALTHCARE/MONOREPO:**
+- packageManager=pnpm no root; usar PNPM como padrão
+- Turborepo e Next.js 15: limpar .turbo e .next/cache de apps/*
+- Playwright: não remover browsers baixados salvo necessidade; reinstalar com `playwright install --with-deps` se limpar
+- Prisma: executar `pnpm -r prisma generate` após reinstalação
+- Evitar misturar managers; respeitar pnpm-lock.yaml
 
 **EXECUÇÃO SEGURA:**
 - Backup completo antes de qualquer modificação
-- Metodologia A.P.T.E com foco em zero downtime
-- Otimização específica PNPM: store prune → prune → dedupe → install
+- A.P.T.E com foco em zero downtime
+- PNPM: store prune → prune (-r) → dedupe (-r) → install --frozen-lockfile --prefer-offline --ignore-scripts → rebuild
 - Relatório final com métricas healthcare
 
-Meta: >40% redução mantendo compliance 100%
+Meta: ≥40% redução mantendo compliance 100% e builds verdes
 ```
 
 ---
@@ -465,10 +540,41 @@ Meta: >40% redução mantendo compliance 100%
 
 ---
 
+## 🏗️ CI/CD RECIPES (PNPM-FIRST)
+
+```bash
+# CI install (determinístico e rápido)
+pnpm fetch
+pnpm install --frozen-lockfile --prefer-offline --ignore-scripts
+
+# Workspaces build/type-check
+pnpm -r run type-check
+pnpm -r run build
+
+# Tests
+bunx vitest run --reporter=verbose
+bunx vitest run --project integration --reporter=verbose || true
+bunx playwright test || true
+
+# Playwright no CI (instala binários apenas quando necessário)
+bunx playwright install --with-deps || true
+```
+
+### ℹ️ Nota sobre Bun × PNPM
+- Use pnpm para instalações/lockfile neste monorepo (packageManager=pnpm@8.15.0).
+- Use bun/bunx apenas para executar scripts/CLIs (vitest/playwright), sem gerar lock próprio.
+
 ## 🔄 MANUTENÇÃO E CUSTOMIZAÇÃO
 
 ### Versioning
-- v1.0.0 - Versão inicial universal (Agosto 2025)
+- v1.1.0 - PNPM-first monorepo update (Set 2025)
+  - Detecção monorepo/manager aprimorada
+  - Fluxo PNPM workspace-aware (prune/dedupe/install/rebuild)
+  - Limpeza de caches Next/Turbo/Playwright
+  - Validação com prisma generate + builds -r
+  - Seção HEAVY CLEAN opcional
+  - Receitas CI/CD e nota Bun×PNPM
+- v1.0.0 - Versão inicial universal (Ago 2025)
 - Compatível com PNPM, NPM e Yarn
 - Atualizar conforme novos package managers
 

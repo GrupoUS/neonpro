@@ -402,7 +402,7 @@ export function VoiceMedicalProvider({ children }: { children: React.ReactNode; 
 
   const handleSpeechResult = useCallback((event: SpeechRecognitionEvent) => {
     const lastResult = event.results[event.results.length - 1];
-    if (!lastResult.isFinal) {return;}
+    if (!lastResult.isFinal) return;
 
     const transcript = lastResult[0].transcript.toLowerCase().trim();
     const confidence = lastResult[0].confidence;
@@ -584,7 +584,7 @@ export function VoiceMedicalProvider({ children }: { children: React.ReactNode; 
 
   const speak = useCallback(
     (text: string, priority: "normal" | "high" | "emergency" = "normal") => {
-      if (!synthesis.current || !settings.voice_feedback) {return;}
+      if (!synthesis.current || !settings.voice_feedback) return;
 
       // Stop current speech if higher priority
       if (
@@ -626,7 +626,7 @@ export function VoiceMedicalProvider({ children }: { children: React.ReactNode; 
   // ================================================================================
 
   const playAudioCue = useCallback((type: "start" | "stop" | "error" | "success") => {
-    if (!settings.audio_cues) {return;}
+    if (!settings.audio_cues) return;
 
     // Create simple audio cues using Web Audio API
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -668,12 +668,12 @@ export function VoiceMedicalProvider({ children }: { children: React.ReactNode; 
   // ================================================================================
 
   const startListening = useCallback(async () => {
-    if (!recognition.current || isListening) {return;}
+    if (!recognition.current || isListening) return;
 
     // Request LGPD consent if required
     if (settings.lgpd_mode && settings.consent_required && !consentGiven.current) {
       const consent = await requestConsent();
-      if (!consent) {return;}
+      if (!consent) return;
     }
 
     // Start new session

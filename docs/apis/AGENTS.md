@@ -1,3 +1,37 @@
+---
+title: "APIs Orchestrator (docs/apis) — v2"
+version: 2.0.0
+last_updated: 2025-09-02
+language: en
+applyTo:
+  - "docs/apis/**"
+llm:
+  mandatory_sequence:
+    - sequential-thinking
+    - task-management
+    - codebase-analysis
+  pre_read:
+    - path: "docs/AGENTS.md"
+      reason: "Root docs orchestrator"
+    - path: "docs/memory.md"
+      reason: "Memory protocol"
+  retrieval_hints:
+    prefer:
+      - "docs/apis/AGENTS.md"
+      - "docs/apis/**/README.md"
+    avoid:
+      - "images/**"
+      - "*.pdf"
+  guardrails:
+    tone: "concise, professional, English"
+    formatting: "Markdown with clear headings and short lists"
+    stop_criteria: "finish only when the task is 100% resolved"
+  output_preferences:
+    - "Use short bullets"
+    - "Include relative paths in backticks"
+    - "Provide shell commands in fenced code blocks when applicable"
+---
+
 # API Docs Orchestrator (docs/apis)
 
 Purpose: define how to create, name, review, and maintain API docs in this folder with consistency and quality.
@@ -19,23 +53,27 @@ Purpose: define how to create, name, review, and maintain API docs in this folde
 ## Required endpoint section format
 
 For each endpoint, document in this order:
-1) Title: `### [METHOD] /api/path`
-2) Purpose: what it does and when to use
-3) Auth: requirements and roles
-4) Parameters: path, query, headers
-5) Request Body: JSON schema or example
-6) Responses: status codes + JSON examples (success and common errors)
-7) Source Path: code location (e.g., `apps/web/app/api/.../route.ts`)
-8) Notes: pitfalls, limits, rate limits, side effects
+
+1. Title: `### [METHOD] /api/path`
+2. Purpose: what it does and when to use
+3. Auth: requirements and roles
+4. Parameters: path, query, headers
+5. Request Body: JSON schema or example
+6. Responses: status codes + JSON examples (success and common errors)
+7. Source Path: code location (e.g., `apps/web/app/api/.../route.ts`)
+8. Notes: pitfalls, limits, rate limits, side effects
 
 ## Minimal file template
+
 ```md
 # <Domain> – <Scope>
 
 Purpose: <1–2 sentences>
 
 ## Endpoints
-### [METHOD] /api/... 
+
+### [METHOD] /api/...
+
 - Purpose: ...
 - Auth: ...
 - Params: path/query/headers ...
@@ -72,6 +110,7 @@ capabilities:
 ### **🤖 AI INTEGRATION DOCUMENTATION** (Vercel AI SDK)
 
 ## Process (Archon-first)
+
 - Create an Archon task for the doc change (todo → doing → review)
 - Link PR/commit and add implementation notes in the task
 - Keep docs in sync with code changes; update examples and paths

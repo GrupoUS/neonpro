@@ -539,7 +539,7 @@ export class ANVISATester {
    * Calculate ANVISA compliance score
    */
   private calculateANVISAScore(violations: ComplianceViolation[], totalChecks: number): number {
-    if (totalChecks === 0) {return 100;}
+    if (totalChecks === 0) return 100;
 
     const weightedViolations = violations.reduce((sum, violation) => {
       const weight = this.getViolationWeight(violation.severity);

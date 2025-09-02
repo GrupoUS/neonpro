@@ -439,7 +439,7 @@ export class ReportScheduler {
    * Check if compliance data passes schedule filters
    */
   private passesFilters(data: unknown, filters?: ReportSchedule["filters"]): boolean {
-    if (!filters) {return true;}
+    if (!filters) return true;
 
     if (filters.minimumScore && data.summary.overallScore < filters.minimumScore) {
       return false;

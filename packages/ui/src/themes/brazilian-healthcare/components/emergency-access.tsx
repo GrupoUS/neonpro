@@ -138,7 +138,7 @@ export function EmergencyAccessInterface({
             aria-describedby="search-help"
             autoComplete="off"
           />
-          
+
           {isSearching && (
             <div className="search-loading" aria-label="Buscando...">
               <div className="loading-spinner" />
@@ -163,7 +163,7 @@ export function EmergencyAccessInterface({
                 {searchResults.length} paciente(s) encontrado(s)
               </span>
             </div>
-            
+
             <div className="results-list">
               {searchResults.map((patient) => (
                 <button
@@ -187,13 +187,11 @@ export function EmergencyAccessInterface({
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="patient-status">
-                    {patient.isActive ? (
-                      <span className="status-active">Ativo</span>
-                    ) : (
-                      <span className="status-inactive">Inativo</span>
-                    )}
+                    {patient.isActive
+                      ? <span className="status-active">Ativo</span>
+                      : <span className="status-inactive">Inativo</span>}
                   </div>
                 </button>
               ))}
@@ -222,7 +220,7 @@ export function EmergencyAccessInterface({
         >
           📞 SAMU (192)
         </button>
-        
+
         <button
           type="button"
           className="emergency-action-btn emergency-fire"
@@ -231,7 +229,7 @@ export function EmergencyAccessInterface({
         >
           🚒 Bombeiros (193)
         </button>
-        
+
         <button
           type="button"
           className="emergency-action-btn emergency-police"

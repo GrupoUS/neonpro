@@ -251,7 +251,7 @@ export class ANVISAComplianceReporter {
 
     // Deduct points for compliance issues - UTC-safe date comparisons
     const expiredProducts = products.filter((product) => {
-      if (!product.expiry_date) {return false;}
+      if (!product.expiry_date) return false;
       const expiryDate = new Date(product.expiry_date);
       return expiryDate.getTime() < now.getTime();
     }).length || ZERO_FALLBACK;
@@ -261,7 +261,7 @@ export class ANVISAComplianceReporter {
         .length || ZERO_FALLBACK;
 
     const overduePendingReports = pendingReports.filter((report) => {
-      if (!report.due_date) {return false;}
+      if (!report.due_date) return false;
       const dueDate = new Date(report.due_date);
       return dueDate.getTime() < now.getTime();
     }).length || ZERO_FALLBACK;

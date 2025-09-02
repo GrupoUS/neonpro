@@ -1,0 +1,37 @@
+{
+  "mode": "apply",
+  "root_path": "/home/vibecoder/neonpro",
+  "applied_at": "2025-09-02T17:16:26.134226+00:00",
+  "removed": [
+    {
+      "path": "coverage/.tmp/coverage-1.json",
+      "size_bytes": 17047,
+      "category": "reports"
+    },
+    {
+      "path": "coverage/.tmp/coverage-3.json",
+      "size_bytes": 6156,
+      "category": "reports"
+    },
+    {
+      "path": "coverage/.tmp/coverage-0.json",
+      "size_bytes": 16852,
+      "category": "reports"
+    },
+    {
+      "path": "coverage/.tmp/coverage-2.json",
+      "size_bytes": 6399,
+      "category": "reports"
+    }
+  ],
+  "removed_count": 4,
+  "removed_size_bytes": 46454,
+  "arch_checks": {
+    "apps": true,
+    "packages": true,
+    "apps_count": 2,
+    "packages_count": 22
+  },
+  "errors": [],
+  "source_manifest": "manifest-20250902-140851.json"
+}

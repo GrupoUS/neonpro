@@ -19,11 +19,9 @@ logs/
 .claude/
 
 # Project specific - not maintained by formatters
-archon/
-serena/
+.serena/
 
 # Testing reports
 tools/testing/reports/assets/
 tools/e2e/reports/
 tools/reports/
-.ruler/

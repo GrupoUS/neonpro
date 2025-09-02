@@ -38,6 +38,7 @@ Each documented endpoint must contain:
 **Authentication:** Requires Supabase authentication (Bearer token)
 
 **Query Parameters:**
+
 - `page` (number, optional): Page number (default: 1)
 - `limit` (number, optional): Items per page (default: 10, max: 100)
 - `search` (string, optional): Search by event name or description
@@ -47,6 +48,7 @@ Each documented endpoint must contain:
 - `date_to` (string, optional): End date (ISO 8601 format)
 
 **Success Response (200):**
+
 ```json
 {
   "events": [
@@ -74,6 +76,7 @@ Each documented endpoint must contain:
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized`: Invalid or missing authentication token
 - `403 Forbidden`: User does not have permission to access events
 - `422 Unprocessable Entity`: Invalid query parameters

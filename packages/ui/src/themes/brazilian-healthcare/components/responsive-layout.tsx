@@ -48,7 +48,7 @@ export function ResponsiveLayout({
       const isSlow = connectivity.type === "2G"
         || (connectivity.type === "3G" && connectivity.strength === "weak")
         || connectivity.latency > 1000;
-      
+
       setIsLowBandwidth(isSlow);
       setConnectionSpeed(`${connectivity.type} - ${connectivity.strength}`);
     }
@@ -83,11 +83,9 @@ export function ResponsiveLayout({
               📶
             </span>
             <span className="connection-type">{connectivity.type}</span>
-            {connectivity.latency && (
-              <span className="latency">{connectivity.latency}ms</span>
-            )}
+            {connectivity.latency && <span className="latency">{connectivity.latency}ms</span>}
           </div>
-          
+
           {isLowBandwidth && (
             <div className="bandwidth-warning">
               ⚠️ Conexão lenta detectada - Modo otimizado ativado
@@ -117,7 +115,7 @@ export function ResponsiveLayout({
             <span className="region-name">{regional.region}</span>
             <span className="timezone">{regional.timezone}</span>
           </div>
-          
+
           {regional.accessibility && (
             <div className="accessibility-features">
               {regional.accessibility.screenReader && (
@@ -148,7 +146,8 @@ export function ResponsiveLayout({
       {/* Performance Optimization for Low Bandwidth */}
       {isLowBandwidth && (
         <div className="performance-optimizations">
-          <style jsx>{`
+          <style jsx>
+            {`
             .responsive-layout.low-bandwidth {
               /* Reduce animations */
               * {
@@ -168,12 +167,14 @@ export function ResponsiveLayout({
                 box-shadow: none !important;
               }
             }
-          `}</style>
+          `}
+          </style>
         </div>
       )}
 
       {/* Viewport-specific Optimizations */}
-      <style jsx>{`
+      <style jsx>
+        {`
         .responsive-layout.viewport-mobile {
           /* Mobile-first optimizations */
           font-size: 16px; /* Prevent zoom on iOS */
@@ -200,10 +201,12 @@ export function ResponsiveLayout({
           --text-color: #000000;
           filter: contrast(150%);
         }
-      `}</style>
+      `}
+      </style>
 
       {/* Brazilian Healthcare Specific Styles */}
-      <style jsx>{`
+      <style jsx>
+        {`
         .connectivity-status {
           position: fixed;
           top: 0;
@@ -244,7 +247,8 @@ export function ResponsiveLayout({
           0%, 100% { opacity: 1; }
           50% { opacity: 0.8; }
         }
-      `}</style>
+      `}
+      </style>
     </div>
   );
 }

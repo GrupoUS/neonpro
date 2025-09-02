@@ -197,9 +197,9 @@ const formatRelativeTime = (date: Date): string => {
   const now = new Date();
   const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
-  if (diffInHours < 1) {return "Há poucos minutos";}
-  if (diffInHours < 24) {return `Há ${Math.floor(diffInHours)} horas`;}
-  if (diffInHours < 48) {return "Ontem";}
+  if (diffInHours < 1) return "Há poucos minutos";
+  if (diffInHours < 24) return `Há ${Math.floor(diffInHours)} horas`;
+  if (diffInHours < 48) return "Ontem";
   return `Há ${Math.floor(diffInHours / 24)} dias`;
 };
 
@@ -207,9 +207,9 @@ const formatTimeUntil = (date: Date): string => {
   const now = new Date();
   const diffInHours = (date.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-  if (diffInHours < 0) {return "Vencido";}
-  if (diffInHours < 1) {return "Vence em breve";}
-  if (diffInHours < 24) {return `${Math.floor(diffInHours)}h restantes`;}
+  if (diffInHours < 0) return "Vencido";
+  if (diffInHours < 1) return "Vence em breve";
+  if (diffInHours < 24) return `${Math.floor(diffInHours)}h restantes`;
   return `${Math.floor(diffInHours / 24)} dias restantes`;
 };
 

@@ -1041,7 +1041,7 @@ export function UniversalAIChat({
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    if (!inputValue.trim() || isLoading) {return;}
+                    if (!inputValue.trim() || isLoading) return;
                     handleSubmit(e as unknown);
                     announce("Mensagem enviada para análise médica.", "polite");
                   }

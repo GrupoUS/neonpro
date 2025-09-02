@@ -48,4 +48,3 @@
 - During PR: Ensure coverage summaries meet targets
 - Before merge: Run coverage:verify script locally and in CI
 - After merge: Monitor trends; address declines promptly
-
