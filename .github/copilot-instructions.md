@@ -187,8 +187,6 @@ CONSTITUTIONAL_PRINCIPLES:
 
 ## 🔧 MCP TOOL INTEGRATION
 
-**📚 Detailed guidance:** [`.ruler/agents/mcp-coordination.md`](../.ruler/agents/mcp-coordination.md)
-
 ### **⚡ Mandatory Sequence**
 
 1. **🧠 sequential-thinking** (FIRST STEP)
@@ -432,7 +430,6 @@ validation:
 
 ## 📚 **Referências dos Agentes APEX**
 
-- **🤖 Sistema de Coordenação**: [`.ruler/agents/AGENT.md`](../.ruler/agents/AGENT.md)
 - **💻 @apex-dev**: [`.ruler/agents/apex-dev.md`](../.ruler/agents/apex-dev.md) - Coordenador unificado com modos de Desenvolvimento, Arquitetura, Auditoria e Refatoração
 - **🔬 @apex-researcher**: [`.ruler/agents/apex-researcher.md`](../.ruler/agents/apex-researcher.md) - Pesquisa multi-fonte e validação constitucional
 - **🎨 @apex-ui-ux-designer**: [`.ruler/agents/apex-ui-ux-designer.md`](../.ruler/agents/apex-ui-ux-designer.md) - Design healthcare com acessibilidade WCAG 2.1 AA+
@@ -445,5 +442,4 @@ validation:
 - **✅ Complete each step** before moving to the next, using appropriate MCPs for each phase
 - **🔄 Iterate** until all quality checks pass
 - **📝 Document everything** for future reference using `archon` knowledge base
-- **🎯 For detailed MCP guidance**: See [`.ruler/agents/mcp-coordination.md`](../.ruler/agents/mcp-coordination.md)
 - **🚨 If stuck >3 attempts**: Use sequential-thinking to reassess and try alternatives

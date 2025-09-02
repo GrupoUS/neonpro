@@ -1,7 +1,3 @@
----
-applyTo: "**/*"
----
-
 # 🤖 NeonPro Agent Orchestration System
 
 ## 🧠 COORDENAÇÃO CENTRAL INTELIGENTE
@@ -16,12 +12,13 @@ applyTo: "**/*"
 
 **Coordenador Central** (Sempre Ativo):
 
-- **💻 apex-dev** - Coordenador base + desenvolvimento full-stack healthcare
+- **💻 apex-dev** - Coordenador base + desenvolvimento full-stack healthcare + refatoração + auditoria de segurança
 
 **Especialistas On-Demand** (Ativação por Contexto):
 
 - **🔬 apex-researcher** - Pesquisa multi-fonte e validação constitucional
 - **🎨 apex-ui-ux-designer** - Design healthcare com acessibilidade WCAG 2.1 AA+
+- **🧪 test** - Especialista em TDD e qualidade de código
 - **📋 prd** - Especificações de produto e roadmaps
 - **📢 briefing** - Estratégia de marketing e posicionamento
 - **📚 documentation** - Documentação técnica e guias
@@ -34,15 +31,36 @@ applyTo: "**/*"
 #### **apex-dev.md** - Coordenador Base (Sempre Ativo)
 
 ```yaml
-role: "Full-Stack Healthcare Development + Agent Coordination"
+role: "Full-Stack Healthcare Development + Agent Coordination + Refactoring + Security Audit"
 always_active: true
-triggers: ["desenvolver", "implementar", "código", "feature", "bug", "healthcare"]
+triggers: [
+  "desenvolver",
+  "implementar",
+  "código",
+  "feature",
+  "bug",
+  "healthcare",
+  "refatorar",
+  "otimizar",
+  "auditoria",
+  "segurança",
+  "refactor",
+  "optimize",
+  "audit",
+  "security",
+]
 capabilities:
   - Next.js 15 + React 19 + TypeScript development
   - Constitutional principles (KISS/YAGNI/CoT) enforcement
   - Agent coordination and workflow orchestration
   - Production deployment and quality gates
   - Archon MCP integration for task management
+  - Integrated Refactor Mode for systematic code improvement
+  - Integrated Security Audit Mode for vulnerability assessment
+  - Code smell detection and performance optimization
+  - Safe incremental refactoring with rollback strategies
+  - Static code analysis and penetration testing
+  - Authentication and access control validation
 ```
 
 #### **apex-researcher.md** - Inteligência de Pesquisa
@@ -71,28 +89,18 @@ capabilities:
 
 ### **🏗️ PROCESS AGENTS** (Methodology Specialists)
 
-#### **architect.md** - Arquiteto de Sistemas
+#### **test.md** - Especialista em TDD
 
 ```yaml
-role: "Senior Software Architect for Scalable Systems"
-triggers: ["arquitetura", "design system", "estrutura", "planejar", "architect", "sistema"]
+role: "Test-Driven Development and Quality Assurance Specialist"
+triggers: ["teste", "tdd", "qualidade", "test", "testing", "quality", "coverage"]
 capabilities:
-  - Requirements analysis and system design
-  - Architecture patterns and scalability planning
-  - Component design and interface definition
-  - Database schema and integration planning
-```
-
-#### **audit.md** - Engenheiro de Segurança
-
-```yaml
-role: "Practical Security Engineer for Vulnerability Assessment"
-triggers: ["auditoria", "segurança", "vulnerabilidade", "security", "audit", "teste"]
-capabilities:
-  - Static code analysis and security testing
-  - Authentication and access control validation
-  - Input validation and injection prevention
-  - Risk assessment and fix prioritization
+  - Test-Driven Development (Red-Green-Refactor) workflow
+  - Vitest unit and integration testing
+  - Playwright end-to-end testing
+  - Code coverage analysis and quality gates
+  - Mock patterns and test structure optimization
+  - Performance testing and CI/CD integration
 ```
 
 #### **prd.md** - Gerente de Produto
@@ -105,18 +113,6 @@ capabilities:
   - Strategic alignment and success metrics
   - Implementation roadmap and risk assessment
   - Epic organization and file structuring
-```
-
-#### **refactor.md** - Arquiteto de Refatoração
-
-```yaml
-role: "Code Refactoring Architect for Quality Improvement"
-triggers: ["refatorar", "melhorar", "otimizar", "refactor", "cleanup", "debt"]
-capabilities:
-  - Code smell detection and elimination
-  - Performance optimization and maintainability
-  - KISS/YAGNI principle enforcement
-  - Safe incremental refactoring strategies
 ```
 
 ### **🛠️ SUPPORT AGENTS** (Utility Specialists)
@@ -164,11 +160,11 @@ capabilities:
 ```yaml
 workflow: "Full Feature Development"
 sequence:
-  1. architect → "System design and component planning"
-  2. apex-researcher → "Technology validation and best practices"
+  1. apex-researcher → "Technology validation and best practices"
+  2. apex-dev → "Architecture planning and component design (Architecture Mode)"
   3. apex-dev → "Core implementation with constitutional principles"
   4. apex-ui-ux-designer → "Healthcare-optimized interface design"
-  5. audit → "Security validation and vulnerability assessment"
+  5. test → "Unit/Integration/E2E validation and coverage checks"
   6. documentation → "Technical documentation and guides"
 output: "Production-ready healthcare feature with full documentation"
 ```
@@ -179,22 +175,21 @@ output: "Production-ready healthcare feature with full documentation"
 workflow: "Research-Driven Implementation"
 sequence:
   1. apex-researcher → "Multi-source research and validation"
-  2. architect → "Architecture design based on research findings"
+  2. apex-dev → "Architecture design based on research findings (Architecture Mode)"
   3. apex-dev → "Implementation following research insights"
-  4. audit → "Security review of implemented solution"
-output: "Evidence-based implementation with security validation"
+  4. test → "Automated tests and security checks via quality gates"
+output: "Evidence-based implementation with validated quality"
 ```
 
-### **🔧 Refatoração Segura**
+### **🔧 Refatoração e Segurança Integradas**
 
 ```yaml
-workflow: "Secure Refactoring"
+workflow: "Integrated Refactoring & Security"
 sequence:
-  1. audit → "Current system security assessment"
-  2. refactor → "Code improvement and optimization"
-  3. apex-dev → "Implementation of refactoring changes"
-  4. audit → "Post-refactoring security validation"
-output: "Improved codebase with maintained security standards"
+  1. apex-dev → "Security assessment and refactoring plan (Security/Refactor Modes)"
+  2. apex-dev → "Refactoring execution with functional parity"
+  3. test → "Regression and coverage validation"
+output: "Improved, secure codebase with validated quality"
 ```
 
 ### **📋 MVP Completo**
@@ -203,11 +198,11 @@ output: "Improved codebase with maintained security standards"
 workflow: "Complete MVP Development"
 sequence:
   1. prd → "Product requirements and specifications"
-  2. architect → "System architecture and design patterns"
+  2. apex-dev → "System architecture and design patterns (Architecture Mode)"
   3. apex-researcher → "Technology stack validation"
   4. apex-dev → "Core development and integration"
   5. apex-ui-ux-designer → "User interface and experience"
-  6. audit → "Security and compliance validation"
+  6. test → "Security, coverage and E2E validation"
   7. documentation → "Complete system documentation"
 output: "Production-ready MVP with full compliance"
 ```
@@ -219,15 +214,13 @@ output: "Production-ready MVP with full compliance"
 ```bash
 # Desenvolvimento
 @apex-dev "implementar autenticação JWT"
-@architect "projetar arquitetura de microserviços"
-@refactor "otimizar performance do dashboard"
+@test "criar testes de integração para autenticação"
 
 # Pesquisa e Design
 @apex-researcher "validar padrões de segurança LGPD"
 @apex-ui-ux-designer "criar interface acessível para pacientes"
 
 # Qualidade e Documentação
-@audit "revisar vulnerabilidades de segurança"
 @documentation "criar guia de instalação"
 @rules "definir padrões de código TypeScript"
 
@@ -240,29 +233,28 @@ output: "Production-ready MVP with full compliance"
 
 ```bash
 # Desenvolvimento Coordenado
-@apex-dev,architect "implementar sistema de agendamento"
 @apex-researcher,apex-dev "pesquisar e implementar FHIR"
-@audit,refactor "revisar e otimizar autenticação"
+@apex-dev,test "revisar e validar autenticação"
 
 # Design e Implementação
 @apex-ui-ux-designer,apex-dev "criar dashboard responsivo"
-@architect,apex-dev,audit "desenvolver API segura"
+@apex-dev,test "desenvolver API segura"
 
 # Produto Completo
-@prd,architect,apex-dev "especificar e desenvolver MVP"
+@prd,apex-dev "especificar e desenvolver MVP"
 ```
 
 ### **Ativação de Equipe Completa**
 
 ```bash
-# Desenvolvimento Full-Stack
-@team-full "desenvolver plataforma de telemedicina completa"
+# Desenvolvimento Full-Stack Completo
+@apex-dev,apex-researcher,apex-ui-ux-designer,test,documentation "desenvolver plataforma de telemedicina completa"
 
-# Auditoria Completa
-@team-audit "revisar segurança e compliance do sistema"
+# Qualidade e Documentação Completa
+@apex-dev,test,documentation "validar qualidade e criar documentação técnica"
 
-# Documentação Completa
-@team-docs "criar documentação técnica e de usuário"
+# MVP com Validação Completa
+@prd,apex-researcher,apex-dev,apex-ui-ux-designer,test,documentation "especificar, desenvolver e validar MVP"
 ```
 
 ## 📚 REFERÊNCIAS OBRIGATÓRIAS
@@ -278,16 +270,14 @@ output: "Production-ready MVP with full compliance"
 ```markdown
 # Formato de Referência para Agentes
 
-- **APEX Development**: [`.ruler/agents/apex-dev.md`](../../.ruler/agents/apex-dev.md)
-- **APEX Research**: [`.ruler/agents/apex-researcher.md`](../../.ruler/agents/apex-researcher.md)
-- **APEX UI/UX**: [`.ruler/agents/apex-ui-ux-designer.md`](../../.ruler/agents/apex-ui-ux-designer.md)
-- **Architecture**: [`.ruler/agents/architect.md`](../../.ruler/agents/architect.md)
-- **Security Audit**: [`.ruler/agents/audit.md`](../../.ruler/agents/audit.md)
-- **Product Requirements**: [`.ruler/agents/prd.md`](../../.ruler/agents/prd.md)
-- **Code Refactoring**: [`.ruler/agents/refactor.md`](../../.ruler/agents/refactor.md)
-- **Marketing Strategy**: [`.ruler/agents/briefing.md`](../../.ruler/agents/briefing.md)
-- **Documentation**: [`.ruler/agents/documentation.md`](../../.ruler/agents/documentation.md)
-- **Rules & Standards**: [`.ruler/agents/rules.md`](../../.ruler/agents/rules.md)
+- **APEX Development**: [`docs/agents/apex-dev.md`](./apex-dev.md)
+- **APEX Research**: [`docs/agents/apex-researcher.md`](./apex-researcher.md)
+- **APEX UI/UX**: [`docs/agents/apex-ui-ux-designer.md`](./apex-ui-ux-designer.md)
+- **Product Requirements**: [`docs/agents/prd.md`](./prd.md)
+- **Marketing Strategy**: [`docs/agents/briefing.md`](./briefing.md)
+- **Documentation**: [`docs/agents/documentation.md`](./documentation.md)
+- **Testing & Quality**: [`docs/agents/test.md`](./test.md)
+- **Rules & Standards**: [`docs/agents/rules.md`](./rules.md)
 ```
 
 ## 🎯 BENEFÍCIOS DO SISTEMA
@@ -307,13 +297,14 @@ output: "Production-ready MVP with full compliance"
 ### **🔒 Excelência Healthcare**
 
 - **Compliance Integrado**: LGPD/ANVISA/CFM em todos os processos
-- **Segurança por Design**: Auditoria contínua e validação
+- **Segurança por Design**: Auditoria integrada no apex-dev com validação contínua
 - **Acessibilidade Universal**: WCAG 2.1 AA+ como padrão
+- **Qualidade por TDD**: Testes automatizados e cobertura garantida
 
 ---
 
-**🎯 COORDENADOR CENTRAL**: O **apex-dev** atua como maestro, orquestrando todos os agentes especializados para entregar soluções healthcare de excelência constitucional.
+**🎯 COORDENADOR CENTRAL**: O **apex-dev** atua como maestro unificado, integrando desenvolvimento, refatoração e auditoria de segurança, orquestrando todos os agentes especializados para entregar soluções healthcare de excelência constitucional.
 
-**🔄 ATIVAÇÃO INTELIGENTE**: Sistema de triggers contextuais garante que o agente certo seja ativado no momento certo, maximizando eficiência e qualidade.
+**🔄 ATIVAÇÃO INTELIGENTE**: Sistema de triggers contextuais garante que o agente certo seja ativado no momento certo, com apex-dev cobrindo múltiplas responsabilidades de forma integrada.
 
-**📋 WORKFLOWS INTEGRADOS**: Colaboração predefinida entre agentes assegura que projetos complexos sejam executados com precisão e consistência.
+**📋 WORKFLOWS INTEGRADOS**: Colaboração predefinida entre agentes assegura que projetos complexos sejam executados com precisão, consistência e qualidade validada por testes automatizados.

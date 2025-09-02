@@ -1,6 +1,18 @@
-# Database Schema Documentation Guide - Version: 1.0.0
+# Database Schema Documentation Guide
 
-This file contains instructions for organizing and maintaining database schema documentation in a clear and concise way.
+This folder contains the structured database schema documentation.
+
+## Instructions
+
+The generation and organization of all files in this folder must strictly follow the guidelines of this file for templates, documentation rules, and best practices.
+
+## Structure
+
+- `tables/` - Individual documentation for each table
+- `functions.md` - Custom database functions
+- `triggers.md` - Database triggers
+- `relationships.md` - Table relationships
+- `enums.md` - Custom enum types
 
 ## Database Schema Instructions
 

@@ -14,92 +14,11 @@ When you have ANY doubt during development:
 - Review `docs/tech-stack.md` for technology guidelines
 - Look at `docs/apis.md` for API patterns
 - Check `docs/database-schema.md` for data structure
-- Consult specific guides in `/rules` or `/docs` for coding standards, best practices, and design patterns
+- Consult specific guides in `/docs` for coding standards, best practices, and design patterns
 
 ## 🤖 AGENT COORDINATION SYSTEM
 
-**🎯 Filosofia de Coordenação**: *"Roteamento inteligente para o agente certo na hora certa"*
-
-### **🔄 Sistema de Roteamento Inteligente**
-
-**Coordenador Central** (Sempre Ativo):
-- **💻 @apex-dev** - Coordenador base + desenvolvimento full-stack healthcare
-
-**Especialistas On-Demand** (Ativação por Contexto):
-- **🔬 @apex-researcher** - Pesquisa multi-fonte e validação constitucional
-- **🎨 @apex-ui-ux-designer** - Design healthcare com acessibilidade WCAG 2.1 AA+
-- **🏗️ @architect** - Arquitetura de sistemas e design patterns
-- **🔒 @audit** - Auditoria de segurança e vulnerabilidades
-- **📋 @prd** - Especificações de produto e roadmaps
-- **🔧 @refactor** - Refatoração e otimização de código
-- **📢 @briefing** - Estratégia de marketing e posicionamento
-- **📚 @documentation** - Documentação técnica e guias
-- **⚖️ @rules** - Regras e padrões de desenvolvimento
-
-### **🎯 Comandos de Ativação**
-
-```bash
-# Agente Único
-@apex-dev "implementar autenticação JWT"
-@architect "projetar arquitetura de microserviços"
-@apex-researcher "validar padrões de segurança LGPD"
-
-# Múltiplos Agentes
-@apex-dev,architect "implementar sistema de agendamento"
-@apex-ui-ux-designer,apex-dev "criar dashboard responsivo"
-
-# Equipes Completas
-@team-full "desenvolver plataforma de telemedicina completa"
-@team-audit "revisar segurança e compliance do sistema"
-@team-docs "criar documentação técnica e de usuário"
-```
-
-### **🔄 Workflows de Colaboração Predefinidos**
-
-**🚀 Desenvolvimento Completo de Feature**:
-```yaml
-sequence: architect → apex-researcher → apex-dev → apex-ui-ux-designer → audit → documentation
-output: "Production-ready healthcare feature with full documentation"
-```
-
-**🔬 Pesquisa e Implementação**:
-```yaml
-sequence: apex-researcher → architect → apex-dev → audit
-output: "Evidence-based implementation with security validation"
-```
-
-**🔧 Refatoração Segura**:
-```yaml
-sequence: audit → refactor → apex-dev → audit
-output: "Improved codebase with maintained security standards"
-```
-
-### **📋 MVP Completo**:
-```yaml
-sequence: prd → architect → apex-researcher → apex-dev → apex-ui-ux-designer → audit → documentation
-output: "Production-ready MVP with full compliance"
-```
-
-### **🎯 Matriz de Decisão para Seleção de Agentes**
-
-| Contexto/Trigger | Agente Principal | Agentes Colaboradores | Workflow |
-|------------------|------------------|----------------------|----------|
-| 🔬 **Pesquisa/Análise** | @apex-researcher | @architect, @apex-dev | Research → Implementation |
-| 💻 **Desenvolvimento** | @apex-dev | @architect, @audit | Plan → Code → Validate |
-| 🎨 **UI/UX Design** | @apex-ui-ux-designer | @apex-dev, @audit | Design → Implement → Test |
-| 🏗️ **Arquitetura** | @architect | @apex-researcher, @apex-dev | Research → Design → Implement |
-| 🔒 **Segurança** | @audit | @apex-dev, @refactor | Audit → Fix → Re-audit |
-| 📋 **Produto** | @prd | @architect, @apex-ui-ux-designer | Spec → Design → Develop |
-| 🔧 **Refatoração** | @refactor | @audit, @apex-dev | Audit → Refactor → Validate |
-| 📚 **Documentação** | @documentation | @apex-dev, @architect | Code → Document → Review |
-| 📢 **Marketing** | @briefing | @apex-ui-ux-designer, @prd | Strategy → Design → Content |
-| ⚖️ **Padrões** | @rules | @audit, @apex-dev | Define → Implement → Enforce |
-
-**🔄 Regras de Ativação Automática**:
-- **Complexidade ≥7**: Ativação automática de @apex-researcher
-- **UI/UX necessário**: Auto-inclusão de @apex-ui-ux-designer
-- **Segurança crítica**: Auto-inclusão de @audit
-- **Arquitetura nova**: Auto-inclusão de @architect
+**Orchestrator** [`/agents/AGENTS.md`](/agents/AGENTS.md) is always active and coordinates the team. Other agents are activated on-demand based on context triggers.
 
 ## 🎯 CORE PRINCIPLES & MISSION
 ```yaml
@@ -223,23 +142,7 @@ RESEARCH_EXECUTION_FRAMEWORK:
 - Create a detailed task list using the todo tool to implement the feature
 - Break down complex features into manageable subtasks, always make atomic tasks on archon and then subtasks on native todos task lists
 - Mark tasks as in_progress when starting, completed when finished
-- **Follow the Project Context Guide:** [`docs/project.md`](../docs/project.md)
-
-**🎯 Ativação de Agentes por Contexto**:
-```bash
-# Planejamento Técnico
-@apex-dev "planejar implementação de [feature]"
-
-# Planejamento de UI/UX
-@apex-ui-ux-designer "projetar interface para [funcionalidade]"
-
-# Planejamento Arquitetural
-@architect "definir arquitetura para [sistema]"
-
-# Planejamento Colaborativo
-@apex-dev,architect "planejar sistema de [funcionalidade complexa]"
-```
-
+- **Follow the Project Context Guide:** [`docs/AGENTS.md`](../docs/AGENTS.md)
 - Follow the Planning & Design Framework below
 
 ```yaml
@@ -372,17 +275,15 @@ RESEARCH_EXECUTION_FRAMEWORK:
 
 ## 📚 **Referências dos Agentes**
 
-- **🤖 Sistema de Coordenação**: [`.ruler/agents/AGENT.md`](../.ruler/agents/AGENT.md)
-- **💻 @apex-dev**: [`.ruler/agents/apex-dev.md`](../.ruler/agents/apex-dev.md)
-- **🔬 @apex-researcher**: [`.ruler/agents/apex-researcher.md`](../.ruler/agents/apex-researcher.md)
-- **🎨 @apex-ui-ux-designer**: [`.ruler/agents/apex-ui-ux-designer.md`](../.ruler/agents/apex-ui-ux-designer.md)
-- **🏗️ @architect**: [`.ruler/agents/architect.md`](../.ruler/agents/architect.md)
-- **🔒 @audit**: [`.ruler/agents/audit.md`](../.ruler/agents/audit.md)
-- **📋 @prd**: [`.ruler/agents/prd.md`](../.ruler/agents/prd.md)
-- **🔧 @refactor**: [`.ruler/agents/refactor.md`](../.ruler/agents/refactor.md)
-- **📢 @briefing**: [`.ruler/agents/briefing.md`](../.ruler/agents/briefing.md)
-- **📚 @documentation**: [`.ruler/agents/documentation.md`](../.ruler/agents/documentation.md)
-- **⚖️ @rules**: [`.ruler/agents/rules.md`](../.ruler/agents/rules.md)
+- **🤖 Sistema de Coordenação**: [`docs/agents/AGENTS.md`](./agents/AGENTS.md)
+- **💻 @apex-dev**: [`docs/agents/apex-dev.md`](./agents/apex-dev.md)
+- **🔬 @apex-researcher**: [`docs/agents/apex-researcher.md`](./agents/apex-researcher.md)
+- **🎨 @apex-ui-ux-designer**: [`docs/agents/apex-ui-ux-designer.md`](./agents/apex-ui-ux-designer.md)
+- **📋 @prd**: [`docs/agents/prd.md`](./agents/prd.md)
+- **📢 @briefing**: [`docs/agents/briefing.md`](./agents/briefing.md)
+- **📚 @documentation**: [`docs/agents/documentation.md`](./agents/documentation.md)
+- **🧪 @test**: [`docs/agents/test.md`](./agents/test.md)
+- **⚖️ @rules**: [`docs/agents/rules.md`](./agents/rules.md)
 
 ## Important Notes
 

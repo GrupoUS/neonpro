@@ -10,8 +10,8 @@ This rule outlines the **critical protocol** for consulting and maintaining pers
 
 1. **Initial Memory Scan (MANDATORY FIRST STEP):**
    - **MUST**: At the absolute beginning of every user request processing, read the content of:
-     - `.ruler/project.md` (for project-specific guidelines and overarching project context)
-     - `.ruler/code-preferences.md` (for user-specific, one-line coding preferences)
+     - `docs/project.md` (for project-specific guidelines and overarching project context)
+     - `docs/code-preferences.md` (for user-specific, one-line coding preferences)
    - This initial scan is crucial for context awareness and error prevention.
 
 2. **Targeted Memory Consultation (AS NEEDED):**

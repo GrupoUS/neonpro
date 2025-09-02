@@ -1,4 +1,108 @@
-# TDD Flow Protocol - Version: 1.0.0
+# 🧪 Test Agent Orchestration Guide (docs/agents/test.md)
+
+## 🧠 Intelligent Testing Context Engineering
+
+- Purpose: Central navigation for testing docs (do not duplicate content here)
+- Mission: Route AI agents and developers to the right testing guide fast
+- Principle: Minimal context loading → precise document selection → efficient QA
+
+> Note: Detailed rules, code samples, and configs live under `docs/testing/`. This file orchestrates and links to those authoritative sources.
+
+## 📚 Testing Documentation Matrix
+
+### React Component Testing
+
+- **⚛️ @react-tests**: [docs/testing/react-test-patterns.md](../testing/react-test-patterns.md)
+  - One‑line: Patterns and best practices for testing React components (unit/integration, a11y, performance)
+  - Use when: Writing tests for components, hooks, forms, and UI accessibility
+  - Metadata:
+    ```yaml
+    role: "React Testing Patterns"
+    triggers: ["react", "component", "hook", "a11y", "integration"]
+    outputs: ["test structure", "mocks/fixtures", "a11y checks", "performance tests"]
+    ```
+
+### Code Review & Quality Gates
+
+- **🧰 @code-review**: [docs/testing/code-review-checklist.md](../testing/code-review-checklist.md)
+  - One‑line: Comprehensive code review checklist with healthcare compliance
+  - Use when: Performing PR reviews, verifying security, compliance, and coverage
+  - Metadata:
+    ```yaml
+    role: "Code Review & Compliance Checklist"
+    triggers: ["review", "checklist", "security", "compliance", "coverage"]
+    outputs: ["review steps", "security checks", "coverage targets"]
+    ```
+
+## 🔄 Orchestrated Testing Workflows
+
+### TDD Cycle (Red → Green → Refactor)
+
+```yaml
+workflow: "TDD for Features"
+sequence:
+  1. Define behavior → write failing test (RED)
+  2. Implement minimal code to pass (GREEN)
+  3. Refactor with tests green (REFACTOR)
+references:
+  - @react-tests → "Test structure, mocks, fixtures, a11y"
+  - @code-review → "Quality gates before merge"
+```
+
+### PR Quality Gates
+
+```yaml
+workflow: "Pre-merge Quality"
+sequence:
+  1. Unit/Integration tests passing
+  2. Coverage thresholds met (see @code-review)
+  3. A11y checks for UI components (@react-tests)
+  4. Security/compliance checklist (@code-review)
+```
+
+## 🧭 Navigation Commands
+
+```bash
+# Component & Hook testing
+@react-tests "padrões para componentes"
+@react-tests "mocks, fixtures e providers"
+@react-tests "acessibilidade (WCAG)"
+
+# Code review & compliance
+@code-review "checklist completo"
+@code-review "segurança e LGPD"
+@code-review "cobertura mínima"
+```
+
+## 🧠 Context Strategy
+
+```yaml
+CONTEXT_STRATEGY:
+  minimal_loading: "Carregue apenas 1-2 arquivos por tarefa"
+  when_to_load:
+    componentes_react: [@react-tests]
+    acessibilidade: [@react-tests]
+    code_review: [@code-review]
+    compliance: [@code-review]
+```
+
+## 🧩 Agent Identity (TDD Specialist)
+
+```yaml
+role: "Test-Driven Development & Quality Orchestration"
+triggers: ["test", "tests", "tdd", "quality", "coverage", "ci"]
+capabilities:
+  - Route to authoritative testing docs (no duplication here)
+  - Enforce TDD workflow and quality gates via references
+  - Promote a11y, performance, and compliance testing
+  - Orchestrate CI-friendly testing flows
+```
+
+---
+
+Legacy appendix below is deprecated. For rules, patterns, or code examples, use the links above in `docs/testing/`. This file now focuses on navigation and orchestration only.
+
+# Tester Agent Mode
 
 ## Purpose
 
@@ -25,165 +129,6 @@ Defines Test-Driven Development workflow for TypeScript/Jest projects. Follow th
 ├── Data validation (schemas)
 └── External integrations
 ```
-
-## 🤖 APEX Healthcare Agent Strategy
-
-### **🔄 Intelligent Loading Pattern**
-
-**Always Active** (Base Coordinator):
-
-- **💻 apex-dev** - Full-stack healthcare development and coordination
-
-**On-Demand Activation**:
-
-- **🔬 apex-researcher** - Multi-source research when planning/analyzing
-- **🎨 apex-ui-ux-designer** - UI/UX expertise when creating interfaces
-
-### **🎯 Agent Specialization Matrix**
-
-#### **💻 apex-dev.md** - Base Coordinator (Always Active)
-
-```yaml
-role: "Full-Stack Healthcare Development + Agent Coordination"
-always_active: true
-capabilities:
-  - Next.js 15 + React 19 + TypeScript development
-  - Healthcare compliance (LGPD/ANVISA/CFM) built-in
-  - Constitutional principles (KISS/YAGNI/CoT) enforcement
-  - Agent coordination and workflow orchestration
-  - Production deployment and quality gates
-```
-
-#### **🔬 apex-researcher.md** - Research Intelligence (On-Demand)
-
-```yaml
-role: "Multi-Source Research and Healthcare Compliance"
-activation_triggers:
-  ["research", "analyze", "investigate", "pesquisar", "analisar", "planejar"]
-capabilities:
-  - Context7 → Tavily → Exa intelligence chain
-  - Healthcare documentation and regulatory research
-  - LGPD/ANVISA/CFM compliance validation
-  - Medical best practices and technology evaluation
-  - Evidence-based implementation guidance
-```
-
-#### **🎨 apex-ui-ux-designer.md** - Design Excellence (On-Demand)
-
-```yaml
-role: "Healthcare UI/UX with Constitutional Accessibility"
-activation_triggers:
-  ["design", "ui", "ux", "interface", "página", "componente", "acessibilidade"]
-capabilities:
-  - WCAG 2.1 AA accessibility compliance
-  - shadcn/ui v4 healthcare optimization
-  - Patient-centered design patterns
-  - Emergency scenario interface design
-  - Mobile-first responsive healthcare interfaces
-```
-
-## 🛠️ Ruler Integration - Optimized Configuration
-
-### **ruler.toml Configuration**
-
-```toml
-# OPTIMIZED: Only APEX Healthcare Agents
-# GitHub Copilot handles claude/copilot/trae automatically
-default_agents = ["apex-dev"]
-
-[agents.apex-dev]
-enabled = true
-output_path = ".claude/agents/apex-dev.md"
-source_path = ".ruler/agents/apex-dev.md"
-description = "Always Active - Base Healthcare Development Coordinator"
-
-[agents.apex-researcher]
-enabled = true
-output_path = ".claude/agents/apex-researcher.md"
-source_path = ".ruler/agents/apex-researcher.md"
-description = "On-Demand - Research and Compliance Intelligence"
-
-[agents.apex-ui-ux-designer]
-enabled = true
-output_path = ".claude/agents/apex-ui-ux-designer.md"
-source_path = ".ruler/agents/apex-ui-ux-designer.md"
-description = "On-Demand - Healthcare Interface Design Excellence"
-```
-
-### **Usage Commands**
-
-```bash
-# Generate base coordinator (apex-dev always active)
-ruler
-
-# Activate researcher for planning/analysis tasks
-ruler --agents apex-dev,apex-researcher
-
-# Activate UI/UX designer for interface work
-ruler --agents apex-dev,apex-ui-ux-designer
-
-# Full healthcare team activation
-ruler --agents apex-dev,apex-researcher,apex-ui-ux-designer
-```
-
-## 🏥 Workflow Orchestration
-
-#### **Research & Planning Phase**
-
-```bash
-# Triggers: research, analyze, investigate, pesquisar, analisar, planejar
-ruler --agents apex-dev,apex-researcher
-```
-
-- **apex-dev**: Coordinates research with development context
-- **apex-researcher**: Multi-source intelligence (Context7 → Tavily → Exa)
-- **Focus**: Compliance validation, best practices, evidence-based decisions
-
-#### **UI/UX Development Phase**
-
-```bash
-# Triggers: design, ui, ux, interface, página, componente, acessibilidade
-ruler --agents apex-dev,apex-ui-ux-designer
-```
-
-- **apex-dev**: Provides technical implementation context
-- **apex-ui-ux-designer**: Healthcare accessibility and design expertise
-- **Focus**: WCAG 2.1 AA, patient-centered design, emergency scenarios
-
-#### **Core Development Phase**
-
-```bash
-# Default: apex-dev always active
-ruler --agents apex-dev
-```
-
-- **apex-dev**: Full-stack healthcare development
-- **Focus**: Constitutional principles, compliance, quality gates
-
-## 📚 Benefits of Optimized Strategy
-
-### **🚀 Performance Improvements**
-
-- **Reduced Overhead**: Eliminates redundant configurations
-- **Contextual Loading**: Specialists activate only when needed
-- **Intelligent Coordination**: apex-dev orchestrates team efficiently
-
-### **🎯 Focus Enhancement**
-
-- **Healthcare Specialization**: All agents optimize for medical workflows
-- **Constitutional Principles**: Consistent quality and compliance
-- **On-Demand Expertise**: Right specialist for the right task
-
-### **🔧 Maintenance Simplification**
-
-- **Single Source**: Only APEX agents in Ruler configuration
-- **Auto-Loading**: Copilot and Claude code handles its own configurations
-- **Clear Separation**: Healthcare vs general development concerns
-
-## 📚 References
-
-- **🌟 Complete Workflow**: [`.ruler/dev-workflow.md`](../.ruler/dev-workflow.md)
-- **⚙️ Always Follow Project Standards**: [`docs/project.md`](../docs/project.md)
 
 ## Decision Framework
 
