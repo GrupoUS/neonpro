@@ -256,8 +256,8 @@ export function ResponsiveLayout({
 } // Mobile Layout - Optimized for single-hand use
 function MobileLayout({
   children,
-  _isLowBandwidth: isLowBandwidth,
-  _optimizations: optimizations,
+  isLowBandwidth: _isLowBandwidth,
+  optimizations: _optimizations,
 }: {
   children: ReactNode;
   isLowBandwidth: boolean;
@@ -299,8 +299,8 @@ function MobileLayout({
 // Tablet Layout - Clinical workflow optimized
 function TabletLayout({
   children,
-  _isLowBandwidth: isLowBandwidth,
-  _optimizations: optimizations,
+  isLowBandwidth: _isLowBandwidth,
+  optimizations: _optimizations,
 }: {
   children: ReactNode;
   isLowBandwidth: boolean;
@@ -340,8 +340,8 @@ function TabletLayout({
 // Desktop Layout - Full feature set
 function DesktopLayout({
   children,
-  _isLowBandwidth: isLowBandwidth,
-  _optimizations: optimizations,
+  isLowBandwidth: _isLowBandwidth,
+  optimizations: _optimizations,
 }: {
   children: ReactNode;
   isLowBandwidth: boolean;

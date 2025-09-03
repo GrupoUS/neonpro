@@ -7,19 +7,19 @@
 import { cn } from "@neonpro/utils";
 import {
   AlertCircle,
-  Calendar,
+
   CheckCircle,
   Clock,
   CreditCard,
   Download,
   Eye,
-  Filter,
+
   Search,
-  User,
+
   XCircle,
 } from "lucide-react";
 import type React from "react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 // Brazilian payment methods
 export type BrazilianPaymentMethod =
@@ -306,7 +306,7 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
   loading = false,
   currentPage = 1,
   totalPages = 1,
-  itemsPerPage = 10,
+  _itemsPerPage = 10,
   onPageChange,
   searchQuery = "",
   onSearchChange,

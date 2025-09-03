@@ -17,9 +17,9 @@ export async function createAnvisaServices(_supabaseClient?: SupabaseClient) {
 export async function validateAnvisaCompliance(
   tenantId: string,
   services: {
-    audit?: { hasRecentEntries?: (tenantId: string) => Promise<boolean> };
-    storage?: { hasTemperatureLogs?: (tenantId: string) => Promise<boolean> };
-    documents?: { hasRequiredDocs?: (tenantId: string) => Promise<boolean> };
+    audit?: { hasRecentEntries?: (tenantId: string) => Promise<boolean>; };
+    storage?: { hasTemperatureLogs?: (tenantId: string) => Promise<boolean>; };
+    documents?: { hasRequiredDocs?: (tenantId: string) => Promise<boolean>; };
   } | unknown,
 ) {
   try {
@@ -43,7 +43,7 @@ export async function validateAnvisaCompliance(
       const r = report.report;
       if (r.complianceScore < 90) {
         issues.push("Compliance score below recommended threshold (< 90)");
-        recommendations.push(...r.recommendations);
+        recommendations.push(...(r.recommendations ?? []));
       }
       if (r.adverseEvents > 0) {
         recommendations.push("Review adverse event handling and reporting procedures");
@@ -74,7 +74,12 @@ export async function validateAnvisaCompliance(
       }
     }
 
-    const baseScore = report.success && report.report ? report.report.complianceScore : 70;
+    const baseScoreCandidate = report.success && report.report
+      ? (report.report as any).complianceScore
+      : undefined;
+    const baseScore = typeof baseScoreCandidate === "number" && Number.isFinite(baseScoreCandidate)
+      ? baseScoreCandidate
+      : 70;
     const penalty = Math.min(30, issues.length * 5);
     const score = Math.max(0, Math.min(100, baseScore - penalty));
 

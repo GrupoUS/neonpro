@@ -41,14 +41,7 @@ const HealthcareErrorBoundary: React.FC<HealthcareErrorBoundaryProps> = ({
   children,
 }) => <div>{children}</div>;
 
-interface HealthcareContainerProps {
-  children: ReactNode;
-  className?: string;
-  "data-testid"?: string;
-  "aria-label"?: string;
-  "aria-describedby"?: string;
-  accessibilityLevel?: "AA" | "AAA";
-}
+// Note: HealthcareContainerProps interface available for future use
 
 interface LoadingSpinnerProps {
   size?: string;
@@ -58,12 +51,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size }) => (
   <div data-size={size}>Loading...</div>
 );
 
-interface ButtonProps {
-  children: ReactNode;
-  variant?: string;
-  className?: string;
-  role?: string;
-}
+// Note: ButtonProps interface available for future use
 
 interface LGPDConsentBannerProps {
   children?: ReactNode;
@@ -125,9 +113,7 @@ const useLGPDConsent = () => ({
   grantConsent: async () => true,
 });
 
-const useHealthcareForm = (_schema: unknown) => ({
-  // placeholder implementation
-});
+// Note: useHealthcareForm hook available for future use
 
 // Base props for all healthcare components
 export interface HealthcareComponentProps {
@@ -377,8 +363,8 @@ export function createHealthcareComponent<T>(
     });
 
     const logger = useMemo(() => Logger, []);
-    const { user, isAuthenticated } = useHealthcareAuth();
-    const { hasConsent, requestConsent, checkConsent, grantConsent } = useLGPDConsent();
+    const { user } = useHealthcareAuth();
+    const { requestConsent, grantConsent } = useLGPDConsent();
 
     // Load initial data
     useEffect(() => {
@@ -568,7 +554,7 @@ export function createHealthcareComponent<T>(
 }
 
 // Actions available to healthcare components
-export interface HealthcareComponentActions<T> {
+export interface HealthcareComponentActions<_T = unknown> {
   refresh: () => Promise<void>;
   handleEmergencyAccess: (justification: string) => Promise<void>;
   grantLGPDConsent: () => Promise<void>;

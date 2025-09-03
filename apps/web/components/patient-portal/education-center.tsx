@@ -598,8 +598,8 @@ function EmergencyContacts() {
 export function EducationCenter() {
   const [activeTab, setActiveTab] = useState("my-treatments");
   const [searchTerm, setSearchTerm] = useState("");
-  const [_selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedContent, setSelectedContent] = useState<any>();
+  const [/* _selectedCategory */, setSelectedCategory] = useState("all");
+  const [selectedContent, setSelectedContent] = useState<unknown>();
 
   const handleViewContent = (content: unknown) => {
     setSelectedContent(content);

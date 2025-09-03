@@ -4,6 +4,7 @@
  * Integra com toast system e audio alerts para urgências médicas
  */
 
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Notification } from "../../types/database.types";
@@ -207,7 +208,7 @@ export function useRealtimeNotifications(
   const handleNotificationChange = useCallback(
     (payload: unknown) => {
       try {
-        const typedPayload = payload as unknown;
+        const typedPayload = payload as RealtimePostgresChangesPayload<ExtendedNotification>;
         const realtimePayload: RealtimeNotificationPayload = {
           eventType: typedPayload.eventType,
           new: typedPayload.new as ExtendedNotification,

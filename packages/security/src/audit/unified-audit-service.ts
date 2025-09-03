@@ -146,6 +146,8 @@ export class UnifiedAuditService {
   private errorCount = 0;
   private auditFlushRetries = 0;
   private readonly retryInitialDelayMs = 1000;
+  // eslint-disable-next-line unicorn/numeric-separators-style -- single literal intentional for clarity
+  // Using numeric separators for readability and rule compliance
   private readonly retryMaxDelayMs = 30_000;
 
   // Enterprise features

@@ -81,13 +81,23 @@ export class AIContextCacheLayer implements CacheOperation {
         rawJson = JSON.stringify(entry.value as unknown);
       }
 
-      // Try to parse JSON; if it fails, return raw string to avoid runtime errors
+      // Try to parse JSON; if it fails, log warning and return null (fail-fast)
       try {
         const parsed = JSON.parse(rawJson) as T;
         return parsed;
-      } catch {
-        // Fallback: return raw string value when not valid JSON
-        return rawJson as unknown as T;
+      } catch (err) {
+        console.warn(
+          "AIContextCacheLayer.get: JSON parse failed",
+          {
+            key,
+            compressed: entry.compressed,
+            contextType: entry.contextType,
+            importance: entry.importance,
+            error: (err as Error)?.message ?? err,
+            raw: rawJson,
+          },
+        );
+        return null;
       }
     } catch (error) {
       this.stats.misses++;

@@ -1,3 +1,4 @@
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { getRealtimeManager } from "../connection-manager";
@@ -90,29 +91,32 @@ export function useRealtimeCompliance(
    */
   const determineComplianceType = useCallback(
     (payload: unknown): keyof ComplianceEventType => {
-      const typedPayload = payload as unknown;
+      const typedPayload = payload as RealtimePostgresChangesPayload<ComplianceLog>;
       const eventData = typedPayload.new || typedPayload.old;
 
       if (!eventData) {
         return "LGPD_DATA_ACCESS";
       }
 
+      // Type assertion to ensure eventData has the correct type
+      const complianceData = eventData as ComplianceLog;
+
       // Map based on action categories
-      if (eventData.action?.includes("consent")) {
-        return eventData.action === "consent_granted"
+      if (complianceData.action?.includes("consent")) {
+        return complianceData.action === "consent_granted"
           ? "LGPD_CONSENT_GRANTED"
           : "LGPD_CONSENT_REVOKED";
       }
 
       if (
-        eventData.action?.includes("deletion")
-        || eventData.action?.includes("delete")
+        complianceData.action?.includes("deletion")
+        || complianceData.action?.includes("delete")
       ) {
         return "LGPD_DATA_DELETION";
       }
 
-      if (eventData.action?.includes("anvisa")) {
-        const metadata = (eventData.metadata as Record<string, unknown>) || {};
+      if (complianceData.action?.includes("anvisa")) {
+        const metadata = complianceData.metadata || {};
         if (metadata.severity === "CRITICAL") {
           return "ANVISA_VIOLATION";
         }
@@ -120,15 +124,15 @@ export function useRealtimeCompliance(
       }
 
       if (
-        eventData.action?.includes("breach")
-        || eventData.action?.includes("vazamento")
+        complianceData.action?.includes("breach")
+        || complianceData.action?.includes("vazamento")
       ) {
         return "DATA_BREACH_DETECTED";
       }
 
       if (
-        eventData.action?.includes("unauthorized")
-        || eventData.action?.includes("nao_autorizado")
+        complianceData.action?.includes("unauthorized")
+        || complianceData.action?.includes("nao_autorizado")
       ) {
         return "UNAUTHORIZED_ACCESS";
       }
@@ -143,17 +147,24 @@ export function useRealtimeCompliance(
    */
   const determineSeverity = useCallback(
     (payload: unknown): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" => {
-      const typedPayload = payload as unknown;
+      const typedPayload = payload as RealtimePostgresChangesPayload<ComplianceLog>;
       const eventData = typedPayload.new || typedPayload.old;
       const { eventType } = typedPayload;
 
+      if (!eventData) {
+        return "LOW";
+      }
+
+      // Type assertion to ensure eventData has the correct type
+      const complianceData = eventData as ComplianceLog;
+
       // Critical severity scenarios
       if (
-        eventData?.action?.includes("breach")
-        || eventData?.action?.includes("unauthorized")
-        || eventData?.action?.includes("violation")
-        || eventData?.action?.includes("vazamento")
-        || eventData?.action?.includes("nao_autorizado")
+        complianceData.action?.includes("breach")
+        || complianceData.action?.includes("unauthorized")
+        || complianceData.action?.includes("violation")
+        || complianceData.action?.includes("vazamento")
+        || complianceData.action?.includes("nao_autorizado")
       ) {
         return "CRITICAL";
       }
@@ -161,18 +172,18 @@ export function useRealtimeCompliance(
       // High severity scenarios
       if (
         eventType === "DELETE"
-        || eventData?.action?.includes("consent_revoked")
-        || eventData?.action?.includes("data_deletion")
-        || eventData?.action?.includes("anvisa_violation")
+        || complianceData.action?.includes("consent_revoked")
+        || complianceData.action?.includes("data_deletion")
+        || complianceData.action?.includes("anvisa_violation")
       ) {
         return "HIGH";
       }
 
       // Medium severity scenarios
       if (
-        eventData?.action?.includes("consent_granted")
-        || eventData?.action?.includes("data_export")
-        || eventData?.action?.includes("anvisa_compliance_check")
+        complianceData.action?.includes("consent_granted")
+        || complianceData.action?.includes("data_export")
+        || complianceData.action?.includes("anvisa_compliance_check")
       ) {
         return "MEDIUM";
       }
@@ -319,7 +330,7 @@ export function useRealtimeCompliance(
         const severity = determineSeverity(payload);
         const requiresAction = severity === "HIGH" || severity === "CRITICAL";
 
-        const typedPayload = payload as unknown;
+        const typedPayload = payload as RealtimePostgresChangesPayload<ComplianceLog>;
         const realtimePayload: RealtimeCompliancePayload = {
           eventType: typedPayload.eventType,
           complianceType,

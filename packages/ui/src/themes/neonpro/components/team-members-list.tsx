@@ -11,7 +11,6 @@ import {
   Crown,
   Edit,
   Mail,
-  MapPin,
   MoreVertical,
   Phone,
   Settings,

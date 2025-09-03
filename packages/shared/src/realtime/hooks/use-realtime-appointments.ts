@@ -4,6 +4,7 @@
  * Crítico para ambiente healthcare com notificações urgentes
  */
 
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import type { Database } from "../../types/database.types";
@@ -216,7 +217,7 @@ export function useRealtimeAppointments(
   const handleAppointmentChange = useCallback(
     (payload: unknown) => {
       try {
-        const typedPayload = payload as unknown;
+        const typedPayload = payload as RealtimePostgresChangesPayload<AppointmentRow>;
         const realtimePayload: RealtimeAppointmentPayload = {
           eventType: typedPayload.eventType,
           new: typedPayload.new as AppointmentRow,

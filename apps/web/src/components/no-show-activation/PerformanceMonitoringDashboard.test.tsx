@@ -13,6 +13,7 @@
  * - Test conditional ROI goal banner and progress capping logic
  */
 
+import React from "react";
 import "@testing-library/jest-dom";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";

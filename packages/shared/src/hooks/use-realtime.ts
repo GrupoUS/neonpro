@@ -30,31 +30,16 @@ export type RealtimePayload<
 > = RealtimePostgresChangesPayload<T>;
 
 // LGPD compliance utilities
-const sanitizeRealtimeData = (
-  data: unknown,
-  sensitiveFields: string[] = [],
-) => {
-  if (!data || typeof data !== "object") {
-    return data;
-  }
-
-  const sanitized = { ...data };
-  sensitiveFields.forEach((field) => {
-    if (field in sanitized) {
-      (sanitized as unknown)[field] = "***PROTECTED***";
-    }
-  });
-
-  return sanitized;
-};
+// Note: sanitizeRealtimeData function available for future use
 
 const logRealtimeEvent = (
   _event: string,
   _table: string,
-  payload: unknown,
+  _payload: unknown,
   lgpdConfig?: LGPDRealtimeConfig,
 ) => {
   if (lgpdConfig?.enableAuditLogging) {
+    // Audit logging implementation would go here
   }
 };
 

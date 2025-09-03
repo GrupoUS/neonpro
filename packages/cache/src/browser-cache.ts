@@ -1,4 +1,4 @@
-
+import type { CacheEntry, CacheOperation, CacheStats, HealthcareDataPolicy } from "./types";
 
 type BrowserCacheEntry = CacheEntry<unknown> & {
   lastAccessed: number;
@@ -63,7 +63,23 @@ export class BrowserCacheLayer implements CacheOperation {
 
     this.stats.hits++;
     this.updateStats(startTime);
-    return entry.value as T;
+
+    // Retrieve raw string (decompress if necessary), then parse JSON into T
+    try {
+      const raw = entry.compressed
+        ? this.decompress(entry.value as string)
+        : (entry.value as string);
+      const parsed = JSON.parse(raw) as T;
+      return parsed;
+    } catch (err) {
+      // On any failure, treat as cache miss for safety
+      console.warn("BrowserCacheLayer.get: failed to deserialize entry", {
+        key,
+        compressed: entry.compressed,
+        error: (err as Error)?.message ?? err,
+      });
+      return null;
+    }
   }
 
   async set<T>(
@@ -86,8 +102,10 @@ export class BrowserCacheLayer implements CacheOperation {
       return; // Skip browser caching for restricted data
     }
 
+    const serialized = JSON.stringify(value);
+
     const entry: BrowserCacheEntry = {
-      value: this.config.compressionEnabled ? this.compress(value) : (value as unknown),
+      value: this.config.compressionEnabled ? this.compress(serialized) : serialized,
       timestamp: Date.now(),
       ttl: effectiveTTL,
       lastAccessed: Date.now(),
@@ -237,9 +255,14 @@ export class BrowserCacheLayer implements CacheOperation {
   }
 
   // Utility methods
-  private compress<T>(data: T): unknown {
-    // Placeholder compression
-    return data as unknown;
+  private compress(data: string): string {
+    // Placeholder compression - return input as-is
+    return data;
+  }
+
+  private decompress(data: string): string {
+    // Placeholder decompression - return input as-is
+    return data;
   }
 
   private calculateStorageUsed(): number {

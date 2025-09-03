@@ -23,8 +23,8 @@ const Logger = {
 };
 
 // Placeholder middleware for template compilation
-const healthcareSecurityMiddleware = async (c: Context, next: Next) => await next();
-const healthcareValidationMiddleware = async (c: Context, next: Next) => await next();
+const healthcareSecurityMiddleware = async (_c: Context, next: Next) => await next();
+const healthcareValidationMiddleware = async (_c: Context, next: Next) => await next();
 
 // Standard API response types
 export interface HealthcareApiResponse<T> {
@@ -135,7 +135,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
         const result = await this.handleList(context, pagination);
         return c.json(this.formatResponse(result));
       } catch (error) {
-        return this.handleError(c, error);
+        return this.handleError(c, error as Error);
       }
     });
 
@@ -156,7 +156,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
 
         return c.json(this.formatResponse(result));
       } catch (error) {
-        return this.handleError(c, error);
+        return this.handleError(c, error as Error);
       }
     });
 
@@ -169,7 +169,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
         const result = await this.feature.create(input, context);
         return c.json(this.formatResponse(result), 201);
       } catch (error) {
-        return this.handleError(c, error);
+        return this.handleError(c, error as Error);
       }
     });
 
@@ -187,7 +187,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
         const result = await this.feature.update(id, input, context);
         return c.json(this.formatResponse(result));
       } catch (error) {
-        return this.handleError(c, error);
+        return this.handleError(c, error as Error);
       }
     });
 
@@ -206,7 +206,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
           this.formatResponse(null, "Resource deleted successfully"),
         );
       } catch (error) {
-        return this.handleError(c, error);
+        return this.handleError(c, error as Error);
       }
     });
 
@@ -223,7 +223,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
         const results = await this.feature.batchCreate(inputs, context);
         return c.json(this.formatResponse(results));
       } catch (error) {
-        return this.handleError(c, error);
+        return this.handleError(c, error as Error);
       }
     });
 
@@ -247,7 +247,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
         );
         return c.json(this.formatResponse(result));
       } catch (error) {
-        return this.handleError(c, error);
+        return this.handleError(c, error as Error);
       }
     });
   }
@@ -259,31 +259,46 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   ): Promise<T[] | PaginatedResponse<T>>;
 
   // Extract healthcare context from request
-  private extractHealthcareContext(c: Record<string, unknown>): HealthcareContext {
-    const user = c.get("user");
+  private extractHealthcareContext(c: Context): HealthcareContext {
+    const user = c.get("user") as {
+      id?: string;
+      role?: string;
+      professionalLicense?: string;
+      clinicId?: string;
+    } | undefined;
     const isEmergency = c.req.header("X-Emergency-Access") === "true";
     const lgpdConsent = c.req.header("X-LGPD-Consent") === "true";
 
-    return {
+    const context: HealthcareContext = {
       userId: user?.id || "anonymous",
-      userRole: user?.role || "anonymous",
-      professionalLicense: user?.professionalLicense,
-      clinicId: user?.clinicId || c.req.header("X-Clinic-ID"),
+      userRole: (user?.role as "patient" | "physician" | "admin" | "staff") || "patient",
+      clinicId: user?.clinicId || c.req.header("X-Clinic-ID") || "default",
       isEmergencyAccess: isEmergency,
       lgpdConsent: lgpdConsent,
     };
+
+    if (user?.professionalLicense) {
+      context.professionalLicense = user.professionalLicense;
+    }
+
+    return context;
   }
 
   // Extract pagination parameters
-  private extractPaginationParams(c: Record<string, unknown>): PaginationParams {
+  private extractPaginationParams(c: Context): PaginationParams {
     const query = c.req.query();
 
-    return {
-      page: parseInt(query.page) || 1,
-      limit: Math.min(parseInt(query.limit) || 20, 100), // Max 100 items per page
-      sortBy: query.sortBy,
+    const params: PaginationParams = {
+      page: parseInt(query.page || "1") || 1,
+      limit: Math.min(parseInt(query.limit || "20") || 20, 100), // Max 100 items per page
       sortOrder: query.sortOrder === "desc" ? "desc" : "asc",
     };
+
+    if (query.sortBy) {
+      params.sortBy = query.sortBy;
+    }
+
+    return params;
   }
 
   // Format standard API response
@@ -302,34 +317,42 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   }
 
   // Handle errors with proper healthcare context
-  private handleError(c: Record<string, unknown>, error: Record<string, unknown>): Response {
+  private handleError(
+    c: Context,
+    error: Error | HTTPException | z.ZodError | Record<string, unknown>,
+  ): Response {
     let statusCode = 500;
     let errorCode = "HC_SYSTEM_001";
     let message = "Internal server error";
 
     if (error instanceof HTTPException) {
-      ({ status: statusCode, message } = error);
+      statusCode = error.status;
+      message = error.message;
     } else if (error instanceof z.ZodError) {
       statusCode = 400;
       errorCode = HealthcareErrorCodes.VALIDATION_FAILED;
       message = "Validation failed";
-    } else if (error.message?.includes("Professional license")) {
-      statusCode = 403;
-      errorCode = HealthcareErrorCodes.PROFESSIONAL_LICENSE_REQUIRED;
-      message = error.message;
-    } else if (error.message?.includes("LGPD consent")) {
-      statusCode = 403;
-      errorCode = HealthcareErrorCodes.LGPD_CONSENT_REQUIRED;
-      ({ message } = error);
-    } else if (error.message?.includes("Emergency access")) {
-      statusCode = 403;
-      errorCode = HealthcareErrorCodes.EMERGENCY_ACCESS_DENIED;
-      ({ message } = error);
+    } else if (error instanceof Error) {
+      if (error.message?.includes("Professional license")) {
+        statusCode = 403;
+        errorCode = HealthcareErrorCodes.PROFESSIONAL_LICENSE_REQUIRED;
+        message = error.message;
+      } else if (error.message?.includes("LGPD consent")) {
+        statusCode = 403;
+        errorCode = HealthcareErrorCodes.LGPD_CONSENT_REQUIRED;
+        message = error.message;
+      } else if (error.message?.includes("Emergency access")) {
+        statusCode = 403;
+        errorCode = HealthcareErrorCodes.EMERGENCY_ACCESS_DENIED;
+        message = error.message;
+      } else {
+        message = error.message;
+      }
     }
 
     this.logger.error("API Error", {
-      error: error.message,
-      stack: error.stack,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
       statusCode,
       errorCode,
     });
@@ -339,7 +362,9 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
       error: {
         code: errorCode,
         message,
-        ...(error instanceof z.ZodError ? { details: error.errors } : {}),
+        ...(error instanceof z.ZodError
+          ? { details: error.errors as unknown as Record<string, unknown> }
+          : {}),
       },
       metadata: {
         timestamp: new Date().toISOString(),
@@ -347,7 +372,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
       },
     };
 
-    return c.json(response, statusCode);
+    return c.json(response, statusCode as any);
   }
 
   // Get the configured Hono app

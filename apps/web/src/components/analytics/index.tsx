@@ -352,7 +352,7 @@ export const calculateBusinessDays = (start: Date, end: Date): number => {
  * Check if date is a Brazilian national holiday
  */
 export const isBrazilianHoliday = (date: Date): boolean => {
-  const year = date.getFullYear();
+  // const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
 

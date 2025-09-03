@@ -4,6 +4,7 @@
  * Otimizado para ambiente healthcare com LGPD compliance
  */
 
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import type { Database } from "../../types/database.types";
@@ -125,7 +126,7 @@ export function useRealtimePatients(
   const handlePatientChange = useCallback(
     (payload: unknown) => {
       try {
-        const typedPayload = payload as unknown;
+        const typedPayload = payload as RealtimePostgresChangesPayload<PatientRow>;
         const realtimePayload: RealtimePatientPayload = {
           eventType: typedPayload.eventType,
           new: typedPayload.new as PatientRow,

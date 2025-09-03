@@ -6,10 +6,9 @@
  * automatic retry, authentication management, and LGPD compliance.
  */
 
+import type { Hono } from "hono";
 import { hc } from "hono/client";
 import type { z } from "zod";
-// Import backend app types
-// import type { AppType } from '../../apps/api/src/index';
 // Import validation schemas
 import {
   LoginRequestSchema,
@@ -470,8 +469,8 @@ export const ApiUtils = {
 export function createApiClient(config: Partial<ApiClientConfig> = {}) {
   const finalConfig = { ...DEFAULT_CONFIG, ...config };
 
-  // Create Hono RPC client
-  const client = hc<unknown>(finalConfig.baseUrl, {
+  // Create Hono RPC client - using generic Hono type for now
+  const client = hc<Hono>(finalConfig.baseUrl, {
     fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
       const requestStart = Date.now();
       const requestId = ApiUtils.generateRequestId();
@@ -661,7 +660,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 
   // Return enhanced client with additional methods
   return {
-    ...client,
+    ...(client as Record<string, unknown>),
 
     // Authentication methods
     auth: {

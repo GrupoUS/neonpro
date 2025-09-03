@@ -380,7 +380,13 @@ export class HealthcareRBAC {
 
   // Middleware helper for Next.js API routes
   static createPermissionMiddleware(requiredPermissions: string | string[]) {
-    return async (req: Record<string, unknown>, res: Record<string, unknown>, next: unknown) => {
+    return async (
+      req: Record<string, unknown> & { user?: { id: string; }; },
+      res: Record<string, unknown> & {
+        status: (code: number) => { json: (data: unknown) => unknown; };
+      },
+      next: () => void,
+    ) => {
       const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ error: "Unauthorized" });
@@ -396,7 +402,7 @@ export class HealthcareRBAC {
         return res.status(403).json({ error: "Insufficient permissions" });
       }
 
-      next();
+      return next();
     };
   }
 }

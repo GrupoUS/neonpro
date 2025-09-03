@@ -12,13 +12,11 @@ import {
   MessageCircle,
   Minimize2,
   Phone,
-  PhoneOff,
   Send,
-  Settings,
   Volume2,
   VolumeX,
   X,
-} from "lucide-react";
+} from "lucide-react"; // removed unused PhoneOff, Settings imports
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ConfidenceIndicator } from "./confidence-indicator";
@@ -28,7 +26,7 @@ import { VoiceInput } from "./voice-input";
 
 interface ExternalChatWidgetProps {
   className?: string;
-  position?: "bottom-right" | "bottom-left" | "top-right" | "top-left";
+  position?: "bottom-right" | "bottom-left" | "top-right" | "top-left"; // eslint-disable-line @typescript-eslint/no-unused-vars
   onMessage?: (message: string) => Promise<{
     response: string;
     confidence: number;

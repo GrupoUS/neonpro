@@ -298,7 +298,7 @@ function AppointmentCard({
                 <div className="flex items-center space-x-1">
                   <span className="text-sm">Avaliação:</span>
                   <div className="flex">
-                    {new Array(5).fill().map((_, i) => (
+                    {Array.from({ length: 5 }).map((_, i) => (
                       <span
                         className={cn(
                           "text-sm",
@@ -315,7 +315,7 @@ function AppointmentCard({
                 </div>
                 {appointment.feedback && (
                   <p className="text-muted-foreground text-sm italic">
-                    "{appointment.feedback}"
+                    &quot;{appointment.feedback}&quot;
                   </p>
                 )}
               </div>

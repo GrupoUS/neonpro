@@ -623,7 +623,7 @@ function TreatmentMilestones({ milestones }: { milestones: unknown[]; }) {
 
                 {milestone.notes && (
                   <p className="mt-2 text-muted-foreground text-sm italic">
-                    "{milestone.notes}"
+                    &quot;{milestone.notes}&quot;
                   </p>
                 )}
 
@@ -838,7 +838,7 @@ export function TreatmentJourney() {
 
                         <div className="space-y-2 text-right">
                           <div className="flex items-center space-x-1">
-                            {new Array(5).fill().map((_, i) => (
+                            {Array.from({ length: 5 }).map((_, i) => (
                               <Star
                                 className={cn(
                                   "h-4 w-4",

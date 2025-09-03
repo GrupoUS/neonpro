@@ -4,7 +4,7 @@
  */
 
 import type { ComplianceFramework, ComplianceViolation, ViolationSeverity } from '../types';
-import { complianceService } from '../ComplianceService';
+
 
 export interface ViolationDetectionRule {
   id: string;
@@ -336,7 +336,7 @@ export class ViolationDetector {
       description: 'Color contrast ratio below WCAG AA standard',
       category: 'accessibility',
       severity: 'high',
-      checkFunction: async (context) => {
+      checkFunction: async (_context) => {
         // Mock implementation - would use actual accessibility checking
         const hasLowContrast = Math.random() < 0.1;
         return {
@@ -360,7 +360,7 @@ export class ViolationDetector {
       description: 'Images without alternative text for screen readers',
       category: 'accessibility',
       severity: 'medium',
-      checkFunction: async (context) => {
+      checkFunction: async (_context) => {
         // Mock implementation
         const hasMissingAlt = Math.random() < 0.15;
         return {
@@ -385,7 +385,7 @@ export class ViolationDetector {
       description: 'Personal data processing without explicit user consent',
       category: 'privacy',
       severity: 'critical',
-      checkFunction: async (context) => {
+      checkFunction: async (_context) => {
         // Mock implementation
         const missingConsent = Math.random() < 0.05;
         return {
@@ -409,7 +409,7 @@ export class ViolationDetector {
       description: 'Personal data retained beyond specified retention period',
       category: 'privacy',
       severity: 'high',
-      checkFunction: async (context) => {
+      checkFunction: async (_context) => {
         // Mock implementation
         const retentionExceeded = Math.random() < 0.08;
         return {
@@ -434,7 +434,7 @@ export class ViolationDetector {
       description: 'Medical record without required digital signature',
       category: 'medical_records',
       severity: 'critical',
-      checkFunction: async (context) => {
+      checkFunction: async (_context) => {
         // Mock implementation
         const missingSignature = context.url?.includes('/medical-records') && Math.random() < 0.03;
         return {
@@ -459,7 +459,7 @@ export class ViolationDetector {
       description: 'Potential breach of patient medical privacy',
       category: 'ethics',
       severity: 'critical',
-      checkFunction: async (context) => {
+      checkFunction: async (_context) => {
         // Mock implementation
         const privacyRisk = Math.random() < 0.02;
         return {
@@ -512,7 +512,7 @@ export class ViolationDetector {
     console.log(`🚨 Alert: ${violation.severity.toUpperCase()} violation detected - ${violation.rule}`);
   }
 
-  private async triggerAutoRemediation(violation: ComplianceViolation, remediation: unknown): Promise<void> {
+  private async triggerAutoRemediation(violation: ComplianceViolation, _remediation: unknown): Promise<void> {
     // Would trigger automatic remediation actions
     console.log(`🔧 Auto-remediation triggered for: ${violation.rule}`);
   }

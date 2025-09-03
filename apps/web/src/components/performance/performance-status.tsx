@@ -4,7 +4,7 @@ import {
   usePerformanceMetrics,
   usePerformanceMonitor,
 } from "@/providers/performance-monitor-provider";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function PerformanceStatus() {
   const { isInitialized, isMonitoringEnabled } = usePerformanceMonitor();

@@ -4,15 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -21,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import {
@@ -33,16 +25,14 @@ import {
   Eye,
   FileDown,
   FileText,
-  Globe,
   Mail,
   Pause,
   Play,
   Plus,
   Settings,
-  Trash2,
 } from "lucide-react";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { ComplianceFramework } from "../types";
 import type { GeneratedReport, ReportGenerationConfig } from "./ComplianceReportGenerator";
 import type { ReportSchedule } from "./ReportScheduler";
@@ -372,7 +362,9 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
                   <div className="text-center py-8 text-muted-foreground">
                     <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
                     <p>Nenhum relatório gerado ainda</p>
-                    <p className="text-sm">Gere seu primeiro relatório na aba "Gerar Novo"</p>
+                    <p className="text-sm">
+                      Gere seu primeiro relatório na aba &quot;Gerar Novo&quot;
+                    </p>
                   </div>
                 )}
               </div>

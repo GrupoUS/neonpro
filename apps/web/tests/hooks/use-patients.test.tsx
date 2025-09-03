@@ -10,6 +10,7 @@
  * - Multi-tenant data isolation
  */
 
+import React from "react";
 import {
   QueryClient,
   QueryClientProvider,

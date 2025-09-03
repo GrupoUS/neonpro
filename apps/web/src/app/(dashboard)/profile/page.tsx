@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";
-import { Bell, Camera, Eye, Mail, MapPin, Phone, Save, Shield, User } from "lucide-react";
+import { Bell, Camera, Eye, Save, Shield, User } from "lucide-react";
 
 export default function ProfilePage() {
   const { user } = useAuth();

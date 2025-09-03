@@ -1,6 +1,22 @@
 import { vi } from "vitest";
 import "@testing-library/jest-dom/vitest";
+import http from "http";
+import https from "https";
 import React from "react";
+
+// Make React available globally
+global.React = React;
+
+// Make jest globals available for compatibility
+global.jest = {
+  fn: vi.fn,
+  spyOn: vi.spyOn,
+  mock: vi.mock,
+  unmock: vi.unmock,
+  clearAllMocks: vi.clearAllMocks,
+  resetAllMocks: vi.resetAllMocks,
+  restoreAllMocks: vi.restoreAllMocks,
+};
 
 /**
  * ⚡ NeonPro Optimized Vitest Setup
@@ -119,6 +135,105 @@ const mockFetch = vi.fn(
 );
 
 global.fetch = mockFetch;
+
+// Node http/https request mocks to prevent real network calls to localhost:3000
+const originalHttpRequest = http.request;
+const originalHttpGet = http.get;
+const originalHttpsRequest = https.request;
+const originalHttpsGet = https.get;
+
+function createMockResponse(body: any = {}, status = 200) {
+  // Create a minimal IncomingMessage-like object
+  const { PassThrough } = require("stream");
+  const res = new PassThrough();
+  // emit headers/status after next tick
+  process.nextTick(() => {
+    res.statusCode = status;
+    res.headers = { "content-type": "application/json" };
+    res.emit("data", Buffer.from(JSON.stringify(body)));
+    res.emit("end");
+  });
+  return res;
+}
+
+function shouldMockHost(options: any) {
+  try {
+    // Handle string URL inputs
+    if (typeof options === "string") {
+      const u = new URL(options);
+      return u.hostname === "127.0.0.1" || u.hostname === "localhost" || u.port === "3000";
+    }
+    // Handle URL object inputs
+    if (typeof URL !== "undefined" && options instanceof URL) {
+      return options.hostname === "127.0.0.1" || options.hostname === "localhost" || options.port === "3000";
+    }
+    // Handle RequestOptions-like objects
+    const hostname = (options && (options.hostname || options.host)) || options?.host?.hostname || "";
+    const port = (options && (options.port || options?.host?.port)) || "";
+    const host = `${hostname}`;
+    const str = String(options || "");
+    // If no explicit host fields, inspect the string representation
+    if (!host) {
+      return str.includes("127.0.0.1") || str.includes("localhost") || str.includes(":3000");
+    }
+    return host === "127.0.0.1" || host === "localhost" || String(port) === "3000" || str.includes(":3000");
+  } catch {
+    const s = String(options || "");
+    return s.includes("127.0.0.1") || s.includes("localhost") || s.includes(":3000");
+  }
+}
+
+http.request = function(options: any, callback?: any) {
+  try {
+    if (shouldMockHost(options)) {
+      const { PassThrough } = require("stream");
+      const req = new PassThrough();
+      req.write = () => {};
+      req.end = () => {
+        const res = createMockResponse({});
+        if (callback) callback(res);
+        req.emit("response", res);
+      };
+      req.on = () => req;
+      return req as any;
+    }
+  } catch (e) {
+    // fallthrough
+  }
+  return originalHttpRequest.apply(this, arguments as any);
+} as any;
+
+http.get = function(options: any, callback?: any) {
+  const req = (http.request as any)(options, callback);
+  req.end();
+  return req;
+} as any;
+
+https.request = function(options: any, callback?: any) {
+  try {
+    if (shouldMockHost(options)) {
+      const { PassThrough } = require("stream");
+      const req = new PassThrough();
+      req.write = () => {};
+      req.end = () => {
+        const res = createMockResponse({});
+        if (callback) callback(res);
+        req.emit("response", res);
+      };
+      req.on = () => req;
+      return req as any;
+    }
+  } catch (e) {
+    // fallthrough
+  }
+  return originalHttpsRequest.apply(this, arguments as any);
+} as any;
+
+https.get = function(options: any, callback?: any) {
+  const req = (https.request as any)(options, callback);
+  req.end();
+  return req;
+} as any;
 
 // 💾 Storage mocks
 if (typeof window !== "undefined") {

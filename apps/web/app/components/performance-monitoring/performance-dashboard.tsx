@@ -43,7 +43,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface PerformanceDashboardProps {
   clinicId?: string;

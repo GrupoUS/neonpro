@@ -82,7 +82,8 @@ export class EdgeCacheLayer implements CacheOperation {
       compressed: shouldCompress,
       encrypted: this.config.encryption,
       lastAccessed: Date.now(),
-    };
+      tags: [],
+    } as EdgeCacheEntry;
 
     this.cache.set(this.buildKey(key), entry);
   }
@@ -115,7 +116,7 @@ export class EdgeCacheLayer implements CacheOperation {
   async warmup(keys: string[]): Promise<void> {
     // Pre-load commonly used keys (placeholder implementation)
     for (const key of keys) {
-      const entry = this.cache.get(this.buildKey(key)) as unknown as CacheEntry | undefined;
+      const entry = this.cache.get(this.buildKey(key));
       if (entry) {
         entry.lastAccessed = Date.now();
         this.cache.set(this.buildKey(key), entry);
@@ -193,12 +194,8 @@ export class EdgeCacheLayer implements CacheOperation {
     return data;
   }
 
-  private decompress(data: string): unknown {
-    try {
-      return JSON.parse(data);
-    } catch {
-      return data; // Return as-is if not JSON
-    }
+  private decompress(data: string): string {
+    return typeof data === "string" ? data : JSON.stringify(data);
   }
 
   private evictLRU(): void {

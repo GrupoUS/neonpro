@@ -29,7 +29,7 @@ export function VoiceNavigationButton({
     confidence,
     error,
     toggleListening,
-    availableCommands,
+
     getCommandsByCategory,
     speak,
   } = useVoiceNavigation();
@@ -41,7 +41,7 @@ export function VoiceNavigationButton({
   const handleVoiceToggle = async () => {
     try {
       await toggleListening();
-    } catch (error) {
+    } catch (_error) {
       // console.error("Voice navigation error:", error);
       speak("Erro ao ativar reconhecimento de voz");
     }

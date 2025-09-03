@@ -326,7 +326,7 @@ function PaymentForm({ payment, selectedMethod }: unknown) {
                   onChange={(e) => setInstallments(Number(e.target.value))}
                   value={installments}
                 >
-                  {new Array(12).fill().map((_, i) => {
+                  {Array.from({ length: 12 }, (_, i) => {
                     const parcels = i + 1;
                     const parcelValue = payment.amount / parcels;
                     return (
@@ -611,8 +611,8 @@ function FinancialSummary({ summary }: unknown) {
 
 export function PaymentBilling() {
   const [activeTab, setActiveTab] = useState("pending");
-  const [selectedPayment, setSelectedPayment] = useState<any>();
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<any>();
+  const [selectedPayment, setSelectedPayment] = useState<unknown>();
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<unknown>();
   const [searchTerm, setSearchTerm] = useState("");
 
   const handlePayNow = (payment: unknown) => {

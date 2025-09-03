@@ -26,14 +26,14 @@ const Logger = {
 type EncryptionCategory = "sensitive" | "pii" | "medical" | "financial";
 
 const HealthcareEncryption = {
-  encrypt: (data: unknown, category: EncryptionCategory) => Promise.resolve(JSON.stringify(data)),
-  decrypt: (encrypted: string, category: EncryptionCategory) =>
+  encrypt: (data: unknown, _category: EncryptionCategory) => Promise.resolve(JSON.stringify(data)),
+  decrypt: (encrypted: string, _category: EncryptionCategory) =>
     Promise.resolve(JSON.parse(encrypted)),
 };
 
 const AuditService = {
-  log: (event: string, data: Record<string, unknown>) => Promise.resolve(),
-  getAuditLog: (entityId: string) => Promise.resolve([]),
+  log: (_event: string, _data: Record<string, unknown>) => Promise.resolve(),
+  getAuditLog: (_entityId: string) => Promise.resolve([]),
 };
 
 const validateBrazilianCPF = (cpf: string) => /^\d{11}$/.test(cpf.replace(/\D/g, ""));
@@ -155,13 +155,13 @@ export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
       ...additionalData,
     };
 
-    await this.audit.log(operation, auditData);
+    await this.audit.log(operation, auditData as unknown as Record<string, unknown>);
   }
 
   // Data encryption helper
   protected async encryptSensitiveData(
     data: string,
-    patientId?: string,
+    _patientId?: string,
   ): Promise<string> {
     const encrypted = await HealthcareEncryption.encrypt(
       data,
@@ -173,7 +173,7 @@ export abstract class HealthcareFeatureTemplate<T, CreateInput, UpdateInput> {
   // Data decryption helper
   protected async decryptSensitiveData(
     encryptedData: string,
-    patientId?: string,
+    _patientId?: string,
   ): Promise<string> {
     return await HealthcareEncryption.decrypt(
       encryptedData,

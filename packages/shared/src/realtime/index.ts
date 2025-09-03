@@ -100,7 +100,7 @@ export const RealtimeUtils = {
       anvisa_alert: (data) => `Alerta ANVISA: ${data.category} - ${data.message}`,
     };
 
-    return formatMap[type]?.(data) || `Evento: ${type}`;
+    return formatMap[type]?.(data as Record<string, unknown>) || `Evento: ${type}`;
   },
 
   /**

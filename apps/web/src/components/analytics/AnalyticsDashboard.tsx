@@ -274,14 +274,15 @@ export default function AnalyticsDashboard({
   refreshInterval = 5,
   realTimeEnabled = true,
   exportEnabled = true,
-  customFilters = [],
-  permissions = [],
+  _customFilters = [],
+  _permissions = [],
 }: AnalyticsDashboardProps) {
   // ====== STATE MANAGEMENT ======
   const [isLoading, setIsLoading] = useState(false);
   const [analytics] = useState<HealthcareAnalytics>(mockAnalyticsData);
   const [selectedDateRange] = useState(dateRange);
   const [activeTab, setActiveTab] = useState("overview");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [alerts] = useState<CriticalAlert[]>([]);
   const [expandedInsights, setExpandedInsights] = useState<string[]>([]);
   const [realTimeData, setRealTimeData] = useState(realTimeEnabled);

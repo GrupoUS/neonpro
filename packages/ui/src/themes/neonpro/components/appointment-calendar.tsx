@@ -5,7 +5,7 @@
  */
 
 import { cn } from "@neonpro/utils";
-import { Calendar, ChevronLeft, ChevronRight, Clock, MapPin, User } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type React from "react";
 import { useMemo, useState } from "react";
 
@@ -264,16 +264,16 @@ export const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   appointments = [],
   currentDate = new Date(),
   brazilianHolidays = [],
-  showWeekNumbers = false,
+  _showWeekNumbers = false,
   firstDayOfWeek = 1, // Monday first (Brazilian standard)
-  workingDays = [1, 2, 3, 4, 5], // Mon-Fri
+  _workingDays = [1, 2, 3, 4, 5], // Mon-Fri
   workingHours = { start: 8, end: 18 }, // 8am-6pm
   showDensityIndicators = true,
   maxAppointmentsPerDay = 12,
   onDateSelect,
   onAppointmentClick = () => {},
-  onCreateAppointment,
-  size = "md",
+  _onCreateAppointment,
+  _size = "md",
   variant = "default",
   className,
 }) => {
@@ -390,7 +390,7 @@ export const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
       {/* Weekday headers */}
       <div className="grid grid-cols-7 border-b border-gray-200">
-        {BRAZILIAN_WEEKDAYS.map((day, index) => (
+        {BRAZILIAN_WEEKDAYS.map((day, _index) => (
           <div
             key={day}
             className="p-3 text-sm font-medium text-gray-700 text-center bg-gray-50"

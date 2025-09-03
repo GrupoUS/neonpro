@@ -232,7 +232,7 @@ describe("button Component - NeonPro Healthcare UI", () => {
 
       const button = screen.getByTestId("critical-emergency-button");
       // The component auto-maps critical priority to emergency variant
-      const { className: className } = button;
+      const { className } = button as unknown as { className: string; };
       expect(className).toContain("from-destructive");
       expect(button).toHaveAttribute("data-priority", "critical");
       expect(button).toHaveAttribute("role", "button");

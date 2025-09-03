@@ -7,9 +7,9 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { EmergencyPatientCache } from "./emergency-cache";
+import { EmergencyCache, type EmergencyPatientCache } from "./emergency-cache";
 
-type IEmergencyCacheAny = unknown;
+type IEmergencyCacheAny = EmergencyCache;
 
 // Minimal in-memory Fake IndexedDB to satisfy the code paths used by EmergencyCache
 class InMemoryObjectStore<T extends { id: string; }> {
@@ -129,7 +129,7 @@ describe("EmergencyCache", () => {
   // Move import to top of file
 
   function newCacheInstance(): IEmergencyCacheAny {
-    return {} as IEmergencyCacheAny; // Temporary placeholder until EmergencyCache is imported
+    return new EmergencyCache();
   }
   it("stores and retrieves entries via set/get with accessCount increment and LGPD logging for critical read", async () => {
     const cache = newCacheInstance();
