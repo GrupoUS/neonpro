@@ -55,11 +55,17 @@ src/
 - **Pagination:** Implement pagination using `.range(from, to)` for large datasets.
   ```typescript
   const PAGE_SIZE = 20;
-  const page = 1; // Or get from query params
+  // page comes from query params; ensure it's >= 1
+  const pageParam = Number(new URLSearchParams(location.search).get("page") ?? 1);
+  const page = Number.isFinite(pageParam) && pageParam >= 1 ? pageParam : 1;
+
+  const from = (page - 1) * PAGE_SIZE;
+  const to = page * PAGE_SIZE - 1;
+
   const { data, error, count } = await supabase
     .from("attendees")
     .select("id, name, email", { count: "exact" }) // Get total count
-    .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+    .range(from, to);
   ```
 - **Filtering:** Use Supabase filter methods (`eq`, `neq`, `gt`, `lt`, `in`, `like`, etc.) server-side whenever possible.
 

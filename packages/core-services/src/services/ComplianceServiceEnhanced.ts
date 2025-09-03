@@ -540,7 +540,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
           metadata: request.metadata || {},
           createdAt: new Date(),
           updatedAt: new Date(),
-          createdBy: context.userId!,
+          createdBy: context.userId ?? "system",
         };
 
         // Store policy (mock - would integrate with database)
@@ -645,14 +645,14 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
           category: request.category,
           severity: request.severity,
           status: IncidentStatus.REPORTED,
-          reportedBy: context.userId!,
+          reportedBy: context.userId ?? "system",
           detectedAt: new Date(),
           affectedSystems: request.affectedSystems,
           affectedData: impactAssessment,
           containmentActions: [],
           remediation: this.createDefaultRemediationPlan(
             request.severity,
-            context.userId!,
+            context.userId ?? "system",
           ),
           metadata: request.metadata || {},
           createdAt: new Date(),
@@ -1178,7 +1178,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
   protected async cleanup(): Promise<void> {
     // Stop all active monitors
-    for (const [_monitorId, interval] of this.activeMonitors.entries()) {
+    for (const [, interval] of this.activeMonitors.entries()) {
       clearInterval(interval);
     }
     this.activeMonitors.clear();

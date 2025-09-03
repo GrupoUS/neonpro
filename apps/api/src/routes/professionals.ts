@@ -101,7 +101,7 @@ export const professionalsRoutes = new Hono()
       const offset = (page - 1) * limit;
       query = query.range(offset, offset + limit - 1);
 
-      const { data: professionals, error, count } = await query;
+      const { data: professionals, error } = await query;
 
       if (error) {
         return c.json<ApiResponse<null>>(
@@ -484,7 +484,7 @@ export const professionalsRoutes = new Hono()
         ?.reduce((sum, a) => sum + (a.total_amount || 0), 0) || 0;
 
       // Get unique patients count
-      const { data: patientsData, error: patientsError } = await supabase
+      const { data: patientsData } = await supabase
         .from("appointments")
         .select("patient_id")
         .eq("professional_id", id)
@@ -588,8 +588,7 @@ export const professionalsRoutes = new Hono()
       // Generate 30-minute slots
       const availableSlots: string[] = [];
       if (dayHours.length >= 2) {
-        const startTime = dayHours[0];
-        const endTime = dayHours[1];
+        const [startTime, endTime] = dayHours;
 
         const start = new Date(`${targetDate}T${startTime}:00`);
         const end = new Date(`${targetDate}T${endTime}:00`);

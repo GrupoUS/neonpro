@@ -450,10 +450,10 @@ export class MonitoringService extends EnhancedAIService<
       id: `alert_rule_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       name: input.alert_rule.name || "Unnamed Alert Rule",
       description: input.alert_rule.description || "",
-      metric_name: input.alert_rule.metric_name!,
+      metric_name: input.alert_rule.metric_name ?? "unknown_metric",
       service: input.alert_rule.service,
-      condition: input.alert_rule.condition!,
-      threshold_value: input.alert_rule.threshold_value!,
+      condition: input.alert_rule.condition ?? ">",
+      threshold_value: input.alert_rule.threshold_value ?? 0,
       severity: input.alert_rule.severity || "medium",
       enabled: input.alert_rule.enabled !== false,
       notification_channels: input.alert_rule.notification_channels || [
@@ -678,7 +678,7 @@ export class MonitoringService extends EnhancedAIService<
       throw new Error("service is required");
     }
 
-    const { service: service } = input;
+    const { service } = input;
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
 
@@ -895,7 +895,8 @@ export class MonitoringService extends EnhancedAIService<
     metric: MonitoringMetric,
     rule: AlertRule,
   ): boolean {
-    const { operator, threshold_value } = rule;
+    const { operator } = rule.condition;
+    const { threshold_value } = rule;
     const { metric_value: value } = metric;
 
     switch (operator) {

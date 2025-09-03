@@ -410,7 +410,7 @@ export class BehavioralCrmService extends EnhancedAIService {
         }
         if (criteria.churn_risk_threshold !== undefined) {
           patients = patients.filter(
-            (p) => p.behavioral_profile.churn_risk >= criteria.churn_risk_threshold!,
+            (p) => p.behavioral_profile.churn_risk >= (criteria.churn_risk_threshold ?? 0),
           );
         }
         if (criteria.custom_tags) {
@@ -1646,7 +1646,7 @@ export class BehavioralCrmService extends EnhancedAIService {
     };
   }
 
-  private async analyzeBehavioralSegments(): Promise<any[]> {
+  private async analyzeBehavioralSegments(): Promise<unknown[]> {
     const segments = new Map<
       string,
       { patients: PatientBehavior[]; metrics: unknown; }
@@ -1666,7 +1666,7 @@ export class BehavioralCrmService extends EnhancedAIService {
     // Calculate segment metrics
     const segmentAnalysis = [];
     for (const [segmentName, data] of segments.entries()) {
-      const { patients: patients } = data;
+      const { patients } = data;
       const segmentAnalysis_item = {
         segment_name: segmentName.replace("_", " "),
         patient_count: patients.length,
@@ -1701,7 +1701,7 @@ export class BehavioralCrmService extends EnhancedAIService {
     return segmentAnalysis;
   }
 
-  private async getCampaignPerformance(): Promise<any[]> {
+  private async getCampaignPerformance(): Promise<unknown[]> {
     return [...this.activeCampaigns.values()].map((campaign) => ({
       campaign_name: campaign.name,
       status: campaign.status,

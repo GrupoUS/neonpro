@@ -1,12 +1,8 @@
-import {
-  categorizeError,
-  createHealthcareError,
-  generateErrorId,
-} from "@neonpro/shared/errors/error-utils";
+import { createHealthcareError, generateErrorId } from "@neonpro/shared/errors/error-utils";
 import { ErrorCategory, ErrorSeverity } from "@neonpro/shared/errors/healthcare-error-types";
 import type { ErrorContext, HealthcareError } from "@neonpro/shared/errors/healthcare-error-types";
 import type { Context, Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
+// import { HTTPException } from "hono/http-exception";
 import { auditLogger } from "../../lib/audit-logger";
 import { logger } from "../../lib/logger";
 

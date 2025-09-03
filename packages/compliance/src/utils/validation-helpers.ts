@@ -91,9 +91,6 @@ export function validateLGPDConsent(consent: {
   };
 }
 
-import type { HealthcareRole, HealthcareUser } from "../enterprise/security/healthcare-rbac";
-import { ComplianceError, HealthcareRegulation } from "../types";
-
 export interface ValidationContext {
   user: HealthcareUser;
   clinicId?: string;

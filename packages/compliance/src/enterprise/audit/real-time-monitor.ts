@@ -437,32 +437,36 @@ export class RealTimeComplianceMonitor {
       switch (area) {
         case "lgpd": {
           const lgpdAssessment = await this.assessLgpdCompliance(tenantId);
-          score = lgpdAssessment.score;
-          issues.push(...lgpdAssessment.issues);
+          const { score: lgpdScore, issues: lgpdIssues } = lgpdAssessment;
+          score = lgpdScore;
+          issues.push(...lgpdIssues);
           recommendations.push(...lgpdAssessment.recommendations);
           break;
         }
 
         case "anvisa": {
           const anvisaAssessment = await this.assessAnvisaCompliance(tenantId);
-          score = anvisaAssessment.score;
-          issues.push(...anvisaAssessment.issues);
+          const { score: anvisaScore, issues: anvisaIssues } = anvisaAssessment;
+          score = anvisaScore;
+          issues.push(...anvisaIssues);
           recommendations.push(...anvisaAssessment.recommendations);
           break;
         }
 
         case "cfm": {
           const cfmAssessment = await this.assessCfmCompliance(tenantId);
-          score = cfmAssessment.score;
-          issues.push(...cfmAssessment.issues);
+          const { score: cfmScore, issues: cfmIssues } = cfmAssessment;
+          score = cfmScore;
+          issues.push(...cfmIssues);
           recommendations.push(...cfmAssessment.recommendations);
           break;
         }
 
         case "constitutional_healthcare": {
           const constitutionalAssessment = await this.assessConstitutionalCompliance(tenantId);
-          score = constitutionalAssessment.score;
-          issues.push(...constitutionalAssessment.issues);
+          const { score: constScore, issues: constIssues } = constitutionalAssessment;
+          score = constScore;
+          issues.push(...constIssues);
           recommendations.push(...constitutionalAssessment.recommendations);
           break;
         }
@@ -600,7 +604,8 @@ export class RealTimeComplianceMonitor {
     try {
       // Clear existing interval if unknown
       if (this.monitoringIntervals.has(monitorId)) {
-        clearInterval(this.monitoringIntervals.get(monitorId)!);
+        const existing = this.monitoringIntervals.get(monitorId);
+        if (existing) clearInterval(existing);
       }
 
       // Setup new monitoring interval
@@ -676,7 +681,8 @@ export class RealTimeComplianceMonitor {
     try {
       // Clear monitoring interval
       if (this.monitoringIntervals.has(monitorId)) {
-        clearInterval(this.monitoringIntervals.get(monitorId)!);
+        const existing = this.monitoringIntervals.get(monitorId);
+        if (existing) clearInterval(existing);
         this.monitoringIntervals.delete(monitorId);
       }
 

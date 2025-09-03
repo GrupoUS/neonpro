@@ -1,0 +1,26 @@
+{
+  "dependencies": ["@neonpro/database", "@supabase/supabase-js", "zod", "axios"],
+  "devDependencies": ["tsup"],
+  "missing": {},
+  "using": {
+    "typescript": ["/home/vibecoder/neonpro/packages/integrations/package.json"],
+    "vitest": [
+      "/home/vibecoder/neonpro/packages/integrations/package.json",
+      "/home/vibecoder/neonpro/packages/integrations/vitest.config.ts"
+    ],
+    "@types/node": [
+      "/home/vibecoder/neonpro/packages/integrations/package.json",
+      "/home/vibecoder/neonpro/packages/integrations/vitest.config.ts"
+    ],
+    "@vitest/ui": [
+      "/home/vibecoder/neonpro/packages/integrations/package.json",
+      "/home/vibecoder/neonpro/packages/integrations/vitest.config.ts"
+    ],
+    "happy-dom": [
+      "/home/vibecoder/neonpro/packages/integrations/package.json",
+      "/home/vibecoder/neonpro/packages/integrations/vitest.config.ts"
+    ]
+  },
+  "invalidFiles": {},
+  "invalidDirs": {}
+}

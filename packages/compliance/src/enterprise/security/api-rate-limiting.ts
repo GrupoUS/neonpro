@@ -791,7 +791,7 @@ export class ApiRateLimitingService {
     // Find matching endpoint configuration
     let endpointConfig: EndpointRateLimit | null = null;
 
-    for (const [pattern, config] of [...this.endpointLimits]) {
+    for (const [pattern, config] of this.endpointLimits) {
       if (this.matchesEndpointPattern(request.endpoint, pattern)) {
         endpointConfig = config;
         break;

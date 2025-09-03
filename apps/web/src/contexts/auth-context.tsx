@@ -31,8 +31,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode; }) {
-  const [user, setUser] = useState<User | null>();
-  const [token, setToken] = useState<string | null>();
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Initialize auth state from localStorage
@@ -69,9 +69,8 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
     password: string;
     tenantId: string;
   }) => {
+    setLoading(true);
     try {
-      setLoading(true);
-
       const response = await AuthApiClient.login(credentials);
 
       if (!response.success) {
@@ -87,9 +86,6 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
 
       setToken(tokens.accessToken);
       setUser(userData);
-    } catch (error) {
-      // console.error("Login error:", error);
-      throw error;
     } finally {
       setLoading(false);
     }

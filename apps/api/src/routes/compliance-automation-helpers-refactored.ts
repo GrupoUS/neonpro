@@ -44,8 +44,8 @@ function calculateComplianceConsistency(scores: readonly number[]): number {
 function determineTrend(scores: readonly number[]): "improving" | "stable" | "declining" {
   if (scores.length < 2) return "stable";
 
-  const firstScore = scores[0];
-  const lastScore = scores[scores.length - 1];
+  const [firstScore, ...restScores] = scores;
+  const lastScore = restScores[restScores.length - 1] ?? firstScore;
   const trendPercentage = ((lastScore - firstScore) / firstScore) * MAGIC_NUMBERS.HUNDRED;
 
   if (trendPercentage > MAGIC_NUMBERS.ONE) return "improving";

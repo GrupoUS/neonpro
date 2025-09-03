@@ -570,7 +570,7 @@ export class AIService extends EnhancedServiceBase {
 
   private getModelConfig(modelName: string): AIModelConfig {
     return (
-      this.modelConfigs.get(modelName) || this.modelConfigs.get("default")!
+      this.modelConfigs.get(modelName) ?? this.modelConfigs.get("default")
     );
   }
 

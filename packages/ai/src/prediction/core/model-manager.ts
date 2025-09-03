@@ -1,4 +1,7 @@
-import type { GraphModel, LayersModel } from "@tensorflow/tfjs";
+// Note: Avoid direct type imports from '@tensorflow/tfjs' to keep it optional at install time
+// Define minimal aliases to keep types without hard dependency
+type GraphModel = unknown;
+type LayersModel = unknown;
 import type { ModelMetadata, ModelType, PredictionConfig } from "../types";
 import { LazyTensorFlowOperations, tensorFlowLoader } from "./tensorflow-lazy-loader";
 
@@ -109,12 +112,14 @@ export class AIModelManager {
   async loadModel(modelType: ModelType): Promise<GraphModel | LayersModel> {
     // Return cached model if available
     if (this.models.has(modelType)) {
-      return this.models.get(modelType)!;
+      const cached = this.models.get(modelType);
+      if (cached) return cached;
     }
 
     // Return existing loading promise if in progress
     if (this.loadingPromises.has(modelType)) {
-      return this.loadingPromises.get(modelType)!;
+      const inFlight = this.loadingPromises.get(modelType);
+      if (inFlight) return inFlight;
     }
 
     const config = this.MODEL_CONFIGS[modelType];
@@ -216,7 +221,7 @@ export class AIModelManager {
    * Get model metadata for monitoring and analytics
    */
   getModelMetadata(modelType: ModelType): ModelMetadata | null {
-    return this.modelMetadata.get(modelType) || undefined;
+    return this.modelMetadata.get(modelType) ?? null;
   }
 
   /**

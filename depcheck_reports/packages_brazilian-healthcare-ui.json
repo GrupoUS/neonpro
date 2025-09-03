@@ -1,0 +1,32 @@
+{
+  "dependencies": [],
+  "devDependencies": ["@types/react-dom", "@types/node"],
+  "missing": {},
+  "using": {
+    "tsup": [
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/package.json",
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/tsup.config.ts"
+    ],
+    "typescript": [
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/package.json",
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/tsup.config.ts"
+    ],
+    "react": [
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/package.json",
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/src/index.ts",
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/src/components/emergency-access.tsx",
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/src/components/lgpd-compliance.tsx",
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/src/components/responsive-layout.tsx",
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/dist/index.js",
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/dist/index.mjs"
+    ],
+    "react-dom": ["/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/src/index.ts"],
+    "@types/react": [
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/src/components/emergency-access.tsx",
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/src/components/lgpd-compliance.tsx",
+      "/home/vibecoder/neonpro/packages/brazilian-healthcare-ui/src/components/responsive-layout.tsx"
+    ]
+  },
+  "invalidFiles": {},
+  "invalidDirs": {}
+}

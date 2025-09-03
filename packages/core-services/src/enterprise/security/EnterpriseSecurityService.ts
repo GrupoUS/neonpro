@@ -708,7 +708,7 @@ export class EnterpriseSecurityService {
       ([_, session]) => session.userId === userId,
     );
 
-    for (const [sessionId, _] of userSessions) {
+    for (const [sessionId] of userSessions) {
       await this.destroySession(sessionId);
     }
   }

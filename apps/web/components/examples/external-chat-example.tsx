@@ -99,7 +99,7 @@ export function ExternalChatExample() {
       promise,
       new Promise<never>((_, reject) => {
         setTimeout(() => {
-          reject(new Error("AI response timeout after " + timeoutMs + "ms"));
+          reject(new Error(`AI response timeout after ${timeoutMs}ms`));
         }, timeoutMs);
       }),
     ]);
@@ -153,10 +153,10 @@ export function ExternalChatExample() {
     });
 
     // Aqui você integraria com seu sistema de atendimento (WhatsApp, Zendesk, etc.)
-    alert(
-      `Atendimento humano solicitado!\nMotivo: ${
-        handoffState.handoffReason || "Solicitação manual"
-      }`,
+    // Replaced alert with non-blocking UI log to comply with no-alert rule
+    console.log(
+      "Atendimento humano solicitado:",
+      handoffState.handoffReason || "Solicitação manual",
     );
   }, [handoffState]);
 

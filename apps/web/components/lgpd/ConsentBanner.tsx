@@ -38,7 +38,6 @@ export default function ConsentBanner({
   onConsentComplete,
   onConsentDeclined,
 }: ConsentBannerProps) {
-  const [_showDetails, _setShowDetails] = useState(false);
   const [consents, setConsents] = useState<Record<string, boolean>>({});
   const [step, setStep] = useState<"banner" | "detailed" | "confirmation">(
     "banner",
@@ -121,7 +120,7 @@ export default function ConsentBanner({
       initialConsents[option.id] = option.required;
     });
     setConsents(initialConsents);
-  }, []);
+  }, [consentOptions]);
 
   const handleConsentChange = (optionId: string, enabled: boolean) => {
     if (consentOptions.find((opt) => opt.id === optionId)?.required) {
@@ -488,23 +487,27 @@ export function useConsentBanner() {
     }
   }, []);
 
-  const handleConsentComplete = (consents: Record<string, boolean>) => {
+  const handleConsentComplete = async (consents: Record<string, boolean>) => {
     localStorage.setItem("lgpd_consents", JSON.stringify(consents));
     localStorage.setItem("lgpd_consent_timestamp", Date.now().toString());
     setConsentsGiven(consents);
     setShowBanner(false);
 
     // Send to API for backend storage and audit
-    fetch("/api/lgpd/consent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        consents,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        ipAddress: undefined, // Will be detected server-side
-      }),
-    }).catch(console.error);
+    try {
+      await fetch("/api/lgpd/consent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          consents,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          ipAddress: undefined, // Will be detected server-side
+        }),
+      });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleConsentDeclined = () => {

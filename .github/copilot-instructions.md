@@ -6,10 +6,26 @@ applyTo: "**/*"
 
 > **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
 
-## 📚 ALWAYS READ AND LOAD References
+# MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
 
-- **🌟 Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
+- **🌟 Always Read the Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
 - **⚙️ Always Read the Project Memory**: [`docs/memory.md`](../docs/memory.md)
+- **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.
+- **MANDATORY** Use do gerenciador de tasks nativo do augment de forma mais ativa para acompanhar tudo o que precisa ser feito, criando atomic tasks para executar tudo o que foi solicitado em fases
+- **MANDATORY** use of `serena mcp` to search codebase and semantic code analysis, *DO NOT USE NATIVE SEARCH CODEBASE tool*
+- **MANDATORY** use of `supabase mcp` for database operations
+- **MANDATORY** use of `shadcn-ui mcp` to manage ui components
+- **MANDATORY** use of `archon mcp` for task and knowledge management
+- **MANDATORY** use of `desktop-commander mcp` for file and terminal operations and system management
+- **MANDATORY** use of `sequential-thinking` and `think` native tool before any other action to break down problems, plan approaches, and verify solutions, use `think` each 5 steps to outline next steps and strategies.
+- **MANDATORY** use of `tavily mcp` for real-time information, current trends, and technology updates, *DO NOT USE NATIVE SEARCH tool*
+- **MANDATORY** use of `context7 mcp` for deep contextual understanding and analysis, *DO NOT USE NATIVE CONTEXT tool*
+- **NO INTERRUPTIONS**: Continue through ALL steps until problem fully solved.
+- **MANDATORY FIRST STEP**: Always begin with sequential-thinking tool.
+- **ONLY TERMINATE WHEN**: User query COMPLETELY resolved and Problem 100% solved.
+- **CRITICAL:This project uses Archon for knowledge management, task tracking, and project organization.**
+- Project uses A.P.T.E methodology (Analyze → Plan → Think → Execute) with quality standard ≥9.5/10, prefers Bun over npm for 3-5x performance improvements, and requires phased migration approach with rollback strategies.
+- User prefers comprehensive backend database architecture audits following a 4-phase structured approach: Architecture Analysis → Backend Integration Audit → Archon Project Creation → Task Execution, with mandatory use of serena mcp for codebase analysis, supabase mcp for database operations, and archon mcp for project management, following sequential-thinking → research → plan → implement → validate workflow.
 
 ## Pre-Development Guidelines
 
@@ -160,7 +176,9 @@ CONSTITUTIONAL_PRINCIPLES:
 - Requisitos de segurança/compliance
 - Necessidades de otimização de performance
 - Decisões arquiteturais
-- Regulamentações específicas de saúde (HIPAA, LGPD)**Comando de Ativação APEX**:
+- Regulamentações específicas de saúde (HIPAA, LGPD)
+
+**Comando de Ativação APEX**:
 
 ```bash
 @apex-researcher "pesquisar [tecnologia/padrão/regulamentação]"
@@ -248,7 +266,9 @@ phase_3_planning_design:
   1. **RED**: Write failing test first (describe expected behavior)
   2. **GREEN**: Write minimal code to pass the test
   3. **REFACTOR**: Improve code while keeping tests green
-  4. **REPEAT**: Continue cycle for next requirement- **Test Priority (from ttd-flow.md):**
+  4. **REPEAT**: Continue cycle for next requirement
+
+  **Test Priority (from ttd-flow.md):**
   - 🔥 **CRITICAL**: Business logic, AI agents, APIs, financial operations
   - ⚡ **IMPORTANT**: Complex hooks, utilities, data validation, integrations
   - ✅ **USEFUL**: UI components with logic, helpers
@@ -303,7 +323,9 @@ phase_3_planning_design:
   - Fix issues using `desktop-commander` for file operations
   - **Stuck >3x**: Use sequential-thinking to reassess
   - Return to **Step 4** and repeat cycle
-  - Continue until ALL quality checks pass```yaml
+  - Continue until ALL quality checks pass
+
+```yaml
 validation:
   vibecoder_integration: "Quality Validation & Testing with constitutional enforcement gates"
   architecture_analysis: "Always check architecture docs for best practices validation"
@@ -347,7 +369,9 @@ validation:
   - Any other relevant documentation folders
 - Use `desktop-commander` to create/update documentation files
 - Use `archon` to store documentation updates in knowledge base
-- **Suggest to User**: Recommend specific updates and ask user to review### 11. **Out-of-Scope Documentation**
+- **Suggest to User**: Recommend specific updates and ask user to review
+
+### 11. **Out-of-Scope Documentation**
 
 - **🔄 Ativação do @apex-researcher**: Para documentação não coberta por protocolos existentes
 

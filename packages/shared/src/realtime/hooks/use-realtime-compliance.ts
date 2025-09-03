@@ -145,7 +145,7 @@ export function useRealtimeCompliance(
     (payload: unknown): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" => {
       const typedPayload = payload as unknown;
       const eventData = typedPayload.new || typedPayload.old;
-      const { eventType: eventType } = typedPayload;
+      const { eventType } = typedPayload;
 
       // Critical severity scenarios
       if (

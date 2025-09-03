@@ -54,7 +54,7 @@ async function checkEnvironmentVariables() {
   }
 
   // Carregar variáveis
-  import dotenv from "dotenv"; dotenv.config({ path: envPath });
+  const dotenv = await import("dotenv"); dotenv.config({ path: envPath });
 
   const requiredVars = [
     "NEXT_PUBLIC_SUPABASE_URL",
@@ -81,7 +81,7 @@ async function checkEnvironmentVariables() {
 // 3. Verificar conexão com Supabase
 async function checkSupabaseConnection() {
   try {
-    import { createClient } from "@supabase/supabase-js";
+    const { createClient } = await import("@supabase/supabase-js");
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY,
@@ -111,7 +111,7 @@ async function applyDatabaseMigration() {
 
   try {
     // Ler conteúdo da migration
-    import { createClient } from "@supabase/supabase-js";
+    const { createClient } = await import("@supabase/supabase-js");
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY,
@@ -138,7 +138,8 @@ async function applyDatabaseMigration() {
 // 5. Verificar configuração Stripe
 async function checkStripeConfiguration() {
   try {
-    const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+    const { default: Stripe } = await import("stripe");
+    const stripe = new Stripe(String(process.env.STRIPE_SECRET_KEY));
 
     // Teste básico de conexão
     const account = await stripe.accounts.retrieve();
@@ -262,10 +263,10 @@ async function main() {
 }
 
 // Executar se chamado diretamente
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((_error) => {
     process.exit(1);
   });
 }
 
-module.exports = { main };
+export { main };

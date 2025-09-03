@@ -313,7 +313,7 @@ const supabaseAuthEndpoints = {
     return {
       success: true,
       user: {
-        id: "new-user-" + Date.now(),
+        id: `new-user-${Date.now()}`,
         email: email,
         role: metadata.role || "PATIENT",
       },

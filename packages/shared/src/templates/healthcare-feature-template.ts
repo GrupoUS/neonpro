@@ -457,4 +457,4 @@ export function createHealthcareFeature<T, CreateInput, UpdateInput>(
   return new implementation(HealthcareFeaturePresets[preset]);
 }
 
-export { HealthcareFeatureTemplate as default };
+export default HealthcareFeatureTemplate;

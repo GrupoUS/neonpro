@@ -342,7 +342,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
     let score = 1;
 
     // Check patient demographic completeness
-    const demographics = request.patientProfile.demographics;
+    const { demographics } = request.patientProfile;
     if (!demographics.age || demographics.age <= 0) {
       issues.push("Missing or invalid patient age");
       score -= 0.2;

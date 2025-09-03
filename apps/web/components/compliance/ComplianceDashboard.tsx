@@ -51,9 +51,7 @@ interface ComplianceDashboardProps {
   data?: unknown;
 }
 
-export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
-  data,
-}) => {
+export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
   const [complianceScores, setComplianceScores] = useState<ComplianceScore[]>([]);
   const [violations, setViolations] = useState<ComplianceViolation[]>([]);
   const [trends, setTrends] = useState<Record<string, ComplianceTrendData>>({});
@@ -140,11 +138,9 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const [updatedViolations] = await Promise.all([
-          complianceService.fetchViolations({
-            framework: selectedFramework !== "all" ? selectedFramework : undefined,
-          }),
-        ]);
+        const updatedViolations = await complianceService.fetchViolations({
+          framework: selectedFramework !== "all" ? selectedFramework : undefined,
+        });
         setViolations(updatedViolations);
       } catch (error) {
         console.error("Error refreshing compliance data:", error);

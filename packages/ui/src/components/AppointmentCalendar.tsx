@@ -241,7 +241,7 @@ export const AppointmentCalendar = React.forwardRef<
       const monthEnd = endOfMonth(currentDate);
       const calendarStart = startOfWeek(monthStart, { locale: ptBR });
       const calendarEnd = endOfWeek(monthEnd, { locale: ptBR });
-      const days = eachDayOfInterval({
+      let days = eachDayOfInterval({
         start: calendarStart,
         end: calendarEnd,
       });

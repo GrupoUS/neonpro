@@ -73,7 +73,12 @@ async function setupTestDatabase() {
   console.log("🗄️ Configurando banco de dados de teste...");
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!serviceRoleKey) {
+    console.warn("⚠️ SUPABASE_SERVICE_ROLE_KEY ausente. Pulando setup do banco.");
+    return;
+  }
 
   const supabase = createClient(supabaseUrl, serviceRoleKey, {
     auth: {

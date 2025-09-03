@@ -10,7 +10,7 @@
  * @author NeonPro Healthcare AI Team
  */
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -279,10 +279,10 @@ export default function AnalyticsDashboard({
 }: AnalyticsDashboardProps) {
   // ====== STATE MANAGEMENT ======
   const [isLoading, setIsLoading] = useState(false);
-  const [analytics, setAnalytics] = useState<HealthcareAnalytics>(mockAnalyticsData);
-  const [selectedDateRange, setSelectedDateRange] = useState(dateRange);
+  const [analytics] = useState<HealthcareAnalytics>(mockAnalyticsData);
+  const [selectedDateRange] = useState(dateRange);
   const [activeTab, setActiveTab] = useState("overview");
-  const [alerts, setAlerts] = useState<CriticalAlert[]>([]);
+  const [alerts] = useState<CriticalAlert[]>([]);
   const [expandedInsights, setExpandedInsights] = useState<string[]>([]);
   const [realTimeData, setRealTimeData] = useState(realTimeEnabled);
   const [lastRefresh, setLastRefresh] = useState(new Date());

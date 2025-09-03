@@ -51,9 +51,41 @@ import { APIRequestContext, request } from "@playwright/test";
 export async function loginViaApi(baseURL: string, email: string, password: string) {
   const context: APIRequestContext = await request.newContext();
   const res = await context.post(`${baseURL}/api/auth/login`, { data: { email, password } });
-  if (!res.ok()) throw new Error("Login failed");
+  if (!res.ok()) {
+    await context.dispose();
+    throw new Error("Login failed");
+  }
   const { accessToken } = await res.json();
+  await context.dispose(); // ensure API context is released
   return accessToken;
+}
+
+// Inject token before any page scripts run. Adjust storage key to your app.
+export async function applyAuthTokenToPage(page: import("@playwright/test").Page, token: string) {
+  await page.addInitScript((t) => {
+    try {
+      localStorage.setItem("accessToken", t as string);
+    } catch {}
+  }, token);
+}
+
+// Alternative: use cookies if your app reads auth from cookies
+export async function applyAuthCookie(
+  context: import("@playwright/test").BrowserContext,
+  token: string,
+  baseURL: string,
+) {
+  const url = new URL(baseURL);
+  await context.addCookies([
+    {
+      name: "accessToken",
+      value: token,
+      domain: url.hostname,
+      path: "/",
+      httpOnly: false,
+      secure: false,
+    },
+  ]);
 }
 ```
 

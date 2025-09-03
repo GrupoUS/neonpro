@@ -185,7 +185,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
     ControlledPrescriptionStatus | "all"
   >("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [selectedPrescription, setSelectedPrescription] = useState<ControlledPrescription | null>(
+  const [selectedPrescription] = useState<ControlledPrescription | null>(
     null,
   );
 

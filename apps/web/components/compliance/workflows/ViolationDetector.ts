@@ -495,7 +495,7 @@ export class ViolationDetector {
     return { url, elements: [], metadata: {} };
   }
 
-  private async getActiveSessions(): Promise<<unknown>[]> {
+  private async getActiveSessions(): Promise<{ userId: string; sessionId: string; data: unknown }[]> {
     return [
       { userId: 'user1', sessionId: 'sess1', data: {} },
       { userId: 'user2', sessionId: 'sess2', data: {} }

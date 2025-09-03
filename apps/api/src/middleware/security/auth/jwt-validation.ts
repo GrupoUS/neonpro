@@ -415,14 +415,17 @@ class HealthcareJWTValidator {
 
       // Log emergency access if applicable
       if (isEmergency && validationErrors.length === 0) {
-        AuthenticationAuditLogger.logEmergencyAccess({
-          user_id: payload.sub,
-          emergency_type: payload.emergency_access!.type,
-          justification: payload.emergency_access!.justification,
-          expires_at: new Date(payload.emergency_access!.expires_at * 1000),
-          granted_by: payload.issued_by,
-          timestamp: new Date(),
-        });
+        const ea = payload.emergency_access;
+        if (ea) {
+          AuthenticationAuditLogger.logEmergencyAccess({
+            user_id: payload.sub,
+            emergency_type: ea.type,
+            justification: ea.justification,
+            expires_at: new Date(ea.expires_at * 1000),
+            granted_by: payload.issued_by,
+            timestamp: new Date(),
+          });
+        }
       }
 
       return {
@@ -456,10 +459,8 @@ class HealthcareJWTValidator {
    * Check if token represents emergency access
    */
   private isEmergencyAccess(payload: HealthcareJWTPayload): boolean {
-    return Boolean(
-      payload.emergency_access?.granted
-        && payload.role === HealthcareRole.EMERGENCY_PHYSICIAN,
-    );
+    return Boolean(payload.emergency_access?.granted)
+      && payload.role === HealthcareRole.EMERGENCY_PHYSICIAN;
   }
 
   /**
@@ -594,7 +595,10 @@ export const createJWTAuthMiddleware = (
 
       if (authResult.isEmergency) {
         c.res.headers.set("X-Emergency-Access", "true");
-        c.res.headers.set("X-Emergency-Type", authResult.user.emergency_access!.type);
+        const emergencyType = authResult.user.emergency_access?.type;
+        if (emergencyType) {
+          c.res.headers.set("X-Emergency-Type", emergencyType);
+        }
       }
 
       await next();

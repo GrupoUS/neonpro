@@ -1,12 +1,9 @@
 import crypto from "node:crypto";
 import { z } from "zod";
+import { MfaDatabaseService } from "./mfa-database-service";
 
 // Constants for magic numbers
-const HOTP_OFFSET_BYTES = 3;
 const BACKUP_CODE_SEPARATOR_POSITION = 4;
-const LOCKOUT_DURATION_MINUTES = 15;
-const SECONDS_PER_MINUTE = 60;
-const MINUTES_TO_MILLISECONDS = SECONDS_PER_MINUTE * 1000;
 
 // Regex patterns moved to top level
 const PHONE_NUMBER_REGEX = /^\+[1-9]\d{1,14}$/;
@@ -571,8 +568,6 @@ export async function verifyMfa(
     };
   }
 }
-
-import { MfaDatabaseService } from "./mfa-database-service";
 
 // Global database service instance
 const mfaDb = new MfaDatabaseService();

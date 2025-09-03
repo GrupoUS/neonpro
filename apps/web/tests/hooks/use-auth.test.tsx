@@ -11,6 +11,7 @@ import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Import the hook we're testing
+import { ApiHelpers } from "@neonpro/shared/api-client";
 import { useAuth } from "../../hooks/enhanced/use-auth";
 
 // Mock Next.js router
@@ -85,16 +86,9 @@ describe("useAuth Hook - NeonPro Healthcare Authentication", () => {
 
   describe("error Handling", () => {
     it("should handle ApiHelpers.formatError without throwing", () => {
-      const wrapper = createWrapper();
-      const { result } = renderHook(() => useAuth(), { wrapper });
-
-      // This test validates that our mock is working and doesn't throw
-      expect(() => {
-        // Import and use ApiHelpers
-        const { ApiHelpers } = await import("@neonpro/shared/api-client");
-        const formattedError = ApiHelpers.formatError("test error");
-        expect(formattedError).toBe("test error");
-      }).not.toThrow();
+      // Use ApiHelpers directly without top-level await in test body
+      const formattedError = ApiHelpers.formatError("test error");
+      expect(formattedError).toBe("test error");
     });
   });
 });

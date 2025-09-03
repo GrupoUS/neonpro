@@ -116,19 +116,7 @@ export function validateEmail(email: string): boolean {
 
   if (!emailRegex.test(email)) return false;
 
-  // Additional validation for healthcare domains
-  const healthcareDomains = [
-    "sus.gov.br",
-    "saude.gov.br",
-    "anvisa.gov.br",
-    "cfm.org.br",
-    "coren.org.br",
-    "crm.org.br",
-  ];
-
-  const domain = email.split("@")[1]?.toLowerCase();
-
-  // Allow all domains, but mark healthcare domains as preferred
+  // Allow all valid emails (domain-specific preferences handled elsewhere)
   return true;
 }
 

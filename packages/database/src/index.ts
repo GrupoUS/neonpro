@@ -209,7 +209,7 @@ export const dbUtils = {
     try {
       // Simple query to test connection
       const result = await fetch(
-        process.env.NEXT_PUBLIC_SUPABASE_URL + "/rest/v1/",
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/`,
         {
           headers: {
             apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",

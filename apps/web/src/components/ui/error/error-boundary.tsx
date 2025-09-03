@@ -24,7 +24,7 @@ export class ErrorBoundary extends React.Component<
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(_error: Error, _errorInfo: React.ErrorInfo) {
     // console.error("ErrorBoundary caught an error:", error, errorInfo);
   }
 
@@ -36,14 +36,14 @@ export class ErrorBoundary extends React.Component<
 
       if (this.props.fallback) {
         return React.createElement(this.props.fallback, {
-          error: this.state.error!,
+          error: this.state.error ?? new Error("Unknown error"),
           resetError,
         });
       }
 
       return (
         <DefaultErrorFallback
-          error={this.state.error!}
+          error={this.state.error ?? new Error("Unknown error")}
           resetError={resetError}
         />
       );

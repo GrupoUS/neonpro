@@ -186,7 +186,7 @@ describe("enhancedAIService", () => {
       await service.executeWithMetrics({ input: "hello" });
 
       expect(mockMetrics.metrics).toHaveLength(1);
-      const metric = mockMetrics.metrics[0];
+      const [metric] = mockMetrics.metrics;
       expect(metric.operation).toBe("service_execution");
       expect(metric.success).toBeTruthy();
       expect(metric.duration).toBeGreaterThan(0);
@@ -200,7 +200,7 @@ describe("enhancedAIService", () => {
       }
 
       expect(mockMetrics.metrics).toHaveLength(1);
-      const metric = mockMetrics.metrics[0];
+      const [metric] = mockMetrics.metrics;
       expect(metric.operation).toBe("service_execution");
       expect(metric.success).toBeFalsy();
       expect(metric.errorType).toBe("Error");
@@ -354,7 +354,7 @@ describe("enhancedAIService", () => {
     it("should measure execution time accurately", async () => {
       await service.executeWithMetrics({ input: "slow" });
 
-      const { metrics: metrics } = mockMetrics;
+      const { metrics } = mockMetrics;
       expect(metrics).toHaveLength(1);
       expect(metrics[0].duration).toBeGreaterThan(90); // Should be at least 100ms minus some tolerance
     });

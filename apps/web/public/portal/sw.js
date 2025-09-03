@@ -224,18 +224,25 @@ async function syncOfflineActions() {
     // For now, just send a message to all clients
     const clients = await self.clients.matchAll();
     clients.forEach((client) => {
-      client.postMessage({
-        type: "SYNC_COMPLETE",
-        data: { success: true },
-      });
+      const targetOrigin = new URL(client.url).origin;
+      client.postMessage(
+        {
+          type: "SYNC_COMPLETE",
+          data: { success: true },
+        },
+        targetOrigin,
+      );
     });
   } catch (error) {
     const clients = await self.clients.matchAll();
     clients.forEach((client) => {
-      client.postMessage({
-        type: "SYNC_FAILED",
-        data: { error: error.message },
-      });
+      client.postMessage(
+        {
+          type: "SYNC_FAILED",
+          data: { error: error.message },
+        },
+        client.location?.origin || self.location.origin,
+      );
     });
   }
 }
@@ -293,10 +300,13 @@ self.addEventListener("notificationclick", (event) => {
           const clientUrl = new URL(client.url);
           if (clientUrl.pathname.startsWith("/portal/") && "focus" in client) {
             client.focus();
-            client.postMessage({
-              type: "NOTIFICATION_CLICK",
-              data: { url: targetUrl },
-            });
+            client.postMessage(
+              {
+                type: "NOTIFICATION_CLICK",
+                data: { url: targetUrl },
+              },
+              new URL(client.url).origin,
+            );
             return;
           }
         }

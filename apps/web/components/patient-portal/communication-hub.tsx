@@ -319,7 +319,7 @@ function ConversationList({
 
 function ChatWindow({ conversation }: unknown) {
   const [message, setMessage] = useState("");
-  const [_showCallOptions, _setShowCallOptions] = useState(false);
+  // const [_showCallOptions, _setShowCallOptions] = useState(false);
 
   const formatMessageTime = (timestamp: string) => {
     return new Date(timestamp).toLocaleTimeString("pt-BR", {

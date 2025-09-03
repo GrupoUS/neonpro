@@ -251,8 +251,8 @@ export class AdvancedComplianceIntegration {
         actions_taken: actionsTaken,
         follow_up_required: followUpRequired,
       };
-    } catch (error) {
-      console.error("Healthcare interaction processing failed:", error);
+    } catch (_error) {
+      // console.error("Healthcare interaction processing failed:", _error);
 
       // Fail-safe: treat as compliance violation requiring manual review
       return {
@@ -333,8 +333,8 @@ export class AdvancedComplianceIntegration {
           recommendations,
         },
       };
-    } catch (error) {
-      console.error("Compliance monitoring failed:", error);
+    } catch (_error) {
+      // console.error("Compliance monitoring failed:", _error);
 
       return {
         timestamp: new Date(),
@@ -487,7 +487,7 @@ export class AdvancedComplianceIntegration {
 
   private async createComplianceAuditTrail(data: Record<string, unknown>): Promise<void> {
     // Implementation would store audit trail in database
-    console.log("Compliance audit trail created:", data);
+    // console.log("Compliance audit trail created:", data);
   }
 
   private generateExecutiveSummary(
@@ -505,17 +505,17 @@ Overall system performance: Stable with recommended improvements in automated de
 
   private async storeComplianceReport(report: ComplianceReport): Promise<void> {
     // Implementation would store in database
-    console.log("Compliance report stored:", report.report_id);
+    // console.log("Compliance report stored:", report.report_id);
   }
 
   private async distributeComplianceReport(report: ComplianceReport): Promise<void> {
     // Implementation would email/notify stakeholders
-    console.log("Compliance report distributed:", report.report_id);
+    // console.log("Compliance report distributed:", report.report_id);
   }
 
   private async triggerCriticalAlert(status: ComplianceMonitoringResult): Promise<void> {
     // Implementation would send immediate alerts
-    console.error("Critical compliance alert triggered:", status);
+    // console.error("Critical compliance alert triggered:", status);
   }
 
   // Cleanup

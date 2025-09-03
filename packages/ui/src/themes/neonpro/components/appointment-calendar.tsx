@@ -309,7 +309,7 @@ export const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     const grouped: { [key: string]: Appointment[]; } = {};
 
     appointments.forEach((appointment) => {
-      const dateKey = appointment.startTime.toISOString().split("T")[0];
+      const [dateKey] = appointment.startTime.toISOString().split("T");
       if (!grouped[dateKey]) {
         grouped[dateKey] = [];
       }
@@ -402,7 +402,7 @@ export const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
       {/* Calendar grid */}
       <div className="grid grid-cols-7">
         {calendarDays.map((date, index) => {
-          const dateKey = date.toISOString().split("T")[0];
+          const [dateKey] = date.toISOString().split("T");
           const dayAppointments = appointmentsByDate[dateKey] || [];
           const isToday = date.toDateString() === new Date().toDateString();
           const isCurrentMonth = date.getMonth() === viewDate.getMonth();

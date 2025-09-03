@@ -744,7 +744,7 @@ export class ConflictDetector {
 
   private async getTreatmentSequenceRules(
     _treatmentType: string,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     return [];
   }
 

@@ -115,7 +115,7 @@ export class EdgeCacheLayer implements CacheOperation {
   async warmup(keys: string[]): Promise<void> {
     // Pre-load commonly used keys (placeholder implementation)
     for (const key of keys) {
-      const entry = this.cache.get(this.buildKey(key)) as any;
+      const entry = this.cache.get(this.buildKey(key)) as unknown as CacheEntry | undefined;
       if (entry) {
         entry.lastAccessed = Date.now();
         this.cache.set(this.buildKey(key), entry);

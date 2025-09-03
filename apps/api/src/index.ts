@@ -37,14 +37,13 @@ import {
   createHealthcareAPISecurityStack,
   EndpointSecurityLevel,
   SecurityEnvironment,
-  ValidationContext,
 } from "@/middleware/security";
 
 // Import legacy middleware for comparison/migration
 import { auditMiddleware } from "@/middleware/audit";
-import { errorHandler } from "@/middleware/error-handler";
-import { lgpdMiddleware } from "@/middleware/lgpd";
-import { rateLimitMiddleware } from "@/middleware/rate-limit";
+// import { errorHandler } from "@/middleware/error-handler";
+// import { lgpdMiddleware } from "@/middleware/lgpd";
+// import { rateLimitMiddleware } from "@/middleware/rate-limit";
 import { aiRoutes } from "@/routes/ai";
 import { analyticsRoutes } from "@/routes/analytics";
 import appointments from "@/routes/appointments";

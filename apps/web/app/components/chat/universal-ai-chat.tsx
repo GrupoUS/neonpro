@@ -107,6 +107,7 @@ export function UniversalAIChat({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   // Hooks
   const { toast } = useToast();
@@ -870,7 +871,6 @@ export function UniversalAIChat({
                   className="animate-pulse focus-emergency emergency-button"
                   title="Chamar médico imediatamente"
                   aria-label="EMERGÊNCIA: Chamar médico imediatamente"
-                  role="button"
                   aria-describedby="emergency-action-warning"
                   tabIndex={0}
                   data-emergency="true"
@@ -1005,6 +1005,7 @@ export function UniversalAIChat({
               className="flex gap-2"
               onSubmit={handleSubmit}
               aria-label="Enviar mensagem para o assistente médico de IA"
+              ref={formRef}
             >
               <Input
                 id="chat-input"
@@ -1042,7 +1043,7 @@ export function UniversalAIChat({
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     if (!inputValue.trim() || isLoading) return;
-                    handleSubmit(e as unknown);
+                    formRef.current?.requestSubmit();
                     announce("Mensagem enviada para análise médica.", "polite");
                   }
                 }}

@@ -400,13 +400,13 @@ export interface ChatSessionRepository {
 
 export interface ConversationRepository {
   create(data: unknown): Promise<void>;
-  findMany(query: unknown): Promise<any[]>;
+  findMany(query: unknown): Promise<unknown[]>;
   aggregate(query: unknown): Promise<unknown>;
 }
 
 export interface EmbeddingRepository {
   create(data: unknown): Promise<void>;
-  findSimilar(embedding: number[], limit: number): Promise<any[]>;
+  findSimilar(embedding: number[], limit: number): Promise<unknown[]>;
 }
 
 export interface PredictionRepository {
@@ -435,7 +435,7 @@ export interface AppointmentRepository {
 
 export interface AuditLogRepository {
   create(data: unknown): Promise<void>;
-  findMany(query: unknown): Promise<any[]>;
+  findMany(query: unknown): Promise<unknown[]>;
 }
 
 // Feature Flag Types

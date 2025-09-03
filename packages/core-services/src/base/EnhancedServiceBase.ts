@@ -11,7 +11,6 @@
 
 import {
   EnterpriseAnalyticsService,
-  EnterpriseAuditService,
   EnterpriseCacheService,
   EnterpriseSecurityService,
 } from "../enterprise";
@@ -271,7 +270,8 @@ export abstract class EnhancedServiceBase {
       }
     }
 
-    throw lastError!;
+    if (lastError) throw lastError;
+    throw new Error("Operation failed after retries");
   }
 
   /**
@@ -491,8 +491,7 @@ export abstract class EnhancedServiceBase {
    * Initialize security service
    */
   private initializeSecurityService(): ISecurityService {
-    const enterpriseSecurity = this.enterpriseSecurity;
-    const audit = this.audit;
+    const { enterpriseSecurity, audit } = this;
 
     return {
       async validateAccess(

@@ -172,7 +172,7 @@ test.describe("Accessibility Audit", () => {
 
     // Run axe accessibility audit
     const results = await page.evaluate(async () => {
-      // @ts-expect-error
+      // @ts-expect-error: axe is injected via addScriptTag and not typed on window
       const { axe: axe } = window;
       return await axe.run();
     });

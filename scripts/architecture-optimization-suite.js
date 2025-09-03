@@ -12,9 +12,9 @@
  *   node scripts/architecture-optimization-suite.js --cleanup-test-artifacts
  */
 
-const fs = require("node:fs");
-const path = require("node:path");
-const { execSync } = require("node:child_process");
+import { execSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 
 // Configuration
 const CONFIG = {
@@ -298,14 +298,14 @@ Usage:
 }
 
 // Run if called directly
-if (require.main === module) {
+if (process.argv[1] === new URL(import.meta.url).pathname) {
   main();
 }
 
-module.exports = {
-  phase1SafeCleanup,
-  phase2PackageConsolidation,
+export {
   consolidateCacheImplementations,
   mergeMonitoringPackages,
+  phase1SafeCleanup,
+  phase2PackageConsolidation,
   updateImportStatements,
 };

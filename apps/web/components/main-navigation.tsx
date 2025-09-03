@@ -42,20 +42,19 @@ export function MainNavigation() {
   const { user } = useAuth();
 
   // Simple permission checks based on user role
-  const canAccessPatients = () => {
+  const canAccessPatients = React.useCallback(() => {
     return (
-      user
-      && ["clinic_owner", "clinic_manager", "professional"].includes(user.role)
+      user && ["clinic_owner", "clinic_manager", "professional"].includes(user.role)
     );
-  };
+  }, [user]);
 
-  const canAccessProfessionals = () => {
+  const canAccessProfessionals = React.useCallback(() => {
     return user && ["clinic_owner", "clinic_manager"].includes(user.role);
-  };
+  }, [user]);
 
-  const canAccessCompliance = () => {
+  const canAccessCompliance = React.useCallback(() => {
     return user && ["clinic_owner", "clinic_manager"].includes(user.role);
-  };
+  }, [user]);
 
   // Define navigation items based on user role and permissions
   const navigationItems: NavigationItem[] = React.useMemo(() => {
@@ -268,9 +267,16 @@ export function MainNavigation() {
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
-            <div
+            <button
               className="fixed inset-0 bg-sidebar-background/80 backdrop-blur-sm"
+              tabIndex={0}
+              aria-label="Fechar menu móvel"
               onClick={() => setIsMobileMenuOpen(false)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === "Escape" || e.key === " ") {
+                  setIsMobileMenuOpen(false);
+                }
+              }}
             />
             <div className="fixed top-0 left-0 h-full w-80 border-r bg-card shadow-lg">
               <div className="flex h-full flex-col">

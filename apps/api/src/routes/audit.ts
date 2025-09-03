@@ -5,9 +5,8 @@ import { z } from "zod";
 import { HTTP_STATUS } from "../lib/constants";
 import { auditMiddleware } from "../middleware/auditMiddleware";
 import { authMiddleware } from "../middleware/auth";
-import { AuditResourceType } from "../services/AuditService";
+import { AuditResourceType, AuditService } from "../services/AuditService";
 import type { AuditLogQuery } from "../services/AuditService";
-import { AuditService } from "../services/AuditService";
 
 const auditRoutes = new Hono();
 

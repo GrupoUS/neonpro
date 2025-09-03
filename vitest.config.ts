@@ -35,14 +35,13 @@ export default defineConfig({
           environment: "happy-dom",
           setupFiles: ["./vitest.setup.ts"],
 
-          // Bun optimized performance
-          isolate: false,
-          pool: "forks",
+          // Performance for unit tests
+          isolate: true,
+          pool: "threads",
           poolOptions: {
-            forks: {
-              singleFork: true,
-              maxForks: 1,
-              minForks: 1,
+            threads: {
+              singleThread: false,
+              maxThreads: 4,
             },
           },
 

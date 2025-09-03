@@ -32,7 +32,7 @@ interface TreatmentService {
 interface StaffService {
   getStaffMember(id: string): Promise<unknown>;
   getStaffAvailability(id: string, date: Date): Promise<StaffAvailability>;
-  getAvailableStaff(date: Date, skills: string[]): Promise<any[]>;
+  getAvailableStaff(date: Date, skills: string[]): Promise<unknown[]>;
   updateStaffSchedule(id: string, appointment: AIAppointment): Promise<void>;
 }
 
@@ -65,7 +65,7 @@ interface InventoryService {
     equipment: string[],
     appointment: AIAppointment,
   ): Promise<void>;
-  getEquipmentMaintenance(equipment: string): Promise<any[]>;
+  getEquipmentMaintenance(equipment: string): Promise<unknown[]>;
 }
 
 export interface ServiceDependencies {
@@ -612,7 +612,7 @@ export class SchedulingIntegrationService {
     _rooms: RoomType[],
     _equipment: string[],
     _timeSlot: unknown,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Identify potential resource conflicts
     return [];
   }
@@ -652,7 +652,7 @@ export class SchedulingIntegrationService {
   private async checkUpdateConflicts(
     _current: AIAppointment,
     _updates: Partial<AIAppointment>,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Check for conflicts with updates
     return [];
   }
@@ -668,7 +668,7 @@ export class SchedulingIntegrationService {
   private async updateAppointmentResources(
     _current: AIAppointment,
     _updates: Partial<AIAppointment>,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Update resources based on appointment changes
     return [];
   }
@@ -697,7 +697,7 @@ export class SchedulingIntegrationService {
   private async findAlternativeSlots(
     _timeSlot: unknown,
     _requirements: unknown,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Find alternative time slots
     return [];
   }

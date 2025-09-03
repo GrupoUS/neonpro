@@ -23,7 +23,7 @@ const _analyticsQuerySchema = z.object({
 const eventTrackingSchema = z.object({
   event_type: z.string(),
   user_id: z.string(),
-  properties: z.record(z.<unknown>()).optional(),
+  properties: z.record(z.unknown()).optional(),
   timestamp: z.string().optional(),
 });
 

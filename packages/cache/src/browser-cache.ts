@@ -83,7 +83,7 @@ export class BrowserCacheLayer implements CacheOperation {
       ttl: effectiveTTL,
       lastAccessed: Date.now(),
       sensitiveData,
-      lgpdConsent: policy?.requiresConsent ? false : true, // Default to false for sensitive data
+      lgpdConsent: policy?.requiresConsent ?? true, // Default to true unless explicit consent is required
       auditRequired: policy?.auditRequired || false,
       compressed: this.config.compressionEnabled,
       dataClassification: policy?.dataClassification,

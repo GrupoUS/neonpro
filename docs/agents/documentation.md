@@ -3,6 +3,7 @@ title: "Documentation Architect Agent"
 version: 2.0.0
 last_updated: 2025-09-02
 language: en
+form: reference
 llm:
   guardrails:
     tone: "concise, professional, English-only"

@@ -169,8 +169,7 @@ export class ConstitutionalAIEthicsValidator {
       || decision.accuracy < this.MINIMUM_ACCURACY_THRESHOLD;
 
     return {
-      isValid: violations.length === 0
-        || violations.every((v) => v.severity === "minor"),
+      isValid: violations.every((v) => v.severity === "minor"),
       score: Math.max(0, score),
       violations,
       recommendations: this.generateRecommendations(violations),
@@ -219,7 +218,7 @@ export class ConstitutionalAIEthicsValidator {
   private async detectAlgorithmicBias(decision: AIDecision): Promise<number> {
     // Simplified bias detection (in real implementation, use statistical analysis)
     // Check for demographic bias indicators
-    const { input: input } = decision;
+    const { input } = decision;
     let biasScore = 0;
 
     // Age bias detection

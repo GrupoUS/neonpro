@@ -524,9 +524,11 @@ export function InterventionDashboard({
             {/* Formulário simplificado */}
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Tipo de Intervenção</label>
+                <label htmlFor="intervention-type" className="text-sm font-medium">
+                  Tipo de Intervenção
+                </label>
                 <Select>
-                  <SelectTrigger>
+                  <SelectTrigger id="intervention-type">
                     <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
                   <SelectContent>
@@ -539,9 +541,11 @@ export function InterventionDashboard({
               </div>
 
               <div>
-                <label className="text-sm font-medium">Prioridade</label>
+                <label htmlFor="intervention-priority" className="text-sm font-medium">
+                  Prioridade
+                </label>
                 <Select>
-                  <SelectTrigger>
+                  <SelectTrigger id="intervention-priority">
                     <SelectValue placeholder="Selecione a prioridade" />
                   </SelectTrigger>
                   <SelectContent>
@@ -554,8 +558,11 @@ export function InterventionDashboard({
               </div>
 
               <div>
-                <label className="text-sm font-medium">Descrição</label>
+                <label htmlFor="intervention-description" className="text-sm font-medium">
+                  Descrição
+                </label>
                 <Textarea
+                  id="intervention-description"
                   placeholder="Descreva a intervenção necessária..."
                   className="min-h-20"
                 />

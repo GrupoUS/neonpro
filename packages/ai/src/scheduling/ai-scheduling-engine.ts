@@ -527,14 +527,14 @@ export class AISchedulingEngine {
   private async getAvailableStaff(
     _period: unknown,
     _staffRequired: string[],
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     return [];
   }
 
   private async getAvailableRooms(
     _period: unknown,
     _roomType: RoomType,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     return [];
   }
 
@@ -678,7 +678,7 @@ export class AISchedulingEngine {
   private async calculateNoShowFactors(
     _history: PatientHistory,
     _slot: AlternativeSlot,
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     return [];
   }
 

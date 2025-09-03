@@ -287,7 +287,7 @@ function calculateOverallStatus(
 function extractRegionFromUrl(url: string): string {
   try {
     const urlObj = new URL(url);
-    const subdomain = urlObj.hostname.split(".")[0];
+    const [subdomain] = urlObj.hostname.split(".");
     // Extract region from subdomain pattern: projectid.supabase.co
     return subdomain && subdomain.includes("-")
       ? subdomain.split("-").pop() || "unknown"

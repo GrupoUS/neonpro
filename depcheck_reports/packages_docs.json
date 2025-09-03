@@ -1,0 +1,44 @@
+{
+  "dependencies": [
+    "@apidevtools/swagger-parser",
+    "@types/swagger-jsdoc",
+    "swagger-jsdoc",
+    "swagger-ui-dist",
+    "openapi-types",
+    "json-schema",
+    "mustache",
+    "fs-extra",
+    "chalk"
+  ],
+  "devDependencies": ["@types/mustache", "@types/fs-extra"],
+  "missing": {},
+  "using": {
+    "tsx": ["/home/vibecoder/neonpro/packages/docs/package.json"],
+    "typescript": ["/home/vibecoder/neonpro/packages/docs/package.json"],
+    "glob": [
+      "/home/vibecoder/neonpro/packages/docs/src/openapi/generator.ts",
+      "/home/vibecoder/neonpro/packages/docs/dist/openapi/generator.js"
+    ],
+    "@types/node": [
+      "/home/vibecoder/neonpro/packages/docs/src/openapi/generator.ts",
+      "/home/vibecoder/neonpro/packages/docs/src/generators/adr-generator.ts"
+    ],
+    "ora": [
+      "/home/vibecoder/neonpro/packages/docs/src/openapi/generator.ts",
+      "/home/vibecoder/neonpro/packages/docs/src/generators/adr-generator.ts",
+      "/home/vibecoder/neonpro/packages/docs/dist/openapi/generator.js",
+      "/home/vibecoder/neonpro/packages/docs/dist/generators/adr-generator.js"
+    ],
+    "yaml": [
+      "/home/vibecoder/neonpro/packages/docs/src/openapi/generator.ts",
+      "/home/vibecoder/neonpro/packages/docs/dist/openapi/generator.js"
+    ],
+    "inquirer": [
+      "/home/vibecoder/neonpro/packages/docs/src/generators/adr-generator.ts",
+      "/home/vibecoder/neonpro/packages/docs/dist/generators/adr-generator.js"
+    ],
+    "@types/inquirer": ["/home/vibecoder/neonpro/packages/docs/src/generators/adr-generator.ts"]
+  },
+  "invalidFiles": {},
+  "invalidDirs": {}
+}

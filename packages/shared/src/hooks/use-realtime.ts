@@ -173,6 +173,7 @@ export function useRealtime<
     config.onError,
     config.onInsert,
     config.onUpdate,
+    config,
   ]);
 
   const healthCheck: RealtimeHealthCheck = {

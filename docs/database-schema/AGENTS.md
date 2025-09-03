@@ -128,47 +128,51 @@ Status: ✅/❌ (risk if disabled)
 ```sql
 -- enable RLS/policies here
 ```
-````
 
-````
 Functions file:
+
 ```markdown
 # Database Functions
 
 ## <function_name>
-Purpose: ...  
-Parameters: ...  
-Returns: ...  
+
+Purpose: ...\
+Parameters: ...\
+Returns: ...\
 Usage: ...
+```
 
 ```sql
 CREATE OR REPLACE FUNCTION ...
-````
+```
 
-````
 Triggers file:
+
 ```markdown
 # Database Triggers
 
 ## <trigger_name>
-Table: ...  
-Event: INSERT/UPDATE/DELETE  
-Timing: BEFORE/AFTER  
-Function: ...  
+
+Table: ...\
+Event: INSERT/UPDATE/DELETE\
+Timing: BEFORE/AFTER\
+Function: ...\
 Purpose: ...
+```
 
 ```sql
 CREATE TRIGGER ...
-````
+```
 
-````
 Enums file:
+
 ```markdown
 # Enum Types
 
 ## <enum_name>
+
 Values: a | b | c
-````
+```
 
 ## When to edit which file
 
@@ -202,3 +206,4 @@ Values: a | b | c
 - Rules: `../rules/`
 
 Notes: Keep this orchestrator short. Expand details in the consolidated docs and per-table files.
+````

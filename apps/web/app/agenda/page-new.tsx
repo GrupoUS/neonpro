@@ -1,11 +1,11 @@
 "use client";
 
-import { EmptyState, ErrorBoundary, StateManager } from "@/components/forms/loading-error-states";
+import { EmptyState, StateManager } from "@/components/forms/loading-error-states";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import {
   Select,
   SelectContent,
@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/auth-context-new";
 import {
@@ -44,9 +44,7 @@ import {
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
-  AlertCircle,
   AlertTriangle,
-  Calendar,
   CalendarDays,
   Check,
   CheckCircle,
@@ -54,23 +52,17 @@ import {
   ChevronRight,
   Clock,
   Edit,
-  Eye,
-  Filter,
-  Mail,
   MapPin,
-  Pause,
   Phone,
   Play,
   Plus,
   RefreshCw,
   RotateCcw,
-  Search,
   Stethoscope,
-  Users,
   UserX,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // API Base URL
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
@@ -508,10 +500,14 @@ function AppointmentCalendar({
         return (
           <div
             key={index}
+            tabIndex={0}
             className={`min-h-24 p-1 border border-border cursor-pointer hover:bg-muted/50 ${
               !isCurrentMonth ? "text-muted-foreground bg-muted/20" : ""
             } ${isToday ? "bg-primary/5 border-primary" : ""} ${isSelected ? "bg-primary/10" : ""}`}
             onClick={() => onDateSelect(day)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") onDateSelect(day);
+            }}
           >
             <div className="text-sm font-medium mb-1">
               {format(day, "d")}
@@ -521,12 +517,20 @@ function AppointmentCalendar({
               {dayAppointments.slice(0, 3).map((appointment) => (
                 <div
                   key={appointment.id}
+                  role="button"
+                  tabIndex={0}
                   className={`text-xs p-1 rounded cursor-pointer truncate ${
                     STATUS_CONFIG[appointment.status].color
                   }`}
                   onClick={(e) => {
                     e.stopPropagation();
                     onAppointmentClick(appointment);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.stopPropagation();
+                      onAppointmentClick(appointment);
+                    }
                   }}
                   title={`${appointment.patients?.full_name} - ${
                     format(parseISO(appointment.start_time), "HH:mm")
@@ -558,10 +562,15 @@ function AppointmentCalendar({
         return (
           <div
             key={index}
+            role="button"
+            tabIndex={0}
             className={`border border-border rounded-lg p-3 cursor-pointer hover:bg-muted/50 ${
               isToday ? "bg-primary/5 border-primary" : ""
             } ${isSelected ? "bg-primary/10" : ""}`}
             onClick={() => onDateSelect(day)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") onDateSelect(day);
+            }}
           >
             <div className="text-center mb-3">
               <div className="text-xs text-muted-foreground uppercase">
@@ -576,12 +585,20 @@ function AppointmentCalendar({
               {dayAppointments.map((appointment) => (
                 <div
                   key={appointment.id}
+                  role="button"
+                  tabIndex={0}
                   className={`text-xs p-2 rounded cursor-pointer ${
                     STATUS_CONFIG[appointment.status].color
                   }`}
                   onClick={(e) => {
                     e.stopPropagation();
                     onAppointmentClick(appointment);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.stopPropagation();
+                      onAppointmentClick(appointment);
+                    }
                   }}
                 >
                   <div className="font-medium truncate">

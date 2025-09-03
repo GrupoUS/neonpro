@@ -343,7 +343,7 @@ export class AestheticPostProcessor {
 
   private calculateLayerDistribution(area: string, totalVolume: number) {
     // Different areas require different injection depths
-    const layerStrategies: Record<string, any[]> = {
+    const layerStrategies: Record<string, unknown[]> = {
       lips: [
         {
           depth: "subcutaneous",

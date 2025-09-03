@@ -412,7 +412,7 @@ export class ComplianceOrchestrator {
     };
   }
 
-  private async testInterServiceCommunication(): Promise<<unknown>[]> {
+  private async testInterServiceCommunication(): Promise<unknown[]> {
     // Test critical service interactions
     const tests = [
       {
@@ -532,7 +532,7 @@ export class ComplianceOrchestrator {
     ];
   }
 
-  private async prioritizeActions(testSuite: unknown, violations: unknown[]): Promise<<unknown>[]> {
+  private async prioritizeActions(testSuite: unknown, violations: unknown[]): Promise<unknown[]> {
     return [
       {
         priority: 'high' as const,

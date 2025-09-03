@@ -133,7 +133,7 @@ function DashboardPage() {
   const [data, setData] = React.useState();
   const [loading, setLoading] = React.useState(false);
 
-  const fetchProtectedData = async () => {
+  const fetchProtectedData = React.useCallback(async () => {
     setLoading(true);
     try {
       const token = await getValidToken();
@@ -153,7 +153,7 @@ function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getValidToken]);
 
   React.useEffect(() => {
     fetchProtectedData();

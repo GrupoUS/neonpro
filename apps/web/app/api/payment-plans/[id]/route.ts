@@ -20,7 +20,7 @@ const updatePaymentPlanSchema = z.object({
     })
     .optional(),
   description: z.string().optional(),
-  metadata: z.record(z.<unknown>()).optional(),
+  metadata: z.record(z.unknown()).optional(),
 });
 
 const paramsSchema = z.object({

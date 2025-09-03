@@ -418,7 +418,7 @@ export const authRoutes = new Hono()
       const authHeader = c.req.header("Authorization");
 
       if (authHeader && authHeader.startsWith("Bearer ")) {
-        const token = authHeader.slice(7);
+        // const token = authHeader.slice(7); // Not used currently
 
         // Sign out the user from Supabase (invalidates the session)
         await supabase.auth.signOut();

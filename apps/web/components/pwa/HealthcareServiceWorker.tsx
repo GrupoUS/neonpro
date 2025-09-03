@@ -206,7 +206,7 @@ export function useHealthcareServiceWorker() {
     if ("serviceWorker" in navigator) {
       const registration = await navigator.serviceWorker.getRegistration();
       if (registration?.waiting) {
-        registration.waiting.postMessage({ type: "SKIP_WAITING" });
+        registration.waiting.postMessage({ type: "SKIP_WAITING" }, self.location.origin);
         window.location.reload();
       }
     }

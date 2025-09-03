@@ -12,7 +12,7 @@
  * - ANVISA regulatory field validation
  */
 
-import type { Context, MiddlewareHandler } from "hono";
+// import type { Context, MiddlewareHandler } from "hono";
 import { z } from "zod";
 
 // Brazilian document types
@@ -215,22 +215,22 @@ export class HealthcareLicenseValidator {
       && Object.values(BrazilianState).includes(state);
   }
 
-  private static validateCRF(license: string, state: BrazilianState): boolean {
+  private static validateCRF(license: string, _state: BrazilianState): boolean {
     // CRF format: 4-5 digits + state code
     return license.length >= 4 && license.length <= 5;
   }
 
-  private static validateCRN(license: string, state: BrazilianState): boolean {
+  private static validateCRN(license: string, _state: BrazilianState): boolean {
     // CRN format: 4-5 digits + state code
     return license.length >= 4 && license.length <= 5;
   }
 
-  private static validateCREFITO(license: string, state: BrazilianState): boolean {
+  private static validateCREFITO(license: string, _state: BrazilianState): boolean {
     // CREFITO format: 6 digits + regional number
     return license.length === 6;
   }
 
-  private static validateCOREN(license: string, state: BrazilianState): boolean {
+  private static validateCOREN(license: string, _state: BrazilianState): boolean {
     // COREN format: 6 digits + state code
     return license.length === 6;
   }

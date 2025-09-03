@@ -1,18 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import {
-  AlertTriangle,
-  CheckCircle,
-  Loader2,
-  RefreshCw,
-  Wifi,
-  WifiOff,
-  XCircle,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle, Loader2, RefreshCw, WifiOff, XCircle } from "lucide-react";
 import React from "react";
 
 // Loading States
@@ -164,7 +156,7 @@ export const NetworkStatus: React.FC<NetworkStatusProps> = ({
   isOnline = true,
   className,
 }) => {
-  if (isOnline) {return null;}
+  if (isOnline) return null;
 
   return (
     <div
@@ -230,7 +222,7 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
 
 // Empty States
 export interface EmptyStateProps {
-  icon?: React.ComponentType<<unknown>>;
+  icon?: React.ComponentType<unknown>;
   title: string;
   description?: string;
   action?: {

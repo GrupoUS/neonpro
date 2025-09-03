@@ -213,7 +213,7 @@ export class NeonProAIIntegration {
       const accuracy = Object.assign(
         {},
         ...accuracyChecks.map((check) => {
-          const [key, value] = Object.entries(check)[0];
+          const [[key, value]] = Object.entries(check);
           return { [key]: (value as unknown).currentAccuracy };
         }),
       );

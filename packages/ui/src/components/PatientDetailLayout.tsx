@@ -121,7 +121,7 @@ const PatientDetailLayout = React.forwardRef<
                 <div className="flex items-center gap-1">
                   {patient.phone && (
                     <Button
-                      onClick={() => onCall?.(patient.phone!)}
+                      onClick={() => patient.phone && onCall?.(patient.phone)}
                       size="sm"
                       variant="outline"
                     >
@@ -132,7 +132,7 @@ const PatientDetailLayout = React.forwardRef<
 
                   {patient.email && (
                     <Button
-                      onClick={() => onEmail?.(patient.email!)}
+                      onClick={() => patient.email && onEmail?.(patient.email)}
                       size="sm"
                       variant="outline"
                     >

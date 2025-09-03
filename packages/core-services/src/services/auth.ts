@@ -5,8 +5,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { sign, verify } from "jsonwebtoken";
-import { randomBytes, scrypt } from "node:crypto";
-import { promisify } from "node:util";
+import { randomBytes } from "node:crypto";
 import { config } from "./configuration";
 import { monitoring } from "./monitoring";
 // ================================================

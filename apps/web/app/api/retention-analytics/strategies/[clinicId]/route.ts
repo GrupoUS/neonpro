@@ -53,12 +53,12 @@ const CreateStrategySchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().min(1).max(1000),
   strategy_type: z.nativeEnum(RetentionStrategyType),
-  trigger_conditions: z.record(z.<unknown>()),
-  action_sequence: z.array(z.record(z.<unknown>())),
-  target_criteria: z.record(z.<unknown>()),
+  trigger_conditions: z.record(z.unknown()),
+  action_sequence: z.array(z.record(z.unknown())),
+  target_criteria: z.record(z.unknown()),
   priority: z.number().min(1).max(10).default(5),
   is_active: z.boolean().default(true),
-  schedule_config: z.record(z.<unknown>()).optional(),
+  schedule_config: z.record(z.unknown()).optional(),
 });
 // =====================================================================================
 // GET RETENTION STRATEGIES

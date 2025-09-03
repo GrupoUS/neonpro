@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Mic, MicOff, Square } from "lucide-react";
+import { Mic, Square } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ConfidenceIndicator } from "./confidence-indicator";
 
@@ -43,7 +43,8 @@ export function VoiceInput({
     // Verifica se a Speech Recognition API é suportada
     if (typeof window !== "undefined") {
       const SpeechRecognition = window.SpeechRecognition
-        || (window as any).webkitSpeechRecognition;
+        || (window as unknown as { webkitSpeechRecognition?: typeof window.SpeechRecognition; })
+          .webkitSpeechRecognition;
 
       if (!SpeechRecognition) {
         setIsSupported(false);
@@ -93,8 +94,9 @@ export function VoiceInput({
         setIsListening(false);
       };
 
-      recognition.onerror = (event: SpeechRecognitionError) => {
-        console.error("Speech recognition error:", event.error);
+      recognition.addEventListener("error", (event: Event) => {
+        const err = event as unknown as SpeechRecognitionError;
+        console.error("Speech recognition error:", err.error);
         setIsListening(false);
 
         const errorMessages = {
@@ -105,13 +107,13 @@ export function VoiceInput({
           "service-not-allowed": "Serviço de reconhecimento não permitido.",
           "bad-grammar": "Erro na gramática de reconhecimento.",
           "language-not-supported": "Idioma não suportado.",
-        };
+        } as const;
 
-        const errorMessage = errorMessages[event.error as keyof typeof errorMessages]
-          || `Erro de reconhecimento de fala: ${event.error}`;
+        const errorMessage = errorMessages[err.error as keyof typeof errorMessages]
+          || `Erro de reconhecimento de fala: ${err.error}`;
 
         onError?.(errorMessage);
-      };
+      });
 
       recognitionRef.current = recognition;
     }

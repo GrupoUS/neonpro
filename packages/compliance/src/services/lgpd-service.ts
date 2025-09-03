@@ -552,10 +552,12 @@ export class LgpdService {
 
     // Auto-schedule notifications if required
     if (anpdNotificationRequired) {
-      await LgpdService.scheduleAnpdNotification(
-        incident,
-        notificationDeadline!,
-      );
+      if (notificationDeadline) {
+        await LgpdService.scheduleAnpdNotification(
+          incident,
+          notificationDeadline,
+        );
+      }
     }
 
     if (userNotificationRequired) {

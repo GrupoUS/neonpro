@@ -885,9 +885,9 @@ export class HealthcareRbacService {
     }
 
     // Validate role hierarchy conflicts
-    const userRoles = user.assigned_roles.map(
-      (roleId) => this.roles.get(roleId)!,
-    );
+    const userRoles = user.assigned_roles
+      .map((roleId) => this.roles.get(roleId))
+      .filter((r): r is NonNullable<typeof r> => Boolean(r));
     const hierarchyLevels = userRoles.map((role) => role.hierarchy_level);
 
     // Check for inappropriate hierarchy combinations

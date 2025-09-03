@@ -1,0 +1,37 @@
+{
+  "dependencies": [],
+  "devDependencies": ["@types/react-dom", "@types/node"],
+  "missing": {},
+  "using": {
+    "tsup": [
+      "/home/vibecoder/neonpro/packages/health-dashboard/package.json",
+      "/home/vibecoder/neonpro/packages/health-dashboard/tsup.config.ts"
+    ],
+    "typescript": [
+      "/home/vibecoder/neonpro/packages/health-dashboard/package.json",
+      "/home/vibecoder/neonpro/packages/health-dashboard/tsup.config.ts"
+    ],
+    "react": [
+      "/home/vibecoder/neonpro/packages/health-dashboard/package.json",
+      "/home/vibecoder/neonpro/packages/health-dashboard/src/index.ts",
+      "/home/vibecoder/neonpro/packages/health-dashboard/src/components/cache-metrics.tsx",
+      "/home/vibecoder/neonpro/packages/health-dashboard/src/components/dashboard.tsx",
+      "/home/vibecoder/neonpro/packages/health-dashboard/dist/index.js",
+      "/home/vibecoder/neonpro/packages/health-dashboard/dist/index.mjs"
+    ],
+    "@neonpro/monitoring": [
+      "/home/vibecoder/neonpro/packages/health-dashboard/src/index.ts",
+      "/home/vibecoder/neonpro/packages/health-dashboard/src/components/dashboard.tsx"
+    ],
+    "react-dom": [
+      "/home/vibecoder/neonpro/packages/health-dashboard/src/index.ts",
+      "/home/vibecoder/neonpro/packages/health-dashboard/src/components/cache-metrics.tsx"
+    ],
+    "@types/react": [
+      "/home/vibecoder/neonpro/packages/health-dashboard/src/components/cache-metrics.tsx",
+      "/home/vibecoder/neonpro/packages/health-dashboard/src/components/dashboard.tsx"
+    ]
+  },
+  "invalidFiles": {},
+  "invalidDirs": {}
+}

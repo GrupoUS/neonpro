@@ -286,8 +286,18 @@ class BrazilianConnectivityOptimizer {
   private preloadImage(src: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.onload = () => resolve();
-      img.onerror = () => reject();
+      const onLoad = () => {
+        img.removeEventListener("load", onLoad);
+        img.removeEventListener("error", onError);
+        resolve();
+      };
+      const onError = () => {
+        img.removeEventListener("load", onLoad);
+        img.removeEventListener("error", onError);
+        reject();
+      };
+      img.addEventListener("load", onLoad);
+      img.addEventListener("error", onError);
       img.src = src;
     });
   }

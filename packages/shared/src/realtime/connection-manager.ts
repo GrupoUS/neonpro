@@ -220,8 +220,8 @@ export class SupabaseRealtimeManager {
       return;
     }
 
-    window.addEventListener("focus", this.handleWindowFocus.bind(this));
-    window.addEventListener("blur", this.handleWindowBlur.bind(this));
+    window.addEventListener("focus", this.onFocus);
+    window.addEventListener("blur", this.onBlur);
   } /**
    * Subscribe to a realtime channel
    */
@@ -495,6 +495,9 @@ export class SupabaseRealtimeManager {
   /**
    * Destroy connection manager
    */
+  private onFocus = () => this.handleWindowFocus();
+  private onBlur = () => this.handleWindowBlur();
+
   public destroy(): void {
     this.isDestroyed = true;
 
@@ -517,8 +520,8 @@ export class SupabaseRealtimeManager {
 
     // Remove event listeners
     if (typeof window !== "undefined") {
-      window.removeEventListener("focus", this.handleWindowFocus.bind(this));
-      window.removeEventListener("blur", this.handleWindowBlur.bind(this));
+      window.removeEventListener("focus", this.onFocus);
+      window.removeEventListener("blur", this.onBlur);
     }
 
     // Clear status listeners

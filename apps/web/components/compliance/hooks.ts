@@ -355,7 +355,7 @@ export const useComplianceCheck = () => {
  */
 export const useComplianceReports = () => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [reports, setReports] = useState << unknown > [] > [];
+  const [reports, setReports] = useState<unknown[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const generateReport = useCallback(

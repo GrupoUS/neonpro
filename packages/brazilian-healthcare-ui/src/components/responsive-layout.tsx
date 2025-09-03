@@ -4,6 +4,16 @@ import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import type { ConnectivityLevel, RegionalSettings } from "../types";
 
+interface RegionalOptimizations {
+  minTouchTarget?: string;
+  highContrast?: boolean;
+  reduceAnimations?: boolean;
+  compressImages?: boolean;
+  prefetchDisabled?: boolean;
+  enableAdvancedFeatures?: boolean;
+  highQualityImages?: boolean;
+}
+
 interface ResponsiveLayoutProps {
   children: ReactNode;
   connectivity?: ConnectivityLevel;
@@ -53,8 +63,14 @@ export function ResponsiveLayout({
     }
 
     // Use Network Information API if available
-    if ("connection" in navigator) {
-      const connection = (navigator as unknown).connection;
+    if (typeof navigator !== "undefined" && "connection" in navigator) {
+      interface NavigatorConnection {
+        effectiveType?: string;
+        addEventListener?: (t: string, cb: () => void) => void;
+        removeEventListener?: (t: string, cb: () => void) => void;
+      }
+      const connection = (navigator as unknown as { connection?: NavigatorConnection; }).connection;
+
       const updateConnectionInfo = () => {
         setConnectionSpeed(connection?.effectiveType || "unknown");
         setIsLowBandwidth(
@@ -64,21 +80,21 @@ export function ResponsiveLayout({
       };
 
       updateConnectionInfo();
-      connection.addEventListener("change", updateConnectionInfo);
+      connection?.addEventListener?.("change", updateConnectionInfo);
 
-      return () => connection.removeEventListener("change", updateConnectionInfo);
+      return () => connection?.removeEventListener?.("change", updateConnectionInfo);
     }
   }, [connectivity]);
 
   // Brazilian region-specific optimizations
-  const getRegionalOptimizations = () => {
+  const getRegionalOptimizations = (): RegionalOptimizations => {
     if (!regional) {
       return {};
     }
 
-    const baseOptimizations = {
+    const baseOptimizations: RegionalOptimizations = {
       // All regions: Touch-friendly, high contrast for sunlight
-      minTouchTarget: "12px", // 48px minimum as per spacing.12
+      minTouchTarget: "48px",
       highContrast: true,
     };
 
@@ -120,7 +136,7 @@ export function ResponsiveLayout({
       data-connectivity={connectionSpeed}
       data-viewport={viewport}
       style={{
-        "--min-touch-target": (optimizations as unknown)?.minTouchTarget || "48px",
+        "--min-touch-target": optimizations.minTouchTarget ?? "48px",
       } as React.CSSProperties}
     >
       {/* Connectivity Status Bar - Critical for Brazilian healthcare */}
@@ -226,9 +242,9 @@ export function ResponsiveLayout({
 
         /* Touch targets for tablets - healthcare requirement */
         .tablet-layout button,
-        .tablet-layout [// role="button" - consider using actual button element],
+        .tablet-layout [role="button"],
         .mobile-layout button,
-        .mobile-layout [// role="button" - consider using actual button element] {
+        .mobile-layout [role="button"] {
           min-height: var(--min-touch-target);
           min-width: var(--min-touch-target);
         }

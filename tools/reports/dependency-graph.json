@@ -1,0 +1,86 @@
+{
+  "generatedAt": "2025-09-02T00:00:00Z",
+  "nodes": [
+    {"id": "apps/web", "type": "app"},
+    {"id": "apps/api", "type": "app"},
+    {"id": "@neonpro/ui", "type": "package"},
+    {"id": "@neonpro/shared", "type": "package"},
+    {"id": "@neonpro/utils", "type": "package"},
+    {"id": "@neonpro/domain", "type": "package"},
+    {"id": "@neonpro/database", "type": "package"},
+    {"id": "@neonpro/ai", "type": "package"},
+    {"id": "@neonpro/monitoring", "type": "package"},
+    {"id": "@neonpro/security", "type": "package"},
+    {"id": "@neonpro/compliance", "type": "package"},
+    {"id": "@neonpro/core-services", "type": "package"},
+    {"id": "@neonpro/cache", "type": "package"},
+    {"id": "@neonpro/health-dashboard", "type": "package"},
+    {"id": "@neonpro/brazilian-healthcare-ui", "type": "package"},
+    {"id": "@neonpro/performance", "type": "package"},
+    {"id": "@neonpro/devops", "type": "package"},
+    {"id": "@neonpro/integrations", "type": "package"},
+    {"id": "@neonpro/docs", "type": "package"},
+    {"id": "@neonpro/enterprise", "type": "package"},
+    {"id": "@neonpro/types", "type": "package"}
+  ],
+  "edges": [
+    {"from": "apps/web", "to": "@neonpro/ui"},
+    {"from": "apps/web", "to": "@neonpro/shared"},
+    {"from": "apps/web", "to": "@neonpro/utils"},
+    {"from": "apps/web", "to": "@neonpro/domain"},
+    {"from": "apps/web", "to": "@neonpro/database"},
+    {"from": "apps/web", "to": "@neonpro/ai", "note": "lazy/dynamic", "status": "manual-review"},
+    {"from": "apps/web", "to": "@neonpro/monitoring"},
+    {"from": "apps/api", "to": "@neonpro/shared"},
+    {"from": "apps/api", "to": "@neonpro/compliance"},
+    {"from": "apps/api", "to": "@neonpro/database"},
+    {"from": "apps/api", "to": "@neonpro/security"},
+
+    {"from": "@neonpro/ui", "to": "@neonpro/types"},
+    {"from": "@neonpro/ui", "to": "@neonpro/shared"},
+
+    {"from": "@neonpro/shared", "to": "@neonpro/types"},
+    {"from": "@neonpro/shared", "to": "@neonpro/database"},
+    {"from": "@neonpro/shared", "to": "@neonpro/auth"},
+
+    {"from": "@neonpro/monitoring", "to": "@neonpro/types"},
+    {"from": "@neonpro/monitoring", "to": "@neonpro/database"},
+    {"from": "@neonpro/monitoring", "to": "@neonpro/shared"},
+    {"from": "@neonpro/monitoring", "to": "@neonpro/core-services"},
+
+    {"from": "@neonpro/devops", "to": "@neonpro/types"},
+    {"from": "@neonpro/devops", "to": "@neonpro/database"},
+    {"from": "@neonpro/devops", "to": "@neonpro/monitoring"},
+
+    {"from": "@neonpro/domain", "to": "@neonpro/types"},
+    {"from": "@neonpro/domain", "to": "@neonpro/database"},
+    {"from": "@neonpro/domain", "to": "@neonpro/shared"},
+
+    {"from": "@neonpro/ai", "to": "@neonpro/types"},
+    {"from": "@neonpro/ai", "to": "@neonpro/cache"},
+    {"from": "@neonpro/ai", "to": "@neonpro/core-services"},
+    {"from": "@neonpro/ai", "to": "@neonpro/database"},
+
+    {"from": "@neonpro/core-services", "to": "@neonpro/types"},
+    {"from": "@neonpro/core-services", "to": "@neonpro/database"},
+    {"from": "@neonpro/core-services", "to": "@neonpro/shared"},
+    {"from": "@neonpro/core-services", "to": "@neonpro/security"},
+
+    {"from": "@neonpro/cache", "to": "@neonpro/types"},
+    {"from": "@neonpro/cache", "to": "@neonpro/database"},
+
+    {"from": "@neonpro/compliance", "to": "@neonpro/types"},
+
+    {"from": "@neonpro/auth", "to": "@neonpro/types"},
+    {"from": "@neonpro/auth", "to": "@neonpro/database"},
+
+    {"from": "@neonpro/brazilian-healthcare-ui", "to": "@neonpro/types"},
+    {"from": "@neonpro/brazilian-healthcare-ui", "to": "@neonpro/ui"},
+    {"from": "@neonpro/brazilian-healthcare-ui", "to": "@neonpro/shared"},
+
+    {"from": "@neonpro/health-dashboard", "to": "@neonpro/types"},
+    {"from": "@neonpro/health-dashboard", "to": "@neonpro/ui"},
+    {"from": "@neonpro/health-dashboard", "to": "@neonpro/brazilian-healthcare-ui"},
+    {"from": "@neonpro/health-dashboard", "to": "@neonpro/monitoring"}
+  ]
+}

@@ -65,10 +65,6 @@ export function ActiveSessionsTable() {
   const [selectedSession, setSelectedSession] = useState<ActiveSession | null>();
   const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
   const [sessionToTerminate, setSessionToTerminate] = useState<string | null>(null);
-  const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
-  const [sessionToTerminate, setSessionToTerminate] = useState<string | null>(null);
-  const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
-  const [sessionToTerminate, setSessionToTerminate] = useState<string | null>(null);
 
   const fetchSessions = async () => {
     try {

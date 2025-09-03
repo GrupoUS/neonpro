@@ -74,7 +74,7 @@ export const analyticsRoutes = new Hono()
       try {
         // Calculate date range based on period
         let dateFrom: string;
-        let dateTo: string = new Date().toISOString().split("T")[0];
+        let [dateTo] = new Date().toISOString().split("T");
 
         if (period === "custom" && startDate && endDate) {
           dateFrom = startDate;
@@ -1018,7 +1018,9 @@ export const analyticsRoutes = new Hono()
 
       const waitTimes = appointmentsWithTimes.map(apt => {
         const scheduledTime = new Date(apt.appointment_time);
-        const actualStartTime = new Date(apt.actual_start_time!);
+        const actualStartTime = apt.actual_start_time
+          ? new Date(apt.actual_start_time)
+          : new Date(apt.appointment_time);
         return Math.max(0, (actualStartTime.getTime() - scheduledTime.getTime()) / (1000 * 60));
       });
       const averageWaitTime = waitTimes.length > 0
@@ -1027,8 +1029,11 @@ export const analyticsRoutes = new Hono()
 
       const adherenceTimes = appointmentsWithTimes.filter(apt => {
         const scheduledDuration = apt.duration || 60; // Default 60 minutes
-        const actualDuration =
-          (new Date(apt.actual_end_time!).getTime() - new Date(apt.actual_start_time!).getTime())
+        const actualDuration = ((apt.actual_end_time
+          ? new Date(apt.actual_end_time).getTime()
+          : new Date(apt.appointment_time).getTime()) - (apt.actual_start_time
+            ? new Date(apt.actual_start_time).getTime()
+            : new Date(apt.appointment_time).getTime()))
           / (1000 * 60);
         return Math.abs(actualDuration - scheduledDuration) <= 15; // Within 15 minutes
       });

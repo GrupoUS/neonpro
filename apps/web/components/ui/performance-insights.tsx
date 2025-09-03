@@ -48,7 +48,7 @@ export function PerformanceInsights({
   onRefreshData,
   className
 }: PerformanceInsightsProps) {
-  const [metrics, setMetrics] = useState&lt;PerformanceMetric[]&gt;([]);
+  const [metrics, setMetrics] = useState<PerformanceMetric[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
@@ -195,222 +195,222 @@ export function PerformanceInsights({
   const averagePerformance = metrics.reduce((acc, m) => acc + getProgressValue(m), 0) / totalMetrics;
 
   return (
-    &lt;Card className={cn('w-full', className)}&gt;
-      &lt;CardHeader className="pb-4"&gt;
-        &lt;div className="flex items-center justify-between"&gt;
-          &lt;CardTitle className="flex items-center gap-2"&gt;
-            &lt;Activity className="h-5 w-5 text-blue-600" /&gt;
+    <Card className={cn('w-full', className)}>
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <Activity className="h-5 w-5 text-blue-600" />
             Performance Insights - {timeRange === 'today' ? 'Hoje' : 
               timeRange === 'week' ? 'Esta Semana' : 
               timeRange === 'month' ? 'Este Mês' : 'Este Trimestre'}
-          &lt;/CardTitle&gt;
+          </CardTitle>
           
-          &lt;div className="flex items-center gap-2"&gt;
-            &lt;Badge variant="outline" className="text-xs"&gt;
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-xs">
               Atualizado: {lastUpdated.toLocaleTimeString('pt-BR', { 
                 hour: '2-digit', 
                 minute: '2-digit' 
               })}
-            &lt;/Badge&gt;
+            </Badge>
             
-            &lt;Button 
+            <Button 
               variant="outline" 
               size="sm"
               onClick={handleRefresh}
               disabled={isLoading}
-            &gt;
-              &lt;RefreshCw className={cn('h-4 w-4 mr-2', isLoading && 'animate-spin')} /&gt;
+            >
+              <RefreshCw className={cn('h-4 w-4 mr-2', isLoading && 'animate-spin')} />
               Atualizar
-            &lt;/Button&gt;
+            </Button>
             
             {userRole === 'Admin' && (
-              &lt;Button 
+              <Button 
                 variant="outline" 
                 size="sm"
                 onClick={onExportData}
-              &gt;
-                &lt;Download className="h-4 w-4 mr-2" /&gt;
+              >
+                <Download className="h-4 w-4 mr-2" />
                 Exportar
-              &lt;/Button&gt;
+              </Button>
             )}
-          &lt;/div&gt;
-        &lt;/div&gt;
+          </div>
+        </div>
 
         {/* Summary Cards */}
-        &lt;div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4"&gt;
-          &lt;Card className="p-3 bg-blue-50 border-blue-200"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm text-blue-600 font-medium"&gt;Performance Geral&lt;/p&gt;
-                &lt;p className="text-2xl font-bold text-blue-900"&gt;
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <Card className="p-3 bg-blue-50 border-blue-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-blue-600 font-medium">Performance Geral</p>
+                <p className="text-2xl font-bold text-blue-900">
                   {Math.round(averagePerformance)}%
-                &lt;/p&gt;
-              &lt;/div&gt;
-              &lt;Activity className="h-8 w-8 text-blue-600" /&gt;
-            &lt;/div&gt;
-          &lt;/Card&gt;
+                </p>
+              </div>
+              <Activity className="h-8 w-8 text-blue-600" />
+            </div>
+          </Card>
 
-          &lt;Card className="p-3 bg-green-50 border-green-200"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm text-green-600 font-medium"&gt;Métricas Ativas&lt;/p&gt;
-                &lt;p className="text-2xl font-bold text-green-900"&gt;{totalMetrics}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;TrendingUp className="h-8 w-8 text-green-600" /&gt;
-            &lt;/div&gt;
-          &lt;/Card&gt;
+          <Card className="p-3 bg-green-50 border-green-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-green-600 font-medium">Métricas Ativas</p>
+                <p className="text-2xl font-bold text-green-900">{totalMetrics}</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-green-600" />
+            </div>
+          </Card>
 
-          &lt;Card className={cn(
+          <Card className={cn(
             'p-3',
             criticalMetrics.length > 0 
               ? 'bg-red-50 border-red-200' 
               : 'bg-yellow-50 border-yellow-200'
-          )}&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className={cn(
+          )}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className={cn(
                   'text-sm font-medium',
                   criticalMetrics.length > 0 ? 'text-red-600' : 'text-yellow-600'
-                )}&gt;
+                )}>
                   Atenção Requerida
-                &lt;/p&gt;
-                &lt;p className={cn(
+                </p>
+                <p className={cn(
                   'text-2xl font-bold',
                   criticalMetrics.length > 0 ? 'text-red-900' : 'text-yellow-900'
-                )}&gt;
+                )}>
                   {criticalMetrics.length}
-                &lt;/p&gt;
-              &lt;/div&gt;
-              &lt;AlertTriangle className={cn(
+                </p>
+              </div>
+              <AlertTriangle className={cn(
                 'h-8 w-8',
                 criticalMetrics.length > 0 ? 'text-red-600' : 'text-yellow-600'
-              )} /&gt;
-            &lt;/div&gt;
-          &lt;/Card&gt;
-        &lt;/div&gt;
-      &lt;/CardHeader&gt;
+              )} />
+            </div>
+          </Card>
+        </div>
+      </CardHeader>
 
-      &lt;CardContent&gt;
+      <CardContent>
         {/* Metrics Grid */}
-        &lt;div className="grid grid-cols-1 md:grid-cols-2 gap-4"&gt;
-          {metrics.map((metric) =&gt; {
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {metrics.map((metric) => {
             const IconComponent = getMetricIcon(metric.category);
             const TrendIcon = getTrendIcon(metric.trend);
             const changePercentage = calculateChangePercentage(metric.value, metric.previousValue);
             const progressValue = getProgressValue(metric);
             
             return (
-              &lt;Card 
+              <Card 
                 key={metric.id} 
                 className={cn(
                   'p-4 transition-all hover:shadow-md',
                   metric.critical && 'border-red-300 bg-red-50'
                 )}
-              &gt;
-                &lt;div className="space-y-3"&gt;
+              >
+                <div className="space-y-3">
                   {/* Header */}
-                  &lt;div className="flex items-center justify-between"&gt;
-                    &lt;div className="flex items-center gap-2"&gt;
-                      &lt;div className={cn(
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className={cn(
                         'p-2 rounded-lg border',
                         getCategoryColor(metric.category)
-                      )}&gt;
-                        &lt;IconComponent className="h-4 w-4" /&gt;
-                      &lt;/div&gt;
-                      &lt;div&gt;
-                        &lt;p className="font-medium text-sm"&gt;{metric.name}&lt;/p&gt;
-                        &lt;p className="text-xs text-gray-500 capitalize"&gt;
+                      )}>
+                        <IconComponent className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{metric.name}</p>
+                        <p className="text-xs text-gray-500 capitalize">
                           {metric.category}
-                        &lt;/p&gt;
-                      &lt;/div&gt;
-                    &lt;/div&gt;
+                        </p>
+                      </div>
+                    </div>
                     
                     {metric.critical && (
-                      &lt;AlertTriangle className="h-4 w-4 text-red-500" /&gt;
+                      <AlertTriangle className="h-4 w-4 text-red-500" />
                     )}
-                  &lt;/div&gt;
+                  </div>
 
                   {/* Value and Trend */}
-                  &lt;div className="flex items-end justify-between"&gt;
-                    &lt;div&gt;
-                      &lt;p className="text-2xl font-bold"&gt;
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <p className="text-2xl font-bold">
                         {metric.unit === 'R$' ? (
                           `R$ ${metric.value.toLocaleString('pt-BR')}`
                         ) : (
                           `${metric.value}${metric.unit}`
                         )}
-                      &lt;/p&gt;
+                      </p>
                       
                       {metric.target && (
-                        &lt;p className="text-xs text-gray-500"&gt;
+                        <p className="text-xs text-gray-500">
                           Meta: {metric.unit === 'R$' ? `R$ ${metric.target.toLocaleString('pt-BR')}` : `${metric.target}${metric.unit}`}
-                        &lt;/p&gt;
+                        </p>
                       )}
-                    &lt;/div&gt;
+                    </div>
 
-                    &lt;div className="flex items-center gap-1"&gt;
-                      &lt;TrendIcon className={cn(
+                    <div className="flex items-center gap-1">
+                      <TrendIcon className={cn(
                         'h-4 w-4',
                         metric.trend === 'up' ? 'text-green-600' : 
                         metric.trend === 'down' ? 'text-red-600' : 'text-gray-600'
-                      )} /&gt;
-                      &lt;span className={cn(
+                      )} />
+                      <span className={cn(
                         'text-sm font-medium',
                         metric.trend === 'up' ? 'text-green-600' : 
                         metric.trend === 'down' ? 'text-red-600' : 'text-gray-600'
-                      )}&gt;
+                      )}>
                         {changePercentage > 0 ? '+' : ''}{changePercentage.toFixed(1)}%
-                      &lt;/span&gt;
-                    &lt;/div&gt;
-                  &lt;/div&gt;
+                      </span>
+                    </div>
+                  </div>
 
                   {/* Progress Bar */}
                   {metric.target && (
-                    &lt;div className="space-y-1"&gt;
-                      &lt;Progress 
+                    <div className="space-y-1">
+                      <Progress 
                         value={progressValue} 
                         className={cn(
                           'h-2',
                           progressValue >= 100 ? 'bg-green-100' :
                           progressValue >= 75 ? 'bg-yellow-100' : 'bg-red-100'
                         )}
-                      /&gt;
-                      &lt;div className="flex justify-between text-xs text-gray-500"&gt;
-                        &lt;span&gt;Progresso&lt;/span&gt;
-                        &lt;span&gt;{Math.round(progressValue)}% da meta&lt;/span&gt;
-                      &lt;/div&gt;
-                    &lt;/div&gt;
+                      />
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span>Progresso</span>
+                        <span>{Math.round(progressValue)}% da meta</span>
+                      </div>
+                    </div>
                   )}
                 </div>
-              &lt;/Card&gt;
+              </Card>
             );
           })}
-        &lt;/div&gt;
+        </div>
 
         {/* Time Range Selector */}
-        &lt;div className="mt-6 pt-4 border-t"&gt;
-          &lt;div className="flex items-center justify-between"&gt;
-            &lt;p className="text-sm font-medium"&gt;Período de Análise:&lt;/p&gt;
-            &lt;div className="flex gap-1"&gt;
+        <div className="mt-6 pt-4 border-t">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium">Período de Análise:</p>
+            <div className="flex gap-1">
               {[
                 { value: 'today', label: 'Hoje' },
                 { value: 'week', label: 'Semana' },
                 { value: 'month', label: 'Mês' },
                 { value: 'quarter', label: 'Trimestre' }
-              ].map((range) =&gt; (
-                &lt;Button
+              ].map((range) => (
+                <Button
                   key={range.value}
                   variant={timeRange === range.value ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() =&gt; onTimeRangeChange?.(range.value)}
-                &gt;
+                  onClick={() => onTimeRangeChange?.(range.value)}
+                >
                   {range.label}
-                &lt;/Button&gt;
+                </Button>
               ))}
-            &lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/CardContent&gt;
-    &lt;/Card&gt;
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

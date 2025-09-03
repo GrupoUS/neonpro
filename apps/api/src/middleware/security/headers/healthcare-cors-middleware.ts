@@ -478,7 +478,7 @@ export class HealthcareCORSManager {
       ];
 
       const urlObj = new URL(origin);
-      const hostname = urlObj.hostname;
+      const { hostname } = urlObj;
 
       // Check against healthcare domain patterns
       for (const pattern of healthcareDomainPatterns) {

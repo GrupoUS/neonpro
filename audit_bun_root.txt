@@ -1,0 +1,17 @@
+tmp  <=0.2.3
+  @turbo/gen › inquirer › external-editor › tmp
+  low: tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter - https://github.com/advisories/GHSA-52f5-9888-hmc6
+
+xlsx  <0.19.3
+  (direct dependency)
+  high: Prototype Pollution in sheetJS - https://github.com/advisories/GHSA-4r6h-8v6p-xvw6
+  high: SheetJS Regular Expression Denial of Service (ReDoS) - https://github.com/advisories/GHSA-5pgg-2g8v-p4x9
+
+3 vulnerabilities (2 high, 1 low)
+
+To update all dependencies to the latest compatible versions:
+  bun update
+
+To update all dependencies to the latest versions (including breaking changes):
+  bun update --latest
+

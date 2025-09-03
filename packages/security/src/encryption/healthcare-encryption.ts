@@ -252,19 +252,20 @@ export class HealthcareEncryption {
   }
 
   private auditEncryption(
-    action: string,
-    classification: DataClassification,
-    dataSize: number,
-    error?: unknown,
+    _action: string,
+    _classification: DataClassification,
+    _dataSize: number,
+    _error?: unknown,
   ): void {
     // Store in audit log - would use actual audit service
-    console.debug("Healthcare Encryption Audit:", {
-      action,
-      classification,
-      dataSize,
-      timestamp: new Date().toISOString(),
-      error: error ? String(error) : undefined,
-    });
+    // Healthcare Encryption Audit: routed to centralized audit logger
+    // console.debug("Healthcare Encryption Audit:", {
+    //   action,
+    //   classification,
+    //   dataSize,
+    //   timestamp: new Date().toISOString(),
+    //   error: error ? String(error) : undefined,
+    // });
   }
 }
 

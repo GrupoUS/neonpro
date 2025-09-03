@@ -32,6 +32,7 @@ import {
   Heart,
   Maximize,
   MessageCircle,
+  Pause,
   Play,
   RotateCcw,
   Search,

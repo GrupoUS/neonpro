@@ -586,7 +586,7 @@ export class AnalyticsService extends EnhancedServiceBase {
           filters: request.filters || [],
           refreshRate: request.refreshRate || 300_000, // 5 minutes default
           isPublic: request.isPublic,
-          createdBy: context.userId!,
+          createdBy: context.userId ?? "system",
           createdAt: new Date(),
           updatedAt: new Date(),
         };
@@ -675,7 +675,7 @@ export class AnalyticsService extends EnhancedServiceBase {
           format: request.format,
           recipients: request.recipients,
           isActive: true,
-          createdBy: context.userId!,
+          createdBy: context.userId ?? "system",
           createdAt: new Date(),
         };
 

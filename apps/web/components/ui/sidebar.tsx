@@ -69,6 +69,17 @@ function SidebarProvider({
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
   const [_open, _setOpen] = React.useState(defaultOpen);
+  // Load persisted state from localStorage on mount (if uncontrolled)
+  React.useEffect(() => {
+    if (openProp === undefined && typeof window !== "undefined") {
+      try {
+        const saved = window.localStorage.getItem(SIDEBAR_COOKIE_NAME);
+        if (saved != null) _setOpen(saved === "true");
+      } catch {
+        // ignore storage errors
+      }
+    }
+  }, [openProp]);
   const open = openProp ?? _open;
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
@@ -79,9 +90,14 @@ function SidebarProvider({
         _setOpen(openState);
       }
 
-      // This sets the cookie to keep the sidebar state.
-      document.cookie =
-        `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      // Persist sidebar state (client-safe; no cookies)
+      try {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(SIDEBAR_COOKIE_NAME, String(openState));
+        }
+      } catch {
+        // ignore storage errors
+      }
     },
     [setOpenProp, open],
   );

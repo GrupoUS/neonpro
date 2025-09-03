@@ -311,7 +311,7 @@ export const HealthcareImageUtils = {
     // Check minimum resolution for medical images
     const minWidth = 800;
     const minHeight = 600;
-    const minQuality = 0.8;
+    // const minQuality = 0.8; // reserved for future advanced quality checks
 
     if (canvas.width < minWidth || canvas.height < minHeight) {
       return false;
@@ -326,7 +326,10 @@ export const HealthcareImageUtils = {
     canvas: HTMLCanvasElement,
     clinicName: string,
   ): Promise<HTMLCanvasElement> => {
-    const ctx = canvas.getContext("2d")!;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      throw new Error("Failed to get 2D rendering context from canvas");
+    }
 
     // Add timestamp watermark
     const timestamp = new Date().toLocaleString("pt-BR");
@@ -348,11 +351,14 @@ export const HealthcareImageUtils = {
 
     // Create canvas for compression
     const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d")!;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      throw new Error("Failed to get 2D rendering context from canvas");
+    }
     const img = new Image();
 
     return new Promise((resolve) => {
-      img.onload = () => {
+      img.addEventListener("load", () => {
         // Calculate new dimensions to fit size limit
         const scale = Math.sqrt((maxSizeKB * 1024) / blob.size);
         canvas.width = img.width * scale;
@@ -361,13 +367,18 @@ export const HealthcareImageUtils = {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
         canvas.toBlob(
-          (compressedBlob) => resolve(compressedBlob!),
+          (compressedBlob) => {
+            if (compressedBlob) {
+              resolve(compressedBlob);
+            }
+          },
           "image/jpeg",
           0.7,
         );
-      };
+      });
 
       img.src = URL.createObjectURL(blob);
+      img.decode?.().catch(() => {/* noop */});
     });
   },
 } as const;

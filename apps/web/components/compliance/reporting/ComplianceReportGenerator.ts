@@ -366,33 +366,33 @@ export class ComplianceReportGenerator {
   /**
    * Generate recommendations based on compliance data
    */
-  private async generateRecommendations(data: ReportData, config: ReportGenerationConfig): Promise<<unknown>[]> {
-    const recommendations: unknown[] = [];
+  private async generateRecommendations(data: ReportData, config: ReportGenerationConfig): Promise<unknown[]> {
+  const recommendations: unknown[] = [];
 
-    // Framework-specific recommendations
-    for (const framework of config.frameworks) {
-      const frameworkScore = data.summary.frameworkScores[framework] || 0;
-      const frameworkViolations = data.violations.filter(v => v.framework === framework);
+  // Framework-specific recommendations
+  for (const framework of config.frameworks) {
+    const frameworkScore = data.summary.frameworkScores[framework] || 0;
+    const frameworkViolations = data.violations.filter(v => v.framework === framework);
 
-      if (frameworkScore < 80) {
-        recommendations.push(...await this.getFrameworkRecommendations(framework, frameworkViolations));
-      }
+    if (frameworkScore < 80) {
+      recommendations.push(...await this.getFrameworkRecommendations(framework, frameworkViolations));
     }
-
-    // General improvement recommendations
-    recommendations.push(...await this.getGeneralRecommendations(data));
-
-    // Priority recommendations based on critical violations
-    const criticalViolations = data.violations.filter(v => v.severity === 'critical');
-    if (criticalViolations.length > 0) {
-      recommendations.push(...await this.getCriticalViolationRecommendations(criticalViolations));
-    }
-
-    // Sort by priority and return top recommendations
-    return recommendations
-      .sort((a, b) => b.priority - a.priority)
-      .slice(0, 15);
   }
+
+  // General improvement recommendations
+  recommendations.push(...await this.getGeneralRecommendations(data));
+
+  // Priority recommendations based on critical violations
+  const criticalViolations = data.violations.filter(v => v.severity === 'critical');
+  if (criticalViolations.length > 0) {
+    recommendations.push(...await this.getCriticalViolationRecommendations(criticalViolations));
+  }
+
+  // Sort by priority and return top recommendations
+  return recommendations
+    .sort((a, b) => (b as any).priority - (a as any).priority)
+    .slice(0, 15);
+}
 
   /**
    * Apply template to report content
@@ -614,41 +614,41 @@ export class ComplianceReportGenerator {
     return { type: 'line', data: trends.map(t => t.violationHistory) };
   }
 
-  private async getFrameworkRecommendations(framework: ComplianceFramework, violations: ComplianceViolation[]): Promise<<unknown>[]> {
-    return [
-      { 
-        title: `Improve ${framework} compliance`,
-        description: `Address ${violations.length} violations`,
-        priority: 8,
-        effort: 'medium',
-        impact: 'high'
-      }
-    ];
-  }
+  private async getFrameworkRecommendations(framework: ComplianceFramework, violations: ComplianceViolation[]): Promise<unknown[]> {
+  return [
+    { 
+      title: `Improve ${framework} compliance`,
+      description: `Address ${violations.length} violations`,
+      priority: 8,
+      effort: "medium",
+      impact: "high",
+    },
+  ] as unknown[];
+}
 
-  private async getGeneralRecommendations(data: ReportData): Promise<<unknown>[]> {
-    return [
-      {
-        title: 'Implement automated compliance monitoring',
-        description: 'Set up continuous compliance checking',
-        priority: 9,
-        effort: 'high',
-        impact: 'high'
-      }
-    ];
-  }
+  private async getGeneralRecommendations(_data: ReportData): Promise<unknown[]> {
+  return [
+    {
+      title: "Implement automated compliance monitoring",
+      description: "Set up continuous compliance checking",
+      priority: 9,
+      effort: "high",
+      impact: "high",
+    },
+  ] as unknown[];
+}
 
-  private async getCriticalViolationRecommendations(violations: ComplianceViolation[]): Promise<<unknown>[]> {
-    return [
-      {
-        title: 'Address critical compliance violations immediately',
-        description: `${violations.length} critical violations need immediate attention`,
-        priority: 10,
-        effort: 'high',
-        impact: 'critical'
-      }
-    ];
-  }
+  private async getCriticalViolationRecommendations(violations: ComplianceViolation[]): Promise<unknown[]> {
+  return [
+    {
+      title: "Address critical compliance violations immediately",
+      description: `${violations.length} critical violations need immediate attention`,
+      priority: 10,
+      effort: "high",
+      impact: "critical",
+    },
+  ] as unknown[];
+}
 
   private async generateCustomSection(section: string, data: ReportData, config: ReportGenerationConfig): Promise<unknown> {
     // Mock implementation for custom sections

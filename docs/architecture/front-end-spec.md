@@ -39,7 +39,6 @@ packages/     # 20 specialized packages
 apps/
 ├── web/              # Next.js 15 Frontend Application
 ├── api/              # Hono.dev Backend API  
-└── docs/             # Documentation Site
 
 packages/ (20 packages organized by domain)
 ├── UI & Components (4)

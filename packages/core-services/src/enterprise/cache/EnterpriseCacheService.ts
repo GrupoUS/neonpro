@@ -125,9 +125,9 @@ class RedisCacheLayer implements CacheLayer {
 
   constructor(config: EnterpriseCacheConfig["layers"]["redis"]) {
     try {
-      // Dynamic require to make Redis optional dependency
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { default: Redis } = await import("ioredis");
+      // Dynamic import in constructor is not allowed with await; use require
+      // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+      const Redis = require("ioredis");
       this.redis = new Redis({
         host: config.host,
         port: config.port,

@@ -183,10 +183,13 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
     if (typeof window === "undefined") return Promise.resolve(false);
 
     return new Promise<boolean>((resolve) => {
-      const consent = window.confirm(
-        "Para utilizar recursos de IA preditiva, precisamos processar dados clínicos com algoritmos de aprendizado de máquina. "
-          + "Os dados são processados localmente no seu dispositivo. Autoriza o uso de IA para predições clínicas?",
-      );
+      // TODO: Replace with custom modal in UI layer; confirm used as minimal fallback
+      const consent = typeof window !== "undefined" && typeof window.confirm === "function"
+        ? window.confirm(
+          "Para utilizar recursos de IA preditiva, precisamos processar dados clínicos com algoritmos de aprendizado de máquina. "
+            + "Os dados são processados localmente no seu dispositivo. Autoriza o uso de IA para predições clínicas?",
+        )
+        : false;
 
       if (consent) {
         localStorage.setItem("lgpd-consent-ai", "accepted");

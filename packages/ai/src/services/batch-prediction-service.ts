@@ -930,7 +930,7 @@ export class BatchPredictionService extends EnhancedAIService {
 
   private async fetchAppointments(
     parameters: BatchPredictionJob["parameters"],
-  ): Promise<<unknown>[]> {
+  ): Promise<unknown[]> {
     // In production, query Supabase with filters
     // For now, simulate appointment data
     const appointments: unknown[] = [];

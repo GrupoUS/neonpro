@@ -419,7 +419,8 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
             {/* Status Filter */}
             <select
               value={statusFilter}
-              onChange={(e) => onStatusFilterChange?.(e.target.value as any)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                onStatusFilterChange?.(e.target.value)}
               className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">Todos os Status</option>
@@ -433,7 +434,8 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
             {/* Method Filter */}
             <select
               value={methodFilter}
-              onChange={(e) => onMethodFilterChange?.(e.target.value as any)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                onMethodFilterChange?.(e.target.value)}
               className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">Todas as Formas</option>

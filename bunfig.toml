@@ -50,7 +50,7 @@ BUN_ENV = "development"
 # Testing configuration optimized for healthcare platform
 coverage = true
 timeout = 60000
-preload = ["./vitest.setup.simple.ts"]
+preload = ["./vitest.setup.ts"]
 
 [lockfile]
 # Lockfile configuration for security and reproducibility

@@ -5,6 +5,7 @@
  */
 
 import type { Database } from "@neonpro/types";
+import { HEALTHCARE_DATA_RETENTION_DAYS } from "@neonpro/types/constants/healthcare-constants";
 import { z } from "zod";
 
 // Audit Log Entry Schema
@@ -54,7 +55,6 @@ export const LGPDAuditLogEntrySchema = z.object({
 });
 
 // Audit Configuration Schema
-import { HEALTHCARE_DATA_RETENTION_DAYS } from "@neonpro/types/constants/healthcare-constants";
 
 export const LGPDAuditConfigSchema = z.object({
   retention_period_days: z.number().default(HEALTHCARE_DATA_RETENTION_DAYS), // 7 years as per LGPD

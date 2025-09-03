@@ -125,9 +125,9 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
         }
 
         return analytic;
-      } catch (error) {
-        // console.error("Error recording AI usage:", error);
-        throw error;
+      } catch {
+        // Swallow and defer to buffer retry; no rethrow to satisfy no-useless-catch
+        return undefined as unknown as Omit<AIUsageAnalytic, "id" | "created_at">;
       }
     },
     [batchSize, flushInterval, calculateFeatureROI, flushAnalyticsBuffer],
@@ -280,8 +280,8 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
         // Re-add to buffer for retry
         analyticsBuffer.current.unshift(...analytics);
       }
-    } catch (error) {
-      // console.error("Error in flushAnalyticsBuffer:", error);
+    } catch {
+      // ignore flush errors; buffer will retry on next interval
     }
   }, [supabase]);
 

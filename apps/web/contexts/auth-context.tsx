@@ -204,13 +204,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // If we have a URL, open it in a popup
       if (data?.url) {
+        const left = window.screen.width / 2 - 250;
+        const top = window.screen.height / 2 - 300;
+        const features =
+          `width=500,height=600,scrollbars=yes,resizable=yes,left=${left},top=${top}`;
         const popup = window.open(
           data.url,
           "google-oauth",
-          "width=500,height=600,scrollbars=yes,resizable=yes,left="
-            + (window.screen.width / 2 - 250)
-            + ",top="
-            + (window.screen.height / 2 - 300),
+          features,
         );
 
         if (!popup) {

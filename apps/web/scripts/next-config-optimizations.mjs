@@ -64,7 +64,7 @@ const optimizedNextConfig = {
   },
 
   // Webpack optimization for aggressive bundle splitting
-  webpack: (config, { dev, isServer, webpack }) => {
+  webpack: async (config, { dev, isServer, webpack }) => {
     if (!dev && !isServer) {
       // Enhanced code splitting for healthcare application
       config.optimization.splitChunks = {
@@ -162,9 +162,10 @@ const optimizedNextConfig = {
 
       // Bundle analyzer in development
       if (process.env.ANALYZE === "true") {
-        const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
+        const { BundleAnalyzerPlugin } = await import("webpack-bundle-analyzer");
+        const Analyzer = BundleAnalyzerPlugin.BundleAnalyzerPlugin ?? BundleAnalyzerPlugin;
         config.plugins.push(
-          new BundleAnalyzerPlugin({
+          new Analyzer({
             analyzerMode: "static",
             reportFilename: "../bundle-analysis.html",
             openAnalyzer: true,

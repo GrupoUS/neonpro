@@ -195,17 +195,23 @@ export class CircuitBreaker {
   /**
    * Log state changes for healthcare audit
    */
-  private logStateChange(from: string, to: string, reason: string): void {}
+  private logStateChange(_from: string, _to: string, _reason: string): void {
+    // Intentionally no-op for now to avoid console noise in production
+  }
 
   /**
    * Log healthcare failures for regulatory compliance
    */
-  private logHealthcareFailure(error: unknown): void {}
+  private logHealthcareFailure(_error: unknown): void {
+    // Hook for integrating with audit logging systems
+  }
 
   /**
    * Log emergency bypass usage
    */
-  private logEmergencyBypass(error: unknown): void {}
+  private logEmergencyBypass(_error: unknown): void {
+    // Hook for integrating with audit logging systems
+  }
 }
 
 // Healthcare Circuit Breaker States

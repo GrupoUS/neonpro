@@ -161,7 +161,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
         category: formData.category,
         practitionerId: formData.practitionerId,
         treatmentId: formData.treatmentId,
-        scheduledDate: formData.scheduledDate!,
+        scheduledDate: formData.scheduledDate ?? new Date(),
         scheduledTime: formData.scheduledTime,
         estimatedDuration: formData.estimatedDuration,
         location: formData.location,

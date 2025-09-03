@@ -1,0 +1,210 @@
+{
+  "dependencies": ["@neonpro/database", "@neonpro/domain", "@neonpro/utils"],
+  "devDependencies": ["@neonpro/config"],
+  "missing": {
+    "next": [
+      "/home/vibecoder/neonpro/packages/core-services/src/services/api-gateway.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/api-gateway.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/api-gateway.js"
+    ],
+    "@supabase/supabase-js": [
+      "/home/vibecoder/neonpro/packages/core-services/src/services/auth.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/compliance.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/configuration.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/financial.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/monitoring.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/notification.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/patient.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/auth.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/compliance.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/configuration.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/financial.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/monitoring.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/notification.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/patient.js"
+    ],
+    "jsonwebtoken": [
+      "/home/vibecoder/neonpro/packages/core-services/src/services/auth.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/auth.js"
+    ],
+    "@tanstack/react-query": [
+      "/home/vibecoder/neonpro/packages/core-services/src/hooks/use-patients.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/hooks/use-patients.js"
+    ],
+    "sonner": [
+      "/home/vibecoder/neonpro/packages/core-services/src/hooks/use-patients.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/hooks/use-patients.js"
+    ],
+    "@neonpro/security": [
+      "/home/vibecoder/neonpro/packages/core-services/src/health/EnterpriseHealthCheckService.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/enterprise/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/enterprise/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/enterprise/index.js"
+    ]
+  },
+  "using": {
+    "tsup": [
+      "/home/vibecoder/neonpro/packages/core-services/package.json",
+      "/home/vibecoder/neonpro/packages/core-services/tsup.config.bundled_3qyproifmdo.mjs",
+      "/home/vibecoder/neonpro/packages/core-services/tsup.config.ts"
+    ],
+    "typescript": [
+      "/home/vibecoder/neonpro/packages/core-services/package.json",
+      "/home/vibecoder/neonpro/packages/core-services/tsup.config.bundled_3qyproifmdo.mjs",
+      "/home/vibecoder/neonpro/packages/core-services/tsup.config.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/treatment/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/treatment/service.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/test/fase3-integration-validation.js",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/auth.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/compliance.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/financial.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/notification.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/patient.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/scheduling/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/scheduling/service.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/resilience/circuit-breaker-manager.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/patient/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/patient/service.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/notification/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/notification/service.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/inventory/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/inventory/service.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/health/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/enterprise/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/enterprise/security/EnterpriseSecurityService.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/billing/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/billing/service.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/base/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/index.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/treatment/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/treatment/index.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/treatment/service.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/treatment/service.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/auth.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/compliance.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/financial.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/index.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/notification.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/patient.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/scheduling/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/scheduling/index.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/scheduling/service.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/resilience/circuit-breaker-manager.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/resilience/circuit-breaker-manager.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/patient/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/patient/index.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/patient/service.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/notification/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/notification/index.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/notification/service.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/notification/service.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/inventory/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/inventory/index.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/inventory/service.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/inventory/service.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/health/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/health/index.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/enterprise/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/enterprise/index.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/enterprise/security/EnterpriseSecurityService.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/billing/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/billing/index.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/billing/service.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/billing/service.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/base/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/base/index.js"
+    ],
+    "vitest": [
+      "/home/vibecoder/neonpro/packages/core-services/package.json",
+      "/home/vibecoder/neonpro/packages/core-services/vitest.config.ts",
+      "/home/vibecoder/neonpro/packages/core-services/tests/integration.test.ts"
+    ],
+    "@types/node": [
+      "/home/vibecoder/neonpro/packages/core-services/package.json",
+      "/home/vibecoder/neonpro/packages/core-services/vitest.config.ts",
+      "/home/vibecoder/neonpro/packages/core-services/tests/integration.test.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/auth.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/enterprise/security/EnterpriseSecurityService.ts"
+    ],
+    "zod": [
+      "/home/vibecoder/neonpro/packages/core-services/src/types.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/treatment/types.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/patient/types.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/notification/types.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/inventory/types.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/billing/types.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/types.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/types.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/treatment/types.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/treatment/types.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/patient/types.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/patient/types.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/notification/types.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/notification/types.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/inventory/types.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/inventory/types.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/billing/types.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/billing/types.js"
+    ],
+    "date-fns": [
+      "/home/vibecoder/neonpro/packages/core-services/src/treatment/service.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/patient/service.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/notification/service.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/inventory/service.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/billing/service.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/treatment/service.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/patient/service.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/notification/service.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/inventory/service.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/billing/service.js"
+    ],
+    "next": [
+      "/home/vibecoder/neonpro/packages/core-services/src/services/api-gateway.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/api-gateway.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/api-gateway.js"
+    ],
+    "@supabase/supabase-js": [
+      "/home/vibecoder/neonpro/packages/core-services/src/services/auth.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/compliance.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/configuration.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/financial.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/monitoring.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/notification.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/services/patient.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/auth.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/compliance.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/configuration.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/financial.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/monitoring.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/notification.js",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/patient.js"
+    ],
+    "jsonwebtoken": [
+      "/home/vibecoder/neonpro/packages/core-services/src/services/auth.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/services/auth.js"
+    ],
+    "@tanstack/react-query": [
+      "/home/vibecoder/neonpro/packages/core-services/src/hooks/use-patients.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/hooks/use-patients.js"
+    ],
+    "sonner": [
+      "/home/vibecoder/neonpro/packages/core-services/src/hooks/use-patients.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/hooks/use-patients.js"
+    ],
+    "@neonpro/security": [
+      "/home/vibecoder/neonpro/packages/core-services/src/health/EnterpriseHealthCheckService.ts",
+      "/home/vibecoder/neonpro/packages/core-services/src/enterprise/index.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/enterprise/index.d.ts",
+      "/home/vibecoder/neonpro/packages/core-services/dist/enterprise/index.js"
+    ]
+  },
+  "invalidFiles": {
+    "/home/vibecoder/neonpro/packages/core-services/src/enterprise/cache/EnterpriseCacheService.ts": "SyntaxError: Unexpected reserved word 'await'. (130:33)\n    at constructor (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:367:19)\n    at TypeScriptParserMixin.raise (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:6630:19)\n    at TypeScriptParserMixin.checkReservedWord (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:12237:12)\n    at TypeScriptParserMixin.checkReservedWord (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:9398:13)\n    at TypeScriptParserMixin.parseIdentifierName (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:12217:12)\n    at TypeScriptParserMixin.parseIdentifier (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:12187:23)\n    at TypeScriptParserMixin.parseExprAtom (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:11421:27)\n    at TypeScriptParserMixin.parseExprAtom (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:4797:20)\n    at TypeScriptParserMixin.parseExprSubscripts (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:11081:23)\n    at TypeScriptParserMixin.parseUpdate (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:11066:21)",
+    "/home/vibecoder/neonpro/packages/core-services/dist/enterprise/cache/EnterpriseCacheService.js": "SyntaxError: Unexpected reserved word 'await'. (77:39)\n    at constructor (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:367:19)\n    at FlowParserMixin.raise (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:6630:19)\n    at FlowParserMixin.checkReservedWord (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:12237:12)\n    at FlowParserMixin.parseIdentifierName (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:12217:12)\n    at FlowParserMixin.parseIdentifier (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:12187:23)\n    at FlowParserMixin.parseExprAtom (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:11421:27)\n    at FlowParserMixin.parseExprAtom (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:4797:20)\n    at FlowParserMixin.parseExprSubscripts (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:11081:23)\n    at FlowParserMixin.parseUpdate (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:11066:21)\n    at FlowParserMixin.parseMaybeUnary (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:11046:23)"
+  },
+  "invalidDirs": {}
+}

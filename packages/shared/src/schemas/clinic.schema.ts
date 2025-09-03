@@ -46,10 +46,8 @@ export const BusinessHoursSchema = z
       return false;
     }
 
-    const [openHour] = openTimeParts;
-    const openMin = openTimeParts[1];
-    const [closeHour] = closeTimeParts;
-    const closeMin = closeTimeParts[1];
+    const [openHour, openMin] = openTimeParts;
+    const [closeHour, closeMin] = closeTimeParts;
 
     if (
       typeof openHour !== "number"

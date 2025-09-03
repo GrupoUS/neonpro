@@ -72,3 +72,8 @@ supabase/types/
 **/playwright-report/**
 **/test-results/**
 **/.vercel/**
+# Ignore compiled JS in utils performance module (TypeScript emit uses `void 0`)
+packages/utils/src/performance/*.js
+packages/utils/src/performance/**/*.js
+**/packages/utils/src/performance/*.js
+**/packages/utils/src/performance/**/*.js

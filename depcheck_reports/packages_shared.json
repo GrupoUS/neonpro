@@ -1,0 +1,176 @@
+{
+  "dependencies": ["@neonpro/database"],
+  "devDependencies": ["tsup"],
+  "missing": {
+    "vitest": [
+      "/home/vibecoder/neonpro/packages/shared/vitest.config.ts",
+      "/home/vibecoder/neonpro/packages/shared/tests/api-client.test.ts",
+      "/home/vibecoder/neonpro/packages/shared/tests/hooks/realtime-integration.test.tsx"
+    ],
+    "@testing-library/react": [
+      "/home/vibecoder/neonpro/packages/shared/tests/hooks/realtime-integration.test.tsx"
+    ],
+    "next": [
+      "/home/vibecoder/neonpro/packages/shared/src/auth/protected-route.tsx",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/protected-route.js"
+    ]
+  },
+  "using": {
+    "typescript": ["/home/vibecoder/neonpro/packages/shared/package.json"],
+    "react": [
+      "/home/vibecoder/neonpro/packages/shared/package.json",
+      "/home/vibecoder/neonpro/packages/shared/tests/hooks/realtime-integration.test.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/templates/healthcare-component-template.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/providers/realtime-provider.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-appointments.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-compliance.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-notifications.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-patients.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/hooks/use-healthcare-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/hooks/use-lgpd-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/hooks/use-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/auth/auth-provider.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/auth/protected-route.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/auth/usage-example.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/auth/use-auth-token.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/templates/healthcare-component-template.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/templates/healthcare-component-template.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/providers/realtime-provider.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/hooks/use-realtime-appointments.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/hooks/use-realtime-compliance.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/hooks/use-realtime-notifications.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/hooks/use-realtime-patients.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/hooks/use-healthcare-realtime.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/hooks/use-lgpd-realtime.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/hooks/use-realtime.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/auth-provider.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/protected-route.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/usage-example.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/usage-example.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/use-auth-token.js"
+    ],
+    "@types/node": [
+      "/home/vibecoder/neonpro/packages/shared/vitest.config.ts",
+      "/home/vibecoder/neonpro/packages/shared/tests/api-client.test.ts",
+      "/home/vibecoder/neonpro/packages/shared/tests/hooks/realtime-integration.test.tsx"
+    ],
+    "vitest": [
+      "/home/vibecoder/neonpro/packages/shared/vitest.config.ts",
+      "/home/vibecoder/neonpro/packages/shared/tests/api-client.test.ts",
+      "/home/vibecoder/neonpro/packages/shared/tests/hooks/realtime-integration.test.tsx"
+    ],
+    "@tanstack/react-query": [
+      "/home/vibecoder/neonpro/packages/shared/tests/hooks/realtime-integration.test.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-appointments.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-compliance.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-notifications.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-patients.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/hooks/use-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/hooks/use-realtime-appointments.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/hooks/use-realtime-compliance.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/hooks/use-realtime-notifications.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/hooks/use-realtime-patients.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/hooks/use-realtime.js"
+    ],
+    "@testing-library/react": [
+      "/home/vibecoder/neonpro/packages/shared/tests/hooks/realtime-integration.test.tsx"
+    ],
+    "@types/react": [
+      "/home/vibecoder/neonpro/packages/shared/tests/hooks/realtime-integration.test.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/templates/healthcare-component-template.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/providers/realtime-provider.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-appointments.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-compliance.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-notifications.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/hooks/use-realtime-patients.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/hooks/use-healthcare-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/hooks/use-lgpd-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/hooks/use-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/auth/auth-provider.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/auth/protected-route.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/auth/usage-example.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/auth/use-auth-token.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/templates/healthcare-component-template.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/auth-provider.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/protected-route.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/usage-example.d.ts"
+    ],
+    "hono": [
+      "/home/vibecoder/neonpro/packages/shared/src/api-client.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/types/hono.types.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/templates/healthcare-api-template.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/auth/auth-middleware.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/api-client.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/types/hono.types.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/templates/healthcare-api-template.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/templates/healthcare-api-template.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/auth-middleware.js"
+    ],
+    "zod": [
+      "/home/vibecoder/neonpro/packages/shared/src/api-client.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/templates/healthcare-api-template.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/templates/healthcare-component-template.tsx",
+      "/home/vibecoder/neonpro/packages/shared/src/templates/healthcare-feature-template.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/schemas/appointment.schema.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/schemas/auth.schema.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/schemas/clinic.schema.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/schemas/compliance.schema.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/schemas/patient.schema.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/schemas/professional.schema.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/schemas/service.schema.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/compliance/lgpd-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/api-client.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/templates/healthcare-api-template.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/templates/healthcare-api-template.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/templates/healthcare-component-template.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/templates/healthcare-feature-template.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/templates/healthcare-feature-template.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/appointment.schema.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/appointment.schema.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/auth.schema.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/auth.schema.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/clinic.schema.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/clinic.schema.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/compliance.schema.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/compliance.schema.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/patient.schema.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/patient.schema.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/professional.schema.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/professional.schema.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/service.schema.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/schemas/service.schema.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/compliance/lgpd-realtime.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/compliance/lgpd-realtime.js"
+    ],
+    "@supabase/supabase-js": [
+      "/home/vibecoder/neonpro/packages/shared/src/types/realtime.types.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/realtime/connection-manager.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/hooks/use-healthcare-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/hooks/use-lgpd-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/hooks/use-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/compliance/lgpd-realtime.ts",
+      "/home/vibecoder/neonpro/packages/shared/src/auth/supabase.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/types/realtime.types.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/connection-manager.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/connection-manager.js",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/hooks/use-healthcare-realtime.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/hooks/use-lgpd-realtime.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/hooks/use-realtime.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/compliance/lgpd-realtime.d.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/supabase.js"
+    ],
+    "jsonwebtoken": [
+      "/home/vibecoder/neonpro/packages/shared/src/auth/auth-middleware.ts",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/auth-middleware.js"
+    ],
+    "@types/jsonwebtoken": ["/home/vibecoder/neonpro/packages/shared/src/auth/auth-middleware.ts"],
+    "next": [
+      "/home/vibecoder/neonpro/packages/shared/src/auth/protected-route.tsx",
+      "/home/vibecoder/neonpro/packages/shared/dist/src/auth/protected-route.js"
+    ]
+  },
+  "invalidFiles": {
+    "/home/vibecoder/neonpro/packages/shared/dist/src/realtime/providers/realtime-provider.d.ts": "SyntaxError: Unexpected token (19:43)\n    at constructor (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:367:19)\n    at TypeScriptParserMixin.raise (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:6630:19)\n    at TypeScriptParserMixin.unexpected (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:6650:16)\n    at TypeScriptParserMixin.tsParseNonArrayType (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:8506:10)\n    at TypeScriptParserMixin.tsParseArrayTypeOrHigher (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:8512:21)\n    at /home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:8568:158\n    at TypeScriptParserMixin.tsInAllowConditionalTypesContext (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:8859:14)\n    at TypeScriptParserMixin.tsParseTypeOperatorOrHigher (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:8568:114)\n    at TypeScriptParserMixin.tsParseUnionOrIntersectionType (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:8575:18)\n    at TypeScriptParserMixin.tsParseIntersectionTypeOrHigher (/home/vibecoder/.npm/_npx/d2bd3cb5801d0b99/node_modules/@babel/parser/lib/index.js:8584:17)"
+  },
+  "invalidDirs": {}
+}

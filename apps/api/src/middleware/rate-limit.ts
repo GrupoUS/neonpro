@@ -168,12 +168,12 @@ export const rateLimitMiddleware = (
     const fullPath = `${method} ${path}`;
 
     // Find the most specific matching configuration
-    let effectiveConfig = { ...DEFAULT_CONFIG, ...config };
+    let effectiveConfig = Object.assign({}, DEFAULT_CONFIG, config);
 
     // Check for endpoint-specific configuration
     for (const [pattern, patternConfig] of Object.entries(DEFAULT_LIMITS)) {
       if (path.startsWith(pattern) || fullPath === pattern) {
-        effectiveConfig = { ...effectiveConfig, ...patternConfig };
+        Object.assign(effectiveConfig, patternConfig);
         break;
       }
     }

@@ -7,7 +7,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { z } from "zod";
 // TODO: Import from @neonpro/utils when implementing
 // import { Logger } from '@neonpro/utils';
@@ -50,11 +50,6 @@ interface HealthcareContainerProps {
   accessibilityLevel?: "AA" | "AAA";
 }
 
-const HealthcareContainer: React.FC<HealthcareContainerProps> = ({
-  children,
-  className,
-}) => <div className={className}>{children}</div>;
-
 interface LoadingSpinnerProps {
   size?: string;
 }
@@ -69,12 +64,6 @@ interface ButtonProps {
   className?: string;
   role?: string;
 }
-
-const Button: React.FC<ButtonProps> = ({ children, className, ...props }) => (
-  <button className={className} {...props}>
-    {children}
-  </button>
-);
 
 interface LGPDConsentBannerProps {
   children?: ReactNode;
@@ -136,7 +125,7 @@ const useLGPDConsent = () => ({
   grantConsent: async () => true,
 });
 
-const useHealthcareForm = (schema: unknown) => ({
+const useHealthcareForm = (_schema: unknown) => ({
   // placeholder implementation
 });
 
@@ -687,4 +676,4 @@ export function createHealthcareComponentWithPreset<T>(
   );
 }
 
-export { HealthcareComponentTemplate as default };
+export default HealthcareComponentTemplate;

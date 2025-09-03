@@ -3,8 +3,6 @@
 // Enterprise-grade API gateway with authentication, rate limiting, and routing
 // ================================================
 
-import rateLimit from "express-rate-limit";
-import slowDown from "express-slow-down";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -221,7 +219,12 @@ export class CircuitBreaker {
         state: "CLOSED",
       });
     }
-    return this.states.get(serviceKey)!;
+    return this.states.get(serviceKey) ?? {
+      healthy: false,
+      lastChecked: Date.now(),
+      responseTime: 0,
+      errorRate: 0,
+    };
   }
 
   private onSuccess(serviceKey: string): void {
@@ -391,12 +394,15 @@ export class RequestRouter {
     headers.set("X-Forwarded-For", request.ip || "unknown");
 
     try {
-      const response = await fetch(url.toString(), {
+      const init: RequestInit = {
         method: request.method,
         headers,
-        body: request.body,
         signal: AbortSignal.timeout(route.timeout),
-      });
+      };
+      if (request.method !== "GET" && request.body !== undefined) {
+        init.body = request.body as BodyInit;
+      }
+      const response = await fetch(url.toString(), init);
 
       // Copy response headers
       const responseHeaders = new Headers(response.headers);

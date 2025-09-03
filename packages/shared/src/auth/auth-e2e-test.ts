@@ -5,6 +5,7 @@
 
 import { authTokenManager } from "./auth-token-manager";
 
+/* eslint-disable jest/no-export */
 export interface TestCredentials {
   email: string;
   password: string;

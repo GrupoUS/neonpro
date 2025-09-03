@@ -157,7 +157,7 @@ export const requirePermissions = (permissions: string[]) => {
       });
     }
 
-    const { user: user } = authContext;
+    const { user } = authContext;
 
     // Admin tem todas as permissões
     if (user.role === "admin") {
@@ -210,7 +210,7 @@ export const requireTenant = createMiddleware(async (c, next) => {
     });
   }
 
-  const { user: user } = authContext;
+  const { user } = authContext;
   const requestedTenantId = c.req.header("x-tenant-id") || c.req.param("tenantId");
 
   if (!user.tenantId) {

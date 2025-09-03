@@ -380,7 +380,7 @@ describe("Universal AI Chat - Accessibility Compliance", () => {
       const results = await testSuite.runComprehensiveTests(container);
 
       // Should maintain accessibility score on mobile
-      expect(results.score).toBeGreaterThanOrEqual(8.0);
+      expect(results.score).toBeGreaterThanOrEqual(8);
 
       // Check touch targets are adequate size
       const buttons = container.querySelectorAll("button");

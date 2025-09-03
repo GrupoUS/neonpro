@@ -306,7 +306,7 @@ export class PrivacyPreservingAnalyticsService {
 
     // Filter groups that meet k-anonymity requirement
     const anonymizedData: unknown[] = [];
-    for (const [_key, group] of [...groups]) {
+    for (const [, group] of groups) {
       if (group.length >= k) {
         // Apply generalization to all rows in the group
         const generalizedGroup = group.map((row) => {
@@ -344,7 +344,7 @@ export class PrivacyPreservingAnalyticsService {
 
     // Filter groups that meet l-diversity requirement
     const diverseData: unknown[] = [];
-    for (const [_key, group] of [...groups]) {
+    for (const [, group] of groups) {
       // Check if group has at least l distinct values for sensitive attributes
       const distinctValues = new Set(
         group.map((row) => sensitiveColumns.map((col) => row[col]).join("|")),

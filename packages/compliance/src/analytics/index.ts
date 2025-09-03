@@ -75,7 +75,7 @@ export async function validateAnalyticsCompliance(
       };
     }
 
-    const { metrics: metrics } = metricsResult;
+    const { metrics } = metricsResult;
     const issues: string[] = [];
     const recommendations: string[] = [];
     let score = 10;

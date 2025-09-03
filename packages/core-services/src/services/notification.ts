@@ -51,34 +51,9 @@ interface NotificationTemplate {
   updatedAt: Date;
 }
 
-interface NotificationPreference {
-  id: string;
-  userId: string;
-  tenantId: string;
-  channel: NotificationChannel;
-  type: NotificationType;
-  enabled: boolean;
-  quietHoursStart?: string;
-  quietHoursEnd?: string;
-  timezone: string;
-  metadata: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface NotificationRule {
-  id: string;
-  tenantId: string;
-  name: string;
-  description: string;
-  trigger: NotificationTrigger;
-  conditions: NotificationCondition[];
-  actions: NotificationAction[];
-  isActive: boolean;
-  metadata: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
-}
+// Placeholder interfaces (remove or use when implementing)
+// interface NotificationPreference { /* ... */ }
+// interface NotificationRule { /* ... */ }
 
 interface NotificationTrigger {
   event: string;
@@ -1173,10 +1148,9 @@ export class NotificationService {
         );
         const avgDeliveryTime = deliveredNotifications.length > 0
           ? deliveredNotifications.reduce((sum, n) => {
-            const sentTime = new Date(n.sent_at!).getTime();
-            const deliveredTime = new Date(
-              n.read_at || n.sent_at!,
-            ).getTime();
+            const sentTime = n.sent_at ? new Date(n.sent_at).getTime() : 0;
+            const deliveredISO = n.read_at ?? n.sent_at ?? new Date().toISOString();
+            const deliveredTime = new Date(deliveredISO).getTime();
             return sum + (deliveredTime - sentTime);
           }, 0)
             / deliveredNotifications.length

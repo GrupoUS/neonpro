@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 // Frontend-Backend Integration Test
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Test connection to our backend API
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3004";
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       backendHealth: data,
       timestamp: new Date().toISOString(),
     });
-  } catch (_error) {
+  } catch (error) {
     console.error("Integration test failed:", error);
 
     return NextResponse.json(

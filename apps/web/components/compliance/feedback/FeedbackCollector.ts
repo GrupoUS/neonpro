@@ -10,10 +10,14 @@ import type {
 } from "./types";
 
 export class FeedbackCollector {
-  private supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+  private supabase = (() => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !anon) {
+      throw new Error("Supabase environment variables are not configured");
+    }
+    return createClient(url, anon);
+  })();
   private config: FeedbackCollectionConfig;
   private activeListeners: Map<string, () => void> = new Map();
 
@@ -388,16 +392,26 @@ export class FeedbackCollector {
   // Event listener setup methods
   private setupErrorTracking(): void {
     const originalError = window.onerror;
-    window.onerror = (message, filename, lineno, colno, error) => {
+    const handler = (event: ErrorEvent) => {
       this.triggerContextualFeedback({
         trigger: "error",
-        errorData: { message, filename, lineno, colno, error },
+        errorData: {
+          message: event.message,
+          filename: event.filename,
+          lineno: event.lineno,
+          colno: event.colno,
+          error: event.error,
+        },
       });
-      if (originalError) {
-        return originalError(message, filename, lineno, colno, error);
+
+      if (typeof originalError === "function") {
+        // Preserve original onerror behavior
+        return originalError(event.message, event.filename, event.lineno, event.colno, event.error);
       }
       return false;
     };
+
+    window.addEventListener("error", handler);
   }
 
   private setupTimeSpentTracking(): void {

@@ -3,7 +3,7 @@
  * Tests all FASE 2 enterprise services functionality
  */
 
-import { UnifiedAuditService as EnterpriseAuditService } from "@neonpro/security";
+// import { UnifiedAuditService as EnterpriseAuditService } from "@neonpro/security";
 import { EnhancedServiceBase } from "../base/EnhancedServiceBase";
 import { EnterpriseAnalyticsService } from "../enterprise/analytics/EnterpriseAnalyticsService";
 import { EnterpriseCacheService } from "../enterprise/cache/EnterpriseCacheService";
@@ -75,7 +75,7 @@ async function testEnterpriseServices() {
       timestamp: Date.now(),
       properties: { test: true },
     });
-    const securityService = new EnterpriseSecurityService();
+    // const securityService = new EnterpriseSecurityService();
     const auditService = new UnifiedAuditService();
 
     await auditService.logEvent({
@@ -87,10 +87,10 @@ async function testEnterpriseServices() {
       timestamp: new Date(),
       data: { test: true },
     });
-    const healthService = new EnterpriseHealthCheckService();
-    const testService = new TestEnterpriseService();
+    // const healthService = new EnterpriseHealthCheckService();
+    const _testService = new TestEnterpriseService();
 
-    const context: TestContext = {
+    const _context: TestContext = {
       userId: "test-user",
       operation: "test",
       ipAddress: "127.0.0.1",
@@ -101,6 +101,7 @@ async function testEnterpriseServices() {
   }
 }
 
+/* eslint-disable no-unused-vars */
 // Export for testing
 export { TestEnterpriseService, testEnterpriseServices };
 

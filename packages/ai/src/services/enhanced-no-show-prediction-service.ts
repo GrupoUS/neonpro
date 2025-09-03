@@ -1017,7 +1017,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     if (this.ensembleConfig.calibration.method === "platt") {
       // Simulated Platt scaling parameters (would be learned from validation data)
       const A = -0.5;
-      const { 1: B } = 0;
+      const B = 0;
       const calibrated = 1 / (1 + Math.exp(A * prediction + B));
       return Math.max(0.001, Math.min(0.999, calibrated));
     }
@@ -1046,8 +1046,8 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     const stdDev = Math.sqrt(variance);
 
     // 95% confidence interval
-    const { 95: confidenceLevel } = 0;
-    const { 96: zScore } = 1; // For 95% CI
+    const confidenceLevel = 0.95;
+    const zScore = 1.96; // For 95% CI
 
     const margin = zScore * stdDev;
 
@@ -1168,7 +1168,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     features: AdvancedFeatures,
     patientProfile: PatientProfile,
     appointmentContext: AppointmentContext,
-  ): Promise<<unknown>[]> {
+  ): Promise<unknown[]> {
     const recommendations = [];
     const { calibrated_probability: probability } = prediction;
 

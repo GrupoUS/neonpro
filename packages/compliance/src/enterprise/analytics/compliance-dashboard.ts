@@ -575,7 +575,7 @@ export class ComplianceDashboardService {
     const auditEntry: ComplianceDashboardAudit = {
       audit_id: crypto.randomUUID(),
       dashboard_action: "alert_resolved",
-      metrics_snapshot: this.currentMetrics!,
+      metrics_snapshot: this.currentMetrics ?? ({} as typeof this.currentMetrics),
       alerts_generated: [],
       constitutional_validation: true,
       privacy_impact_assessment: {

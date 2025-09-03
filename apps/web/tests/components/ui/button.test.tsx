@@ -56,7 +56,7 @@ describe("button Component - NeonPro Healthcare UI", () => {
         expect(button).toBeInTheDocument();
 
         // Check for variant-specific classes in the className
-        const { className: className } = button;
+        const { className } = button as unknown as { className: string; };
         if (variant === "medical") {
           expect(className).toContain("bg-gradient-primary");
         } else if (variant === "emergency") {
@@ -85,7 +85,7 @@ describe("button Component - NeonPro Healthcare UI", () => {
         );
 
         const button = screen.getByTestId(`button-${size}`);
-        const { className: className } = button;
+        const { className } = button as unknown as { className: string; };
 
         // Check for size-specific classes
         if (size === "sm") {
@@ -213,7 +213,7 @@ describe("button Component - NeonPro Healthcare UI", () => {
       );
 
       const button = screen.getByTestId("emergency-button");
-      const { className: className } = button;
+      const { className } = button as unknown as { className: string; };
 
       // Emergency buttons should have the emergency variant styling
       expect(className).toContain("from-destructive");

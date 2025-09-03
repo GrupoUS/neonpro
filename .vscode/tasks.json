@@ -105,7 +105,7 @@
     {
       "label": "🚀 Type Check",
       "type": "shell",
-      "command": "bun",
+      "command": "pnpm",
       "args": ["run", "type-check"],
       "group": "build",
       "detail": "Run monorepo type-check via Turbo (pnpm-first)",
@@ -208,7 +208,7 @@
       "label": "🔗 Realtime Integration Tests",
       "type": "shell",
       "command": "pnpm",
-      "args": ["vitest", "run", "--project", "integration", "--reporter=verbose", "--filter", "real-time|realtime"],
+      "args": ["vitest", "run", "--project", "integration", "--reporter=verbose", "--filter", "/real-time|realtime/"],
       "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "detail": "Run realtime subscriptions integration tests",

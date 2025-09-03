@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2025-09-02T00:00:00Z",
+  "notes": [
+    "Candidates exclude dynamic imports and known route entrypoints.",
+    "Items with ambiguous usage are marked as manual-review and should not be removed without proof.",
+    "Auth utilities in packages/utils/src/auth are deprecated; confirm zero imports before removal.",
+    "Final import scan: no direct references found for @neonpro/utils/auth or @neonpro/enterprise (only path alias definitions)."
+  ],
+  "candidates": [
+    {
+      "path": "packages/enterprise/src/api-gateway/*",
+      "reason": "No references from apps or turbo tasks; API uses Hono in apps/api",
+      "evidence": "grep: no occurrences of '@neonpro/enterprise' in apps/** or packages/** (excluding tsconfig aliases); routes under apps/api/src/routes and apps/web/app/api",
+      "status": "manual-review"
+    },
+    {
+      "path": "packages/utils/src/auth/**",
+      "reason": "Deprecated in favor of @neonpro/shared/auth",
+      "evidence": "grep: no occurrences of '@neonpro/utils/auth'; deprecation banner present; verify no transitive usage",
+      "status": "manual-review"
+    },
+    {
+      "path": "packages/testing/**",
+      "reason": "Auxiliary test helpers not published/consumed by apps",
+      "evidence": "Not referenced via @neonpro/* aliases; used only by tools/testing",
+      "status": "manual-review"
+    }
+  ]
+}

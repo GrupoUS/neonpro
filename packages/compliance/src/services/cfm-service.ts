@@ -137,11 +137,8 @@ export class CFMService {
   private initialized = false;
 
   constructor() {
-    this.initializeService().catch(error => {
-      console.error("CFM Service initialization failed:", {
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString(),
-      });
+    this.initializeService().catch(() => {
+      // TODO: route to monitoring service in production
     });
   }
 
@@ -154,12 +151,8 @@ export class CFMService {
       await this.verifyCFMConnectivity();
 
       this.initialized = true;
-      console.log("CFM Service initialized successfully");
-    } catch (error) {
-      console.error("CFM Service initialization error:", {
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString(),
-      });
+    } catch (_error) {
+      // TODO: integrate with centralized error tracking in production
       throw new Error("CFM Service failed to initialize");
     }
   }
@@ -168,9 +161,8 @@ export class CFMService {
     try {
       // In production, this would load from database or external API
       // For now, procedure authorizations are already loaded in the Map
-      console.log("CFM procedure authorizations loaded");
     } catch (error) {
-      console.error("Failed to load procedure authorizations:", error);
+      // Re-throw preserving stack
       throw error;
     }
   }
@@ -180,9 +172,7 @@ export class CFMService {
       // In production, this would verify actual CFM API connectivity
       // Simulate connectivity check
       await new Promise(resolve => setTimeout(resolve, 100));
-      console.log("CFM API connectivity verified");
-    } catch (error) {
-      console.error("CFM API connectivity failed:", error);
+    } catch (_error) {
       throw new Error("Cannot connect to CFM services");
     }
   }
@@ -319,13 +309,6 @@ export class CFMService {
 
       return { success: true, professional };
     } catch (error) {
-      console.error("Professional validation failed:", {
-        error: error instanceof Error ? error.message : "Unknown error",
-        crmNumber,
-        crmState,
-        timestamp: new Date().toISOString(),
-      });
-
       return {
         success: false,
         error: error instanceof Error
@@ -437,13 +420,6 @@ export class CFMService {
 
       return { authorized: true };
     } catch (error) {
-      console.error("Procedure authorization check failed:", {
-        error: error instanceof Error ? error.message : "Unknown error",
-        professionalId,
-        procedureType,
-        timestamp: new Date().toISOString(),
-      });
-
       return {
         authorized: false,
         reason: error instanceof Error ? error.message : "Authorization check failed",
@@ -538,11 +514,6 @@ export class CFMService {
         recommendations: recommendations.length > 0 ? recommendations : undefined,
       };
     } catch (error) {
-      console.error("Ethics compliance validation failed:", {
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString(),
-      });
-
       return {
         compliant: false,
         violations: [

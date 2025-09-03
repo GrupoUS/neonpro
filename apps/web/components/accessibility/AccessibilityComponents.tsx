@@ -503,11 +503,12 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Speaker className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label htmlFor="screen-reader-switch" className="text-sm font-medium">
                       Leitor de Tela
                     </label>
                   </div>
                   <Switch
+                    id="screen-reader-switch"
                     checked={preferences.screenReader}
                     onCheckedChange={(checked) => updatePreference("screenReader", checked)}
                   />
@@ -517,11 +518,12 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Keyboard className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label htmlFor="keyboard-navigation-switch" className="text-sm font-medium">
                       Navegação por Teclado
                     </label>
                   </div>
                   <Switch
+                    id="keyboard-navigation-switch"
                     checked={preferences.keyboardNavigation}
                     onCheckedChange={(checked) => updatePreference("keyboardNavigation", checked)}
                   />
@@ -533,11 +535,12 @@ export function AccessibilityPanel() {
                     {preferences.soundEnabled
                       ? <Volume2 className="h-4 w-4" />
                       : <VolumeX className="h-4 w-4" />}
-                    <label className="text-sm font-medium">
+                    <label htmlFor="sound-enabled-switch" className="text-sm font-medium">
                       Sons do Sistema
                     </label>
                   </div>
                   <Switch
+                    id="sound-enabled-switch"
                     checked={preferences.soundEnabled}
                     onCheckedChange={(checked) => updatePreference("soundEnabled", checked)}
                   />
@@ -557,11 +560,15 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Stethoscope className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label
+                      htmlFor="medical-terminology-help-switch"
+                      className="text-sm font-medium"
+                    >
                       Ajuda com Terminologia Médica
                     </label>
                   </div>
                   <Switch
+                    id="medical-terminology-help-switch"
                     checked={preferences.medicalTerminologyHelp}
                     onCheckedChange={(checked) =>
                       updatePreference("medicalTerminologyHelp", checked)}
@@ -572,11 +579,12 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label htmlFor="emergency-high-contrast-switch" className="text-sm font-medium">
                       Alto Contraste para Emergências
                     </label>
                   </div>
                   <Switch
+                    id="emergency-high-contrast-switch"
                     checked={preferences.emergencyHighContrast}
                     onCheckedChange={(checked) =>
                       updatePreference("emergencyHighContrast", checked)}
@@ -588,11 +596,12 @@ export function AccessibilityPanel() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Mic className="h-4 w-4" />
-                      <label className="text-sm font-medium">
+                      <label htmlFor="voice-navigation-switch" className="text-sm font-medium">
                         Navegação por Voz
                       </label>
                     </div>
                     <Switch
+                      id="voice-navigation-switch"
                       checked={preferences.voiceNavigation}
                       onCheckedChange={(checked) => updatePreference("voiceNavigation", checked)}
                     />
@@ -602,10 +611,10 @@ export function AccessibilityPanel() {
                       <p>Comandos disponíveis:</p>
                       <ul className="space-y-1 text-[11px]">
                         <li>
-                          • "Mostrar pacientes" - Abrir lista de pacientes
+                          • &quot;Mostrar pacientes&quot; - Abrir lista de pacientes
                         </li>
-                        <li>• "Buscar paciente [nome]" - Procurar paciente</li>
-                        <li>• "Agenda de hoje" - Ver consultas do dia</li>
+                        <li>• &quot;Buscar paciente [nome]&quot; - Procurar paciente</li>
+                        <li>• &quot;Agenda de hoje&quot; - Ver consultas do dia</li>
                         <li>• "Estoque de [produto]" - Verificar estoque</li>
                       </ul>
                     </div>
@@ -616,11 +625,12 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <MousePointer className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label htmlFor="larger-touch-targets-switch" className="text-sm font-medium">
                       Alvos de Toque Maiores
                     </label>
                   </div>
                   <Switch
+                    id="larger-touch-targets-switch"
                     checked={preferences.largerTouchTargets}
                     onCheckedChange={(checked) => updatePreference("largerTouchTargets", checked)}
                   />
@@ -630,11 +640,12 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Volume2 className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label htmlFor="medical-alerts-audio-switch" className="text-sm font-medium">
                       Alertas Médicos por Áudio
                     </label>
                   </div>
                   <Switch
+                    id="medical-alerts-audio-switch"
                     checked={preferences.medicalAlertsAudio}
                     onCheckedChange={(checked) => updatePreference("medicalAlertsAudio", checked)}
                   />
@@ -644,11 +655,12 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Activity className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label htmlFor="cognitive-assistance-switch" className="text-sm font-medium">
                       Assistência Cognitiva
                     </label>
                   </div>
                   <Switch
+                    id="cognitive-assistance-switch"
                     checked={preferences.cognitiveAssistance}
                     onCheckedChange={(checked) => updatePreference("cognitiveAssistance", checked)}
                   />
@@ -668,11 +680,15 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Speaker className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label
+                      htmlFor="portuguese-screen-reader-switch"
+                      className="text-sm font-medium"
+                    >
                       Leitor de Tela em Português
                     </label>
                   </div>
                   <Switch
+                    id="portuguese-screen-reader-switch"
                     checked={preferences.portugueseScreenReader}
                     onCheckedChange={(checked) =>
                       updatePreference("portugueseScreenReader", checked)}
@@ -683,11 +699,12 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label htmlFor="dyslexia-friendly-font-switch" className="text-sm font-medium">
                       Fonte Amigável para Dislexia
                     </label>
                   </div>
                   <Switch
+                    id="dyslexia-friendly-font-switch"
                     checked={preferences.dyslexiaFriendlyFont}
                     onCheckedChange={(checked) => updatePreference("dyslexiaFriendlyFont", checked)}
                   />
@@ -695,10 +712,11 @@ export function AccessibilityPanel() {
 
                 {/* Color Blindness Support */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">
+                  <label htmlFor="color-blindness-support" className="text-sm font-medium">
                     Suporte para Daltonismo
                   </label>
                   <select
+                    id="color-blindness-support"
                     value={preferences.colorBlindnessSupport}
                     onChange={(e) =>
                       updatePreference(
@@ -724,11 +742,12 @@ export function AccessibilityPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Focus className="h-4 w-4" />
-                    <label className="text-sm font-medium">
+                    <label htmlFor="slow-animations-switch" className="text-sm font-medium">
                       Animações Mais Lentas
                     </label>
                   </div>
                   <Switch
+                    id="slow-animations-switch"
                     checked={preferences.slowAnimations}
                     onCheckedChange={(checked) => updatePreference("slowAnimations", checked)}
                   />

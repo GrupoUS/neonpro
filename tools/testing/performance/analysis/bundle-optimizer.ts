@@ -37,7 +37,9 @@ export type TreeShakingOpportunity = {
   module: string;
   unusedExports: string[];
   estimatedSavings: number;
-}; /**
+};
+
+/**
  * Bundle Analyzer and Optimizer for NeonPro Healthcare
  *
  * Analyzes JavaScript bundles and provides optimization recommendations

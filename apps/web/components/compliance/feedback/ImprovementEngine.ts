@@ -397,7 +397,7 @@ export class ImprovementEngine {
     }, {} as Record<string, number>);
   }
 
-  private async calculateSuccessMetrics(initiatives: ImprovementInitiative[]): Promise<<unknown>[]> {
+  private async calculateSuccessMetrics(initiatives: ImprovementInitiative[]): Promise<unknown[]> {
     const metrics = [];
     const completedInitiatives = initiatives.filter(i => i.status === 'completed');
     
@@ -418,7 +418,7 @@ export class ImprovementEngine {
     return metrics;
   }
 
-  private async identifyTopAchievements(initiatives: ImprovementInitiative[]): Promise<<unknown>[]> {
+  private async identifyTopAchievements(initiatives: ImprovementInitiative[]): Promise<unknown[]> {
     return initiatives
       .filter(i => i.status === 'completed')
       .sort((a, b) => (b.businessValue.affectedUsers || 0) - (a.businessValue.affectedUsers || 0))
@@ -456,7 +456,7 @@ export class ImprovementEngine {
     }));
   }
 
-  private async generateRecommendations(initiatives: ImprovementInitiative[]): Promise<<unknown>[]> {
+  private async generateRecommendations(initiatives: ImprovementInitiative[]): Promise<unknown[]> {
     const recommendations = [];
     
     // Analysis-based recommendations

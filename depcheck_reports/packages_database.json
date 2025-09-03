@@ -1,0 +1,62 @@
+{
+  "dependencies": ["zod"],
+  "devDependencies": ["@types/node"],
+  "missing": {},
+  "using": {
+    "prisma": [
+      "/home/vibecoder/neonpro/packages/database/package.json",
+      "/home/vibecoder/neonpro/packages/database/src/index.ts",
+      "/home/vibecoder/neonpro/packages/database/dist/index.d.ts",
+      "/home/vibecoder/neonpro/packages/database/dist/index.js"
+    ],
+    "supabase": ["/home/vibecoder/neonpro/packages/database/package.json"],
+    "tsx": ["/home/vibecoder/neonpro/packages/database/package.json"],
+    "typescript": ["/home/vibecoder/neonpro/packages/database/package.json"],
+    "@supabase/supabase-js": [
+      "/home/vibecoder/neonpro/packages/database/src/auth.ts",
+      "/home/vibecoder/neonpro/packages/database/src/client.ts",
+      "/home/vibecoder/neonpro/packages/database/dist/auth.d.ts",
+      "/home/vibecoder/neonpro/packages/database/dist/client.js"
+    ],
+    "next": [
+      "/home/vibecoder/neonpro/packages/database/src/auth.ts",
+      "/home/vibecoder/neonpro/packages/database/src/client.ts",
+      "/home/vibecoder/neonpro/packages/database/src/health-check.ts",
+      "/home/vibecoder/neonpro/packages/database/src/index.ts",
+      "/home/vibecoder/neonpro/packages/database/src/rls-validator.ts",
+      "/home/vibecoder/neonpro/packages/database/scripts/apply-migration.js",
+      "/home/vibecoder/neonpro/packages/database/dist/auth.js",
+      "/home/vibecoder/neonpro/packages/database/dist/client.d.ts",
+      "/home/vibecoder/neonpro/packages/database/dist/health-check.js",
+      "/home/vibecoder/neonpro/packages/database/dist/index.d.ts",
+      "/home/vibecoder/neonpro/packages/database/dist/index.js",
+      "/home/vibecoder/neonpro/packages/database/dist/rls-validator.js"
+    ],
+    "react": [
+      "/home/vibecoder/neonpro/packages/database/src/auth.ts",
+      "/home/vibecoder/neonpro/packages/database/src/client.ts",
+      "/home/vibecoder/neonpro/packages/database/src/health-check.ts",
+      "/home/vibecoder/neonpro/packages/database/src/index.ts",
+      "/home/vibecoder/neonpro/packages/database/src/rls-validator.ts",
+      "/home/vibecoder/neonpro/packages/database/scripts/apply-migration.js",
+      "/home/vibecoder/neonpro/packages/database/dist/auth.js",
+      "/home/vibecoder/neonpro/packages/database/dist/client.d.ts",
+      "/home/vibecoder/neonpro/packages/database/dist/health-check.js",
+      "/home/vibecoder/neonpro/packages/database/dist/index.d.ts",
+      "/home/vibecoder/neonpro/packages/database/dist/index.js",
+      "/home/vibecoder/neonpro/packages/database/dist/rls-validator.js"
+    ],
+    "@types/react": ["/home/vibecoder/neonpro/packages/database/src/auth.ts"],
+    "@supabase/ssr": [
+      "/home/vibecoder/neonpro/packages/database/src/client.ts",
+      "/home/vibecoder/neonpro/packages/database/dist/client.js"
+    ],
+    "@prisma/client": [
+      "/home/vibecoder/neonpro/packages/database/src/index.ts",
+      "/home/vibecoder/neonpro/packages/database/dist/index.d.ts",
+      "/home/vibecoder/neonpro/packages/database/dist/index.js"
+    ]
+  },
+  "invalidFiles": {},
+  "invalidDirs": {}
+}

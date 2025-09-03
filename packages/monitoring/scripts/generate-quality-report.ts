@@ -330,7 +330,7 @@ class QualityReportGenerator {
   }
 
   private createCoverageCard(): string {
-    const coverage = this.metrics.coverage!;
+    const { coverage } = this.metrics as { coverage: CoverageMetrics; };
     const overallScore = Math.round(
       (coverage.statements
         + coverage.branches
@@ -361,7 +361,7 @@ class QualityReportGenerator {
   }
 
   private createSecurityCard(): string {
-    const security = this.metrics.security!;
+    const { security } = this.metrics as { security: SecurityMetrics; };
     const statusClass = security.vulnerabilities.critical === 0
         && security.vulnerabilities.high === 0
       ? "pass"
@@ -379,7 +379,7 @@ class QualityReportGenerator {
   }
 
   private createPerformanceCard(): string {
-    const performance = this.metrics.performance!;
+    const { performance } = this.metrics as { performance: PerformanceMetrics; };
     const statusClass = performance.bundleSize < 2
       ? "pass"
       : performance.bundleSize < 3
@@ -397,7 +397,7 @@ class QualityReportGenerator {
   }
 
   private createAccessibilityCard(): string {
-    const accessibility = this.metrics.accessibility!;
+    const { accessibility } = this.metrics as { accessibility: AccessibilityMetrics; };
     const statusClass = accessibility.score >= 95
       ? "pass"
       : accessibility.score >= 80
@@ -414,7 +414,7 @@ class QualityReportGenerator {
   }
 
   private createComplianceCard(): string {
-    const compliance = this.metrics.compliance!;
+    const { compliance } = this.metrics as { compliance: ComplianceMetrics; };
     const statusClass = compliance.overallScore >= 90
       ? "pass"
       : compliance.overallScore >= 80
@@ -433,7 +433,7 @@ class QualityReportGenerator {
   }
 
   private createComplexityCard(): string {
-    const complexity = this.metrics.complexity!;
+    const { complexity } = this.metrics as { complexity: ComplexityMetrics; };
     const statusClass = complexity.averageCyclomatic <= 5
       ? "pass"
       : complexity.averageCyclomatic <= 10
@@ -452,9 +452,11 @@ class QualityReportGenerator {
 
   private generateRecommendations(): string {
     const recommendations: string[] = [];
-    const coverage = this.metrics.coverage!;
-    const security = this.metrics.security!;
-    const performance = this.metrics.performance!;
+    const { coverage, security, performance } = this.metrics as {
+      coverage: CoverageMetrics;
+      security: SecurityMetrics;
+      performance: PerformanceMetrics;
+    };
 
     if (
       (coverage.statements
@@ -494,11 +496,13 @@ class QualityReportGenerator {
   }
 
   private calculateOverallScore(): number {
-    const coverage = this.metrics.coverage!;
-    const security = this.metrics.security!;
-    const performance = this.metrics.performance!;
-    const accessibility = this.metrics.accessibility!;
-    const compliance = this.metrics.compliance!;
+    const { coverage, security, performance, accessibility, compliance } = this.metrics as {
+      coverage: CoverageMetrics;
+      security: SecurityMetrics;
+      performance: PerformanceMetrics;
+      accessibility: AccessibilityMetrics;
+      compliance: ComplianceMetrics;
+    };
 
     const coverageScore = (coverage.statements
       + coverage.branches
@@ -524,8 +528,10 @@ class QualityReportGenerator {
 
   private countPassedGates(): number {
     let passed = 0;
-    const coverage = this.metrics.coverage!;
-    const security = this.metrics.security!;
+    const { coverage, security } = this.metrics as {
+      coverage: CoverageMetrics;
+      security: SecurityMetrics;
+    };
 
     if (
       (coverage.statements

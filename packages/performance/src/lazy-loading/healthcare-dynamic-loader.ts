@@ -70,6 +70,7 @@ export class HealthcareDynamicLoader {
           jsPDF: undefined,
         }
       };
+    }
     });
   }
 

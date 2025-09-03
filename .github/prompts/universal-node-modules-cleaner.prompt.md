@@ -1,14 +1,14 @@
 # 🧹 **UNIVERSAL NODE_MODULES CLEANER** — Multi-Package-Manager Optimization Expert
 
 ## 🎯 OBJETIVO
-**MISSÃO**: Analisar e otimizar **TODA** a estrutura de dependências removendo modules duplicados, redundantes, inutilizados e obsoletos (PNPM + NPM + Yarn)
+**MISSÃO**: Analisar e otimizar **TODA** a estrutura de dependências removendo modules duplicados, redundantes, inutilizados e obsoletos (Bun + PNPM + NPM)
 **QUALIDADE**: ≥9.5/10, **SUCESSO**: ≥95%
 **MÉTODO**: A.P.T.E (Analyze → Plan → Test → Execute) com suporte multi-package-manager
 
 ## 🌐 CONTEXTO UNIVERSAL
 ```yaml
 project: "Node.js project com múltiplos package managers"
-environment: "PNPM | NPM | Yarn | Node.js | TypeScript"
+environment: "Bun | PNPM | NPM | Node.js | TypeScript"
 target: "node_modules (COMPLETO) + cache folders + lock files"
 scope:
   - "node_modules/.pnpm" # PNPM store
@@ -27,7 +27,7 @@ workflow:
   - "Mapeamento universal de dependências"
   - "Identificação de redundâncias"
   - "Limpeza segura e organizada"
-references: "package.json | pnpm-lock.yaml | package-lock.json | yarn.lock"
+references: "package.json | bun.lock | bun.lockb | pnpm-lock.yaml | package-lock.json"
 hierarchy: "detecção → análise → implementação → validação"
 ```
 
@@ -37,10 +37,10 @@ hierarchy: "detecção → análise → implementação → validação"
 ```yaml
 objetivo: "Identificar package managers e mapear arquitetura completa"
 detecção_automática:
+  bun: "Verificar existência de bun.lock ou bun.lockb e binário bun"
   pnpm: "Verificar existência de pnpm-lock.yaml"
   npm: "Verificar existência de package-lock.json"
-  yarn: "Verificar existência de yarn.lock"
-  primary_manager: "Determinar gerenciador principal por prioridade"
+  primary_manager: "Determinar gerenciador principal por prioridade: Bun → PNPM → NPM"
 mapeamento_estrutura:
   - "Ler e analisar package.json (universal)"
   - "Analisar todos os lock files presentes"
@@ -56,18 +56,18 @@ validação: "Mapeamento completo ≥9.5/10 de precisão"
 objetivo: "Criar estratégia detalhada de otimização multi-manager"
 backup_obrigatório:
   - "package.json → backup-dependencies/"
+  - "bun.lock | bun.lockb → backup-dependencies/ (se existe)"
   - "pnpm-lock.yaml → backup-dependencies/ (se existe)"
   - "package-lock.json → backup-dependencies/ (se existe)"
-  - "yarn.lock → backup-dependencies/ (se existe)"
   - "node_modules → node_modules.backup_[timestamp] (opcional se muito grande)"
 sequência_por_manager:
+  bun: "pm cache rm (opcional) → rm -rf node_modules (quando necessário) → install --frozen-lockfile --ignore-scripts --filter '*' → rebuild nativo via scripts (esbuild/sharp/prisma)"
   pnpm: "store prune → prune (root + -r) → dedupe (root + -r) → install --frozen-lockfile --prefer-offline --ignore-scripts → rebuild"
   npm: "cache verify|clean → rm node_modules → ci --ignore-scripts → audit (informativo)"
-  yarn: "cache clean → rm node_modules → install --frozen-lockfile --ignore-scripts → audit (informativo)"
 validação_planejada: "Build + type-check (root e workspaces) e prisma generate"
 notas:
   - "Evitar misturar gerenciadores; seguir packageManager do root"
-  - "Preferir pnpm -r para operações em workspaces"
+  - "Preferir bun workspaces com --filter ou pnpm -r para operações em monorepo"
 ```
 
 
@@ -113,25 +113,28 @@ relatório_final:
 echo "🔍 Detectando package manager e monorepo..."
 
 # Detecta lockfiles e workspaces
+[[ -f bun.lock || -f bun.lockb ]] && echo "✅ Bun lockfile detectado" || echo "❌ Bun lockfile não encontrado"
 [[ -f pnpm-lock.yaml ]] && echo "✅ PNPM lockfile detectado" || echo "❌ PNPM lockfile não encontrado"
 [[ -f package-lock.json ]] && echo "✅ NPM lockfile detectado" || echo "❌ NPM lockfile não encontrado"
-[[ -f yarn.lock ]] && echo "✅ Yarn lockfile detectado" || echo "❌ Yarn lockfile não encontrado"
 [[ -f pnpm-workspace.yaml ]] && echo "✅ Monorepo PNPM detectado (pnpm-workspace.yaml)" || echo "ℹ️ pnpm-workspace.yaml não encontrado"
 
-# Verifica manager configurado em package.json
-if grep -q '"packageManager"\s*:\s*"pnpm@' package.json 2>/dev/null; then
-  echo "✅ packageManager=pnpm configurado (enforce PNPM)"
+# Verifica manager configurado em package.json (detecção robusta via jq)
+pm_val=$(jq -r '.packageManager // ""' package.json 2>/dev/null || echo "")
+if echo "$pm_val" | grep -q '^bun@'; then
+  echo "✅ packageManager=bun configurado (preferir Bun)"
+elif echo "$pm_val" | grep -q '^pnpm@'; then
+  echo "✅ packageManager=pnpm configurado (fallback PNPM)"
 fi
 
 # Verificar ferramentas instaladas
+which bun >/dev/null 2>&1 && bun -v || echo "ℹ️ bun não encontrado no PATH"
 which pnpm >/dev/null 2>&1 && pnpm -v || echo "ℹ️ pnpm não encontrado no PATH"
 which npm >/dev/null 2>&1 && npm -v || true
-which yarn >/dev/null 2>&1 && yarn -v || true
 node -v && echo "Node.js OK"
 
-# Checagem de mistura perigosa de managers
-if [[ -f pnpm-lock.yaml ]] && ([[ -f package-lock.json ]] || [[ -f yarn.lock ]]); then
-  echo "⚠️ Detectada presença de múltiplos lockfiles. Evite misturar gerenciadores nesta limpeza."
+# Checagem de mistura perigosa de lockfiles
+if ([[ -f bun.lock || -f bun.lockb ]] && ([[ -f pnpm-lock.yaml ]] || [[ -f package-lock.json ]])); then
+  echo "⚠️ Múltiplos lockfiles detectados (bun + outros). Evite misturar gerenciadores."
 fi
 
 # Medir estado inicial (monorepo root)
@@ -169,12 +172,12 @@ if [[ -f package-lock.json ]]; then
   npm audit --json > audit_npm.json 2>/dev/null || true
 fi
 
-# Para Yarn (se detectado)
-if [[ -f yarn.lock ]]; then
-  echo "🔍 Análise Yarn:"
-  yarn list --depth=0 > deps_yarn.txt 2>/dev/null || true
-  yarn outdated > outdated_yarn.txt 2>/dev/null || true
-  yarn audit --json > audit_yarn.json 2>/dev/null || true
+# Para Bun (se detectado)
+if [[ -f bun.lock || -f bun.lockb ]]; then
+  echo "🔍 Análise Bun:"
+  bun pm ls --depth=0 > deps_bun_root.txt 2>/dev/null || true
+  bun outdated > outdated_bun_root.txt 2>/dev/null || true
+  bun audit > audit_bun_root.txt 2>/dev/null || true
 fi
 
 # Análise de uso real no código (ignora caches e build outputs)
@@ -202,17 +205,37 @@ cp package.json "backup-dependencies/package.json.backup-$timestamp"
 [[ -f package-lock.json ]] && cp package-lock.json "backup-dependencies/package-lock.json.backup-$timestamp"
 [[ -f yarn.lock ]] && cp yarn.lock "backup-dependencies/yarn.lock.backup-$timestamp"
 
-# Backup de node_modules (pode ser grande)
-echo "📦 Backup de node_modules (pode demorar)..."
-cp -r node_modules "node_modules.backup_$timestamp" 2>/dev/null || echo "⚠️ Backup de node_modules falhou (muito grande), continuando..."
-
-echo "✅ Backup completo criado em backup-dependencies/"
-```
-
 ### **FASE 3: OTIMIZAÇÃO SISTEMÁTICA UNIVERSAL**
 ```bash
-# Estratégia PNPM (preferencial para este monorepo)
-if [[ -f pnpm-lock.yaml ]]; then
+# Estratégia Bun (preferencial neste monorepo)
+if [[ -f bun.lock || -f bun.lockb ]]; then
+  echo "🧹 Executando limpeza Bun (workspaces)..."
+
+  echo "  1/6 (Opcional) Limpar cache global do Bun"
+  bun pm cache rm || true
+
+  echo "  2/6 Removendo caches locais e node_modules quando necessário"
+  rm -rf node_modules 2>/dev/null || true
+
+  echo "  3/6 Reinstalando com lockfile congelado (monorepo-aware)"
+  bun install --frozen-lockfile --ignore-scripts --filter '*'
+
+  echo "  4/6 Regenerar Prisma e rebuild nativos se necessário"
+  (bun run --filter '*' prisma:generate || (bunx prisma --version >/dev/null 2>&1 && bunx prisma generate)) || true
+
+  echo "  5/6 (Opcional) Outdated/Audit informativos"
+  bun outdated || true
+  bun audit || true
+
+  echo "  6/6 Turbo prune/build (se aplicável)"
+  (bunx turbo prune --scope="apps/*" --docker || true)
+  (bunx turbo run build --filter='...' || true)
+
+  echo "✅ Otimização Bun concluída"
+fi
+
+# Estratégia PNPM (fallback) 
+if [[ -f pnpm-lock.yaml && ! -f bun.lock && ! -f bun.lockb ]]; then
   echo "🧹 Executando limpeza PNPM (root + workspaces)..."
 
   echo "  1/6 Limpando store global..."
@@ -256,22 +279,22 @@ if [[ -f package-lock.json && ! -f pnpm-lock.yaml ]]; then
   echo "✅ Otimização NPM concluída"
 fi
 
-# Estratégia Yarn (fallback)
-if [[ -f yarn.lock && ! -f pnpm-lock.yaml && ! -f package-lock.json ]]; then
-  echo "🧹 Executando limpeza Yarn..."
+# Estratégia NPM (fallback final)
+if [[ -f package-lock.json && ! -f bun.lock && ! -f bun.lockb && ! -f pnpm-lock.yaml ]]; then
+  echo "🧹 Executando limpeza NPM..."
   echo "  1/4 Limpando cache..."
-  yarn cache clean
+  npm cache verify || npm cache clean --force
   
   echo "  2/4 Removendo node_modules..."
   rm -rf node_modules
   
-  echo "  3/4 Reinstalando com yarn..."
-  yarn install --frozen-lockfile --ignore-scripts
+  echo "  3/4 Reinstalando com npm ci..."
+  npm ci --ignore-scripts
 
   echo "  4/4 Auditoria (informativa)"
-  yarn npm audit --json > audit_yarn_post.json 2>/dev/null || true
+  npm audit --json > audit_npm_post.json 2>/dev/null || true
   
-  echo "✅ Otimização Yarn concluída"
+  echo "✅ Otimização NPM concluída"
 fi
 ```
 
@@ -293,8 +316,10 @@ find apps -maxdepth 2 -type d -name cache -path '*/.next/cache' -exec rm -rf {} 
 [[ -d .turbo ]] && rm -rf .turbo || true
 
 # Playwright browsers cache (opcional: limpa binários baixados)
-if command -v npx >/dev/null 2>&1; then
-  npx --yes playwright install-deps 2>/dev/null || true
+if command -v bunx >/dev/null 2>&1; then
+  bunx playwright install --with-deps 2>/dev/null || true
+elif command -v npx >/dev/null 2>&1; then
+  npx --yes playwright install --with-deps 2>/dev/null || true
 fi
 
 # Limpar symlinks quebrados
@@ -315,13 +340,13 @@ read -p "Confirma HEAVY CLEAN? (y/N) " ans; [[ "$ans" == "y" || "$ans" == "Y" ]]
 rm -rf node_modules .turbo
 find apps -maxdepth 2 -type d -name cache -path '*/.next/cache' -exec rm -rf {} + 2>/dev/null || true
 
-# Pré-aquecer store e reinstalar de forma determinística
-pnpm fetch
-pnpm install --frozen-lockfile --prefer-offline
+# Pré-aquecer e reinstalar determinístico (Bun como primário)
+(bun install --lockfile-only || true)
+(bun install --frozen-lockfile --ignore-scripts --filter '*')
 
 # Regenerar Prisma e rebuild nativos se necessário
-(pnpm -r exec prisma --version >/dev/null 2>&1 && pnpm -r prisma generate) || true
-pnpm rebuild || true
+(bun run --filter '*' prisma:generate || (bunx prisma --version >/dev/null 2>&1 && bunx prisma generate)) || true
+(bun run --filter '*' rebuild || true)
 ```
 
 ### **FASE 5: VALIDAÇÃO FINAL UNIVERSAL**
@@ -330,15 +355,23 @@ pnpm rebuild || true
 echo "✅ Executando validação final..."
 
 # Preferir tasks do monorepo quando disponíveis (PNPM workspaces)
-if command -v pnpm >/dev/null && [[ -f pnpm-lock.yaml ]]; then
+if command -v bun >/dev/null && ([[ -f bun.lock ]] || [[ -f bun.lockb ]]); then
   # Prisma: regenerar clientes (evita erros de engine em Next/Hono)
-  (pnpm -r exec prisma --version >/dev/null 2>&1 && pnpm -r prisma generate) || true
+  (bun run --filter '*' prisma:generate || (bunx prisma --version >/dev/null 2>&1 && bunx prisma generate)) || true
 
-  # Builds dos workspaces
+  # Builds dos workspaces (prefer Turbo)
   echo "🛠 Testando build dos workspaces..."
-  pnpm -r run build || echo "⚠️ Algumas builds falharam"
+  (bunx turbo run build --filter='...' || bun --filter '*' run build || true)
 
   # Type-check nos workspaces
+  echo "🔍 Verificando types no monorepo..."
+  (bun --filter '*' run type-check || true)
+
+elif command -v pnpm >/dev/null && [[ -f pnpm-lock.yaml ]]; then
+  # Prisma: regenerar clientes
+  (pnpm -r exec prisma --version >/dev/null 2>&1 && pnpm -r prisma generate) || true
+  echo "🛠 Testando build dos workspaces..."
+  pnpm -r run build || echo "⚠️ Algumas builds falharam"
   echo "🔍 Verificando types no monorepo..."
   pnpm -r run type-check || echo "⚠️ Alguns type-checks falharam"
 else
@@ -346,11 +379,11 @@ else
   if [[ -f package.json ]]; then
     if grep -q '"build"' package.json; then
       echo "🛠 Testando build..."
-      npm run build || yarn build || true
+      npm run build || true
     fi
     if grep -q '"type-check"' package.json; then
       echo "🔍 Verificando tipos..."
-      npm run type-check || yarn type-check || true
+      npm run type-check || true
     fi
   fi
 fi
@@ -405,9 +438,9 @@ echo "✅ Validação final concluída"
 
 | Package Manager | Detectado | Otimizado |
 |----------------|-----------|-----------|
+| Bun            | ✅/❌     | ✅/❌     |
 | PNPM           | ✅/❌     | ✅/❌     |
 | NPM            | ✅/❌     | ✅/❌     |
-| Yarn           | ✅/❌     | ✅/❌     |
 
 | Métrica               | ANTES     | DEPOIS    | ECONOMIA              |
 |-----------------------|-----------|-----------|----------------------|
@@ -443,7 +476,7 @@ rm -rf node_modules
 ### 🎯 Comando Básico
 ```
 @copilot Execute limpeza universal de dependências:
-1. Detectar package managers (PNPM/NPM/Yarn)
+1. Detectar package managers (Bun/PNPM/NPM)
 2. Backup completo (package.json + lock files)
 3. Medir tamanho atual node_modules
 4. Executar otimização específica do manager detectado
@@ -458,7 +491,7 @@ Meta: ≥40% redução, zero breakage, suporte universal
 @copilot Seguindo metodologia A.P.T.E, execute limpeza UNIVERSAL de dependências:
 
 **ANALYZE:**
-- Detectar automaticamente PNPM/NPM/Yarn
+- Detectar automaticamente Bun/PNPM/NPM
 - Mapear package.json e todos os lock files
 - Medir tamanho/arquivos de node_modules
 - Identificar dependências não utilizadas no código
@@ -512,7 +545,7 @@ Restaurar estado exato anterior à limpeza.
 @copilot Execute limpeza de dependências para projeto healthcare NEONPRO:
 
 **CONTEXTO HEALTHCARE/MONOREPO:**
-- packageManager=pnpm no root; usar PNPM como padrão
+- packageManager=bun ou pnpm no root; usar Bun como padrão e PNPM como fallback
 - Turborepo e Next.js 15: limpar .turbo e .next/cache de apps/*
 - Playwright: não remover browsers baixados salvo necessidade; reinstalar com `playwright install --with-deps` se limpar
 - Prisma: executar `pnpm -r prisma generate` após reinstalação
@@ -521,6 +554,7 @@ Restaurar estado exato anterior à limpeza.
 **EXECUÇÃO SEGURA:**
 - Backup completo antes de qualquer modificação
 - A.P.T.E com foco em zero downtime
+- Bun: install --frozen-lockfile --ignore-scripts --filter '*' → prisma generate → bunx turbo run build
 - PNPM: store prune → prune (-r) → dedupe (-r) → install --frozen-lockfile --prefer-offline --ignore-scripts → rebuild
 - Relatório final com métricas healthcare
 
@@ -540,34 +574,42 @@ Meta: ≥40% redução mantendo compliance 100% e builds verdes
 
 ---
 
-## 🏗️ CI/CD RECIPES (PNPM-FIRST)
+## 🏗️ CI/CD RECIPES (BUN-FIRST, TURBO)
 
 ```bash
-# CI install (determinístico e rápido)
-pnpm fetch
-pnpm install --frozen-lockfile --prefer-offline --ignore-scripts
+# Setup bun
+bun --version
 
-# Workspaces build/type-check
-pnpm -r run type-check
-pnpm -r run build
+# Deterministic install
+bun install --frozen-lockfile --ignore-scripts --filter '*'
 
-# Tests
+# Turbo cache-aware build
+bunx turbo run type-check --filter='...'
+bunx turbo run build --filter='...'
+
+# Tests (vitest/playwright via bunx)
 bunx vitest run --reporter=verbose
 bunx vitest run --project integration --reporter=verbose || true
 bunx playwright test || true
 
-# Playwright no CI (instala binários apenas quando necessário)
+# Playwright no CI
 bunx playwright install --with-deps || true
+
+# Fallbacks
+pnpm install --frozen-lockfile --prefer-offline --ignore-scripts || true
+npm ci --ignore-scripts || true
 ```
 
-### ℹ️ Nota sobre Bun × PNPM
-- Use pnpm para instalações/lockfile neste monorepo (packageManager=pnpm@8.15.0).
-- Use bun/bunx apenas para executar scripts/CLIs (vitest/playwright), sem gerar lock próprio.
+### ℹ️ Nota sobre Bun × PNPM × NPM
+- Preferir Bun como package manager e executor (bun, bunx, bun.lock ou bun.lockb).
+- Se um pacote não funcionar com Bun, usar PNPM como fallback (pnpm-lock.yaml presente).
+- Em último caso, usar NPM (package-lock.json) apenas quando o pacote não aceitar Bun nem PNPM.
+- Evitar múltiplos lockfiles. Não use Yarn neste repositório.
 
 ## 🔄 MANUTENÇÃO E CUSTOMIZAÇÃO
 
 ### Versioning
-- v1.1.0 - PNPM-first monorepo update (Set 2025)
+- v1.2.0 - Bun-first monorepo update (Set 2025)
   - Detecção monorepo/manager aprimorada
   - Fluxo PNPM workspace-aware (prune/dedupe/install/rebuild)
   - Limpeza de caches Next/Turbo/Playwright

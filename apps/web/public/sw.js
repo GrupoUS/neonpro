@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/require-post-message-target-origin */
 // NeonPro Service Worker - VIBECODE V1.0 Performance Standards
 // Healthcare PWA Implementation with offline-first strategies + Background Sync
 // FASE 3: Frontend Enhancement - Healthcare-Optimized Service Worker
@@ -216,11 +217,15 @@ async function processOfflineQueue() {
         const response = await cache.match(cacheKey);
         const requestData = await response.json();
 
-        const syncResponse = await fetch(requestData.url, {
+        const options = {
           method: requestData.method,
           headers: requestData.headers,
-          body: requestData.body,
-        });
+        };
+        if (requestData.method && requestData.method.toUpperCase() !== "GET") {
+          options.body = requestData.body;
+        }
+        // Ensure no body is sent for GET to satisfy no-invalid-fetch-options
+        const syncResponse = await fetch(requestData.url, options);
 
         if (syncResponse.ok) {
           // Remove from cache and IndexedDB
@@ -263,11 +268,16 @@ async function notifyClientOfSync(type, data) {
   const clients = await self.clients.matchAll();
 
   clients.forEach((client) => {
-    client.postMessage({
-      type: "BACKGROUND_SYNC",
-      action: type,
-      data,
-    });
+    // Spec-compliant targetOrigin to satisfy lint rule
+    const targetOrigin = new URL(client.url).origin;
+    client.postMessage(
+      {
+        type: "BACKGROUND_SYNC",
+        action: type,
+        data,
+      },
+      targetOrigin,
+    );
   });
 }
 
@@ -290,8 +300,8 @@ async function storeInIndexedDB(storeName, data) {
       const store = transaction.objectStore(storeName);
 
       const addRequest = store.put(data);
-      addRequest.onsuccess = () => resolve();
-      addRequest.onerror = () => reject(addRequest.error);
+      addRequest.addEventListener("success", () => resolve());
+      addRequest.addEventListener("error", () => reject(addRequest.error));
     };
 
     request.onerror = () => reject(request.error);
@@ -308,8 +318,8 @@ async function removeFromIndexedDB(storeName, id) {
       const store = transaction.objectStore(storeName);
 
       const deleteRequest = store.delete(id);
-      deleteRequest.onsuccess = () => resolve();
-      deleteRequest.onerror = () => reject(deleteRequest.error);
+      deleteRequest.addEventListener("success", () => resolve());
+      deleteRequest.addEventListener("error", () => reject(deleteRequest.error));
     };
 
     request.onerror = () => reject(request.error);
@@ -474,8 +484,7 @@ self.addEventListener("push", (event) => {
 
 // Notification click handler
 self.addEventListener("notificationclick", (event) => {
-  const { notification: notification } = event;
-  const { action: action } = event;
+  const { notification, action } = event;
   const data = notification.data || {};
 
   notification.close();
@@ -539,7 +548,7 @@ self.addEventListener("notificationclick", (event) => {
 
 // Notification close handler
 self.addEventListener("notificationclose", (event) => {
-  const { notification: notification } = event;
+  const { notification } = event;
   const data = notification.data || {};
 
   // Track notification closure analytics if needed

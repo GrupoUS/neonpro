@@ -214,8 +214,7 @@ export function useExcelProcessing() {
         trim: true,
       });
 
-      const headers = records[0];
-      const rows = records.slice(1);
+      const [headers, ...rows] = records;
 
       return {
         headers,

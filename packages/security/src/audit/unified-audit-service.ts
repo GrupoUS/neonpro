@@ -214,12 +214,13 @@ export class UnifiedAuditService {
       this.recordPerformanceMetrics(processingTime);
 
       return validatedEvent.id;
-    } catch (error) {
+    } catch (_error) {
       this.errorCount++;
       const processingTime = performance.now() - startTime;
       this.recordPerformanceMetrics(processingTime);
 
-      console.error("Failed to log audit event:", error);
+      // TODO: integrate with centralized logger
+      // console.error("Failed to log audit event:", error);
       return null;
     }
   }
@@ -420,8 +421,8 @@ export class UnifiedAuditService {
       if (error) {
         throw new Error(`Failed to store audit events: ${error.message}`);
       }
-    } catch (error) {
-      console.error("Failed to flush audit buffer:", error);
+    } catch (_error) {
+      // console.error("Failed to flush audit buffer:", error);
       // Re-add events to buffer for retry
       this.eventBuffer.unshift(...events);
       throw error;
@@ -515,8 +516,8 @@ export class UnifiedAuditService {
         events,
         totalCount: count || 0,
       };
-    } catch (error) {
-      console.error("Failed to query audit events:", error);
+    } catch (_error) {
+      // console.error("Failed to query audit events:", error);
       return { events: [], totalCount: 0 };
     }
   }
@@ -575,8 +576,8 @@ export class UnifiedAuditService {
       }
 
       return data?.length || 0;
-    } catch (error) {
-      console.error("Failed to cleanup audit events:", error);
+    } catch (_error) {
+      // console.error("Failed to cleanup audit events:", error);
       return 0;
     }
   }
@@ -724,10 +725,10 @@ export class UnifiedAuditService {
         .lt("timestamp", cutoffDate.toISOString());
 
       if (error) {
-        console.error("Retention cleanup failed:", error);
+        // console.error("Retention cleanup failed:", error);
       }
-    } catch (error) {
-      console.error("Retention cleanup error:", error);
+    } catch (_error) {
+      // console.error("Retention cleanup error:", error);
     }
   }
 

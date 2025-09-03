@@ -53,8 +53,7 @@ NeonPro uses **Turborepo with 3 applications and 20 specialized packages**:
 ```
 apps/
 ├── web/              # Next.js 15 Frontend Application
-├── api/              # Hono.dev Backend API  
-└── docs/             # Documentation Site (VitePress)
+├── api/              # Hono.dev Backend API
 ```
 
 ### Package Categories (20 packages)

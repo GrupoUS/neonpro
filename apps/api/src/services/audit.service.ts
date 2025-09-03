@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { z } from "zod";
+
 import type {
   AuditAction,
   AuditConfig,
@@ -11,22 +11,19 @@ import type {
   AuditStats,
   ResourceType,
 } from "../types/audit";
-import {
-  AuditEventSchema,
-  AuditFilterSchema,
-  AuditSeverity,
-  CriticalAuditAlert,
-} from "../types/audit";
+import { AuditEventSchema, AuditFilterSchema, AuditSeverity } from "../types/audit";
 
 export class AuditService {
   private supabase;
   private config: AuditConfig;
 
   constructor() {
-    this.supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error("Supabase credentials are not configured");
+    }
+    this.supabase = createClient(supabaseUrl, supabaseKey);
 
     // Configuração padrão
     this.config = {
@@ -254,19 +251,16 @@ export class AuditService {
 
       let exportData: unknown;
       let filename: string;
-      let contentType: string;
 
       switch (options.format) {
         case "json":
           exportData = JSON.stringify(logsResponse.data, null, 2);
           filename = `audit_logs_${Date.now()}.json`;
-          contentType = "application/json";
           break;
 
         case "csv":
           exportData = this.convertToCSV(logsResponse.data, options.include_details);
           filename = `audit_logs_${Date.now()}.csv`;
-          contentType = "text/csv";
           break;
 
         case "pdf":
@@ -374,7 +368,7 @@ export class AuditService {
     const userCounts = logs
       .filter(log => log.user_id)
       .reduce((acc, log) => {
-        const userId = log.user_id!;
+        const userId = String(log.user_id);
         acc[userId] = (acc[userId] || 0) + 1;
         return acc;
       }, {} as Record<string, number>);
@@ -395,13 +389,13 @@ export class AuditService {
     for (let i = 0; i < days; i++) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split("T")[0];
+      const [dateStr] = date.toISOString().split("T");
       dailyCounts[dateStr] = 0;
     }
 
     // Contar eventos por dia
     logs.forEach(log => {
-      const dateStr = log.timestamp.toISOString().split("T")[0];
+      const [dateStr] = log.timestamp.toISOString().split("T");
       if (dailyCounts.hasOwnProperty(dateStr)) {
         dailyCounts[dateStr]++;
       }

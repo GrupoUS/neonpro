@@ -567,7 +567,7 @@ export function createHealthcareRateLimiter(
       if (emergencyHeader) {
         try {
           emergencyContext = JSON.parse(emergencyHeader);
-        } catch (e) {
+        } catch (_e) {
           console.warn("Invalid emergency access header:", emergencyHeader);
         }
       }
@@ -599,7 +599,7 @@ export function createHealthcareRateLimiter(
             limit: result.limit,
             remaining: result.remaining,
             resetTime: new Date(result.resetTime).toISOString(),
-            emergencyBypassAvailable: emergencyContext ? false : true,
+            emergencyBypassAvailable: !emergencyContext,
           },
         }, 429);
       }

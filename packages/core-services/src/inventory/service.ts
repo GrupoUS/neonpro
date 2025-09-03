@@ -6,13 +6,13 @@ import type {
   CreateSupplierData,
   InventoryAlert,
   Product,
+  ProductCategory,
   PurchaseOrder,
   StockItem,
   StockMovement,
   Supplier,
 } from "./types";
 import { AlertSeverity, AlertType, MovementType, OrderStatus } from "./types";
-import type { ProductCategory } from "./types";
 
 export interface InventoryRepository {
   // Product operations

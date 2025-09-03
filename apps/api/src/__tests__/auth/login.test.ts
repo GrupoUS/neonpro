@@ -10,6 +10,7 @@
  * - Token management and security
  */
 
+/* eslint-disable no-unused-vars */
 import type { Context } from "hono";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 

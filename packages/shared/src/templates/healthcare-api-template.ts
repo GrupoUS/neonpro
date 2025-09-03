@@ -11,7 +11,6 @@ import { z } from "zod";
 // TODO: Import from @neonpro/utils when implementing
 // import { Logger } from '@neonpro/utils';
 import type { HealthcareContext, HealthcareFeatureTemplate } from "./healthcare-feature-template";
-import { HealthcareFeatureConfig } from "./healthcare-feature-template";
 // TODO: Import from @neonpro/api/middleware when implementing
 // import { healthcareSecurityMiddleware, healthcareValidationMiddleware } from '@neonpro/api/middleware';
 
@@ -111,7 +110,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   constructor(
     basePath: string,
     feature: HealthcareFeatureTemplate<T, CreateInput, UpdateInput>,
-    config?: { enableCors?: boolean; enableRateLimit?: boolean; },
+    _config?: { enableCors?: boolean; enableRateLimit?: boolean; },
   ) {
     this.basePath = basePath;
     this.feature = feature;
@@ -290,7 +289,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
   // Format standard API response
   private formatResponse<D>(
     data: D,
-    message?: string,
+    _message?: string,
   ): HealthcareApiResponse<D> {
     return {
       success: true,
@@ -309,8 +308,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
     let message = "Internal server error";
 
     if (error instanceof HTTPException) {
-      statusCode = error.status;
-      message = error.message;
+      ({ status: statusCode, message } = error);
     } else if (error instanceof z.ZodError) {
       statusCode = 400;
       errorCode = HealthcareErrorCodes.VALIDATION_FAILED;
@@ -322,11 +320,11 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
     } else if (error.message?.includes("LGPD consent")) {
       statusCode = 403;
       errorCode = HealthcareErrorCodes.LGPD_CONSENT_REQUIRED;
-      message = error.message;
+      ({ message } = error);
     } else if (error.message?.includes("Emergency access")) {
       statusCode = 403;
       errorCode = HealthcareErrorCodes.EMERGENCY_ACCESS_DENIED;
-      message = error.message;
+      ({ message } = error);
     }
 
     this.logger.error("API Error", {
@@ -484,4 +482,4 @@ export const BrazilianHealthcareSchemas = {
   }),
 };
 
-export { HealthcareApiTemplate as default };
+export default HealthcareApiTemplate;
