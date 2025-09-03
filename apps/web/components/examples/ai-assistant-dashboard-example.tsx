@@ -167,38 +167,38 @@ export function AIAssistantDashboardExample() {
   // Handle export functions
   const handleExportAssistantData = (data: unknown, format: "pdf" | "excel" | "csv") => {
     console.log(`[EXPORT] Assistant data as ${format}:`, data);
-    alert(`Exportando dados do assistente em formato ${format.toUpperCase()}`);
+    console.info(`Exportando dados do assistente em formato ${format.toUpperCase()}`);
   };
 
   const handleExportPerformanceData = () => {
     console.log("[EXPORT] Performance data");
-    alert("Exportando relatório de performance");
+    console.info("Exportando relatório de performance");
   };
 
   const handleRefreshPerformanceData = () => {
     console.log("[REFRESH] Performance data");
-    alert("Dados de performance atualizados");
+    console.info("Dados de performance atualizados");
   };
 
   const handleExportComplianceReport = () => {
     console.log("[EXPORT] Compliance report");
-    alert("Exportando relatório de compliance");
+    console.info("Exportando relatório de compliance");
   };
 
   const handleRefreshComplianceData = () => {
     console.log("[REFRESH] Compliance data");
-    alert("Dados de compliance verificados");
+    console.info("Dados de compliance verificados");
   };
 
   const handleViewComplianceDetails = (itemId: string) => {
     console.log("[VIEW] Compliance item details:", itemId);
-    alert(`Visualizando detalhes do item de compliance: ${itemId}`);
+    console.info(`Visualizando detalhes do item de compliance: ${itemId}`);
   };
 
   const handleExportResults = (resultId: string, format: "pdf" | "excel" | "csv" | "png") => {
     const result = queryResults.find(r => r.id === resultId);
     console.log(`[EXPORT] Result ${resultId} as ${format}:`, result);
-    alert(`Exportando resultado "${result?.query}" em formato ${format.toUpperCase()}`);
+    console.info(`Exportando resultado "${result?.query}" em formato ${format.toUpperCase()}`);
   };
 
   return (
@@ -299,12 +299,12 @@ export function AIAssistantDashboardExample() {
                   💡 Dica: Para ver resultados aqui
                 </p>
                 <p className="text-blue-700 text-sm">
-                  Vá para a aba "Assistente IA" e faça consultas como:
+                  Vá para a aba &quot;Assistente IA&quot; e faça consultas como:
                 </p>
                 <ul className="mt-3 text-sm text-blue-600 space-y-1">
-                  <li>"Mostrar gráfico de pacientes atendidos"</li>
-                  <li>"Gerar tabela de procedimentos realizados"</li>
-                  <li>"Criar dashboard completo da clínica"</li>
+                  <li>&quot;Mostrar gráfico de pacientes atendidos&quot;</li>
+                  <li>&quot;Gerar tabela de procedimentos realizados&quot;</li>
+                  <li>&quot;Criar dashboard completo da clínica&quot;</li>
                 </ul>
               </div>
             )}

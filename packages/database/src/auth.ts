@@ -22,7 +22,12 @@ export const getUser = cache(async (): Promise<User | null> => {
       getAll: () => cookieStore.getAll(),
       setAll: (cookieList) => {
         cookieList.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options as unknown);
+          if (options !== undefined) {
+            // Only pass options when defined to satisfy tuple typing
+            cookieStore.set(name, value, options as any);
+          } else {
+            cookieStore.set(name, value);
+          }
         });
       },
     });
@@ -58,7 +63,11 @@ export const getSession = cache(async (): Promise<Session | null> => {
       getAll: () => cookieStore.getAll(),
       setAll: (cookieList) => {
         cookieList.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options as unknown);
+          if (options !== undefined) {
+            cookieStore.set(name, value, options as any);
+          } else {
+            cookieStore.set(name, value);
+          }
         });
       },
     });
@@ -105,7 +114,11 @@ export async function requireHealthcareProfessional(): Promise<User> {
     getAll: () => cookieStore.getAll(),
     setAll: (cookies) => {
       cookies.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options as unknown);
+        if (options !== undefined) {
+          cookieStore.set(name, value, options as any);
+        } else {
+          cookieStore.set(name, value);
+        }
       });
     },
   });
@@ -146,7 +159,11 @@ async function logHealthcareAccess(
       getAll: () => cookieStore.getAll(),
       setAll: (cookieList) => {
         cookieList.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options as unknown);
+          if (options !== undefined) {
+            cookieStore.set(name, value, options as any);
+          } else {
+            cookieStore.set(name, value);
+          }
         });
       },
     });
@@ -175,7 +192,11 @@ export async function signOut(): Promise<void> {
     getAll: () => cookieStore.getAll(),
     setAll: (cookies) => {
       cookies.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options as unknown);
+        if (options !== undefined) {
+          cookieStore.set(name, value, options as any);
+        } else {
+          cookieStore.set(name, value);
+        }
       });
     },
   });

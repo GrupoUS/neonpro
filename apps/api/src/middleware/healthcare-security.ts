@@ -362,9 +362,9 @@ function isCFMApiResponse(data: unknown): data is CFMApiResponse {
   return !!data
     && typeof data === "object"
     && "numero_inscricao" in data
-    && typeof (data as any).numero_inscricao === "string"
+    && typeof (data as Record<string, unknown>).numero_inscricao === "string"
     && "uf" in data
-    && typeof (data as any).uf === "string"
+    && typeof (data as Record<string, unknown>).uf === "string"
     && "data_inscricao" in data
     && typeof (data as any).data_inscricao === "string";
 }
@@ -750,8 +750,8 @@ function parseTimeWindow(window: string): number {
     throw new Error(`Invalid time window format: ${window}`);
   }
 
-  const value = parseInt(match[1]!, 10);
-  const unit = match[2]!;
+  const value = parseInt(match[1] ?? "0", 10);
+  const unit = match[2] ?? "s";
 
   switch (unit) {
     case "s":

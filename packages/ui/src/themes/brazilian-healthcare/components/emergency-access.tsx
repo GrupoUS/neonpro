@@ -202,7 +202,7 @@ export function EmergencyAccessInterface({
         {/* No Results Message */}
         {searchQuery.length >= 3 && !isSearching && searchResults.length === 0 && (
           <div className="no-results" role="status">
-            <p>Nenhum paciente encontrado para "{searchQuery}"</p>
+            <p>Nenhum paciente encontrado para &quot;{searchQuery}&quot;</p>
             <p className="no-results-help">
               Verifique se os dados estão corretos ou tente uma busca diferente.
             </p>

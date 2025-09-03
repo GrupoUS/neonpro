@@ -632,7 +632,7 @@ apps/api/
 - **Linting**: Oxc Oxlint + Dprint + Prettier
 - **Type Checking**: TypeScript strict mode
 - **Testing**: Vitest + Testing Library
-- **Git Hooks**: Husky + lint-staged
+- **Git Hooks**: none (Husky removed)
 - **CI/CD**: GitHub Actions
 
 ---

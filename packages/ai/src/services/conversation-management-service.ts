@@ -238,13 +238,15 @@ export class ConversationManagementService extends EnhancedAIService<
         }
 
         case "analyze": {
-          result = await this.getConversation(input.sessionId!);
+          if (!input.sessionId) throw new Error("sessionId is required");
+          result = await this.getConversation(input.sessionId);
           if (input.options?.includeAnalytics) {
-            analytics = await this.analyzeConversation(input.sessionId!);
+            analytics = await this.analyzeConversation(input.sessionId);
           }
           if (input.options?.includeRecommendations) {
+            if (!input.sessionId) throw new Error("sessionId is required");
             recommendations = await this.generateRecommendations(
-              input.sessionId!,
+              input.sessionId,
               analytics,
             );
           }
@@ -252,10 +254,11 @@ export class ConversationManagementService extends EnhancedAIService<
         }
 
         case "summarize": {
-          result = await this.getConversation(input.sessionId!);
-          summary = await this.summarizeConversation(input.sessionId!);
+          if (!input.sessionId) throw new Error("sessionId is required");
+          result = await this.getConversation(input.sessionId);
+          summary = await this.summarizeConversation(input.sessionId);
           if (input.options?.includeAnalytics) {
-            analytics = await this.analyzeConversation(input.sessionId!);
+            analytics = await this.analyzeConversation(input.sessionId);
           }
           break;
         }
@@ -344,7 +347,7 @@ export class ConversationManagementService extends EnhancedAIService<
       user_id: input.userId,
       clinic_id: input.clinicId,
       session_type: input.context?.interfaceType,
-      title: this.generateSessionTitle(input.context!),
+      title: input.context ? this.generateSessionTitle(input.context) : "AI Conversation",
       status: "active",
       context: input.context,
       metadata: {
@@ -396,7 +399,7 @@ export class ConversationManagementService extends EnhancedAIService<
     const { data, error } = await this.supabase
       .from("ai_chat_sessions")
       .update(updates)
-      .eq("id", input.sessionId!)
+      .eq("id", input.sessionId ?? "")
       .eq("user_id", input.userId) // Security check
       .select()
       .single();
@@ -421,8 +424,9 @@ export class ConversationManagementService extends EnhancedAIService<
     input: ConversationManagementInput,
   ): Promise<ConversationSession> {
     // First, get conversation analytics for archival summary
-    const analytics = await this.analyzeConversation(input.sessionId!);
-    const summary = await this.summarizeConversation(input.sessionId!);
+    if (!input.sessionId) throw new Error("sessionId is required");
+    const analytics = await this.analyzeConversation(input.sessionId);
+    const summary = await this.summarizeConversation(input.sessionId);
 
     const { data, error } = await this.supabase
       .from("ai_chat_sessions")
@@ -436,7 +440,7 @@ export class ConversationManagementService extends EnhancedAIService<
           archive_reason: "manual_archive",
         },
       })
-      .eq("id", input.sessionId!)
+      .eq("id", input.sessionId ?? "")
       .eq("user_id", input.userId) // Security check
       .select()
       .single();
@@ -655,12 +659,13 @@ export class ConversationManagementService extends EnhancedAIService<
   private async exportConversation(
     input: ConversationManagementInput,
   ): Promise<unknown> {
-    const conversation = await this.getConversation(input.sessionId!);
+    if (!input.sessionId) throw new Error("sessionId is required");
+    const conversation = await this.getConversation(input.sessionId);
     const analytics = input.options?.includeAnalytics
-      ? await this.analyzeConversation(input.sessionId!)
+      ? await this.analyzeConversation(input.sessionId)
       : undefined;
     const summary = input.options?.includeSummary
-      ? await this.summarizeConversation(input.sessionId!)
+      ? await this.summarizeConversation(input.sessionId)
       : undefined;
 
     const exportData = {
@@ -782,15 +787,18 @@ export class ConversationManagementService extends EnhancedAIService<
 
       words.forEach((word) => {
         if (medicalTopics.some((topic) => word.includes(topic))) {
-          const topic = medicalTopics.find((t) => word.includes(t))!;
+          const topic = medicalTopics.find((t) => word.includes(t));
+          if (!topic) continue;
           topicCounts.set(topic, (topicCounts.get(topic) || 0) + 1);
           topicCategories.set(topic, "medical");
         } else if (adminTopics.some((topic) => word.includes(topic))) {
-          const topic = adminTopics.find((t) => word.includes(t))!;
+          const topic = adminTopics.find((t) => word.includes(t));
+          if (!topic) continue;
           topicCounts.set(topic, (topicCounts.get(topic) || 0) + 1);
           topicCategories.set(topic, "administrative");
         } else if (techTopics.some((topic) => word.includes(topic))) {
-          const topic = techTopics.find((t) => word.includes(t))!;
+          const topic = techTopics.find((t) => word.includes(t));
+          if (!topic) continue;
           topicCounts.set(topic, (topicCounts.get(topic) || 0) + 1);
           topicCategories.set(topic, "technical");
         }

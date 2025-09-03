@@ -58,10 +58,10 @@ export function PerformanceInsights({
       {
         id: 'daily-revenue',
         name: 'Faturamento Diário',
-        value: 15750,
-        previousValue: 14200,
+        value: 15_750,
+        previousValue: 14_200,
         unit: 'R$',
-        target: 18000,
+        target: 18_000,
         category: 'revenue',
         trend: 'up',
         critical: false

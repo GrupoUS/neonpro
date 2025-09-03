@@ -12,11 +12,9 @@
     "format": "dprint fmt",
     "format:check": "dprint check",
     "type-check": "tsc --noEmit",
-    "test": "playwright test",
-    "test:ui": "playwright test --ui",
-    "test:debug": "playwright test --debug",
-    "test:headed": "playwright test --headed",
-    "test:report": "playwright show-report",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "prisma": {
@@ -99,8 +97,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.10.0",
-    "@playwright/test": "^1.49.0",
     "@types/node": "^22.17.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

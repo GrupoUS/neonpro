@@ -10,6 +10,9 @@ applyTo: "**/*"
 
 - **🌟 Always Read the Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
 - **⚙️ Always Read the Project Memory**: [`docs/memory.md`](../docs/memory.md)
+- **📚 Always Read the @source-tree**: [docs/architecture/source-tree.md](./source-tree.md)
+  - One‑line: Real monorepo structure (apps/packages) validated and categorized
+  - Use when: Locating code, packages, or wiring across the repo
 - **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.
 - **MANDATORY** Use do gerenciador de tasks nativo do augment de forma mais ativa para acompanhar tudo o que precisa ser feito, criando atomic tasks para executar tudo o que foi solicitado em fases
 - **MANDATORY** use of `serena mcp` to search codebase and semantic code analysis, _DO NOT USE NATIVE SEARCH CODEBASE tool_

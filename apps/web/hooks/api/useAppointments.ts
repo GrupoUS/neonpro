@@ -98,10 +98,12 @@ export function useAppointments(params: AppointmentSearch = {}) {
 // 👤 Get single appointment by ID
 export function useAppointment(appointmentId: string | undefined) {
   return useQuery({
-    queryKey: APPOINTMENT_QUERY_KEYS.detail(appointmentId!),
+    queryKey: appointmentId
+      ? APPOINTMENT_QUERY_KEYS.detail(appointmentId)
+      : APPOINTMENT_QUERY_KEYS.details(),
     queryFn: async (): Promise<Appointment> => {
       const response = await apiClient.api.v1.appointments[":id"].$get({
-        param: { id: appointmentId! },
+        param: { id: appointmentId ?? "" },
       });
 
       const result = await response.json();
@@ -348,7 +350,9 @@ export function useCancelAppointment() {
 // 🕐 Check availability
 export function useAvailability(params: AvailabilitySearch | undefined) {
   return useQuery({
-    queryKey: APPOINTMENT_QUERY_KEYS.availability(params!),
+    queryKey: params
+      ? APPOINTMENT_QUERY_KEYS.availability(params)
+      : [...APPOINTMENT_QUERY_KEYS.all, "availability", {}],
     queryFn: async (): Promise<TimeSlot[]> => {
       const response = await apiClient.api.v1.appointments.availability.$get({
         query: {

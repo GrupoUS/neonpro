@@ -54,6 +54,7 @@ import {
   Heart,
   History,
   Lungs,
+  Mail,
   MapPin,
   Pause,
   Phone,
@@ -397,7 +398,7 @@ export const EmergencyProtocolsManager: React.FC<
       });
 
       if (result.isValid && result.data) {
-        setActiveEmergencies((prev) => [result.data!, ...prev]);
+        setActiveEmergencies((prev) => [result.data, ...prev]);
         setIsEmergencyDialogOpen(false);
         resetForm();
         toast.success("Protocolo de emergência acionado com sucesso");

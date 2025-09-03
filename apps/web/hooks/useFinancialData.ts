@@ -123,7 +123,7 @@ export function useFinancialData(): FinancialHook {
         (transaction) => transaction.type === "income" && transaction.service_id,
       )
       .forEach((transaction) => {
-        const serviceId = transaction.service_id!;
+        const serviceId = transaction.service_id ?? "unknown";
         const current = serviceMap.get(serviceId) || {
           totalRevenue: 0,
           transactionCount: 0,

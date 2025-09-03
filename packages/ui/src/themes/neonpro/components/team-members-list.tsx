@@ -500,7 +500,7 @@ export const TeamMembersList: React.FC<TeamMembersListProps> = ({
             {/* Role filter */}
             <select
               value={roleFilter}
-              onChange={(e) => onRoleFilterChange?.(e.target.value as any)}
+              onChange={(e) => onRoleFilterChange?.(e.target.value as unknown as typeof roleFilter)}
               className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">Todos os Cargos</option>
@@ -514,7 +514,8 @@ export const TeamMembersList: React.FC<TeamMembersListProps> = ({
             {/* Status filter */}
             <select
               value={statusFilter}
-              onChange={(e) => onStatusFilterChange?.(e.target.value as any)}
+              onChange={(e) =>
+                onStatusFilterChange?.(e.target.value as unknown as typeof statusFilter)}
               className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">Todos os Status</option>

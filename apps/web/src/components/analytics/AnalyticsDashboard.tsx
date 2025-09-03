@@ -437,7 +437,7 @@ export default function AnalyticsDashboard({
                     key={index}
                     className="bg-primary/20 rounded-sm"
                     style={{
-                      height: `${(value / Math.max(...metric.trend!)) * 100}%`,
+                      height: `${(value / Math.max(...(metric.trend ?? [1]))) * 100}%`,
                       width: "8px",
                       backgroundColor: metric.color || "#3b82f6",
                     }}

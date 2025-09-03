@@ -48,7 +48,7 @@
     "lint": "oxlint",
     "format": "dprint fmt",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
+    "test": "pnpm -w --filter @neonpro/tooling vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage"
   },

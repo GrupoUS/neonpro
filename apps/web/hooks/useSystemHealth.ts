@@ -115,9 +115,9 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
   // Determine health status based on response time and errors
   const getHealthStatus = useCallback(
     (
+      component: SystemComponent,
       responseTime?: number,
       errorCount = 0,
-      component: SystemComponent,
     ): HealthStatus => {
       const config = HEALTH_CHECK_CONFIGS[component];
 
@@ -160,7 +160,7 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
 
       return {
         component: "supabase_database",
-        status: getHealthStatus(responseTime, 0, "supabase_database"),
+        status: getHealthStatus("supabase_database", responseTime, 0),
         responseTime,
         details: { query_successful: true },
       };
@@ -192,7 +192,7 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
 
       return {
         component: "supabase_auth",
-        status: getHealthStatus(responseTime, 0, "supabase_auth"),
+        status: getHealthStatus("supabase_auth", responseTime, 0),
         responseTime,
         details: { auth_accessible: true },
       };
@@ -217,7 +217,7 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
 
       return {
         component: "redis_cache",
-        status: getHealthStatus(responseTime, 0, "redis_cache"),
+        status: getHealthStatus("redis_cache", responseTime, 0),
         responseTime,
         details: { cache_accessible: true },
       };
@@ -255,7 +255,7 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
 
       return {
         component: "ai_chat_service",
-        status: getHealthStatus(responseTime, 0, "ai_chat_service"),
+        status: getHealthStatus("ai_chat_service", responseTime, 0),
         responseTime,
         details: { service_responsive: true },
       };
@@ -292,7 +292,7 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
 
       return {
         component: "prediction_engine",
-        status: getHealthStatus(responseTime, 0, "prediction_engine"),
+        status: getHealthStatus("prediction_engine", responseTime, 0),
         responseTime,
         details: { prediction_service_active: true },
       };
@@ -332,7 +332,7 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
 
         return {
           component,
-          status: getHealthStatus(responseTime, 0, component),
+          status: getHealthStatus(component, responseTime, 0),
           responseTime,
           details: { service_responsive: true },
         };

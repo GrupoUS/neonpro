@@ -569,8 +569,8 @@ export class ComplianceSystemValidator {
 
   private extractRecommendations(): string[] {
     const allRecommendations = this.validationResults
-      .filter(r => r.recommendations)
-      .flatMap(r => r.recommendations!);
+      .filter(r => r.recommendations && r.recommendations.length > 0)
+      .flatMap(r => r.recommendations ?? []);
 
     return [...new Set(allRecommendations)]; // Remove duplicates
   }

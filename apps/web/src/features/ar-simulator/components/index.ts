@@ -5,12 +5,6 @@
 // Features: 3D modeling, AR visualization, React components, hooks integration
 // =============================================================================
 
-// Re-export hooks for convenience - INACTIVE
-// export {
-//   useARSimulator,
-//   useSimulationComparison,
-//   useSimulationMetrics,
-// } from "../hooks/_inactive_useARSimulator";
-// export type { SimulationData } from "./_inactive_ARResultsSimulator";
-// export { default as ARResultsSimulator } from "./_inactive_ARResultsSimulator";
-// export { default as WebARViewer } from "./_inactive_WebARViewer";
+// This file intentionally re-exports future AR components when activated.
+// For now, export a harmless placeholder to avoid empty-file lint errors.
+export const __AR_SIMULATOR_PLACEHOLDER__ = true;

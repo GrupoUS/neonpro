@@ -63,7 +63,7 @@ export class LGPDConsentManager {
 
   private validateConsentPurposes(): void {
     const requiredCategories = ["essential", "functional", "analytics", "marketing"];
-    const existingCategories = new Set(this.consentPurposes.map(p => p.category));
+    const existingCategories = new Set<string>(this.consentPurposes.map(p => p.category));
 
     for (const category of requiredCategories) {
       if (!existingCategories.has(category as any)) {

@@ -3,7 +3,7 @@
  * Applies the corrected subscriptions table migration and validates system
  */
 
-import { execFile, spawn } from "node:child_process";
+import { execFile } from "node:child_process";
 import fs from "node:fs";
 
 const COLORS = {

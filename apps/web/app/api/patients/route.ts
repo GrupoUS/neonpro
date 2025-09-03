@@ -280,14 +280,14 @@ async function handlePatientCreate(body: PatientRequest): Promise<NextResponse<P
   // Mock patient creation - in production would save to database
   const newPatient: Patient = {
     id: `patient-${Date.now()}`,
-    ...body.patientData!,
+    ...(body.patientData ?? {}),
     status: "pending",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     dataConsent: {
-      ...body.dataConsent!,
+      ...(body.dataConsent ?? {}),
       ipAddress: "192.168.1.100", // Would get from request
-    },
+    } as Patient["dataConsent"],
   };
 
   return NextResponse.json({
@@ -303,7 +303,7 @@ async function handlePatientUpdate(
   // Mock patient update - in production would update database
   const updatedPatient: Patient = {
     id: body.patientId,
-    ...body.patientData!,
+    ...(body.patientData ?? {}),
     status: "active",
     createdAt: "2024-01-15T10:00:00Z", // Would come from database
     updatedAt: new Date().toISOString(),

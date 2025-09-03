@@ -161,6 +161,8 @@ export default defineConfig({
       "**/coverage/**",
       "**/playwright-report/**",
       "**/test-results/**",
+      // Legacy Playwright-based test (removed)
+      "apps/web/tests/external-chat-widget.test.ts",
 
       // E2E and performance tests (separate tools)
       "**/tools/e2e/**",

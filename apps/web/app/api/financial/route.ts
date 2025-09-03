@@ -231,7 +231,7 @@ export async function POST(request: NextRequest) {
 
 // Handler functions
 async function handleFinancialOverview(
-  request: FinancialRequest,
+  _request: FinancialRequest,
 ): Promise<NextResponse<FinancialResponse>> {
   // Mock financial overview - in production would query database
   const mockMetrics: FinancialMetrics = {
@@ -324,7 +324,7 @@ async function handleFinancialReports(
 }
 
 async function handleFinancialAnalytics(
-  request: FinancialRequest,
+  _request: FinancialRequest,
 ): Promise<NextResponse<FinancialResponse>> {
   // Mock analytics data
   const mockMetrics: FinancialMetrics = {
@@ -375,7 +375,7 @@ async function handleFinancialAnalytics(
 }
 
 async function handleFinancialPredictions(
-  request: FinancialRequest,
+  _request: FinancialRequest,
 ): Promise<NextResponse<FinancialResponse>> {
   // Mock predictions data
   const mockPredictions = [
@@ -410,7 +410,7 @@ async function handleFinancialPredictions(
 }
 
 async function handleCashFlowAnalysis(
-  request: FinancialRequest,
+  _request: FinancialRequest,
 ): Promise<NextResponse<FinancialResponse>> {
   // Mock cash flow analysis
   const mockCashFlow = {
@@ -451,7 +451,7 @@ async function handleCashFlowAnalysis(
 }
 
 async function handleFinancialDashboard(
-  request: FinancialRequest,
+  _request: FinancialRequest,
 ): Promise<NextResponse<FinancialResponse>> {
   // Mock dashboard data
   const mockDashboard = {
@@ -484,7 +484,7 @@ async function handleFinancialDashboard(
 }
 
 async function handleFinancialAlerts(
-  request: FinancialRequest,
+  _request: FinancialRequest,
 ): Promise<NextResponse<FinancialResponse>> {
   // Mock alerts data
   const mockAlerts = [

@@ -579,3 +579,4 @@ audit-reports/temp/
 # Last updated: 2025 - Based on NeonPro Healthcare Architecture v2025
 # Total packages: 22 | Apps: 2 (web, api) | Stack: Next.js 15 + Hono.dev + Supabase
 # =============================================================================
+.env*.local

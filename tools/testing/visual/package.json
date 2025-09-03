@@ -4,19 +4,10 @@
   "private": true,
   "description": "Visual regression tests for NeonPro Healthcare Platform",
   "scripts": {
-    "test": "playwright test",
-    "test:update": "playwright test --update-snapshots",
-    "test:headed": "playwright test --headed",
-    "test:debug": "playwright test --debug",
-    "test:ui": "playwright test --ui",
-    "test:report": "playwright show-report",
-    "baseline:create": "playwright test --update-snapshots",
-    "baseline:update": "playwright test --update-snapshots",
-    "screenshots:clean": "rimraf test-results-*/ && rimraf playwright-report/",
-    "install:browsers": "playwright install"
+    "test": "echo 'Visual E2E tests disabled (Playwright removed). Use Vitest for unit/integration.'",
+    "screenshots:clean": "rimraf test-results-*/ && rimraf playwright-report/"
   },
   "dependencies": {
-    "@playwright/test": "^1.44.0",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0",
     "rimraf": "^5.0.0"

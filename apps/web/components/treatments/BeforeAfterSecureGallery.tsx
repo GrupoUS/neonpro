@@ -605,7 +605,7 @@ export function BeforeAfterSecureGallery({
                         <div className="col-span-2 py-8 text-center">
                           <Camera className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
                           <p className="text-muted-foreground text-sm">
-                            Nenhuma foto "antes" disponível
+                            Nenhuma foto &quot;antes&quot; disponível
                           </p>
                         </div>
                       )}
@@ -642,7 +642,7 @@ export function BeforeAfterSecureGallery({
                         <div className="col-span-2 py-8 text-center">
                           <Camera className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
                           <p className="text-muted-foreground text-sm">
-                            Nenhuma foto "depois" disponível
+                            Nenhuma foto &quot;depois&quot; disponível
                           </p>
                         </div>
                       )}

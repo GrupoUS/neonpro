@@ -10,16 +10,19 @@ applyTo: "**/*"
 
 - **🌟 Always Read the Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
 - **⚙️ Always Read the Project Memory**: [`docs/memory.md`](../docs/memory.md)
+- **📚 Always Read the @source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
+  - One‑line: Real monorepo structure (apps/packages) validated and categorized
+  - Use when: Locating code, packages, or wiring across the repo
 - **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.
 - **MANDATORY** Use do gerenciador de tasks nativo do augment de forma mais ativa para acompanhar tudo o que precisa ser feito, criando atomic tasks para executar tudo o que foi solicitado em fases
-- **MANDATORY** use of `serena mcp` to search codebase and semantic code analysis, *DO NOT USE NATIVE SEARCH CODEBASE tool*
+- **MANDATORY** use of `serena mcp` to search codebase and semantic code analysis, _DO NOT USE NATIVE SEARCH CODEBASE tool_
 - **MANDATORY** use of `supabase mcp` for database operations
 - **MANDATORY** use of `shadcn-ui mcp` to manage ui components
 - **MANDATORY** use of `archon mcp` for task and knowledge management
 - **MANDATORY** use of `desktop-commander mcp` for file and terminal operations and system management
 - **MANDATORY** use of `sequential-thinking` and `think` native tool before any other action to break down problems, plan approaches, and verify solutions, use `think` each 5 steps to outline next steps and strategies.
-- **MANDATORY** use of `tavily mcp` for real-time information, current trends, and technology updates, *DO NOT USE NATIVE SEARCH tool*
-- **MANDATORY** use of `context7 mcp` for deep contextual understanding and analysis, *DO NOT USE NATIVE CONTEXT tool*
+- **MANDATORY** use of `tavily mcp` for real-time information, current trends, and technology updates, _DO NOT USE NATIVE SEARCH tool_
+- **MANDATORY** use of `context7 mcp` for deep contextual understanding and analysis, _DO NOT USE NATIVE CONTEXT tool_
 - **NO INTERRUPTIONS**: Continue through ALL steps until problem fully solved.
 - **MANDATORY FIRST STEP**: Always begin with sequential-thinking tool.
 - **ONLY TERMINATE WHEN**: User query COMPLETELY resolved and Problem 100% solved.

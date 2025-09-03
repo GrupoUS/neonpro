@@ -1021,7 +1021,9 @@ export function TremorFriendlyControls({
                         <div className="flex items-center justify-between">
                           <span className="text-sm">Tipo</span>
                           <span className="text-xs">
-                            {TREMOR_CLASSIFICATIONS[currentClassification!]?.name || "Desconhecido"}
+                            {currentClassification != null
+                              ? TREMOR_CLASSIFICATIONS[currentClassification]?.name
+                              : "Desconhecido"}
                           </span>
                         </div>
 

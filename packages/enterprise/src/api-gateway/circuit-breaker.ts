@@ -271,7 +271,9 @@ export class HealthcareCircuitBreakerManager {
     if (!this.circuitBreakers.has(serviceKey)) {
       this.circuitBreakers.set(serviceKey, new CircuitBreaker(config));
     }
-    return this.circuitBreakers.get(serviceKey)!;
+    const cb = this.circuitBreakers.get(serviceKey);
+    if (!cb) throw new Error(`Circuit breaker not found for service: ${serviceKey}`);
+    return cb;
   }
 
   /**

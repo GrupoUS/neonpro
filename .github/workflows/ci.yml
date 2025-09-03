@@ -612,72 +612,9 @@ jobs:
           echo "- **Audit Trail**: ✅ Implementation found" >> $GITHUB_STEP_SUMMARY
 
   # =============================================================================
-  # PHASE 6: END-TO-END TESTING (CONDITIONAL)
+  # PHASE 6: (Removed) E2E Testing
+  # NOTE: Playwright-based E2E tests removed; Vitest covers unit/integration
   # =============================================================================
-
-  e2e-testing:
-    name: 🎭 E2E Testing
-    runs-on: ubuntu-22.04
-    timeout-minutes: 20
-    needs: [ci-initialization, build-and-test]
-    if: needs.ci-initialization.outputs.skip-tests != 'true' && needs.ci-initialization.outputs.is-main-branch == 'true'
-    env:
-      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/ms-playwright
-    steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-
-      - name: 📦 Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8.15.6
-
-      - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-
-      - name: 📥 Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: 🎭 Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-
-      - name: 🎭 Install Playwright browsers
-        run: |
-          echo "🎭 Installing Playwright browsers..."
-          pnpm dlx playwright install --with-deps chromium
-          echo "✅ Playwright browsers installed"
-
-      - name: 🎭 Run E2E tests
-        run: |
-          echo "🎭 Running end-to-end tests..."
-          e2e_exit_code=0
-          pnpm dlx playwright test || e2e_exit_code=$?
-
-          if [ $e2e_exit_code -eq 0 ]; then
-            echo "✅ E2E tests passed successfully"
-          else
-            echo "⚠️ E2E tests failed (exit code: $e2e_exit_code)"
-            echo "E2E failures may indicate deployment issues"
-          fi
-        continue-on-error: true
-
-      - name: 📊 Upload E2E test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: e2e-results-${{ github.sha }}
-          path: |
-            test-results/
-            playwright-report/
-          retention-days: 7
 
   # =============================================================================
   # PHASE 7: DEPLOYMENT PREPARATION

@@ -11,7 +11,7 @@
     "lint": "oxlint src/",
     "format": "dprint fmt",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
+    "test": "pnpm -w --filter @neonpro/tooling vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "deploy:blue-green": "tsx src/deployment/blue-green/deployer.ts",
@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@neonpro/database": "workspace:*",
-    "@playwright/test": "^1.47.2",
     "@testing-library/react": "^16.0.1",
     "@testing-library/jest-dom": "^6.5.0",
     "lighthouse": "^12.2.1",

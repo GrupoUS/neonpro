@@ -52,8 +52,9 @@ export const auditMiddleware = () => {
     try {
       const token = extractToken(c);
       if (token) {
-        const payload = await verify(token, process.env.JWT_SECRET!);
-        auditContext.user_id = payload.sub as string;
+        const secret = process.env.JWT_SECRET ?? "";
+        const payload = await verify(token, secret);
+        auditContext.user_id = (payload?.sub ?? "") as string;
         auditContext.session_id = payload.jti as string;
       }
     } catch (error) {

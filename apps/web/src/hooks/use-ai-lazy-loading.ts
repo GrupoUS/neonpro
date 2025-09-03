@@ -182,28 +182,56 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
   const requestAIConsent = useCallback(() => {
     if (typeof window === "undefined") return Promise.resolve(false);
 
+    // Prefer UI-driven consent via CustomEvent to comply with no-alert/no-confirm policy
     return new Promise<boolean>((resolve) => {
-      // TODO: Replace with custom modal in UI layer; confirm used as minimal fallback
-      const consent = typeof window !== "undefined" && typeof window.confirm === "function"
-        ? window.confirm(
-          "Para utilizar recursos de IA preditiva, precisamos processar dados clínicos com algoritmos de aprendizado de máquina. "
-            + "Os dados são processados localmente no seu dispositivo. Autoriza o uso de IA para predições clínicas?",
-        )
-        : false;
+      let resolved = false;
 
-      if (consent) {
-        localStorage.setItem("lgpd-consent-ai", "accepted");
-        setState(prev => ({ ...prev, canLoad: true, error: null }));
-      } else {
-        localStorage.setItem("lgpd-consent-ai", "denied");
+      const onResponse = (event: Event) => {
+        const detail = (event as CustomEvent<{ consent: boolean; }>).detail;
+        if (!detail || typeof detail.consent !== "boolean") return;
+        resolved = true;
+        window.removeEventListener("ai-consent-response", onResponse as EventListener);
+
+        const consent = detail.consent;
+        if (consent) {
+          localStorage.setItem("lgpd-consent-ai", "accepted");
+          setState(prev => ({ ...prev, canLoad: true, error: null }));
+        } else {
+          localStorage.setItem("lgpd-consent-ai", "denied");
+          setState(prev => ({
+            ...prev,
+            canLoad: false,
+            error: "AI consent denied - required for predictions",
+          }));
+        }
+        resolve(consent);
+      };
+
+      // Listen for UI response
+      window.addEventListener("ai-consent-response", onResponse as EventListener, { once: true });
+
+      // Notify UI layer to show consent modal
+      const requestEvent = new CustomEvent("ai-consent-request", {
+        detail: {
+          context: "predictive-ai",
+          message:
+            "Para utilizar recursos de IA preditiva, precisamos processar dados clínicos com algoritmos de aprendizado de máquina. Os dados são processados localmente no seu dispositivo. Autoriza o uso de IA para predições clínicas?",
+        },
+      });
+      window.dispatchEvent(requestEvent);
+
+      // Fallback timeout: if no UI handles the request, do not block; resolve to false safely
+      window.setTimeout(() => {
+        if (resolved) return;
+        window.removeEventListener("ai-consent-response", onResponse as EventListener);
+        // No blocking dialogs; require explicit UI consent
         setState(prev => ({
           ...prev,
           canLoad: false,
-          error: "AI consent denied - required for predictions",
+          error: "AI consent pending - awaiting user decision",
         }));
-      }
-
-      resolve(consent);
+        resolve(false);
+      }, 8000);
     });
   }, []);
 

@@ -114,7 +114,7 @@ class QueueStorageService {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(this.dbName, this.dbVersion);
 
-      request.onerror = () => reject(request.error);
+      request.addEventListener("error", () => reject(request.error));
       request.onsuccess = () => {
         this.db = request.result;
         resolve();
@@ -141,7 +141,7 @@ class QueueStorageService {
       const store = transaction.objectStore("actions");
       const request = store.add(action);
 
-      request.onerror = () => reject(request.error);
+      request.addEventListener("error", () => reject(request.error));
       request.onsuccess = () => resolve();
     });
   }
@@ -154,7 +154,7 @@ class QueueStorageService {
       const store = transaction.objectStore("actions");
       const request = store.put(action);
 
-      request.onerror = () => reject(request.error);
+      request.addEventListener("error", () => reject(request.error));
       request.onsuccess = () => resolve();
     });
   }
@@ -167,7 +167,7 @@ class QueueStorageService {
       const store = transaction.objectStore("actions");
       const request = store.getAll();
 
-      request.onerror = () => reject(request.error);
+      request.addEventListener("error", () => reject(request.error));
       request.onsuccess = () => resolve(request.result);
     });
   }
@@ -181,7 +181,7 @@ class QueueStorageService {
       const index = store.index("status");
       const request = index.getAll(status);
 
-      request.onerror = () => reject(request.error);
+      request.addEventListener("error", () => reject(request.error));
       request.onsuccess = () => resolve(request.result);
     });
   }
@@ -194,7 +194,7 @@ class QueueStorageService {
       const store = transaction.objectStore("actions");
       const request = store.delete(actionId);
 
-      request.onerror = () => reject(request.error);
+      request.addEventListener("error", () => reject(request.error));
       request.onsuccess = () => resolve();
     });
   }

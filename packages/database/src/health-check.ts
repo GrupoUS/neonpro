@@ -158,7 +158,7 @@ async function testRLSPolicies(): Promise<HealthCheckResult> {
     const adminClient = createAdminClient();
 
     // Test RLS is enabled on critical tables
-    const { data: rlsStatus, error } = await (adminClient as unknown)
+    const { data: rlsStatus, error } = await (adminClient as any)
       .rpc("check_rls_enabled", { table_name: "patients" });
 
     if (error) {

@@ -615,7 +615,7 @@ export function AccessibilityPanel() {
                         </li>
                         <li>• &quot;Buscar paciente [nome]&quot; - Procurar paciente</li>
                         <li>• &quot;Agenda de hoje&quot; - Ver consultas do dia</li>
-                        <li>• "Estoque de [produto]" - Verificar estoque</li>
+                        <li>• &quot;Estoque de [produto]&quot; - Verificar estoque</li>
                       </ul>
                     </div>
                   )}

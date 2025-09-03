@@ -304,7 +304,7 @@ async function storeInIndexedDB(storeName, data) {
       addRequest.addEventListener("error", () => reject(addRequest.error));
     };
 
-    request.onerror = () => reject(request.error);
+    request.addEventListener("error", () => reject(request.error));
   });
 }
 
@@ -322,7 +322,7 @@ async function removeFromIndexedDB(storeName, id) {
       deleteRequest.addEventListener("error", () => reject(deleteRequest.error));
     };
 
-    request.onerror = () => reject(request.error);
+    request.addEventListener("error", () => reject(request.error));
   });
 }
 

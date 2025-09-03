@@ -599,7 +599,7 @@ export function AccessibilityIntegrationExample() {
                     </div>
                     {accessibilityConfig.voice_medical && (
                       <Badge variant="outline" className="mt-2 text-xs">
-                        Comando de voz: "Dor nível 3"
+                        Comando de voz: &quot;Dor nível 3&quot;
                       </Badge>
                     )}
                   </Card>

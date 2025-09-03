@@ -266,8 +266,17 @@
     },
     "test": {
       "dependsOn": ["build"],
-      "inputs": ["**/*.test.*", "**/*.spec.*", "**/vitest.config.*"],
+      "inputs": [
+        "**/*.test.*",
+        "**/*.spec.*",
+        "**/vitest.config.*",
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json"
+      ],
       "outputs": ["coverage/**", "tools/testing/reports/**"],
+      "env": ["CI", "NODE_ENV"],
+      "cache": true,
       "outputLogs": "full"
     },
     "test:unit": {

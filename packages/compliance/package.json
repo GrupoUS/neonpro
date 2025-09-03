@@ -12,7 +12,7 @@
     "format": "dprint fmt",
     "lint:fix": "oxlint src/ --fix",
     "type-check": "tsc --noEmit",
-    "test": "vitest",
+    "test": "pnpm -w --filter @neonpro/tooling vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "clean": "rm -rf dist coverage"

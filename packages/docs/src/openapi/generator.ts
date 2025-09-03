@@ -30,6 +30,36 @@ export interface OpenAPIConfig {
   };
 }
 
+export interface OpenAPIComponents {
+  schemas: Record<string, unknown>;
+  parameters: Record<string, unknown>;
+  responses: Record<string, unknown>;
+  examples: Record<string, unknown>;
+  requestBodies: Record<string, unknown>;
+  headers: Record<string, unknown>;
+  securitySchemes: Record<string, unknown>;
+}
+
+interface ParsedInterfaceSchema {
+  properties: Record<string, unknown>;
+  required: string[];
+}
+
+export interface OpenAPISpec {
+  openapi: string;
+  info: {
+    title: string;
+    version: string;
+    description: string;
+    contact: { name: string; email: string; url: string; };
+    license: { name: string; url: string; };
+  };
+  servers: OpenAPIConfig["servers"];
+  components: OpenAPIComponents;
+  paths: Record<string, unknown>;
+  tags: Array<{ name: string; description: string; }>;
+}
+
 export class OpenAPIGenerator {
   private readonly config: OpenAPIConfig;
   private readonly spinner: ReturnType<typeof ora>;
@@ -127,7 +157,7 @@ export class OpenAPIGenerator {
   /**
    * Parse JSDoc comments for OpenAPI annotations
    */
-  private parseJSDocForOpenAPI(jsdoc: string, components: unknown): void {
+  private parseJSDocForOpenAPI(jsdoc: string, components: OpenAPIComponents): void {
     // Extract @swagger or @openapi annotations
     const swaggerMatch = jsdoc.match(/@swagger\s+([\s\S]*?)(?=\*\/|\* @)/)?.[1];
     const openapiMatch = jsdoc.match(/@openapi\s+([\s\S]*?)(?=\*\/|\* @)/)?.[1];
@@ -139,12 +169,12 @@ export class OpenAPIGenerator {
 
         // Merge components
         if (parsed.components && typeof parsed.components === "object") {
-          const parsedComponents = parsed.components as any;
+          const parsedComponents = parsed.components as Record<string, Record<string, unknown>>;
           Object.keys(parsedComponents).forEach((componentType) => {
-            if ((components as any)[componentType]) {
+            if ((components as Record<string, unknown>)[componentType]) {
               Object.assign(
-                (components as any)[componentType],
-                parsedComponents[componentType],
+                (components as Record<string, unknown>)[componentType] as Record<string, unknown>,
+                parsedComponents[componentType] || {},
               );
             }
           });
@@ -172,13 +202,13 @@ export class OpenAPIGenerator {
       }
 
       try {
-        const schema = this.parseInterfaceToSchema(interfaceBody) as any;
+        const schema = this.parseInterfaceToSchema(interfaceBody) as ParsedInterfaceSchema;
         schemas[interfaceName] = {
           type: "object",
           properties: schema?.properties || {},
           required: schema?.required || [],
           description: `Generated from ${interfaceName} interface`,
-        };
+        } as const;
       } catch {}
     }
   }
@@ -234,7 +264,7 @@ export class OpenAPIGenerator {
       return {
         type: "array",
         items: this.typeScriptTypeToOpenAPIType(itemType),
-      };
+      } as const;
     }
 
     // Union types (basic support)
@@ -243,7 +273,7 @@ export class OpenAPIGenerator {
         oneOf: tsType
           .split("|")
           .map((t) => this.typeScriptTypeToOpenAPIType(t.trim())),
-      };
+      } as const;
     }
 
     return typeMap[tsType] || { $ref: `#/components/schemas/${tsType}` };
@@ -252,8 +282,8 @@ export class OpenAPIGenerator {
   /**
    * Generate OpenAPI specification
    */
-  private generateSpec(components: unknown): unknown {
-    const spec = {
+  private generateSpec(components: OpenAPIComponents): OpenAPISpec {
+    const spec: OpenAPISpec = {
       openapi: "3.0.3",
       info: {
         title: this.config.title,
@@ -308,9 +338,9 @@ export class OpenAPIGenerator {
   /**
    * Validate OpenAPI specification
    */
-  private async validateSpec(spec: unknown): Promise<void> {
+  private async validateSpec(spec: OpenAPISpec): Promise<void> {
     // Basic validation
-    const specObj = spec as any;
+    const specObj = spec as OpenAPISpec;
     if (!(specObj?.openapi && specObj?.info && specObj?.paths)) {
       throw new Error("Invalid OpenAPI specification structure");
     }
@@ -324,9 +354,9 @@ export class OpenAPIGenerator {
   /**
    * Validate healthcare compliance requirements
    */
-  private validateHealthcareCompliance(spec: unknown): void {
+  private validateHealthcareCompliance(spec: OpenAPISpec): void {
     const warnings: string[] = [];
-    const specObj = spec as any;
+    const specObj = spec as OpenAPISpec;
 
     // Check for security schemes
     if (!specObj?.components?.securitySchemes) {
@@ -351,7 +381,7 @@ export class OpenAPIGenerator {
   /**
    * Write output files (JSON and YAML)
    */
-  private async writeOutputFiles(spec: unknown): Promise<void> {
+  private async writeOutputFiles(spec: OpenAPISpec): Promise<void> {
     const outputDir = dirname(this.config.outputPath);
 
     // Ensure output directory exists

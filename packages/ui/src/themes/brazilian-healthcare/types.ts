@@ -125,7 +125,7 @@ export interface AuditEvent {
   timestamp: string;
   action: string;
   userId: string;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   ipAddress: string;
   userAgent: string;
 }

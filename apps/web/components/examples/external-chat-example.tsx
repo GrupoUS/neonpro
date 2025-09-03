@@ -221,7 +221,7 @@ export function ExternalChatExample() {
               </h4>
               <p className="text-sm text-gray-600 mb-2">Digite mensagens simples como:</p>
               <div className="bg-gray-100 p-2 rounded text-sm font-mono">
-                "Olá", "Como você funciona?", "Preciso de ajuda"
+                &quot;Olá&quot;, &quot;Como você funciona?&quot;, &quot;Preciso de ajuda&quot;
               </div>
             </div>
 
@@ -231,7 +231,8 @@ export function ExternalChatExample() {
               </h4>
               <p className="text-sm text-gray-600 mb-2">Digite mensagens como:</p>
               <div className="bg-gray-100 p-2 rounded text-sm font-mono">
-                "Como fazer backup", "Preciso de um tutorial", "Exemplo de configuração"
+                &quot;Como fazer backup&quot;, &quot;Preciso de um tutorial&quot;, &quot;Exemplo de
+                configuração&quot;
               </div>
             </div>
 
@@ -241,7 +242,8 @@ export function ExternalChatExample() {
               </h4>
               <p className="text-sm text-gray-600 mb-2">Digite mensagens como:</p>
               <div className="bg-gray-100 p-2 rounded text-sm font-mono">
-                "Problema técnico complexo", "Erro específico", "Falar com atendente"
+                &quot;Problema técnico complexo&quot;, &quot;Erro específico&quot;, &quot;Falar com
+                atendente&quot;
               </div>
             </div>
 
