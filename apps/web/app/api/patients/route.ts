@@ -104,6 +104,13 @@ interface PatientResponse {
   message?: string;
 }
 
+const DEFAULT_CONSENT: Patient["dataConsent"] = {
+  dataProcessing: false,
+  marketing: false,
+  consentDate: new Date().toISOString(),
+  ipAddress: "",
+};
+
 // GET /api/patients - List patients with optional search and filters
 // GET /api/patients?action=search&query=... - Search patients
 export async function GET(request: NextRequest) {
@@ -164,7 +171,10 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    return handlePatientUpdate(body);
+    const forwardedFor = request.headers.get("x-forwarded-for");
+    const requestIp = forwardedFor?.split(",")[0]?.trim() || "";
+
+    return handlePatientUpdate(body, { requestIp });
   } catch (error) {
     console.error("Patients API PUT error:", error);
     return NextResponse.json(
@@ -304,19 +314,27 @@ async function handlePatientCreate(body: PatientRequest): Promise<NextResponse<P
 
 async function handlePatientUpdate(
   body: PatientRequest & { patientId: string; },
+  opts?: { requestIp?: string; existingPatient?: Patient | null },
 ): Promise<NextResponse<PatientResponse>> {
   // Mock patient update - in production would update database
   const clientConsent = body.dataConsent ?? {};
+  const existingPatient = opts?.existingPatient ?? null;
+  const requestIp = opts?.requestIp || "";
+
+  const mergedConsent: Patient["dataConsent"] = {
+    ...DEFAULT_CONSENT,
+    ...(existingPatient?.dataConsent ?? {}),
+    ...clientConsent,
+    ipAddress: requestIp,
+  };
+
   const updatedPatient: Patient = {
     ...(body.patientData ?? {}),
     id: body.patientId,
     status: "active",
     createdAt: "2024-01-15T10:00:00Z", // Would come from database
     updatedAt: new Date().toISOString(),
-    dataConsent: {
-      ...clientConsent,
-      ipAddress: "192.168.1.100", // Would get from request
-    },
+    dataConsent: mergedConsent,
   };
 
   return NextResponse.json({

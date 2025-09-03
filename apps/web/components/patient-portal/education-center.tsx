@@ -44,6 +44,48 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+// Content types
+type BaseContent = {
+  id: number;
+  title: string;
+  description?: string;
+  category?: string;
+  priority?: "high" | "medium" | "low";
+  completed?: boolean;
+  featured?: boolean;
+  tags?: string[];
+  views?: number;
+  rating?: number;
+};
+
+export type VideoContent = BaseContent & {
+  type: "video";
+  duration: string;
+  thumbnail?: string;
+};
+
+export type ArticleContent = BaseContent & {
+  type: "article";
+  readTime: string;
+};
+
+export type QuizContent = BaseContent & {
+  type: "quiz";
+  duration?: string;
+  readTime?: string;
+};
+
+export type InteractiveContent = BaseContent & {
+  type: "interactive";
+  duration?: string;
+};
+
+export type ContentItem =
+  | VideoContent
+  | ArticleContent
+  | QuizContent
+  | InteractiveContent;
+
 // Mock data for educational content
 const mockEducationalContent = {
   myTreatments: [
@@ -218,8 +260,8 @@ function ContentCard({
   content,
   onView,
 }: {
-  content: unknown;
-  onView: () => void;
+  content: ContentItem;
+  onView: (content: ContentItem) => void;
 }) {
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -285,7 +327,7 @@ function ContentCard({
         getPriorityColor(content.priority),
       )}
     >
-      <CardContent className="p-4" onClick={onView}>
+      <CardContent className="p-4" onClick={() => onView(content)}>
         <div className="mb-3 flex items-start justify-between">
           <div className="flex-1">
             <div className="mb-2 flex items-center space-x-2">
@@ -429,7 +471,7 @@ function CareInstructionsWidget() {
   );
 }
 
-function VideoPlayer({ content }: { content: unknown; }) {
+function VideoPlayer({ content }: { content: VideoContent }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, _setCurrentTime] = useState(45); // seconds
@@ -599,9 +641,9 @@ export function EducationCenter() {
   const [activeTab, setActiveTab] = useState("my-treatments");
   const [searchTerm, setSearchTerm] = useState("");
   const [/* _selectedCategory */, setSelectedCategory] = useState("all");
-  const [selectedContent, setSelectedContent] = useState<unknown>();
+  const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null);
 
-  const handleViewContent = (content: unknown) => {
+  const handleViewContent = (content: ContentItem) => {
     setSelectedContent(content);
   };
 
@@ -609,13 +651,15 @@ export function EducationCenter() {
     return (
       <div className="space-y-6">
         {/* Back Button */}
-        <Button onClick={() => setSelectedContent(undefined)} variant="outline">
+        <Button onClick={() => setSelectedContent(null)} variant="outline">
           <ChevronRight className="h-4 w-4 rotate-180" />
           Voltar
         </Button>
 
         {/* Content Viewer */}
-        {selectedContent.type === "video" ? <VideoPlayer content={selectedContent} /> : (
+        {selectedContent.type === "video" ? (
+          <VideoPlayer content={selectedContent as VideoContent} />
+        ) : (
           <Card>
             <CardHeader>
               <CardTitle>{selectedContent.title}</CardTitle>

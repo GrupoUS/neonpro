@@ -132,8 +132,8 @@ COMPLEXITY_DETECTION:
 
 ```yaml
 MCP_COORDINATION:
-  research_pipeline: "archon → context7 → tavily → exa"
-  execution_engine: "desktop-commander (file operations + system management)"
+  research_pipeline: "archon → context7 → tavily"
+  execution_engine: "file tools (move_file, list_directory, read_file, write_file)"
   reasoning_engine: "sequential-thinking (complex problem decomposition) + think native tool"
   coordination_protocol:
     research_first: "ALWAYS research before critical implementations"
@@ -142,7 +142,7 @@ MCP_COORDINATION:
     if_stuck_in_loop: "Use research-first protocol to get official docs and best practices"
   strategic_selection:
     archon: "Task management, project organization, knowledge base"
-    desktop_commander: "File operations, system management, data analysis, scaffolding"
+    file_tools: "File operations via move_file, list_directory, read_file, write_file"
     context7: "Documentation research, framework lookup, best practices validation"
     tavily: "Real-time information, current trends, technology updates"
     sequential_thinking: "Complex problem decomposition, systematic analysis"
@@ -186,7 +186,7 @@ process:
   investigation: "Define 3-5 key questions"
   documentation: "archon + context7 → Official docs and best practices"
   validation: "tavily → Current patterns and security updates"
-  advanced: "exa → Real-world implementations (if complexity ≥5)"
+  advanced: "archon knowledge base → Real-world implementations (if complexity ≥5)"
   synthesis: "Cross-reference multiple sources"
 quality_gate: "Research quality ≥9.5/10"
 ```
@@ -221,7 +221,7 @@ THINK_AND_PLAN:
 DEVELOPMENT_FLOW:
   planning: "sequential-thinking → Architecture design"
   research: "context7 → Framework documentation"
-  implementation: "desktop-commander → File operations"
+  implementation: "file tools (move_file, list_directory, read_file, write_file) → File operations"
   backend: "supabase-mcp → Database operations"
   frontend: "shadcn-ui → Component library"
   validation: "Think tool → Quality checks every 5 api request"

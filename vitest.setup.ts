@@ -165,10 +165,12 @@ function shouldMockHost(options: any) {
     }
     // Handle URL object inputs
     if (typeof URL !== "undefined" && options instanceof URL) {
-      return options.hostname === "127.0.0.1" || options.hostname === "localhost" || options.port === "3000";
+      return options.hostname === "127.0.0.1" || options.hostname === "localhost"
+        || options.port === "3000";
     }
     // Handle RequestOptions-like objects
-    const hostname = (options && (options.hostname || options.host)) || options?.host?.hostname || "";
+    const hostname = (options && (options.hostname || options.host)) || options?.host?.hostname
+      || "";
     const port = (options && (options.port || options?.host?.port)) || "";
     const host = `${hostname}`;
     const str = String(options || "");
@@ -176,31 +178,35 @@ function shouldMockHost(options: any) {
     if (!host) {
       return str.includes("127.0.0.1") || str.includes("localhost") || str.includes(":3000");
     }
-    return host === "127.0.0.1" || host === "localhost" || String(port) === "3000" || str.includes(":3000");
+    return host === "127.0.0.1" || host === "localhost" || String(port) === "3000"
+      || str.includes(":3000");
   } catch {
     const s = String(options || "");
     return s.includes("127.0.0.1") || s.includes("localhost") || s.includes(":3000");
   }
 }
 
-http.request = function(options: any, callback?: any) {
+http.request = function(...args: any[]) {
   try {
-    if (shouldMockHost(options)) {
+    const cb = args.find((a) => typeof a === "function");
+    const candidates = args.slice(0, 2); // url, options
+    const match = candidates.some((c) => shouldMockHost(c));
+    if (match) {
       const { PassThrough } = require("stream");
       const req = new PassThrough();
-      req.write = () => {};
-      req.end = () => {
+      (req as any).write = () => {};
+      (req as any).end = () => {
         const res = createMockResponse({});
-        if (callback) callback(res);
-        req.emit("response", res);
+        if (cb) cb(res);
+        (req as any).emit("response", res);
       };
-      req.on = () => req;
+      (req as any).on = () => req;
       return req as any;
     }
   } catch (e) {
-    // fallthrough
+    // fallthrough to original
   }
-  return originalHttpRequest.apply(this, arguments as any);
+  return originalHttpRequest.apply(this, args as any);
 } as any;
 
 http.get = function(options: any, callback?: any) {
@@ -209,24 +215,27 @@ http.get = function(options: any, callback?: any) {
   return req;
 } as any;
 
-https.request = function(options: any, callback?: any) {
+https.request = function(...args: any[]) {
   try {
-    if (shouldMockHost(options)) {
+    const cb = args.find((a) => typeof a === "function");
+    const candidates = args.slice(0, 2); // url, options
+    const match = candidates.some((c) => shouldMockHost(c));
+    if (match) {
       const { PassThrough } = require("stream");
       const req = new PassThrough();
-      req.write = () => {};
-      req.end = () => {
+      (req as any).write = () => {};
+      (req as any).end = () => {
         const res = createMockResponse({});
-        if (callback) callback(res);
-        req.emit("response", res);
+        if (cb) cb(res);
+        (req as any).emit("response", res);
       };
-      req.on = () => req;
+      (req as any).on = () => req;
       return req as any;
     }
   } catch (e) {
     // fallthrough
   }
-  return originalHttpsRequest.apply(this, arguments as any);
+  return originalHttpsRequest.apply(this, args as any);
 } as any;
 
 https.get = function(options: any, callback?: any) {
@@ -234,6 +243,12 @@ https.get = function(options: any, callback?: any) {
   req.end();
   return req;
 } as any;
+
+// Ensure modules importing different core specifiers see the mocked APIs
+vi.mock("http", () => ({ ...http, default: http }));
+vi.mock("https", () => ({ ...https, default: https }));
+vi.mock("node:http", () => ({ ...http, default: http }));
+vi.mock("node:https", () => ({ ...https, default: https }));
 
 // 💾 Storage mocks
 if (typeof window !== "undefined") {
