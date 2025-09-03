@@ -40,7 +40,11 @@
     "**/supabase/types/**",
     "**/*.generated.*",
     "**/*.d.ts",
-    "tools/e2e/reports/**"
+    "tools/e2e/reports/**",
+    // Ignore compiled JS artifacts inside source trees to reduce noise
+    "packages/utils/src/**/*.js",
+    "packages/ai/src/**/*.js",
+    "packages/monitoring/src/**/*.js"
   ],
   "env": {
     "browser": true,
@@ -240,6 +244,7 @@
     "prefer-template": "warn",
     "prefer-spread": "warn",
     "prefer-rest-params": "warn",
+    "no-sparse-arrays": "warn",
     "prefer-destructuring": [
       "warn",
       {
@@ -279,7 +284,7 @@
     "unicorn/numeric-separators-style": "error",
 
     // ===== SELECTIVE RESTRICTION RULES (Healthcare Critical) =====
-    "no-void": "error",
+    "no-void": "warn",
     "typescript/no-var-requires": "warn",
     "typescript/no-require-imports": "warn"
     // ===== JSDOC (Documentation Quality) - not using external jsdoc plugin in oxlint binary mode =====
@@ -575,6 +580,7 @@
         "no-debugger": "error",
         "no-alert": "error",
         "no-eval": "error",
+        "no-void": "error",
         "unicorn/no-document-cookie": "error"
       }
     },

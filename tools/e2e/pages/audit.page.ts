@@ -17,7 +17,7 @@ export interface AuditLogEntry {
   ipAddress: string;
   userAgent: string;
   outcome: "success" | "failure" | "warning";
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   complianceFlags: string[];
 }
 
@@ -630,7 +630,7 @@ export class AuditPage extends BasePage {
     title: string;
     period: { start: string; end: string; };
     sections: string[];
-    filters: Record<string, any>;
+    filters: Record<string, unknown>;
     format: "pdf" | "excel" | "csv";
   }): Promise<void> {
     await this.reportGenerator.click();

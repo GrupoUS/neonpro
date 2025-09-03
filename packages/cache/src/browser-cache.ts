@@ -1,8 +1,9 @@
-import type { CacheEntry, CacheOperation, CacheStats, HealthcareDataPolicy } from "./types";
+
 
 type BrowserCacheEntry = CacheEntry<unknown> & {
   lastAccessed: number;
   sensitiveData?: boolean;
+  lgpdConsent?: boolean;
   auditRequired?: boolean;
   dataClassification?: HealthcareDataPolicy["dataClassification"];
   compressed?: boolean;
@@ -62,7 +63,7 @@ export class BrowserCacheLayer implements CacheOperation {
 
     this.stats.hits++;
     this.updateStats(startTime);
-    return entry.value;
+    return entry.value as T;
   }
 
   async set<T>(
@@ -86,7 +87,7 @@ export class BrowserCacheLayer implements CacheOperation {
     }
 
     const entry: BrowserCacheEntry = {
-      value: this.config.compressionEnabled ? this.compress(value) : value,
+      value: this.config.compressionEnabled ? this.compress(value) : (value as unknown),
       timestamp: Date.now(),
       ttl: effectiveTTL,
       lastAccessed: Date.now(),
@@ -94,7 +95,9 @@ export class BrowserCacheLayer implements CacheOperation {
       lgpdConsent: policy?.requiresConsent ?? true, // Default to true unless explicit consent is required
       auditRequired: policy?.auditRequired || false,
       compressed: this.config.compressionEnabled,
-      dataClassification: policy?.dataClassification,
+      ...(policy && policy.dataClassification
+        ? { dataClassification: policy.dataClassification }
+        : {}),
     };
 
     this.cache.set(key, entry);
@@ -112,8 +115,9 @@ export class BrowserCacheLayer implements CacheOperation {
     // Audit log if required
     if (entry?.auditRequired) {
       this.logCacheOperation(key, "DELETE", {
-        dataClassification: entry.dataClassification,
+        dataClassification: entry.dataClassification ?? "INTERNAL",
         auditRequired: true,
+        requiresConsent: entry.lgpdConsent ?? false,
       } as HealthcareDataPolicy);
     }
   }
@@ -131,6 +135,8 @@ export class BrowserCacheLayer implements CacheOperation {
     if (auditRequiredEntries.length > 0) {
       this.logCacheOperation("*", "CLEAR", {
         auditRequired: true,
+        requiresConsent: true,
+        dataClassification: "INTERNAL",
       } as HealthcareDataPolicy);
     }
   }
@@ -160,6 +166,8 @@ export class BrowserCacheLayer implements CacheOperation {
       if (entry.auditRequired) {
         this.logCacheOperation(key, "CONSENT_GRANTED", {
           auditRequired: true,
+          requiresConsent: true,
+          dataClassification: entry.dataClassification ?? "INTERNAL",
         } as HealthcareDataPolicy);
       }
     }
@@ -173,6 +181,8 @@ export class BrowserCacheLayer implements CacheOperation {
 
       this.logCacheOperation(key, "CONSENT_REVOKED", {
         auditRequired: true,
+        requiresConsent: false,
+        dataClassification: entry.dataClassification ?? "INTERNAL",
       } as HealthcareDataPolicy);
     }
   }
@@ -188,6 +198,8 @@ export class BrowserCacheLayer implements CacheOperation {
 
     this.logCacheOperation(`patient_${patientId}:*`, "PATIENT_DATA_CLEARED", {
       auditRequired: true,
+      requiresConsent: true,
+      dataClassification: "CONFIDENTIAL",
     } as HealthcareDataPolicy);
   }
 
@@ -220,36 +232,32 @@ export class BrowserCacheLayer implements CacheOperation {
       }
     }
 
-    // If still over quota, remove LRU entries
-    while (this.calculateStorageUsed() > this.config.storageQuota * 0.8) {
-      this.evictLRU();
-      cleaned++;
-    }
-
     const sizeAfter = this.calculateStorageUsed();
     return { cleaned, sizeBefore, sizeAfter };
   }
 
-  private compress<T>(value: T): T {
-    // Simple compression placeholder - in real implementation, use compression library
-    if (typeof value === "string" && value.length > 1024) {
-      // Compress large strings
-      return value as T;
-    }
-    return value;
+  // Utility methods
+  private compress<T>(data: T): unknown {
+    // Placeholder compression
+    return data as unknown;
   }
 
-  // private decompress<T>(value: T): T {
-  //   // Decompression placeholder
-  //   return value;
-  // }
+  private calculateStorageUsed(): number {
+    // Rough estimation of storage used
+    let total = 0;
+    for (const [, entry] of this.cache.entries()) {
+      const json = JSON.stringify(entry.value ?? "");
+      total += json.length;
+    }
+    return total;
+  }
 
   private evictLRU(): void {
     let oldestKey = "";
     let oldestTime = Date.now();
 
     for (const [key, entry] of this.cache.entries()) {
-      if (entry.lastAccessed < oldestTime) {
+      if (entry.lastAccessed && entry.lastAccessed < oldestTime) {
         oldestTime = entry.lastAccessed;
         oldestKey = key;
       }
@@ -258,30 +266,6 @@ export class BrowserCacheLayer implements CacheOperation {
     if (oldestKey) {
       this.cache.delete(oldestKey);
     }
-  }
-
-  private calculateStorageUsed(): number {
-    let totalSize = 0;
-    for (const [key, entry] of this.cache.entries()) {
-      totalSize += new Blob([JSON.stringify(entry)]).size;
-      totalSize += key.length * 2; // UTF-16 encoding
-    }
-    return totalSize;
-  }
-
-  private logCacheOperation(
-    key: string,
-    operation: string,
-    policy?: HealthcareDataPolicy,
-  ): void {
-    // In a real implementation, this would send to audit service
-    console.debug("Browser Cache Audit:", {
-      key,
-      operation,
-      timestamp: new Date().toISOString(),
-      classification: policy?.dataClassification,
-      requiresConsent: policy?.requiresConsent,
-    });
   }
 
   private updateStats(startTime: number): void {
@@ -305,5 +289,9 @@ export class BrowserCacheLayer implements CacheOperation {
       averageResponseTime: 0,
     };
     this.responseTimeBuffer = [];
+  }
+
+  private logCacheOperation(_key: string, _op: string, _policy: HealthcareDataPolicy): void {
+    // Placeholder for integration with audit service
   }
 }

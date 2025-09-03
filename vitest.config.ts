@@ -14,6 +14,8 @@ import { defineConfig } from "vitest/config";
  * - Clean separation of unit vs integration tests
  */
 export default defineConfig({
+  // Ensure deterministic cache location for Turborepo outputs caching
+  cacheDir: path.resolve(__dirname, ".vitest"),
   // React JSX configuration
   esbuild: {
     jsx: "automatic",
@@ -21,8 +23,6 @@ export default defineConfig({
   },
 
   test: {
-    // Ensure deterministic cache location for Turborepo outputs caching
-    cacheDir: path.resolve(__dirname, ".vitest"),
     // 📋 PROJECTS CONFIGURATION - Best Practice for Monorepos
     projects: [
       // 🧪 UNIT TESTS PROJECT
@@ -63,6 +63,11 @@ export default defineConfig({
             "packages/core-services/tests/**/*.test.{ts}",
             "packages/shared/tests/**/*.test.{ts,tsx}",
             "packages/security/src/index.test.ts",
+          ],
+          // Ensure unit project does not pick up integration suites
+          exclude: [
+            "apps/web/tests/integration/**",
+            "packages/*/tests/integration/**",
           ],
 
           // Optimized timeouts for unit tests

@@ -26,7 +26,7 @@ const createSupabaseMockResponse = (data: unknown, error: unknown = null) => {
 const insertedRecords = new Map<string, Record<string, unknown>[]>();
 
 // Helper functions to control mock behavior
-const setMockError = (error: unknown) => {
+const setMockError = (_error: unknown) => {
   // Not used in simplified version
 };
 
@@ -136,6 +136,7 @@ const createMockQueryBuilder = () => {
   };
 
   // Add promise-like behavior for direct awaiting
+  /* eslint-disable unicorn/no-thenable */
   (mockBuilder as Record<string, unknown>).then = function(
     onResolve: (value: unknown) => unknown,
     onReject?: (reason: unknown) => unknown,
@@ -162,6 +163,7 @@ const createMockQueryBuilder = () => {
     const result = { data: resultData, error: null };
     return Promise.resolve(result).then(onResolve, onReject);
   };
+  /* eslint-enable unicorn/no-thenable */
 
   return mockBuilder;
 };

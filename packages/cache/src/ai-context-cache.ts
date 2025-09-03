@@ -69,11 +69,26 @@ export class AIContextCacheLayer implements CacheOperation {
       this.stats.hits++;
       this.updateStats(startTime);
 
-      return (
-        this.config.compressionEnabled
-          ? this.decompress(entry.value)
-          : entry.value
-      ) as unknown as T;
+      // Always return a deserialized object of type T.
+      // 1) Obtain raw JSON string: decompress if entry is compressed, otherwise use stored value.
+      let rawJson: string;
+      if (entry.compressed) {
+        rawJson = this.decompress(entry.value);
+      } else if (typeof entry.value === "string") {
+        rawJson = entry.value;
+      } else {
+        // Safety: if value was somehow stored as an object, normalize to string
+        rawJson = JSON.stringify(entry.value as unknown);
+      }
+
+      // Try to parse JSON; if it fails, return raw string to avoid runtime errors
+      try {
+        const parsed = JSON.parse(rawJson) as T;
+        return parsed;
+      } catch {
+        // Fallback: return raw string value when not valid JSON
+        return rawJson as unknown as T;
+      }
     } catch (error) {
       this.stats.misses++;
       this.updateStats(startTime);
@@ -338,12 +353,9 @@ export class AIContextCacheLayer implements CacheOperation {
     return data;
   }
 
-  private decompress(data: string): unknown {
-    try {
-      return JSON.parse(data);
-    } catch {
-      return data;
-    }
+  private decompress(data: string): string {
+    // Placeholder for real decompression. Return original string.
+    return data;
   }
 
   private async intelligentEviction(): Promise<void> {

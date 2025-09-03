@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type React from "react";
-import { forwardRef, useState } from "react";
+import { forwardRef, useId } from "react";
 import { useResponsive } from "./ResponsiveLayout";
 
 // Touch-optimized button with healthcare context awareness
@@ -65,7 +65,8 @@ interface TouchInputProps extends React.ComponentProps<typeof Input> {
 export const TouchInput = forwardRef<HTMLInputElement, TouchInputProps>(
   ({ className, label, helperText, required, id, ...props }, ref) => {
     const { healthcareContext, touchOptimized } = useResponsive();
-    const inputId = id || `input-${Math.random().toString(36).slice(2, 9)}`;
+    const reactId = useId();
+    const inputId = id ?? `input-${reactId}`;
 
     const inputClass = cn(
       "touch-target",
@@ -121,7 +122,8 @@ interface TouchTextareaProps extends React.ComponentProps<typeof Textarea> {
 export const TouchTextarea = forwardRef<HTMLTextAreaElement, TouchTextareaProps>(
   ({ className, label, helperText, required, id, ...props }, ref) => {
     const { healthcareContext, touchOptimized } = useResponsive();
-    const textareaId = id || `textarea-${Math.random().toString(36).slice(2, 9)}`;
+    const reactId = useId();
+    const textareaId = id ?? `textarea-${reactId}`;
 
     const textareaClass = cn(
       "touch-target",
@@ -198,7 +200,8 @@ export function TouchSelect({
   id,
 }: TouchSelectProps) {
   const { healthcareContext, touchOptimized } = useResponsive();
-  const selectId = id || `select-${Math.random().toString(36).slice(2, 9)}`;
+  const reactId = useId();
+  const selectId = id ?? `select-${reactId}`;
 
   const selectClass = cn(
     "touch-target w-full p-3 border rounded-md bg-background",
@@ -272,7 +275,8 @@ export function TouchCheckbox({
   id,
 }: TouchCheckboxProps) {
   const { healthcareContext } = useResponsive();
-  const checkboxId = id || `checkbox-${Math.random().toString(36).slice(2, 9)}`;
+  const reactId = useId();
+  const checkboxId = id ?? `checkbox-${reactId}`;
 
   const containerClass = cn(
     "touch-checkbox-container touch-target flex items-start gap-3 p-3 rounded-md cursor-pointer",
@@ -349,7 +353,8 @@ export function TouchRadioGroup({
   name,
 }: TouchRadioGroupProps) {
   const { healthcareContext } = useResponsive();
-  const groupName = name || `radio-group-${Math.random().toString(36).slice(2, 9)}`;
+  const reactId = useId();
+  const groupName = name ?? `radio-group-${reactId}`;
 
   return (
     <div className={cn("touch-radio-group", className)}>

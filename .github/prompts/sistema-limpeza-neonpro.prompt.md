@@ -34,7 +34,8 @@ exclude:
   - "node_modules/"
   - "**/dist/", "**/build/", ".next/", "turbo/"
   - "coverage/", "reports/", "nyc_output/"
-  - ".vscode/", ".idea/"
+  - "**/.husky/**"
+  - ".vscode/**", ".idea/**"
   - "**/*.env", "**/.env*"
 gitignore: true
 max_items_per_phase: 2000
@@ -202,4 +203,3 @@ Recriar itens removidos a partir do manifest/backup se necessário, priorizando 
 ---
 
 Status: ✅ Pronto para uso recorrente (com salvaguardas)  | Segurança: 10/10 | Observabilidade: 10/10 | Aderência APEX: 100%
-

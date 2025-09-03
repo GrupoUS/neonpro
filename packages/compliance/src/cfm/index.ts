@@ -1,8 +1,9 @@
 export { CFMService as CfmService, cfmUtils, createCFMService } from "../services/cfm-service";
+import { CFMService } from "../services/cfm-service";
 
 export function createCfmServices(_supabase?: unknown) {
   // Bridge for existing code expecting a factory taking supabase
-  return new (require("../services/cfm-service").CFMService)();
+  return new CFMService();
 }
 
 export async function validateCfmCompliance(tenantId: string, _services: unknown) {

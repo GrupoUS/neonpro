@@ -67,7 +67,7 @@ export interface QRHandoffGeneratorProps {
   emergencyMode?: boolean;
   onHandoffComplete?: (targetDevice: DeviceFingerprint) => void;
   onError?: (error: string) => void;
-  sessionData?: Record<string, any>;
+  sessionData?: Record<string, unknown>;
 }
 
 // Device Detection Hook
@@ -106,7 +106,7 @@ const useDeviceFingerprint = (): DeviceFingerprint => {
 const useTokenService = () => {
   const generateHandoffToken = useCallback(
     async (
-      sessionData: Record<string, any>,
+      sessionData: Record<string, unknown>,
       deviceFingerprint: DeviceFingerprint,
     ): Promise<string> => {
       try {

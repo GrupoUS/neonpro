@@ -62,7 +62,7 @@ export interface ContextState {
   aiConfidence?: number;
   activeWorkflow?: string;
   permissions: string[];
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   lastSwitchTime: number;
   switchReason?: SwitchReason;
 }
@@ -212,7 +212,7 @@ export function useContextSwitching(initialContext: Partial<ContextState> = {}) 
   const switchContext = useCallback(async (
     newType: ContextType,
     reason: SwitchReason = SwitchReason.USER_REQUEST,
-    preserveData: Record<string, any> = {},
+    preserveData: Record<string, unknown> = {},
   ) => {
     const currentRules = TransitionRules[context.type];
 
@@ -258,7 +258,7 @@ export function useContextSwitching(initialContext: Partial<ContextState> = {}) 
   }, [context]);
 
   // Auto-switch based on conditions
-  const checkAutoSwitch = useCallback((conditions: Record<string, any>) => {
+  const checkAutoSwitch = useCallback((conditions: Record<string, unknown>) => {
     const currentRules = TransitionRules[context.type];
 
     for (const [targetType, triggers] of Object.entries(currentRules.autoSwitchTriggers)) {

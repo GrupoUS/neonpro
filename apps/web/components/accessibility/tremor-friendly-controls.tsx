@@ -1325,4 +1325,21 @@ export function TremorFriendlyControls({
   );
 }
 
+// Convenience demo wrappers for integration examples
+export function TremorFriendlyDemo() {
+  return (
+    <TremorFriendlyProvider>
+      <TremorFriendlyControls />
+    </TremorFriendlyProvider>
+  );
+}
+
+export function TremorFriendlySettings() {
+  return (
+    <TremorFriendlyProvider>
+      <TremorFriendlyControls />
+    </TremorFriendlyProvider>
+  );
+}
+
 export default TremorFriendlyControls;

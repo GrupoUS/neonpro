@@ -444,7 +444,6 @@ The agent automatically switches between modes based on task complexity and trig
 - Implement features not in requirements
 - Proceed with <85% confidence in Standard Mode (<90% in Architecture Mode)
 - Assume changes are complete without explicit verification
-- Skip mandatory Archon task cycle
 - Use native codebase search instead of serena MCP
 
 **MUST ALWAYS**:

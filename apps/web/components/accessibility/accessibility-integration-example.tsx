@@ -74,6 +74,7 @@ import {
   TremorFriendlyDemo,
   TremorFriendlyProvider,
   TremorFriendlySettings,
+  useTremorFriendly,
 } from "./tremor-friendly-controls";
 import {
   VisualAccessibilityDemo,

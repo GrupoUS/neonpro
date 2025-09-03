@@ -144,6 +144,9 @@ export class UnifiedAuditService {
   private totalEvents = 0;
   private totalProcessingTime = 0;
   private errorCount = 0;
+  private auditFlushRetries = 0;
+  private readonly retryInitialDelayMs = 1000;
+  private readonly retryMaxDelayMs = 30_000;
 
   // Enterprise features
   private readonly encryptionKey?: Buffer;
@@ -421,10 +424,29 @@ export class UnifiedAuditService {
       if (error) {
         throw new Error(`Failed to store audit events: ${error.message}`);
       }
+      // Success: reset retry counter
+      this.auditFlushRetries = 0;
     } catch (_error) {
       // console.error("Failed to flush audit buffer:", _error);
       // Re-add events to buffer for retry
       this.eventBuffer.unshift(...events);
+      // Schedule capped exponential backoff retry and restore batch timer
+      this.auditFlushRetries = Math.min(this.auditFlushRetries + 1, 5);
+      const delay = Math.min(
+        this.retryInitialDelayMs * 2 ** (this.auditFlushRetries - 1),
+        this.retryMaxDelayMs,
+      );
+
+      // If a timer is not already set, schedule one
+      if (!this.batchTimer) {
+        this.batchTimer = setTimeout(() => {
+          // Fire and forget; success will reset retries inside
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          this.flushBuffer().catch(() => {/* intentionally ignored */});
+        }, delay);
+      }
+
+      // Re-throw original error after scheduling retry
       throw _error;
     }
   }

@@ -1,4 +1,4 @@
-/**
+/*
  * @fileoverview OpenAPI Documentation Generator
  * Enterprise-grade API documentation generator for NeonPro healthcare platform
  * Automatically generates OpenAPI 3.0 specifications from TypeScript interfaces and route handlers
@@ -124,8 +124,8 @@ export class OpenAPIGenerator {
   /**
    * Extract OpenAPI components from TypeScript files
    */
-  private async extractComponents(files: string[]): Promise<unknown> {
-    const components = {
+  private async extractComponents(files: string[]): Promise<OpenAPIComponents> {
+    const components: OpenAPIComponents = {
       schemas: {},
       parameters: {},
       responses: {},
@@ -171,11 +171,10 @@ export class OpenAPIGenerator {
         if (parsed.components && typeof parsed.components === "object") {
           const parsedComponents = parsed.components as Record<string, Record<string, unknown>>;
           Object.keys(parsedComponents).forEach((componentType) => {
-            if ((components as Record<string, unknown>)[componentType]) {
-              Object.assign(
-                (components as Record<string, unknown>)[componentType] as Record<string, unknown>,
-                parsedComponents[componentType] || {},
-              );
+            const key = componentType as keyof OpenAPIComponents;
+            const target = components[key] as Record<string, unknown> | undefined;
+            if (target) {
+              Object.assign(target, parsedComponents[componentType] || {});
             }
           });
         }

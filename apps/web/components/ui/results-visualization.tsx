@@ -31,7 +31,7 @@ export interface DataPoint {
   value: number;
   category?: string;
   date?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ChartData {

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import type React from "react";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 interface MedicalTermProps {
   /** The medical term to be displayed */
@@ -85,7 +85,7 @@ export function MedicalTerm({
   const termRef = useRef<HTMLSpanElement>(null);
 
   // Get pronunciation guide from dictionary or use provided pronunciation
-  const getPronunciationGuide = () => {
+  const getPronunciationGuide = useCallback(() => {
     const dictionaryEntry = MEDICAL_PRONUNCIATION_GUIDE[term.toLowerCase()];
     if (dictionaryEntry) {
       return dictionaryEntry;
@@ -95,7 +95,7 @@ export function MedicalTerm({
     return pronunciation
       ? `${pronunciation} - ${definition}`
       : `${categoryContext}: ${definition}`;
-  };
+  }, [term, pronunciation, definition, category]);
 
   // Announce medical term on mount if requested (for critical terms)
   useEffect(() => {

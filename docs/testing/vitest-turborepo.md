@@ -11,7 +11,7 @@ related:
 # Vitest + Turborepo: Setup & Usage
 
 This repository uses Vitest with Turborepo for fast, cacheable tests.
-We follow the official guide (turborepo.com/docs/guides/tools/vitest).
+We follow the official guide (https://turborepo.com/docs/guides/tools/vitest).
 
 ## What was configured
 

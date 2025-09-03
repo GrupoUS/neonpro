@@ -26,9 +26,9 @@
     }
   },
   "include": [
-    "src/index.ts",
-    "src/services/anvisa-service.ts",
-    "src/services/cfm-service.ts"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts"
   ],
   "exclude": ["node_modules", "dist", "coverage"],
   "references": [

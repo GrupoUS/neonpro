@@ -179,6 +179,8 @@ apps/*/src/**/*.js.map
 **/.oxlint_cache/
 .oxlint/
 **/.oxlint/
+.tmp_oxlint_report*.json
+**/.tmp_oxlint_report*.json
 
 # Dprint (formatting tool) 
 .dprint/

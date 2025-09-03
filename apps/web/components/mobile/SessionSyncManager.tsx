@@ -46,7 +46,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 interface DeviceSession {
   id: string;
   deviceType: "mobile" | "tablet" | "desktop";
-  deviceFingerprint: Record<string, any>;
+  deviceFingerprint: Record<string, unknown>;
   lastActive: number;
   isCurrentDevice: boolean;
   syncStatus: "synced" | "syncing" | "conflict" | "offline";
