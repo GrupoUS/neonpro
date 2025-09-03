@@ -1,7 +1,8 @@
 "use client";
 
 import { AuthApiClient } from "@/lib/api-client";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import type React from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface User {
   id: string;

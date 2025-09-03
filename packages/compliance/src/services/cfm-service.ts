@@ -667,7 +667,7 @@ export class CFMService {
     _professionalId: string,
   ): Promise<CFMProfessional | null> {
     // Mock data - would query actual database
-    return; // In production, would return actual professional data
+    return null; // In production, would return actual professional data
   }
 
   private compareProcedureLevel(
@@ -695,9 +695,9 @@ export class CFMService {
   private async getComplianceChecks(
     _professionalId: string,
     _dateRange: { startDate: Date; endDate: Date; },
-  ): Promise<unknown[]> {
+  ): Promise<{ compliant: boolean; }[]> {
     // Mock data - would query actual database
-    return [];
+    return [] as { compliant: boolean; }[];
   }
 
   private checkCertificationStatus(

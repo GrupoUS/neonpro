@@ -14,7 +14,7 @@
     "test:unit:bun": "vitest run --no-coverage --pool=threads --poolOptions.threads.singleThread=true --reporter=verbose --isolate=false",
     "test:bun:fast": "vitest run --no-coverage --pool=threads --poolOptions.threads.singleThread=true --reporter=verbose --isolate=false --css=false",
     "test:bun:integration": "vitest run --config vitest.config.integration.ts --no-coverage --pool=threads --poolOptions.threads.singleThread=true",
-    "test:watch": "vitest --watch --pool=threads --poolOptions.threads.singleThread=true",
+    "test:watch": "turbo run test:watch",
     "test:ui": "vitest --ui",
     "test:lint": "bun run lint && bun run type-check",
     "test:type": "turbo run type-check",
@@ -41,7 +41,15 @@
     "test:healthcare": "turbo run test --filter=@neonpro/healthcare",
     "build:production": "NODE_ENV=production turbo run build",
     "validate:production": "turbo run lint && turbo run type-check && turbo run test:safe",
+    "vercel:login": "vercel login",
+    "vercel:link": "vercel link --yes",
+    "env:pull": "vercel env pull .env.local",
+    "env:push": "vercel env pull .env.local && bash scripts/setup-vercel.sh || true",
     "deploy:vercel": "vercel --prod",
+    "deploy:web:preview": "vercel --cwd apps/web",
+    "deploy:web:prod": "vercel --cwd apps/web --prod",
+    "deploy:api:preview": "vercel --cwd apps/api",
+    "deploy:api:prod": "vercel --cwd apps/api --prod",
     "deploy:staging": "vercel",
     "health:check": "turbo run health:check",
     "monitor:production": "turbo run monitor",
@@ -100,7 +108,8 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "recharts": "^3.1.2",
-    "tailwindcss": "^3.4.15"
+    "tailwindcss": "^3.4.15",
+    "vercel": "47.0.1"
   },
   "pnpm": {
     "overrides": {

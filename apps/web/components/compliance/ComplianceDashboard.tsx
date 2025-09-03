@@ -1,6 +1,7 @@
 // Real-time compliance monitoring dashboard with comprehensive tracking
 import { formatDistanceToNow } from "date-fns";
-import React, { useEffect, useMemo, useState } from "react";
+import type React from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 // UI Components

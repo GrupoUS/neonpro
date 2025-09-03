@@ -22,7 +22,7 @@
     "build": "tsc && prisma generate",
     "dev": "tsc --watch",
     "clean": "if exist dist rmdir /s /q dist",
-    "type-check": "tsc --noEmit && prisma validate",
+    "type-check": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",

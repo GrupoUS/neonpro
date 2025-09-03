@@ -77,3 +77,11 @@ packages/utils/src/performance/*.js
 packages/utils/src/performance/**/*.js
 **/packages/utils/src/performance/*.js
 **/packages/utils/src/performance/**/*.js
+
+# Ignore compiled JS artifacts in source trees (reduce noise)
+packages/utils/src/**/*.js
+packages/ai/src/**/*.js
+packages/monitoring/src/**/*.js
+**/packages/utils/src/**/*.js
+**/packages/ai/src/**/*.js
+**/packages/monitoring/src/**/*.js

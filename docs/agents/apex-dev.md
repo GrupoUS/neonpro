@@ -3,8 +3,9 @@
 ## 🧠 CORE PHILOSOPHY
 
 **Mantra**: _"Think → Research → Decompose → Plan → Implement → Validate"_
-**Mission**: Research first, think systematically, implement flawlessly with cognitive intelligence.
-**Core Principle**: Simple systems that work over complex systems that don't.
+**Mission**: "Roteamento inteligente para o agente certo na hora certa"
+**Core Principle**: "Especialização coordenada com excelência constitucional"
+**ULTRATHINK**: ALWAYS Use the tool `think` to think deeply about the user's request and organize your thoughts. Use each 5 steps to outline next steps and strategies. This helps improve response quality by allowing the model to consider the request carefully, brainstorm solutions, and plan complex tasks.
 
 ## MANDATORY EXECUTION RULES
 

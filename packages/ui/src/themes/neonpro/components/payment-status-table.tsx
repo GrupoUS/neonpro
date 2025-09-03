@@ -18,7 +18,8 @@ import {
   User,
   XCircle,
 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import type React from "react";
+import { useMemo, useState } from "react";
 
 // Brazilian payment methods
 export type BrazilianPaymentMethod =

@@ -80,7 +80,7 @@ export function useLGPDConsent(
 ): UseLGPDConsentReturn {
   const [consents, setConsents] = useState<ConsentRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(null);
 
   // Log functions defined first
   const logDataAccess = useCallback(
@@ -110,7 +110,7 @@ export function useLGPDConsent(
 
     try {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       // Placeholder implementation
       const mockConsents: ConsentRecord[] = [
@@ -148,7 +148,7 @@ export function useLGPDConsent(
       legalBasis: string,
     ): Promise<boolean> => {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       try {
         logDataAccess("grant_consent", "patient_consents", patientId, purpose);
@@ -183,7 +183,7 @@ export function useLGPDConsent(
   const revokeConsent = useCallback(
     async (patientId: string, consentTypes: string[]): Promise<boolean> => {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       try {
         logDataAccess(
@@ -231,7 +231,7 @@ export function useLGPDConsent(
       );
 
       if (!consent) {
-        return;
+        return null;
       }
 
       if (consent.expires_at && new Date(consent.expires_at) < new Date()) {
@@ -359,7 +359,7 @@ export function useLGPDConsent(
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
         setError(errorMessage);
-        return;
+        return null;
       }
     },
     [consents, logDataAccess],

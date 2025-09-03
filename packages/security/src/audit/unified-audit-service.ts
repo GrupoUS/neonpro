@@ -422,10 +422,10 @@ export class UnifiedAuditService {
         throw new Error(`Failed to store audit events: ${error.message}`);
       }
     } catch (_error) {
-      // console.error("Failed to flush audit buffer:", error);
+      // console.error("Failed to flush audit buffer:", _error);
       // Re-add events to buffer for retry
       this.eventBuffer.unshift(...events);
-      throw error;
+      throw _error;
     }
   }
 
@@ -526,6 +526,9 @@ export class UnifiedAuditService {
    * Record performance metrics
    */
   private recordPerformanceMetrics(processingTime: number): void {
+    // Ensure 'this' is bound correctly when used as a callback
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const self = this;
     this.totalEvents++;
     this.totalProcessingTime += processingTime;
   }
@@ -615,7 +618,12 @@ export class UnifiedAuditService {
   async getAuditStats(): Promise<{
     total: number;
     recent: { last24h: number; last7d: number; };
-    performance: ReturnType<typeof this.getPerformanceMetrics>;
+    performance: {
+      totalEvents: number;
+      averageProcessingTime: number;
+      errorRate: number;
+      bufferUtilization: number;
+    };
     retention: { encrypted: number; total: number; };
   }> {
     const now = new Date();

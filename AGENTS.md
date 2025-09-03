@@ -20,7 +20,8 @@ applyTo: "**/*"
 - **MANDATORY** use of `shadcn-ui mcp` to manage ui components
 - **MANDATORY** use of `archon mcp` for task and knowledge management
 - **MANDATORY** use of `desktop-commander mcp` for file and terminal operations and system management
-- **MANDATORY** use of `sequential-thinking` and `think` native tool before any other action to break down problems, plan approaches, and verify solutions, use `think` each 5 steps to outline next steps and strategies.
+- **MANDATORY** use of `sequential-thinking` and `think` native tool before any other action to break down problems, plan approaches, and verify solutions.
+- **ULTRATHINK**: ALWAYS Use the tool `think` to think deeply about the user's request and organize your thoughts. Use each 5 steps to outline next steps and strategies. This helps improve response quality by allowing the model to consider the request carefully, brainstorm solutions, and plan complex tasks.
 - **MANDATORY** use of `tavily mcp` for real-time information, current trends, and technology updates, _DO NOT USE NATIVE SEARCH tool_
 - **MANDATORY** use of `context7 mcp` for deep contextual understanding and analysis, _DO NOT USE NATIVE CONTEXT tool_
 - **NO INTERRUPTIONS**: Continue through ALL steps until problem fully solved.

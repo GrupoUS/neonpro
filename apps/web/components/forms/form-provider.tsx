@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useCallback, useContext, useState } from "react";
+import type React from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import type { ValidationSchema } from "./validation";
 import { validateSchema, ValidationResult } from "./validation";
 

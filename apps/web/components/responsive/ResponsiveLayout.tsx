@@ -1,5 +1,6 @@
 import { useMediaQuery } from "@/hooks/use-media-query";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import type React from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // Healthcare context types for responsive behavior
 export type HealthcareContext =

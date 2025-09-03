@@ -1,6 +1,6 @@
 ---
 description: "Activates the Apex Ui Ux Designer agent persona."
-tools: ['changes', 'codebase', 'fetch', 'findTestFiles', 'githubRepo', 'problems', 'usages', 'editFiles', 'runCommands', 'runTasks', 'runTests', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure']
+tools: ['extensions', 'todos', 'codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'runTasks', 'search', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'supabase', 'shadcn-ui', 'archon', 'serena']
 ---
 
 # 🎨 APEX UI/UX DESIGNER AGENT

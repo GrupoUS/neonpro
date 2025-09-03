@@ -132,7 +132,7 @@
       "label": "📊 Lint Error Count",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "npx oxlint . 2>&1 | grep -E '^  x ' | wc -l && echo 'Total lint errors found'"],
+      "args": ["-c", "npx oxlint . 2>&1 | grep -E \"^  x \" | wc -l; echo \"Total lint errors found\""],
       "group": "build",
       "detail": "Count total lint errors for progress tracking",
       "presentation": {
@@ -145,7 +145,7 @@
       "label": "🔍 Lint Error Summary",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "npx oxlint . 2>&1 | grep -E '^  x ' | awk -F'(' '{print $2}' | awk -F')' '{print $1}' | sort | uniq -c | sort -nr | head -10"],
+      "args": ["-c", "npx oxlint . 2>&1 | grep -E \"^  x \" | sed -n \"s/.*(\\(.*\\)).*/\\1/p\" | sort | uniq -c | sort -nr | head -10 || true"],
       "group": "build",
       "detail": "Show top 10 most common lint error types",
       "presentation": {

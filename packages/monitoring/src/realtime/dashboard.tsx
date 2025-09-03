@@ -13,7 +13,8 @@
 "use client";
 
 import { createClient } from "@neonpro/database";
-import React, { useCallback, useEffect, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 import type {
   HealthcareContext,
   PerformanceAlert,

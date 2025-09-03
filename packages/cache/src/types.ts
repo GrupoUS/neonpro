@@ -6,6 +6,10 @@ export interface CacheEntry<T = unknown> {
   tags?: string[];
   sensitive?: boolean;
   lgpdConsent?: boolean;
+  // Optional metadata for eviction and analytics across layers
+  accessCount?: number;
+  lastAccessed?: number;
+  compressed?: boolean;
 }
 
 export interface CacheStats {

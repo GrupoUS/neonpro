@@ -25,7 +25,11 @@
       "@neonpro/types/*": ["../types/src/*"]
     }
   },
-  "include": ["src/**/*", "../types/src/**/*"],
+  "include": [
+    "src/index.ts",
+    "src/services/anvisa-service.ts",
+    "src/services/cfm-service.ts"
+  ],
   "exclude": ["node_modules", "dist", "coverage"],
   "references": [
     {

@@ -6,7 +6,8 @@
 
 import { cn } from "@neonpro/utils";
 import { Calendar, ChevronLeft, ChevronRight, Clock, MapPin, User } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import type React from "react";
+import { useMemo, useState } from "react";
 
 // Brazilian healthcare appointment types
 export type AppointmentType =

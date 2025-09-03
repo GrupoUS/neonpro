@@ -9,7 +9,8 @@
 import { cn } from "@/lib/utils";
 import type { HealthcareContext, MessageType } from "@/types/chat";
 import type { KeyboardEvent } from "react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // Icons (would be imported from lucide-react or similar)
 const SendIcon = ({ className }: { className?: string; }) => (

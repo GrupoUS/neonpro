@@ -21,6 +21,8 @@ export default defineConfig({
   },
 
   test: {
+    // Ensure deterministic cache location for Turborepo outputs caching
+    cacheDir: path.resolve(__dirname, ".vitest"),
     // 📋 PROJECTS CONFIGURATION - Best Practice for Monorepos
     projects: [
       // 🧪 UNIT TESTS PROJECT

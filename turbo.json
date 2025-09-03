@@ -270,14 +270,53 @@
         "**/*.test.*",
         "**/*.spec.*",
         "**/vitest.config.*",
+        "vitest.setup.*",
+        "vitest.d.ts",
         "src/**/*.{ts,tsx,js,jsx}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["coverage/**", "tools/testing/reports/**"],
+      "outputs": [
+        "coverage/**",
+        "tools/testing/reports/**",
+        ".vitest/**",
+        "node_modules/.vitest/**"
+      ],
       "env": ["CI", "NODE_ENV"],
       "cache": true,
       "outputLogs": "full"
+    },
+    "test:watch": {
+      "cache": false,
+      "persistent": true,
+      "inputs": [
+        "**/*.test.*",
+        "**/*.spec.*",
+        "**/vitest.config.*",
+        "vitest.setup.*",
+        "vitest.d.ts",
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": [],
+      "env": ["NODE_ENV"]
+    },
+    "test:coverage": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "**/*.test.*",
+        "**/*.spec.*",
+        "**/vitest.config.*",
+        "vitest.setup.*",
+        "vitest.d.ts",
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": ["coverage/**", ".vitest/**", "node_modules/.vitest/**"],
+      "env": ["CI", "NODE_ENV"],
+      "cache": true
     },
     "test:unit": {
       "dependsOn": ["build"],

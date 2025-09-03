@@ -18,7 +18,8 @@ import {
   User,
   XCircle,
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type {
   CFMValidationBadgeProps,

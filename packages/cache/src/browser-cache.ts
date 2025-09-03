@@ -1,7 +1,15 @@
-import type { CacheOperation, CacheStats, HealthcareDataPolicy } from "./types";
+import type { CacheEntry, CacheOperation, CacheStats, HealthcareDataPolicy } from "./types";
+
+type BrowserCacheEntry = CacheEntry<unknown> & {
+  lastAccessed: number;
+  sensitiveData?: boolean;
+  auditRequired?: boolean;
+  dataClassification?: HealthcareDataPolicy["dataClassification"];
+  compressed?: boolean;
+};
 
 export class BrowserCacheLayer implements CacheOperation {
-  private cache = new Map<string, unknown>();
+  private cache = new Map<string, BrowserCacheEntry>();
   private stats: CacheStats = {
     hits: 0,
     misses: 0,
@@ -77,7 +85,7 @@ export class BrowserCacheLayer implements CacheOperation {
       return; // Skip browser caching for restricted data
     }
 
-    const entry = {
+    const entry: BrowserCacheEntry = {
       value: this.config.compressionEnabled ? this.compress(value) : value,
       timestamp: Date.now(),
       ttl: effectiveTTL,

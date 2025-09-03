@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import * as React from "react";
+import type * as React from "react";
 
 interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg";

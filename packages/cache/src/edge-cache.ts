@@ -1,7 +1,11 @@
 import type { CacheEntry, CacheOperation, CacheStats } from "./types";
 
+type EdgeCacheEntry = CacheEntry<string> & {
+  encrypted?: boolean;
+};
+
 export class EdgeCacheLayer implements CacheOperation {
-  private cache = new Map<string, unknown>();
+  private cache = new Map<string, EdgeCacheEntry>();
   private stats: CacheStats = {
     hits: 0,
     misses: 0,
@@ -47,11 +51,8 @@ export class EdgeCacheLayer implements CacheOperation {
       this.updateStats(startTime);
 
       // Decompress if needed
-      const value = entry.compressed
-        ? this.decompress(entry.value)
-        : entry.value;
-
-      return value;
+      const value = entry.compressed ? this.decompress(entry.value) : entry.value;
+      return value as unknown as T;
     } catch (error) {
       this.stats.misses++;
       this.updateStats(startTime);
@@ -74,7 +75,7 @@ export class EdgeCacheLayer implements CacheOperation {
     const serialized = JSON.stringify(value);
     const shouldCompress = serialized.length > this.config.compressionThreshold;
 
-    const entry = {
+    const entry: EdgeCacheEntry = {
       value: shouldCompress ? this.compress(serialized) : serialized,
       timestamp: Date.now(),
       ttl: effectiveTTL,
@@ -104,8 +105,7 @@ export class EdgeCacheLayer implements CacheOperation {
 
   async invalidateByTags(tags: string[]): Promise<void> {
     for (const [key, entry] of this.cache.entries()) {
-      const typedEntry = entry as CacheEntry;
-      if (typedEntry.tags?.some((tag: string) => tags.includes(tag))) {
+      if (entry.tags?.some((tag) => tags.includes(tag))) {
         this.cache.delete(key);
       }
     }
@@ -206,9 +206,8 @@ export class EdgeCacheLayer implements CacheOperation {
     let oldestTime = Date.now();
 
     for (const [key, entry] of this.cache.entries()) {
-      const typedEntry = entry as CacheEntry;
-      if (typedEntry.lastAccessed < oldestTime) {
-        oldestTime = typedEntry.lastAccessed;
+      if (entry.lastAccessed && entry.lastAccessed < oldestTime) {
+        oldestTime = entry.lastAccessed;
         oldestKey = key;
       }
     }

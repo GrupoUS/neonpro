@@ -10,47 +10,9 @@
  * @license Proprietary - NeonPro Aesthetic Clinic Platform
  */
 
-// Privacy-Preserving Analytics for Aesthetic Clinics
-export * from "./analytics";
-
-// Enterprise Features for Multi-Clinic Operations
-export * from "./enterprise";
-// LGPD (Lei Geral de Proteção de Dados) - Brazilian Data Protection Law
-export * from "./lgpd";
-
-// Brazilian Compliance Automation Service
-export {
-  BrazilianComplianceAutomationService,
-  type ComplianceAutomationConfig,
-  type ComplianceAutomationResponse,
-  createBrazilianComplianceAutomationService,
-  DEFAULT_COMPLIANCE_CONFIG,
-} from "./services/compliance-automation-service";
-
-// Core Types and Interfaces for Aesthetic Clinic Compliance
-export {
-  type ComplianceScore,
-  ComplianceScoreSchema,
-  ComplianceStatus,
-  type Consent,
-  ConsentSchema,
-  type ConstitutionalResponse,
-  type DPIAAssessment,
-  DPIAAssessmentSchema,
-  type HealthcareAnalytics,
-  HealthcareAnalyticsMetric,
-  HealthcareAnalyticsSchema,
-  LGPDLegalBasis,
-  PatientDataClassification,
-  type ProfessionalValidation,
-  ProfessionalValidationSchema,
-  type RegulatoryEvent,
-  RegulatoryEventSchema,
-} from "./types";
-export * from "./utils/audit-utils";
-// Utilities and Helpers
-export * from "./utils/compliance-helpers";
-export * from "./utils/validation-helpers";
+// Export only stable services to keep package type-safe
+export * from "./services/anvisa-service";
+export * from "./services/cfm-service";
 
 /**
  * Aesthetic Clinic Compliance Configuration

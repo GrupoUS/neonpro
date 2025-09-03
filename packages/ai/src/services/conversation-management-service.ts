@@ -788,17 +788,23 @@ export class ConversationManagementService extends EnhancedAIService<
       words.forEach((word) => {
         if (medicalTopics.some((topic) => word.includes(topic))) {
           const topic = medicalTopics.find((t) => word.includes(t));
-          if (!topic) continue;
+          if (!topic) {
+            return; // skip this word in forEach callback
+          }
           topicCounts.set(topic, (topicCounts.get(topic) || 0) + 1);
           topicCategories.set(topic, "medical");
         } else if (adminTopics.some((topic) => word.includes(topic))) {
           const topic = adminTopics.find((t) => word.includes(t));
-          if (!topic) continue;
+          if (!topic) {
+            return; // skip this word in forEach callback
+          }
           topicCounts.set(topic, (topicCounts.get(topic) || 0) + 1);
           topicCategories.set(topic, "administrative");
         } else if (techTopics.some((topic) => word.includes(topic))) {
           const topic = techTopics.find((t) => word.includes(t));
-          if (!topic) continue;
+          if (!topic) {
+            return; // skip this word in forEach callback
+          }
           topicCounts.set(topic, (topicCounts.get(topic) || 0) + 1);
           topicCategories.set(topic, "technical");
         }

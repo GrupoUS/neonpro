@@ -41,7 +41,8 @@ import {
   Volume2,
   Zap,
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // Import all accessibility components
 import {
@@ -55,7 +56,7 @@ import {
   CognitiveAccessibilitySettings,
 } from "./cognitive-accessibility-helper";
 import {
-  EyeTrackingDemo,
+  EyeTrackingDevice as EyeTrackingDemo,
   EyeTrackingProvider,
   EyeTrackingSettings,
 } from "./eye-tracking-interaction";

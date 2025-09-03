@@ -20,7 +20,8 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import type React from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 // ================================================================================
 // GLOBAL TYPE DECLARATIONS

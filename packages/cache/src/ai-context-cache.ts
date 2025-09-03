@@ -1,4 +1,4 @@
-import type { CacheOperation, CacheStats } from "./types";
+import type { CacheEntry, CacheOperation, CacheStats } from "./types";
 
 export interface AIContextMetadata {
   contextType: "conversation" | "knowledge" | "embedding" | "reasoning";
@@ -11,8 +11,13 @@ export interface AIContextMetadata {
   childContexts?: string[];
 }
 
+type AIContextEntry = CacheEntry<string> & {
+  importance: AIContextMetadata["importance"];
+  contextType: AIContextMetadata["contextType"];
+};
+
 export class AIContextCacheLayer implements CacheOperation {
-  private cache = new Map<string, unknown>();
+  private cache = new Map<string, AIContextEntry>();
   private contextMap = new Map<string, AIContextMetadata>();
   private stats: CacheStats = {
     hits: 0,
@@ -64,9 +69,11 @@ export class AIContextCacheLayer implements CacheOperation {
       this.stats.hits++;
       this.updateStats(startTime);
 
-      return this.config.compressionEnabled
-        ? this.decompress(entry.value)
-        : entry.value;
+      return (
+        this.config.compressionEnabled
+          ? this.decompress(entry.value)
+          : entry.value
+      ) as unknown as T;
     } catch (error) {
       this.stats.misses++;
       this.updateStats(startTime);
@@ -103,7 +110,7 @@ export class AIContextCacheLayer implements CacheOperation {
       );
     }
 
-    const entry = {
+    const entry: AIContextEntry = {
       value: this.config.compressionEnabled
         ? this.compress(serialized)
         : serialized,
@@ -151,7 +158,7 @@ export class AIContextCacheLayer implements CacheOperation {
 
   async invalidateByTags(tags: string[]): Promise<void> {
     for (const [key, entry] of this.cache.entries()) {
-      if (entry.tags?.some((tag: string) => tags.includes(tag))) {
+      if (entry.tags?.some((tag) => tags.includes(tag))) {
         await this.delete(key.replace(this.buildKey(""), ""));
       }
     }
@@ -360,11 +367,11 @@ export class AIContextCacheLayer implements CacheOperation {
     }
   }
 
-  private calculateEvictionScore(entry: Record<string, unknown>): number {
+  private calculateEvictionScore(entry: AIContextEntry): number {
     const now = Date.now();
     const age = now - entry.timestamp;
-    const accessRecency = now - (entry.lastAccessed || entry.timestamp);
-    const accessFrequency = entry.accessCount || 0;
+    const accessRecency = now - (entry.lastAccessed ?? entry.timestamp);
+    const accessFrequency = entry.accessCount ?? 0;
 
     // Importance weights
     const importanceWeights = {
@@ -372,17 +379,13 @@ export class AIContextCacheLayer implements CacheOperation {
       medium: 2,
       high: 4,
       critical: 8,
-    };
+    } as const;
 
-    const importanceWeight = importanceWeights[entry.importance as keyof typeof importanceWeights]
-      || 2;
+    const importanceWeight = importanceWeights[entry.importance] ?? 2;
 
     // Lower score = more likely to be evicted
     return (
-      age / 1000
-      + accessRecency / 1000
-      - accessFrequency * 1000
-      - importanceWeight * 10_000
+      age / 1000 + accessRecency / 1000 - accessFrequency * 1000 - importanceWeight * 10_000
     );
   }
 

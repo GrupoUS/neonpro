@@ -41,7 +41,8 @@ import {
   Settings,
   Trash2,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import type { ComplianceFramework } from "../types";
 import type { GeneratedReport, ReportGenerationConfig } from "./ComplianceReportGenerator";
 import type { ReportSchedule } from "./ReportScheduler";

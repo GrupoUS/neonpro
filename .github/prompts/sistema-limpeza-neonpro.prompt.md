@@ -34,7 +34,7 @@ exclude:
   - "node_modules/"
   - "**/dist/", "**/build/", ".next/", "turbo/"
   - "coverage/", "reports/", "nyc_output/"
-  - ".husky/", ".vscode/", ".idea/"
+  - ".vscode/", ".idea/"
   - "**/*.env", "**/.env*"
 gitignore: true
 max_items_per_phase: 2000

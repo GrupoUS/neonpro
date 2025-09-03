@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useResponsive } from "./ResponsiveLayout";
 
 // Gesture types supported by the navigation system

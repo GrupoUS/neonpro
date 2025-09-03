@@ -9,12 +9,12 @@
 
 import type { Database } from "@neonpro/types";
 import type { createClient } from "@supabase/supabase-js";
-import { createAnvisaServices, validateAnvisaCompliance } from "../anvisa/index.js";
-import { createCfmServices, validateCfmCompliance, validateCfmResolutions } from "../cfm/index.js";
-import { RealTimeComplianceMonitor } from "../enterprise/audit/real-time-monitor.js";
-import type { ComplianceMonitoringResponse } from "../enterprise/audit/real-time-monitor.js";
-import { LGPDValidator } from "../lgpd/validator.js";
-import type { LGPDValidationConfig, LGPDValidationResult } from "../lgpd/validator.js";
+import { createAnvisaServices, validateAnvisaCompliance } from "../anvisa";
+import { createCfmServices, validateCfmCompliance, validateCfmResolutions } from "../cfm";
+import { RealTimeComplianceMonitor } from "../enterprise/audit/real-time-monitor";
+import type { ComplianceMonitoringResponse } from "../enterprise/audit/real-time-monitor";
+import { LGPDValidator } from "../lgpd/validator";
+import type { LGPDValidationConfig, LGPDValidationResult } from "../lgpd/validator";
 
 /**
  * Compliance Automation Configuration

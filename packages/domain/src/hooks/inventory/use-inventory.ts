@@ -48,11 +48,11 @@ export function useInventory(
   const [state, setState] = useState<InventoryState>({
     items: [],
     loading: false,
-    error: undefined,
+    error: null,
   });
 
   const refreshData = useCallback(async () => {
-    setState((prev) => ({ ...prev, loading: true, error: undefined }));
+    setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
       // Placeholder implementation

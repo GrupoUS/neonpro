@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import React from "react";
+import type React from "react";
 import type { ModalComponentProps } from "./types/healthcare";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";

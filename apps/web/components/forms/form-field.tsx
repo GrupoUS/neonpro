@@ -13,7 +13,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { AlertTriangle, CheckCircle, Info } from "lucide-react";
-import React from "react";
+import type React from "react";
 
 export interface FormFieldProps {
   id: string;

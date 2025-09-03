@@ -6,7 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { AlertCircle, CheckCircle2, Pause, Play, RotateCcw, Settings, Zap } from "lucide-react";
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import type React from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 // ================================================================================
 // TYPES & INTERFACES

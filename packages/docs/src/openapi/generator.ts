@@ -57,7 +57,7 @@ export interface OpenAPISpec {
   servers: OpenAPIConfig["servers"];
   components: OpenAPIComponents;
   paths: Record<string, unknown>;
-  tags: Array<{ name: string; description: string; }>;
+  tags: { name: string; description: string; }[];
 }
 
 export class OpenAPIGenerator {

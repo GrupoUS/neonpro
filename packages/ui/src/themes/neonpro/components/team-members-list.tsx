@@ -22,7 +22,8 @@ import {
   UserCheck,
   UserPlus,
 } from "lucide-react";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 
 // Brazilian healthcare team roles
 export type TeamRole =

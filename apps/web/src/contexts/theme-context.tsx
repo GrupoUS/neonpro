@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import type React from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // Healthcare theme types for Brazilian aesthetic clinics
 export type HealthcareTheme = "light" | "dark" | "system";

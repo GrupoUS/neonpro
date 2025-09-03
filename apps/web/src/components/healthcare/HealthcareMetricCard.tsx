@@ -15,7 +15,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import React from "react";
+import type React from "react";
 
 // TweakCN NEONPRO Healthcare Metric Card Types
 export interface HealthcareMetricCardProps {

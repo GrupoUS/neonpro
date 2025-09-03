@@ -6,7 +6,7 @@
 
 import { cn } from "@neonpro/utils";
 import { Activity, Calendar, DollarSign, TrendingDown, TrendingUp, Users } from "lucide-react";
-import React from "react";
+import type React from "react";
 
 // Brazilian healthcare metric types
 export type HealthcareMetricType =

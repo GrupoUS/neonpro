@@ -14,7 +14,7 @@ export interface ToastActionElement {
 }
 
 export interface UseToastReturn {
-  toast: (props: Omit<Toast, "id">) => void;
+  toast: (props: Omit<Toast, "id">) => void | Promise<void>;
   dismiss: (toastId?: string) => void;
   toasts: Toast[];
 }

@@ -19,7 +19,8 @@ import {
   Timer,
   Zap,
 } from "lucide-react";
-import React, {
+import type React from "react";
+import {
   createContext,
   useCallback,
   useContext,

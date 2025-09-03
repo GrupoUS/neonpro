@@ -54,7 +54,8 @@ import {
   Trash2,
   User,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import type {
