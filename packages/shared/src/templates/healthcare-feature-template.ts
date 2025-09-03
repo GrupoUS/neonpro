@@ -411,7 +411,7 @@ export type HealthcarePatient = z.infer<typeof HealthcarePatientSchema>;
 export const HealthcareFeaturePresets = {
   PatientData: {
     featureName: "patient-data",
-    encryptionCategory: "PatientPII" as EncryptionCategory,
+    encryptionCategory: "pii",
     requiresProfessionalLicense: true,
     emergencyAccessAllowed: true,
     lgpdConsentRequired: true,
@@ -419,7 +419,7 @@ export const HealthcareFeaturePresets = {
   },
   MedicalRecords: {
     featureName: "medical-records",
-    encryptionCategory: "MedicalData" as EncryptionCategory,
+    encryptionCategory: "medical",
     requiresProfessionalLicense: true,
     emergencyAccessAllowed: true,
     lgpdConsentRequired: true,
@@ -427,7 +427,7 @@ export const HealthcareFeaturePresets = {
   },
   AppointmentScheduling: {
     featureName: "appointment-scheduling",
-    encryptionCategory: "PatientPII" as EncryptionCategory,
+    encryptionCategory: "pii",
     requiresProfessionalLicense: false,
     emergencyAccessAllowed: false,
     lgpdConsentRequired: true,
@@ -435,7 +435,7 @@ export const HealthcareFeaturePresets = {
   },
   FinancialRecords: {
     featureName: "financial-records",
-    encryptionCategory: "Financial" as EncryptionCategory,
+    encryptionCategory: "financial",
     requiresProfessionalLicense: false,
     emergencyAccessAllowed: false,
     lgpdConsentRequired: true,

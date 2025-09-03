@@ -32,11 +32,12 @@ export class EnterpriseCacheFacade {
       auditRequired: !!options?.auditContext,
       requiresConsent: !!options?.healthcareData,
       dataClassification: options?.healthcareData ? "CONFIDENTIAL" : "INTERNAL",
+      tags: options?.tags,
     });
   }
 
   async invalidateByPatient(patientId: string): Promise<void> {
-    // Supabase layer supports clearing by patient; for other layers, clear pattern keys if implemented
-    await this.cacheManager.delete(`patient_${patientId}`, [CacheLayer.SUPABASE]);
+    // Invalidate patient data across all cache layers
+    await this.cacheManager.delete(`patient_${patientId}`);
   }
 }

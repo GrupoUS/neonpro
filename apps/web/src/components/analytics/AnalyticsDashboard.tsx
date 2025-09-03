@@ -274,8 +274,8 @@ export default function AnalyticsDashboard({
   refreshInterval = 5,
   realTimeEnabled = true,
   exportEnabled = true,
-  _customFilters = [],
-  _permissions = [],
+  customFilters: _customFilters = [],
+  permissions: _permissions = [],
 }: AnalyticsDashboardProps) {
   // ====== STATE MANAGEMENT ======
   const [isLoading, setIsLoading] = useState(false);

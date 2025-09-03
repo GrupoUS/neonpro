@@ -23,34 +23,10 @@ interface AuditTrailEntry {
 
 interface CacheManagerStats {
   layers: {
-    browser: {
-      hits: number;
-      misses: number;
-      hitRate: number;
-      totalRequests: number;
-      averageResponseTime: number;
-    };
-    edge: {
-      hits: number;
-      misses: number;
-      hitRate: number;
-      totalRequests: number;
-      averageResponseTime: number;
-    };
-    supabase: {
-      hits: number;
-      misses: number;
-      hitRate: number;
-      totalRequests: number;
-      averageResponseTime: number;
-    };
-    aiContext: {
-      hits: number;
-      misses: number;
-      hitRate: number;
-      totalRequests: number;
-      averageResponseTime: number;
-    };
+    browser: StatsEntry;
+    edge: StatsEntry;
+    supabase: StatsEntry;
+    aiContext: StatsEntry;
   };
   overall: {
     totalHits: number;
@@ -63,6 +39,14 @@ interface CacheManagerStats {
     lastOperation?: string;
   };
 }
+
+type StatsEntry = {
+  hits: number;
+  misses: number;
+  hitRate: number;
+  totalRequests: number;
+  averageResponseTime: number;
+};
 
 export interface MultiLayerCacheConfig {
   supabase: SupabaseCacheConfig;
@@ -79,7 +63,7 @@ export class MultiLayerCacheManager {
 
   private readonly auditTrail: AuditTrailEntry[] = [];
 
-  private readonly stats = {
+  private readonly stats: { browser: StatsEntry; edge: StatsEntry; supabase: StatsEntry; aiContext: StatsEntry } = {
     browser: {
       hits: 0,
       misses: 0,
@@ -108,7 +92,7 @@ export class MultiLayerCacheManager {
       totalRequests: 0,
       averageResponseTime: 0,
     },
-  } as const;
+  };
 
   constructor(config: MultiLayerCacheConfig) {
     this.browser = new BrowserCacheLayer();
@@ -193,7 +177,7 @@ export class MultiLayerCacheManager {
               tags?: string[];
             } = {
               healthcareData: !!policy && policy.dataClassification !== "PUBLIC",
-              tags: [],
+              tags: policy?.tags ?? [],
             };
             if (policy?.auditRequired) {
               options.auditContext = "healthcare_audit";
@@ -319,7 +303,7 @@ export class MultiLayerCacheManager {
       audit: {
         totalEntries: this.auditTrail.length,
         ...(this.auditTrail.length > 0
-          ? { lastOperation: this.auditTrail[this.auditTrail.length - 1]!.timestamp }
+          ? { lastOperation: this.auditTrail[this.auditTrail.length - 1]!.operation }
           : {}),
       },
     };
@@ -329,7 +313,7 @@ export class MultiLayerCacheManager {
    * Internal stats aggregator
    */
   private updateLayerStats(layer: CacheLayer, responseTime: number, hit: boolean): void {
-    const stats = this.stats[
+    const stats: StatsEntry = this.stats[
       layer === CacheLayer.BROWSER
         ? "browser"
         : layer === CacheLayer.EDGE
@@ -339,20 +323,19 @@ export class MultiLayerCacheManager {
         : "aiContext"
     ];
 
-    // Using temporary object to mutate values since this.stats is a const object
-    (stats as unknown as {
-      totalRequests: number;
-      hits: number;
-      misses: number;
-      hitRate: number;
-      averageResponseTime: number;
-    }).totalRequests++;
+    const oldCount = stats.totalRequests;
+    const newCount = oldCount + 1;
+    stats.totalRequests = newCount;
+
     if (hit) {
-      (stats as unknown as { hits: number; }).hits++;
+      stats.hits += 1;
     } else {
-      (stats as any).misses++;
+      stats.misses += 1;
     }
-    (stats as any).hitRate = stats.totalRequests > 0 ? (stats.hits / stats.totalRequests) * 100 : 0;
-    (stats as any).averageResponseTime = (stats.averageResponseTime + responseTime) / 2;
+
+    stats.hitRate = newCount > 0 ? (stats.hits / newCount) * 100 : 0;
+    stats.averageResponseTime = oldCount === 0
+      ? responseTime
+      : ((stats.averageResponseTime * oldCount) + responseTime) / newCount;
   }
 }

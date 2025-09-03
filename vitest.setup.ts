@@ -5,7 +5,7 @@ import https from "https";
 import React from "react";
 
 // Make React available globally
-global.React = React;
+(globalThis as any).React = React;
 
 // Make jest globals available for compatibility
 global.jest = {
@@ -200,7 +200,6 @@ http.request = function(...args: any[]) {
         if (cb) cb(res);
         (req as any).emit("response", res);
       };
-      (req as any).on = () => req;
       return req as any;
     }
   } catch (e) {
@@ -229,7 +228,6 @@ https.request = function(...args: any[]) {
         if (cb) cb(res);
         (req as any).emit("response", res);
       };
-      (req as any).on = () => req;
       return req as any;
     }
   } catch (e) {

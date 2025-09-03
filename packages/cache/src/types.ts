@@ -56,6 +56,7 @@ export interface HealthcareDataPolicy {
   dataClassification: "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED";
   retentionPeriod?: number;
   auditRequired: boolean;
+  tags?: string[]; // Optional tags for invalidation
 }
 
 export interface SupabaseCacheConfig {

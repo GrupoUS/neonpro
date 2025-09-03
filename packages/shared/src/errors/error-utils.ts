@@ -106,7 +106,7 @@ export function categorizeError(
 export function assessSeverity(
   _error: Error,
   category: ErrorCategory,
-  _context?: ErrorContext,
+  context?: ErrorContext,
 ): ErrorSeverity {
   // Critical severity for certain categories
   if (
@@ -135,7 +135,7 @@ export function assessSeverity(
   }
 
   // Patient context increases severity
-  if (_context?.patientId) {
+  if (context?.patientId) {
     return ErrorSeverity.HIGH;
   }
 

@@ -66,9 +66,19 @@ export class BrowserCacheLayer implements CacheOperation {
 
     // Retrieve raw string (decompress if necessary), then parse JSON into T
     try {
-      const raw = entry.compressed
-        ? this.decompress(entry.value as string)
-        : (entry.value as string);
+      let raw: string;
+      if (entry.compressed) {
+        if (typeof entry.value !== "string") {
+          console.warn("BrowserCacheLayer.get: compressed entry but non-string value", {
+            key,
+            typeofValue: typeof entry.value,
+          });
+          return null;
+        }
+        raw = await this.decompress(entry.value);
+      } else {
+        raw = String(entry.value ?? "");
+      }
       const parsed = JSON.parse(raw) as T;
       return parsed;
     } catch (err) {
@@ -104,15 +114,33 @@ export class BrowserCacheLayer implements CacheOperation {
 
     const serialized = JSON.stringify(value);
 
+    let storedValue: string = serialized;
+    let compressed = false;
+
+    if (this.config.compressionEnabled) {
+      try {
+        storedValue = await this.compress(serialized);
+        // If compression returned identical value without base64 markers, assume no compression
+        compressed = storedValue !== serialized;
+      } catch (e) {
+        console.warn("BrowserCacheLayer.set: compression failed, storing uncompressed", {
+          key,
+          error: (e as Error)?.message ?? e,
+        });
+        storedValue = serialized;
+        compressed = false;
+      }
+    }
+
     const entry: BrowserCacheEntry = {
-      value: this.config.compressionEnabled ? this.compress(serialized) : serialized,
+      value: storedValue,
       timestamp: Date.now(),
       ttl: effectiveTTL,
       lastAccessed: Date.now(),
       sensitiveData,
       lgpdConsent: policy?.requiresConsent ?? true, // Default to true unless explicit consent is required
       auditRequired: policy?.auditRequired || false,
-      compressed: this.config.compressionEnabled,
+      compressed,
       ...(policy && policy.dataClassification
         ? { dataClassification: policy.dataClassification }
         : {}),
@@ -255,13 +283,73 @@ export class BrowserCacheLayer implements CacheOperation {
   }
 
   // Utility methods
-  private compress(data: string): string {
-    // Placeholder compression - return input as-is
+  private async compress(data: string): Promise<string> {
+    try {
+      // Prefer Web Compression Streams when available
+      const CompressionStreamCtor = (globalThis as any).CompressionStream;
+      if (CompressionStreamCtor) {
+        const cs = new CompressionStreamCtor("gzip");
+        const encoder = new TextEncoder();
+        const inputStream = new ReadableStream<Uint8Array>({
+          start(controller) {
+            controller.enqueue(encoder.encode(data));
+            controller.close();
+          },
+        });
+        const compressedStream = inputStream.pipeThrough(cs);
+        const compressedBuffer = await new Response(compressedStream).arrayBuffer();
+        const bytes = new Uint8Array(compressedBuffer);
+        let binary = "";
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(Number(bytes[i]));
+        return btoa(binary);
+      }
+
+      // Fallback to pako if available globally
+      const pako = (globalThis as any).pako;
+      if (pako?.deflate) {
+        const bytes: Uint8Array = pako.deflate(data);
+        let binary = "";
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(Number(bytes[i]));
+        return btoa(binary);
+      }
+    } catch (e) {
+      // Swallow and fallback to uncompressed
+      console.warn("BrowserCacheLayer.compress: compression failed", (e as Error)?.message ?? e);
+    }
+    // Fallback: return original (uncompressed)
     return data;
   }
 
-  private decompress(data: string): string {
-    // Placeholder decompression - return input as-is
+  private async decompress(data: string): Promise<string> {
+    try {
+      // Base64 decode into bytes
+      let bytes: Uint8Array | null = null;
+      try {
+        const binary = atob(data);
+        const arr = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
+        bytes = arr;
+      } catch {
+        // Not base64 (likely uncompressed original), return as-is
+        return data;
+      }
+
+      const DecompressionStreamCtor = (globalThis as any).DecompressionStream;
+      if (DecompressionStreamCtor && bytes) {
+        const stream = new Blob([bytes.buffer as ArrayBuffer]).stream().pipeThrough(new DecompressionStreamCtor("gzip"));
+        const decompressedBuffer = await new Response(stream).arrayBuffer();
+        return new TextDecoder().decode(decompressedBuffer);
+      }
+
+      const pako = (globalThis as any).pako;
+      if (pako?.inflate && bytes) {
+        const out: string = pako.inflate(bytes, { to: "string" });
+        return out;
+      }
+    } catch (e) {
+      console.warn("BrowserCacheLayer.decompress: decompression failed", (e as Error)?.message ?? e);
+    }
+    // Fallback: return original
     return data;
   }
 

@@ -50,9 +50,12 @@ export class EdgeCacheLayer implements CacheOperation {
       this.stats.hits++;
       this.updateStats(startTime);
 
-      // Decompress if needed
-      const value = entry.compressed ? this.decompress(entry.value) : entry.value;
-      return value as unknown as T;
+      // Decompress if needed, then parse JSON
+      const serialized = entry.compressed
+        ? this.decompress(entry.value as string)
+        : String(entry.value ?? "");
+      const parsed = JSON.parse(serialized) as T;
+      return parsed;
     } catch (error) {
       this.stats.misses++;
       this.updateStats(startTime);
