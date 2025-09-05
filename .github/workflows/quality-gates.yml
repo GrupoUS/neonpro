@@ -114,10 +114,14 @@ jobs:
           echo "" >> quality-gates-report.md
           echo "| Category | Score | Max | Status |" >> quality-gates-report.md
           echo "|----------|-------|-----|--------|" >> quality-gates-report.md
-          echo "| TypeScript Compilation | $TSC_SCORE | 25 | $([ $TSC_SCORE -eq 25 ] && echo "✅" || echo "❌") |" >> quality-gates-report.md
-          echo "| Linting Quality | $LINT_SCORE | 25 | $([ $LINT_SCORE -ge 20 ] && echo "✅" || echo "⚠️") |" >> quality-gates-report.md
-          echo "| Type Safety | $TYPE_SCORE | 25 | $([ $TYPE_SCORE -ge 20 ] && echo "✅" || echo "⚠️") |" >> quality-gates-report.md
-          echo "| Security & Best Practices | $SECURITY_SCORE | 25 | $([ $SECURITY_SCORE -eq 25 ] && echo "✅" || echo "❌") |" >> quality-gates-report.md
+          STATUS_TSC=$([ $TSC_SCORE -eq 25 ] && echo "✅" || echo "❌")
+          STATUS_LINT=$([ $LINT_SCORE -ge 20 ] && echo "✅" || echo "⚠️")
+          STATUS_TYPE=$([ $TYPE_SCORE -ge 20 ] && echo "✅" || echo "⚠️")
+          STATUS_SEC=$([ $SECURITY_SCORE -eq 25 ] && echo "✅" || echo "❌")
+          echo "| TypeScript Compilation | $TSC_SCORE | 25 | ${STATUS_TSC} |" >> quality-gates-report.md
+          echo "| Linting Quality | $LINT_SCORE | 25 | ${STATUS_LINT} |" >> quality-gates-report.md
+          echo "| Type Safety | $TYPE_SCORE | 25 | ${STATUS_TYPE} |" >> quality-gates-report.md
+          echo "| Security & Best Practices | $SECURITY_SCORE | 25 | ${STATUS_SEC} |" >> quality-gates-report.md
           echo "" >> quality-gates-report.md
 
           if (( $(echo "$QUALITY_SCORE >= 8.5" | bc -l) )); then
