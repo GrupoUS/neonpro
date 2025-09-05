@@ -23,7 +23,7 @@ export const validationSchemas = {
 
   updateAnalysisSession: z.object({
     status: z.string().optional(),
-    results: z.<unknown>().optional(),
+    results: z.any().optional(),
     notes: z.string().optional(),
   }),
 };

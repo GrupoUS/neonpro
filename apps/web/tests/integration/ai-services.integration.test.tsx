@@ -728,19 +728,8 @@ describe("aI Database Integration", () => {
   let supabaseClient: unknown;
 
   beforeAll(async () => {
-    // Use mock Supabase client for integration tests
-    supabaseClient = {
-      from: () => ({
-        insert: () => ({
-          select: () => ({
-            single: () => Promise.resolve({ data: { id: "mock-id" }, error: null }),
-          }),
-        }),
-        delete: () => ({ eq: () => Promise.resolve() }),
-        select: () => ({ eq: () => Promise.resolve({ data: [], error: null }) }),
-        update: () => ({ eq: () => Promise.resolve({ data: [], error: null }) }),
-      }),
-    };
+    // Use global chainable Supabase mock for integration tests
+    supabaseClient = (globalThis as any).mockSupabaseClient;
   });
 
   it("should handle concurrent AI chat sessions", async () => {
@@ -781,7 +770,9 @@ describe("aI Database Integration", () => {
       (r) => (r as PromiseFulfilledResult<any>).value.data.id,
     );
 
-    await supabaseClient.from("ai_chat_sessions").delete().in("id", sessionIds);
+    // Use global mock client to ensure chainable .in exists
+    const globalClient = (globalThis as any).mockSupabaseClient ?? supabaseClient;
+    await globalClient.from("ai_chat_sessions").delete().in("id", sessionIds);
   });
 
   it("should enforce Row Level Security for AI data", async () => {
@@ -795,7 +786,8 @@ describe("aI Database Integration", () => {
     const { data, error } = await userClient
       .from("ai_chat_sessions")
       .select("*")
-      .eq("user_id", "different-user-123");
+      .eq("user_id", "different-user-123")
+      .maybeSingle();
 
     expect(error).toBeDefined();
     expect(data).toBeNull();
@@ -813,7 +805,9 @@ describe("aI Database Integration", () => {
 
     const { data, error } = await supabaseClient
       .from("ai_chat_messages")
-      .insert(invalidMessage);
+      .insert(invalidMessage)
+      .select()
+      .single();
 
     expect(error).toBeDefined();
     expect(data).toBeNull();

@@ -587,8 +587,11 @@ export class EnterpriseHealthCheckService {
     // Shutdown test services
     for (const service of this.services.values()) {
       try {
-        if (service.shutdown) {
-          await service.shutdown();
+        if (
+          service && typeof service === "object" && "shutdown" in service
+          && typeof (service as any).shutdown === "function"
+        ) {
+          await (service as any).shutdown();
         }
       } catch {}
     }

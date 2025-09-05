@@ -6,7 +6,7 @@ export const updateForecastingModelSchema = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
   type: z.string().optional(),
-  parameters: z.record(z.<unknown>()).optional(),
+  parameters: z.record(z.any()).optional(),
   is_active: z.boolean().optional(),
 });
 

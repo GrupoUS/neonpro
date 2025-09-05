@@ -32,16 +32,8 @@
       "@neonpro/config/*": ["./packages/config/*"],
       "@neonpro/shared": ["./packages/shared/src"],
       "@neonpro/shared/*": ["./packages/shared/src/*"],
-
-      "@neonpro/ai": ["./packages/ai/src"],
-      "@neonpro/ai/*": ["./packages/ai/src/*"],
-
       "@neonpro/security": ["./packages/security/src"],
-      "@neonpro/security/*": ["./packages/security/src/*"],
-      "@neonpro/cache": ["./packages/cache/src"],
-      "@neonpro/cache/*": ["./packages/cache/src/*"],
-      "@neonpro/monitoring": ["./packages/monitoring/src"],
-      "@neonpro/monitoring/*": ["./packages/monitoring/src/*"]
+      "@neonpro/security/*": ["./packages/security/src/*"]
     },
     "strictNullChecks": true,
     "plugins": [
@@ -99,14 +91,7 @@
       "path": "./packages/core-services"
     },
     {
-      "path": "./packages/ai"
-    },
-
-    {
       "path": "./packages/security"
-    },
-    {
-      "path": "./packages/monitoring"
     }
   ]
 }

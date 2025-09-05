@@ -3,6 +3,8 @@
  * Types for all enterprise services and features
  */
 
+import type { UserRole } from "./rbac";
+
 // Enterprise Service Configuration
 export interface EnterpriseServiceConfig {
   serviceName: string;
@@ -75,7 +77,7 @@ export interface AnalyticsEvent {
 
 export interface AnalyticsContext {
   feature: string;
-  userRole: string;
+  userRole: UserRole;
   deviceType: "mobile" | "desktop" | "tablet";
   location?: string;
   healthcareProvider?: string;
@@ -437,7 +439,7 @@ export interface DashboardLayout {
 
 export interface DashboardPermission {
   userId: string;
-  role: string;
+  role: UserRole;
   permissions: ("view" | "edit" | "share" | "delete")[];
 }
 

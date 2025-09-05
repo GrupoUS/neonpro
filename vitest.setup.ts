@@ -1,4 +1,4 @@
-import { vi, afterEach } from "vitest";
+import { afterEach, vi } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { QueryClient } from "@tanstack/react-query";
 import { cleanup } from "@testing-library/react";
@@ -8,18 +8,7 @@ import React from "react";
 // - No spying on Node core modules (ESM limitation)
 // - Provide globals, clean console, env, crypto, fetch, and Supabase mocks
 
-// Early fetch stub to neutralize audit-log calls in all projects
-try {
-  const originalFetch = (globalThis as any).fetch?.bind(globalThis);
-  (globalThis as any).fetch = vi.fn(async (input: any, init?: any) => {
-    const url = typeof input === "string" ? input : input?.url;
-    if (url && String(url).includes("/api/v1/audit-log")) {
-      return { ok: true, status: 200, json: async () => ({ success: true }) } as any;
-    }
-    return originalFetch ? originalFetch(input, init) : ({ ok: true, json: async () => ({}) } as any);
-  });
-} catch {}
-
+// (Removed early duplicate fetch stub; unified handler exists later in file)
 
 // Expose React globally for JSX in tests
 (globalThis as any).React = React; // Expose a shared QueryClient for tests that expect it on global
@@ -38,7 +27,9 @@ if (false) {
       return {
         ...actual,
         render: (...args: any[]) => {
-          try { cleanup(); } catch {}
+          try {
+            cleanup();
+          } catch {}
           return (actual as any).render(...args);
         },
       };
@@ -49,7 +40,9 @@ if (false) {
 // Reset in-memory DB and mocks after each test
 afterEach(() => {
   // Ensure DOM is cleaned to avoid duplicate elements between tests
-  try { cleanup(); } catch {}
+  try {
+    cleanup();
+  } catch {}
   if ((globalThis as any).__db?.clear) (globalThis as any).__db.clear();
   vi.clearAllMocks();
 });
@@ -98,22 +91,6 @@ Object.defineProperty(globalThis, "crypto", {
     getRandomValues: (arr: Uint8Array) => arr,
   },
 });
-// Initial fetch mock replaced by unified handler below
-// Stub audit-log endpoint to avoid network errors during tests
-try {
-  const originalFetch = (globalThis as any).fetch?.bind(globalThis);
-  (globalThis as any).fetch = vi.fn(async (input: any, init?: any) => {
-    try {
-      const url = typeof input === "string" ? input : input?.url;
-      if (url && String(url).includes("/api/v1/audit-log")) {
-        return { ok: true, status: 200, json: async () => ({ success: true }) } as any;
-      }
-      return originalFetch ? originalFetch(input, init) : ({ ok: true, json: async () => ({}) } as any);
-    } catch (_) {
-      return { ok: true, status: 200, json: async () => ({ success: true }) } as any;
-    }
-  });
-} catch {}
 
 // Browser storage mocks
 if (typeof window !== "undefined") {
@@ -153,12 +130,36 @@ if (typeof window !== "undefined") {
 const __db = new Map<string, any[]>();
 // Seed commonly queried tables so select/in queries return data out of the box
 __db.set("ai_metrics", [
-  { service: "feature-flags", metric_name: "latency_ms", metric_value: 123, timestamp: new Date().toISOString() },
-  { service: "cache-management", metric_name: "hit_rate", metric_value: 0.9, timestamp: new Date().toISOString() },
-  { service: "monitoring", metric_name: "requests", metric_value: 10, timestamp: new Date().toISOString() },
+  {
+    service: "feature-flags",
+    metric_name: "latency_ms",
+    metric_value: 123,
+    timestamp: new Date().toISOString(),
+  },
+  {
+    service: "cache-management",
+    metric_name: "hit_rate",
+    metric_value: 0.9,
+    timestamp: new Date().toISOString(),
+  },
+  {
+    service: "monitoring",
+    metric_name: "requests",
+    metric_value: 10,
+    timestamp: new Date().toISOString(),
+  },
+]);
+// Seed ai_service_metrics to satisfy ecosystem metrics queries
+__db.set("ai_service_metrics", [
+  {
+    service: "feature-flags",
+    metric_name: "message_processed",
+    metric_value: 1,
+    timestamp: new Date().toISOString(),
+  },
 ]);
 // Simple session context memory for chat continuity
-const __chatContext = new Map<string, { healthcare: boolean }>();
+const __chatContext = new Map<string, { healthcare: boolean; }>();
 // expose for tests/reset
 (globalThis as any).__db = __db;
 (globalThis as any).__chatContext = __chatContext;
@@ -178,10 +179,10 @@ const createChainableMock = (table?: string) => {
   let payload: any = null;
   let filters: Array<(row: any) => boolean> = [];
   let likeFilters: Array<(row: any) => boolean> = [];
-  let orderBy: { column: string; ascending: boolean } | null = null;
+  let orderBy: { column: string; ascending: boolean; } | null = null;
   let limitCount: number | null = null;
   let useSingle = false;
-  let shouldError: { message: string; code?: string } | null = null;
+  let shouldError: { message: string; code?: string; } | null = null;
 
   const api: any = {
     select: vi.fn((_cols?: string) => {
@@ -192,7 +193,10 @@ const createChainableMock = (table?: string) => {
       op = "insert";
       payload = Array.isArray(data) ? data : [data];
       // Foreign key fail heuristic for AI messages
-      if (currentTable === "ai_chat_messages" && payload?.some?.((d: any) => d.session_id?.startsWith?.("non-existent"))) {
+      if (
+        currentTable === "ai_chat_messages"
+        && payload?.some?.((d: any) => d.session_id?.startsWith?.("non-existent"))
+      ) {
         shouldError = { message: "foreign key violation" };
       }
       return api;
@@ -225,7 +229,10 @@ const createChainableMock = (table?: string) => {
       // Role-based access heuristics for auth-flow tests
       if (col === "sensitive_data" || col === "medical_records") {
         // if an unauthorized role is implied via a prior flag, block
-        if ((globalThis as any).mockAuthHook?.user?.user_metadata?.role && (globalThis as any).mockAuthHook.user.user_metadata.role !== "doctor") {
+        if (
+          (globalThis as any).mockAuthHook?.user?.user_metadata?.role
+          && (globalThis as any).mockAuthHook.user.user_metadata.role !== "doctor"
+        ) {
           shouldError = { message: "Insufficient permissions" };
         }
       }
@@ -233,13 +240,15 @@ const createChainableMock = (table?: string) => {
       api.eq = api.eq;
       return api;
     }),
-    // renamed to inList to avoid duplicate key collisions in object literal parsing
+    // support both .in and alias .inList for chaining after any op
+    in: vi.fn((col: string, arr: any[]) => {
+      filters.push((row) => arr?.includes?.(row?.[col]));
+      return api;
+    }),
     inList: vi.fn((col: string, arr: any[]) => {
       filters.push((row) => arr?.includes?.(row?.[col]));
       return api;
     }),
-    // attach .in alias at runtime for call-time chaining support
-    // will be assigned below after api object creation to avoid duplicate literal keys
     like: vi.fn((col: string, pattern: string) => {
       const needle = String(pattern).replace(/%/g, "").toLowerCase();
       likeFilters.push((row) => String(row?.[col] ?? "").toLowerCase().includes(needle));
@@ -255,7 +264,7 @@ const createChainableMock = (table?: string) => {
       filters.push((row) => String(row?.[col] ?? "") <= String(v));
       return api;
     }),
-    order: vi.fn((col: string, options?: { ascending?: boolean }) => {
+    order: vi.fn((col: string, options?: { ascending?: boolean; }) => {
       orderBy = { column: col, ascending: options?.ascending !== false };
       return api;
     }),
@@ -268,16 +277,18 @@ const createChainableMock = (table?: string) => {
       useSingle = true;
       return api;
     }),
+    maybeSingle: vi.fn(() => {
+      useSingle = true;
+      return api;
+    }),
     // Compatibility: allow chained eq after eq
     // and helper is defined once below; remove duplicate to avoid warnings
     // (no-op for chaining)
     and: vi.fn(() => api),
   };
 
-  // ensure .in alias is available for any chain stage
-  if (!(api as any).in) {
-    (api as any).in = (col: string, arr: any[]) => (api as any).inList(col, arr);
-  }
+  // ensure alias still points to same implementation (idempotent)
+  (api as any).in = (api as any).in ?? ((col: string, arr: any[]) => (api as any).inList(col, arr));
 
   // Thenable behavior: finalize operation
   (api as any).then = (resolve: any) => {
@@ -296,9 +307,14 @@ const createChainableMock = (table?: string) => {
         updated_at: item?.updated_at ?? new Date().toISOString(),
       }));
       // Unique constraint heuristic for feature flag names
-      const hasDuplicate = items.some((n: any) => tableRef.some((e: any) => (e.name && n.name && e.name === n.name)));
+      const hasDuplicate = items.some((n: any) =>
+        tableRef.some((e: any) => (e.name && n.name && e.name === n.name))
+      );
       if (hasDuplicate) {
-        return resolve({ data: null, error: { message: "duplicate key value violates unique constraint", code: "23505" } });
+        return resolve({
+          data: null,
+          error: { message: "duplicate key value violates unique constraint", code: "23505" },
+        });
       }
       tableRef.push(...items);
       return resolve({ data: useSingle ? items[0] : items, error: null });
@@ -311,7 +327,9 @@ const createChainableMock = (table?: string) => {
         updated_at: new Date().toISOString(),
       }));
       for (const it of items) {
-        const idx = tableRef.findIndex((r: any) => (it.id && r.id === it.id) || (it.name && r.name === it.name));
+        const idx = tableRef.findIndex((r: any) =>
+          (it.id && r.id === it.id) || (it.name && r.name === it.name)
+        );
         if (idx >= 0) tableRef[idx] = { ...tableRef[idx], ...it };
         else tableRef.push(it);
       }
@@ -320,7 +338,9 @@ const createChainableMock = (table?: string) => {
 
     if (op === "update") {
       // Apply filters and update matching rows
-      const match = tableRef.filter((row) => filters.every((f) => f(row)) && likeFilters.every((f) => f(row)));
+      const match = tableRef.filter((row) =>
+        filters.every((f) => f(row)) && likeFilters.every((f) => f(row))
+      );
       for (const row of match) Object.assign(row, payload ?? {});
       return resolve({ data: useSingle ? match[0] ?? null : __clone(match), error: null });
     }
@@ -336,9 +356,10 @@ const createChainableMock = (table?: string) => {
       return resolve({ data: useSingle ? removed[0] ?? null : __clone(removed), error: null });
     }
 
-
     // Select or default: compute result set
-    let result = tableRef.filter((row) => filters.every((f) => f(row)) && likeFilters.every((f) => f(row)));
+    let result = tableRef.filter((row) =>
+      filters.every((f) => f(row)) && likeFilters.every((f) => f(row))
+    );
 
     if (orderBy) {
       const { column, ascending } = orderBy;
@@ -360,7 +381,9 @@ const createChainableMock = (table?: string) => {
   (api as any).catch = vi.fn(() => Promise.resolve({ data: null, error: { message: "caught" } }));
   // expose a no-op finally to allow promise chaining
   (api as any).finally = vi.fn((cb?: any) => {
-    try { cb && cb(); } catch {}
+    try {
+      cb && cb();
+    } catch {}
     return Promise.resolve();
   });
 
@@ -471,7 +494,10 @@ if (!(globalThis as any).mockLGPDService) {
       audit_trail_id: "audit-dsr-123",
     })),
     getAuditTrail: vi.fn(async () => ({ success: true, audit_report: { entries: [] } })),
-    createAuditEntry: vi.fn(async (entry?: any) => ({ success: true, audit_id: entry?.id ?? "audit-1" })),
+    createAuditEntry: vi.fn(async (entry?: any) => ({
+      success: true,
+      audit_id: entry?.id ?? "audit-1",
+    })),
     checkRetentionPolicy: vi.fn(async () => ({
       policy_compliant: true,
       retention_periods: { patients: "10y" },
@@ -510,7 +536,10 @@ if (!(globalThis as any).mockPatientsHook) {
 
 (globalThis as any).fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
   // ensure mockRealtimeHook.error is null unless explicitly set by test
-  if ((globalThis as any).mockRealtimeHook && typeof (globalThis as any).mockRealtimeHook.error === "undefined") {
+  if (
+    (globalThis as any).mockRealtimeHook
+    && typeof (globalThis as any).mockRealtimeHook.error === "undefined"
+  ) {
     (globalThis as any).mockRealtimeHook.error = null;
   }
   const url = typeof input === "string" ? input : input.toString();
@@ -525,7 +554,12 @@ if (!(globalThis as any).mockPatientsHook) {
     const id = (body?.session_id as string) || `test-session-${Date.now()}`;
     // store a session entry for later metrics/cache queries
     const sessions = __ensureTable("ai_chat_sessions");
-    sessions.push({ id, user_id: body?.user_id ?? "test-user-456", created_at: new Date().toISOString(), status: "active" });
+    sessions.push({
+      id,
+      user_id: body?.user_id ?? "test-user-456",
+      created_at: new Date().toISOString(),
+      status: "active",
+    });
 
     return new Response(
       JSON.stringify({
@@ -547,35 +581,83 @@ if (!(globalThis as any).mockPatientsHook) {
   if (url.includes("/api/ai/universal-chat/message")) {
     const sessionId = body.session_id as string | undefined;
     const message = (body.message || "").toLowerCase();
-    const isEmergency = message.includes("emergência") || message.includes("emergency") || message.includes("urgente");
-    const healthcareKeywords = ["diabete", "diabetes", "pressão", "saúde", "fadiga", "peso", "glicemia"];
+    const isEmergency = message.includes("emergência") || message.includes("emergency")
+      || message.includes("urgente");
+    const healthcareKeywords = [
+      "diabete",
+      "diabetes",
+      "pressão",
+      "saúde",
+      "fadiga",
+      "peso",
+      "glicemia",
+    ];
     const mentionsHealthcare = healthcareKeywords.some(k => message.includes(k));
 
     // Persist simple context per session
-    const ctx = sessionId ? (__chatContext.get(sessionId) ?? { healthcare: false }) : { healthcare: false };
+    const ctx = sessionId
+      ? (__chatContext.get(sessionId) ?? { healthcare: false })
+      : { healthcare: false };
     ctx.healthcare = ctx.healthcare || mentionsHealthcare;
     if (sessionId) __chatContext.set(sessionId, ctx);
 
     // Track a metric for this message
     const metrics = __ensureTable("ai_service_metrics");
     metrics.push(
-      { service: "universal-chat", metric_name: "message_processed", metric_value: 1, timestamp: new Date().toISOString() },
-      { service: "feature-flags", metric_name: "evaluate", metric_value: 1, timestamp: new Date().toISOString() },
-      { service: "cache-management", metric_name: "get", metric_value: 1, timestamp: new Date().toISOString() },
-      { service: "monitoring", metric_name: "ingest", metric_value: 1, timestamp: new Date().toISOString() },
+      {
+        service: "universal-chat",
+        metric_name: "message_processed",
+        metric_value: 1,
+        timestamp: new Date().toISOString(),
+      },
+      {
+        service: "feature-flags",
+        metric_name: "evaluate",
+        metric_value: 1,
+        timestamp: new Date().toISOString(),
+      },
+      {
+        service: "cache-management",
+        metric_name: "get",
+        metric_value: 1,
+        timestamp: new Date().toISOString(),
+      },
+      {
+        service: "monitoring",
+        metric_name: "ingest",
+        metric_value: 1,
+        timestamp: new Date().toISOString(),
+      },
     );
 
     // Seed metrics table referenced by ecosystem test
     const svcMetrics = __ensureTable("ai_metrics");
     if (svcMetrics.length === 0) {
       svcMetrics.push(
-        { service: "feature-flags", metric_name: "latency_ms", metric_value: 123, timestamp: new Date().toISOString() },
-        { service: "cache-management", metric_name: "hit_rate", metric_value: 0.9, timestamp: new Date().toISOString() },
-        { service: "monitoring", metric_name: "requests", metric_value: 10, timestamp: new Date().toISOString() },
+        {
+          service: "feature-flags",
+          metric_name: "latency_ms",
+          metric_value: 123,
+          timestamp: new Date().toISOString(),
+        },
+        {
+          service: "cache-management",
+          metric_name: "hit_rate",
+          metric_value: 0.9,
+          timestamp: new Date().toISOString(),
+        },
+        {
+          service: "monitoring",
+          metric_name: "requests",
+          metric_value: 10,
+          timestamp: new Date().toISOString(),
+        },
       );
     }
 
-    const responseText = ctx.healthcare ? "orientações sobre diabete e saúde" : "general ai response";
+    const responseText = ctx.healthcare
+      ? "orientações sobre diabete e saúde"
+      : "general ai response";
 
     return new Response(
       JSON.stringify({
@@ -606,7 +688,11 @@ if (!(globalThis as any).mockPatientsHook) {
       return new Response(
         JSON.stringify({
           success: true,
-          sentiment_analysis: { overall_sentiment: "positive", confidence: 0.98, emotions: ["trust", "joy"] },
+          sentiment_analysis: {
+            overall_sentiment: "positive",
+            confidence: 0.98,
+            emotions: ["trust", "joy"],
+          },
         }),
         { status: 200, headers: { "content-type": "application/json" } },
       );
@@ -628,7 +714,12 @@ if (!(globalThis as any).mockPatientsHook) {
       return new Response(
         JSON.stringify({
           success: true,
-          safety_assessment: { emergency_detected: false, suicide_risk: 0.1, violence_risk: 0.1, substance_abuse: 0.1 },
+          safety_assessment: {
+            emergency_detected: false,
+            suicide_risk: 0.1,
+            violence_risk: 0.1,
+            substance_abuse: 0.1,
+          },
         }),
         { status: 200, headers: { "content-type": "application/json" } },
       );
@@ -638,14 +729,23 @@ if (!(globalThis as any).mockPatientsHook) {
     return new Response(
       JSON.stringify({
         success: true,
-        summary: { main_topics: ["saúde", "pressão arterial"], patient_concerns: ["tonturas", "dor de cabeça"], recommendations: ["consultar cardiologista"], follow_up_required: false },
+        summary: {
+          main_topics: ["saúde", "pressão arterial"],
+          patient_concerns: ["tonturas", "dor de cabeça"],
+          recommendations: ["consultar cardiologista"],
+          follow_up_required: false,
+        },
       }),
       { status: 200, headers: { "content-type": "application/json" } },
     );
   }
   if (url.includes("/api/ai/conversation/compliance")) {
     return new Response(
-      JSON.stringify({ success: true, compliance_status: { lgpd_violations: 0, anvisa_violations: 0, cfm_violations: 0 }, audit_trail_created: true }),
+      JSON.stringify({
+        success: true,
+        compliance_status: { lgpd_violations: 0, anvisa_violations: 0, cfm_violations: 0 },
+        audit_trail_created: true,
+      }),
       { status: 200, headers: { "content-type": "application/json" } },
     );
   }
@@ -653,13 +753,24 @@ if (!(globalThis as any).mockPatientsHook) {
   // Compliance endpoints
   if (url.includes("/api/ai/compliance/report")) {
     return new Response(
-      JSON.stringify({ success: true, report: { summary: "ok", lgpd_compliance_rate: 0.99, violations: [], recommendations: ["manter políticas"] } }),
+      JSON.stringify({
+        success: true,
+        report: {
+          summary: "ok",
+          lgpd_compliance_rate: 0.99,
+          violations: [],
+          recommendations: ["manter políticas"],
+        },
+      }),
       { status: 200, headers: { "content-type": "application/json" } },
     );
   }
   if (url.includes("/api/ai/compliance/validate-lgpd")) {
     return new Response(
-      JSON.stringify({ success: true, data: { compliance_status: { lgpd_compliant: true }, audit_trail: [] } }),
+      JSON.stringify({
+        success: true,
+        data: { compliance_status: { lgpd_compliant: true }, audit_trail: [] },
+      }),
       { status: 200, headers: { "content-type": "application/json" } },
     );
   }
@@ -680,13 +791,13 @@ if (!(globalThis as any).mockPatientsHook) {
       payload.violations = consent
         ? []
         : [
-            {
-              category: "lgpd",
-              code: "CONSENT_REQUIRED",
-              severity: "high",
-              message: "Processing without valid LGPD consent",
-            },
-          ];
+          {
+            category: "lgpd",
+            code: "CONSENT_REQUIRED",
+            severity: "high",
+            message: "Processing without valid LGPD consent",
+          },
+        ];
     } else if (category === "anvisa") {
       payload.compliance_status.anvisa_compliant = true;
       payload.device_validation = { registration_valid: true };
@@ -721,18 +832,23 @@ if (!(globalThis as any).mockPatientsHook) {
       },
     }));
     return new Response(
-      JSON.stringify({ success: true, data: { optimized_appointments: optimized, improvements: ["reduced_wait_time"] } }),
+      JSON.stringify({
+        success: true,
+        data: { optimized_appointments: optimized, improvements: ["reduced_wait_time"] },
+      }),
       { status: 200, headers: { "content-type": "application/json" } },
     );
   }
   if (url.includes("/api/ai/no-show-prediction/interventions")) {
     const prob = body?.no_show_probability ?? 0.1;
-    const interventions = prob > 0.5 ? [
-      { type: "reminder_sms", effectiveness: 0.3 },
-      { type: "prioritize_followup", effectiveness: 0.5 },
-    ] : [
-      { type: "standard_reminder", effectiveness: 0.1 },
-    ];
+    const interventions = prob > 0.5
+      ? [
+        { type: "reminder_sms", effectiveness: 0.3 },
+        { type: "prioritize_followup", effectiveness: 0.5 },
+      ]
+      : [
+        { type: "standard_reminder", effectiveness: 0.1 },
+      ];
     return new Response(
       JSON.stringify({ success: true, data: { interventions } }),
       { status: 200, headers: { "content-type": "application/json" } },
@@ -740,6 +856,17 @@ if (!(globalThis as any).mockPatientsHook) {
   }
   if (url.includes("/api/ai/feature-flags/evaluate")) {
     const failing = init?.headers && (init.headers as any)["X-Test-Feature-Flag-Failure"];
+    // Record a metric for feature flag evaluation
+    try {
+      const metrics = __ensureTable("ai_service_metrics");
+      metrics.push({
+        service: "feature-flags",
+        metric_name: "evaluate",
+        metric_value: 1,
+        timestamp: new Date().toISOString(),
+      });
+    } catch {}
+
     if (failing) {
       return new Response(
         JSON.stringify({ success: true, data: { enabled: false } }),
@@ -747,7 +874,11 @@ if (!(globalThis as any).mockPatientsHook) {
       );
     }
     return new Response(
-      JSON.stringify({ success: true, flags: { ai_chat_service_v2: true }, data: { enabled: true } }),
+      JSON.stringify({
+        success: true,
+        flags: { ai_chat_service_v2: true },
+        data: { enabled: true },
+      }),
       { status: 200, headers: { "content-type": "application/json" } },
     );
   }
@@ -756,8 +887,25 @@ if (!(globalThis as any).mockPatientsHook) {
     const key = new URL(url, "http://localhost").searchParams.get("key") ?? "default";
     const cache = __ensureTable("ai_cache");
     const entry = cache.find((e: any) => e.key === key);
+    // Record a metric for cache access
+    try {
+      const metrics = __ensureTable("ai_service_metrics");
+      metrics.push({
+        service: "cache-management",
+        metric_name: "get",
+        metric_value: 1,
+        timestamp: new Date().toISOString(),
+      });
+    } catch {}
+
     return new Response(
-      JSON.stringify({ success: true, data: { value: fallback ? { fallback: true } : entry?.value ?? null, hit: Boolean(entry && !fallback) } }),
+      JSON.stringify({
+        success: true,
+        data: {
+          value: fallback ? { fallback: true } : entry?.value ?? null,
+          hit: Boolean(entry && !fallback),
+        },
+      }),
       { status: 200, headers: { "content-type": "application/json" } },
     );
   }
@@ -766,7 +914,8 @@ if (!(globalThis as any).mockPatientsHook) {
       const { key, value } = body ?? {};
       const cache = __ensureTable("ai_cache");
       const idx = cache.findIndex((e: any) => e.key === key);
-      if (idx >= 0) cache[idx].value = value; else cache.push({ key, value });
+      if (idx >= 0) cache[idx].value = value;
+      else cache.push({ key, value });
     } catch {}
     return new Response(
       JSON.stringify({ success: true, stored: true }),
@@ -774,6 +923,16 @@ if (!(globalThis as any).mockPatientsHook) {
     );
   }
   if (url.includes("/api/ai/monitoring/metric")) {
+    // Persist monitoring metric into in-memory table
+    try {
+      const metrics = __ensureTable("ai_service_metrics");
+      metrics.push({
+        service: body?.service ?? "monitoring",
+        metric_name: body?.metric_name ?? "ingest",
+        metric_value: body?.metric_value ?? 1,
+        timestamp: new Date().toISOString(),
+      });
+    } catch {}
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: { "content-type": "application/json" },
@@ -783,19 +942,33 @@ if (!(globalThis as any).mockPatientsHook) {
     // return metrics based on what we seeded earlier
     const metrics = (__db.get("ai_metrics") ?? []) as any[];
     return new Response(
-      JSON.stringify({ success: true, data: { aggregated_metrics: metrics.length ? metrics : [{ service: "feature-flags", avg: 1.0 }] } }),
+      JSON.stringify({
+        success: true,
+        data: {
+          aggregated_metrics: metrics.length ? metrics : [{ service: "feature-flags", avg: 1.0 }],
+        },
+      }),
       { status: 200, headers: { "content-type": "application/json" } },
     );
   }
 
   // Auth endpoints used implicitly by hooks
   if (url.includes("/auth/v1/token")) {
-    return new Response(JSON.stringify({ access_token: "t", token_type: "bearer" }), { status: 200, headers: { "content-type": "application/json" } });
+    return new Response(JSON.stringify({ access_token: "t", token_type: "bearer" }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
   }
   if (url.includes("/auth/v1/user")) {
-    return new Response(JSON.stringify({ user: { id: "u_test", email: "doctor@clinic.com" } }), { status: 200, headers: { "content-type": "application/json" } });
+    return new Response(JSON.stringify({ user: { id: "u_test", email: "doctor@clinic.com" } }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
   }
 
   // Default OK JSON
-  return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "content-type": "application/json" } });
+  return new Response(JSON.stringify({ success: true }), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
 });

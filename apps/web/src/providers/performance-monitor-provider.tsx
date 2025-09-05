@@ -1,7 +1,14 @@
 "use client";
 
-import type { HealthcarePerformanceMonitor } from "@neonpro/monitoring";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+
+// Minimal local interface to avoid hard dependency on @neonpro/monitoring during MVP
+export interface HealthcarePerformanceMonitor {
+  setHealthcareContext: (context: any) => void;
+  startMonitoring: () => Promise<void>;
+  stopMonitoring: () => Promise<void>;
+  getMetricsSummary: () => Promise<unknown>;
+}
 
 interface HealthcareContext {
   clinicId?: string;
@@ -86,7 +93,9 @@ export function PerformanceMonitorProvider({
 
       try {
         // Dynamic import to avoid SSR issues and optimize bundle
-        const { HealthcarePerformanceMonitor } = await import("@neonpro/monitoring");
+        const { HealthcarePerformanceMonitor } = (await import("@neonpro/monitoring").catch(() => ({} as any))) as {
+          HealthcarePerformanceMonitor: new (config: any) => HealthcarePerformanceMonitor;
+        };
 
         // Healthcare-optimized configuration
         const healthcareConfig = {
@@ -103,6 +112,13 @@ export function PerformanceMonitorProvider({
           collectInterval: 5000, // 5 seconds for healthcare responsiveness
           ...config,
         };
+
+        if (!HealthcarePerformanceMonitor) {
+          console.warn("Performance monitoring package not available; running without monitoring");
+          setIsInitialized(true);
+          setIsMonitoringEnabled(false);
+          return;
+        }
 
         const monitorInstance = new HealthcarePerformanceMonitor(healthcareConfig);
 
@@ -144,7 +160,7 @@ export function PerformanceMonitorProvider({
 
     // Cleanup monitoring on unmount
     return () => {
-      if (monitor) {
+      if (monitor && typeof monitor.stopMonitoring === "function") {
         monitor.stopMonitoring().catch(console.error);
       }
     };

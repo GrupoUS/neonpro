@@ -1,22 +1,19 @@
 import type { BaseEntity } from "./common";
-import { UserRole } from "./rbac";
+import type { UserRole } from "./rbac";
+import type { Permission } from "./rbac";
 
 export interface User extends BaseEntity {
   email: string;
   name: string;
   role: UserRole;
   avatar_url?: string;
-  permissions: UserPermission[];
+  permissions: Permission[];
   isActive: boolean;
   mfaEnabled: boolean;
   lastLogin?: Date;
 }
 
-export interface UserPermission {
-  id: string;
-  name: string;
-  resource: string;
-  action: string;
-}
+// Alias UserPermission to Permission from rbac for backwards compatibility
+export type UserPermission = Permission;
 
 // UserRole is now defined in rbac.ts

@@ -1514,7 +1514,10 @@ export default function AgendaPage() {
               </div>
 
               {/* View Mode Selector */}
-              <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as unknown)}>
+              <Tabs
+                value={viewMode}
+                onValueChange={(value) => setViewMode(value as "day" | "week" | "month")}
+              >
                 <TabsList>
                   <TabsTrigger value="month">Mês</TabsTrigger>
                   <TabsTrigger value="week">Semana</TabsTrigger>

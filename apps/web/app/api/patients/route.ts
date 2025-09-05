@@ -293,16 +293,31 @@ async function handlePatientCreate(body: PatientRequest): Promise<NextResponse<P
   const clientConsent = body.dataConsent ?? {};
 
   // Spread client-provided data first, then explicitly set server-controlled fields
+  const patientData = (body.patientData ?? {}) as Partial<Patient>;
   const newPatient: Patient = {
-    ...(body.patientData ?? {}),
+    // Required fields with non-empty defaults
+    name: patientData.name || "MVP Patient",
+    email: patientData.email || "mvp@example.com",
+    phone: patientData.phone || "+55 11 0000-0000",
+    birthDate: patientData.birthDate || "1990-01-01",
+    // Optional fields
+    address: patientData.address,
+    medicalHistory: patientData.medicalHistory,
+    // Spread remaining client data (excluding conflicting fields)
+    ...patientData,
+    // Server-controlled fields (override any client data)
     id: serverAssignedId,
+    cpf: "000.000.000-00", // MVP default
+    gender: "Other",
     status: "pending",
     createdAt: nowIso,
     updatedAt: nowIso,
     dataConsent: {
-      ...clientConsent,
+      dataProcessing: true,
+      marketing: false,
+      consentDate: nowIso,
       ipAddress: "192.168.1.100", // Would get from request
-    } as Patient["dataConsent"],
+    },
   };
 
   return NextResponse.json({
@@ -323,13 +338,23 @@ async function handlePatientUpdate(
 
   const mergedConsent: Patient["dataConsent"] = {
     ...DEFAULT_CONSENT,
-    ...(existingPatient?.dataConsent ?? {}),
+    ...existingPatient?.dataConsent,
     ...clientConsent,
     ipAddress: requestIp,
   };
 
+  const patientData = (body.patientData ?? {}) as Partial<Patient>;
   const updatedPatient: Patient = {
-    ...(body.patientData ?? {}),
+    // Required fields with defaults
+    name: patientData.name || "Updated Patient",
+    email: patientData.email || "updated@example.com",
+    phone: patientData.phone || "+55 11 0000-0001",
+    cpf: patientData.cpf || "000.000.000-01",
+    birthDate: patientData.birthDate || "1990-01-01",
+    gender: patientData.gender || "Other",
+    // Spread remaining client data
+    ...patientData,
+    // Server-controlled fields (override client data)
     id: body.patientId,
     status: "active",
     createdAt: "2024-01-15T10:00:00Z", // Would come from database

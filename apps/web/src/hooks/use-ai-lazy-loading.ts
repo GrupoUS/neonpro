@@ -77,22 +77,15 @@ export function useAILazyLoading(config: AIFeatureConfig = {}) {
 
       setState(prev => ({ ...prev, loadingProgress: 30 }));
 
-      // Dynamic import of AI prediction services
-      console.log("🧠 Loading AI prediction services...");
-      const [aiModule, tfModule] = await Promise.all([
-        import("@neonpro/ai/prediction"),
-        import("@neonpro/ai/prediction/core/tensorflow-lazy-loader"),
-      ]);
+      // AI services temporarily disabled for MVP
+      console.log("🧠 AI services temporarily disabled for MVP build...");
 
       setState(prev => ({ ...prev, loadingProgress: 60 }));
 
-      // Initialize TensorFlow.js with healthcare optimizations
-      await tfModule.tensorFlowLoader.getTensorFlow();
+      // Simulate loading delay for MVP
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       setState(prev => ({ ...prev, loadingProgress: 90 }));
-
-      // Initialize prediction engine
-      await aiModule.AestheticPredictionEngine?.prototype?.initialize?.();
 
       setState(prev => ({
         ...prev,

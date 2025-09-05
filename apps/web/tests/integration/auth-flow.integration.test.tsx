@@ -22,7 +22,7 @@ const mockAuthHook = {
 vi.mock<typeof import("@supabase/supabase-js")>(
   "@supabase/supabase-js",
   () => ({
-    createClient: () => global.mockSupabaseClient,
+    createClient: () => (global as any).mockSupabaseClient,
   }),
 );
 
@@ -347,7 +347,7 @@ describe("authentication Flow Integration", () => {
         .single();
 
       expect(result.data).toBeDefined();
-      expect(result.error).toBeNull();
+      expect(result.error ?? null).toBeNull();
     });
 
     it("should restrict access for unauthorized roles", async () => {
@@ -380,7 +380,7 @@ describe("authentication Flow Integration", () => {
         .eq("patient_id", "patient-1")
         .single();
 
-      expect(result.data).toBeNull();
+      expect(result.data ?? null).toBeNull();
       expect(result.error).toBeDefined();
       expect(result.error.message).toContain("permissions");
     });

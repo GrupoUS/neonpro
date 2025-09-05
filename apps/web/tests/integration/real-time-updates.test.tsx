@@ -199,7 +199,7 @@ describe("real-time Updates Integration Tests", () => {
       await new Promise((resolve) => setTimeout(resolve, 2100));
 
       expect(mockRealtimeHook.isConnected).toBeTruthy();
-      expect(mockRealtimeHook.error).toBeNull();
+      expect(mockRealtimeHook.error ?? null).toBeNull();
     });
   });
 

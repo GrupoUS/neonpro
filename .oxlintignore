@@ -85,3 +85,7 @@ packages/monitoring/src/**/*.js
 **/packages/utils/src/**/*.js
 **/packages/ai/src/**/*.js
 **/packages/monitoring/src/**/*.js
+
+# Ignore archived code
+packages/_archive/
+**/packages/_archive/**

@@ -40,7 +40,7 @@ export function LGPDComplianceDashboard({
     }
 
     const updatedConsent: LGPDConsent = {
-      ...(consent || {}),
+      ...consent,
       [field]: value,
       consentDate: new Date().toISOString(),
       consentVersion: "2.1", // LGPD compliance version

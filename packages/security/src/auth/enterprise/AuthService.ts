@@ -26,6 +26,29 @@ import type {
   UserRole,
 } from "./types";
 
+// Service interfaces for dependency injection
+interface CacheService {
+  set(key: string, value: unknown, ttl?: number): Promise<void>;
+  get(key: string): Promise<unknown>;
+  delete(key: string): Promise<void>;
+}
+
+interface AnalyticsService {
+  track(event: string, properties: unknown): Promise<void>;
+  recordPerformance(operation: string, duration: number): Promise<void>;
+}
+
+interface SecurityService {
+  checkRateLimit(identifier: string, limit: number, windowMs: number): Promise<boolean>;
+  clearRateLimit(identifier: string): Promise<void>;
+  auditOperation(event: unknown): Promise<void>;
+}
+
+interface AuditService {
+  logOperation(operation: string, details: unknown): Promise<void>;
+  log(operation: string, details: unknown): Promise<void>;
+}
+
 /**
  * Healthcare-compliant authentication service with enterprise features
  */
@@ -33,23 +56,27 @@ export class AuthService {
   protected readonly config: AuthConfig;
   private readonly supabase: SupabaseClient;
   private readonly rolePermissions: RolePermissions;
+  private readonly cache: CacheService;
+  private readonly analytics: AnalyticsService;
+  private readonly security: SecurityService;
+  private readonly audit: AuditService;
 
-  // Mock properties for compatibility
-  private readonly cache: any = {};
-  private readonly analytics: any = {};
-  private readonly security: any = {};
-  private readonly audit: any = {};
-
-  constructor(config: AuthConfig, supabaseUrl: string, supabaseKey: string) {
-      cacheOptions: {
-        defaultTTL: 15 * 60 * 1000, // 15 minutes for auth tokens
-        maxItems: 1000,
-      },
-    });
-
+  constructor(
+    config: AuthConfig,
+    supabaseUrl: string,
+    supabaseKey: string,
+    cache: CacheService,
+    analytics: AnalyticsService,
+    security: SecurityService,
+    audit: AuditService,
+  ) {
     this.config = config;
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.rolePermissions = this.initializeRolePermissions();
+    this.cache = cache;
+    this.analytics = analytics;
+    this.security = security;
+    this.audit = audit;
   }
 
   /**

@@ -11,6 +11,9 @@
  */
 
 // Mock Form components
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   Form,
   FormControl,
@@ -20,9 +23,6 @@ import {
   FormLabel,
   FormMessage,
 } from "../../../../../packages/ui/src/components/ui/form";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock Brazilian validation functions
 vi.mock(

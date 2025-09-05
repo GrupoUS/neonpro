@@ -7,7 +7,6 @@
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { createClient } from "@/app/utils/supabase/server";
 import { safeParseNumber } from "@/src/types/analytics";
-import type { DatabaseRow } from "@/src/types/analytics";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
@@ -352,8 +351,8 @@ export async function POST(
 
     // Calculate metrics in batches to avoid overwhelming the system
     const retentionService = new RetentionAnalyticsService();
-    const results: DatabaseRow[] = [];
-    const errors: DatabaseRow[] = [];
+    const results: any[] = [];
+    const errors: any[] = [];
 
     const batchSize = 10; // Process 10 patients at a time
 
@@ -381,16 +380,16 @@ export async function POST(
       batchResults.forEach((result) => {
         if (result.status === "fulfilled") {
           if (result.value.success) {
-            results.push(result.value as DatabaseRow);
+            results.push(result.value);
           } else {
-            errors.push(result.value as DatabaseRow);
+            errors.push(result.value);
           }
         } else {
           errors.push({
             patientId: "unknown",
             error: result.reason?.message || "Promise rejected",
             success: false,
-          } as DatabaseRow);
+          });
         }
       });
     }
@@ -407,7 +406,7 @@ export async function POST(
       success: true,
       data: {
         results: results.map(
-          (r: DatabaseRow) => (r as unknown as { metrics: unknown; }).metrics,
+          (r: any) => (r as unknown as { metrics: unknown; }).metrics,
         ),
         summary,
         errors: errors.length > 0 ? errors : undefined,

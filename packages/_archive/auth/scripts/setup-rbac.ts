@@ -66,11 +66,23 @@ class RBACSetup {
 
             if (error) {
               // Continue with other statements unless it's a critical error
-              if (error.message.includes("already exists")) {
+              if (error.message?.includes("already exists")) {
+                console.warn(
+                  `RBAC migration notice: object already exists (statement #${i + 1}). Proceeding.`,
+                );
+              } else {
+                console.error(
+                  `RBAC migration error on statement #${i + 1}:`,
+                  error?.message ?? String(error),
+                );
               }
             }
-          } catch {
+          } catch (error) {
             // Continue with other statements for non-critical errors
+            const msg = error instanceof Error ? error.message : String(error);
+            console.error(
+              `RBAC migration exception on statement #${i + 1}: ${msg}`,
+            );
           }
         }
       }
@@ -80,10 +92,15 @@ class RBACSetup {
         message: `Migration ${filename} executed successfully`,
       };
     } catch (error) {
+      const e = error as any;
       return {
         success: false,
         message: `Migration ${filename} failed`,
-        details: error,
+        details: {
+          message: String(e?.message ?? e),
+          name: String(e?.name ?? "Error"),
+          stack: e?.stack ? String(e.stack) : "",
+        },
       };
     }
   }
@@ -127,10 +144,15 @@ class RBACSetup {
         },
       };
     } catch (error) {
+      const e = error as any;
       return {
         success: false,
         message: "RLS verification failed",
-        details: error,
+        details: {
+          message: String(e?.message ?? e),
+          name: String(e?.name ?? "Error"),
+          stack: e?.stack ? String(e.stack) : "",
+        },
       };
     }
   }
@@ -174,10 +196,15 @@ class RBACSetup {
         message: "Audit log table configured successfully",
       };
     } catch (error) {
+      const e = error as any;
       return {
         success: false,
         message: "Audit log setup failed",
-        details: error,
+        details: {
+          message: String(e?.message ?? e),
+          name: String(e?.name ?? "Error"),
+          stack: e?.stack ? String(e.stack) : "",
+        },
       };
     }
   }
@@ -220,10 +247,15 @@ class RBACSetup {
         },
       };
     } catch (error) {
+      const e = error as any;
       return {
         success: false,
         message: "RBAC permission tests failed",
-        details: error,
+        details: {
+          message: String(e?.message ?? e),
+          name: String(e?.name ?? "Error"),
+          stack: e?.stack ? String(e.stack) : "",
+        },
       };
     }
   }
@@ -251,13 +283,27 @@ class RBACSetup {
     const successCount = results.filter((r) => r.success).length;
     const { length: totalSteps } = results;
 
-    results.forEach((result, _index) => {
-      if (result.details) {
-      }
-    });
+    // Surface details for visibility
+    const errors = results
+      .map((r, idx) => ({ idx, r }))
+      .filter(({ r }) => !r.success)
+      .map(({ idx, r }) => ({
+        step: idx + 1,
+        message: r.message,
+        details: r.details,
+      }));
 
     if (successCount === totalSteps) {
+      console.log(
+        `RBAC setup completed successfully (${successCount}/${totalSteps}).`,
+      );
+      return;
     } else {
+      console.error(
+        `RBAC setup completed with failures (${successCount}/${totalSteps}).`,
+        JSON.stringify(errors, null, 2),
+      );
+      process.exit(1);
     }
   }
 }
@@ -270,7 +316,9 @@ if (require.main === module) {
   (async () => {
     try {
       await setup.setup();
-    } catch {
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error(`RBAC setup fatal error: ${msg}`);
       process.exit(1);
     }
   })();

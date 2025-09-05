@@ -121,11 +121,14 @@ export class AccessibilityTestSuite {
 
       return results;
     } catch (error) {
-      console.error("Accessibility testing failed:", error);
+      const errorMessage = String(
+        error && (error as Error).message ? (error as Error).message : error,
+      );
+      console.error("Accessibility testing failed:", errorMessage);
       results.violations.push({
         rule: "test-execution-error",
         severity: "critical",
-        description: `Testing framework error: ${error.message}`,
+        description: `Testing framework error: ${errorMessage}`,
         element: "test-suite",
         impact: "standard",
         wcagCriterion: "N/A",
@@ -156,8 +159,12 @@ export class AccessibilityTestSuite {
         allPassed = false;
       }
 
-      // Check keyboard accessibility
-      if (!button.hasAttribute("onKeyDown") && !button.onclick) {
+      // Check keyboard accessibility - check for keyboard handlers
+      const hasKeyboardHandler = button.onkeydown
+        || button.hasAttribute("onkeydown")
+        || button.hasAttribute("onKeyDown")
+        || button.onclick;
+      if (!hasKeyboardHandler) {
         allPassed = false;
       }
 
@@ -302,12 +309,16 @@ export class AccessibilityTestSuite {
    */
   private async runAxeTests(element: Element | Document): Promise<AxeResults> {
     const config = {
-      rules: WCAG21AA_RULES,
-      tags: ["wcag2a", "wcag2aa", "wcag21aa"],
+      rules: {
+        ...WCAG21AA_RULES,
+        ...EMERGENCY_CONTRAST_RULES,
+        ...MEDICAL_TERMINOLOGY_RULES,
+      },
+      tags: ["wcag2a", "wcag2aa", "wcag21aa", "healthcare", "emergency"],
       options: {
         runOnly: {
           type: "tag",
-          values: ["wcag21aa", "best-practice"],
+          values: ["wcag21aa", "best-practice", "healthcare", "emergency"],
         },
       },
     };

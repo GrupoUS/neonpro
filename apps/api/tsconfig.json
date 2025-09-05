@@ -28,17 +28,12 @@
       "@/routes/*": ["./src/routes/*"],
       "@neonpro/ui": ["../../packages/ui/src"],
       "@neonpro/ui/*": ["../../packages/ui/src/*"],
-      "@neonpro/ai": ["../../packages/ai/src"],
-      "@neonpro/ai/*": ["../../packages/ai/src/*"],
-
       "@neonpro/types": ["../../packages/types/src"],
       "@neonpro/types/*": ["../../packages/types/src/*"],
       "@neonpro/utils": ["../../packages/utils/src"],
       "@neonpro/utils/*": ["../../packages/utils/src/*"],
       "@neonpro/core-services": ["../../packages/core-services/src"],
       "@neonpro/core-services/*": ["../../packages/core-services/src/*"],
-      "@neonpro/compliance": ["../../packages/compliance/src"],
-      "@neonpro/compliance/*": ["../../packages/compliance/src/*"],
       "@neonpro/security": ["../../packages/security/src"],
       "@neonpro/security/*": ["../../packages/security/src/*"],
       "@neonpro/shared": ["../../packages/shared/src"],
@@ -49,8 +44,6 @@
       "@neonpro/database/*": ["../../packages/database/src/*"],
       "@neonpro/cache": ["../../packages/cache/src"],
       "@neonpro/cache/*": ["../../packages/cache/src/*"],
-      "@neonpro/monitoring": ["../../packages/monitoring/src"],
-      "@neonpro/monitoring/*": ["../../packages/monitoring/src/*"],
       "@neonpro/enterprise": ["../../packages/enterprise/src"],
       "@neonpro/enterprise/*": ["../../packages/enterprise/src/*"]
     }
@@ -67,10 +60,6 @@
       "path": "../../packages/ui"
     },
     {
-      "path": "../../packages/ai"
-    },
-
-    {
       "path": "../../packages/types"
     },
     {
@@ -79,9 +68,7 @@
     {
       "path": "../../packages/core-services"
     },
-    {
-      "path": "../../packages/compliance"
-    },
+
     {
       "path": "../../packages/security"
     },
@@ -90,15 +77,6 @@
     },
     {
       "path": "../../packages/database"
-    },
-    {
-      "path": "../../packages/cache"
-    },
-    {
-      "path": "../../packages/monitoring"
-    },
-    {
-      "path": "../../packages/enterprise"
     }
   ]
 }

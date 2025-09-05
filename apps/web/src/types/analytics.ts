@@ -856,3 +856,45 @@ export const PERFORMANCE_THRESHOLDS = {
   errorRate: 0.01, // 1%
   availability: 0.999, // 99.9%
 } as const;
+
+// ====== UTILITY FUNCTIONS ======
+
+/**
+ * Safely parses a string or number value to a number
+ * Returns NaN if the value cannot be parsed as a valid number
+ */
+export function safeParseNumber(value: string | number | null | undefined): number {
+  if (typeof value === "number") {
+    return isFinite(value) ? value : NaN;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number(value.trim());
+    return isFinite(parsed) ? parsed : NaN;
+  }
+
+  return NaN;
+}
+
+/**
+ * Safely parses a string or number value to a number with a default fallback
+ */
+export function safeParseNumberWithDefault(
+  value: string | number | null | undefined,
+  defaultValue: number,
+): number {
+  const parsed = safeParseNumber(value);
+  return isNaN(parsed) ? defaultValue : parsed;
+}
+
+// ====== DATABASE TYPES ======
+
+/**
+ * Generic database row type for MVP
+ */
+export interface DatabaseRow {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  [key: string]: unknown;
+}

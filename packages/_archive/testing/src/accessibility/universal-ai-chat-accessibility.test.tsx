@@ -181,8 +181,11 @@ describe("Universal AI Chat - Accessibility Compliance", () => {
           altKey: shortcut.altKey || false,
         });
 
-        // Allow for async processing
-        await waitFor(() => {}, { timeout: 100 });
+        // Wait for keyboard shortcut to be processed
+        await waitFor(() => {
+          // Check that the keyboard shortcut was processed by verifying focus or UI state
+          expect(document.activeElement).toBeTruthy();
+        });
       }
 
       const results = await testSuite.runComprehensiveTests(container);

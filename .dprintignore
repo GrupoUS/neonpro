@@ -76,3 +76,6 @@ pnpm-lock.yaml
 **/docs/api/**
 **/docs/generated/**
 **/storybook-static/**
+# Ignore archived code
+packages/_archive/
+**/packages/_archive/**

@@ -11,10 +11,10 @@
  */
 
 // Mock the Button component (assuming it's in packages/ui)
-import { Button } from "../../../../../packages/ui/src/components/ui/button";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { Button } from "../../../../../packages/ui/src/components/ui/button";
 
 // Mock theme provider if needed
 const ThemeWrapper = ({ children }: { children: React.ReactNode; }) => (

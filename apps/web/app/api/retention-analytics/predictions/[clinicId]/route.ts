@@ -8,7 +8,7 @@ import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytic
 import { ChurnModelType, ChurnRiskLevel } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
 import { safeParseNumber } from "@/src/types/analytics";
-import type { DatabaseRow, RetentionPrediction } from "@/src/types/analytics";
+// import type { DatabaseRow, RetentionPrediction } from "@/src/types/analytics";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
@@ -435,8 +435,8 @@ export async function POST(
 
     // Generate predictions
     const retentionService = new RetentionAnalyticsService();
-    const results: DatabaseRow[] = [];
-    const errors: DatabaseRow[] = [];
+    const results: any[] = [];
+    const errors: any[] = [];
 
     // Process in batches for better performance
     const batchSize = 5; // Smaller batch for ML predictions
@@ -466,16 +466,16 @@ export async function POST(
       batchResults.forEach((result) => {
         if (result.status === "fulfilled") {
           if (result.value.success) {
-            results.push(result.value as DatabaseRow);
+            results.push(result.value as any);
           } else {
-            errors.push(result.value as DatabaseRow);
+            errors.push(result.value as any);
           }
         } else {
           errors.push({
             patientId: "unknown",
             error: result.reason?.message || "Promise rejected",
             success: false,
-          } as DatabaseRow);
+          } as any);
         }
       });
     }
@@ -487,7 +487,7 @@ export async function POST(
       failed: errors.length,
       success_rate: results.length / targetPatientIds.length,
       model_type: modelType,
-      high_risk_detected: results.filter((r: DatabaseRow) =>
+      high_risk_detected: results.filter((r: any) =>
         ["high", "critical"].includes(
           (r as unknown as { prediction: { risk_level: string; }; }).prediction
             .risk_level || "unknown",
@@ -499,7 +499,7 @@ export async function POST(
       success: true,
       data: {
         predictions: results.map(
-          (r: DatabaseRow) => (r as unknown as { prediction: unknown; }).prediction,
+          (r: any) => (r as unknown as { prediction: unknown; }).prediction,
         ),
         summary,
         errors: errors.length > 0 ? errors : undefined,

@@ -7,7 +7,13 @@
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { RetentionStrategyStatus, RetentionStrategyType } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
-import { safeParseNumber } from "@/src/types/analytics";
+// import { safeParseNumber } from "@/src/types/analytics";
+
+// Simple MVP function
+const safeParseNumber = (value: any, defaultValue: number = 0): number => {
+  const parsed = Number(value);
+  return isNaN(parsed) ? defaultValue : parsed;
+};
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
@@ -175,7 +181,7 @@ export async function GET(
 
     // Apply sorting
     filteredStrategies.sort((a: StrategyData, b: StrategyData) => {
-      let valueA: unknown, valueB: unknown;
+      let valueA: any, valueB: any;
 
       switch (sortBy) {
         case "created_at": {
@@ -194,8 +200,8 @@ export async function GET(
           break;
         }
         case "success_rate": {
-          valueA = safeParseNumber(a.success_rate);
-          valueB = safeParseNumber(b.success_rate);
+          valueA = safeParseNumber(a.success_rate, 0);
+          valueB = safeParseNumber(b.success_rate, 0);
           break;
         }
         default: {

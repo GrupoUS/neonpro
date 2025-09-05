@@ -7,6 +7,7 @@ Este documento detalha as mudanças realizadas na estrutura de packages do proje
 ## Packages Removidos
 
 ### 1. Packages Desnecessários para MVP
+
 - **@neonpro/devops** - Ferramentas de DevOps não essenciais para MVP
 - **@neonpro/docs** - Geração de documentação pode ser adicionada posteriormente
 - **@neonpro/performance** - Otimizações avançadas não são críticas para MVP
@@ -15,6 +16,7 @@ Este documento detalha as mudanças realizadas na estrutura de packages do proje
 - **@neonpro/tooling** - Ferramentas de desenvolvimento não essenciais
 
 ### 2. Packages Consolidados
+
 - **@neonpro/brazilian-healthcare-ui** → Consolidado no @neonpro/ui
 - **@neonpro/health-dashboard** → Consolidado no @neonpro/ui
 - **@neonpro/domain** → Tipos movidos para @neonpro/types
@@ -36,16 +38,19 @@ Este documento detalha as mudanças realizadas na estrutura de packages do proje
 ## Correções Realizadas
 
 ### 1. Conflitos de Tipos
+
 - Resolvidos conflitos de tipos duplicados entre packages
 - Renomeados tipos conflitantes (UserRole, Permission, SecurityEventType)
 - Consolidados tipos do domain no package types
 
 ### 2. Dependências
+
 - Removidas dependências de packages inexistentes
 - Atualizados imports e referências
 - Corrigidas configurações do turbo.json e tsconfig.json
 
 ### 3. Erros de Build
+
 - Corrigidos erros de TypeScript em vários packages
 - Ajustados modificadores de acesso em classes
 - Resolvidos problemas de tsBuildInfo

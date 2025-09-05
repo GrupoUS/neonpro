@@ -191,7 +191,7 @@ export default defineConfig({
       "**/*.e2e.{ts,tsx}",
       "**/playwright/**",
 
-      // Unimplemented/problematic tests
+      // Unimplemented/problematic tests (keep monitoring excluded if package missing)
       "**/compliance/**",
       "**/ai/**",
       "**/lgpd/**",

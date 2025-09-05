@@ -232,12 +232,21 @@ async function handleCommunicationOverview(
     engagementRate: 67.8,
     activeProviders: ["email", "sms", "whatsapp", "push"],
     recentMessages: 12,
+    byProvider: {
+      email: { sent: 1200, delivered: 1134, opened: 680, read: 650 },
+      sms: { sent: 850, delivered: 825, opened: 620, read: 600 },
+      whatsapp: { sent: 300, delivered: 290, opened: 200, read: 180 },
+      push: { sent: 100, delivered: 95, opened: 45, read: 40 },
+    },
+    deliveryRates: { email: 94.5, sms: 97.1, whatsapp: 96.7, push: 95 },
+    engagementRates: { email: 56.7, sms: 72.9, whatsapp: 66.7, push: 45 },
+    period: { startDate: new Date().toISOString(), endDate: new Date().toISOString() },
   };
 
   return NextResponse.json({
     success: true,
     data: { analytics: overview },
-  });
+  } as CommunicationResponse);
 }
 
 async function handleMessageStatus(
@@ -379,7 +388,7 @@ async function handleTestCommunication(
   // Mock communication test
   const testResult = {
     provider: body.provider || "email",
-    status: Math.random() > 0.1 ? "success" : "failed" as const,
+    status: Math.random() > 0.1 ? "success" : "failed" as "success" | "failed",
     details: Math.random() > 0.1
       ? `${body.provider || "email"} provider is working correctly`
       : `${body.provider || "email"} provider connection failed`,

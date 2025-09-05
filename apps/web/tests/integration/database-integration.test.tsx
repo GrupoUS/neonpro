@@ -582,7 +582,7 @@ describe("database Integration Tests", () => {
 
     it("should prevent cross-tenant data access", async () => {
       // Attempt to access patient from different clinic
-      mockPrismaClient.patient.findUnique.mockResolvedValue();
+      mockPrismaClient.patient.findUnique.mockResolvedValue(null as any);
 
       const result = await mockPrismaClient.patient.findUnique({
         where: {

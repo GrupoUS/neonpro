@@ -5,15 +5,17 @@
 ## Migration Guide
 
 ### Before (deprecated):
+
 ```typescript
 import { AuthService } from "@neonpro/auth";
-import type { User, AuthSession } from "@neonpro/auth";
+import type { AuthSession, User } from "@neonpro/auth";
 ```
 
 ### After (recommended):
+
 ```typescript
 import { AuthService } from "@neonpro/security/auth/enterprise";
-import type { User, AuthSession } from "@neonpro/security/auth/enterprise";
+import type { AuthSession, User } from "@neonpro/security/auth/enterprise";
 ```
 
 ## Why was this package merged?

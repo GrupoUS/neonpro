@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "NeonPro shared configurations (Oxlint, Dprint, Tailwind, TypeScript)",
   "private": true,
-  "main": "index.js",
   "exports": {
     "./base": "./base.json",
     "./nextjs": "./nextjs.json",

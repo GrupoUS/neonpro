@@ -18,3 +18,7 @@ coverage/
 # Ignore dev/test tooling
 /tools/
 /scripts/
+
+# Ignore archived code
+packages/_archive/
+**/packages/_archive/**

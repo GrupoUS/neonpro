@@ -148,6 +148,7 @@ CONTEXT_STRATEGY:
 ```
 
 ## 📚 References (MVP scope)
+
 - **🌳 @source-tree**: [docs/architecture/source-tree.md](./source-tree.md)
 - **🖥️ @frontend-architecture**: [docs/architecture/frontend-architecture.md](./frontend-architecture.md)
 - **🧩 @frontend-spec**: [docs/architecture/front-end-spec.md](./front-end-spec.md)

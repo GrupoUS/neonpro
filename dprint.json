@@ -69,7 +69,8 @@
     "**/.env*",
     "**/sentry.*.config.*",
     "**/instrumentation*.ts",
-    "**/*.chatmode.md"
+    "**/*.chatmode.md",
+    "packages/_archive/**"
   ],
 
   "typescript": {

@@ -3,7 +3,8 @@
  * @package @neonpro/auth
  */
 
-import React, { isValidElement, type ComponentType } from "react";
+import type React from "react";
+import { type ComponentType, isValidElement } from "react";
 
 // Define component types that will be implemented in the web app
 export interface LoginFormProps {
@@ -96,7 +97,9 @@ export const validateAuthButtonProps = (props: AuthButtonProps): boolean => {
   if (typeof props !== "object" || props === null) return false;
   if (props.onClick !== undefined && !isFunction(props.onClick)) return false;
   if (props.loading !== undefined && !isBoolean(props.loading)) return false;
-  if (props.variant !== undefined && !["login", "logout", "register"].includes(props.variant)) return false;
+  if (props.variant !== undefined && !["login", "logout", "register"].includes(props.variant)) {
+    return false;
+  }
   if (props.children !== undefined && !isReactNode(props.children)) return false;
   return true;
 };

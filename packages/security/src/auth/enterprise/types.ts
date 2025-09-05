@@ -157,7 +157,7 @@ export interface IAuthService {
   logout: () => Promise<void>;
   register: (data: { email: string; password: string; name: string; }) => Promise<User>;
   getCurrentUser: () => Promise<User | null>;
-  refreshToken: () => Promise<{ accessToken: string; refreshToken: string }>;
-  initiateMfa?: (userId: string) => Promise<MfaSetupResult>;
-  verifyMfa?: (userId: string, code: string) => Promise<LoginResult>;
+  refreshToken: () => Promise<{ accessToken: string; refreshToken: string; }>;
+  initiateMfa: (userId: string) => Promise<MfaSetupResult>;
+  verifyMfa: (userId: string, code: string) => Promise<LoginResult>;
 }

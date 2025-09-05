@@ -11,10 +11,15 @@
  */
 
 // Mock the Card components
-import { Card, CardContent, CardHeader, CardTitle } from "../../../../../packages/ui/src/components/ui/card";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../../../../packages/ui/src/components/ui/card";
 
 // Mock theme provider
 const ThemeWrapper = ({ children }: { children: React.ReactNode; }) => (

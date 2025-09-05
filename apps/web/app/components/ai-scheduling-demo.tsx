@@ -301,7 +301,6 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
               onError={handleError}
               patients={patients}
               staff={staff}
-              tenantId={tenantId}
               treatmentTypes={treatmentTypes}
             />
 
@@ -362,8 +361,8 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 
             <SchedulingAnalyticsDashboard
               onTimeRangeChange={setTimeRange}
-              tenantId={tenantId}
               timeRange={timeRange}
+              tenantId={tenantId}
             />
           </div>
         )}

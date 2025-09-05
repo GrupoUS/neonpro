@@ -14,11 +14,20 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 
 ### 📊 Critérios de Aprovação
 
-- **Score Mínimo**: 8.5/10 em todos os testes
-- **Emergência**: 100% dos atalhos de emergência funcionais
-- **Terminologia**: 90%+ dos termos médicos com pronúncia
-- **Navegação**: 95%+ dos elementos acessíveis por teclado
-- **Contraste**: 7:1 para emergência, 4.5:1 normal, 3:1 foco
+#### Sistema de Pontuação Unificado (0-10 escala)
+
+**Pesos por Categoria:**
+- **🚨 Emergência**: 25% (peso 2.5) - Funcionalidades críticas de emergência
+- **🩺 Terminologia**: 20% (peso 2.0) - Termos médicos e pronúncia
+- **⌨️ Navegação**: 20% (peso 2.0) - Acessibilidade via teclado
+- **🎨 Contraste**: 15% (peso 1.5) - Ratios de contraste visual
+- **🔗 Skip Links**: 10% (peso 1.0) - Enlaces de navegação rápida
+- **📱 Responsividade**: 10% (peso 1.0) - Adaptação móvel e desktop
+
+**Score Mínimo para Aprovação**: 8.5/10
+- ✅ **APROVADO**: ≥8.5/10 (85%+)
+- ⚠️ **ATENÇÃO**: 7.0-8.4/10 (70-84%)
+- ❌ **REPROVADO**: <7.0/10 (<70%)
 
 ---
 
@@ -370,26 +379,29 @@ Este manual orienta profissionais de saúde na validação das funcionalidades d
 
 ## 📋 RESUMO DE RESULTADOS
 
-### Pontuação por Categoria
+### Pontuação por Categoria (Escala 0-10)
 
-| Categoria            | Score  | Status |
-| -------------------- | ------ | ------ |
-| 🚨 Emergência        | ___/4  | ✅⚠️❌  |
-| 🩺 Terminologia      | ___/12 | ✅⚠️❌  |
-| ⌨️ Navegação          | ___/13 | ✅⚠️❌  |
-| 🎨 Contraste         | ___/4  | ✅⚠️❌  |
-| 🔗 Skip Links        | ___/4  | ✅⚠️❌  |
-| 📱 Mobile            | ___/4  | ✅⚠️❌  |
-| 📊 Screen Readers    | ___/12 | ✅⚠️❌  |
-| 🏥 Cenários Clínicos | ___/9  | ✅⚠️❌  |
+| Categoria            | Score Individual | Peso | Score Ponderado | Status |
+| -------------------- | --------------- | ---- | --------------- | ------ |
+| 🚨 Emergência        | ___/10          | 25%  | ___/2.5         | ✅⚠️❌  |
+| 🩺 Terminologia      | ___/10          | 20%  | ___/2.0         | ✅⚠️❌  |
+| ⌨️ Navegação          | ___/10          | 20%  | ___/2.0         | ✅⚠️❌  |
+| 🎨 Contraste         | ___/10          | 15%  | ___/1.5         | ✅⚠️❌  |
+| 🔗 Skip Links        | ___/10          | 10%  | ___/1.0         | ✅⚠️❌  |
+| 📱 Responsividade    | ___/10          | 10%  | ___/1.0         | ✅⚠️❌  |
 
-### Score Total: ___/62
+### Score Final: ___/10.0
+
+**Critérios de Status por Categoria:**
+- ✅ **BOM**: ≥8.5/10 na categoria
+- ⚠️ **ATENÇÃO**: 7.0-8.4/10 na categoria  
+- ❌ **CRÍTICO**: <7.0/10 na categoria
 
 ### Classificação Final
 
-- **✅ APROVADO**: ≥53/62 (85%+)
-- **⚠️ ATENÇÃO**: 47-52/62 (75-84%)
-- **❌ REPROVADO**: <47/62 (<75%)
+- **✅ APROVADO**: Score Final ≥8.5/10 (85%+)
+- **⚠️ ATENÇÃO**: Score Final 7.0-8.4/10 (70-84%)
+- **❌ REPROVADO**: Score Final <7.0/10 (<70%)
 
 ---
 

@@ -116,9 +116,13 @@ const createMockQueryBuilder = () => {
       (mockBuilder as any)._in = { col, values };
       return mockBuilder;
     }),
+    inList: vi.fn().mockImplementation((col: string, values: any[]) => {
+      (mockBuilder as any)._in = { col, values };
+      return mockBuilder;
+    }),
     eq: vi.fn().mockImplementation((col: string, val: any) => {
       // Track eq filters for later evaluation and basic RLS simulation
-      (mockBuilder as any)._eqs = [ ...((mockBuilder as any)._eqs ?? []), { col, val } ];
+      (mockBuilder as any)._eqs = [...((mockBuilder as any)._eqs ?? []), { col, val }];
       // Simulate RLS denial when accessing different user/tenant in tests
       if (col === "user_id" && String(val).includes("different-user")) {
         (mockBuilder as any)._rlsDenied = true;
@@ -165,20 +169,31 @@ const createMockQueryBuilder = () => {
     range: vi.fn().mockReturnThis(),
     and: vi.fn().mockReturnThis(),
     abortSignal: vi.fn().mockReturnThis(),
+    // Allow repeated eq chaining: return self
+    eqAgain: vi.fn().mockImplementation((col: string, val: any) => mockBuilder.eq(col, val)),
+    maybeSingle: vi.fn().mockImplementation(() => {
+      (mockBuilder as any)._maybeSingle = true;
+      return mockBuilder;
+    }),
     single: vi.fn().mockImplementation(() => {
       if (shouldError || (mockBuilder as any)._rlsDenied) {
         return createSupabaseMockResponse(null, {
-          message: (mockBuilder as any)._rlsDenied ? "permission denied" : "duplicate key value violates unique constraint",
+          message: (mockBuilder as any)._rlsDenied
+            ? "permission denied"
+            : "duplicate key value violates unique constraint",
           code: (mockBuilder as any)._rlsDenied ? "42501" : "23505",
         });
       }
 
       const tableName = (mockBuilder as unknown as any).currentTable || "default";
       const store = insertedRecords.get(tableName) || [];
-      const data = insertedData && insertedData.length > 0 ? insertedData[0] : (store[0] ?? { id: "test-id" });
+      const data = insertedData && insertedData.length > 0
+        ? insertedData[0]
+        : (store[0] ?? { id: "test-id" });
       return createSupabaseMockResponse(data, null);
     }),
-    maybeSingle: vi.fn().mockImplementation(() => createSupabaseMockResponse(null, null)),
+    // handled above to toggle _maybeSingle; the thenable will return null or first row accordingly
+    // maybeSingle: vi.fn().mockImplementation(() => createSupabaseMockResponse(null, null)),
     csv: vi.fn().mockImplementation(() => createSupabaseMockResponse("", null)),
     geojson: vi.fn().mockImplementation(() => createSupabaseMockResponse(null, null)),
     explain: vi.fn().mockImplementation(() => createSupabaseMockResponse(null, null)),
@@ -205,10 +220,10 @@ const createMockQueryBuilder = () => {
     const store = insertedRecords.get(tableName) || [];
 
     const isDelete = Boolean((mockBuilder as any)._deleteMode);
-    const like = (mockBuilder as any)._like as { col: string; pattern: string } | undefined;
-    const inFilter = (mockBuilder as any)._in as { col: string; values: any[] } | undefined;
-    const contains = (mockBuilder as any)._contains as { col: string; arr: any[] } | undefined;
-    const eqs = ((mockBuilder as any)._eqs as { col: string; val: any }[] | undefined) ?? [];
+    const like = (mockBuilder as any)._like as { col: string; pattern: string; } | undefined;
+    const inFilter = (mockBuilder as any)._in as { col: string; values: any[]; } | undefined;
+    const contains = (mockBuilder as any)._contains as { col: string; arr: any[]; } | undefined;
+    const eqs = ((mockBuilder as any)._eqs as { col: string; val: any; }[] | undefined) ?? [];
 
     if (isDelete) {
       let kept = store;
@@ -245,7 +260,9 @@ const createMockQueryBuilder = () => {
 
     if (hasSelectAfterInsert) {
       // Start with store when only selecting
-      let rows = insertedData ? (Array.isArray(insertedData) ? insertedData : [insertedData]) : store;
+      let rows = insertedData
+        ? (Array.isArray(insertedData) ? insertedData : [insertedData])
+        : store;
       if (like) {
         const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         const escaped = escapeRegex(String(like.pattern));
@@ -269,6 +286,10 @@ const createMockQueryBuilder = () => {
       resultData = rows;
     } else if (!insertedData) {
       resultData = [];
+    }
+    // maybeSingle support: if flagged and result is array, return first element
+    if ((mockBuilder as any)._maybeSingle) {
+      resultData = Array.isArray(resultData) ? (resultData[0] ?? null) : (resultData ?? null);
     }
 
     // Reset one-shot flags
@@ -383,19 +404,40 @@ const mockComplianceService: {
 // Seed metrics for ecosystem tests and service metrics table used by ecosystem
 if (!insertedRecords.has("ai_metrics")) {
   insertedRecords.set("ai_metrics", [
-    { service: "feature-flags", metric_name: "latency_ms", metric_value: 120, timestamp: new Date().toISOString() },
-    { service: "cache-management", metric_name: "hit_rate", metric_value: 0.88, timestamp: new Date().toISOString() },
-    { service: "monitoring", metric_name: "requests", metric_value: 5, timestamp: new Date().toISOString() },
+    {
+      service: "feature-flags",
+      metric_name: "latency_ms",
+      metric_value: 120,
+      timestamp: new Date().toISOString(),
+    },
+    {
+      service: "cache-management",
+      metric_name: "hit_rate",
+      metric_value: 0.88,
+      timestamp: new Date().toISOString(),
+    },
+    {
+      service: "monitoring",
+      metric_name: "requests",
+      metric_value: 5,
+      timestamp: new Date().toISOString(),
+    },
   ]);
 }
 if (!insertedRecords.has("ai_service_metrics")) {
   insertedRecords.set("ai_service_metrics", [
-    { service: "feature-flags", metric_name: "message_processed", metric_value: 1, timestamp: new Date().toISOString() },
+    {
+      service: "feature-flags",
+      metric_name: "message_processed",
+      metric_value: 1,
+      timestamp: new Date().toISOString(),
+    },
   ]);
 }
 
 // Provide realtime hook default
-(globalThis as unknown).mockRealtimeHook = (globalThis as any).mockRealtimeHook ?? { isConnected: true, error: null };
+(globalThis as unknown).mockRealtimeHook = (globalThis as any).mockRealtimeHook
+  ?? { isConnected: true, error: null };
 if (typeof (globalThis as any).mockRealtimeHook.error === "undefined") {
   (globalThis as any).mockRealtimeHook.error = null;
 }

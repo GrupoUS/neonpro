@@ -15,7 +15,6 @@ declare global {
 
 // Mock IntersectionObserver for components that use it
 global.IntersectionObserver = class MockIntersectionObserver {
-  constructor() {}
   disconnect() {}
   observe() {}
   unobserve() {}
@@ -23,7 +22,6 @@ global.IntersectionObserver = class MockIntersectionObserver {
 
 // Mock ResizeObserver for components that use it
 global.ResizeObserver = class ResizeObserver {
-  constructor() {}
   disconnect() {}
   observe() {}
   unobserve() {}

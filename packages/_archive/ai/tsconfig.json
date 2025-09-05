@@ -1,11 +1,12 @@
 {
-  "extends": "../config/react.json",
+  "extends": "../config/base.json",
   "compilerOptions": {
     "composite": true,
-    "rootDir": "./src",
     "outDir": "./dist",
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.*", "**/*.spec.*"],
   "references": [
     {
       "path": "../types"

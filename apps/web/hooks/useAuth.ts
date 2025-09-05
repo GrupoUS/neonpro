@@ -1,3 +1,4 @@
+import type { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 
 // Mock auth hook for development
@@ -18,7 +19,7 @@ const signInWithGoogle = async () => {
 };
 
 export function useAuth() {
-  const [user, setUser] = useState<unknown>();
+  const [user, setUser] = useState<User | undefined>();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

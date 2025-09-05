@@ -206,6 +206,7 @@ describe("patient CRUD Integration Tests", () => {
       const result = await mockPatientsHook.createPatient(mockPatientData);
 
       // Verify CPF validation was called
+      expect(mockCpfValidator.isValid).toHaveBeenCalled();
       expect(mockCpfValidator.isValid).toHaveBeenCalledWith(
         mockPatientData.cpf,
       );

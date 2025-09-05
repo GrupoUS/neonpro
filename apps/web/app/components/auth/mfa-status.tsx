@@ -1,8 +1,37 @@
 "use client";
 
-import { useMFA } from "@neonpro/domain/hooks/auth/use-mfa";
-import { MfaMethod } from "@neonpro/security/auth/mfa-service";
+// import { useMFA } from "@neonpro/domain/hooks/auth/use-mfa";
+// Mock MfaMethod enum for MVP
+enum MfaMethod {
+  TOTP = "totp",
+  SMS = "sms",
+  EMAIL = "email",
+  BACKUP_CODES = "backup_codes",
+}
 import { useState } from "react";
+
+// Mock hook for MVP
+const useMFA = () => ({
+  getMfaStatus: async () => ({
+    enabled: false,
+    methods: [],
+    backupCodes: 0,
+  }),
+  disableMfaMethod: async (method: any) => ({ success: true }),
+  generateBackupCodes: async () => ({
+    success: true,
+    codes: ["123456", "789012"],
+  }),
+  isEnabled: false,
+  config: { methods: [], backupCodes: 0 },
+  disableMfa: async (method: any) => ({ success: true }),
+  regenerateBackupCodes: async () => ({ success: true, codes: [] }),
+  isMethodEnabled: (method: any) => false,
+  hasBackupCodes: false,
+  clearError: () => {},
+  isLoading: false,
+  error: null,
+});
 
 interface MfaStatusProps {
   onSetupMfa?: () => void;

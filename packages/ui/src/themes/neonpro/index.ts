@@ -219,9 +219,9 @@ export const generateNeonproCSSProperties = () => {
   };
 };
 
-// Hot reload support for development
-if (typeof module !== "undefined" && module.hot) {
-  module.hot.accept();
-}
+// Hot reload support for development - disabled for MVP
+// if (typeof module !== "undefined" && (module as any).hot) {
+//   (module as any).hot.accept();
+// }
 
 export default neonproTheme;

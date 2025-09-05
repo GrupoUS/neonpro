@@ -4,22 +4,22 @@ import React from "react";
 
 type Severity = "critical" | "high" | "medium" | "low" | string;
 
-type Alert = {
+interface Alert {
   id: string;
   message: string;
   severity: Severity;
   timestamp: string | number | Date;
   acknowledged?: boolean;
-};
+}
 
-type HealthCheckResult = {
+interface HealthCheckResult {
   component: string;
   status: "healthy" | "degraded" | "unhealthy" | string;
   message: string;
   responseTime: number;
-};
+}
 
-type PerformanceInsight = {
+interface PerformanceInsight {
   id: string;
   title: string;
   severity: Severity;
@@ -28,7 +28,7 @@ type PerformanceInsight = {
   recommendation: string;
   potentialImpact?: string;
   estimatedROI?: number;
-};
+}
 
 interface PerformanceDashboardProps {
   alerts: Alert[];

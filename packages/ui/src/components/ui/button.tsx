@@ -91,7 +91,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (loading) return;
       if (confirmAction || Boolean(confirmMessage)) {
-        const fn = (globalThis as any)?.confirm ?? (typeof window !== "undefined" ? (window as any).confirm : undefined);
+        const fn = (globalThis as any)?.confirm
+          ?? (typeof window !== "undefined" ? (window as any).confirm : undefined);
         const ok = typeof fn === "function" ? fn(confirmMessage) : true;
         if (!ok) return;
       }

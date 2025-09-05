@@ -22,6 +22,11 @@ export interface ChainIntegrity {
 
 export class UnifiedAuditService {
   private events: AuditEvent[] = [];
+  private readonly maxEvents: number;
+
+  constructor(maxEvents: number = 10_000) {
+    this.maxEvents = maxEvents;
+  }
 
   /**
    * Log an audit event
@@ -31,6 +36,11 @@ export class UnifiedAuditService {
       ...event,
       timestamp: event.timestamp || new Date().toISOString(),
     });
+
+    // Enforce retention cap by removing oldest entries
+    while (this.events.length > this.maxEvents) {
+      this.events.shift();
+    }
   }
 
   /**
@@ -50,9 +60,12 @@ export class UnifiedAuditService {
   async getAuditStats(): Promise<Record<string, unknown>> {
     return {
       total: this.events.length,
+      maxEvents: this.maxEvents,
+      memoryUsagePercent: Math.round((this.events.length / this.maxEvents) * 100),
       byService: this.getEventsByService(),
       byType: this.getEventsByType(),
       lastEvent: this.events[this.events.length - 1]?.timestamp,
+      firstEvent: this.events[0]?.timestamp,
     };
   }
 

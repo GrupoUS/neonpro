@@ -267,6 +267,10 @@ test-results/
 # Vitest
 vitest-results/
 **/vitest-results/
+.vitest/
+**/.vitest/
+.vitest/
+**/.vitest/
 
 # Playwright
 playwright-report/
