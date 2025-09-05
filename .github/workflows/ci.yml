@@ -1,814 +1,261 @@
-# 🚀 NeonPro AI Healthcare Platform - CI/CD Pipeline
-# Comprehensive build, test, and deployment pipeline with healthcare compliance
-# Tier 1 Quality Gates - Zero tolerance for production issues
-
-name: 🚀 CI/CD Pipeline
+name: CI (Unified)
 
 on:
   push:
-    branches: ["main", "develop"]
-    paths-ignore: ["docs/**", "*.md", ".gitignore", "LICENSE"]
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
   workflow_dispatch:
-    inputs:
-      environment:
-        description: "Deployment environment"
-        required: true
-        default: "preview"
-        type: choice
-        options: ["preview", "production"]
-      skip_tests:
-        description: "Skip tests (emergency deployment only)"
-        required: false
-        default: false
-        type: boolean
-      run_e2e:
-        description: "Install Playwright browsers & enable E2E setup"
-        required: false
-        default: false
-        type: boolean
 
-# Concurrency management
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-
-# Global environment variables
-env:
-  NODE_VERSION: 20
-  TURBO_TELEMETRY_DISABLED: 1
-  CI: true
-
-# Permissions for CI/CD operations
 permissions:
   contents: read
-  deployments: write
   pull-requests: write
-  checks: write
-  security-events: write
-  statuses: write
-  actions: write
+  actions: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  # =============================================================================
-  # PHASE 1: CI INITIALIZATION & VALIDATION
-  # =============================================================================
-
-  ci-initialization:
-    name: 🚀 CI Initialization
-    runs-on: ubuntu-22.04
-    timeout-minutes: 5
-    outputs:
-      deployment-env: ${{ steps.env-setup.outputs.deployment-env }}
-      skip-tests: ${{ steps.env-setup.outputs.skip-tests }}
-      is-main-branch: ${{ github.ref == 'refs/heads/main' }}
-      cache-key: ${{ steps.cache-setup.outputs.cache-key }}
+  setup-and-install:
+    name: Setup and Install
+    runs-on: ubuntu-latest
     steps:
-      - name: 🎯 Environment setup
-        id: env-setup
-        run: |
-          echo "🎯 Setting up CI environment..."
-
-          # Determine deployment environment
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            deployment_env="${{ github.event.inputs.environment }}"
-            skip_tests="${{ github.event.inputs.skip_tests }}"
-          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            deployment_env="production"
-            skip_tests="false"
-          else
-            deployment_env="preview"
-            skip_tests="false"
-          fi
-
-          echo "deployment-env=$deployment_env" >> $GITHUB_OUTPUT
-          echo "skip-tests=$skip_tests" >> $GITHUB_OUTPUT
-
-          echo "🎯 Deployment environment: $deployment_env"
-          echo "🧪 Skip tests: $skip_tests"
-
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          fetch-depth: 0
-
-      - name: 🔑 Cache setup
-        id: cache-setup
-        run: |
-          # Generate cache key based on package files
-          cache_key="ci-${{ runner.os }}-node${{ env.NODE_VERSION }}-${{ hashFiles('**/pnpm-lock.yaml', 'package.json') }}"
-          echo "cache-key=$cache_key" >> $GITHUB_OUTPUT
-          echo "🔑 Cache key: $cache_key"
-
-      - name: 📊 CI initialization summary
-        run: |
-          echo "### 🚀 CI Pipeline Initialized" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Environment**: ${{ steps.env-setup.outputs.deployment-env }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Skip Tests**: ${{ steps.env-setup.outputs.skip-tests }}" >> $GITHUB_STEP_SUMMARY
-
-  # =============================================================================
-  # PHASE 2: DEPENDENCY MANAGEMENT & CACHING
-  # =============================================================================
-
-  dependency-setup:
-    name: 📦 Dependency Setup
-    runs-on: ubuntu-22.04
-    timeout-minutes: 10
-    needs: ci-initialization
-    env:
-      TURBO_TOKEN: ${{ vars.TURBO_TOKEN }}
-    steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-
-      - name: 📦 Install pnpm
-        uses: pnpm/action-setup@v4
+          node-version: 20
+          cache: pnpm
+      - uses: pnpm/action-setup@v4
         with:
-          version: 8.15.6
-
-      - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-
-      - name: 📁 Cache Turbo
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
-
-      - name: 📥 Install dependencies
-        run: |
-          echo "📥 Installing dependencies..."
-          pnpm install --frozen-lockfile
-
-          echo "📊 Dependency summary:"
-          echo "- pnpm version: $(pnpm --version)"
-          echo "- Node version: $(node --version)"
-          echo "- Package count: $(pnpm list --depth=0 2>/dev/null | wc -l || echo 'N/A')"
-
-      - name: 🔍 Dependency security audit
-        run: |
-          echo "🔍 Running dependency security audit..."
-          audit_exit_code=0
-          pnpm audit --audit-level moderate || audit_exit_code=$?
-
-          if [ $audit_exit_code -eq 0 ]; then
-            echo "✅ No moderate+ security vulnerabilities found"
-          else
-            echo "⚠️ Security vulnerabilities detected (exit code: $audit_exit_code)"
-            echo ""
-            echo "Continuing with build but consider updating vulnerable dependencies"
-          fi
-
-  # =============================================================================
-  # PHASE 3: CODE QUALITY & STANDARDS ENFORCEMENT
-  # =============================================================================
-
-  code-quality:
-    name: ✨ Code Quality Enforcement
-    runs-on: ubuntu-22.04
-    timeout-minutes: 10
-    needs: [ci-initialization, dependency-setup]
-    env:
-      TURBO_TOKEN: ${{ vars.TURBO_TOKEN }}
-    steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-
-      - name: 📦 Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8.15.6
-
-      - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-
-      - name: 📁 Restore Turbo cache
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
-
-      - name: 📥 Install dependencies
+          version: 9
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: 🎨 Code formatting validation
-        run: |
-          echo "🎨 Validating code formatting..."
-          if pnpm format:check; then
-            echo "✅ Code formatting is consistent"
-          else
-            echo "❌ Code formatting issues detected"
-            echo ""
-            echo "Auto-fixing formatting issues..."
-            pnpm format
-            
-            # Check if there are changes after formatting
-            if git diff --quiet; then
-              echo "✅ All formatting issues resolved"
-            else
-              echo "❌ Formatting changes required - commit them:"
-              git diff --name-only
-              exit 1
-            fi
-          fi
-
-      - name: 📝 TypeScript compilation
-        run: |
-          echo "📝 Running TypeScript compilation..."
-          if pnpm type-check; then
-            echo "✅ TypeScript compilation successful"
-          else
-            echo "❌ TypeScript compilation failed"
-            echo ""
-            echo "TypeScript errors must be fixed before deployment"
-            exit 1
-          fi
-
-      - name: 🔍 Code linting
-        run: |
-          echo "🔍 Running code linting..."
-          lint_exit_code=0
-          pnpm lint:oxlint || lint_exit_code=$?
-
-          if [ $lint_exit_code -eq 0 ]; then
-            echo "✅ Linting validation passed"
-          else
-            echo "⚠️ Linting issues detected (exit code: $lint_exit_code)"
-            echo ""
-            echo "Linting issues found but continuing for gradual improvement"
-            echo "Consider fixing these issues in future commits"
-          fi
-
-      - name: 📊 Quality metrics summary
-        run: |
-          echo "### ✨ Code Quality Results" >> $GITHUB_STEP_SUMMARY
-          echo "- **Formatting**: ✅ Validated & Fixed" >> $GITHUB_STEP_SUMMARY
-          echo "- **TypeScript**: ✅ Compiled Successfully" >> $GITHUB_STEP_SUMMARY
-          echo "- **Linting**: ⚠️ Reviewed (Warnings OK)" >> $GITHUB_STEP_SUMMARY
-
-  # =============================================================================
-  # PHASE 3.5: DOCUMENTATION & MERMAID VALIDATION
-  # =============================================================================
-
-  documentation-validation:
-    name: 📚 Documentation & Diagram Validation
-    runs-on: ubuntu-22.04
-    timeout-minutes: 8
-    needs: [ci-initialization, dependency-setup]
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    needs: setup-and-install
     steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-
-      - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: 📦 Install Mermaid CLI
-        run: |
-          echo "📦 Installing Mermaid CLI for diagram validation..."
-          npm install -g @mermaid-js/mermaid-cli
-
-      - name: 🔍 Find Mermaid diagrams
-        id: find-mermaid
-        run: |
-          echo "🔍 Finding Mermaid diagrams in repository..."
-          
-          # Find files that might contain Mermaid diagrams
-          mermaid_files=()
-          
-          # Check YAML templates for Mermaid content
-          if find . -name "*.yaml" -o -name "*.yml" | grep -v node_modules | grep -v .git; then
-            echo "📄 Found YAML files that may contain Mermaid diagrams"
-            
-            # Extract Mermaid diagrams from YAML files and validate them
-            validation_failed=false
-            
-            for file in $(find . -name "*.yaml" -o -name "*.yml" | grep -v node_modules | grep -v .git); do
-              echo "🔍 Checking $file for Mermaid content..."
-              
-              # Look for graph TD pattern and extract diagram content
-              if grep -q "graph TD" "$file"; then
-                echo "📊 Found Mermaid diagram in $file"
-                
-                # Extract the diagram content starting from "graph TD"
-                # Create a temporary file with just the Mermaid content
-                temp_mermaid="/tmp/temp_diagram_$(basename $file .yaml).mmd"
-                
-                # Extract lines from "graph TD" until we hit a line that doesn't look like Mermaid
-                awk '
-                  /^graph TD/ { in_diagram = 1 }
-                  in_diagram && /^[A-Za-z0-9\[\]() ->-]+$/ { print }
-                  in_diagram && !/^[A-Za-z0-9\[\]() ->-]+$/ && !/^graph TD/ { exit }
-                ' "$file" > "$temp_mermaid"
-                
-                # Validate the extracted Mermaid diagram
-                if [ -s "$temp_mermaid" ]; then
-                  echo "🧪 Validating Mermaid diagram from $file..."
-                  if mmdc -i "$temp_mermaid" -o "/tmp/test_output.svg" --quiet 2>/dev/null; then
-                    echo "✅ Mermaid diagram in $file is valid"
-                    rm -f "$temp_mermaid" "/tmp/test_output.svg"
-                  else
-                    echo "❌ Mermaid diagram in $file failed validation"
-                    echo "📊 Diagram content:"
-                    cat "$temp_mermaid"
-                    validation_failed=true
-                    rm -f "$temp_mermaid"
-                  fi
-                else
-                  echo "⚠️ Could not extract valid Mermaid content from $file"
-                fi
-              fi
-            done
-            
-            if [ "$validation_failed" = true ]; then
-              echo "❌ One or more Mermaid diagrams failed validation"
-              exit 1
-            else
-              echo "✅ All Mermaid diagrams validated successfully"
-            fi
-          else
-            echo "ℹ️ No YAML files found to check for Mermaid diagrams"
-          fi
-
-      - name: 📚 Documentation structure validation
-        run: |
-          echo "📚 Validating documentation structure..."
-          
-          # Check for required documentation files
-          required_docs=(
-            "README.md"
-            "docs/project.md"
-            "docs/architecture.md"
-          )
-          
-          missing_docs=()
-          for doc in "${required_docs[@]}"; do
-            if [ ! -f "$doc" ]; then
-              missing_docs+=("$doc")
-            else
-              echo "✅ Found: $doc"
-            fi
-          done
-          
-          if [ ${#missing_docs[@]} -eq 0 ]; then
-            echo "✅ All required documentation files present"
-          else
-            echo "⚠️ Missing documentation files:"
-            printf '%s\n' "${missing_docs[@]}"
-            echo "Consider adding these files for better project documentation"
-          fi
-
-      - name: 📊 Documentation validation summary
-        run: |
-          echo "### 📚 Documentation Validation Results" >> $GITHUB_STEP_SUMMARY
-          echo "- **Mermaid Diagrams**: ✅ Validated" >> $GITHUB_STEP_SUMMARY
-          echo "- **Documentation Structure**: ✅ Checked" >> $GITHUB_STEP_SUMMARY
-          echo "- **Template Files**: ✅ Syntax Valid" >> $GITHUB_STEP_SUMMARY
-
-  # =============================================================================
-  # PHASE 4: BUILD & TEST MATRIX
-  # =============================================================================
-
-  build-and-test:
-    name: 🏗️ Build & Test
-    runs-on: ubuntu-22.04
-    timeout-minutes: 20
-    needs: [ci-initialization, dependency-setup, code-quality, documentation-validation]
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [web, api]
-        include:
-          - target: web
-            build-output: "apps/web/.next"
-            test-pattern: "apps/web/**/*.{test,spec}.{ts,tsx}"
-          - target: api
-            build-output: "apps/api/dist"
-            test-pattern: "apps/api/**/*.{test,spec}.{ts,tsx}"
-    env:
-      TURBO_TOKEN: ${{ vars.TURBO_TOKEN }}
-      NODE_ENV: production
-    steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-
-      - name: 📦 Install pnpm
-        uses: pnpm/action-setup@v4
+          node-version: 20
+          cache: pnpm
+      - uses: pnpm/action-setup@v4
         with:
-          version: 8.15.6
-
-      - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-
-      - name: 📁 Restore Turbo cache
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
-
-      - name: 📥 Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: 🏗️ Build ${{ matrix.target }}
-        run: |
-          echo "🏗️ Building ${{ matrix.target }} application..."
-
-          # Set appropriate environment variables for build
-          if [[ "${{ matrix.target }}" == "web" ]]; then
-            export NEXT_PUBLIC_APP_URL="https://neonpro.app"
-            export NEXT_PUBLIC_ENV="${{ needs.ci-initialization.outputs.deployment-env }}"
-          fi
-
-          if pnpm build --filter=${{ matrix.target }}; then
-            echo "✅ Build successful for ${{ matrix.target }}"
-            
-            # Verify build output
-            if [ -e "${{ matrix.build-output }}" ]; then
-              echo "✅ Build output verified: ${{ matrix.build-output }}"
-              
-              # Show build output size for web builds
-              if [[ "${{ matrix.target }}" == "web" ]]; then
-                echo "📊 Build size analysis:"
-                du -sh "${{ matrix.build-output }}" 2>/dev/null || echo "Size analysis unavailable"
-              fi
-            else
-              echo "⚠️ Expected build output not found: ${{ matrix.build-output }}"
-              echo "📁 Checking build directory:"
-              ls -la "apps/${{ matrix.target }}/" | head -10
-            fi
-          else
-            echo "❌ Build failed for ${{ matrix.target }}"
-            echo ""
-            echo "Build failure is critical - deployment cannot proceed"
-            exit 1
-          fi
-
-      - name: 🧪 Run tests for ${{ matrix.target }}
-        if: needs.ci-initialization.outputs.skip-tests != 'true'
-        run: |
-          echo "🧪 Running tests for ${{ matrix.target }}..."
-
-          # Try different test commands based on availability
-          test_exit_code=0
-
-          # Try target-specific test command
-          if pnpm test --filter=${{ matrix.target }} 2>/dev/null; then
-            echo "✅ Target-specific tests passed for ${{ matrix.target }}"
-          else
-            echo "ℹ️ Target-specific tests not configured for ${{ matrix.target }}"
-            
-            # Try general test command
-            if pnpm test 2>/dev/null; then
-              echo "✅ General tests passed"
-            else
-              echo "ℹ️ Tests not configured or failed"
-              echo "This is normal for projects without comprehensive test suites"
-            fi
-          fi
-
-      - name: 🏥 Healthcare compliance validation
-        run: |
-          echo "🏥 Running healthcare compliance validation for ${{ matrix.target }}..."
-
-          # Check for healthcare-specific patterns
-          echo "🔍 Checking healthcare compliance patterns..."
-
-          # Look for LGPD/ANVISA compliance markers
-          compliance_found=false
-          if grep -r "lgpd\|anvisa\|cfm\|compliance" "apps/${{ matrix.target }}" --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
-            echo "✅ Healthcare compliance patterns found"
-            compliance_found=true
-          fi
-
-          # Check for data validation patterns
-          if grep -r "validate\|schema\|zod" "apps/${{ matrix.target }}" --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
-            echo "✅ Data validation patterns found"
-          fi
-
-          # Check for security patterns
-          if grep -r "encrypt\|secure\|auth" "apps/${{ matrix.target }}" --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
-            echo "✅ Security patterns found"
-          fi
-
-          echo "### 🏥 Healthcare Compliance - ${{ matrix.target }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Compliance markers**: $($compliance_found && echo '✅ Found' || echo 'ℹ️ Basic')" >> $GITHUB_STEP_SUMMARY
-          echo "- **Data validation**: ✅ Implemented" >> $GITHUB_STEP_SUMMARY
-          echo "- **Security patterns**: ✅ Present" >> $GITHUB_STEP_SUMMARY
-
-      - name: 📦 Archive build artifacts
-        if: success()
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - name: Run oxlint
+        run: npx oxlint .
+      - name: Check formatting
+        run: npx dprint check
+      - name: Upload lint logs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.target }}-${{ github.sha }}
+          name: lint-report
           path: |
-            ${{ matrix.build-output }}
-            apps/${{ matrix.target }}/package.json
-          retention-days: 30
+            .
+          if-no-files-found: ignore
 
-  # =============================================================================
-  # PHASE 5: SECURITY & VULNERABILITY SCANNING
-  # =============================================================================
-
-  security-scanning:
-    name: 🔒 Security Scanning
-    runs-on: ubuntu-22.04
-    timeout-minutes: 15
-    needs: [ci-initialization, dependency-setup]
-    env:
-      SEMGREP_APP_TOKEN: ${{ vars.SEMGREP_APP_TOKEN }}
+  type-check:
+    name: Type Check
+    runs-on: ubuntu-latest
+    needs: setup-and-install
     steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          fetch-depth: 0
-
-      - name: 📦 Install pnpm
-        uses: pnpm/action-setup@v4
+          node-version: 20
+          cache: pnpm
+      - uses: pnpm/action-setup@v4
         with:
-          version: 8.15.6
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - name: TypeScript compile
+        run: npx tsc --noEmit --skipLibCheck
 
-      - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-
-      - name: 📥 Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: 🔍 Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: typescript, javascript
-          queries: security-extended
-
-      - name: 🔒 Semgrep security analysis
-        uses: semgrep/semgrep-action@v1
-        with:
-          config: >-
-            p/security-audit
-            p/secrets
-            p/typescript
-            p/owasp-top-ten
-            p/cwe-top-25
-        env:
-          SEMGREP_APP_TOKEN: ${{ env.SEMGREP_APP_TOKEN }}
-        continue-on-error: true
-        if: env.SEMGREP_APP_TOKEN != ''
-
-      - name: 🔍 Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-        continue-on-error: true
-
-      - name: 🏥 Healthcare data security audit
-        run: |
-          echo "🏥 Performing healthcare-specific security audit..."
-
-          # Check for potential PHI exposure
-          echo "🔍 Scanning for potential PHI exposure patterns..."
-          phi_patterns=false
-
-          # Look for hardcoded sensitive data
-          if grep -r "cpf\|rg\|patient.*id\|medical.*record" apps/ packages/ --include="*.ts" --include="*.tsx" 2>/dev/null | grep -v "Type\|Interface\|type\|interface\|test\|mock" | head -3; then
-            echo "⚠️ Found potential PHI patterns - review for data handling"
-            phi_patterns=true
-          fi
-
-          # Check for encryption patterns
-          echo "🔍 Checking encryption implementation..."
-          if grep -r "encrypt\|decrypt\|crypto\|hash" apps/ packages/ --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
-            echo "✅ Encryption patterns found"
-          else
-            echo "💡 Consider implementing encryption for sensitive healthcare data"
-          fi
-
-          # Check for audit trail patterns
-          echo "🔍 Checking audit trail implementation..."
-          if grep -r "audit\|log\|track\|history" apps/ packages/ --include="*.ts" --include="*.tsx" 2>/dev/null | head -3; then
-            echo "✅ Audit trail patterns found"
-          else
-            echo "💡 Consider implementing audit trails for healthcare compliance"
-          fi
-
-          echo "### 🔒 Security Analysis Results" >> $GITHUB_STEP_SUMMARY
-          echo "- **CodeQL**: ✅ Executed" >> $GITHUB_STEP_SUMMARY
-          echo "- **Semgrep**: ✅ Executed" >> $GITHUB_STEP_SUMMARY
-          echo "- **PHI Security**: $($phi_patterns && echo '⚠️ Review needed' || echo '✅ Basic patterns OK')" >> $GITHUB_STEP_SUMMARY
-          echo "- **Encryption**: ✅ Patterns found" >> $GITHUB_STEP_SUMMARY
-          echo "- **Audit Trail**: ✅ Implementation found" >> $GITHUB_STEP_SUMMARY
-
-  # =============================================================================
-  # PHASE 6: (Removed) E2E Testing
-  # NOTE: Playwright-based E2E tests removed; Vitest covers unit/integration
-  # =============================================================================
-
-  # =============================================================================
-  # PHASE 7: DEPLOYMENT PREPARATION
-  # =============================================================================
-
-  deployment-prep:
-    name: 🚀 Deployment Preparation
-    runs-on: ubuntu-22.04
-    timeout-minutes: 10
-    needs: [ci-initialization, build-and-test, security-scanning]
-    if: success()
-    outputs:
-      deployment-ready: ${{ steps.deployment-check.outputs.ready }}
-      environment: ${{ needs.ci-initialization.outputs.deployment-env }}
+  test-and-coverage:
+    name: Tests & Coverage
+    runs-on: ubuntu-latest
+    needs: setup-and-install
     steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - name: Run unit tests with coverage
+        run: pnpm vitest run --project unit --coverage --reporter=verbose
+      - name: Upload coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            coverage/
+          retention-days: 14
 
-      - name: 🔍 Deployment readiness check
-        id: deployment-check
+  quality-gates:
+    name: Quality Gates
+    runs-on: ubuntu-latest
+    needs: [lint, type-check, test-and-coverage]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - name: Compute quality metrics
+        id: qg
+        shell: bash
         run: |
-          echo "🔍 Checking deployment readiness..."
+          set -e
+          echo "Running quality gates..."
 
-          ready=true
+          TOTAL_SCORE=0
 
-          # Check build artifacts exist
-          echo "📦 Checking build artifacts..."
-
-          # Check security scan status
-          security_status="${{ needs.security-scanning.result }}"
-          if [[ "$security_status" != "success" ]]; then
-            echo "⚠️ Security scanning had issues (status: $security_status)"
-            echo "Continuing with deployment but review security results"
+          echo "Checking TypeScript compilation..."
+          if npx tsc --noEmit --skipLibCheck > /dev/null 2>&1; then
+            TSC_SCORE=25
+          else
+            TSC_SCORE=0
           fi
+          TOTAL_SCORE=$((TOTAL_SCORE + TSC_SCORE))
 
-          # Check build status
-          build_status="${{ needs.build-and-test.result }}"
-          if [[ "$build_status" != "success" ]]; then
-            echo "❌ Build failed - deployment not possible"
-            ready=false
+          echo "Checking linting..."
+          LINT_VIOLATIONS=$(npx oxlint --quiet 2>/dev/null | wc -l || echo "0")
+          if [ "$LINT_VIOLATIONS" -eq 0 ]; then
+            LINT_SCORE=25
+          elif [ "$LINT_VIOLATIONS" -le 1000 ]; then
+            LINT_SCORE=20
+          elif [ "$LINT_VIOLATIONS" -le 5000 ]; then
+            LINT_SCORE=15
+          elif [ "$LINT_VIOLATIONS" -le 10000 ]; then
+            LINT_SCORE=10
+          else
+            LINT_SCORE=5
           fi
+          TOTAL_SCORE=$((TOTAL_SCORE + LINT_SCORE))
 
-          echo "ready=$ready" >> $GITHUB_OUTPUT
-          echo "🚀 Deployment ready: $ready"
+          echo "Checking type safety (: any occurrences)..."
+          ANY_FILES=$(find . -name "*.ts" -o -name "*.tsx" | grep -v node_modules | grep -v .next | grep -v dist | xargs grep -l ": any" 2>/dev/null | wc -l || echo "0")
+          if [ "$ANY_FILES" -eq 0 ]; then
+            TYPE_SCORE=25
+          elif [ "$ANY_FILES" -le 10 ]; then
+            TYPE_SCORE=20
+          elif [ "$ANY_FILES" -le 30 ]; then
+            TYPE_SCORE=15
+          elif [ "$ANY_FILES" -le 60 ]; then
+            TYPE_SCORE=10
+          else
+            TYPE_SCORE=5
+          fi
+          TOTAL_SCORE=$((TOTAL_SCORE + TYPE_SCORE))
 
-      - name: 📊 Deployment summary
+          echo "Checking security patterns via oxlint..."
+          SECURITY_ISSUES=$(npx oxlint --quiet 2>/dev/null | grep -c "security\|dangerous" || echo "0")
+          if [ "$SECURITY_ISSUES" -eq 0 ]; then
+            SECURITY_SCORE=25
+          elif [ "$SECURITY_ISSUES" -le 20 ]; then
+            SECURITY_SCORE=20
+          elif [ "$SECURITY_ISSUES" -le 50 ]; then
+            SECURITY_SCORE=15
+          elif [ "$SECURITY_ISSUES" -le 100 ]; then
+            SECURITY_SCORE=10
+          else
+            SECURITY_SCORE=5
+          fi
+          TOTAL_SCORE=$((TOTAL_SCORE + SECURITY_SCORE))
+
+          QUALITY_SCORE=$(echo "scale=1; $TOTAL_SCORE / 10" | bc)
+
+          echo "quality_score=$QUALITY_SCORE" >> "$GITHUB_OUTPUT"
+          echo "tsc_score=$TSC_SCORE" >> "$GITHUB_OUTPUT"
+          echo "lint_score=$LINT_SCORE" >> "$GITHUB_OUTPUT"
+          echo "type_score=$TYPE_SCORE" >> "$GITHUB_OUTPUT"
+          echo "security_score=$SECURITY_SCORE" >> "$GITHUB_OUTPUT"
+          echo "lint_violations=$LINT_VIOLATIONS" >> "$GITHUB_OUTPUT"
+          echo "any_files=$ANY_FILES" >> "$GITHUB_OUTPUT"
+          echo "security_issues=$SECURITY_ISSUES" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "## Quality Gates Report";
+            echo "";
+            echo "Overall Quality Score: $QUALITY_SCORE/10.0";
+            echo "";
+            echo "| Category | Score | Max | Status |";
+            echo "|----------|-------|-----|--------|";
+            if [ "$TSC_SCORE" -eq 25 ]; then STATUS_TSC="✅"; else STATUS_TSC="❌"; fi
+            if [ "$LINT_SCORE" -ge 20 ]; then STATUS_LINT="✅"; else STATUS_LINT="⚠️"; fi
+            if [ "$TYPE_SCORE" -ge 20 ]; then STATUS_TYPE="✅"; else STATUS_TYPE="⚠️"; fi
+            if [ "$SECURITY_SCORE" -eq 25 ]; then STATUS_SEC="✅"; else STATUS_SEC="❌"; fi
+            echo "| TypeScript Compilation | $TSC_SCORE | 25 | $STATUS_TSC |";
+            echo "| Linting Quality | $LINT_SCORE | 25 | $STATUS_LINT |";
+            echo "| Type Safety | $TYPE_SCORE | 25 | $STATUS_TYPE |";
+            echo "| Security & Best Practices | $SECURITY_SCORE | 25 | $STATUS_SEC |";
+            echo "";
+            if (( $(echo "$QUALITY_SCORE >= 8.5" | bc -l) )); then
+              echo "Quality gates PASSED - Excellent code quality!";
+            elif (( $(echo "$QUALITY_SCORE >= 7.0" | bc -l) )); then
+              echo "Quality gates WARNING - Good quality with room for improvement";
+            else
+              echo "Quality gates FAILED - Quality improvements required";
+            fi
+          } > quality-gates-report.md
+
+      - name: Enforce gates
+        shell: bash
         run: |
-          echo "### 🚀 Deployment Preparation" >> $GITHUB_STEP_SUMMARY
-          echo "- **Environment**: ${{ needs.ci-initialization.outputs.deployment-env }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Ready**: ${{ steps.deployment-check.outputs.ready == 'true' && '✅ Yes' || '❌ No' }}" >> $GITHUB_STEP_SUMMARY
+          QUALITY_SCORE='${{ steps.qg.outputs.quality_score }}'
+          TSC_SCORE='${{ steps.qg.outputs.tsc_score }}'
+          SECURITY_SCORE='${{ steps.qg.outputs.security_score }}'
 
-  # =============================================================================
-  # PHASE 8: VERCEL DEPLOYMENT
-  # =============================================================================
+          echo "Quality Score: $QUALITY_SCORE"
 
-  deploy:
-    name: 🌍 Deploy to Vercel
-    runs-on: ubuntu-22.04
-    timeout-minutes: 15
-    needs: [ci-initialization, deployment-prep]
-    if: needs.deployment-prep.outputs.deployment-ready == 'true'
-    environment: ${{ needs.ci-initialization.outputs.deployment-env }}
+          if [ "$TSC_SCORE" -ne 25 ]; then
+            echo "TypeScript compilation must succeed"; exit 1; fi
+          if [ "$SECURITY_SCORE" -lt 10 ]; then
+            echo "Too many security issues"; exit 1; fi
+          if (( $(echo "$QUALITY_SCORE < 7.0" | bc -l) )); then
+            echo "Quality score must be ≥7.0/10"; exit 1; fi
+
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-gates-report
+          path: quality-gates-report.md
+          retention-days: 14
+
+  deploy-vercel:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    needs: [quality-gates]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     env:
-      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-
-      - name: 📦 Install pnpm
-        uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          version: 8.15.6
+          node-version: 20
+      - run: npm i -g vercel@latest
+      - name: Pull Vercel env
+        run: vercel pull --yes --environment=production --token=${{ env.VERCEL_TOKEN }}
+      - name: Build
+        run: vercel build --prod --token=${{ env.VERCEL_TOKEN }}
+      - name: Deploy
+        run: vercel deploy --prebuilt --prod --token=${{ env.VERCEL_TOKEN }}
 
-      - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-
-      - name: 📥 Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: 🚀 Install Vercel CLI
-        run: npm install --global vercel@latest
-
-      - name: 🔗 Link Vercel project
-        run: |
-          echo "🔗 Linking Vercel project..."
-          vercel link --yes --token=${{ env.VERCEL_TOKEN }}
-
-      - name: 🌍 Deploy to Vercel
-        run: |
-          echo "🌍 Deploying to Vercel..."
-
-          # Determine deployment type
-          if [[ "${{ needs.ci-initialization.outputs.deployment-env }}" == "production" ]]; then
-            echo "🚀 Production deployment"
-            deployment_url=$(vercel deploy --prod --token=${{ env.VERCEL_TOKEN }})
-          else
-            echo "🔍 Preview deployment"
-            deployment_url=$(vercel deploy --token=${{ env.VERCEL_TOKEN }})
-          fi
-
-          echo "✅ Deployment successful"
-          echo "🌍 Deployment URL: $deployment_url"
-
-          # Save deployment URL for later steps
-          echo "DEPLOYMENT_URL=$deployment_url" >> $GITHUB_ENV
-
-      - name: 🏥 Post-deployment healthcare checks
-        run: |
-          echo "🏥 Running post-deployment healthcare compliance checks..."
-
-          if [[ -n "$DEPLOYMENT_URL" ]]; then
-            echo "🔍 Checking deployment accessibility..."
-            
-            # Basic health check
-            if curl -s --head "$DEPLOYMENT_URL" | grep -q "200 OK"; then
-              echo "✅ Deployment is accessible"
-            else
-              echo "⚠️ Deployment accessibility check failed"
-            fi
-            
-            # Check for HTTPS (required for healthcare)
-            if [[ "$DEPLOYMENT_URL" == https://* ]]; then
-              echo "✅ HTTPS enabled (healthcare compliance)"
-            else
-              echo "⚠️ HTTPS not enabled - required for healthcare data"
-            fi
-          else
-            echo "⚠️ Deployment URL not available for checks"
-          fi
-
-      - name: 📊 Deployment success summary
-        run: |
-          echo "### 🌍 Deployment Complete" >> $GITHUB_STEP_SUMMARY
-          echo "- **Environment**: ${{ needs.ci-initialization.outputs.deployment-env }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **URL**: ${{ env.DEPLOYMENT_URL }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Status**: ✅ Successful" >> $GITHUB_STEP_SUMMARY
-          echo "- **HTTPS**: ✅ Enabled" >> $GITHUB_STEP_SUMMARY
-          echo "- **Healthcare Ready**: ✅ Compliance Validated" >> $GITHUB_STEP_SUMMARY
-
-  # =============================================================================
-  # PHASE 9: POST-DEPLOYMENT VALIDATION & NOTIFICATIONS
-  # =============================================================================
-
-  post-deployment:
-    name: 📊 Post-Deployment Validation
-    runs-on: ubuntu-22.04
-    timeout-minutes: 10
-    needs: [ci-initialization, deploy]
-    if: success()
-    steps:
-      - name: 🔍 Deployment validation
-        run: |
-          echo "🔍 Running post-deployment validation..."
-
-          # Wait for deployment to be fully ready
-          sleep 30
-
-          echo "✅ Deployment validation completed"
-
-      - name: 📊 Pipeline summary
-        run: |
-          echo "## 🚀 CI/CD Pipeline Complete" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Environment**: ${{ needs.ci-initialization.outputs.deployment-env }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Pipeline Results:" >> $GITHUB_STEP_SUMMARY
-          echo "- **Code Quality**: ✅ Validated" >> $GITHUB_STEP_SUMMARY
-          echo "- **Build**: ✅ Successful" >> $GITHUB_STEP_SUMMARY
-          echo "- **Security**: ✅ Scanned" >> $GITHUB_STEP_SUMMARY
-          echo "- **Deployment**: ✅ Complete" >> $GITHUB_STEP_SUMMARY
-          echo "- **Healthcare Compliance**: ✅ Validated" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "🎉 **All systems operational - deployment successful!**" >> $GITHUB_STEP_SUMMARY
-
-      - name: 🏁 Pipeline completion
-        run: |
-          echo "🏁 CI/CD pipeline completed successfully"
-          echo "🏥 Healthcare platform ready for production use"
-      - name: 🎭 Install Playwright browsers (E2E setup)
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.run_e2e == 'true' }}
-        run: |
-          echo "🎭 Installing Playwright browsers for E2E..."
-          npx playwright install --with-deps
-          echo "✅ Playwright browsers installed"
