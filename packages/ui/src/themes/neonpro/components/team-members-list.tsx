@@ -4,7 +4,6 @@
  * Optimized for Brazilian healthcare team management
  */
 
-import { cn } from "@neonpro/utils";
 import {
   Calculator,
   Code,
@@ -23,6 +22,7 @@ import {
 } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
+import { cn } from "../../../lib/utils";
 
 // Brazilian healthcare team roles
 export type TeamRole =

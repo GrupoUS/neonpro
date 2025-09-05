@@ -113,15 +113,7 @@
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
     },
-    "@neonpro/devops#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/database#build",
-        "@neonpro/monitoring#build"
-      ],
-      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
+
     "@neonpro/ui#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/shared#build"],
       "inputs": [
@@ -185,51 +177,7 @@
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
     },
-    "@neonpro/brazilian-healthcare-ui#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/ui#build",
-        "@neonpro/shared#build"
-      ],
-      "inputs": [
-        "src/**/*.{ts,tsx,js,jsx}",
-        "styles/**/*.{css,scss}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": ["dist/**"]
-    },
-    "@neonpro/health-dashboard#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/ui#build",
-        "@neonpro/brazilian-healthcare-ui#build",
-        "@neonpro/monitoring#build"
-      ],
-      "inputs": [
-        "src/**/*.{ts,tsx,js,jsx}",
-        "styles/**/*.{css,scss}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": ["dist/**"]
-    },
-    "@neonpro/enterprise#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/database#build",
-        "@neonpro/auth#build",
-        "@neonpro/security#build",
-        "@neonpro/compliance#build"
-      ],
-      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
-    "@neonpro/docs#build": {
-      "dependsOn": ["@neonpro/types#build"],
-      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
+
     "lint": {
       "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json"],
       "outputs": [],
@@ -383,14 +331,12 @@
     },
     "deploy:blue-green": {
       "dependsOn": [
-        "@neonpro/devops#build",
         "build",
         "test:healthcare",
         "compliance:validate"
       ],
       "cache": false,
       "inputs": [
-        "packages/devops/src/deployment/**/*.{ts,js}",
         "apps/**/.next/**"
       ],
       "outputs": []
@@ -410,10 +356,9 @@
       "outputs": []
     },
     "health:check": {
-      "dependsOn": ["@neonpro/devops#build", "@neonpro/monitoring#build"],
+      "dependsOn": ["@neonpro/monitoring#build"],
       "cache": false,
       "inputs": [
-        "packages/devops/src/deployment/**/*.{ts,js}",
         "packages/monitoring/src/**/*.{ts,js}"
       ],
       "outputs": []

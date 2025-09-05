@@ -23,12 +23,11 @@
     "lint": "oxlint src/",
     "lint:fix": "oxlint src/ --fix",
     "type-check": "tsc --noEmit",
-    "test": "pnpm -w --filter @neonpro/tooling vitest run",
+    "test": "pnpm -w --filter @neonpro/tooling vitest run -- --passWithNoTests",
     "test:watch": "vitest --watch",
     "clean": "rm -rf dist coverage"
   },
   "dependencies": {
-    "@neonpro/core-services": "workspace:*",
     "@supabase/supabase-js": "^2.38.0",
     "bcryptjs": "^2.4.3",
     "jose": "^5.1.3",

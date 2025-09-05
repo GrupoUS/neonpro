@@ -14,6 +14,7 @@ import {
 import type * as React from "react";
 import { forwardRef } from "react";
 import { cn } from "../../lib/utils";
+import { getVariant } from "../../types/badge-functions";
 
 const badgeVariants = cva(
   "inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold text-xs backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
@@ -76,6 +77,14 @@ const badgeVariants = cva(
           "border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm ring-1 ring-warning/20 backdrop-blur-sm hover:scale-105",
         "lgpd-violation":
           "border-transparent bg-gradient-to-br from-destructive/15 via-destructive/10 to-destructive/5 text-destructive shadow-healthcare-md ring-1 ring-destructive/20 backdrop-blur-sm hover:scale-105",
+
+        // Additional variants for compliance
+        emergency:
+          "border-transparent bg-gradient-to-br from-red-600/15 via-red-600/10 to-red-600/5 text-red-600 shadow-healthcare-md ring-1 ring-red-600/20 backdrop-blur-sm hover:scale-105",
+        routine:
+          "border-transparent bg-gradient-to-br from-blue-400/15 via-blue-400/10 to-blue-400/5 text-blue-600 shadow-healthcare-sm ring-1 ring-blue-400/20 backdrop-blur-sm hover:scale-105",
+        "follow-up":
+          "border-transparent bg-gradient-to-br from-purple-400/15 via-purple-400/10 to-purple-400/5 text-purple-600 shadow-healthcare-sm ring-1 ring-purple-400/20 backdrop-blur-sm hover:scale-105",
       },
       size: {
         default: "px-2.5 py-0.5 text-xs",
@@ -388,7 +397,7 @@ const LGPDBadge = forwardRef<HTMLDivElement, LGPDBadgeProps>(
         icon={getComplianceIcon()}
         pulse={compliance === "violation"}
         ref={ref}
-        variant={getVariant() as unknown}
+        variant={getVariant()}
         {...props}
       >
         {props.children || getComplianceLabel()}

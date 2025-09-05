@@ -20,7 +20,7 @@ import type {
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 // Import query keys and config from provider
-import { HealthcareQueryConfig, QueryKeys } from "@/providers/query-provider";
+import { HealthcareQueryConfig, QueryKeys } from "../../providers/query-provider";
 
 // Types for paginated responses
 export interface PaginatedResponse<T> {

@@ -4,6 +4,7 @@ interface LayoutState {
   sidebarCollapsed: boolean;
   _activeMenuItem: string | null;
   breadcrumbs: { title: string; href?: string; }[];
+  activeMenuItem?: string | undefined;
 }
 
 interface LayoutActions {
@@ -18,6 +19,7 @@ interface LayoutActions {
 export function useLayout(): LayoutState & LayoutActions {
   const [state, setState] = React.useState<LayoutState>({
     sidebarCollapsed: false,
+    _activeMenuItem: null,
     activeMenuItem: undefined,
     breadcrumbs: [],
   });
@@ -31,7 +33,7 @@ export function useLayout(): LayoutState & LayoutActions {
   }, []);
 
   const setActiveMenuItem = React.useCallback((itemId: string | null) => {
-    setState((prev) => ({ ...prev, activeMenuItem: itemId }));
+    setState((prev) => ({ ...prev, activeMenuItem: itemId || undefined }));
   }, []);
 
   const setBreadcrumbs = React.useCallback(

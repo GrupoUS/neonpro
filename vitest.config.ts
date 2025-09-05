@@ -324,6 +324,7 @@ export default defineConfig({
   resolve: {
     alias: [
       // Web app aliases
+      { find: /^@\//, replacement: path.resolve(__dirname, "./apps/web/") },
       { find: /^@$/, replacement: path.resolve(__dirname, "./apps/web") },
       { find: /^@\/lib(.*)?$/, replacement: path.resolve(__dirname, "./apps/web/lib") + "$1" },
       {
@@ -331,6 +332,11 @@ export default defineConfig({
         replacement: path.resolve(__dirname, "./apps/web/components") + "$1",
       },
       { find: /^@\/hooks(.*)?$/, replacement: path.resolve(__dirname, "./apps/web/hooks") + "$1" },
+      {
+        find: /^@\/providers(.*)?$/,
+        replacement: path.resolve(__dirname, "./apps/web/providers") + "$1",
+      },
+      { find: /^@\/lib(.*)?$/, replacement: path.resolve(__dirname, "./apps/web/lib") + "$1" },
 
       // API aliases
       {
@@ -390,6 +396,14 @@ export default defineConfig({
       {
         find: "@neonpro/utils/validation",
         replacement: path.resolve(__dirname, "./packages/utils/src/validation.ts"),
+      },
+      {
+        find: "@/lib/query/query-utils",
+        replacement: path.resolve(__dirname, "./apps/web/lib/query/query-utils.ts"),
+      },
+      {
+        find: "@/lib/query/query-utils.ts",
+        replacement: path.resolve(__dirname, "./apps/web/lib/query/query-utils.ts"),
       },
 
       // Force single React instance

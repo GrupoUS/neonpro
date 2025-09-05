@@ -44,7 +44,7 @@ import type {
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 // Import our enhanced query utilities
-import { QueryKeys, useHealthcareQueryUtils } from "@/lib/query/query-utils";
+import { QueryKeys, useHealthcareQueryUtils } from "../../lib/query/query-utils";
 
 // Enhanced auth context with healthcare-specific features
 export interface AuthContext {
@@ -560,10 +560,10 @@ export function useAuthStatus(): AuthContext {
       : false;
 
     return {
-      user: user || undefined,
+      user: user ?? null,
       isAuthenticated,
       isLoading,
-      error,
+      error: error ?? null,
 
       // Role functions
       hasRole,
@@ -585,8 +585,8 @@ export function useAuthStatus(): AuthContext {
 
       // Session info
       sessionId: apiClient.auth.getSessionId(),
-      lastActivity: user?.last_login ? new Date(user.last_login) : undefined,
-      tokenExpiry: undefined, // Would need to be calculated from token
+      lastActivity: user?.last_login ? new Date(user.last_login) : null,
+      tokenExpiry: null, // Would need to be calculated from token
     };
   }, [user, isLoading, error]);
 
@@ -733,13 +733,13 @@ export function useAuth() {
     isRefreshingToken: refreshToken.isPending,
 
     // Error states
-    loginError: login.error,
-    logoutError: logout.error,
-    registerError: register.error,
-    updateProfileError: updateProfile.error,
-    changePasswordError: changePassword.error,
-    forgotPasswordError: forgotPassword.error,
-    resetPasswordError: resetPassword.error,
-    refreshTokenError: refreshToken.error,
+    loginError: login.error ?? null,
+    logoutError: logout.error ?? null,
+    registerError: register.error ?? null,
+    updateProfileError: updateProfile.error ?? null,
+    changePasswordError: changePassword.error ?? null,
+    forgotPasswordError: forgotPassword.error ?? null,
+    resetPasswordError: resetPassword.error ?? null,
+    refreshTokenError: refreshToken.error ?? null,
   };
 }

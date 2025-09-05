@@ -478,12 +478,10 @@ export async function scheduleAestheticProcedure(appointment: AestheticAppointme
 - **Issue**: Color contrast failing → **Solution**: Use 4.5:1 ratio for text, 3:1 for UI components
 - **Issue**: Touch targets too small → **Solution**: Ensure minimum 44px height/width
 
-## Related Documentation
+## Related Documentation (MVP)
 
-- [`docs/prd.md`](../prd.md) - Complete product requirements
 - [`docs/architecture/tech-stack.md`](../architecture/tech-stack.md) - Technology stack details
 - [`docs/accessibility/accessibility-standards.md`](../accessibility/accessibility-standards.md) - WCAG 2.1 AA implementation guide
-- [`.ruler/agents/apex-dev.md`](../../.ruler/agents/apex-dev.md) - Development principles
 
 ---
 

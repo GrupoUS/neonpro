@@ -275,7 +275,7 @@ export function ComplianceDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {complianceStatus.dataRequests.recentRequests.map(
+              {(complianceStatus.dataRequests.recentRequests as LGPDRequest[]).map(
                 (request: LGPDRequest, index) => (
                   <div
                     className="flex items-center justify-between rounded-lg bg-gray-50 p-3"

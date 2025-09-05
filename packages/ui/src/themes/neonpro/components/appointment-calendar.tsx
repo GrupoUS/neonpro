@@ -4,10 +4,10 @@
  * Optimized for Brazilian healthcare appointment scheduling
  */
 
-import { cn } from "@neonpro/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type React from "react";
 import { useMemo, useState } from "react";
+import { cn } from "../../../lib/utils";
 
 // Brazilian healthcare appointment types
 export type AppointmentType =
@@ -62,6 +62,12 @@ export interface AppointmentCalendarProps {
   size?: "sm" | "md" | "lg";
   variant?: "default" | "compact" | "detailed";
   className?: string;
+
+  // Internal props (prefixed with _ for backward compatibility)
+  _showWeekNumbers?: boolean;
+  _workingDays?: number[];
+  _onCreateAppointment?: (date: Date, time?: Date) => void;
+  _size?: "sm" | "md" | "lg";
 }
 
 // Brazilian month names

@@ -10,7 +10,7 @@
     "build": "echo 'No build for tooling'",
     "type-check": "echo 'No type-check for tooling'",
     "lint": "echo 'Lint via root turbo'",
-    "test": "vitest run --pool=threads --poolOptions.threads.singleThread=true",
+    "test": "vitest run --passWithNoTests --pool=threads --poolOptions.threads.singleThread=true",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage"
   },

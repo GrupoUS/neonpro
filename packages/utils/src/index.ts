@@ -2,20 +2,9 @@
 // NeonPro AI Healthcare Platform - Constitutional Service Layer
 
 export * from "./analytics";
-export * from "./auth";
 export * from "./cn";
-export * from "./compliance";
-export * from "./components";
 export * from "./format";
-export * from "./performance";
 export * from "./validation";
 
 // Re-export common utilities for convenience
-export type { ComplianceReport } from "./compliance";
-
-// Re-export performance optimization utilities
-export {
-  brazilianBundleAnalyzer,
-  brazilianConnectivityOptimizer,
-  brazilianInfrastructureMonitoring,
-} from "./performance";
+// Note: Compliance and performance modules temporarily disabled due to dependency issues

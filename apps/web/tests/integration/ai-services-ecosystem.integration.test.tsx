@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 interface TestConfig {
@@ -65,7 +66,7 @@ interface AIServiceResponse {
 }
 
 interface EcosystemTestContext {
-  supabaseClient: unknown;
+  supabaseClient: SupabaseClient;
   testSession: unknown;
   cleanupTasks: (() => Promise<void>)[];
   testStartTime: number;
@@ -77,7 +78,13 @@ class AIServicesEcosystemTester {
 
   static async setupTestEnvironment(): Promise<void> {
     // Use global mock Supabase client for integration tests
-    const supabaseClient = (globalThis as any).mockSupabaseClient;
+    const globalWithMock = globalThis as unknown as {
+      mockSupabaseClient?: SupabaseClient;
+    };
+    const supabaseClient = globalWithMock.mockSupabaseClient;
+    if (!supabaseClient) {
+      throw new Error("globalThis.mockSupabaseClient is not set for tests");
+    }
 
     AIServicesEcosystemTester.context = {
       supabaseClient,

@@ -5,6 +5,7 @@ import { ptBR } from "date-fns/locale";
 import { AlertTriangle, Eye, RefreshCw, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import type { SecurityEventStatus } from "../../../types/badge-variants";
 import { Badge } from "../../ui/badge";
 import { Button } from "../../ui/button";
 import {
@@ -451,7 +452,7 @@ export function SecurityEventsTable() {
                                       handleUpdateStatus(selectedEvent.id, value);
                                       setSelectedEvent({
                                         ...selectedEvent,
-                                        status: value as unknown,
+                                        status: value as SecurityEventStatus,
                                       });
                                     }}
                                     value={selectedEvent.status}

@@ -5,6 +5,11 @@ import { Activity, AlertCircle, CheckCircle, Clock, Heart } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "../../lib/utils";
+import {
+  getComplianceVariant,
+  getPhaseColor,
+  getStageVariant,
+} from "../../types/progress-variants";
 
 const progressVariants = cva(
   "relative h-2 w-full overflow-hidden rounded-full bg-gradient-to-r from-muted/80 via-muted/60 to-muted/80 shadow-healthcare-sm backdrop-blur-sm transition-all duration-500",
@@ -241,7 +246,7 @@ const TreatmentProgress = React.forwardRef<
           ref={ref}
           showValue
           value={progress}
-          variant={getPhaseColor() as unknown}
+          variant={getPhaseColor()}
           {...props}
         />
 
@@ -350,7 +355,7 @@ const LGPDComplianceProgress = React.forwardRef<
         ref={ref}
         showValue={false}
         value={overallScore}
-        variant={getComplianceVariant() as unknown}
+        variant={getComplianceVariant()}
         {...props}
       />
 
@@ -516,7 +521,7 @@ const PatientRecoveryProgress = React.forwardRef<
           ref={ref}
           showValue={false}
           value={recoveryPercentage}
-          variant={getStageVariant() as unknown}
+          variant={getStageVariant()}
           {...props}
         />
 

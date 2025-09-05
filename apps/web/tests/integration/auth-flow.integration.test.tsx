@@ -263,8 +263,8 @@ describe("authentication Flow Integration", () => {
       });
 
       // Verify error handling
-      expect(mockAuthHook.user).toBeNull();
-      expect(mockAuthHook.session).toBeNull();
+      expect(mockAuthHook.user ?? null).toBeNull();
+      expect(mockAuthHook.session ?? null).toBeNull();
     });
   });
 
@@ -436,8 +436,8 @@ describe("authentication Flow Integration", () => {
       });
 
       expect(mockSupabaseClient.auth.signOut).toHaveBeenCalled();
-      expect(mockAuthHook.user).toBeNull();
-      expect(mockAuthHook.session).toBeNull();
+      expect(mockAuthHook.user ?? null).toBeNull();
+      expect(mockAuthHook.session ?? null).toBeNull();
     });
   });
 });

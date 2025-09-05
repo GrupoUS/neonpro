@@ -357,7 +357,7 @@ export const HealthcareDashboardExample: React.FC = () => {
           showFilters
           showExport
           onPaymentView={handlePaymentView}
-          onPaymentRefund={(payment) => console.log("Refund:", payment)}
+          onPaymentRefund={(payment: PaymentRecord) => console.log("Refund:", payment)}
           onExportData={() => console.log("Export payments")}
         />
       </div>

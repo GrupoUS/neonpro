@@ -44,15 +44,7 @@ llm:
 
 ### System Architecture
 
-- **🏗️ @system-architecture**: [docs/architecture/architecture.md](./architecture.md)
-  - One‑line: End‑to‑end platform architecture overview and diagrams
-  - Use when: You need the big picture before decisions or cross‑cutting changes
-  - Metadata:
-    ```yaml
-    role: "System Architecture Overview"
-    triggers: ["overview", "diagram", "end-to-end", "big-picture", "decisão"]
-    outputs: ["contexto geral", "componentes", "fluxos de alto nível"]
-    ```
+<!-- Omitted for MVP: system-architecture big‑picture doc removed to keep scope lean. -->
 
 - **🌳 @source-tree**: [docs/architecture/source-tree.md](./source-tree.md)
   - One‑line: Real monorepo structure (apps/packages) validated and categorized
@@ -155,9 +147,7 @@ CONTEXT_STRATEGY:
     definir_fluxos: [@platform-flows, @system-architecture]
 ```
 
-## 📚 References (correct link format)
-
-- **🏗️ @system-architecture**: [docs/architecture/architecture.md](./architecture.md)
+## 📚 References (MVP scope)
 - **🌳 @source-tree**: [docs/architecture/source-tree.md](./source-tree.md)
 - **🖥️ @frontend-architecture**: [docs/architecture/frontend-architecture.md](./frontend-architecture.md)
 - **🧩 @frontend-spec**: [docs/architecture/front-end-spec.md](./front-end-spec.md)

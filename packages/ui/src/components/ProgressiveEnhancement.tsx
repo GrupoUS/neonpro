@@ -665,10 +665,8 @@ export const useFeatureDetection = () => {
         supportsTouchScreen: "ontouchstart" in window,
         supportsWebGL: Boolean(window.WebGLRenderingContext),
         supportsServiceWorker: "serviceWorker" in navigator,
-        hasGoodConnection: (
-          navigator as unknown
-        ).connection?.effectiveType?.includes("4g"),
-        batteryLevel: (navigator as unknown).getBattery ? undefined : undefined, // Requires async call
+        hasGoodConnection: navigator.connection?.effectiveType?.includes("4g") || false,
+        batteryLevel: navigator.getBattery ? undefined : undefined, // Requires async call
       });
     };
 
@@ -685,7 +683,7 @@ export const useNetworkStatus = () => {
 
   React.useEffect(() => {
     const updateNetworkStatus = () => {
-      const connection = (navigator as unknown).connection;
+      const connection = navigator.connection;
       setNetworkStatus({
         online: navigator.onLine,
         effectiveType: connection?.effectiveType || "unknown",

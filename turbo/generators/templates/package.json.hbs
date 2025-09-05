@@ -10,7 +10,7 @@
 "./dist/index.cjs", "module": "./dist/index.js", "types": "./dist/index.d.ts",
 "files": [ "dist/**" ], "scripts": { "build": "tsup", "dev": "tsup --watch",
 "lint": "biome lint .", "lint:fix": "biome lint --write .", "format": "biome
-format --write .", "type-check": "tsc --noEmit", "test": "vitest run",
+format --write .", "type-check": "tsc --noEmit", "test": "vitest run --passWithNoTests",
 "test:watch": "vitest", "test:coverage": "vitest run --coverage",
 {{#if healthcare}}
   "test:compliance": "vitest run

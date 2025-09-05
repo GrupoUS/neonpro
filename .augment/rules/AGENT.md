@@ -21,7 +21,7 @@ type: "always_apply"
 - **MANDATORY** use of `archon mcp` for task and knowledge management
 - **MANDATORY** use of `desktop-commander mcp` for file and terminal operations and system management
 - **MANDATORY** invoke `sequential-thinking` first and then the `think` native tool before any other action; under ULTRATHINK, always use `think` to produce a 5‑step breakdown of next steps/strategies to clarify order and purpose.
-- **MANDATORY** use of `tavily mcp` for real-time information, current trends, and technology updates, _DO NOT USE NATIVE SEARCH tool_
+- **MANDATORY** Use Tavily MCP for all web searches (real-time info, trends, tech updates). DO NOT use native search tools (e.g., Search View, grep, file_search). Use Serena MCP for all codebase search and analysis.
 - **MANDATORY** use of `context7 mcp` for deep contextual understanding and analysis, _DO NOT USE NATIVE CONTEXT tool_
 - **NO INTERRUPTIONS**: Continue through ALL steps until problem fully solved.
 - **MANDATORY FIRST STEP**: Always begin with sequential-thinking tool.
@@ -288,33 +288,24 @@ phase_3_planning_design:
 
 ### 4. **Test Execution & Validation** ✅
 
-**🔧 MCP**: desktop-commander + serena
-
 - Use `desktop-commander` to run all test commands
-- Run `bun oxlint apps packages --fix` for linter issues
-- Run `bun format && bun lint:fix && bun type-check` to format code
-- Run `bun test` and all task tests
+- Run `bun run lint:fix` for linter issues (or `bun run oxlint:fix`)
+- Run `bun run format && bun run lint:fix && bun run type-check` to format code
 - **Correction Loop**: If tests fail:
   - Use `serena` to analyze failing code and dependencies
-  - Fix issues following TDD principles
+  - Fix all issues
   - **Stuck >3x**: Use sequential-thinking to reassess
   - Repeat until ALL tests pass
-- **Coverage Requirements** (from ttd-flow.md):
-  - Critical business logic: 100%
-  - AI agents/services: 90%+
-  - Complex hooks: 85%+
-  - Utilities/validators: 80%+
 - Use `archon` to document test results and coverage metrics
 - Only proceed when all tests green and coverage meets requirements
-- Run `run tasks:test` to execute all task tests
 
 ### 5. **Code Quality Check** 🔍
 
 **🔧 MCP**: desktop-commander + serena
 
 - Use `desktop-commander` to run quality check commands
-- Run `bun next lint` for linting issues
-- Run `bun tsc --noEmit` to verify TypeScript compilation
+- Run `bun run next:lint:web` for Next.js linting
+- Run `bun run type-check` to verify TypeScript compilation
 - Use `serena` to analyze code quality and identify issues
 - Fix any errors or warnings before proceeding
 - **Correction Loop**: If issues found:

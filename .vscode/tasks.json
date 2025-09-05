@@ -95,7 +95,7 @@
       "group": "test",
       "detail": "Run unit tests via Bun (fast), fallback to pnpm if Bun missing",
       "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
-    }
+    },
     {
       "label": "🧪 Watch Tests",
       "type": "shell",

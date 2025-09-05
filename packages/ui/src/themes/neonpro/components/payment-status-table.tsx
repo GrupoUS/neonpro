@@ -4,7 +4,6 @@
  * Optimized for Brazilian healthcare payment tracking
  */
 
-import { cn } from "@neonpro/utils";
 import {
   AlertCircle,
   CheckCircle,
@@ -17,6 +16,7 @@ import {
 } from "lucide-react";
 import type React from "react";
 import { useMemo } from "react";
+import { cn } from "../../../lib/utils";
 
 // Brazilian payment methods
 export type BrazilianPaymentMethod =
@@ -84,6 +84,9 @@ export interface PaymentStatusTableProps {
   showFilters?: boolean;
   showExport?: boolean;
   className?: string;
+
+  // Internal props (prefixed with _ for backward compatibility)
+  _itemsPerPage?: number;
 }
 
 // Status configuration (NEONPRO theme colors)
@@ -418,7 +421,9 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
             <select
               value={statusFilter}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                onStatusFilterChange?.(e.target.value)}
+                onStatusFilterChange?.(
+                  e.target.value as "success" | "all" | "processing" | "pending" | "failed",
+                )}
               className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">Todos os Status</option>
@@ -433,7 +438,7 @@ export const PaymentStatusTable: React.FC<PaymentStatusTableProps> = ({
             <select
               value={methodFilter}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                onMethodFilterChange?.(e.target.value)}
+                onMethodFilterChange?.(e.target.value as "all" | BrazilianPaymentMethod)}
               className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">Todas as Formas</option>

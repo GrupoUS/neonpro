@@ -5,6 +5,7 @@ import { ptBR } from "date-fns/locale";
 import { AlertTriangle, CheckCircle2, Clock, Eye, RefreshCw, Search, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import type { SecurityAlertStatus } from "../../../types/badge-variants";
 import { Badge } from "../../ui/badge";
 import { Button } from "../../ui/button";
 import {
@@ -556,7 +557,7 @@ export function SecurityAlertsTable() {
                                       handleUpdateStatus(selectedAlert.id, value);
                                       setSelectedAlert({
                                         ...selectedAlert,
-                                        status: value as unknown,
+                                        status: value as SecurityAlertStatus,
                                       });
                                     }}
                                     value={selectedAlert.status}

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import type React from "react";
 import { useComplianceAlerts, useComplianceScore } from "../../lib/utils";
+import type { BadgeVariant } from "../../types/badge-variants";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -67,7 +68,7 @@ const getStatusColor = (status: string): string => {
   }
 };
 
-const getSeverityColor = (severity: string): string => {
+const getSeverityColor = (severity: string): BadgeVariant => {
   switch (severity.toLowerCase()) {
     case "critical": {
       return "destructive";
@@ -79,10 +80,10 @@ const getSeverityColor = (severity: string): string => {
       return "secondary";
     }
     case "low": {
-      return "outline";
+      return "low";
     }
     default: {
-      return "outline";
+      return "default";
     }
   }
 };
@@ -483,7 +484,7 @@ export const ComplianceAutomationDashboard: React.FC<
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <Badge
-                              variant={getSeverityColor(alert.severity) as unknown}
+                              variant={getSeverityColor(alert.severity)}
                             >
                               {alert.severity.toUpperCase()}
                             </Badge>

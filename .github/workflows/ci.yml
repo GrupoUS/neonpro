@@ -21,6 +21,11 @@ on:
         required: false
         default: false
         type: boolean
+      run_e2e:
+        description: "Install Playwright browsers & enable E2E setup"
+        required: false
+        default: false
+        type: boolean
 
 # Concurrency management
 concurrency:
@@ -801,3 +806,9 @@ jobs:
         run: |
           echo "🏁 CI/CD pipeline completed successfully"
           echo "🏥 Healthcare platform ready for production use"
+      - name: 🎭 Install Playwright browsers (E2E setup)
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.run_e2e == 'true' }}
+        run: |
+          echo "🎭 Installing Playwright browsers for E2E..."
+          npx playwright install --with-deps
+          echo "✅ Playwright browsers installed"

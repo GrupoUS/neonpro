@@ -49,7 +49,7 @@ export function ResponsiveLayout({
         || (connectivity.type === "3G" && connectivity.strength === "weak")
         || (connectivity.latency && connectivity.latency > 1000);
 
-      setIsLowBandwidth(isSlow);
+      setIsLowBandwidth(Boolean(isSlow));
       setConnectionSpeed(`${connectivity.type} - ${connectivity.strength}`);
     }
   }, [connectivity]);

@@ -2,35 +2,40 @@
   "name": "@neonpro/shared",
   "version": "1.0.0",
   "description": "Shared types and schemas for NeonPro Healthcare Platform",
-  "main": "./dist/index.js",
-  "module": "./dist/index.esm.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/src/index.js",
+  "module": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.esm.js",
-      "require": "./dist/index.js"
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js"
     },
     "./api-client": {
-      "types": "./dist/api-client.d.ts",
-      "import": "./dist/api-client.esm.js",
-      "require": "./dist/api-client.js"
+      "types": "./dist/src/api-client.d.ts",
+      "import": "./dist/src/api-client.js",
+      "require": "./dist/src/api-client.js"
     },
     "./hooks/use-healthcare-realtime": {
-      "types": "./dist/hooks/use-healthcare-realtime.d.ts",
-      "import": "./dist/hooks/use-healthcare-realtime.esm.js",
-      "require": "./dist/hooks/use-healthcare-realtime.js"
+      "types": "./dist/src/hooks/use-healthcare-realtime.d.ts",
+      "import": "./dist/src/hooks/use-healthcare-realtime.js",
+      "require": "./dist/src/hooks/use-healthcare-realtime.js"
     },
     "./hooks/use-lgpd-realtime": {
-      "types": "./dist/hooks/use-lgpd-realtime.d.ts",
-      "import": "./dist/hooks/use-lgpd-realtime.esm.js",
-      "require": "./dist/hooks/use-lgpd-realtime.js"
+      "types": "./dist/src/hooks/use-lgpd-realtime.d.ts",
+      "import": "./dist/src/hooks/use-lgpd-realtime.js",
+      "require": "./dist/src/hooks/use-lgpd-realtime.js"
     },
     "./hooks/use-realtime": {
-      "types": "./dist/hooks/use-realtime.d.ts",
-      "import": "./dist/hooks/use-realtime.esm.js",
-      "require": "./dist/hooks/use-realtime.js"
+      "types": "./dist/src/hooks/use-realtime.d.ts",
+      "import": "./dist/src/hooks/use-realtime.js",
+      "require": "./dist/src/hooks/use-realtime.js"
+    },
+    "./schemas": {
+      "types": "./dist/src/schemas/index.d.ts",
+      "import": "./dist/src/schemas/index.js",
+      "require": "./dist/src/schemas/index.js"
     }
   },
   "files": [

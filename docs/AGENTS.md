@@ -58,7 +58,7 @@ llm_index:
     priority: medium
   - name: "prd"
     path: "docs/prd/**"
-    priority: low
+    priority: omitted
   - name: "mistakes"
     path: "docs/mistakes/**"
     priority: medium

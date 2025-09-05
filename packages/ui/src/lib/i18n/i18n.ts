@@ -270,7 +270,7 @@ export function createTranslator(dictionary: Dictionary) {
     let value: unknown = dictionary;
 
     for (const k of keys) {
-      value = value?.[k];
+      value = (value as any)?.[k];
     }
 
     if (typeof value !== "string") {

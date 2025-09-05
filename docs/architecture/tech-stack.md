@@ -39,11 +39,9 @@ This section reflects the actual, in-repo configuration and versions verified fr
 
 - Testing & QA
   - Unit/Integration: Vitest (root ^3.2.x; api ^2.0.x) with happy-dom/jsdom, Testing Library (@testing-library/react ^16.3.0, jest-dom ^6.8.0, dom ^10.4.1), MSW ^2.10.5
-  - E2E: Playwright (root ^1.55.0; web ^1.49.0) with global config at repository root
   - Linting/Type-check: turbo tasks lint, type-check; oxlint, tsc
 
 - Observability & Monitoring
-  - Sentry for Next.js: @sentry/nextjs ^10.5.0 (sentry.*.config.ts present)
   - Optional: Vercel Analytics/Speed Insights (supported; not pinned in root deps)
 
 - Deployment & Infra

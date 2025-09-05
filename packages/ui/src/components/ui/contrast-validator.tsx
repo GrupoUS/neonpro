@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import type { ContrastContext } from "../../types/badge-variants";
 
 /**
  * NEONPRO HEALTHCARE - CONTRAST VALIDATOR COMPONENT
@@ -411,7 +412,7 @@ export const validateColorPalette = (
 }[] => {
   return palette.map(({ bg, fg, context = "general" }) => {
     const ratio = calculateContrastRatio(bg, fg);
-    const requiredRatio = getMinimumRatio("normal", context as unknown);
+    const requiredRatio = getMinimumRatio("normal", context as ContrastContext);
     const isValid = ratio >= requiredRatio;
 
     return { bg, fg, context, ratio, isValid };
@@ -445,7 +446,7 @@ const ContrastWrapper = React.forwardRef<HTMLElement, ContrastWrapperProps>(
     };
 
     return React.createElement(
-      Element as unknown,
+      Element as any,
       { ref, style: computedStyle },
       <ContrastValidator
         backgroundColor={backgroundColor}

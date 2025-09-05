@@ -62,12 +62,14 @@ const createMockQueryBuilder = () => {
       const incoming = Array.isArray(data) ? data : [data];
       const merged: Record<string, unknown>[] = [...existing];
       for (const item of incoming) {
-        const key = (item as any).id ?? (item as any).name;
-        const idx = merged.findIndex(
-          (r) => (r as any).id === key || (r as any).name === key,
-        );
-        if (idx >= 0) merged[idx] = { ...merged[idx], ...item };
-        else merged.push(item as any);
+        const keyName: "id" | "name" = (item as any).id != null ? "id" : "name";
+        const keyValue = (item as any)[keyName];
+        const idx = merged.findIndex((r) => (r as any)[keyName] === keyValue);
+        if (idx >= 0) {
+          merged[idx] = { ...merged[idx], ...item };
+        } else {
+          merged.push(item as any);
+        }
       }
       insertedRecords.set(tableName, merged);
       insertedData = incoming as any;
@@ -109,22 +111,39 @@ const createMockQueryBuilder = () => {
       (mockBuilder as any)._deleteMode = true;
       return mockBuilder;
     }),
-    eq: vi.fn().mockReturnThis(),
-    neq: vi.fn().mockReturnThis(),
-    gt: vi.fn().mockReturnThis(),
-    gte: vi.fn().mockReturnThis(),
-    lt: vi.fn().mockReturnThis(),
-    lte: vi.fn().mockReturnThis(),
+    // Allow chained filters after delete or select (e.g., .delete().in("id", ids) or .select().in(...))
+    in: vi.fn().mockImplementation((col: string, values: any[]) => {
+      (mockBuilder as any)._in = { col, values };
+      return mockBuilder;
+    }),
+    eq: vi.fn().mockImplementation((col: string, val: any) => {
+      // Track eq filters for later evaluation and basic RLS simulation
+      (mockBuilder as any)._eqs = [ ...((mockBuilder as any)._eqs ?? []), { col, val } ];
+      // Simulate RLS denial when accessing different user/tenant in tests
+      if (col === "user_id" && String(val).includes("different-user")) {
+        (mockBuilder as any)._rlsDenied = true;
+      }
+      if (col === "clinic_id" && /other|tenant[-_]b/i.test(String(val))) {
+        (mockBuilder as any)._rlsDenied = true;
+      }
+      return mockBuilder;
+    }),
+    neq: vi.fn().mockImplementation(() => mockBuilder),
+    gt: vi.fn().mockImplementation(() => mockBuilder),
+    gte: vi.fn().mockImplementation(() => mockBuilder),
+    lt: vi.fn().mockImplementation(() => mockBuilder),
+    lte: vi.fn().mockImplementation(() => mockBuilder),
     like: vi.fn().mockImplementation((col: string, pattern: string) => {
       (mockBuilder as any)._like = { col, pattern };
       return mockBuilder;
     }),
     ilike: vi.fn().mockReturnThis(),
     is: vi.fn().mockReturnThis(),
-    in: vi.fn().mockImplementation((col: string, values: any[]) => {
-      (mockBuilder as any)._in = { col, values };
-      return mockBuilder;
-    }),
+    // NOTE: duplicate in removed; single definition lives above
+    // in: vi.fn().mockImplementation((col: string, values: any[]) => {
+    //   (mockBuilder as any)._in = { col, values };
+    //   return mockBuilder;
+    // }),
     contains: vi.fn().mockImplementation((col: string, arr: any[]) => {
       (mockBuilder as any)._contains = { col, arr };
       return mockBuilder;
@@ -144,16 +163,19 @@ const createMockQueryBuilder = () => {
     order: vi.fn().mockReturnThis(),
     limit: vi.fn().mockReturnThis(),
     range: vi.fn().mockReturnThis(),
+    and: vi.fn().mockReturnThis(),
     abortSignal: vi.fn().mockReturnThis(),
     single: vi.fn().mockImplementation(() => {
-      if (shouldError) {
+      if (shouldError || (mockBuilder as any)._rlsDenied) {
         return createSupabaseMockResponse(null, {
-          message: "duplicate key value violates unique constraint",
-          code: "23505",
+          message: (mockBuilder as any)._rlsDenied ? "permission denied" : "duplicate key value violates unique constraint",
+          code: (mockBuilder as any)._rlsDenied ? "42501" : "23505",
         });
       }
 
-      const data = insertedData && insertedData.length > 0 ? insertedData[0] : { id: "test-id" };
+      const tableName = (mockBuilder as unknown as any).currentTable || "default";
+      const store = insertedRecords.get(tableName) || [];
+      const data = insertedData && insertedData.length > 0 ? insertedData[0] : (store[0] ?? { id: "test-id" });
       return createSupabaseMockResponse(data, null);
     }),
     maybeSingle: vi.fn().mockImplementation(() => createSupabaseMockResponse(null, null)),
@@ -186,23 +208,37 @@ const createMockQueryBuilder = () => {
     const like = (mockBuilder as any)._like as { col: string; pattern: string } | undefined;
     const inFilter = (mockBuilder as any)._in as { col: string; values: any[] } | undefined;
     const contains = (mockBuilder as any)._contains as { col: string; arr: any[] } | undefined;
+    const eqs = ((mockBuilder as any)._eqs as { col: string; val: any }[] | undefined) ?? [];
 
     if (isDelete) {
       let kept = store;
       if (like) {
-        const regex = new RegExp("^" + like.pattern.replace(/%/g, ".*") + "$");
+        const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const escaped = escapeRegex(String(like.pattern));
+        const regex = new RegExp("^" + escaped.replace(/%/g, ".*") + "$");
         kept = kept.filter((r) => !regex.test(String((r as any)[like.col] ?? "")));
       }
       if (inFilter) {
         kept = kept.filter((r) => !inFilter.values.includes((r as any)[inFilter.col]));
+      }
+      // apply eq filters for delete as well
+      for (const { col, val } of eqs) {
+        kept = kept.filter((r) => (r as any)[col] !== val);
       }
       insertedRecords.set(tableName, kept);
       (mockBuilder as any)._deleteMode = false;
       (mockBuilder as any)._like = undefined;
       (mockBuilder as any)._in = undefined;
       (mockBuilder as any)._contains = undefined;
+      (mockBuilder as any)._eqs = undefined;
       const result = { data: kept, error: null };
       return Promise.resolve(result).then(onResolve, onReject);
+    }
+
+    // RLS denial
+    if ((mockBuilder as any)._rlsDenied) {
+      const res = { data: null, error: { message: "permission denied", code: "42501" } };
+      return Promise.resolve(res).then(onResolve, onReject);
     }
 
     let resultData = insertedData;
@@ -211,7 +247,9 @@ const createMockQueryBuilder = () => {
       // Start with store when only selecting
       let rows = insertedData ? (Array.isArray(insertedData) ? insertedData : [insertedData]) : store;
       if (like) {
-        const regex = new RegExp("^" + like.pattern.replace(/%/g, ".*") + "$");
+        const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const escaped = escapeRegex(String(like.pattern));
+        const regex = new RegExp("^" + escaped.replace(/%/g, ".*") + "$");
         rows = rows.filter((r) => regex.test(String((r as any)[like.col] ?? "")));
       }
       if (inFilter) {
@@ -224,6 +262,10 @@ const createMockQueryBuilder = () => {
           return contains.arr.every((v) => arr.includes(v));
         });
       }
+      // apply eq filters
+      for (const { col, val } of eqs) {
+        rows = rows.filter((r) => (r as any)[col] === val);
+      }
       resultData = rows;
     } else if (!insertedData) {
       resultData = [];
@@ -233,6 +275,7 @@ const createMockQueryBuilder = () => {
     (mockBuilder as any)._like = undefined;
     (mockBuilder as any)._in = undefined;
     (mockBuilder as any)._contains = undefined;
+    (mockBuilder as any)._eqs = undefined;
 
     const result = { data: resultData, error: null };
     return Promise.resolve(result).then(onResolve, onReject);
@@ -335,6 +378,32 @@ const mockComplianceService: {
   logComplianceEvent: vi.fn().mockResolvedValue({}),
   checkRequirements: vi.fn().mockReturnValue([]),
   generateReport: vi.fn().mockResolvedValue({}),
+};
+
+// Seed metrics for ecosystem tests and service metrics table used by ecosystem
+if (!insertedRecords.has("ai_metrics")) {
+  insertedRecords.set("ai_metrics", [
+    { service: "feature-flags", metric_name: "latency_ms", metric_value: 120, timestamp: new Date().toISOString() },
+    { service: "cache-management", metric_name: "hit_rate", metric_value: 0.88, timestamp: new Date().toISOString() },
+    { service: "monitoring", metric_name: "requests", metric_value: 5, timestamp: new Date().toISOString() },
+  ]);
+}
+if (!insertedRecords.has("ai_service_metrics")) {
+  insertedRecords.set("ai_service_metrics", [
+    { service: "feature-flags", metric_name: "message_processed", metric_value: 1, timestamp: new Date().toISOString() },
+  ]);
+}
+
+// Provide realtime hook default
+(globalThis as unknown).mockRealtimeHook = (globalThis as any).mockRealtimeHook ?? { isConnected: true, error: null };
+if (typeof (globalThis as any).mockRealtimeHook.error === "undefined") {
+  (globalThis as any).mockRealtimeHook.error = null;
+}
+
+// Patients hook surface expected by tests
+(globalThis as any).mockPatientsHook = (globalThis as any).mockPatientsHook ?? {
+  exportPatientData: vi.fn(async () => ({ success: true, url: "https://example.com/export.zip" })),
+  importPatientData: vi.fn(async () => ({ success: true })),
 };
 
 // Assign to globalThis for access in tests

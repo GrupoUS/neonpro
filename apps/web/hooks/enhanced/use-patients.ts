@@ -39,7 +39,7 @@ import {
   InvalidationHelpers,
   QueryKeys,
   useHealthcareQueryUtils,
-} from "@/lib/query/query-utils";
+} from "../../lib/query/query-utils";
 
 // Patient management context interface
 export interface PatientManagementContext {

@@ -115,10 +115,9 @@ export function DataSubjectRights() {
         }
 
         requestData.details = {
-          field: rectificationField,
-          oldValue: rectificationOldValue,
-          newValue: rectificationNewValue,
+          specificData: [rectificationField],
           reason: rectificationReason,
+          urgency: "medium" as const,
         };
       }
 

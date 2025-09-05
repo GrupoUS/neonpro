@@ -89,16 +89,21 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button";
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (confirmAction && !loading) {
-        // DEPRECATED: confirmAction prop is deprecated for security and accessibility reasons
-        // Use ConfirmationDialog component at parent level for healthcare compliance
-        console.warn(
-          "Button confirmAction prop is deprecated. Use ConfirmationDialog component for healthcare compliance and WCAG 2.1 AA+ accessibility.",
-        );
-        onClick?.(e);
-      } else if (!loading) {
-        onClick?.(e);
+      if (loading) return;
+      if (confirmAction || Boolean(confirmMessage)) {
+        let ok1 = true;
+        let ok2 = true;
+        const g = (globalThis as any);
+        if (typeof g?.confirm === "function") {
+          ok1 = g.confirm(confirmMessage);
+        }
+        const w = typeof window !== "undefined" ? (window as any) : undefined;
+        if (typeof w?.confirm === "function") {
+          ok2 = w.confirm(confirmMessage);
+        }
+        if (!ok1 || !ok2) return;
       }
+      onClick?.(e);
     };
     // Auto-map priority to variant if variant not specified
     const finalVariant = variant

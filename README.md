@@ -119,6 +119,24 @@ neonpro/
 
 **🛡️ Security & Compliance**
 
+## 🧪 Testing & Linting Standards
+
+- Preferred test command: `bun run test`.
+  - This orchestrates package tests via Turborepo and uses Vitest where configured.
+  - Guard: do not use `bun test` in this monorepo. Bun’s test runner will scan raw files and does not provide Vitest globals (e.g., `vi.mock`) or Playwright harness; it will produce false failures.
+
+- Empty packages: test scripts are configured with `--passWithNoTests` so the pipeline doesn’t fail when a package has no tests yet.
+
+- Linting Next.js app: use the scoped helper to avoid root resolution errors:
+  - `bun run next:lint:web` (alias for `next lint --dir apps/web`).
+  - The generic `next lint` at the repo root will fail because there is no app/pages directory in the monorepo root.
+
+- Type checking: use `bun run type-check` (scoped via Turbo), or per‑app `pnpm -w --filter @neonpro/web tsc --noEmit`.
+
+- E2E tests (Playwright): kept separate from default `test` runs.
+  - To prepare a CI runner or dev machine for E2E, install browsers: `npx playwright install --with-deps`.
+  - CI has an optional step to install Playwright browsers when the workflow is dispatched with `run_e2e=true`.
+
 - **Row Level Security (RLS)** - Database-level authorization
 - **Zero-Trust Architecture** - Never trust, always verify
 - **Advanced Session Management** - Multi-device security monitoring

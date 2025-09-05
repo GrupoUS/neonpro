@@ -4,6 +4,7 @@
  */
 
 import { EnhancedServiceBase } from "@neonpro/core-services";
+import crypto from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import bcrypt from "bcryptjs";
