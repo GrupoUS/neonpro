@@ -181,6 +181,7 @@ describe("authentication Flow Integration", () => {
       mockAuthHook.signIn.mockImplementation(
         async (email: string, password: string) => {
           // Simulate actual hook behavior by calling global mock
+          await (mockSupabaseClient as any).auth.signInWithPassword({ email, password });
           mockAuthHook.user = mockUser;
           mockAuthHook.session = mockSession;
           return {

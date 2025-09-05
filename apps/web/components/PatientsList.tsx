@@ -28,7 +28,7 @@ export function PatientsList({
   const router = useRouter();
 
   const handleViewAllPatients = () => {
-    router.push("/patients");
+    router.push("/pacientes");
   };
 
   const getPatientInitial = (patient: Patient) => {

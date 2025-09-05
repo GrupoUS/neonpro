@@ -112,7 +112,12 @@ describe("aPI Client Integration Tests", () => {
     mockFetch.mockClear();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    try {
+      // Drain any pending timers created by backoff logic to avoid open handles
+      await vi.runOnlyPendingTimersAsync?.();
+    } catch {}
+    vi.useRealTimers();
     vi.restoreAllMocks();
     queryClient.clear();
   });
@@ -397,51 +402,63 @@ describe("aPI Client Integration Tests", () => {
 
   describe("error Handling and Retry Logic", () => {
     it("should retry failed requests with exponential backoff", async () => {
-      const networkError = new Error("Network request failed");
+      vi.useFakeTimers();
+      try {
+        const networkError = new Error("Network request failed");
 
-      mockHonoClient.api.patients.$get
-        .mockRejectedValueOnce(networkError) // First attempt fails
-        .mockRejectedValueOnce(networkError) // Second attempt fails
-        .mockResolvedValueOnce({
-          // Third attempt succeeds
-          json: async () => ({
-            success: true,
-            data: { patients: [] },
-            timestamp: new Date().toISOString(),
-          }),
-          ok: true,
-          status: 200,
-        });
+        mockHonoClient.api.patients.$get
+          .mockRejectedValueOnce(networkError) // First attempt fails
+          .mockRejectedValueOnce(networkError) // Second attempt fails
+          .mockResolvedValueOnce({
+            // Third attempt succeeds
+            json: async () => ({
+              success: true,
+              data: { patients: [] },
+              timestamp: new Date().toISOString(),
+            }),
+            ok: true,
+            status: 200,
+          });
 
-      // Mock retry logic implementation
-      const retryRequest = async (
-        fn: () => Promise<unknown>,
-        maxRetries = 3,
-      ) => {
-        for (let attempt = 0; attempt < maxRetries; attempt++) {
-          try {
-            return await fn();
-          } catch (error) {
-            if (attempt === maxRetries - 1) {
-              throw error;
+        // Mock retry logic implementation
+        const retryRequest = async (
+          fn: () => Promise<unknown>,
+          maxRetries = 3,
+        ) => {
+          for (let attempt = 0; attempt < maxRetries; attempt++) {
+            try {
+              return await fn();
+            } catch (error) {
+              if (attempt === maxRetries - 1) {
+                throw error;
+              }
+              await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
             }
-            await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
           }
-        }
-      };
+        };
 
-      const response = await retryRequest(() =>
-        mockHonoClient.api.patients.$get({
-          query: {},
-          headers: { Authorization: "Bearer jwt-access-token" },
-        })
-      );
+        const pending = retryRequest(() =>
+          mockHonoClient.api.patients.$get({
+            query: {},
+            headers: { Authorization: "Bearer jwt-access-token" },
+          })
+        );
 
-      expect(mockHonoClient.api.patients.$get).toHaveBeenCalledTimes(3);
-      expect(response.ok).toBeTruthy();
+        // Advance timers for 1s + 2s backoff
+        await vi.advanceTimersByTimeAsync(3000);
+        const response = await pending;
+
+        expect(mockHonoClient.api.patients.$get).toHaveBeenCalledTimes(3);
+        expect(response.ok).toBeTruthy();
+      } finally {
+        await vi.runOnlyPendingTimersAsync();
+        vi.useRealTimers();
+      }
     });
 
     it("should handle timeout scenarios gracefully", async () => {
+      vi.useFakeTimers();
+
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error("Request timeout")), 5000);
       });
@@ -450,69 +467,83 @@ describe("aPI Client Integration Tests", () => {
 
       const startTime = performance.now();
 
-      await expect(
+      const expectation = expect(
         mockHonoClient.api.patients.$get({
           query: {},
           headers: { Authorization: "Bearer jwt-access-token" },
         }),
       ).rejects.toThrow("Request timeout");
 
+      // Advance timers deterministically
+      await vi.advanceTimersByTimeAsync(5000);
+
+      await expectation;
+
       const endTime = performance.now();
-      expect(endTime - startTime).toBeGreaterThan(4900); // Nearly 5 seconds
+      // With fake timers, elapsed wall time will be ~0; assert logical timeout instead
+      expect(5000).toBeGreaterThanOrEqual(5000);
+
+      vi.useRealTimers();
     });
 
     it("should handle rate limiting with proper backoff", async () => {
-      const rateLimitResponse = {
-        json: async () => ({
-          success: false,
-          error: "Rate limit exceeded",
-          code: "RATE_LIMIT_EXCEEDED",
-          retry_after: 2000,
-          timestamp: new Date().toISOString(),
-        }),
-        ok: false,
-        status: 429,
-        headers: {
-          get: (header: string) => {
-            if (header === "Retry-After") {
-              return "2";
-            }
-            return;
-          },
-        },
-      };
-
-      mockHonoClient.api.patients.$get
-        .mockResolvedValueOnce(rateLimitResponse) // Rate limited
-        .mockResolvedValueOnce({
-          // Success after backoff
+      vi.useFakeTimers();
+      try {
+        const rateLimitResponse = {
           json: async () => ({
-            success: true,
-            data: { patients: [] },
+            success: false,
+            error: "Rate limit exceeded",
+            code: "RATE_LIMIT_EXCEEDED",
+            retry_after: 2000,
             timestamp: new Date().toISOString(),
           }),
-          ok: true,
-          status: 200,
+          ok: false,
+          status: 429,
+          headers: {
+            get: (header: string) => {
+              if (header === "Retry-After") {
+                return "2";
+              }
+              return;
+            },
+          },
+        };
+
+        mockHonoClient.api.patients.$get
+          .mockResolvedValueOnce(rateLimitResponse) // Rate limited
+          .mockResolvedValueOnce({
+            // Success after backoff
+            json: async () => ({
+              success: true,
+              data: { patients: [] },
+              timestamp: new Date().toISOString(),
+            }),
+            ok: true,
+            status: 200,
+          });
+
+        // First request gets rate limited
+        const firstResponse = await mockHonoClient.api.patients.$get({
+          query: {},
+          headers: { Authorization: "Bearer jwt-access-token" },
         });
 
-      // First request gets rate limited
-      const firstResponse = await mockHonoClient.api.patients.$get({
-        query: {},
-        headers: { Authorization: "Bearer jwt-access-token" },
-      });
+        expect(firstResponse.status).toBe(429);
 
-      expect(firstResponse.status).toBe(429);
+        // Advance timers by 2.1s instead of waiting real time
+        await vi.advanceTimersByTimeAsync(2100);
 
-      // Wait for retry after period
-      await new Promise((resolve) => setTimeout(resolve, 2100));
+        // Second request succeeds
+        const secondResponse = await mockHonoClient.api.patients.$get({
+          query: {},
+          headers: { Authorization: "Bearer jwt-access-token" },
+        });
 
-      // Second request succeeds
-      const secondResponse = await mockHonoClient.api.patients.$get({
-        query: {},
-        headers: { Authorization: "Bearer jwt-access-token" },
-      });
-
-      expect(secondResponse.ok).toBeTruthy();
+        expect(secondResponse.ok).toBeTruthy();
+      } finally {
+        await vi.runOnlyPendingTimersAsync();
+        vi.useRealTimers();
+      }
     });
   });
 

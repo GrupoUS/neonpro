@@ -3,6 +3,9 @@
 import { useAppointments } from "@/hooks/useAppointments";
 import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
 import { usePatients } from "@/hooks/usePatients";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@neonpro/ui";
+import { Calendar, Shield, TestTube, User } from "lucide-react";
+import Link from "next/link";
 import { PatientsList } from "../components/PatientsList";
 import { AppointmentsList } from "./components/dashboard/AppointmentsList";
 import { HeroSection } from "./components/dashboard/HeroSection";
@@ -86,6 +89,69 @@ const QuickAccessSection = ({
         appointmentsLoading={appointmentsLoading}
         todaysAppointments={todaysAppointments}
       />
+    </div>
+
+    {/* Quick Access Links */}
+    <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <User className="h-5 w-5 mr-2" />
+            Gerenciar Pacientes
+          </CardTitle>
+          <CardDescription>
+            Sistema completo de cadastro e gerenciamento de pacientes
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link href="/pacientes">
+            <Button className="w-full">
+              <User className="h-4 w-4 mr-2" />
+              Ver Todos os Pacientes
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Calendar className="h-5 w-5 mr-2" />
+            Agenda de Consultas
+          </CardTitle>
+          <CardDescription>
+            Visualização e gerenciamento de agendamentos
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link href="/agenda">
+            <Button className="w-full">
+              <Calendar className="h-4 w-4 mr-2" />
+              Abrir Agenda
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Shield className="h-5 w-5 mr-2" />
+            Teste de Autenticação
+          </CardTitle>
+          <CardDescription>
+            Página de desenvolvimento para testar o sistema de autenticação real
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link href="/auth-test">
+            <Button className="w-full" variant="outline">
+              <TestTube className="h-4 w-4 mr-2" />
+              Abrir Teste de Auth
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
     </div>
   </section>
 );

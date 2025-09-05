@@ -307,7 +307,9 @@ phase_3_planning_design:
 - Run `bun run next:lint:web` for Next.js linting
 - Run `bun run type-check` to verify TypeScript compilation
 - Use `serena` to analyze code quality and identify issues
-- Fix any errors or warnings before proceeding
+- Always look for big picture, and Fix all errors or warnings before finalizing tasks.
+- Avoid loop trying to fix errors and focus on the most impactful changes, finish all tasks and return to fix errors later
+- Ensure code adheres to project coding standards and best practices
 - **Correction Loop**: If issues found:
   - Use `serena` to understand code structure and dependencies
   - Fix issues using `desktop-commander` for file operations

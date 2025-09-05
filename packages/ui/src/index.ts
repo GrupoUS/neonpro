@@ -32,7 +32,7 @@ export * from "./hooks/use-toast";
 // Layout exports
 export * from "./layouts";
 // Utils exports
-export * from "./lib/utils";
+export * from "./utils";
 // Type exports
 export * from "./types";
 

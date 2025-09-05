@@ -102,3 +102,32 @@ echo "2. Run: vercel --prod"
 echo "3. Configure custom domain: vercel domains add neonpro.com.br"
 echo
 echo -e "${GREEN}🚀 Ready for deployment!${NC}"
+# --- Supabase Branching (Optional Helpers) ---
+# To push env consistently for preview/production; fill placeholders before use.
+# Example usage:
+#   ./scripts/setup-vercel-env.sh  # interactive prompts as above
+#   # or export variables beforehand to avoid prompts
+#   export NEXT_PUBLIC_SUPABASE_URL="https://YOUR-PROJECT.supabase.co"
+#   export NEXT_PUBLIC_SUPABASE_ANON_KEY="..."
+#   export SUPABASE_SERVICE_ROLE_KEY="..."
+#   export SUPABASE_JWT_SECRET="..."
+#   ./scripts/setup-vercel-env.sh
+
+push_env_if_set() {
+  local name=$1
+  local value=${!name}
+  if [ -n "$value" ]; then
+    vercel env add "$name" production <<< "$value"
+    vercel env add "$name" preview <<< "$value"
+    echo -e "${GREEN}✅ $name set from environment${NC}"
+  fi
+}
+
+# Non-interactive mode: read from existing shell env if provided
+if [ -n "$CI" ] || [ "$NON_INTERACTIVE" = "1" ]; then
+  echo -e "${BLUE}Running in non-interactive mode...${NC}"
+  push_env_if_set NEXT_PUBLIC_SUPABASE_URL
+  push_env_if_set NEXT_PUBLIC_SUPABASE_ANON_KEY
+  push_env_if_set SUPABASE_SERVICE_ROLE_KEY
+  push_env_if_set SUPABASE_JWT_SECRET
+fi

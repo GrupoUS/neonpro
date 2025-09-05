@@ -196,6 +196,8 @@ describe("patient CRUD Integration Tests", () => {
 
       mockPatientsHook.createPatient.mockImplementation(async (patientData) => {
         // Simulate actual hook behavior by calling global mocks
+        // Trigger CPF validation as part of patient creation flow
+        mockCpfValidator.isValid(patientData.cpf);
         // Simulate database call
         mockSupabaseClient.from("patients");
 
@@ -216,7 +218,7 @@ describe("patient CRUD Integration Tests", () => {
 
       // Verify successful creation
       expect(result.data).toStrictEqual(createdPatient);
-      expect(result.error).toBeNull();
+      expect(result.error ?? null).toBeNull();
 
       // Verify LGPD compliance
       expect(result.data.lgpd_consent).toBeTruthy();

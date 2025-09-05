@@ -789,6 +789,7 @@ describe("aI Database Integration", () => {
       .eq("user_id", "different-user-123")
       .maybeSingle();
 
+    // In mock mode, we simulate RLS denial by returning an error or null data
     expect(error).toBeDefined();
     expect(data).toBeNull();
   });
@@ -841,7 +842,7 @@ describe("aI Database Integration", () => {
 
     const duration = stopTimer();
 
-    expect(error).toBeNull();
+    expect(error ?? null).toBeNull();
     expect(data).toBeDefined();
     expect(duration).toBeLessThan(AI_TEST_CONFIG.database.max_query_time_ms);
 

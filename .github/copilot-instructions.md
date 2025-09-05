@@ -280,7 +280,8 @@ phase_3_planning_design:
   - Use `desktop-commander` for file operations (chunked 25-30 lines max)
   - Use `shadcn-ui` to check component availability before custom development
   - Follow established code patterns, naming conventions, and project standards
-  - **Stuck >3x**: Use sequential-thinking to reassess
+  - **Stuck >3x**: Use sequential-thinking to reassess and try alternatives
+  - **Complexity ≥7**: Add context7 → tavily for deep understanding and best practices
   - Use `think` tool every 5 steps for alignment with requirements
   - Implement comprehensive error handling following project patterns
   - **Test Categories**: Success cases, error cases, edge cases, business logic
@@ -293,11 +294,10 @@ phase_3_planning_design:
 - Run `bun run format && bun run lint:fix && bun run type-check` to format code
 - **Correction Loop**: If tests fail:
   - Use `serena` to analyze failing code and dependencies
-  - Fix all issues
-  - **Stuck >3x**: Use sequential-thinking to reassess
+  - Use `tavily` and `context7` for oficial docs and best practices to fix the errors
+  - **Stuck >3x**: Use sequential-thinking to update strategy with new insights from research
   - Repeat until ALL tests pass
 - Use `archon` to document test results and coverage metrics
-- Only proceed when all tests green and coverage meets requirements
 
 ### 5. **Code Quality Check** 🔍
 
@@ -307,13 +307,17 @@ phase_3_planning_design:
 - Run `bun run next:lint:web` for Next.js linting
 - Run `bun run type-check` to verify TypeScript compilation
 - Use `serena` to analyze code quality and identify issues
-- Fix any errors or warnings before proceeding
+- Always look for big picture, and Fix all errors or warnings before finalizing tasks.
+- Avoid loop trying to fix errors and focus on the most impactful changes, finish all tasks and return to fix errors later
+- Ensure code adheres to project coding standards and best practices
+- Only proceed when all tests green and coverage meets requirements
 - **Correction Loop**: If issues found:
   - Use `serena` to understand code structure and dependencies
   - Fix issues using `desktop-commander` for file operations
-  - **Stuck >3x**: Use sequential-thinking to reassess
+  - **Stuck >3x**: Use sequential-thinking to reassess and try alternatives
+  - Use `context7` and `tavily` for oficial docs and best practices to fix the errors
   - Return to **Step 4** and repeat cycle
-  - Continue until ALL quality checks pass
+  - Only Continue when ALL quality checks pass
 
 ```yaml
 validation:

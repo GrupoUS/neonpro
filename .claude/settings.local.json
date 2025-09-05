@@ -99,7 +99,10 @@
       "mcp__supabase__get_project",
       "mcp__supabase__list_tables",
       "mcp__supabase__execute_sql",
-      "mcp__desktop-commander__start_search"
+      "mcp__desktop-commander__start_search",
+      "mcp__supabase__get_project_url",
+      "mcp__supabase__get_anon_key",
+      "mcp__supabase__apply_migration"
     ],
     "deny": [
       "Edit",

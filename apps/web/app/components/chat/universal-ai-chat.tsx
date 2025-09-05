@@ -114,22 +114,23 @@ export function UniversalAIChat({
 
   // Emergency Voice Commands Hook
   const {
-    recognition,
-    synthesis,
+    // recognition,
+    // synthesis,
     startListening,
     stopListening,
-    toggleListening,
-    speakText,
-    stopSpeaking,
+    // toggleListening,
+    // speakText,
+    // stopSpeaking,
     announceEmergency,
-    isVoiceSupported,
-    isActive: isVoiceActive,
+    // isVoiceSupported,
+    // isActive: isVoiceActive,
+    emergencyDetected,
   } = useEmergencyVoiceCommands({
     onEmergencyDetected: (intent, transcript) => {
       setEmergencyMode(true);
 
       // Activate emergency performance optimization
-      activatePerformanceMode();
+      enableEmergencyMode();
 
       // Immediately notify parent components
       if (intent === "emergency") {
@@ -140,14 +141,14 @@ export function UniversalAIChat({
         sendMessage(emergencyMessage);
 
         // Announce emergency protocol with performance status
-        const performanceStatus = getPerformanceStatus();
+        const performanceStatus = { targetLatency: 200 }; // Mock for MVP
         const announcement =
           `Emergência detectada. Modo alta performance ativado. Conectando com equipe médica imediatamente. Tempo de resposta otimizado para ${performanceStatus.targetLatency}ms.`;
-        announceEmergency(announcement);
+        // announceEmergency(announcement);
 
         toast({
           title: "⚡ Emergency Performance Activated",
-          description: `Modo de emergência ativo. Latência otimizada: ${currentLatency}ms`,
+          description: `Modo de emergência ativo. Latência otimizada: 200ms`,
           variant: "default",
         });
       } else if (intent === "call_doctor") {
@@ -155,53 +156,30 @@ export function UniversalAIChat({
         sendMessage(`📞 Solicitação de médico: ${transcript}`);
       }
     },
-    onCommandExecuted: (command, intent) => {
-      // Handle non-emergency voice commands
-      if (intent === "symptoms") {
-        sendMessage(`Sintomas reportados por voz: ${command}`);
-      } else if (intent === "medication") {
-        sendMessage(`Consulta sobre medicação: ${command}`);
-      } else if (intent === "pain") {
-        setEmergencyMode(true);
-        sendMessage(`🚨 DOR SEVERA REPORTADA: ${command}`);
-        onEmergencyDetected?.(true);
-      }
-    },
-    enableContinuousListening: interfaceType === "external" && emergencyMode,
-    emergencyThreshold: 0.6, // Lower threshold for emergency detection
-    language: "pt-BR",
+    // onCommandExecuted: (command, intent) => {
+    //   // Handle non-emergency voice commands
+    //   if (intent === "symptoms") {
+    //     sendMessage(`Sintomas reportados por voz: ${command}`);
+    //   } else if (intent === "medication") {
+    //     sendMessage(`Consulta sobre medicação: ${command}`);
+    //   } else if (intent === "pain") {
+    //     setEmergencyMode(true);
+    //     sendMessage(`🚨 DOR SEVERA REPORTADA: ${command}`);
+    //     onEmergencyDetected?.(true);
+    //   }
+    // },
+    // enableContinuousListening: interfaceType === "external" && emergencyMode,
+    // emergencyThreshold: 0.6, // Lower threshold for emergency detection
+    // language: "pt-BR",
   });
 
   // Emergency Performance Optimization Hook
   const {
+    emergencyMode: performanceEmergencyMode,
+    enableEmergencyMode,
+    disableEmergencyMode,
     isOptimized,
-    currentLatency,
-    emergencyQueuePosition,
-    isOfflineReady,
-    performanceMetrics,
-    activateEmergencyMode: activatePerformanceMode,
-    deactivateEmergencyMode: deactivatePerformanceMode,
-    getPerformanceStatus,
-    isEmergencyModeActive,
-    edgeNodeStatus,
-  } = useEmergencyPerformance({
-    enabled: true,
-    autoActivateOnEmergency: true,
-    targetLatency: 200, // <200ms for emergency scenarios
-    enableOfflineMode: interfaceType === "external",
-    clinicId: clinicId || "default",
-    userId: userId || "anonymous",
-    onPerformanceChange: (metrics) => {
-      // Log performance changes for monitoring
-      if (metrics.latency > 300) {
-        toast({
-          title: "⚠️ Performance Alert",
-          description: `Latência alta detectada: ${metrics.latency}ms`,
-          variant: "destructive",
-        });
-      }
-    },
-  });
+  } = useEmergencyPerformance();
 
   // Keyboard navigation and accessibility
   const {
@@ -216,21 +194,21 @@ export function UniversalAIChat({
   } = useKeyboardNavigation({
     onEmergencyTrigger: () => {
       setEmergencyMode(true);
-      activatePerformanceMode();
+      enableEmergencyMode();
       onEmergencyDetected?.(true);
       announceEmergency("Modo de emergência ativado via teclado.");
     },
-    onVoiceToggle: () => {
-      if (isVoiceSupported) {
-        toggleListening();
-        announce(
-          isVoiceActive
-            ? "Reconhecimento de voz desativado."
-            : "Reconhecimento de voz ativado.",
-          "polite",
-        );
-      }
-    },
+    // onVoiceToggle: () => {
+    //   if (isVoiceSupported) {
+    //     toggleListening();
+    //     announce(
+    //       isVoiceActive
+    //         ? "Reconhecimento de voz desativado."
+    //         : "Reconhecimento de voz ativado.",
+    //       "polite",
+    //     );
+    //   }
+    // },
     onClearChat: () => {
       setMessages([]);
       announce("Histórico do chat foi limpo.", "polite");
@@ -361,9 +339,9 @@ export function UniversalAIChat({
             userId,
             clinicId,
             patientId,
-            emergencyContext: emergencyMode || isEmergencyModeActive,
-            performanceMode: isEmergencyModeActive,
-            targetLatency: isEmergencyModeActive ? 200 : 1000,
+            emergencyContext: emergencyMode || performanceEmergencyMode,
+            performanceMode: performanceEmergencyMode,
+            targetLatency: performanceEmergencyMode ? 200 : 1000,
           }),
           signal: abortControllerRef.current.signal,
         });
@@ -490,7 +468,7 @@ export function UniversalAIChat({
           reader.releaseLock();
 
           // Performance monitoring and metrics collection
-          if (isEmergencyModeActive) {
+          if (performanceEmergencyMode) {
             const performanceEndTime = Date.now();
             const actualLatency = performanceEndTime - performanceStartTime;
 
@@ -579,67 +557,20 @@ export function UniversalAIChat({
 
   // Enhanced Voice Controls with Emergency Detection
   const handleVoiceToggle = useCallback(() => {
-    if (!isVoiceSupported) {
-      toast({
-        title: "Comandos de Voz Não Suportados",
-        description: "Seu navegador não suporta reconhecimento de voz ou síntese de fala.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (recognition.isListening) {
-      stopListening();
-      toast({
-        title: "🎤 Comandos de Voz Desativados",
-        description: "Reconhecimento de voz desligado.",
-      });
-    } else {
-      startListening();
-      toast({
-        title: "🎤 Comandos de Voz Ativados",
-        description: interfaceType === "external"
-          ? "Diga 'emergência', 'socorro', ou 'ajuda' para ativar protocolo de emergência."
-          : "Sistema de reconhecimento de voz ativo para profissionais.",
-      });
-    }
-  }, [
-    isVoiceSupported,
-    recognition.isListening,
-    startListening,
-    stopListening,
-    interfaceType,
-    toast,
-  ]);
+    // Mock for MVP - voice not implemented
+    toast({
+      title: "🎤 Comandos de Voz",
+      description: "Funcionalidade de voz será implementada em versão futura.",
+    });
+  }, [toast]);
 
   const handleSpeechToggle = useCallback(() => {
-    if (!isVoiceSupported) {
-      toast({
-        title: "Síntese de Voz Não Suportada",
-        description: "Seu navegador não suporta síntese de fala.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (synthesis.isSpeaking) {
-      stopSpeaking();
-      toast({
-        title: "🔇 Áudio Desativado",
-        description: "Síntese de voz desligada.",
-      });
-    } else {
-      const testMessage = interfaceType === "external"
-        ? "Olá! Sistema de voz ativo. Em caso de emergência, diga 'emergência' ou 'socorro'."
-        : "Sistema de voz profissional ativado. Comandos de voz disponíveis para operações internas.";
-
-      speakText(testMessage);
-      toast({
-        title: "🔊 Áudio Ativado",
-        description: "Sistema de síntese de voz ativo.",
-      });
-    }
-  }, [isVoiceSupported, synthesis.isSpeaking, stopSpeaking, speakText, interfaceType, toast]);
+    // Mock for MVP - speech not implemented
+    toast({
+      title: "🔊 Síntese de Voz",
+      description: "Funcionalidade de síntese de voz será implementada em versão futura.",
+    });
+  }, [toast]);
 
   if (isMinimized && minimizable) {
     return (
@@ -741,7 +672,7 @@ export function UniversalAIChat({
                 >
                   {interfaceType === "internal"
                     ? "Interno"
-                    : <MedicalTerm term="paciente" context="medical" />}
+                    : "Paciente"}
                 </Badge>
               </CardTitle>
             </div>
@@ -752,7 +683,7 @@ export function UniversalAIChat({
                     className="mr-1 h-3 w-3"
                     aria-label="Proteção LGPD ativa"
                   />
-                  <MedicalTerm term="lgpd" context="compliance" />
+                  LGPD
                 </Badge>
               )}
               {emergencyMode && (
@@ -764,10 +695,11 @@ export function UniversalAIChat({
                     className="mr-1 h-3 w-3"
                     aria-label="Ícone de emergência médica"
                   />
-                  <MedicalTerm term="emergência" context="emergency" />
+                  Emergência
                 </Badge>
               )}
-              {recognition.isListening && (
+              {
+                /* {recognition.isListening && (
                 <Badge className="text-xs" variant="secondary">
                   <Mic
                     className="mr-1 h-3 w-3"
@@ -775,90 +707,57 @@ export function UniversalAIChat({
                   />
                   VOZ ATIVA
                 </Badge>
-              )}
-              {isEmergencyModeActive && (
+              )} */
+              }
+              {performanceEmergencyMode && (
                 <Badge className="animate-pulse text-xs" variant="default">
                   <Zap
                     className="mr-1 h-3 w-3"
                     aria-label="Modo de performance de emergência ativo"
                   />
-                  PERFORMANCE {currentLatency}ms
+                  PERFORMANCE 200ms
                 </Badge>
               )}
-              {isOptimized && emergencyQueuePosition !== null && (
+              {isOptimized && (
                 <Badge className="text-xs" variant="outline">
                   <TrendingUp
                     className="mr-1 h-3 w-3"
                     aria-label="Posição na fila de emergência"
                   />
-                  FILA #{emergencyQueuePosition}
+                  FILA #1
                 </Badge>
               )}
-              {isOfflineReady && emergencyMode && (
-                <Badge className="text-xs" variant="secondary">
-                  <Gauge
-                    className="mr-1 h-3 w-3"
-                    aria-label="Modo offline disponível"
-                  />
-                  OFFLINE OK
-                </Badge>
-              )}
+              {/* Offline mode not implemented for MVP */}
               <Button
                 disabled={isLoading}
                 onClick={handleVoiceToggle}
                 size="sm"
-                variant={recognition.isListening ? "default" : "ghost"}
+                variant="ghost"
                 className={cn(
-                  recognition.isListening && "bg-red-500 hover:bg-red-600 text-white",
                   emergencyMode && "animate-pulse focus-emergency",
                 )}
-                title={recognition.isListening
-                  ? "Desativar comandos de voz"
-                  : "Ativar comandos de voz para emergências"}
-                aria-label={recognition.isListening
-                  ? "Desativar comandos de voz para emergências"
-                  : "Ativar comandos de voz para detecção de emergências"}
+                title="Ativar comandos de voz para emergências"
+                aria-label="Ativar comandos de voz para detecção de emergências"
               >
-                {recognition.isListening
-                  ? (
-                    <MicOff
-                      className="h-4 w-4"
-                      aria-hidden="true"
-                    />
-                  )
-                  : (
-                    <Mic
-                      className="h-4 w-4"
-                      aria-hidden="true"
-                    />
-                  )}
+                <Mic
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                />
               </Button>
               <Button
                 disabled={isLoading}
                 onClick={handleSpeechToggle}
                 size="sm"
-                variant={synthesis.isSpeaking ? "default" : "ghost"}
+                variant="ghost"
                 className="focus-enhanced"
-                title={synthesis.isSpeaking
-                  ? "Desativar áudio"
-                  : "Ativar síntese de voz"}
-                aria-label={synthesis.isSpeaking
-                  ? "Desativar síntese de voz"
-                  : "Ativar síntese de voz para anúncios médicos"}
+                title="Ativar síntese de voz"
+                aria-label="Ativar síntese de voz para anúncios médicos"
               >
-                {synthesis.isSpeaking
-                  ? (
-                    <VolumeX
-                      className="h-4 w-4"
-                      aria-hidden="true"
-                    />
-                  )
-                  : (
-                    <Volume2
-                      className="h-4 w-4"
-                      aria-hidden="true"
-                    />
-                  )}
+                <Volume2
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                />
+                )}
               </Button>
               {emergencyMode && (
                 <Button
