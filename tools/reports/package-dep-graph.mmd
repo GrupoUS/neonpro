@@ -1,0 +1,26 @@
+graph LR
+neonpro__api-->neonpro__security
+neonpro__api-->neonpro__shared
+neonpro__api-->neonpro__types
+neonpro__web-->neonpro__ui
+neonpro__web-->neonpro__security
+neonpro__web-->neonpro__utils
+neonpro__web-->neonpro__database
+neonpro__web-->neonpro__types
+neonpro__web-->neonpro__monitoring
+neonpro__web-->neonpro__api
+neonpro__auth-->neonpro__core-services
+neonpro__core-services-->neonpro__security
+neonpro__health-dashboard-->neonpro__monitoring
+neonpro__monitoring-->neonpro__database
+neonpro__monitoring-->neonpro__core-services
+neonpro__shared-->neonpro__utils
+neonpro__shared-->neonpro__core-services
+neonpro__shared-->neonpro__monitoring
+neonpro__shared-->neonpro__ui
+neonpro__domain-->neonpro__security
+neonpro__compliance-->neonpro__types
+neonpro__utils-->neonpro__types
+neonpro__ui-->neonpro__utils
+neonpro__ai-->neonpro__core-services
+neonpro__ai-->neonpro__types

@@ -56,6 +56,23 @@ const createMockQueryBuilder = () => {
 
       return mockBuilder;
     }),
+    upsert: vi.fn().mockImplementation((data) => {
+      const tableName = (mockBuilder as unknown).currentTable || "default";
+      const existing = insertedRecords.get(tableName) || [];
+      const incoming = Array.isArray(data) ? data : [data];
+      const merged: Record<string, unknown>[] = [...existing];
+      for (const item of incoming) {
+        const key = (item as any).id ?? (item as any).name;
+        const idx = merged.findIndex(
+          (r) => (r as any).id === key || (r as any).name === key,
+        );
+        if (idx >= 0) merged[idx] = { ...merged[idx], ...item };
+        else merged.push(item as any);
+      }
+      insertedRecords.set(tableName, merged);
+      insertedData = incoming as any;
+      return mockBuilder;
+    }),
     insert: vi.fn().mockImplementation((data) => {
       insertedData = Array.isArray(data) ? data : [data];
 
@@ -88,18 +105,30 @@ const createMockQueryBuilder = () => {
       return mockBuilder;
     }),
     update: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
+    delete: vi.fn().mockImplementation(() => {
+      (mockBuilder as any)._deleteMode = true;
+      return mockBuilder;
+    }),
     eq: vi.fn().mockReturnThis(),
     neq: vi.fn().mockReturnThis(),
     gt: vi.fn().mockReturnThis(),
     gte: vi.fn().mockReturnThis(),
     lt: vi.fn().mockReturnThis(),
     lte: vi.fn().mockReturnThis(),
-    like: vi.fn().mockReturnThis(),
+    like: vi.fn().mockImplementation((col: string, pattern: string) => {
+      (mockBuilder as any)._like = { col, pattern };
+      return mockBuilder;
+    }),
     ilike: vi.fn().mockReturnThis(),
     is: vi.fn().mockReturnThis(),
-    in: vi.fn().mockReturnThis(),
-    contains: vi.fn().mockReturnThis(),
+    in: vi.fn().mockImplementation((col: string, values: any[]) => {
+      (mockBuilder as any)._in = { col, values };
+      return mockBuilder;
+    }),
+    contains: vi.fn().mockImplementation((col: string, arr: any[]) => {
+      (mockBuilder as any)._contains = { col, arr };
+      return mockBuilder;
+    }),
     containedBy: vi.fn().mockReturnThis(),
     rangeGt: vi.fn().mockReturnThis(),
     rangeGte: vi.fn().mockReturnThis(),
@@ -149,16 +178,61 @@ const createMockQueryBuilder = () => {
       return Promise.resolve(result).then(onResolve, onReject);
     }
 
-    // Return appropriate data based on the last operation
+    // Return appropriate data based on the last operation and filters
+    const tableName = (mockBuilder as unknown as any).currentTable || "default";
+    const store = insertedRecords.get(tableName) || [];
+
+    const isDelete = Boolean((mockBuilder as any)._deleteMode);
+    const like = (mockBuilder as any)._like as { col: string; pattern: string } | undefined;
+    const inFilter = (mockBuilder as any)._in as { col: string; values: any[] } | undefined;
+    const contains = (mockBuilder as any)._contains as { col: string; arr: any[] } | undefined;
+
+    if (isDelete) {
+      let kept = store;
+      if (like) {
+        const regex = new RegExp("^" + like.pattern.replace(/%/g, ".*") + "$");
+        kept = kept.filter((r) => !regex.test(String((r as any)[like.col] ?? "")));
+      }
+      if (inFilter) {
+        kept = kept.filter((r) => !inFilter.values.includes((r as any)[inFilter.col]));
+      }
+      insertedRecords.set(tableName, kept);
+      (mockBuilder as any)._deleteMode = false;
+      (mockBuilder as any)._like = undefined;
+      (mockBuilder as any)._in = undefined;
+      (mockBuilder as any)._contains = undefined;
+      const result = { data: kept, error: null };
+      return Promise.resolve(result).then(onResolve, onReject);
+    }
+
     let resultData = insertedData;
 
-    // For select operations after insert, return the inserted data as array
-    if (hasSelectAfterInsert && insertedData) {
-      resultData = Array.isArray(insertedData) ? insertedData : [insertedData];
-    } // For select operations without insert, return empty array
-    else if (hasSelectAfterInsert && !insertedData) {
+    if (hasSelectAfterInsert) {
+      // Start with store when only selecting
+      let rows = insertedData ? (Array.isArray(insertedData) ? insertedData : [insertedData]) : store;
+      if (like) {
+        const regex = new RegExp("^" + like.pattern.replace(/%/g, ".*") + "$");
+        rows = rows.filter((r) => regex.test(String((r as any)[like.col] ?? "")));
+      }
+      if (inFilter) {
+        rows = rows.filter((r) => inFilter.values.includes((r as any)[inFilter.col]));
+      }
+      if (contains) {
+        rows = rows.filter((r) => {
+          const arr = (r as any)[contains.col] as any[];
+          if (!Array.isArray(arr)) return false;
+          return contains.arr.every((v) => arr.includes(v));
+        });
+      }
+      resultData = rows;
+    } else if (!insertedData) {
       resultData = [];
     }
+
+    // Reset one-shot flags
+    (mockBuilder as any)._like = undefined;
+    (mockBuilder as any)._in = undefined;
+    (mockBuilder as any)._contains = undefined;
 
     const result = { data: resultData, error: null };
     return Promise.resolve(result).then(onResolve, onReject);

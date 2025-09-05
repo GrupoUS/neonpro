@@ -90,6 +90,9 @@ export default defineConfig({
               "packages/utils/**",
               "tools/tests/**",
             ],
+            exclude: [
+              "packages/health-dashboard/**",
+            ],
             thresholds: {
               global: {
                 branches: 80,
@@ -149,6 +152,9 @@ export default defineConfig({
               "apps/web/app/**/*.{ts,tsx}",
               "apps/web/lib/**/*.{ts,tsx}",
               "packages/**/*.{ts,tsx}",
+            ],
+            exclude: [
+              "packages/health-dashboard/**",
             ],
             thresholds: {
               global: {
@@ -256,14 +262,14 @@ export default defineConfig({
           "packages/utils/tests/**/*.test.{ts}",
           "packages/core-services/tests/**/*.test.{ts}",
           "packages/shared/tests/**/*.test.{ts,tsx}",
-          "packages/security/src/index.test.ts"
+          "packages/security/src/index.test.ts",
         ],
         exclude: [
           "apps/web/tests/integration/**",
           "packages/*/tests/integration/**",
           "apps/web/tests/performance/**",
           "**/*.performance.test.{ts,tsx}",
-          "apps/web/tests/external-chat-widget.test.ts"
+          "apps/web/tests/external-chat-widget.test.ts",
         ],
         testTimeout: 5_000,
         hookTimeout: 5_000,
@@ -274,13 +280,13 @@ export default defineConfig({
             "apps/web/tests/**",
             "packages/ui/**",
             "packages/utils/**",
-            "tools/tests/**"
+            "tools/tests/**",
           ],
           thresholds: {
-            global: { branches: 80, functions: 85, lines: 85, statements: 85 }
-          }
-        }
-      }
+            global: { branches: 80, functions: 85, lines: 85, statements: 85 },
+          },
+        },
+      },
     }),
     defineProject({
       test: {
@@ -291,7 +297,7 @@ export default defineConfig({
         poolOptions: { forks: { singleFork: false, maxForks: 2 } },
         include: [
           "apps/web/tests/integration/**/*.test.{ts,tsx}",
-          "packages/*/tests/integration/**/*.test.{ts,tsx}"
+          "packages/*/tests/integration/**/*.test.{ts,tsx}",
         ],
         testTimeout: 15_000,
         hookTimeout: 10_000,
@@ -304,40 +310,92 @@ export default defineConfig({
           include: [
             "apps/web/app/**/*.{ts,tsx}",
             "apps/web/lib/**/*.{ts,tsx}",
-            "packages/**/*.{ts,tsx}"
+            "packages/**/*.{ts,tsx}",
           ],
           thresholds: {
-            global: { branches: 70, functions: 75, lines: 80, statements: 80 }
-          }
-        }
-      }
-    })
+            global: { branches: 70, functions: 75, lines: 80, statements: 80 },
+          },
+        },
+      },
+    }),
   ],
 
   // ✅ UNIFIED RESOLVE ALIASES
   resolve: {
-    alias: {
+    alias: [
       // Web app aliases
-      "@": path.resolve(__dirname, "./apps/web"),
-      "@/lib": path.resolve(__dirname, "./apps/web/lib"),
-      "@/components": path.resolve(__dirname, "./apps/web/components"),
-      "@/hooks": path.resolve(__dirname, "./apps/web/hooks"),
+      { find: /^@$/, replacement: path.resolve(__dirname, "./apps/web") },
+      { find: /^@\/lib(.*)?$/, replacement: path.resolve(__dirname, "./apps/web/lib") + "$1" },
+      {
+        find: /^@\/components(.*)?$/,
+        replacement: path.resolve(__dirname, "./apps/web/components") + "$1",
+      },
+      { find: /^@\/hooks(.*)?$/, replacement: path.resolve(__dirname, "./apps/web/hooks") + "$1" },
 
       // API aliases
-      "@/middleware": path.resolve(__dirname, "./apps/api/src/middleware"),
-      "@/routes": path.resolve(__dirname, "./apps/api/src/routes"),
-      "@/types": path.resolve(__dirname, "./apps/api/src/types"),
+      {
+        find: /^@\/middleware(.*)?$/,
+        replacement: path.resolve(__dirname, "./apps/api/src/middleware") + "$1",
+      },
+      {
+        find: /^@\/routes(.*)?$/,
+        replacement: path.resolve(__dirname, "./apps/api/src/routes") + "$1",
+      },
+      {
+        find: /^@\/types(.*)?$/,
+        replacement: path.resolve(__dirname, "./apps/api/src/types") + "$1",
+      },
 
-      // Package aliases
-      "@neonpro/ui": path.resolve(__dirname, "./packages/ui/src"),
-      "@neonpro/utils": path.resolve(__dirname, "./packages/utils/src"),
-      "@neonpro/types": path.resolve(__dirname, "./packages/types/src"),
-      "@neonpro/shared": path.resolve(__dirname, "./packages/shared/src"),
+      // Monorepo package aliases (source, handle subpaths safely)
+      // Exact package imports → point to source index
+      {
+        find: /^@neonpro\/ui$/,
+        replacement: path.resolve(__dirname, "./packages/ui/src/index.ts"),
+      },
+      {
+        find: /^@neonpro\/utils$/,
+        replacement: path.resolve(__dirname, "./packages/utils/src/index.ts"),
+      },
+      {
+        find: /^@neonpro\/types$/,
+        replacement: path.resolve(__dirname, "./packages/types/src/index.ts"),
+      },
+      {
+        find: /^@neonpro\/shared$/,
+        replacement: path.resolve(__dirname, "./packages/shared/src/index.ts"),
+      },
+      // Subpath imports → map folder then append capture group
+      {
+        find: /^@neonpro\/ui\/(.*)$/,
+        replacement: path.resolve(__dirname, "./packages/ui/src") + "/$1",
+      },
+      {
+        find: /^@neonpro\/utils\/(.*)$/,
+        replacement: path.resolve(__dirname, "./packages/utils/src") + "/$1",
+      },
+      {
+        find: /^@neonpro\/types\/(.*)$/,
+        replacement: path.resolve(__dirname, "./packages/types/src") + "/$1",
+      },
+      {
+        find: /^@neonpro\/shared\/(.*)$/,
+        replacement: path.resolve(__dirname, "./packages/shared/src") + "/$1",
+      },
+
+      // Explicit subpath aliases for tests (kept for determinism)
+      {
+        find: "@neonpro/shared/api-client",
+        replacement: path.resolve(__dirname, "./packages/shared/src/api-client.ts"),
+      },
+      {
+        find: "@neonpro/utils/validation",
+        replacement: path.resolve(__dirname, "./packages/utils/src/validation.ts"),
+      },
 
       // Force single React instance
-      "react": path.resolve(__dirname, "./node_modules/react"),
-      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
-    },
+      { find: "react", replacement: path.resolve(__dirname, "./node_modules/react") },
+      { find: "react-dom", replacement: path.resolve(__dirname, "./node_modules/react-dom") },
+    ],
   },
 
   // Performance dependencies

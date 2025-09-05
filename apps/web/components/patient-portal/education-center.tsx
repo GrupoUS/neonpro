@@ -45,7 +45,7 @@ import {
 import { useState } from "react";
 
 // Content types
-type BaseContent = {
+interface BaseContent {
   id: number;
   title: string;
   description?: string;
@@ -56,7 +56,7 @@ type BaseContent = {
   tags?: string[];
   views?: number;
   rating?: number;
-};
+}
 
 export type VideoContent = BaseContent & {
   type: "video";
@@ -471,7 +471,7 @@ function CareInstructionsWidget() {
   );
 }
 
-function VideoPlayer({ content }: { content: VideoContent }) {
+function VideoPlayer({ content }: { content: VideoContent; }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, _setCurrentTime] = useState(45); // seconds
@@ -657,21 +657,21 @@ export function EducationCenter() {
         </Button>
 
         {/* Content Viewer */}
-        {selectedContent.type === "video" ? (
-          <VideoPlayer content={selectedContent as VideoContent} />
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>{selectedContent.title}</CardTitle>
-              <CardDescription>{selectedContent.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="prose prose-sm max-w-none">
-                <p>Conteúdo do artigo apareceria aqui...</p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {selectedContent.type === "video"
+          ? <VideoPlayer content={selectedContent as VideoContent} />
+          : (
+            <Card>
+              <CardHeader>
+                <CardTitle>{selectedContent.title}</CardTitle>
+                <CardDescription>{selectedContent.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="prose prose-sm max-w-none">
+                  <p>Conteúdo do artigo apareceria aqui...</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
       </div>
     );
   }

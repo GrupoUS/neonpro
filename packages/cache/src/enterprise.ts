@@ -1,5 +1,5 @@
 import type { MultiLayerCacheManager } from "./cache-manager";
-import { CacheLayer } from "./types";
+import type { CacheLayer } from "./types";
 
 export interface OperationMetadata {
   healthcareData?: boolean;

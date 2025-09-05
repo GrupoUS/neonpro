@@ -76,15 +76,8 @@ class AIServicesEcosystemTester {
   private static context: EcosystemTestContext;
 
   static async setupTestEnvironment(): Promise<void> {
-    // Use mock Supabase client for integration tests
-    const supabaseClient = {
-      from: () => ({
-        delete: () => ({ like: () => Promise.resolve() }),
-        insert: () => Promise.resolve({ data: [], error: null }),
-        select: () => ({ eq: () => Promise.resolve({ data: [], error: null }) }),
-        update: () => ({ eq: () => Promise.resolve({ data: [], error: null }) }),
-      }),
-    };
+    // Use global mock Supabase client for integration tests
+    const supabaseClient = (globalThis as any).mockSupabaseClient;
 
     AIServicesEcosystemTester.context = {
       supabaseClient,

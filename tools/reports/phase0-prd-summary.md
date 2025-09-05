@@ -1,24 +1,35 @@
-## PRD Summary (Phase 0)
+# Phase 0 — PRD Summary (docs/prd)
 
-- Source: `docs/prd/prd.md`
+Docs reviewed
+- `docs/prd/prd.md`, `docs/prd/02-functional-and-technical-specs.md`
 
-- Active/Planned/Out-of-Scope (initial mapping)
-  - Active (Phase 1 foundation): Auth, basic CRUD (patients/appointments), responsive UI with shadcn/ui, basic LGPD
-  - Planned (Phase 2–3): Universal AI Chat, Anti-No-Show engine, notifications/WhatsApp/SMS, dashboards, predictive insights
-  - Out-of-scope (now): AR/VR simulations, advanced enterprise-only capabilities unless required by roadmap
+Objectives & scope
+- IA-first platform for Brazilian aesthetic clinics
+- Core mission: reduce no-shows; streamline ops; enforce LGPD/ANVISA/CFM
 
-- Success metrics
-  - AI response <2s (95%), accuracy >90%
-  - Uptime 99.9%, mobile first
-  - Reduction in no-shows; admin efficiency improvements
+Primary features
+- Universal AI Chat (PT-BR), scheduling via natural language
+- Engine Anti-No-Show (predictive scoring + interventions)
+- Compliance automation (LGPD/ANVISA/CFM)
+- Integrated management: appointments, EMR, dashboard, stock, finance
 
-- Links
-  - <augment_code_snippet path="docs/prd/prd.md" mode="EXCERPT">
-````markdown
-- Universal AI Chat com GPT-4 otimizado
-- Engine Anti-No-Show com machine learning
-````
-  </augment_code_snippet>
+Technical baseline
+- FE: Next.js 15 + React 19 + TS + Tailwind + shadcn/ui
+- BE/DB: Supabase (Postgres+Auth+Realtime+Storage) + Prisma
+- AI: GPT-4/AI SDK; RAG + vectors (pgvector)
+- Infra: Turborepo, Vercel, GitHub Actions
+Phasing (from PRD)
+- Phase 1: Foundation (auth, basic CRUD patients/appointments, responsive UI, basic LGPD)
+- Phase 2: Intelligent architecture (data pipeline, notifications, WhatsApp/SMS)
+- Phase 3: AI features (chat, anti‑no‑show, automation, insights)
 
-- Gaps / Decision required
-  - Confirm which Phase 1 foundation tasks are complete vs pending in code (apps/api routes, apps/web features)
+Success criteria
+- IA response <2s; uptime 99.9%; mobile-first perf; offline basics
+- Impact: fewer no-shows; admin time reduction; user satisfaction; AI adoption
+- Quality: 100% LGPD/ANVISA/CFM; zero security incidents; usability; stability
+
+DB core entities (spec excerpt)
+- clinics, patients, appointments plus AI conversations and behavior analysis
+
+Notes
+- Keep Product scope aligned with consolidation work (API/DB) to avoid rework

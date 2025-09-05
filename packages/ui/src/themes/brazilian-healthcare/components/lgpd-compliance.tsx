@@ -22,7 +22,7 @@ export function LGPDComplianceDashboard({
     currentConsent || null,
   );
   const [isUpdating, setIsUpdating] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState<Date | null>();
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
 
   useEffect(() => {
     setConsent(currentConsent || null);
@@ -40,7 +40,7 @@ export function LGPDComplianceDashboard({
     }
 
     const updatedConsent: LGPDConsent = {
-      ...consent,
+      ...(consent || {}),
       [field]: value,
       consentDate: new Date().toISOString(),
       consentVersion: "2.1", // LGPD compliance version

@@ -266,13 +266,6 @@ export async function updatePatientAction(formData: FormData) {
 
 ## 🔒 **ADVANCED AESTHETIC COMPLIANCE**
 
-### **Regulatory Framework**
-
-- **LGPD Compliance**: Automated patient consent management and data protection validation
-- **ANVISA Class IIa**: Advanced aesthetic device software compliance with audit trail requirements
-- **CFM Ethics**: Professional conduct validation and aesthetic medicine ethics compliance monitoring
-- **International Standards**: HIPAA compatibility for future expansion
-
 ### **Security Implementation**
 
 - **Encryption**: AES-256-GCM for all aesthetic patient information
@@ -473,14 +466,6 @@ test("Emergency patient access workflow", async ({ page }) => {
 });
 ```
 
-### **Quality Metrics**
-
-- **Security**: 100% compliance (LGPD, advanced aesthetic sector)
-- **Performance**: <200ms response, >95 Lighthouse
-- **Testing**: 95%+ coverage, E2E workflows
-- **Accessibility**: WCAG 2.1 AA compliant
-- **Type Safety**: TypeScript strict mode
-
 ---
 
 ## 🎯 **AI INTEGRATION & AUTOMATION**
@@ -489,7 +474,6 @@ test("Emergency patient access workflow", async ({ page }) => {
 
 - **Privacy-First AI**: Patient data sanitization before AI processing with compliance validation
 - **Aesthetic Context**: Advanced aesthetic-specific AI prompts and validation patterns
-- **Compliance Automation**: AI-powered LGPD/ANVISA/CFM adherence monitoring
 - **Streaming Optimization**: Real-time AI responses with advanced aesthetic workflow integration
 
 ### **Privacy-Preserving AI**
@@ -533,140 +517,6 @@ export class AestheticAI {
     );
   }
 }
-```
-
----
-
-## 🔧 **PERFORMANCE & MONITORING**
-
-### **Advanced Aesthetic Performance Targets**
-
-- **Emergency Response**: <200ms for critical patient data access
-- **Aesthetic Operations**: <2s response time guarantee for all treatment workflows
-- **Compliance Validation**: Real-time LGPD/ANVISA checking with automatic remediation
-- **AI Response Times**: <500ms for advanced aesthetic AI interactions with streaming optimization
-
-### **Quality Gates & Standards**
-
-- **Progressive Quality**: L1-L10 standards with advanced aesthetic domain overrides
-- **Test Coverage**: ≥95% for advanced aesthetic features with compliance scenario testing
-- **Accessibility**: WCAG 2.1 AA compliance for aesthetic accessibility requirements
-- **Security Validation**: Zero high/critical vulnerabilities with continuous monitoring
-
----
-
-## 📚 **DEVELOPMENT WORKFLOW & DAILY ROUTINES**
-
-### **Mandatory Tools**
-
-- **Task Management**: Archon MCP server (primary system)
-- **File Operations**: Desktop Commander (100% mandatory usage)
-- **Research Chain**: Context7 → Tavily → Exa (progressive intelligence)
-- **AI Integration**: Vercel AI SDK 5.0 with constitutional patterns
-- **Compliance**: Automated LGPD/ANVISA/CFM validation tools
-
-### **Code Quality Enforcement**
-
-- **TypeScript**: Strict mode with advanced aesthetic data structures
-- **Testing**: Vitest + Playwright with advanced aesthetic scenario coverage
-- **Linting**: Constitutional linting rules with advanced aesthetic compliance checks
-- **Architecture**: Constitutional service patterns with self-governance
-
-### **Development Setup**
-
-1. **Clone repository**
-   ```bash
-   git clone <repository-url>
-   cd neonpro
-   ```
-
-2. **Install dependencies**
-   ```bash
-   bun install
-   ```
-
-3. **Setup environment**
-   ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your credentials
-   ```
-
-4. **Run development server**
-   ```bash
-   bun dev
-   ```
-
-### **Essential Environment Variables**
-
-```bash
-# API Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-
-# AI Services
-ANTHROPIC_API_KEY=your-anthropic-key
-OPENAI_API_KEY=your-openai-key
-
-# Application
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
-
----
-
-## 📚 **QUICK REFERENCE**
-
-### **🚀 Pre-Production Checklist**
-
-- [ ] **Archon**: Tasks completed and marked as "review"
-- [ ] **Security**: MFA active, PHI encrypted, audit logs functioning
-- [ ] **Performance**: <200ms response, Lighthouse >95, bundle <1MB
-- [ ] **Compliance**: LGPD consent, ANVISA audit, CFM ethics validated
-- [ ] **Testing**: 95%+ coverage, E2E workflows, accessibility tested
-- [ ] **Quality**: 30-second reality check passed, TypeScript strict
-- [ ] **Documentation**: Architecture docs updated, comments clear
-
-### **⚡ Emergency Commands**
-
-```bash
-# Complete code validation
-bun run ci:check      # Full code validation (format + lint + type + test)
-bun run security:audit # Security audit
-bun run compliance:validate # Advanced aesthetic compliance validation
-
-# Performance & Quality
-bun run build && bun run lighthouse # Build + performance analysis
-bun run test:coverage # Test coverage
-bun run format       # Format code automatically
-bun run lint:fix     # Fix linting issues
-
-# Archon Integration
-archon:get_available_sources() # Check knowledge base
-archon:manage_task(action="list") # List current tasks
-archon:perform_rag_query(query="advanced aesthetic patterns") # Research
-```
-
-### **Development Workflow**
-
-```bash
-# Archon task management
-archon:manage_task(action="list", filter_by="status", filter_value="todo")
-archon:perform_rag_query(query="advanced aesthetic implementation patterns")
-
-# Quality validation
-bun run ci:check          # Complete code validation
-bun run compliance:validate   # Advanced aesthetic compliance validation
-bun run test:aesthetic   # Advanced aesthetic scenario testing
-```
-
-### **Advanced Aesthetic Compliance**
-
-```bash
-# Compliance validation
-bun run compliance:validate     # Validate advanced aesthetic compliance
-bun run audit:trail            # Generate audit trail reports
-bun run lgpd:check            # LGPD compliance validation
-bun run anvisa:validate       # ANVISA compliance validation
 ```
 
 ### **🏥 Advanced Aesthetic-Specific Patterns**
@@ -718,5 +568,3 @@ const developWithArchon = async (feature: string) => {
 ```
 
 ---
-
-> **🏥 Constitutional Advanced Aesthetic Document**: This comprehensive document provides NeonPro-specific rules that complement the universal framework in [`../../docs/AGENTS.md`](../../docs/AGENTS.md) and complete architecture in [`docs/architecture/`](../). Unified coding standards integrated with VIBECODER principles, Archon workflow, and advanced aesthetic compliance. Maintains quality standards ≥9.8/10 with continuous validation and complete guidance for advanced aesthetic-first development. Last updated: January 2025.

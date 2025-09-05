@@ -294,7 +294,7 @@ async function handlePatientCreate(body: PatientRequest): Promise<NextResponse<P
 
   // Spread client-provided data first, then explicitly set server-controlled fields
   const newPatient: Patient = {
-    ...(body.patientData ?? {}),
+    ...body.patientData,
     id: serverAssignedId,
     status: "pending",
     createdAt: nowIso,
@@ -314,7 +314,7 @@ async function handlePatientCreate(body: PatientRequest): Promise<NextResponse<P
 
 async function handlePatientUpdate(
   body: PatientRequest & { patientId: string; },
-  opts?: { requestIp?: string; existingPatient?: Patient | null },
+  opts?: { requestIp?: string; existingPatient?: Patient | null; },
 ): Promise<NextResponse<PatientResponse>> {
   // Mock patient update - in production would update database
   const clientConsent = body.dataConsent ?? {};
@@ -323,13 +323,13 @@ async function handlePatientUpdate(
 
   const mergedConsent: Patient["dataConsent"] = {
     ...DEFAULT_CONSENT,
-    ...(existingPatient?.dataConsent ?? {}),
+    ...existingPatient?.dataConsent,
     ...clientConsent,
     ipAddress: requestIp,
   };
 
   const updatedPatient: Patient = {
-    ...(body.patientData ?? {}),
+    ...body.patientData,
     id: body.patientId,
     status: "active",
     createdAt: "2024-01-15T10:00:00Z", // Would come from database

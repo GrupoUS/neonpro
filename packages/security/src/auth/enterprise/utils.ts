@@ -179,7 +179,7 @@ export function generateSecureRandom(length = 32): string {
 /**
  * Sanitize user input to prevent XSS
  */
-export function sanitizeInput(input: string): string {
+export function sanitizeAuthInput(input: string): string {
   return input
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")

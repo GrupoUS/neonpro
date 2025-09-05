@@ -13,7 +13,7 @@ interface CacheLayerStats {
 }
 
 interface CacheMetricsProps {
-  cacheManager?: unknown;
+  cacheManager?: { getAllStats: () => Promise<Record<string, any>>; };
   refreshInterval?: number;
 }
 
@@ -43,7 +43,7 @@ export function CacheMetrics({
         let totalResponseTime = 0;
 
         for (const [layer, layerData] of Object.entries(allStats)) {
-          const data = layerData as unknown;
+          const data = layerData as any;
           stats.push({
             layer,
             hitRate: data.hitRate,

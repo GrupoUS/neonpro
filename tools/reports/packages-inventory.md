@@ -1,25 +1,29 @@
-## Packages Inventory (Phase 1)
+# Packages Inventory — Detailed
 
-- Package manager: `pnpm@8.15.0`
-- Build/Test tooling: `turbo.json`, TypeScript strict, Vitest, Playwright, Next.js
-
-- Inventory (selection; full JSON in `tools/reports/packages-inventory.json`)
-  - @neonpro/database — path `packages/database` — size 5.3M — exports: `.`, `./client`, `./prisma`
-  - @neonpro/core-services — path `packages/core-services` — size 2.8M — exports: `.`, `./scheduling`, `./treatment`, `./patient`, `./inventory`, `./billing`, `./notification`
-  - @neonpro/ui — path `packages/ui` — size 3.9M — exports: `.`, `./button`, `./styles`, theming exports
-  - @neonpro/shared — path `packages/shared` — size 4.0M — exports: `.`, `./api-client`, hooks
-  - @neonpro/compliance — path `packages/compliance` — size 2.4M
-  - @neonpro/security — path `packages/security` — size 1.8M — UnifiedAuditService
-  - Others: ai, auth, cache, config, devops, docs, domain, health-dashboard, integrations, monitoring, performance, types, utils, brazilian-healthcare-ui, enterprise
-
-- Evidence
-  - <augment_code_snippet path="packages/ui/package.json" mode="EXCERPT">
-````json
-{"name":"@neonpro/ui","exports":{".":{"types":"./dist/src/index.d.ts"}}
-````
-  </augment_code_snippet>
-  - <augment_code_snippet path="turbo.json" mode="EXCERPT">
-````json
-"@neonpro/ui#build": {"dependsOn": ["@neonpro/types#build", "@neonpro/shared#build"]}
-````
-  </augment_code_snippet>
+| kind | name | path | private | size | main | module | types | exports | scripts | bin |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| app | @neonpro/api | apps/api | true | 6.7M | dist/index.js | - | - | 0 | 9 | 0 |
+| app | @neonpro/web | apps/web | true | 1003M | - | - | - | 0 | 13 | 0 |
+| package | @neonpro/auth | packages/auth | false | 1.1M | ./dist/index.js | - | ./dist/index.d.ts | 3 | 4 | 0 |
+| package | @neonpro/cache | packages/cache | true | 456K | ./dist/index.js | - | ./dist/index.d.ts | 1 | 5 | 0 |
+| package | @neonpro/core-services | packages/core-services | true | 9.2M | ./dist/index.js | ./dist/index.mjs | ./dist/index.d.ts | 7 | 8 | 0 |
+| package | @neonpro/health-dashboard | packages/health-dashboard | false | 5.2M | dist/index.js | - | dist/index.d.ts | 1 | 3 | 0 |
+| package | @neonpro/database | packages/database | true | 5.4M | dist/src/index.js | - | dist/src/index.d.ts | 3 | 38 | 0 |
+| package | @neonpro/types | packages/types | true | 2.9M | dist/index.js | - | dist/index.d.ts | 0 | 3 | 0 |
+| package | @neonpro/monitoring | packages/monitoring | false | 1.2M | dist/index.js | - | dist/index.d.ts | 8 | 14 | 0 |
+| package | enterprise | packages/enterprise | false | 408K | - | - | - | 0 | 0 | 0 |
+| package | @neonpro/tooling | packages/tooling | true | 124K | dist/index.js | - | - | 0 | 6 | 0 |
+| package | @neonpro/brazilian-healthcare-ui | packages/brazilian-healthcare-ui | false | 5.3M | dist/index.js | - | dist/index.d.ts | 1 | 3 | 0 |
+| package | @neonpro/shared | packages/shared | false | 4.1M | ./dist/index.js | ./dist/index.esm.js | ./dist/index.d.ts | 5 | 5 | 0 |
+| package | @neonpro/domain | packages/domain | true | 1.8M | dist/index.js | dist/index.esm.js | dist/index.d.ts | 0 | 3 | 0 |
+| package | @neonpro/config | packages/config | true | 308K | index.js | - | - | 5 | 1 | 0 |
+| package | @neonpro/performance | packages/performance | true | 208K | ./dist/index.js | ./dist/index.mjs | ./dist/index.d.ts | 3 | 8 | 0 |
+| package | @neonpro/compliance | packages/compliance | false | 2.6M | dist/index.js | dist/index.mjs | dist/index.d.ts | 0 | 10 | 0 |
+| package | @neonpro/utils | packages/utils | true | 1.4M | dist/index.js | dist/index.esm.js | dist/index.d.ts | 0 | 3 | 0 |
+| package | @neonpro/security | packages/security | false | 2.2M | dist/index.js | dist/index.mjs | dist/index.d.ts | 0 | 8 | 0 |
+| package | @neonpro/docs | packages/docs | false | 516K | dist/index.js | - | dist/index.d.ts | 4 | 10 | 0 |
+| package | @neonpro/integrations | packages/integrations | true | 336K | ./dist/index.js | ./dist/index.mjs | ./dist/index.d.ts | 0 | 8 | 0 |
+| package | @neonpro/ui | packages/ui | false | 3.7M | ./dist/src/index.js | ./dist/src/index.js | ./dist/src/index.d.ts | 7 | 5 | 0 |
+| package | testing | packages/testing | false | 84K | - | - | - | 0 | 0 | 0 |
+| package | @neonpro/ai | packages/ai | true | 1.4M | ./dist/index.js | ./dist/index.mjs | ./dist/index.d.ts | 7 | 8 | 0 |
+| package | @neonpro/devops | packages/devops | true | 3.7M | ./dist/index.js | ./dist/index.mjs | ./dist/index.d.ts | 0 | 14 | 0 |

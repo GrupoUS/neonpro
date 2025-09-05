@@ -1,6 +1,8 @@
 {
   "name": "@neonpro/health-dashboard",
   "version": "1.0.0",
+  "private": true,
+  "deprecated": "Merged into @neonpro/ui (use @neonpro/ui/components/dashboard/health/*). This package will be removed in a future release.",
   "description": "Real-time health dashboard components for NeonPro performance monitoring",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

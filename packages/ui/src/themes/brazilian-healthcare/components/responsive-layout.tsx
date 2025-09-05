@@ -47,7 +47,7 @@ export function ResponsiveLayout({
     if (connectivity) {
       const isSlow = connectivity.type === "2G"
         || (connectivity.type === "3G" && connectivity.strength === "weak")
-        || connectivity.latency > 1000;
+        || (connectivity.latency && connectivity.latency > 1000);
 
       setIsLowBandwidth(isSlow);
       setConnectionSpeed(`${connectivity.type} - ${connectivity.strength}`);

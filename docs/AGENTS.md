@@ -132,30 +132,34 @@ navigation_matrix:
         - docs/testing/e2e-testing.md
 ```
 
-## 🗂️ Docs Folder Map
+## Pre-Development Guidelines
+
+**📚 Documentation Consultation:**
+⚠️ **IMPORTANT**: Only consult documentation when you have specific questions or uncertainties. Avoid loading unnecessary context.
 
 - agents/ — Orchestrator: [./agents/AGENTS.md](./agents/AGENTS.md)
   - Key documents: apex-dev, apex-researcher, apex-ui-ux-designer, test, prd, briefing, documentation, rules
-- architecture/ — Orchestrator: [./architecture/AGENTS.md](./architecture/AGENTS.md)
+
+- Check architecture/ — Orchestrator for architectural decisions: [./architecture/AGENTS.md](./architecture/AGENTS.md)
+  - Review `docs/tech-stack.md` for technology guidelines
   - Key documents: architecture, source-tree, frontend-architecture, front-end-spec, tech-stack, aesthetic-platform-flows
-- database-schema/ — Orchestrator: [./database-schema/AGENTS.md](./database-schema/AGENTS.md)
+
+- Check database-schema/ — Orchestrator for data structure: [./database-schema/AGENTS.md](./database-schema/AGENTS.md)
   - Key documents: database-schema-consolidated, tables/README, tables/tables-consolidated
-- apis/ — Orchestrator: [./apis/AGENTS.md](./apis/AGENTS.md)
+- Look at apis/ — Orchestrator for API patterns: [./apis/AGENTS.md](./apis/AGENTS.md)
   - Key documents: apis, ai-sdk-v5.0, ai-sdk-v4.0
-- rules/ — Standards: coding-standards, supabase-*, variables-configuration
-- testing/ — Tests: react-test-patterns, e2e-testing, integration-testing, coverage-policy, ci-pipelines
-- prd/ — Product: prd and support files
-- mistakes/ — Errors and fixes
-- shards/ — Granular planning (epics/stories)
+- **Code Style:** Follow established patterns and conventions from development rules and guidelines found in the `/rules` directory — Standards: coding-standards, supabase-*, variables-configuration
+- Check testing/ — Tests: react-test-patterns, e2e-testing, integration-testing, coverage-policy, ci-pipelines
+- Check prd/ — Product: prd and support files
+- Check mistakes/ — Errors and fixes
 
-## 🧱 Content Hierarchy (Diátaxis)
+## Mandatory Development Steps
 
-- Tutorials: guided steps from zero to “aha” (e.g., quickstarts)
-- How-to: task-focused recipes (e.g., “how to document an endpoint”)
-- Reference: stable facts and APIs (e.g., contracts, tables)
-- Explanation: context and rationale (e.g., architectural decisions)
+### **Planning & Task List**
 
-Keep each document focused on ONE form. Avoid mixing forms.
+- Create a detailed task list using the todo tool to implement the feature
+- Break down complex features into manageable subtasks
+- Mark tasks as in_progress when starting, completed when finished
 
 ## 🏷️ Metadata and Tagging (Recommended)
 
@@ -200,10 +204,4 @@ Benefits: better retrieval (RAG), maintenance, and cross-navigation.
 
 Refer to the previous version’s “Complete Inventory” section or search within `docs/`.
 
-## 🕒 Changelog
-
-- 2.0.0 (2025-09-02)
-  - Adds machine-readable front matter (LLM)
-  - Creates `llm_index` and navigation matrix
-  - Establishes metadata, tagging, and link conventions
-  - Aligns content to the Diátaxis framework
+---

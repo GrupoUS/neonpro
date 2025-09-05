@@ -10,7 +10,7 @@ applyTo: "**/*"
 
 - **🌟 Always Read the Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
 - **⚙️ Always Read the Project Memory**: [`docs/memory.md`](../docs/memory.md)
-- **📚 Always Read the @source-tree**: [docs/architecture/source-tree.md](./source-tree.md)
+- **📚 Always Read the @source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
   - One‑line: Real monorepo structure (apps/packages) validated and categorized
   - Use when: Locating code, packages, or wiring across the repo
 - **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.
@@ -46,7 +46,7 @@ When you have ANY doubt during development:
 ## 🤖 APEX AGENT COORDINATION SYSTEM
 
 **🎯 Filosofia de Coordenação**: _"Agentes especializados com coordenação inteligente"_
-**🌟 Complete Workflow**: [`docs/agents/AGENTS.md`](docs/agents/AGENTS.md)
+**🌟 Complete Workflow**: [`docs/agents/AGENTS.md`](../docs/agents/AGENTS.md)
 
 ## 🎯 CORE PRINCIPLES & MISSION
 
@@ -262,23 +262,20 @@ phase_3_planning_design:
   quality_gate: "Architecture review ≥9.5/10 with scalability validation and security compliance"
 ```
 
-### 3. **TDD Implementation (Red-Green-Refactor)**
+### 3. **TEST DRIVEN Implementation**
 
-- **MANDATORY**: Follow the TDD process as described in `docs/ttd-flow.md`
-- **TDD Cycle for each feature component:**
+- **MANDATORY**: Follow the process as described in `docs/AGENTS.md`
+- **TEST DRIVEN Cycle for each feature component:**
   1. **RED**: Write failing test first (describe expected behavior)
   2. **GREEN**: Write minimal code to pass the test
   3. **REFACTOR**: Improve code while keeping tests green
   4. **REPEAT**: Continue cycle for next requirement
-
-  **Test Priority (from ttd-flow.md):**
   - 🔥 **CRITICAL**: Business logic, AI agents, APIs, financial operations
   - ⚡ **IMPORTANT**: Complex hooks, utilities, data validation, integrations
   - ✅ **USEFUL**: UI components with logic, helpers
 
 - **Implementation Guidelines:**
   - **🔧 MCP**: serena → desktop-commander (+shadcn-ui for UI)
-  - **MANDATORY**: Follow ALL guidelines from `/.ruler` and `/docs`
   - Use `serena` for codebase analysis (get_symbols_overview → find_symbol)
   - Use `desktop-commander` for file operations (chunked 25-30 lines max)
   - Use `shadcn-ui` to check component availability before custom development
@@ -294,10 +291,9 @@ phase_3_planning_design:
 **🔧 MCP**: desktop-commander + serena
 
 - Use `desktop-commander` to run all test commands
-- Run `pnpm format:check` for formatting issues
-- Run `npx oxlint apps packages --fix` for linter issues
-- Run `pnpm format && pnpm lint:fix && pnpm type-check` to format code
-- Run `pnpm test` and all task tests
+- Run `bun oxlint apps packages --fix` for linter issues
+- Run `bun format && bun lint:fix && bun type-check` to format code
+- Run `bun test` and all task tests
 - **Correction Loop**: If tests fail:
   - Use `serena` to analyze failing code and dependencies
   - Fix issues following TDD principles
@@ -317,8 +313,8 @@ phase_3_planning_design:
 **🔧 MCP**: desktop-commander + serena
 
 - Use `desktop-commander` to run quality check commands
-- Run `pnpx next lint` for linting issues
-- Run `pnpx tsc --noEmit` to verify TypeScript compilation
+- Run `bun next lint` for linting issues
+- Run `bun tsc --noEmit` to verify TypeScript compilation
 - Use `serena` to analyze code quality and identify issues
 - Fix any errors or warnings before proceeding
 - **Correction Loop**: If issues found:
@@ -353,10 +349,6 @@ validation:
   - Use `archon` to create/update project documents and knowledge base
   - Create `mistakes/[error-category].md` if mistakes corrected
   - Create `features/[feature-name].md` for new features or modified behavior
-  - **TDD Documentation**: Include test coverage metrics, patterns, decisions
-  - Update `docs\project.md` if new project standards established
-  - Update `.ruler\code-preferences.md` if coding preferences clarified
-- Use `desktop-commander` to update README files if needed
 - **Test Documentation**: Document new test patterns, mocks, utilities
 - Store learnings in archon knowledge base for future retrieval
 
@@ -366,7 +358,7 @@ validation:
 
 - Use `serena` to analyze code changes and identify documentation impact
 - **Evaluate and Suggest**: Assess if documentation folders need updates:
-  - Application flows (`docs/app-flows/`) - if user flows modified
+  - Application flows (`docs/architecture/aesthetic-platform-flows.md`) - if user flows modified
   - API documentation (`docs/apis/`) - if endpoints created/modified
   - Database schemas (`docs/database-schema/`) - if structure changed
   - Any other relevant documentation folders
@@ -397,3 +389,5 @@ validation:
 - **🔄 Iterate** until all quality checks pass
 - **📝 Document everything** for future reference using `archon` knowledge base
 - **🚨 If stuck >3 attempts**: Use sequential-thinking to reassess and try alternatives
+
+---

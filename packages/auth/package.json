@@ -1,7 +1,9 @@
 {
   "name": "@neonpro/auth",
   "version": "0.1.0",
-  "description": "Authentication and authorization utilities for NeonPro",
+  "private": true,
+  "deprecated": "Merged into @neonpro/security. Please migrate imports to @neonpro/security/auth.",
+  "description": "DEPRECATED: Authentication and authorization utilities for NeonPro",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {

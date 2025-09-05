@@ -1,58 +1,55 @@
 "use client";
 
-import type { Alert, HealthCheckResult, PerformanceInsight } from "@neonpro/monitoring";
-import { useEffect, useState } from "react";
+import React from "react";
 
-interface DashboardProps {
-  performanceMonitor?: unknown;
-  refreshInterval?: number;
+type Severity = "critical" | "high" | "medium" | "low" | string;
+
+type Alert = {
+  id: string;
+  message: string;
+  severity: Severity;
+  timestamp: string | number | Date;
+  acknowledged?: boolean;
+};
+
+type HealthCheckResult = {
+  component: string;
+  status: "healthy" | "degraded" | "unhealthy" | string;
+  message: string;
+  responseTime: number;
+};
+
+type PerformanceInsight = {
+  id: string;
+  title: string;
+  severity: Severity;
+  timestamp: string | number | Date;
+  description: string;
+  recommendation: string;
+  potentialImpact?: string;
+  estimatedROI?: number;
+};
+
+interface PerformanceDashboardProps {
+  alerts: Alert[];
+  healthChecks: HealthCheckResult[];
+  insights: PerformanceInsight[];
+  isLoading?: boolean;
+  lastUpdated?: Date;
+  onAcknowledgeAlert?: (alertId: string) => void | Promise<void>;
 }
 
 export function PerformanceDashboard({
-  performanceMonitor,
-  refreshInterval = 30_000,
-}: DashboardProps) {
-  const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [healthChecks, setHealthChecks] = useState<HealthCheckResult[]>([]);
-  const [insights, setInsights] = useState<PerformanceInsight[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [lastUpdated, setLastUpdated] = useState<Date>();
-
-  useEffect(() => {
-    if (!performanceMonitor) {
-      return;
-    }
-
-    const fetchDashboardData = async () => {
-      try {
-        setIsLoading(true);
-
-        const [currentAlerts, healthResults, recentInsights] = await Promise.all([
-          performanceMonitor.getActiveAlerts(),
-          performanceMonitor.performHealthCheck(),
-          performanceMonitor.getRecentInsights(10),
-        ]);
-
-        setAlerts(currentAlerts);
-        setHealthChecks(healthResults);
-        setInsights(recentInsights);
-        setLastUpdated(new Date());
-      } catch {
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDashboardData();
-    const interval = setInterval(fetchDashboardData, refreshInterval);
-    return () => clearInterval(interval);
-  }, [performanceMonitor, refreshInterval]);
-
-  const handleAcknowledgeAlert = async (alertId: string) => {
+  alerts,
+  healthChecks,
+  insights,
+  isLoading = false,
+  lastUpdated,
+  onAcknowledgeAlert,
+}: PerformanceDashboardProps) {
+  const handleAcknowledge = async (id: string) => {
     try {
-      await performanceMonitor.acknowledgeAlert(alertId, "dashboard-user");
-      const updatedAlerts = await performanceMonitor.getActiveAlerts();
-      setAlerts(updatedAlerts);
+      await onAcknowledgeAlert?.(id);
     } catch {}
   };
 
@@ -68,22 +65,20 @@ export function PerformanceDashboard({
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="font-bold text-3xl text-gray-900">
-            Performance Dashboard
-          </h1>
+          <h1 className="font-bold text-3xl text-gray-900">Performance Dashboard</h1>
           <p className="mt-2 text-gray-600">
             Real-time monitoring and analytics • Last updated: {lastUpdated?.toLocaleTimeString()}
           </p>
         </div>
+
         {/* Alerts Section */}
-        {alerts.length > 0 && (
+        {alerts?.length > 0 && (
           <div className="mb-8">
-            <h2 className="mb-4 font-semibold text-gray-900 text-xl">
-              Active Alerts
-            </h2>
+            <h2 className="mb-4 font-semibold text-gray-900 text-xl">Active Alerts</h2>
             <div className="grid gap-4">
               {alerts.map((alert) => (
                 <div
+                  key={alert.id}
                   className={`rounded-lg border-l-4 p-4 ${
                     alert.severity === "critical"
                       ? "border-red-500 bg-red-50"
@@ -93,13 +88,10 @@ export function PerformanceDashboard({
                       ? "border-yellow-500 bg-yellow-50"
                       : "border-blue-500 bg-blue-50"
                   }`}
-                  key={alert.id}
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        {alert.message}
-                      </h3>
+                      <h3 className="font-medium text-gray-900">{alert.message}</h3>
                       <p className="mt-1 text-gray-600 text-sm">
                         {new Date(alert.timestamp).toLocaleString()}
                       </p>
@@ -107,7 +99,7 @@ export function PerformanceDashboard({
                     {!alert.acknowledged && (
                       <button
                         className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700"
-                        onClick={() => handleAcknowledgeAlert(alert.id)}
+                        onClick={() => handleAcknowledge(alert.id)}
                       >
                         Acknowledge
                       </button>
@@ -120,16 +112,12 @@ export function PerformanceDashboard({
         )}
         {/* Health Checks */}
         <div className="mb-8">
-          <h2 className="mb-4 font-semibold text-gray-900 text-xl">
-            System Health
-          </h2>
+          <h2 className="mb-4 font-semibold text-gray-900 text-xl">System Health</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {healthChecks.map((check, index) => (
+            {healthChecks?.map((check, index) => (
               <div className="rounded-lg bg-white p-4 shadow" key={index}>
                 <div className="mb-2 flex items-center justify-between">
-                  <h3 className="font-medium text-gray-900">
-                    {check.component}
-                  </h3>
+                  <h3 className="font-medium text-gray-900">{check.component}</h3>
                   <span
                     className={`rounded-full px-2 py-1 text-xs ${
                       check.status === "healthy"
@@ -145,30 +133,21 @@ export function PerformanceDashboard({
                   </span>
                 </div>
                 <p className="text-gray-600 text-sm">{check.message}</p>
-                <p className="mt-1 text-gray-500 text-xs">
-                  Response: {check.responseTime}ms
-                </p>
+                <p className="mt-1 text-gray-500 text-xs">Response: {check.responseTime}ms</p>
               </div>
             ))}
           </div>
-        </div>{" "}
+        </div>
         {/* Performance Insights */}
-        {insights.length > 0 && (
+        {insights?.length > 0 && (
           <div className="mb-8">
-            <h2 className="mb-4 font-semibold text-gray-900 text-xl">
-              Performance Insights
-            </h2>
+            <h2 className="mb-4 font-semibold text-gray-900 text-xl">Performance Insights</h2>
             <div className="grid gap-6">
               {insights.map((insight) => (
-                <div
-                  className="rounded-lg bg-white p-6 shadow"
-                  key={insight.id}
-                >
+                <div className="rounded-lg bg-white p-6 shadow" key={insight.id}>
                   <div className="mb-4 flex items-start justify-between">
                     <div>
-                      <h3 className="font-medium text-gray-900 text-lg">
-                        {insight.title}
-                      </h3>
+                      <h3 className="font-medium text-gray-900 text-lg">{insight.title}</h3>
                       <span
                         className={`mt-1 inline-block rounded-full px-2 py-1 text-xs ${
                           insight.severity === "critical"
@@ -191,16 +170,12 @@ export function PerformanceDashboard({
                   <p className="mb-3 text-gray-700">{insight.description}</p>
 
                   <div className="mb-3 rounded-lg bg-blue-50 p-4">
-                    <h4 className="mb-2 font-medium text-blue-900">
-                      Recommendation
-                    </h4>
+                    <h4 className="mb-2 font-medium text-blue-900">Recommendation</h4>
                     <p className="text-blue-800">{insight.recommendation}</p>
                   </div>
 
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">
-                      Impact: {insight.potentialImpact}
-                    </span>
+                    <span className="text-gray-600">Impact: {insight.potentialImpact}</span>
                     {insight.estimatedROI && (
                       <span className="font-medium text-green-600">
                         Potential ROI: ${insight.estimatedROI.toLocaleString()}
@@ -212,9 +187,10 @@ export function PerformanceDashboard({
             </div>
           </div>
         )}
+
         {/* Footer */}
         <div className="text-center text-gray-500 text-sm">
-          <p>NeonPro Performance Monitoring • Real-time Healthcare Analytics</p>
+          <p>NeonPro Performance Monitoring  Real-time Healthcare Analytics</p>
         </div>
       </div>
     </div>

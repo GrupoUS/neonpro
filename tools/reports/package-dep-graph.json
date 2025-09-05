@@ -1,0 +1,207 @@
+{
+  "generatedAt": "2025-09-05T16:45:33.608Z",
+  "nodes": [
+    "@neonpro/api",
+    "@neonpro/web",
+    "@neonpro/auth",
+    "@neonpro/core-services",
+    "@neonpro/health-dashboard",
+    "@neonpro/monitoring",
+    "@neonpro/shared",
+    "@neonpro/domain",
+    "@neonpro/compliance",
+    "@neonpro/utils",
+    "@neonpro/ui",
+    "@neonpro/ai",
+    "@neonpro/security",
+    "@neonpro/types",
+    "@neonpro/database"
+  ],
+  "edges": [
+    {
+      "src": "@neonpro/api",
+      "deps": [
+        {
+          "dst": "@neonpro/security",
+          "count": 1
+        },
+        {
+          "dst": "@neonpro/shared",
+          "count": 1
+        },
+        {
+          "dst": "@neonpro/types",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "src": "@neonpro/web",
+      "deps": [
+        {
+          "dst": "@neonpro/ui",
+          "count": 25
+        },
+        {
+          "dst": "@neonpro/security",
+          "count": 3
+        },
+        {
+          "dst": "@neonpro/utils",
+          "count": 6
+        },
+        {
+          "dst": "@neonpro/database",
+          "count": 4
+        },
+        {
+          "dst": "@neonpro/types",
+          "count": 1
+        },
+        {
+          "dst": "@neonpro/monitoring",
+          "count": 1
+        },
+        {
+          "dst": "@neonpro/api",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "src": "@neonpro/auth",
+      "deps": [
+        {
+          "dst": "@neonpro/core-services",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "src": "@neonpro/core-services",
+      "deps": [
+        {
+          "dst": "@neonpro/security",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "src": "@neonpro/health-dashboard",
+      "deps": [
+        {
+          "dst": "@neonpro/monitoring",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "src": "@neonpro/monitoring",
+      "deps": [
+        {
+          "dst": "@neonpro/database",
+          "count": 2
+        },
+        {
+          "dst": "@neonpro/core-services",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "src": "@neonpro/shared",
+      "deps": [
+        {
+          "dst": "@neonpro/utils",
+          "count": 3
+        },
+        {
+          "dst": "@neonpro/core-services",
+          "count": 1
+        },
+        {
+          "dst": "@neonpro/monitoring",
+          "count": 1
+        },
+        {
+          "dst": "@neonpro/ui",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "src": "@neonpro/domain",
+      "deps": [
+        {
+          "dst": "@neonpro/security",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "src": "@neonpro/compliance",
+      "deps": [
+        {
+          "dst": "@neonpro/types",
+          "count": 10
+        }
+      ]
+    },
+    {
+      "src": "@neonpro/utils",
+      "deps": [
+        {
+          "dst": "@neonpro/types",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "src": "@neonpro/ui",
+      "deps": [
+        {
+          "dst": "@neonpro/utils",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "src": "@neonpro/ai",
+      "deps": [
+        {
+          "dst": "@neonpro/core-services",
+          "count": 14
+        },
+        {
+          "dst": "@neonpro/types",
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "inbound": {
+    "@neonpro/security": 8,
+    "@neonpro/shared": 1,
+    "@neonpro/types": 20,
+    "@neonpro/ui": 27,
+    "@neonpro/utils": 13,
+    "@neonpro/database": 6,
+    "@neonpro/monitoring": 4,
+    "@neonpro/api": 1,
+    "@neonpro/core-services": 17
+  },
+  "outbound": {
+    "@neonpro/api": 6,
+    "@neonpro/web": 41,
+    "@neonpro/auth": 1,
+    "@neonpro/core-services": 3,
+    "@neonpro/health-dashboard": 2,
+    "@neonpro/monitoring": 3,
+    "@neonpro/shared": 7,
+    "@neonpro/domain": 1,
+    "@neonpro/compliance": 10,
+    "@neonpro/utils": 2,
+    "@neonpro/ui": 4,
+    "@neonpro/ai": 17
+  }
+}

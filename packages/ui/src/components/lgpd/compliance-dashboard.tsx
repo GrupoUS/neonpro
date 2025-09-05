@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "../ui/alert";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Progress } from "../ui/progress";
+import type { LGPDRequest } from "./types";
 
 // ============================================================================
 // TYPES
@@ -275,7 +276,7 @@ export function ComplianceDashboard() {
           <CardContent>
             <div className="space-y-4">
               {complianceStatus.dataRequests.recentRequests.map(
-                (request, index) => (
+                (request: LGPDRequest, index) => (
                   <div
                     className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
                     key={index}

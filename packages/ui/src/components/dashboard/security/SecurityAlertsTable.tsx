@@ -431,14 +431,10 @@ export function SecurityAlertsTable() {
                                           selectedAlert.status,
                                         )}
                                       >
-                                        {selectedAlert.status === "active"
-                                          && "Ativo"}
-                                        {selectedAlert.status
-                                            === "acknowledged" && "Reconhecido"}
-                                        {selectedAlert.status === "resolved"
-                                          && "Resolvido"}
-                                        {selectedAlert.status === "dismissed"
-                                          && "Descartado"}
+                                        {selectedAlert.status === "active" && "Ativo"}
+                                        {selectedAlert.status === "acknowledged" && "Reconhecido"}
+                                        {selectedAlert.status === "resolved" && "Resolvido"}
+                                        {selectedAlert.status === "dismissed" && "Descartado"}
                                       </Badge>
                                     </div>
                                   </div>

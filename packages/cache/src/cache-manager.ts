@@ -40,13 +40,13 @@ interface CacheManagerStats {
   };
 }
 
-type StatsEntry = {
+interface StatsEntry {
   hits: number;
   misses: number;
   hitRate: number;
   totalRequests: number;
   averageResponseTime: number;
-};
+}
 
 export interface MultiLayerCacheConfig {
   supabase: SupabaseCacheConfig;
@@ -63,7 +63,12 @@ export class MultiLayerCacheManager {
 
   private readonly auditTrail: AuditTrailEntry[] = [];
 
-  private readonly stats: { browser: StatsEntry; edge: StatsEntry; supabase: StatsEntry; aiContext: StatsEntry } = {
+  private readonly stats: {
+    browser: StatsEntry;
+    edge: StatsEntry;
+    supabase: StatsEntry;
+    aiContext: StatsEntry;
+  } = {
     browser: {
       hits: 0,
       misses: 0,

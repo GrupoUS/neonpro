@@ -74,6 +74,29 @@
       }
     },
     {
+      "label": "🧪 Run Tests (Bun)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "if command -v bun >/dev/null 2>&1; then bun run test:unit:bun; else pnpm vitest run --project unit --reporter=verbose; fi"
+      ],
+      "windows": {
+        "command": "powershell",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "if (Get-Command bun -ErrorAction SilentlyContinue) { bun run test:unit:bun } else { pnpm vitest run --project unit --reporter=verbose }"
+        ]
+      },
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "test",
+      "detail": "Run unit tests via Bun (fast), fallback to pnpm if Bun missing",
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+    }
+    {
       "label": "🧪 Watch Tests",
       "type": "shell",
       "command": "pnpm",
@@ -247,6 +270,35 @@
       "dependsOrder": "sequence",
       "group": { "kind": "test", "isDefault": false },
       "detail": "Run full local CI-style suite in sequence"
+    },
+    {
+      "label": "🔎 Detect Context",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "if [ -f \"${workspaceFolder}/package.json\" ]; then context='nextjs react typescript healthcare'; elif ls ${workspaceFolder}/.env* 1> /dev/null 2>&1; then context='security authentication'; else context='base'; fi; echo \"Contexto detectado: $context\""
+      ],
+      "linux": {
+        "command": "bash",
+        "args": [
+          "-lc",
+          "if [ -f \"${workspaceFolder}/package.json\" ]; then context='nextjs react typescript healthcare'; elif ls ${workspaceFolder}/.env* 1> /dev/null 2>&1; then context='security authentication'; else context='base'; fi; echo \"Contexto detectado: $context\""
+        ]
+      },
+      "windows": {
+        "command": "powershell",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "$context = if (Test-Path \"${workspaceFolder}\\package.json\") { 'nextjs react typescript healthcare' } elseif (Test-Path \"${workspaceFolder}\\.env*\") { 'security authentication' } else { 'base' }; Write-Host \"Contexto detectado: $context\" -ForegroundColor Green"
+        ]
+      },
+      "group": "build",
+      "detail": "Cross-platform context detection that works on Linux/macOS (bash) and Windows (PowerShell)",
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
     }
   ]
 }

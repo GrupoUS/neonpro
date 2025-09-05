@@ -9,15 +9,7 @@ export { PaymentStatusTable, type PaymentStatusTableProps } from "./payment-stat
 export { TeamMembersList, type TeamMembersListProps } from "./team-members-list";
 
 // Component type exports
-export type {
-  Appointment,
-  AppointmentType,
-  BrazilianPaymentMethod,
-  HealthcareMetricType,
-  PaymentRecord,
-  TeamMember,
-  TeamRole,
-} from "./healthcare-metric-card";
+export type { HealthcareMetricType } from "./healthcare-metric-card";
 
 export type { Appointment, AppointmentType } from "./appointment-calendar";
 

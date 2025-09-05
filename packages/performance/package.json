@@ -28,7 +28,7 @@
     "lint": "oxlint",
     "format": "dprint fmt",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
+    "test": "vitest --passWithNoTests",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage"
   },

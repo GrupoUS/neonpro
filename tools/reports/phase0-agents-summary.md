@@ -1,27 +1,28 @@
-## Agents Summary (Phase 0)
+# Phase 0 — Agents Summary (docs/agents/AGENTS.md)
 
-- Orchestrator: `docs/AGENTS.md`; area orchestrators in `docs/architecture/AGENTS.md` and `docs/agents/AGENTS.md`
+Purpose
+- Central orchestration of specialized agents and workflows; Archon-first tasking
 
-- Roles & handoffs
-  - apex-dev: coordinator, full-stack, refactor+security; always active
-  - apex-researcher: multi-source research, compliance validation
-  - apex-ui-ux-designer: healthcare UI/UX, accessibility
-  - test: TDD/QA (Vitest/Playwright)
-  - prd: product requirements and roadmaps
-  - documentation: technical docs and guides
-  - rules: coding standards, conventions
+Core mantra
+- Think → Research → Decompose → Plan → Implement → Validate
 
-- Acceptance criteria per agent (from docs)
-  - apex-dev: architecture alignment, quality gates, rollback strategy
-  - test: coverage and regression checks
-  - documentation: updated docs with links and tags
+Key agents (roles → triggers → capabilities)
+- apex-dev: Full‑stack + coordination, refactor, security; Archon MCP integration
+- apex-researcher: Multi‑source research (Context7 → Tavily → Exa), compliance validation
+- apex-ui-ux-designer: WCAG AA+, shadcn/ui optimization for healthcare
+- test: TDD, Vitest/Playwright, coverage and quality gates
+- prd: PRDs, roadmap, success metrics; documentation/rules support agents
 
-- Links
-  - <augment_code_snippet path="docs/agents/AGENTS.md" mode="EXCERPT">
-````markdown
-role: "Full-Stack Healthcare Development + Agent Coordination + Refactoring + Security Audit"
-````
-  </augment_code_snippet>
+Workflows
+- Full feature dev; Research‑driven implementation; Integrated Refactor & Security; Complete MVP
+Mandatory references
+- `docs/AGENTS.md`, `docs/project.md`, `docs/architecture/source-tree.md`
 
-- Notes
-  - Use triggers and workflows defined in agents docs to map owners for backlog tasks
+Guidance
+- Minimal context loading: pick 1–2 docs per task
+- Move tasks todo → doing → review (not directly to complete)
+- Quality standard ≥9.5/10; finish only when 100% resolved
+
+Notes
+- Keep Augment tasklist single IN_PROGRESS; Archon may track multiple doings
+- Use Archon for tasks/knowledge; Serena for codebase reads; Desktop Commander for file ops

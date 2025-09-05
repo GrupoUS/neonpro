@@ -336,7 +336,9 @@ export class BrowserCacheLayer implements CacheOperation {
 
       const DecompressionStreamCtor = (globalThis as any).DecompressionStream;
       if (DecompressionStreamCtor && bytes) {
-        const stream = new Blob([bytes.buffer as ArrayBuffer]).stream().pipeThrough(new DecompressionStreamCtor("gzip"));
+        const stream = new Blob([bytes.buffer as ArrayBuffer]).stream().pipeThrough(
+          new DecompressionStreamCtor("gzip"),
+        );
         const decompressedBuffer = await new Response(stream).arrayBuffer();
         return new TextDecoder().decode(decompressedBuffer);
       }
@@ -347,7 +349,10 @@ export class BrowserCacheLayer implements CacheOperation {
         return out;
       }
     } catch (e) {
-      console.warn("BrowserCacheLayer.decompress: decompression failed", (e as Error)?.message ?? e);
+      console.warn(
+        "BrowserCacheLayer.decompress: decompression failed",
+        (e as Error)?.message ?? e,
+      );
     }
     // Fallback: return original
     return data;

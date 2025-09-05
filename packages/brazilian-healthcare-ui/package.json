@@ -1,6 +1,8 @@
 {
   "name": "@neonpro/brazilian-healthcare-ui",
   "version": "1.0.0",
+  "private": true,
+  "deprecated": "Merged into @neonpro/ui (use @neonpro/ui/themes/brazilian-healthcare). This package will be removed in a future release.",
   "description": "Brazilian healthcare-specialized UI components with LGPD compliance and accessibility",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

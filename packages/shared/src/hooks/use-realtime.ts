@@ -51,8 +51,8 @@ export function useRealtime<
   T extends Record<string, unknown> = Record<string, unknown>,
 >(supabaseClient: SupabaseClient, config: UseRealtimeConfig<T>) {
   const [isConnected, setIsConnected] = useState(false);
-  const [error, setError] = useState<Error | null>();
-  const [lastUpdate, setLastUpdate] = useState<Date | null>();
+  const [error, setError] = useState<Error | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
   const handleRealtimeEvent = useCallback(
@@ -81,7 +81,7 @@ export function useRealtime<
         }
 
         // Clear unknown previous errors
-        setError(undefined);
+        setError(null);
       } catch (error) {
         const errorInstance = error instanceof Error ? error : new Error("Realtime event error");
         setError(errorInstance);
@@ -129,7 +129,7 @@ export function useRealtime<
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
           setIsConnected(true);
-          setError(undefined);
+          setError(null);
         } else if (status === "CHANNEL_ERROR") {
           setIsConnected(false);
           const error = new Error(`Real-time subscription error: ${status}`);

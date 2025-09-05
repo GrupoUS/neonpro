@@ -11,7 +11,11 @@ export {
 export type { MfaConfig, MfaVerificationResult } from "./auth/mfa-service";
 export * from "./auth/mfa-service";
 export { MfaMethod } from "./auth/mfa-service";
+
 export * from "./middleware/input-validation";
+
+// Enterprise Authentication - Consolidated from @neonpro/auth
+export * from "./auth/enterprise";
 export type { RateLimitConfig, RateLimitResult } from "./middleware/rate-limiting";
 export * from "./middleware/rate-limiting";
 export type { SecurityHeadersConfig } from "./middleware/security-headers";

@@ -45,7 +45,7 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
     const [showFilters, setShowFilters] = React.useState(false);
     const debounceRef = React.useRef<
       ReturnType<typeof setTimeout> | undefined
-    >();
+    >(undefined);
 
     React.useEffect(() => {
       setSearchValue(value);

@@ -11,6 +11,7 @@ import { Input } from "../Input";
 import { Label } from "../Label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../Select";
 import { Textarea } from "../Textarea";
+import type { DataSubjectRightsRequest } from "./types";
 
 // ============================================================================
 // TYPES
@@ -97,9 +98,10 @@ export function DataSubjectRights() {
     setLoading(true);
 
     try {
-      const requestData: unknown = {
+      const requestData: DataSubjectRightsRequest = {
         requestType: selectedRequestType,
-        reason: requestDetails,
+        subjectEmail: "", // Would be filled from user context
+        description: requestDetails,
       };
 
       // Special handling for rectification requests

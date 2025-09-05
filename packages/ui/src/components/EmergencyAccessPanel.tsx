@@ -267,7 +267,11 @@ export const EmergencyAccessPanel = React.forwardRef<
         accessLevel: formData.accessLevel || "standard",
         reason: formData.reason || "other_medical_emergency",
         customReason: formData.customReason,
-        requestingPhysician: formData.requestingPhysician ?? "",
+        requestingPhysician: formData.requestingPhysician ?? {
+          id: "",
+          name: "",
+          crm: "",
+        },
         timeoutMinutes: formData.timeoutMinutes || 60,
         justification: formData.justification,
         witnessPhysician: formData.witnessPhysician,

@@ -41,4 +41,38 @@ export * from "./themes/neonpro";
 export * from "./themes/neonpro/components";
 
 // Brazilian Healthcare Theme - Consolidated from @neonpro/brazilian-healthcare-ui
-export * from "./themes/brazilian-healthcare";
+// Note: Selective exports to avoid type conflicts
+export {
+  brazilianHealthcareTheme,
+  colors,
+  DataClassificationBadge,
+  EmergencyAccessInterface,
+  LGPDComplianceDashboard,
+  ResponsiveLayout,
+  spacing,
+  typography,
+} from "./themes/brazilian-healthcare";
+
+export type {
+  AccessibilityOptions,
+  Address,
+  AuditEvent,
+  BrazilianHealthcareTheme,
+  ConnectivityLevel,
+  EmergencyAlert,
+  HealthcareProfessional,
+  LGPDCompliance,
+  LGPDConsent,
+  MedicalAttachment,
+} from "./themes/brazilian-healthcare";
+
+// Aliased exports to avoid conflicts with main types
+export type {
+  EmergencyContact as BrazilianEmergencyContact,
+  MedicalRecord as BrazilianMedicalRecord,
+} from "./themes/brazilian-healthcare";
+
+// Health Dashboard Components - Consolidated from @neonpro/health-dashboard
+export * from "./components/dashboard/health/cache-metrics";
+export * from "./components/dashboard/health/dashboard";
+export * from "./components/dashboard/health/metric-widgets";

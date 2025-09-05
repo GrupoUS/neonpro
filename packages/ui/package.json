@@ -32,6 +32,16 @@
       "types": "./dist/src/themes/brazilian-healthcare/index.d.ts",
       "import": "./dist/src/themes/brazilian-healthcare/index.js",
       "require": "./dist/src/themes/brazilian-healthcare/index.js"
+    },
+    "./themes/brazilian-healthcare/tokens": {
+      "types": "./dist/src/themes/brazilian-healthcare/tokens.d.ts",
+      "import": "./dist/src/themes/brazilian-healthcare/tokens.js",
+      "require": "./dist/src/themes/brazilian-healthcare/tokens.js"
+    },
+    "./components/dashboard/health/*": {
+      "types": "./dist/src/components/dashboard/health/*.d.ts",
+      "import": "./dist/src/components/dashboard/health/*.js",
+      "require": "./dist/src/components/dashboard/health/*.js"
     }
   },
   "files": [

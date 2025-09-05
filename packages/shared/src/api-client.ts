@@ -836,17 +836,23 @@ export const ApiHelpers = {
 
     if (typeof error === "object" && error && "error" in error) {
       const apiError = error as ApiErrorObject;
-      if (
-        apiError.error?.error?.validation_errors?.length
-        && apiError.error.error.validation_errors.length > 0
-      ) {
-        return apiError.error.error.validation_errors
-          .map((ve) => `${ve.field}: ${ve.message}`)
-          .join(", ");
+      const nested = apiError.error?.error;
+      const topLevel = apiError.error;
+
+      const nestedValidations = nested?.validation_errors;
+      const topValidations = topLevel?.validation_errors as any;
+
+      const validations = Array.isArray(nestedValidations) && nestedValidations.length > 0
+        ? nestedValidations
+        : Array.isArray(topValidations) && topValidations.length > 0
+        ? topValidations
+        : [];
+
+      if (validations.length > 0) {
+        return validations.map((ve: any) => `${ve.field}: ${ve.message}`).join(", ");
       }
-      return (
-        apiError.message || apiError.error?.message || "API error occurred"
-      );
+
+      return String(topLevel?.message || apiError.message || "API error occurred");
     }
 
     return "An unexpected error occurred";
@@ -868,17 +874,20 @@ export const ApiHelpers = {
 
   // Check if error is authentication issue
   isAuthError: (error: unknown): boolean => {
-    if (typeof error === "object" && error && "error" in error) {
-      const apiError = error as ApiErrorObject;
-      const errorCode = apiError.error?.error?.code;
-      return errorCode
+    // Accept either nested error.error.code or top-level error.code (as tests use)
+    if (typeof error === "object" && error) {
+      const maybeObj = error as Record<string, any>;
+      const nestedCode = maybeObj?.error?.error?.code;
+      const topLevelCode = maybeObj?.error?.code || maybeObj?.code;
+      const code = nestedCode || topLevelCode;
+      return code
         ? [
           "UNAUTHORIZED",
           "FORBIDDEN",
           "TOKEN_EXPIRED",
           "INVALID_CREDENTIALS",
           "SESSION_EXPIRED",
-        ].includes(errorCode)
+        ].includes(code)
         : false;
     }
     return false;
@@ -886,13 +895,15 @@ export const ApiHelpers = {
 
   // Check if error is validation issue
   isValidationError: (error: unknown): boolean => {
-    if (typeof error === "object" && error && "error" in error) {
-      const apiError = error as ApiErrorObject;
+    if (typeof error === "object" && error) {
+      const maybeObj = error as Record<string, any>;
+      const nested = maybeObj?.error?.error;
+      const topLevel = maybeObj?.error;
       return (
-        apiError.error?.error?.code === "VALIDATION_ERROR"
-        || (apiError.error?.error?.validation_errors?.length
-          && apiError.error.error.validation_errors.length > 0)
-        || false
+        nested?.code === "VALIDATION_ERROR"
+        || topLevel?.code === "VALIDATION_ERROR"
+        || Array.isArray(nested?.validation_errors) && nested.validation_errors.length > 0
+        || Array.isArray(topLevel?.validation_errors) && topLevel.validation_errors.length > 0
       );
     }
     return false;
