@@ -124,6 +124,41 @@ if (typeof window !== "undefined") {
     },
     writable: true,
   });
+
+  // Mock navigator.sendBeacon to avoid real network calls during tests
+  if (typeof window !== "undefined" && (window as any).navigator) {
+    try {
+      Object.defineProperty((window as any).navigator, "sendBeacon", {
+        value: vi.fn((url: any, data?: any) => {
+          try {
+            const str = typeof data === "string" ? data : (() => {
+              try {
+                return JSON.stringify(data);
+              } catch {
+                return "{}";
+              }
+            })();
+            let parsed: any = {};
+            try {
+              parsed = JSON.parse(str);
+            } catch {}
+            if (String(url).includes("/api/v1/audit-log")) {
+              const entries = __ensureTable("audit_log");
+              entries.push({
+                id: `audit-${Math.random().toString(36).slice(2, 9)}`,
+                ...parsed,
+                created_at: new Date().toISOString(),
+              });
+            }
+          } catch {}
+          // Always report success to prevent errors during teardown
+          return true;
+        }),
+        configurable: true,
+        writable: true,
+      });
+    } catch {}
+  }
 }
 // Supabase mocks
 // In-memory store per table for realistic mocking
@@ -186,7 +221,9 @@ const createChainableMock = (table?: string) => {
 
   const api: any = {
     select: vi.fn((_cols?: string) => {
-      op = "select";
+      // Preserve current op if a mutating operation was initiated (insert/update/upsert/delete)
+      // so that `.insert(...).select().single()` and similar chains return affected rows
+      if (!op) op = "select";
       return api;
     }),
     insert: vi.fn((data?: any) => {
@@ -964,6 +1001,23 @@ if (!(globalThis as any).mockPatientsHook) {
       status: 200,
       headers: { "content-type": "application/json" },
     });
+  }
+
+  // Audit log endpoint used by auth/hooks during tests
+  if (url.includes("/api/v1/audit-log")) {
+    // Accept any payload and return success; store minimal entry in memory for optional assertions
+    try {
+      const entries = __ensureTable("audit_log");
+      entries.push({
+        id: `audit-${Math.random().toString(36).slice(2, 9)}`,
+        ...body,
+        created_at: new Date().toISOString(),
+      });
+    } catch {}
+    return new Response(
+      JSON.stringify({ success: true }),
+      { status: 200, headers: { "content-type": "application/json" } },
+    );
   }
 
   // Default OK JSON
