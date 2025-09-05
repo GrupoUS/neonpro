@@ -44,24 +44,20 @@
       "@neonpro/types/*": ["../../packages/types/src/*"],
       "@neonpro/utils": ["../../packages/utils/src"],
       "@neonpro/utils/*": ["../../packages/utils/src/*"],
-      "@neonpro/domain": ["../../packages/domain/src"],
-      "@neonpro/domain/*": ["../../packages/domain/src/*"],
       "@neonpro/core-services": ["../../packages/core-services/src"],
       "@neonpro/core-services/*": ["../../packages/core-services/src/*"],
       "@neonpro/compliance": ["../../packages/compliance/src"],
       "@neonpro/compliance/*": ["../../packages/compliance/src/*"],
       "@neonpro/security": ["../../packages/security/src"],
       "@neonpro/security/*": ["../../packages/security/src/*"],
-      "@neonpro/auth": ["../../packages/auth/src"],
-      "@neonpro/auth/*": ["../../packages/auth/src/*"],
+
       "@neonpro/database": ["../../packages/database/src"],
       "@neonpro/database/*": ["../../packages/database/src/*"],
       "@neonpro/cache": ["../../packages/cache/src"],
       "@neonpro/cache/*": ["../../packages/cache/src/*"],
       "@neonpro/monitoring": ["../../packages/monitoring/src"],
       "@neonpro/monitoring/*": ["../../packages/monitoring/src/*"],
-      "@neonpro/enterprise": ["../../packages/enterprise/src"],
-      "@neonpro/enterprise/*": ["../../packages/enterprise/src/*"],
+
       "qrcode.react": ["./lib/placeholders/qrcode-react"]
     },
     "noEmit": true
@@ -86,9 +82,6 @@
     },
     {
       "path": "../../packages/utils"
-    },
-    {
-      "path": "../../packages/domain"
     },
     {
       "path": "../../packages/core-services"

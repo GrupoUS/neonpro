@@ -20,7 +20,10 @@ export function MetricWidget({
   description,
   color = "blue",
 }: MetricWidgetProps) {
-  const isHealthy = value.current >= value.target;
+  const safeTarget = typeof value.target === "number" && value.target > 0 ? value.target : 0;
+  const isHealthy = safeTarget > 0 ? value.current >= safeTarget : false;
+  const rawPct = safeTarget > 0 ? (value.current / safeTarget) * 100 : 0;
+  const percentage = Math.max(0, Math.min(rawPct, 100));
   const percentage = Math.min((value.current / value.target) * 100, 100);
 
   const colorClasses = {
@@ -74,7 +77,10 @@ interface ROIMetricProps {
 }
 
 export function ROIMetric({ actualROI, targetROI, period }: ROIMetricProps) {
-  const isExceeding = actualROI >= targetROI;
+  const safeTarget = targetROI || 0;
+  const isExceeding = safeTarget > 0 ? actualROI >= safeTarget : false;
+  const rawPct = safeTarget > 0 ? (actualROI / safeTarget) * 100 : 0;
+  const percentageOfTarget = Math.max(0, Math.min(rawPct, 100));
   const percentageOfTarget = (actualROI / targetROI) * 100;
 
   return (

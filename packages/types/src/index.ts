@@ -9,6 +9,8 @@ export * from "./database";
 export * from "./enterprise";
 export * from "./ml-pipeline";
 export * from "./patient";
+export * from "./rbac";
+export * from "./session";
 export * from "./stock-alerts";
 export * from "./subscription";
 export * from "./user";

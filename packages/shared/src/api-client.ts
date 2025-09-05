@@ -839,8 +839,8 @@ export const ApiHelpers = {
       const nested = apiError.error?.error;
       const topLevel = apiError.error;
 
-      const nestedValidations = nested?.validation_errors;
-      const topValidations = topLevel?.validation_errors as any;
+      const nestedValidations = (nested as any)?.validation_errors;
+      const topValidations = (topLevel as any)?.validation_errors;
 
       const validations = Array.isArray(nestedValidations) && nestedValidations.length > 0
         ? nestedValidations

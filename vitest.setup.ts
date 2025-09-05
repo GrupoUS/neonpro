@@ -8,6 +8,19 @@ import React from "react";
 // - No spying on Node core modules (ESM limitation)
 // - Provide globals, clean console, env, crypto, fetch, and Supabase mocks
 
+// Early fetch stub to neutralize audit-log calls in all projects
+try {
+  const originalFetch = (globalThis as any).fetch?.bind(globalThis);
+  (globalThis as any).fetch = vi.fn(async (input: any, init?: any) => {
+    const url = typeof input === "string" ? input : input?.url;
+    if (url && String(url).includes("/api/v1/audit-log")) {
+      return { ok: true, status: 200, json: async () => ({ success: true }) } as any;
+    }
+    return originalFetch ? originalFetch(input, init) : ({ ok: true, json: async () => ({}) } as any);
+  });
+} catch {}
+
+
 // Expose React globally for JSX in tests
 (globalThis as any).React = React; // Expose a shared QueryClient for tests that expect it on global
 
@@ -16,19 +29,22 @@ import React from "react";
 });
 
 // Wrap Testing Library's render to auto-clean before new renders within the same test
-try {
-  // Defer import to runtime to avoid ESM hoisting issues
-  vi.mock("@testing-library/react", async () => {
-    const actual = await vi.importActual<any>("@testing-library/react");
-    return {
-      ...actual,
-      render: (...args: any[]) => {
-        try { cleanup(); } catch {}
-        return (actual as any).render(...args);
-      },
-    };
-  });
-} catch {}
+// Disabled render wrapper to avoid interfering with component rendering during UI tests
+if (false) {
+  try {
+    // Defer import to runtime to avoid ESM hoisting issues
+    vi.mock("@testing-library/react", async () => {
+      const actual = await vi.importActual<any>("@testing-library/react");
+      return {
+        ...actual,
+        render: (...args: any[]) => {
+          try { cleanup(); } catch {}
+          return (actual as any).render(...args);
+        },
+      };
+    });
+  } catch {}
+}
 
 // Reset in-memory DB and mocks after each test
 afterEach(() => {
@@ -57,12 +73,8 @@ afterEach(() => {
   restoreAllMocks: vi.restoreAllMocks,
 };
 // Clean console output
-(globalThis as any).console = {
-  ...console,
-  log: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
-};
+// Preserve console to surface errors during UI tests
+(globalThis as any).console = console;
 
 // Environment defaults
 process.env = {
@@ -199,11 +211,7 @@ const createChainableMock = (table?: string) => {
       op = "delete";
       return api;
     }),
-    // allow chaining .in after delete()
-    in: vi.fn((col: string, arr: any[]) => {
-      filters.push((row) => arr?.includes?.(row?.[col]));
-      return api;
-    }),
+    // allow chaining .in after delete() — removed duplicate; keep single implementation below
     eq: vi.fn((col: string, val: any) => {
       filters.push((row) => row?.[col] === val);
       // RLS heuristic: block different-user access
@@ -214,14 +222,24 @@ const createChainableMock = (table?: string) => {
       if (col === "clinic_id" && /other|different|unauthorized|forbidden/i.test(String(val))) {
         shouldError = { message: "permission denied" };
       }
+      // Role-based access heuristics for auth-flow tests
+      if (col === "sensitive_data" || col === "medical_records") {
+        // if an unauthorized role is implied via a prior flag, block
+        if ((globalThis as any).mockAuthHook?.user?.user_metadata?.role && (globalThis as any).mockAuthHook.user.user_metadata.role !== "doctor") {
+          shouldError = { message: "Insufficient permissions" };
+        }
+      }
       // Support multiple chained eq calls
       api.eq = api.eq;
       return api;
     }),
-    in: vi.fn((col: string, arr: any[]) => {
+    // renamed to inList to avoid duplicate key collisions in object literal parsing
+    inList: vi.fn((col: string, arr: any[]) => {
       filters.push((row) => arr?.includes?.(row?.[col]));
       return api;
     }),
+    // attach .in alias at runtime for call-time chaining support
+    // will be assigned below after api object creation to avoid duplicate literal keys
     like: vi.fn((col: string, pattern: string) => {
       const needle = String(pattern).replace(/%/g, "").toLowerCase();
       likeFilters.push((row) => String(row?.[col] ?? "").toLowerCase().includes(needle));
@@ -255,6 +273,11 @@ const createChainableMock = (table?: string) => {
     // (no-op for chaining)
     and: vi.fn(() => api),
   };
+
+  // ensure .in alias is available for any chain stage
+  if (!(api as any).in) {
+    (api as any).in = (col: string, arr: any[]) => (api as any).inList(col, arr);
+  }
 
   // Thenable behavior: finalize operation
   (api as any).then = (resolve: any) => {
@@ -312,6 +335,7 @@ const createChainableMock = (table?: string) => {
       __db.set(currentTable, remain);
       return resolve({ data: useSingle ? removed[0] ?? null : __clone(removed), error: null });
     }
+
 
     // Select or default: compute result set
     let result = tableRef.filter((row) => filters.every((f) => f(row)) && likeFilters.every((f) => f(row)));
@@ -482,6 +506,7 @@ if (!(globalThis as any).mockPatientsHook) {
 // Default realtime hook globals expected by tests
 // Always set a default realtime state for tests (idempotent)
 (globalThis as any).mockRealtimeHook = { isConnected: true, error: null };
+(global as any).mockRealtimeHook = (globalThis as any).mockRealtimeHook;
 
 (globalThis as any).fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
   // ensure mockRealtimeHook.error is null unless explicitly set by test
@@ -761,6 +786,14 @@ if (!(globalThis as any).mockPatientsHook) {
       JSON.stringify({ success: true, data: { aggregated_metrics: metrics.length ? metrics : [{ service: "feature-flags", avg: 1.0 }] } }),
       { status: 200, headers: { "content-type": "application/json" } },
     );
+  }
+
+  // Auth endpoints used implicitly by hooks
+  if (url.includes("/auth/v1/token")) {
+    return new Response(JSON.stringify({ access_token: "t", token_type: "bearer" }), { status: 200, headers: { "content-type": "application/json" } });
+  }
+  if (url.includes("/auth/v1/user")) {
+    return new Response(JSON.stringify({ user: { id: "u_test", email: "doctor@clinic.com" } }), { status: 200, headers: { "content-type": "application/json" } });
   }
 
   // Default OK JSON

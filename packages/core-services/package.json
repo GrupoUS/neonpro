@@ -55,7 +55,6 @@
   },
   "dependencies": {
     "@neonpro/database": "workspace:*",
-    "@neonpro/domain": "workspace:*",
     "@neonpro/utils": "workspace:*",
     "date-fns": "^3.6.0",
     "zod": "^3.22.4"

@@ -136,9 +136,7 @@ export interface SecurityEvent {
   riskScore: number;
 }
 
-export interface RolePermissions {
-  [role: string]: Permission[];
-}
+export type RolePermissions = Record<UserRole, Permission[]>;
 
 export interface User {
   id: string;
@@ -155,16 +153,11 @@ export interface User {
 }
 
 export interface IAuthService {
-  login: (credentials: {
-    email: string;
-    password: string;
-  }) => Promise<{ user: User; token: string; }>;
+  login: (credentials: LoginCredentials) => Promise<LoginResult>;
   logout: () => Promise<void>;
-  register: (data: {
-    email: string;
-    password: string;
-    name: string;
-  }) => Promise<User>;
+  register: (data: { email: string; password: string; name: string; }) => Promise<User>;
   getCurrentUser: () => Promise<User | null>;
-  refreshToken: () => Promise<string>;
+  refreshToken: () => Promise<{ accessToken: string; refreshToken: string }>;
+  initiateMfa?: (userId: string) => Promise<MfaSetupResult>;
+  verifyMfa?: (userId: string, code: string) => Promise<LoginResult>;
 }

@@ -91,17 +91,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (loading) return;
       if (confirmAction || Boolean(confirmMessage)) {
-        let ok1 = true;
-        let ok2 = true;
-        const g = (globalThis as any);
-        if (typeof g?.confirm === "function") {
-          ok1 = g.confirm(confirmMessage);
-        }
-        const w = typeof window !== "undefined" ? (window as any) : undefined;
-        if (typeof w?.confirm === "function") {
-          ok2 = w.confirm(confirmMessage);
-        }
-        if (!ok1 || !ok2) return;
+        const fn = (globalThis as any)?.confirm ?? (typeof window !== "undefined" ? (window as any).confirm : undefined);
+        const ok = typeof fn === "function" ? fn(confirmMessage) : true;
+        if (!ok) return;
       }
       onClick?.(e);
     };

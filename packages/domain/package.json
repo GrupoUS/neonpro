@@ -1,48 +1,8 @@
 {
   "name": "@neonpro/domain",
-  "version": "1.0.0",
-  "description": "NeonPro Healthcare Domain Logic - Business hooks and domain utilities",
+  "version": "0.0.0",
   "private": true,
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "type-check": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@neonpro/database": "workspace:*",
-    "@neonpro/security": "workspace:*",
-    "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.39.0",
-    "@tanstack/react-query": "^5.62.5",
-    "date-fns": "^4.1.0",
-    "next": "^15.1.4",
-    "react": "^18.3.1",
-    "sonner": "^1.7.0",
-    "zod": "^3.25.76"
-  },
-  "devDependencies": {
-    "@types/node": "^22.17.1",
-    "@types/react": "^18.3.18",
-    "typescript": "^5.9.2"
-  },
-  "peerDependencies": {
-    "react": "^18.0.0"
-  },
-  "keywords": [
-    "healthcare",
-    "domain",
-    "business-logic",
-    "react-hooks",
-    "lgpd",
-    "anvisa",
-    "cfm",
-    "neonpro"
-  ]
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts"
 }

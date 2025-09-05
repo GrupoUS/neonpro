@@ -24,8 +24,6 @@
       "@neonpro/ui/*": ["./packages/ui/src/*"],
       "@neonpro/utils": ["./packages/utils/src"],
       "@neonpro/utils/*": ["./packages/utils/src/*"],
-      "@neonpro/domain": ["./packages/domain/src"],
-      "@neonpro/domain/*": ["./packages/domain/src/*"],
       "@neonpro/database": ["./packages/database/src"],
       "@neonpro/database/*": ["./packages/database/src/*"],
       "@neonpro/types": ["./packages/types/src"],
@@ -34,20 +32,16 @@
       "@neonpro/config/*": ["./packages/config/*"],
       "@neonpro/shared": ["./packages/shared/src"],
       "@neonpro/shared/*": ["./packages/shared/src/*"],
-      "@neonpro/auth": ["./packages/auth/src"],
-      "@neonpro/auth/*": ["./packages/auth/src/*"],
+
       "@neonpro/ai": ["./packages/ai/src"],
       "@neonpro/ai/*": ["./packages/ai/src/*"],
-      "@neonpro/compliance": ["./packages/compliance/src"],
-      "@neonpro/compliance/*": ["./packages/compliance/src/*"],
+
       "@neonpro/security": ["./packages/security/src"],
       "@neonpro/security/*": ["./packages/security/src/*"],
       "@neonpro/cache": ["./packages/cache/src"],
       "@neonpro/cache/*": ["./packages/cache/src/*"],
       "@neonpro/monitoring": ["./packages/monitoring/src"],
-      "@neonpro/monitoring/*": ["./packages/monitoring/src/*"],
-      "@neonpro/enterprise": ["./packages/enterprise/src"],
-      "@neonpro/enterprise/*": ["./packages/enterprise/src/*"]
+      "@neonpro/monitoring/*": ["./packages/monitoring/src/*"]
     },
     "strictNullChecks": true,
     "plugins": [
@@ -92,9 +86,6 @@
       "path": "./packages/utils"
     },
     {
-      "path": "./packages/domain"
-    },
-    {
       "path": "./packages/database"
     },
     {
@@ -103,27 +94,19 @@
     {
       "path": "./packages/shared"
     },
-    {
-      "path": "./packages/auth"
-    },
+
     {
       "path": "./packages/core-services"
     },
     {
       "path": "./packages/ai"
     },
-    {
-      "path": "./packages/compliance"
-    },
+
     {
       "path": "./packages/security"
     },
     {
-      "path": "./packages/cache"
-    },
-    {
       "path": "./packages/monitoring"
-    },
-
+    }
   ]
 }

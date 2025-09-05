@@ -98,7 +98,8 @@
       "mcp__supabase__list_projects",
       "mcp__supabase__get_project",
       "mcp__supabase__list_tables",
-      "mcp__supabase__execute_sql"
+      "mcp__supabase__execute_sql",
+      "mcp__desktop-commander__start_search"
     ],
     "deny": [
       "Edit",

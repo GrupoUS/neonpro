@@ -30,14 +30,11 @@
       "@neonpro/ui/*": ["../../packages/ui/src/*"],
       "@neonpro/ai": ["../../packages/ai/src"],
       "@neonpro/ai/*": ["../../packages/ai/src/*"],
-      "@neonpro/auth": ["../../packages/auth/src"],
-      "@neonpro/auth/*": ["../../packages/auth/src/*"],
+
       "@neonpro/types": ["../../packages/types/src"],
       "@neonpro/types/*": ["../../packages/types/src/*"],
       "@neonpro/utils": ["../../packages/utils/src"],
       "@neonpro/utils/*": ["../../packages/utils/src/*"],
-      "@neonpro/domain": ["../../packages/domain/src"],
-      "@neonpro/domain/*": ["../../packages/domain/src/*"],
       "@neonpro/core-services": ["../../packages/core-services/src"],
       "@neonpro/core-services/*": ["../../packages/core-services/src/*"],
       "@neonpro/compliance": ["../../packages/compliance/src"],
@@ -72,17 +69,12 @@
     {
       "path": "../../packages/ai"
     },
-    {
-      "path": "../../packages/auth"
-    },
+
     {
       "path": "../../packages/types"
     },
     {
       "path": "../../packages/utils"
-    },
-    {
-      "path": "../../packages/domain"
     },
     {
       "path": "../../packages/core-services"

@@ -517,14 +517,7 @@ export type ComplianceFramework =
   | "hipaa"
   | "iso27001"
   | "cfm";
-export type HealthcareRole =
-  | "doctor"
-  | "nurse"
-  | "admin"
-  | "patient"
-  | "receptionist"
-  | "manager"
-  | "auditor";
+// HealthcareRole is now defined in rbac.ts as UserRole
 export type DataSensitivityLevel =
   | "public"
   | "internal"

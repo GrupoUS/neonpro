@@ -370,6 +370,15 @@ export default defineConfig({
         find: /^@neonpro\/shared$/,
         replacement: path.resolve(__dirname, "./packages/shared/src/index.ts"),
       },
+      // Optional domain alias stubs to avoid resolution attempts
+      {
+        find: /^@neonpro\/domain$/,
+        replacement: path.resolve(__dirname, "./packages/shared/src/index.ts"),
+      },
+      {
+        find: /^@neonpro\/domain\/(.*)$/,
+        replacement: path.resolve(__dirname, "./packages/shared/src") + "/$1",
+      },
       // Subpath imports → map folder then append capture group
       {
         find: /^@neonpro\/ui\/(.*)$/,
@@ -386,6 +395,11 @@ export default defineConfig({
       {
         find: /^@neonpro\/shared\/(.*)$/,
         replacement: path.resolve(__dirname, "./packages/shared/src") + "/$1",
+      },
+      // Direct source alias for UI package in tests
+      {
+        find: /^@ui-src\/(.*)$/,
+        replacement: path.resolve(__dirname, "./packages/ui/src") + "/$1",
       },
 
       // Explicit subpath aliases for tests (kept for determinism)

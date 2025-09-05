@@ -208,7 +208,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     return this.executeOperation(
       "getPatients",
       async () => {
-        return this.repository.getPatients(filters);
+        return this.repository.getPatients(filters) as Promise<Patient[]>;
       },
       context,
       {
@@ -264,7 +264,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     return this.executeOperation(
       "searchPatients",
       async () => {
-        return this.repository.searchPatients(query);
+        return this.repository.searchPatients(query) as Promise<Patient[]>;
       },
       context,
       {
@@ -335,7 +335,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
       async () => {
         const consentForms = await this.repository.getConsentForms(patientId);
         return consentForms.some(
-          (form) =>
+          (form: any) =>
             form.treatmentType === treatmentType
             && form.isActive
             && form.signedDate,

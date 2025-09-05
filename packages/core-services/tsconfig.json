@@ -8,6 +8,7 @@
     "rootDir": "./src",
     "composite": true,
     "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -19,9 +20,5 @@
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
-  "references": [
-    { "path": "../database" },
-    { "path": "../domain" },
-    { "path": "../utils" }
-  ]
+  "references": [{ "path": "../database" }, { "path": "../utils" }]
 }

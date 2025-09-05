@@ -10,7 +10,7 @@ const nextConfig = {
     "@neonpro/brazilian-healthcare-ui",
     "@neonpro/types",
     "@neonpro/utils",
-    "@neonpro/auth",
+
     "@neonpro/core-services",
   ],
   experimental: {},

@@ -8,8 +8,8 @@
  * - Alertas automáticos
  */
 
-import { UnifiedAuditService as EnterpriseAuditService } from "@neonpro/security";
 import { EnterpriseAnalyticsService } from "../enterprise/analytics/EnterpriseAnalyticsService";
+import { UnifiedAuditService } from "../enterprise/audit/UnifiedAuditService";
 import { EnterpriseCacheService } from "../enterprise/cache/EnterpriseCacheService";
 import { EnterpriseSecurityService } from "../enterprise/security/EnterpriseSecurityService";
 
@@ -170,19 +170,19 @@ export class EnterpriseHealthCheckService {
       // Test connectivity and basic operations
       switch (serviceName) {
         case "cache": {
-          await this.testCacheService(service, result);
+          await this.testCacheService(service as EnterpriseCacheService, result);
           break;
         }
         case "analytics": {
-          await this.testAnalyticsService(service, result);
+          await this.testAnalyticsService(service as EnterpriseAnalyticsService, result);
           break;
         }
         case "security": {
-          await this.testSecurityService(service, result);
+          await this.testSecurityService(service as EnterpriseSecurityService, result);
           break;
         }
         case "audit": {
-          await this.testAuditService(service, result);
+          await this.testAuditService(service as UnifiedAuditService, result);
           break;
         }
         default: {

@@ -3,7 +3,7 @@
  * @package @neonpro/auth
  */
 
-import type { ComponentType } from "react";
+import React, { isValidElement, type ComponentType } from "react";
 
 // Define component types that will be implemented in the web app
 export interface LoginFormProps {
@@ -65,24 +65,46 @@ export function registerAuthComponents(
 }
 
 // Validation helpers for component props
-export const validateLoginFormProps = (props: LoginFormProps): boolean => {
-  return typeof props === "object" && props !== null;
+const isFunction = (v: unknown): v is (...args: any[]) => any => typeof v === "function";
+const isString = (v: unknown): v is string => typeof v === "string";
+const isBoolean = (v: unknown): v is boolean => typeof v === "boolean";
+const isReactNode = (v: unknown): boolean => {
+  if (v == null) return true;
+  const t = typeof v;
+  if (t === "string" || t === "number" || t === "boolean") return true;
+  if (Array.isArray(v)) return v.every(isReactNode);
+  return isValidElement(v as any);
 };
 
-export const validateRegisterFormProps = (
-  props: RegisterFormProps,
-): boolean => {
-  return typeof props === "object" && props !== null;
+export const validateLoginFormProps = (props: LoginFormProps): boolean => {
+  if (typeof props !== "object" || props === null) return false;
+  if (props.onLogin !== undefined && !isFunction(props.onLogin)) return false;
+  if (props.loading !== undefined && !isBoolean(props.loading)) return false;
+  if (props.error !== undefined && !isString(props.error)) return false;
+  return true;
+};
+
+export const validateRegisterFormProps = (props: RegisterFormProps): boolean => {
+  if (typeof props !== "object" || props === null) return false;
+  if (props.onRegister !== undefined && !isFunction(props.onRegister)) return false;
+  if (props.loading !== undefined && !isBoolean(props.loading)) return false;
+  if (props.error !== undefined && !isString(props.error)) return false;
+  return true;
 };
 
 export const validateAuthButtonProps = (props: AuthButtonProps): boolean => {
-  return typeof props === "object" && props !== null;
+  if (typeof props !== "object" || props === null) return false;
+  if (props.onClick !== undefined && !isFunction(props.onClick)) return false;
+  if (props.loading !== undefined && !isBoolean(props.loading)) return false;
+  if (props.variant !== undefined && !["login", "logout", "register"].includes(props.variant)) return false;
+  if (props.children !== undefined && !isReactNode(props.children)) return false;
+  return true;
 };
 
-export const validateProtectedRouteProps = (
-  props: ProtectedRouteProps,
-): boolean => {
-  return (
-    typeof props === "object" && props !== null && props.children !== undefined
-  );
+export const validateProtectedRouteProps = (props: ProtectedRouteProps): boolean => {
+  if (typeof props !== "object" || props === null) return false;
+  if (!isReactNode(props.children)) return false;
+  if (props.fallback !== undefined && !isReactNode(props.fallback)) return false;
+  if (props.requireAuth !== undefined && !isBoolean(props.requireAuth)) return false;
+  return true;
 };
