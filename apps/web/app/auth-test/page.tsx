@@ -64,7 +64,7 @@ export default function AuthTestPage() {
         password,
         ...(mfaCode && { mfaCode: mfaCode.trim() }),
       });
-    } catch (err) {
+    } catch (_err) { // Unused catch parameter
       // Error is handled by the auth context
     } finally {
       setLoginLoading(false);
@@ -77,7 +77,7 @@ export default function AuthTestPage() {
       setEmail("");
       setPassword("");
       setMfaCode("");
-    } catch (err) {
+    } catch (_err) { // Unused catch parameter
       // Error is handled by the auth context
     }
   };
@@ -352,7 +352,7 @@ export default function AuthTestPage() {
           <div>
             <h4 className="font-medium mb-1">3. Teste de Logout</h4>
             <p className="text-sm text-muted-foreground">
-              Clique em "Logout" para testar a funcionalidade de encerramento de sessão.
+              Clique em &quot;Logout&quot; para testar a funcionalidade de encerramento de sessão.
             </p>
           </div>
 

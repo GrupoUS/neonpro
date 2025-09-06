@@ -1,7 +1,7 @@
 // Database Integration Test
 // Prisma operations with Supabase PostgreSQL and transaction handling
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient /*, QueryClientProvider*/ } from "@tanstack/react-query"; // Unused import
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock Prisma client
@@ -59,11 +59,11 @@ const mockSupabaseClient = {
   rpc: vi.fn(), // For stored procedures
 };
 
-vi.mock<typeof import("@prisma/client")>("@prisma/client", () => ({
+vi.mock("@prisma/client", () => ({
   PrismaClient: () => mockPrismaClient,
 }));
 
-vi.mock<typeof import("@supabase/supabase-js")>(
+vi.mock(
   "@supabase/supabase-js",
   () => ({
     createClient: () => mockSupabaseClient,

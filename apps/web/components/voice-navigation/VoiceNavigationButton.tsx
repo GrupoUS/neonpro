@@ -93,7 +93,7 @@ export function VoiceNavigationButton({
             {/* Status */}
             {lastCommand && (
               <div className="text-xs text-muted-foreground">
-                <p>Último comando: "{lastCommand}"</p>
+                <p>Último comando: &quot;{lastCommand}&quot;</p>
                 {confidence > 0 && <p>Confiança: {Math.round(confidence * 100)}%</p>}
               </div>
             )}

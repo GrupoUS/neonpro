@@ -1,5 +1,5 @@
 // API types
-export * from "./api";
+// export * from "./api"; // disabled for MVP to avoid duplicate re-exports with @neonpro/database
 
 // Auth types
 export * from "./auth";

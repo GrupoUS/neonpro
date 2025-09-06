@@ -92,7 +92,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
   healthcareContext = true,
   scanInterval = 5000,
   minimumSeverity = "moderate",
-  includePerformance = true,
+  includePerformance: _includePerformance = true, // rename for typing, keep unused alias
   onIssuesFound,
   devMode = process.env.NODE_ENV === "development",
 }) => {

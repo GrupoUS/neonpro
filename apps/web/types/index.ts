@@ -15,7 +15,7 @@
 export * from "./appointments";
 export * from "./auth";
 export * from "./billing";
-export * from "./common";
+// export * from "./common"; // disabled for MVP to avoid ambient conflicts
 export * from "./consultations";
 export * from "./database";
 export * from "./financial";

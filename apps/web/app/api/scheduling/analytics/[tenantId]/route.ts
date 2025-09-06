@@ -4,6 +4,53 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
 
+// Type definitions for analytics response data
+interface WeeklyTrend {
+  week: string;
+  schedulingTime: number;
+  noShowRate: number;
+  utilization: number;
+}
+
+interface Trends {
+  schedulingTimeReduction: number;
+  noShowReduction: number;
+  utilizationImprovement: number;
+  satisfactionImprovement: number;
+  revenueGrowth: number;
+  weeklyTrends: WeeklyTrend[];
+  targetAchievement: {
+    schedulingTimeReduction: boolean;
+    noShowReduction: boolean;
+    schedulingEfficiency: boolean;
+    decisionTime: boolean;
+  };
+}
+
+interface OptimizationOpportunity {
+  area: string;
+  potential: string;
+  recommendation: string;
+  impact: "Low" | "Medium" | "High";
+}
+
+interface AIInsights {
+  keyAchievements: string[];
+  optimizationOpportunities: OptimizationOpportunity[];
+  predictions: {
+    nextWeekDemand: number;
+    peakDays: string[];
+    recommendedActions: string[];
+  };
+  performanceScore: {
+    overall: number;
+    efficiency: number;
+    accuracy: number;
+    patientSatisfaction: number;
+    revenueOptimization: number;
+  };
+}
+
 const analyticsQuerySchema = z.object({
   startDate: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
@@ -176,7 +223,7 @@ function generateTimeSlotEfficiency(): TimeSlotEfficiency[] {
 async function calculateTrends(
   _analytics: SchedulingAnalytics,
   _tenantId: string,
-): Promise<unknown> {
+): Promise<Trends> {
   // Calculate improvement trends
   return {
     schedulingTimeReduction: 62.3, // 62.3% improvement
@@ -203,8 +250,8 @@ async function calculateTrends(
 
 async function generateAIInsights(
   _analytics: SchedulingAnalytics,
-  _trends: unknown,
-): Promise<unknown> {
+  _trends: Trends,
+): Promise<AIInsights> {
   return {
     keyAchievements: [
       "Successfully achieved 60% scheduling time reduction target",

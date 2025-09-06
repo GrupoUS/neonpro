@@ -178,7 +178,7 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
     data: unknown,
   ) => {
     try {
-      await validation.validateEntity(type, entityId, data);
+      await validation.validateEntity(type, entityId, data as Record<string, unknown>);
     } catch (error) {
       console.error("Validation failed:", error);
     }

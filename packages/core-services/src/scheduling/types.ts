@@ -185,6 +185,61 @@ export interface AISchedulingConfig {
     demandForecasting: boolean;
     resourceOptimization: boolean;
   };
+  // Database client for data operations
+  databaseClient?: DatabaseClient;
+  // AI engine for intelligent scheduling (dependency injection)
+  aiEngine?: IAiSchedulingEngine;
+}
+
+// Database client interface for dependency injection
+export interface DatabaseClient {
+  from(table: string): DatabaseQueryBuilder;
+}
+
+export interface DatabaseQueryBuilder {
+  select(columns?: string): DatabaseQueryBuilder;
+  eq(column: string, value: unknown): DatabaseQueryBuilder;
+  single(): Promise<{ data: unknown | null; error: unknown | null; }>;
+  limit(count: number): Promise<{ data: unknown[] | null; error: unknown | null; }>;
+}
+
+// AI Scheduling Engine interface for dependency injection
+export interface IAiSchedulingEngine {
+  scheduleAppointment(
+    request: SchedulingRequest,
+    availableSlots: AppointmentSlot[],
+    staff: Staff[],
+    patients: Patient[],
+    treatments: TreatmentType[],
+  ): Promise<SchedulingResult>;
+
+  handleDynamicEvent(
+    event: DynamicSchedulingEvent,
+    currentSchedule: AppointmentSlot[],
+    availableStaff: Staff[],
+  ): Promise<SchedulingAction[]>;
+
+  predictTreatmentDuration(
+    treatment: TreatmentType,
+    staffId: string,
+    patientId: string,
+  ): { predicted: number; confidence: number; factors: string[]; };
+
+  calculateNoShowRisk(
+    appointment: unknown,
+    patient: Patient,
+  ): number;
+}
+
+// Scheduling action with typed impact
+export interface SchedulingActionWithImpact extends SchedulingAction {
+  impact: {
+    efficiencyChange: number;
+    patientSatisfactionChange: number;
+    revenueImpact: number;
+    affectedAppointments: number;
+  };
+  executionTime: number;
 }
 
 // AI Scheduling Engine Types

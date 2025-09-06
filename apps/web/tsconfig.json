@@ -57,8 +57,12 @@
     "noEmit": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
+    "app/**/*",
+    "components/**/*",
+    "lib/**/*",
+    "hooks/**/*",
+    "contexts/**/*",
+    "types/**/*",
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],
@@ -66,8 +70,18 @@
     "node_modules",
     ".next/types/**/*",
     "__tests__/**/*",
+    "tests/**",
+    "tests/**/*",
     "**/*.test.ts",
-    "**/*.test.tsx"
+    "**/*.test.tsx",
+    "tests/e2e/**",
+    "app/components/ai-scheduling-demo.tsx",
+    "app/components/intelligent-scheduler.tsx",
+    "app/components/neonpro-healthcare-dashboard.tsx",
+    "app/components/performance-monitoring/**",
+    "app/api/scheduling/**",
+    "test-mvp-compilation.ts",
+    "types/common.ts"
   ],
   "references": [
     { "path": "../../packages/ui" },

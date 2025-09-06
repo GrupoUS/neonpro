@@ -140,7 +140,7 @@ export function useHealthcareServiceWorker() {
         });
 
         setState((prev) => ({ ...prev, isInstalled: true }));
-      } catch (error) {
+      } catch (_error) { // Unused catch parameter
         // console.error("Service Worker registration failed:", error);
       }
     }
@@ -196,7 +196,7 @@ export function useHealthcareServiceWorker() {
           uploaded: 67.8,
         },
       }));
-    } catch (error) {
+    } catch (_error) { // Unused catch parameter
       setState((prev) => ({ ...prev, syncInProgress: false }));
       // console.error("Critical data sync failed:", error);
     }

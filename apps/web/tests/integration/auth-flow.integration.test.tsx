@@ -19,14 +19,14 @@ const mockAuthHook = {
   refreshSession: vi.fn(),
 };
 
-vi.mock<typeof import("@supabase/supabase-js")>(
+vi.mock(
   "@supabase/supabase-js",
   () => ({
     createClient: () => (global as any).mockSupabaseClient,
   }),
 );
 
-vi.mock<typeof import("../../hooks/enhanced/use-auth")>(
+vi.mock(
   "../../hooks/enhanced/use-auth",
   () => ({
     useAuth: () => mockAuthHook,

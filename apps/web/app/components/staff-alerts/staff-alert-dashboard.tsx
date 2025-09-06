@@ -1,5 +1,6 @@
 "use client";
 
+import { useStaffAlerts } from "@/app/hooks/use-staff-alerts";
 import { Alert as AlertUI, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,6 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useStaffAlerts } from "@/hooks/use-staff-alerts";
 import { cn } from "@/lib/utils";
 import type { StaffAlert } from "@/types/staff-alerts";
 import {

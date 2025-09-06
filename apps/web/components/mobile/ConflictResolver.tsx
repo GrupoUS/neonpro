@@ -20,7 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+// import { Separator } from "@/components/ui/separator"; // Unused import
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
@@ -31,14 +31,14 @@ import {
   CheckCircle,
   Clock,
   Eye,
-  Merge,
+  // Merge, // Unused import
   Monitor,
   RefreshCw,
   Shield,
   Smartphone,
   Tablet,
-  User,
-  XCircle,
+  // User, // Unused import
+  // XCircle, // Unused import
 } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -277,11 +277,11 @@ export default function ConflictResolver({
   userId = "",
   conflicts: externalConflicts,
   onConflictResolved,
-  onConflictDismissed,
+  _onConflictDismissed, // Unused parameter
   autoResolveEnabled = true,
 }: ConflictResolverProps) {
-  const [selectedConflict, setSelectedConflict] = useState<ConflictData | null>(null);
-  const [manualResolutionData, setManualResolutionData] = useState<any>(null);
+  const [_selectedConflict, setSelectedConflict] = useState<ConflictData | null>(null); // Unused variable
+  const [manualResolutionData, setManualResolutionData] = useState<unknown>(null);
   const [resolutionError, setResolutionError] = useState<string | null>(null);
 
   // Use internal conflict detection or external conflicts
@@ -478,7 +478,7 @@ export default function ConflictResolver({
 
           {/* Conflict description */}
           <p className="text-sm text-muted-foreground">
-            Field "{conflict.fieldName}" has conflicting changes that require resolution.
+            Field &quot;{conflict.fieldName}&quot; has conflicting changes that require resolution.
           </p>
 
           {/* Action buttons */}

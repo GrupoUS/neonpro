@@ -85,7 +85,7 @@ export function ANVISAProfessionalManagement({
     fetchProfessionals();
   }, [fetchProfessionals]);
 
-  const checkAuthorization = async (professionalId: string) => {
+  const _checkAuthorization = async (professionalId: string) => { // Unused function
     try {
       const response = await fetch(
         `/api/anvisa/professionals?clinic_id=${clinicId}&action=check_authorization&professional_id=${professionalId}`,
@@ -194,7 +194,7 @@ export function ANVISAProfessionalManagement({
           <div className="h-10 w-40 animate-pulse rounded bg-gray-200" />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {new Array(6).fill(null).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <Card className="animate-pulse" key={i}>
               <CardHeader>
                 <div className="h-4 w-32 rounded bg-gray-200" />

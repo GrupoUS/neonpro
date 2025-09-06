@@ -4,7 +4,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress"; // Unused import
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -166,7 +166,7 @@ export function useVoiceInteraction(
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const {
-    mode = VoiceMode.PUSH_TO_TALK,
+    _mode = VoiceMode.PUSH_TO_TALK, // Unused variable
     language = "pt-BR",
     continuous = false,
     interimResults = true,
@@ -175,7 +175,8 @@ export function useVoiceInteraction(
   // Check browser support
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition
-      || (window as any).webkitSpeechRecognition;
+      || (window as unknown as { webkitSpeechRecognition: typeof SpeechRecognition; })
+        .webkitSpeechRecognition;
 
     setIsSupported(!!SpeechRecognition && !!window.speechSynthesis);
   }, []);
@@ -185,7 +186,8 @@ export function useVoiceInteraction(
     if (!isSupported) return;
 
     const SpeechRecognition = window.SpeechRecognition
-      || (window as any).webkitSpeechRecognition;
+      || (window as unknown as { webkitSpeechRecognition: typeof SpeechRecognition; })
+        .webkitSpeechRecognition;
 
     const recognition = new SpeechRecognition();
     recognition.lang = language;
@@ -263,7 +265,7 @@ export function useVoiceInteraction(
 
     try {
       recognitionRef.current.start();
-    } catch (err) {
+    } catch (_err) { // Unused catch parameter
       setError("Não foi possível iniciar o reconhecimento de voz");
       setState(VoiceState.ERROR);
     }
@@ -373,7 +375,7 @@ export function VoiceInteractionUX({
   showConfidence = true,
   showTranscript = true,
   enableCommands = true,
-  autoSpeak = false,
+  _autoSpeak = false, // Unused parameter
 }: VoiceInteractionUXProps) {
   const [currentMode, setCurrentMode] = useState(mode);
   const [isEnabled, setIsEnabled] = useState(true);
@@ -655,7 +657,7 @@ export function VoiceInteractionUX({
                     <strong>Comandos Globais:</strong>
                     {Object.keys(VoiceCommands.global).map(cmd => (
                       <Badge key={cmd} variant="outline" className="ml-1 text-xs">
-                        "{cmd}"
+                        " &quot;{cmd}&quot;"
                       </Badge>
                     ))}
                   </div>
@@ -665,7 +667,7 @@ export function VoiceInteractionUX({
                       <strong>Comandos do Contexto:</strong>
                       {Object.keys(VoiceCommands[context]).map(cmd => (
                         <Badge key={cmd} variant="outline" className="ml-1 text-xs">
-                          "{cmd}"
+                          " &quot;{cmd}&quot;"
                         </Badge>
                       ))}
                     </div>
