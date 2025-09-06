@@ -216,8 +216,7 @@ function createErrorResponse(c: Context, error: HealthcareError): Response {
   if (error.patientImpact) {
     const payload = errorResponse.error as Record<string, unknown>;
     payload.patientDataInvolved = true;
-    payload.complianceNotification =
-      "Security team has been automatically notified";
+    payload.complianceNotification = "Security team has been automatically notified";
   }
 
   return c.json(errorResponse, statusCode as number);
