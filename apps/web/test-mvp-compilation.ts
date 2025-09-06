@@ -2,13 +2,7 @@
 // This file tests that our MVP auth and CRUD systems compile correctly
 
 // Test auth imports
-import {
-  canAccessResource,
-  getUser,
-  hasPermission,
-  PERMISSIONS,
-  verifyAuth,
-} from "./lib/auth";
+import { canAccessResource, getUser, hasPermission, PERMISSIONS, verifyAuth } from "./lib/auth";
 
 // Test data imports
 import {
