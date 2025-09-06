@@ -4,13 +4,13 @@
  * Provides authentication state management and methods using RealAuthService
  */
 
+import {
+  type LoginCredentials,
+  type LoginResult,
+  RealAuthService,
+  type User,
+} from "@neonpro/security";
 import { useCallback, useEffect, useState } from "react";
-import { RealAuthService } from "../../../packages/security/src/auth/RealAuthService";
-import type {
-  LoginCredentials,
-  LoginResult,
-  User,
-} from "../../../packages/security/src/auth/supabase-adapter/SupabaseAuthAdapter";
 
 // Authentication state interface
 export interface AuthState {

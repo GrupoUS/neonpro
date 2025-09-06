@@ -947,12 +947,12 @@ export class ChatWorkflowSystem {
   private async checkAvailability(
     date: string,
     specialty: string,
-  ): Promise<<unknown>[]> {
+  ): Promise<Array<{ date: string; time: string; specialty: string; available: boolean }>> {
     // Mock availability - would integrate with actual scheduling system
     return [{ date: "15/12/2024", time: "14:00", specialty, available: true }];
   }
 
-  private async createAppointment(appointmentData: unknown): Promise<unknown> {
+  private async createAppointment(appointmentData: any): Promise<{ id: string } & any> {
     // Mock appointment creation
     return { id: crypto.randomUUID(), ...appointmentData };
   }
@@ -968,10 +968,9 @@ export class ChatWorkflowSystem {
   ): Record<string, number> {
     const scores: Record<string, number> = {};
     symptoms.forEach((symptom) => {
-      scores[symptom] = Math.min(
-        10,
-        Math.max(1, parseInt(data["severity_score"]) || 5),
-      );
+      const raw = (data as Record<string, unknown>)["severity_score"];
+      const n = typeof raw === "string" ? parseInt(raw, 10) : typeof raw === "number" ? raw : 5;
+      scores[symptom] = Math.min(10, Math.max(1, n || 5));
     });
     return scores;
   }
@@ -980,8 +979,9 @@ export class ChatWorkflowSystem {
     symptoms: string[],
     data: Record<string, unknown>,
   ): "low" | "medium" | "high" | "critical" {
-    const severity = parseInt(data["severity_score"]) || 5;
-    const duration = data["symptom_duration"] || "";
+    const rawSeverity = (data as Record<string, unknown>)["severity_score"];
+    const severity = typeof rawSeverity === "string" ? parseInt(rawSeverity, 10) : typeof rawSeverity === "number" ? rawSeverity : 5;
+    const duration = (data as Record<string, unknown>)["symptom_duration"] as string || "";
 
     if (
       severity >= 9

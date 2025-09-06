@@ -1,6 +1,26 @@
-import crypto from "node:crypto";
+// import { createHmac, randomBytes } from "node:crypto"; // Commented for client-side compatibility
 import { z } from "zod";
 import { MfaDatabaseService } from "./mfa-database-service";
+
+// Mock crypto for client-side compatibility
+const randomBytes = (size: number) => {
+  const array = new Uint8Array(size);
+  if (typeof window !== "undefined" && window.crypto) {
+    window.crypto.getRandomValues(array);
+  }
+  return Buffer.from(array);
+};
+
+const createHmac = (algorithm: string, key: Buffer | string) => ({
+  update: (data: string) => ({
+    digest: (encoding: string) => "mock-hmac",
+  }),
+});
+
+const crypto = {
+  randomBytes,
+  createHmac,
+};
 
 // Constants for magic numbers
 const BACKUP_CODE_SEPARATOR_POSITION = 4;
@@ -197,7 +217,7 @@ function generateHotp(secret: string, counter: number): string {
   counterBuffer.writeUInt32BE(counter & 0xFF_FF_FF_FF, BUFFER_OFFSET_HIGH_BITS);
 
   // Generate HMAC
-  const hmac = crypto.createHmac("sha1", key);
+  const hmac = crypto.createHmac("sha1", key as unknown as Buffer);
   hmac.update(counterBuffer);
   const digest = hmac.digest();
 

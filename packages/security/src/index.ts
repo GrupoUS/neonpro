@@ -20,3 +20,12 @@ export type { RateLimitConfig, RateLimitResult } from "./middleware/rate-limitin
 export * from "./middleware/rate-limiting";
 export type { SecurityHeadersConfig } from "./middleware/security-headers";
 export * from "./middleware/security-headers";
+
+// Auth services
+export * from "./auth/RealAuthService";
+export type {
+  AuthConfig,
+  LoginCredentials,
+  LoginResult,
+  User,
+} from "./auth/supabase-adapter/SupabaseAuthAdapter";

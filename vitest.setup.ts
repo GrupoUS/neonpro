@@ -1020,6 +1020,28 @@ if (!(globalThis as any).mockPatientsHook) {
     );
   }
 
+  // Handle Supabase REST mock for RLS tests
+  if (url.includes("/rest/v1/ai_chat_sessions")) {
+    const params = new URL(url, "http://localhost").searchParams;
+    const userIdFilter = params.get("user_id"); // e.g., eq.different-user-123
+    const isDifferentUser = typeof userIdFilter === "string"
+      && userIdFilter.includes("different-user");
+
+    if (isDifferentUser) {
+      // Simulate RLS denial with a forbidden response so supabase-js sets error and null data
+      return new Response(
+        JSON.stringify({ message: "permission denied", code: "42501" }),
+        { status: 403, headers: { "content-type": "application/json" } },
+      );
+    }
+
+    // Default REST shape for allowed queries: empty result set
+    return new Response(JSON.stringify([]), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
   // Default OK JSON
   return new Response(JSON.stringify({ success: true }), {
     status: 200,

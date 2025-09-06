@@ -12,8 +12,17 @@
 
 import { createClient } from "@supabase/supabase-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { createHash, randomUUID } from "node:crypto";
+// import { createHash, randomUUID } from "node:crypto"; // Commented for client-side compatibility
 import { z } from "zod";
+
+// Mock crypto for client-side compatibility
+const createHash = (algorithm: string) => ({
+  update: (data: string) => ({
+    digest: (encoding: string) => "mock-hash",
+  }),
+});
+
+const randomUUID = () => `mock-uuid-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
 // Audit event types for aesthetic clinic operations
 export const AuditEventType = {

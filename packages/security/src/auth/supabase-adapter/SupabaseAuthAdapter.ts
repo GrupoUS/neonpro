@@ -10,18 +10,40 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@supabase/supabase-js";
 // import jwt from "jsonwebtoken";
-// import crypto from "node:crypto";
+// import nodeCrypto from "node:crypto"; // Removed for client-side compatibility
 
-// Mock for client-side compatibility
-const crypto = {
-  randomBytes: (size: number) => {
-    const array = new Uint8Array(size);
-    if (typeof window !== "undefined" && window.crypto) {
-      window.crypto.getRandomValues(array);
+// Minimal crypto shim usable in both Node and browser (no Node-specific imports)
+const cryptoShim = {
+  randomBytes: (size: number): Uint8Array => {
+    const g: any = globalThis as any;
+    if (g?.crypto?.getRandomValues) {
+      const array = new Uint8Array(size);
+      g.crypto.getRandomValues(array);
+      return array;
     }
-    return Buffer.from(array);
+    // Insecure fallback for environments without Web Crypto (non-production)
+    const array = new Uint8Array(size);
+    for (let i = 0; i < size; i++) array[i] = Math.floor(Math.random() * 256);
+    return array;
   },
-};
+  randomUUID: (): string => {
+    const g: any = (globalThis as any).crypto;
+    if (g && typeof g.randomUUID === "function") {
+      return g.randomUUID();
+    }
+    // Fallback RFC4122 v4 generator using random bytes
+    const bytes = cryptoShim.randomBytes(16);
+    // Per RFC 4122 section 4.4
+    bytes[6] = (bytes[6] & 0x0F) | 0x40; // version 4
+    bytes[8] = (bytes[8] & 0x3F) | 0x80; // variant 10xxxxxx
+    const toHex = (b: Uint8Array) =>
+      Array.from(b).map((v) => v.toString(16).padStart(2, "0")).join("");
+    const hex = toHex(bytes);
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${
+      hex.slice(20)
+    }`;
+  },
+} as const;
 
 const jwt = {
   sign: (payload: any, secret: string, options?: any) => "mock-jwt-token",
@@ -336,7 +358,7 @@ export class SupabaseAuthAdapter {
    * Create session in active_user_sessions table
    */
   private async createSession(profile: any, deviceInfo?: DeviceInfo): Promise<AuthSession> {
-    const sessionId = `session_${crypto.randomUUID()}`;
+    const sessionId = `session_${cryptoShim.randomUUID()}`;
     const expiresAt = new Date(Date.now() + this.config.sessionTimeout);
 
     const sessionData = {

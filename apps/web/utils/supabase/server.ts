@@ -1,45 +1,81 @@
-// Real Supabase Server Client
+/**
+ * Secure Supabase Server Client
+ * Uses centralized environment management with validation
+ */
+
+import { serverEnv, validateServerEnv } from "@/lib/env";
 import { type CookieOptions, createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+
+// Validate environment on module load (server-side only)
+try {
+  validateServerEnv();
+} catch (error) {
+  console.error("🚨 Supabase Server Environment Validation Failed:", error);
+  throw error;
+}
 
 export function createClient() {
   const cookieStore = cookies();
 
-  // Check for required environment variables
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  return createServerClient(
+    serverEnv.supabase.url,
+    serverEnv.supabase.anonKey,
+    {
+      cookies: {
+        get: (name: string) => {
+          const c = cookieStore.get(name);
+          return c?.value ?? null;
+        },
+        set: (name: string, value: string, options: CookieOptions) => {
+          try {
+            cookieStore.set({ name, value, ...options });
+          } catch (error) {
+            // Called from a Server Component. Safe to ignore if middleware handles session refresh.
+          }
+        },
+        remove: (name: string, options: CookieOptions) => {
+          try {
+            cookieStore.set({ name, value: "", ...options });
+          } catch (error) {
+            // Called from a Server Component. Safe to ignore if middleware handles session refresh.
+          }
+        },
+      },
+    },
+  );
+}
 
-  if (!supabaseUrl || !supabaseAnonKey) {
+/**
+ * Create admin client with service role key for server-side admin operations
+ * ⚠️ WARNING: Only use for server-side admin operations - bypasses RLS!
+ */
+export function createAdminClient() {
+  if (!serverEnv.supabase.serviceRoleKey) {
     throw new Error(
-      "Missing Supabase environment variables. Please check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local",
+      "SUPABASE_SERVICE_ROLE_KEY is required for admin operations. "
+        + "Add it to your .env.local file for admin functionality.",
     );
   }
 
   return createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
+    serverEnv.supabase.url,
+    serverEnv.supabase.serviceRoleKey,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        get: (name: string) => {
+          const c = cookies().get(name);
+          return c?.value ?? null;
         },
-        set(name: string, value: string, options: CookieOptions) {
+        set: (name: string, value: string, options: CookieOptions) => {
           try {
-            cookieStore.set({ name, value, ...options });
-          } catch (error) {
-            // The `set` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
-          }
+            cookies().set({ name, value, ...options });
+          } catch {}
         },
-        remove(name: string, options: CookieOptions) {
+        remove: (name: string, options: CookieOptions) => {
           try {
-            cookieStore.set({ name, value: "", ...options });
-          } catch (error) {
-            // The `delete` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
-          }
+            cookies().set({ name, value: "", ...options });
+          } catch {}
         },
       },
     },

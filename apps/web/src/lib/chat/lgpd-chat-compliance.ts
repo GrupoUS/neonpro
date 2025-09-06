@@ -849,7 +849,7 @@ export class LGPDChatCompliance {
     // Implement privacy officer notification
   }
 
-  private async getUserPersonalData(userId: string): Promise<<unknown>[]> {
+  private async getUserPersonalData(userId: string): Promise<unknown[]> {
     // Implement user data retrieval
     return [];
   }
@@ -863,12 +863,12 @@ export class LGPDChatCompliance {
 
   private async checkLegalRetentionRequirements(
     userId: string,
-  ): Promise<<unknown>[]> {
+  ): Promise<Array<{ data_type: string; retention_until: string }>> {
     // Implement legal retention check
     return [];
   }
 
-  private async getUserDataCategories(userId: string): Promise<string[]> {
+  private async getUserDataCategories(userId: string): Promise<Array<string>> {
     // Implement user data categories retrieval
     return [];
   }
@@ -877,6 +877,8 @@ export class LGPDChatCompliance {
     userId: string,
     category: string,
   ): Promise<void> {
+    // TODO: implement deletion logic
+    return;
     // Implement selective data deletion
   }
 
@@ -884,6 +886,8 @@ export class LGPDChatCompliance {
     userId: string,
     category: string,
   ): Promise<void> {
+    // TODO: implement anonymization logic
+    return;
     // Implement selective data anonymization
   }
 }

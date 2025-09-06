@@ -4,10 +4,11 @@ export {
   TranslationProvider,
   // Core UI hooks
   useDebounce,
+  // Map UI's useIsMobile to legacy useMobile for backward compatibility
+  useIsMobile as useMobile,
   // Layout
   useLayout,
   useLocale,
-  useMobile,
   // Domain-facing alias
   usePermissions as useHealthcarePermissions,
   useToast,

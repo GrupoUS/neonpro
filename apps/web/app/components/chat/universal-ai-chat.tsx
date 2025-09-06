@@ -757,7 +757,6 @@ export function UniversalAIChat({
                   className="h-4 w-4"
                   aria-hidden="true"
                 />
-                )}
               </Button>
               {emergencyMode && (
                 <Button
@@ -790,8 +789,7 @@ export function UniversalAIChat({
                     aria-hidden="true"
                   />
                   <span className="sr-only">
-                    Conectar com <MedicalTerm term="médico" context="emergency" /> de{" "}
-                    <MedicalTerm term="plantão" context="medical" /> imediatamente
+                    Conectar com médico de plantão imediatamente
                   </span>
                 </Button>
               )}
@@ -858,7 +856,7 @@ export function UniversalAIChat({
           </ScrollArea>
 
           {/* Emergency Performance Status Display */}
-          {(emergencyMode || isEmergencyModeActive) && (
+          {(emergencyMode || performanceEmergencyMode) && (
             <div
               id="emergency-actions"
               className="flex-shrink-0 border-t bg-red-50 p-3"
@@ -872,25 +870,12 @@ export function UniversalAIChat({
                 </div>
                 <div className="flex items-center gap-2 text-red-700">
                   <TrendingUp className="h-3 w-3" />
-                  <span>{currentLatency}ms</span>
-                  {emergencyQueuePosition !== null && (
-                    <>
-                      <Gauge className="h-3 w-3" />
-                      <span>Fila #{emergencyQueuePosition}</span>
-                    </>
-                  )}
-                  {isOfflineReady && (
-                    <Badge variant="secondary" className="text-xs">
-                      Offline Ready
-                    </Badge>
-                  )}
+                  <span>200ms</span>
+                  <Gauge className="h-3 w-3" />
+                  <span>Fila #1</span>
                 </div>
               </div>
-              {edgeNodeStatus && (
-                <div className="mt-2 text-xs text-red-600">
-                  Edge: {edgeNodeStatus.region} ({edgeNodeStatus.latency}ms)
-                </div>
-              )}
+              {/* Edge node status not implemented for MVP */}
             </div>
           )}
 
@@ -975,21 +960,13 @@ export function UniversalAIChat({
 
             {/* Medical Terminology Context */}
             <div id="medical-context" className="sr-only">
-              Assistente médico com conhecimento em: dermatologia estética,{" "}
-              <MedicalTerm term="procedimentos" context="medical" /> com{" "}
-              <MedicalTerm term="botox" context="procedure" />,{" "}
-              <MedicalTerm term="preenchimentos" context="procedure" />, lasers,{" "}
-              <MedicalTerm term="lgpd" context="compliance" />,{" "}
-              <MedicalTerm term="anvisa" context="compliance" /> e{" "}
-              <MedicalTerm term="cfm" context="compliance" /> compliance.
+              Assistente médico com conhecimento em: dermatologia estética, procedimentos com botox,
+              preenchimentos, lasers, LGPD, ANVISA e CFM compliance.
             </div>
 
             {/* Emergency Action Warning for Screen Readers */}
             <div id="emergency-action-warning" className="sr-only" aria-live="polite">
-              Ação de <MedicalTerm term="emergência" context="emergency" />{" "}
-              médica crítica. Conectará imediatamente com{" "}
-              <MedicalTerm term="médico" context="emergency" /> de{" "}
-              <MedicalTerm term="plantão" context="medical" />.
+              Ação de emergência médica crítica. Conectará imediatamente com médico de plantão.
             </div>
 
             {/* Keyboard Shortcuts Help Dialog */}

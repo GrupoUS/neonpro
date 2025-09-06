@@ -12,6 +12,11 @@ permissions:
   pull-requests: write
   actions: read
 
+env:
+  NODE_OPTIONS: "--max-old-space-size=4096"
+  CI: true
+  PNPM_CACHE_FOLDER: .pnpm-cache
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -20,16 +25,31 @@ jobs:
   setup-and-install:
     name: Setup and Install
     runs-on: ubuntu-latest
+    outputs:
+      cache-hit: ${{ steps.cache.outputs.cache-hit }}
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-      - uses: pnpm/action-setup@v4
+      - name: Cache node_modules
+        id: cache
+        uses: actions/cache@v4
         with:
-          version: 9
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+            tools/*/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
       - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
 
   lint:
@@ -38,18 +58,31 @@ jobs:
     needs: setup-and-install
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-      - uses: pnpm/action-setup@v4
+      - name: Restore node_modules cache
+        uses: actions/cache@v4
         with:
-          version: 9
-      - run: pnpm install --frozen-lockfile
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+            tools/*/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - name: Install dependencies (if cache miss)
+        if: needs.setup-and-install.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
       - name: Run oxlint
-        run: npx oxlint .
+        run: pnpm oxlint:fix
       - name: Check formatting
-        run: npx dprint check
+        run: pnpm format:check
       - name: Upload lint logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -65,16 +98,29 @@ jobs:
     needs: setup-and-install
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-      - uses: pnpm/action-setup@v4
+      - name: Restore node_modules cache
+        uses: actions/cache@v4
         with:
-          version: 9
-      - run: pnpm install --frozen-lockfile
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+            tools/*/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - name: Install dependencies (if cache miss)
+        if: needs.setup-and-install.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
       - name: TypeScript compile
-        run: npx tsc --noEmit --skipLibCheck
+        run: pnpm type-check
 
   test-and-coverage:
     name: Tests & Coverage
@@ -82,16 +128,29 @@ jobs:
     needs: setup-and-install
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-      - uses: pnpm/action-setup@v4
+      - name: Restore node_modules cache
+        uses: actions/cache@v4
         with:
-          version: 9
-      - run: pnpm install --frozen-lockfile
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+            tools/*/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - name: Install dependencies (if cache miss)
+        if: needs.setup-and-install.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
       - name: Run unit tests with coverage
-        run: pnpm vitest run --project unit --coverage --reporter=verbose
+        run: pnpm test:unit:coverage
       - name: Upload coverage artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -107,14 +166,29 @@ jobs:
     needs: [lint, type-check, test-and-coverage]
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-      - uses: pnpm/action-setup@v4
+      - name: Restore node_modules cache
+        uses: actions/cache@v4
         with:
-          version: 9
-      - run: pnpm install --frozen-lockfile
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+            tools/*/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - name: Install dependencies (if cache miss)
+        if: needs.setup-and-install.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
+      - name: Install bc for quality calculations
+        run: sudo apt-get update && sudo apt-get install -y bc
       - name: Compute quality metrics
         id: qg
         shell: bash
@@ -125,7 +199,7 @@ jobs:
           TOTAL_SCORE=0
 
           echo "Checking TypeScript compilation..."
-          if npx tsc --noEmit --skipLibCheck > /dev/null 2>&1; then
+          if pnpm type-check > /dev/null 2>&1; then
             TSC_SCORE=25
           else
             TSC_SCORE=0
@@ -133,7 +207,7 @@ jobs:
           TOTAL_SCORE=$((TOTAL_SCORE + TSC_SCORE))
 
           echo "Checking linting..."
-          LINT_VIOLATIONS=$(npx oxlint --quiet 2>/dev/null | wc -l || echo "0")
+          LINT_VIOLATIONS=$(pnpm exec oxlint . --quiet 2>/dev/null | wc -l || echo "0")
           if [ "$LINT_VIOLATIONS" -eq 0 ]; then
             LINT_SCORE=25
           elif [ "$LINT_VIOLATIONS" -le 1000 ]; then
@@ -163,7 +237,7 @@ jobs:
           TOTAL_SCORE=$((TOTAL_SCORE + TYPE_SCORE))
 
           echo "Checking security patterns via oxlint..."
-          SECURITY_ISSUES=$(npx oxlint --quiet 2>/dev/null | grep -c "security\|dangerous" || echo "0")
+          SECURITY_ISSUES=$(pnpm exec oxlint . --quiet 2>/dev/null | grep -c "security\|dangerous" || echo "0")
           if [ "$SECURITY_ISSUES" -eq 0 ]; then
             SECURITY_SCORE=25
           elif [ "$SECURITY_ISSUES" -le 20 ]; then
@@ -246,12 +320,17 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      NODE_OPTIONS: "--max-old-space-size=4096"
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm i -g vercel@latest
+          cache: pnpm
+      - run: pnpm add -g vercel@latest
       - name: Pull Vercel env
         run: vercel pull --yes --environment=production --token=${{ env.VERCEL_TOKEN }}
       - name: Build

@@ -29,6 +29,8 @@ export * from "./hooks/use-debounce";
 export * from "./hooks/use-mobile";
 export * from "./hooks/use-permissions";
 export * from "./hooks/use-toast";
+export * from "./hooks/use-translation";
+export * from "./hooks/useLayout";
 // Layout exports
 export * from "./layouts";
 // Utils exports

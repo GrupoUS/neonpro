@@ -1,325 +1,400 @@
 /**
- * Production Health Check API Endpoint
- * Comprehensive healthcare system status validation for production deployment
- * Used by Vercel, monitoring systems, and E2E tests
+ * NeonPro Health Check Endpoints
+ * Comprehensive system health monitoring for production readiness
  */
 
+import { serverEnv, validateServerEnv } from "@/lib/env";
+import { LogCategory, logger } from "@/lib/logger";
+import { createAdminClient } from "@/utils/supabase/server";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-interface HealthCheckResponse {
-  status: "healthy" | "degraded" | "unhealthy";
+// Health check status types
+type HealthStatus = "healthy" | "degraded" | "unhealthy";
+
+interface HealthCheckResult {
+  status: HealthStatus;
   timestamp: string;
-  service: string;
-  environment: string;
-  version: string;
-  checks: {
-    database: HealthStatus;
-    ai_services: HealthStatus;
-    compliance: HealthStatus;
-    security: HealthStatus;
-    real_time: HealthStatus;
-    performance: HealthStatus;
-  };
   uptime: number;
-  deployment: {
-    build_id: string;
-    region: string;
-    commit_sha: string;
+  version: string;
+  environment: string;
+  checks: {
+    [key: string]: {
+      status: HealthStatus;
+      message: string;
+      duration: number;
+      details?: any;
+    };
+  };
+  summary: {
+    total: number;
+    healthy: number;
+    degraded: number;
+    unhealthy: number;
   };
 }
 
-interface HealthStatus {
-  status: "healthy" | "degraded" | "unhealthy";
-  message: string;
-  responseTime?: number;
-  lastChecked: string;
-}
-
-export async function GET() {
-  const timestamp = new Date().toISOString();
+// Individual health check functions
+async function checkEnvironment(): Promise<
+  { status: HealthStatus; message: string; duration: number; details?: any; }
+> {
+  const start = Date.now();
 
   try {
-    // Initialize health checks
-    const checks = {
-      database: await checkDatabase(),
-      ai_services: await checkAIServices(),
-      compliance: await checkComplianceStatus(),
-      security: await checkSecurityStatus(),
-      real_time: await checkRealTimeServices(),
-      performance: await checkPerformanceMetrics(),
-    };
+    validateServerEnv();
 
-    // Determine overall health status
-    const overallStatus = determineOverallStatus(checks);
-
-    const response: HealthCheckResponse = {
-      status: overallStatus,
-      timestamp,
-      service: "NeonPro Healthcare Platform",
-      environment: process.env.NODE_ENV || "development",
-      version: process.env.npm_package_version || "1.0.0",
-      checks,
-      uptime: process.uptime(),
-      deployment: {
-        build_id: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 8) || "local",
-        region: process.env.VERCEL_REGION || "local",
-        commit_sha: process.env.VERCEL_GIT_COMMIT_SHA || "local",
+    return {
+      status: "healthy",
+      message: "Environment configuration is valid",
+      duration: Date.now() - start,
+      details: {
+        environment: serverEnv.app.environment,
+        lgpdCompliance: serverEnv.compliance.lgpdMode,
+        monitoringEnabled: !!serverEnv.monitoring.sentryDsn,
       },
     };
-
-    const statusCode = overallStatus === "healthy"
-      ? 200
-      : overallStatus === "degraded"
-      ? 200
-      : 503;
-
-    return NextResponse.json(response, {
-      status: statusCode,
-      headers: {
-        "Cache-Control": "no-store, max-age=0",
-        "X-Health-Check": "production",
-      },
-    });
-  } catch {
-    const errorResponse: HealthCheckResponse = {
+  } catch (error) {
+    return {
       status: "unhealthy",
-      timestamp,
-      service: "NeonPro Healthcare Platform",
-      environment: process.env.NODE_ENV || "development",
-      version: process.env.npm_package_version || "1.0.0",
-      checks: {
-        database: {
-          status: "unhealthy",
-          message: "Check failed",
-          lastChecked: timestamp,
-        },
-        ai_services: {
-          status: "unhealthy",
-          message: "Check failed",
-          lastChecked: timestamp,
-        },
-        compliance: {
-          status: "unhealthy",
-          message: "Check failed",
-          lastChecked: timestamp,
-        },
-        security: {
-          status: "unhealthy",
-          message: "Check failed",
-          lastChecked: timestamp,
-        },
-        real_time: {
-          status: "unhealthy",
-          message: "Check failed",
-          lastChecked: timestamp,
-        },
-        performance: {
-          status: "unhealthy",
-          message: "Check failed",
-          lastChecked: timestamp,
-        },
-      },
-      uptime: process.uptime(),
-      deployment: {
-        build_id: "error",
-        region: "error",
-        commit_sha: "error",
-      },
+      message: `Environment validation failed: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+      duration: Date.now() - start,
     };
-
-    return NextResponse.json(errorResponse, { status: 503 });
   }
 }
 
-async function checkDatabase(): Promise<HealthStatus> {
-  const startTime = performance.now();
-  try {
-    // Simulate database connectivity check
-    // In production, this would use Supabase MCP to validate connection
-    const hasSupabaseConfig = Boolean(
-      process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY,
-    );
+async function checkDatabase(): Promise<
+  { status: HealthStatus; message: string; duration: number; details?: any; }
+> {
+  const start = Date.now();
 
-    if (!hasSupabaseConfig) {
+  try {
+    if (!serverEnv.supabase.serviceRoleKey) {
+      return {
+        status: "degraded",
+        message: "Service role key not configured - admin operations unavailable",
+        duration: Date.now() - start,
+      };
+    }
+
+    const supabase = createAdminClient();
+
+    // Test basic connectivity
+    const { error: connectError } = await supabase
+      .from("pg_stat_activity")
+      .select("count(*)")
+      .limit(1);
+
+    if (connectError) {
       return {
         status: "unhealthy",
-        message: "Database configuration missing",
-        responseTime: performance.now() - startTime,
-        lastChecked: new Date().toISOString(),
+        message: `Database connection failed: ${connectError.message}`,
+        duration: Date.now() - start,
+      };
+    }
+
+    // Check if critical tables exist
+    const { data: tables, error: tableError } = await supabase
+      .from("information_schema.tables")
+      .select("table_name")
+      .eq("table_schema", "public")
+      .in("table_name", ["patients", "appointments", "clinics", "profiles"]);
+
+    if (tableError) {
+      return {
+        status: "degraded",
+        message: `Table check failed: ${tableError.message}`,
+        duration: Date.now() - start,
+      };
+    }
+
+    const expectedTables = ["patients", "appointments", "clinics", "profiles"];
+    const existingTables = tables?.map(t => t.table_name) || [];
+    const missingTables = expectedTables.filter(t => !existingTables.includes(t));
+
+    if (missingTables.length > 0) {
+      return {
+        status: "degraded",
+        message: `Missing critical tables: ${missingTables.join(", ")}`,
+        duration: Date.now() - start,
+        details: { missingTables, existingTables },
       };
     }
 
     return {
       status: "healthy",
-      message: "Database connection validated",
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
+      message: "Database is accessible and schema is valid",
+      duration: Date.now() - start,
+      details: {
+        tablesChecked: expectedTables.length,
+        allTablesPresent: true,
+      },
     };
   } catch (error) {
     return {
       status: "unhealthy",
-      message: `Database check failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
+      message: `Database check failed: ${error instanceof Error ? error.message : String(error)}`,
+      duration: Date.now() - start,
     };
   }
 }
 
-async function checkAIServices(): Promise<HealthStatus> {
-  const startTime = performance.now();
+async function checkSupabaseServices(): Promise<
+  { status: HealthStatus; message: string; duration: number; details?: any; }
+> {
+  const start = Date.now();
+
   try {
-    // Validate AI service configuration
-    const hasAIConfig = Boolean(
-      process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY,
+    // Check Supabase REST API
+    const response = await fetch(`${serverEnv.supabase.url}/rest/v1/`, {
+      method: "HEAD",
+      headers: {
+        "apikey": serverEnv.supabase.anonKey,
+      },
+    });
+
+    if (!response.ok) {
+      return {
+        status: "unhealthy",
+        message: `Supabase REST API unhealthy: ${response.status} ${response.statusText}`,
+        duration: Date.now() - start,
+      };
+    }
+
+    // Check Auth service
+    const authResponse = await fetch(`${serverEnv.supabase.url}/auth/v1/health`, {
+      method: "GET",
+      headers: {
+        "apikey": serverEnv.supabase.anonKey,
+      },
+    });
+
+    const authHealthy = authResponse.ok;
+
+    return {
+      status: authHealthy ? "healthy" : "degraded",
+      message: authHealthy ? "Supabase services are healthy" : "Auth service degraded",
+      duration: Date.now() - start,
+      details: {
+        restApi: response.ok,
+        authService: authHealthy,
+        supabaseRegion: serverEnv.supabase.region,
+      },
+    };
+  } catch (error) {
+    return {
+      status: "unhealthy",
+      message: `Supabase services check failed: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+      duration: Date.now() - start,
+    };
+  }
+}
+
+async function checkMemoryUsage(): Promise<
+  { status: HealthStatus; message: string; duration: number; details?: any; }
+> {
+  const start = Date.now();
+
+  try {
+    if (typeof process === "undefined" || !process.memoryUsage) {
+      return {
+        status: "degraded",
+        message: "Memory usage information not available",
+        duration: Date.now() - start,
+      };
+    }
+
+    const memUsage = process.memoryUsage();
+    const totalMB = Math.round(memUsage.rss / 1024 / 1024);
+    const heapUsedMB = Math.round(memUsage.heapUsed / 1024 / 1024);
+    const heapTotalMB = Math.round(memUsage.heapTotal / 1024 / 1024);
+
+    // Memory thresholds (adjust based on your deployment)
+    const WARNING_THRESHOLD = 512; // MB
+    const CRITICAL_THRESHOLD = 1024; // MB
+
+    let status: HealthStatus = "healthy";
+    let message = `Memory usage: ${totalMB}MB (heap: ${heapUsedMB}/${heapTotalMB}MB)`;
+
+    if (totalMB > CRITICAL_THRESHOLD) {
+      status = "unhealthy";
+      message = `High memory usage: ${totalMB}MB (critical threshold: ${CRITICAL_THRESHOLD}MB)`;
+    } else if (totalMB > WARNING_THRESHOLD) {
+      status = "degraded";
+      message = `Elevated memory usage: ${totalMB}MB (warning threshold: ${WARNING_THRESHOLD}MB)`;
+    }
+
+    return {
+      status,
+      message,
+      duration: Date.now() - start,
+      details: {
+        rss: totalMB,
+        heapUsed: heapUsedMB,
+        heapTotal: heapTotalMB,
+        external: Math.round(memUsage.external / 1024 / 1024),
+        thresholds: {
+          warning: WARNING_THRESHOLD,
+          critical: CRITICAL_THRESHOLD,
+        },
+      },
+    };
+  } catch (error) {
+    return {
+      status: "degraded",
+      message: `Memory check failed: ${error instanceof Error ? error.message : String(error)}`,
+      duration: Date.now() - start,
+    };
+  }
+}
+
+async function checkComplianceFeatures(): Promise<
+  { status: HealthStatus; message: string; duration: number; details?: any; }
+> {
+  const start = Date.now();
+
+  try {
+    const checks = {
+      lgpdCompliance: serverEnv.compliance.lgpdMode === "strict",
+      anvisaAudit: serverEnv.compliance.anvisaAuditEnabled,
+      cfmCompliance: serverEnv.compliance.cfmComplianceEnabled,
+      loggingEnabled: true, // We know logging is enabled
+    };
+
+    const enabledFeatures = Object.values(checks).filter(Boolean).length;
+    const totalFeatures = Object.keys(checks).length;
+
+    let status: HealthStatus = "healthy";
+    let message = `Compliance features: ${enabledFeatures}/${totalFeatures} enabled`;
+
+    if (!checks.lgpdCompliance && serverEnv.app.environment === "production") {
+      status = "degraded";
+      message = "LGPD strict compliance not enabled in production";
+    }
+
+    return {
+      status,
+      message,
+      duration: Date.now() - start,
+      details: {
+        ...checks,
+        enabledCount: enabledFeatures,
+        totalCount: totalFeatures,
+        environment: serverEnv.app.environment,
+      },
+    };
+  } catch (error) {
+    return {
+      status: "degraded",
+      message: `Compliance check failed: ${error instanceof Error ? error.message : String(error)}`,
+      duration: Date.now() - start,
+    };
+  }
+}
+
+// Main health check handler
+async function GET(request: NextRequest) {
+  const startTime = Date.now();
+
+  // Log health check request
+  logger.info(LogCategory.SYSTEM, "Health check requested", {
+    requestId: `health-${startTime}`,
+    userAgent: request.headers.get("user-agent"),
+    ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
+  });
+
+  try {
+    // Get process uptime
+    const uptime = process.uptime ? process.uptime() : 0;
+
+    // Run all health checks in parallel
+    const [envCheck, dbCheck, servicesCheck, memoryCheck, complianceCheck] = await Promise.all([
+      checkEnvironment(),
+      checkDatabase(),
+      checkSupabaseServices(),
+      checkMemoryUsage(),
+      checkComplianceFeatures(),
+    ]);
+
+    const checks = {
+      environment: envCheck,
+      database: dbCheck,
+      services: servicesCheck,
+      memory: memoryCheck,
+      compliance: complianceCheck,
+    };
+
+    // Calculate overall status
+    const statuses = Object.values(checks).map(check => check.status);
+    const summary = {
+      total: statuses.length,
+      healthy: statuses.filter(s => s === "healthy").length,
+      degraded: statuses.filter(s => s === "degraded").length,
+      unhealthy: statuses.filter(s => s === "unhealthy").length,
+    };
+
+    let overallStatus: HealthStatus = "healthy";
+    if (summary.unhealthy > 0) {
+      overallStatus = "unhealthy";
+    } else if (summary.degraded > 0) {
+      overallStatus = "degraded";
+    }
+
+    const result: HealthCheckResult = {
+      status: overallStatus,
+      timestamp: new Date().toISOString(),
+      uptime,
+      version: "1.0.0", // TODO: Get from package.json or build info
+      environment: serverEnv.app.environment,
+      checks,
+      summary,
+    };
+
+    // Log result
+    logger.info(LogCategory.SYSTEM, `Health check completed: ${overallStatus}`, {
+      status: overallStatus,
+      duration: Date.now() - startTime,
+      summary,
+    });
+
+    // Return appropriate HTTP status
+    const httpStatus = overallStatus === "healthy"
+      ? 200
+      : overallStatus === "degraded"
+      ? 200
+      : 503;
+
+    return NextResponse.json(result, { status: httpStatus });
+  } catch (error) {
+    logger.error(
+      LogCategory.SYSTEM,
+      `Health check failed: ${error instanceof Error ? error.message : String(error)}`,
+      {
+        error: error instanceof Error
+          ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+          }
+          : undefined,
+      },
     );
 
-    return {
-      status: hasAIConfig ? "healthy" : "degraded",
-      message: hasAIConfig
-        ? "AI services configured"
-        : "AI services configuration incomplete",
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
-    };
-  } catch (error) {
-    return {
+    return NextResponse.json({
       status: "unhealthy",
-      message: `AI services check failed: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
-    };
+      timestamp: new Date().toISOString(),
+      uptime: 0,
+      version: "1.0.0",
+      environment: "unknown",
+      checks: {},
+      summary: { total: 0, healthy: 0, degraded: 0, unhealthy: 1 },
+      error: "Health check system failure",
+    }, { status: 503 });
   }
 }
 
-async function checkComplianceStatus(): Promise<HealthStatus> {
-  const startTime = performance.now();
-  try {
-    // Healthcare compliance validation
-    const complianceChecks = {
-      lgpd: true, // LGPD compliance validated
-      anvisa: true, // ANVISA compliance validated
-      cfm: true, // CFM compliance validated
-    };
-
-    const allCompliant = Object.values(complianceChecks).every(
-      (check) => check,
-    );
-
-    return {
-      status: allCompliant ? "healthy" : "degraded",
-      message: allCompliant
-        ? "All healthcare compliance requirements met"
-        : "Some compliance checks failed",
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
-    };
-  } catch (error) {
-    return {
-      status: "unhealthy",
-      message: `Compliance check failed: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
-    };
-  }
-}
-
-async function checkSecurityStatus(): Promise<HealthStatus> {
-  const startTime = performance.now();
-  try {
-    // Security configuration validation
-    const securityChecks = {
-      httpsEnabled: true,
-      corsConfigured: true,
-      authConfigured: Boolean(process.env.JWT_SECRET),
-      environmentSecured: process.env.NODE_ENV === "production",
-    };
-
-    const allSecure = Object.values(securityChecks).every((check) => check);
-
-    return {
-      status: allSecure ? "healthy" : "degraded",
-      message: allSecure
-        ? "Security configuration validated"
-        : "Some security checks failed",
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
-    };
-  } catch (error) {
-    return {
-      status: "unhealthy",
-      message: `Security check failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
-    };
-  }
-}
-
-async function checkRealTimeServices(): Promise<HealthStatus> {
-  const startTime = performance.now();
-  try {
-    // Real-time services validation
-    return {
-      status: "healthy",
-      message: "Real-time services operational",
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
-    };
-  } catch (error) {
-    return {
-      status: "unhealthy",
-      message: `Real-time services check failed: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
-    };
-  }
-}
-
-async function checkPerformanceMetrics(): Promise<HealthStatus> {
-  const startTime = performance.now();
-  try {
-    // Performance metrics validation
-    const memoryUsage = process.memoryUsage();
-    const memoryUsedMB = Math.round(memoryUsage.heapUsed / 1024 / 1024);
-    const memoryThreshold = 512; // MB
-
-    return {
-      status: memoryUsedMB < memoryThreshold ? "healthy" : "degraded",
-      message: `Memory usage: ${memoryUsedMB}MB`,
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
-    };
-  } catch (error) {
-    return {
-      status: "unhealthy",
-      message: `Performance check failed: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
-      responseTime: performance.now() - startTime,
-      lastChecked: new Date().toISOString(),
-    };
-  }
-}
-
-function determineOverallStatus(
-  checks: HealthCheckResponse["checks"],
-): "healthy" | "degraded" | "unhealthy" {
-  const statuses = Object.values(checks).map((check) => check.status);
-
-  if (statuses.some((status) => status === "unhealthy")) {
-    return "unhealthy";
-  }
-
-  if (statuses.some((status) => status === "degraded")) {
-    return "degraded";
-  }
-
-  return "healthy";
-}
-
+export { GET };
 export const dynamic = "force-dynamic";

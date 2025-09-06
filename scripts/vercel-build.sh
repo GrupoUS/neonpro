@@ -14,6 +14,10 @@ export VERCEL=1
 # Memory optimization for build process
 export NODE_OPTIONS="--max-old-space-size=4096"
 
+# Prisma schema Single Source of Truth (SoT)
+export PRISMA_SCHEMA=${PRISMA_SCHEMA:-packages/database/prisma/schema.prisma}
+echo "Using Prisma schema: $PRISMA_SCHEMA"
+
 echo "📦 Installing dependencies..."
 pnpm install --frozen-lockfile
 

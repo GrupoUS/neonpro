@@ -109,9 +109,9 @@ export class StockAnalyticsService {
    * Compute core performance metrics
    */
   private async computeMetrics(
-    inventory: unknown[],
-    transactions: unknown[],
-    alerts: unknown[],
+    inventory: any[],
+    transactions: any[],
+    alerts: any[],
     period: { start: Date; end: Date; },
   ): Promise<StockPerformanceMetrics["metrics"]> {
     // Total value and quantity
@@ -320,7 +320,7 @@ export class StockAnalyticsService {
     previous: number,
     reverse = false,
   ): "increasing" | "decreasing" | "stable" {
-    const { 05: threshold } = 0; // 5% threshold for "stable"
+    const threshold = 0.05; // 5% threshold for "stable"
     const change = (current - previous) / Math.max(previous, 1);
 
     if (Math.abs(change) < threshold) {
@@ -536,7 +536,20 @@ export class StockAnalyticsService {
       throw new Error("Access denied to this clinic");
     }
 
-    const reportId = crypto.randomUUID();
+    const reportId = (globalThis.crypto?.randomUUID?.() ||
+      (() => {
+        const toHex = (buf: Uint8Array) => Array.from(buf).map(b => b.toString(16).padStart(2, "0")).join("");
+        const bytes = new Uint8Array(16);
+        if (globalThis.crypto?.getRandomValues) {
+          globalThis.crypto.getRandomValues(bytes);
+        } else {
+          for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+        }
+        bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
+        bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant
+        const hex = toHex(bytes);
+        return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+      })()) as string;
     const now = new Date();
 
     const report: CustomStockReport = {

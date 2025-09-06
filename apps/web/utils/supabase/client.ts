@@ -1,18 +1,24 @@
-// Real Supabase Client for Browser
+/**
+ * Secure Supabase Browser Client
+ * Uses centralized environment management with validation
+ */
+
+import { clientEnv, validateClientEnv } from "@/lib/env";
 import { createBrowserClient } from "@supabase/ssr";
 
+// Validate environment on module load
+try {
+  validateClientEnv();
+} catch (error) {
+  console.error("🚨 Supabase Client Environment Validation Failed:", error);
+  throw error;
+}
+
 export function createClient() {
-  // Check for required environment variables
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
-      "Missing Supabase environment variables. Please check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local",
-    );
-  }
-
-  return createBrowserClient(supabaseUrl, supabaseAnonKey);
+  return createBrowserClient(
+    clientEnv.supabase.url,
+    clientEnv.supabase.anonKey,
+  );
 }
 
 export default createClient;

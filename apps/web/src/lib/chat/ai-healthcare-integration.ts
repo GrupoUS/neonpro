@@ -629,7 +629,7 @@ export class AIHealthcareIntegration {
       samu: 192,
       fire: 193,
       police: 190,
-      poison_control: 0800722001,
+      poison_control: 800722001, // removed leading zero to avoid octal literal in TS
     });
   }
 

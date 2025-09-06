@@ -99,7 +99,14 @@ const samplePatients = [
 function AIFirstWorkflow() {
   const [activeDemo, setActiveDemo] = useState<string>("patient-analysis");
   const [selectedPatient, setSelectedPatient] = useState(samplePatients[0]);
-  const [aiResults, setAiResults] = useState << unknown >> (null);
+  const [aiResults, setAiResults] = useState<
+    {
+      success: boolean;
+      confidence?: number;
+      result?: unknown;
+      error?: string;
+    } | null
+  >(null);
   const [shouldFail, setShouldFail] = useState(false);
   const [shouldThrow, setShouldThrow] = useState<string | null>(null);
 

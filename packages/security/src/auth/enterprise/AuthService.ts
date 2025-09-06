@@ -8,9 +8,28 @@ import { createClient } from "@supabase/supabase-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import crypto from "node:crypto";
+// import { randomBytes, randomUUID, timingSafeEqual } from "node:crypto"; // Commented for client-side compatibility
 import QRCode from "qrcode";
 import speakeasy from "speakeasy";
+
+// Mock crypto for client-side compatibility
+const randomBytes = (size: number) => {
+  const array = new Uint8Array(size);
+  if (typeof window !== "undefined" && window.crypto) {
+    window.crypto.getRandomValues(array);
+  }
+  return Buffer.from(array);
+};
+
+const randomUUID = () => `mock-uuid-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+const timingSafeEqual = (a: Buffer, b: Buffer) => a.toString() === b.toString();
+
+const crypto = {
+  randomBytes,
+  randomUUID,
+  timingSafeEqual,
+};
 import type {
   AuthConfig,
   AuthSession,

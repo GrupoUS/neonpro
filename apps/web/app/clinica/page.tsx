@@ -1,13 +1,23 @@
 "use client";
 
-import { Alert, AlertDescription } from "@repo/ui/alert";
-import { Badge } from "@repo/ui/badge";
-import { Button } from "@repo/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/card";
-import { Input } from "@repo/ui/input";
-import { Label } from "@repo/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/tabs";
-import { Textarea } from "@repo/ui/textarea";
+import {
+  Alert,
+  AlertDescription,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Textarea,
+} from "@neonpro/ui";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -67,7 +77,7 @@ const mockClinicStats = {
   monthlyAppointments: 342,
   staffMembers: 12,
   activeServices: 15,
-  revenue: 89_500.00,
+  revenue: 89_500,
   growthRate: 12.5,
 };
 

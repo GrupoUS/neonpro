@@ -269,23 +269,24 @@ export const INTERVENTION_ACTIONS_PT = {
 
 // Type guards
 export function isNoShowPrediction(obj: unknown): obj is NoShowPrediction {
+  if (typeof obj !== "object" || obj === null) return false;
+  const o = obj as Partial<Record<string, unknown>>;
   return (
-    typeof obj === "object"
-    && obj !== null
-    && typeof obj.id === "string"
-    && typeof obj.appointmentId === "string"
-    && typeof obj.riskScore === "number"
-    && ["low", "medium", "high", "critical"].includes(obj.riskLevel)
+    typeof o.id === "string"
+    && typeof o.appointmentId === "string"
+    && typeof o.riskScore === "number"
+    && typeof o.riskLevel === "string"
+    && ["low", "medium", "high", "critical"].includes(o.riskLevel as string)
   );
 }
 
 export function isRiskFactor(obj: unknown): obj is RiskFactor {
+  if (typeof obj !== "object" || obj === null) return false;
+  const o = obj as Partial<Record<string, unknown>>;
   return (
-    typeof obj === "object"
-    && obj !== null
-    && typeof obj.id === "string"
-    && typeof obj.name === "string"
-    && typeof obj.weight === "number"
+    typeof o.id === "string"
+    && typeof o.name === "string"
+    && typeof o.weight === "number"
   );
 }
 

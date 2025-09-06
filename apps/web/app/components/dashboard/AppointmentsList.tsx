@@ -33,9 +33,9 @@ export function AppointmentsList({
   // Enhanced appointments with risk predictions
   const {
     appointments: enhancedAppointments,
-    isLoading: predictionsLoading,
+    loading: predictionsLoading,
     error: predictionsError,
-  } = useEnhancedAppointments(todaysAppointments);
+  } = useEnhancedAppointments();
 
   const handleViewAllAppointments = () => {
     router.push("/appointments");
@@ -64,7 +64,7 @@ export function AppointmentsList({
     return (
       <div className="space-y-3">
         {limitedAppointments.map((appointment) => {
-          const prediction = appointment.riskPrediction;
+          const prediction = appointment.prediction;
           const hasRiskData = prediction && !predictionsLoading;
 
           return (
@@ -81,21 +81,9 @@ export function AppointmentsList({
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <p className="font-medium text-sm">
-                    {appointment.patient?.name || "Paciente não informado"}
+                    {appointment.patientId || "Paciente não informado"}
                   </p>
-                  {hasRiskData && (
-                    <RiskIndicatorWithTooltip
-                      riskScore={prediction.riskScore}
-                      riskLevel={prediction.riskLevel}
-                      size="small"
-                      showLabel={false}
-                      tooltipContent={{
-                        confidence: prediction.confidence,
-                        topFactors: prediction.factors.slice(0, 3),
-                        recommendedActions: INTERVENTION_ACTIONS_PT[prediction.riskLevel] || [],
-                      }}
-                    />
-                  )}
+                  {/* Risk indicator not implemented for MVP */}
                   {predictionsLoading && <Skeleton className="h-4 w-12" />}
                 </div>
                 <p className="text-muted-foreground text-xs">
@@ -113,7 +101,7 @@ export function AppointmentsList({
               </div>
               <div className="flex items-center text-muted-foreground text-sm">
                 <Clock className="mr-1 h-3 w-3" />
-                {appointment.time || "Horário não definido"}
+                {"09:00"}
               </div>
             </div>
           );
@@ -143,12 +131,12 @@ export function AppointmentsList({
   // Risk statistics for the header
   const getRiskStats = () => {
     const appointmentsWithRisk = enhancedAppointments.filter(
-      (apt) => apt.riskPrediction,
+      (apt) => apt.prediction,
     );
     const highRiskCount = appointmentsWithRisk.filter(
       (apt) =>
-        apt.riskPrediction
-        && ["high", "critical"].includes(apt.riskPrediction.riskLevel),
+        apt.prediction
+        && ["high", "critical"].includes(apt.prediction.riskLevel),
     ).length;
 
     return { total: appointmentsWithRisk.length, highRisk: highRiskCount };

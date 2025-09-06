@@ -334,7 +334,7 @@ describe("SupabaseRealtimeChat - subscribeToConversation", () => {
     await vi.runAllTimersAsync();
 
     await p;
-    expect(onError).toHaveBeenCalledWith(expect.<unknown>(Error)); // Connection closed
+    expect(onError).toHaveBeenCalledWith(expect.any(Error)); // Connection closed
     expect(ch.subscribe).toHaveBeenCalledTimes(2); // initial + reconnection
   });
 });

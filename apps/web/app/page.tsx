@@ -4,7 +4,7 @@ import { useAppointments } from "@/hooks/useAppointments";
 import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
 import { usePatients } from "@/hooks/usePatients";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@neonpro/ui";
-import { Calendar, Shield, TestTube, User } from "lucide-react";
+import { Building2, Calendar, Shield, TestTube, User } from "lucide-react";
 import Link from "next/link";
 import { PatientsList } from "../components/PatientsList";
 import { AppointmentsList } from "./components/dashboard/AppointmentsList";
@@ -92,7 +92,7 @@ const QuickAccessSection = ({
     </div>
 
     {/* Quick Access Links */}
-    <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+    <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
@@ -128,6 +128,26 @@ const QuickAccessSection = ({
             <Button className="w-full">
               <Calendar className="h-4 w-4 mr-2" />
               Abrir Agenda
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Building2 className="h-5 w-5 mr-2" />
+            Gerenciar Clínica
+          </CardTitle>
+          <CardDescription>
+            Configurações, equipe e informações da clínica
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link href="/clinica">
+            <Button className="w-full">
+              <Building2 className="h-4 w-4 mr-2" />
+              Gerenciar Clínica
             </Button>
           </Link>
         </CardContent>
