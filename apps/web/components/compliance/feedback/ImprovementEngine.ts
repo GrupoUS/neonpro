@@ -447,11 +447,15 @@ export class ImprovementEngine {
   private getUpcomingInitiatives(): unknown[] {
     const upcomingInitiatives = Array.from(this.initiatives.values())
       .filter(i => i.status === 'approved' && i.implementation.startDate)
-      .sort((a, b) => (a.implementation.startDate!.getTime()) - (b.implementation.startDate!.getTime()));
+      .sort((a, b) => {
+        const aTime = a.implementation.startDate?.getTime() ?? 0;
+        const bTime = b.implementation.startDate?.getTime() ?? 0;
+        return aTime - bTime;
+      });
     
     return upcomingInitiatives.slice(0, 5).map(initiative => ({
       title: initiative.title,
-      expectedDate: initiative.implementation.startDate!,
+      expectedDate: initiative.implementation.startDate ?? new Date(0),
       expectedImpact: initiative.businessValue.expectedBenefit
     }));
   }

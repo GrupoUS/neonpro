@@ -7,7 +7,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { z } from "zod";
-import { getDatabase } from "../lib/database";
+import { db } from "../lib/database";
 import type {
   AppointmentListParams,
   AuthenticatedUser,
@@ -130,10 +130,10 @@ appointments.get("/", zValidator("query", appointmentListSchema), async (c) => {
     const limit = params.limit || 20;
     const offset = (page - 1) * limit;
 
-    const db = getDatabase();
+    const supabase = db.client;
 
     // Build query with filters
-    let query = db
+    let query = supabase
       .from("appointments")
       .select(
         `
@@ -220,7 +220,7 @@ appointments.post("/", zValidator("json", createAppointmentSchema), async (c) =>
       );
     }
 
-    const db = getDatabase();
+    const supabase = db.client;
 
     // Verify patient belongs to clinic
     const { data: patient, error: patientError } = await db

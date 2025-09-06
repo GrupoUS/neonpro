@@ -5,6 +5,7 @@
  * NeonPro database structure using SupabaseAuthAdapter
  */
 
+import { performance } from "node:perf_hooks";
 import type {
   AuthConfig,
   LoginCredentials,
@@ -118,13 +119,31 @@ export class RealAuthService {
   constructor(
     supabaseUrl: string,
     supabaseKey: string,
-    jwtSecret: string = process.env.JWT_SECRET || "fallback-secret-key",
+    jwtSecret?: string,
     config?: Partial<AuthConfig>,
   ) {
+    // Validate JWT secret in production
+    const resolvedJwtSecret = jwtSecret || process.env.JWT_SECRET;
+
+    if (!resolvedJwtSecret && process.env.NODE_ENV === "production") {
+      throw new Error("JWT secret required in production");
+    }
+
+    // Use dev-only fallback in non-production environments
+    const finalJwtSecret = resolvedJwtSecret || (() => {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(
+          "⚠️  Using development JWT secret. Set JWT_SECRET for production deployments.",
+        );
+        return "dev-only-fallback-secret-key-not-for-production";
+      }
+      throw new Error("JWT secret is required");
+    })();
+
     this.config = {
       serviceName: "NeonPro Authentication",
       version: "1.0.0",
-      jwtSecret,
+      jwtSecret: finalJwtSecret,
       jwtExpiresIn: "1h",
       refreshTokenExpiresIn: "7d",
       maxLoginAttempts: 5,
@@ -148,18 +167,26 @@ export class RealAuthService {
     const startTime = performance.now();
 
     try {
-      // Security: Rate limiting check
-      const rateLimitKey = `login_attempts_${credentials.email}`;
-      const isRateLimited = await this.security.checkRateLimit(
-        rateLimitKey,
-        this.config.maxLoginAttempts,
-        15 * 60 * 1000, // 15 minutes window
-      );
+      // Normalize email and extract IP for rate limiting
+      const normalizedEmail = credentials.email.trim().toLowerCase();
+      const clientIP = credentials.deviceInfo?.ip || "unknown";
 
-      if (isRateLimited) {
+      // Security: Dual rate limiting - per email and per IP
+      const emailRateLimitKey = `login_attempts_email_${normalizedEmail}`;
+      const ipRateLimitKey = `login_attempts_ip_${clientIP}`;
+      const window = 15 * 60 * 1000; // 15 minutes
+
+      const [isEmailRateLimited, isIPRateLimited] = await Promise.all([
+        this.security.checkRateLimit(emailRateLimitKey, this.config.maxLoginAttempts, window),
+        this.security.checkRateLimit(ipRateLimitKey, this.config.maxLoginAttempts, window),
+      ]);
+
+      if (isEmailRateLimited || isIPRateLimited) {
         await this.audit.logOperation("login_rate_limited", {
-          email: credentials.email,
-          ip: credentials.deviceInfo?.ip || "",
+          email: normalizedEmail,
+          ip: clientIP,
+          emailRateLimited: isEmailRateLimited,
+          ipRateLimited: isIPRateLimited,
         });
 
         return {
@@ -179,8 +206,11 @@ export class RealAuthService {
           mfaEnabled: result.user.mfaEnabled,
         });
 
-        // Clear rate limit on success
-        await this.security.clearRateLimit(rateLimitKey);
+        // Clear both rate limits on successful login
+        await Promise.all([
+          this.security.clearRateLimit(emailRateLimitKey),
+          this.security.clearRateLimit(ipRateLimitKey),
+        ]);
       }
 
       // Record performance
@@ -191,8 +221,12 @@ export class RealAuthService {
 
       return result;
     } catch (error) {
+      const normalizedEmail = credentials.email.trim().toLowerCase();
+      const clientIP = credentials.deviceInfo?.ip || "unknown";
+
       await this.audit.logOperation("login_error", {
-        email: credentials.email,
+        email: normalizedEmail,
+        ip: clientIP,
         error: error instanceof Error ? error.message : String(error),
       });
 

@@ -234,13 +234,15 @@ export function RealLoginForm() {
         </Button>
       </p>
 
-      {/* Development Notice */}
-      <div className="rounded-md bg-blue-50 p-4 text-center dark:bg-blue-950">
-        <p className="text-blue-700 text-xs dark:text-blue-300">
-          🚧 <strong>Modo Desenvolvimento:</strong>{" "}
-          Usando sistema de autenticação real integrado com Supabase
-        </p>
-      </div>
+      {/* Development Notice - Only show in development */}
+      {process.env.NODE_ENV === "development" && (
+        <div className="rounded-md bg-blue-50 p-4 text-center dark:bg-blue-950">
+          <p className="text-blue-700 text-xs dark:text-blue-300">
+            🚧 <strong>Modo Desenvolvimento:</strong>{" "}
+            Usando sistema de autenticação real integrado com Supabase
+          </p>
+        </div>
+      )}
     </div>
   );
 }

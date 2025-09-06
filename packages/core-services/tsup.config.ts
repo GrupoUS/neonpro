@@ -11,6 +11,9 @@ export default defineConfig({
 
     // Enhanced Patient Service example
     "enhanced-patient": "src/patient/enhanced-service.ts",
+
+    // Scheduling service
+    scheduling: "src/scheduling/index.ts",
   },
 
   // Output formats
@@ -34,7 +37,6 @@ export default defineConfig({
   // External dependencies (not bundled)
   external: [
     "@neonpro/database",
-    "@neonpro/domain",
     "@neonpro/utils",
     "@neonpro/cache",
     "date-fns",

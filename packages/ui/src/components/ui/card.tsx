@@ -88,7 +88,9 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         role={interactive ? "button" : undefined}
         tabIndex={interactive ? 0 : undefined}
         {...props}
-      />
+      >
+        {props.children}
+      </div>
     );
   },
 );
@@ -104,7 +106,9 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
       )}
       data-slot="card-header"
       {...props}
-    />
+    >
+      {props.children}
+    </div>
   );
 }
 
@@ -114,7 +118,9 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("font-semibold leading-none", className)}
       data-slot="card-title"
       {...props}
-    />
+    >
+      {props.children}
+    </div>
   );
 }
 
@@ -124,7 +130,9 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("text-muted-foreground text-sm", className)}
       data-slot="card-description"
       {...props}
-    />
+    >
+      {props.children}
+    </div>
   );
 }
 
@@ -137,7 +145,9 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
       )}
       data-slot="card-action"
       {...props}
-    />
+    >
+      {props.children}
+    </div>
   );
 }
 
@@ -147,7 +157,9 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("px-6", className)}
       data-slot="card-content"
       {...props}
-    />
+    >
+      {props.children}
+    </div>
   );
 }
 
@@ -157,7 +169,9 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
       data-slot="card-footer"
       {...props}
-    />
+    >
+      {props.children}
+    </div>
   );
 }
 

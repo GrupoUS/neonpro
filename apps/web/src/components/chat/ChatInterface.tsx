@@ -342,16 +342,20 @@ export default function ChatInterface({
       };
 
       // Add message to local state immediately
-      setState((prev) => ({
-        ...prev,
-        messages: {
-          ...prev.messages,
-          [state.activeConversation!.id]: [
-            ...(prev.messages[state.activeConversation!.id] || []),
-            newMessage,
-          ],
-        },
-      }));
+      setState((prev) => {
+        const activeId = state.activeConversation?.id;
+        if (!activeId) return prev;
+        return {
+          ...prev,
+          messages: {
+            ...prev.messages,
+            [activeId]: [
+              ...(prev.messages[activeId] || []),
+              newMessage,
+            ],
+          },
+        };
+      });
 
       // Notify parent
       onMessageSent?.(newMessage);
@@ -361,23 +365,26 @@ export default function ChatInterface({
         // await sendMessage(newMessage);
 
         // Update message status to sent
-        setState((prev) => ({
-          ...prev,
-          messages: {
-            ...prev.messages,
-            [state.activeConversation!.id]:
-              prev.messages[state.activeConversation!.id]?.map((msg) =>
+        setState((prev) => {
+          const activeId = state.activeConversation?.id;
+          if (!activeId) return prev;
+          return {
+            ...prev,
+            messages: {
+              ...prev.messages,
+              [activeId]: prev.messages[activeId]?.map((msg) =>
                 msg.id === newMessage.id ? { ...msg, status: "sent" } : msg
               ) || [],
-          },
-        }));
+            },
+          };
+        });
 
         // Mock AI response if AI is enabled
         if (aiEnabled && state.activeConversation.ai_enabled) {
           setTimeout(() => {
             const aiResponse: ChatMessage = {
               id: `ai-${Date.now()}`,
-              conversation_id: state.activeConversation!.id,
+              conversation_id: state.activeConversation?.id || "",
               sender_id: "ai-assistant",
               sender_type: "ai_assistant",
               message_type: "text",
@@ -416,30 +423,37 @@ export default function ChatInterface({
               lgpd_compliant: true,
             };
 
-            setState((prev) => ({
-              ...prev,
-              messages: {
-                ...prev.messages,
-                [state.activeConversation!.id]: [
-                  ...prev.messages[state.activeConversation!.id],
-                  aiResponse,
-                ],
-              },
-            }));
+            setState((prev) => {
+              const activeId = state.activeConversation?.id;
+              if (!activeId) return prev;
+              return {
+                ...prev,
+                messages: {
+                  ...prev.messages,
+                  [activeId]: [
+                    ...prev.messages[activeId],
+                    aiResponse,
+                  ],
+                },
+              };
+            });
           }, 2000);
         }
       } catch (error) {
         // Update message status to failed
-        setState((prev) => ({
-          ...prev,
-          messages: {
-            ...prev.messages,
-            [state.activeConversation!.id]:
-              prev.messages[state.activeConversation!.id]?.map((msg) =>
+        setState((prev) => {
+          const activeId = state.activeConversation?.id;
+          if (!activeId) return prev;
+          return {
+            ...prev,
+            messages: {
+              ...prev.messages,
+              [activeId]: prev.messages[activeId]?.map((msg) =>
                 msg.id === newMessage.id ? { ...msg, status: "failed" } : msg
               ) || [],
-          },
-        }));
+            },
+          };
+        });
       }
     },
     [

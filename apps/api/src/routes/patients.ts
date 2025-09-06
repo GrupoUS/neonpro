@@ -7,7 +7,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { z } from "zod";
-import { getDatabase } from "../lib/database";
+import { db } from "../lib/database";
 import type { AuthenticatedUser, CreatePatientRequest, PatientListParams } from "../types/api";
 import { createErrorResponse, createPaginatedResponse, createSuccessResponse } from "../types/api";
 
@@ -112,7 +112,7 @@ patients.get("/", zValidator("query", patientListSchema), async (c) => {
     const limit = params.limit || 20;
     const offset = (page - 1) * limit;
 
-    const db = getDatabase();
+    const supabase = db.client;
 
     // Build query with filters
     let query = db
@@ -189,7 +189,7 @@ patients.get("/:id", async (c) => {
       return c.json(createErrorResponse("ID do paciente é obrigatório"), 400);
     }
 
-    const db = getDatabase();
+    const supabase = db.client;
     const { data, error } = await db
       .from("patients")
       .select("*")
@@ -225,7 +225,7 @@ patients.post("/", zValidator("json", createPatientSchema), async (c) => {
       return c.json(createErrorResponse("CPF inválido"), 400);
     }
 
-    const db = getDatabase();
+    const supabase = db.client;
 
     // Check if CPF already exists in the clinic
     const { data: existingPatient } = await db

@@ -12,9 +12,19 @@ export function createTranslator(dictionary: Dictionary) {
   };
 }
 
-export async function getDictionary(_locale: Locale): Promise<Dictionary> {
-  // Placeholder: replace with dynamic import or remote fetch in future
-  return {};
+export async function getDictionary(locale: Locale): Promise<Dictionary> {
+  // Basic locale handling - can be expanded with dynamic imports in future
+  const baseDictionary: Dictionary = {
+    common: {
+      save: locale === "pt-BR" ? "Salvar" : "Save",
+      cancel: locale === "pt-BR" ? "Cancelar" : "Cancel",
+      loading: locale === "pt-BR" ? "Carregando..." : "Loading...",
+      error: locale === "pt-BR" ? "Erro" : "Error",
+      success: locale === "pt-BR" ? "Sucesso" : "Success"
+    }
+  };
+  
+  return baseDictionary;
 }
 
 function getValue(obj: any, path: string): any {

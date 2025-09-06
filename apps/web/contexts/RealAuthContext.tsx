@@ -11,11 +11,8 @@ import React, { createContext, useContext } from "react";
 import type { UseRealAuthReturn } from "../hooks/useRealAuth";
 import { useRealAuth } from "../hooks/useRealAuth";
 
-// Context type
-interface RealAuthContextType extends UseRealAuthReturn {}
-
 // Create context
-const RealAuthContext = createContext<RealAuthContextType | undefined>(undefined);
+const RealAuthContext = createContext<UseRealAuthReturn | undefined>(undefined);
 
 // Provider component props
 interface RealAuthProviderProps {
@@ -34,7 +31,7 @@ export function RealAuthProvider({ children }: RealAuthProviderProps) {
 }
 
 // Hook to use auth context
-export function useRealAuthContext(): RealAuthContextType {
+export function useRealAuthContext(): UseRealAuthReturn {
   const context = useContext(RealAuthContext);
 
   if (context === undefined) {
@@ -45,4 +42,4 @@ export function useRealAuthContext(): RealAuthContextType {
 }
 
 // Export types for convenience
-export type { UseRealAuthReturn as RealAuthContextType };
+export type { UseRealAuthReturn };

@@ -69,7 +69,7 @@ apps/
 
 - `@neonpro/database` - Primary database package (Supabase + Prisma)
 - `@neonpro/types` - TypeScript type definitions
-- `@neonpro/domain` - Business logic and domain models
+- `@neonpro/domain` - ✅ MIGRATED: Business logic consolidated into @neonpro/ui
 
 #### Core Services (2 packages)
 

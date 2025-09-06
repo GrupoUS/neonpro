@@ -132,27 +132,59 @@ export class ErrorBoundary extends Component<Props, State> {
     console.groupEnd();
   }
 
-  private reportToMonitoring(error: Error, errorInfo: ErrorInfo) {
-    // Send to external monitoring service (Sentry, LogRocket, etc.)
+  private async reportToMonitoring(error: Error, errorInfo: ErrorInfo) {
+    // Send to external monitoring service with CSRF protection
     if (typeof window !== "undefined" && window.location) {
-      fetch("/api/errors", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          error: {
-            name: error.name,
-            message: error.message,
-            stack: error.stack,
+      try {
+        // First, get a CSRF token
+        const tokenResponse = await fetch("/api/errors/token", {
+          method: "GET",
+          credentials: "same-origin",
+        });
+
+        if (!tokenResponse.ok) {
+          console.warn("Failed to fetch CSRF token for error reporting, skipping report");
+          return;
+        }
+
+        const tokenData = await tokenResponse.json();
+        const csrfToken = tokenData.token;
+
+        if (!csrfToken) {
+          console.warn("No CSRF token received, skipping error report");
+          return;
+        }
+
+        // Now send the authenticated error report
+        const reportResponse = await fetch("/api/errors", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-csrf-token": csrfToken,
           },
-          errorInfo,
-          errorId: this.state.errorId,
-          url: window.location.href,
-          userAgent: navigator.userAgent,
-          timestamp: new Date().toISOString(),
-        }),
-      }).catch(reportingError => {
+          credentials: "same-origin",
+          body: JSON.stringify({
+            error: {
+              name: error.name,
+              message: error.message,
+              stack: error.stack,
+            },
+            errorInfo,
+            errorId: this.state.errorId,
+            url: window.location.href,
+            userAgent: navigator.userAgent,
+            timestamp: new Date().toISOString(),
+            csrfToken, // Also include in body as backup
+          }),
+        });
+
+        if (!reportResponse.ok) {
+          console.warn(`Error report failed with status: ${reportResponse.status}`);
+        }
+      } catch (reportingError) {
         console.error("Failed to report error to monitoring:", reportingError);
-      });
+        // Could implement buffering logic here for offline scenarios
+      }
     }
   }
 

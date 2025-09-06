@@ -290,7 +290,7 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
       });
 
       if (result.isValid && result.data) {
-        setPrescriptions((prev) => [result.data!, ...prev]);
+        setPrescriptions((prev) => [result.data, ...prev]);
         setIsCreateDialogOpen(false);
         resetForm();
         toast.success("Receita controlada criada com sucesso");

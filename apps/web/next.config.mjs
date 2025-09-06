@@ -4,7 +4,6 @@ const nextConfig = {
   transpilePackages: [
     "@neonpro/ui",
     "@neonpro/utils",
-    "@neonpro/domain",
     "@neonpro/database",
   ],
 

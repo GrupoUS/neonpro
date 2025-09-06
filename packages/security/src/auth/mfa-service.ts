@@ -1,26 +1,10 @@
-// import { createHmac, randomBytes } from "node:crypto"; // Commented for client-side compatibility
 import { z } from "zod";
+import { secureCrypto } from "../utils/secure-crypto";
 import { MfaDatabaseService } from "./mfa-database-service";
 
-// Mock crypto for client-side compatibility
-const randomBytes = (size: number) => {
-  const array = new Uint8Array(size);
-  if (typeof window !== "undefined" && window.crypto) {
-    window.crypto.getRandomValues(array);
-  }
-  return Buffer.from(array);
-};
-
-const createHmac = (algorithm: string, key: Buffer | string) => ({
-  update: (data: string) => ({
-    digest: (encoding: string) => "mock-hmac",
-  }),
-});
-
-const crypto = {
-  randomBytes,
-  createHmac,
-};
+// Use secure crypto implementation
+const randomBytes = secureCrypto.randomBytes;
+const createHmac = secureCrypto.createHmac;
 
 // Constants for magic numbers
 const BACKUP_CODE_SEPARATOR_POSITION = 4;
@@ -217,19 +201,19 @@ function generateHotp(secret: string, counter: number): string {
   counterBuffer.writeUInt32BE(counter & 0xFF_FF_FF_FF, BUFFER_OFFSET_HIGH_BITS);
 
   // Generate HMAC
-  const hmac = crypto.createHmac("sha1", key as unknown as Buffer);
+  const hmac = createHmac("sha1", key as unknown as Buffer);
   hmac.update(counterBuffer);
-  const digest = hmac.digest();
+  const digest = hmac.digest() as Buffer;
 
   // Dynamic truncation
   // oxlint-disable-next-line no-bitwise
-  const offset = (digest.at(-1) ?? 0) & 0x0F;
+  const offset = Number(digest.at(-1) ?? 0) & 0x0F;
   // HOTP dynamic truncation algorithm (RFC 4226) requires bitwise operations
   // oxlint-disable-next-line no-bitwise
-  const code = ((digest[offset] & HOTP_MASK) << 24)
-    | ((digest[offset + 1] & BYTE_MASK) << 16)
-    | ((digest[offset + 2] & BYTE_MASK) << 8)
-    | (digest[offset + 3] & BYTE_MASK);
+  const code = ((Number(digest[offset]) & HOTP_MASK) << 24)
+    | ((Number(digest[offset + 1]) & BYTE_MASK) << 16)
+    | ((Number(digest[offset + 2]) & BYTE_MASK) << 8)
+    | (Number(digest[offset + 3]) & BYTE_MASK);
 
   return (code % 10 ** TOTP_DIGITS).toString().padStart(TOTP_DIGITS, "0");
 }

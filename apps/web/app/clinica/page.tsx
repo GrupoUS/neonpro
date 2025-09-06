@@ -484,11 +484,11 @@ export default function ClinicaPage() {
                   <Users className="h-5 w-5 mr-2" />
                   Gerenciamento de Equipe
                 </div>
-                <Link href="/team">
-                  <Button>
+                <Button asChild>
+                  <Link href="/team">
                     Gerenciar Equipe
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </CardTitle>
               <CardDescription>
                 Visualize e gerencie sua equipe de profissionais

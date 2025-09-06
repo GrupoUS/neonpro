@@ -1,23 +1,32 @@
 # <!-- Powered by BMAD™ Core -->
 markdownExploder: true
 qa:
-  qaLocation: docs/qa
+  qaLocation: docs/testing
 prd:
-  prdFile: docs/prd.md
+  prdFile: docs/prd/prd.md
   prdVersion: v4
   prdSharded: true
   prdShardedLocation: docs/prd
   epicFilePattern: epic-{n}*.md
 architecture:
-  architectureFile: docs/architecture.md
+  architectureFile: docs/architecture/architecture.md
   architectureVersion: v4
   architectureSharded: true
   architectureShardedLocation: docs/architecture
-customTechnicalDocuments: null
+customTechnicalDocuments:
+  - docs/AGENTS.md
+  - docs/agents/AGENTS.md
+  - docs/architecture/AGENTS.md
+  - docs/apis/AGENTS.md
+  - docs/database-schema/AGENTS.md
+  - docs/testing/AGENTS.md
 devLoadAlwaysFiles:
-  - docs/architecture/coding-standards.md
-  - docs/architecture/tech-stack.md
+  - docs/AGENTS.md
+  - docs/memory.md
+  - docs/agents/AGENTS.md
+  - docs/rules/coding-standards.md
   - docs/architecture/source-tree.md
+  - docs/architecture/tech-stack.md
 devDebugLog: .ai/debug-log.md
-devStoryLocation: docs/stories
+devStoryLocation: docs/features
 slashPrefix: BMad

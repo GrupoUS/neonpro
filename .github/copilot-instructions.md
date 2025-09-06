@@ -14,7 +14,7 @@ applyTo: "**/*"
   - One‑line: Real monorepo structure (apps/packages) validated and categorized
   - Use when: Locating code, packages, or wiring across the repo
 - **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.
-- **MANDATORY** Use do gerenciador de tasks nativo do augment de forma mais ativa para acompanhar tudo o que precisa ser feito, criando atomic tasks para executar tudo o que foi solicitado em fases
+- **MANDATORY** Use the native task manager more actively to track everything that needs to be done, creating atomic tasks to execute all requested items in phases
 - **MANDATORY** use of `serena mcp` to search codebase and semantic code analysis, _DO NOT USE NATIVE SEARCH CODEBASE tool_
 - **MANDATORY** use of `supabase mcp` for database operations
 - **MANDATORY** use of `shadcn-ui mcp` to manage ui components
@@ -294,7 +294,7 @@ phase_3_planning_design:
 - Run `bun run format && bun run lint:fix && bun run type-check` to format code
 - **Correction Loop**: If tests fail:
   - Use `serena` to analyze failing code and dependencies
-  - Use `tavily` and `context7` for oficial docs and best practices to fix the errors
+  - Use `tavily` and `context7` for official docs and best practices to fix the errors
   - **Stuck >3x**: Use sequential-thinking to update strategy with new insights from research
   - Repeat until ALL tests pass
 - Use `archon` to document test results and coverage metrics
@@ -315,7 +315,7 @@ phase_3_planning_design:
   - Use `serena` to understand code structure and dependencies
   - Fix issues using `desktop-commander` for file operations
   - **Stuck >3x**: Use sequential-thinking to reassess and try alternatives
-  - Use `context7` and `tavily` for oficial docs and best practices to fix the errors
+  - Use `context7` and `tavily` for official docs and best practices to fix the errors
   - Return to **Step 4** and repeat cycle
   - Only Continue when ALL quality checks pass
 

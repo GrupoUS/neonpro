@@ -55,7 +55,7 @@ This section reflects the actual, in-repo configuration and versions verified fr
 - Internal Packages (selected)
   - UI & Components: @neonpro/ui, @neonpro/brazilian-healthcare-ui
   - Data & Types: @neonpro/types, @neonpro/database
-  - Core/Infra: @neonpro/auth, @neonpro/core-services, @neonpro/compliance, @neonpro/security, @neonpro/monitoring, @neonpro/devops, @neonpro/domain, @neonpro/utils, @neonpro/cache, @neonpro/integrations, @neonpro/enterprise, @neonpro/health-dashboard, @neonpro/docs
+  - Core/Infra: @neonpro/auth, @neonpro/core-services, @neonpro/compliance, @neonpro/security, @neonpro/monitoring, @neonpro/devops, @neonpro/utils, @neonpro/cache, @neonpro/integrations, @neonpro/enterprise, @neonpro/health-dashboard, @neonpro/docs
 
 Notes
 

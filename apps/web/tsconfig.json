@@ -21,10 +21,9 @@
     "jsx": "preserve",
     "incremental": true,
     "outDir": "dist",
+    "rootDir": "../../",
     "plugins": [
-      {
-        "name": "next"
-      }
+      { "name": "next" }
     ],
     "baseUrl": ".",
     "paths": {
@@ -36,6 +35,7 @@
       "@/hooks/*": ["./hooks/*"],
       "@/utils/*": ["./utils/*"],
       "@/app/*": ["./app/*"],
+
       "@neonpro/ui": ["../../packages/ui/src"],
       "@neonpro/ui/*": ["../../packages/ui/src/*"],
       "@neonpro/types": ["../../packages/types/src"],
@@ -56,7 +56,21 @@
     },
     "noEmit": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+
+    // Allow package sources used by path aliases (read-only for type-check)
+    "../../packages/security/src/**/*.ts",
+    "../../packages/security/src/**/*.tsx",
+    "../../packages/ui/src/**/*.ts",
+    "../../packages/ui/src/**/*.tsx",
+    "../../packages/utils/src/**/*.ts",
+    "../../packages/utils/src/**/*.tsx",
+    "../../packages/types/src/**/*.ts"
+  ],
   "exclude": [
     "node_modules",
     ".next/types/**/*",
@@ -65,24 +79,12 @@
     "**/*.test.tsx"
   ],
   "references": [
-    {
-      "path": "../../packages/ui"
-    },
-
-    {
-      "path": "../../packages/types"
-    },
-    {
-      "path": "../../packages/utils"
-    },
-    {
-      "path": "../../packages/core-services"
-    },
-    {
-      "path": "../../packages/database"
-    },
-    {
-      "path": "../../packages/shared"
-    }
+    { "path": "../../packages/ui" },
+    { "path": "../../packages/types" },
+    { "path": "../../packages/utils" },
+    { "path": "../../packages/core-services" },
+    { "path": "../../packages/database" },
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/security" }
   ]
 }

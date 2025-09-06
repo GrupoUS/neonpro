@@ -25,7 +25,14 @@ const randomUUID = () => `mock-uuid-${Date.now()}-${Math.random().toString(36).s
 
 const timingSafeEqual = (a: Buffer, b: Buffer) => a.toString() === b.toString();
 
-const crypto = {
+// Custom crypto interface and implementation
+interface CustomCrypto {
+  randomBytes: (size: number) => Buffer;
+  randomUUID: () => string;
+  timingSafeEqual: (a: Buffer, b: Buffer) => boolean;
+}
+
+const customCrypto: CustomCrypto = {
   randomBytes,
   randomUUID,
   timingSafeEqual,
@@ -200,7 +207,7 @@ export class AuthService {
         const max = Math.max(A.length, B.length);
         const AA = Buffer.concat([A, Buffer.alloc(Math.max(0, max - A.length))]);
         const BB = Buffer.concat([B, Buffer.alloc(Math.max(0, max - B.length))]);
-        return crypto.timingSafeEqual(AA, BB);
+        return customCrypto.timingSafeEqual(AA, BB);
       };
       if (user.mfa_enabled) {
         const mfaValid = Boolean(verifiedCalc && safeEq(expected, providedCode || "000000"));
@@ -383,7 +390,7 @@ export class AuthService {
       // Generate backup codes
       const backupCodes = Array.from(
         { length: 10 },
-        () => crypto.randomBytes(5).toString("hex").slice(0, 10).toUpperCase(),
+        () => customCrypto.randomBytes(5).toString("hex").slice(0, 10).toUpperCase(),
       );
 
       // Store MFA secret temporarily (user must verify to activate)
@@ -574,7 +581,7 @@ export class AuthService {
     deviceInfo?: DeviceInfo,
   ): Promise<AuthSession> {
     const session = {
-      id: `session_${crypto.randomUUID?.() ?? crypto.randomBytes(16).toString("hex")}`,
+      id: `session_${customCrypto.randomUUID?.() ?? customCrypto.randomBytes(16).toString("hex")}`,
       user_id: user.id,
       device_info: deviceInfo || {
         userAgent: "",

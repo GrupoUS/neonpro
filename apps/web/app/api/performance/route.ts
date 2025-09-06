@@ -10,7 +10,6 @@ interface PerformanceMetricPayload extends PerformanceMetric {
   clinicId?: string;
   userAgent: string;
   url: string;
-  timestamp: string;
 }
 
 interface PerformanceBatchPayload {
@@ -152,10 +151,11 @@ export async function POST(request: NextRequest) {
       || "unknown";
 
     if (!checkRateLimit(clientIp)) {
-      logger.log(LogLevel.WARN, "Performance API rate limit exceeded", {
-        category: LogCategory.SECURITY,
-        clientIp,
-        endpoint: "/api/performance",
+      logger.warn(LogCategory.SECURITY, "Performance API rate limit exceeded", {
+        metadata: {
+          clientIp,
+          endpoint: "/api/performance",
+        },
       });
 
       return NextResponse.json(
@@ -192,10 +192,11 @@ export async function POST(request: NextRequest) {
     }
 
     if (validMetrics.length === 0) {
-      logger.log(LogLevel.WARN, "No valid performance metrics received", {
-        category: LogCategory.SYSTEM,
-        errors,
-        totalMetrics: body.metrics.length,
+      logger.warn(LogCategory.API, "No valid performance metrics received", {
+        metadata: {
+          errors,
+          totalMetrics: body.metrics.length,
+        },
       });
 
       return NextResponse.json(
@@ -243,10 +244,15 @@ export async function POST(request: NextRequest) {
           .select();
 
         if (error) {
-          logger.log(LogLevel.ERROR, "Failed to insert performance metrics", {
-            category: LogCategory.DATABASE,
-            error: error.message,
-            batchSize: batch.length,
+          logger.error(LogCategory.DATABASE, "Failed to insert performance metrics", {
+            metadata: {
+              batchSize: batch.length,
+            },
+            error: {
+              name: error.name || "DatabaseError",
+              message: error.message,
+              stack: error.stack,
+            },
           });
           continue;
         }
@@ -261,39 +267,51 @@ export async function POST(request: NextRequest) {
           }
         });
       } catch (batchError) {
-        logger.log(LogLevel.ERROR, "Error processing performance metrics batch", {
-          category: LogCategory.SYSTEM,
-          error: batchError instanceof Error ? batchError.message : "Unknown error",
-          batchSize: batch.length,
+        logger.error(LogCategory.SYSTEM, "Error processing performance metrics batch", {
+          metadata: {
+            batchSize: batch.length,
+          },
+          error: batchError instanceof Error
+            ? {
+              name: batchError.name,
+              message: batchError.message,
+              stack: batchError.stack,
+            }
+            : {
+              name: "UnknownError",
+              message: "Unknown error",
+            },
         });
       }
     }
 
     // Log critical metrics for immediate attention
     if (criticalMetrics.length > 0) {
-      logger.log(LogLevel.WARN, "Critical performance metrics detected", {
-        category: LogCategory.PERFORMANCE,
-        criticalCount: criticalMetrics.length,
-        metrics: criticalMetrics.map(m => ({
-          name: m.name,
-          value: m.value,
-          severity: categorizeMetricSeverity(m),
-          isHealthcare: m.metadata?.isHealthcareOperation,
-        })),
+      logger.warn(LogCategory.PERFORMANCE, "Critical performance metrics detected", {
+        metadata: {
+          criticalCount: criticalMetrics.length,
+          metrics: criticalMetrics.map(m => ({
+            name: m.name,
+            value: m.value,
+            severity: categorizeMetricSeverity(m),
+            isHealthcare: m.metadata?.isHealthcareOperation,
+          })),
+        },
         clinicId: body.sessionInfo.clinicId,
         userId: body.sessionInfo.userId,
       });
     }
 
     // Log successful processing
-    logger.log(LogLevel.INFO, "Performance metrics processed successfully", {
-      category: LogCategory.PERFORMANCE,
-      totalReceived: body.metrics.length,
-      totalValidated: validMetrics.length,
-      totalInserted,
-      criticalMetrics: criticalMetrics.length,
-      sessionId: body.sessionInfo.sessionId,
-      clinicId: body.sessionInfo.clinicId,
+    logger.info(LogCategory.PERFORMANCE, "Performance metrics processed successfully", {
+      metadata: {
+        totalReceived: body.metrics.length,
+        totalValidated: validMetrics.length,
+        totalInserted,
+        criticalMetrics: criticalMetrics.length,
+        sessionId: body.sessionInfo.sessionId,
+        clinicId: body.sessionInfo.clinicId,
+      },
     });
 
     // Return response
@@ -310,10 +328,17 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    logger.log(LogLevel.ERROR, "Unexpected error in performance API", {
-      category: LogCategory.SYSTEM,
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
+    logger.error(LogCategory.API, "Unexpected error in performance API", {
+      error: error instanceof Error
+        ? {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        }
+        : {
+          name: "UnknownError",
+          message: "Unknown error",
+        },
     });
 
     return NextResponse.json(

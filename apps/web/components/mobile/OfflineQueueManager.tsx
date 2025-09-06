@@ -135,9 +135,10 @@ class QueueStorageService {
 
   async addAction(action: QueuedAction): Promise<void> {
     if (!this.db) throw new Error("Database not initialized");
+    const db = this.db;
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(["actions"], "readwrite");
+      const transaction = db.transaction(["actions"], "readwrite");
       const store = transaction.objectStore("actions");
       const request = store.add(action);
 
@@ -148,9 +149,10 @@ class QueueStorageService {
 
   async updateAction(action: QueuedAction): Promise<void> {
     if (!this.db) throw new Error("Database not initialized");
+    const db = this.db;
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(["actions"], "readwrite");
+      const transaction = db.transaction(["actions"], "readwrite");
       const store = transaction.objectStore("actions");
       const request = store.put(action);
 
@@ -161,9 +163,10 @@ class QueueStorageService {
 
   async getAllActions(): Promise<QueuedAction[]> {
     if (!this.db) throw new Error("Database not initialized");
+    const db = this.db;
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(["actions"], "readonly");
+      const transaction = db.transaction(["actions"], "readonly");
       const store = transaction.objectStore("actions");
       const request = store.getAll();
 
@@ -174,9 +177,10 @@ class QueueStorageService {
 
   async getActionsByStatus(status: QueuedAction["status"]): Promise<QueuedAction[]> {
     if (!this.db) throw new Error("Database not initialized");
+    const db = this.db;
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(["actions"], "readonly");
+      const transaction = db.transaction(["actions"], "readonly");
       const store = transaction.objectStore("actions");
       const index = store.index("status");
       const request = index.getAll(status);
@@ -188,9 +192,10 @@ class QueueStorageService {
 
   async deleteAction(actionId: string): Promise<void> {
     if (!this.db) throw new Error("Database not initialized");
+    const db = this.db;
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(["actions"], "readwrite");
+      const transaction = db.transaction(["actions"], "readwrite");
       const store = transaction.objectStore("actions");
       const request = store.delete(actionId);
 
@@ -201,6 +206,7 @@ class QueueStorageService {
 
   async clearCompleted(): Promise<void> {
     if (!this.db) throw new Error("Database not initialized");
+    const db = this.db;
 
     const completedActions = await this.getActionsByStatus("completed");
     const failedActions = await this.getActionsByStatus("failed");

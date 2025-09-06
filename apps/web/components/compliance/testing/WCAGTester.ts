@@ -391,7 +391,10 @@ export class WCAGTester {
           });
         }
 
-        const entry = violationMap.get(key)!;
+        const entry = violationMap.get(key);
+        if (!entry) {
+          return;
+        }
         entry.pages.add(result.page);
         entry.count++;
       });

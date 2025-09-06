@@ -13,6 +13,24 @@ const errorRateLimitMap = new Map<string, { count: number; resetTime: number; }>
 const ERROR_RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
 const MAX_ERRORS_PER_MINUTE = 50; // Generous limit for error scenarios
 
+// Periodic cleanup of expired rate limit entries every 5 minutes
+const cleanupInterval = setInterval(() => {
+  const now = Date.now();
+  const gracePeriod = ERROR_RATE_LIMIT_WINDOW; // Use window as grace period
+
+  for (const [clientId, record] of errorRateLimitMap.entries()) {
+    if (now > record.resetTime + gracePeriod) {
+      errorRateLimitMap.delete(clientId);
+    }
+  }
+}, 5 * 60 * 1000);
+
+// Handle graceful shutdown
+if (typeof process !== "undefined") {
+  process.on("SIGTERM", () => clearInterval(cleanupInterval));
+  process.on("SIGINT", () => clearInterval(cleanupInterval));
+}
+
 interface ErrorReport {
   error: {
     name: string;
@@ -87,12 +105,24 @@ function sanitizeErrorReport(report: ErrorReport): ErrorReport {
 
 function sanitizeText(text: string): string {
   return text
-    // Brazilian healthcare data patterns
-    .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, "[CPF-REDACTED]")
-    .replace(/\b\d{3}\s?\d{9}\b/g, "[CNS-REDACTED]")
-    .replace(/\b\d{11,15}\b/g, "[PHONE-REDACTED]")
-    .replace(/@[\w.-]+\.\w+/g, "[EMAIL-REDACTED]")
+    // Enhanced Brazilian healthcare data patterns
+    .replace(/\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g, "[CPF-REDACTED]")
+    .replace(/\b\d{15}[\s.-]*\b/g, "[CNS-REDACTED]") // 15-digit CNS with optional separators
+    .replace(/\b\d{15}[\s.-]*\b/g, "[SUS-REDACTED]") // 15-digit SUS card numbers
+    .replace(/\b[A-Za-z0-9]{6,12}[-]?\d{0,6}\b/g, "[MRN-REDACTED]") // Medical record numbers
+    .replace(/\b[A-Za-z0-9]{8,15}\b/g, "[INSURANCE-REDACTED]") // Insurance/ANS numbers
+    .replace(/\b\+?55[\s\-()]?[\d\s\-()]{10,15}\b/g, "[PHONE-REDACTED]") // Brazilian phones with country code
+    .replace(/\b[\d\s\-()]{10,15}\b/g, "[PHONE-REDACTED]") // General phone patterns
+    .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, "[EMAIL-REDACTED]") // Enhanced email pattern
     .replace(/\b\d{5}-?\d{3}\b/g, "[CEP-REDACTED]")
+    // Portuguese medical terms
+    .replace(/\bprontu[aá]rio[\s\w]*\b/gi, "[MEDICAL-RECORD-REDACTED]")
+    .replace(/\bcart[aã]o\s+sus\b/gi, "[SUS-CARD-REDACTED]")
+    .replace(/\bsus\s+card\b/gi, "[SUS-CARD-REDACTED]")
+    .replace(/\bpaciente[\s\w]*\b/gi, "[PATIENT-REDACTED]")
+    .replace(/\bnome[\s\w]*\b/gi, "[NAME-REDACTED]")
+    .replace(/\bnascimento[\s\w]*\b/gi, "[BIRTH-REDACTED]")
+    .replace(/\bregistro[\s\w]*\b/gi, "[REGISTRATION-REDACTED]")
     // Generic PII patterns
     .replace(/password[^a-zA-Z0-9]*[a-zA-Z0-9]+/gi, "password=[REDACTED]")
     .replace(/token[^a-zA-Z0-9]*[a-zA-Z0-9]+/gi, "token=[REDACTED]")
@@ -137,18 +167,17 @@ function categorizeError(report: ErrorReport): "critical" | "high" | "medium" | 
   return "low";
 }
 
-async function POST(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    // Rate limiting
-    const clientId = getErrorClientId(request);
-    if (isErrorRateLimited(clientId)) {
-      return NextResponse.json(
-        { error: "Error reporting rate limit exceeded" },
-        { status: 429 },
-      );
-    }
+    // Import CSRF validation from token route
+    const { validateCSRFToken } = await import("./token/route");
 
-    // Parse error report
+    // Get client IP for CSRF validation
+    const clientIP = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+      || request.headers.get("x-real-ip")
+      || "unknown";
+
+    // Parse error report first to get CSRF token
     let report: ErrorReport;
     try {
       report = await request.json();
@@ -156,6 +185,32 @@ async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Invalid error report format" },
         { status: 400 },
+      );
+    }
+
+    // Validate CSRF token
+    const csrfToken = request.headers.get("x-csrf-token") || (report as any).csrfToken;
+    if (!csrfToken) {
+      return NextResponse.json(
+        { error: "CSRF token is required" },
+        { status: 403 },
+      );
+    }
+
+    const tokenValidation = validateCSRFToken(csrfToken, clientIP);
+    if (!tokenValidation.valid) {
+      return NextResponse.json(
+        { error: tokenValidation.error || "Invalid CSRF token" },
+        { status: 403 },
+      );
+    }
+
+    // Rate limiting
+    const clientId = getErrorClientId(request);
+    if (isErrorRateLimited(clientId)) {
+      return NextResponse.json(
+        { error: "Error reporting rate limit exceeded" },
+        { status: 429 },
       );
     }
 
@@ -278,7 +333,7 @@ async function forwardToExternalService(report: ErrorReport, severity: string): 
       };
 
       // In a real implementation, use the Sentry SDK
-      console.log("Would forward to Sentry:", sentryPayload);
+      logger.info(LogCategory.SYSTEM, "Would forward to Sentry", { sentryPayload });
     }
   } catch (error) {
     logger.warn(

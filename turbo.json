@@ -99,15 +99,7 @@
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
     },
-    "@neonpro/domain#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/database#build",
-        "@neonpro/shared#build"
-      ],
-      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
+
     "@neonpro/ui#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/shared#build"],
       "inputs": [

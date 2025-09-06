@@ -164,7 +164,7 @@ async function logAuditEvent(
       resource_name: extractResourceName(path, requestBody),
       ip_address: auditContext.ip_address,
       user_agent: auditContext.user_agent,
-      method: method as unknown,
+      method: method as "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
       endpoint: path,
       status_code: responseInfo.status_code,
       severity,

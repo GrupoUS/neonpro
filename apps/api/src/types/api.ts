@@ -310,7 +310,7 @@ export const createSuccessResponse = <T>(data: T, message?: string): ApiResponse
 export const createErrorResponse = (error: string, details?: unknown): ApiResponse => ({
   success: false,
   error,
-  message: details,
+  message: typeof details === "string" ? details : undefined,
   timestamp: new Date().toISOString(),
 });
 

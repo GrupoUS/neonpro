@@ -5,7 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import type { PatientRiskContextProps } from "@/types/no-show-prediction";
+// Mock type for MVP
+interface PatientRiskContextProps {
+  prediction: any;
+  patient: any;
+  showActions?: boolean;
+}
 import { INTERVENTION_ACTIONS_PT, RiskFactor } from "@/types/no-show-prediction";
 import {
   Calendar,

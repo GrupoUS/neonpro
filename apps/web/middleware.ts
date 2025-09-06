@@ -9,8 +9,6 @@ const SECURITY_CONFIG = {
     "default-src": ["'self'"],
     "script-src": [
       "'self'",
-      "'unsafe-inline'", // Required for Next.js
-      "'unsafe-eval'", // Required for Next.js development
       "https://va.vercel-scripts.com", // Vercel Analytics
       "https://vitals.vercel-app.com", // Web Vitals
     ],
@@ -71,6 +69,37 @@ const SECURITY_CONFIG = {
 // Rate limiting storage (in production, use Redis)
 const rateLimitStore = new Map<string, { count: number; resetTime: number; }>();
 
+// Cleanup expired rate limit entries every 5 minutes
+const cleanupInterval = setInterval(() => {
+  const now = Date.now();
+  const gracePeriod = 60_000; // 1 minute grace period
+
+  for (const [key, record] of rateLimitStore.entries()) {
+    if (now > record.resetTime + gracePeriod) {
+      rateLimitStore.delete(key);
+    }
+  }
+
+  // Log cleanup stats if there were entries to clean
+  const remainingEntries = rateLimitStore.size;
+  if (remainingEntries > 0) {
+    logger.log(LogLevel.DEBUG, "Rate limit cleanup completed", {
+      category: LogCategory.SYSTEM,
+      remainingEntries,
+      cleanedAt: new Date().toISOString(),
+    });
+  }
+}, 5 * 60 * 1000); // Run every 5 minutes
+
+// Handle graceful shutdown
+process.on("SIGTERM", () => {
+  clearInterval(cleanupInterval);
+});
+
+process.on("SIGINT", () => {
+  clearInterval(cleanupInterval);
+});
+
 function getRateLimitKey(ip: string, path: string): string {
   return `${ip}:${path}`;
 }
@@ -113,10 +142,11 @@ function checkRateLimit(
 function buildCSP(csp: Record<string, string[]>): string {
   return Object.entries(csp)
     .map(([directive, sources]) => {
+      const normalizedDirective = directive.replace(/_/g, "-");
       if (sources.length === 0) {
-        return directive.replace(/-/g, "-");
+        return normalizedDirective;
       }
-      return `${directive} ${sources.join(" ")}`;
+      return `${normalizedDirective} ${sources.join(" ")}`;
     })
     .join("; ");
 }

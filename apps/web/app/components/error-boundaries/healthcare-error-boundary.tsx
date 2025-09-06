@@ -38,6 +38,7 @@ interface HealthcareError {
   severity: ErrorSeverity;
   context?: ErrorContext;
   message: string;
+  patientImpact?: string;
 }
 
 const createHealthcareError = (

@@ -100,12 +100,16 @@ export function HealthMonitoringDashboard() {
     // Simulate real-time updates
     const interval = setInterval(() => {
       if (metrics) {
-        setMetrics((prev) => ({
-          ...prev!,
-          apiResponseTime: Math.floor(150 + Math.random() * 100),
-          activeUsers: Math.floor(40 + Math.random() * 20),
-          errorRate: Math.random() * 0.5,
-        }));
+        setMetrics((prev) => (
+          prev
+            ? {
+              ...prev,
+              apiResponseTime: Math.floor(150 + Math.random() * 100),
+              activeUsers: Math.floor(40 + Math.random() * 20),
+              errorRate: Math.random() * 0.5,
+            }
+            : prev
+        ));
       }
     }, 5000);
 

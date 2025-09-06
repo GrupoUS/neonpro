@@ -472,7 +472,7 @@ export const EmergencyProtocolsManager: React.FC<
       if (result?.isValid) {
         // Update local state
         setActiveEmergencies((prev) =>
-          prev.map((emergency) => emergency.id === selectedEmergency.id ? result.data! : emergency)
+          prev.map((emergency) => emergency.id === selectedEmergency.id ? result.data : emergency)
         );
 
         setIsActionDialogOpen(false);

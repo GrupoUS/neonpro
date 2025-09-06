@@ -1,5 +1,6 @@
 // Placeholder file
-export const placeholder = true;
+// ambient speech types for tests/node
+
 // =============================================================================
 // 🤖 AI AGENT TYPES - Healthcare Specialized Chat System
 // =============================================================================
@@ -121,7 +122,13 @@ export interface AgentResponse {
 // SPEECH RECOGNITION TYPES
 // =============================================================================
 
+// Provide minimal ambient declarations for Node/test environments
+// so references compile even when the API isn't available.
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface SpeechGrammarList {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface SpeechRecognition {}
   interface Window {
     SpeechRecognition: typeof SpeechRecognition;
     webkitSpeechRecognition: typeof SpeechRecognition;
@@ -261,4 +268,3 @@ export interface AgentPersonality {
   tone: "professional" | "friendly" | "clinical" | "adaptive";
   language: "pt-BR" | "en-US" | "multi";
 }
-export default placeholder;

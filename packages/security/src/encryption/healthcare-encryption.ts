@@ -9,44 +9,30 @@
  * @quality ≥9.8/10 Healthcare Grade
  */
 
-// import {
-//   createCipheriv,
-//   createDecipheriv,
-//   pbkdf2Sync,
-//   randomBytes,
-//   timingSafeEqual,
-// } from "node:crypto"; // Commented for client-side compatibility
+import { secureCrypto } from "../utils/secure-crypto";
 
-// Mock crypto functions for client-side compatibility
-const createCipheriv = (algorithm: string, key: Buffer, iv: Buffer) => ({
-  update: (data: string, inputEncoding: string, outputEncoding: string) => "mock-encrypted",
-  final: (outputEncoding: string) => "",
-  getAuthTag: () => Buffer.from("mock-auth-tag"),
-});
+// Secure crypto implementations
+let createCipheriv: any;
+let createDecipheriv: any;
+let pbkdf2Sync: any;
 
-const createDecipheriv = (algorithm: string, key: Buffer, iv: Buffer) => ({
-  setAuthTag: (tag: Buffer) => {},
-  update: (data: string, inputEncoding: string, outputEncoding: string) => "mock-decrypted",
-  final: (outputEncoding: string) => "",
-});
+// Initialize crypto functions based on environment
+if (typeof process !== "undefined" && process.versions?.node) {
+  // Node.js environment - use node:crypto
+  const crypto = require("node:crypto");
+  createCipheriv = crypto.createCipheriv;
+  createDecipheriv = crypto.createDecipheriv;
+  pbkdf2Sync = crypto.pbkdf2Sync;
+} else {
+  // Browser environment - use WebCrypto polyfills
+  throw new Error(
+    "Healthcare encryption requires Node.js environment for AES-256-GCM operations. "
+      + "Browser-based encryption is not supported for this security-critical functionality.",
+  );
+}
 
-const pbkdf2Sync = (
-  password: string,
-  salt: Buffer,
-  iterations: number,
-  keylen: number,
-  digest: string,
-) => Buffer.from("mock-derived-key");
-
-const randomBytes = (size: number) => {
-  const array = new Uint8Array(size);
-  if (typeof window !== "undefined" && window.crypto) {
-    window.crypto.getRandomValues(array);
-  }
-  return Buffer.from(array);
-};
-
-const timingSafeEqual = (a: Buffer, b: Buffer) => a.toString() === b.toString();
+const randomBytes = secureCrypto.randomBytes;
+const timingSafeEqual = secureCrypto.timingSafeEqual;
 
 // Encryption configuration
 const ALGORITHM = "aes-256-gcm";
@@ -274,7 +260,7 @@ export class HealthcareEncryption {
     ]);
 
     return pbkdf2Sync(
-      derivationInput,
+      derivationInput.toString("base64"),
       salt,
       PBKDF2_ITERATIONS,
       KEY_LENGTH,

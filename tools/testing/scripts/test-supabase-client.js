@@ -14,15 +14,14 @@ async function testSupabaseClient() {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
-    // Listar algumas tabelas públicas
-    const { data: tables, error } = await supabase
-      .from("information_schema.tables")
-      .select("table_name")
-      .eq("table_schema", "public")
-      .limit(10);
+    // Testar conectividade do banco com query simples
+    const { data: version, error } = await supabase.rpc("version");
 
     if (error) {
+      console.log(`❌ Database connection failed: ${error.message}`);
+      return;
     } else {
+      console.log(`✅ Database connected successfully`);
     }
 
     const tablesToTest = [

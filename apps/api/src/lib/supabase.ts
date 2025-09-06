@@ -15,7 +15,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 
 // Barreira server-only: nunca permita uso de Service Role no browser
-if (typeof window !== "undefined") {
+if (typeof globalThis !== "undefined" && "window" in globalThis) {
   throw new Error("Este módulo é apenas para ambiente de servidor (service role).");
 }
 

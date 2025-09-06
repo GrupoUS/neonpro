@@ -5,57 +5,21 @@
  * facilitar importação em componentes e hooks.
  */
 
-export * from "./analytics";
-// API Types
-export * from "./api";
+// Base type modules
+// Do not re-export placeholders to avoid TS2308 collisions
+// export * from "./analytics";
+// export * from "./notifications";  // placeholder
+// export * from "./patients";       // placeholder
+// export * from "./professionals";  // placeholder
+// export * from "./reports";        // placeholder
 export * from "./appointments";
-// Auth Types
 export * from "./auth";
 export * from "./billing";
-// Common Types
 export * from "./common";
 export * from "./consultations";
-// Database Types
 export * from "./database";
 export * from "./financial";
-// Re-export commonly used types for convenience
-export type {
-  Appointment,
-  AppointmentsFilters,
-  AppointmentsHook,
-  // Extended types with relationships
-  AppointmentWithDetails,
-  // Combined hook types
-  DashboardData,
-  // Hook types
-  DashboardMetrics,
-  FinancialHook,
-  FinancialOverview,
-  // Summary types
-  FinancialSummary,
-  FinancialTransaction,
-  MonthlyRevenue,
-  // Database base types
-  Patient,
-  // Filter and pagination types
-  PatientsFilters,
-  PatientsHook,
-  PaymentMethodStats,
-  RevenueByService,
-  Service,
-  ServiceCategory,
-  ServicesHook,
-  ServiceWithStats,
-  StaffAvailability,
-  StaffHook,
-  StaffMember,
-  StaffMemberWithStats,
-} from "./hooks";
-// Hook Types - Novos tipos para os hooks dinâmicos
-export * from "./hooks";
-export * from "./notifications";
-// Domain Types
-export * from "./patients";
-export * from "./professionals";
-export * from "./reports";
 export * from "./supabase";
+
+// Re-export all hook types in one statement to avoid duplication
+export * from "./hooks";

@@ -67,7 +67,7 @@ neonpro/
 
 - Build: next build
 - Tests: vitest run (unit + integration via root vitest projects)
-- Depends on: @neonpro/ui, @neonpro/shared, @neonpro/domain, @neonpro/database, @neonpro/monitoring
+- Depends on: @neonpro/ui, @neonpro/shared, @neonpro/database, @neonpro/monitoring
 - Deployment: Vercel (root vercel.json maps functions apps/web/app/api/**/*)
 - Outputs: .next/** (excluding cache)
 
@@ -174,7 +174,7 @@ Principais relações conforme turbo.json (build dependsOn):
 
 - **@neonpro/core-services** → @neonpro/types, @neonpro/database, @neonpro/shared
 - **@neonpro/monitoring** → @neonpro/types, @neonpro/database, @neonpro/shared
-- **@neonpro/domain** → @neonpro/types, @neonpro/database, @neonpro/shared
+- **@neonpro/domain** → ✅ MIGRATED: Consolidated into @neonpro/ui
 
 ### Infrastructure
 

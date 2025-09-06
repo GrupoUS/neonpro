@@ -1,5 +1,8 @@
 import { vi } from "vitest";
 
+// Define RequestInfo type for Node.js environment
+type RequestInfo = string | URL;
+
 // Mock console for cleaner test output
 global.console = {
   ...console,

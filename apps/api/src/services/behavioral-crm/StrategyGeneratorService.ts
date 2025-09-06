@@ -416,6 +416,7 @@ export class StrategyGeneratorService {
 
     for (let i = 0; i < baseActions.length; i++) {
       const baseAction = baseActions[i];
+      if (!baseAction) continue;
 
       // Personalize timing based on patient patterns
       const timing = await this.personalizeActionTiming(
@@ -446,11 +447,11 @@ export class StrategyGeneratorService {
       personalizedActions.push({
         id: `action_${Date.now()}_${i}`,
         sequence: i + 1,
-        type: baseAction.type,
-        title: baseAction.title,
+        type: baseAction.type || "communication",
+        title: baseAction.title || "Action",
         content,
         timing,
-        conditions: baseAction.conditions,
+        conditions: baseAction.conditions || [],
         personalization,
       });
     }
@@ -575,7 +576,8 @@ export class StrategyGeneratorService {
     profile: PatientBehaviorProfile,
   ): Promise<ActionPlan["timing"]> {
     // Adapt to patient's response time pattern
-    let { delay } = baseTiming;
+    const timing = baseTiming as ActionPlan["timing"];
+    let { delay } = timing;
     if (profile.patterns.responseTime === "immediate") {
       delay = Math.max(1, delay * 0.5); // Faster for immediate responders
     } else if (profile.patterns.responseTime === "delayed") {
@@ -591,8 +593,8 @@ export class StrategyGeneratorService {
 
     return {
       delay: Math.round(delay),
-      timeOfDay: baseTiming.timeOfDay || this.getOptimalTimeForPatient(profile),
-      dayOfWeek: baseTiming.dayOfWeek,
+      timeOfDay: timing.timeOfDay || this.getOptimalTimeForPatient(profile),
+      dayOfWeek: timing.dayOfWeek,
       blackoutPeriods: this.getBlackoutPeriods(profile),
     };
   }
@@ -958,7 +960,7 @@ export class StrategyGeneratorService {
     }
 
     // Adjust based on data completeness (simulated)
-    const { 8: dataCompleteness } = 0; // Would calculate based on available data
+    const dataCompleteness = 0.8; // Would calculate based on available data
     baseConfidence *= dataCompleteness;
 
     // Adjust based on strategy type success rates
@@ -1032,7 +1034,7 @@ export class StrategyGeneratorService {
     _targetMetrics: StrategyMetrics["targetMetrics"],
   ): number {
     const { revenueGenerated: revenue } = actualResults;
-    const estimatedCost = 200; // Estimated cost per strategy execution
+    const estimatedCost = 200; // Estimated cost per strategy execution (actualResults doesn't contain cost)
 
     if (estimatedCost === 0) {
       return 0;
@@ -1046,7 +1048,7 @@ export class StrategyGeneratorService {
   // =============================================================================
 
   private async storeStrategy(strategy: PersonalizedStrategy): Promise<void> {
-    const { error } = await supabase.from("patient_strategies").upsert({
+    const { error } = await (supabase as any).from("patient_strategies").upsert({
       id: strategy.id,
       patient_id: strategy.patientId,
       type: strategy.type,
@@ -1071,7 +1073,7 @@ export class StrategyGeneratorService {
     strategyId: string,
   ): Promise<PersonalizedStrategy | null> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("patient_strategies")
         .select("*")
         .eq("id", strategyId)
@@ -1081,26 +1083,27 @@ export class StrategyGeneratorService {
         throw error;
       }
       if (!data) {
-        return;
+        return null;
       }
 
+      const record = data as any;
       return {
-        id: data.id,
-        patientId: data.patient_id,
-        type: data.type,
-        priority: data.priority,
-        confidence: data.confidence,
-        strategy: data.strategy,
-        actions: data.actions,
-        channels: data.channels,
-        triggers: data.triggers,
-        metrics: data.metrics,
-        status: data.status,
-        createdAt: new Date(data.created_at),
-        updatedAt: new Date(data.updated_at),
+        id: record.id,
+        patientId: record.patient_id,
+        type: record.type,
+        priority: record.priority,
+        confidence: record.confidence,
+        strategy: record.strategy,
+        actions: record.actions,
+        channels: record.channels,
+        triggers: record.triggers,
+        metrics: record.metrics,
+        status: record.status,
+        createdAt: new Date(record.created_at),
+        updatedAt: new Date(record.updated_at),
       };
     } catch {
-      return;
+      return null;
     }
   }
 
@@ -1109,7 +1112,7 @@ export class StrategyGeneratorService {
   // =============================================================================
 
   async activateStrategy(strategyId: string): Promise<void> {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("patient_strategies")
       .update({
         status: "active",
@@ -1123,7 +1126,7 @@ export class StrategyGeneratorService {
   }
 
   async pauseStrategy(strategyId: string): Promise<void> {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("patient_strategies")
       .update({
         status: "paused",
@@ -1140,7 +1143,7 @@ export class StrategyGeneratorService {
     patientId?: string,
   ): Promise<PersonalizedStrategy[]> {
     try {
-      let query = supabase
+      let query = (supabase as any)
         .from("patient_strategies")
         .select("*")
         .eq("status", "active");
@@ -1154,7 +1157,7 @@ export class StrategyGeneratorService {
         throw error;
       }
 
-      return (data || []).map((strategy) => ({
+      return (data || []).map((strategy: any) => ({
         id: strategy.id,
         patientId: strategy.patient_id,
         type: strategy.type,

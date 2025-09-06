@@ -1,8 +1,44 @@
 import { LogCategory, logger, LogLevel } from "@/lib/logger";
+import { LogCategory, logger } from "@/lib/logger";
 import { alertSystem, type MonitoringDashboard } from "@/lib/monitoring/alert-system";
 import { createClient } from "@/utils/supabase/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+
+// Type definitions for monitoring API
+interface AlertRule {
+  name: string;
+  condition: string;
+  threshold: number;
+  severity: "low" | "medium" | "high" | "critical";
+  description?: string;
+  enabled?: boolean;
+  tags?: string[];
+}
+
+interface PerformanceMetric {
+  id: string;
+  timestamp: Date;
+  metricName: string;
+  value: number;
+  labels?: Record<string, string>;
+  clinicId?: string;
+  userId?: string;
+}
+
+interface MonitoringResult {
+  success: boolean;
+  data: any;
+  timestamp: string;
+}
+
+interface MonitoringError {
+  success: false;
+  error: string;
+  timestamp: string;
+}
+
+type MonitoringResponse = MonitoringResult | MonitoringError;
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,7 +76,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    let responseData: any;
+    let responseData: MonitoringDashboard | any[] | Record<string, any>;
 
     switch (action) {
       case "dashboard":
@@ -72,10 +108,12 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    logger.log(LogLevel.ERROR, "Monitoring API error", {
-      category: LogCategory.SYSTEM,
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
+    logger.error(LogCategory.SYSTEM, "Monitoring API error", {
+      error: {
+        name: error instanceof Error ? error.name : "UnknownError",
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+      },
     });
 
     return NextResponse.json(
@@ -99,21 +137,69 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    let body: any;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Invalid JSON in request body" },
+        { status: 400 },
+      );
+    }
+
+    // Validate required fields
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { error: "Request body must be a valid object" },
+        { status: 400 },
+      );
+    }
+
     const { action, ...data } = body;
 
-    let result: any;
+    if (!action || typeof action !== "string") {
+      return NextResponse.json(
+        { error: "Action field is required and must be a string" },
+        { status: 400 },
+      );
+    }
+
+    let result: Record<string, any> | null = null;
 
     switch (action) {
       case "acknowledge_alert":
+        if (!data?.alertId) {
+          return NextResponse.json(
+            { error: "alertId is required for acknowledge_alert action" },
+            { status: 400 },
+          );
+        }
         result = await acknowledgeAlert(data.alertId, user.id);
         break;
 
       case "resolve_alert":
+        if (!data?.alertId) {
+          return NextResponse.json(
+            { error: "alertId is required for resolve_alert action" },
+            { status: 400 },
+          );
+        }
         result = await resolveAlert(data.alertId, user.id, data.resolution);
         break;
 
       case "create_alert_rule":
+        if (!data?.rule) {
+          return NextResponse.json(
+            { error: "rule is required for create_alert_rule action" },
+            { status: 400 },
+          );
+        }
+        if (!user?.id) {
+          return NextResponse.json(
+            { error: "User ID is required" },
+            { status: 401 },
+          );
+        }
         result = await createAlertRule(data.rule, user.id);
         break;
 
@@ -130,9 +216,12 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    logger.log(LogLevel.ERROR, "Monitoring API POST error", {
-      category: LogCategory.SYSTEM,
-      error: error instanceof Error ? error.message : "Unknown error",
+    logger.error(LogCategory.SYSTEM, "Monitoring API POST error", {
+      error: {
+        name: error instanceof Error ? error.name : "UnknownError",
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+      },
     });
 
     return NextResponse.json(
@@ -148,17 +237,21 @@ async function getDashboardData(): Promise<MonitoringDashboard> {
   try {
     const dashboard = await alertSystem.getDashboard();
 
-    logger.log(LogLevel.INFO, "Dashboard data retrieved", {
-      category: LogCategory.SYSTEM,
-      activeAlerts: dashboard.activeAlerts.length,
-      systemHealth: dashboard.systemHealth.overall,
+    logger.info(LogCategory.SYSTEM, "Dashboard data retrieved", {
+      metadata: {
+        activeAlerts: dashboard.activeAlerts.length,
+        systemHealth: dashboard.systemHealth.overall,
+      },
     });
 
     return dashboard;
   } catch (error) {
-    logger.log(LogLevel.ERROR, "Failed to get dashboard data", {
-      category: LogCategory.SYSTEM,
-      error: error instanceof Error ? error.message : "Unknown error",
+    logger.error(LogCategory.SYSTEM, "Failed to get dashboard data", {
+      error: {
+        name: error instanceof Error ? error.name : "UnknownError",
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+      },
     });
 
     throw error;
@@ -171,7 +264,19 @@ async function getAlerts(searchParams: URLSearchParams) {
     const severity = searchParams.get("severity");
     const category = searchParams.get("category");
     const clinicId = searchParams.get("clinic_id");
-    const limit = parseInt(searchParams.get("limit") || "50");
+
+    // Safe limit parsing with validation
+    const MAX_LIMIT = 100;
+    const DEFAULT_LIMIT = 50;
+    const rawLimit = searchParams.get("limit")?.trim();
+    let limit = DEFAULT_LIMIT;
+
+    if (rawLimit) {
+      const parsedLimit = parseInt(rawLimit, 10);
+      if (!isNaN(parsedLimit)) {
+        limit = Math.max(1, Math.min(parsedLimit, MAX_LIMIT));
+      }
+    }
 
     const supabase = createClient();
 
@@ -209,9 +314,17 @@ async function getAlerts(searchParams: URLSearchParams) {
       filters: { status, severity, category, clinicId },
     };
   } catch (error) {
-    logger.log(LogLevel.ERROR, "Failed to get alerts", {
-      category: LogCategory.DATABASE,
-      error: error instanceof Error ? error.message : "Unknown error",
+    logger.error(LogCategory.DATABASE, "Failed to get alerts", {
+      error: error instanceof Error
+        ? {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        }
+        : {
+          name: "UnknownError",
+          message: "Unknown error",
+        },
     });
 
     return { alerts: [], total: 0, error: "Failed to fetch alerts" };
@@ -229,9 +342,17 @@ async function getHealthStatus() {
       lastUpdate: new Date().toISOString(),
     };
   } catch (error) {
-    logger.log(LogLevel.ERROR, "Failed to get health status", {
-      category: LogCategory.SYSTEM,
-      error: error instanceof Error ? error.message : "Unknown error",
+    logger.error(LogCategory.SYSTEM, "Failed to get health status", {
+      error: error instanceof Error
+        ? {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        }
+        : {
+          name: "UnknownError",
+          message: "Unknown error",
+        },
     });
 
     return {
@@ -300,9 +421,17 @@ async function getMetrics(searchParams: URLSearchParams) {
       count: metrics.length,
     };
   } catch (error) {
-    logger.log(LogLevel.ERROR, "Failed to get metrics", {
-      category: LogCategory.DATABASE,
-      error: error instanceof Error ? error.message : "Unknown error",
+    logger.error(LogCategory.DATABASE, "Failed to get metrics", {
+      error: error instanceof Error
+        ? {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        }
+        : {
+          name: "UnknownError",
+          message: "Unknown error",
+        },
     });
 
     return { metrics: [], error: "Failed to fetch metrics" };
@@ -314,20 +443,31 @@ async function acknowledgeAlert(alertId: string, userId: string): Promise<boolea
     const result = await alertSystem.acknowledgeAlert(alertId, userId);
 
     if (result) {
-      logger.log(LogLevel.INFO, "Alert acknowledged via API", {
-        category: LogCategory.SYSTEM,
-        alertId,
-        userId,
+      logger.info(LogCategory.SYSTEM, "Alert acknowledged via API", {
+        metadata: {
+          alertId,
+          userId,
+        },
       });
     }
 
     return result;
   } catch (error) {
-    logger.log(LogLevel.ERROR, "Failed to acknowledge alert", {
-      category: LogCategory.SYSTEM,
-      alertId,
-      userId,
-      error: error instanceof Error ? error.message : "Unknown error",
+    logger.error(LogCategory.SYSTEM, "Failed to acknowledge alert", {
+      metadata: {
+        alertId,
+        userId,
+      },
+      error: error instanceof Error
+        ? {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        }
+        : {
+          name: "UnknownError",
+          message: "Unknown error",
+        },
     });
 
     return false;
@@ -343,52 +483,74 @@ async function resolveAlert(
     const result = await alertSystem.resolveAlert(alertId, userId, resolution);
 
     if (result) {
-      logger.log(LogLevel.INFO, "Alert resolved via API", {
-        category: LogCategory.SYSTEM,
-        alertId,
-        userId,
-        resolution,
+      logger.info(LogCategory.SYSTEM, "Alert resolved via API", {
+        metadata: {
+          alertId,
+          userId,
+          resolution,
+        },
       });
     }
 
     return result;
   } catch (error) {
-    logger.log(LogLevel.ERROR, "Failed to resolve alert", {
-      category: LogCategory.SYSTEM,
-      alertId,
-      userId,
-      error: error instanceof Error ? error.message : "Unknown error",
+    logger.error(LogCategory.SYSTEM, "Failed to resolve alert", {
+      metadata: {
+        alertId,
+        userId,
+      },
+      error: error instanceof Error
+        ? {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        }
+        : {
+          name: "UnknownError",
+          message: "Unknown error",
+        },
     });
 
     return false;
   }
 }
 
-async function createAlertRule(rule: any, userId: string): Promise<string | null> {
+async function createAlertRule(rule: AlertRule, userId: string): Promise<string | null> {
   try {
     const ruleId = await alertSystem.addAlertRule(rule);
 
-    logger.log(LogLevel.INFO, "Alert rule created via API", {
-      category: LogCategory.SYSTEM,
-      ruleId,
-      ruleName: rule.name,
-      userId,
+    logger.info(LogCategory.SYSTEM, "Alert rule created via API", {
+      metadata: {
+        ruleId,
+        ruleName: rule.name,
+        userId,
+      },
     });
 
     return ruleId;
   } catch (error) {
-    logger.log(LogLevel.ERROR, "Failed to create alert rule", {
-      category: LogCategory.SYSTEM,
-      ruleName: rule?.name,
-      userId,
-      error: error instanceof Error ? error.message : "Unknown error",
+    logger.error(LogCategory.SYSTEM, "Failed to create alert rule", {
+      metadata: {
+        ruleName: rule?.name,
+        userId,
+      },
+      error: error instanceof Error
+        ? {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        }
+        : {
+          name: "UnknownError",
+          message: "Unknown error",
+        },
     });
 
     return null;
   }
 }
 
-function processMetricsData(metrics: any[], type: string) {
+function processMetricsData(metrics: PerformanceMetric[], type: string) {
   // Group metrics by time buckets for charting
   const buckets = new Map<string, any[]>();
 

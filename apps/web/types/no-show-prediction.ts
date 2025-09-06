@@ -236,6 +236,20 @@ export interface NoShowPredictionSort {
   direction: "asc" | "desc";
 }
 
+// Component-specific interfaces
+export interface PatientRiskContextProps {
+  prediction: NoShowPrediction;
+  className?: string;
+}
+
+export interface RiskIndicatorProps {
+  riskScore: number;
+  riskLevel: RiskLevelType;
+  showLabel?: boolean;
+  size?: "sm" | "md" | "lg";
+  className?: string;
+}
+
 // Constants
 export const RISK_LEVEL_COLORS = {
   low: "#10B981",
@@ -249,6 +263,16 @@ export const RISK_LEVEL_LABELS = {
   medium: "Risco Médio",
   high: "Alto Risco",
   critical: "Risco Crítico",
+} as const;
+
+// Aliases for backward compatibility
+export const RISK_COLORS = RISK_LEVEL_COLORS;
+export const RISK_LABELS_PT = RISK_LEVEL_LABELS;
+
+export const RISK_THRESHOLDS = {
+  LOW: 30,
+  MEDIUM: 60,
+  HIGH: 80,
 } as const;
 
 export const INTERVENTION_TYPE_LABELS = {

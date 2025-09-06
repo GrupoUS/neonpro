@@ -63,10 +63,10 @@
     "oxlint:fix": "source scripts/optimize-memory.sh && run_oxlint_optimized --fix",
     "compliance:check": "node scripts/compliance-check.mjs",
     "coverage:verify": "node scripts/coverage-verify.mjs",
-    "db:generate": "PRISMA_SCHEMA=${PRISMA_SCHEMA:-packages/database/prisma/schema.prisma} pnpm --filter @neonpro/database exec prisma generate --schema \"$PRISMA_SCHEMA\"",
-    "db:migrate:status": "PRISMA_SCHEMA=${PRISMA_SCHEMA:-packages/database/prisma/schema.prisma} pnpm --filter @neonpro/database exec prisma migrate status --schema \"$PRISMA_SCHEMA\"",
-    "db:migrate:dev": "PRISMA_SCHEMA=${PRISMA_SCHEMA:-packages/database/prisma/schema.prisma} pnpm --filter @neonpro/database exec prisma migrate dev --schema \"$PRISMA_SCHEMA\"",
-    "db:introspect": "PRISMA_SCHEMA=${PRISMA_SCHEMA:-packages/database/prisma/schema.prisma} pnpm --filter @neonpro/database exec prisma db pull --schema \"$PRISMA_SCHEMA\""
+    "db:generate": "PRISMA_SCHEMA=${PRISMA_SCHEMA:-packages/database/prisma/schema.prisma} bunx --filter @neonpro/database prisma generate --schema \"$PRISMA_SCHEMA\"",
+    "db:migrate:status": "PRISMA_SCHEMA=${PRISMA_SCHEMA:-packages/database/prisma/schema.prisma} bunx --filter @neonpro/database prisma migrate status --schema \"$PRISMA_SCHEMA\"",
+    "db:migrate:dev": "PRISMA_SCHEMA=${PRISMA_SCHEMA:-packages/database/prisma/schema.prisma} bunx --filter @neonpro/database prisma migrate dev --schema \"$PRISMA_SCHEMA\"",
+    "db:introspect": "PRISMA_SCHEMA=${PRISMA_SCHEMA:-packages/database/prisma/schema.prisma} bunx --filter @neonpro/database prisma db pull --schema \"$PRISMA_SCHEMA\""
   },
   "devDependencies": {
     "@turbo/gen": "^1.13.4",

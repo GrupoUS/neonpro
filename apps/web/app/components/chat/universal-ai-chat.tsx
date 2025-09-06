@@ -116,8 +116,8 @@ export function UniversalAIChat({
   const {
     // recognition,
     // synthesis,
-    startListening,
-    stopListening,
+    // startListening,
+    // stopListening,
     // toggleListening,
     // speakText,
     // stopSpeaking,
@@ -141,7 +141,20 @@ export function UniversalAIChat({
         sendMessage(emergencyMessage);
 
         // Announce emergency protocol with performance status
-        const performanceStatus = { targetLatency: 200 }; // Mock for MVP
+        // TODO: Replace with actual measured latency from real async operations
+        const EMERGENCY_TARGET_LATENCY = 200; // Configurable constant (ms)
+
+        // Measure actual performance (placeholder implementation)
+        // In production, this should measure actual API call latency or handler performance
+        const performanceStartTime = performance.now();
+        const measuredLatency = Math.round(performanceStartTime % 100 + 150); // Placeholder calculation
+
+        const performanceStatus = {
+          targetLatency: EMERGENCY_TARGET_LATENCY,
+          measuredLatency: measuredLatency,
+          isPlaceholder: true, // TODO: Remove when real measurement is implemented
+        };
+
         const announcement =
           `Emergência detectada. Modo alta performance ativado. Conectando com equipe médica imediatamente. Tempo de resposta otimizado para ${performanceStatus.targetLatency}ms.`;
         // announceEmergency(announcement);

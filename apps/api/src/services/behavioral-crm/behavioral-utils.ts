@@ -241,8 +241,12 @@ function calculateConsistencyScore(events: readonly BehavioralEvent[]): number {
   const intervals: number[] = [];
 
   for (let i = 1; i < events.length; i++) {
-    const interval = getDaysDifference(events[i - 1].timestamp, events[i].timestamp);
-    intervals.push(interval);
+    const prevEvent = events[i - 1];
+    const currentEvent = events[i];
+    if (prevEvent?.timestamp && currentEvent?.timestamp) {
+      const interval = getDaysDifference(prevEvent.timestamp, currentEvent.timestamp);
+      intervals.push(interval);
+    }
   }
 
   const avgInterval = intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;

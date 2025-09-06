@@ -325,7 +325,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
       });
 
       if (result.isValid && result.data) {
-        setConsentRecords((prev) => [result.data!, ...prev]);
+        setConsentRecords((prev) => [result.data, ...prev]);
         setIsConsentDialogOpen(false);
         resetForm();
         toast.success("Consentimento registrado com sucesso");

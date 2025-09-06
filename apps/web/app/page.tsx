@@ -104,12 +104,12 @@ const QuickAccessSection = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Link href="/pacientes">
-            <Button className="w-full">
+          <Button asChild className="w-full">
+            <Link href="/pacientes">
               <User className="h-4 w-4 mr-2" />
               Ver Todos os Pacientes
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </CardContent>
       </Card>
 
@@ -124,12 +124,12 @@ const QuickAccessSection = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Link href="/agenda">
-            <Button className="w-full">
+          <Button asChild className="w-full">
+            <Link href="/agenda">
               <Calendar className="h-4 w-4 mr-2" />
               Abrir Agenda
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </CardContent>
       </Card>
 
@@ -144,12 +144,12 @@ const QuickAccessSection = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Link href="/clinica">
-            <Button className="w-full">
+          <Button asChild className="w-full">
+            <Link href="/clinica">
               <Building2 className="h-4 w-4 mr-2" />
               Gerenciar Clínica
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </CardContent>
       </Card>
 
@@ -164,12 +164,12 @@ const QuickAccessSection = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Link href="/auth-test">
-            <Button className="w-full" variant="outline">
+          <Button asChild className="w-full" variant="outline">
+            <Link href="/auth-test">
               <TestTube className="h-4 w-4 mr-2" />
               Abrir Teste de Auth
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </CardContent>
       </Card>
     </div>

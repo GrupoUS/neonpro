@@ -8,8 +8,8 @@
 
 import { AuditEventType, AuditSeverity, UnifiedAuditService } from "@neonpro/security";
 // ✅ Healthcare domain imports
-import { useHealthcarePermissions } from "@neonpro/domain/hooks";
 import { validateHealthcareAccess } from "@neonpro/security/auth";
+import { useHealthcarePermissions } from "@neonpro/ui";
 // ✅ Type imports
 import type { HealthcareDashboardData } from "@neonpro/types/healthcare";
 

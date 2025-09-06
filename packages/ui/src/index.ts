@@ -31,6 +31,8 @@ export * from "./hooks/use-permissions";
 export * from "./hooks/use-toast";
 export * from "./hooks/use-translation";
 export * from "./hooks/useLayout";
+// Domain-facing alias for healthcare permissions
+export { usePermissions as useHealthcarePermissions } from "./hooks/use-permissions";
 // Layout exports
 export * from "./layouts";
 // Utils exports
