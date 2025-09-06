@@ -80,11 +80,8 @@ async function checkDatabase(): Promise<
 
     const supabase = createAdminClient();
 
-    // Test basic connectivity
-    const { error: connectError } = await supabase
-      .from("pg_stat_activity")
-      .select("count(*)")
-      .limit(1);
+    // Test basic connectivity using PostgreSQL version function
+    const { error: connectError } = await supabase.rpc("version");
 
     if (connectError) {
       return {

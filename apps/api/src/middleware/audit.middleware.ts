@@ -157,7 +157,7 @@ async function logAuditEvent(
     // Registrar evento usando UnifiedAuditService
     await auditService.logEvent({
       eventType: action || "SYSTEM_EVENT",
-      severity: severity || "INFO",
+      severity: mapSeverityToString(severity || AuditSeverity.LOW),
       outcome: responseInfo.status_code >= 400 ? "FAILURE" : "SUCCESS",
       userId: auditContext.user_id || undefined,
       resourceType: resourceType || undefined,
@@ -500,6 +500,24 @@ function extractOS(userAgent: string): string {
     return "iOS";
   }
   return "Unknown";
+}
+
+/**
+ * Maps AuditSeverity enum to expected string literal type for UnifiedAuditService
+ */
+function mapSeverityToString(severity: AuditSeverity): "INFO" | "WARNING" | "ERROR" | "CRITICAL" {
+  switch (severity) {
+    case AuditSeverity.LOW:
+      return "INFO";
+    case AuditSeverity.MEDIUM:
+      return "WARNING";
+    case AuditSeverity.HIGH:
+      return "ERROR";
+    case AuditSeverity.CRITICAL:
+      return "CRITICAL";
+    default:
+      return "INFO";
+  }
 }
 
 /**

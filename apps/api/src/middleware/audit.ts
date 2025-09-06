@@ -15,6 +15,22 @@ import { createRouteRegex, extractResourceIds } from "../lib/regex-constants";
 const SAFE_REQUEST_ID_REGEX = /^[a-zA-Z0-9\-_]{1,64}$/;
 
 /**
+ * Decode a JWT payload segment using base64url-safe decoding.
+ */
+function decodeJwtPayload(segment: string): unknown {
+  let base64 = segment.replace(/-/g, "+").replace(/_/g, "/");
+  while (base64.length % 4) base64 += "=";
+  const decoded = typeof Buffer !== "undefined"
+    ? Buffer.from(base64, "base64").toString("utf8")
+    : typeof atob !== "undefined"
+    ? atob(base64)
+    : (() => {
+      throw new Error("No base64 decoder available");
+    })();
+  return JSON.parse(decoded);
+}
+
+/**
  * Sanitize X-Request-ID header to prevent header/log forgery
  * @param requestId - The request ID from the header
  * @returns Sanitized request ID or a locally generated one
@@ -299,7 +315,7 @@ const extractUserContext = (c: Context) => {
       if (parts.length < 2 || !parts[1]) {
         throw new Error("Invalid JWT token format");
       }
-      const payload = JSON.parse(atob(parts[1]));
+      const payload = decodeJwtPayload(parts[1]) as Record<string, unknown>;
 
       return {
         userId: payload.sub || payload.userId || payload.id,

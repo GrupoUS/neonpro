@@ -22,18 +22,18 @@ import React from "react";
 if (false) {
   try {
     // Defer import to runtime to avoid ESM hoisting issues
-    vi.mock("@testing-library/react", async () => {
-      const actual = await vi.importActual<any>("@testing-library/react");
-      return {
-        ...actual,
-        render: (...args: any[]) => {
-          try {
-            cleanup();
-          } catch {}
-          return (actual as any).render(...args);
-        },
-      };
-    });
+    // vi.mock("@testing-library/react", async () => {
+    //   const actual = await vi.importActual<any>("@testing-library/react");
+    //   return {
+    //     ...actual,
+    //     render: (...args: any[]) => {
+    //       try {
+    //         cleanup();
+    //       } catch {}
+    //       return (actual as any).render(...args);
+    //     },
+    //   };
+    // });
   } catch {}
 }
 
@@ -452,31 +452,32 @@ const mockSupabaseClient = {
 
 (globalThis as any).mockSupabaseClient = mockSupabaseClient;
 
-vi.mock("@supabase/supabase-js", () => ({
-  createClient: vi.fn(() => mockSupabaseClient),
-}));
+// Mock Supabase manually - vi.mock cannot be used in setup files
+// vi.mock("@supabase/supabase-js", () => ({
+//   createClient: vi.fn(() => mockSupabaseClient),
+// }));
 
 // Re-export client and the raw mock for tests that need direct control
-vi.mock("@/lib/supabase/client", () => ({
-  supabase: mockSupabaseClient,
-  mockSupabaseClient,
-}));
+// vi.mock("@/lib/supabase/client", () => ({
+//   supabase: mockSupabaseClient,
+//   mockSupabaseClient,
+// }));
 
 // Map utils validation to our CPF mock so tests can spy on calls
-vi.mock("@neonpro/utils/validation", async () => {
-  const actual = await vi.importActual<any>("@neonpro/utils/src/validation.ts").catch(() => ({}));
-  const cpf = (globalThis as any).mockCpfValidator;
-  return {
-    ...actual,
-    validateCPF: cpf?.isValid ?? ((v: string) => Boolean(v)),
-    formatCPF: cpf?.format ?? ((v: string) => v),
-  };
-});
+// vi.mock("@neonpro/utils/validation", async () => {
+//   const actual = await vi.importActual<any>("@neonpro/utils/src/validation.ts").catch(() => ({}));
+//   const cpf = (globalThis as any).mockCpfValidator;
+//   return {
+//     ...actual,
+//     validateCPF: cpf?.isValid ?? ((v: string) => Boolean(v)),
+//     formatCPF: cpf?.format ?? ((v: string) => v),
+//   };
+// });
 
 // Keep LGPD/CPF mocks unified below to avoid duplicates
-vi.mock("@/lib/supabase/server", () => ({
-  createServerClient: vi.fn(() => mockSupabaseClient),
-})); // --- Integration test global mocks and fetch extensions (appended) ---
+// vi.mock("@/lib/supabase/server", () => ({
+//   createServerClient: vi.fn(() => mockSupabaseClient),
+// })); // --- Integration test global mocks and fetch extensions (appended) ---
 // Expose global Supabase mock for tests accessing global.mockSupabaseClient
 
 (globalThis as any).mockSupabaseClient = mockSupabaseClient;

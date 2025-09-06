@@ -491,10 +491,7 @@ export const requirePermission = (
         (permission) => !userPermissions.includes(permission),
       );
 
-      throw createError.authorization("Permissões insuficientes", {
-        required: requiredPermissions,
-        missing: missingPermissions,
-      });
+      throw createError.authorization("Permissões insuficientes");
     }
 
     await next();
@@ -553,7 +550,9 @@ export const requireClinicAccess = (): MiddlewareHandler => {
     // Extract clinic ID from request (URL parameter, query, or body)
     const bodyClinicId = c.req.method !== "GET"
         && c.req.header("content-type")?.includes("application/json")
-      ? (await c.req.raw.clone().json().catch(() => ({} as Record<string, unknown>)))?.clinicId
+      ? (await c.req.raw.clone().json().catch(
+        () => ({ clinicId: undefined }),
+      ) as { clinicId?: string; })?.clinicId
       : undefined;
 
     const requestClinicId = c.req.param("clinicId")

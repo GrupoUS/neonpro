@@ -334,7 +334,9 @@ async function forwardToExternalService(report: ErrorReport, severity: string): 
       };
 
       // In a real implementation, use the Sentry SDK
-      logger.info(LogCategory.SYSTEM, "Would forward to Sentry", { sentryPayload });
+      logger.info(LogCategory.SYSTEM, "Would forward to Sentry", {
+        metadata: { sentryPayload },
+      });
     }
   } catch (error) {
     logger.warn(

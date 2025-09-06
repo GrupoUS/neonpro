@@ -456,28 +456,460 @@ psql -c "SELECT * FROM pg_stat_activity WHERE state = 'active';"
 curl https://neonpro.com.br/api/monitoring?action=metrics
 ```
 
-### Rollback Procedures
+### Comprehensive Rollback Procedures
 
-#### Code Rollback
+#### Overview
+
+Rollback procedures are critical for maintaining system stability and data integrity. This section provides detailed step-by-step procedures for different rollback scenarios, including verification steps and communication protocols.
+
+#### Rollback Decision Matrix
+
+| Severity     | Conditions                                                | Rollback Type                | Timeline             |
+| ------------ | --------------------------------------------------------- | ---------------------------- | -------------------- |
+| **Critical** | System outage, data corruption, security breach           | Full system rollback         | Immediate (< 15 min) |
+| **High**     | Major functionality broken, performance degradation > 50% | Application rollback         | < 30 minutes         |
+| **Medium**   | Minor features broken, UI issues                          | Feature rollback or hotfix   | < 1 hour             |
+| **Low**      | Cosmetic issues, non-critical bugs                        | Scheduled maintenance window | Next deployment      |
+
+#### 1. Application Code Rollback
+
+##### Pre-Rollback Checklist
+
+- [ ] Document current issue and impact
+- [ ] Identify last known good deployment
+- [ ] Notify stakeholders of planned rollback
+- [ ] Backup current state before rollback
+
+##### Step-by-Step Rollback Process
 
 ```bash
-# Vercel rollback
-vercel rollback [deployment-url]
+# 1. Get current deployment information
+vercel ls --scope=neonpro
 
-# Custom deployment rollback
+# 2. Identify target rollback deployment
+vercel rollback --help
+
+# 3. Execute rollback (Vercel)
+vercel promote [deployment-url] --scope=neonpro
+
+# 4. For custom deployments
+# Store current deployment info
+echo "$(git rev-parse HEAD)" > /tmp/rollback-from-commit.txt
+echo "$(date)" >> /tmp/rollback-from-commit.txt
+
+# Rollback to previous stable commit
 git checkout [previous-stable-commit]
-pm2 restart all
+
+# Rebuild application
+pnpm install --frozen-lockfile
+pnpm build
+
+# Restart services
+pm2 restart all --update-env
+
+# 5. Verify rollback success
+curl -f https://neonpro.com.br/api/health
+curl -f https://neonpro.com.br/api/health/quick
 ```
 
-#### Database Rollback
+##### Post-Rollback Verification
 
 ```bash
-# Restore from backup
-supabase db dump --db-url=[backup-url] | supabase db reset --db-url=[current-url]
+# 1. Run health checks
+./scripts/post-rollback-verification.sh
 
-# Point-in-time recovery
-pg_restore -d neonpro backup_file.sql
+# 2. Test critical user journeys
+npx playwright test --config=playwright.config.rollback.ts
+
+# 3. Verify data integrity
+curl https://neonpro.com.br/api/health/database
+
+# 4. Check performance metrics
+curl https://neonpro.com.br/api/monitoring?action=metrics
 ```
+
+#### 2. Database Rollback
+
+##### Database Migration Rollback
+
+```bash
+# 1. Stop application to prevent new database writes
+pm2 stop all
+
+# 2. Create point-in-time backup before rollback
+pg_dump -h localhost -U postgres -d neonpro > /backup/pre-rollback-$(date +%Y%m%d_%H%M%S).sql
+
+# 3. Rollback specific migration
+supabase migration down [migration-name]
+
+# 4. Verify schema state
+supabase db diff
+
+# 5. Restart application with previous version
+git checkout [previous-database-compatible-commit]
+pnpm build
+pm2 start all
+```
+
+##### Full Database Restore
+
+```bash
+# 1. Emergency database restore procedure
+# Create maintenance mode
+echo '{"maintenance": true, "message": "Emergency maintenance in progress"}' > /var/www/html/maintenance.json
+
+# 2. Stop all services accessing database
+pm2 stop all
+systemctl stop nginx  # if applicable
+
+# 3. Create backup of current state
+pg_dump -h localhost -U postgres -d neonpro_current > /backup/emergency-backup-$(date +%Y%m%d_%H%M%S).sql
+
+# 4. Restore from backup
+dropdb neonpro_current
+createdb neonpro_current
+pg_restore -d neonpro_current /backup/[backup-file].sql
+
+# 5. Verify database integrity
+psql -d neonpro_current -c "SELECT COUNT(*) FROM patients;"
+psql -d neonpro_current -c "SELECT COUNT(*) FROM appointments;"
+
+# 6. Update application configuration if needed
+# Check that SUPABASE_URL points to correct database
+
+# 7. Restart services
+pm2 start all
+systemctl start nginx
+
+# 8. Remove maintenance mode
+rm /var/www/html/maintenance.json
+```
+
+##### Point-in-Time Recovery
+
+```bash
+# 1. Determine recovery point
+echo "Target recovery time: [YYYY-MM-DD HH:MM:SS]"
+
+# 2. Stop application
+pm2 stop all
+
+# 3. Restore to specific point in time (Supabase)
+# Note: This requires Supabase Pro plan with point-in-time recovery
+supabase db restore --recovery-time="2024-12-05 14:30:00"
+
+# 4. Verify recovery point
+psql -c "SELECT MAX(created_at) FROM audit_logs;"
+
+# 5. Restart application
+pm2 start all
+```
+
+#### 3. Environment Configuration Rollback
+
+##### Environment Variable Rollback
+
+```bash
+# 1. Backup current environment variables
+cp .env.production .env.production.backup.$(date +%Y%m%d_%H%M%S)
+
+# 2. Restore previous environment configuration
+cp .env.production.previous .env.production
+
+# 3. Verify critical variables are set
+grep -E "SUPABASE_URL|SUPABASE_SERVICE_ROLE_KEY|JWT_SECRET" .env.production
+
+# 4. Restart application with new environment
+pm2 restart all --update-env
+
+# 5. Verify application starts correctly
+sleep 10
+curl -f https://neonpro.com.br/api/health
+```
+
+##### Supabase Configuration Rollback
+
+```bash
+# 1. Rollback Supabase project settings
+supabase projects list
+supabase link --project-ref [previous-project-ref]
+
+# 2. Update environment variables
+export NEXT_PUBLIC_SUPABASE_URL=[previous-url]
+export SUPABASE_SERVICE_ROLE_KEY=[previous-key]
+
+# 3. Update application configuration
+sed -i 's/current-supabase-url/previous-supabase-url/g' .env.production
+
+# 4. Restart with updated configuration
+pm2 restart all --update-env
+```
+
+#### 4. Feature Flag Rollback
+
+```bash
+# 1. Identify feature flags to rollback
+curl https://neonpro.com.br/api/feature-flags | jq '.'
+
+# 2. Disable problematic features
+curl -X POST https://neonpro.com.br/api/feature-flags \
+  -H "Content-Type: application/json" \
+  -d '{"flag": "new-appointment-ui", "enabled": false}'
+
+# 3. Verify feature is disabled
+curl https://neonpro.com.br/api/feature-flags/new-appointment-ui
+
+# 4. Clear feature flag cache
+curl -X POST https://neonpro.com.br/api/cache/clear?type=feature-flags
+```
+
+#### 5. Rollback Testing Procedures
+
+##### Automated Rollback Testing
+
+```bash
+# Create rollback test script
+cat > scripts/test-rollback-procedures.sh << 'EOF'
+#!/bin/bash
+set -e
+
+echo "🧪 Testing rollback procedures..."
+
+# 1. Test health endpoints after rollback
+echo "Testing health endpoints..."
+curl -f https://neonpro.com.br/api/health || exit 1
+curl -f https://neonpro.com.br/api/health/database || exit 1
+
+# 2. Test critical functionality
+echo "Testing critical functionality..."
+curl -f https://neonpro.com.br/api/patients || exit 1
+curl -f https://neonpro.com.br/api/appointments || exit 1
+
+# 3. Test authentication
+echo "Testing authentication..."
+curl -X POST https://neonpro.com.br/api/auth/health || exit 1
+
+# 4. Test performance
+echo "Testing performance..."
+response_time=$(curl -o /dev/null -s -w '%{time_total}' https://neonpro.com.br)
+if (( $(echo "$response_time > 3.0" | bc -l) )); then
+  echo "❌ Response time too slow: ${response_time}s"
+  exit 1
+fi
+
+echo "✅ All rollback tests passed"
+EOF
+
+chmod +x scripts/test-rollback-procedures.sh
+```
+
+##### Manual Testing Checklist
+
+After any rollback, verify:
+
+- [ ] **Authentication Flow**
+  - Login/logout functionality
+  - Password reset
+  - Session management
+
+- [ ] **Core Features**
+  - Patient registration
+  - Appointment booking
+  - Medical records access
+  - Clinic management
+
+- [ ] **Data Integrity**
+  - Recent patient data accessible
+  - Appointments show correctly
+  - Audit logs intact
+  - Consent records preserved
+
+- [ ] **Compliance Features**
+  - LGPD data processing
+  - Audit trail generation
+  - Consent management
+  - Data retention policies
+
+#### 6. Communication During Rollback
+
+##### Internal Communication Template
+
+```markdown
+**PRODUCTION ROLLBACK NOTIFICATION**
+
+**Status:** IN PROGRESS / COMPLETED
+**Severity:** Critical / High / Medium / Low
+**Start Time:** [YYYY-MM-DD HH:MM UTC]
+**Expected Completion:** [YYYY-MM-DD HH:MM UTC]
+
+**Issue Description:**
+[Brief description of the issue requiring rollback]
+
+**Rollback Scope:**
+
+- [ ] Application code
+- [ ] Database changes
+- [ ] Environment configuration
+- [ ] Feature flags
+
+**Impact:**
+
+- Affected users: [number/percentage]
+- Affected features: [list]
+- Estimated downtime: [duration]
+
+**Current Status:**
+[Update on rollback progress]
+
+**Next Update:** [when next update will be provided]
+```
+
+##### External Communication Template
+
+```markdown
+**SERVICE MAINTENANCE UPDATE**
+
+We are currently performing emergency maintenance to resolve a service issue.
+
+**Status:** Maintenance in progress
+**Affected Services:** [list affected features]
+**Expected Resolution:** [time]
+
+We apologize for any inconvenience and will provide updates as they become available.
+
+For urgent matters, please contact: emergency@neonpro.com.br
+```
+
+#### 7. Post-Rollback Procedures
+
+##### Immediate Actions (0-15 minutes)
+
+1. **Verify System Health**
+   ```bash
+   # Run comprehensive health check
+   curl https://neonpro.com.br/api/health | jq '.'
+
+   # Check all critical endpoints
+   ./scripts/test-rollback-procedures.sh
+   ```
+
+2. **Monitor Key Metrics**
+   ```bash
+   # Monitor error rates
+   curl https://neonpro.com.br/api/monitoring?action=errors&timeframe=5m
+
+   # Monitor response times
+   curl https://neonpro.com.br/api/monitoring?action=performance&timeframe=5m
+   ```
+
+3. **Update Status Communications**
+   - Internal team notification
+   - User-facing status page update
+   - Stakeholder communication
+
+##### Short-term Actions (15 minutes - 2 hours)
+
+1. **Conduct Post-Rollback Analysis**
+   - Document root cause of original issue
+   - Identify what went wrong with deployment
+   - Create action items to prevent recurrence
+
+2. **Monitor for Side Effects**
+   - Watch for data inconsistencies
+   - Monitor user complaints or support tickets
+   - Check compliance audit trails
+
+3. **Plan Forward Path**
+   - Determine fix strategy for original issue
+   - Schedule proper deployment of corrected version
+   - Update deployment procedures if needed
+
+##### Long-term Actions (2+ hours)
+
+1. **Create Incident Report**
+   ```markdown
+   **INCIDENT REPORT: [YYYY-MM-DD]**
+
+   **Timeline:**
+
+   - [HH:MM] Issue detected
+   - [HH:MM] Rollback decision made
+   - [HH:MM] Rollback initiated
+   - [HH:MM] Rollback completed
+   - [HH:MM] System verified healthy
+
+   **Root Cause:**
+   [Detailed analysis of what caused the issue]
+
+   **Impact Analysis:**
+
+   - Downtime duration: [X minutes]
+   - Users affected: [number]
+   - Data integrity: [status]
+
+   **Preventive Measures:**
+
+   - [ ] Improve testing procedures
+   - [ ] Update deployment checklist
+   - [ ] Add monitoring alerts
+   - [ ] Enhance rollback automation
+   ```
+
+2. **Update Rollback Procedures**
+   - Document any new rollback scenarios encountered
+   - Update automation scripts based on lessons learned
+   - Train team on updated procedures
+
+3. **Schedule Follow-up Deployment**
+   - Fix original issue
+   - Enhanced testing for the fix
+   - Staged rollout plan
+   - Improved monitoring for the corrected deployment
+
+#### 8. Rollback Automation Scripts
+
+##### Quick Rollback Script
+
+```bash
+#!/bin/bash
+# scripts/emergency-rollback.sh
+
+set -e
+
+ROLLBACK_TYPE=${1:-"full"}
+ROLLBACK_TARGET=${2:-""}
+
+echo "🚨 Emergency rollback initiated: $ROLLBACK_TYPE"
+
+case $ROLLBACK_TYPE in
+  "app")
+    echo "Rolling back application..."
+    vercel rollback $ROLLBACK_TARGET
+    ;;
+  "db")
+    echo "Rolling back database..."
+    # Implement database rollback logic
+    ./scripts/db-rollback.sh $ROLLBACK_TARGET
+    ;;
+  "full")
+    echo "Full system rollback..."
+    ./scripts/app-rollback.sh $ROLLBACK_TARGET
+    ./scripts/db-rollback.sh $ROLLBACK_TARGET
+    ;;
+  *)
+    echo "Invalid rollback type. Use: app, db, or full"
+    exit 1
+    ;;
+esac
+
+# Verify rollback
+sleep 30
+./scripts/test-rollback-procedures.sh
+
+echo "✅ Emergency rollback completed successfully"
+```
+
+This comprehensive rollback section ensures that the team has detailed, step-by-step procedures for various rollback scenarios, proper testing mechanisms, and communication protocols to minimize downtime and maintain system stability.
 
 ---
 

@@ -15,18 +15,23 @@ interface AlertRule {
   tags?: string[];
 }
 
-interface PerformanceMetric {
-  id: string;
-  timestamp?: Date;
-  metricName?: string;
-  value?: number;
+// Canonicalized metric shapes
+interface DbPerformanceMetric {
+  id?: string;
+  created_at: string; // ISO timestamp from DB
+  metric_value: number | string;
+  labels?: Record<string, string>;
+  clinic_id?: string;
+  user_id?: string;
+}
+
+interface ApiPerformanceMetric {
+  id?: string;
+  timestamp: Date;
+  value: number;
   labels?: Record<string, string>;
   clinicId?: string;
   userId?: string;
-
-  // DB column names (supabase row shape) — optional to satisfy runtime shapes
-  created_at?: string; // e.g. "2025-09-02T12:34:56.000Z"
-  metric_value?: number | string; // stored metric value column
 }
 
 interface MonitoringResult {
@@ -414,7 +419,7 @@ async function getMetrics(searchParams: URLSearchParams) {
     }
 
     // Process metrics data
-    const metrics = data || [];
+    const metrics = (data || []) as DbPerformanceMetric[];
     const processedData = processMetricsData(metrics, type);
 
     return {
@@ -587,7 +592,7 @@ async function createAlertRule(rule: AlertRule, userId: string): Promise<string 
   }
 }
 
-function processMetricsData(metrics: PerformanceMetric[], type: string) {
+function processMetricsData(metrics: DbPerformanceMetric[], type: string) {
   // handle empty metrics early
   if (!metrics || metrics.length === 0) {
     return {
@@ -605,8 +610,8 @@ function processMetricsData(metrics: PerformanceMetric[], type: string) {
   const buckets = new Map<string, any[]>();
 
   metrics.forEach(metric => {
-    // prefer DB column created_at, fallback to typed timestamp
-    const ts = metric.created_at ?? (metric.timestamp ? metric.timestamp.toISOString() : undefined);
+    // use DB column created_at (ISO timestamp from DB)
+    const ts = metric.created_at;
     if (!ts) return; // skip if no timestamp available
 
     const bucket = new Date(ts).toISOString().slice(0, 16); // Minute precision
@@ -639,7 +644,7 @@ function processMetricsData(metrics: PerformanceMetric[], type: string) {
     .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
 
   const allValues = metrics
-    .map(m => Number(m.metric_value ?? m.value ?? NaN))
+    .map(m => Number(m.metric_value ?? NaN))
     .filter(v => !Number.isNaN(v));
 
   const totalDataPoints = allValues.length;

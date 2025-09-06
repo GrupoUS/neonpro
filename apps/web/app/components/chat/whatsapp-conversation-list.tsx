@@ -121,7 +121,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
       className={cn(
-        "flex items-center gap-3 p-3 cursor-pointer border-b transition-colors",
+        "group flex items-center gap-3 p-3 cursor-pointer border-b transition-colors",
         isSelected && "bg-green-50 border-l-4 border-l-green-500",
       )}
       onClick={onClick}
@@ -299,7 +299,11 @@ export const WhatsappConversationList: React.FC<WhatsappConversationListProps> =
 
         {/* Filters */}
         <div className="flex items-center gap-2">
-          <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as any)}>
+          <Select
+            value={statusFilter}
+            onValueChange={(value: string) =>
+              setStatusFilter(value as "all" | WhatsappConversationStatus)}
+          >
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
@@ -342,7 +346,7 @@ export const WhatsappConversationList: React.FC<WhatsappConversationListProps> =
               </div>
             )
             : (
-              <div className="group">
+              <div>
                 {sortedConversations.map((conversation) => (
                   <ConversationItem
                     key={conversation.id}

@@ -19,6 +19,17 @@ import {
 import type React from "react";
 import { useState } from "react";
 
+interface Conversation {
+  id: string;
+  status: "active" | "closed" | "archived";
+  unreadCount?: number;
+  messageCount?: number;
+  phoneNumber: string;
+  contactName?: string;
+  lastMessageAt?: Date | string;
+  tags?: string[];
+}
+
 // UI Components
 import { cn } from "@/lib/utils";
 import {
@@ -80,8 +91,8 @@ export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
   });
 
   // Handle conversation selection
-  const handleSelectConversation = (conversation: any) => {
-    selectConversation(conversation);
+  const handleSelectConversation = (conversation: Conversation) => {
+    selectConversation(conversation as any);
     // On mobile, switch to chat tab when conversation is selected
     if (window.innerWidth < 768) {
       setActiveTab("chat");
@@ -89,12 +100,15 @@ export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
   };
 
   // Handle refresh
+  const [refreshError, setRefreshError] = useState<string | null>(null);
   const handleRefresh = async () => {
     try {
       await refreshData();
-      console.log("Data refreshed successfully");
+      setRefreshError(null);
     } catch (err) {
       console.error("Failed to refresh data:", err);
+      const msg = err instanceof Error ? err.message : String(err);
+      setRefreshError(`Failed to refresh data: ${msg}`);
     }
   };
 
@@ -137,8 +151,11 @@ export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
   // Statistics
   const stats = {
     total: conversations.length,
-    active: conversations.filter((c: any) => c.status === "active").length,
-    unread: conversations.reduce((sum: number, c: any) => sum + c.unreadCount, 0),
+    active: conversations.filter((c: Conversation) => c.status === "active").length,
+    unread: conversations.reduce(
+      (sum: number, c: Conversation) => sum + (c.unreadCount || 0),
+      0,
+    ),
   };
 
   return (
@@ -195,11 +212,11 @@ export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
         </CardHeader>
       </Card>
 
-      {/* Error Alert */}
-      {error && (
+      {/* Error Alerts */}
+      {(error || refreshError) && (
         <Alert variant="destructive" className="mb-4">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription>{refreshError || error}</AlertDescription>
         </Alert>
       )}
 

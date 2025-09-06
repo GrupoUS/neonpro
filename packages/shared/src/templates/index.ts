@@ -182,6 +182,11 @@ export const TemplatePatternsGuide = {
   },
 };
 
+// AI Prompt Templates
+export * from "./ai-prompt-templates";
+export * from "./lgpd-compliance-templates";
+export * from "./template-manager";
+
 // Common types are already exported above - no need to re-export
 
 // Version and metadata

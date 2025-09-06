@@ -80,7 +80,8 @@ export interface SwitchNavigationContextType {
 // CONSTANTS & CONFIGURATIONS
 // ================================================================================
 
-const HEALTHCARE_ACTIONS: SwitchAction[] = [
+// Note: Example actions preserved in docs; not used in runtime currently.
+const _HEALTHCARE_ACTIONS: SwitchAction[] = [
   {
     id: "patient_next",
     name: "Próximo Paciente",
@@ -123,7 +124,7 @@ const HEALTHCARE_ACTIONS: SwitchAction[] = [
   },
 ];
 
-const NAVIGATION_PATTERNS: NavigationPattern[] = [
+const _NAVIGATION_PATTERNS: NavigationPattern[] = [
   {
     id: "sequential",
     name: "Sequencial",

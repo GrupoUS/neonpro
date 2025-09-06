@@ -118,6 +118,7 @@ CREATE TABLE patients (
 CREATE TABLE patient_behavior_analysis (
     id UUID PRIMARY KEY,
     patient_id UUID REFERENCES patients(id),
+    -- Reference: the 'appointments' table is defined in docs/database-schema/appointments.sql (see section "Appointments Schema")
     appointment_id UUID REFERENCES appointments(id),
     behavior_score DECIMAL(3,2), -- 0.00 a 1.00
     risk_factors JSONB,
@@ -382,7 +383,7 @@ graph TB
 - **ML Customizado**: Modelos próprios para previsão de no-show
 - **Vector Database**: pgvector para busca semântica
 - **RAG System**: Retrieval-Augmented Generation para respostas contextuais
-- **Edge Computing**: Opcional; serviços principais via Hono API + Vercel Functions
+- **Execution Model**: Vercel Functions (Node.js/serverless, regional by default); use Vercel Edge Functions (runtime: 'edge') only where ultra-low latency is required
 
 **Microserviços e APIs**
 

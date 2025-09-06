@@ -84,12 +84,12 @@ export const auditMiddleware = (
       return originalJson.call(this, body);
     };
 
-    res.end = function(chunk?: unknown, encoding?: BufferEncoding) {
+    res.end = function(this: any, chunk?: any, encoding?: BufferEncoding, cb?: () => void) {
       if (chunk) {
         responseBody = chunk;
       }
-      return originalEnd.call(this, chunk, encoding as BufferEncoding);
-    };
+      return originalEnd.call(this, chunk, encoding || "utf8", cb);
+    } as any;
 
     // Hook into response finish event to log audit
     res.on("finish", async () => {

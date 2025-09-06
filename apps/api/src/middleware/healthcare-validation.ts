@@ -10,7 +10,7 @@
  * - Audit logging integration
  */
 
-import { validateCEP, validateCPF, validateEmail, validatePhone } from "@neonpro/utils/validation";
+import { validateCPF } from "@neonpro/utils/validation";
 import type { Context, MiddlewareHandler } from "hono";
 import { z } from "zod";
 import { createError } from "./error-handler";
@@ -112,11 +112,9 @@ export const PatientDataSchemas = {
     // Brazilian specific documents
     cpf: z
       .string()
-      .regex(
-        /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
-        "CPF deve estar no formato 000.000.000-00",
-      )
-      .refine(validateCPF, "CPF inválido"),
+      .transform((v) => v.replace(/\D/g, ""))
+      .refine(validateCPF, "CPF inválido")
+      .transform((digits) => digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")),
 
     rg: z
       .string()

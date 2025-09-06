@@ -254,7 +254,7 @@
   - Churn rate <5% mensal
   - NPS >70 entre clientes pagantes
 
-### 10.3 Resource Requirements
+### 10.4 Resource Requirements
 
 - **Team composition**:
   - Core Team: 8-12 pessoas (4 devs, 2 AI engineers, 1 DevOps, 2 QA, 1 UI/UX, 1-2 PM)
@@ -271,7 +271,7 @@
   - Compliance legal validation
   - Aesthetic domain expertise
 
-### 10.4 Testing Strategy
+### 10.5 Testing Strategy
 
 - **Unit testing**: >90% cobertura com Jest/Vitest, testes automatizados em CI/CD, mock de APIs externas
 - **Integration testing**: Playwright E2E, testes de API com Postman, testes de database com Supabase local

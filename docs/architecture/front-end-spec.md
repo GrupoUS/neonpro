@@ -245,6 +245,7 @@ graph TD
   --primary-50: #eff6ff;
   --primary-100: #dbeafe;
   --primary-500: #3b82f6; /* Main brand color */
+  --primary-500-rgb: 59, 130, 246; /* RGB for rgba() usage */
   --primary-600: #2563eb;
   --primary-900: #1e3a8a;
 
@@ -442,7 +443,7 @@ graph TD
 
 .input:focus {
   border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px var(--primary-500/20);
+  box-shadow: 0 0 0 3px rgba(var(--primary-500-rgb), 0.2);
   outline: none;
 }
 

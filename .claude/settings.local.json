@@ -1,16 +1,4 @@
 {
-  "permissions": {
-    "allow": [
-      "mcp__supabase__list_migrations",
-      "mcp__desktop-commander__read_multiple_files",
-      "mcp__Sequential_Thinking__sequentialthinking",
-      "mcp__serena__get_symbols_overview",
-      "mcp__desktop-commander__read_file",
-      "mcp__desktop-commander__edit_block",
-      "mcp__serena__find_symbol",
-      "mcp__serena__search_for_pattern"
-    ]
-  },
   "allowedToolsUnguarded": [
     "mcp__archon__create_project",
     "mcp__archon__list_projects",
@@ -98,5 +86,10 @@
         }
       }
     }
-  ]
+  ],
+  "permissions": {
+    "allow": [
+      "mcp__desktop-commander__force_terminate"
+    ]
+  }
 }

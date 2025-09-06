@@ -32,6 +32,7 @@ interface LogEntry {
   timestamp: Date;
   stack?: string;
   duration?: number;
+  sentryPayload?: Record<string, unknown>;
 }
 
 interface Alert {

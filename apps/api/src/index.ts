@@ -22,7 +22,9 @@
  * - JOSE para JWT handling
  */
 
-// Load environment variables
+// Load environment variables from .env before accessing process.env
+import "dotenv/config";
+
 // Validate required environment variables at startup
 const requiredJwtSecret = process.env.JWT_SECRET;
 if (!requiredJwtSecret) {
@@ -30,7 +32,6 @@ if (!requiredJwtSecret) {
   console.error("Please set JWT_SECRET to a secure random string before starting the server.");
   process.exit(1);
 }
-import "dotenv/config";
 
 // Import Hono and middleware
 import { type Context, Hono, type Next } from "hono";

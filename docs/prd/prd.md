@@ -153,7 +153,7 @@ NeonPro oferece uma solução integrada que conecta todas as operações da clí
 
 ### Aspectos de Segurança
 
-- **Criptografia end-to-end** para dados sensíveis
+- **Criptografia em trânsito e em repouso** para dados sensíveis (com chaves geridas no servidor)
 - **Controle de acesso** baseado em roles e permissões
 - **Auditoria completa** de todas as ações no sistema
 - **Backup automatizado** com procedimentos de recovery

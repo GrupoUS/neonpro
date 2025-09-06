@@ -415,12 +415,14 @@ export const usePatientSelectors = () => {
 
 ```typescript
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useAuditLogging } from '@/hooks/useAuditLogging';
+// import { useAuditLogging } from '@/hooks/useAuditLogging'; // Do not use hooks in classes
 
-// Base API service class
+// Base API service class (no React hooks; use dependency injection)
 class BaseAPIService {
-  protected supabase = createClientComponentClient();
-  protected auditLogger = useAuditLogging();
+  constructor(
+    protected supabase: ReturnType<typeof createClientComponentClient>,
+    protected auditLogger: { logError: (...args: any[]) => void; logSuccess: (...args: any[]) => void },
+  ) {}
 
   protected async handleRequest<T>(
     operation: () => Promise<{ data: T | null; error: any }>,
@@ -444,8 +446,25 @@ class BaseAPIService {
   }
 }
 
+// Factory to create service inside React components
+export function createPatientService() {
+  const supabase = createClientComponentClient();
+  const auditLogger = {
+    logError: (...args: any[]) => console.error('[AUDIT]', ...args),
+    logSuccess: (...args: any[]) => console.log('[AUDIT]', ...args),
+  };
+  return new PatientService(supabase, auditLogger);
+}
+
 // Patient service implementation
 export class PatientService extends BaseAPIService {
+  constructor(
+    supabase: ReturnType<typeof createClientComponentClient>,
+    auditLogger: { logError: (...args: any[]) => void; logSuccess: (...args: any[]) => void },
+  ) {
+    super(supabase, auditLogger);
+  }
+
   async getPatients(clinicId: string, filters?: PatientFilters): Promise<Patient[]> {
     return this.handleRequest(
       async () => {
@@ -774,6 +793,7 @@ export interface ButtonProps
 export function Button({ className, variant, size, ...props }: ButtonProps) {
   return (
     <button
+      type="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />

@@ -5,7 +5,7 @@
  * Basic toast functionality for user notifications
  */
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface ToastOptions {
   title: string;
@@ -20,6 +20,7 @@ interface Toast extends ToastOptions {
 
 export const useToast = () => {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const toast = useCallback((options: ToastOptions) => {
     const id = Math.random().toString(36).substr(2, 9);
@@ -32,16 +33,33 @@ export const useToast = () => {
 
     // Auto-remove toast after duration
     const duration = options.duration || 5000;
-    setTimeout(() => {
+    const timerId = setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
+      timersRef.current.delete(id);
     }, duration);
+    timersRef.current.set(id, timerId);
 
-    // For now, just log to console
-    console.log(`Toast: ${options.title}`, options.description);
+    // Debug logging only in non-production
+    if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.log(`Toast: ${options.title}`, options.description);
+    }
   }, []);
 
   const dismiss = useCallback((id: string) => {
+    const timerId = timersRef.current.get(id);
+    if (timerId) {
+      clearTimeout(timerId);
+      timersRef.current.delete(id);
+    }
     setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      timersRef.current.forEach((timerId) => clearTimeout(timerId));
+      timersRef.current.clear();
+    };
   }, []);
 
   return {

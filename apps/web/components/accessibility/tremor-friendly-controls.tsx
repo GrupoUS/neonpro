@@ -6,19 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import {
-  Activity,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  Hand,
-  MousePointer,
-  Settings,
-  Smartphone,
-  Target,
-  Timer,
-  Zap,
-} from "lucide-react";
+import { Hand } from "lucide-react";
 import type React from "react";
 import {
   createContext,

@@ -65,8 +65,8 @@ export const useWhatsapp = (options: UseWhatsappOptions): UseWhatsappReturn => {
   >("disconnected");
 
   // Refs
-  const refreshTimeoutRef = useRef<NodeJS.Timeout>();
-  const abortControllerRef = useRef<AbortController>();
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Load conversations
   const loadConversations = useCallback(async (filters?: WhatsappConversationFilters) => {
@@ -248,6 +248,7 @@ export const useWhatsapp = (options: UseWhatsappOptions): UseWhatsappReturn => {
       return () => {
         if (refreshTimeoutRef.current) {
           clearTimeout(refreshTimeoutRef.current);
+          refreshTimeoutRef.current = null;
         }
       };
     }
@@ -263,9 +264,11 @@ export const useWhatsapp = (options: UseWhatsappOptions): UseWhatsappReturn => {
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
+        abortControllerRef.current = null;
       }
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
+        refreshTimeoutRef.current = null;
       }
     };
   }, []);

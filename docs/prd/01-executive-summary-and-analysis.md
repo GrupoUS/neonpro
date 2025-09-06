@@ -16,11 +16,11 @@ NeonPro representa uma revolução na gestão de clínicas estéticas brasileira
 
 ### 1.3 Business Justification
 
-O mercado brasileiro de clínicas estéticas enfrenta desafios críticos: 30% de taxa de no-show, caos administrativo, controle financeiro inadequado e falta de automação de conformidade regulatória. NeonPro oferece ROI de $820.750+ anuais através de redução de 25% em no-shows, 40% de melhoria em eficiência administrativa e posicionamento premium no mercado.
+O mercado brasileiro de clínicas estéticas enfrenta desafios críticos: 30% de taxa de no-show, caos administrativo, controle financeiro inadequado e falta de automação de conformidade regulatória. NeonPro oferece ROI de $820,750+ anuais através de redução de 25% em no-shows, 40% de melhoria em eficiência administrativa e posicionamento premium no mercado.
 
 ### 1.4 Success Definition
 
-Sucesso é definido por: redução de 25% em no-shows, tempo de resposta <2s para AI chat, 90%+ de precisão em respostas de IA, 40% de redução em tarefas administrativas rotineiras, e $468.750+ de proteção de receita anual através de prevenção de no-shows.
+Sucesso é definido por: redução de 25% em no-shows, tempo de resposta <2s para AI chat, 90%+ de precisão em respostas de IA, 40% de redução em tarefas administrativas rotineiras, e $468,750+ de proteção de receita anual através de prevenção de no-shows.
 
 ## 2. Market & User Research
 
@@ -65,7 +65,7 @@ Pesquisa com 200+ profissionais de clínicas estéticas revelou:
 - **Objetivo Primário**: Estabelecer NeonPro como líder em aesthetic technology no Brasil
 - **Diferenciação**: Primeira plataforma com IA conversacional nativa em português para clínicas estéticas
 - **Expansão**: Base para evolução para Autonomous Practice Intelligence (2026-2027)
-- **ROI**: Gerar $820.750+ em valor anual para clientes através de eficiência operacional
+- **ROI**: Gerar $820,750+ em valor anual para clientes através de eficiência operacional
 
 ### 3.2 Product Strategy
 

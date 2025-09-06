@@ -64,6 +64,10 @@ Esta seção reflete a configuração atual verificada nos manifestos de pacotes
 | **JWT**           | jose library           | Token handling          | Secure token validation and generation    |
 | **bcryptjs**      | ^2.4.3                 | Password hashing        | Industry standard password security       |
 
+- Single source of truth: Supabase Auth is the canonical session provider. Do not run NextAuth.js as an independent session store; if used, integrate it as a thin adapter over Supabase sessions to prevent drift.
+- Session exposure: Supabase sessions are accessed via server components/middleware and propagated to the client as needed.
+- Password hashing: Prefer Argon2id when implementing in-house hashing (memory-hard). If retaining bcryptjs, use cost >= 12 and ensure CPU/memory budgets for serverless are respected. Document migration steps for existing bcrypt hashes.
+
 ### 🗄️ **Database & Data Layer**
 
 | Technology            | Version  | Purpose              | Rationale                                    |
@@ -96,6 +100,14 @@ Esta seção reflete a configuração atual verificada nos manifestos de pacotes
 - **Natural Language Processing**: Brazilian Portuguese healthcare terminology
 - **Vector Database**: Knowledge base for healthcare procedures
 
+#### AI Provider Governance
+
+- Timeouts: default 15s; provider overrides supported via config (e.g., ai.providers.openai.timeoutMs).
+- Retries: exponential backoff, maxRetries=3, baseDelay=500ms, backoffFactor=2.
+- Failover: primary→secondary order [OpenAI → Anthropic]; triggers on timeout, 5xx, or safety block; sticky per request.
+- Data retention: prompts/logs retained 7 days (LGPD-compliant); PII minimized; redaction rules applied before logging.
+- PII stripping: client-side and middleware filters remove phone numbers, emails, and patient IDs; see configs in apps/web/lib/ai-sanitizer.ts and apps/api/src/middleware/audit.ts.
+
 ### 🔧 **Backend API (apps/api)**
 
 | Technology              | Version | Purpose            | Rationale                          |
@@ -111,6 +123,12 @@ Esta seção reflete a configuração atual verificada nos manifestos de pacotes
 - **Real-time WebSockets**: Live appointment updates
 - **Webhook Handlers**: WhatsApp Business API integration
 - **CORS Configuration**: Secure cross-origin requests
+
+#### Webhook Security (WhatsApp Business)
+
+- Signature verification: extract `X-Hub-Signature-256` (or provider header), compute HMAC (SHA-256) using app secret over raw body, and reject on mismatch.
+- Idempotency: validate and persist event IDs; ignore duplicates on retry.
+- Retry/backoff: handle provider retries with exponential backoff; safe to retry as handlers are idempotent; respect retry headers if provided.
 
 ### 📱 **State Management & Data Fetching**
 
@@ -139,17 +157,24 @@ Esta seção reflete a configuração atual verificada nos manifestos de pacotes
 
 | Technology                | Version  | Purpose                  | Rationale                        |
 | ------------------------- | -------- | ------------------------ | -------------------------------- |
-| **Vercel Analytics**      | Latest   | Performance monitoring   | Core Web Vitals, user experience |
-| **Vercel Speed Insights** | Latest   | Performance optimization | Real user monitoring             |
+| **Vercel Analytics**      | 1.2.2    | Performance monitoring   | Core Web Vitals, user experience |
+| **Vercel Speed Insights** | 1.0.4    | Performance optimization | Real user monitoring             |
 | **Custom Audit Logging**  | Internal | Healthcare compliance    | LGPD audit trail requirements    |
+
+- LGPD compliance: client-side analytics disabled by default pending explicit opt-in consent.
+- Consent mechanism: consent banner with state stored server-side or in user profile; enforce before any data transmission.
+- Anonymization: IP truncation, no persistent device IDs, pseudonymous user identifiers.
+- Server-side toggle: ensure analytics SDKs do not initialize until consent is granted.
 
 ### 🚀 **Deployment & Infrastructure**
 
-| Technology         | Version | Purpose          | Rationale                                    |
-| ------------------ | ------- | ---------------- | -------------------------------------------- |
-| **Vercel**         | Latest  | Hosting platform | Edge functions, global CDN, Brazilian region |
-| **Docker**         | Latest  | Containerization | Consistent environments, scalability         |
-| **GitHub Actions** | Latest  | CI/CD            | Automated testing, deployment                |
+| Technology         | Version        | Purpose          | Rationale                                    |
+| ------------------ | -------------- | ---------------- | -------------------------------------------- |
+| **Vercel**         | pinned project | Hosting platform | Edge functions, global CDN, Brazilian region |
+| **Docker**         | 24.0.7         | Containerization | Consistent environments, reproducible builds |
+| **GitHub Actions** | actions@v4/SHA | CI/CD            | Pinned actions reduce supply-chain risk      |
+
+Note: Pin all GitHub Actions to exact versions or commit SHAs (e.g., uses: actions/checkout@v4 or @<commit-sha>) to ensure reproducible builds and mitigate supply-chain risk.
 
 **Deployment Configuration**:
 
@@ -342,12 +367,30 @@ Esta seção reflete a configuração atual verificada nos manifestos de pacotes
 // next.config.mjs
 const securityHeaders = [
   {
+    key: "Content-Security-Policy",
+    value: [
+      "default-src 'self'",
+      "script-src 'self' 'strict-dynamic' https: 'nonce-<generated>'",
+      "style-src 'self' https:",
+      "img-src 'self' data:",
+      "font-src 'self'",
+      "connect-src 'self' https:",
+      "frame-src 'none'",
+      "worker-src 'self'",
+      "base-uri 'none'",
+      "form-action 'self'",
+      "object-src 'none'",
+      "block-all-mixed-content",
+      "upgrade-insecure-requests",
+    ].join("; "),
+  },
+  {
     key: "X-DNS-Prefetch-Control",
     value: "on",
   },
   {
     key: "Strict-Transport-Security",
-    value: "max-age=63072000; includeSubDomains; preload",
+    value: "max-age=63072000; includeSubDomains",
   },
   {
     key: "X-Frame-Options",
@@ -359,10 +402,12 @@ const securityHeaders = [
   },
   {
     key: "Referrer-Policy",
-    value: "origin-when-cross-origin",
+    value: "strict-origin-when-cross-origin",
   },
 ];
 ```
+
+Note: Deploy CSP initially as Content-Security-Policy-Report-Only to collect violations before enforcing. Only add HSTS preload after verifying HTTPS on all subdomains and submitting to the preload list.
 
 ## 🔄 **Migration & Upgrade Strategy**
 

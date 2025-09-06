@@ -4,7 +4,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -19,7 +18,6 @@ import {
   Accessibility,
   Activity,
   AlertCircle,
-  Bluetooth,
   Brain,
   CheckCircle2,
   Clock,
@@ -28,8 +26,6 @@ import {
   FileText,
   Hand,
   HardDrive,
-  Headphones,
-  Heart,
   Home,
   Keyboard,
   Lightbulb,
@@ -926,20 +922,20 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
       try {
         wsRef.current = new WebSocket("ws://localhost:8080/at-websocket");
 
-        wsRef.current.onopen = () => {
+        wsRef.current.addEventListener("open", () => {
           console.log("AT WebSocket connected");
-        };
+        });
 
-        wsRef.current.onmessage = (event) => {
+        wsRef.current.addEventListener("message", (event) => {
           const message = JSON.parse(event.data);
           if (message.type === "device_command") {
             executeCommand(message.commandId, message.params);
           }
-        };
+        });
 
-        wsRef.current.onerror = (error) => {
+        wsRef.current.addEventListener("error", (error) => {
           console.error("AT WebSocket error:", error);
-        };
+        });
       } catch (error) {
         console.warn("WebSocket connection failed - using fallback methods");
       }
@@ -1340,7 +1336,7 @@ export function AssistiveTechnologyAPISettings() {
                         <div className="flex flex-wrap gap-1">
                           {command.voice_triggers.slice(0, 2).map((trigger, index) => (
                             <Badge key={index} variant="outline" className="text-xs">
-                              "{trigger}"
+                              &quot;{trigger}&quot;
                             </Badge>
                           ))}
                           {command.keyboard_shortcuts.slice(0, 2).map((shortcut, index) => (
@@ -1757,7 +1753,8 @@ export function AssistiveTechnologyAPIDemo() {
                 <div className="space-y-1">
                   <div className="font-medium text-sm">{command.name_pt}</div>
                   <div className="text-xs text-muted-foreground">
-                    Voz: "{command.voice_triggers[0]}" • Tecla: {command.keyboard_shortcuts[0]}
+                    Voz: &quot;{command.voice_triggers[0]}&quot; • Tecla:{" "}
+                    {command.keyboard_shortcuts[0]}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

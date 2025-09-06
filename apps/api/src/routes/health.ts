@@ -27,11 +27,8 @@ class HealthCheckService {
         process.env.SUPABASE_SERVICE_ROLE_KEY || "",
       );
 
-      // Test basic database connectivity
-      const { error } = await supabase
-        .from("patients")
-        .select("count")
-        .limit(1);
+      // Test basic database connectivity using PostgreSQL version function
+      const { error } = await supabase.rpc("version");
 
       const responseTime = Date.now() - startTime;
 

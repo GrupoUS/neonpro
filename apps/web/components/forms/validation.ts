@@ -99,7 +99,8 @@ export const healthcareValidators = {
 
   phone: (value: string) => {
     if (!value) return null;
-    if (!validatePhone(value)) {
+    const digitsOnly = value.replace(/\D/g, "");
+    if (!validatePhone(digitsOnly)) {
       return "Telefone deve estar no formato brasileiro: (00) 00000-0000 ou (00) 0000-0000";
     }
     return null;

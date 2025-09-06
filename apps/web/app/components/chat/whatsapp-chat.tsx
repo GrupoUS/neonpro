@@ -46,10 +46,10 @@ import type {
 interface WhatsappChatProps {
   conversation: WhatsappConversation;
   messages: WhatsappMessage[];
-  currentUserId: string;
+  currentUserId: string; // TODO: consider removing if direction is authoritative
   clinicId: string;
   onSendMessage: (message: SendWhatsappMessageRequest) => Promise<void>;
-  onMarkAsRead?: (messageId: string) => void;
+  onMarkAsRead?: (messageId: string) => void; // TODO: wire into read tracking when message becomes visible
   className?: string;
   isLoading?: boolean;
 }
@@ -156,6 +156,14 @@ export const WhatsappChat: React.FC<WhatsappChatProps> = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
+
+  // Mark inbound messages as read (placeholder implementation)
+  useEffect(() => {
+    if (!onMarkAsRead) return;
+    messages
+      .filter((m) => m.status !== "read" && m.direction === "inbound")
+      .forEach((m) => onMarkAsRead(m.id));
+  }, [messages, onMarkAsRead]);
 
   // Handle message sending
   const handleSendMessage = useCallback(async () => {

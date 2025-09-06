@@ -88,7 +88,7 @@ interface ErrorResponse {
   success: false;
   error: string;
   message: string;
-  details?: unknown;
+  details?: Record<string, unknown>;
   timestamp: string;
   requestId?: string;
   auditId?: string;
@@ -152,6 +152,8 @@ const logError = (error: unknown, context: Context): void => {
   const requestId = context.req.header("X-Request-ID") || "unknown";
   const auditId = context.req.header("X-Audit-ID") || "unknown";
 
+  // Safe access to error properties
+  const errorObj = error as any;
   const logData = {
     errorId,
     requestId,
@@ -159,10 +161,10 @@ const logError = (error: unknown, context: Context): void => {
     timestamp: new Date().toISOString(),
 
     // Error details
-    type: error.type || ErrorType.INTERNAL_SERVER_ERROR,
-    message: error.message,
-    stack: error.stack,
-    statusCode: error.statusCode || 500,
+    type: errorObj?.type || ErrorType.INTERNAL_SERVER_ERROR,
+    message: errorObj?.message || "Unknown error",
+    stack: errorObj?.stack,
+    statusCode: errorObj?.statusCode || 500,
 
     // Request context
     method: context.req.method,
@@ -181,22 +183,22 @@ const logError = (error: unknown, context: Context): void => {
       || "unknown",
 
     // Metadata
-    metadata: error.metadata,
+    metadata: errorObj?.metadata,
 
     // Environment
     environment: process.env.NODE_ENV,
   };
 
   // Sanitize sensitive data before logging
-  const sanitizedLog = sanitizeError(logData);
+  const sanitizedLog = sanitizeError(logData) as any;
 
   // Log using centralized logger
   logger.error("API Error occurred", error, {
-    endpoint: sanitizedLog.endpoint,
-    method: sanitizedLog.method,
-    statusCode: sanitizedLog.statusCode,
-    errorType: sanitizedLog.type,
-    requestId: sanitizedLog.requestId,
+    endpoint: sanitizedLog?.endpoint,
+    method: sanitizedLog?.method,
+    statusCode: sanitizedLog?.statusCode,
+    errorType: sanitizedLog?.type,
+    requestId: sanitizedLog?.requestId,
   });
 };
 
@@ -228,7 +230,8 @@ const formatErrorResponse = (
   }
 
   // Handle validation errors (Zod)
-  if (error.name === "ZodError") {
+  const errorObj = error as any;
+  if (errorObj?.name === "ZodError") {
     return {
       response: {
         success: false,
@@ -237,10 +240,10 @@ const formatErrorResponse = (
         details: isProduction
           ? undefined
           : {
-            validationErrors: error.errors?.map((err: unknown) => ({
-              field: err.path?.join("."),
-              message: err.message,
-              code: err.code,
+            validationErrors: errorObj?.errors?.map((err: any) => ({
+              field: err?.path?.join("."),
+              message: err?.message,
+              code: err?.code,
             })),
           },
         timestamp: new Date().toISOString(),
@@ -252,8 +255,8 @@ const formatErrorResponse = (
   }
 
   // Handle HTTP errors
-  if (error.status || error.statusCode) {
-    const statusCode = (error.status || error.statusCode) as StatusCode;
+  if (errorObj?.status || errorObj?.statusCode) {
+    const statusCode = (errorObj.status || errorObj.statusCode) as StatusCode;
     let errorType: ErrorType;
     let message: string;
 
@@ -293,8 +296,8 @@ const formatErrorResponse = (
       response: {
         success: false,
         error: errorType,
-        message: error.message || message,
-        details: isProduction ? undefined : sanitizeError(error),
+        message: errorObj?.message || message,
+        details: isProduction ? undefined : (sanitizeError(error) as Record<string, unknown>),
         timestamp: new Date().toISOString(),
         requestId,
         auditId,
@@ -305,8 +308,8 @@ const formatErrorResponse = (
 
   // Handle database errors
   if (
-    error.name === "PrismaClientKnownRequestError"
-    || error.name === "PrismaClientUnknownRequestError"
+    errorObj?.name === "PrismaClientKnownRequestError"
+    || errorObj?.name === "PrismaClientUnknownRequestError"
   ) {
     return {
       response: {
@@ -316,8 +319,8 @@ const formatErrorResponse = (
         details: isProduction
           ? undefined
           : {
-            code: error.code,
-            meta: sanitizeError(error.meta),
+            code: errorObj?.code,
+            meta: sanitizeError(errorObj?.meta),
           },
         timestamp: new Date().toISOString(),
         requestId,
@@ -334,8 +337,8 @@ const formatErrorResponse = (
       error: ErrorType.INTERNAL_SERVER_ERROR,
       message: isProduction
         ? "Erro interno do servidor"
-        : error.message || "Something went wrong",
-      details: isProduction ? undefined : sanitizeError(error),
+        : errorObj?.message || "Something went wrong",
+      details: isProduction ? undefined : (sanitizeError(error) as Record<string, unknown>),
       timestamp: new Date().toISOString(),
       requestId,
       auditId,
@@ -359,14 +362,14 @@ export const errorHandler: ErrorHandler = (error, context) => {
   context.res.headers.set("X-Frame-Options", "DENY");
 
   // Return structured error response
-  return context.json(response, statusCode);
+  return context.json(response, statusCode as any);
 };
 
 /**
  * Error factory functions for common errors
  */
 export const createError = {
-  validation: (message: string, details?: unknown) =>
+  validation: (message: string, details?: Record<string, unknown>) =>
     new NeonProError(
       ErrorType.VALIDATION_ERROR,
       message,
@@ -391,7 +394,7 @@ export const createError = {
   rateLimit: (message = "Muitas tentativas") =>
     new NeonProError(ErrorType.RATE_LIMIT_ERROR, message, 429),
 
-  database: (message: string, details?: unknown) =>
+  database: (message: string, details?: Record<string, unknown>) =>
     new NeonProError(
       ErrorType.DATABASE_ERROR,
       message,
@@ -408,7 +411,7 @@ export const createError = {
       userMessage || message,
     ),
 
-  lgpdCompliance: (message: string, details?: unknown) =>
+  lgpdCompliance: (message: string, details?: Record<string, unknown>) =>
     new NeonProError(
       ErrorType.LGPD_COMPLIANCE_ERROR,
       message,
@@ -417,7 +420,7 @@ export const createError = {
       details,
     ),
 
-  anvisaCompliance: (message: string, details?: unknown) =>
+  anvisaCompliance: (message: string, details?: Record<string, unknown>) =>
     new NeonProError(
       ErrorType.ANVISA_COMPLIANCE_ERROR,
       message,
@@ -426,7 +429,7 @@ export const createError = {
       details,
     ),
 
-  internal: (message = "Erro interno", details?: unknown) =>
+  internal: (message = "Erro interno", details?: Record<string, unknown>) =>
     new NeonProError(
       ErrorType.INTERNAL_SERVER_ERROR,
       message,

@@ -221,20 +221,20 @@ export const corsMiddleware = (): MiddlewareHandler[] => {
   const corsPolicy = getCorsPolicyByEnvironment();
 
   // Enhanced origin validation
-  const originValidator = (origin: string): boolean => {
+  const originValidator = (origin: string, c: Context): string | null => {
     // If no origin (same-origin requests), allow
     if (!origin) {
-      return true;
+      return origin;
     }
 
     // Check static origins first
     if (isStaticOriginAllowed(origin, corsPolicy.origin)) {
-      return true;
+      return origin;
     }
 
     // Check dynamic clinic origins
     if (validateClinicOrigin(origin)) {
-      return true;
+      return origin;
     }
 
     // Log rejected origins for monitoring
@@ -242,7 +242,7 @@ export const corsMiddleware = (): MiddlewareHandler[] => {
       origin,
       timestamp: new Date().toISOString(),
     });
-    return false;
+    return null;
   };
 
   return [
@@ -277,10 +277,10 @@ export const optimizedPreflight = (): MiddlewareHandler => {
       // Add timing header for monitoring
       c.res.headers.set("X-Preflight-Time", Date.now().toString());
 
-      return c.text("", HTTP_STATUS.NO_CONTENT);
+      return c.body(null, { status: 204 });
     }
 
-    await next();
+    return await next();
   };
 };
 
@@ -333,9 +333,9 @@ export const corsUtils = {
  */
 export const strictCors = (): MiddlewareHandler => {
   return cors({
-    origin: (origin) => {
+    origin: (origin, c) => {
       // Only allow same-origin requests for highly sensitive endpoints
-      return !origin; // No origin = same-origin request
+      return !origin ? origin : null; // No origin = same-origin request
     },
     credentials: false, // No credentials for strict mode
     allowMethods: ["GET", "POST"],

@@ -125,6 +125,7 @@ export type {
   Required,
   SearchFilter,
   SearchParams,
+  SendWhatsappMessageRequest,
   ServerErrorResponse,
   SuccessResponse,
   TimeString,
@@ -133,6 +134,9 @@ export type {
   UUID,
   ValidationError,
   ValidationErrorResponse,
+  WhatsappConversation,
+  WhatsappConversationStatus,
+  WhatsappMessage,
 } from "./types";
 
 // Package version and metadata
@@ -441,6 +445,9 @@ export type SuccessMessage = keyof typeof SUCCESS_MESSAGES;
 
 // API Client export
 export * from "./api-client";
+
+// Templates export
+export * from "./templates";
 
 // Hooks exports
 export * from "./hooks/use-healthcare-realtime";

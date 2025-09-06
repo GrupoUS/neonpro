@@ -18,6 +18,14 @@ import {
 } from "./schemas";
 import type { AuditActionSchema, UserBaseSchema } from "./schemas";
 import type { RpcClient } from "./types";
+import type {
+  SendWhatsappMessageRequest,
+  WhatsappConfig,
+  WhatsappConversation,
+  WhatsappConversationFilters,
+  WhatsappMessage,
+  WhatsappMessageFilters,
+} from "./types/whatsapp.types";
 
 // API Error types
 interface ApiValidationError {
@@ -709,16 +717,9 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
     // WhatsApp Business API methods
     whatsapp: {
       // Send WhatsApp message
-      sendMessage: async (params: {
-        to: string;
-        message: string;
-        type?: "text" | "template";
-        clinicId: string;
-        patientId?: string;
-        messageType?: string;
-        templateName?: string;
-        templateParams?: string[];
-      }) => {
+      sendMessage: async (
+        params: SendWhatsappMessageRequest,
+      ): Promise<ApiResponse<{ messageId: string; status: string; }>> => {
         const response = await fetch(`${finalConfig.baseUrl}/api/v1/whatsapp/send`, {
           method: "POST",
           headers: {
@@ -736,13 +737,9 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
       },
 
       // Get WhatsApp messages for a conversation
-      getMessages: async (params: {
-        clinicId: string;
-        phoneNumber?: string;
-        patientId?: string;
-        page?: number;
-        limit?: number;
-      }) => {
+      getMessages: async (
+        params: WhatsappMessageFilters,
+      ): Promise<ApiResponse<{ messages: WhatsappMessage[]; }>> => {
         const searchParams = new URLSearchParams();
         Object.entries(params).forEach(([key, value]) => {
           if (value !== undefined) {
@@ -767,13 +764,9 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
       },
 
       // Get WhatsApp conversations
-      getConversations: async (params: {
-        clinicId: string;
-        status?: "active" | "closed" | "archived";
-        assignedTo?: string;
-        page?: number;
-        limit?: number;
-      }) => {
+      getConversations: async (
+        params: WhatsappConversationFilters,
+      ): Promise<ApiResponse<{ conversations: WhatsappConversation[]; }>> => {
         const searchParams = new URLSearchParams();
         Object.entries(params).forEach(([key, value]) => {
           if (value !== undefined) {
@@ -816,12 +809,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
       },
 
       // Update WhatsApp configuration
-      updateConfig: async (clinicId: string, config: {
-        autoReply?: boolean;
-        autoReplyMessage?: string;
-        businessHours?: any;
-        isActive?: boolean;
-      }) => {
+      updateConfig: async (clinicId: string, config: Partial<WhatsappConfig>) => {
         const response = await fetch(
           `${finalConfig.baseUrl}/api/v1/whatsapp/config/${clinicId}`,
           {

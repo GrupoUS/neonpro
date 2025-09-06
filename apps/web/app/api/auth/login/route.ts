@@ -3,7 +3,11 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 // Validate required environment variables
-function validateEnvironmentVariables() {
+function validateEnvironmentVariables(): {
+  supabaseUrl: string;
+  supabaseAnonKey: string;
+  jwtSecret: string;
+} {
   const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.SUPABASE_ANON_KEY
     || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -19,21 +23,22 @@ function validateEnvironmentVariables() {
     throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
   }
 
-  return { supabaseUrl, supabaseAnonKey, jwtSecret };
+  return { supabaseUrl: supabaseUrl!, supabaseAnonKey: supabaseAnonKey!, jwtSecret: jwtSecret! };
 }
 
-// Initialize auth service with validated environment variables
-let authService: RealAuthService;
-try {
-  const { supabaseUrl, supabaseAnonKey, jwtSecret } = validateEnvironmentVariables();
-  authService = new RealAuthService(supabaseUrl, supabaseAnonKey, jwtSecret);
-} catch (error) {
-  console.error("Auth service initialization failed:", error);
-  // AuthService will be undefined, causing 500 errors which is appropriate
+// Lazy, typed getter for auth service
+let authService: RealAuthService | undefined;
+function getAuthService(): RealAuthService {
+  if (!authService) {
+    const { supabaseUrl, supabaseAnonKey, jwtSecret } = validateEnvironmentVariables();
+    authService = new RealAuthService(supabaseUrl, supabaseAnonKey, jwtSecret);
+  }
+  return authService;
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const svc = getAuthService();
     const body = await request.json();
     const { email, password, deviceInfo } = body;
 
@@ -44,7 +49,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await authService.login({
+    const result = await svc.login({
       email,
       password,
       deviceInfo: deviceInfo || {
@@ -105,9 +110,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result, { status: 401 });
   } catch (error) {
     console.error("Login API error:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
+    const status = message.includes("Missing required environment variables") ? 503 : 500;
     return NextResponse.json(
-      { success: false, error: "Internal server error" },
-      { status: 500 },
+      {
+        success: false,
+        error: status === 503
+          ? "Service unavailable: configuration error"
+          : "Internal server error",
+      },
+      { status },
     );
   }
 }

@@ -3,23 +3,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import {
-  Activity,
-  AlertTriangle,
-  CheckCircle2,
-  Headphones,
-  MessageCircle,
-  Mic,
-  MicOff,
-  Settings,
-  Shield,
-  Stethoscope,
-  Volume2,
-  VolumeX,
-} from "lucide-react";
+import { Mic, MicOff, Shield, Stethoscope, Volume2 } from "lucide-react";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
@@ -371,7 +357,7 @@ export function VoiceMedicalProvider({ children }: { children: React.ReactNode; 
         }
       };
 
-      recognition.current.onerror = (event) => {
+      const handleError = (event: SpeechRecognitionErrorEvent) => {
         console.error("Speech recognition error:", event.error);
         setIsListening(false);
 
@@ -384,6 +370,7 @@ export function VoiceMedicalProvider({ children }: { children: React.ReactNode; 
           speak("Nenhuma fala detectada. Tente falar mais próximo ao microfone.", "normal");
         }
       };
+      recognition.current.addEventListener("error", handleError as unknown as EventListener);
 
       recognition.current.onresult = (event) => {
         handleSpeechResult(event);

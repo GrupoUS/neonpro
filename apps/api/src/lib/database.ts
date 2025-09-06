@@ -2,7 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Server-only runtime guard - prevent client-side bundling
-if (typeof window !== 'undefined') {
+if (typeof globalThis !== 'undefined' && 'window' in globalThis) {
   throw new Error('Database service can only be imported in server-side environments (Node.js/Edge Runtime)');
 }
 
@@ -27,7 +27,8 @@ export const db = {
   async healthCheck(): Promise<DatabaseHealthCheck> {
     try {
       const start = Date.now();
-      const { error } = await serverSupabaseClient.from('_health_check').select('*', { head: true });
+      // Use PostgreSQL version() function for connectivity test instead of non-existent table
+      const { error } = await serverSupabaseClient.rpc('version');
       const latency = Date.now() - start;
       
       return {
@@ -47,7 +48,7 @@ export const db = {
 
   // Server-only client getter - prevents accidental client-side usage
   get client() {
-    if (typeof window !== 'undefined') {
+    if (typeof globalThis !== 'undefined' && 'window' in globalThis) {
       throw new Error('Database client cannot be accessed in browser environments');
     }
     return serverSupabaseClient;
@@ -55,11 +56,6 @@ export const db = {
 };
 
 // Server-only named export - use this instead of direct client access
-export const getServerSupabaseClient = () => {
-  if (typeof window !== 'undefined') {
-    throw new Error('Server-only Supabase client cannot be accessed in browser environments');
-  }
-  return serverSupabaseClient;
-};
+export const getServerSupabaseClient = () => db.client;
 
 export default db;

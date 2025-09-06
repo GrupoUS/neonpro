@@ -152,9 +152,6 @@ api.route("/ai", aiRoutes);
 // WhatsApp Business API routes
 api.route("/whatsapp", whatsappRoutes);
 
-// WhatsApp Business API routes
-api.route("/whatsapp", whatsappRoutes);
-
 // API documentation endpoint
 api.get("/docs", (c) => {
   return c.json({

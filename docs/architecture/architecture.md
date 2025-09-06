@@ -499,7 +499,10 @@ Based on the architectural patterns and tech stack, the system is organized into
 - **Documentation**: https://developers.facebook.com/docs/whatsapp
 - **Base URL(s)**: https://graph.facebook.com/v18.0/
 - **Authentication**: Bearer token authentication
-- **Rate Limits**: 1000 messages per second per phone number
+- **Rate Limits**:
+  - Messaging tiers (business-initiated per 24h): initial 250; scalable to 1K, 10K, 100K, and Unlimited via self-serve and automatic scaling (see developers.facebook.com docs)
+  - Cloud API throughput (per phone number): default 80 msgs/sec; auto-upgradable to 1,000 msgs/sec (see developers.facebook.com docs)
+  - Pair rate limit: 1 msg every 6s per recipient (bursts up to 45 msgs/6s) (see developers.facebook.com docs)
 
 **Key Endpoints Used**:
 
@@ -1772,7 +1775,8 @@ jobs:
 
 **Frontend Security:**
 
-- CSP Headers: `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'`
+- CSP Headers: `default-src 'self'; script-src 'self' 'strict-dynamic' https: 'nonce-<generated>'; style-src 'self' https:; img-src 'self' data:; font-src 'self'; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'`
+  - Generate a unique per-response nonce and attach it to allowed inline scripts; avoid using 'unsafe-inline' in production.
 - XSS Prevention: Input sanitization and output encoding for all user data
 - Secure Storage: Sensitive data stored in httpOnly cookies or encrypted localStorage
 

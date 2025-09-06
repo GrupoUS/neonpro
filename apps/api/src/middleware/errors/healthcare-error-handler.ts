@@ -3,8 +3,8 @@ import { ErrorCategory, ErrorSeverity } from "@neonpro/shared/errors/healthcare-
 import type { ErrorContext, HealthcareError } from "@neonpro/shared/errors/healthcare-error-types";
 import type { Context, Hono } from "hono";
 // import { HTTPException } from "hono/http-exception";
-import { auditLogger } from "../../lib/audit-logger";
 import { logger } from "../../lib/logger";
+import { auditService } from "../../services/audit.service";
 
 /**
  * Healthcare-specific error handling middleware for Hono.dev
@@ -125,7 +125,9 @@ async function logHealthcareError(
     default:
       logger.info("LOW Healthcare Error", logData);
   }
-} /**
+}
+
+/**
  * Logs LGPD compliance errors for patient data access failures
  */
 
@@ -135,17 +137,20 @@ async function logLGPDComplianceError(error: HealthcareError): Promise<void> {
   }
 
   try {
-    await auditLogger.logDataAccessError({
-      errorId: error.id,
-      userId: error.context.userId,
-      patientId: error.context.patientId,
-      clinicId: error.context.clinicId,
+    await auditService.logEvent({
       action: "failed_data_access",
-      reason: error.message,
-      endpoint: error.context.endpoint,
-      timestamp: error.timestamp,
-      ipAddress: error.context.ipAddress,
-      userAgent: error.context.userAgent,
+      resourceType: "patient_data",
+      resourceId: error.context.patientId,
+      userId: error.context.userId,
+      metadata: {
+        errorId: error.id,
+        clinicId: error.context.clinicId,
+        reason: error.message,
+        endpoint: error.context.endpoint,
+        timestamp: error.timestamp,
+        ipAddress: error.context.ipAddress,
+        userAgent: error.context.userAgent,
+      },
     });
   } catch (auditError) {
     // Critical: audit logging failed

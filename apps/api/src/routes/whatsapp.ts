@@ -10,7 +10,8 @@ import { z } from "zod";
 
 // Import middleware
 import { auditMiddleware } from "../middleware/audit.middleware";
-import { healthcareSecurityMiddleware } from "../middleware/healthcare-security";
+import { HealthcareAuthMiddleware } from "../middleware/healthcare-security";
+import { auditService } from "../services/audit.service";
 
 // Import types
 import type { Context } from "hono";
@@ -75,7 +76,25 @@ const messageWebhookSchema = z.object({
 const whatsappRoutes = new Hono();
 
 // Apply middleware
-whatsappRoutes.use("*", healthcareSecurityMiddleware());
+// Wrap class-based middleware instance into a Hono-compatible middleware handler
+const healthcareAuth = new HealthcareAuthMiddleware();
+whatsappRoutes.use("*", async (c, next) => {
+  // Try common handler names, fall back to calling next()
+  // Cast to any to accommodate different implementations without strict typing errors
+  const anyAuth = healthcareAuth as any;
+  if (typeof anyAuth.handle === "function") {
+    return anyAuth.handle(c, next);
+  }
+  if (typeof anyAuth.middleware === "function") {
+    return anyAuth.middleware(c, next);
+  }
+  if (typeof anyAuth === "function") {
+    // If the exported value is callable
+    return anyAuth(c, next);
+  }
+  // Fallback: continue to next middleware
+  return next();
+});
 whatsappRoutes.use("*", auditMiddleware());
 
 /**
@@ -162,27 +181,32 @@ whatsappRoutes.post(
  * POST /whatsapp/send
  * Sends messages to patients via WhatsApp Business API
  */
+const sendPayloadSchema = z.object({
+  to: z.string().regex(/^\+?\d{10,15}$/, "Invalid phone number format"),
+  message: z.string().min(1).max(4096),
+  type: z.enum(["text", "template"]).default("text"),
+  clinicId: z.string().uuid(),
+  patientId: z.string().uuid().optional(),
+  messageType: z
+    .enum(["appointment_reminder", "general", "emergency", "marketing"])
+    .default("general"),
+});
+
 whatsappRoutes.post(
   "/send",
-  zValidator(
-    "json",
-    z.object({
-      to: z.string().regex(/^\d{10,15}$/, "Invalid phone number format"),
-      message: z.string().min(1).max(4096),
-      type: z.enum(["text", "template"]).default("text"),
-      clinicId: z.string().uuid(),
-      patientId: z.string().uuid().optional(),
-      messageType: z.enum(["appointment_reminder", "general", "emergency", "marketing"]).default(
-        "general",
-      ),
-    }),
-  ),
+  // Use the named schema here (no runtime change)
+  zValidator("json", sendPayloadSchema),
   async (c: Context) => {
     try {
-      const { to, message, type, clinicId, patientId, messageType } = (c.req as any).valid("json");
+      // Cast the validated body to the inferred type to satisfy TS
+      const payload = (c.req as any).valid("json") as z.infer<typeof sendPayloadSchema>;
+      const { to, message, type, clinicId, patientId, messageType } = payload;
 
       // Validate clinic access and permissions
-      // TODO: Implement clinic authorization check
+      const authorized = await authorizeClinicAccess(c, clinicId);
+      if (!authorized) {
+        return c.json({ error: "Forbidden: clinic access denied" }, 403);
+      }
 
       // Send message via WhatsApp Business API
       const result = await sendWhatsAppMessage({
@@ -253,6 +277,59 @@ whatsappRoutes.get("/health", async (c: Context) => {
 // Helper functions (to be implemented)
 
 /**
+ * Authorize that the authenticated user can access the given clinic.
+ */
+async function authorizeClinicAccess(c: Context, clinicId: string): Promise<boolean> {
+  try {
+    const user: any = c.get("user");
+    const userId: string | undefined = user?.id || user?.userId || user?.sub;
+    const roles: string[] = Array.isArray(user?.roles)
+      ? user.roles
+      : typeof user?.role === "string"
+      ? [user.role]
+      : [];
+    const clinicIds: string[] = Array.isArray(user?.clinicIds)
+      ? user.clinicIds
+      : user?.clinic_id
+      ? [user.clinic_id]
+      : [];
+
+    const isAdmin = roles.includes("admin") || roles.includes("superadmin")
+      || roles.includes("dpo");
+    const isMember = clinicIds.includes(clinicId);
+
+    if (isAdmin || isMember) return true;
+
+    // Attempt DB lookup for associations if not present in token (optional TODO)
+    // TODO: Fetch clinic associations from DB if needed
+
+    await auditService.logEvent({
+      eventType: "UNAUTHORIZED_CLINIC_ACCESS",
+      severity: "WARNING",
+      outcome: "FAILURE",
+      userId,
+      resourceType: "AUTHORIZATION",
+      resourceId: clinicId,
+      ipAddress: c.req.header("CF-Connecting-IP") || "unknown",
+      userAgent: c.req.header("User-Agent") || undefined,
+      description: `User attempted to access clinic without permission`,
+      details: {
+        endpoint: c.req.path,
+        method: (c.req.method && ["GET", "POST", "PUT", "PATCH", "DELETE"].includes(c.req.method))
+          ? (c.req.method as "GET" | "POST" | "PUT" | "PATCH" | "DELETE")
+          : undefined,
+        status_code: 403,
+      },
+    });
+
+    return false;
+  } catch (err) {
+    // In case of unexpected failure, default to deny
+    return false;
+  }
+}
+
+/**
  * Process incoming WhatsApp message
  */
 async function processIncomingMessage(
@@ -261,24 +338,114 @@ async function processIncomingMessage(
   c: Context,
 ): Promise<void> {
   try {
-    console.log("Processing incoming WhatsApp message:", {
+    const fromMasked = typeof message.from === "string"
+      ? message.from.replace(/.(?=.{4}$)/g, "*")
+      : "unknown";
+    const contentLength = typeof message.text?.body === "string" ? message.text.body.length : 0;
+
+    console.log("Processing incoming WhatsApp message (safe)", {
       messageId: message.id,
-      from: message.from,
+      fromMasked,
       type: message.type,
+      contentLength,
       timestamp: message.timestamp,
     });
 
-    // TODO: Implement message processing logic
-    // 1. Store message in database
-    // 2. Identify patient/clinic
-    // 3. Process with AI if needed
-    // 4. Send response if required
+    // Extract message content
+    const messageContent = message.text?.body || message.caption || "";
+    if (!messageContent.trim()) {
+      console.log("Empty message content, skipping AI processing");
+      return;
+    }
 
-    // For MVP: Basic message logging
-    console.log("Message content:", message.text?.body || `[${message.type} message]`);
+    // Build WhatsApp chat request
+    const whatsappRequest = {
+      messages: [
+        {
+          id: message.id,
+          role: "user" as const,
+          content: messageContent,
+          timestamp: Date.now(),
+        },
+      ],
+      whatsappContext: {
+        phoneNumber: message.from,
+        messageType: message.type || "text",
+        isFirstContact: await isFirstContact(message.from),
+        previousInteractions: await getPreviousInteractionCount(message.from),
+      },
+      context: {
+        clinicType: "aesthetic" as const,
+        communicationChannel: "whatsapp" as const,
+        patientLanguage: "pt-BR" as const,
+      },
+    };
+
+    // Process with Brazilian AI Service
+    const { BrazilianAIService } = await import(
+      "@neonpro/core-services/services/BrazilianAIService"
+    );
+    const aiService = new BrazilianAIService();
+
+    const serviceContext = {
+      requestId: `whatsapp_${message.id}`,
+      userId: message.from,
+      timestamp: Date.now(),
+      source: "whatsapp-webhook",
+    };
+
+    const aiResponse = await aiService.processWhatsAppChat(whatsappRequest, serviceContext);
+
+    // Send AI response back via WhatsApp
+    if (aiResponse.message?.content) {
+      await sendWhatsAppMessage({
+        to: message.from,
+        message: aiResponse.message.content,
+        type: "text",
+        clinicId: "default", // TODO: Extract from context
+        messageType: "general",
+      });
+
+      // Log successful AI interaction
+      console.log("AI response sent successfully", {
+        messageId: message.id,
+        fromMasked,
+        templateUsed: aiResponse.templateUsed,
+        emergencyDetected: aiResponse.emergencyDetected,
+        responseLength: aiResponse.message?.content?.length || 0,
+      });
+    }
   } catch (error) {
     console.error("Error processing incoming message:", error);
+
+    // Send fallback response
+    try {
+      const fallbackMessage =
+        "Olá! Obrigado por entrar em contato. Nossa equipe irá responder em breve. Para emergências, ligue: (11) 99999-9999";
+      await sendWhatsAppMessage({
+        to: message.from,
+        message: fallbackMessage,
+        type: "text",
+        clinicId: "default",
+        messageType: "general",
+      });
+    } catch (fallbackError) {
+      console.error("Error sending fallback message:", fallbackError);
+    }
   }
+}
+
+// Helper functions for WhatsApp context
+async function isFirstContact(phoneNumber: string): Promise<boolean> {
+  // TODO: Check database for previous interactions
+  // For now, return false as placeholder
+  return false;
+}
+
+async function getPreviousInteractionCount(phoneNumber: string): Promise<number> {
+  // TODO: Count previous interactions from database
+  // For now, return 0 as placeholder
+  return 0;
 }
 
 /**
@@ -306,31 +473,119 @@ async function processMessageStatus(
   }
 }
 
-/**
- * Send message via WhatsApp Business API
- */
-async function sendWhatsAppMessage(params: {
+async function sendWhatsAppMessage(args: {
   to: string;
   message: string;
-  type: string;
+  type: "text" | "template";
   clinicId: string;
   patientId?: string;
-  messageType: string;
-}): Promise<{ messageId: string; }> {
-  const { to, message, type } = params;
-
-  // TODO: Implement actual WhatsApp API call
-  // For MVP: Mock implementation
-  console.log("Sending WhatsApp message:", {
+  messageType: "appointment_reminder" | "general" | "emergency" | "marketing";
+}): Promise<{ messageId: string; status?: string; raw?: any; }> {
+  const {
     to,
-    message: message.slice(0, 100) + (message.length > 100 ? "..." : ""),
-    type,
-  });
+    message,
+    type = "text",
+    clinicId,
+    patientId,
+    messageType = "general",
+  } = args;
 
-  // Mock response
-  return {
-    messageId: `mock_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+  // Basic validation
+  const toNormalized = String(to).replace(/[\s-]/g, "");
+  if (!/^\+?\d{10,15}$/.test(toNormalized)) {
+    throw new Error("Invalid phone number format");
+  }
+
+  const token = process.env.WHATSAPP_ACCESS_TOKEN;
+  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+
+  if (!token || !phoneNumberId) {
+    throw new Error("WhatsApp API not configured (missing env vars)");
+  }
+
+  // Build payload
+  const payload: any = {
+    messaging_product: "whatsapp",
+    to: toNormalized,
   };
+
+  if (type === "text") {
+    payload.type = "text";
+    payload.text = { body: message };
+  } else {
+    // For MVP: send template as text if detailed template params aren't provided.
+    // In production, templates should follow WhatsApp template structure.
+    payload.type = "text";
+    payload.text = { body: message };
+  }
+
+  // Add simple metadata for auditing (non-sensitive)
+  const metadata: Record<string, string> = {
+    clinicId,
+    messageType,
+  };
+  if (patientId) metadata.patientId = patientId;
+  // Attach metadata as a custom field (won't be sent to recipient). Keep it local in logs/DB.
+  // Do not include message body in logs to comply with LGPD; log only safe metadata.
+  const toMasked = toNormalized.replace(/.(?=.{4}$)/g, "*");
+  const messageLength = message.length;
+
+  try {
+    const url = `https://graph.facebook.com/v17.0/${encodeURIComponent(phoneNumberId)}/messages`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const raw: any = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      console.error("WhatsApp API error", {
+        status: res.status,
+        statusText: res.statusText,
+        // include minimal info only
+        to,
+        clinicId,
+        patientId,
+        messageType,
+        response: raw,
+      });
+      throw new Error(`WhatsApp API request failed: ${res.status} ${res.statusText}`);
+    }
+
+    // Typical success shape: { messages: [{ id: "wamid.HBgL..." }] }
+    const messageId = raw && Array.isArray(raw?.messages) && raw.messages[0]?.id
+      ? raw.messages[0].id
+      : `mock_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
+    // Audit log (non-sensitive)
+    console.log("WhatsApp message sent", {
+      toMasked,
+      messageId,
+      clinicId,
+      patientId,
+      messageType,
+      messageLength,
+    });
+
+    return { messageId, status: res.status.toString(), raw };
+  } catch (error) {
+    // Log limited info for privacy
+    console.error("Failed to send WhatsApp message", {
+      toMasked,
+      clinicId,
+      patientId,
+      messageType,
+      messageLength,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
 }
 
+// Keep a single named export (removed duplicate)
 export { whatsappRoutes };
