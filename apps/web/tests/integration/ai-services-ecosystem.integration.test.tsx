@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+// import { createClient } from "@supabase/supabase-js"; // TODO: Use for Supabase integration
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -52,18 +52,19 @@ const TEST_CONFIG: TestConfig = {
   },
 };
 
-interface AIServiceResponse {
-  success: boolean;
-  data?: unknown;
-  error?: string;
-  metadata?: {
-    service_version: string;
-    response_time_ms: number;
-    cache_hit?: boolean;
-    compliance_validated?: boolean;
-    feature_flags_applied?: string[];
-  };
-}
+// TODO: Use for AI service response typing
+// interface AIServiceResponse {
+//   success: boolean;
+//   data?: unknown;
+//   error?: string;
+//   metadata?: {
+//     service_version: string;
+//     response_time_ms: number;
+//     cache_hit?: boolean;
+//     compliance_validated?: boolean;
+//     feature_flags_applied?: string[];
+//   };
+// }
 
 interface EcosystemTestContext {
   supabaseClient: SupabaseClient;
@@ -103,7 +104,7 @@ class AIServicesEcosystemTester {
     for (const cleanup of AIServicesEcosystemTester.context.cleanupTasks) {
       try {
         await cleanup();
-      } catch (error) {
+      } catch {
         // console.warn("Cleanup task failed:", error);
       }
     }
@@ -274,10 +275,10 @@ class AIServicesEcosystemTester {
   }
 
   private static async generateTestReport(): Promise<void> {
-    const testDuration = Date.now() - AIServicesEcosystemTester.context.testStartTime;
-    const metrics = Object.fromEntries(
-      AIServicesEcosystemTester.context.serviceMetrics,
-    );
+    // const testDuration = Date.now() - AIServicesEcosystemTester.context.testStartTime;
+    // const metrics = Object.fromEntries(
+    //   AIServicesEcosystemTester.context.serviceMetrics,
+    // );
 
     // console.log("\n=== AI Services Ecosystem Test Report ===");
     // console.log(`Test Duration: ${testDuration}ms`);

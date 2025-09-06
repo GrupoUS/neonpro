@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
             await logout();
           }
         }
-      } catch (error) {
+      } catch {
         // console.error("Error initializing auth:", error);
       } finally {
         setLoading(false);
@@ -97,7 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
       if (token) {
         await AuthApiClient.logout(token);
       }
-    } catch (error) {
+    } catch {
       // console.error("Logout error:", error);
     } finally {
       // Clear auth state regardless of API call success

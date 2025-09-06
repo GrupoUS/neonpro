@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Handler functions
-async function handleAIOverview(request: AIRequest): Promise<NextResponse<AIResponse>> {
+async function handleAIOverview(_request: AIRequest): Promise<NextResponse<AIResponse>> {
   // Mock AI system overview
   const overview = {
     noShowPredictions: {
@@ -321,7 +321,7 @@ async function handleNoShowPrediction(request: AIRequest): Promise<NextResponse<
   }
 }
 
-async function handleModelManagement(request: AIRequest): Promise<NextResponse<AIResponse>> {
+async function handleModelManagement(_request: AIRequest): Promise<NextResponse<AIResponse>> {
   // Mock model management
   const models: ModelInfo[] = [
     {
@@ -361,7 +361,7 @@ async function handleModelManagement(request: AIRequest): Promise<NextResponse<A
   });
 }
 
-async function handleDriftDetection(request: AIRequest): Promise<NextResponse<AIResponse>> {
+async function handleDriftDetection(_request: AIRequest): Promise<NextResponse<AIResponse>> {
   // Mock drift detection alerts
   const driftAlerts: DriftAlert[] = [
     {
@@ -386,7 +386,7 @@ async function handleDriftDetection(request: AIRequest): Promise<NextResponse<AI
   });
 }
 
-async function handleUniversalChat(request: AIRequest): Promise<NextResponse<AIResponse>> {
+async function handleUniversalChat(_request: AIRequest): Promise<NextResponse<AIResponse>> {
   // Mock universal chat response
   const chatResponse: ChatResponse = {
     messageId: `msg-${Date.now()}`,

@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
     let report: ErrorReport;
     try {
       report = await request.json();
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { error: "Invalid error report format" },
         { status: 400 },

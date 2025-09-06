@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Dialog, Transition } from "@headlessui/react";
-import { Calendar, FileText, Home, Menu, Shield, User, Users, X } from "lucide-react";
+import { Calendar, Home, Shield, User, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";

@@ -373,7 +373,7 @@ export function VoiceProcessingLoading(
 // Hook for managing AI loading states
 export function useAILoadingState(
   variant: AILoadingStatesProps["variant"] = "default",
-  estimatedSeconds: number = 3,
+  _estimatedSeconds: number = 3,
 ) {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);

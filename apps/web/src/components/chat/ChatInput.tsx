@@ -292,7 +292,7 @@ export default function ChatInput({
   maxLength = 2000,
   allowFiles = true,
   allowVoice = true,
-  healthcareContext,
+  healthcareContext: _healthcareContext,
   emergencyMode = false,
   aiEnabled = true,
   onEmergencyDetected,
