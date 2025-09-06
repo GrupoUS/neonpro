@@ -134,7 +134,7 @@ class RedisCacheLayer implements CacheLayer {
         maxRetriesPerRequest: 3,
         lazyConnect: true,
       });
-    } catch (error) {
+    } catch (_error) {
       console.warn("Redis not available, falling back to memory cache:", error);
       this.redis = null;
     }
@@ -212,7 +212,7 @@ class RedisCacheLayer implements CacheLayer {
         hitCount: this.hitCount,
         memoryInfo: info,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         layer: this.name,
         error: error instanceof Error ? error.message : String(error),
@@ -513,7 +513,7 @@ export class EnterpriseCacheService {
             canWrite: true,
             canRead: retrieved !== null,
           };
-        } catch (error) {
+        } catch (_error) {
           return {
             layer: layer.name,
             status: "unhealthy",

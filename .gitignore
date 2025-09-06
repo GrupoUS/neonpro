@@ -586,3 +586,11 @@ audit-reports/temp/
 # Total packages: 22 | Apps: 2 (web, api) | Stack: Next.js 15 + Hono.dev + Supabase
 # =============================================================================
 .env*.local
+.clinerules/byterover-rules.md
+.kilocode/rules/byterover-rules.md
+.roo/rules/byterover-rules.md
+.windsurf/rules/byterover-rules.md
+.cursor/rules/byterover-rules.mdc
+.kiro/steering/byterover-rules.md
+.qoder/rules/byterover-rules.md
+.augment/rules/byterover-rules.md

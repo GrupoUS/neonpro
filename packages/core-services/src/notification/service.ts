@@ -239,7 +239,7 @@ export class NotificationService {
         timestamp: new Date(),
         details: { externalId, channel: notification.channel },
       });
-    } catch (error) {
+    } catch (_error) {
       const retryCount = notification.retryCount + 1;
       const shouldRetry = retryCount <= notification.maxRetries;
 

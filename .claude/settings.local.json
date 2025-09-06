@@ -11,7 +11,12 @@
       "mcp__archon__update_task",
       "mcp__desktop-commander__write_file",
       "mcp__desktop-commander__create_directory",
-      "mcp__archon__get_task"
+      "mcp__archon__get_task",
+      "mcp__desktop-commander__read_multiple_files",
+      "mcp__desktop-commander__start_process",
+      "mcp__desktop-commander__read_process_output",
+      "mcp__desktop-commander__list_sessions",
+      "mcp__serena__search_for_pattern"
     ]
   },
   "allowedToolsUnguarded": [

@@ -1,0 +1,381 @@
+{
+  "metadata": {
+    "generated": "2025-09-06T18:00:00Z",
+    "generator": "PREP-003 Workspace Analysis",
+    "monorepo_structure": "turborepo + pnpm",
+    "total_workspaces": 10,
+    "apps_count": 2,
+    "packages_count": 8
+  },
+  "root_configuration": {
+    "package_manager": "pnpm 8.15.0",
+    "turborepo": "2.5.6",
+    "typescript": "5.7.2",
+    "node_version": ">=18.0.0"
+  },
+  "apps": {
+    "web": {
+      "name": "@neonpro/web",
+      "version": "1.0.0",
+      "path": "apps/web",
+      "description": "Next.js 15 healthcare web application",
+      "framework": "Next.js 15.5.0",
+      "runtime": "React 19.1.1",
+      "entry_points": {
+        "main": "app/layout.tsx",
+        "pages": "app/**/*.tsx"
+      },
+      "scripts": {
+        "build": "next build",
+        "dev": "next dev",
+        "start": "next start",
+        "lint": "oxlint src --fix",
+        "format": "dprint fmt",
+        "type-check": "tsc --noEmit",
+        "test": "vitest --run",
+        "vercel-build": "prisma generate && prisma migrate deploy && next build"
+      },
+      "dependencies": {
+        "workspace": [
+          "@neonpro/database",
+          "@neonpro/shared",
+          "@neonpro/ui",
+          "@neonpro/utils"
+        ],
+        "external_key": [
+          "next@15.5.0",
+          "react@19.1.1",
+          "typescript@5.9.2",
+          "@ai-sdk/anthropic@2.0.4",
+          "@prisma/client@5.7.1",
+          "@supabase/supabase-js@2.38.5"
+        ]
+      },
+      "features": [
+        "healthcare_dashboard",
+        "patient_management",
+        "appointment_scheduling",
+        "whatsapp_integration",
+        "ai_chat_assistant",
+        "lgpd_compliance",
+        "authentication",
+        "realtime_updates"
+      ],
+      "compliance": ["LGPD", "ANVISA", "CFM", "WCAG_2.1_AA"]
+    },
+    "api": {
+      "name": "@neonpro/api",
+      "version": "1.0.0",
+      "path": "apps/api",
+      "description": "Hono.dev healthcare API backend",
+      "framework": "Hono.dev 4.5.8",
+      "runtime": "Node.js ESM",
+      "entry_points": {
+        "main": "src/index.ts",
+        "build_output": "dist/index.js"
+      },
+      "scripts": {
+        "build": "tsup src/index.ts --format esm --target esnext --clean",
+        "dev": "tsx watch src/index.ts",
+        "start": "node dist/index.js",
+        "type-check": "tsc --noEmit",
+        "test": "vitest --run",
+        "lint": "oxlint src --fix"
+      },
+      "dependencies": {
+        "workspace": [
+          "@neonpro/shared",
+          "@neonpro/types",
+          "@neonpro/security"
+        ],
+        "external_key": [
+          "hono@4.5.8",
+          "@prisma/client@5.18.0",
+          "@supabase/supabase-js@2.45.1",
+          "typescript@5.9.2",
+          "@ai-sdk/openai@2.0.15"
+        ]
+      },
+      "features": [
+        "rest_api",
+        "healthcare_endpoints",
+        "authentication",
+        "ai_integration",
+        "whatsapp_webhook",
+        "lgpd_compliance",
+        "audit_logging"
+      ],
+      "compliance": ["LGPD", "ANVISA", "CFM"]
+    }
+  },
+  "packages": {
+    "core-services": {
+      "name": "@neonpro/core-services",
+      "version": "0.1.0",
+      "path": "packages/core-services",
+      "description": "Core business services for healthcare clinic SaaS",
+      "type": "business_logic",
+      "exports": {
+        ".": "./dist/index.js",
+        "./scheduling": "./dist/scheduling/index.js",
+        "./treatment": "./dist/treatment/index.js",
+        "./patient": "./dist/patient/index.js",
+        "./inventory": "./dist/inventory/index.js",
+        "./billing": "./dist/billing/index.js",
+        "./notification": "./dist/notification/index.js"
+      },
+      "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "test": "vitest run --passWithNoTests",
+        "lint": "oxlint src --fix"
+      },
+      "dependencies": {
+        "workspace": ["@neonpro/database", "@neonpro/utils"],
+        "external": ["date-fns@3.6.0", "zod@3.22.4"]
+      },
+      "domains": ["scheduling", "treatment", "patient", "inventory", "billing", "notification"]
+    },
+    "database": {
+      "name": "@neonpro/database",
+      "version": "1.0.0",
+      "path": "packages/database",
+      "description": "Prisma ORM + Supabase integration with LGPD compliance",
+      "type": "database_layer",
+      "exports": {
+        ".": "./dist/src/index.js",
+        "./client": "./dist/src/index.js",
+        "./prisma": "./node_modules/@prisma/client/index.js"
+      },
+      "scripts": {
+        "build": "tsc && prisma generate",
+        "prisma:generate": "prisma generate",
+        "prisma:migrate": "prisma migrate dev",
+        "db:seed": "tsx prisma/seed.ts",
+        "supabase:generate:types": "supabase gen types typescript --project-id ownkoxryswokcdanrdgj > src/supabase-generated.ts"
+      },
+      "dependencies": {
+        "workspace": [],
+        "external": ["@prisma/client@5.22.0", "@supabase/supabase-js@2.45.4", "zod@3.23.8"]
+      },
+      "features": ["prisma_orm", "supabase_integration", "lgpd_compliance", "healthcare_schemas"],
+      "compliance": ["LGPD", "ANVISA", "CFM"]
+    },
+    "types": {
+      "name": "@neonpro/types",
+      "version": "1.0.0",
+      "path": "packages/types",
+      "description": "Shared TypeScript types and interfaces",
+      "type": "type_definitions",
+      "exports": {
+        ".": "./dist/index.js"
+      },
+      "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "test": "vitest --run"
+      },
+      "dependencies": {
+        "workspace": [],
+        "external": []
+      },
+      "features": ["shared_types", "healthcare_types", "api_types"]
+    },
+    "shared": {
+      "name": "@neonpro/shared",
+      "version": "1.0.0",
+      "path": "packages/shared",
+      "description": "Shared types, schemas, and RPC client for healthcare platform",
+      "type": "shared_utilities",
+      "exports": {
+        ".": "./dist/src/index.js",
+        "./api-client": "./dist/src/api-client.js",
+        "./hooks/use-healthcare-realtime": "./dist/src/hooks/use-healthcare-realtime.js",
+        "./hooks/use-lgpd-realtime": "./dist/src/hooks/use-lgpd-realtime.js",
+        "./hooks/use-realtime": "./dist/src/hooks/use-realtime.js",
+        "./schemas": "./dist/src/schemas/index.js",
+        "./templates": "./dist/src/templates/index.js"
+      },
+      "scripts": {
+        "build": "tsc --project tsconfig.build.json",
+        "dev": "tsc --project tsconfig.build.json --watch",
+        "test": "vitest --run",
+        "lint": "oxlint src --fix"
+      },
+      "dependencies": {
+        "workspace": ["@neonpro/database"],
+        "external": ["@supabase/supabase-js@2.55.0", "hono@4.5.8", "zod@3.23.8", "react@19.1.1"]
+      },
+      "features": ["rpc_client", "realtime_hooks", "healthcare_schemas", "templates"]
+    },
+    "config": {
+      "name": "@neonpro/config",
+      "version": "1.0.0",
+      "path": "packages/config",
+      "description": "Shared TypeScript and build configurations",
+      "type": "build_configuration",
+      "exports": {
+        ".": "./base.json"
+      },
+      "scripts": {
+        "build": "echo 'Config package - no build needed' && exit 0"
+      },
+      "dependencies": {
+        "workspace": [],
+        "external": []
+      },
+      "features": ["tsconfig_base", "build_configs"]
+    },
+    "utils": {
+      "name": "@neonpro/utils",
+      "version": "1.0.0",
+      "path": "packages/utils",
+      "description": "Shared utilities and helper functions",
+      "type": "utility_functions",
+      "exports": {
+        ".": "./dist/src/index.js",
+        "./validation": "./dist/src/validation.js"
+      },
+      "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "test": "vitest --run"
+      },
+      "dependencies": {
+        "workspace": ["@neonpro/database"],
+        "external": ["clsx@2.0.0", "date-fns@4.1.0", "tailwind-merge@3.3.1", "zod@3.25.76"]
+      },
+      "features": ["utility_functions", "validation_helpers", "date_utils", "style_utils"]
+    },
+    "security": {
+      "name": "@neonpro/security",
+      "version": "0.1.0",
+      "path": "packages/security",
+      "description": "Security infrastructure for healthcare platform",
+      "type": "security_layer",
+      "exports": {
+        ".": "./dist/index.js",
+        "./auth/enterprise": "./dist/auth/enterprise/index.js"
+      },
+      "scripts": {
+        "build": "tsc --project tsconfig.build.json",
+        "dev": "tsup --watch",
+        "test": "vitest --run",
+        "lint": "oxlint src/ --fix"
+      },
+      "dependencies": {
+        "workspace": [],
+        "external": [
+          "@supabase/supabase-js@2.38.0",
+          "bcryptjs@2.4.3",
+          "jose@5.1.3",
+          "speakeasy@2.0.0"
+        ]
+      },
+      "features": ["authentication", "authorization", "mfa", "encryption", "healthcare_security"],
+      "compliance": ["LGPD", "HIPAA"]
+    },
+    "ui": {
+      "name": "@neonpro/ui",
+      "version": "0.1.0",
+      "path": "packages/ui",
+      "description": "Healthcare UI Components - Simplified Design System",
+      "type": "ui_components",
+      "exports": {
+        ".": "./dist/src/index.js",
+        "./button": "./dist/src/button-only.js",
+        "./styles": "./dist/src/styles.css",
+        "./themes/neonpro": "./dist/src/themes/neonpro/index.js",
+        "./themes/brazilian-healthcare": "./dist/src/themes/brazilian-healthcare/index.js"
+      },
+      "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "test": "vitest --run",
+        "lint": "oxlint src --fix"
+      },
+      "dependencies": {
+        "workspace": ["@neonpro/utils"],
+        "external": [
+          "@radix-ui/*",
+          "class-variance-authority@0.7.0",
+          "lucide-react@0.263.1",
+          "tailwind-merge@1.14.0"
+        ]
+      },
+      "features": [
+        "design_system",
+        "healthcare_components",
+        "accessibility",
+        "themes",
+        "brazilian_healthcare_theme"
+      ],
+      "compliance": ["WCAG_2.1_AA", "LGPD"]
+    }
+  },
+  "dependency_analysis": {
+    "internal_dependencies": {
+      "@neonpro/web": ["database", "shared", "ui", "utils"],
+      "@neonpro/api": ["shared", "types", "security"],
+      "@neonpro/core-services": ["database", "utils"],
+      "@neonpro/shared": ["database"],
+      "@neonpro/utils": ["database"],
+      "@neonpro/ui": ["utils"],
+      "@neonpro/security": [],
+      "@neonpro/types": [],
+      "@neonpro/config": [],
+      "@neonpro/database": []
+    },
+    "dependency_layers": {
+      "foundation": ["config", "types", "database"],
+      "utilities": ["utils", "security"],
+      "business": ["core-services"],
+      "presentation": ["ui", "shared"],
+      "applications": ["api", "web"]
+    }
+  },
+  "typescript_configuration": {
+    "base_config": "tsconfig.json",
+    "target": "ES2022",
+    "module": "ESNext",
+    "path_aliases": {
+      "@/*": ["./*"],
+      "@neonpro/ui": ["./packages/ui/src"],
+      "@neonpro/utils": ["./packages/utils/src"],
+      "@neonpro/database": ["./packages/database/src"],
+      "@neonpro/types": ["./packages/types/src"],
+      "@neonpro/config": ["./packages/config"],
+      "@neonpro/shared": ["./packages/shared/src"],
+      "@neonpro/security": ["./packages/security/src"]
+    },
+    "project_references": [
+      "./apps/api",
+      "./packages/ui",
+      "./packages/utils",
+      "./packages/database",
+      "./packages/types",
+      "./packages/shared",
+      "./packages/core-services",
+      "./packages/security"
+    ]
+  },
+  "build_system": {
+    "turborepo_tasks": ["build", "dev", "lint", "test", "type-check"],
+    "package_manager": "pnpm",
+    "workspace_protocol": "workspace:*",
+    "caching": "enabled",
+    "parallel_execution": "enabled"
+  },
+  "quality_tools": {
+    "linting": "oxlint",
+    "formatting": "dprint",
+    "type_checking": "tsc",
+    "testing": "vitest"
+  },
+  "healthcare_compliance": {
+    "regulations": ["LGPD", "ANVISA", "CFM"],
+    "accessibility": "WCAG 2.1 AA",
+    "security": "Healthcare grade encryption",
+    "audit_logging": "Enabled"
+  }
+}

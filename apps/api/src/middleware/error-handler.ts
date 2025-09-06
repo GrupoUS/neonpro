@@ -104,7 +104,7 @@ interface ErrorLike {
   stack?: string;
   metadata?: unknown;
   name?: string;
-  errors?: any[];
+  errors?: unknown[]; // changed from any[] to unknown[]
 }
 
 function isErrorLike(err: unknown): err is ErrorLike {
@@ -252,7 +252,32 @@ const formatErrorResponse = (
 
   // Handle validation errors (Zod)
   const errorObj2 = isErrorLike(error) ? error : undefined;
-  if (errorObj2 && (errorObj2 as any).name === "ZodError") {
+  if (errorObj2 && (errorObj2 as { name?: string; }).name === "ZodError") {
+    // Normalize possible shapes: some Zod versions/consumers use `errors`, some `issues`
+    const rawIssues: unknown[] = Array.isArray((errorObj2 as any).errors)
+      ? (errorObj2 as any).errors as unknown[]
+      : Array.isArray((errorObj2 as any).issues)
+      ? (errorObj2 as any).issues as unknown[]
+      : [];
+
+    // Safely normalize Zod issues without `any`
+    const validationDetails = rawIssues.map((issue) => {
+      if (isZodIssue(issue)) {
+        const field = Array.isArray(issue.path) ? issue.path.join(".") : undefined;
+        const message = typeof issue.message === "string"
+          ? issue.message
+          : String(issue.message ?? "");
+        const code = typeof issue.code === "string" ? issue.code : undefined;
+        return { field, message, code };
+      }
+      // fallback for unexpected shapes
+      return {
+        field: undefined,
+        message: typeof issue === "string" ? issue : String(issue ?? ""),
+        code: undefined,
+      };
+    });
+
     return {
       response: {
         success: false,
@@ -261,11 +286,7 @@ const formatErrorResponse = (
         details: isProduction
           ? undefined
           : {
-            validationErrors: (errorObj2 as any)?.errors?.map((err: any) => ({
-              field: err?.path?.join("."),
-              message: err?.message,
-              code: err?.code,
-            })),
+            validationErrors: validationDetails,
           },
         timestamp: new Date().toISOString(),
         requestId,
@@ -463,3 +484,15 @@ export const createError = {
 };
 
 // Types and utilities are already exported when defined above
+
+// Add: type guard for Zod-like issues
+function isZodIssue(obj: unknown): obj is { path?: unknown[]; message?: unknown; code?: unknown; } {
+  return (
+    isErrorLike(obj)
+    && (
+      Object.prototype.hasOwnProperty.call(obj as Record<string, unknown>, "message")
+      || Object.prototype.hasOwnProperty.call(obj as Record<string, unknown>, "path")
+      || Object.prototype.hasOwnProperty.call(obj as Record<string, unknown>, "code")
+    )
+  );
+}

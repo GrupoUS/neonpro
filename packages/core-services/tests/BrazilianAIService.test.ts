@@ -9,7 +9,7 @@ import type { ServiceContext, WhatsAppChatRequest } from "../src/services/Brazil
 
 // Mock Supabase
 vi.mock("@supabase/supabase-js", () => ({
-  createClient: vi.fn(() => (globalThis as any).mockSupabaseClient),
+  createClient: vi.fn(() => (globalThis as unknown).mockSupabaseClient),
 }));
 
 // Mock security package to avoid Supabase initialization issues
@@ -37,7 +37,7 @@ vi.mock("@neonpro/shared/templates", () => ({
       category: "whatsapp",
       language: "pt-BR",
     })),
-    renderTemplate: vi.fn((id: string, options?: any) => {
+    renderTemplate: vi.fn((id: string, options?: unknown) => {
       if (id === "whatsapp-emergency-escalation") {
         return "🚨 Situação de emergência detectada. Entre em contato com nossa equipe médica imediatamente: (11) 99999-9999";
       }
@@ -62,7 +62,7 @@ vi.mock("@neonpro/shared", () => ({
       category: "whatsapp",
       language: "pt-BR",
     })),
-    renderTemplate: vi.fn((id: string, options?: any) => {
+    renderTemplate: vi.fn((id: string, options?: unknown) => {
       if (id === "whatsapp-emergency-escalation") {
         return "🚨 Situação de emergência detectada. Entre em contato com nossa equipe médica imediatamente: (11) 99999-9999";
       }
@@ -75,7 +75,7 @@ vi.mock("@neonpro/shared", () => ({
 }));
 
 vi.mock("../src/services/AIService", async () => {
-  const actual = await vi.importActual<any>("../src/services/AIService");
+  const actual = await vi.importActual<unknown>("../src/services/AIService");
   class MockAIService extends actual.AIService {
     processChat = vi.fn().mockResolvedValue({
       id: "test_response",
@@ -88,7 +88,7 @@ vi.mock("../src/services/AIService", async () => {
       usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30 },
       metadata: { model: "gpt-4", responseTime: 100, cached: false },
     });
-    executeOperation = vi.fn().mockImplementation((_name: string, fn: any) => fn());
+    executeOperation = vi.fn().mockImplementation((_name: string, fn: unknown) => fn());
   }
   return { AIService: MockAIService };
 });
@@ -139,19 +139,19 @@ describe("BrazilianAIService", () => {
       const result = await service.processWhatsAppChat(baseRequest, mockContext);
 
       expect(result).toMatchObject({
-        id: expect.any(String),
+        id: expect.unknown(String),
         message: {
           role: "assistant",
-          content: expect.any(String),
-          timestamp: expect.any(Number),
+          content: expect.unknown(String),
+          timestamp: expect.unknown(Number),
         },
-        templateUsed: expect.any(String),
+        templateUsed: expect.unknown(String),
         emergencyDetected: false,
         escalationTriggered: false,
         lgpdCompliance: {
-          consentRequired: expect.any(Boolean),
-          dataUsageExplained: expect.any(Boolean),
-          rightsInformed: expect.any(Boolean),
+          consentRequired: expect.unknown(Boolean),
+          dataUsageExplained: expect.unknown(Boolean),
+          rightsInformed: expect.unknown(Boolean),
         },
       });
     });
@@ -271,9 +271,9 @@ describe("BrazilianAIService", () => {
       expect(result).toMatchObject({
         message: {
           role: "assistant",
-          content: expect.any(String),
+          content: expect.unknown(String),
         },
-        templateUsed: expect.any(String),
+        templateUsed: expect.unknown(String),
       });
     });
 
@@ -304,8 +304,8 @@ describe("BrazilianAIService", () => {
       );
 
       expect(result).toMatchObject({
-        response: expect.any(String),
-        template: expect.any(Object),
+        response: expect.unknown(String),
+        template: expect.unknown(Object),
         complianceStatus: expect.stringMatching(/^(compliant|requires_action|violation)$/),
       });
     });

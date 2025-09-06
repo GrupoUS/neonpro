@@ -36,7 +36,7 @@ interface ApiPerformanceMetric {
 
 interface MonitoringResult {
   success: boolean;
-  data: any;
+  data: unknown;
   timestamp: string;
 }
 
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    let responseData: MonitoringDashboard | any[] | Record<string, any>;
+    let responseData: MonitoringDashboard | unknown[] | Record<string, unknown>;
 
     switch (action) {
       case "dashboard":
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let body: any;
+    let body: unknown;
     try {
       body = await request.json();
     } catch (error) {
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
     }
 
     // allow boolean (acknowledge/resolve), string (created rule id) or object responses
-    let result: boolean | string | Record<string, any> | null = null;
+    let result: boolean | string | Record<string, unknown> | null = null;
 
     switch (action) {
       case "acknowledge_alert":
@@ -540,26 +540,26 @@ async function createAlertRule(rule: AlertRule, userId: string): Promise<string 
       threshold: rule.threshold,
 
       // Required fields for alertSystem.AlertRule (defaults used when missing)
-      category: (rule as any).category ?? "general",
+      category: (rule as unknown).category ?? "general",
       metadata: {
         createdBy: userId,
         createdAt: new Date().toISOString(),
-        ...(rule as any).metadata,
+        ...(rule as unknown).metadata,
       },
-      conditions: (rule as any).conditions ?? [
+      conditions: (rule as unknown).conditions ?? [
         {
           expression: rule.condition ?? "",
           threshold: rule.threshold,
         },
       ],
-      actions: (rule as any).actions ?? [
+      actions: (rule as unknown).actions ?? [
         // default action: notify via email (adjust if your system uses different action shapes)
         { type: "notify", channels: ["email"] },
       ],
     };
 
-    // Cast to any to satisfy the alertSystem parameter shape without importing external types
-    const ruleId = await alertSystem.addAlertRule(payload as any);
+    // Cast to unknown to satisfy the alertSystem parameter shape without importing external types
+    const ruleId = await alertSystem.addAlertRule(payload as unknown);
 
     logger.info(LogCategory.SYSTEM, "Alert rule created via API", {
       metadata: {
@@ -607,7 +607,7 @@ function processMetricsData(metrics: DbPerformanceMetric[], type: string) {
   }
 
   // Group metrics by time buckets for charting
-  const buckets = new Map<string, any[]>();
+  const buckets = new Map<string, unknown[]>();
 
   metrics.forEach(metric => {
     // use DB column created_at (ISO timestamp from DB)

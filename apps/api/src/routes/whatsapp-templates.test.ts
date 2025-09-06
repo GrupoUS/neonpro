@@ -207,7 +207,7 @@ describe("WhatsApp Brazilian Templates Validation", () => {
                   "Authorization": "Bearer test_access_token",
                   "Content-Type": "application/json",
                 }),
-                body: expect.stringContaining(expectedResponse.substring(0, 20)),
+                body: expect.stringContaining(expectedResponse.slice(0, 20)),
               }),
             );
           }

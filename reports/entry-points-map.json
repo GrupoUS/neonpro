@@ -1,0 +1,336 @@
+{
+  "metadata": {
+    "generated": "2025-09-06T18:00:00Z",
+    "generator": "PREP-003 Entry Points Analysis",
+    "description": "Complete mapping of entry points and exports across NeonPro workspace",
+    "total_entry_points": 47,
+    "apps_entry_points": 4,
+    "packages_entry_points": 43
+  },
+  "apps": {
+    "@neonpro/web": {
+      "type": "Next.js Application",
+      "framework": "Next.js 15",
+      "entry_points": {
+        "main": "app/layout.tsx",
+        "pages": "app/**/*.tsx",
+        "build_output": ".next/"
+      },
+      "runtime_entries": [
+        "app/layout.tsx",
+        "app/page.tsx",
+        "app/(dashboard)/**/*.tsx",
+        "app/api/**/*.ts"
+      ],
+      "static_assets": "public/",
+      "deployment": {
+        "vercel": "next build",
+        "docker": "Dockerfile"
+      }
+    },
+    "@neonpro/api": {
+      "type": "Hono API Backend",
+      "framework": "Hono.dev",
+      "entry_points": {
+        "main": "src/index.ts",
+        "build_output": "dist/index.js"
+      },
+      "runtime_entries": [
+        "src/index.ts",
+        "src/routes/**/*.ts",
+        "src/middleware/**/*.ts"
+      ],
+      "deployment": {
+        "vercel": "tsup build",
+        "docker": "node dist/index.js"
+      }
+    }
+  },
+  "packages": {
+    "@neonpro/core-services": {
+      "type": "Business Logic Package",
+      "build_system": "tsup",
+      "main_exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "import": "./dist/index.mjs",
+          "require": "./dist/index.js"
+        }
+      },
+      "modular_exports": {
+        "./scheduling": {
+          "types": "./dist/scheduling/index.d.ts",
+          "import": "./dist/scheduling/index.mjs",
+          "require": "./dist/scheduling/index.js"
+        },
+        "./treatment": {
+          "types": "./dist/treatment/index.d.ts",
+          "import": "./dist/treatment/index.mjs",
+          "require": "./dist/treatment/index.js"
+        },
+        "./patient": {
+          "types": "./dist/patient/index.d.ts",
+          "import": "./dist/patient/index.mjs",
+          "require": "./dist/patient/index.js"
+        },
+        "./inventory": {
+          "types": "./dist/inventory/index.d.ts",
+          "import": "./dist/inventory/index.mjs",
+          "require": "./dist/inventory/index.js"
+        },
+        "./billing": {
+          "types": "./dist/billing/index.d.ts",
+          "import": "./dist/billing/index.mjs",
+          "require": "./dist/billing/index.js"
+        },
+        "./notification": {
+          "types": "./dist/notification/index.d.ts",
+          "import": "./dist/notification/index.mjs",
+          "require": "./dist/notification/index.js"
+        }
+      },
+      "domains": ["scheduling", "treatment", "patient", "inventory", "billing", "notification"],
+      "source_structure": "src/{domain}/index.ts"
+    },
+    "@neonpro/database": {
+      "type": "Database Layer Package",
+      "build_system": "tsc + prisma",
+      "main_exports": {
+        ".": {
+          "types": "./dist/src/index.d.ts",
+          "default": "./dist/src/index.js"
+        },
+        "./client": {
+          "types": "./dist/src/index.d.ts",
+          "default": "./dist/src/index.js"
+        },
+        "./prisma": {
+          "types": "./node_modules/@prisma/client/index.d.ts",
+          "default": "./node_modules/@prisma/client/index.js"
+        }
+      },
+      "prisma_schema": "prisma/schema.prisma",
+      "generated_client": "./node_modules/@prisma/client/",
+      "supabase_types": "src/supabase-generated.ts",
+      "seed_file": "prisma/seed.ts"
+    },
+    "@neonpro/types": {
+      "type": "Type Definitions Package",
+      "build_system": "tsc",
+      "main_exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        }
+      },
+      "source_structure": "src/**/*.ts",
+      "purpose": "Shared TypeScript types and interfaces"
+    },
+    "@neonpro/shared": {
+      "type": "Shared Utilities Package",
+      "build_system": "tsc",
+      "main_exports": {
+        ".": {
+          "types": "./dist/src/index.d.ts",
+          "import": "./dist/src/index.js",
+          "require": "./dist/src/index.js"
+        }
+      },
+      "feature_exports": {
+        "./api-client": {
+          "types": "./dist/src/api-client.d.ts",
+          "import": "./dist/src/api-client.js",
+          "require": "./dist/src/api-client.js"
+        },
+        "./hooks/use-healthcare-realtime": {
+          "types": "./dist/src/hooks/use-healthcare-realtime.d.ts",
+          "import": "./dist/src/hooks/use-healthcare-realtime.js",
+          "require": "./dist/src/hooks/use-healthcare-realtime.js"
+        },
+        "./hooks/use-lgpd-realtime": {
+          "types": "./dist/src/hooks/use-lgpd-realtime.d.ts",
+          "import": "./dist/src/hooks/use-lgpd-realtime.js",
+          "require": "./dist/src/hooks/use-lgpd-realtime.js"
+        },
+        "./hooks/use-realtime": {
+          "types": "./dist/src/hooks/use-realtime.d.ts",
+          "import": "./dist/src/hooks/use-realtime.js",
+          "require": "./dist/src/hooks/use-realtime.js"
+        },
+        "./schemas": {
+          "types": "./dist/src/schemas/index.d.ts",
+          "import": "./dist/src/schemas/index.js",
+          "require": "./dist/src/schemas/index.js"
+        },
+        "./templates": {
+          "types": "./dist/src/templates/index.d.ts",
+          "import": "./dist/src/templates/index.js",
+          "require": "./dist/src/templates/index.js"
+        }
+      },
+      "features": ["api-client", "realtime-hooks", "schemas", "templates"]
+    },
+    "@neonpro/config": {
+      "type": "Configuration Package",
+      "build_system": "none",
+      "main_exports": {
+        ".": "./base.json"
+      },
+      "config_files": ["base.json"],
+      "purpose": "Shared TypeScript and build configurations"
+    },
+    "@neonpro/utils": {
+      "type": "Utility Functions Package",
+      "build_system": "tsc",
+      "main_exports": {
+        ".": {
+          "types": "./dist/src/index.d.ts",
+          "import": "./dist/src/index.js",
+          "require": "./dist/src/index.js"
+        }
+      },
+      "feature_exports": {
+        "./validation": {
+          "types": "./dist/src/validation.d.ts",
+          "import": "./dist/src/validation.js",
+          "require": "./dist/src/validation.js"
+        }
+      },
+      "features": ["utilities", "validation"]
+    },
+    "@neonpro/security": {
+      "type": "Security Layer Package",
+      "build_system": "tsc",
+      "main_exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "import": "./dist/index.mjs",
+          "require": "./dist/index.js"
+        }
+      },
+      "enterprise_exports": {
+        "./auth/enterprise": {
+          "types": "./dist/auth/enterprise/index.d.ts",
+          "import": "./dist/auth/enterprise/index.mjs",
+          "require": "./dist/auth/enterprise/index.js"
+        }
+      },
+      "features": ["authentication", "enterprise-auth"]
+    },
+    "@neonpro/ui": {
+      "type": "UI Components Package",
+      "build_system": "tsc",
+      "main_exports": {
+        ".": {
+          "types": "./dist/src/index.d.ts",
+          "import": "./dist/src/index.js",
+          "require": "./dist/src/index.js"
+        }
+      },
+      "component_exports": {
+        "./button": {
+          "types": "./dist/src/button-only.d.ts",
+          "import": "./dist/src/button-only.js",
+          "require": "./dist/src/button-only.js"
+        }
+      },
+      "theme_exports": {
+        "./themes/neonpro": {
+          "types": "./dist/src/themes/neonpro/index.d.ts",
+          "import": "./dist/src/themes/neonpro/index.js",
+          "require": "./dist/src/themes/neonpro/index.js"
+        },
+        "./themes/neonpro/components": {
+          "types": "./dist/src/themes/neonpro/components/index.d.ts",
+          "import": "./dist/src/themes/neonpro/components/index.js",
+          "require": "./dist/src/themes/neonpro/components/index.js"
+        },
+        "./themes/brazilian-healthcare": {
+          "types": "./dist/src/themes/brazilian-healthcare/index.d.ts",
+          "import": "./dist/src/themes/brazilian-healthcare/index.js",
+          "require": "./dist/src/themes/brazilian-healthcare/index.js"
+        },
+        "./themes/brazilian-healthcare/tokens": {
+          "types": "./dist/src/themes/brazilian-healthcare/tokens.d.ts",
+          "import": "./dist/src/themes/brazilian-healthcare/tokens.js",
+          "require": "./dist/src/themes/brazilian-healthcare/tokens.js"
+        }
+      },
+      "style_exports": {
+        "./styles": "./dist/src/styles.css",
+        "./themes/neonpro/styles": "./dist/src/themes/neonpro/styles.css"
+      },
+      "dynamic_exports": {
+        "./components/dashboard/health/*": {
+          "types": "./dist/src/components/dashboard/health/*.d.ts",
+          "import": "./dist/src/components/dashboard/health/*.js",
+          "require": "./dist/src/components/dashboard/health/*.js"
+        }
+      },
+      "features": ["components", "themes", "styles", "healthcare-specific"]
+    }
+  },
+  "typescript_path_mapping": {
+    "aliases": {
+      "@/*": ["./*"],
+      "@neonpro/ui": ["./packages/ui/src"],
+      "@neonpro/ui/*": ["./packages/ui/src/*"],
+      "@neonpro/utils": ["./packages/utils/src"],
+      "@neonpro/utils/*": ["./packages/utils/src/*"],
+      "@neonpro/database": ["./packages/database/src"],
+      "@neonpro/database/*": ["./packages/database/src/*"],
+      "@neonpro/types": ["./packages/types/src"],
+      "@neonpro/types/*": ["./packages/types/src/*"],
+      "@neonpro/config": ["./packages/config"],
+      "@neonpro/config/*": ["./packages/config/*"],
+      "@neonpro/shared": ["./packages/shared/src"],
+      "@neonpro/shared/*": ["./packages/shared/src/*"],
+      "@neonpro/security": ["./packages/security/src"],
+      "@neonpro/security/*": ["./packages/security/src/*"]
+    },
+    "base_url": ".",
+    "module_resolution": "bundler"
+  },
+  "build_outputs": {
+    "apps": {
+      "@neonpro/web": ".next/",
+      "@neonpro/api": "dist/"
+    },
+    "packages": {
+      "@neonpro/core-services": "dist/",
+      "@neonpro/database": "dist/",
+      "@neonpro/types": "dist/",
+      "@neonpro/shared": "dist/",
+      "@neonpro/config": "N/A",
+      "@neonpro/utils": "dist/",
+      "@neonpro/security": "dist/",
+      "@neonpro/ui": "dist/"
+    }
+  },
+  "import_strategies": {
+    "esm_native": ["@neonpro/shared", "@neonpro/api"],
+    "dual_module": ["@neonpro/core-services", "@neonpro/security"],
+    "cjs_compatible": ["@neonpro/ui", "@neonpro/utils", "@neonpro/database"]
+  },
+  "healthcare_specific_exports": {
+    "@neonpro/shared": [
+      "./hooks/use-healthcare-realtime",
+      "./hooks/use-lgpd-realtime"
+    ],
+    "@neonpro/ui": [
+      "./themes/brazilian-healthcare",
+      "./themes/brazilian-healthcare/tokens",
+      "./components/dashboard/health/*"
+    ],
+    "@neonpro/core-services": [
+      "./treatment",
+      "./patient"
+    ]
+  },
+  "validation_commands": {
+    "check_exports": "pnpm --filter='@neonpro/*' run build",
+    "validate_imports": "pnpm --filter='@neonpro/*' run type-check",
+    "test_entry_points": "node -e \"console.log(require.resolve('@neonpro/shared'))\"",
+    "verify_paths": "tsc --noEmit --showConfig"
+  }
+}

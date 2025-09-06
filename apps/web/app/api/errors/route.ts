@@ -52,7 +52,7 @@ interface ErrorReport {
     timestamp: string;
     message: string;
     category: string;
-    data?: any;
+    data?: unknown;
   }[];
 }
 

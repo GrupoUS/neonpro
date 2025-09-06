@@ -129,7 +129,15 @@ class HealthcareKeyManager {
       return newKey;
     }
 
-    return categoryKeys[0];
+    // Safely get first element and guard against undefined for TypeScript
+    const firstKey = categoryKeys[0];
+    if (!firstKey) {
+      const newKey = this.generateKey(category);
+      this.keys.set(newKey.id, newKey);
+      return newKey;
+    }
+
+    return firstKey;
   }
 
   getKey(keyId: string): EncryptionKey | null {
@@ -388,7 +396,7 @@ export class HealthcareEncryption {
   static hashSensitiveData(data: string, salt?: string): string {
     const actualSalt = salt || crypto.randomBytes(16).toString("hex");
     const hash = crypto.pbkdf2Sync(data, actualSalt, 10_000, 64, "sha256");
-    return actualSalt + ":" + hash.toString("hex");
+    return `${actualSalt}:${hash.toString("hex")}`;
   }
 
   /**
@@ -472,14 +480,16 @@ export const responseDecryptionMiddleware = (): MiddlewareHandler => {
     if (method === "GET" && path.includes("/patients") && user) {
       const originalJson = c.res.json;
 
-      (c.res as any).json = function(data: unknown, _status?: number) {
+      // Replace with async function so we can await decryption
+      (c.res as any).json = async function(data: unknown, _status?: number) {
         // Decrypt patient data fields
         if (data && (Array.isArray(data) || (data as any).id)) {
+          const userAny = user as any;
           const accessContext: DataAccessContext = {
-            userId: user.id,
+            userId: userAny?.id || "unknown",
             purpose: "patient_data_access",
             patientId: Array.isArray(data) ? undefined : (data as any).id,
-            clinicId: user.clinicId,
+            clinicId: userAny?.clinicId,
           };
 
           const fieldsToDecrypt = [
@@ -496,8 +506,8 @@ export const responseDecryptionMiddleware = (): MiddlewareHandler => {
 
           if (Array.isArray(data)) {
             // Decrypt array of patients
-            Promise.all(
-              data.map((patient) =>
+            const decryptedData = await Promise.all(
+              (data as any[]).map((patient) =>
                 HealthcareEncryption.decryptFields(
                   patient as Record<string, unknown>,
                   fieldsToDecrypt,
@@ -505,23 +515,23 @@ export const responseDecryptionMiddleware = (): MiddlewareHandler => {
                   (patient as any).id,
                 )
               ),
-            ).then((decryptedData) => {
-              return originalJson.call(this, decryptedData);
-            });
+            );
+
+            return (originalJson as any).call(this, decryptedData);
           } else {
             // Decrypt single patient
-            HealthcareEncryption.decryptFields(
+            const decryptedData = await HealthcareEncryption.decryptFields(
               data as Record<string, unknown>,
               fieldsToDecrypt,
               accessContext,
               (data as any).id,
-            ).then((decryptedData) => {
-              return originalJson.call(this, decryptedData);
-            });
+            );
+
+            return (originalJson as any).call(this, decryptedData);
           }
         }
 
-        return originalJson.call(this, data);
+        return (originalJson as any).call(this, data);
       };
     }
   };
@@ -588,15 +598,27 @@ export const encryptBackupData = async (
 
 /**
  * Decrypt backup data utility
+ *
+ * - Accepts an optional `associatedId` used as associated data (same value used during encryption).
+ * - Uses a system access context for audit logging.
  */
 export const decryptBackupData = async (
-  encryptedData: EncryptedData,
-  accessContext: DataAccessContext,
+  encrypted: EncryptedData,
+  associatedId?: string,
 ): Promise<unknown> => {
+  const accessContext: DataAccessContext = {
+    userId: "system_backup",
+    purpose: "backup_restore",
+    clinicId: "system",
+    emergencyAccess: false,
+  };
+
   const decrypted = await HealthcareEncryption.decryptPatientData(
-    encryptedData,
+    encrypted,
     accessContext,
+    associatedId,
   );
+
   return JSON.parse(decrypted);
 };
 

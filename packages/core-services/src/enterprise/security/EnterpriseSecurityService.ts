@@ -176,7 +176,7 @@ export class EnterpriseSecurityService {
       });
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       await this.logSecurityEvent("ACCESS_VALIDATION_ERROR", {
         operation,
         error: error instanceof Error ? error.message : "Unknown error",
@@ -340,7 +340,7 @@ export class EnterpriseSecurityService {
       });
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       await this.logSecurityEvent("ENCRYPTION_FAILED", {
         error: error instanceof Error ? error.message : "Unknown error",
       });
@@ -412,7 +412,7 @@ export class EnterpriseSecurityService {
       });
 
       return result as T;
-    } catch (error) {
+    } catch (_error) {
       await this.logSecurityEvent("DECRYPTION_FAILED", {
         error: error instanceof Error ? error.message : "Unknown error",
       });

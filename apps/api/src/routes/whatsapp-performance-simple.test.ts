@@ -478,13 +478,13 @@ describe("WhatsApp Performance Validation", () => {
       it(`should validate ${name}`, () => {
         // Test LGPD compliance logic
         const testCompliance = (dataType: string) => {
-          const dataCollectionTypes = ["personal_data", "medical_history", "contact_info"];
+          const dataCollectionTypes = new Set(["personal_data", "medical_history", "contact_info"]);
           const marketingTypes = ["promotions", "newsletter", "offers"];
 
-          const requiresConsent = dataCollectionTypes.includes(dataType)
+          const requiresConsent = dataCollectionTypes.has(dataType)
             || marketingTypes.includes(dataType);
           const dataUsageExplained = true; // Always explain data usage
-          const rightsInformed = dataCollectionTypes.includes(dataType); // Inform rights for personal data
+          const rightsInformed = dataCollectionTypes.has(dataType); // Inform rights for personal data
 
           return {
             consentRequired: requiresConsent,

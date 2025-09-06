@@ -9,7 +9,7 @@ import { vi } from "vitest";
 // Extend expect with jest-dom matchers
 declare global {
   namespace Vi {
-    interface JestAssertion<T = any> extends jest.Matchers<void, T> {}
+    interface JestAssertion<T = unknown> extends jest.Matchers<void, T> {}
   }
 }
 
@@ -18,7 +18,7 @@ global.IntersectionObserver = class MockIntersectionObserver {
   disconnect() {}
   observe() {}
   unobserve() {}
-} as any;
+} as unknown;
 
 // Mock ResizeObserver for components that use it
 global.ResizeObserver = class ResizeObserver {

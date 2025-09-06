@@ -31,7 +31,7 @@ export const ErrorSeverity = {
 } as const;
 export type ErrorSeverity = typeof ErrorSeverity[keyof typeof ErrorSeverity];
 
-type ErrorContext = Record<string, any>;
+type ErrorContext = Record<string, unknown>;
 
 interface HealthcareError {
   category: ErrorCategory;

@@ -85,7 +85,7 @@ export const auditMiddleware = (
     };
 
     res.end = function(this: any, ...args: any[]) {
-      const first = args[0];
+      const [first] = args;
       if (typeof first === "string" || (typeof Buffer !== "undefined" && Buffer.isBuffer(first))) {
         responseBody = first;
       }

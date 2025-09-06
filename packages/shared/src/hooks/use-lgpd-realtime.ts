@@ -123,7 +123,7 @@ export function useLGPDRealtime<
         if (config.lgpdConfig.dataMinimization) {
           const allowedFields = config.lgpdConfig.sensitiveFields || [];
           processedPayload = LGPDDataProcessor.minimizeData<T>(
-            processedPayload as RealtimePostgresChangesPayload<T & Record<string, any>>,
+            processedPayload as RealtimePostgresChangesPayload<T & Record<string, unknown>>,
             allowedFields,
           );
         }
@@ -131,7 +131,7 @@ export function useLGPDRealtime<
         // Apply anonymization if configured
         if (config.lgpdConfig.anonymization) {
           processedPayload = LGPDDataProcessor.anonymizePayload<T>(
-            processedPayload as RealtimePostgresChangesPayload<T & Record<string, any>>,
+            processedPayload as RealtimePostgresChangesPayload<T & Record<string, unknown>>,
             config.lgpdConfig,
           );
         }
@@ -139,7 +139,7 @@ export function useLGPDRealtime<
         // Apply pseudonymization if configured
         if (config.lgpdConfig.pseudonymization) {
           processedPayload = LGPDDataProcessor.pseudonymizePayload<T>(
-            processedPayload as RealtimePostgresChangesPayload<T & Record<string, any>>,
+            processedPayload as RealtimePostgresChangesPayload<T & Record<string, unknown>>,
             config.lgpdConfig,
           );
         }

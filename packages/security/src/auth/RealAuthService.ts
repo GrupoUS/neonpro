@@ -61,11 +61,11 @@ class MockCacheService implements CacheService {
 
 class MockAnalyticsService implements AnalyticsService {
   async track(event: string, properties: unknown): Promise<void> {
-    console.log(`Analytics: ${event}`, properties);
+    // // console.log(`Analytics: ${event}`, properties);
   }
 
   async recordPerformance(operation: string, duration: number): Promise<void> {
-    console.log(`Performance: ${operation} took ${duration}ms`);
+    // // console.log(`Performance: ${operation} took ${duration}ms`);
   }
 }
 
@@ -94,17 +94,17 @@ class MockSecurityService implements SecurityService {
   }
 
   async auditOperation(operation: unknown): Promise<void> {
-    console.log("Security audit:", operation);
+    // // console.log("Security audit:", operation);
   }
 }
 
 class MockAuditService implements AuditService {
   async logOperation(operation: string, details: unknown): Promise<void> {
-    console.log(`Audit: ${operation}`, details);
+    // // console.log(`Audit: ${operation}`, details);
   }
 
   async log(event: string, details: unknown): Promise<void> {
-    console.log(`Audit Log: ${event}`, details);
+    // // console.log(`Audit Log: ${event}`, details);
   }
 }
 
@@ -132,9 +132,7 @@ export class RealAuthService {
     // Use dev-only fallback in non-production environments
     const finalJwtSecret = resolvedJwtSecret || (() => {
       if (process.env.NODE_ENV !== "production") {
-        console.warn(
-          "⚠️  Using development JWT secret. Set JWT_SECRET for production deployments.",
-        );
+        // Using development JWT secret. Set JWT_SECRET for production deployments.
         return "dev-only-fallback-secret-key-not-for-production";
       }
       throw new Error("JWT secret is required");

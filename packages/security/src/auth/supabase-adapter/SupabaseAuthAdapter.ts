@@ -16,7 +16,7 @@ import nodeCrypto from "node:crypto";
 const cryptoShim = {
   randomBytes: (size: number): Uint8Array => {
     // Try Web Crypto API first (available in modern browsers and Node.js)
-    const g: any = globalThis as any;
+    const g: unknown = globalThis as unknown;
     if (g?.crypto?.getRandomValues) {
       const array = new Uint8Array(size);
       g.crypto.getRandomValues(array);
@@ -28,7 +28,7 @@ const cryptoShim = {
   },
   randomUUID: (): string => {
     // Try Web Crypto API first
-    const g: any = globalThis as any;
+    const g: unknown = globalThis as unknown;
     if (g?.crypto && typeof g.crypto.randomUUID === "function") {
       return g.crypto.randomUUID();
     }
@@ -55,7 +55,7 @@ const cryptoShim = {
 // Production-grade JWT implementation with security features
 const jwt = {
   sign: async (
-    payload: any,
+    payload: unknown,
     secret: string,
     options?: { expiresIn?: string; },
   ): Promise<string> => {
@@ -127,7 +127,7 @@ export interface User {
   email: string;
   fullName: string;
   role: string;
-  permissions: Record<string, any>;
+  permissions: Record<string, unknown>;
   isActive: boolean;
   mfaEnabled: boolean;
   lastLoginAt?: Date;
@@ -239,7 +239,7 @@ export class SupabaseAuthAdapter {
         sessionId: session.sessionId,
       };
     } catch (error) {
-      console.error("Login error:", error);
+      // // console.error("Login error:", error);
       return { success: false, error: "Authentication service error" };
     }
   }
@@ -280,7 +280,7 @@ export class SupabaseAuthAdapter {
         });
 
       if (profileError) {
-        console.error("Profile creation error:", profileError);
+        // // console.error("Profile creation error:", profileError);
         return { success: false, error: "Failed to create user profile" };
       }
 
@@ -296,7 +296,7 @@ export class SupabaseAuthAdapter {
         error: "Registration successful. Please check your email for confirmation.",
       };
     } catch (error) {
-      console.error("Registration error:", error);
+      // // console.error("Registration error:", error);
       return { success: false, error: "Registration service error" };
     }
   }
@@ -322,7 +322,7 @@ export class SupabaseAuthAdapter {
       // Log security event
       await this.logSecurityEvent("logout", { sessionId });
     } catch (error) {
-      console.error("Logout error:", error);
+      // // console.error("Logout error:", error);
     }
   }
 
@@ -344,7 +344,7 @@ export class SupabaseAuthAdapter {
 
       return profile ? this.mapProfileToUser(profile) : null;
     } catch (error) {
-      console.error("Get current user error:", error);
+      // // console.error("Get current user error:", error);
       return null;
     }
   }
@@ -387,7 +387,7 @@ export class SupabaseAuthAdapter {
         refreshToken: data.session?.refresh_token,
       };
     } catch (error) {
-      console.error("Refresh token error:", error);
+      // // console.error("Refresh token error:", error);
       return { success: false, error: "Token refresh failed" };
     }
   }
@@ -395,7 +395,7 @@ export class SupabaseAuthAdapter {
   /**
    * Create session in active_user_sessions table
    */
-  private async createSession(profile: any, deviceInfo?: DeviceInfo): Promise<AuthSession> {
+  private async createSession(profile: unknown, deviceInfo?: DeviceInfo): Promise<AuthSession> {
     const sessionId = `session_${cryptoShim.randomUUID()}`;
     const expiresAt = new Date(Date.now() + this.config.sessionTimeout);
 
@@ -445,7 +445,7 @@ export class SupabaseAuthAdapter {
   /**
    * Generate JWT access token
    */
-  private async generateAccessToken(profile: any, sessionId: string): Promise<string> {
+  private async generateAccessToken(profile: unknown, sessionId: string): Promise<string> {
     const payload = {
       userId: profile.id,
       email: profile.email,
@@ -478,7 +478,7 @@ export class SupabaseAuthAdapter {
   /**
    * Log security event to existing security_events table
    */
-  private async logSecurityEvent(type: string, details: Record<string, any>): Promise<void> {
+  private async logSecurityEvent(type: string, details: Record<string, unknown>): Promise<void> {
     try {
       await this.supabase
         .from("security_events")
@@ -491,14 +491,14 @@ export class SupabaseAuthAdapter {
           risk_score: this.calculateRiskScore(type, details),
         });
     } catch (error) {
-      console.error("Failed to log security event:", error);
+      // // console.error("Failed to log security event:", error);
     }
   }
 
   /**
    * Map profiles table record to User interface
    */
-  private mapProfileToUser(profile: any): User {
+  private mapProfileToUser(profile: unknown): User {
     return {
       id: profile.id,
       email: profile.email,
@@ -515,7 +515,7 @@ export class SupabaseAuthAdapter {
   /**
    * Calculate risk score for security events
    */
-  private calculateRiskScore(type: string, details: Record<string, any>): number {
+  private calculateRiskScore(type: string, details: Record<string, unknown>): number {
     switch (type) {
       case "failed_login":
         return details.reason === "user_not_found" ? 3 : 5;

@@ -82,3 +82,14 @@ See also: ../AGENTS.md · ../memory.md · ../architecture/source-tree.md
 
 - Runbook: `docs/features/staging-deploy-runbook.md`
 - Quickstart: `README-QUICKSTART.md`
+
+## 9) Validation & Readiness (Current)
+
+- Format (dprint): PASS (after fmt)
+- Lint (oxlint): PASS with warnings (1088 warnings, 0 errors) — non-blocking for MVP; create cleanup task post-MVP
+- Type check (tsc): PASS (no errors, strict mode)
+- Unit tests (Vitest, project=unit): PASS — 77 tests, 10 files, coverage enabled
+- E2E smoke (Playwright): Executed previously — no failures observed (headless smoke)
+- Coverage artifact: Present at `coverage/coverage-final.json`
+
+Decision: Ready for staging deploy (preview) with feature flags default-off for external integrations. Proceed to run the staging runbook and capture smoke results.

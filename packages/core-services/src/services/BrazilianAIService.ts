@@ -53,6 +53,12 @@ export interface EnhancedChatResponse extends ChatResponse {
   message: ChatMessage; // Ensure message is always present
 }
 
+// Narrow type for optional enhancement input to avoid any
+export interface ContextEnhancement {
+  enhancedPrompt?: string;
+  culturalAdaptations?: string[];
+}
+
 export class BrazilianAIService extends AIService {
   private readonly medicalErrorHandler = new MedicalErrorHandler();
   private readonly contextProcessor = new BrazilianHealthcareContextProcessor();
@@ -94,10 +100,6 @@ export class BrazilianAIService extends AIService {
     "limpeza de pele",
     "drenagem linfática",
   ];
-
-  constructor(config?: Partial<ServiceConfig>) {
-    super(config);
-  }
 
   /**
    * Process WhatsApp chat with Brazilian context
@@ -216,7 +218,7 @@ export class BrazilianAIService extends AIService {
    */
   async processLGPDRequest(
     requestType: "consent" | "rights" | "privacy" | "data-usage",
-    patientData: Record<string, any>,
+    patientData: Record<string, unknown>,
     context: ServiceContext,
   ): Promise<{
     response: string;
@@ -338,10 +340,10 @@ export class BrazilianAIService extends AIService {
         clinicEmergencyPhoneRaw ?? ""
       }"`;
       // Prefer service logger if available; fallback to console
-      // @ts-expect-error - logger is only present on some subclasses
-      if ((this as any).logger?.error) {
-        // @ts-expect-error - dynamic logger method on subclass
-        (this as any).logger.error(msg, { envVar: "CLINIC_EMERGENCY_PHONE" });
+      const maybeLogger =
+        (this as unknown as { logger?: { error?: (m: string, meta?: unknown) => void; }; }).logger;
+      if (maybeLogger?.error) {
+        maybeLogger.error(msg, { envVar: "CLINIC_EMERGENCY_PHONE" });
       } else {
         console.error(msg);
       }
@@ -422,10 +424,10 @@ export class BrazilianAIService extends AIService {
   ): Promise<BrazilianHealthcareContext> {
     const consent = await this.getPatientConsent(request.patientId).catch((e: unknown) => {
       const errMsg = e instanceof Error ? e.message : String(e);
-      // @ts-expect-error - logger is only present on some subclasses
-      if ((this as any).logger?.error) {
-        // @ts-expect-error - dynamic logger method on subclass
-        (this as any).logger.error("getPatientConsent failed", {
+      const maybeLogger =
+        (this as unknown as { logger?: { error?: (m: string, meta?: unknown) => void; }; }).logger;
+      if (maybeLogger?.error) {
+        maybeLogger.error("getPatientConsent failed", {
           patientId: request.patientId,
           error: errMsg,
         });
@@ -470,15 +472,22 @@ export class BrazilianAIService extends AIService {
       const consents = await svc.getPatientConsents(patientId, "system");
       const latest = (type: string) => {
         const filtered = consents.filter(
-          (c: any) => c.consentType === type && c.consentGiven === true,
+          (c: unknown) =>
+            (c as { consentType?: string; consentGiven?: boolean; }).consentType === type
+            && (c as { consentType?: string; consentGiven?: boolean; }).consentGiven === true,
         );
-        if (filtered.length === 0) return undefined;
+        if (filtered.length === 0) return;
         // Choose the consent with the most recent consentDate
-        return filtered.reduce((acc: any, cur: any) => {
-          const accTime = acc && acc.consentDate ? new Date(acc.consentDate).getTime() : -Infinity;
-          const curTime = cur && cur.consentDate ? new Date(cur.consentDate).getTime() : -Infinity;
-          return curTime > accTime ? cur : acc;
-        }, undefined as any);
+        return filtered.reduce(
+          (
+            acc: { consentDate?: string; },
+            cur: { consentDate?: string; },
+          ) => {
+            const accTime = acc?.consentDate ? new Date(acc.consentDate).getTime() : -Infinity;
+            const curTime = cur?.consentDate ? new Date(cur.consentDate).getTime() : -Infinity;
+            return curTime > accTime ? cur : acc;
+          },
+        );
       };
       return {
         dataProcessing: Boolean(latest("data_processing")),
@@ -487,10 +496,10 @@ export class BrazilianAIService extends AIService {
       };
     } catch (e) {
       const errMsg = e instanceof Error ? e.message : String(e);
-      // @ts-expect-error - logger is only present on some subclasses
-      if ((this as any).logger?.error) {
-        // @ts-expect-error - dynamic logger method on subclass
-        (this as any).logger.error("getPatientConsent threw", { error: errMsg });
+      const maybeLogger =
+        (this as unknown as { logger?: { error?: (m: string, meta?: unknown) => void; }; }).logger;
+      if (maybeLogger?.error) {
+        maybeLogger.error("getPatientConsent threw", { error: errMsg });
       } else {
         console.error("getPatientConsent threw", { error: errMsg });
       }
@@ -501,13 +510,14 @@ export class BrazilianAIService extends AIService {
   /**
    * Enhance request with template and context
    */
+
   private enhanceRequestWithTemplateAndContext(
     request: ChatRequest,
     template?: PromptTemplate | LGPDTemplate | null,
-    contextEnhancement?: any,
+    contextEnhancement?: ContextEnhancement | null,
   ): ChatRequest {
     // Use enhanced prompt from context processor if available
-    let systemPrompt = contextEnhancement?.enhancedPrompt
+    let systemPrompt = (contextEnhancement && contextEnhancement.enhancedPrompt)
       || this.brazilianSystemPrompts.whatsappExternal;
 
     // Add template-specific context if available
@@ -575,7 +585,7 @@ export class BrazilianAIService extends AIService {
   private enhanceResponseForBrazil(
     response: ChatResponse,
     template?: PromptTemplate | LGPDTemplate | null,
-    brazilianContext?: BrazilianHealthcareContext,
+    _brazilianContext?: BrazilianHealthcareContext,
   ): EnhancedChatResponse {
     return {
       ...response,

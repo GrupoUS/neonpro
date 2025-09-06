@@ -69,8 +69,11 @@ export const auditMiddleware = () => {
     // Adicionar contexto ao request para uso posterior
     c.set("auditContext", auditContext);
 
+    // Use object destructuring for repeated req properties
+    const { path, method } = c.req;
+
     // Verificar se deve pular auditoria para esta rota
-    if (shouldSkipAudit(c.req.path, c.req.method)) {
+    if (shouldSkipAudit(path, method)) {
       await next();
       return;
     }
@@ -86,7 +89,7 @@ export const auditMiddleware = () => {
       statusCode = c.res.status;
 
       // Capturar corpo da resposta se necessário
-      if (shouldCaptureResponseBody(c.req.path, c.req.method)) {
+      if (shouldCaptureResponseBody(path, method)) {
         try {
           const responseText = await c.res.clone().text();
           if (responseText) {
@@ -125,8 +128,8 @@ async function logAuditEvent(
   responseInfo: ResponseInfo,
 ): Promise<void> {
   try {
-    const method = c.req.method;
-    const path = c.req.path;
+    // Use object destructuring for req properties
+    const { method, path } = c.req;
     const query = c.req.query();
 
     // Determinar ação baseada no método HTTP e rota
@@ -526,8 +529,8 @@ function mapSeverityToString(severity: AuditSeverity): "INFO" | "WARNING" | "ERR
  */
 export const auditAuthMiddleware = () => {
   return async (c: Context, next: Next) => {
-    const path = c.req.path;
-    const method = c.req.method;
+    // Use destructuring here as well
+    const { path, method } = c.req;
 
     if (path.includes("/login") || path.includes("/logout")) {
       const startTime = Date.now();

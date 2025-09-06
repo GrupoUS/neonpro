@@ -234,7 +234,7 @@ export class UnifiedAuditService {
       this.recordPerformanceMetrics(processingTime);
 
       // TODO: integrate with centralized logger
-      // console.error("Failed to log audit event:", error);
+      // // console.error("Failed to log audit event:", error);
       return null;
     }
   }
@@ -438,7 +438,7 @@ export class UnifiedAuditService {
       // Success: reset retry counter
       this.auditFlushRetries = 0;
     } catch (_error) {
-      // console.error("Failed to flush audit buffer:", _error);
+      // // console.error("Failed to flush audit buffer:", _error);
       // Re-add events to buffer for retry
       this.eventBuffer.unshift(...events);
       // Schedule capped exponential backoff retry and restore batch timer
@@ -550,7 +550,7 @@ export class UnifiedAuditService {
         totalCount: count || 0,
       };
     } catch (_error) {
-      // console.error("Failed to query audit events:", error);
+      // // console.error("Failed to query audit events:", error);
       return { events: [], totalCount: 0 };
     }
   }
@@ -613,7 +613,7 @@ export class UnifiedAuditService {
 
       return data?.length || 0;
     } catch (_error) {
-      // console.error("Failed to cleanup audit events:", error);
+      // // console.error("Failed to cleanup audit events:", error);
       return 0;
     }
   }
@@ -766,10 +766,10 @@ export class UnifiedAuditService {
         .lt("timestamp", cutoffDate.toISOString());
 
       if (error) {
-        // console.error("Retention cleanup failed:", error);
+        // // console.error("Retention cleanup failed:", error);
       }
     } catch (_error) {
-      // console.error("Retention cleanup error:", error);
+      // // console.error("Retention cleanup error:", error);
     }
   }
 

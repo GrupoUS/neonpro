@@ -60,16 +60,7 @@
     "**/*.ts",
     "**/*.tsx",
     "next-env.d.ts",
-    ".next/types/**/*.ts",
-
-    // Allow package sources used by path aliases (read-only for type-check)
-    "../../packages/security/src/**/*.ts",
-    "../../packages/security/src/**/*.tsx",
-    "../../packages/ui/src/**/*.ts",
-    "../../packages/ui/src/**/*.tsx",
-    "../../packages/utils/src/**/*.ts",
-    "../../packages/utils/src/**/*.tsx",
-    "../../packages/types/src/**/*.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

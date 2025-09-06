@@ -52,6 +52,8 @@
     "type-check": "tsc --noEmit",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix",
+    "format": "dprint fmt",
+    "format:check": "dprint check",
     "test": "vitest --run",
     "test:watch": "vitest",
     "coverage": "vitest --run --coverage"

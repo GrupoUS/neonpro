@@ -259,7 +259,7 @@ export class TemplateManager {
       "/": "&#x2F;",
       "`": "&#x60;",
     };
-    return text.replace(/[&<>"'`\/]/g, (ch) => map[ch] || ch);
+    return text.replace(/[&<>"'`/]/g, (ch) => map[ch] || ch);
   }
 
   /**

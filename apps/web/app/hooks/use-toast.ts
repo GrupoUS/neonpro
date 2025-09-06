@@ -23,7 +23,7 @@ export const useToast = () => {
   const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const toast = useCallback((options: ToastOptions) => {
-    const id = Math.random().toString(36).substr(2, 9);
+    const id = Math.random().toString(36).slice(2, 9);
     const newToast: Toast = {
       id,
       ...options,
