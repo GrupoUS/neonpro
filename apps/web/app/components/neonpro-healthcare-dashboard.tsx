@@ -36,7 +36,7 @@ import {
   TabsContent,
   Textarea,
 } from "@neonpro/ui";
-import format from "date-fns/format";
+import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 

@@ -85,7 +85,7 @@ interface WhatsAppMessage {
   timestamp: string;
   type?: string;
   text?: { body?: string; };
-  media?: Array<{ caption?: string; }> | { caption?: string; } | undefined;
+  media?: { caption?: string; }[] | { caption?: string; } | undefined;
   image?: { caption?: string; } | undefined;
   video?: { caption?: string; } | undefined;
   caption?: string | undefined;

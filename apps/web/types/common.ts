@@ -119,9 +119,9 @@ export interface AgentResponse {
 }
 
 // =============================================================================
-// SPEECH RECOGNITION TYPES
+// SPEECH RECOGNITION TYPES (disabled for MVP)
 // =============================================================================
-
+/*
 // Provide minimal ambient declarations for Node/test environments
 // so references compile even when the API isn't available.
 declare global {
@@ -159,6 +159,7 @@ export interface SpeechRecognitionConfig {
   lang: string;
   grammars?: SpeechGrammarList;
 }
+*/
 
 // =============================================================================
 // HEALTHCARE-SPECIFIC AGENT CONTEXT

@@ -218,7 +218,7 @@ describe("MedicalErrorHandler", () => {
     it("should consider patient age in risk assessment", () => {
       const query = "Gostaria de fazer um procedimento estético";
 
-      const youngPatient = handler.validateMedicalQuery(query, {
+      const _youngPatient = handler.validateMedicalQuery(query, { // Unused variable
         communicationChannel: "whatsapp",
         patientAge: 25,
       });

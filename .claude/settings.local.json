@@ -19,7 +19,9 @@
       "mcp__serena__search_for_pattern",
       "mcp__serena__find_file",
       "mcp__serena__find_symbol",
-      "mcp__desktop-commander__read_process_output"
+      "mcp__desktop-commander__read_process_output",
+      "mcp__desktop-commander__start_search",
+      "mcp__desktop-commander__get_more_search_results"
     ]
   },
   "allowedToolsUnguarded": [

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import type { SchedulingAnalytics, TimeSlotEfficiency } from "@neonpro/core-services/scheduling";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";

@@ -9,7 +9,7 @@ import { EnhancedServiceBase } from "../EnhancedServiceBase";
 import type { ServiceConfig } from "../EnhancedServiceBase";
 
 // Mock implementation for testing
-class TestEnhancedService extends EnhancedServiceBase {
+class _TestEnhancedService extends EnhancedServiceBase { // Unused class
   constructor() {
     const config: ServiceConfig = {
       serviceName: "test-service",

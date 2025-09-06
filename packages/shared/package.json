@@ -62,7 +62,7 @@
     "@neonpro/database": "workspace:*",
     "@supabase/supabase-js": "^2.55.0",
     "@tanstack/react-query": "^5.51.23",
-    "hono": "^4.5.8",
+    "hono": "^4.9.6",
     "jsonwebtoken": "^9.0.2",
     "react": "^19.1.1",
     "zod": "^3.23.8"

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Automated Drift Monitoring Cron Job
  *
@@ -43,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     // Log execution results
     const supabase = await createClient();
-    await supabase.from<AuditEventInsert>("audit_events").insert({
+    await supabase.from("audit_events").insert({
       event_type: "automated_drift_monitoring",
       table_name: "ai_models",
       record_id: undefined,
@@ -136,7 +135,7 @@ export async function GET(request: NextRequest) {
     // Log failure for debugging
     try {
       const supabase = await createClient();
-      await supabase.from<AuditEventInsert>("audit_events").insert({
+      await supabase.from("audit_events").insert({
         event_type: "drift_monitoring_failure",
         table_name: "ai_models",
         record_id: undefined,

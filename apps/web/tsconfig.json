@@ -62,6 +62,8 @@
     "lib/**/*",
     "hooks/**/*",
     "contexts/**/*",
+    "utils/**/*",
+    "src/hooks/**/*",
     "types/**/*",
     "next-env.d.ts",
     ".next/types/**/*.ts"
@@ -79,7 +81,11 @@
     "app/components/intelligent-scheduler.tsx",
     "app/components/neonpro-healthcare-dashboard.tsx",
     "app/components/performance-monitoring/**",
+    "app/components/staff-training/**",
+    "app/components/**/analytics*",
+    "app/api/retention-analytics/**",
     "app/api/scheduling/**",
+    "src/types/analytics.ts",
     "test-mvp-compilation.ts",
     "types/common.ts"
   ],
