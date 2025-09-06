@@ -185,6 +185,7 @@
       "outputs": [
         "coverage/**",
         "tools/testing/reports/**",
+        "junit.xml",
         ".vitest/**",
         "node_modules/.vitest/**"
       ],

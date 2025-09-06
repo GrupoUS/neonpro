@@ -74,9 +74,10 @@ vi.mock("@neonpro/shared", () => ({
   },
 }));
 
-vi.mock("../src/services/AIService", () => ({
-  AIService: vi.fn().mockImplementation(() => ({
-    processChat: vi.fn().mockResolvedValue({
+vi.mock("../src/services/AIService", async () => {
+  const actual = await vi.importActual<any>("../src/services/AIService");
+  class MockAIService extends actual.AIService {
+    processChat = vi.fn().mockResolvedValue({
       id: "test_response",
       message: {
         id: "test_msg",
@@ -86,10 +87,11 @@ vi.mock("../src/services/AIService", () => ({
       },
       usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30 },
       metadata: { model: "gpt-4", responseTime: 100, cached: false },
-    }),
-    executeOperation: vi.fn().mockImplementation((name, fn) => fn()),
-  })),
-}));
+    });
+    executeOperation = vi.fn().mockImplementation((_name: string, fn: any) => fn());
+  }
+  return { AIService: MockAIService };
+});
 
 describe("BrazilianAIService", () => {
   let service: BrazilianAIService;

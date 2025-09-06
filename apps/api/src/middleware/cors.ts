@@ -25,11 +25,6 @@ const CACHE_DURATION = {
   NONE: 0, // No caching for sensitive endpoints
 } as const;
 
-// HTTP status codes
-const HTTP_STATUS = {
-  NO_CONTENT: 204,
-} as const;
-
 // Regex patterns imported from constants module for performance
 
 // Environment-based CORS configuration
@@ -221,7 +216,7 @@ export const corsMiddleware = (): MiddlewareHandler[] => {
   const corsPolicy = getCorsPolicyByEnvironment();
 
   // Enhanced origin validation
-  const originValidator = (origin: string, c: Context): string | null => {
+  const originValidator = (origin: string, _c: Context): string | null => {
     // If no origin (same-origin requests), allow
     if (!origin) {
       return origin;
@@ -333,7 +328,7 @@ export const corsUtils = {
  */
 export const strictCors = (): MiddlewareHandler => {
   return cors({
-    origin: (origin, c) => {
+    origin: (origin, _c) => {
       // Only allow same-origin requests for highly sensitive endpoints
       return !origin ? origin : null; // No origin = same-origin request
     },

@@ -7,21 +7,12 @@
  */
 
 import { motion } from "framer-motion";
-import {
-  Archive,
-  CheckCheck,
-  Clock,
-  Filter,
-  MessageCircle,
-  MoreVertical,
-  Pin,
-  Search,
-} from "lucide-react";
+import { Archive, Filter, MessageCircle, MoreVertical, Pin, Search } from "lucide-react";
 import type React from "react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 // UI Components
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -40,7 +31,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 
 // Hooks and utilities
 import { cn } from "@/lib/utils";

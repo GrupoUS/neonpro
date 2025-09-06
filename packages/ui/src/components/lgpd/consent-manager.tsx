@@ -116,45 +116,47 @@ export function ConsentManager() {
     }
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category.toLowerCase()) {
-      case "essential": {
-        return <Shield className="h-4 w-4 text-green-600" />;
-      }
-      case "functional": {
-        return <Check className="h-4 w-4 text-blue-600" />;
-      }
-      case "analytics": {
-        return <Clock className="h-4 w-4 text-yellow-600" />;
-      }
-      case "marketing": {
-        return <AlertTriangle className="h-4 w-4 text-orange-600" />;
-      }
-      default: {
-        return <Shield className="h-4 w-4 text-gray-600" />;
-      }
-    }
-  };
+  // TODO: Implement category icons
+  // const getCategoryIcon = (category: string) => {
+  //   switch (category.toLowerCase()) {
+  //     case "essential": {
+  //       return <Shield className="h-4 w-4 text-green-600" />;
+  //     }
+  //     case "functional": {
+  //       return <Check className="h-4 w-4 text-blue-600" />;
+  //     }
+  //     case "analytics": {
+  //       return <Clock className="h-4 w-4 text-yellow-600" />;
+  //     }
+  //     case "marketing": {
+  //       return <AlertTriangle className="h-4 w-4 text-orange-600" />;
+  //     }
+  //     default: {
+  //       return <Shield className="h-4 w-4 text-gray-600" />;
+  //     }
+  //   }
+  // };
 
-  const getCategoryColorClass = (category: string): string => {
-    switch (category.toLowerCase()) {
-      case "essential": {
-        return "bg-green-100 text-green-800";
-      }
-      case "functional": {
-        return "bg-blue-100 text-blue-800";
-      }
-      case "analytics": {
-        return "bg-yellow-100 text-yellow-800";
-      }
-      case "marketing": {
-        return "bg-orange-100 text-orange-800";
-      }
-      default: {
-        return "bg-gray-100 text-gray-800";
-      }
-    }
-  };
+  // TODO: Implement category color classes
+  // const getCategoryColorClass = (category: string): string => {
+  //   switch (category.toLowerCase()) {
+  //     case "essential": {
+  //       return "bg-green-100 text-green-800";
+  //     }
+  //     case "functional": {
+  //       return "bg-blue-100 text-blue-800";
+  //     }
+  //     case "analytics": {
+  //       return "bg-yellow-100 text-yellow-800";
+  //     }
+  //     case "marketing": {
+  //       return "bg-orange-100 text-orange-800";
+  //     }
+  //     default: {
+  //       return "bg-gray-100 text-gray-800";
+  //     }
+  //   }
+  // };
 
   if (loading) {
     return (

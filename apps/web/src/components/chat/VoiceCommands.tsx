@@ -12,15 +12,11 @@ import {
   Bot,
   Languages,
   Mic,
-  MicOff,
   Pause,
   Play,
   Send,
   Square,
   Trash2,
-  Volume2,
-  VolumeX,
-  Waveform,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -76,8 +72,8 @@ export interface VoiceCommandsProps {
 
 export function VoiceCommands({
   onVoiceMessage,
-  healthcareContext,
-  userType,
+  healthcareContext: _healthcareContext,
+  userType: _userType,
   emergencyMode = false,
   maxDuration = 300, // 5 minutes
   enableTranscription = true,
@@ -85,8 +81,11 @@ export function VoiceCommands({
   className,
   disabled = false,
 }: VoiceCommandsProps) {
+  const _unusedHealthcareContext = _healthcareContext;
+  const _unusedUserType = _userType;
   // Recording state
   const [isRecording, setIsRecording] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPaused, setIsPaused] = useState(false);
   const [currentRecording, setCurrentRecording] = useState<VoiceRecording | null>(null);
   const [recordingDuration, setRecordingDuration] = useState(0);
@@ -395,24 +394,24 @@ export function VoiceCommands({
         setIsTranscribing(false);
       }
     },
-    [enableTranscription, emergencyMode, enableMedicalTerms],
+    [enableTranscription, emergencyMode, enableMedicalTerms, extractMedicalTerms],
   );
 
   /**
    * Detect emergency keywords in transcription
    */
-  const detectEmergencyKeywords = (text: string): boolean => {
+  const detectEmergencyKeywords = useCallback((text: string): boolean => {
     const lowercaseText = text.toLowerCase();
     return EMERGENCY_KEYWORDS.some((keyword) => lowercaseText.includes(keyword));
-  };
+  }, []);
 
   /**
    * Extract medical terminology from transcription
    */
-  const extractMedicalTerms = (text: string): string[] => {
+  const extractMedicalTerms = useCallback((text: string): string[] => {
     const lowercaseText = text.toLowerCase();
     return MEDICAL_TERMS.filter((term) => lowercaseText.includes(term));
-  };
+  }, []);
 
   /**
    * Play recorded audio
@@ -426,9 +425,9 @@ export function VoiceCommands({
       const audioUrl = URL.createObjectURL(currentRecording.blob);
       const audio = new Audio(audioUrl);
 
-      audio.onloadedmetadata = () => {
+      const onLoadedMetadata = () => {
         setIsPlaying(true);
-        audio.play();
+        void audio.play();
 
         // Start playback timer
         playbackTimerRef.current = setInterval(() => {
@@ -436,7 +435,7 @@ export function VoiceCommands({
         }, 100);
       };
 
-      audio.onended = () => {
+      const onEnded = () => {
         setIsPlaying(false);
         setPlaybackTime(0);
         if (playbackTimerRef.current) {
@@ -444,12 +443,19 @@ export function VoiceCommands({
           playbackTimerRef.current = null;
         }
         URL.revokeObjectURL(audioUrl);
+        audio.removeEventListener("ended", onEnded);
+        audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+        audio.removeEventListener("error", onError);
       };
 
-      audio.onerror = () => {
+      const onError = () => {
         toast.error("Erro ao reproduzir áudio");
         setIsPlaying(false);
       };
+
+      audio.addEventListener("loadedmetadata", onLoadedMetadata);
+      audio.addEventListener("ended", onEnded);
+      audio.addEventListener("error", onError);
 
       playbackAudioRef.current = audio;
     } catch (error) {

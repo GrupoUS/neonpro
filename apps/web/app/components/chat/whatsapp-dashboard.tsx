@@ -6,7 +6,7 @@
  * Mobile-first responsive design for Brazilian healthcare providers
  */
 
-import { motion } from "framer-motion";
+// framer-motion not used in this dashboard
 import {
   AlertCircle,
   BarChart3,
@@ -75,9 +75,7 @@ export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
     selectedConversation,
     isLoading,
     isLoadingMessages,
-    isSending,
     error,
-    loadConversations,
     sendMessage,
     selectConversation,
     markAsRead,

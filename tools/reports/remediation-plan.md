@@ -61,3 +61,24 @@ Progress 2025-09-06:
   - Fixed lint in apps/api/src/middleware/error-handler.ts: converted `type ErrorLike` → `interface ErrorLike`, `errors?: Array<any>` → `any[]`.
   - Ran full code check: 0 errors, warnings unchanged. Repo green.
 - PR-Docs: Standardized code fences in docs/architecture/aesthetic-platform-flows.md to ```ts; ran dprint fmt and full code check. Verified no remaining ```typescript|tsx|js fences via content search. Repo remains green (0 errors).
+
+## PR-002 Update — ts-comment lint cleanup (2025-09-06)
+- Replaced all remaining `@ts-ignore` with `@ts-expect-error` and added concise reasons in:
+  - `packages/core-services/src/services/BrazilianAIService.ts`
+  - `tools/testing/tests/accessibility/accessibility-demo.spec.ts`
+  - `apps/web/tests/components/ui/button.test.tsx`
+- Ran full code check (format + lint + type-check): 0 errors, warnings remain acceptable.
+- Next: continue PR-002 hygiene in chat components and WhatsApp route (imports, unused vars, addEventListener fixes) and re-run checks.
+
+## PR-002 Completion — chat + WhatsApp route + UI tests (2025-09-06)
+- Chat/WhatsApp hygiene:
+  - apps/api/src/routes/whatsapp.ts: tightened types, replaced obvious any→unknown, underscored unused params.
+  - apps/web/app/components/chat/*: removed unused imports/vars; minor hook deps review (no behavior change).
+- Testing enablement:
+  - Fixed vitest.config.ts alias array syntax (missing commas). Unit tests now run.
+  - Ran unit tests (project=unit) with coverage: 10 files, 77 tests — all passed.
+- Repo validation:
+  - npx dprint fmt → clean
+  - npx oxlint . → ~1366 warnings, 0 errors (baseline warnings outside PR scope)
+  - npx tsc --noEmit --skipLibCheck → OK
+- Status: PR-002 ready for review (functional parity maintained, safe to revert).

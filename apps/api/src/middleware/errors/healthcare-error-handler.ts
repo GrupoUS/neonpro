@@ -14,7 +14,7 @@ import { auditService } from "../../services/audit.service";
 export function healthcareErrorHandler() {
   return async (c: Context, next: () => Promise<void>) => {
     try {
-      await next();
+      return await next();
     } catch (error) {
       const healthcareError = await handleHealthcareError(error, c);
       return createErrorResponse(c, healthcareError);
@@ -138,7 +138,7 @@ async function logLGPDComplianceError(error: HealthcareError): Promise<void> {
 
   try {
     await auditService.logEvent({
-      action: "failed_data_access",
+      action: "DATA_ACCESS",
       resourceType: "patient_data",
       resourceId: error.context.patientId,
       userId: error.context.userId,
@@ -214,14 +214,12 @@ function createErrorResponse(c: Context, error: HealthcareError): Response {
 
   // Add additional context for specific error types
   if (error.patientImpact) {
-    errorResponse.error = {
-      ...errorResponse.error,
-      patientDataInvolved: true,
-      complianceNotification: "Security team has been automatically notified",
-    };
+    (errorResponse.error as any).patientDataInvolved = true;
+    (errorResponse.error as any).complianceNotification =
+      "Security team has been automatically notified";
   }
 
-  return c.json(errorResponse, statusCode);
+  return c.json(errorResponse, statusCode as any);
 }
 
 /**

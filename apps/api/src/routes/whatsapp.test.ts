@@ -3,7 +3,7 @@
  * Tests for WhatsApp Business API webhook endpoints and message processing
  */
 
-import { BrazilianAIService } from "@neonpro/core-services/services/BrazilianAIService";
+import { BrazilianAIService } from "@neonpro/core-services";
 import { testClient } from "hono/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { whatsappRoutes } from "./whatsapp";
@@ -42,7 +42,7 @@ const mockBrazilianAIService = {
   }),
 };
 
-vi.mock("@neonpro/core-services/services/BrazilianAIService", () => ({
+vi.mock("@neonpro/core-services", () => ({
   BrazilianAIService: vi.fn(() => mockBrazilianAIService),
 }));
 

@@ -67,7 +67,8 @@ async function setupSupabaseTest() {
   try {
     // Test Supabase connection
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const { data, error } = await supabase
+    const { error } = await supabase
+      // const { data, error } = await supabase // TODO: Use data for validation
       .from("_health_check")
       .select("*")
       .limit(1);

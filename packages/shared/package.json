@@ -36,6 +36,11 @@
       "types": "./dist/src/schemas/index.d.ts",
       "import": "./dist/src/schemas/index.js",
       "require": "./dist/src/schemas/index.js"
+    },
+    "./templates": {
+      "types": "./dist/src/templates/index.d.ts",
+      "import": "./dist/src/templates/index.js",
+      "require": "./dist/src/templates/index.js"
     }
   },
   "files": [

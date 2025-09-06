@@ -1,5 +1,6 @@
 import type { CircuitBreakerConfig } from "./healthcare-circuit-breaker";
-import { CircuitBreakerState, HealthcareCircuitBreaker } from "./healthcare-circuit-breaker";
+import { HealthcareCircuitBreaker } from "./healthcare-circuit-breaker";
+// import { CircuitBreakerState } from "./healthcare-circuit-breaker"; // TODO: Use for state management
 import type { ServiceDegradationConfig } from "./service-degradation";
 import { healthcareServiceDegradations } from "./service-degradation";
 

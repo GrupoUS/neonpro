@@ -2,7 +2,8 @@ import type { Context, Next } from "hono";
 import { getCookie } from "hono/cookie";
 import { verify } from "hono/jwt";
 import { auditService } from "../services/audit.service";
-import type { AuditContext, AuditEvent } from "../types/audit";
+import type { AuditContext } from "../types/audit";
+// import type { AuditEvent } from "../types/audit"; // TODO: Use for typing
 import { AuditAction, AuditSeverity, ResourceType } from "../types/audit";
 
 // Type definitions for audit middleware

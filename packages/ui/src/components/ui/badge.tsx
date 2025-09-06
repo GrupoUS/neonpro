@@ -14,7 +14,7 @@ import {
 import type * as React from "react";
 import { forwardRef } from "react";
 import { cn } from "../../lib/utils";
-import { getVariant } from "../../types/badge-functions";
+// import { getVariant } from "../../types/badge-functions"; // TODO: Use for variant logic
 
 const badgeVariants = cva(
   "inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold text-xs backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",

@@ -17,7 +17,7 @@ export default defineConfig({
         singleThread: true,
       },
     },
-    reporters: ["default"],
+    reporters: ["default", "../../.vitest-reporters/junit.cjs"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],

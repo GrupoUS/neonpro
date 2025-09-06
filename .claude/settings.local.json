@@ -1,4 +1,15 @@
 {
+  "permissions": {
+    "allow": [
+      "mcp__desktop-commander__force_terminate",
+      "mcp__Sequential_Thinking__sequentialthinking",
+      "mcp__archon__get_project",
+      "mcp__serena__list_dir",
+      "mcp__desktop-commander__read_file",
+      "mcp__archon__list_tasks",
+      "mcp__archon__create_task"
+    ]
+  },
   "allowedToolsUnguarded": [
     "mcp__archon__create_project",
     "mcp__archon__list_projects",
@@ -86,10 +97,5 @@
         }
       }
     }
-  ],
-  "permissions": {
-    "allow": [
-      "mcp__desktop-commander__force_terminate"
-    ]
-  }
+  ]
 }

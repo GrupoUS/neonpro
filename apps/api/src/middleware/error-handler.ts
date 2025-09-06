@@ -215,11 +215,11 @@ const logError = (error: unknown, context: Context): void => {
 
   // Log using centralized logger
   logger.error("API Error occurred", error, {
-    endpoint: sanitizedLog?.endpoint,
-    method: sanitizedLog?.method,
-    statusCode: sanitizedLog?.statusCode,
-    errorType: sanitizedLog?.type,
-    requestId: sanitizedLog?.requestId,
+    endpoint: sanitizedLog?.endpoint as string | undefined,
+    method: sanitizedLog?.method as string | undefined,
+    statusCode: sanitizedLog?.statusCode as number | undefined,
+    errorType: sanitizedLog?.type as string | undefined,
+    requestId: sanitizedLog?.requestId as string | undefined,
   });
 };
 
@@ -385,7 +385,7 @@ export const errorHandler: ErrorHandler = (error, context) => {
   context.res.headers.set("X-Frame-Options", "DENY");
 
   // Return structured error response
-  return context.json(response, statusCode);
+  return context.json(response, statusCode as any);
 };
 
 /**

@@ -9,7 +9,7 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts", "./src/test-setup.ts"],
     globals: true,
     css: true,
-    reporters: ["default"],
+    reporters: ["default", "../../.vitest-reporters/junit.cjs"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],

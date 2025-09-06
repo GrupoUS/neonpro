@@ -511,7 +511,8 @@ export function HealthcareDesignSystem({
   theme = "light",
   className,
 }: HealthcareDesignSystemProps) {
-  const [currentTheme, _setCurrentTheme] = useState(theme);
+  const [currentTheme] = useState(theme);
+  // const _setCurrentTheme = useState(theme)[1]; // TODO: Implement theme switching
 
   useEffect(() => {
     document.documentElement.setAttribute(

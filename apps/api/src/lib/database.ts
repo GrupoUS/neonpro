@@ -27,8 +27,8 @@ export const db = {
   async healthCheck(): Promise<DatabaseHealthCheck> {
     try {
       const start = Date.now();
-      // Call lightweight RPC for connectivity check
-      const { error } = await serverSupabaseClient.rpc('health_check');
+      // Call canonical lightweight RPC for connectivity check
+      const { data: _version, error } = await serverSupabaseClient.rpc('db_version');
       const latency = Date.now() - start;
       
       return {

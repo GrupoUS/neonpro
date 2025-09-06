@@ -45,6 +45,7 @@
     "**/tools/e2e/reports/**",
     "**/tools/reports/**",
     "**/test-results/**",
+    "**/.vitest-reporters/**",
     "**/performance-report.json",
     "**/load-test-report.json",
     "archon/**",

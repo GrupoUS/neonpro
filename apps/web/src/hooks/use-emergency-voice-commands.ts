@@ -445,7 +445,7 @@ export function useEmergencyVoiceCommands({
       setSynthesis(prev => ({ ...prev, isSpeaking: false }));
     };
 
-    utterance.onerror = (error) => {
+    const handleUtteranceError = (error: SpeechSynthesisErrorEvent) => {
       setSynthesis(prev => ({ ...prev, isSpeaking: false }));
       toast({
         title: "Erro na Síntese de Voz",
@@ -453,6 +453,8 @@ export function useEmergencyVoiceCommands({
         variant: "destructive",
       });
     };
+
+    utterance.addEventListener("error", handleUtteranceError);
 
     synthRef.current.speak(utterance);
   }, [synthesis.isSupported, synthesis.isSpeaking, synthesis.selectedVoice, language, toast]);

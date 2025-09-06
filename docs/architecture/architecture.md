@@ -20,10 +20,11 @@ This unified approach combines what would traditionally be separate backend and 
 
 ### Change Log
 
-| Date       | Version | Description                                             | Author           |
-| ---------- | ------- | ------------------------------------------------------- | ---------------- |
-| 2025-09-06 | 2.0.0   | Enhanced with fullstack architecture template structure | AI IDE Agent     |
-| 2024-12-01 | 1.0.0   | Initial architecture document                           | Development Team |
+| Date       | Version | Description                                                   | Author           |
+| ---------- | ------- | ------------------------------------------------------------- | ---------------- |
+| 2025-09-06 | 2.1.0   | Aligned with real 8-package MVP structure and Turborepo 2.5.6 | AI IDE Agent     |
+| 2025-09-06 | 2.0.0   | Enhanced with fullstack architecture template structure       | AI IDE Agent     |
+| 2024-12-01 | 1.0.0   | Initial architecture document                                 | Development Team |
 
 ## High Level Architecture
 
@@ -1053,42 +1054,44 @@ export const api = new HealthcareAPIClient();
 
 #### Service Example
 
-````typescript
-import { api } from '@/lib/api-client';
-import { useAuditLogging } from '@/hooks/useAuditLogging';
+```typescript
+import { useAuditLogging } from "@/hooks/useAuditLogging";
+import { api } from "@/lib/api-client";
 
 export function usePatientService() {
   const { logPatientAccess } = useAuditLogging();
 
   const getPatient = async (id: string) => {
-    await logPatientAccess(id, 'VIEW_PATIENT_PROFILE');
+    await logPatientAccess(id, "VIEW_PATIENT_PROFILE");
     return api.patients.get(id);
   };
 
   const updatePatient = async (id: string, updates: UpdatePatientRequest) => {
-    await logPatientAccess(id, 'MODIFY_PATIENT_DATA', { changes: updates });
+    await logPatientAccess(id, "MODIFY_PATIENT_DATA", { changes: updates });
     return api.patients.update(id, updates);
   };
 
   const createPatient = async (data: CreatePatientRequest) => {
     const patient = await api.patients.create(data);
-    await logPatientAccess(patient.id, 'CREATE_PATIENT_PROFILE');
+    await logPatientAccess(patient.id, "CREATE_PATIENT_PROFILE");
     return patient;
   };
 
   return {
     getPatient,
     updatePatient,
-    createPatient
+    createPatient,
   };
 }
-```## Backend Architecture
+```
+
+## Backend Architecture
 
 ### Service Architecture
 
 #### Function Organization
-````
 
+```
 supabase/functions/
 ├── ai-chat/ # AI chat functionality
 │ ├── index.ts # Main chat handler
@@ -1110,16 +1113,16 @@ supabase/functions/
 ├── auth.ts # Authentication helpers
 ├── validation.ts # Data validation schemas
 └── error-handler.ts # Centralized error handling
+```
 
-````
 #### Function Template
 
 ```typescript
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders } from '../shared/cors.ts';
-import { validateRequest } from '../shared/validation.ts';
-import { handleError } from '../shared/error-handler.ts';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { corsHeaders } from "../shared/cors.ts";
+import { handleError } from "../shared/error-handler.ts";
+import { validateRequest } from "../shared/validation.ts";
 
 interface RequestBody {
   // Define request structure
@@ -1131,29 +1134,29 @@ interface ResponseBody {
 
 serve(async (req) => {
   // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
     // Validate request
     const body = await validateRequest<RequestBody>(req);
-    
+
     // Initialize Supabase client
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
       {
         global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
+          headers: { Authorization: req.headers.get("Authorization")! },
         },
-      }
+      },
     );
 
     // Verify authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
-      throw new Error('Unauthorized');
+      throw new Error("Unauthorized");
     }
 
     // Business logic here
@@ -1164,16 +1167,15 @@ serve(async (req) => {
     return new Response(
       JSON.stringify(result),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
-      }
+      },
     );
-
   } catch (error) {
     return handleError(error);
   }
 });
-````
+```
 
 ### Database Architecture
 
@@ -1381,10 +1383,10 @@ sequenceDiagram
 
 #### Middleware/Guards
 
-`````typescript
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+```typescript
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
@@ -1396,26 +1398,26 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   // Protect dashboard routes
-  if (req.nextUrl.pathname.startsWith('/dashboard')) {
+  if (req.nextUrl.pathname.startsWith("/dashboard")) {
     if (!session) {
-      return NextResponse.redirect(new URL('/login', req.url));
+      return NextResponse.redirect(new URL("/login", req.url));
     }
 
     // Check professional status
     const { data: professional } = await supabase
-      .from('professionals')
-      .select('is_active, professional_type, clinic_id')
-      .eq('user_id', session.user.id)
+      .from("professionals")
+      .select("is_active, professional_type, clinic_id")
+      .eq("user_id", session.user.id)
       .single();
 
     if (!professional || !professional.is_active) {
-      return NextResponse.redirect(new URL('/unauthorized', req.url));
+      return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
     // Add professional context to headers
     const requestHeaders = new Headers(req.headers);
-    requestHeaders.set('x-user-role', professional.professional_type);
-    requestHeaders.set('x-clinic-id', professional.clinic_id);
+    requestHeaders.set("x-user-role", professional.professional_type);
+    requestHeaders.set("x-clinic-id", professional.clinic_id);
 
     return NextResponse.next({
       request: {
@@ -1428,7 +1430,7 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/api/:path*'],
+  matcher: ["/dashboard/:path*", "/api/:path*"],
 };
 ```
 
@@ -1566,6 +1568,7 @@ neonpro/
 **From Complex to Simple**: The project underwent package simplification from 24+ packages to 8 essential packages for MVP deployment:
 
 **Removed Packages** (consolidated or eliminated):
+
 - `@neonpro/devops` - DevOps tooling (manual deployment for MVP)
 - `@neonpro/docs` - Documentation generation (manual docs)
 - `@neonpro/performance` - Performance monitoring (basic monitoring)
@@ -1577,6 +1580,7 @@ neonpro/
 - `@neonpro/domain` - Consolidated into `@neonpro/types`
 
 **Benefits of Simplification**:
+
 - 54% reduction in package complexity
 - Faster build times and development workflow
 - Easier maintenance and dependency management
@@ -1660,7 +1664,7 @@ pnpm clean
 
 #### Required Environment Variables
 
-````bash
+```bash
 # Frontend (.env.local)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
@@ -1688,17 +1692,21 @@ SENTRY_DSN=your-sentry-dsn (optional)
 DATABASE_URL=postgresql://postgres:[password]@db.your-project.supabase.co:5432/postgres
 NEXTAUTH_SECRET=your-nextauth-secret
 NEXTAUTH_URL=http://localhost:3000
-```## Deployment Architecture
+```
+
+## Deployment Architecture
 
 ### Deployment Strategy
 
 **Frontend Deployment:**
+
 - **Platform**: Vercel Edge Network
 - **Build Command**: `pnpm build`
 - **Output Directory**: `.next`
 - **CDN/Edge**: Automatic edge caching with South America priority
 
 **Backend Deployment:**
+
 - **Platform**: Vercel Functions (Hono API)
 - **Build Command**: `supabase functions deploy`
 - **Deployment Method**: Serverless functions with Deno runtime
@@ -1722,17 +1730,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-      
+          cache: "pnpm"
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: Run tests
         run: pnpm test:ci
-      
+
       - name: Run type check
         run: pnpm type-check
-      
+
       - name: Run linting
         run: pnpm lint
 
@@ -1747,7 +1755,7 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"
 
   deploy-backend:
     needs: test
@@ -1758,13 +1766,13 @@ jobs:
         uses: supabase/setup-cli@v1
         with:
           version: latest
-      
+
       - name: Deploy functions
         run: |
           supabase functions deploy --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-`````
+```
 
 ### Environments
 
@@ -2032,29 +2040,29 @@ Deno.test("AI Chat Function", async (t) => {
 
 #### E2E Test
 
-````typescript
-import { test, expect } from '@playwright/test';
+```typescript
+import { expect, test } from "@playwright/test";
 
-test.describe('Patient Management Workflow', () => {
+test.describe("Patient Management Workflow", () => {
   test.beforeEach(async ({ page }) => {
     // Login as professional
-    await page.goto('/login');
-    await page.fill('[data-testid="email"]', 'professional@clinic.com');
-    await page.fill('[data-testid="password"]', 'password123');
+    await page.goto("/login");
+    await page.fill('[data-testid="email"]', "professional@clinic.com");
+    await page.fill('[data-testid="password"]', "password123");
     await page.click('[data-testid="login-button"]');
-    await expect(page).toHaveURL('/dashboard');
+    await expect(page).toHaveURL("/dashboard");
   });
 
-  test('should create new patient with LGPD compliance', async ({ page }) => {
+  test("should create new patient with LGPD compliance", async ({ page }) => {
     // Navigate to patient creation
     await page.click('[data-testid="patients-menu"]');
     await page.click('[data-testid="new-patient-button"]');
 
     // Fill patient form
-    await page.fill('[data-testid="patient-name"]', 'Maria Santos');
-    await page.fill('[data-testid="patient-email"]', 'maria@email.com');
-    await page.fill('[data-testid="patient-phone"]', '(11) 98765-4321');
-    await page.fill('[data-testid="patient-cpf"]', '987.654.321-00');
+    await page.fill('[data-testid="patient-name"]', "Maria Santos");
+    await page.fill('[data-testid="patient-email"]', "maria@email.com");
+    await page.fill('[data-testid="patient-phone"]', "(11) 98765-4321");
+    await page.fill('[data-testid="patient-cpf"]', "987.654.321-00");
 
     // Accept LGPD consent
     await page.check('[data-testid="consent-data-processing"]');
@@ -2065,46 +2073,51 @@ test.describe('Patient Management Workflow', () => {
 
     // Verify success
     await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-    await expect(page.locator('text=Maria Santos')).toBeVisible();
+    await expect(page.locator("text=Maria Santos")).toBeVisible();
   });
 
-  test('should schedule appointment with AI assistance', async ({ page }) => {
+  test("should schedule appointment with AI assistance", async ({ page }) => {
     // Navigate to AI chat
     await page.click('[data-testid="ai-chat-menu"]');
 
     // Send appointment request in Portuguese
-    await page.fill('[data-testid="chat-input"]', 'Quero agendar botox na testa para próxima terça-feira');
+    await page.fill(
+      '[data-testid="chat-input"]',
+      "Quero agendar botox na testa para próxima terça-feira",
+    );
     await page.click('[data-testid="send-message"]');
 
     // Wait for AI response
     await expect(page.locator('[data-testid="ai-response"]')).toBeVisible();
 
     // Verify appointment suggestion
-    await expect(page.locator('text=disponibilidade')).toBeVisible();
-    
+    await expect(page.locator("text=disponibilidade")).toBeVisible();
+
     // Confirm appointment
     await page.click('[data-testid="confirm-appointment"]');
-    
+
     // Verify appointment created
     await expect(page.locator('[data-testid="appointment-confirmation"]')).toBeVisible();
   });
 
-  test('should maintain accessibility standards', async ({ page }) => {
+  test("should maintain accessibility standards", async ({ page }) => {
     // Test keyboard navigation
-    await page.keyboard.press('Tab');
-    await expect(page.locator(':focus')).toBeVisible();
+    await page.keyboard.press("Tab");
+    await expect(page.locator(":focus")).toBeVisible();
 
     // Test screen reader compatibility
     const patientCard = page.locator('[data-testid="patient-card"]').first();
-    await expect(patientCard).toHaveAttribute('role', 'region');
-    await expect(patientCard).toHaveAttribute('aria-label');
+    await expect(patientCard).toHaveAttribute("role", "region");
+    await expect(patientCard).toHaveAttribute("aria-label");
 
     // Test color contrast (automated check)
     // This would typically use axe-playwright
     // await expect(page).toPassAxeTests();
   });
 });
-```## Coding Standards
+```
+
+## Coding Standards
 
 ### Critical Fullstack Rules
 
@@ -2119,14 +2132,14 @@ test.describe('Patient Management Workflow', () => {
 
 ### Naming Conventions
 
-| Element | Frontend | Backend | Example |
-|---------|----------|---------|---------|
-| Components | PascalCase | - | `PatientCard.tsx` |
-| Hooks | camelCase with 'use' | - | `usePatientData.ts` |
-| API Routes | - | kebab-case | `/api/patient-profile` |
-| Database Tables | - | snake_case | `patient_profiles` |
-| Functions | camelCase | camelCase | `calculateRiskScore` |
-| Constants | SCREAMING_SNAKE_CASE | SCREAMING_SNAKE_CASE | `MAX_APPOINTMENT_DURATION` |
+| Element         | Frontend             | Backend              | Example                    |
+| --------------- | -------------------- | -------------------- | -------------------------- |
+| Components      | PascalCase           | -                    | `PatientCard.tsx`          |
+| Hooks           | camelCase with 'use' | -                    | `usePatientData.ts`        |
+| API Routes      | -                    | kebab-case           | `/api/patient-profile`     |
+| Database Tables | -                    | snake_case           | `patient_profiles`         |
+| Functions       | camelCase            | camelCase            | `calculateRiskScore`       |
+| Constants       | SCREAMING_SNAKE_CASE | SCREAMING_SNAKE_CASE | `MAX_APPOINTMENT_DURATION` |
 
 ## Error Handling Strategy
 
@@ -2148,7 +2161,7 @@ sequenceDiagram
     A-->>F: Structured error response
     F->>F: Display user-friendly message
     F-->>C: Error feedback
-````
+```
 
 ### Error Response Format
 

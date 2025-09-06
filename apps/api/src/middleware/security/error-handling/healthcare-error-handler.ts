@@ -809,7 +809,7 @@ export function createHealthcareErrorHandler(
       const errorResponse = await errorHandler.handleError(error, c, additionalContext);
 
       // Return structured error response
-      return c.json(errorResponse, errorResponse.error.statusCode);
+      return c.json(errorResponse, errorResponse.error.statusCode as any);
     }
   };
 }

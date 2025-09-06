@@ -5,6 +5,7 @@ export { AIService } from "./AIService";
 export { AnalyticsService } from "./AnalyticsService";
 export * from "./api-gateway";
 export * from "./auth";
+export { BrazilianAIService } from "./BrazilianAIService";
 export * from "./compliance";
 export { ComplianceServiceEnhanced } from "./ComplianceServiceEnhanced";
 export * from "./configuration";

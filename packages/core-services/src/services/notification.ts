@@ -55,27 +55,30 @@ interface NotificationTemplate {
 // interface NotificationPreference { /* ... */ }
 // interface NotificationRule { /* ... */ }
 
-interface NotificationTrigger {
-  event: string;
-  entity: string;
-  conditions?: Record<string, unknown>;
-}
+// TODO: Implement notification triggers
+// interface NotificationTrigger {
+//   event: string;
+//   entity: string;
+//   conditions?: Record<string, unknown>;
+// }
 
-interface NotificationCondition {
-  field: string;
-  operator: ConditionOperator;
-  value: unknown;
-  logicalOperator?: LogicalOperator;
-}
+// TODO: Implement notification conditions
+// interface NotificationCondition {
+//   field: string;
+//   operator: ConditionOperator;
+//   value: unknown;
+//   logicalOperator?: LogicalOperator;
+// }
 
-interface NotificationAction {
-  type: NotificationType;
-  channel: NotificationChannel;
-  templateId?: string;
-  recipients: NotificationRecipient[];
-  delay?: number;
-  priority: NotificationPriority;
-}
+// TODO: Implement notification actions
+// interface NotificationAction {
+//   type: NotificationType;
+//   channel: NotificationChannel;
+//   templateId?: string;
+//   recipients: NotificationRecipient[];
+//   delay?: number;
+//   priority: NotificationPriority;
+// }
 
 interface NotificationRecipient {
   type: RecipientType;

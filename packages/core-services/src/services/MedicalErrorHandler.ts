@@ -62,16 +62,16 @@ export class MedicalErrorHandler {
   ];
 
   private readonly prohibitedMedicalAdvice = [
-    "diagnóstico",
+    "diagnostico",
     "prescrever",
     "receitar",
     "medicamento",
     "dosagem",
-    "tratamento específico",
+    "tratamento especifico",
     "cirurgia",
     "procedimento invasivo",
     "anestesia",
-    "internação",
+    "internacao",
   ];
 
   private readonly complianceKeywords = {
@@ -124,6 +124,11 @@ export class MedicalErrorHandler {
       recommendations.push("Consulta médica presencial recomendada");
     }
 
+    // Additional safety for pregnancy context
+    if (/\bgr[aá]vida\b/i.test(query)) {
+      recommendations.push("Encaminhar para avaliação obstétrica");
+    }
+
     if (context.communicationChannel === "whatsapp" && riskLevel !== "low") {
       recommendations.push("Agendar consulta para avaliação detalhada");
     }
@@ -158,10 +163,17 @@ export class MedicalErrorHandler {
     if (error.type === "emergency") {
       const emergencyTemplate = templateManager.getTemplate("whatsapp-emergency-escalation");
       if (emergencyTemplate) {
-        const clinicEmergencyPhone = process.env.CLINIC_EMERGENCY_PHONE || "";
+        const rawPhone = process.env.CLINIC_EMERGENCY_PHONE;
+        const clinicEmergencyPhone = (rawPhone ?? "").trim();
+        const phoneOk = clinicEmergencyPhone.length > 0
+          && /^[+]?[-().\s\d]{6,20}$/.test(clinicEmergencyPhone);
+        if (!phoneOk) {
+          const msg = `Invalid or missing CLINIC_EMERGENCY_PHONE env value: "${rawPhone ?? ""}"`;
+          console.error(msg);
+        }
         response = templateManager.renderTemplate(emergencyTemplate.id, {
           variables: {
-            clinic_emergency_phone: clinicEmergencyPhone,
+            clinic_emergency_phone: phoneOk ? clinicEmergencyPhone : "N/A",
           },
         }) || response;
       }
@@ -179,10 +191,24 @@ export class MedicalErrorHandler {
     if (error.complianceViolation) {
       const lgpdTemplate = templateManager.getTemplate("lgpd-data-rights-info");
       if (lgpdTemplate && error.complianceViolation.regulation === "LGPD") {
-        const whatsappContact = process.env.CLINIC_WHATSAPP || "";
+        const rawWhatsapp = process.env.CLINIC_WHATSAPP;
+        const whatsappContactTrim = (rawWhatsapp ?? "").trim();
+        const whatsappContactOk = whatsappContactTrim.length > 0
+          && /^[+]?[-().\s\d]{6,20}$/.test(whatsappContactTrim);
+        const whatsappContact = whatsappContactOk ? whatsappContactTrim : "N/A";
+        if (!whatsappContactOk) {
+          console.error(`Invalid or missing CLINIC_WHATSAPP env value: "${rawWhatsapp ?? ""}"`);
+        }
         const privacyEmail = process.env.PRIVACY_EMAIL || "";
         const dpoName = process.env.DPO_NAME || "Encarregado de Dados";
-        const dpoContact = process.env.DPO_CONTACT || "";
+        const rawDpo = process.env.DPO_CONTACT;
+        const dpoContactTrim = (rawDpo ?? "").trim();
+        const dpoContactOk = dpoContactTrim.length > 0
+          && /^[+]?[-().\s\d]{6,20}$/.test(dpoContactTrim);
+        const dpoContact = dpoContactOk ? dpoContactTrim : "N/A";
+        if (!dpoContactOk) {
+          console.error(`Invalid or missing DPO_CONTACT env value: "${rawDpo ?? ""}"`);
+        }
         const lgpdResponse = templateManager.renderTemplate(lgpdTemplate.id, {
           variables: {
             whatsapp_contact: whatsappContact,
@@ -293,9 +319,19 @@ export class MedicalErrorHandler {
       escalationRequired: true,
       emergencyProtocol: {
         immediateAction: "Contact emergency services",
-        contactInfo: `SAMU: ${process.env.EMERGENCY_SAMU || "192"}, Clínica: ${
-          process.env.CLINIC_EMERGENCY_PHONE || ""
-        }`,
+        contactInfo: (() => {
+          const samu = (process.env.EMERGENCY_SAMU ?? "192").toString().trim() || "192";
+          const rawClinic = process.env.CLINIC_EMERGENCY_PHONE;
+          const clinic = (rawClinic ?? "").trim();
+          const clinicOk = clinic.length > 0 && /^[+]?[-().\s\d]{6,20}$/.test(clinic);
+          if (!clinicOk) {
+            console.error(
+              `Invalid or missing CLINIC_EMERGENCY_PHONE env value: "${rawClinic ?? ""}"`,
+            );
+          }
+          const clinicSafe = clinicOk ? clinic : "N/A"; // Safe fallback, avoid empty strings
+          return `SAMU: ${samu}, Clínica: ${clinicSafe}`;
+        })(),
         escalationLevel: "emergency_services",
       },
     };

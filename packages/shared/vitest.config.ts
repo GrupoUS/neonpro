@@ -6,7 +6,7 @@ export default defineConfig({
     globals: true,
     environment: "happy-dom",
     include: ["tests/**/*.test.{ts,tsx}", "src/**/*.{test,spec}.{ts,tsx}"],
-    reporters: ["default"],
+    reporters: ["default", "../../.vitest-reporters/junit.cjs"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],

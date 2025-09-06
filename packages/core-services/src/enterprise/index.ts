@@ -8,7 +8,7 @@
  * - UnifiedAuditService: Audit trail completo e compliance
  */
 
-export { UnifiedAuditService as EnterpriseAuditService } from "@neonpro/security";
+// export { UnifiedAuditService as EnterpriseAuditService } from "@neonpro/security";
 export type {
   AnalyticsEvent,
   AnalyticsInsight,

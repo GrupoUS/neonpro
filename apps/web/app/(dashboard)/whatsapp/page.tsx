@@ -11,7 +11,7 @@ import React from "react";
 import { WhatsappDashboard } from "@/app/components/chat/whatsapp-dashboard";
 
 // Utils and hooks
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation"; // unused
 
 export const metadata: Metadata = {
   title: "WhatsApp Business | NeonPro",

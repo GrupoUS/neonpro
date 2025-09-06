@@ -105,17 +105,18 @@ const whatsappRoutes = new Hono();
 const healthcareAuth = new HealthcareAuthMiddleware();
 whatsappRoutes.use("*", async (c, next) => {
   // Try common handler names, fall back to calling next()
-  // Cast to any to accommodate different implementations without strict typing errors
-  const anyAuth = healthcareAuth as any;
-  if (typeof anyAuth.handle === "function") {
-    return anyAuth.handle(c, next);
+  const maybeAuth: unknown = healthcareAuth;
+
+  if (typeof maybeAuth === "function") {
+    return (maybeAuth as (c: Context, next: () => Promise<void>) => unknown)(c, next);
   }
-  if (typeof anyAuth.middleware === "function") {
-    return anyAuth.middleware(c, next);
-  }
-  if (typeof anyAuth === "function") {
-    // If the exported value is callable
-    return anyAuth(c, next);
+  if (typeof maybeAuth === "object" && maybeAuth !== null) {
+    const obj = maybeAuth as {
+      handle?: (c: Context, next: () => Promise<void>) => unknown;
+      middleware?: (c: Context, next: () => Promise<void>) => unknown;
+    };
+    if (typeof obj.handle === "function") return obj.handle(c, next);
+    if (typeof obj.middleware === "function") return obj.middleware(c, next);
   }
   // Fallback: continue to next middleware
   return next();
@@ -132,10 +133,9 @@ whatsappRoutes.get(
   zValidator("query", webhookVerificationSchema),
   async (c: Context) => {
     try {
-      const { "hub.mode": mode, "hub.challenge": challenge, "hub.verify_token": verifyToken } =
-        (c.req as unknown as {
-          valid: (type: "query") => z.infer<typeof webhookVerificationSchema>;
-        }).valid("query");
+      const { "hub.challenge": challenge, "hub.verify_token": verifyToken } = (c.req as unknown as {
+        valid: (type: "query") => z.infer<typeof webhookVerificationSchema>;
+      }).valid("query");
 
       // Verify the token matches our configured verify token
       const expectedToken = process.env.WHATSAPP_VERIFY_TOKEN;
@@ -171,7 +171,9 @@ whatsappRoutes.post(
   zValidator("json", messageWebhookSchema),
   async (c: Context) => {
     try {
-      const webhookData = (c.req as any).valid("json");
+      const webhookData =
+        (c.req as unknown as { valid: (type: "json") => z.infer<typeof messageWebhookSchema>; })
+          .valid("json");
 
       // Process each entry in the webhook
       for (const entry of webhookData.entry) {
@@ -226,7 +228,10 @@ whatsappRoutes.post(
   async (c: Context) => {
     try {
       // Cast the validated body to the inferred type to satisfy TS
-      const payload = (c.req as any).valid("json") as z.infer<typeof sendPayloadSchema>;
+      const payload =
+        (c.req as unknown as { valid: (type: "json") => z.infer<typeof sendPayloadSchema>; }).valid(
+          "json",
+        );
       const { to, message, type, clinicId, patientId, messageType } = payload;
 
       // Validate clinic access and permissions
@@ -308,7 +313,15 @@ whatsappRoutes.get("/health", async (c: Context) => {
  */
 async function authorizeClinicAccess(c: Context, clinicId: string): Promise<boolean> {
   try {
-    const user: any = c.get("user");
+    const user = c.get("user") as unknown as {
+      id?: string;
+      userId?: string;
+      sub?: string;
+      roles?: string[];
+      role?: string;
+      clinicIds?: string[];
+      clinic_id?: string;
+    };
     const userId: string | undefined = user?.id || user?.userId || user?.sub;
     const roles: string[] = Array.isArray(user?.roles)
       ? user.roles
@@ -350,7 +363,7 @@ async function authorizeClinicAccess(c: Context, clinicId: string): Promise<bool
     });
 
     return false;
-  } catch (err) {
+  } catch {
     // In case of unexpected failure, default to deny
     return false;
   }
@@ -360,9 +373,9 @@ async function authorizeClinicAccess(c: Context, clinicId: string): Promise<bool
  * Process incoming WhatsApp message
  */
 async function processIncomingMessage(
-  message: any,
-  metadata: any,
-  c: Context,
+  message: WhatsAppMessage,
+  _metadata: WebhookMetadata | undefined,
+  _c: Context,
 ): Promise<void> {
   try {
     const fromMasked = typeof message.from === "string"
@@ -380,10 +393,11 @@ async function processIncomingMessage(
 
     // Extract message content including captions attached to media
     const mediaCaption = message?.media?.caption
-      || message?.image?.caption
-      || message?.video?.caption
-      || (Array.isArray(message?.media)
-        ? (message.media.find((m: any) => m?.caption)?.caption)
+      ?? message?.image?.caption
+      ?? message?.video?.caption
+      ?? (Array.isArray(message?.media)
+        ? message.media.find((m: unknown) => (m as { caption?: string; } | undefined)?.caption)
+          ?.caption
         : undefined);
     const messageContent = message.text?.body || message.caption || mediaCaption || "";
     if (!messageContent.trim()) {
@@ -415,9 +429,7 @@ async function processIncomingMessage(
     };
 
     // Process with Brazilian AI Service
-    const { BrazilianAIService } = await import(
-      "@neonpro/core-services/services/BrazilianAIService"
-    );
+    const { BrazilianAIService } = await import("@neonpro/core-services");
     const aiService = new BrazilianAIService();
 
     const serviceContext = {
@@ -469,13 +481,13 @@ async function processIncomingMessage(
 }
 
 // Helper functions for WhatsApp context
-async function isFirstContact(phoneNumber: string): Promise<boolean> {
+async function isFirstContact(_phoneNumber: string): Promise<boolean> {
   // TODO: Check database for previous interactions
   // For now, return false as placeholder
   return false;
 }
 
-async function getPreviousInteractionCount(phoneNumber: string): Promise<number> {
+async function getPreviousInteractionCount(_phoneNumber: string): Promise<number> {
   // TODO: Count previous interactions from database
   // For now, return 0 as placeholder
   return 0;
@@ -485,9 +497,9 @@ async function getPreviousInteractionCount(phoneNumber: string): Promise<number>
  * Process WhatsApp message status update
  */
 async function processMessageStatus(
-  status: any,
-  metadata: any,
-  c: Context,
+  status: WhatsAppStatus,
+  _metadata: WebhookMetadata | undefined,
+  _c: Context,
 ): Promise<void> {
   try {
     console.log("Processing WhatsApp message status:", {
@@ -513,7 +525,7 @@ async function sendWhatsAppMessage(args: {
   clinicId: string;
   patientId?: string;
   messageType: "appointment_reminder" | "general" | "emergency" | "marketing";
-}): Promise<{ messageId: string; status?: string; raw?: any; }> {
+}): Promise<{ messageId: string; status?: string; raw?: unknown; }> {
   const {
     to,
     message,
@@ -537,7 +549,7 @@ async function sendWhatsAppMessage(args: {
   }
 
   // Build payload
-  const payload: any = {
+  const payload: Record<string, unknown> = {
     messaging_product: "whatsapp",
     to: toNormalized,
   };
@@ -568,7 +580,7 @@ async function sendWhatsAppMessage(args: {
 
     const maxRetries = 3;
     const baseDelay = 500; // ms
-    let lastError: any = null;
+    let lastError: unknown = null;
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       const controller = new AbortController();
@@ -585,7 +597,7 @@ async function sendWhatsAppMessage(args: {
         });
         clearTimeout(timeout);
 
-        const raw: any = await res.json().catch(() => null);
+        const raw: unknown = await res.json().catch(() => null);
 
         if (res.ok) {
           const messageId = raw && Array.isArray(raw?.messages) && raw.messages[0]?.id
@@ -626,9 +638,8 @@ async function sendWhatsAppMessage(args: {
       } catch (err) {
         clearTimeout(timeout);
         lastError = err;
-        const isAbort = err instanceof Error && err.name === "AbortError";
-        if (attempt === maxRetries - 1 || !isAbort) {
-          // If not a timeout or max retries reached, don't retry further
+        // Retry on any error type until the final attempt
+        if (attempt === maxRetries - 1) {
           break;
         }
         const jitter = Math.random() * 100;

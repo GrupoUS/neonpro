@@ -8,7 +8,7 @@
 
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/types/chat";
-import { AIResponseData, MessageType, SenderType } from "@/types/chat";
+import { MessageType } from "@/types/chat";
 import React, { useCallback, useState } from "react";
 
 // Icons (would be imported from lucide-react or similar)

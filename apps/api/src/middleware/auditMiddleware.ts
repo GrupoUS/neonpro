@@ -107,7 +107,7 @@ export const auditMiddleware = (
               if (parsed.oldValues) {
                 oldValues = parsed.oldValues;
               }
-            } catch (e) {
+            } catch {
               // Ignore parsing errors
             }
           }
@@ -183,7 +183,7 @@ export const authAuditMiddleware = () => {
                 ? JSON.parse(responseBody)
                 : responseBody;
               userId = parsed.user?.id || parsed.id || "anonymous";
-            } catch (e) {
+            } catch {
               // Ignore parsing errors
             }
           }

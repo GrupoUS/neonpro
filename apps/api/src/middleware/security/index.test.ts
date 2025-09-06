@@ -5,7 +5,7 @@ import {
   EndpointSecurityLevel,
   healthcareSecurityMiddlewares,
   HealthcareSecurityOrchestrator,
-  securityComponents,
+  // securityComponents, // TODO: Add tests
   SecurityEnvironment,
   securityPresets,
 } from "./index";

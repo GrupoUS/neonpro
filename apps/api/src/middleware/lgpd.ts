@@ -207,7 +207,7 @@ consentStore.grantConsent("pat_456", ConsentType.DATA_PROCESSING, "1.0");
 /**
  * Extract patient ID from request
  */
-const extractPatientId = (c: Context): string | null => {
+const extractPatientId = async (c: Context): Promise<string | null> => {
   // Try to get from URL parameters
   const pathPatientId = c.req.param("id");
   if (pathPatientId) {
@@ -216,7 +216,7 @@ const extractPatientId = (c: Context): string | null => {
 
   // Try to get from request body
   try {
-    const body = c.req.json();
+    const body = await c.req.json();
     if (body?.patientId) {
       return body.patientId;
     }
@@ -239,7 +239,7 @@ const extractPatientId = (c: Context): string | null => {
     return userId;
   }
 
-  return;
+  return null;
 };
 
 /**
@@ -264,7 +264,7 @@ const getRouteConfig = (
     }
   }
 
-  return;
+  return null;
 };
 
 /**
@@ -297,7 +297,7 @@ export const lgpdMiddleware = (): MiddlewareHandler => {
 
     if (routeConfig) {
       // Extract patient ID for consent checking
-      const patientId = extractPatientId(c);
+      const patientId = await extractPatientId(c);
 
       // Check consent requirements
       if (routeConfig.requiresConsent.length > 0 && patientId) {
@@ -450,9 +450,9 @@ export const lgpdUtils = {
     }
 
     // Generate anonymous ID for analytics correlation
-    if (data.id) {
-      anonymized.anonymousId = `anon_${
-        btoa(data.id.toString())
+    if ((data as any).id) {
+      (anonymized as any).anonymousId = `anon_${
+        btoa((data as any).id.toString())
           .replaceAll(/[^a-zA-Z0-9]/g, "")
           .slice(0, 8)
       }`;

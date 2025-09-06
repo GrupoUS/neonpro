@@ -6,7 +6,7 @@
  * Integrates with WhatsApp Business API and existing AI chat system
  */
 
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   AlertCircle,
   Check,
@@ -23,7 +23,7 @@ import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // UI Components
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -46,7 +46,7 @@ import type {
 interface WhatsappChatProps {
   conversation: WhatsappConversation;
   messages: WhatsappMessage[];
-  currentUserId: string; // TODO: consider removing if direction is authoritative
+  currentUserId: string; // unused: direction already authoritative; kept for API compatibility
   clinicId: string;
   onSendMessage: (message: SendWhatsappMessageRequest) => Promise<void>;
   onMarkAsRead?: (messageId: string) => void; // TODO: wire into read tracking when message becomes visible
@@ -136,7 +136,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isOwn, showAvata
 export const WhatsappChat: React.FC<WhatsappChatProps> = ({
   conversation,
   messages,
-  currentUserId,
+  _currentUserId,
   clinicId,
   onSendMessage,
   onMarkAsRead,

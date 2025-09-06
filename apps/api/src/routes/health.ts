@@ -308,7 +308,7 @@ health.get("/health/supabase", async (c) => {
       healthy: supabaseHealth.status === "healthy",
       ...supabaseHealth,
     },
-    statusCode,
+    statusCode as any,
   );
 });
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { MedicalTerm } from "@/components/accessibility/medical-term";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,16 +19,13 @@ import {
   Loader2,
   MessageSquare,
   Mic,
-  MicOff,
   Minimize2,
-  Phone,
   PhoneCall,
   Send,
   Shield,
   TrendingUp,
   User,
   Volume2,
-  VolumeX,
   Zap,
 } from "lucide-react";
 import type React from "react";
@@ -124,7 +120,6 @@ export function UniversalAIChat({
     announceEmergency,
     // isVoiceSupported,
     // isActive: isVoiceActive,
-    emergencyDetected,
   } = useEmergencyVoiceCommands({
     onEmergencyDetected: (intent, transcript) => {
       setEmergencyMode(true);
@@ -141,23 +136,7 @@ export function UniversalAIChat({
         sendMessage(emergencyMessage);
 
         // Announce emergency protocol with performance status
-        // TODO: Replace with actual measured latency from real async operations
-        const EMERGENCY_TARGET_LATENCY = 200; // Configurable constant (ms)
-
-        // Measure actual performance (placeholder implementation)
-        // In production, this should measure actual API call latency or handler performance
-        const performanceStartTime = performance.now();
-        const measuredLatency = Math.round(performanceStartTime % 100 + 150); // Placeholder calculation
-
-        const performanceStatus = {
-          targetLatency: EMERGENCY_TARGET_LATENCY,
-          measuredLatency: measuredLatency,
-          isPlaceholder: true, // TODO: Remove when real measurement is implemented
-        };
-
-        const announcement =
-          `Emergência detectada. Modo alta performance ativado. Conectando com equipe médica imediatamente. Tempo de resposta otimizado para ${performanceStatus.targetLatency}ms.`;
-        // announceEmergency(announcement);
+        // announceEmergency("Emergência detectada. Modo alta performance ativado. Conectando com equipe médica imediatamente. Tempo de resposta otimizado para 200ms.");
 
         toast({
           title: "⚡ Emergency Performance Activated",
@@ -190,19 +169,15 @@ export function UniversalAIChat({
   const {
     emergencyMode: performanceEmergencyMode,
     enableEmergencyMode,
-    disableEmergencyMode,
     isOptimized,
   } = useEmergencyPerformance();
 
   // Keyboard navigation and accessibility
   const {
     announce,
-    focusElement,
-    focusFirstEmergencyElement,
     announcementText,
     shortcuts,
     isHelpVisible,
-    showHelp,
     hideHelp,
   } = useKeyboardNavigation({
     onEmergencyTrigger: () => {
@@ -290,7 +265,7 @@ export function UniversalAIChat({
         title: "Chat conectado",
         description: "Sessão de chat iniciada com sucesso.",
       });
-    } catch (_error) {
+    } catch {
       // console.error("Failed to initialize session:", error);
       setConnectionStatus("disconnected");
       toast({
@@ -471,7 +446,7 @@ export function UniversalAIChat({
                       throw new Error(parsedData.error || "Erro desconhecido");
                     }
                   }
-                } catch (_error) {
+                } catch {
                   // console.error("Error parsing SSE data:", error);
                 }
               }

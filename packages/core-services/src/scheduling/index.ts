@@ -53,6 +53,7 @@ export class AISchedulingEngine {
 
 export const schedulingEngine = new AISchedulingEngine();
 
+export { AISchedulingService } from "./service";
 export * from "./types";
 
 export default schedulingEngine;

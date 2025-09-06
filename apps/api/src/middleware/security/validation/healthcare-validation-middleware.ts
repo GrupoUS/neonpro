@@ -12,13 +12,11 @@
  */
 
 import type { Context, MiddlewareHandler } from "hono";
-import { HTTPException } from "hono/http-exception";
+
 import { z, ZodError } from "zod";
 import type { BrazilianHealthcareLicense, BrazilianState } from "./brazilian-healthcare-validator";
 import {
-  BrazilianDocumentType,
   BrazilianHealthcareSanitizer,
-  CNSValidator,
   CPFValidator,
   HealthcareLicenseValidator,
   healthcareProviderSchema,
@@ -427,7 +425,7 @@ export class HealthcareInputValidator {
    * This is a placeholder for actual database implementation
    */
   private async queryPatientByCPF(
-    cpf: string,
+    _cpf: string,
   ): Promise<Array<{ id: string; cpf: string; }> | null> {
     // Placeholder for actual database query
     // In production, integrate with your database layer:

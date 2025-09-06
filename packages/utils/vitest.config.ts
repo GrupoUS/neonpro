@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: true,
-    reporters: ["default"],
+    reporters: ["default", "../../.vitest-reporters/junit.cjs"],
     include: ["src/**/*.{test,spec}.{ts,tsx}", "tests/**/*.test.{ts,tsx}"],
     coverage: {
       provider: "v8",

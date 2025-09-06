@@ -108,20 +108,21 @@ const mockMedicalRecordData = {
 };
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
+// TODO: Implement test wrapper
+// const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
+//   const queryClient = new QueryClient({
+//     defaultOptions: {
+//       queries: {
+//         retry: false,
+//       },
+//       mutations: {
+//         retry: false,
+//       },
+//     },
+//   });
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-};
+//   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+// };
 
 describe("database Integration Tests", () => {
   let queryClient: QueryClient;

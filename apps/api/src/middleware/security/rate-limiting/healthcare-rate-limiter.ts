@@ -567,7 +567,7 @@ export function createHealthcareRateLimiter(
       if (emergencyHeader) {
         try {
           emergencyContext = JSON.parse(emergencyHeader);
-        } catch (_e) {
+        } catch {
           console.warn("Invalid emergency access header:", emergencyHeader);
         }
       }

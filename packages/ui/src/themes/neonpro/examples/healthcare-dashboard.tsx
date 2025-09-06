@@ -4,8 +4,8 @@
  * Includes patient metrics, appointments, and financial tracking
  */
 
-import type React from "react";
-import { useState } from "react";
+// import type React from "react"; // TODO: Add React types when needed
+// import { useState } from "react"; // TODO: Add state management
 
 // Temporarily disabled for MVP build
 export default function HealthcareDashboard() {

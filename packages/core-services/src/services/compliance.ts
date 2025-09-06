@@ -58,26 +58,27 @@ interface RuleAction {
   escalationRequired: boolean;
 }
 
-interface ComplianceAudit {
-  id: string;
-  tenantId: string;
-  policyId: string;
-  name: string;
-  description: string;
-  type: AuditType;
-  scope: AuditScope;
-  status: AuditStatus;
-  findings: ComplianceFinding[];
-  riskLevel: RiskLevel;
-  startDate: Date;
-  endDate?: Date;
-  completedAt?: Date;
-  nextDueDate?: Date;
-  assessor: string;
-  metadata: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
-}
+// TODO: Implement compliance audit functionality
+// interface ComplianceAudit {
+//   id: string;
+//   tenantId: string;
+//   policyId: string;
+//   name: string;
+//   description: string;
+//   type: AuditType;
+//   scope: AuditScope;
+//   status: AuditStatus;
+//   findings: ComplianceFinding[];
+//   riskLevel: RiskLevel;
+//   startDate: Date;
+//   endDate?: Date;
+//   completedAt?: Date;
+//   nextDueDate?: Date;
+//   assessor: string;
+//   metadata: Record<string, unknown>;
+//   createdAt: Date;
+//   updatedAt: Date;
+// }
 
 interface ComplianceFinding {
   id: string;

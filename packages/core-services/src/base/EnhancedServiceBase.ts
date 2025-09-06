@@ -17,6 +17,13 @@ import {
 import { EnterpriseHealthCheckService } from "../health";
 import type { AuditEvent, PerformanceMetrics, SecurityConfig, ServiceContext } from "../types";
 
+// Minimal Audit interface used internally
+interface MinimalAudit {
+  logEvent(event: AuditEvent): Promise<void>;
+  getAuditStats(): Promise<unknown>;
+  shutdown(): Promise<void>;
+}
+
 // Core service interfaces
 interface ICacheService {
   get<T>(key: string): Promise<T | null>;
@@ -71,7 +78,7 @@ export abstract class EnhancedServiceBase {
   protected readonly cache: ICacheService;
   protected readonly analytics: IAnalyticsService;
   protected readonly security: ISecurityService;
-  protected readonly audit: any; // UnifiedAuditService;
+  protected readonly audit: MinimalAudit; // UnifiedAuditService;
   protected readonly healthCheck: EnterpriseHealthCheckService;
 
   // Internal services
@@ -130,7 +137,18 @@ export abstract class EnhancedServiceBase {
       allowedOrigins: process.env.ALLOWED_ORIGINS?.split(",") || ["*"],
     });
 
-    this.audit = {} as any; // new UnifiedAuditService();
+    // Lightweight in-memory audit stub for tests/runtime without external deps
+    this.audit = {
+      async logEvent(_event: AuditEvent): Promise<void> {
+        // no-op
+      },
+      async getAuditStats(): Promise<Record<string, unknown>> {
+        return { events: 0 };
+      },
+      async shutdown(): Promise<void> {
+        // no-op
+      },
+    } as any; // replace with UnifiedAuditService in production environments
     this.healthCheck = new EnterpriseHealthCheckService();
 
     // Initialize integrated service interfaces

@@ -45,7 +45,7 @@ const MockLoginComponent = () => {
 
     try {
       await signIn(email, password);
-    } catch (error) {
+    } catch {
       // Handle authentication errors gracefully
       // console.log("Authentication error handled:", error);
     }

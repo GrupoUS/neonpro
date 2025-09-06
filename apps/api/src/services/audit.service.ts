@@ -395,9 +395,11 @@ export class AuditService {
 
     // Contar eventos por dia
     logs.forEach(log => {
-      const [dateStr] = log.timestamp.toISOString().split("T");
-      if (dailyCounts.hasOwnProperty(dateStr)) {
-        dailyCounts[dateStr]++;
+      if (log.timestamp) {
+        const [dateStr] = log.timestamp.toISOString().split("T");
+        if (dailyCounts.hasOwnProperty(dateStr)) {
+          dailyCounts[dateStr]++;
+        }
       }
     });
 

@@ -487,9 +487,9 @@ export const requirePermission = (
     );
 
     if (!hasAllPermissions) {
-      const missingPermissions = requiredPermissions.filter(
-        (permission) => !userPermissions.includes(permission),
-      );
+      // const missingPermissions = requiredPermissions.filter(
+      //   (permission) => !userPermissions.includes(permission),
+      // );
 
       throw createError.authorization("Permissões insuficientes");
     }
