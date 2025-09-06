@@ -307,13 +307,13 @@ export class MedicalErrorHandler {
    */
   private createEmergencyError(
     query: string,
-    context: { communicationChannel: string; },
+    _context: { communicationChannel: string; },
   ): MedicalError {
     return {
       type: "emergency",
       severity: "critical",
       code: "EMERGENCY_DETECTED",
-      message: `Emergency situation detected in query: ${query.substring(0, 50)}...`,
+      message: `Emergency situation detected in query: ${query.slice(0, 50)}...`,
       userMessage:
         "🚨 Situação de emergência detectada. Entre em contato com nossa equipe médica imediatamente ou ligue para o SAMU (192).",
       escalationRequired: true,

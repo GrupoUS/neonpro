@@ -589,9 +589,9 @@ export class EnterpriseHealthCheckService {
       try {
         if (
           service && typeof service === "object" && "shutdown" in service
-          && typeof (service as any).shutdown === "function"
+          && typeof (service as { shutdown?: unknown }).shutdown === "function"
         ) {
-          await (service as any).shutdown();
+          await (service as { shutdown: () => unknown }).shutdown();
         }
       } catch {}
     }

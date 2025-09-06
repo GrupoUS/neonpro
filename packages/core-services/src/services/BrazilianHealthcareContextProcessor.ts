@@ -234,7 +234,7 @@ export class BrazilianHealthcareContextProcessor {
     let urgencyLevel: "low" | "medium" | "high" | "critical" = "low";
     for (const [level, keywords] of Object.entries(urgencyKeywords)) {
       if (keywords.some(keyword => contentLower.includes(keyword))) {
-        urgencyLevel = level as any;
+        urgencyLevel = level as "low" | "medium" | "high" | "critical";
         break;
       }
     }
@@ -250,7 +250,7 @@ export class BrazilianHealthcareContextProcessor {
     let topicCategory: "aesthetic" | "medical" | "administrative" | "emergency" = "aesthetic";
     for (const [category, keywords] of Object.entries(topicKeywords)) {
       if (keywords.some(keyword => contentLower.includes(keyword))) {
-        topicCategory = category as any;
+        topicCategory = category as "aesthetic" | "medical" | "administrative" | "emergency";
         break;
       }
     }
@@ -266,7 +266,7 @@ export class BrazilianHealthcareContextProcessor {
     let emotionalTone: "neutral" | "anxious" | "excited" | "concerned" | "frustrated" = "neutral";
     for (const [tone, keywords] of Object.entries(emotionalKeywords)) {
       if (keywords.some(keyword => contentLower.includes(keyword))) {
-        emotionalTone = tone as any;
+        emotionalTone = tone as "neutral" | "anxious" | "excited" | "concerned" | "frustrated";
         break;
       }
     }

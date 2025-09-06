@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -23,57 +23,57 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+// import { TooltipProvider, TooltipTrigger, Tooltip, TooltipContent } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
   Activity,
-  AlertCircle,
+  // AlertCircle,
   AlertTriangle,
   ArrowUp,
   Baby,
   BarChart3,
-  Bell,
-  BookOpen,
+  // Bell,
+  // BookOpen,
   Brain,
-  Calendar,
+  // Calendar,
   CheckCircle,
   Clock,
   Download,
-  Eye,
+  // Eye,
   FileText,
   Heart,
-  History,
+  // History,
   Lungs,
   Mail,
   MapPin,
-  Pause,
+  // Pause,
   Phone,
-  PhoneCall,
+  // PhoneCall,
   Pill,
   Play,
-  Plus,
-  Radio,
+  // Plus,
+  // Radio,
   Search,
-  Settings,
+  // Settings,
   Shield,
   Stethoscope,
-  Target,
+  // Target,
   Timer,
   Truck,
   User,
   UserCheck,
   Users,
-  XCircle,
+  // XCircle,
   Zap,
 } from "lucide-react";
 import type React from "react";
@@ -89,10 +89,10 @@ import type {
   EmergencyResponseTeam,
 } from "@/lib/compliance/emergency-medical-protocols";
 import {
-  EmergencyEscalationLevel,
+  // EmergencyEscalationLevel,
   EmergencyMedicalProtocolsService,
-  EmergencyNotification,
-  EmergencyStatus,
+  // EmergencyNotification,
+  // EmergencyStatus,
 } from "@/lib/compliance/emergency-medical-protocols";
 
 // Initialize Emergency service

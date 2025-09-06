@@ -82,3 +82,13 @@ Progress 2025-09-06:
   - npx oxlint . → ~1366 warnings, 0 errors (baseline warnings outside PR scope)
   - npx tsc --noEmit --skipLibCheck → OK
 - Status: PR-002 ready for review (functional parity maintained, safe to revert).
+
+## PR-003 Completion — API middleware hygiene (2025-09-06)
+- Scope: apps/api/src/middleware/** — removed unused imports/vars, underscored unused handler params, avoided behavior changes; minor any→unknown in safe spots.
+- Formatting: dprint fmt → formatted 2 files (docs/features/bmad-brownfield-mvp-plan.md, apps/web/tests/setup/global-mocks.ts)
+- Validation:
+  - npx dprint check → pass
+  - npx oxlint . → 1149 warnings, 0 errors (warnings outside PR scope tolerated per plan)
+  - npx tsc --noEmit --skipLibCheck → OK
+  - pnpm vitest run → 206 tests passed (unit+integration)
+- Status: Ready for review. Functional parity maintained, single-commit rollback safe.

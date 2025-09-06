@@ -62,17 +62,17 @@ const createMockQueryBuilder = () => {
       const incoming = Array.isArray(data) ? data : [data];
       const merged: Record<string, unknown>[] = [...existing];
       for (const item of incoming) {
-        const keyName: "id" | "name" = (item as any).id != null ? "id" : "name";
-        const keyValue = (item as any)[keyName];
-        const idx = merged.findIndex((r) => (r as any)[keyName] === keyValue);
+        const keyName: "id" | "name" = (item as unknown).id != null ? "id" : "name";
+        const keyValue = (item as unknown)[keyName];
+        const idx = merged.findIndex((r) => (r as unknown)[keyName] === keyValue);
         if (idx >= 0) {
           merged[idx] = { ...merged[idx], ...item };
         } else {
-          merged.push(item as any);
+          merged.push(item as unknown);
         }
       }
       insertedRecords.set(tableName, merged);
-      insertedData = incoming as any;
+      insertedData = incoming as unknown;
       return mockBuilder;
     }),
     insert: vi.fn().mockImplementation((data) => {
@@ -108,27 +108,27 @@ const createMockQueryBuilder = () => {
     }),
     update: vi.fn().mockReturnThis(),
     delete: vi.fn().mockImplementation(() => {
-      (mockBuilder as any)._deleteMode = true;
+      (mockBuilder as unknown)._deleteMode = true;
       return mockBuilder;
     }),
     // Allow chained filters after delete or select (e.g., .delete().in("id", ids) or .select().in(...))
-    in: vi.fn().mockImplementation((col: string, values: any[]) => {
-      (mockBuilder as any)._in = { col, values };
+    in: vi.fn().mockImplementation((col: string, values: unknown[]) => {
+      (mockBuilder as unknown)._in = { col, values };
       return mockBuilder;
     }),
-    inList: vi.fn().mockImplementation((col: string, values: any[]) => {
-      (mockBuilder as any)._in = { col, values };
+    inList: vi.fn().mockImplementation((col: string, values: unknown[]) => {
+      (mockBuilder as unknown)._in = { col, values };
       return mockBuilder;
     }),
-    eq: vi.fn().mockImplementation((col: string, val: any) => {
+    eq: vi.fn().mockImplementation((col: string, val: unknown) => {
       // Track eq filters for later evaluation and basic RLS simulation
-      (mockBuilder as any)._eqs = [...((mockBuilder as any)._eqs ?? []), { col, val }];
+      (mockBuilder as unknown)._eqs = [...((mockBuilder as unknown)._eqs ?? []), { col, val }];
       // Simulate RLS denial when accessing different user/tenant in tests
       if (col === "user_id" && String(val).includes("different-user")) {
-        (mockBuilder as any)._rlsDenied = true;
+        (mockBuilder as unknown)._rlsDenied = true;
       }
       if (col === "clinic_id" && /other|tenant[-_]b/i.test(String(val))) {
-        (mockBuilder as any)._rlsDenied = true;
+        (mockBuilder as unknown)._rlsDenied = true;
       }
       return mockBuilder;
     }),
@@ -138,18 +138,18 @@ const createMockQueryBuilder = () => {
     lt: vi.fn().mockImplementation(() => mockBuilder),
     lte: vi.fn().mockImplementation(() => mockBuilder),
     like: vi.fn().mockImplementation((col: string, pattern: string) => {
-      (mockBuilder as any)._like = { col, pattern };
+      (mockBuilder as unknown)._like = { col, pattern };
       return mockBuilder;
     }),
     ilike: vi.fn().mockReturnThis(),
     is: vi.fn().mockReturnThis(),
     // NOTE: duplicate in removed; single definition lives above
-    // in: vi.fn().mockImplementation((col: string, values: any[]) => {
-    //   (mockBuilder as any)._in = { col, values };
+    // in: vi.fn().mockImplementation((col: string, values: unknown[]) => {
+    //   (mockBuilder as unknown)._in = { col, values };
     //   return mockBuilder;
     // }),
-    contains: vi.fn().mockImplementation((col: string, arr: any[]) => {
-      (mockBuilder as any)._contains = { col, arr };
+    contains: vi.fn().mockImplementation((col: string, arr: unknown[]) => {
+      (mockBuilder as unknown)._contains = { col, arr };
       return mockBuilder;
     }),
     containedBy: vi.fn().mockReturnThis(),
@@ -170,22 +170,22 @@ const createMockQueryBuilder = () => {
     and: vi.fn().mockReturnThis(),
     abortSignal: vi.fn().mockReturnThis(),
     // Allow repeated eq chaining: return self
-    eqAgain: vi.fn().mockImplementation((col: string, val: any) => mockBuilder.eq(col, val)),
+    eqAgain: vi.fn().mockImplementation((col: string, val: unknown) => mockBuilder.eq(col, val)),
     maybeSingle: vi.fn().mockImplementation(() => {
-      (mockBuilder as any)._maybeSingle = true;
+      (mockBuilder as unknown)._maybeSingle = true;
       return mockBuilder;
     }),
     single: vi.fn().mockImplementation(() => {
-      if (shouldError || (mockBuilder as any)._rlsDenied) {
+      if (shouldError || (mockBuilder as unknown)._rlsDenied) {
         return createSupabaseMockResponse(null, {
-          message: (mockBuilder as any)._rlsDenied
+          message: (mockBuilder as unknown)._rlsDenied
             ? "permission denied"
             : "duplicate key value violates unique constraint",
-          code: (mockBuilder as any)._rlsDenied ? "42501" : "23505",
+          code: (mockBuilder as unknown)._rlsDenied ? "42501" : "23505",
         });
       }
 
-      const tableName = (mockBuilder as unknown as any).currentTable || "default";
+      const tableName = (mockBuilder as unknown as unknown).currentTable || "default";
       const store = insertedRecords.get(tableName) || [];
       const data = insertedData && insertedData.length > 0
         ? insertedData[0]
@@ -216,14 +216,19 @@ const createMockQueryBuilder = () => {
     }
 
     // Return appropriate data based on the last operation and filters
-    const tableName = (mockBuilder as unknown as any).currentTable || "default";
+    const tableName = (mockBuilder as unknown as unknown).currentTable || "default";
     const store = insertedRecords.get(tableName) || [];
 
-    const isDelete = Boolean((mockBuilder as any)._deleteMode);
-    const like = (mockBuilder as any)._like as { col: string; pattern: string; } | undefined;
-    const inFilter = (mockBuilder as any)._in as { col: string; values: any[]; } | undefined;
-    const contains = (mockBuilder as any)._contains as { col: string; arr: any[]; } | undefined;
-    const eqs = ((mockBuilder as any)._eqs as { col: string; val: any; }[] | undefined) ?? [];
+    const isDelete = Boolean((mockBuilder as unknown)._deleteMode);
+    const like = (mockBuilder as unknown)._like as { col: string; pattern: string; } | undefined;
+    const inFilter = (mockBuilder as unknown)._in as
+      | { col: string; values: unknown[]; }
+      | undefined;
+    const contains = (mockBuilder as unknown)._contains as
+      | { col: string; arr: unknown[]; }
+      | undefined;
+    const eqs = ((mockBuilder as unknown)._eqs as { col: string; val: unknown; }[] | undefined)
+      ?? [];
 
     if (isDelete) {
       let kept = store;
@@ -231,27 +236,27 @@ const createMockQueryBuilder = () => {
         const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         const escaped = escapeRegex(String(like.pattern));
         const regex = new RegExp("^" + escaped.replace(/%/g, ".*") + "$");
-        kept = kept.filter((r) => !regex.test(String((r as any)[like.col] ?? "")));
+        kept = kept.filter((r) => !regex.test(String((r as unknown)[like.col] ?? "")));
       }
       if (inFilter) {
-        kept = kept.filter((r) => !inFilter.values.includes((r as any)[inFilter.col]));
+        kept = kept.filter((r) => !inFilter.values.includes((r as unknown)[inFilter.col]));
       }
       // apply eq filters for delete as well
       for (const { col, val } of eqs) {
-        kept = kept.filter((r) => (r as any)[col] !== val);
+        kept = kept.filter((r) => (r as unknown)[col] !== val);
       }
       insertedRecords.set(tableName, kept);
-      (mockBuilder as any)._deleteMode = false;
-      (mockBuilder as any)._like = undefined;
-      (mockBuilder as any)._in = undefined;
-      (mockBuilder as any)._contains = undefined;
-      (mockBuilder as any)._eqs = undefined;
+      (mockBuilder as unknown)._deleteMode = false;
+      (mockBuilder as unknown)._like = undefined;
+      (mockBuilder as unknown)._in = undefined;
+      (mockBuilder as unknown)._contains = undefined;
+      (mockBuilder as unknown)._eqs = undefined;
       const result = { data: kept, error: null };
       return Promise.resolve(result).then(onResolve, onReject);
     }
 
     // RLS denial
-    if ((mockBuilder as any)._rlsDenied) {
+    if ((mockBuilder as unknown)._rlsDenied) {
       const res = { data: null, error: { message: "permission denied", code: "42501" } };
       return Promise.resolve(res).then(onResolve, onReject);
     }
@@ -267,36 +272,36 @@ const createMockQueryBuilder = () => {
         const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         const escaped = escapeRegex(String(like.pattern));
         const regex = new RegExp("^" + escaped.replace(/%/g, ".*") + "$");
-        rows = rows.filter((r) => regex.test(String((r as any)[like.col] ?? "")));
+        rows = rows.filter((r) => regex.test(String((r as unknown)[like.col] ?? "")));
       }
       if (inFilter) {
-        rows = rows.filter((r) => inFilter.values.includes((r as any)[inFilter.col]));
+        rows = rows.filter((r) => inFilter.values.includes((r as unknown)[inFilter.col]));
       }
       if (contains) {
         rows = rows.filter((r) => {
-          const arr = (r as any)[contains.col] as any[];
+          const arr = (r as unknown)[contains.col] as unknown[];
           if (!Array.isArray(arr)) return false;
           return contains.arr.every((v) => arr.includes(v));
         });
       }
       // apply eq filters
       for (const { col, val } of eqs) {
-        rows = rows.filter((r) => (r as any)[col] === val);
+        rows = rows.filter((r) => (r as unknown)[col] === val);
       }
       resultData = rows;
     } else if (!insertedData) {
       resultData = [];
     }
     // maybeSingle support: if flagged and result is array, return first element
-    if ((mockBuilder as any)._maybeSingle) {
+    if ((mockBuilder as unknown)._maybeSingle) {
       resultData = Array.isArray(resultData) ? (resultData[0] ?? null) : (resultData ?? null);
     }
 
     // Reset one-shot flags
-    (mockBuilder as any)._like = undefined;
-    (mockBuilder as any)._in = undefined;
-    (mockBuilder as any)._contains = undefined;
-    (mockBuilder as any)._eqs = undefined;
+    (mockBuilder as unknown)._like = undefined;
+    (mockBuilder as unknown)._in = undefined;
+    (mockBuilder as unknown)._contains = undefined;
+    (mockBuilder as unknown)._eqs = undefined;
 
     const result = { data: resultData, error: null };
     return Promise.resolve(result).then(onResolve, onReject);
@@ -436,24 +441,24 @@ if (!insertedRecords.has("ai_service_metrics")) {
 }
 
 // Provide realtime hook default
-(globalThis as any).mockRealtimeHook = (globalThis as any).mockRealtimeHook
+(globalThis as unknown).mockRealtimeHook = (globalThis as unknown).mockRealtimeHook
   ?? { isConnected: true, error: null };
-if (typeof (globalThis as any).mockRealtimeHook.error === "undefined") {
-  (globalThis as any).mockRealtimeHook.error = null;
+if (typeof (globalThis as unknown).mockRealtimeHook.error === "undefined") {
+  (globalThis as unknown).mockRealtimeHook.error = null;
 }
 
 // Patients hook surface expected by tests
-(globalThis as any).mockPatientsHook = (globalThis as any).mockPatientsHook ?? {
+(globalThis as unknown).mockPatientsHook = (globalThis as unknown).mockPatientsHook ?? {
   exportPatientData: vi.fn(async () => ({ success: true, url: "https://example.com/export.zip" })),
   importPatientData: vi.fn(async () => ({ success: true })),
 };
 
 // Assign to globalThis for access in tests
-(globalThis as any).mockCpfValidator = mockCpfValidator;
-(globalThis as any).mockSupabaseClient = mockSupabaseClient;
-(globalThis as any).mockLgpdService = mockLgpdService;
-(globalThis as any).mockNotificationService = mockNotificationService;
-(globalThis as any).mockComplianceService = mockComplianceService;
+(globalThis as unknown).mockCpfValidator = mockCpfValidator;
+(globalThis as unknown).mockSupabaseClient = mockSupabaseClient;
+(globalThis as unknown).mockLgpdService = mockLgpdService;
+(globalThis as unknown).mockNotificationService = mockNotificationService;
+(globalThis as unknown).mockComplianceService = mockComplianceService;
 
 // Export for direct imports if needed
 export {

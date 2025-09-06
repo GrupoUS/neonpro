@@ -10,12 +10,12 @@
  * @author NeonPro Healthcare AI Team
  */
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
+// import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -25,13 +25,13 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type {
-  AlertSeverity,
-  AutomatedAction,
-  CriticalAlert,
-  EmergencyTrigger,
+  // AlertSeverity,
+  // AutomatedAction,
+  // CriticalAlert,
+  // EmergencyTrigger,
   HealthcareMonitoring,
-  VitalSignsMonitoring,
-  WarningAlert,
+  // VitalSignsMonitoring,
+  // WarningAlert,
 } from "@/types/analytics";
 import {
   Activity,
@@ -39,37 +39,37 @@ import {
   AlertTriangle,
   Bell,
   BellRing,
-  Calendar,
+  // Calendar,
   CheckCircle,
-  Clock,
-  Droplet,
-  Eye,
-  Filter,
-  Heart,
+  // Clock,
+  // Droplet,
+  // Eye,
+  // Filter,
+  // Heart,
   Info,
-  MapPin,
-  MessageSquare,
+  // MapPin,
+  // MessageSquare,
   Monitor,
   Pause,
   Phone,
   Play,
-  Radio,
-  RefreshCw,
-  Search,
-  Settings,
-  Shield,
+  // Radio,
+  // RefreshCw,
+  // Search,
+  // Settings,
+  // Shield,
   Stethoscope,
-  Thermometer,
+  // Thermometer,
   TrendingDown,
   TrendingUp,
-  UserCheck,
+  // UserCheck,
   Users,
   Volume2,
   VolumeX,
   Wifi,
   WifiOff,
   XCircle,
-  Zap,
+  // Zap,
 } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -304,7 +304,7 @@ interface MonitoringDashboardProps {
 }
 
 export default function RealTimeMonitoringDashboard({
-  clinicId,
+  clinicId: _clinicId,
   refreshInterval = 30,
   soundAlertsEnabled = true,
   autoRefresh = true,
@@ -386,7 +386,7 @@ export default function RealTimeMonitoringDashboard({
     [],
   );
 
-  const playAlertSound = useCallback(() => {
+  const _playAlertSound = useCallback(() => {
     if (soundEnabled && typeof window !== "undefined") {
       // In real implementation, play alert sound
       console.log("Alert sound triggered");

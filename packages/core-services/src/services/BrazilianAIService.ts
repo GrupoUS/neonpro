@@ -57,7 +57,7 @@ export class BrazilianAIService extends AIService {
   private readonly medicalErrorHandler = new MedicalErrorHandler();
   private readonly contextProcessor = new BrazilianHealthcareContextProcessor();
   // Cache for lazily imported PatientService to avoid repeated dynamic imports
-  private static patientServiceInstance: any | null = null;
+  private static patientServiceInstance: unknown | null = null;
 
   private readonly brazilianSystemPrompts = {
     whatsappExternal: templateManager.getWhatsAppSystemPrompt(),
@@ -320,8 +320,8 @@ export class BrazilianAIService extends AIService {
    * Handle emergency response
    */
   private async handleEmergencyResponse(
-    request: WhatsAppChatRequest,
-    context: ServiceContext,
+    _request: WhatsAppChatRequest,
+    _context: ServiceContext,
   ): Promise<EnhancedChatResponse> {
     const emergencyTemplate = templateManager.getTemplate("whatsapp-emergency-escalation");
 

@@ -10,7 +10,8 @@
       "mcp__archon__create_task",
       "mcp__archon__update_task",
       "mcp__desktop-commander__write_file",
-      "mcp__desktop-commander__create_directory"
+      "mcp__desktop-commander__create_directory",
+      "mcp__archon__get_task"
     ]
   },
   "allowedToolsUnguarded": [
