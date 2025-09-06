@@ -15,7 +15,7 @@ import { useSearch } from "@tanstack/react-router";
 import { Activity, Calendar, Clock, DollarSign, TrendingUp, Users } from "lucide-react";
 
 export function DashboardOverview() {
-  const search = useSearch({ from: "/dashboard" });
+  // const search = useSearch({ from: "/dashboard" }); // TODO: Use search for filtering
   const { user } = useAuth();
   return (
     <div className="space-y-6">

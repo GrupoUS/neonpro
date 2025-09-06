@@ -97,7 +97,7 @@ function extractPatientId(c: Context): string | undefined {
  */
 async function logHealthcareError(
   error: HealthcareError,
-  c: Context,
+  _c: Context,
 ): Promise<void> {
   const logData = {
     errorId: error.id,
@@ -214,12 +214,12 @@ function createErrorResponse(c: Context, error: HealthcareError): Response {
 
   // Add additional context for specific error types
   if (error.patientImpact) {
-    (errorResponse.error as any).patientDataInvolved = true;
-    (errorResponse.error as any).complianceNotification =
-      "Security team has been automatically notified";
+    const payload = errorResponse.error as Record<string, unknown>;
+    payload.patientDataInvolved = true;
+    payload.complianceNotification = "Security team has been automatically notified";
   }
 
-  return c.json(errorResponse, statusCode as any);
+  return c.json(errorResponse, statusCode as number);
 }
 
 /**

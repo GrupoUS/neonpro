@@ -49,7 +49,7 @@ const STORAGE_KEYS = {
 
 export function HealthcareThemeProvider({
   children,
-  attribute = "class",
+  attribute: _attribute = "class",
   defaultTheme = "light",
   enableSystem = true,
   disableTransitionOnChange = false,

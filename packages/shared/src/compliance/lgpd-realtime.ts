@@ -109,7 +109,7 @@ export class LGPDDataProcessor {
   /**
    * Anonymize sensitive data in real-time payload
    */
-  static anonymizePayload<T extends Record<string, any>>(
+  static anonymizePayload<T extends Record<string, unknown>>(
     payload: RealtimePostgresChangesPayload<T>,
     config: LGPDRealtimeConfig,
   ): RealtimePostgresChangesPayload<T> {
@@ -139,7 +139,7 @@ export class LGPDDataProcessor {
   /**
    * Pseudonymize data for analytics while maintaining referential integrity
    */
-  static pseudonymizePayload<T extends Record<string, any>>(
+  static pseudonymizePayload<T extends Record<string, unknown>>(
     payload: RealtimePostgresChangesPayload<T>,
     config: LGPDRealtimeConfig,
   ): RealtimePostgresChangesPayload<T> {
@@ -169,7 +169,7 @@ export class LGPDDataProcessor {
   /**
    * Apply data minimization - only include necessary fields
    */
-  static minimizeData<T extends Record<string, any>>(
+  static minimizeData<T extends Record<string, unknown>>(
     payload: RealtimePostgresChangesPayload<T>,
     allowedFields: string[],
   ): RealtimePostgresChangesPayload<T> {
@@ -213,9 +213,9 @@ export class LGPDDataProcessor {
 
     fieldsToAnonymize.forEach((field) => {
       if (field in anonymized) {
-        (anonymized as Record<string, any>)[field] = LGPDDataProcessor.generateAnonymousValue(
+        (anonymized as Record<string, unknown>)[field] = LGPDDataProcessor.generateAnonymousValue(
           field,
-          (anonymized as Record<string, any>)[field],
+          (anonymized as Record<string, unknown>)[field],
         );
       }
     });
@@ -235,9 +235,9 @@ export class LGPDDataProcessor {
 
     sensitiveFields.forEach((field) => {
       if (field in pseudonymized) {
-        (pseudonymized as Record<string, any>)[field] = LGPDDataProcessor.generatePseudonym(
+        (pseudonymized as Record<string, unknown>)[field] = LGPDDataProcessor.generatePseudonym(
           field,
-          (pseudonymized as Record<string, any>)[field],
+          (pseudonymized as Record<string, unknown>)[field],
         );
       }
     });
@@ -257,7 +257,7 @@ export class LGPDDataProcessor {
 
     allowedFields.forEach((field) => {
       if (field in data) {
-        (extracted as Record<string, any>)[field] = (data as Record<string, any>)[field];
+        (extracted as Record<string, unknown>)[field] = (data as Record<string, unknown>)[field];
       }
     });
 

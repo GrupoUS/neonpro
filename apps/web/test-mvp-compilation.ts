@@ -2,39 +2,15 @@
 // This file tests that our MVP auth and CRUD systems compile correctly
 
 // Test auth imports
-import {
-  type AuthUser,
-  canAccessResource,
-  createClient,
-  getUser,
-  hasPermission,
-  PERMISSIONS,
-  requireAuth,
-  requireRole,
-  signOut,
-  type User,
-  type UserRole,
-  verifyAuth,
-} from "./lib/auth";
+import { canAccessResource, getUser, hasPermission, PERMISSIONS, verifyAuth } from "./lib/auth";
 
 // Test data imports
 import {
-  type Appointment,
   appointmentService,
   type AppointmentStatus,
-  type AppointmentWithDetails,
-  type CreateAppointmentDto,
-  type CreatePatientDto,
-  type CreateProfessionalDto,
-  type Patient,
   patientService,
-  type Professional,
   professionalService,
   type ProfessionalType,
-  services,
-  type UpdateAppointmentDto,
-  type UpdatePatientDto,
-  type UpdateProfessionalDto,
 } from "./lib/data";
 
 // Test auth functionality

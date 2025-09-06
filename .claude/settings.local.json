@@ -7,7 +7,10 @@
       "mcp__serena__list_dir",
       "mcp__desktop-commander__read_file",
       "mcp__archon__list_tasks",
-      "mcp__archon__create_task"
+      "mcp__archon__create_task",
+      "mcp__archon__update_task",
+      "mcp__desktop-commander__write_file",
+      "mcp__desktop-commander__create_directory"
     ]
   },
   "allowedToolsUnguarded": [

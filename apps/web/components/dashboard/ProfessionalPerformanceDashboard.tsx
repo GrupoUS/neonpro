@@ -12,7 +12,7 @@ export interface ProfessionalPerformanceDashboardProps {
 
 export default function ProfessionalPerformanceDashboard({
   professionalId,
-  metrics,
+  metrics: _metrics,
   loading = false,
   error,
 }: ProfessionalPerformanceDashboardProps) {
