@@ -9,8 +9,8 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@supabase/supabase-js";
-// import jwt from "jsonwebtoken";
-// import nodeCrypto from "node:crypto"; // Removed for client-side compatibility
+import * as jose from "jose";
+import nodeCrypto from "node:crypto";
 
 // Production-grade crypto implementation with fallbacks
 const cryptoShim = {
@@ -23,17 +23,8 @@ const cryptoShim = {
       return array;
     }
 
-    // Try Node.js crypto if available (server-side)
-    try {
-      const nodeCrypto = require("node:crypto");
-      return new Uint8Array(nodeCrypto.randomBytes(size));
-    } catch {
-      // Last resort fallback (not cryptographically secure, testing only)
-      console.warn("⚠️  Using Math.random() for crypto operations. Not suitable for production.");
-      const array = new Uint8Array(size);
-      for (let i = 0; i < size; i++) array[i] = Math.floor(Math.random() * 256);
-      return array;
-    }
+    // Use Node.js crypto as fallback (server-side)
+    return new Uint8Array(nodeCrypto.randomBytes(size));
   },
   randomUUID: (): string => {
     // Try Web Crypto API first
@@ -42,14 +33,9 @@ const cryptoShim = {
       return g.crypto.randomUUID();
     }
 
-    // Try Node.js crypto
-    try {
-      const nodeCrypto = require("node:crypto");
-      if (typeof nodeCrypto.randomUUID === "function") {
-        return nodeCrypto.randomUUID();
-      }
-    } catch (e) {
-      // Ignore and continue to fallback
+    // Use Node.js crypto
+    if (typeof nodeCrypto.randomUUID === "function") {
+      return nodeCrypto.randomUUID();
     }
 
     // RFC4122 v4 generator using secure random bytes
@@ -68,46 +54,36 @@ const cryptoShim = {
 
 // Production-grade JWT implementation with security features
 const jwt = {
-  sign: (payload: any, secret: string, options?: { expiresIn?: string; }) => {
+  sign: async (
+    payload: any,
+    secret: string,
+    options?: { expiresIn?: string; },
+  ): Promise<string> => {
+    const secretKey = new TextEncoder().encode(secret);
+
     try {
-      // Try to use jose library for secure JWT handling
-      const jose = require("jose");
-      const secretKey = new TextEncoder().encode(secret);
-      return new jose.SignJWT(payload)
+      // Use jose library for secure JWT handling
+      return await new jose.SignJWT(payload)
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
         .setExpirationTime(options?.expiresIn || "1h")
         .sign(secretKey);
-    } catch {
-      // Fallback to jsonwebtoken if jose is not available
-      try {
-        const jsonwebtoken = require("jsonwebtoken");
-        return jsonwebtoken.sign(payload, secret, {
-          algorithm: "HS256",
-          expiresIn: options?.expiresIn || "1h",
-          ...options,
-        });
-      } catch {
-        console.warn("⚠️  JWT libraries not available. Using insecure mock token.");
-        return "mock-jwt-token-not-for-production";
-      }
+    } catch (error) {
+      throw new Error(
+        `JWT signing failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   },
-  verify: (token: string, secret: string) => {
+  verify: async (token: string, secret: string) => {
+    const secretKey = new TextEncoder().encode(secret);
+
     try {
-      // Try jose library first
-      const jose = require("jose");
-      const secretKey = new TextEncoder().encode(secret);
-      return jose.jwtVerify(token, secretKey);
-    } catch {
-      // Fallback to jsonwebtoken
-      try {
-        const jsonwebtoken = require("jsonwebtoken");
-        return jsonwebtoken.verify(token, secret, { algorithms: ["HS256"] });
-      } catch {
-        console.warn("⚠️  JWT verification failed or libraries not available.");
-        return { userId: "mock-user" };
-      }
+      // Use jose library for secure JWT verification
+      return await jose.jwtVerify(token, secretKey);
+    } catch (error) {
+      throw new Error(
+        `JWT verification failed: ${error instanceof Error ? error.message : "Invalid token"}`,
+      );
     }
   },
 };
@@ -244,8 +220,8 @@ export class SupabaseAuthAdapter {
         .eq("id", profile.id);
 
       // Generate tokens
-      const accessToken = this.generateAccessToken(profile, session.sessionId);
-      const refreshToken = this.generateRefreshToken(profile.id, session.sessionId);
+      const accessToken = await this.generateAccessToken(profile, session.sessionId);
+      const refreshToken = await this.generateRefreshToken(profile.id, session.sessionId);
 
       // Log successful login
       await this.logSecurityEvent("login_success", {
@@ -469,7 +445,7 @@ export class SupabaseAuthAdapter {
   /**
    * Generate JWT access token
    */
-  private generateAccessToken(profile: any, sessionId: string): string {
+  private async generateAccessToken(profile: any, sessionId: string): Promise<string> {
     const payload = {
       userId: profile.id,
       email: profile.email,
@@ -486,7 +462,7 @@ export class SupabaseAuthAdapter {
   /**
    * Generate refresh token
    */
-  private generateRefreshToken(userId: string, sessionId: string): string {
+  private async generateRefreshToken(userId: string, sessionId: string): Promise<string> {
     const payload = {
       userId,
       sessionId,

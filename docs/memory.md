@@ -5,7 +5,8 @@
 ### Package Simplification Complete
 
 - **Date Completed**: December 2024
-- **Packages Reduced**: 24+ → 11 (54% reduction)
+- **Packages Reduced**: 24+ → 8 (~67% reduction)
+  - Note: Initially consolidated to 11 in Dec 2024; further simplified to 8 by Sep 2025.
 - **Build Status**: ✅ All packages compile successfully
 - **TypeScript**: ✅ Zero compilation errors
 - **MVP Status**: ✅ Ready for deployment
@@ -28,19 +29,16 @@
 
 ### Current Package Structure
 
-**Essential Packages (11):**
+**Essential Packages (8):**
 
-1. `@neonpro/api` - Core API application
-2. `@neonpro/config` - Configuration management
-3. `@neonpro/core-services` - Business logic
-4. `@neonpro/database` - Database with Prisma
+1. `@neonpro/types` - Centralized types
+2. `@neonpro/ui` - Consolidated UI components
+3. `@neonpro/database` - Database with Prisma
+4. `@neonpro/core-services` - Business logic
 5. `@neonpro/security` - Authentication & security
 6. `@neonpro/shared` - Shared utilities
-7. `@neonpro/types` - Centralized types
-8. `@neonpro/ui` - Consolidated UI components
-9. `@neonpro/utils` - Utility functions
-10. `@neonpro/web` - Main web application
-11. `@neonpro/domain` - ✅ MIGRATED: Domain logic consolidated into @neonpro/ui
+7. `@neonpro/utils` - Utility functions
+8. `@neonpro/config` - Configuration management
 
 ### Development Guidelines
 

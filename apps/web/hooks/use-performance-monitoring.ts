@@ -1,34 +1,11 @@
 "use client";
 
+import type {
+  PerformanceKPI,
+  PerformanceMetric,
+  PerformanceReport,
+} from "apps/web/types/performance-monitoring";
 import { useEffect, useState } from "react";
-
-export interface PerformanceMetric {
-  id: string;
-  name: string;
-  value: number;
-  unit: string;
-  threshold?: number;
-  status: "normal" | "warning" | "critical";
-  timestamp: Date;
-}
-
-export interface PerformanceKPI {
-  id: string;
-  name: string;
-  value: number;
-  target: number;
-  unit: string;
-  trend: "up" | "down" | "stable";
-  change: number;
-}
-
-export interface PerformanceReport {
-  id: string;
-  title: string;
-  summary: string;
-  metrics: PerformanceMetric[];
-  generatedAt: Date;
-}
 
 export function usePerformanceMonitoring() {
   const [metrics, setMetrics] = useState<PerformanceMetric[]>([]);

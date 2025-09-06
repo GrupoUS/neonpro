@@ -8,22 +8,33 @@ import { createClient } from "@supabase/supabase-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-// import { randomBytes, randomUUID, timingSafeEqual } from "node:crypto"; // Commented for client-side compatibility
+import crypto from "node:crypto";
 import QRCode from "qrcode";
 import speakeasy from "speakeasy";
 
-// Mock crypto for client-side compatibility
-const randomBytes = (size: number) => {
-  const array = new Uint8Array(size);
-  if (typeof window !== "undefined" && window.crypto) {
-    window.crypto.getRandomValues(array);
-  }
-  return Buffer.from(array);
+// Secure crypto implementations using Node.js crypto module
+const secureRandomBytes = (size: number) => {
+  return crypto.randomBytes(size);
 };
 
-const randomUUID = () => `mock-uuid-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+const secureRandomUUID = () => {
+  if (typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  // Fallback for older Node versions
+  return crypto.randomBytes(16).toString("hex").replace(
+    /(.{8})(.{4})(.{4})(.{4})(.{12})/,
+    "$1-$2-$3-$4-$5",
+  );
+};
 
-const timingSafeEqual = (a: Buffer, b: Buffer) => a.toString() === b.toString();
+const secureTimingSafeEqual = (a: Buffer, b: Buffer): boolean => {
+  // Return false immediately if lengths differ to avoid crypto.timingSafeEqual throwing
+  if (a.length !== b.length) {
+    return false;
+  }
+  return crypto.timingSafeEqual(a, b);
+};
 
 // Custom crypto interface and implementation
 interface CustomCrypto {
@@ -33,9 +44,9 @@ interface CustomCrypto {
 }
 
 const customCrypto: CustomCrypto = {
-  randomBytes,
-  randomUUID,
-  timingSafeEqual,
+  randomBytes: secureRandomBytes,
+  randomUUID: secureRandomUUID,
+  timingSafeEqual: secureTimingSafeEqual,
 };
 import type {
   AuthConfig,
@@ -581,7 +592,7 @@ export class AuthService {
     deviceInfo?: DeviceInfo,
   ): Promise<AuthSession> {
     const session = {
-      id: `session_${customCrypto.randomUUID?.() ?? customCrypto.randomBytes(16).toString("hex")}`,
+      id: `session_${customCrypto.randomUUID()}`,
       user_id: user.id,
       device_info: deviceInfo || {
         userAgent: "",

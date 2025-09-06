@@ -71,3 +71,15 @@ export {
   ServiceTypeSchema,
   UpdateServiceSchema,
 } from "./service.schema";
+
+// WhatsApp schemas only
+export {
+  sendWhatsappMessageSchema,
+  whatsappAnalyticsSchema,
+  whatsappConfigSchema,
+  whatsappConversationSchema,
+  whatsappIncomingWebhookSchema,
+  whatsappMessageSchema,
+  whatsappTemplateSchema,
+  whatsappWebhookVerificationSchema,
+} from "./whatsapp.schema";

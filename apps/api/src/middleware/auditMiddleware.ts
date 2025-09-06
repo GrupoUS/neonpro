@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { AuditAction, AuditResourceType, AuditService } from "../services/AuditService";
 
-// Extend Express Request interface to include audit context
+// Extend Express Request interface to include audit context and user
 declare global {
   namespace Express {
     interface Request {
@@ -11,6 +11,11 @@ declare global {
         resourceId?: string;
         lgpdBasis?: string;
         skipAudit?: boolean;
+      };
+      user?: {
+        id: string;
+        email?: string;
+        role?: string;
       };
     }
   }
@@ -79,11 +84,11 @@ export const auditMiddleware = (
       return originalJson.call(this, body);
     };
 
-    res.end = function(chunk?: unknown, encoding?: unknown) {
+    res.end = function(chunk?: unknown, encoding?: BufferEncoding) {
       if (chunk) {
         responseBody = chunk;
       }
-      return originalEnd.call(this, chunk, encoding);
+      return originalEnd.call(this, chunk, encoding as BufferEncoding);
     };
 
     // Hook into response finish event to log audit
@@ -110,8 +115,8 @@ export const auditMiddleware = (
             action,
             req.auditContext?.resourceType || resourceType,
             resourceId,
-            oldValues,
-            newValues,
+            oldValues as Record<string, unknown> | undefined,
+            newValues as Record<string, unknown> | undefined,
             req.auditContext?.lgpdBasis || options.lgpdBasis,
           );
         }

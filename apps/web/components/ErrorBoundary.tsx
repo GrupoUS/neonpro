@@ -174,7 +174,6 @@ export class ErrorBoundary extends Component<Props, State> {
             url: window.location.href,
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString(),
-            csrfToken, // Also include in body as backup
           }),
         });
 

@@ -169,7 +169,7 @@ const useRealTimeSync = (userId: string, enabled: boolean = true) => {
         supabase.removeChannel(channelRef.current);
       }
     };
-  }, [userId, enabled]);
+  }, [userId, enabled, supabase]);
 
   const fetchSessionData = useCallback(async () => {
     try {
@@ -219,7 +219,7 @@ const useRealTimeSync = (userId: string, enabled: boolean = true) => {
     } catch (error) {
       console.error("Error fetching session data:", error);
     }
-  }, [userId]);
+  }, [userId, supabase]);
 
   const handleSessionChange = (payload: Record<string, unknown>) => {
     const { eventType, new: newRecord, old: oldRecord } = payload;

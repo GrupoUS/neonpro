@@ -436,8 +436,10 @@ export const authMiddleware = (): MiddlewareHandler => {
       await next();
     } catch (error) {
       if (
-        error.message.includes("Invalid token")
-        || error.message.includes("jwt")
+        error instanceof Error && (
+          error.message.includes("Invalid token")
+          || error.message.includes("jwt")
+        )
       ) {
         throw createError.authentication("Token inválido");
       }

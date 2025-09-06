@@ -154,34 +154,34 @@ async function logAuditEvent(
       }
     }
 
-    // Construir evento de auditoria
-    const auditEvent: AuditEvent = {
-      user_id: auditContext.user_id,
-      session_id: auditContext.session_id,
-      action,
-      resource_type: resourceType,
-      resource_id: resourceId,
-      resource_name: extractResourceName(path, requestBody),
-      ip_address: auditContext.ip_address,
-      user_agent: auditContext.user_agent,
-      method: method as "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
-      endpoint: path,
-      status_code: responseInfo.status_code,
-      severity,
-      duration_ms: responseInfo.duration_ms,
-      error_message: responseInfo.error_message,
+    // Registrar evento usando UnifiedAuditService
+    await auditService.logEvent({
+      eventType: action || "SYSTEM_EVENT",
+      severity: severity || "INFO",
+      outcome: responseInfo.status_code >= 400 ? "FAILURE" : "SUCCESS",
+      userId: auditContext.user_id || undefined,
+      resourceType: resourceType || undefined,
+      resourceId: resourceId || undefined,
+      ipAddress: auditContext.ip_address || "unknown",
+      userAgent: auditContext.user_agent || undefined,
+      description: `${action} operation on ${resourceType || "resource"}`,
       details: {
         request_id: auditContext.request_id,
+        session_id: auditContext.session_id,
+        resource_name: extractResourceName(path, requestBody),
+        method: (method && ["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method))
+          ? method as "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
+          : undefined,
+        endpoint: path,
+        status_code: responseInfo.status_code,
+        duration_ms: responseInfo.duration_ms,
+        error_message: responseInfo.error_message,
         query_params: Object.keys(query).length > 0 ? query : undefined,
         request_body: requestBody,
         response_body: responseInfo.response_body,
         user_agent_parsed: parseUserAgent(auditContext.user_agent),
       },
-      timestamp: new Date(),
-    };
-
-    // Registrar evento
-    await auditService.logEvent(auditEvent);
+    });
   } catch (error) {
     console.error("Erro interno no logging de auditoria:", error);
   }
@@ -212,12 +212,12 @@ function extractToken(c: Context): string | null {
 function getClientIP(c: Context): string {
   // Verificar headers de proxy
   const xForwardedFor = c.req.header("X-Forwarded-For");
-  if (xForwardedFor) {
-    return xForwardedFor.split(",")[0].trim();
+  if (xForwardedFor && typeof xForwardedFor === "string") {
+    return xForwardedFor.split(",")[0]?.trim() || "unknown";
   }
 
   const xRealIP = c.req.header("X-Real-IP");
-  if (xRealIP) {
+  if (xRealIP && typeof xRealIP === "string") {
     return xRealIP;
   }
 
@@ -526,59 +526,64 @@ export const auditAuthMiddleware = () => {
         const action = path.includes("/login") ? AuditAction.LOGIN : AuditAction.LOGOUT;
         const severity = c.res.status === 200 ? AuditSeverity.LOW : AuditSeverity.HIGH;
 
-        const auditEvent: AuditEvent = {
-          action,
-          resource_type: ResourceType.USER,
-          ip_address: auditContext.ip_address,
-          user_agent: auditContext.user_agent,
-          method: method as unknown,
-          endpoint: path,
-          status_code: c.res.status,
-          severity,
-          duration_ms: Date.now() - startTime,
-          details: {
-            request_id: auditContext.request_id,
-            auth_attempt: true,
-          },
-          timestamp: new Date(),
-        };
-
         // Tentar extrair user_id da resposta de login bem-sucedido
+        let userId: string | undefined;
         if (action === AuditAction.LOGIN && c.res.status === 200) {
           try {
             const responseText = await c.res.clone().text();
             const responseData = JSON.parse(responseText);
             if (responseData.user?.id) {
-              auditEvent.user_id = responseData.user.id;
+              userId = responseData.user.id;
             }
           } catch {
             // Ignorar erros de parsing
           }
         }
 
-        await auditService.logEvent(auditEvent);
+        await auditService.logEvent({
+          eventType: action === AuditAction.LOGIN ? "LOGIN_SUCCESS" : "LOGOUT_SUCCESS",
+          severity: severity === AuditSeverity.LOW ? "INFO" : "WARNING",
+          outcome: c.res.status === 200 ? "SUCCESS" : "FAILURE",
+          userId: userId,
+          ipAddress: auditContext.ip_address || "unknown",
+          userAgent: auditContext.user_agent || undefined,
+          description: `${action === AuditAction.LOGIN ? "Login" : "Logout"} ${
+            c.res.status === 200 ? "successful" : "failed"
+          }`,
+          details: {
+            request_id: auditContext.request_id,
+            auth_attempt: true,
+            endpoint: path,
+            method: (method && ["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method))
+              ? method as "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
+              : undefined,
+            status_code: c.res.status,
+            duration_ms: Date.now() - startTime,
+          },
+        });
       } catch (error) {
         // Log tentativa de autenticação falhada
-        const auditEvent: AuditEvent = {
-          action: path.includes("/login") ? AuditAction.LOGIN : AuditAction.LOGOUT,
-          resource_type: ResourceType.USER,
-          ip_address: auditContext.ip_address,
-          user_agent: auditContext.user_agent,
-          method: method as unknown,
-          endpoint: path,
-          status_code: 500,
-          severity: AuditSeverity.CRITICAL,
-          duration_ms: Date.now() - startTime,
-          error_message: error instanceof Error ? error.message : "Erro de autenticação",
+        await auditService.logEvent({
+          eventType: path.includes("/login") ? "LOGIN_FAILURE" : "LOGOUT_FAILURE",
+          severity: "CRITICAL",
+          outcome: "FAILURE",
+          ipAddress: auditContext.ip_address || "unknown",
+          userAgent: auditContext.user_agent || undefined,
+          description: `Authentication failed: ${
+            error instanceof Error ? error.message : "Erro de autenticação"
+          }`,
           details: {
             request_id: auditContext.request_id,
             auth_attempt: true,
             failed: true,
+            endpoint: path,
+            method: (method && ["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method))
+              ? method as "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
+              : undefined,
+            status_code: 500,
+            duration_ms: Date.now() - startTime,
           },
-          timestamp: new Date(),
-        };
-
-        await auditService.logEvent(auditEvent);
+        });
         throw error;
       }
     } else {

@@ -705,6 +705,183 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
       request: RequestValidator,
       response: ResponseValidator,
     },
+
+    // WhatsApp Business API methods
+    whatsapp: {
+      // Send WhatsApp message
+      sendMessage: async (params: {
+        to: string;
+        message: string;
+        type?: "text" | "template";
+        clinicId: string;
+        patientId?: string;
+        messageType?: string;
+        templateName?: string;
+        templateParams?: string[];
+      }) => {
+        const response = await fetch(`${finalConfig.baseUrl}/api/v1/whatsapp/send`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tokenManager.getAccessToken()}`,
+          },
+          body: JSON.stringify(params),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: Failed to send WhatsApp message`);
+        }
+
+        return response.json();
+      },
+
+      // Get WhatsApp messages for a conversation
+      getMessages: async (params: {
+        clinicId: string;
+        phoneNumber?: string;
+        patientId?: string;
+        page?: number;
+        limit?: number;
+      }) => {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined) {
+            searchParams.append(key, String(value));
+          }
+        });
+
+        const response = await fetch(
+          `${finalConfig.baseUrl}/api/v1/whatsapp/messages?${searchParams}`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokenManager.getAccessToken()}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: Failed to get WhatsApp messages`);
+        }
+
+        return response.json();
+      },
+
+      // Get WhatsApp conversations
+      getConversations: async (params: {
+        clinicId: string;
+        status?: "active" | "closed" | "archived";
+        assignedTo?: string;
+        page?: number;
+        limit?: number;
+      }) => {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined) {
+            searchParams.append(key, String(value));
+          }
+        });
+
+        const response = await fetch(
+          `${finalConfig.baseUrl}/api/v1/whatsapp/conversations?${searchParams}`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokenManager.getAccessToken()}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: Failed to get WhatsApp conversations`);
+        }
+
+        return response.json();
+      },
+
+      // Get WhatsApp configuration for clinic
+      getConfig: async (clinicId: string) => {
+        const response = await fetch(
+          `${finalConfig.baseUrl}/api/v1/whatsapp/config/${clinicId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokenManager.getAccessToken()}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: Failed to get WhatsApp config`);
+        }
+
+        return response.json();
+      },
+
+      // Update WhatsApp configuration
+      updateConfig: async (clinicId: string, config: {
+        autoReply?: boolean;
+        autoReplyMessage?: string;
+        businessHours?: any;
+        isActive?: boolean;
+      }) => {
+        const response = await fetch(
+          `${finalConfig.baseUrl}/api/v1/whatsapp/config/${clinicId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tokenManager.getAccessToken()}`,
+            },
+            body: JSON.stringify(config),
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: Failed to update WhatsApp config`);
+        }
+
+        return response.json();
+      },
+
+      // Get WhatsApp analytics
+      getAnalytics: async (params: {
+        clinicId: string;
+        dateFrom?: string;
+        dateTo?: string;
+        period?: "day" | "week" | "month";
+      }) => {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined) {
+            searchParams.append(key, String(value));
+          }
+        });
+
+        const response = await fetch(
+          `${finalConfig.baseUrl}/api/v1/whatsapp/analytics?${searchParams}`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokenManager.getAccessToken()}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: Failed to get WhatsApp analytics`);
+        }
+
+        return response.json();
+      },
+
+      // Check WhatsApp health status
+      checkHealth: async () => {
+        const response = await fetch(`${finalConfig.baseUrl}/api/v1/whatsapp/health`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: WhatsApp health check failed`);
+        }
+
+        return response.json();
+      },
+    },
   };
 }
 

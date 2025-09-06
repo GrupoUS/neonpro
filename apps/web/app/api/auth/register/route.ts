@@ -1,4 +1,4 @@
-import { RealAuthService } from "@neonpro/security/auth/RealAuthService";
+import { RealAuthService } from "@neonpro/security";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 

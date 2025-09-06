@@ -1,4 +1,16 @@
 {
+  "permissions": {
+    "allow": [
+      "mcp__supabase__list_migrations",
+      "mcp__desktop-commander__read_multiple_files",
+      "mcp__Sequential_Thinking__sequentialthinking",
+      "mcp__serena__get_symbols_overview",
+      "mcp__desktop-commander__read_file",
+      "mcp__desktop-commander__edit_block",
+      "mcp__serena__find_symbol",
+      "mcp__serena__search_for_pattern"
+    ]
+  },
   "allowedToolsUnguarded": [
     "mcp__archon__create_project",
     "mcp__archon__list_projects",
@@ -16,11 +28,9 @@
     "mcp__supabase__list_projects",
     "mcp__supabase__get_project",
     "mcp__supabase__get_cost",
-    "mcp__supabase__confirm_cost",
     "mcp__supabase__list_tables",
     "mcp__supabase__list_extensions",
     "mcp__supabase__list_migrations",
-    "mcp__supabase__execute_sql",
     "mcp__supabase__get_logs",
     "mcp__supabase__get_advisors",
     "mcp__supabase__get_project_url",
@@ -48,11 +58,45 @@
           ]
         }
       }
+    },
+    {
+      "name": "mcp__supabase__execute_sql",
+      "preToolUse": {
+        "guardScript": "scripts/guard-nonprod-only.py",
+        "confirmationRequired": true,
+        "confirmationPrompt": "⚠️  SQL EXECUTION WARNING ⚠️\n\nThis will execute raw SQL against the database which can:\n• Modify, delete, or corrupt data permanently\n• Affect database performance and stability\n• Expose sensitive information if misused\n• Be irreversible without proper backups\n\nEnvironment: {environment}\nSQL Query: {query}\n\nConfirm you want to execute this SQL query?",
+        "metadata": {
+          "description": "Raw SQL execution with security protection",
+          "requirements": [
+            "Non-production environment (CLAUDE_ENV != production)",
+            "Explicit user confirmation",
+            "Guard script validation"
+          ],
+          "safetyChecks": [
+            "Environment validation via guard-nonprod-only.py",
+            "User confirmation with SQL query preview",
+            "Read-only query detection and warnings"
+          ]
+        }
+      }
+    },
+    {
+      "name": "mcp__supabase__confirm_cost",
+      "preToolUse": {
+        "confirmationRequired": true,
+        "confirmationPrompt": "⚠️  FINANCIAL OPERATION CONFIRMATION ⚠️\n\nThis will confirm costs for a financial operation which may:\n• Authorize charges to your Supabase account\n• Commit to billing for resources\n• Affect your organization's budget\n\nOperation Type: {type}\nAmount: {amount} {recurrence}\n\nConfirm you want to authorize this cost?",
+        "metadata": {
+          "description": "Financial operation confirmation with billing protection",
+          "requirements": [
+            "Explicit user confirmation",
+            "Cost transparency"
+          ],
+          "safetyChecks": [
+            "User confirmation with cost breakdown",
+            "Operation type and amount validation"
+          ]
+        }
+      }
     }
-  ],
-  "permissions": {
-    "allow": [
-      "mcp__supabase__list_migrations"
-    ]
-  }
+  ]
 }

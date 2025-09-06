@@ -419,14 +419,16 @@ export class StrategyGeneratorService {
       if (!baseAction) continue;
 
       // Personalize timing based on patient patterns
+      // Ensure timing has a safe default if template omitted it
       const timing = await this.personalizeActionTiming(
-        baseAction.timing,
+        baseAction.timing ?? { delay: 24 },
         profile,
       );
 
       // Adapt content to personality type
+      // Provide empty string fallback for optional content
       const content = await this.adaptContentToPersonality(
-        baseAction.content,
+        baseAction.content ?? "",
         profile.personalityType,
         profile.patterns,
       );
@@ -451,7 +453,8 @@ export class StrategyGeneratorService {
         title: baseAction.title || "Action",
         content,
         timing,
-        conditions: baseAction.conditions || [],
+        // conditions is optional in ActionPlan; keep undefined if not provided
+        conditions: baseAction.conditions ?? undefined,
         personalization,
       });
     }
@@ -1034,12 +1037,13 @@ export class StrategyGeneratorService {
     _targetMetrics: StrategyMetrics["targetMetrics"],
   ): number {
     const { revenueGenerated: revenue } = actualResults;
-    const estimatedCost = 200; // Estimated cost per strategy execution (actualResults doesn't contain cost)
+    // Ensure estimatedCost is a general number (avoid literal-type comparison issues)
+    const estimatedCost: number = 200; // Estimated cost per strategy execution (actualResults doesn't contain cost)
 
-    if (estimatedCost === 0) {
+    // Guard against zero or negative cost to avoid division by zero / invalid ROI
+    if (estimatedCost <= 0) {
       return 0;
     }
-
     return Math.round(((revenue - estimatedCost) / estimatedCost) * 100);
   }
 

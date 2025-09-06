@@ -47,6 +47,7 @@ interface ErrorReport {
   userId?: string;
   clinicId?: string;
   sessionId?: string;
+  csrfToken?: string;
   breadcrumbs?: {
     timestamp: string;
     message: string;
@@ -189,7 +190,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate CSRF token
-    const csrfToken = request.headers.get("x-csrf-token") || (report as any).csrfToken;
+    const csrfToken = request.headers.get("x-csrf-token");
     if (!csrfToken) {
       return NextResponse.json(
         { error: "CSRF token is required" },
@@ -359,5 +360,5 @@ async function GET() {
   });
 }
 
-export { GET, POST };
+export { GET };
 export const dynamic = "force-dynamic";

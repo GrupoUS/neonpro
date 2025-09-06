@@ -272,7 +272,7 @@ export class AuditService {
       }
 
       // Salvar arquivo temporário (implementar storage)
-      const fileSize = Buffer.byteLength(exportData, "utf8");
+      const fileSize = Buffer.byteLength(String(exportData), "utf8");
       const downloadUrl = `/api/audit/download/${filename}`; // Placeholder
 
       return {
@@ -461,6 +461,9 @@ export class AuditService {
     return csvRows.join("\n");
   }
 }
+
+// Import the UnifiedAuditService
+import { UnifiedAuditService } from "@neonpro/security";
 
 // Instância singleton
 export const auditService = new UnifiedAuditService();

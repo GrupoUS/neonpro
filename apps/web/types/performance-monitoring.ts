@@ -77,14 +77,4 @@ export interface PerformanceConfiguration {
   alertChannels: string[];
 }
 
-// Export all types
-export type {
-  PerformanceAlert,
-  PerformanceConfiguration,
-  PerformanceDashboardData,
-  PerformanceKPI,
-  PerformanceMetric,
-  PerformanceReport,
-  PerformanceThreshold,
-  PerformanceTrend,
-} from "./performance-monitoring";
+// All types are already exported above

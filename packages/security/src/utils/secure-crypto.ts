@@ -156,13 +156,14 @@ function createSecureTimingSafeEqual(): SecureTimingSafeEqual {
   } else {
     // Implement constant-time comparison for browsers
     return (a: Buffer, b: Buffer): boolean => {
-      if (a.length !== b.length) {
-        return false;
-      }
+      // Incorporate length difference into the result to prevent timing leaks
+      let result = a.length ^ b.length;
+      const maxLength = Math.max(a.length, b.length);
 
-      let result = 0;
-      for (let i = 0; i < a.length; i++) {
-        result |= a[i] ^ b[i];
+      for (let i = 0; i < maxLength; i++) {
+        const aVal = i < a.length ? a[i] : 0;
+        const bVal = i < b.length ? b[i] : 0;
+        result |= aVal ^ bVal;
       }
       return result === 0;
     };

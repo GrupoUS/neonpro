@@ -151,7 +151,7 @@ interface AestheticLGPDConsent {
 // Core aesthetic platform structure
 apps/
 ├── web/                     // Next.js aesthetic clinic interface
-├── api/                     // Supabase Edge Functions
+├── api/                     // Hono API (Vercel Functions)
 └── mobile/                  // PWA mobile app
 
 packages/

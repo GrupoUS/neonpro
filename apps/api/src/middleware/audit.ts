@@ -36,7 +36,11 @@ export enum AuditLevel {
 }
 
 // LGPD sensitive operations that require audit
-const LGPD_SENSITIVE_OPERATIONS = {
+const LGPD_SENSITIVE_OPERATIONS: Record<string, {
+  level: AuditLevel;
+  category: string;
+  description: string;
+}> = {
   // Data access operations
   "GET /api/v1/patients": {
     level: AuditLevel.INFO,
@@ -179,25 +183,26 @@ class AuditStore {
   private async persistLog(log: AuditLog): Promise<void> {
     try {
       // Persist to database using AuditService
-      await auditService.log({
-        userId: log.userId || null,
-        sessionId: log.sessionId || null,
-        action: log.operation,
-        resourceType: log.category,
-        resourceId: log.resourceId || null,
-        ipAddress: log.clientIP,
-        userAgent: log.userAgent,
-        statusCode: log.statusCode || 200,
+      await auditService.logEvent({
+        eventType: log.operation || "SYSTEM_EVENT",
         severity: this.mapLevelToSeverity(log.level),
-        requestMethod: log.method,
-        requestPath: log.path,
-        requestBody: log.metadata?.requestBody as Record<string, unknown> || null,
-        responseBody: log.metadata?.responseBody as Record<string, unknown> || null,
-        errorMessage: log.metadata?.error as string || null,
-        errorStack: log.metadata?.errorStack as string || null,
-        additionalData: {
+        outcome: log.statusCode && log.statusCode >= 400 ? "FAILURE" : "SUCCESS",
+        userId: log.userId || undefined,
+        resourceType: log.category || undefined,
+        resourceId: log.resourceId || undefined,
+        ipAddress: log.clientIP || "unknown",
+        userAgent: log.userAgent || undefined,
+        description: log.description || `${log.operation || "Operation"} performed`,
+        details: {
           auditId: log.auditId,
-          description: log.description,
+          sessionId: log.sessionId,
+          statusCode: log.statusCode || 200,
+          requestMethod: log.method,
+          requestPath: log.path,
+          requestBody: log.metadata?.requestBody as Record<string, unknown> || undefined,
+          responseBody: log.metadata?.responseBody as Record<string, unknown> || undefined,
+          errorMessage: log.metadata?.error as string || undefined,
+          errorStack: log.metadata?.errorStack as string || undefined,
           lgpdRelevant: log.lgpdRelevant,
           personalDataAccessed: log.personalDataAccessed,
           consentRequired: log.consentRequired,
@@ -224,18 +229,18 @@ class AuditStore {
     }
   }
 
-  private mapLevelToSeverity(level: AuditLevel): "low" | "medium" | "high" | "critical" {
+  private mapLevelToSeverity(level: AuditLevel): "INFO" | "WARNING" | "ERROR" | "CRITICAL" {
     switch (level) {
       case AuditLevel.INFO:
-        return "low";
+        return "INFO";
       case AuditLevel.WARNING:
-        return "medium";
+        return "WARNING";
       case AuditLevel.ERROR:
-        return "high";
+        return "ERROR";
       case AuditLevel.CRITICAL:
-        return "critical";
+        return "CRITICAL";
       default:
-        return "medium";
+        return "INFO";
     }
   }
 
@@ -290,7 +295,11 @@ const extractUserContext = (c: Context) => {
       // Fallback: decode JWT manually if user context not available
       // Note: This is a basic decode without verification for audit purposes only
       // The actual verification should be done in the auth middleware
-      const payload = JSON.parse(atob(token.split(".")[1]));
+      const parts = token.split(".");
+      if (parts.length < 2 || !parts[1]) {
+        throw new Error("Invalid JWT token format");
+      }
+      const payload = JSON.parse(atob(parts[1]));
 
       return {
         userId: payload.sub || payload.userId || payload.id,
@@ -324,7 +333,7 @@ const extractUserContext = (c: Context) => {
 const extractClientContext = (c: Context) => {
   return {
     clientIP: c.req.header("CF-Connecting-IP")
-      || c.req.header("X-Forwarded-For")?.split(",")[0].trim()
+      || c.req.header("X-Forwarded-For")?.split(",")[0]?.trim()
       || c.req.header("X-Real-IP")
       || "unknown",
     userAgent: c.req.header("User-Agent") || "unknown",
@@ -403,7 +412,7 @@ export const auditMiddleware = (): MiddlewareHandler => {
       const resourceIdMatch = extractResourceIds(path);
       const resourceId = resourceIdMatch?.[
         resourceIdMatch.length - 1
-      ]?.replaceAll(String.raw`\/`, "");
+      ]?.replace(/\\\//g, "");
 
       // Create audit log entry
       const auditLog: AuditLog = {
@@ -475,7 +484,7 @@ export const auditMiddleware = (): MiddlewareHandler => {
           auditLog.metadata = {
             ...auditLog.metadata,
             error: true,
-            errorMessage: error.message,
+            errorMessage: error instanceof Error ? error.message : "Unknown error",
           };
 
           auditStore.add(auditLog);

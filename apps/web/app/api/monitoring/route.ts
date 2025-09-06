@@ -1,5 +1,4 @@
 import { LogCategory, logger, LogLevel } from "@/lib/logger";
-import { LogCategory, logger } from "@/lib/logger";
 import { alertSystem, type MonitoringDashboard } from "@/lib/monitoring/alert-system";
 import { createClient } from "@/utils/supabase/server";
 import type { NextRequest } from "next/server";
@@ -18,12 +17,16 @@ interface AlertRule {
 
 interface PerformanceMetric {
   id: string;
-  timestamp: Date;
-  metricName: string;
-  value: number;
+  timestamp?: Date;
+  metricName?: string;
+  value?: number;
   labels?: Record<string, string>;
   clinicId?: string;
   userId?: string;
+
+  // DB column names (supabase row shape) — optional to satisfy runtime shapes
+  created_at?: string; // e.g. "2025-09-02T12:34:56.000Z"
+  metric_value?: number | string; // stored metric value column
 }
 
 interface MonitoringResult {
@@ -164,7 +167,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let result: Record<string, any> | null = null;
+    // allow boolean (acknowledge/resolve), string (created rule id) or object responses
+    let result: boolean | string | Record<string, any> | null = null;
 
     switch (action) {
       case "acknowledge_alert":
@@ -517,7 +521,40 @@ async function resolveAlert(
 
 async function createAlertRule(rule: AlertRule, userId: string): Promise<string | null> {
   try {
-    const ruleId = await alertSystem.addAlertRule(rule);
+    // Map incoming rule to the alertSystem expected shape, providing sensible defaults
+    const payload = {
+      // preserve original fields
+      name: rule.name,
+      description: rule.description ?? "",
+      severity: rule.severity,
+      enabled: rule.enabled ?? true,
+      tags: rule.tags ?? [],
+
+      // legacy/compat fields kept for downstream systems
+      condition: rule.condition,
+      threshold: rule.threshold,
+
+      // Required fields for alertSystem.AlertRule (defaults used when missing)
+      category: (rule as any).category ?? "general",
+      metadata: {
+        createdBy: userId,
+        createdAt: new Date().toISOString(),
+        ...(rule as any).metadata,
+      },
+      conditions: (rule as any).conditions ?? [
+        {
+          expression: rule.condition ?? "",
+          threshold: rule.threshold,
+        },
+      ],
+      actions: (rule as any).actions ?? [
+        // default action: notify via email (adjust if your system uses different action shapes)
+        { type: "notify", channels: ["email"] },
+      ],
+    };
+
+    // Cast to any to satisfy the alertSystem parameter shape without importing external types
+    const ruleId = await alertSystem.addAlertRule(payload as any);
 
     logger.info(LogCategory.SYSTEM, "Alert rule created via API", {
       metadata: {
@@ -551,11 +588,28 @@ async function createAlertRule(rule: AlertRule, userId: string): Promise<string 
 }
 
 function processMetricsData(metrics: PerformanceMetric[], type: string) {
+  // handle empty metrics early
+  if (!metrics || metrics.length === 0) {
+    return {
+      timeSeries: [],
+      summary: {
+        totalDataPoints: 0,
+        avgResponseTime: 0,
+        maxResponseTime: 0,
+        minResponseTime: 0,
+      },
+    };
+  }
+
   // Group metrics by time buckets for charting
   const buckets = new Map<string, any[]>();
 
   metrics.forEach(metric => {
-    const bucket = new Date(metric.created_at).toISOString().slice(0, 16); // Minute precision
+    // prefer DB column created_at, fallback to typed timestamp
+    const ts = metric.created_at ?? (metric.timestamp ? metric.timestamp.toISOString() : undefined);
+    if (!ts) return; // skip if no timestamp available
+
+    const bucket = new Date(ts).toISOString().slice(0, 16); // Minute precision
     if (!buckets.has(bucket)) {
       buckets.set(bucket, []);
     }
@@ -565,30 +619,43 @@ function processMetricsData(metrics: PerformanceMetric[], type: string) {
   // Convert to time series data
   const timeSeries = Array.from(buckets.entries())
     .map(([time, bucketMetrics]) => {
-      const avgValue = bucketMetrics.reduce((sum, m) => sum + Number(m.metric_value), 0)
-        / bucketMetrics.length;
-      const maxValue = Math.max(...bucketMetrics.map(m => Number(m.metric_value)));
-      const minValue = Math.min(...bucketMetrics.map(m => Number(m.metric_value)));
+      const values = bucketMetrics
+        .map(m => Number(m.metric_value ?? m.value ?? 0))
+        .filter(v => !Number.isNaN(v));
+
+      const count = values.length;
+      const avgValue = count > 0 ? values.reduce((sum, v) => sum + v, 0) / count : 0;
+      const maxValue = count > 0 ? Math.max(...values) : 0;
+      const minValue = count > 0 ? Math.min(...values) : 0;
 
       return {
         timestamp: time,
         avg: Math.round(avgValue),
         max: maxValue,
         min: minValue,
-        count: bucketMetrics.length,
+        count,
       };
     })
     .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
 
+  const allValues = metrics
+    .map(m => Number(m.metric_value ?? m.value ?? NaN))
+    .filter(v => !Number.isNaN(v));
+
+  const totalDataPoints = allValues.length;
+  const avgResponseTime = totalDataPoints > 0
+    ? Math.round(allValues.reduce((s, v) => s + v, 0) / totalDataPoints)
+    : 0;
+  const maxResponseTime = totalDataPoints > 0 ? Math.max(...allValues) : 0;
+  const minResponseTime = totalDataPoints > 0 ? Math.min(...allValues) : 0;
+
   return {
     timeSeries,
     summary: {
-      totalDataPoints: metrics.length,
-      avgResponseTime: Math.round(
-        metrics.reduce((sum, m) => sum + Number(m.metric_value), 0) / metrics.length,
-      ),
-      maxResponseTime: Math.max(...metrics.map(m => Number(m.metric_value))),
-      minResponseTime: Math.min(...metrics.map(m => Number(m.metric_value))),
+      totalDataPoints,
+      avgResponseTime,
+      maxResponseTime,
+      minResponseTime,
     },
   };
 }

@@ -22,6 +22,7 @@ import health from "./health";
 import patients from "./patients";
 import { professionalRoutes } from "./professionals";
 import { servicesRoutes } from "./services";
+import { whatsappRoutes } from "./whatsapp";
 
 // Import middleware
 import { auditMiddleware } from "../middleware/audit.middleware";
@@ -120,6 +121,7 @@ api.get("/", (c) => {
       analytics: "/analytics",
       services: "/services",
       ai: "/ai",
+      whatsapp: "/whatsapp",
     },
   });
 });
@@ -146,6 +148,12 @@ api.route("/services", servicesRoutes);
 
 // AI and ML routes
 api.route("/ai", aiRoutes);
+
+// WhatsApp Business API routes
+api.route("/whatsapp", whatsappRoutes);
+
+// WhatsApp Business API routes
+api.route("/whatsapp", whatsappRoutes);
 
 // API documentation endpoint
 api.get("/docs", (c) => {

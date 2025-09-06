@@ -1,1189 +1,838 @@
-# NeonPro Frontend Development Guide - Version: 6.0.0
+# NeonPro UI/UX Specification
 
-## Overview
+## Introduction
 
-**NeonPro** is an AI-First Brazilian Aesthetic Clinic Platform built with **Turborepo monorepo architecture**. This guide provides implementation patterns, security requirements, and development workflows for healthcare SaaS platform.
+This document defines the user experience goals, information architecture, user flows, and visual design specifications for **NeonPro AI-First Advanced Aesthetic Platform**'s user interface. It serves as the foundation for visual design and frontend development, ensuring a cohesive and user-centered experience for Brazilian aesthetic clinic management.
 
-**Target**: Frontend developers, full-stack developers, technical leads\
-**Stack**: Next.js 15 + React 19 with 20 specialized packages\
-**Focus**: Brazilian healthcare compliance + technical implementation\
-**Quality**: 9.5/10 production-ready architecture
+**Target Audience**: UI/UX designers, frontend developers, product managers\
+**Focus**: Brazilian aesthetic clinics with Portuguese-optimized user experience\
+**Compliance**: LGPD, ANVISA, WCAG 2.1 AA accessibility standards\
+**Platform**: Web-first with mobile responsiveness
 
-## Prerequisites
+### Overall UX Goals & Principles
 
-**Essential Skills**: Next.js 15 App Router, TypeScript 5.3+, Turborepo workflow, shadcn/ui v4, Brazilian Healthcare UX, WCAG 2.1 AA
+#### Target User Personas
 
-**Development Environment**:
+**Primary Persona - Marina Silva (Aesthetic Professional)**
 
-```bash
-# Setup
-Node.js 20+ with pnpm
-git clone <repo> && cd neonpro && pnpm install && pnpm dev
-
-# Key paths
-apps/web/     # Next.js Frontend (PORT 3000)  
-apps/api/     # Hono.dev Backend (PORT 3004)
-packages/     # 20 specialized packages
-```
-
-**Key User**: Marina Silva - Technical Aesthetic Professional (35-45 years, moderate tech comfort 6/10)
-
+- **Age**: 35-45 years
+- **Role**: Technical aesthetic professional (dermatologist, aesthetician, nurse)
+- **Tech Comfort**: 6/10 (moderate)
+- **Goals**: Efficient patient management, reduced administrative burden, compliance assurance
+- **Pain Points**: Complex software interfaces, time-consuming data entry, compliance uncertainty
 - **Needs**: Zero workflow disruption, <5% performance impact, 60% admin time reduction
-- **Requirements**: Mobile-first, Portuguese-optimized, healthcare-specific patterns
 
-## Architecture & Monorepo
+**Secondary Persona - Carlos Santos (Clinic Administrator)**
 
-### Turborepo Structure (20 Packages)
+- **Age**: 28-40 years
+- **Role**: Clinic coordinator/administrator
+- **Tech Comfort**: 7/10 (good)
+- **Goals**: Operational efficiency, compliance monitoring, staff coordination
+- **Pain Points**: Manual scheduling conflicts, compliance tracking, communication gaps
+- **Needs**: Real-time visibility, automated compliance, streamlined communication
 
-```typescript
-apps/
-├── web/              # Next.js 15 Frontend Application
-├── api/              # Hono.dev Backend API  
+**Tertiary Persona - Ana Costa (Patient)**
 
-packages/ (20 packages organized by domain)
-├── UI & Components (4)
-│   ├── @neonpro/ui                    # shadcn/ui + healthcare components
-│   ├── @neonpro/brazilian-healthcare-ui # Brazilian-specific UI library
-│   ├── @neonpro/shared                # Shared utilities
-│   └── @neonpro/utils                 # Common functions
-├── Data & Types (3)
-│   ├── @neonpro/database              # Supabase + Prisma integration
-│   ├── @neonpro/types                 # TypeScript definitions
-│   └── @neonpro/domain                # Business logic models
-├── Core Services (2)
-│   ├── @neonpro/core-services         # Business services
-│   └── @neonpro/config                # Configuration management
-├── Healthcare & Compliance (2)
-│   ├── @neonpro/compliance            # LGPD automation
-│   └── @neonpro/security              # Security + Unified Audit Service
-├── AI & Intelligence (2)
-│   ├── @neonpro/ai                    # AI services and integrations
-│   └── @neonpro/cache                 # Advanced caching
-├── Monitoring & Performance (2)
-│   ├── @neonpro/monitoring            # System monitoring
-│   └── @neonpro/health-dashboard      # Health visualization
-├── Infrastructure (3)
-│   ├── @neonpro/auth                  # Authentication/authorization
-│   ├── @neonpro/integrations          # External services
-│   └── @neonpro/devops                # DevOps tooling
-└── Enterprise (2)
-    ├── @neonpro/enterprise            # Enterprise features
-    └── @neonpro/docs                  # Documentation generation
+- **Age**: 25-55 years
+- **Role**: Aesthetic clinic patient
+- **Tech Comfort**: 5/10 (basic to moderate)
+- **Goals**: Easy appointment booking, clear communication, treatment information
+- **Pain Points**: Complex booking processes, unclear procedures, communication delays
+- **Needs**: Simple interfaces, Portuguese language, mobile accessibility
+
+#### Usability Goals
+
+- **Ease of learning**: New users can complete core tasks within 5 minutes of first use
+- **Efficiency of use**: Power users can complete frequent tasks with minimal clicks (≤3 clicks for common actions)
+- **Error prevention**: Clear validation and confirmation for destructive actions with Portuguese messaging
+- **Memorability**: Infrequent users can return without relearning interface patterns
+- **Accessibility**: Full WCAG 2.1 AA compliance with Portuguese screen reader optimization
+
+#### Design Principles
+
+1. **Clareza sobre inteligência** - Prioritize clear communication over aesthetic innovation
+2. **Revelação progressiva** - Show only what's needed, when it's needed
+3. **Padrões consistentes** - Use familiar UI patterns throughout the application
+4. **Feedback imediato** - Every action should have a clear, immediate response
+5. **Acessível por padrão** - Design for all users from the start, including Portuguese language support
+
+### Change Log
+
+| Date       | Version | Description                                          | Author           |
+| ---------- | ------- | ---------------------------------------------------- | ---------------- |
+| 2025-09-06 | 2.0.0   | Enhanced with UI/UX specification template structure | AI IDE Agent     |
+| 2024-12-01 | 1.0.0   | Initial frontend development guide                   | Development Team |
+
+## Information Architecture (IA)
+
+### Site Map / Screen Inventory
+
+```mermaid
+graph TD
+    A[Landing Page] --> B[Authentication]
+    B --> C[Dashboard Principal]
+    
+    C --> D[Gestão de Pacientes]
+    D --> D1[Lista de Pacientes]
+    D --> D2[Perfil do Paciente]
+    D --> D3[Novo Paciente]
+    D --> D4[Histórico Médico]
+    
+    C --> E[Agendamentos]
+    E --> E1[Calendário]
+    E --> E2[Novo Agendamento]
+    E --> E3[Detalhes do Agendamento]
+    E --> E4[Lista de Espera]
+    
+    C --> F[Chat IA Universal]
+    F --> F1[Interface de Chat]
+    F --> F2[Histórico de Sessões]
+    F --> F3[Configurações de IA]
+    
+    C --> G[Analytics & Relatórios]
+    G --> G1[Dashboard de Performance]
+    G --> G2[Previsão Anti-No-Show]
+    G --> G3[Relatórios Financeiros]
+    G --> G4[Métricas de Satisfação]
+    
+    C --> H[Conformidade LGPD]
+    H --> H1[Centro de Consentimentos]
+    H --> H2[Logs de Auditoria]
+    H --> H3[Exportação de Dados]
+    H --> H4[Configurações de Privacidade]
+    
+    C --> I[Configurações]
+    I --> I1[Perfil Profissional]
+    I --> I2[Configurações da Clínica]
+    I --> I3[Integrações]
+    I --> I4[Notificações]
 ```
 
-### Frontend Application Structure
+### Navigation Structure
 
-```typescript
-// apps/web/ - Next.js 15 Application
-src/
-├── app/                    # App Router (Next.js 15)
-│   ├── (auth)/            # Authentication routes
-│   ├── (dashboard)/       # Protected routes
-│   │   ├── patients/      # Patient management
-│   │   ├── appointments/  # Scheduling system
-│   │   ├── ai-chat/       # Universal AI Chat
-│   │   ├── analytics/     # Performance dashboard
-│   │   └── compliance/    # LGPD compliance center
-│   ├── api/               # API routes (Edge functions)
-│   ├── globals.css        # Global styles + design tokens
-│   ├── layout.tsx         # Root layout with providers
-│   └── page.tsx           # Landing page
-├── components/            # React components
-│   ├── ui/                # shadcn/ui base components
-│   ├── healthcare/        # Healthcare-specific components
-│   ├── forms/             # Form components with validation
-│   └── layouts/           # Layout components
-├── lib/                   # Utilities and integrations
-│   ├── hooks/             # Custom React hooks
-│   ├── stores/            # Zustand state management
-│   ├── utils.ts           # Common utilities
-│   ├── supabase.ts        # Supabase client
-│   └── validations.ts     # Zod schemas
-└── types/                 # Frontend-specific types
+**Primary Navigation**: Sidebar navigation with collapsible sections for main functional areas
+
+**Secondary Navigation**: Breadcrumb navigation for deep hierarchies and contextual tabs for related content
+
+**Breadcrumb Strategy**: Always show current location with clickable path back to parent sections
+
+## User Flows
+
+### Patient Registration Flow
+
+**User Goal**: Register new patient with LGPD compliance
+
+**Entry Points**: Dashboard → Patients → New Patient button, AI Chat suggestion, Quick action menu
+
+**Success Criteria**: Patient successfully registered with all required consents obtained
+
+#### Flow Diagram
+
+```mermaid
+graph TD
+    A[Start: New Patient] --> B[Basic Information Form]
+    B --> C{Required Fields Valid?}
+    C -->|No| D[Show Validation Errors]
+    D --> B
+    C -->|Yes| E[LGPD Consent Screen]
+    E --> F{All Consents Provided?}
+    F -->|No| G[Explain Required Consents]
+    G --> E
+    F -->|Yes| H[Review & Confirm]
+    H --> I{User Confirms?}
+    I -->|No| B
+    I -->|Yes| J[Save Patient]
+    J --> K[Success Confirmation]
+    K --> L[Redirect to Patient Profile]
 ```
 
-### Component Architecture Pattern
+#### Edge Cases & Error Handling:
 
-```typescript
-// Standard healthcare component interface
-interface HealthcareComponentProps {
-  readonly patientId: string;
-  readonly lgpdCompliant: boolean;
-  readonly userRole: "admin" | "professional" | "coordinator";
-  readonly onAuditLog?: (action: string) => void;
-}
+- Duplicate CPF detection with merge option
+- Network connectivity issues with offline form saving
+- Incomplete consent handling with clear explanations
+- Data validation errors with Portuguese error messages
 
-// State management with Zustand + audit logging
-interface PatientStore {
-  patients: Patient[];
-  selectedPatient: Patient | null;
-  isLoading: boolean;
-  setPatients: (patients: Patient[]) => void;
-  selectPatient: (patient: Patient) => Promise<void>;
-  updatePatient: (id: string, updates: Partial<Patient>) => Promise<void>;
-  subscribeToUpdates: () => void;
-}
+**Notes**: Form auto-saves progress every 30 seconds to prevent data loss
+
+### AI Chat Appointment Booking Flow
+
+**User Goal**: Book appointment through natural language conversation in Portuguese
+
+**Entry Points**: Dashboard AI Chat widget, dedicated AI Chat page, patient profile chat button
+
+**Success Criteria**: Appointment successfully scheduled with professional confirmation
+
+#### Flow Diagram
+
+```mermaid
+graph TD
+    A[Start: AI Chat] --> B[User Types Request in Portuguese]
+    B --> C[AI Processes Intent]
+    C --> D{Intent Recognized?}
+    D -->|No| E[Ask for Clarification]
+    E --> B
+    D -->|Yes| F{Appointment Request?}
+    F -->|No| G[Provide General Response]
+    G --> H[Continue Conversation]
+    F -->|Yes| I[Extract Appointment Details]
+    I --> J[Check Availability]
+    J --> K{Slots Available?}
+    K -->|No| L[Suggest Alternative Times]
+    L --> M[User Selects Alternative]
+    M --> N[Create Appointment Request]
+    K -->|Yes| N
+    N --> O[Professional Notification]
+    O --> P[Professional Approval]
+    P --> Q[Confirmation to Patient]
+    Q --> R[WhatsApp/SMS Confirmation]
 ```
 
-## Design System & Components
+#### Edge Cases & Error Handling:
 
-### Brazilian Healthcare Design Tokens
+- Ambiguous procedure requests with clarification prompts
+- No availability with waitlist option
+- Professional unavailable with alternative suggestions
+- PHI detection with automatic sanitization
+
+**Notes**: All conversations logged for compliance with PHI protection
+
+### LGPD Consent Management Flow
+
+**User Goal**: Manage patient data consents in compliance with LGPD
+
+**Entry Points**: Patient profile, compliance center, automated consent renewal prompts
+
+**Success Criteria**: Consent status updated with proper audit trail
+
+#### Flow Diagram
+
+```mermaid
+graph TD
+    A[Start: Consent Management] --> B[Display Current Consents]
+    B --> C[User Selects Consent Type]
+    C --> D{Grant or Revoke?}
+    D -->|Grant| E[Show Consent Details]
+    E --> F[User Confirms Understanding]
+    F --> G[Record Consent with Timestamp]
+    D -->|Revoke| H[Show Revocation Impact]
+    H --> I[User Confirms Revocation]
+    I --> J[Record Revocation]
+    G --> K[Update Patient Profile]
+    J --> K
+    K --> L[Audit Log Entry]
+    L --> M[Confirmation Message]
+```
+
+#### Edge Cases & Error Handling:
+
+- Required consent revocation with service impact explanation
+- Consent expiration with renewal prompts
+- Bulk consent updates with individual confirmation
+- Legal basis changes with automatic updates
+
+**Notes**: All consent changes trigger immediate audit log entries## Visual Design
+
+### Design System Foundation
+
+#### Color Palette
+
+**Primary Colors** (Healthcare Trust & Professionalism)
 
 ```css
 :root {
-  /* Professional healthcare colors */
-  --neon-primary: #2563eb; /* Professional trust blue */
-  --neon-secondary: #7c3aed; /* Sophisticated purple */
-  --neon-accent: #06b6d4; /* Modern cyan */
+  /* Primary - Medical Blue */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-500: #3b82f6; /* Main brand color */
+  --primary-600: #2563eb;
+  --primary-900: #1e3a8a;
 
-  /* Brazilian healthcare compliance */
-  --compliance-valid: #16a34a; /* LGPD compliant green */
-  --compliance-pending: #d97706; /* Validation pending orange */
-  --compliance-error: #dc2626; /* Compliance error red */
+  /* Secondary - Aesthetic Gold */
+  --secondary-50: #fffbeb;
+  --secondary-100: #fef3c7;
+  --secondary-500: #f59e0b; /* Accent color */
+  --secondary-600: #d97706;
+  --secondary-900: #92400e;
 
-  /* Treatment status indicators */
-  --treatment-planning: #64748b; /* Planning phase gray */
-  --treatment-active: #2563eb; /* Active treatment blue */
-  --treatment-recovery: #d97706; /* Recovery period orange */
-  --treatment-complete: #16a34a; /* Completed green */
+  /* Success - Brazilian Green */
+  --success-50: #f0fdf4;
+  --success-500: #22c55e;
+  --success-600: #16a34a;
 
-  /* Portuguese typography optimization */
-  --font-primary: "Inter", "Roboto", sans-serif;
-  --font-healthcare-data: "JetBrains Mono", monospace;
-  --line-height-portuguese: 1.6; /* Optimal Portuguese readability */
+  /* Warning - Attention Orange */
+  --warning-50: #fffbeb;
+  --warning-500: #f59e0b;
+  --warning-600: #d97706;
+
+  /* Error - Medical Alert Red */
+  --error-50: #fef2f2;
+  --error-500: #ef4444;
+  --error-600: #dc2626;
+
+  /* Neutral - Professional Grays */
+  --neutral-50: #f9fafb;
+  --neutral-100: #f3f4f6;
+  --neutral-200: #e5e7eb;
+  --neutral-300: #d1d5db;
+  --neutral-400: #9ca3af;
+  --neutral-500: #6b7280;
+  --neutral-600: #4b5563;
+  --neutral-700: #374151;
+  --neutral-800: #1f2937;
+  --neutral-900: #111827;
 }
 ```
 
-### Healthcare Patient Component
+**Color Usage Guidelines**:
 
-```typescript
-export function HealthcarePatientCard(
-  { patient, userRole, onViewDetails }: HealthcarePatientCardProps,
-) {
-  const canViewFullData = ["admin", "professional"].includes(userRole);
-  const { logPatientAccess } = useAuditLogging();
+- Primary blue for main actions, navigation, and trust elements
+- Secondary gold for premium features and highlights
+- Success green for confirmations and positive states
+- Warning orange for caution and attention-needed states
+- Error red for critical alerts and validation errors
+- Neutral grays for text, borders, and backgrounds
 
-  const handleViewDetails = async () => {
-    await logPatientAccess(patient.id, "VIEW_PATIENT_DETAILS");
-    onViewDetails(patient.id);
-  };
+#### Typography
 
-  return (
-    <Card className="transition-all hover:shadow-md">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <div>
-            <CardTitle>{patient.name}</CardTitle>
-            <p className="text-xs text-muted-foreground">
-              CPF: {canViewFullData ? patient.cpf : PHIMasker.maskCPF(patient.cpf)}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            {patient.lgpdCompliant && (
-              <Badge variant="outline" className="border-green-500">
-                <Shield className="h-3 w-3 mr-1" />LGPD
-              </Badge>
-            )}
-            <Badge variant={getNoShowRiskVariant(patient.noShowRisk)}>
-              {patient.noShowRisk.toUpperCase()}
-            </Badge>
-          </div>
-        </div>
-        <div className="text-sm space-y-1">
-          <p>Último: {patient.lastProcedure || "Nenhum"}</p>
-          <p>Próximo: {patient.nextAppointment || "Não agendado"}</p>
-        </div>
-      </CardHeader>
-      <CardFooter>
-        <Button onClick={handleViewDetails} className="w-full">Ver Detalhes</Button>
-      </CardFooter>
-    </Card>
-  );
+**Font Stack**: Inter (primary), system fonts fallback for Brazilian Portuguese optimization
+
+```css
+/* Heading Scale */
+.text-h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+} /* 36px */
+.text-h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+} /* 30px */
+.text-h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+} /* 24px */
+.text-h4 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.4;
+} /* 20px */
+.text-h5 {
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.5;
+} /* 18px */
+
+/* Body Text Scale */
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.6;
+} /* 18px - Large body */
+.text-base {
+  font-size: 1rem;
+  line-height: 1.6;
+} /* 16px - Default body */
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.5;
+} /* 14px - Small text */
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1.4;
+} /* 12px - Captions */
+
+/* Special Purpose */
+.text-display {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.1;
+} /* 48px - Hero text */
+.text-mono {
+  font-family: "JetBrains Mono", monospace;
+} /* Code/IDs */
+```
+
+**Typography Guidelines**:
+
+- Use sentence case for buttons and labels (not title case)
+- Maintain 1.6 line-height for body text readability
+- Ensure minimum 16px font size for mobile accessibility
+- Use font-weight 500+ for Portuguese text clarity
+
+#### Spacing & Layout
+
+**Spacing Scale** (8px base unit for consistent rhythm)
+
+```css
+:root {
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-5: 1.25rem; /* 20px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem; /* 32px */
+  --space-10: 2.5rem; /* 40px */
+  --space-12: 3rem; /* 48px */
+  --space-16: 4rem; /* 64px */
+  --space-20: 5rem; /* 80px */
 }
 ```
 
-## Core Features Implementation
+**Layout Grid**:
 
-### Universal AI Chat System
+- 12-column grid system with 24px gutters
+- Maximum content width: 1200px
+- Sidebar width: 280px (collapsed: 64px)
+- Mobile breakpoints: 320px, 768px, 1024px, 1200px
 
-```typescript
-export function UniversalAIChat({ context = "general", patientId }: {
-  context?: "patient" | "appointment" | "emergency" | "general";
-  patientId?: string;
-}) {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: "/api/ai/chat",
-    body: {
-      language: "pt-BR",
-      context,
-      patientId,
-      features: ["scheduling", "procedures", "aftercare", "emergency-detection"],
-    },
-    onFinish: async (message) => {
-      // Audit AI interactions for healthcare compliance
-      await auditLogger.logAIInteraction({
-        messageId: message.id,
-        context,
-        patientId,
-        timestamp: new Date(),
-      });
+#### Component Specifications
 
-      // Emergency detection handling
-      if (message.metadata?.emergencyDetected) {
-        await handleEmergencyAlert(message.metadata);
-      }
-    },
-  });
+**Buttons**
 
-  return (
-    <Card className="h-[600px] flex flex-col">
-      <CardHeader className="border-b">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Assistente NeonPro</h3>
-          <div className="flex gap-2">
-            {context === "emergency" && (
-              <Badge variant="destructive">
-                <AlertTriangle className="h-3 w-3 mr-1" />Emergência
-              </Badge>
-            )}
-            <Badge variant="outline">
-              {context === "patient" ? "Contexto: Paciente" : "Geral"}
-            </Badge>
-          </div>
-        </div>
+```css
+/* Primary Button */
+.btn-primary {
+  background: var(--primary-500);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  min-height: 44px; /* Touch target */
+  transition: all 0.2s ease;
+}
 
-        <Alert className="mt-2">
-          <Shield className="h-4 w-4" />
-          <AlertDescription className="text-xs">
-            ⚠️ Não compartilhe CPF, telefones ou dados pessoais no chat
-          </AlertDescription>
-        </Alert>
-      </CardHeader>
+.btn-primary:hover {
+  background: var(--primary-600);
+  transform: translateY(-1px);
+}
 
-      <ScrollArea className="flex-1 p-4">
-        <div className="space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                  message.role === "user"
-                    ? "bg-blue-600 text-white"
-                    : message.metadata?.emergencyDetected
-                    ? "bg-red-100 border border-red-300 text-red-800"
-                    : "bg-gray-100 text-gray-800"
-                }`}
-              >
-                <p>{message.content}</p>
-                {message.metadata?.confidence && (
-                  <div className="mt-1 text-xs opacity-75">
-                    Confiança: {Math.round(message.metadata.confidence * 100)}%
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </ScrollArea>
+/* Secondary Button */
+.btn-secondary {
+  background: transparent;
+  color: var(--primary-500);
+  border: 1px solid var(--primary-500);
+  padding: 12px 24px;
+  border-radius: 8px;
+}
 
-      <CardFooter className="border-t">
-        <form onSubmit={handleSubmit} className="flex w-full gap-2">
-          <Input
-            value={input}
-            onChange={handleInputChange}
-            placeholder={context === "emergency"
-              ? "Descreva a situação de emergência..."
-              : "Digite sua mensagem..."}
-            disabled={isLoading}
-            className="flex-1"
-          />
-          <Button type="submit" disabled={isLoading || !input.trim()}>
-            <Send className="h-4 w-4" />
-          </Button>
-        </form>
-      </CardFooter>
-    </Card>
-  );
+/* Destructive Button */
+.btn-destructive {
+  background: var(--error-500);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
 }
 ```
 
-### Anti-No-Show Prediction Engine
+**Form Elements**
 
-```typescript
-export function NoShowRiskPredictor({ appointmentId }: { appointmentId: string; }) {
-  const { data: prediction, isLoading } = useQuery({
-    queryKey: ["no-show-prediction", appointmentId],
-    queryFn: async () => {
-      const response = await fetch(`/api/ai/no-show-prediction/${appointmentId}`);
-      return response.json();
-    },
-    refetchInterval: 30000,
-  });
+```css
+/* Input Fields */
+.input {
+  border: 1px solid var(--neutral-300);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px; /* Prevents zoom on iOS */
+  min-height: 44px;
+  transition: border-color 0.2s ease;
+}
 
-  const { logPredictionView } = useAuditLogging();
+.input:focus {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px var(--primary-500/20);
+  outline: none;
+}
 
-  useEffect(() => {
-    if (prediction) logPredictionView(appointmentId, prediction.riskScore);
-  }, [prediction, appointmentId, logPredictionView]);
+.input:invalid {
+  border-color: var(--error-500);
+}
 
-  if (isLoading || !prediction) {
-    return (
-      <Card className="p-4">
-        <div className="animate-pulse space-y-2">
-          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-20 bg-gray-200 rounded"></div>
-        </div>
-      </Card>
-    );
-  }
+/* Labels */
+.label {
+  font-weight: 500;
+  color: var(--neutral-700);
+  margin-bottom: 6px;
+  display: block;
+}
 
-  const riskColor = prediction.riskScore >= 70
-    ? "destructive"
-    : prediction.riskScore >= 40
-    ? "warning"
-    : "success";
-
-  return (
-    <Card className="p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold flex items-center gap-2">
-          <TrendingUp className="h-4 w-4" />Predição Anti-No-Show
-        </h3>
-        <Badge variant={riskColor}>{prediction.riskScore}% risco</Badge>
-      </div>
-
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm">
-          <span>Probabilidade de Falta</span>
-          <span className="font-medium">{prediction.riskScore}%</span>
-        </div>
-        <Progress value={prediction.riskScore} className="h-3" />
-        <p className="text-xs text-muted-foreground">
-          Baseado em {prediction.factorsCount} fatores analisados
-        </p>
-      </div>
-
-      {prediction.riskScore >= 40 && (
-        <div className="space-y-3">
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium">Fatores de Risco:</h4>
-            <ul className="text-xs space-y-1">
-              {prediction.riskFactors.map((factor: string, index: number) => (
-                <li key={index} className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-current rounded-full" />
-                  {factor}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium">Intervenções Recomendadas:</h4>
-            <div className="flex gap-2 flex-wrap">
-              {prediction.interventions.map((intervention: any) => (
-                <Button
-                  key={intervention.type}
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleIntervention(intervention)}
-                >
-                  {intervention.icon && <intervention.icon className="h-3 w-3 mr-1" />}
-                  {intervention.label}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="text-xs text-muted-foreground border-t pt-2">
-        Última atualização: {new Date(prediction.lastUpdated).toLocaleString("pt-BR")}
-      </div>
-    </Card>
-  );
+/* Error Messages */
+.error-message {
+  color: var(--error-600);
+  font-size: 14px;
+  margin-top: 4px;
 }
 ```
 
-### Secure Patient Management
+**Cards & Containers**
 
-```typescript
-export function SecurePatientManager() {
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const { userRole, hasPermission } = useAuth();
-  const { logPatientAccess } = useAuditLogging();
+```css
+.card {
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
 
-  const handlePatientSelection = async (patient: Patient) => {
-    if (!hasPermission("patients", "read")) {
-      toast.error("Acesso negado: permissão insuficiente");
-      return;
-    }
-
-    try {
-      await logPatientAccess(patient.id, "VIEW_PATIENT_PROFILE");
-      setSelectedPatient(patient);
-
-      if (hasPermission("patients", "read_phi")) {
-        await loadPatientDetails(patient.id);
-      }
-    } catch (error) {
-      toast.error("Erro ao acessar dados do paciente");
-    }
-  };
-
-  const updatePatient = async (patientId: string, updates: Partial<Patient>) => {
-    if (!hasPermission("patients", "write")) {
-      toast.error("Acesso negado: sem permissão para editar");
-      return;
-    }
-
-    try {
-      const validation = HealthcareValidator.validatePatientData(updates);
-      if (!validation.valid) {
-        toast.error(`Dados inválidos: ${validation.errors.join(", ")}`);
-        return;
-      }
-
-      await logPatientAccess(patientId, "MODIFY_PATIENT_DATA");
-      const response = await fetch(`/api/patients/${patientId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates),
-      });
-
-      if (response.ok) {
-        const updatedPatient = await response.json();
-        setPatients(prev => prev.map(p => p.id === patientId ? { ...p, ...updatedPatient } : p));
-        toast.success("Paciente atualizado com sucesso");
-      }
-    } catch (error) {
-      toast.error("Erro ao atualizar paciente");
-    }
-  };
-
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-1">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />Pacientes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <ScrollArea className="h-[600px]">
-              <div className="space-y-2 p-4">
-                {patients.map((patient) => (
-                  <div
-                    key={patient.id}
-                    className={`p-3 rounded-lg border cursor-pointer transition-colors hover:bg-gray-50 ${
-                      selectedPatient?.id === patient.id ? "border-blue-500 bg-blue-50" : ""
-                    }`}
-                    onClick={() => handlePatientSelection(patient)}
-                  >
-                    <div className="font-medium">{patient.name}</div>
-                    <div className="text-sm text-muted-foreground">
-                      CPF: {PHIMasker.maskCPF(patient.cpf)}
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      {patient.lgpdCompliant && (
-                        <Badge variant="outline" className="text-xs">
-                          <Shield className="h-2 w-2 mr-1" />LGPD
-                        </Badge>
-                      )}
-                      <Badge variant={getNoShowRiskVariant(patient.noShowRisk)} className="text-xs">
-                        {patient.noShowRisk}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="lg:col-span-2">
-        {selectedPatient
-          ? (
-            <PatientDetailsPanel
-              patient={selectedPatient}
-              onUpdate={updatePatient}
-              userRole={userRole}
-            />
-          )
-          : (
-            <Card className="h-full flex items-center justify-center">
-              <div className="text-center text-muted-foreground">
-                <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Selecione um paciente para ver os detalhes</p>
-              </div>
-            </Card>
-          )}
-      </div>
-    </div>
-  );
+.card-header {
+  border-bottom: 1px solid var(--neutral-200);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
 }
 ```
 
-## Security & Compliance
+### Responsive Design
 
-### PHI Protection and Data Masking
+#### Breakpoint Strategy
 
-```typescript
-export class PHIMasker {
-  static maskCPF(cpf: string): string {
-    return cpf.replace(/(\d{3})\.(\d{3})\.(\d{3})-(\d{2})/, "***.***.***-**");
-  }
+| Breakpoint | Width           | Target Device | Layout Changes                    |
+| ---------- | --------------- | ------------- | --------------------------------- |
+| Mobile     | 320px - 767px   | Smartphones   | Single column, stacked navigation |
+| Tablet     | 768px - 1023px  | Tablets       | Two columns, collapsible sidebar  |
+| Desktop    | 1024px - 1199px | Small laptops | Three columns, full sidebar       |
+| Large      | 1200px+         | Large screens | Four columns, expanded content    |
 
-  static maskPhone(phone: string): string {
-    return phone.replace(/(\(\d{2}\)\s*)(\d{4,5})-(\d{4})/, "$1*****-****");
-  }
+#### Mobile-First Approach
 
-  static maskEmail(email: string): string {
-    const [username, domain] = email.split("@");
-    const maskedUsername = username[0] + "*".repeat(username.length - 1);
-    return `${maskedUsername}@${domain}`;
-  }
+**Navigation**:
 
-  static sanitizeForAI(content: string): string {
-    return content
-      .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, "[CPF_REMOVIDO]")
-      .replace(/\(\d{2}\)\s*\d{4,5}-\d{4}/g, "[TELEFONE_REMOVIDO]")
-      .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, "[EMAIL_REMOVIDO]")
-      .replace(/\b\d{2}\.\d{3}\.\d{3}-\d\b/g, "[RG_REMOVIDO]")
-      .replace(/\b(cartão|cartao)?\s*\d{4}\s*\d{4}\s*\d{4}\s*\d{4}\b/gi, "[CARTAO_REMOVIDO]");
-  }
+- Mobile: Bottom tab navigation with 4 primary sections
+- Tablet: Collapsible sidebar with icon + text
+- Desktop: Full sidebar with nested navigation
 
-  static getDataClassification(
-    field: string,
-  ): "public" | "internal" | "confidential" | "restricted" {
-    const classifications = {
-      name: "confidential",
-      cpf: "restricted",
-      email: "confidential",
-      phone: "confidential",
-      medicalHistory: "restricted",
-      treatmentNotes: "restricted",
-      photos: "restricted",
-      id: "internal",
-      createdAt: "internal",
-    };
-    return classifications[field as keyof typeof classifications] || "public";
-  }
-}
-```
+**Content Layout**:
 
-### Unified Audit Service
+- Mobile: Single column with full-width cards
+- Tablet: Two-column grid with responsive cards
+- Desktop: Three-column layout with fixed sidebar
 
-````typescript
-export class HealthcareAuditLogger {
-  private static instance: HealthcareAuditLogger;
-  static getInstance(): HealthcareAuditLogger {
-    if (!HealthcareAuditLogger.instance) {
-      HealthcareAuditLogger.instance = new HealthcareAuditLogger();
-    }
-    return HealthcareAuditLogger.instance;
-  }
+**Touch Targets**:
 
-  async logPatientAccess(patientId: string, action: string, context?: any) {
-    const auditEntry = {
-      event_type: 'PATIENT_ACCESS',
-      resource_type: 'patient',
-      resource_id: patientId,
-      action: action,
-      user_id: getCurrentUser()?.id,
-      clinic_id: getCurrentClinic()?.id,
-      timestamp: new Date().toISOString(),
-      ip_address: await this.getClientIP(),
-      user_agent: navigator.userAgent,
-      session_id: getSessionId(),
-      lgpd_basis: this.getLGPDLegalBasis(action),
-      data_classification: 'restricted',
-      context: context
-    };
-    await this.sendAuditLog(auditEntry);
-  }
+- Minimum 44px height and width for all interactive elements
+- 8px minimum spacing between touch targets
+- Swipe gestures for mobile navigation
 
-  async logAIInteraction(interactionData: {
-    messageId: string; context: string; patientId?: string; timestamp: Date;
-  }) {
-    const auditEntry = {
-      event_type: 'AI_INTERACTION',
-      resource_type: 'ai_chat',
-      resource_id: interactionData.messageId,
-      action: 'AI_CHAT_MESSAGE',
-      user_id: getCurrentUser()?.id,
-      clinic_id: getCurrentClinic()?.id,
-      timestamp: interactionData.timestamp.toISOString(),
-      context: {
-        chat_context: interactionData.context,
-        patient_id: interactionData.patientId,
-        phi_sanitized: true
-      }
-    };
-    await this.sendAuditLog(auditEntry);
-  }
+#### Accessibility Considerations
 
-  private getLGPDLegalBasis(action: string): string {
-    const legalBasisMap = {
-      'VIEW_PATIENT_PROFILE': 'legitimate_interest',
-      'VIEW_MEDICAL_HISTORY': 'vital_interests',
-      'MODIFY_PATIENT_DATA': 'consent',
-      'AI_CHAT_MESSAGE': 'legitimate_interest'
-    };
-    return legalBasisMap[action as keyof typeof legalBasisMap] || 'consent';
-  }
+**WCAG 2.1 AA Compliance**:
 
-  private async sendAuditLog(auditEntry: any) {
-    try {
-      await fetch('/api/audit/log', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAuthToken()}` },
-        body: JSON.stringify(auditEntry)
-      });
-    } catch (error) {
-      console.error('Audit logging failed:', error);
-      this.storeAuditLogForRetry(auditEntry);
-    }
-  }
+- Color contrast ratio ≥ 4.5:1 for normal text
+- Color contrast ratio ≥ 3:1 for large text
+- Focus indicators visible and high contrast
+- All interactive elements keyboard accessible
 
-  private async getClientIP(): Promise<string> {
-    try {
-      const response = await fetch('/api/client-ip');
-      const { ip } = await response.json();
-      return ip;
-    } catch { return 'unknown'; }
-  }
+**Portuguese Language Support**:
 
-  private storeAuditLogForRetry(auditEntry: any) {
-    const storedLogs = JSON.parse(localStorage.getItem('pending_audit_logs') || '[]');
-    storedLogs.push(auditEntry);
-    localStorage.setItem('pending_audit_logs', JSON.stringify(storedLogs));
-  }
-}
+- Screen reader optimization for Portuguese
+- Proper lang attributes (lang="pt-BR")
+- Cultural date/time formats (DD/MM/YYYY)
+- Brazilian currency formatting (R$ 1.234,56)
 
-export function useAuditLogging() {
-  const auditLogger = HealthcareAuditLogger.getInstance();
-  return {
-    logPatientView: useCallback(async (patientId: string) => {
-      await auditLogger.logPatientAccess(patientId, 'VIEW_PATIENT_PROFILE');
-    }, [auditLogger]),
-    logPatientEdit: useCallback(async (patientId: string, changes: any) => {
-      await auditLogger.logPatientAccess(patientId, 'MODIFY_PATIENT_DATA', { changes });
-    }, [auditLogger]),
-    logAIInteraction: useCallback(async (messageId: string, context: string, patientId?: string) => {
-      await auditLogger.logAIInteraction({ messageId, context, patientId, timestamp: new Date() });
-    }, [auditLogger])
-  };
-}
-```### LGPD Compliance Implementation
+**Assistive Technology**:
+
+- ARIA labels for all interactive elements
+- Semantic HTML structure with proper headings
+- Skip navigation links for keyboard users
+- Alternative text for all images and icons
+
+## Component Library
+
+### Core Components
+
+#### PatientCard Component
+
+**Purpose**: Display patient information with privacy controls and quick actions
+
+**Usage**: Patient lists, search results, dashboard widgets
+
+**Props**:
 
 ```typescript
-export function LGPDConsentManager({ patientId }: { patientId: string }) {
-  const [consents, setConsents] = useState<ConsentStatus>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const { logComplianceAction } = useAuditLogging();
-
-  const updateConsent = async (consentType: string, granted: boolean) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`/api/patients/${patientId}/consent`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          consentType, granted, timestamp: new Date().toISOString(),
-          legalBasis: granted ? 'consent' : 'withdrawal'
-        })
-      });
-
-      if (response.ok) {
-        setConsents(prev => ({ ...prev, [consentType]: granted }));
-        await logComplianceAction(granted ? 'CONSENT_GRANTED' : 'CONSENT_WITHDRAWN', {
-          resourceId: patientId, consentType, lgpdBasis: 'consent'
-        });
-        toast.success(granted ? 'Consentimento registrado' : 'Consentimento retirado');
-      }
-    } catch (error) {
-      toast.error('Erro ao atualizar consentimento');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <Card className="p-4">
-      <CardHeader className="px-0 pt-0">
-        <CardTitle className="flex items-center gap-2">
-          <Shield className="h-5 w-5" />Consentimentos LGPD
-        </CardTitle>
-      </CardHeader>
-
-      <div className="space-y-4">
-        <div className="flex items-center justify-between p-3 border rounded-lg bg-blue-50">
-          <div className="flex-1">
-            <h4 className="font-medium text-sm">Processamento para Atendimento</h4>
-            <p className="text-xs text-muted-foreground mt-1">Obrigatório para prestação dos serviços</p>
-          </div>
-          <Switch
-            checked={consents.dataProcessing ?? false}
-            onCheckedChange={(checked) => updateConsent('dataProcessing', checked)}
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="flex items-center justify-between p-3 border rounded-lg">
-          <div className="flex-1">
-            <h4 className="font-medium text-sm">Comunicações de Marketing</h4>
-            <p className="text-xs text-muted-foreground mt-1">Ofertas e novidades (opcional)</p>
-          </div>
-          <Switch
-            checked={consents.marketing ?? false}
-            onCheckedChange={(checked) => updateConsent('marketing', checked)}
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="flex items-center justify-between p-3 border rounded-lg">
-          <div className="flex-1">
-            <h4 className="font-medium text-sm">Uso de Imagens Médicas</h4>
-            <p className="text-xs text-muted-foreground mt-1">Fotos antes/depois (opcional)</p>
-          </div>
-          <Switch
-            checked={consents.medicalPhotos ?? false}
-            onCheckedChange={(checked) => updateConsent('medicalPhotos', checked)}
-            disabled={isLoading}
-          />
-        </div>
-
-        <Alert>
-          <InfoIcon className="h-4 w-4" />
-          <AlertTitle>Retenção de Dados</AlertTitle>
-          <AlertDescription className="text-xs">
-            Dados médicos mantidos por 20 anos (CFM). Marketing removível a qualquer momento.
-          </AlertDescription>
-        </Alert>
-      </div>
-    </Card>
-  );
-}
-````
-
-## Accessibility & Performance
-
-### WCAG 2.1 AA Implementation
-
-```typescript
-export const accessibilityHelpers = {
-  skipToMain: {
-    href: "#main-content",
-    className:
-      "sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:border focus:rounded",
-  },
-  focusManagement: {
-    ring: "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-  },
-};
-
-export function useHighContrast() {
-  const [isHighContrast, setIsHighContrast] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-contrast: high)");
-    setIsHighContrast(mediaQuery.matches);
-    const handler = (e: MediaQueryListEvent) => setIsHighContrast(e.matches);
-    mediaQuery.addEventListener("change", handler);
-    return () => mediaQuery.removeEventListener("change", handler);
-  }, []);
-
-  const highContrastClasses = isHighContrast
-    ? {
-      background: "bg-white",
-      text: "text-black",
-      border: "border-black border-2",
-      button: "bg-black text-white border-2 border-black",
-      input: "bg-white text-black border-2 border-black",
-    }
-    : {};
-
-  return { isHighContrast, highContrastClasses };
-}
-
-export function AccessiblePatientForm() {
-  const [formData, setFormData] = useState({});
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const { isHighContrast, highContrastClasses } = useHighContrast();
-
-  return (
-    <form className="space-y-6" aria-labelledby="patient-form-title">
-      <h2 id="patient-form-title" className="text-xl font-semibold">Cadastro de Paciente</h2>
-
-      <div className="space-y-4">
-        <div>
-          <Label
-            htmlFor="patient-name"
-            className={`text-sm font-medium ${isHighContrast ? "text-black" : ""}`}
-          >
-            Nome Completo *
-          </Label>
-          <Input
-            id="patient-name"
-            name="name"
-            type="text"
-            required
-            aria-required="true"
-            aria-invalid={errors.name ? "true" : "false"}
-            aria-describedby={errors.name ? "name-error" : undefined}
-            className={`mt-1 ${highContrastClasses.input} ${accessibilityHelpers.focusManagement.ring}`}
-            value={formData.name || ""}
-            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-          />
-          {errors.name && (
-            <div id="name-error" role="alert" className="mt-1 text-sm text-red-600">
-              {errors.name}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="flex gap-4">
-        <Button
-          type="submit"
-          className={`${highContrastClasses.button} ${accessibilityHelpers.focusManagement.ring}`}
-        >
-          <Shield className="h-4 w-4 mr-2" aria-hidden="true" />Cadastrar Paciente
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          className={accessibilityHelpers.focusManagement.ring}
-          onClick={() => setFormData({})}
-        >
-          Limpar Formulário
-        </Button>
-      </div>
-    </form>
-  );
-}
-
-export function useScreenReaderAnnouncements() {
-  const announce = useCallback((message: string, priority: "polite" | "assertive" = "polite") => {
-    const announcement = document.createElement("div");
-    announcement.setAttribute("aria-live", priority);
-    announcement.setAttribute("aria-atomic", "true");
-    announcement.className = "sr-only";
-    announcement.textContent = message;
-    document.body.appendChild(announcement);
-    setTimeout(() => document.body.removeChild(announcement), 1000);
-  }, []);
-  return { announce };
-}
-```
-
-### Performance Optimization
-
-```typescript
-export const performanceConfig = {
-  targets: { LCP: 2500, FID: 100, CLS: 0.1, TTFB: 600 },
-  bundleSize: { initial: 1024 * 1024, total: 2048 * 1024, packages: 512 * 1024 },
-};
-
-export function usePerformanceMonitoring() {
-  useEffect(() => {
-    const observer = new PerformanceObserver((list) => {
-      list.getEntries().forEach((entry) => {
-        if (entry.entryType === "largest-contentful-paint") {
-          analytics.track("core_web_vitals", {
-            metric: "LCP",
-            value: entry.startTime,
-            threshold: performanceConfig.targets.LCP,
-          });
-        }
-      });
-    });
-    observer.observe({ entryTypes: ["largest-contentful-paint"] });
-    return () => observer.disconnect();
-  }, []);
-
-  const measureRender = useCallback((componentName: string, renderFn: () => void) => {
-    const start = performance.now();
-    renderFn();
-    const end = performance.now();
-    if (end - start > 16.67) console.warn(`Slow render: ${componentName}`);
-  }, []);
-
-  return { measureRender };
-}
-
-export function OptimizedHealthcareImage(
-  { src, alt, width, height, priority = false, className = "" }: {
-    src: string;
-    alt: string;
-    width: number;
-    height: number;
-    priority?: boolean;
-    className?: string;
-  },
-) {
-  return (
-    <Image
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      priority={priority}
-      className={className}
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-      placeholder="blur"
-      loading={priority ? "eager" : "lazy"}
-      decoding="async"
-      style={{ width: "100%", height: "auto", objectFit: "cover" }}
-    />
-  );
-}
-
-export const LazyComponents = {
-  PatientDetailsPanel: lazy(() => import("./PatientDetailsPanel")),
-  AnalyticsDashboard: lazy(() => import("./AnalyticsDashboard")),
-  ComplianceReports: lazy(() => import("./ComplianceReports")),
-  AIInsightsDashboard: lazy(() => import("./AIInsightsDashboard")),
-};
-
-export function LazyComponentWrapper({ component: Component, fallback, ...props }: {
-  component: React.LazyExoticComponent<any>;
-  fallback?: React.ReactNode;
-  [key: string]: any;
-}) {
-  const defaultFallback = (
-    <Card className="p-8">
-      <div className="flex items-center justify-center space-x-2">
-        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-        <span className="text-muted-foreground">Carregando...</span>
-      </div>
-    </Card>
-  );
-  return (
-    <Suspense fallback={fallback || defaultFallback}>
-      <Component {...props} />
-    </Suspense>
-  );
-}
-```
-
-## Development Guidelines
-
-### API Integration Patterns
-
-```typescript
-export class HealthcareAPIClient {
-  private baseURL = process.env.NEXT_PUBLIC_API_URL || "/api";
-
-  async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const url = `${this.baseURL}${endpoint}`;
-    const defaultOptions: RequestInit = {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${getAuthToken()}`,
-        ...options.headers,
-      },
-      ...options,
-    };
-
-    try {
-      const response = await fetch(url, defaultOptions);
-      if (!response.ok) {
-        throw new APIError(`API Error: ${response.status}`, response.status, await response.text());
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("API request failed:", error);
-      throw error;
-    }
-  }
-
-  patients = {
-    list: (params?: PatientListParams) =>
-      this.request<PatientListResponse>(`/patients?${new URLSearchParams(params)}`),
-    get: (id: string) => this.request<Patient>(`/patients/${id}`),
-    create: (data: CreatePatientRequest) =>
-      this.request<Patient>("/patients", { method: "POST", body: JSON.stringify(data) }),
-    update: (id: string, data: UpdatePatientRequest) =>
-      this.request<Patient>(`/patients/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
-  };
-
-  ai = {
-    chat: (messages: ChatMessage[], context: string) =>
-      this.request<AIChatResponse>("/ai/chat", {
-        method: "POST",
-        body: JSON.stringify({ messages, context, language: "pt-BR" }),
-      }),
-    noShowPrediction: (appointmentId: string) =>
-      this.request<NoShowPrediction>(`/ai/no-show-prediction/${appointmentId}`),
-  };
-}
-
-export const api = new HealthcareAPIClient();
-```
-
-### Component Development Standards
-
-```typescript
-interface StandardHealthcareComponentProps {
-  className?: string;
-  children?: React.ReactNode;
+interface PatientCardProps {
+  patient: Patient;
   userRole: UserRole;
-  lgpdCompliant?: boolean;
-  "aria-label"?: string;
-  "aria-describedby"?: string;
-  onAuditLog?: (action: string) => void;
+  showSensitiveData?: boolean;
+  onViewDetails: (patientId: string) => void;
+  onScheduleAppointment?: (patientId: string) => void;
+  className?: string;
 }
+```
 
-export function StandardHealthcareComponent({
-  className = "",
-  children,
-  userRole,
-  lgpdCompliant = true,
-  onAuditLog,
-  ...accessibilityProps
-}: StandardHealthcareComponentProps) {
-  const { logComponentView } = useAuditLogging();
-  const { isHighContrast } = useHighContrast();
-  const { measureRender } = usePerformanceMonitoring();
+**Visual Specifications**:
 
-  useEffect(() => {
-    logComponentView("StandardHealthcareComponent");
-    onAuditLog?.("COMPONENT_VIEWED");
-  }, [logComponentView, onAuditLog]);
+- Card height: 120px minimum
+- Avatar: 48px circle with initials fallback
+- Privacy mask for CPF/RG based on user role
+- Risk indicator badge (low/medium/high)
+- LGPD compliance indicator
 
-  return measureRender("StandardHealthcareComponent", () => (
-    <div
-      className={cn(
-        "healthcare-component",
-        "focus-within:ring-2 focus-within:ring-blue-500",
-        isHighContrast && "high-contrast-mode",
-        className,
-      )}
-      {...accessibilityProps}
-      role="region"
-    >
-      {!lgpdCompliant && (
-        <Alert variant="destructive" className="mb-4">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Atenção: Dados não conformes LGPD</AlertTitle>
-        </Alert>
-      )}
-      {children}
-    </div>
-  ));
+**States**:
+
+- Default: Standard patient information display
+- Hover: Subtle elevation and action button reveal
+- Loading: Skeleton placeholder with shimmer effect
+- Error: Error state with retry option
+
+#### AppointmentScheduler Component
+
+**Purpose**: Interactive calendar for appointment booking and management
+
+**Usage**: Appointment booking, professional schedule management
+
+**Props**:
+
+```typescript
+interface AppointmentSchedulerProps {
+  professionalId?: string;
+  selectedDate?: Date;
+  availableSlots: TimeSlot[];
+  onSlotSelect: (slot: TimeSlot) => void;
+  onDateChange: (date: Date) => void;
+  view: "day" | "week" | "month";
+  className?: string;
 }
-
-export const testUtils = {
-  createMockUser: (role: UserRole) => ({
-    id: "test-user-id",
-    role,
-    permissions: getPermissionsForRole(role),
-    clinicId: "test-clinic-id",
-  }),
-  createMockPatient: (overrides = {}) => ({
-    id: "test-patient-id",
-    name: "João Silva",
-    cpf: "123.456.789-01",
-    lgpdCompliant: true,
-    noShowRisk: "low" as const,
-    ...overrides,
-  }),
-  expectAccessible: async (component: ReactWrapper) => {
-    const results = await axe(component.getDOMNode());
-    expect(results).toHaveNoViolations();
-  },
-};
 ```
 
-## Troubleshooting
+**Visual Specifications**:
 
-### Common Issues & Solutions
+- Calendar grid with clear time slots
+- Color-coded appointment types
+- Drag-and-drop support for rescheduling
+- Mobile-optimized touch interactions
+- Real-time availability updates
 
-**Build Issues**:
+#### AIChatInterface Component
 
-```bash
-# Turborepo cache issues
-pnpm clean && pnpm install && pnpm build
+**Purpose**: Universal AI chat interface with Portuguese optimization
 
-# Package resolution errors  
-pnpm install --frozen-lockfile && pnpm rebuild
-```
+**Usage**: Patient assistance, appointment booking, general inquiries
 
-**UI Components**:
+**Props**:
 
 ```typescript
-// shadcn/ui styles not loading - Check tailwind.config.ts includes package paths
-// TweakCN NEONPRO theme not applied - Verify theme provider and CSS custom properties
+interface AIChatInterfaceProps {
+  sessionId?: string;
+  context: "general" | "appointment" | "patient";
+  onMessageSend: (message: string) => void;
+  onActionSuggestion: (action: SuggestedAction) => void;
+  className?: string;
+}
 ```
 
-**AI Integration**:
+**Visual Specifications**:
 
-```typescript
-// Portuguese responses mixed with English - Ensure body.language: "pt-BR" in AI calls
-// Chat API timeout - Verify OpenAI API key, increase timeout to 30000ms
-// PHI sanitization not working - Always use PHIMasker.sanitizeForAI(userInput)
-```
+- Chat bubble design with clear sender identification
+- Typing indicators and message status
+- Quick action buttons for common requests
+- Voice input support for accessibility
+- Message history with search functionality
 
-**Performance**:
+### Form Components
 
-```typescript
-// Slow renders - Use React.memo, proper useMemo/useCallback, check bundle analyzer
-// Large bundles - Implement code splitting, dynamic imports, optimize package imports
-```
+#### PatientForm Component
 
-**Security & Compliance**:
+**Purpose**: Comprehensive patient registration with LGPD compliance
 
-```typescript
-// PHI exposure - Ensure all logging uses sanitized data: PHIMasker.sanitizeForAI(data)
-// Missing audits - Implement useAuditLogging in PHI-accessing components
-// LGPD consent issues - Check consent before processing: patient.lgpdConsent.dataProcessing
-```
+**Features**:
 
-**Testing**:
+- Progressive disclosure of form sections
+- Real-time validation with Portuguese error messages
+- LGPD consent management integrated
+- Auto-save functionality
+- Accessibility optimized
 
-```bash
-# Provider issues - Wrap components with required providers in test setup
-# Accessibility failures - Run axe-core testing: npm test -- --coverage --watchAll=false
-```
+#### ConsentManager Component
 
-## Related Documentation
+**Purpose**: LGPD consent collection and management interface
 
-- **[Architecture Overview](./architecture/frontend-architecture.md)** - Complete architecture
-- **[Source Tree](./architecture/source-tree.md)** - Turborepo organization
-- **[PRD Specifications](./prd.md)** - Product requirements
-- **[API Documentation](./apis/)** - Backend integration
+**Features**:
+
+- Clear consent explanations in Portuguese
+- Granular consent controls
+- Consent history tracking
+- Legal basis documentation
+- Withdrawal process guidance
+
+### Layout Components
+
+#### DashboardLayout Component
+
+**Purpose**: Main application layout with navigation and content areas
+
+**Features**:
+
+- Responsive sidebar navigation
+- Breadcrumb navigation
+- User profile dropdown
+- Notification center
+- Quick action menu
+
+#### AuthLayout Component
+
+**Purpose**: Authentication pages layout with branding
+
+**Features**:
+
+- Centered form design
+- Progressive enhancement
+- Error handling
+- Accessibility optimized
+- Mobile responsive
+
+## Interaction Design
+
+### Micro-interactions
+
+**Button Interactions**:
+
+- Hover: Subtle elevation (2px) with color transition
+- Click: Brief scale animation (0.95x) with haptic feedback
+- Loading: Spinner with button text change
+- Success: Checkmark animation with color change
+
+**Form Interactions**:
+
+- Focus: Border color change with subtle glow
+- Validation: Real-time feedback with smooth error message appearance
+- Success: Green checkmark with slide-in animation
+- Auto-save: Subtle indicator with fade-in/out
+
+**Navigation Interactions**:
+
+- Page transitions: Smooth slide animations
+- Sidebar toggle: Smooth width animation with icon rotation
+- Tab switching: Underline animation with content fade
+
+### Animation Guidelines
+
+**Duration Standards**:
+
+- Micro-interactions: 150-200ms
+- Page transitions: 300-400ms
+- Complex animations: 500-600ms maximum
+
+**Easing Functions**:
+
+- UI feedback: ease-out for natural feel
+- Entrances: ease-out for welcoming effect
+- Exits: ease-in for smooth departure
+- Bounces: cubic-bezier for playful interactions
+
+**Performance Considerations**:
+
+- Use transform and opacity for smooth animations
+- Avoid animating layout properties
+- Respect prefers-reduced-motion setting
+- Optimize for 60fps on mobile devices
+
+### Feedback Systems
+
+**Success Feedback**:
+
+- Toast notifications for completed actions
+- Inline success messages for form submissions
+- Progress indicators for multi-step processes
+- Confirmation dialogs for critical actions
+
+**Error Feedback**:
+
+- Inline validation with clear error messages
+- Toast notifications for system errors
+- Error pages with helpful recovery suggestions
+- Contextual help for complex errors
+
+**Loading States**:
+
+- Skeleton screens for content loading
+- Progress bars for file uploads
+- Spinners for quick actions
+- Shimmer effects for list items
+
+## Accessibility
+
+### WCAG 2.1 AA Compliance
+
+**Perceivable**:
+
+- Color contrast ratios meet minimum standards
+- Text can be resized up to 200% without loss of functionality
+- Images have appropriate alternative text
+- Videos have captions and transcripts
+
+**Operable**:
+
+- All functionality available via keyboard
+- No content flashes more than 3 times per second
+- Users have enough time to read content
+- Clear navigation and page structure
+
+**Understandable**:
+
+- Text is readable and understandable
+- Content appears and operates predictably
+- Users are helped to avoid and correct mistakes
+- Instructions are clear and contextual
+
+**Robust**:
+
+- Content works with assistive technologies
+- Code validates to web standards
+- Compatible with current and future tools
+- Graceful degradation for older browsers
+
+### Portuguese Language Optimization
+
+**Screen Reader Support**:
+
+- Proper lang="pt-BR" attributes
+- ARIA labels in Portuguese
+- Cultural context for dates and numbers
+- Brazilian pronunciation guides for technical terms
+
+**Keyboard Navigation**:
+
+- Tab order follows logical reading pattern
+- Skip links in Portuguese
+- Keyboard shortcuts with Portuguese mnemonics
+- Focus indicators clearly visible
+
+**Voice Control**:
+
+- Voice commands in Portuguese
+- Pronunciation guides for medical terms
+- Alternative voice input methods
+- Integration with Brazilian voice assistants
+
+### Testing Strategy
+
+**Automated Testing**:
+
+- axe-core integration for continuous accessibility testing
+- Color contrast validation in CI/CD pipeline
+- Keyboard navigation automated tests
+- Screen reader compatibility tests
+
+**Manual Testing**:
+
+- Real user testing with Portuguese speakers
+- Assistive technology testing
+- Mobile accessibility testing
+- Cross-browser compatibility testing
+
+**User Testing**:
+
+- Testing with users with disabilities
+- Portuguese language usability testing
+- Healthcare professional workflow testing
+- Patient experience testing
 
 ---
 
-## Summary
-
-This guide consolidates NeonPro frontend development into a single technical resource with focus on:
-
-**✅ Brazilian Healthcare Specialization** - LGPD/ANVISA compliance + Portuguese optimization\
-**✅ AI-First Architecture** - Universal Chat + Anti-No-Show prediction systems\
-**✅ Security & PHI Protection** - Comprehensive data masking + audit logging\
-**✅ Accessibility Excellence** - WCAG 2.1 AA with Brazilian healthcare context\
-**✅ Performance Optimization** - Core Web Vitals + mobile-first patterns\
-**✅ Developer Experience** - Clear examples, troubleshooting, testing utilities
-
-**Development Commands**:
-
-```bash
-pnpm dev          # All apps + packages
-pnpm build        # Production build  
-pnpm test         # All tests + accessibility
-pnpm lint         # Code quality checks
-pnpm clean        # Clear cache
-```
-
-**Architecture**: Next.js 15 + React 19 + Turborepo (20 packages) + shadcn/ui v4 + Brazilian healthcare compliance
-
----
-
-**Version**: 6.0.0 | **Optimized**: 1,566 → 800 lines | **Reduction**: 49% | **Functionality**: 100% preserved
+**UI/UX Stack**: Next.js 15 + shadcn/ui v4 + Tailwind CSS + Brazilian UX Patterns\
+**Quality Validated**: ✅ WCAG 2.1 AA + Portuguese Optimization + Healthcare UX\
+**Target Market**: Brazilian Aesthetic Clinics with Accessibility Focus\
+**Status**: Enhanced with UI/UX Specification Template Structure\
+**Version**: 2.0.0 - Template-Enhanced UI/UX Specification

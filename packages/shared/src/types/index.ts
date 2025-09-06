@@ -69,6 +69,8 @@ export type {
 } from "./responses.types";
 // Response types
 export * from "./responses.types";
+// WhatsApp types
+export * from "./whatsapp.types";
 
 // Utility types for common patterns
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

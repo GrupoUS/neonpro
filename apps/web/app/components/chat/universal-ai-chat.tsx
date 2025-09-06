@@ -543,6 +543,8 @@ export function UniversalAIChat({
       onEmergencyDetected,
       onEscalationTriggered,
       toast,
+      performanceEmergencyMode,
+      emergencyMode,
     ],
   );
 

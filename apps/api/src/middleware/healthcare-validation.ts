@@ -10,49 +10,14 @@
  * - Audit logging integration
  */
 
+import { validateCEP, validateCPF, validateEmail, validatePhone } from "@neonpro/utils/validation";
 import type { Context, MiddlewareHandler } from "hono";
 import { z } from "zod";
 import { createError } from "./error-handler";
 import { HealthcareSecurityLogger } from "./healthcare-security";
 
-// Brazilian CPF validation utility
-const validateBrazilianCPF = (cpf: string): boolean => {
-  // Remove formatting
-  const cleanCPF = cpf.replace(/\D/g, "");
-
-  if (cleanCPF.length !== 11) {
-    return false;
-  }
-
-  // Check for repeated digits
-  if (/^(\d)\1{10}$/.test(cleanCPF)) {
-    return false;
-  }
-
-  // Validate check digits
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
-  }
-  let checkDigit1 = 11 - (sum % 11);
-  if (checkDigit1 >= 10) {
-    checkDigit1 = 0;
-  }
-
-  sum = 0;
-  for (let i = 0; i < 10; i++) {
-    sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
-  }
-  let checkDigit2 = 11 - (sum % 11);
-  if (checkDigit2 >= 10) {
-    checkDigit2 = 0;
-  }
-
-  return (
-    checkDigit1 === parseInt(cleanCPF.charAt(9))
-    && checkDigit2 === parseInt(cleanCPF.charAt(10))
-  );
-};
+// Brazilian CPF validation now imported from @neonpro/utils/validation
+// const validateBrazilianCPF = validateCPF; // Use centralized validation
 
 // Brazilian RG validation
 const validateBrazilianRG = (rg: string): boolean => {
@@ -151,7 +116,7 @@ export const PatientDataSchemas = {
         /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
         "CPF deve estar no formato 000.000.000-00",
       )
-      .refine(validateBrazilianCPF, "CPF inválido"),
+      .refine(validateCPF, "CPF inválido"),
 
     rg: z
       .string()
@@ -636,7 +601,7 @@ function getSchemaType(schema: z.ZodSchema): string {
 // Export validation utilities
 export const healthcareValidationUtils = {
   // Validate Brazilian documents
-  validateCPF: validateBrazilianCPF,
+  validateCPF,
   validateRG: validateBrazilianRG,
 
   // Format validation
@@ -673,4 +638,4 @@ export const healthcareValidationUtils = {
   },
 };
 
-export { brazilianPhoneRegex, cepRegex, validateBrazilianCPF, validateBrazilianRG };
+export { brazilianPhoneRegex, cepRegex, validateBrazilianRG, validateCPF };

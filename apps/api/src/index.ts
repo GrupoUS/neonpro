@@ -23,10 +23,17 @@
  */
 
 // Load environment variables
+// Validate required environment variables at startup
+const requiredJwtSecret = process.env.JWT_SECRET;
+if (!requiredJwtSecret) {
+  console.error("FATAL ERROR: JWT_SECRET environment variable is required but not set.");
+  console.error("Please set JWT_SECRET to a secure random string before starting the server.");
+  process.exit(1);
+}
 import "dotenv/config";
 
 // Import Hono and middleware
-import { Hono } from "hono";
+import { type Context, Hono, type Next } from "hono";
 import { compress } from "hono/compress";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
@@ -81,7 +88,7 @@ const securityStack = createHealthcareAPISecurityStack(
   securityEnvironment,
   EndpointSecurityLevel.PROVIDER_DASHBOARD, // Default security level for API
   {
-    jwtSecret: process.env.JWT_SECRET || "your-healthcare-secret-key-change-in-production",
+    jwtSecret: requiredJwtSecret,
     // redisClient: redisClient, // Uncomment when Redis is configured
     // auditLogger: auditLogger, // Uncomment when audit system is configured
     // monitoringSystem: monitoring, // Uncomment when monitoring is configured
@@ -89,11 +96,10 @@ const securityStack = createHealthcareAPISecurityStack(
   },
 );
 
-const securityMiddlewares = securityStack.middlewares;
-const orchestrator = securityStack.orchestrator;
+const { middlewares: securityMiddlewares = [], orchestrator } = securityStack;
 
 // Create fallback middleware that passes through
-const passThroughMiddleware = async (context: any, next: any) => {
+const passThroughMiddleware = async (context: Context, next: Next) => {
   return await next();
 };
 
@@ -205,7 +211,8 @@ const getResponseStatus = (isHealthy: boolean) => {
 app.get("/health", async (context) => {
   try {
     // Import database service for health check
-    const { db } = await import("@/lib/database");
+    const databaseModule = await import("@/lib/database");
+    const db = databaseModule.db;
 
     // Perform database health check
     const dbHealth = await db.healthCheck();

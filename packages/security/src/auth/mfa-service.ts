@@ -200,8 +200,9 @@ function generateHotp(secret: string, counter: number): string {
   // oxlint-disable-next-line no-bitwise
   counterBuffer.writeUInt32BE(counter & 0xFF_FF_FF_FF, BUFFER_OFFSET_HIGH_BITS);
 
-  // Generate HMAC
-  const hmac = createHmac("sha1", key as unknown as Buffer);
+  // Generate HMAC - ensure key is properly typed as Buffer from base32Decode
+  const keyBuffer = Buffer.isBuffer(key) ? key : Buffer.from(key);
+  const hmac = createHmac("sha1", keyBuffer);
   hmac.update(counterBuffer);
   const digest = hmac.digest() as Buffer;
 

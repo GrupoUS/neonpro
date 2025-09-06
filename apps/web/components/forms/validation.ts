@@ -3,6 +3,8 @@
  * LGPD and healthcare compliance validation rules
  */
 
+import { validateCPF, validateEmail, validatePhone } from "@neonpro/utils/validation";
+
 export interface ValidationRule {
   required?: boolean;
   minLength?: number;
@@ -38,33 +40,7 @@ export const HEALTHCARE_PATTERNS = {
   bloodType: /^(A|B|AB|O)[+-]$/,
 };
 
-// CPF validation algorithm
-export const validateCPF = (cpf: string): boolean => {
-  // Remove formatting
-  const digits = cpf.replace(/\D/g, "");
-
-  if (digits.length !== 11 || /^(\d)\1+$/.test(digits)) {
-    return false;
-  }
-
-  // Calculate first check digit
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += parseInt(digits[i]) * (10 - i);
-  }
-  let checkDigit1 = 11 - (sum % 11);
-  if (checkDigit1 >= 10) checkDigit1 = 0;
-
-  // Calculate second check digit
-  sum = 0;
-  for (let i = 0; i < 10; i++) {
-    sum += parseInt(digits[i]) * (11 - i);
-  }
-  let checkDigit2 = 11 - (sum % 11);
-  if (checkDigit2 >= 10) checkDigit2 = 0;
-
-  return parseInt(digits[9]) === checkDigit1 && parseInt(digits[10]) === checkDigit2;
-};
+// CPF validation now imported from @neonpro/utils/validation
 
 // CNPJ validation algorithm
 export const validateCNPJ = (cnpj: string): boolean => {
@@ -115,7 +91,7 @@ export const healthcareValidators = {
 
   email: (value: string) => {
     if (!value) return null;
-    if (!HEALTHCARE_PATTERNS.email.test(value)) {
+    if (!validateEmail(value)) {
       return "Email inválido";
     }
     return null;
@@ -123,8 +99,8 @@ export const healthcareValidators = {
 
   phone: (value: string) => {
     if (!value) return null;
-    if (!HEALTHCARE_PATTERNS.phone.test(value)) {
-      return "Telefone deve estar no formato: (00) 00000-0000";
+    if (!validatePhone(value)) {
+      return "Telefone deve estar no formato brasileiro: (00) 00000-0000 ou (00) 0000-0000";
     }
     return null;
   },

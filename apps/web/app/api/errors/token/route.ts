@@ -14,6 +14,15 @@ import { NextResponse } from "next/server";
 const TOKEN_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
 const MAX_TOKENS_PER_IP = 10; // Prevent token flooding
 
+// Memory safeguards
+const MAX_TOKEN_STORE_SIZE = 10_000; // Maximum tokens in memory
+const MAX_RATE_LIMIT_ENTRIES = 5000; // Maximum rate limit entries
+const CLEANUP_THRESHOLD = 0.8; // Trigger cleanup when 80% full
+
+// Deterministic cleanup tracking
+let lastCleanupTime = 0;
+const CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+
 // In-memory token store (use Redis in production)
 const tokenStore = new Map<string, {
   token: string;
@@ -21,6 +30,9 @@ const tokenStore = new Map<string, {
   ip: string;
   createdAt: number;
 }>();
+
+// O(1) IP token counting index for performance
+const ipTokenCounts = new Map<string, number>();
 
 // Rate limiting per IP for token generation
 const tokenRateLimit = new Map<string, {
@@ -42,6 +54,24 @@ function getClientIP(request: NextRequest): string {
   const xClientIp = request.headers.get("x-client-ip");
 
   return cfConnectingIp || realIp || xClientIp || "unknown";
+}
+
+/**
+ * Delete token and update IP count index
+ */
+function deleteToken(tokenId: string): void {
+  const tokenData = tokenStore.get(tokenId);
+  if (tokenData) {
+    tokenStore.delete(tokenId);
+
+    // Update IP token count index
+    const currentCount = ipTokenCounts.get(tokenData.ip) || 0;
+    if (currentCount <= 1) {
+      ipTokenCounts.delete(tokenData.ip);
+    } else {
+      ipTokenCounts.set(tokenData.ip, currentCount - 1);
+    }
+  }
 }
 
 /**
@@ -68,20 +98,46 @@ function checkTokenRateLimit(ip: string): { allowed: boolean; remaining: number;
 }
 
 /**
- * Clean up expired tokens
+ * Clean up expired tokens and enforce memory limits
  */
 function cleanupExpiredTokens(): void {
   const now = Date.now();
 
+  // Clean up expired tokens
   for (const [tokenId, tokenData] of tokenStore.entries()) {
     if (now > tokenData.expiresAt) {
-      tokenStore.delete(tokenId);
+      deleteToken(tokenId);
     }
   }
 
-  // Also cleanup rate limit records older than 1 hour
+  // Enforce maximum token store size
+  if (tokenStore.size > MAX_TOKEN_STORE_SIZE) {
+    const tokensToDelete = tokenStore.size - Math.floor(MAX_TOKEN_STORE_SIZE * CLEANUP_THRESHOLD);
+    const oldestTokens = Array.from(tokenStore.entries())
+      .sort(([, a], [, b]) => a.createdAt - b.createdAt)
+      .slice(0, tokensToDelete);
+
+    for (const [tokenId] of oldestTokens) {
+      deleteToken(tokenId);
+    }
+  }
+
+  // Clean up rate limit records older than 1 hour and enforce size limit
   for (const [ip, record] of tokenRateLimit.entries()) {
     if (now > record.resetTime + (60 * 60 * 1000)) {
+      tokenRateLimit.delete(ip);
+    }
+  }
+
+  // Enforce maximum rate limit entries
+  if (tokenRateLimit.size > MAX_RATE_LIMIT_ENTRIES) {
+    const entriesToDelete = tokenRateLimit.size
+      - Math.floor(MAX_RATE_LIMIT_ENTRIES * CLEANUP_THRESHOLD);
+    const oldestEntries = Array.from(tokenRateLimit.entries())
+      .sort(([, a], [, b]) => a.resetTime - b.resetTime)
+      .slice(0, entriesToDelete);
+
+    for (const [ip] of oldestEntries) {
       tokenRateLimit.delete(ip);
     }
   }
@@ -110,14 +166,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Clean up expired tokens periodically
-    if (Math.random() < 0.1) { // 10% chance
+    // Deterministic cleanup based on time interval
+    const now = Date.now();
+    if (now - lastCleanupTime >= CLEANUP_INTERVAL_MS) {
+      lastCleanupTime = now;
       cleanupExpiredTokens();
     }
 
-    // Check if IP has too many active tokens
-    const ipTokenCount = Array.from(tokenStore.values())
-      .filter(token => token.ip === clientIP && Date.now() < token.expiresAt).length;
+    // Check if IP has too many active tokens using O(1) lookup
+    const ipTokenCount = ipTokenCounts.get(clientIP) || 0;
 
     if (ipTokenCount >= MAX_TOKENS_PER_IP) {
       return NextResponse.json(
@@ -129,7 +186,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Generate secure token
     const tokenId = secureCrypto.randomUUID();
     const tokenValue = secureCrypto.randomBytes(32).toString("base64url");
-    const now = Date.now();
     const expiresAt = now + TOKEN_EXPIRY_MS;
 
     // Store token
@@ -139,6 +195,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       ip: clientIP,
       createdAt: now,
     });
+
+    // Update IP token count index
+    ipTokenCounts.set(clientIP, (ipTokenCounts.get(clientIP) || 0) + 1);
 
     return NextResponse.json({
       token: tokenValue,
@@ -178,7 +237,7 @@ export function validateCSRFToken(
     if (tokenData.token === token) {
       // Check expiration
       if (now > tokenData.expiresAt) {
-        tokenStore.delete(tokenId); // Clean up expired token
+        deleteToken(tokenId); // Clean up expired token
         return { valid: false, error: "Token has expired" };
       }
 
@@ -188,7 +247,7 @@ export function validateCSRFToken(
       }
 
       // Token is valid - remove it (one-time use)
-      tokenStore.delete(tokenId);
+      deleteToken(tokenId);
       return { valid: true };
     }
   }
