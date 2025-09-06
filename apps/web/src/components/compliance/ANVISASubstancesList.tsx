@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ControlledSubstanceClass } from "@/lib/compliance/anvisa-controlled-substances";
-import { AlertCircle, CheckCircle, Clock, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import type React from "react";
 import { getSubstanceClassConfig, SUBSTANCE_CLASS_CONFIG } from "../../constants/anvisa-configs";
 import type { ANVISASubstance } from "../../types/compliance";

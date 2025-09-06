@@ -12,10 +12,10 @@
       "mcp__desktop-commander__write_file",
       "mcp__desktop-commander__create_directory",
       "mcp__archon__get_task",
-      "mcp__desktop-commander__read_multiple_files",
+      "mcp__Tavily__tavily-search",
+      "mcp__desktop-commander__edit_block",
       "mcp__desktop-commander__start_process",
-      "mcp__desktop-commander__read_process_output",
-      "mcp__desktop-commander__list_sessions",
+      "mcp__serena__search_for_pattern",
       "mcp__serena__search_for_pattern"
     ]
   },
@@ -102,6 +102,111 @@
           "safetyChecks": [
             "User confirmation with cost breakdown",
             "Operation type and amount validation"
+          ]
+        }
+      }
+    },
+    {
+      "name": "mcp__desktop-commander__read_multiple_files",
+      "preToolUse": {
+        "guardScript": "scripts/guard-nonprod-only.py",
+        "confirmationRequired": true,
+        "confirmationPrompt": "⚠️  MULTIPLE FILE READ WARNING ⚠️\n\nThis will read multiple files simultaneously which can:\n• Access sensitive configuration or data files\n• Consume significant system resources\n• Expose file contents that may contain secrets\n• Impact system performance\n\nEnvironment: {environment}\nFiles: {paths}\n\nConfirm you want to read these multiple files?",
+        "metadata": {
+          "description": "Multiple file read operation with security protection",
+          "requirements": [
+            "Non-production environment (CLAUDE_ENV != production)",
+            "Explicit user confirmation",
+            "Guard script validation"
+          ],
+          "safetyChecks": [
+            "Environment validation via guard-nonprod-only.py",
+            "User confirmation with file list preview",
+            "Path validation and security checks"
+          ]
+        }
+      }
+    },
+    {
+      "name": "mcp__desktop-commander__start_process",
+      "preToolUse": {
+        "guardScript": "scripts/guard-nonprod-only.py",
+        "confirmationRequired": true,
+        "confirmationPrompt": "⚠️  PROCESS START WARNING ⚠️\n\nThis will start a new system process which can:\n• Execute arbitrary commands on the system\n• Access system resources and files\n• Potentially compromise system security\n• Run long-running or resource-intensive operations\n\nEnvironment: {environment}\nCommand: {command}\n\nConfirm you want to start this process?",
+        "metadata": {
+          "description": "System process execution with security protection",
+          "requirements": [
+            "Non-production environment (CLAUDE_ENV != production)",
+            "Explicit user confirmation",
+            "Guard script validation"
+          ],
+          "safetyChecks": [
+            "Environment validation via guard-nonprod-only.py",
+            "User confirmation with command preview",
+            "Command validation and security checks"
+          ]
+        }
+      }
+    },
+    {
+      "name": "mcp__desktop-commander__read_process_output",
+      "preToolUse": {
+        "guardScript": "scripts/guard-nonprod-only.py",
+        "confirmationRequired": true,
+        "confirmationPrompt": "⚠️  PROCESS OUTPUT READ WARNING ⚠️\n\nThis will read output from running processes which can:\n• Access potentially sensitive process information\n• Monitor system operations and data flows\n• Expose running process states and data\n• Impact system monitoring and security\n\nEnvironment: {environment}\nProcess ID: {pid}\n\nConfirm you want to read this process output?",
+        "metadata": {
+          "description": "Process output monitoring with security protection",
+          "requirements": [
+            "Non-production environment (CLAUDE_ENV != production)",
+            "Explicit user confirmation",
+            "Guard script validation"
+          ],
+          "safetyChecks": [
+            "Environment validation via guard-nonprod-only.py",
+            "User confirmation with process ID",
+            "Process validation and security checks"
+          ]
+        }
+      }
+    },
+    {
+      "name": "mcp__desktop-commander__list_sessions",
+      "preToolUse": {
+        "guardScript": "scripts/guard-nonprod-only.py",
+        "confirmationRequired": true,
+        "confirmationPrompt": "⚠️  SESSION LIST WARNING ⚠️\n\nThis will list active system sessions which can:\n• Expose running processes and system state\n• Reveal system usage patterns and activities\n• Access potentially sensitive session information\n• Impact system monitoring and privacy\n\nEnvironment: {environment}\n\nConfirm you want to list active sessions?",
+        "metadata": {
+          "description": "System session listing with security protection",
+          "requirements": [
+            "Non-production environment (CLAUDE_ENV != production)",
+            "Explicit user confirmation",
+            "Guard script validation"
+          ],
+          "safetyChecks": [
+            "Environment validation via guard-nonprod-only.py",
+            "User confirmation for session monitoring",
+            "Session access validation and security checks"
+          ]
+        }
+      }
+    },
+    {
+      "name": "mcp__serena__search_for_pattern",
+      "preToolUse": {
+        "guardScript": "scripts/guard-nonprod-only.py",
+        "confirmationRequired": true,
+        "confirmationPrompt": "⚠️  PATTERN SEARCH WARNING ⚠️\n\nThis will search for patterns across the codebase which can:\n• Access and scan potentially sensitive source code\n• Expose configuration files and secrets\n• Consume significant system resources\n• Reveal system architecture and vulnerabilities\n\nEnvironment: {environment}\nPattern: {substring_pattern}\n\nConfirm you want to perform this pattern search?",
+        "metadata": {
+          "description": "Codebase pattern search with security protection",
+          "requirements": [
+            "Non-production environment (CLAUDE_ENV != production)",
+            "Explicit user confirmation",
+            "Guard script validation"
+          ],
+          "safetyChecks": [
+            "Environment validation via guard-nonprod-only.py",
+            "User confirmation with search pattern",
+            "Pattern validation and security checks"
           ]
         }
       }

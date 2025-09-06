@@ -136,7 +136,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isOwn, showAvata
 export const WhatsappChat: React.FC<WhatsappChatProps> = ({
   conversation,
   messages,
-  _currentUserId,
+  currentUserId,
   clinicId,
   onSendMessage,
   onMarkAsRead,

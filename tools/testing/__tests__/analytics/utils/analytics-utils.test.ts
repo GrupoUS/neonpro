@@ -77,7 +77,7 @@ vi.mock<typeof import("lodash")>("lodash", () => ({
   }),
 }));
 
-// Mock jsPDF and xlsx
+// Mock jsPDF and ExcelJS
 const mockPDFInstance = {
   text: vi.fn(),
   addPage: vi.fn(),
@@ -90,14 +90,32 @@ vi.mock<typeof import("jspdf")>("jspdf", () => ({
   default: vi.fn(() => mockPDFInstance),
 }));
 
-vi.mock<typeof import("xlsx")>("xlsx", () => ({
-  utils: {
-    json_to_sheet: vi.fn().mockReturnValue({}),
-    book_new: vi.fn().mockReturnValue({}),
-    book_append_sheet: vi.fn(),
-    sheet_to_csv: vi.fn().mockReturnValue("mock,csv,data"),
+const mockWorkbook = {
+  addWorksheet: vi.fn().mockReturnValue({
+    addRow: vi.fn(),
+    getRow: vi.fn().mockReturnValue({
+      font: {},
+      fill: {},
+    }),
+    columns: [],
+    getCell: vi.fn().mockReturnValue({
+      value: undefined,
+      font: {},
+      fill: {},
+    }),
+    mergeCells: vi.fn(),
+  }),
+  xlsx: {
+    writeBuffer: vi.fn().mockResolvedValue(Buffer.from("mock-excel-data")),
   },
-  write: vi.fn().mockReturnValue("mock-xlsx-data"),
+};
+
+vi.mock<typeof import("exceljs")>("exceljs", () => ({
+  __esModule: true,
+  default: {
+    Workbook: vi.fn(() => mockWorkbook),
+  },
+  Workbook: vi.fn(() => mockWorkbook),
 }));
 
 describe("analytics Utils", () => {

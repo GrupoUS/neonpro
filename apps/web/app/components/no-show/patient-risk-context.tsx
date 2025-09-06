@@ -58,8 +58,31 @@ export function PatientRiskContext({
   const positiveFactors = sortedFactors.filter((f) => f.impact > 0);
   const negativeFactors = sortedFactors.filter((f) => f.impact < 0);
 
-  const interventionActions =
-    INTERVENTION_ACTIONS_PT[prediction.riskLevel as keyof typeof INTERVENTION_ACTIONS_PT] || [];
+  // Map risk level to appropriate intervention actions
+  const getRiskInterventions = (riskLevel: string): string[] => {
+    switch (riskLevel) {
+      case "low":
+        return [INTERVENTION_ACTIONS_PT.reminder];
+      case "medium":
+        return [INTERVENTION_ACTIONS_PT.reminder, INTERVENTION_ACTIONS_PT.confirmation];
+      case "high":
+        return [
+          INTERVENTION_ACTIONS_PT.confirmation,
+          INTERVENTION_ACTIONS_PT.incentive,
+          INTERVENTION_ACTIONS_PT.personal_contact,
+        ];
+      case "critical":
+        return [
+          INTERVENTION_ACTIONS_PT.personal_contact,
+          INTERVENTION_ACTIONS_PT.incentive,
+          INTERVENTION_ACTIONS_PT.rescheduling,
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const interventionActions = getRiskInterventions(prediction.riskLevel);
 
   return (
     <Card className="w-full max-w-md">

@@ -16,7 +16,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import { useEffect, useId, useState } from "react";
+import { useId } from "react";
 import { Badge } from "../Badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
 import { Progress } from "../Progress";

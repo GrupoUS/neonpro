@@ -84,14 +84,18 @@ export const auditMiddleware = (
       return originalJson.call(this, body);
     };
 
-    res.end = function(this: any, ...args: any[]) {
+    // Replace unsafe `any` cast with `unknown` + typed function cast
+    res.end = function(this: Response, ...args: unknown[]) {
       const [first] = args;
-      if (typeof first === "string" || (typeof Buffer !== "undefined" && Buffer.isBuffer(first))) {
+      if (
+        typeof first === "string"
+        || (typeof Buffer !== "undefined" && Buffer.isBuffer(first as unknown as Buffer))
+      ) {
         responseBody = first;
       }
-      // Preserve original Node response.end overload semantics
-      return (originalEnd as any).apply(this, args);
-    } as any;
+      // Call the original `end` using a safe cast through `unknown`
+      return (originalEnd as unknown as (...a: unknown[]) => unknown).apply(this, args);
+    } as unknown as typeof res.end;
 
     // Hook into response finish event to log audit
     res.on("finish", async () => {

@@ -16,7 +16,9 @@ interface AuthLayoutProps {
   showBackground?: boolean;
 }
 
-const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
+type AuthLayoutAllProps = AuthLayoutProps & React.ComponentProps<"div">;
+
+const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutAllProps>(
   (
     {
       children,
@@ -28,7 +30,7 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
       formWidth = "md",
       showLogo = true,
       showBackground = true,
-      ...props
+      ...rest
     },
     ref,
   ) => {
@@ -49,7 +51,7 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
         style={backgroundImage
           ? { backgroundImage: `url(${backgroundImage})` }
           : undefined}
-        {...props}
+        {...rest}
       >
         {/* Background Overlay */}
         {backgroundImage && <div className="absolute inset-0 bg-black/20" />}

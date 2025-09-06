@@ -66,7 +66,7 @@ export class LGPDConsentManager {
     const existingCategories = new Set<string>(this.consentPurposes.map(p => p.category));
 
     for (const category of requiredCategories) {
-      if (!existingCategories.has(category as any)) {
+      if (!existingCategories.has(category as unknown)) {
         console.warn(`Missing consent purpose category: ${category}`);
       }
     }

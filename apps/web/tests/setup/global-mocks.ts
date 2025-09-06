@@ -441,24 +441,24 @@ if (!insertedRecords.has("ai_service_metrics")) {
 }
 
 // Provide realtime hook default
-(globalThis as unknown).mockRealtimeHook = (globalThis as unknown).mockRealtimeHook
+(globalThis as any).mockRealtimeHook = (globalThis as any).mockRealtimeHook
   ?? { isConnected: true, error: null };
-if (typeof (globalThis as unknown).mockRealtimeHook.error === "undefined") {
+if (typeof (globalThis as any).mockRealtimeHook.error === "undefined") {
   (globalThis as unknown).mockRealtimeHook.error = null;
 }
 
 // Patients hook surface expected by tests
-(globalThis as unknown).mockPatientsHook = (globalThis as unknown).mockPatientsHook ?? {
+(globalThis as any).mockPatientsHook = (globalThis as any).mockPatientsHook ?? {
   exportPatientData: vi.fn(async () => ({ success: true, url: "https://example.com/export.zip" })),
   importPatientData: vi.fn(async () => ({ success: true })),
 };
 
 // Assign to globalThis for access in tests
-(globalThis as unknown).mockCpfValidator = mockCpfValidator;
-(globalThis as unknown).mockSupabaseClient = mockSupabaseClient;
-(globalThis as unknown).mockLgpdService = mockLgpdService;
-(globalThis as unknown).mockNotificationService = mockNotificationService;
-(globalThis as unknown).mockComplianceService = mockComplianceService;
+(globalThis as any).mockCpfValidator = mockCpfValidator;
+(globalThis as any).mockSupabaseClient = mockSupabaseClient;
+(globalThis as any).mockLgpdService = mockLgpdService;
+(globalThis as any).mockNotificationService = mockNotificationService;
+(globalThis as any).mockComplianceService = mockComplianceService;
 
 // Export for direct imports if needed
 export {

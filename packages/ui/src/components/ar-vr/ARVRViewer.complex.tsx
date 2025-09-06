@@ -8,7 +8,7 @@
 "use client";
 
 import { Camera, Eye, Monitor, Move3d, RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";

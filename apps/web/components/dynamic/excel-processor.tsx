@@ -116,26 +116,40 @@ export function useExcelProcessing() {
           throw new Error(errorMsg);
         }
 
-        // Lazy load xlsx library
-        const XLSX = await import("xlsx");
+        // Lazy load ExcelJS library (secure replacement for xlsx)
+        const ExcelJS = await import("exceljs");
 
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
 
-          reader.addEventListener("load", (e) => {
+          reader.addEventListener("load", async (e) => {
             try {
               setProgress(30);
 
-              const data = new Uint8Array(e.target?.result as ArrayBuffer);
-              const workbook = XLSX.read(data, { type: "array" });
-              const sheetName = workbook.SheetNames[0];
-              const worksheet = workbook.Sheets[sheetName];
+              const data = e.target?.result as ArrayBuffer;
+              const workbook = new ExcelJS.Workbook();
+              await workbook.xlsx.load(data);
+
+              const worksheet = workbook.worksheets[0];
+              const sheetName = worksheet.name;
 
               setProgress(60);
 
-              const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-              const headers = jsonData[0] as string[];
-              const rows = jsonData.slice(1) as unknown[][];
+              // Convert ExcelJS data to our format
+              const rows: unknown[][] = [];
+              let headers: string[] = [];
+
+              worksheet.eachRow((row, rowNumber) => {
+                const rowValues = row.values as unknown[];
+                // Remove first element (ExcelJS includes undefined at index 0)
+                const cleanValues = rowValues.slice(1);
+
+                if (rowNumber === 1) {
+                  headers = cleanValues.map(val => String(val || ""));
+                } else {
+                  rows.push(cleanValues);
+                }
+              });
 
               setProgress(90);
 
@@ -181,15 +195,51 @@ export function useExcelProcessing() {
     setError(null);
 
     try {
-      // Lazy load xlsx library
-      const XLSX = await import("xlsx");
+      // Lazy load ExcelJS library (secure replacement for xlsx)
+      const ExcelJS = await import("exceljs");
 
-      const ws = XLSX.utils.aoa_to_sheet([data.headers, ...data.rows]);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Data");
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Data");
 
-      // Generate file and trigger download
-      XLSX.writeFile(wb, filename);
+      // Add headers
+      worksheet.addRow(data.headers);
+
+      // Add data rows
+      data.rows.forEach(row => {
+        worksheet.addRow(row);
+      });
+
+      // Style the header row
+      const headerRow = worksheet.getRow(1);
+      headerRow.font = { bold: true };
+      headerRow.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FF366092" },
+      };
+      headerRow.font.color = { argb: "FFFFFFFF" };
+
+      // Auto-fit columns
+      worksheet.columns.forEach(column => {
+        if (column.header) {
+          column.width = Math.max(12, String(column.header).length + 2);
+        }
+      });
+
+      // Generate buffer and trigger download
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     } catch (err) {
       const error = err as Error;
       setError(error);

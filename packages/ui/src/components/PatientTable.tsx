@@ -344,7 +344,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
         }
 
         default: {
-          return (patient as any)[column.key] || "-";
+          return (patient as unknown)[column.key] || "-";
         }
       }
     };

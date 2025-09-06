@@ -8,7 +8,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import {
-  AlertTriangle,
   Bell,
   BellRing,
   Calendar,
@@ -16,14 +15,13 @@ import {
   Clock,
   Filter,
   Pause,
-  Phone,
   Play,
   Settings,
   TrendingUp,
   User,
   X,
 } from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 // Types
 export interface StaffAlert {
@@ -85,7 +83,7 @@ const ALERT_PRIORITY_CONFIG = {
   critical: {
     color: "border-red-500 bg-red-50 text-red-900",
     badgeColor: "bg-red-100 text-red-800",
-    icon: AlertTriangle,
+    icon: BellRing,
     sound: true,
   },
   high: {

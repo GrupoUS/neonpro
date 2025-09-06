@@ -7,15 +7,15 @@ import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
-  AlertCircle,
-  AlertTriangle,
-  Calendar,
+  // AlertCircle,
+  // AlertTriangle,
+  // Calendar,
   CheckCircle,
   Clock,
   Info,
   Phone,
   TrendingUp,
-  User,
+  // User,
   XCircle,
 } from "lucide-react";
 import React, { useCallback, useMemo, useState } from "react";
@@ -64,7 +64,7 @@ const RISK_CONFIG = {
     threshold: 0.5,
     color: "text-yellow-600 border-yellow-200 bg-yellow-50",
     badgeColor: "bg-yellow-100 text-yellow-800",
-    icon: AlertCircle,
+    icon: CheckCircle,
     label: "Risco Moderado",
     description: "Atenção recomendada",
   },
@@ -72,7 +72,7 @@ const RISK_CONFIG = {
     threshold: 0.75,
     color: "text-orange-600 border-orange-200 bg-orange-50",
     badgeColor: "bg-orange-100 text-orange-800",
-    icon: AlertTriangle,
+    icon: XCircle,
     label: "Alto Risco",
     description: "Intervenção recomendada",
   },

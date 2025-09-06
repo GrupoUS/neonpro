@@ -14,7 +14,7 @@ declare global {
 }
 
 // Mock IntersectionObserver for components that use it
-global.IntersectionObserver = class MockIntersectionObserver {
+(global as any).IntersectionObserver = class MockIntersectionObserver {
   disconnect() {}
   observe() {}
   unobserve() {}

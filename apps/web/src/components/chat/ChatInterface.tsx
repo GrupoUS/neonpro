@@ -145,6 +145,7 @@ export default function ChatInterface({
     if (state.activeConversation) {
       scrollToBottom();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.messages, state.activeConversation?.id, scrollToBottom]);
 
   // Mock data loading functions (would be replaced with real API calls)

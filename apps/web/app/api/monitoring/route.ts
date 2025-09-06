@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { action, ...data } = body;
+    const { action, ...data } = body as any;
 
     if (!action || typeof action !== "string") {
       return NextResponse.json(
@@ -540,26 +540,26 @@ async function createAlertRule(rule: AlertRule, userId: string): Promise<string 
       threshold: rule.threshold,
 
       // Required fields for alertSystem.AlertRule (defaults used when missing)
-      category: (rule as unknown).category ?? "general",
+      category: (rule as any).category ?? "general",
       metadata: {
         createdBy: userId,
         createdAt: new Date().toISOString(),
-        ...(rule as unknown).metadata,
+        ...(rule as any).metadata,
       },
-      conditions: (rule as unknown).conditions ?? [
+      conditions: (rule as any).conditions ?? [
         {
           expression: rule.condition ?? "",
           threshold: rule.threshold,
         },
       ],
-      actions: (rule as unknown).actions ?? [
+      actions: (rule as any).actions ?? [
         // default action: notify via email (adjust if your system uses different action shapes)
         { type: "notify", channels: ["email"] },
       ],
     };
 
     // Cast to unknown to satisfy the alertSystem parameter shape without importing external types
-    const ruleId = await alertSystem.addAlertRule(payload as unknown);
+    const ruleId = await alertSystem.addAlertRule(payload as any);
 
     logger.info(LogCategory.SYSTEM, "Alert rule created via API", {
       metadata: {
@@ -625,7 +625,7 @@ function processMetricsData(metrics: DbPerformanceMetric[], type: string) {
   const timeSeries = Array.from(buckets.entries())
     .map(([time, bucketMetrics]) => {
       const values = bucketMetrics
-        .map(m => Number(m.metric_value ?? m.value ?? 0))
+        .map((m: any) => Number(m.metric_value ?? m.value ?? 0))
         .filter(v => !Number.isNaN(v));
 
       const count = values.length;

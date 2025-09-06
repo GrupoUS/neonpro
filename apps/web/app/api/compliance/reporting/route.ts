@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await supabase.from("system_metrics").insert({
+    await (supabase as any).from("system_metrics").insert({
       tenant_id: user.id,
       category: "compliance",
       metric_name: "regulatory_report_generated",
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
     const reportType = searchParams.get("reportType");
     const limit = Number.parseInt(searchParams.get("limit") || "10", 10);
 
-    let query = supabase
+    let query = (supabase as any)
       .from("regulatory_reports")
       .select("*")
       .eq("tenant_id", user.id)

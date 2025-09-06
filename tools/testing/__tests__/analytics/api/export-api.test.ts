@@ -11,7 +11,7 @@ const mockCreateClient = createClient as vi.MockedFunction<typeof createClient>;
 vi.mock("fs/promises");
 vi.mock("path");
 
-// Mock jsPDF and xlsx
+// Mock jsPDF and ExcelJS
 vi.mock<typeof import("jspdf")>("jspdf", () => ({
   __esModule: true,
   default: vi.fn().mockImplementation(() => ({
@@ -22,14 +22,32 @@ vi.mock<typeof import("jspdf")>("jspdf", () => ({
   })),
 }));
 
-vi.mock<typeof import("xlsx")>("xlsx", () => ({
-  utils: {
-    json_to_sheet: vi.fn().mockReturnValue({}),
-    book_new: vi.fn().mockReturnValue({}),
-    book_append_sheet: vi.fn(),
-    sheet_to_csv: vi.fn().mockReturnValue("mock,csv,data"),
+const mockWorkbook = {
+  addWorksheet: vi.fn().mockReturnValue({
+    addRow: vi.fn(),
+    getRow: vi.fn().mockReturnValue({
+      font: {},
+      fill: {},
+    }),
+    columns: [],
+    getCell: vi.fn().mockReturnValue({
+      value: undefined,
+      font: {},
+      fill: {},
+    }),
+    mergeCells: vi.fn(),
+  }),
+  xlsx: {
+    writeBuffer: vi.fn().mockResolvedValue(Buffer.from("mock-excel-data")),
   },
-  write: vi.fn().mockReturnValue("mock-xlsx-data"),
+};
+
+vi.mock<typeof import("exceljs")>("exceljs", () => ({
+  __esModule: true,
+  default: {
+    Workbook: vi.fn(() => mockWorkbook),
+  },
+  Workbook: vi.fn(() => mockWorkbook),
 }));
 
 describe("export API Routes", () => {

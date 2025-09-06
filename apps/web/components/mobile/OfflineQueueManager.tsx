@@ -231,7 +231,7 @@ const useNetworkInfo = (): NetworkInfo => {
 
   useEffect(() => {
     const updateNetworkInfo = () => {
-      const navigator = window.navigator as any;
+      const navigator = window.navigator as unknown;
       const connection = navigator.connection || navigator.mozConnection
         || navigator.webkitConnection;
 
@@ -249,15 +249,15 @@ const useNetworkInfo = (): NetworkInfo => {
     window.addEventListener("online", updateNetworkInfo);
     window.addEventListener("offline", updateNetworkInfo);
 
-    if ((window.navigator as any).connection) {
-      (window.navigator as any).connection.addEventListener("change", updateNetworkInfo);
+    if ((window.navigator as unknown).connection) {
+      (window.navigator as unknown).connection.addEventListener("change", updateNetworkInfo);
     }
 
     return () => {
       window.removeEventListener("online", updateNetworkInfo);
       window.removeEventListener("offline", updateNetworkInfo);
-      if ((window.navigator as any).connection) {
-        (window.navigator as any).connection.removeEventListener("change", updateNetworkInfo);
+      if ((window.navigator as unknown).connection) {
+        (window.navigator as unknown).connection.removeEventListener("change", updateNetworkInfo);
       }
     };
   }, []);

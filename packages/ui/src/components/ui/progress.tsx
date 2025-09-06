@@ -6,9 +6,9 @@ import * as React from "react";
 
 import { cn } from "../../lib/utils";
 import {
-  getComplianceVariant,
-  getPhaseColor,
-  getStageVariant,
+  // getComplianceVariant,
+  // getPhaseColor,
+  // getStageVariant,
 } from "../../types/progress-variants";
 
 const progressVariants = cva(

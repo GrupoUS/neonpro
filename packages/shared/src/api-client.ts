@@ -1014,7 +1014,7 @@ export const ApiHelpers = {
         : [];
 
       if (validations.length > 0) {
-        return validations.map((ve: any) => `${ve.field}: ${ve.message}`).join(", ");
+        return (validations as any[]).map((ve: any) => `${ve.field}: ${ve.message}`).join(", ");
       }
 
       return String(topLevel?.message || apiError.message || "API error occurred");
@@ -1041,7 +1041,7 @@ export const ApiHelpers = {
   isAuthError: (error: unknown): boolean => {
     // Accept either nested error.error.code or top-level error.code (as tests use)
     if (typeof error === "object" && error) {
-      const maybeObj = error as Record<string, any>;
+      const maybeObj = error as any;
       const nestedCode = maybeObj?.error?.error?.code;
       const topLevelCode = maybeObj?.error?.code || maybeObj?.code;
       const code = nestedCode || topLevelCode;
@@ -1061,7 +1061,7 @@ export const ApiHelpers = {
   // Check if error is validation issue
   isValidationError: (error: unknown): boolean => {
     if (typeof error === "object" && error) {
-      const maybeObj = error as Record<string, any>;
+      const maybeObj = error as any;
       const nested = maybeObj?.error?.error;
       const topLevel = maybeObj?.error;
       return (

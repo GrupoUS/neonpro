@@ -14,7 +14,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import {
-  AlertTriangle,
   Calendar,
   ChevronRight,
   Clock,
@@ -24,11 +23,10 @@ import {
   RefreshCw,
   Search,
   SortAsc,
-  SortDesc,
   TrendingUp,
   User,
 } from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import type { RiskScoreData } from "./RiskScoreIndicator";
 import RiskScoreIndicator from "./RiskScoreIndicator";
 

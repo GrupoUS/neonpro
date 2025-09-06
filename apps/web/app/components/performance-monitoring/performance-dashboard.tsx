@@ -22,7 +22,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePerformanceMonitoring } from "@/hooks/use-performance-monitoring";
 import { cn } from "@/lib/utils";
-import type { DashboardKPI, ExportOptions } from "@/types/performance-monitoring";
+import type { ExportOptions, PerformanceKPI } from "@/types/performance-monitoring";
 import { CHART_COLORS, KPI_LABELS_PT } from "@/types/performance-monitoring";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";

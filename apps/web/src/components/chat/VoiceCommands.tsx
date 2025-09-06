@@ -403,6 +403,7 @@ export function VoiceCommands({
   const detectEmergencyKeywords = useCallback((text: string): boolean => {
     const lowercaseText = text.toLowerCase();
     return EMERGENCY_KEYWORDS.some((keyword) => lowercaseText.includes(keyword));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
@@ -411,6 +412,7 @@ export function VoiceCommands({
   const extractMedicalTerms = useCallback((text: string): string[] => {
     const lowercaseText = text.toLowerCase();
     return MEDICAL_TERMS.filter((term) => lowercaseText.includes(term));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**

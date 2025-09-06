@@ -1,6 +1,7 @@
 "use client";
+"use client";
 
-import { AlertTriangle, Check, Clock, Shield, X } from "lucide-react";
+import { AlertTriangle, Check, Shield, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "../Alert";

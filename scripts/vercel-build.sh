@@ -31,7 +31,6 @@ pnpm --filter @neonpro/config build || echo "Config build completed with warning
 # Build database and auth packages
 echo "Building database and authentication..."
 pnpm --filter @neonpro/database build || echo "Database build completed with warnings"
-pnpm --filter @neonpro/auth build || echo "Auth build completed with warnings"
 
 # Build shared utilities
 echo "Building shared utilities..."
@@ -41,7 +40,6 @@ pnpm --filter @neonpro/utils build || echo "Utils build completed with warnings"
 # Build UI packages
 echo "Building UI components..."
 pnpm --filter @neonpro/ui build || echo "UI build completed with warnings"
-pnpm --filter @neonpro/brazilian-healthcare-ui build || echo "Healthcare UI build completed with warnings"
 
 # Build core services
 echo "Building core services..."

@@ -50,7 +50,7 @@ import {
   Stethoscope,
   Target,
 } from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 // ====== MOCK COMPLIANCE DATA ======
 const mockComplianceData: BrazilianHealthcareIntelligence = {

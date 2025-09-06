@@ -105,14 +105,41 @@ interface ErrorLike {
   metadata?: unknown;
   name?: string;
   errors?: unknown[]; // changed from any[] to unknown[]
+  issues?: unknown[];
+  meta?: unknown;
+  [key: string]: unknown;
 }
 
 function isErrorLike(err: unknown): err is ErrorLike {
   return typeof err === "object" && err !== null;
 }
 
-function hasStatus(err: unknown): err is { status?: number; statusCode?: number; } {
-  return isErrorLike(err) && (typeof err.status === "number" || typeof err.statusCode === "number");
+// New helpers: safe, typed property accessors (no `any`)
+function getUnknownArray(obj: unknown, keys: string[]): unknown[] {
+  if (!isErrorLike(obj)) return [];
+  for (const k of keys) {
+    const val = obj[k];
+    if (Array.isArray(val)) return val as unknown[];
+  }
+  return [];
+}
+
+function getNumericProp(obj: unknown, keys: string[], fallback?: number): number | undefined {
+  if (!isErrorLike(obj)) return fallback;
+  for (const k of keys) {
+    const val = obj[k];
+    if (typeof val === "number") return val;
+    if (typeof val === "string" && val.trim() !== "" && !Number.isNaN(Number(val))) {
+      const n = Number(val);
+      if (!Number.isNaN(n)) return n;
+    }
+  }
+  return fallback;
+}
+
+function getProp<T>(obj: unknown, key: string): T | undefined {
+  if (!isErrorLike(obj)) return undefined;
+  return obj[key] as T | undefined;
 }
 
 /**
@@ -175,6 +202,7 @@ const logError = (error: unknown, context: Context): void => {
 
   // Safe access to error properties
   const errorObj = isErrorLike(error) ? error : undefined;
+  const statusFromErr = getNumericProp(errorObj, ["statusCode", "status"]);
   const logData = {
     errorId,
     requestId,
@@ -182,10 +210,12 @@ const logError = (error: unknown, context: Context): void => {
     timestamp: new Date().toISOString(),
 
     // Error details
-    type: (errorObj && errorObj.type) || ErrorType.INTERNAL_SERVER_ERROR,
+    type: (errorObj && (typeof errorObj.type === "string")
+      ? errorObj.type
+      : ErrorType.INTERNAL_SERVER_ERROR),
     message: (errorObj && errorObj.message) || "Unknown error",
     stack: errorObj && errorObj.stack,
-    statusCode: (errorObj && (errorObj as any).statusCode) || 500,
+    statusCode: statusFromErr ?? 500,
 
     // Request context
     method: context.req.method,
@@ -253,12 +283,8 @@ const formatErrorResponse = (
   // Handle validation errors (Zod)
   const errorObj2 = isErrorLike(error) ? error : undefined;
   if (errorObj2 && (errorObj2 as { name?: string; }).name === "ZodError") {
-    // Normalize possible shapes: some Zod versions/consumers use `errors`, some `issues`
-    const rawIssues: unknown[] = Array.isArray((errorObj2 as any).errors)
-      ? (errorObj2 as any).errors as unknown[]
-      : Array.isArray((errorObj2 as any).issues)
-      ? (errorObj2 as any).issues as unknown[]
-      : [];
+    // Normalize possible shapes: use safe extractor for `errors` or `issues`
+    const rawIssues: unknown[] = getUnknownArray(errorObj2, ["errors", "issues"]);
 
     // Safely normalize Zod issues without `any`
     const validationDetails = rawIssues.map((issue) => {
@@ -298,7 +324,7 @@ const formatErrorResponse = (
 
   // Handle HTTP errors
   if (hasStatus(error)) {
-    const statusCode = ((error as any).status || (error as any).statusCode) as StatusCode;
+    const statusCode = getNumericProp(error, ["status", "statusCode"], 500) as StatusCode;
     let errorType: ErrorType;
     let message: string;
 
@@ -350,8 +376,9 @@ const formatErrorResponse = (
 
   // Handle database errors
   if (
-    (isErrorLike(error) && (error as any).name === "PrismaClientKnownRequestError")
-    || (isErrorLike(error) && (error as any).name === "PrismaClientUnknownRequestError")
+    (isErrorLike(error) && (getProp<string>(error, "name") === "PrismaClientKnownRequestError"))
+    || (isErrorLike(error)
+      && (getProp<string>(error, "name") === "PrismaClientUnknownRequestError"))
   ) {
     return {
       response: {
@@ -361,8 +388,8 @@ const formatErrorResponse = (
         details: isProduction
           ? undefined
           : {
-            code: (error as any)?.code,
-            meta: sanitizeError((error as any)?.meta),
+            code: getProp<string>(error, "code"),
+            meta: sanitizeError(getProp<unknown>(error, "meta")),
           },
         timestamp: new Date().toISOString(),
         requestId,
@@ -495,4 +522,7 @@ function isZodIssue(obj: unknown): obj is { path?: unknown[]; message?: unknown;
       || Object.prototype.hasOwnProperty.call(obj as Record<string, unknown>, "code")
     )
   );
+}
+function hasStatus(error: unknown) {
+  throw new Error("Function not implemented.");
 }

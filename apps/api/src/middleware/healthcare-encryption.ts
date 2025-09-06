@@ -45,6 +45,7 @@ export interface EncryptedData {
   category: EncryptionCategory; // Data category
   timestamp: Date; // Encryption timestamp
   version: string; // Encryption version for compatibility
+  associatedData?: string; // Associated authenticated data (AAD) used during encryption
 }
 
 // Data access context for audit logging
@@ -246,6 +247,7 @@ export class HealthcareEncryption {
       category,
       timestamp: new Date(),
       version: "1.0",
+      associatedData: patientId, // Store the associated data used during encryption
     };
 
     // Log encryption for audit
@@ -301,9 +303,10 @@ export class HealthcareEncryption {
         Buffer.from(encryptedData.iv, "hex"),
       );
 
-      // Set associated data if patient ID was used during encryption
-      const associatedData = patientId
-        ? Buffer.from(patientId, "utf8")
+      // Set associated data - use provided patientId or fall back to stored associatedData
+      const aadValue = patientId || encryptedData.associatedData;
+      const associatedData = aadValue
+        ? Buffer.from(aadValue, "utf8")
         : Buffer.alloc(0);
       if (associatedData.length > 0) {
         decipher.setAAD(associatedData);

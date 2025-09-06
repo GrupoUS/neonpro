@@ -15,7 +15,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import {
   Activity,
-  AlertCircle,
   BarChart3,
   Calendar,
   CheckCircle,
@@ -28,11 +27,10 @@ import {
   RefreshCw,
   Target,
   TrendingDown,
-  TrendingUp,
   Users,
   Zap,
 } from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 // Types for performance data
 export interface PerformanceMetrics {

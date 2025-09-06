@@ -21,13 +21,19 @@ import { useState } from "react";
 
 interface Conversation {
   id: string;
-  status: "active" | "closed" | "archived";
-  unreadCount?: number;
-  messageCount?: number;
+  clinicId: string;
+  patientId?: string;
   phoneNumber: string;
   contactName?: string;
-  lastMessageAt?: Date | string;
-  tags?: string[];
+  status: "active" | "closed" | "archived";
+  lastMessageAt?: Date;
+  messageCount: number;
+  unreadCount: number;
+  assignedTo?: string;
+  tags: string[];
+  metadata?: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // UI Components

@@ -16,19 +16,19 @@ import { cn } from "@/lib/utils";
 import {
   Activity,
   ArrowDown,
-  ArrowUp,
+  // ArrowUp,
   BarChart3,
   Brain,
-  Calendar,
+  // Calendar,
   DollarSign,
-  Eye,
+  // Eye,
   Percent,
   PieChart,
   Target,
   TrendingDown,
   TrendingUp,
   Users,
-  Zap,
+  // Zap,
 } from "lucide-react";
 import React from "react";
 

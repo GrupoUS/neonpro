@@ -75,7 +75,9 @@ vi.mock("@neonpro/shared", () => ({
 }));
 
 vi.mock("../src/services/AIService", async () => {
-  const actual = await vi.importActual<unknown>("../src/services/AIService");
+  const actual = await vi.importActual<typeof import("../src/services/AIService")>(
+    "../src/services/AIService",
+  );
   class MockAIService extends actual.AIService {
     processChat = vi.fn().mockResolvedValue({
       id: "test_response",
@@ -88,7 +90,9 @@ vi.mock("../src/services/AIService", async () => {
       usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30 },
       metadata: { model: "gpt-4", responseTime: 100, cached: false },
     });
-    executeOperation = vi.fn().mockImplementation((_name: string, fn: unknown) => fn());
+    executeOperation = vi.fn().mockImplementation((_name: string, fn: (...args: any[]) => any) => {
+      return typeof fn === "function" ? fn() : fn;
+    });
   }
   return { AIService: MockAIService };
 });
@@ -139,19 +143,19 @@ describe("BrazilianAIService", () => {
       const result = await service.processWhatsAppChat(baseRequest, mockContext);
 
       expect(result).toMatchObject({
-        id: expect.unknown(String),
+        id: expect.any(String),
         message: {
           role: "assistant",
-          content: expect.unknown(String),
-          timestamp: expect.unknown(Number),
+          content: expect.any(String),
+          timestamp: expect.any(Number),
         },
-        templateUsed: expect.unknown(String),
+        templateUsed: expect.any(String),
         emergencyDetected: false,
         escalationTriggered: false,
         lgpdCompliance: {
-          consentRequired: expect.unknown(Boolean),
-          dataUsageExplained: expect.unknown(Boolean),
-          rightsInformed: expect.unknown(Boolean),
+          consentRequired: expect.any(Boolean),
+          dataUsageExplained: expect.any(Boolean),
+          rightsInformed: expect.any(Boolean),
         },
       });
     });
@@ -271,9 +275,9 @@ describe("BrazilianAIService", () => {
       expect(result).toMatchObject({
         message: {
           role: "assistant",
-          content: expect.unknown(String),
+          content: expect.any(String),
         },
-        templateUsed: expect.unknown(String),
+        templateUsed: expect.any(String),
       });
     });
 
@@ -304,8 +308,8 @@ describe("BrazilianAIService", () => {
       );
 
       expect(result).toMatchObject({
-        response: expect.unknown(String),
-        template: expect.unknown(Object),
+        response: expect.any(String),
+        template: expect.any(Object),
         complianceStatus: expect.stringMatching(/^(compliant|requires_action|violation)$/),
       });
     });

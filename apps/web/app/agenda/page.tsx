@@ -19,7 +19,7 @@ import {
 // AppointmentCalendar component not available - will create mock
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Calendar, Clock, Filter, LoaderCircle, Plus, User } from "lucide-react";
+import { Calendar, Clock, LoaderCircle, Plus, User } from "lucide-react";
 import { useState } from "react";
 
 export default function AgendaPage() {

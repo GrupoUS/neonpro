@@ -10,7 +10,7 @@ import {
   CheckCircle,
   Clock,
   FileText,
-  Lock,
+  // Lock,
   Shield,
   ShieldCheck,
   User,

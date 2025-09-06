@@ -54,7 +54,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 // ====== MOCK PREDICTION DATA ======
 const mockPredictionData: PredictiveIntelligence = {

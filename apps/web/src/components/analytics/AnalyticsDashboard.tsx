@@ -10,7 +10,7 @@
  * @author NeonPro Healthcare AI Team
  */
 
-import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,7 +28,7 @@ import type {
   AIInsight,
   AIRecommendation,
   AnalyticsDashboardProps,
-  BrazilianHealthcareIntelligence,
+  // BrazilianHealthcareIntelligence,
   ComplianceAnalytics,
   CriticalAlert,
   HealthcareAnalytics,
@@ -36,7 +36,6 @@ import type {
 } from "@/types/analytics";
 import {
   Activity,
-  AlertCircle,
   AlertTriangle,
   BarChart3,
   Bell,
@@ -64,7 +63,7 @@ import {
   XCircle,
   Zap,
 } from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 // ====== MOCK DATA FOR DEMONSTRATION ======
 const mockAnalyticsData: HealthcareAnalytics = {
@@ -245,7 +244,7 @@ const dashboardMetrics: MetricCard[] = [
     unit: "BRL",
     format: "currency",
     status: "good",
-    icon: TrendingUp,
+    icon: TrendingDown,
     color: "#16a34a",
     target: 250_000,
     benchmark: 230_000,

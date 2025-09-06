@@ -16,7 +16,7 @@ import nodeCrypto from "node:crypto";
 const cryptoShim = {
   randomBytes: (size: number): Uint8Array => {
     // Try Web Crypto API first (available in modern browsers and Node.js)
-    const g: unknown = globalThis as unknown;
+    const g = globalThis as any;
     if (g?.crypto?.getRandomValues) {
       const array = new Uint8Array(size);
       g.crypto.getRandomValues(array);
@@ -28,7 +28,7 @@ const cryptoShim = {
   },
   randomUUID: (): string => {
     // Try Web Crypto API first
-    const g: unknown = globalThis as unknown;
+    const g = globalThis as any;
     if (g?.crypto && typeof g.crypto.randomUUID === "function") {
       return g.crypto.randomUUID();
     }
@@ -55,7 +55,7 @@ const cryptoShim = {
 // Production-grade JWT implementation with security features
 const jwt = {
   sign: async (
-    payload: unknown,
+    payload: Record<string, unknown>,
     secret: string,
     options?: { expiresIn?: string; },
   ): Promise<string> => {
@@ -63,14 +63,14 @@ const jwt = {
 
     try {
       // Use jose library for secure JWT handling
-      return await new jose.SignJWT(payload)
+      return await new jose.SignJWT(payload as jose.JWTPayload)
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
         .setExpirationTime(options?.expiresIn || "1h")
         .sign(secretKey);
-    } catch (error) {
+    } catch (_error) {
       throw new Error(
-        `JWT signing failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `JWT signing failed: ${_error instanceof Error ? _error.message : "Unknown error"}`,
       );
     }
   },
@@ -80,9 +80,9 @@ const jwt = {
     try {
       // Use jose library for secure JWT verification
       return await jose.jwtVerify(token, secretKey);
-    } catch (error) {
+    } catch (_error) {
       throw new Error(
-        `JWT verification failed: ${error instanceof Error ? error.message : "Invalid token"}`,
+        `JWT verification failed: ${_error instanceof Error ? _error.message : "Invalid token"}`,
       );
     }
   },
@@ -238,7 +238,7 @@ export class SupabaseAuthAdapter {
         refreshToken,
         sessionId: session.sessionId,
       };
-    } catch (error) {
+    } catch (_error) {
       // // console.error("Login error:", error);
       return { success: false, error: "Authentication service error" };
     }
@@ -295,7 +295,7 @@ export class SupabaseAuthAdapter {
         success: true,
         error: "Registration successful. Please check your email for confirmation.",
       };
-    } catch (error) {
+    } catch (_error) {
       // // console.error("Registration error:", error);
       return { success: false, error: "Registration service error" };
     }
@@ -321,7 +321,7 @@ export class SupabaseAuthAdapter {
 
       // Log security event
       await this.logSecurityEvent("logout", { sessionId });
-    } catch (error) {
+    } catch (_error) {
       // // console.error("Logout error:", error);
     }
   }
@@ -343,7 +343,7 @@ export class SupabaseAuthAdapter {
         .maybeSingle();
 
       return profile ? this.mapProfileToUser(profile) : null;
-    } catch (error) {
+    } catch (_error) {
       // // console.error("Get current user error:", error);
       return null;
     }
@@ -386,7 +386,7 @@ export class SupabaseAuthAdapter {
         accessToken: data.session?.access_token,
         refreshToken: data.session?.refresh_token,
       };
-    } catch (error) {
+    } catch (_error) {
       // // console.error("Refresh token error:", error);
       return { success: false, error: "Token refresh failed" };
     }
@@ -395,7 +395,7 @@ export class SupabaseAuthAdapter {
   /**
    * Create session in active_user_sessions table
    */
-  private async createSession(profile: unknown, deviceInfo?: DeviceInfo): Promise<AuthSession> {
+  private async createSession(profile: any, deviceInfo?: DeviceInfo): Promise<AuthSession> {
     const sessionId = `session_${cryptoShim.randomUUID()}`;
     const expiresAt = new Date(Date.now() + this.config.sessionTimeout);
 
@@ -445,7 +445,7 @@ export class SupabaseAuthAdapter {
   /**
    * Generate JWT access token
    */
-  private async generateAccessToken(profile: unknown, sessionId: string): Promise<string> {
+  private async generateAccessToken(profile: any, sessionId: string): Promise<string> {
     const payload = {
       userId: profile.id,
       email: profile.email,
@@ -490,7 +490,7 @@ export class SupabaseAuthAdapter {
           details: details,
           risk_score: this.calculateRiskScore(type, details),
         });
-    } catch (error) {
+    } catch (_error) {
       // // console.error("Failed to log security event:", error);
     }
   }
@@ -498,7 +498,7 @@ export class SupabaseAuthAdapter {
   /**
    * Map profiles table record to User interface
    */
-  private mapProfileToUser(profile: unknown): User {
+  private mapProfileToUser(profile: any): User {
     return {
       id: profile.id,
       email: profile.email,

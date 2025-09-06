@@ -13,7 +13,7 @@ interface CacheLayerStats {
 }
 
 interface CacheMetricsProps {
-  cacheManager?: { getAllStats: () => Promise<Record<string, any>>; };
+  cacheManager?: { getAllStats: () => Promise<Record<string, unknown>>; };
   refreshInterval?: number;
 }
 

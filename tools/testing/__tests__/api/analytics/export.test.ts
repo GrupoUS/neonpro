@@ -51,8 +51,20 @@ vi.mock<typeof import("exceljs")>("exceljs", () => ({
         fill: {},
       }),
     }),
-    xlsx: {
-      writeBuffer: vi.fn().mockResolvedValue(Buffer.from("mock-excel-content")),
+    exceljs: {
+      Workbook: vi.fn().mockImplementation(() => ({
+        addWorksheet: vi.fn().mockReturnValue({
+          addRow: vi.fn(),
+          getRow: vi.fn().mockReturnValue({
+            font: {},
+            fill: {},
+          }),
+          columns: [],
+        }),
+        xlsx: {
+          writeBuffer: vi.fn().mockResolvedValue(Buffer.from("mock-excel-content")),
+        },
+      })),
     },
   })),
 }));
