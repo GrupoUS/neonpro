@@ -54,3 +54,10 @@ Scope: Non-breaking cleanup in small, reversible batches with guard-rails. Each 
 
 - Baseline warnings (oxlint): 1367 (2025-09-06)
 - Target reduction (initial): ≥ 40% cumulatively across PR-001…PR-006
+
+---
+Progress 2025-09-06:
+- PR-001: Accessibility + API types hygiene
+  - Fixed lint in apps/api/src/middleware/error-handler.ts: converted `type ErrorLike` → `interface ErrorLike`, `errors?: Array<any>` → `any[]`.
+  - Ran full code check: 0 errors, warnings unchanged. Repo green.
+- PR-Docs: Standardized code fences in docs/architecture/aesthetic-platform-flows.md to ```ts; ran dprint fmt and full code check. Verified no remaining ```typescript|tsx|js fences via content search. Repo remains green (0 errors).

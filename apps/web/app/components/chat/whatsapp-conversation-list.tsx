@@ -115,6 +115,16 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     }
   };
 
+  const actionBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  const onRowKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      actionBtnRef.current?.focus();
+      actionBtnRef.current?.click();
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -125,6 +135,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         isSelected && "bg-green-50 border-l-4 border-l-green-500",
       )}
       onClick={onClick}
+      tabIndex={0}
+      onKeyDown={onRowKeyDown}
     >
       {/* Avatar */}
       <div className="relative">
@@ -174,7 +186,13 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+                ref={actionBtnRef}
+                aria-haspopup="menu"
+                className={cn(
+                  "h-6 w-6 p-0 opacity-0 transition-opacity",
+                  "group-hover:opacity-100 focus:opacity-100",
+                  isSelected && "opacity-100",
+                )}
                 onClick={(e) => e.stopPropagation()}
               >
                 <MoreVertical className="h-3 w-3" />

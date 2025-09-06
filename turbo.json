@@ -32,7 +32,9 @@
     "ANTHROPIC_API_KEY"
   ],
   "remoteCache": {
-    "signature": true
+    "signature": true,
+    "enabled": true,
+    "timeout": 60
   },
   "globalPassThroughEnv": ["CI", "NODE_ENV", "VERCEL_ENV"],
   "tasks": {
@@ -122,38 +124,51 @@
     },
 
     "lint": {
-      "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json"],
-      "outputs": [],
+      "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json", ".eslintrc.*", ".oxlintrc.*"],
+      "outputs": [".eslintcache", "**/*.tsbuildinfo"],
       "outputLogs": "new-only",
+      "cache": true,
       "env": ["NODE_OPTIONS=--max-old-space-size=4096"]
     },
     "lint:fix": {
-      "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json"],
-      "outputs": [],
+      "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json", ".eslintrc.*", ".oxlintrc.*"],
+      "outputs": [".eslintcache", "**/*.tsbuildinfo"],
       "outputLogs": "new-only",
+      "cache": true,
       "env": ["NODE_OPTIONS=--max-old-space-size=4096"]
     },
     "type-check": {
       "dependsOn": ["^build"],
-      "inputs": ["**/*.{ts,tsx}", "**/tsconfig.json"],
-      "outputs": ["**/*.tsbuildinfo"],
-      "outputLogs": "errors-only"
+      "inputs": [
+        "**/*.{ts,tsx}",
+        "**/tsconfig.json",
+        "**/tsconfig.*.json",
+        "package.json"
+      ],
+      "outputs": ["**/*.tsbuildinfo", ".turbo/type-check.log"],
+      "outputLogs": "errors-only",
+      "cache": true,
+      "env": ["NODE_OPTIONS=--max-old-space-size=8192"]
     },
     "format": {
       "inputs": [
         "**/*.{ts,tsx,js,jsx,json,md,toml,yaml,yml,css,scss,sass,less}",
-        "dprint.json"
+        "dprint.json",
+        ".prettierrc*"
       ],
-      "outputs": [],
-      "outputLogs": "new-only"
+      "outputs": [".dprint.cache"],
+      "outputLogs": "new-only",
+      "cache": true
     },
     "format:check": {
       "inputs": [
         "**/*.{ts,tsx,js,jsx,json,md,toml,yaml,yml,css,scss,sass,less}",
-        "dprint.json"
+        "dprint.json",
+        ".prettierrc*"
       ],
-      "outputs": [],
-      "outputLogs": "new-only"
+      "outputs": [".dprint.cache"],
+      "outputLogs": "new-only",
+      "cache": true
     },
     "test": {
       "dependsOn": ["build"],
@@ -236,6 +251,27 @@
     "clean": {
       "cache": false,
       "outputs": []
+    },
+    "coverage": {
+      "dependsOn": ["test"],
+      "inputs": [
+        "**/*.test.*",
+        "**/*.spec.*",
+        "**/vitest.config.*",
+        "vitest.setup.*",
+        "vitest.d.ts",
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": [
+        "coverage/**",
+        ".vitest/**",
+        "node_modules/.vitest/**"
+      ],
+      "env": ["CI", "NODE_ENV"],
+      "cache": true,
+      "outputLogs": "full"
     }
   }
 }

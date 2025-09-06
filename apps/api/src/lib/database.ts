@@ -27,8 +27,8 @@ export const db = {
   async healthCheck(): Promise<DatabaseHealthCheck> {
     try {
       const start = Date.now();
-      // Use PostgreSQL version() function for connectivity test instead of non-existent table
-      const { error } = await serverSupabaseClient.rpc('version');
+      // Call lightweight RPC for connectivity check
+      const { error } = await serverSupabaseClient.rpc('health_check');
       const latency = Date.now() - start;
       
       return {

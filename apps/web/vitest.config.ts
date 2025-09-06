@@ -17,6 +17,28 @@ export default defineConfig({
         singleThread: true,
       },
     },
+    reporters: ["default"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html", "lcov"],
+      reportsDirectory: "coverage",
+      all: true,
+      exclude: [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/.next/**",
+        "**/coverage/**",
+        "**/*.d.ts",
+      ],
+      thresholds: {
+        global: {
+          branches: 75,
+          functions: 80,
+          lines: 80,
+          statements: 80,
+        },
+      },
+    },
   },
 
   resolve: {

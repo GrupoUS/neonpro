@@ -3,6 +3,7 @@
  * Tests for WhatsApp Business API webhook endpoints and message processing
  */
 
+import { BrazilianAIService } from "@neonpro/core-services/services/BrazilianAIService";
 import { testClient } from "hono/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { whatsappRoutes } from "./whatsapp";
@@ -18,29 +19,31 @@ const mockEnv = {
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-// Mock BrazilianAIService
+// Centralized singleton mock for BrazilianAIService
+const mockBrazilianAIService = {
+  processWhatsAppChat: vi.fn().mockResolvedValue({
+    id: "test_response_id",
+    message: {
+      id: "test_msg_id",
+      role: "assistant",
+      content: "Olá! Como posso ajudá-lo hoje? 😊",
+      timestamp: Date.now(),
+    },
+    usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30 },
+    metadata: { model: "brazilian-ai", responseTime: 100, cached: false },
+    templateUsed: "whatsapp-greeting",
+    emergencyDetected: false,
+    escalationTriggered: false,
+    lgpdCompliance: {
+      consentRequired: false,
+      dataUsageExplained: true,
+      rightsInformed: true,
+    },
+  }),
+};
+
 vi.mock("@neonpro/core-services/services/BrazilianAIService", () => ({
-  BrazilianAIService: vi.fn().mockImplementation(() => ({
-    processWhatsAppChat: vi.fn().mockResolvedValue({
-      id: "test_response_id",
-      message: {
-        id: "test_msg_id",
-        role: "assistant",
-        content: "Olá! Como posso ajudá-lo hoje? 😊",
-        timestamp: Date.now(),
-      },
-      usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30 },
-      metadata: { model: "brazilian-ai", responseTime: 100, cached: false },
-      templateUsed: "whatsapp-greeting",
-      emergencyDetected: false,
-      escalationTriggered: false,
-      lgpdCompliance: {
-        consentRequired: false,
-        dataUsageExplained: true,
-        rightsInformed: true,
-      },
-    }),
-  })),
+  BrazilianAIService: vi.fn(() => mockBrazilianAIService),
 }));
 
 describe("WhatsApp Routes", () => {
@@ -150,11 +153,7 @@ describe("WhatsApp Routes", () => {
       expect(response.status).toBe(200);
 
       // Verify AI service was called
-      const { BrazilianAIService } = await import(
-        "@neonpro/core-services/services/BrazilianAIService"
-      );
-      const mockInstance = new BrazilianAIService();
-      expect(mockInstance.processWhatsAppChat).toHaveBeenCalledWith(
+      expect(mockBrazilianAIService.processWhatsAppChat).toHaveBeenCalledWith(
         expect.objectContaining({
           messages: expect.arrayContaining([
             expect.objectContaining({
@@ -263,20 +262,12 @@ describe("WhatsApp Routes", () => {
       expect(response.status).toBe(200);
 
       // Should not call AI service for empty messages
-      const { BrazilianAIService } = await import(
-        "@neonpro/core-services/services/BrazilianAIService"
-      );
-      const mockInstance = new BrazilianAIService();
-      expect(mockInstance.processWhatsAppChat).not.toHaveBeenCalled();
+      expect(mockBrazilianAIService.processWhatsAppChat).not.toHaveBeenCalled();
     });
 
     it("should send fallback message on AI service error", async () => {
-      // Mock AI service to throw error
-      const { BrazilianAIService } = await import(
-        "@neonpro/core-services/services/BrazilianAIService"
-      );
-      const mockInstance = new BrazilianAIService();
-      vi.mocked(mockInstance.processWhatsAppChat).mockRejectedValueOnce(
+      // Mock AI service to throw error via centralized mock
+      mockBrazilianAIService.processWhatsAppChat.mockRejectedValueOnce(
         new Error("AI service error"),
       );
 

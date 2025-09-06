@@ -13,6 +13,12 @@ related:
 This repository uses Vitest with Turborepo for fast, cacheable tests.
 We follow the official guide (https://turborepo.com/docs/guides/tools/vitest).
 
+- Cacheable pipelines: test, test:coverage, coverage (Turbo tasks)
+- Only affected packages via filters: e.g., `--filter=...[origin/main]` in CI
+- Coverage per package with v8 provider; reporters: text, html, lcov
+- Thresholds enforced at package-level (see vitest.config.ts in each package)
+- Compatible with pnpm (root packageManager is pnpm@8.x)
+
 ## What was configured
 
 - turbo.json

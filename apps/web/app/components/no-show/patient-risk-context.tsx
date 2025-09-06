@@ -58,7 +58,8 @@ export function PatientRiskContext({
   const positiveFactors = sortedFactors.filter((f) => f.impact > 0);
   const negativeFactors = sortedFactors.filter((f) => f.impact < 0);
 
-  const interventionActions = INTERVENTION_ACTIONS_PT[prediction.riskLevel] || [];
+  const interventionActions =
+    INTERVENTION_ACTIONS_PT[prediction.riskLevel as keyof typeof INTERVENTION_ACTIONS_PT] || [];
 
   return (
     <Card className="w-full max-w-md">
@@ -71,7 +72,7 @@ export function PatientRiskContext({
           <RiskIndicatorWithTooltip
             riskScore={prediction.riskScore}
             riskLevel={prediction.riskLevel}
-            size="small"
+            size="sm"
             showLabel={false}
             tooltipContent={{
               confidence: prediction.confidence,
@@ -155,7 +156,7 @@ export function PatientRiskContext({
             <div>
               <h4 className="font-medium text-sm mb-2">Ações Recomendadas</h4>
               <div className="grid gap-2">
-                {interventionActions.map((action, index) => (
+                {interventionActions.map((action: string, index: number) => (
                   <Button
                     key={index}
                     variant="outline"

@@ -241,18 +241,25 @@ export class TemplateManager {
   /**
    * Get template metadata
    */
-  getTemplateMetadata(templateId: string): any {
+  getTemplateMetadata(templateId: string): TemplateMetadata | null {
     const template = this.getTemplate(templateId);
-    return template?.metadata || null;
+    return (template?.metadata ?? null) as TemplateMetadata | null;
   }
 
   /**
    * Escape HTML characters
    */
   private escapeHtml(text: string): string {
-    const div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
+    const map: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+      "/": "&#x2F;",
+      "`": "&#x60;",
+    };
+    return text.replace(/[&<>"'`\/]/g, (ch) => map[ch] || ch);
   }
 
   /**
@@ -290,5 +297,15 @@ export const templateManager = new TemplateManager();
 // Export types and utilities
 export type { LGPDTemplate, PromptTemplate };
 export { AESTHETIC_PROCEDURE_TEMPLATES, LGPD_COMPLIANCE_TEMPLATES, WHATSAPP_PROMPT_TEMPLATES };
+
+// Define metadata type for stronger typing
+export interface TemplateMetadata {
+  id?: string;
+  category?: string;
+  language?: string;
+  version?: string;
+  tags?: string[];
+  [key: string]: unknown;
+}
 
 export default templateManager;

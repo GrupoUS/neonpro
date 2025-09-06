@@ -84,11 +84,13 @@ export const auditMiddleware = (
       return originalJson.call(this, body);
     };
 
-    res.end = function(this: any, chunk?: any, encoding?: BufferEncoding, cb?: () => void) {
-      if (chunk) {
-        responseBody = chunk;
+    res.end = function(this: any, ...args: any[]) {
+      const first = args[0];
+      if (typeof first === "string" || (typeof Buffer !== "undefined" && Buffer.isBuffer(first))) {
+        responseBody = first;
       }
-      return originalEnd.call(this, chunk, encoding || "utf8", cb);
+      // Preserve original Node response.end overload semantics
+      return (originalEnd as any).apply(this, args);
     } as any;
 
     // Hook into response finish event to log audit

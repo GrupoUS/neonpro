@@ -12,8 +12,10 @@
     "format": "dprint fmt",
     "format:check": "dprint check",
     "type-check": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest --watch",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "coverage": "vitest --run --coverage",
+    "test:coverage": "vitest --run --coverage",
     "test:ui": "vitest --ui",
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },

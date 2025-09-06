@@ -206,8 +206,9 @@ describe("TemplateManager", () => {
       const templates = manager.getLGPDTemplates();
 
       expect(templates.length).toBeGreaterThan(0);
+      const allowed = ["consent", "rights", "privacy", "data-usage"];
       templates.forEach(template => {
-        expect(template.category).toBe("consent" || "rights" || "privacy" || "data-usage");
+        expect(allowed).toContain(template.category);
       });
     });
 

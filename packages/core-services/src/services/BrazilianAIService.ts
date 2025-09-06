@@ -140,7 +140,7 @@ export class BrazilianAIService extends AIService {
         const template = templateManager.getTemplate(templateId);
 
         // Build Brazilian healthcare context
-        const brazilianContext = this.buildBrazilianContext(request);
+        const brazilianContext = await this.buildBrazilianContext(request);
 
         // Process Brazilian healthcare context
         const contextEnhancement = this.contextProcessor.processContext(
@@ -234,13 +234,16 @@ export class BrazilianAIService extends AIService {
         }
 
         // Render template with patient data
+        const clinicName = process.env.CLINIC_NAME || "NeonPro";
+        const privacyEmail = process.env.PRIVACY_EMAIL || "privacidade@neonpro.com.br";
+        const contactWhatsapp = process.env.CLINIC_WHATSAPP || "";
         const response = templateManager.renderTemplate(relevantTemplate.id, {
           variables: patientData,
           fallbackValues: {
             patient_name: "Paciente",
-            clinic_name: "NeonPro",
-            contact_email: "privacidade@neonpro.com.br",
-            contact_whatsapp: "(11) 99999-9999",
+            clinic_name: clinicName,
+            contact_email: privacyEmail,
+            contact_whatsapp: contactWhatsapp,
           },
         });
 
@@ -324,9 +327,10 @@ export class BrazilianAIService extends AIService {
       throw new Error("Emergency template not found");
     }
 
+    const clinicEmergencyPhone = process.env.CLINIC_EMERGENCY_PHONE || "";
     const response = templateManager.renderTemplate(emergencyTemplate.id, {
       variables: {
-        clinic_emergency_phone: "(11) 99999-9999",
+        clinic_emergency_phone: clinicEmergencyPhone,
       },
     });
 
@@ -394,7 +398,14 @@ export class BrazilianAIService extends AIService {
   /**
    * Build Brazilian healthcare context
    */
-  private buildBrazilianContext(request: WhatsAppChatRequest): BrazilianHealthcareContext {
+  private async buildBrazilianContext(
+    request: WhatsAppChatRequest,
+  ): Promise<BrazilianHealthcareContext> {
+    const consent = await this.getPatientConsent(request.patientId).catch(() => ({
+      dataProcessing: false,
+      marketing: false,
+      photoUsage: false,
+    }));
     return {
       clinicType: "aesthetic",
       communicationChannel: "whatsapp",
@@ -405,12 +416,33 @@ export class BrazilianAIService extends AIService {
         urgencyPerception: "medium",
       },
       lgpdConsent: {
-        dataProcessing: false, // Should be checked from patient record
-        marketing: false,
-        photoUsage: false,
+        dataProcessing: consent.dataProcessing,
+        marketing: consent.marketing,
+        photoUsage: consent.photoUsage,
       },
       ...request.context,
     };
+  }
+
+  private async getPatientConsent(
+    patientId?: string | null,
+  ): Promise<{ dataProcessing: boolean; marketing: boolean; photoUsage: boolean; }> {
+    try {
+      if (!patientId) return { dataProcessing: false, marketing: false, photoUsage: false };
+      // Lazy import to avoid circular deps
+      const { PatientService } = await import("./patient");
+      const svc = PatientService.getInstance();
+      const consents = await svc.getPatientConsents(patientId, "system");
+      const latest = (type: string) =>
+        consents.find(c => c.consentType === type && c.consentGiven === true);
+      return {
+        dataProcessing: Boolean(latest("data_processing")),
+        marketing: Boolean(latest("marketing")),
+        photoUsage: Boolean(latest("photo_usage")),
+      };
+    } catch {
+      return { dataProcessing: false, marketing: false, photoUsage: false };
+    }
   }
 
   /**

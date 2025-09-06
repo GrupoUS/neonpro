@@ -31,8 +31,11 @@
     "test:e2e": "echo 'E2E tests are run separately; install browsers with \"npx playwright install --with-deps\" and run from the appropriate package'",
     "ci:fix": "bun run lint:fix && bun run format",
     "test": "turbo run test",
+    "test:changed": "turbo run test --filter=...[HEAD^]",
     "test:unit:watch": "vitest --reporter=verbose",
     "test:unit:ui": "vitest --ui",
+    "test:coverage": "turbo run test:coverage",
+    "coverage": "turbo run coverage",
     "test:unit:coverage": "turbo run test:coverage",
     "test:integration": "vitest run --config vitest.config.integration.ts",
     "test:integration:watch": "vitest --config vitest.config.integration.ts",
@@ -69,21 +72,22 @@
     "db:introspect": "PRISMA_SCHEMA=${PRISMA_SCHEMA:-packages/database/prisma/schema.prisma} bunx --filter @neonpro/database prisma db pull --schema \"$PRISMA_SCHEMA\""
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.5.0",
     "@turbo/gen": "^1.13.4",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "@vitest/coverage-v8": "^3.2.4",
+    "happy-dom": "^18.0.1",
+    "jsdom": "^26.1.0",
     "oxc": "^1.0.1",
     "oxlint": "^0.15.0",
     "prettier": "^3.6.2",
     "sonner": "^2.0.7",
     "turbo": "^2.5.6",
     "typescript": "^5.0.0",
-    "vitest": "^3.2.4",
-    "happy-dom": "^18.0.1",
-    "@testing-library/jest-dom": "^6.5.0"
+    "vitest": "^3.2.4"
   },
-  "optionalDependencies": {},
   "packageManager": "pnpm@8.15.0",
   "engines": {
     "node": ">=18"

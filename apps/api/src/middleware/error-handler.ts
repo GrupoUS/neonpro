@@ -94,6 +94,27 @@ interface ErrorResponse {
   auditId?: string;
 }
 
+// Type guards for safer error property access
+interface ErrorLike {
+  status?: number;
+  statusCode?: number;
+  message?: string;
+  code?: string;
+  type?: string;
+  stack?: string;
+  metadata?: unknown;
+  name?: string;
+  errors?: any[];
+}
+
+function isErrorLike(err: unknown): err is ErrorLike {
+  return typeof err === "object" && err !== null;
+}
+
+function hasStatus(err: unknown): err is { status?: number; statusCode?: number; } {
+  return isErrorLike(err) && (typeof err.status === "number" || typeof err.statusCode === "number");
+}
+
 /**
  * Sanitize error data to prevent sensitive information leakage
  */
@@ -153,7 +174,7 @@ const logError = (error: unknown, context: Context): void => {
   const auditId = context.req.header("X-Audit-ID") || "unknown";
 
   // Safe access to error properties
-  const errorObj = error as any;
+  const errorObj = isErrorLike(error) ? error : undefined;
   const logData = {
     errorId,
     requestId,
@@ -161,10 +182,10 @@ const logError = (error: unknown, context: Context): void => {
     timestamp: new Date().toISOString(),
 
     // Error details
-    type: errorObj?.type || ErrorType.INTERNAL_SERVER_ERROR,
-    message: errorObj?.message || "Unknown error",
-    stack: errorObj?.stack,
-    statusCode: errorObj?.statusCode || 500,
+    type: (errorObj && errorObj.type) || ErrorType.INTERNAL_SERVER_ERROR,
+    message: (errorObj && errorObj.message) || "Unknown error",
+    stack: errorObj && errorObj.stack,
+    statusCode: (errorObj && (errorObj as any).statusCode) || 500,
 
     // Request context
     method: context.req.method,
@@ -183,14 +204,14 @@ const logError = (error: unknown, context: Context): void => {
       || "unknown",
 
     // Metadata
-    metadata: errorObj?.metadata,
+    metadata: errorObj && errorObj.metadata,
 
     // Environment
     environment: process.env.NODE_ENV,
   };
 
   // Sanitize sensitive data before logging
-  const sanitizedLog = sanitizeError(logData) as any;
+  const sanitizedLog = sanitizeError(logData) as Record<string, unknown>;
 
   // Log using centralized logger
   logger.error("API Error occurred", error, {
@@ -230,8 +251,8 @@ const formatErrorResponse = (
   }
 
   // Handle validation errors (Zod)
-  const errorObj = error as any;
-  if (errorObj?.name === "ZodError") {
+  const errorObj2 = isErrorLike(error) ? error : undefined;
+  if (errorObj2 && (errorObj2 as any).name === "ZodError") {
     return {
       response: {
         success: false,
@@ -240,7 +261,7 @@ const formatErrorResponse = (
         details: isProduction
           ? undefined
           : {
-            validationErrors: errorObj?.errors?.map((err: any) => ({
+            validationErrors: (errorObj2 as any)?.errors?.map((err: any) => ({
               field: err?.path?.join("."),
               message: err?.message,
               code: err?.code,
@@ -255,8 +276,8 @@ const formatErrorResponse = (
   }
 
   // Handle HTTP errors
-  if (errorObj?.status || errorObj?.statusCode) {
-    const statusCode = (errorObj.status || errorObj.statusCode) as StatusCode;
+  if (hasStatus(error)) {
+    const statusCode = ((error as any).status || (error as any).statusCode) as StatusCode;
     let errorType: ErrorType;
     let message: string;
 
@@ -296,7 +317,7 @@ const formatErrorResponse = (
       response: {
         success: false,
         error: errorType,
-        message: errorObj?.message || message,
+        message: isErrorLike(error) && error.message ? error.message : message,
         details: isProduction ? undefined : (sanitizeError(error) as Record<string, unknown>),
         timestamp: new Date().toISOString(),
         requestId,
@@ -308,8 +329,8 @@ const formatErrorResponse = (
 
   // Handle database errors
   if (
-    errorObj?.name === "PrismaClientKnownRequestError"
-    || errorObj?.name === "PrismaClientUnknownRequestError"
+    (isErrorLike(error) && (error as any).name === "PrismaClientKnownRequestError")
+    || (isErrorLike(error) && (error as any).name === "PrismaClientUnknownRequestError")
   ) {
     return {
       response: {
@@ -319,8 +340,8 @@ const formatErrorResponse = (
         details: isProduction
           ? undefined
           : {
-            code: errorObj?.code,
-            meta: sanitizeError(errorObj?.meta),
+            code: (error as any)?.code,
+            meta: sanitizeError((error as any)?.meta),
           },
         timestamp: new Date().toISOString(),
         requestId,
@@ -337,7 +358,9 @@ const formatErrorResponse = (
       error: ErrorType.INTERNAL_SERVER_ERROR,
       message: isProduction
         ? "Erro interno do servidor"
-        : errorObj?.message || "Something went wrong",
+        : (isErrorLike(error) && error.message)
+        ? error.message
+        : "Something went wrong",
       details: isProduction ? undefined : (sanitizeError(error) as Record<string, unknown>),
       timestamp: new Date().toISOString(),
       requestId,
@@ -362,7 +385,7 @@ export const errorHandler: ErrorHandler = (error, context) => {
   context.res.headers.set("X-Frame-Options", "DENY");
 
   // Return structured error response
-  return context.json(response, statusCode as any);
+  return context.json(response, statusCode);
 };
 
 /**

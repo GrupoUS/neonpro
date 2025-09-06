@@ -92,7 +92,7 @@ export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
 
   // Handle conversation selection
   const handleSelectConversation = (conversation: Conversation) => {
-    selectConversation(conversation as any);
+    selectConversation(conversation);
     // On mobile, switch to chat tab when conversation is selected
     if (window.innerWidth < 768) {
       setActiveTab("chat");

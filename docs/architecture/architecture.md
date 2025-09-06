@@ -29,7 +29,7 @@ This unified approach combines what would traditionally be separate backend and 
 
 ### Technical Summary
 
-NeonPro employs a modern Jamstack architecture with serverless backend services, specifically designed for Brazilian aesthetic clinics. The system combines Next.js 15 frontend with Supabase PostgreSQL backend, integrated with OpenAI GPT-4 for Portuguese-optimized AI features. The architecture emphasizes real-time capabilities through WebSocket subscriptions, comprehensive LGPD compliance automation, and specialized healthcare workflows. This design achieves the PRD goals of eliminating operational inefficiencies through AI prediction while maintaining full regulatory compliance with Brazilian healthcare standards.
+NeonPro employs a modern Jamstack architecture with Turborepo monorepo organization (2 apps + 8 packages), specifically designed for Brazilian aesthetic clinics. The system combines Next.js 15 frontend with Hono.dev API backend on Vercel Functions, integrated with Supabase PostgreSQL and OpenAI GPT-4 for Portuguese-optimized AI features. The architecture emphasizes real-time capabilities through WebSocket subscriptions, comprehensive LGPD compliance automation, and specialized healthcare workflows. This simplified 8-package MVP structure achieves the PRD goals of eliminating operational inefficiencies through AI prediction while maintaining full regulatory compliance with Brazilian healthcare standards.
 
 ### Platform and Infrastructure Choice
 
@@ -41,9 +41,12 @@ NeonPro employs a modern Jamstack architecture with serverless backend services,
 
 ### Repository Structure
 
-**Structure**: Turborepo monorepo\
-**Monorepo Tool**: Turborepo with pnpm workspaces\
-**Package Organization**: MVP simplified packages (8 essential packages) organized by functionality: types, ui, database, core-services, security, shared, utils, config
+**Structure**: Turborepo monorepo with 2 apps + 8 packages\
+**Monorepo Tool**: Turborepo 2.5.6 with pnpm workspaces\
+**Package Organization**: MVP simplified architecture (8 essential packages) organized by functionality:
+
+- **Apps (2)**: web (Next.js 15), api (Hono.dev)
+- **Packages (8)**: types, ui, database, core-services, security, shared, utils, config
 
 ### High Level Architecture Diagram
 
@@ -58,7 +61,7 @@ graph TB
     subgraph "Backend Layer"
         SUPABASE[Supabase PostgreSQL]
         REALTIME[Real-time Subscriptions]
-        API[Hono API (Vercel Functions)]
+        API[Hono.dev API (Vercel Functions)]
     end
 
     subgraph "AI & External Services"
@@ -101,11 +104,11 @@ This is the DEFINITIVE technology selection for the entire project. All developm
 
 | Category             | Technology                          | Version      | Purpose                              | Rationale                                                            |
 | -------------------- | ----------------------------------- | ------------ | ------------------------------------ | -------------------------------------------------------------------- |
-| Frontend Language    | TypeScript                          | 5.3+         | Type-safe development                | Essential for healthcare data integrity and developer productivity   |
+| Frontend Language    | TypeScript                          | 5.7.2        | Type-safe development                | Essential for healthcare data integrity and developer productivity   |
 | Frontend Framework   | Next.js                             | 15.x         | React-based fullstack framework      | App Router provides optimal performance and SEO for clinic websites  |
 | UI Component Library | shadcn/ui                           | v4           | Modern component system              | Accessible, customizable components with healthcare-specific styling |
 | State Management     | Zustand + React Server Components   | Latest       | Client and server state              | Minimal overhead with server-first approach for healthcare data      |
-| Backend Language     | TypeScript                          | 5.3+         | Unified language across stack        | Reduces context switching and ensures type safety                    |
+| Backend Language     | TypeScript                          | 5.7.2        | Unified language across stack        | Reduces context switching and ensures type safety                    |
 | Backend Framework    | Hono.dev (Vercel Functions)         | Latest       | Lightweight web framework            | Fast API on Node/Vercel; pairs with Supabase Postgres via Prisma     |
 | API Style            | REST + Real-time                    | Supabase API | RESTful with WebSocket subscriptions | Standard REST for CRUD, real-time for live updates                   |
 | Database             | PostgreSQL                          | 15+          | Relational database with RLS         | ACID compliance and Row Level Security for healthcare data           |
@@ -115,13 +118,13 @@ This is the DEFINITIVE technology selection for the entire project. All developm
 | Frontend Testing     | Vitest + Testing Library            | Latest       | Component and integration testing    | Fast testing with React component focus                              |
 | Backend Testing      | Vitest + Supertest                  | Latest       | API and database testing             | Unified testing framework across stack                               |
 | E2E Testing          | Playwright                          | Latest       | End-to-end testing                   | Cross-browser testing for clinic workflows                           |
-| Build Tool           | Turborepo                           | Latest       | Monorepo build orchestration         | Efficient builds across 8 essential packages                         |
+| Build Tool           | Turborepo                           | 2.5.6        | Monorepo build orchestration         | Efficient builds across 8 essential packages                         |
 | Bundler              | Next.js built-in                    | 15.x         | Webpack-based bundling               | Optimized for React and TypeScript                                   |
 | IaC Tool             | Vercel CLI + Supabase CLI           | Latest       | Infrastructure as Code               | Declarative deployment and environment management                    |
 | CI/CD                | GitHub Actions                      | Latest       | Automated deployment                 | Integrated with Vercel and Supabase                                  |
 | Monitoring           | Vercel Analytics + Supabase Metrics | Latest       | Performance and usage monitoring     | Built-in monitoring for fullstack applications                       |
 | Logging              | Vercel Logs + Supabase Logs         | Latest       | Centralized logging                  | Unified logging across frontend and backend                          |
-| CSS Framework        | Tailwind CSS                        | 3.x          | Utility-first styling                | Rapid development with consistent design system                      |
+| CSS Framework        | Tailwind CSS                        | 3.4.15       | Utility-first styling                | Rapid development with consistent design system                      |
 
 ## Data Models
 
@@ -1427,7 +1430,9 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: ['/dashboard/:path*', '/api/:path*'],
 };
-```## Unified Project Structure
+```
+
+## Unified Project Structure
 
 **Current MVP State**: Simplified 8-package architecture optimized for rapid development and deployment.
 

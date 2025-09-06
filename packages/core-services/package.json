@@ -49,8 +49,11 @@
     "dev": "tsup --watch",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix",
-    "test": "pnpm -w --filter @neonpro/tooling vitest run -- --passWithNoTests",
-    "test:coverage": "vitest --coverage",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage --passWithNoTests",
+    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "test:ui": "vitest --ui",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

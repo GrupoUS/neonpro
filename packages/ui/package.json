@@ -52,7 +52,10 @@
     "dev": "tsc --watch",
     "lint": "oxlint src --fix",
     "format": "dprint fmt",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "coverage": "vitest --run --coverage"
   },
   "dependencies": {
     "@neonpro/utils": "workspace:^",

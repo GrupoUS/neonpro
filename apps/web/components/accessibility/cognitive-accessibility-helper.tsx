@@ -17,9 +17,11 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Activity,
+  ArrowRight,
   Bell,
   Brain,
   CheckCircle2,
+  Clock,
   Eye,
   FileText,
   HelpCircle,
@@ -27,6 +29,7 @@ import {
   List,
   Shield,
   Target,
+  Timer,
   Volume2,
   Zap,
 } from "lucide-react";

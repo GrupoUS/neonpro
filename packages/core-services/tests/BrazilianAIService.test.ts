@@ -49,6 +49,31 @@ vi.mock("@neonpro/shared/templates", () => ({
   },
 }));
 
+// Mirror mock for production import path
+vi.mock("@neonpro/shared", () => ({
+  templateManager: {
+    getWhatsAppSystemPrompt: () => "Sistema de atendimento WhatsApp em português brasileiro",
+    getWhatsAppInternalSystemPrompt: () => "Sistema interno WhatsApp",
+    getLGPDDataProtectionPrompt: () => "Prompt LGPD proteção de dados",
+    getLGPDPatientRightsPrompt: () => "Prompt LGPD direitos do paciente",
+    getTemplate: vi.fn((id: string) => ({
+      id,
+      template: `Template para ${id}`,
+      category: "whatsapp",
+      language: "pt-BR",
+    })),
+    renderTemplate: vi.fn((id: string, options?: any) => {
+      if (id === "whatsapp-emergency-escalation") {
+        return "🚨 Situação de emergência detectada. Entre em contato com nossa equipe médica imediatamente: (11) 99999-9999";
+      }
+      return `Resposta renderizada para ${id}`;
+    }),
+    getTemplateByProcedure: vi.fn(() => null),
+    getAestheticTemplates: vi.fn(() => []),
+    getLGPDTemplates: vi.fn(() => []),
+  },
+}));
+
 vi.mock("../src/services/AIService", () => ({
   AIService: vi.fn().mockImplementation(() => ({
     processChat: vi.fn().mockResolvedValue({

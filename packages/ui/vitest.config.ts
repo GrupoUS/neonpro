@@ -9,16 +9,26 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts", "./src/test-setup.ts"],
     globals: true,
     css: true,
+    reporters: ["default"],
     coverage: {
       provider: "v8",
-      reporter: ["text", "json", "html"],
+      reporter: ["text", "html", "lcov"],
+      reportsDirectory: "coverage",
+      all: true,
       exclude: [
-        "node_modules/",
-        "src/test/",
+        "**/node_modules/**",
+        "**/coverage/**",
         "**/*.d.ts",
         "**/*.config.*",
-        "**/coverage/**",
       ],
+      thresholds: {
+        global: {
+          branches: 75,
+          functions: 80,
+          lines: 80,
+          statements: 80,
+        },
+      },
     },
   },
   resolve: {

@@ -122,7 +122,7 @@ export function useExcelProcessing() {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
 
-          reader.onload = (e) => {
+          reader.addEventListener("load", (e) => {
             try {
               setProgress(30);
 
@@ -155,11 +155,11 @@ export function useExcelProcessing() {
             } catch (err) {
               reject(new Error(`Erro ao processar arquivo Excel: ${(err as Error).message}`));
             }
-          };
+          });
 
-          reader.onerror = () => {
+          reader.addEventListener("error", () => {
             reject(new Error("Erro ao ler arquivo"));
-          };
+          });
 
           reader.readAsArrayBuffer(file);
         });

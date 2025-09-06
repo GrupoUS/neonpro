@@ -14,7 +14,7 @@ import { AlertCircle, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 export function RiskIndicator({
   riskScore,
   riskLevel,
-  size = "medium",
+  size = "md",
   showLabel = true,
   className,
 }: RiskIndicatorProps) {
@@ -22,9 +22,9 @@ export function RiskIndicator({
     const iconProps = {
       className: cn(
         "inline-block",
-        size === "small"
+        size === "sm"
           ? "h-3 w-3"
-          : size === "medium"
+          : size === "md"
           ? "h-4 w-4"
           : "h-5 w-5",
       ),
@@ -64,9 +64,9 @@ export function RiskIndicator({
         className={cn(
           "inline-flex items-center gap-1",
           RISK_COLORS[riskLevel],
-          size === "small"
+          size === "sm"
             ? "px-1 py-0 text-xs"
-            : size === "medium"
+            : size === "md"
             ? "px-2 py-1 text-sm"
             : "px-3 py-1 text-base",
         )}
@@ -79,9 +79,9 @@ export function RiskIndicator({
         className={cn(
           "font-mono font-bold",
           getRiskPercentageColor(),
-          size === "small"
+          size === "sm"
             ? "text-xs"
-            : size === "medium"
+            : size === "md"
             ? "text-sm"
             : "text-base",
         )}
@@ -98,7 +98,7 @@ export function RiskIndicator({
 export function RiskIndicatorWithTooltip({
   riskScore,
   riskLevel,
-  size = "medium",
+  size = "md",
   showLabel = true,
   className,
   tooltipContent,

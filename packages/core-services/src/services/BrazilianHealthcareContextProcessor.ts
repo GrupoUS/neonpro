@@ -3,7 +3,7 @@
  * Processes and enhances healthcare context for Brazilian market
  */
 
-import { templateManager } from "@neonpro/shared";
+import { templateManager } from "@neonpro/shared/templates";
 import type { ServiceContext } from "../base/EnhancedServiceBase";
 
 export interface BrazilianHealthcareContext {

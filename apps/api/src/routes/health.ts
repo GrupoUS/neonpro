@@ -27,8 +27,8 @@ class HealthCheckService {
         process.env.SUPABASE_SERVICE_ROLE_KEY || "",
       );
 
-      // Test basic database connectivity using PostgreSQL version function
-      const { error } = await supabase.rpc("version");
+      // Test basic database connectivity using wrapper function
+      const { error } = await supabase.rpc("db_version");
 
       const responseTime = Date.now() - startTime;
 

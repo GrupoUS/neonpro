@@ -234,15 +234,6 @@ describe("MedicalErrorHandler", () => {
       );
     });
 
-    it("should handle pregnancy status in risk assessment", () => {
-      const query = "Quero fazer botox";
-      const result = handler.validateMedicalQuery(query, {
-        communicationChannel: "whatsapp",
-      });
-
-      // Since we can't detect pregnancy from the query alone,
-      // this would need to be handled by the context processor
-      expect(result).toBeDefined();
-    });
+    // Removed redundant test that did not assert meaningful behavior.
   });
 });

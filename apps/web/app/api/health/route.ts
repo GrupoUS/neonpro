@@ -80,8 +80,8 @@ async function checkDatabase(): Promise<
 
     const supabase = createAdminClient();
 
-    // Test basic connectivity using PostgreSQL version function
-    const { error: connectError } = await supabase.rpc("version");
+    // Test basic connectivity using wrapper function
+    const { error: connectError } = await supabase.rpc("db_version");
 
     if (connectError) {
       return {
@@ -93,7 +93,7 @@ async function checkDatabase(): Promise<
 
     // Check database health with a simple query instead of information_schema
     try {
-      const { error: healthError } = await supabase.rpc("version");
+      const { error: healthError } = await supabase.rpc("db_version");
       if (healthError) {
         return {
           status: "degraded",

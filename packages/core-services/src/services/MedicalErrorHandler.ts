@@ -3,7 +3,7 @@
  * Specialized error handling for medical queries with compliance and safety protocols
  */
 
-import { templateManager } from "@neonpro/shared";
+import { templateManager } from "@neonpro/shared/templates";
 import type { ServiceContext } from "../base/EnhancedServiceBase";
 
 export interface MedicalError {
@@ -35,23 +35,30 @@ export interface MedicalQueryValidation {
 }
 
 export class MedicalErrorHandler {
+  private normalize(text: string): string {
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/\p{Diacritic}+/gu, "");
+  }
+
   private readonly emergencyKeywords = [
-    "emergência",
+    "emergencia",
     "urgente",
     "dor forte",
     "sangramento",
     "alergia severa",
-    "reação alérgica",
-    "inchaço excessivo",
+    "reacao alergica",
+    "inchaco excessivo",
     "febre alta",
     "desmaio",
     "tontura severa",
     "falta de ar",
     "socorro",
     "ajuda urgente",
-    "não consigo respirar",
+    "nao consigo respirar",
     "dor no peito",
-    "convulsão",
+    "convulsao",
   ];
 
   private readonly prohibitedMedicalAdvice = [
@@ -151,9 +158,10 @@ export class MedicalErrorHandler {
     if (error.type === "emergency") {
       const emergencyTemplate = templateManager.getTemplate("whatsapp-emergency-escalation");
       if (emergencyTemplate) {
+        const clinicEmergencyPhone = process.env.CLINIC_EMERGENCY_PHONE || "";
         response = templateManager.renderTemplate(emergencyTemplate.id, {
           variables: {
-            clinic_emergency_phone: "(11) 99999-9999",
+            clinic_emergency_phone: clinicEmergencyPhone,
           },
         }) || response;
       }
@@ -171,12 +179,16 @@ export class MedicalErrorHandler {
     if (error.complianceViolation) {
       const lgpdTemplate = templateManager.getTemplate("lgpd-data-rights-info");
       if (lgpdTemplate && error.complianceViolation.regulation === "LGPD") {
+        const whatsappContact = process.env.CLINIC_WHATSAPP || "";
+        const privacyEmail = process.env.PRIVACY_EMAIL || "";
+        const dpoName = process.env.DPO_NAME || "Encarregado de Dados";
+        const dpoContact = process.env.DPO_CONTACT || "";
         const lgpdResponse = templateManager.renderTemplate(lgpdTemplate.id, {
           variables: {
-            whatsapp_contact: "(11) 99999-9999",
-            privacy_email: "privacidade@neonpro.com.br",
-            data_protection_officer: "Encarregado de Dados",
-            dpo_contact: "dpo@neonpro.com.br",
+            whatsapp_contact: whatsappContact,
+            privacy_email: privacyEmail,
+            data_protection_officer: dpoName,
+            dpo_contact: dpoContact,
           },
         });
 
@@ -199,30 +211,35 @@ export class MedicalErrorHandler {
    * Detect emergency situations
    */
   private detectEmergency(query: string): boolean {
-    return this.emergencyKeywords.some(keyword => query.includes(keyword));
+    const q = this.normalize(query);
+    return this.emergencyKeywords.some(keyword => q.includes(keyword));
   }
 
   /**
    * Detect prohibited medical advice requests
    */
   private detectProhibitedAdvice(query: string): string[] {
-    return this.prohibitedMedicalAdvice.filter(advice => query.includes(advice));
+    const q = this.normalize(query);
+    return this.prohibitedMedicalAdvice.map(k => this.normalize(k)).filter(advice =>
+      q.includes(advice)
+    );
   }
 
   /**
    * Detect compliance violations
    */
-  private detectComplianceViolations(query: string): Array<{
+  private detectComplianceViolations(query: string): {
     regulation: "LGPD" | "CFM" | "ANVISA";
     keywords: string[];
-  }> {
-    const violations: Array<{
+  }[] {
+    const violations: {
       regulation: "LGPD" | "CFM" | "ANVISA";
       keywords: string[];
-    }> = [];
+    }[] = [];
 
     Object.entries(this.complianceKeywords).forEach(([regulation, keywords]) => {
-      const foundKeywords = keywords.filter(keyword => query.includes(keyword));
+      const norm = keywords.map(k => this.normalize(k));
+      const foundKeywords = norm.filter(keyword => this.normalize(query).includes(keyword));
       if (foundKeywords.length > 0) {
         violations.push({
           regulation: regulation.toUpperCase() as "LGPD" | "CFM" | "ANVISA",
@@ -276,7 +293,9 @@ export class MedicalErrorHandler {
       escalationRequired: true,
       emergencyProtocol: {
         immediateAction: "Contact emergency services",
-        contactInfo: "SAMU: 192, Clínica: (11) 99999-9999",
+        contactInfo: `SAMU: ${process.env.EMERGENCY_SAMU || "192"}, Clínica: ${
+          process.env.CLINIC_EMERGENCY_PHONE || ""
+        }`,
         escalationLevel: "emergency_services",
       },
     };

@@ -73,6 +73,31 @@ const messageWebhookSchema = z.object({
 });
 
 // Create WhatsApp routes instance
+// Local types to avoid explicit `any` while keeping behavior
+interface WebhookMetadata {
+  display_phone_number?: string;
+  phone_number_id?: string;
+}
+
+interface WhatsAppMessage {
+  id: string;
+  from: string;
+  timestamp: string;
+  type?: string;
+  text?: { body?: string; };
+  media?: Array<{ caption?: string; }> | { caption?: string; } | undefined;
+  image?: { caption?: string; } | undefined;
+  video?: { caption?: string; } | undefined;
+  caption?: string | undefined;
+}
+
+interface WhatsAppStatus {
+  id: string;
+  status: "sent" | "delivered" | "read" | "failed";
+  timestamp: string;
+  recipient_id: string;
+}
+
 const whatsappRoutes = new Hono();
 
 // Apply middleware
@@ -108,7 +133,9 @@ whatsappRoutes.get(
   async (c: Context) => {
     try {
       const { "hub.mode": mode, "hub.challenge": challenge, "hub.verify_token": verifyToken } =
-        (c.req as any).valid("query");
+        (c.req as unknown as {
+          valid: (type: "query") => z.infer<typeof webhookVerificationSchema>;
+        }).valid("query");
 
       // Verify the token matches our configured verify token
       const expectedToken = process.env.WHATSAPP_VERIFY_TOKEN;
@@ -351,8 +378,14 @@ async function processIncomingMessage(
       timestamp: message.timestamp,
     });
 
-    // Extract message content
-    const messageContent = message.text?.body || message.caption || "";
+    // Extract message content including captions attached to media
+    const mediaCaption = message?.media?.caption
+      || message?.image?.caption
+      || message?.video?.caption
+      || (Array.isArray(message?.media)
+        ? (message.media.find((m: any) => m?.caption)?.caption)
+        : undefined);
+    const messageContent = message.text?.body || message.caption || mediaCaption || "";
     if (!messageContent.trim()) {
       console.log("Empty message content, skipping AI processing");
       return;
@@ -532,47 +565,79 @@ async function sendWhatsAppMessage(args: {
 
   try {
     const url = `https://graph.facebook.com/v17.0/${encodeURIComponent(phoneNumberId)}/messages`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
 
-    const raw: any = await res.json().catch(() => null);
+    const maxRetries = 3;
+    const baseDelay = 500; // ms
+    let lastError: any = null;
 
-    if (!res.ok) {
-      console.error("WhatsApp API error", {
-        status: res.status,
-        statusText: res.statusText,
-        // include minimal info only
-        to,
-        clinicId,
-        patientId,
-        messageType,
-        response: raw,
-      });
-      throw new Error(`WhatsApp API request failed: ${res.status} ${res.statusText}`);
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10_000);
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
+
+        const raw: any = await res.json().catch(() => null);
+
+        if (res.ok) {
+          const messageId = raw && Array.isArray(raw?.messages) && raw.messages[0]?.id
+            ? raw.messages[0].id
+            : `mock_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
+          console.log("WhatsApp message sent", {
+            toMasked,
+            messageId,
+            clinicId,
+            patientId,
+            messageType,
+            messageLength,
+          });
+
+          return { messageId, status: res.status.toString(), raw };
+        }
+
+        const retryable = res.status === 429 || (res.status >= 500 && res.status <= 599);
+        console.error("WhatsApp API error", {
+          status: res.status,
+          statusText: res.statusText,
+          toMasked,
+          clinicId,
+          patientId,
+          messageType,
+          response: raw,
+          attempt,
+        });
+
+        if (!retryable || attempt === maxRetries - 1) {
+          throw new Error(`WhatsApp API request failed: ${res.status} ${res.statusText}`);
+        }
+
+        const jitter = Math.random() * 100;
+        const delay = baseDelay * Math.pow(2, attempt) + jitter;
+        await new Promise(r => setTimeout(r, delay));
+      } catch (err) {
+        clearTimeout(timeout);
+        lastError = err;
+        const isAbort = err instanceof Error && err.name === "AbortError";
+        if (attempt === maxRetries - 1 || !isAbort) {
+          // If not a timeout or max retries reached, don't retry further
+          break;
+        }
+        const jitter = Math.random() * 100;
+        const delay = baseDelay * Math.pow(2, attempt) + jitter;
+        await new Promise(r => setTimeout(r, delay));
+      }
     }
 
-    // Typical success shape: { messages: [{ id: "wamid.HBgL..." }] }
-    const messageId = raw && Array.isArray(raw?.messages) && raw.messages[0]?.id
-      ? raw.messages[0].id
-      : `mock_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-
-    // Audit log (non-sensitive)
-    console.log("WhatsApp message sent", {
-      toMasked,
-      messageId,
-      clinicId,
-      patientId,
-      messageType,
-      messageLength,
-    });
-
-    return { messageId, status: res.status.toString(), raw };
+    throw lastError || new Error("Unknown WhatsApp API error");
   } catch (error) {
     // Log limited info for privacy
     console.error("Failed to send WhatsApp message", {

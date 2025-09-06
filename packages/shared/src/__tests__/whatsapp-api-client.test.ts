@@ -3,7 +3,7 @@
  * Tests for WhatsApp Business API integration in @neonpro/shared
  */
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 import { createApiClient } from "../api-client";
 import type {
   SendWhatsappMessageRequest,
@@ -12,11 +12,11 @@ import type {
 } from "../types/whatsapp.types";
 
 // Mock fetch globally
-global.fetch = vi.fn();
+global.fetch = vi.fn() as unknown as typeof fetch;
 
 describe("WhatsApp API Client", () => {
   let apiClient: ReturnType<typeof createApiClient>;
-  const mockFetch = global.fetch as any;
+  const mockFetch = global.fetch as unknown as MockedFunction<typeof fetch>;
 
   beforeEach(() => {
     vi.clearAllMocks();

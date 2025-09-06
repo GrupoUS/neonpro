@@ -18,16 +18,35 @@ const SAFE_REQUEST_ID_REGEX = /^[a-zA-Z0-9\-_]{1,64}$/;
  * Decode a JWT payload segment using base64url-safe decoding.
  */
 function decodeJwtPayload(segment: string): unknown {
-  let base64 = segment.replace(/-/g, "+").replace(/_/g, "/");
-  while (base64.length % 4) base64 += "=";
-  const decoded = typeof Buffer !== "undefined"
-    ? Buffer.from(base64, "base64").toString("utf8")
-    : typeof atob !== "undefined"
-    ? atob(base64)
-    : (() => {
-      throw new Error("No base64 decoder available");
-    })();
-  return JSON.parse(decoded);
+  // Base64url validation: A-Z a-z 0-9 - _ only
+  const BASE64URL_SAFE = /^[A-Za-z0-9_-]+$/;
+  if (!segment || !BASE64URL_SAFE.test(segment)) {
+    throw new Error("Invalid JWT payload encoding (base64url check failed)");
+  }
+
+  try {
+    let base64 = segment.replace(/-/g, "+").replace(/_/g, "/");
+    while (base64.length % 4) base64 += "=";
+
+    const decoded = typeof Buffer !== "undefined"
+      ? Buffer.from(base64, "base64").toString("utf8")
+      : typeof atob !== "undefined"
+      ? atob(base64)
+      : (() => {
+        throw new Error("No base64 decoder available");
+      })();
+
+    try {
+      return JSON.parse(decoded);
+    } catch (err) {
+      throw new Error(
+        `Invalid JWT payload JSON: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`JWT payload decode error: ${msg}`);
+  }
 }
 
 /**

@@ -46,7 +46,10 @@
     "dev": "tsc --project tsconfig.build.json --watch",
     "type-check": "tsc --noEmit",
     "lint": "oxlint src",
-    "lint:fix": "oxlint src --fix"
+    "lint:fix": "oxlint src --fix",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "coverage": "vitest --run --coverage"
   },
   "dependencies": {
     "@neonpro/database": "workspace:*",

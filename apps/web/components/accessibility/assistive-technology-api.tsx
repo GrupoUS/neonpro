@@ -918,32 +918,41 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
 
   // WebSocket connection for real-time AT communication
   useEffect(() => {
+    let handleOpen: (() => void) | undefined;
+    let handleMessage: ((event: MessageEvent) => void) | undefined;
+    let handleError: ((event: Event) => void) | undefined;
+
     if (settings.enabled) {
       try {
         wsRef.current = new WebSocket("ws://localhost:8080/at-websocket");
 
-        wsRef.current.addEventListener("open", () => {
+        handleOpen = () => {
           console.log("AT WebSocket connected");
-        });
-
-        wsRef.current.addEventListener("message", (event) => {
+        };
+        handleMessage = (event: MessageEvent) => {
           const message = JSON.parse(event.data);
           if (message.type === "device_command") {
             executeCommand(message.commandId, message.params);
           }
-        });
-
-        wsRef.current.addEventListener("error", (error) => {
+        };
+        handleError = (error: Event) => {
           console.error("AT WebSocket error:", error);
-        });
+        };
+
+        wsRef.current.addEventListener("open", handleOpen as any);
+        wsRef.current.addEventListener("message", handleMessage as any);
+        wsRef.current.addEventListener("error", handleError as any);
       } catch (error) {
         console.warn("WebSocket connection failed - using fallback methods");
       }
     }
 
     return () => {
-      if (wsRef.current && wsRef.current.readyState !== WebSocket.CLOSED) {
-        wsRef.current.close();
+      if (wsRef.current) {
+        if (handleOpen) wsRef.current.removeEventListener("open", handleOpen as any);
+        if (handleMessage) wsRef.current.removeEventListener("message", handleMessage as any);
+        if (handleError) wsRef.current.removeEventListener("error", handleError as any);
+        if (wsRef.current.readyState !== WebSocket.CLOSED) wsRef.current.close();
         wsRef.current = null;
       }
     };

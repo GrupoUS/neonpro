@@ -536,8 +536,8 @@ curl https://neonpro.com.br/api/monitoring?action=metrics
 # 1. Stop application to prevent new database writes
 pm2 stop all
 
-# 2. Create point-in-time backup before rollback
-pg_dump -h localhost -U postgres -d neonpro > /backup/pre-rollback-$(date +%Y%m%d_%H%M%S).sql
+# 2. Create point-in-time backup before rollback (custom format for pg_restore)
+pg_dump -h localhost -U postgres -d neonpro -Fc -f /backup/pre-rollback-$(date +%Y%m%d_%H%M%S).dump
 
 # 3. Rollback specific migration
 supabase migration down [migration-name]
@@ -562,13 +562,13 @@ echo '{"maintenance": true, "message": "Emergency maintenance in progress"}' > /
 pm2 stop all
 systemctl stop nginx  # if applicable
 
-# 3. Create backup of current state
-pg_dump -h localhost -U postgres -d neonpro_current > /backup/emergency-backup-$(date +%Y%m%d_%H%M%S).sql
+# 3. Create backup of current state (custom format)
+pg_dump -h localhost -U postgres -d neonpro_current -Fc -f /backup/emergency-backup-$(date +%Y%m%d_%H%M%S).dump
 
-# 4. Restore from backup
+# 4. Restore from backup (matching custom format)
 dropdb neonpro_current
 createdb neonpro_current
-pg_restore -d neonpro_current /backup/[backup-file].sql
+pg_restore -d neonpro_current /backup/[backup-file].dump
 
 # 5. Verify database integrity
 psql -d neonpro_current -c "SELECT COUNT(*) FROM patients;"
@@ -595,8 +595,14 @@ echo "Target recovery time: [YYYY-MM-DD HH:MM:SS]"
 pm2 stop all
 
 # 3. Restore to specific point in time (Supabase)
-# Note: This requires Supabase Pro plan with point-in-time recovery
-supabase db restore --recovery-time="2024-12-05 14:30:00"
+# Prerequisites: Pro/Team/Enterprise plan with PITR add-on, physical backups enabled, adequate compute size.
+# Use Supabase Dashboard or Management API. Example (Management API):
+# POST /v1/projects/{project_ref}/database/backups/restore-pitr
+# Body JSON fields:
+#   - recovery_time_target_unix: <epoch_seconds>
+#   - backup_id (optional): <physical_backup_id_if_required>
+#   - source: "pitr"
+# Restores must be initiated via the Dashboard or the Management API; CLI restore with recovery-time is not supported.
 
 # 4. Verify recovery point
 psql -c "SELECT MAX(created_at) FROM audit_logs;"
