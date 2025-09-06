@@ -68,9 +68,9 @@ const jwt = {
         .setIssuedAt()
         .setExpirationTime(options?.expiresIn || "1h")
         .sign(secretKey);
-    } catch (_error) {
+    } catch (error) {
       throw new Error(
-        `JWT signing failed: ${_error instanceof Error ? _error.message : "Unknown error"}`,
+        `JWT signing failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
   },
@@ -80,9 +80,9 @@ const jwt = {
     try {
       // Use jose library for secure JWT verification
       return await jose.jwtVerify(token, secretKey);
-    } catch (_error) {
+    } catch (error) {
       throw new Error(
-        `JWT verification failed: ${_error instanceof Error ? _error.message : "Invalid token"}`,
+        `JWT verification failed: ${error instanceof Error ? error.message : "Invalid token"}`,
       );
     }
   },

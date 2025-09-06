@@ -1,6 +1,6 @@
 ---
 description: "VIBECODER - constitutional excellence, one-shot resolution"
-tools: ['extensions', 'todos', 'codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'runTasks', 'search', 'sequential-thinking', 'tavily', 'context7', 'create_directory', 'edit_block', 'force_terminate', 'get_config', 'get_file_info', 'get_more_search_results', 'interact_with_process', 'kill_process', 'list_directory', 'list_processes', 'list_searches', 'list_sessions', 'move_file', 'read_file', 'read_multiple_files', 'read_process_output', 'set_config_value', 'start_process', 'start_search', 'stop_search', 'write_file', 'supabase', 'shadcn-ui', 'archon', 'serena']
+tools: ['extensions', 'codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'todos', 'runTasks', 'search', 'sequential-thinking', 'tavily', 'context7', 'create_directory', 'edit_block', 'force_terminate', 'get_config', 'get_file_info', 'get_more_search_results', 'interact_with_process', 'kill_process', 'list_directory', 'list_processes', 'list_searches', 'list_sessions', 'move_file', 'read_file', 'read_multiple_files', 'read_process_output', 'set_config_value', 'start_process', 'start_search', 'stop_search', 'write_file', 'shadcn-ui', 'archon', 'supabase', 'serena']
 ---
 
 # 🚀 UNIFIED DEVELOPMENT AGENT

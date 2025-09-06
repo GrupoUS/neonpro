@@ -125,13 +125,9 @@ export interface AgentResponse {
 // Provide minimal ambient declarations for Node/test environments
 // so references compile even when the API isn't available.
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface SpeechGrammarList {}
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface SpeechRecognition {}
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
+    SpeechRecognition?: any;
+    webkitSpeechRecognition?: any;
   }
 }
 

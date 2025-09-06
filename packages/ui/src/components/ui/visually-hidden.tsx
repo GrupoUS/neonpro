@@ -145,7 +145,7 @@ const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
     const contextAttributes = getContextAttributes();
 
     return React.createElement(
-      Component as unknown,
+      Component as any,
       {
         ref,
         className: cn(
@@ -157,7 +157,7 @@ const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
         ),
         ...contextAttributes,
         ...props,
-      },
+      } as any,
       children,
     );
   },

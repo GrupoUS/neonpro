@@ -437,8 +437,8 @@ export class UnifiedAuditService {
       }
       // Success: reset retry counter
       this.auditFlushRetries = 0;
-    } catch (_error) {
-      // // console.error("Failed to flush audit buffer:", _error);
+    } catch (error) {
+      // // console.error("Failed to flush audit buffer:", error);
       // Re-add events to buffer for retry
       this.eventBuffer.unshift(...events);
       // Schedule capped exponential backoff retry and restore batch timer
@@ -458,7 +458,7 @@ export class UnifiedAuditService {
       }
 
       // Re-throw original error after scheduling retry
-      throw _error;
+      throw error;
     }
   }
 
