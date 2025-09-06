@@ -577,7 +577,9 @@ export class AISchedulingService {
     return patient.noShowProbability || 0.1;
   }
 
-  private analyzeAppointmentPatterns(history: Array<{ date: Date; noShow?: boolean; cancellation?: unknown }>): unknown {
+  private analyzeAppointmentPatterns(
+    history: Array<{ date: Date; noShow?: boolean; cancellation?: unknown; }>,
+  ): unknown {
     const patterns = {
       preferredTimeSlots: [],
       preferredDays: [],
@@ -803,12 +805,12 @@ export class AISchedulingService {
     return this.analytics.averageBookingTime;
   }
 
-  private calculateNoShowRate(appointments: Array<{ noShow?: boolean }>): number {
+  private calculateNoShowRate(appointments: Array<{ noShow?: boolean; }>): number {
     const noShows = appointments.filter((apt) => apt.noShow).length;
     return appointments.length > 0 ? noShows / appointments.length : 0;
   }
 
-  private calculateCancellationRate(appointments: Array<{ cancellation?: unknown }>): number {
+  private calculateCancellationRate(appointments: Array<{ cancellation?: unknown; }>): number {
     const cancellations = appointments.filter((apt) => apt.cancellation).length;
     return appointments.length > 0 ? cancellations / appointments.length : 0;
   }
@@ -827,7 +829,7 @@ export class AISchedulingService {
 
   private calculateTimeSlotEfficiencyLegacy(
     _appointments: unknown[],
-    _timeRange: { start: Date; end: Date },
+    _timeRange: { start: Date; end: Date; },
   ): unknown[] {
     return [];
   }

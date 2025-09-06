@@ -3,7 +3,6 @@
  * Tests for WhatsApp Business API webhook endpoints and message processing
  */
 
-import { BrazilianAIService } from "@neonpro/core-services";
 import { testClient } from "hono/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { whatsappRoutes } from "./whatsapp";
