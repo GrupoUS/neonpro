@@ -348,7 +348,7 @@ export function createHealthcareComponent<T>(
     validateData?: (data: T) => boolean;
     renderContent: (
       data: T,
-      actions: HealthcareComponentActions<T>,
+      actions: HealthcareComponentActions,
     ) => React.ReactNode;
   },
 ) {
@@ -430,7 +430,7 @@ export function createHealthcareComponent<T>(
     }, [user, requestConsent, logger]);
 
     // Component actions
-    const actions: HealthcareComponentActions<T> = useMemo(
+    const actions: HealthcareComponentActions = useMemo(
       () => ({
         refresh: async () => {
           setState((prev) => ({ ...prev, loading: true, error: null }));
@@ -554,7 +554,7 @@ export function createHealthcareComponent<T>(
 }
 
 // Actions available to healthcare components
-export interface HealthcareComponentActions<_T = unknown> {
+export interface HealthcareComponentActions {
   refresh: () => Promise<void>;
   handleEmergencyAccess: (justification: string) => Promise<void>;
   grantLGPDConsent: () => Promise<void>;
@@ -652,7 +652,7 @@ export function createHealthcareComponentWithPreset<T>(
     validateData?: (data: T) => boolean;
     renderContent: (
       data: T,
-      actions: HealthcareComponentActions<T>,
+      actions: HealthcareComponentActions,
     ) => React.ReactNode;
   },
 ) {

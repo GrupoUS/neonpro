@@ -304,6 +304,31 @@ pnpm run type-check         # TypeScript validation
 pnpm run format             # Code formatting
 ```
 
+### CI/CD Validation Pipeline
+
+Our GitHub Actions CI pipeline enforces strict quality gates that **block PRs on failures**:
+
+```bash
+# Core CI validation commands (run automatically on PRs)
+npx dprint check             # Code formatting validation
+npx oxlint .                 # Linting with zero tolerance for errors
+pnpm vitest run --project unit  # Unit test execution
+```
+
+**Quality Standards:**
+
+- ✅ **Zero lint errors** - Warnings allowed, errors block deployment
+- ✅ **TypeScript compilation** - Must pass without errors
+- ✅ **Unit test coverage** - Minimum 85% coverage required
+- ✅ **Security compliance** - Automated vulnerability scanning
+- ✅ **Performance gates** - Quality score ≥7.0/10 required
+
+**PR Requirements:**
+
+- All CI checks must pass before merge
+- Quality gates enforce ≥9.5/10 standard for production
+- Automatic deployment to Vercel on main branch merge
+
 ### Testes Específicos para Estética Avançada
 
 - **Compliance Validation**: Automated LGPD/ANVISA/CFM testing

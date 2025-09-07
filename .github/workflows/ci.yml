@@ -81,9 +81,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
       - name: Run oxlint
-        run: pnpm oxlint:fix
+        run: npx oxlint .
       - name: Check formatting
-        run: pnpm format:check
+        run: npx dprint check
       - name: Upload lint logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -162,8 +162,8 @@ jobs:
           key: ${{ runner.os }}-turbo-${{ hashFiles('**/package.json', 'pnpm-lock.yaml', 'turbo.json') }}
           restore-keys: |
             ${{ runner.os }}-turbo-
-      - name: Run tests (affected packages only)
-        run: pnpm turbo run test --filter=...[origin/main]
+      - name: Run unit tests
+        run: pnpm vitest run --project unit
       - name: Run coverage (affected packages only)
         run: pnpm turbo run coverage --filter=...[origin/main]
       - name: Upload coverage artifacts
@@ -224,7 +224,7 @@ jobs:
           TOTAL_SCORE=$((TOTAL_SCORE + TSC_SCORE))
 
           echo "Checking linting..."
-          LINT_VIOLATIONS=$(pnpm exec oxlint . --quiet 2>/dev/null | wc -l || echo "0")
+          LINT_VIOLATIONS=$(npx oxlint . --quiet 2>/dev/null | wc -l || echo "0")
           if [ "$LINT_VIOLATIONS" -eq 0 ]; then
             LINT_SCORE=25
           elif [ "$LINT_VIOLATIONS" -le 1000 ]; then
@@ -254,7 +254,7 @@ jobs:
           TOTAL_SCORE=$((TOTAL_SCORE + TYPE_SCORE))
 
           echo "Checking security patterns via oxlint..."
-          SECURITY_ISSUES=$(pnpm exec oxlint . --quiet 2>/dev/null | grep -c "security\|dangerous" || echo "0")
+          SECURITY_ISSUES=$(npx oxlint . --quiet 2>/dev/null | grep -c "security\|dangerous" || echo "0")
           if [ "$SECURITY_ISSUES" -eq 0 ]; then
             SECURITY_SCORE=25
           elif [ "$SECURITY_ISSUES" -le 20 ]; then

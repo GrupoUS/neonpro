@@ -398,7 +398,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 
   // Don't render in production unless explicitly enabled
   if (!enabled && process.env.NODE_ENV === "production") {
-    return;
+    return null;
   }
 
   const getSeverityColor = (severity: AccessibilityIssue["severity"]) => {

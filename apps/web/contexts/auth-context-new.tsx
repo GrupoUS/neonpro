@@ -373,7 +373,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error("Auth refresh error:", error);
       await signOut();
     }
-  };
+  }, [isAuthenticated, signOut]);
 
   const verifyToken = async (): Promise<boolean> => {
     try {
@@ -394,11 +394,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!isAuthenticated) return;
 
     const interval = setInterval(() => {
-      void refreshAuth();
+      refreshAuth();
     }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(interval);
-  }, [isAuthenticated]);
+  }, [isAuthenticated, refreshAuth]);
 
   // Handle page visibility change to refresh auth
   useEffect(() => {
@@ -410,7 +410,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [isAuthenticated]);
+  }, [isAuthenticated, refreshAuth]);
 
   const value: AuthContextType = {
     user,

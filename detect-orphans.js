@@ -11,9 +11,9 @@
  * - Unused assets
  */
 
-const fs = require("fs");
-const path = require("path");
-const crypto = require("crypto");
+import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 
 class OrphanDetector {
   constructor(rootDir) {
@@ -190,7 +190,7 @@ class OrphanDetector {
     if (importPath.startsWith(".")) {
       resolvedPath = path.normalize(path.join(currentDir, importPath));
     } else {
-      resolvedPath = path.normalize(importPath.substring(1)); // Remove leading /
+      resolvedPath = path.normalize(importPath.slice(1)); // Remove leading /
     }
 
     // Try different extensions
@@ -218,7 +218,7 @@ class OrphanDetector {
     if (assetPath.startsWith(".")) {
       resolvedPath = path.normalize(path.join(currentDir, assetPath));
     } else if (assetPath.startsWith("/")) {
-      resolvedPath = path.normalize(assetPath.substring(1));
+      resolvedPath = path.normalize(assetPath.slice(1));
     } else {
       resolvedPath = assetPath;
     }
@@ -294,7 +294,7 @@ class OrphanDetector {
       },
       duplicates: Object.fromEntries(
         Array.from(this.duplicates.entries()).map(([hash, files]) => [
-          hash.substring(0, 8), // Short hash for readability
+          hash.slice(0, 8), // Short hash for readability
           files.sort(),
         ]),
       ),

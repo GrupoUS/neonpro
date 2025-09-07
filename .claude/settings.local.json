@@ -25,7 +25,8 @@
       "mcp__serena__get_symbols_overview",
       "mcp__serena__find_symbol",
       "mcp__serena__replace_symbol_body",
-      "Bash(pnpm run:*)"
+      "Bash(pnpm run:*)",
+      "mcp__desktop-commander__list_directory"
     ]
   },
   "allowedToolsUnguarded": [

@@ -9,20 +9,24 @@
  * @quality ≥9.8/10 Healthcare Grade
  */
 
+import {
+  createCipheriv as nodeCreateCipheriv,
+  createDecipheriv as nodeCreateDecipheriv,
+  pbkdf2Sync as nodePbkdf2Sync,
+} from "node:crypto";
 import { secureCrypto } from "../utils/secure-crypto";
 
 // Secure crypto implementations
-let createCipheriv: any;
-let createDecipheriv: any;
-let pbkdf2Sync: any;
+let createCipheriv: typeof nodeCreateCipheriv;
+let createDecipheriv: typeof nodeCreateDecipheriv;
+let pbkdf2Sync: typeof nodePbkdf2Sync;
 
 // Initialize crypto functions based on environment
 if (typeof process !== "undefined" && process.versions?.node) {
   // Node.js environment - use node:crypto
-  const crypto = require("node:crypto");
-  createCipheriv = crypto.createCipheriv;
-  createDecipheriv = crypto.createDecipheriv;
-  pbkdf2Sync = crypto.pbkdf2Sync;
+  createCipheriv = nodeCreateCipheriv;
+  createDecipheriv = nodeCreateDecipheriv;
+  pbkdf2Sync = nodePbkdf2Sync;
 } else {
   // Browser environment - use WebCrypto polyfills
   throw new Error(

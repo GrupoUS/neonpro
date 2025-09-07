@@ -228,7 +228,6 @@ export const useWhatsapp = (options: UseWhatsappOptions): UseWhatsappReturn => {
 
       console.log("Conversation archived successfully");
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to archive conversation";
       console.error("Error archiving conversation:", err);
     }
   }, []);

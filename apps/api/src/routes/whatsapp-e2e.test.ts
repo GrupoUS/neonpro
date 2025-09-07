@@ -324,7 +324,7 @@ describe("WhatsApp End-to-End Tests", () => {
       },
     ];
 
-    brazilianScenarios.forEach(({ name, message, expectedTemplate }) => {
+    brazilianScenarios.forEach(({ name, message, expectedTemplate: _expectedTemplate }) => {
       it(`should handle ${name} with appropriate template`, async () => {
         const payload = {
           object: "whatsapp_business_account",

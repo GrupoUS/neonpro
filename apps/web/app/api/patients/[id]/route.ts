@@ -200,7 +200,7 @@ async function handlePatientInsights(patientId: string) {
   });
 }
 
-async function handlePatientTimeline(patientId: string) {
+async function handlePatientTimeline(_patientId: string) {
   // Mock timeline data
   const mockTimeline = [
     {

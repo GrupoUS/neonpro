@@ -148,7 +148,7 @@ export abstract class EnhancedServiceBase {
       async shutdown(): Promise<void> {
         // no-op
       },
-    } as any; // replace with UnifiedAuditService in production environments
+    } as MinimalAudit; // replace with UnifiedAuditService in production environments
     this.healthCheck = new EnterpriseHealthCheckService();
 
     // Initialize integrated service interfaces

@@ -222,7 +222,7 @@ export async function PUT(request: NextRequest) {
 
 // Handler functions
 async function handleCommunicationOverview(
-  request: CommunicationRequest,
+  _request: CommunicationRequest,
 ): Promise<NextResponse<CommunicationResponse>> {
   // Mock communication overview
   const overview = {
@@ -318,7 +318,7 @@ async function handlePreferences(
 }
 
 async function handleAnalytics(
-  request: CommunicationRequest,
+  _request: CommunicationRequest,
 ): Promise<NextResponse<CommunicationResponse>> {
   // Mock analytics data
   const analytics: CommunicationAnalytics = {

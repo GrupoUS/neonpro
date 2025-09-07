@@ -66,7 +66,7 @@ export function registerAuthComponents(
 }
 
 // Validation helpers for component props
-const isFunction = (v: unknown): v is (...args: any[]) => any => typeof v === "function";
+const isFunction = (v: unknown): v is (...args: unknown[]) => unknown => typeof v === "function";
 const isString = (v: unknown): v is string => typeof v === "string";
 const isBoolean = (v: unknown): v is boolean => typeof v === "boolean";
 const isReactNode = (v: unknown): boolean => {
@@ -74,7 +74,7 @@ const isReactNode = (v: unknown): boolean => {
   const t = typeof v;
   if (t === "string" || t === "number" || t === "boolean") return true;
   if (Array.isArray(v)) return v.every(isReactNode);
-  return isValidElement(v as any);
+  return isValidElement(v as unknown as React.ReactElement);
 };
 
 export const validateLoginFormProps = (props: LoginFormProps): boolean => {
