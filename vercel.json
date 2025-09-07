@@ -3,7 +3,7 @@
   "version": 2,
   "regions": ["gru1"],
   "framework": "nextjs",
-  "installCommand": "pnpm install --frozen-lockfile",
+  "installCommand": "npm install",
   "buildCommand": "bash scripts/vercel-build.sh",
   "outputDirectory": "apps/web/.next",
   "ignoreCommand": "git diff --quiet HEAD^ HEAD",
@@ -77,12 +77,6 @@
       ]
     }
   ],
-  "functions": {
-    "apps/web/app/api/**/*.{js,ts}": {
-      "maxDuration": 30,
-      "memory": 256,
-      "runtime": "nodejs20.x"
-    }
-  },
+
   "crons": []
 }

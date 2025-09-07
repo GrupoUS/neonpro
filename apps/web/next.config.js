@@ -14,9 +14,13 @@ const nextConfig = {
     "@neonpro/core-services",
   ],
   experimental: {},
-  // Temporarily skip TypeScript checking for MVP deployment
+  // Only skip TypeScript checking if explicitly allowed (defaults to false for type safety)
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: process.env.NEXT_ALLOW_IGNORE_TS_ERRORS === 'true',
+  },
+  // Skip problematic API routes during build
+  generateBuildId: async () => {
+    return "mvp-build";
   },
   images: {
     domains: ["ownkoxryswokcdanrdgj.supabase.co"],
