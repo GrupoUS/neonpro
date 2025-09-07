@@ -37,7 +37,7 @@ interface ClientLogEntry {
   clinicId?: string;
   url: string;
   userAgent: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   error?: {
     name: string;
     message: string;
@@ -147,11 +147,11 @@ class ClientLogger {
   }
 
   // Healthcare-specific client logging
-  userAction(action: string, metadata?: Record<string, any>): void {
+  userAction(action: string, metadata?: Record<string, unknown>): void {
     this.info(ClientLogCategory.USER_ACTION, `User action: ${action}`, { metadata });
   }
 
-  patientDataAccess(patientId: string, dataType: string, metadata?: Record<string, any>): void {
+  patientDataAccess(patientId: string, dataType: string, metadata?: Record<string, unknown>): void {
     this.info(ClientLogCategory.COMPLIANCE, `Patient data accessed: ${dataType}`, {
       metadata: {
         ...metadata,
@@ -163,14 +163,14 @@ class ClientLogger {
     });
   }
 
-  performanceMetric(operation: string, duration: number, metadata?: Record<string, any>): void {
+  performanceMetric(operation: string, duration: number, metadata?: Record<string, unknown>): void {
     this.info(ClientLogCategory.PERFORMANCE, `Performance: ${operation}`, {
       performance: { duration },
       metadata,
     });
   }
 
-  navigationEvent(from: string, to: string, metadata?: Record<string, any>): void {
+  navigationEvent(from: string, to: string, metadata?: Record<string, unknown>): void {
     this.info(ClientLogCategory.NAVIGATION, `Navigation: ${from} → ${to}`, { metadata });
   }
 }
@@ -179,23 +179,26 @@ class ClientLogger {
 export function useLogger() {
   const logger = useMemo(() => new ClientLogger(), []);
 
-  const logUserAction = useCallback((action: string, metadata?: Record<string, any>) => {
+  const logUserAction = useCallback((action: string, metadata?: Record<string, unknown>) => {
     logger.userAction(action, metadata);
   }, [logger]);
 
-  const logError = useCallback((error: Error, context?: string, metadata?: Record<string, any>) => {
-    logger.error(ClientLogCategory.ERROR, `${context || "Unhandled error"}: ${error.message}`, {
-      error: {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-      },
-      metadata,
-    });
-  }, [logger]);
+  const logError = useCallback(
+    (error: Error, context?: string, metadata?: Record<string, unknown>) => {
+      logger.error(ClientLogCategory.ERROR, `${context || "Unhandled error"}: ${error.message}`, {
+        error: {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        },
+        metadata,
+      });
+    },
+    [logger],
+  );
 
   const logPerformance = useCallback(
-    (operation: string, startTime: number, metadata?: Record<string, any>) => {
+    (operation: string, startTime: number, metadata?: Record<string, unknown>) => {
       const duration = Date.now() - startTime;
       logger.performanceMetric(operation, duration, metadata);
     },
@@ -203,15 +206,18 @@ export function useLogger() {
   );
 
   const logPatientAccess = useCallback(
-    (patientId: string, dataType: string, metadata?: Record<string, any>) => {
+    (patientId: string, dataType: string, metadata?: Record<string, unknown>) => {
       logger.patientDataAccess(patientId, dataType, metadata);
     },
     [logger],
   );
 
-  const logNavigation = useCallback((from: string, to: string, metadata?: Record<string, any>) => {
-    logger.navigationEvent(from, to, metadata);
-  }, [logger]);
+  const logNavigation = useCallback(
+    (from: string, to: string, metadata?: Record<string, unknown>) => {
+      logger.navigationEvent(from, to, metadata);
+    },
+    [logger],
+  );
 
   return {
     logger,
@@ -232,11 +238,11 @@ export function useLogger() {
 export function usePerformanceLogger(operationName: string) {
   const { logPerformance } = useLogger();
 
-  return useCallback((metadata?: Record<string, any>) => {
+  return useCallback((metadata?: Record<string, unknown>) => {
     const startTime = Date.now();
 
     return {
-      end: (additionalMetadata?: Record<string, any>) => {
+      end: (additionalMetadata?: Record<string, unknown>) => {
         logPerformance(operationName, startTime, {
           ...metadata,
           ...additionalMetadata,

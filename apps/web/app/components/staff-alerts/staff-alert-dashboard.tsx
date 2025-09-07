@@ -19,9 +19,8 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
+// import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import type { StaffAlert } from "@/types/staff-alerts";
@@ -30,7 +29,7 @@ import {
   ALERT_PRIORITY_LABELS_PT,
   ALERT_STATUS_LABELS_PT,
   DEPARTMENT_LABELS_PT,
-  INTERVENTION_TYPE_LABELS_PT,
+
 } from "@/types/staff-alerts";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -46,7 +45,7 @@ import {
   User,
   XCircle,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface StaffAlertDashboardProps {
   staffMemberId?: string;
@@ -87,7 +86,6 @@ export function StaffAlertDashboard({
     refreshInterval: 15_000, // 15 seconds for high responsiveness
   });
 
-  const [selectedAlert, setSelectedAlert] = useState<StaffAlert | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 

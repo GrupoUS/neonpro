@@ -31,7 +31,7 @@ interface Conversation {
   unreadCount: number;
   assignedTo?: string;
   tags: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }

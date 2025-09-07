@@ -9,7 +9,7 @@
 
 import { driftDetector } from "@/lib/ai/drift-detection";
 import { createClient } from "@/lib/supabase/server";
-import type { AuditEventInsert } from "@/types/database";
+// import type { AuditEventInsert } from "@/types/database"; // Unused import
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     // Log execution results
     const supabase = await createClient();
-    await supabase.from("audit_events").insert({
+    await (supabase as any).from("audit_events").insert({
       event_type: "automated_drift_monitoring",
       table_name: "ai_models",
       record_id: undefined,
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
     // Log failure for debugging
     try {
       const supabase = await createClient();
-      await supabase.from("audit_events").insert({
+      await (supabase as any).from("audit_events").insert({
         event_type: "drift_monitoring_failure",
         table_name: "ai_models",
         record_id: undefined,
@@ -194,7 +194,7 @@ Next automated check: ${new Date(Date.now() + 6 * 60 * 60 * 1000).toLocaleString
 
   // Log executive summary for audit trail
   const supabase = await createClient();
-  await supabase.from("audit_events").insert({
+  await (supabase as any).from("audit_events").insert({
     event_type: "drift_monitoring_executive_summary",
     table_name: "ai_models",
     record_id: undefined,

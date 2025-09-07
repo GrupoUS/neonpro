@@ -1,4 +1,17 @@
+---
+last_updated: "2025-09-06"
+form: "analysis"
+tags: ["lint", "remediation", "phase-7", "typescript", "eslint"]
+related: ["orchestrator", "lint-remediation-checklist", "phase-summary-index"]
+---
+
 # Lint Remediation Phase 7 Analysis - ST-051 a ST-055
+
+## See also
+
+- [Orchestrator overview](./orchestrator.md) - Lint Remediation Orchestrator system
+- [Lint Remediation Checklist](./lint-remediation-checklist.md) - Best practices and remediation guidelines
+- [Phase Summary Index](./phase-summary-index.md) - Overview of all remediation phases
 
 ## 📊 **Status da Fase 7 - DESCOBERTAS CRÍTICAS**
 

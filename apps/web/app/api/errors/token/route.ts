@@ -6,7 +6,7 @@
  */
 
 import { secureCrypto } from "@neonpro/security/utils/secure-crypto";
-import { headers } from "next/headers";
+// import { headers } from "next/headers"; // Unused import
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 

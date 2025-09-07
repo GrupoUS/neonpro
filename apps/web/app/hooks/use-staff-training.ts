@@ -9,7 +9,7 @@ import type {
   TrainingSection,
   UserTrainingProfile,
 } from "@/types/staff-training";
-import { PracticalExerciseResult } from "@/types/staff-training";
+// import { PracticalExerciseResult } from "@/types/staff-training"; // Unused import
 import { useCallback, useEffect, useState } from "react";
 
 interface UseStaffTrainingOptions {

@@ -130,7 +130,7 @@ appointments.get("/", zValidator("query", appointmentListSchema), async (c) => {
     const limit = params.limit || 20;
     const offset = (page - 1) * limit;
 
-    const supabase = db.client;
+    const supabase = db.client; // used below
 
     // Build query with filters
     let query = supabase
@@ -220,7 +220,7 @@ appointments.post("/", zValidator("json", createAppointmentSchema), async (c) =>
       );
     }
 
-    const supabase = db.client;
+    // const supabase = db.client; // unused
 
     // Verify patient belongs to clinic
     const { data: patient, error: patientError } = await db

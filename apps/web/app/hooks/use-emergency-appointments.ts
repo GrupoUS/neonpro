@@ -178,13 +178,13 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
   const [availableDoctors, setAvailableDoctors] = useState<EmergencyDoctor[]>(mockEmergencyDoctors);
   const [appointments, setAppointments] = useState<EmergencyAppointment[]>(mockAppointments);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(null);
 
   // Get available doctors, optionally filtered by specialty
   const getAvailableDoctors = useCallback(
     async (specialty?: string): Promise<EmergencyDoctor[]> => {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       try {
         // Simulate API call
@@ -228,7 +228,7 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
   const bookEmergencyAppointment = useCallback(
     async (request: EmergencyBookingRequest): Promise<EmergencyAppointment> => {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       try {
         // Validate doctor availability
@@ -326,17 +326,17 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
   const getAppointmentById = useCallback(
     async (id: string): Promise<EmergencyAppointment | null> => {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       try {
         await new Promise((resolve) => setTimeout(resolve, 200));
 
         const appointment = appointments.find((apt) => apt.id === id);
-        return appointment || undefined;
+        return appointment || null;
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Erro ao carregar consulta";
         setError(errorMessage);
-        return;
+        return null;
       } finally {
         setIsLoading(false);
       }
@@ -348,7 +348,7 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
   const cancelAppointment = useCallback(
     async (id: string, reason: string): Promise<boolean> => {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       try {
         await new Promise((resolve) => setTimeout(resolve, 300));
@@ -404,7 +404,7 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
       status: EmergencyAppointment["status"],
     ): Promise<boolean> => {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       try {
         await new Promise((resolve) => setTimeout(resolve, 200));
@@ -443,7 +443,7 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
 
   // Clear error state
   const clearError = useCallback(() => {
-    setError(undefined);
+    setError(null);
   }, []);
 
   // Memoize available doctors sorted by emergency readiness

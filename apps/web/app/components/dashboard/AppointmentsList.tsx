@@ -89,8 +89,7 @@ export function AppointmentsList({
                 <p className="text-muted-foreground text-xs">
                   {appointment.type || "Consulta"}
                 </p>
-                {hasRiskData
-                  && prediction.riskLevel in ["high", "critical"] && (
+                {hasRiskData && ["high", "critical"].includes(prediction.riskLevel) && (
                   <div className="flex items-center gap-1 mt-1">
                     <AlertTriangle className="h-3 w-3 text-orange-500" />
                     <span className="text-xs text-orange-600">

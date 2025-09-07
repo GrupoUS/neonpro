@@ -1,12 +1,12 @@
 // Continuous improvement engine for compliance system
-import type { 
-  ImprovementInitiative, 
+import type {
+  ImprovementInitiative,
   ImprovementMilestone,
-  ImprovementMetric,
+  // ImprovementMetric, // Unused import
   UserFeedback,
   FeedbackAnalysis,
   ContinuousImprovementReport,
-  ComplianceFramework 
+  // ComplianceFramework // Unused import
 } from './types';
 
 export class ImprovementEngine {

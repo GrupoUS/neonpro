@@ -19,8 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { TabsTrigger } from "@/components/ui/tabs";
+// import { Separator } from "@/components/ui/separator"; // Unused import
+// import { TabsTrigger } from "@/components/ui/tabs"; // Unused import
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";

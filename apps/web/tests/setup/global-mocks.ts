@@ -1,8 +1,28 @@
-// @ts-nocheck
 /**
  * Global Mock Setup for Integration Tests
  * Defines all global mocks used across integration tests
  */
+
+// Global type declarations for test environment
+declare global {
+  const mockRealtimeHook: {
+    isConnected: boolean;
+    error: Error | null;
+  };
+  const mockPatientsHook: {
+    exportPatientData: (...args: any[]) => Promise<{ success: boolean; url?: string; }>;
+    importPatientData: (...args: any[]) => Promise<{ success: boolean; }>;
+  };
+  const mockCpfValidator: {
+    isValid: MockedFunction<any>;
+    format: MockedFunction<any>;
+    clean: MockedFunction<any>;
+  };
+  const mockSupabaseClient: any;
+  const mockLgpdService: any;
+  const mockNotificationService: any;
+  const mockComplianceService: any;
+}
 
 import { vi } from "vitest";
 import type { MockedFunction } from "vitest";

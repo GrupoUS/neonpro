@@ -11,13 +11,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  // Select,
+  // SelectContent,
+  // SelectItem,
+  // SelectTrigger,
+  // SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePerformanceMonitoring } from "@/hooks/use-performance-monitoring";
@@ -28,11 +28,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
   Activity,
-  AlertTriangle,
   BarChart3,
-  Calendar,
-  CheckCircle,
-  Clock,
   DollarSign,
   Download,
   LineChart,
@@ -41,7 +37,6 @@ import {
   Target,
   TrendingDown,
   TrendingUp,
-  Users,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -121,7 +116,7 @@ export function PerformanceDashboard({
     }
   };
 
-  const formatKPIValue = (kpi: DashboardKPI) => {
+  const formatKPIValue = (kpi: PerformanceKPI) => {
     switch (kpi.unit) {
       case "percentage":
         return `${kpi.value.toFixed(1)}%`;
@@ -141,7 +136,7 @@ export function PerformanceDashboard({
     }
   };
 
-  const getTrendIcon = (kpi: DashboardKPI) => {
+  const getTrendIcon = (kpi: PerformanceKPI) => {
     const isPositive = kpi.isGoodTrend === (kpi.trend === "up");
 
     if (kpi.trend === "stable") {

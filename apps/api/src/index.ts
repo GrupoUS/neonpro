@@ -104,13 +104,14 @@ const passThroughMiddleware = async (context: Context, next: Next) => {
   return await next();
 };
 
-const validationMiddlewares = securityStack.validationMiddlewares || {
-  providerRegistration: () => passThroughMiddleware,
-  patientRegistration: () => passThroughMiddleware,
-  patientUpdate: () => passThroughMiddleware,
-  appointmentBooking: () => passThroughMiddleware,
-  emergencyAccess: () => passThroughMiddleware,
-};
+// NOTE: securityStack.validationMiddlewares is currently unused. Remove when wiring validations.
+// const validationMiddlewares = securityStack.validationMiddlewares || {
+//   providerRegistration: () => passThroughMiddleware,
+//   patientRegistration: () => passThroughMiddleware,
+//   patientUpdate: () => passThroughMiddleware,
+//   appointmentBooking: () => passThroughMiddleware,
+//   emergencyAccess: () => passThroughMiddleware,
+// };
 
 // Global middleware stack (order is critical for security)
 app.use("*", timing());

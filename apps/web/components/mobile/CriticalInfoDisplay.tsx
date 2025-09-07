@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 import {
   Activity,
   AlertTriangle,
-  Clock,
+  // Clock, // Unused import
   Heart,
   Phone,
   Pill,
-  Shield,
+  // Shield, // Unused import
   User,
   Zap,
 } from "lucide-react";

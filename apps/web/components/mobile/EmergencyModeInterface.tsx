@@ -6,16 +6,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import {
   AlertTriangle,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
+  // ChevronLeft, // Unused import
+  // ChevronRight, // Unused import
+  // Clock, // Unused import
   Database,
   Heart,
   Phone,
-  Settings,
+  // Settings, // Unused import
   User,
   X,
-  Zap,
+  // Zap, // Unused import
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 

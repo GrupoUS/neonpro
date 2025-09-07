@@ -248,7 +248,7 @@ export class NotificationService {
           ? NotificationStatus.QUEUED
           : NotificationStatus.FAILED,
         retryCount,
-        errorMessage: error instanceof Error ? error.message : "Unknown error",
+        errorMessage: _error instanceof Error ? _error.message : "Unknown error",
       });
 
       if (shouldRetry) {
@@ -265,7 +265,7 @@ export class NotificationService {
         event: NotificationEvent.FAILED,
         timestamp: new Date(),
         details: {
-          error: error instanceof Error ? error.message : "Unknown error",
+          error: _error instanceof Error ? _error.message : "Unknown error",
           retryCount,
         },
       });
@@ -676,7 +676,9 @@ export class NotificationService {
     for (const notification of scheduledNotifications) {
       try {
         await this.deliverNotification(notification);
-      } catch {}
+      } catch (_error) {
+        // swallow errors intentionally for scheduled processing; metrics/logging could be added
+      }
     }
   }
 

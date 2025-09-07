@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, /* Menu, */ X } from "lucide-react"; // Menu unused import
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useResponsive } from "./ResponsiveLayout";

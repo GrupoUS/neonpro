@@ -71,7 +71,7 @@ import {
   XCircle,
   Zap,
 } from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 
 // ====== MOCK MONITORING DATA ======
 const mockMonitoringData: HealthcareMonitoring = {

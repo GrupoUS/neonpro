@@ -19,7 +19,7 @@ import {
 } from "lucide-react"; // removed unused PhoneOff, Settings imports
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { ConfidenceIndicator } from "./confidence-indicator";
+// import { ConfidenceIndicator } from "./confidence-indicator"; // Unused import
 import { MessageRenderer } from "./message-renderer";
 import type { Message } from "./message-renderer";
 import { VoiceInput } from "./voice-input";

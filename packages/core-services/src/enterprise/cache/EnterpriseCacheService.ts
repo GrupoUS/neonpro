@@ -135,7 +135,7 @@ class RedisCacheLayer implements CacheLayer {
         lazyConnect: true,
       });
     } catch (_error) {
-      console.warn("Redis not available, falling back to memory cache:", error);
+      console.warn("Redis not available, falling back to memory cache:", _error);
       this.redis = null;
     }
     this.keyPrefix = config.keyPrefix || "neonpro:cache:";
@@ -215,7 +215,7 @@ class RedisCacheLayer implements CacheLayer {
     } catch (_error) {
       return {
         layer: this.name,
-        error: error instanceof Error ? error.message : String(error),
+        error: _error instanceof Error ? _error.message : String(_error),
         hitRate: this.accessCount > 0 ? this.hitCount / this.accessCount : 0,
         accessCount: this.accessCount,
         hitCount: this.hitCount,
@@ -517,7 +517,7 @@ export class EnterpriseCacheService {
           return {
             layer: layer.name,
             status: "unhealthy",
-            error: error instanceof Error ? error.message : String(error),
+            error: _error instanceof Error ? _error.message : String(_error),
             canWrite: false,
             canRead: false,
           };
@@ -547,7 +547,9 @@ export class EnterpriseCacheService {
     this.healthCheckInterval = setInterval(async () => {
       try {
         await this.healthCheck();
-      } catch {}
+      } catch (_error) {
+        // ignore periodic health check errors; health status is computed externally
+      }
     }, this.config.healthCheck.interval);
   }
 

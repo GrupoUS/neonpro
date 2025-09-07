@@ -11,7 +11,7 @@ interface PatientRiskContextProps {
   patient: any;
   showActions?: boolean;
 }
-import { INTERVENTION_ACTIONS_PT, RiskFactor } from "@/types/no-show-prediction";
+import { INTERVENTION_ACTIONS_PT /*, RiskFactor*/ } from "@/types/no-show-prediction"; // RiskFactor unused import
 import {
   Calendar,
   ChevronDown,
@@ -19,7 +19,7 @@ import {
   Clock,
   MessageSquare,
   Phone,
-  TrendingDown,
+  // TrendingDown, // Unused import
   TrendingUp,
   User,
 } from "lucide-react";

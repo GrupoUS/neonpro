@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import {
   Activity,
@@ -31,7 +31,7 @@ export interface HealthcareMetricCardProps {
   isLoading?: boolean;
   onClick?: () => void;
   // Healthcare-specific props
-  patientId?: string;
+  _patientId?: string;
   emergencyMode?: boolean;
   lgpdCompliant?: boolean;
   accessLevel?: "public" | "restricted" | "confidential";
@@ -83,7 +83,7 @@ export function HealthcareMetricCard({
   className,
   isLoading = false,
   onClick,
-  patientId,
+  _patientId: _patientId,
   emergencyMode = false,
   lgpdCompliant = true,
   accessLevel = "public",

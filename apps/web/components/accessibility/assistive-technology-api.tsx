@@ -939,9 +939,9 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
           console.error("AT WebSocket error:", error);
         };
 
-        wsRef.current.addEventListener("open", handleOpen as any);
-        wsRef.current.addEventListener("message", handleMessage as any);
-        wsRef.current.addEventListener("error", handleError as any);
+        wsRef.current.addEventListener("open", handleOpen as unknown as EventListener);
+        wsRef.current.addEventListener("message", handleMessage as unknown as EventListener);
+        wsRef.current.addEventListener("error", handleError as unknown as EventListener);
       } catch (error) {
         console.warn("WebSocket connection failed - using fallback methods");
       }
@@ -949,9 +949,15 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
 
     return () => {
       if (wsRef.current) {
-        if (handleOpen) wsRef.current.removeEventListener("open", handleOpen as any);
-        if (handleMessage) wsRef.current.removeEventListener("message", handleMessage as any);
-        if (handleError) wsRef.current.removeEventListener("error", handleError as any);
+        if (handleOpen) {
+          wsRef.current.removeEventListener("open", handleOpen as unknown as EventListener);
+        }
+        if (handleMessage) {
+          wsRef.current.removeEventListener("message", handleMessage as unknown as EventListener);
+        }
+        if (handleError) {
+          wsRef.current.removeEventListener("error", handleError as unknown as EventListener);
+        }
         if (wsRef.current.readyState !== WebSocket.CLOSED) wsRef.current.close();
         wsRef.current = null;
       }

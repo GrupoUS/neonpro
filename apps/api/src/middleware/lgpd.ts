@@ -431,7 +431,7 @@ export const lgpdUtils = {
 
   // Anonymize data for analytics
   anonymizeData: <T extends Record<string, unknown>>(data: T): T => {
-    const anonymized = { ...data };
+    const anonymized: Record<string, unknown> = { ...data };
 
     // Remove direct identifiers
     const identifyingFields = [
@@ -442,23 +442,37 @@ export const lgpdUtils = {
       "rg",
       "name",
       "fullName",
-    ];
+    ] as const;
     for (const field of identifyingFields) {
-      if (field in anonymized) {
-        delete anonymized[field];
+      if (Object.prototype.hasOwnProperty.call(anonymized, field)) {
+        delete (anonymized as Record<string, unknown>)[field];
       }
     }
 
+    // Safe base64 helper that works in Node and browser-like environments
+    const toBase64 = (value: string): string => {
+      try {
+        // @ts-expect-error: Buffer not defined in browser but available in Node
+        if (typeof Buffer !== "undefined") return Buffer.from(value).toString("base64");
+      } catch {}
+      // Fallback to btoa if available
+      try {
+        // @ts-expect-error: btoa may exist in some runtimes
+        if (typeof btoa === "function") return btoa(value);
+      } catch {}
+      // Last resort: simple hex encoding
+      return Array.from(value).map((c) => c.charCodeAt(0).toString(16)).join("");
+    };
+
     // Generate anonymous ID for analytics correlation
-    if ((data as any).id) {
-      (anonymized as any).anonymousId = `anon_${
-        btoa((data as any).id.toString())
-          .replaceAll(/[^a-zA-Z0-9]/g, "")
-          .slice(0, 8)
+    const originalId = data?.id as unknown;
+    if (typeof originalId === "string" || typeof originalId === "number") {
+      (anonymized as Record<string, unknown>).anonymousId = `anon_${
+        toBase64(String(originalId)).replace(/[^a-zA-Z0-9]/g, "").slice(0, 8)
       }`;
     }
 
-    return anonymized;
+    return anonymized as T;
   },
 };
 

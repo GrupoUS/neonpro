@@ -8,6 +8,7 @@ import type {
   SchedulingRequest,
   SchedulingResult,
   Staff,
+  TimeSlotEfficiency,
   TreatmentType,
 } from "./types";
 
@@ -17,7 +18,7 @@ import type {
  */
 export class AISchedulingService {
   private readonly aiEngine: any; // Will be imported from web app
-  private analytics: SchedulingAnalytics;
+  private analytics!: SchedulingAnalytics;
   private readonly config: AISchedulingConfig;
   private readonly realtimeListeners: Map<string, Function> = new Map();
 
@@ -144,7 +145,7 @@ export class AISchedulingService {
    */
   async updatePatientPreferences(
     patientId: string,
-    appointmentHistory: unknown[],
+    appointmentHistory: Array<{ date: Date; noShow?: boolean; cancellation?: unknown; }>,
     tenantId: string,
   ): Promise<void> {
     // Analyze appointment patterns
@@ -217,18 +218,18 @@ export class AISchedulingService {
     );
 
     // Execute highest priority actions automatically
-    const autoExecuteActions = actions.filter(
+    const autoExecuteActions = actions?.filter(
       (action: any) => action.impact.efficiencyChange > 10 && action.executionTime < 60,
-    );
+    ) || [];
 
     for (const action of autoExecuteActions) {
       await this.executeSchedulingAction(action, tenantId);
     }
 
     // Update analytics
-    this.updateRealtimeMetrics(event, actions);
+    this.updateRealtimeMetrics(event, actions || []);
 
-    return actions;
+    return actions || [];
   }
 
   /**
@@ -248,8 +249,8 @@ export class AISchedulingService {
         timeRange,
       ),
       averageBookingTime: this.calculateAverageBookingTime(tenantId),
-      noShowRate: this.calculateNoShowRate(appointments),
-      cancellationRate: this.calculateCancellationRate(appointments),
+      noShowRate: this.calculateNoShowRate(appointments as Array<{ noShow?: boolean; }>),
+      cancellationRate: this.calculateCancellationRate(appointments as Array<{ cancellation?: unknown; }>),
       patientSatisfactionScore: await this.calculatePatientSatisfaction(tenantId),
       revenueOptimization: this.calculateRevenueOptimization(appointments),
       timeSlotEfficiency: this.calculateTimeSlotEfficiency(
@@ -262,7 +263,7 @@ export class AISchedulingService {
   private calculateTimeSlotEfficiency(
     _appointments: unknown[],
     timeRange: { start: Date; end: Date; },
-  ): import("./types").TimeSlotEfficiency[] {
+  ): TimeSlotEfficiency[] {
     // Minimal implementation for MVP: return empty metrics for the range
     return [
       {
@@ -295,12 +296,12 @@ export class AISchedulingService {
     patientId: string,
     tenantId: string,
   ): Promise<{ predicted: number; confidence: number; factors: string[]; }> {
-    const historicalData = await this.getHistoricalDurations?.(
+    const historicalData = await this.getHistoricalDurations(
       treatmentTypeId,
       staffId,
       patientId,
       tenantId,
-    ) || [];
+    );
 
     const baseFactors: string[] = [];
     let predicted = 0;
@@ -312,7 +313,7 @@ export class AISchedulingService {
         { id: treatmentTypeId } as TreatmentType,
         staffId,
         patientId,
-      );
+      ) || { predicted: 30, confidence: 0.5 };
       predicted = result.predicted;
       confidence = result.confidence;
       baseFactors.push(
@@ -323,7 +324,7 @@ export class AISchedulingService {
       const treatment = await this.getTreatmentById(treatmentTypeId, tenantId);
       const staff = await this.getStaffMemberById(staffId, tenantId);
 
-      predicted = treatment.duration * (2 - (staff?.efficiency || 0.8));
+      predicted = (treatment?.duration || 30) * (2 - (staff?.efficiency || 0.8));
       confidence = 0.6;
       baseFactors.push(
         "Limited historical data, using baseline with staff efficiency",
@@ -332,8 +333,8 @@ export class AISchedulingService {
 
     // Add complexity factors
     const patient = await this.getPatientData(patientId, tenantId);
-    if (patient.history.length > 0) {
-      const avgComplexity = this.calculatePatientComplexity?.(patient) || 0.5;
+    if (patient.history?.length > 0) {
+      const avgComplexity = this.calculatePatientComplexity(patient);
       if (avgComplexity > 0.7) {
         predicted *= 1.2;
         baseFactors.push("Patient complexity factor applied");
@@ -341,6 +342,19 @@ export class AISchedulingService {
     }
 
     return { predicted, confidence, factors: baseFactors };
+  }
+
+  /**
+   * Calculate patient complexity based on history
+   */
+  private calculatePatientComplexity(patient: Patient): number {
+    if (!patient.history || patient.history.length === 0) {
+      return 0.5; // Default complexity
+    }
+    
+    // Simple complexity calculation based on treatment history
+    const complexTreatments = patient.history.filter((h: any) => h.duration > 60).length;
+    return Math.min(complexTreatments / patient.history.length, 1);
   }
 
   /**
@@ -363,8 +377,8 @@ export class AISchedulingService {
       specializations: string[];
     }[];
   }> {
-    const historicalData = await this.getHistoricalDemandData?.(tenantId) || [];
-    const seasonalPatterns = this.analyzeSeasonalPatterns?.(historicalData) || {};
+    const historicalData = this.getHistoricalDemandData(tenantId);
+    const seasonalPatterns = this.analyzeSeasonalPatterns(historicalData);
 
     const dailyDemand = [];
     const treatmentTypeDemand: Record<string, number> = {};
@@ -377,11 +391,11 @@ export class AISchedulingService {
       const month = currentDate.getMonth();
 
       // Base demand from historical patterns
-      const baseDemand = seasonalPatterns.weeklyPattern[dayOfWeek]
-        * seasonalPatterns.monthlyPattern[month];
+      const baseDemand = (seasonalPatterns.weeklyPattern?.[dayOfWeek] || 5)
+        * (seasonalPatterns.monthlyPattern?.[month] || 1);
 
       // Apply trends and external factors
-      const trendAdjustment = this.calculateTrendAdjustment?.(
+      const trendAdjustment = this.calculateTrendAdjustment(
         currentDate,
         historicalData,
       );
@@ -390,7 +404,7 @@ export class AISchedulingService {
       dailyDemand.push({
         date: new Date(currentDate),
         predictedAppointments,
-        confidence: this.calculateForecastConfidence?.(
+        confidence: this.calculateForecastConfidence(
           currentDate,
           historicalData,
         ),
@@ -398,7 +412,7 @@ export class AISchedulingService {
 
       // Staffing recommendations
       const recommendedStaff = Math.ceil(predictedAppointments / 8); // Assume 8 appointments per staff per day
-      const specializations = this.getRecommendedSpecializations?.(
+      const specializations = this.getRecommendedSpecializations(
         currentDate,
         historicalData,
       );
@@ -415,7 +429,7 @@ export class AISchedulingService {
     // Treatment type demand analysis
     const treatments = await this.getTreatmentTypes(tenantId);
     for (const treatment of treatments) {
-      treatmentTypeDemand[treatment.id] = this.predictTreatmentDuration?.(
+      treatmentTypeDemand[treatment.id] = await this.predictTreatmentTypeDemand(
         treatment,
         dailyDemand,
         historicalData,
@@ -423,6 +437,82 @@ export class AISchedulingService {
     }
 
     return { dailyDemand, treatmentTypeDemand, staffingRecommendations };
+  }
+
+  /**
+   * Predict treatment type demand
+   */
+  private async predictTreatmentTypeDemand(
+    treatment: TreatmentType,
+    dailyDemand: Array<{ date: Date; predictedAppointments: number; confidence: number; }>,
+    historicalData: any[],
+  ): Promise<number> {
+    // Simple implementation: calculate based on historical popularity
+    const totalPredictedAppointments = dailyDemand.reduce((sum, day) => sum + day.predictedAppointments, 0);
+    const treatmentPopularity = this.getTreatmentPopularity(treatment.id, historicalData);
+    return Math.round(totalPredictedAppointments * treatmentPopularity);
+  }
+
+  /**
+   * Get treatment popularity from historical data
+   */
+  private getTreatmentPopularity(treatmentId: string, historicalData: any[]): number {
+    if (!historicalData.length) return 0.1; // Default 10% popularity
+    
+    const treatmentCount = historicalData.filter((h: any) => h.treatmentId === treatmentId).length;
+    return treatmentCount / historicalData.length;
+  }
+
+  /**
+   * Get historical demand data
+   */
+  private getHistoricalDemandData(tenantId: string): any[] {
+    // Mock implementation - would fetch from database
+    return [];
+  }
+
+  /**
+   * Analyze seasonal patterns
+   */
+  private analyzeSeasonalPatterns(historicalData: any[]): any {
+    // Default patterns if no historical data
+    if (!historicalData.length) {
+      return {
+        weeklyPattern: [3, 8, 8, 8, 8, 6, 2], // Lower demand on weekends
+        monthlyPattern: Array(12).fill(1), // Consistent monthly demand
+      };
+    }
+    
+    // Would analyze actual patterns from historical data
+    return {
+      weeklyPattern: [3, 8, 8, 8, 8, 6, 2],
+      monthlyPattern: Array(12).fill(1),
+    };
+  }
+
+  /**
+   * Calculate trend adjustment
+   */
+  private calculateTrendAdjustment(date: Date, historicalData: any[]): number {
+    // Simple implementation - would use ML for actual trend analysis
+    return 1.0; // No adjustment
+  }
+
+  /**
+   * Calculate forecast confidence
+   */
+  private calculateForecastConfidence(date: Date, historicalData: any[]): number {
+    // Higher confidence for recent dates with more historical data
+    const dataPoints = historicalData.length;
+    return Math.min(dataPoints / 100, 0.95); // Max 95% confidence
+  }
+
+  /**
+   * Get recommended specializations
+   */
+  private getRecommendedSpecializations(date: Date, historicalData: any[]): string[] {
+    // Default specializations - would analyze demand patterns
+    return ["dermatology", "plastic_surgery"];
   }
 
   // Private helper methods for AI scheduling implementation
@@ -515,7 +605,7 @@ export class AISchedulingService {
       };
 
       // Store for model training
-      await this.storeModelTrainingData?.(modelUpdate, tenantId);
+      await this.storeModelTrainingData(modelUpdate, tenantId);
     }
   }
 
@@ -532,13 +622,13 @@ export class AISchedulingService {
 
     if (noShowRisk > 0.3) {
       // Schedule automated reminders
-      await this.scheduleReminders?.(
+      await this.scheduleReminders(
         result.appointmentSlot.id,
-        patient.preferences.reminderPreferences,
+        patient.preferences?.reminderPreferences,
       );
 
       // Add to high-risk monitoring
-      await this.addToRiskMonitoring?.(result.appointmentSlot.id, noShowRisk);
+      await this.addToRiskMonitoring(result.appointmentSlot.id, noShowRisk);
     }
   }
 
@@ -580,7 +670,12 @@ export class AISchedulingService {
   private analyzeAppointmentPatterns(
     history: Array<{ date: Date; noShow?: boolean; cancellation?: unknown; }>,
   ): unknown {
-    const patterns = {
+    const patterns: {
+      preferredTimeSlots: Array<{ start: Date; end: Date; }>;
+      preferredDays: number[];
+      treatmentSpacing: number;
+      cancelationPatterns: unknown[];
+    } = {
       preferredTimeSlots: [],
       preferredDays: [],
       treatmentSpacing: 14,
@@ -620,7 +715,7 @@ export class AISchedulingService {
 
   private calculateStaffWorkload(
     staff: Staff[],
-    appointments: unknown[],
+    appointments: Array<{ staffId?: string; duration?: number; }>,
   ): Record<string, number> {
     const workload: Record<string, number> = {};
 
@@ -629,7 +724,7 @@ export class AISchedulingService {
         (apt) => apt.staffId === member.id,
       );
       const totalHours = memberAppointments.reduce(
-        (sum, apt) => sum + apt.duration / 60,
+        (sum, apt) => sum + (apt.duration || 30) / 60,
         0,
       );
       workload[member.id] = totalHours;
@@ -638,12 +733,12 @@ export class AISchedulingService {
     return workload;
   }
 
-  private identifyWorkloadImbalances(workload: Record<string, number>): {
+  private identifyWorkloadImbalances(workload: Record<string, number>): Array<{
     staffId: string;
     currentLoad: number;
     targetLoad: number;
     imbalance: number;
-  }[] {
+  }> {
     const values = Object.values(workload);
     const averageLoad = values.reduce((sum, load) => sum + load, 0) / values.length;
     const imbalances = [];
@@ -665,7 +760,12 @@ export class AISchedulingService {
   }
 
   private async generateRebalancingActions(
-    imbalances: unknown[],
+    imbalances: Array<{
+      staffId: string;
+      currentLoad: number;
+      targetLoad: number;
+      imbalance: number;
+    }>,
     _appointments: unknown[],
     _staff: Staff[],
   ): Promise<SchedulingAction[]> {
@@ -787,7 +887,7 @@ export class AISchedulingService {
   private async getAppointmentsInRange(
     _timeRange: { start: Date; end: Date; },
     _tenantId: string,
-  ): Promise<unknown[]> {
+  ): Promise<Array<{ staffId?: string; duration?: number; noShow?: boolean; cancellation?: unknown; }>> {
     // Get appointments in date range
     return [];
   }
@@ -827,10 +927,24 @@ export class AISchedulingService {
     return 0.15;
   }
 
-  private calculateTimeSlotEfficiencyLegacy(
-    _appointments: unknown[],
-    _timeRange: { start: Date; end: Date; },
-  ): unknown[] {
-    return [];
+  private async storeModelTrainingData(
+    _modelUpdate: any,
+    _tenantId: string,
+  ): Promise<void> {
+    // Store model training data
+  }
+
+  private async scheduleReminders(
+    _appointmentId: string,
+    _reminderPreferences: any,
+  ): Promise<void> {
+    // Schedule reminders
+  }
+
+  private async addToRiskMonitoring(
+    _appointmentId: string,
+    _riskScore: number,
+  ): Promise<void> {
+    // Add to risk monitoring
   }
 }

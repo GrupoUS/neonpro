@@ -583,12 +583,8 @@ export function StaffTrainingInterface({
                 <CardContent>
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold">
-                        Conteúdo do Módulo
-                      </h3>
-                      <Badge variant="secondary">
-                        Leitura
-                      </Badge>
+                      <h3 className="text-lg font-semibold">Conteúdo do Módulo</h3>
+                      <Badge variant="secondary">Leitura</Badge>
                     </div>
 
                     {/* Section Content */}
@@ -597,63 +593,26 @@ export function StaffTrainingInterface({
                         <p>Conteúdo do módulo de treinamento será exibido aqui.</p>
                         <p>Este é um placeholder para o sistema de aprendizado interativo.</p>
                       </div>
-                            >
-                              <CheckCircle className="h-4 w-4 mt-0.5 text-green-600" />
-                              <div>
-                                <p className="font-medium">{item.text}</p>
-                                {item.description && (
-                                  <p className="text-sm text-muted-foreground">
-                                    {item.description}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </div>
 
                     <div className="flex justify-between pt-4 border-t">
-                      <Button variant="outline">Anterior</Button>
-                      <Button
-                        onClick={() => completeSection(currentSection.id)}
-                      >
-                        Próximo
+                      <Button variant="outline" onClick={() => setActiveTab("modules")}>
+                        Anterior
                       </Button>
+                      <Button onClick={() => console.log("Next section")}>Próximo</Button>
                     </div>
                   </div>
-                  ) : (
-                  <div className="text-center py-8">
-                    <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">
-                      Módulo Concluído!
-                    </h3>
-                    <p className="text-muted-foreground mb-4">
-                      Você completou todas as seções deste módulo.
-                    </p>
-                    <Button
-                      onClick={() => handleGenerateCertificate(currentModule.id)}
-                    >
-                      <Award className="h-4 w-4 mr-2" />
-                      Gerar Certificado
-                    </Button>
-                  </div>
-                  )}
                 </CardContent>
               </Card>
             )
             : (
               <div className="text-center py-12">
                 <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">
-                  Selecione um Módulo
-                </h3>
+                <h3 className="text-lg font-semibold mb-2">Selecione um Módulo</h3>
                 <p className="text-muted-foreground mb-4">
                   Escolha um módulo da lista para começar seu treinamento.
                 </p>
-                <Button onClick={() => setActiveTab("modules")}>
-                  Ver Módulos
-                </Button>
+                <Button onClick={() => setActiveTab("modules")}>Ver Módulos</Button>
               </div>
             )}
         </TabsContent>
@@ -667,43 +626,45 @@ export function StaffTrainingInterface({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {userProfile?.certificationsEarned.length
+              {completedModules.length > 0
                 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {userProfile.certificationsEarned.map((cert) => (
-                      <Card key={cert.id}>
+                    {completedModules.map((module) => (
+                      <Card key={module.id}>
                         <CardHeader className="pb-3">
                           <div className="flex items-center justify-between">
                             <Award className="h-6 w-6 text-yellow-600" />
                             <Badge variant="secondary">
-                              {cert.earnedAt.toLocaleDateString("pt-BR")}
+                              {userProgress[module.id]?.completedAt?.toLocaleDateString("pt-BR")
+                                || "Concluído"}
                             </Badge>
                           </div>
-                          <CardTitle className="text-lg">{cert.name}</CardTitle>
+                          <CardTitle className="text-lg">{module.title}</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-2">
                             <div className="flex justify-between">
-                              <span className="text-sm">Módulos:</span>
+                              <span className="text-sm">Duração:</span>
                               <span className="text-sm font-medium">
-                                {cert.moduleIds.length}
+                                {module.duration}min
                               </span>
                             </div>
-                            {cert.expiresAt && (
-                              <div className="flex justify-between">
-                                <span className="text-sm">Validade:</span>
-                                <span className="text-sm font-medium">
-                                  {cert.expiresAt.toLocaleDateString("pt-BR")}
-                                </span>
-                              </div>
-                            )}
+                            <div className="flex justify-between">
+                              <span className="text-sm">Categoria:</span>
+                              <span className="text-sm font-medium">
+                                {TRAINING_CATEGORY_LABELS_PT[
+                                  module.category as keyof typeof TRAINING_CATEGORY_LABELS_PT
+                                ]}
+                              </span>
+                            </div>
                             <Button
                               variant="outline"
                               className="w-full mt-3"
-                              onClick={() => window.open(cert.certificateUrl, "_blank")}
+                              onClick={() => handleGenerateCertificate(module.id)}
+                              disabled={isGeneratingCertificate}
                             >
                               <Download className="h-3 w-3 mr-2" />
-                              Baixar Certificado
+                              Gerar Certificado
                             </Button>
                           </div>
                         </CardContent>

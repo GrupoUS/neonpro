@@ -11,7 +11,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/auth-context";
-import { useSearch } from "@tanstack/react-router";
+// import { useSearch } from "@tanstack/react-router"; // Unused import
 import { Activity, Calendar, Clock, DollarSign, TrendingUp, Users } from "lucide-react";
 
 export function DashboardOverview() {

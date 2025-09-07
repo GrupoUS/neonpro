@@ -74,7 +74,7 @@ export function useHealthcareServiceWorker() {
     isInstalled: false,
     updateAvailable: false,
     syncInProgress: false,
-    lastSyncTime: undefined,
+    lastSyncTime: null,
     cacheStatus: {
       patientData: {
         cached: 0,
