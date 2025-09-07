@@ -11,7 +11,7 @@
  * - LGPD compliant audit logging
  */
 
-import createClient from "@/utils/supabase/server";
+// import createClient from "@/utils/supabase/server"; // Unused import
 import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";

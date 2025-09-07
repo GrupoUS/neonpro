@@ -15,7 +15,7 @@ import type {
   PresenceStatus,
   SenderType,
 } from "@/types/chat";
-import { ConversationType } from "@/types/chat";
+// import { ConversationType } from "@/types/chat"; // Unused import
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";

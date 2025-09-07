@@ -639,13 +639,13 @@ export function useWorkflowAutomation({
     const wsUrl = `${protocol}//${window.location.host}/api/workflow-automation/websocket`;
 
     try {
-      wsRef.current = new WebSocket(wsUrl);
+      const ws = new WebSocket(wsUrl);
+      wsRef.current = ws;
 
-      wsRef.current.onopen = () => {
+      const handleOpen = () => {
         console.log("Workflow automation WebSocket connected");
-
         // Subscribe to updates for this clinic
-        wsRef.current?.send(
+        ws.send(
           JSON.stringify({
             type: "subscribe",
             clinicId,
@@ -653,10 +653,9 @@ export function useWorkflowAutomation({
         );
       };
 
-      wsRef.current.onmessage = (event) => {
+      const handleMessage = (event: MessageEvent) => {
         try {
           const message = JSON.parse(event.data);
-
           switch (message.type) {
             case "rule_created":
             case "rule_updated":
@@ -676,11 +675,11 @@ export function useWorkflowAutomation({
         }
       };
 
-      wsRef.current.onerror = (error) => {
+      const handleError = (error: Event) => {
         console.error("Workflow automation WebSocket error:", error);
       };
 
-      wsRef.current.onclose = () => {
+      const handleClose = () => {
         console.log("Workflow automation WebSocket closed");
         // Attempt to reconnect after 5 seconds
         setTimeout(() => {
@@ -689,13 +688,27 @@ export function useWorkflowAutomation({
           }
         }, 5000);
       };
+
+      ws.addEventListener("open", handleOpen);
+      ws.addEventListener("message", handleMessage);
+      ws.addEventListener("error", handleError);
+      ws.addEventListener("close", handleClose);
     } catch (err) {
       console.error("Error creating WebSocket connection:", err);
     }
 
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
+      const ws = wsRef.current;
+      if (ws) {
+        ws.removeEventListener("open", handleOpen as EventListener);
+        ws.removeEventListener("message", handleMessage as EventListener);
+        ws.removeEventListener("error", handleError as EventListener);
+        ws.removeEventListener("close", handleClose as EventListener);
+        try {
+          ws.close();
+        } catch {
+          // ignore
+        }
         wsRef.current = null;
       }
     };

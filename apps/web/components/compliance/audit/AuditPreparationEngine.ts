@@ -5,7 +5,7 @@
 
 import { complianceService } from "../ComplianceService";
 import type { ComplianceFramework } from "../types";
-import { ComplianceScore, ComplianceViolation } from "../types";
+// import { ComplianceScore, ComplianceViolation } from "../types"; // Unused imports
 
 export interface AuditPreparation {
   id: string;

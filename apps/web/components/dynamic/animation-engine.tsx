@@ -21,7 +21,7 @@ const AnimatePresence = dynamic(
   },
 );
 
-const MotionSpring = dynamic(
+const _MotionSpring = dynamic(
   () => import("framer-motion").then((mod) => ({ default: mod.motion })),
   {
     loading: () => <div className="animate-pulse" />,

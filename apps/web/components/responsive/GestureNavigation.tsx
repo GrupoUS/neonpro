@@ -49,7 +49,7 @@ export function GestureNavigation({
   longPressDelay = 500,
   className,
 }: GestureNavigationProps) {
-  const { healthcareContext, isMobile, touchOptimized } = useResponsive();
+  const { healthcareContext, touchOptimized } = useResponsive();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isGestureActive, setIsGestureActive] = useState(false);
 
@@ -331,7 +331,6 @@ export function MobileMenuDrawer({
   className,
 }: MobileMenuDrawerProps) {
   const { isMobile, healthcareContext } = useResponsive();
-  const [isDragging, setIsDragging] = useState(false);
 
   const handleGesture = useCallback((gesture: GestureEvent) => {
     if (gesture.type === "swipe-right" && isOpen) {
@@ -400,7 +399,7 @@ interface GestureHelpProps {
 }
 
 export function GestureHelp({ isVisible, onDismiss }: GestureHelpProps) {
-  const { healthcareContext, touchOptimized } = useResponsive();
+  const { touchOptimized } = useResponsive();
 
   if (!isVisible || !touchOptimized) return null;
 

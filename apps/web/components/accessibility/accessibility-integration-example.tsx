@@ -21,18 +21,18 @@ import {
   Bell,
   Brain,
   CheckCircle2,
-  ChevronRight,
-  Clock,
+  // ChevronRight, // Unused import
+  // Clock, // Unused import
   Eye,
   FileText,
   Hand,
   Heart,
-  Home,
-  Pause,
+  // Home, // Unused import
+  // Pause, // Unused import
   Phone,
-  Play,
-  RotateCcw,
-  Save,
+  // Play, // Unused import
+  // RotateCcw, // Unused import
+  // Save, // Unused import
   Settings,
   Shield,
   Stethoscope,
@@ -74,7 +74,7 @@ import {
   TremorFriendlyDemo,
   TremorFriendlyProvider,
   TremorFriendlySettings,
-  useTremorFriendly,
+  // useTremorFriendly, // Unused import
 } from "./tremor-friendly-controls";
 import {
   VisualAccessibilityDemo,

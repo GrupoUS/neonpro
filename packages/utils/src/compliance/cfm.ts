@@ -9,15 +9,15 @@ import type {
   CFMComplianceLog,
   CFMComplianceReport,
   CFMDocumentType,
-  CFMEducationCategory,
-  CFMLicenseStatus,
+  // CFMEducationCategory, // Unused import
+  // CFMLicenseStatus, // Unused import
   CFMLicenseValidation,
   CFMOperationResult,
   CFMValidationResult,
   ContinuingEducation,
   Database,
-  DatabaseArrayResponse,
-  DatabaseResponse,
+  // DatabaseArrayResponse, // Unused import
+  // DatabaseResponse, // Unused import
   DigitalSignature,
   MedicalProfessional,
   TelemedicineRequirements,

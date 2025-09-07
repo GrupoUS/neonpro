@@ -16,7 +16,7 @@ const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 // Realistic Brazilian clinic data
-const brazilianClinicsData = [
+const _brazilianClinicsData = [
   {
     id: "clinic-001",
     name: "Clínica Estética Bella Vita",
@@ -421,7 +421,15 @@ describe("WhatsApp Real Clinic Data Tests", () => {
     ];
 
     lgpdScenarios.forEach(
-      ({ patient, message, dataType, requiresConsent, requiresIdentification }) => {
+      (
+        {
+          patient,
+          message,
+          dataType,
+          requiresConsent,
+          _requiresIdentification: requiresIdentification,
+        },
+      ) => {
         it(`should handle LGPD ${dataType} request from ${patient.name}`, async () => {
           const lgpdResponse = requiresConsent
             ? "Para atender sua solicitação, preciso confirmar seu consentimento conforme LGPD. Você autoriza o processamento dos seus dados para esta finalidade?"

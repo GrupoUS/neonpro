@@ -1,0 +1,145 @@
+{
+  "dependencies": [
+    "@radix-ui/react-avatar",
+    "@radix-ui/react-popover",
+    "@radix-ui/react-progress",
+    "@radix-ui/react-scroll-area",
+    "@radix-ui/react-select",
+    "@radix-ui/react-slider",
+    "@radix-ui/react-switch",
+    "@radix-ui/react-tabs",
+    "@tanstack/react-query-devtools",
+    "@vitejs/plugin-react",
+    "jspdf",
+    "lru-cache",
+    "lucide-react",
+    "optional",
+    "recharts",
+    "tailwindcss"
+  ],
+  "devDependencies": ["@vitest/coverage-v8", "depcheck", "oxc", "oxlint", "prettier"],
+  "missing": {
+    "@trigger.dev/sdk": ["/home/vibecoder/neonpro/trigger.config.ts"],
+    "@testing-library/react": [
+      "/home/vibecoder/neonpro/vitest.setup.ts",
+      "/home/vibecoder/neonpro/tools/tests/setup.ts",
+      "/home/vibecoder/neonpro/tools/tests/test-utils.tsx",
+      "/home/vibecoder/neonpro/tools/tests/integration/setup/integration-setup.ts",
+      "/home/vibecoder/neonpro/tools/testing/utils/healthcare-test-utils.tsx",
+      "/home/vibecoder/neonpro/tools/testing/utils/test-utils.tsx",
+      "/home/vibecoder/neonpro/tools/testing/unit/vitest-setup.test.ts",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/regulatory-documents-integration.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/integration/analytics-dashboard.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/integration/performance-monitoring.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/hooks/subscription.test.ts",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/contexts/auth-context.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/components/ProfessionalForm.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/components/ProfessionalManagement.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/components/ProfessionalPerformanceDashboard.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/components/subscription.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/components/ui/error-boundary.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/components/dashboard/AnalyticsDashboard.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/analytics/components/analytics-dashboard.test.tsx"
+    ],
+    "@supabase/supabase-js": [
+      "/home/vibecoder/neonpro/tools/tests/integration/setup/global-setup.ts",
+      "/home/vibecoder/neonpro/tools/tests/integration/setup/integration-setup.ts",
+      "/home/vibecoder/neonpro/tools/testing/tests/security/security-audit.test.ts",
+      "/home/vibecoder/neonpro/tools/testing/tests/integration/bank-reconciliation-api.test.ts",
+      "/home/vibecoder/neonpro/tools/testing/scripts/test-supabase-client.js",
+      "/home/vibecoder/neonpro/tools/e2e/global-setup.ts",
+      "/home/vibecoder/neonpro/tools/e2e/global-teardown.ts",
+      "/home/vibecoder/neonpro/tools/e2e/fixtures/test-fixtures.ts"
+    ],
+    "dotenv": [
+      "/home/vibecoder/neonpro/tools/testing/utils/test-setup.ts",
+      "/home/vibecoder/neonpro/tools/testing/scripts/test-prisma-supabase.js",
+      "/home/vibecoder/neonpro/tools/testing/scripts/test-supabase-client.js",
+      "/home/vibecoder/neonpro/tools/e2e/global-setup.ts"
+    ],
+    "@testing-library/user-event": [
+      "/home/vibecoder/neonpro/tools/testing/utils/test-utils.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/integration/analytics-dashboard.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/components/subscription.test.tsx",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/components/dashboard/AnalyticsDashboard.test.tsx"
+    ],
+    "@simplewebauthn/server": [
+      "/home/vibecoder/neonpro/tools/testing/tests/auth/webauthn-verification.test.ts"
+    ],
+    "@simplewebauthn/browser": [
+      "/home/vibecoder/neonpro/tools/testing/tests/auth/webauthn-verification.test.ts"
+    ],
+    "@playwright/test": [
+      "/home/vibecoder/neonpro/tools/testing/tests/accessibility/accessibility-demo.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/tests/accessibility/healthcare-accessibility.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/setup/global-setup.ts",
+      "/home/vibecoder/neonpro/tools/testing/setup/global-teardown.ts",
+      "/home/vibecoder/neonpro/tools/testing/security/penetration-testing.test.ts",
+      "/home/vibecoder/neonpro/tools/testing/playwright-root/utils/healthcare-testing-utils.ts",
+      "/home/vibecoder/neonpro/tools/testing/playwright-root/tests/accessibility-healthcare.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/playwright-root/tests/analytics-dashboard-fixed.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/playwright-root/tests/analytics-dashboard.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/playwright-root/tests/bank-reconciliation-fixed.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/playwright-root/tests/bank-reconciliation.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/playwright-root/tests/performance-healthcare.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/playwright-root/tests/regulatory-documents-fixed.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/playwright-root/tests/regulatory-documents.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/playwright-root/tests/security-healthcare.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/playwright/tests/analytics-dashboard.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/performance/hono-performance.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/performance/stress-testing.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/e2e/appointment-scheduling-flow.spec.ts",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/e2e/auth-flow.spec.ts",
+      "/home/vibecoder/neonpro/tools/e2e/global-setup.ts",
+      "/home/vibecoder/neonpro/tools/e2e/pricing.spec.ts",
+      "/home/vibecoder/neonpro/tools/e2e/utils/performance-metrics.ts",
+      "/home/vibecoder/neonpro/tools/e2e/utils/test-utils.ts",
+      "/home/vibecoder/neonpro/tools/e2e/tests/performance/healthcare-critical.performance.spec.ts",
+      "/home/vibecoder/neonpro/tools/e2e/tests/performance/patient-dashboard.performance.spec.ts",
+      "/home/vibecoder/neonpro/tools/e2e/tests/example/login-flow.spec.ts",
+      "/home/vibecoder/neonpro/tools/e2e/tests/example/patients-management.spec.ts",
+      "/home/vibecoder/neonpro/tools/e2e/pages/AppointmentsPage.ts",
+      "/home/vibecoder/neonpro/tools/e2e/pages/BasePage.ts",
+      "/home/vibecoder/neonpro/tools/e2e/pages/DashboardPage.ts",
+      "/home/vibecoder/neonpro/tools/e2e/pages/LoginPage.ts",
+      "/home/vibecoder/neonpro/tools/e2e/pages/PatientsPage.ts",
+      "/home/vibecoder/neonpro/tools/e2e/pages/audit.page.ts",
+      "/home/vibecoder/neonpro/tools/e2e/pages/emergency.page.ts",
+      "/home/vibecoder/neonpro/tools/e2e/pages/prescription.page.ts",
+      "/home/vibecoder/neonpro/tools/e2e/fixtures/test-fixtures.ts"
+    ],
+    "@axe-core/playwright": [
+      "/home/vibecoder/neonpro/tools/testing/tests/accessibility/healthcare-accessibility.spec.ts"
+    ],
+    "axe-playwright": [
+      "/home/vibecoder/neonpro/tools/testing/tests/accessibility/healthcare-accessibility.spec.ts"
+    ],
+    "hono": [
+      "/home/vibecoder/neonpro/tools/testing/security/security-assessment.test.ts",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/api/hono-rpc-client.test.ts",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/api/hono-validation.test.ts"
+    ],
+    "@prisma/client": ["/home/vibecoder/neonpro/tools/testing/scripts/test-prisma-supabase.js"],
+    "@faker-js/faker": [
+      "/home/vibecoder/neonpro/tools/testing/playwright-root/utils/healthcare-testing-utils.ts"
+    ],
+    "web-vitals": [
+      "/home/vibecoder/neonpro/tools/testing/performance/web-vitals.ts",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/integration/performance-monitoring.test.tsx"
+    ],
+    "lighthouse": [
+      "/home/vibecoder/neonpro/tools/testing/performance/analysis/performance-audit.ts"
+    ],
+    "puppeteer": [
+      "/home/vibecoder/neonpro/tools/testing/performance/analysis/performance-audit.ts"
+    ],
+    "zod": ["/home/vibecoder/neonpro/tools/testing/__tests__/simple-schema.test.ts"],
+    "msw": [
+      "/home/vibecoder/neonpro/tools/testing/__tests__/integration/analytics-dashboard.test.tsx"
+    ],
+    "node-mocks-http": [
+      "/home/vibecoder/neonpro/tools/testing/__tests__/api/subscription.test.ts",
+      "/home/vibecoder/neonpro/tools/testing/__tests__/api/analytics/export.test.ts"
+    ]
+  }
+}

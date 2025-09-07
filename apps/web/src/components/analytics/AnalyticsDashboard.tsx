@@ -29,7 +29,7 @@ import type {
   AIRecommendation,
   AnalyticsDashboardProps,
   // BrazilianHealthcareIntelligence,
-  ComplianceAnalytics,
+  // ComplianceAnalytics, // Unused import
   CriticalAlert,
   HealthcareAnalytics,
   MetricCard,
@@ -38,21 +38,21 @@ import {
   Activity,
   AlertTriangle,
   BarChart3,
-  Bell,
+  // Bell, // Unused import
   Brain,
   Calendar,
   CheckCircle,
   ChevronDown,
   ChevronRight,
-  Clock,
+  // Clock, // Unused import
   Download,
   Eye,
-  Filter,
-  Heart,
-  Info,
+  // Filter, // Unused import
+  // Heart, // Unused import
+  // Info, // Unused import
   PieChart,
   RefreshCw,
-  Search,
+  // Search, // Unused import
   Settings,
   Shield,
   Stethoscope,
@@ -60,7 +60,7 @@ import {
   TrendingDown,
   TrendingUp,
   Users,
-  XCircle,
+  // XCircle, // Unused import
   Zap,
 } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";

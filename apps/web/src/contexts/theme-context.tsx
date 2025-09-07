@@ -314,7 +314,10 @@ export function useAccessibilityPreferences() {
 
 // LGPD compliance hook for Brazilian healthcare requirements
 export function useLGPDCompliance() {
-  const { config, setConfig } = useHealthcareTheme() as unknown;
+  const { config, setConfig } = useHealthcareTheme() as unknown as {
+    config: HealthcareThemeConfig;
+    setConfig: React.Dispatch<React.SetStateAction<HealthcareThemeConfig>>;
+  };
 
   return {
     isCompliant: config.lgpdCompliant,

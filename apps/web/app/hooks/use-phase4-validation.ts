@@ -21,7 +21,7 @@ import {
   // ValidationRequest, // Unused import
   // ValidationResult, // Unused import
 } from "@/app/types/phase4-validation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface UsePhase4ValidationOptions {
   clinic_id: string;
@@ -126,7 +126,7 @@ export function usePhase4Validation(
   const [error, setError] = useState<string | null>(null);
   const [connected, setConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
 
   // Memoized derived state
   const activeSessions = useMemo(
@@ -156,11 +156,9 @@ export function usePhase4Validation(
     const connectWebSocket = () => {
       const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}/validation`);
 
-      ws.onopen = () => {
+      const onOpen = () => {
         setConnected(true);
         console.log("Validation WebSocket connected");
-
-        // Subscribe to clinic-specific events
         ws.send(
           JSON.stringify({
             type: "subscribe",
@@ -169,7 +167,7 @@ export function usePhase4Validation(
         );
       };
 
-      ws.onmessage = (event) => {
+      const onMessage = (event: MessageEvent) => {
         try {
           const data = JSON.parse(event.data);
           handleWebSocketMessage(data);
@@ -178,27 +176,32 @@ export function usePhase4Validation(
         }
       };
 
-      ws.onclose = () => {
+      const onClose = () => {
         setConnected(false);
         console.log("Validation WebSocket disconnected");
-
-        // Attempt to reconnect after 5 seconds
         setTimeout(connectWebSocket, 5000);
       };
 
-      ws.onerror = (error) => {
-        console.error("Validation WebSocket error:", error);
+      const onError = (event: Event) => {
+        console.error("Validation WebSocket error:", event);
         setConnected(false);
       };
 
-      setWsConnection(ws);
+      ws.addEventListener("open", onOpen);
+      ws.addEventListener("message", onMessage);
+      ws.addEventListener("close", onClose);
+      ws.addEventListener("error", onError);
+
+      wsRef.current = ws;
     };
 
     connectWebSocket();
 
     return () => {
-      if (wsConnection) {
-        wsConnection.close();
+      const current = wsRef.current;
+      if (current) {
+        current.close();
+        wsRef.current = null;
       }
     };
   }, [options.real_time_updates, options.clinic_id]);
@@ -211,7 +214,7 @@ export function usePhase4Validation(
       return;
     }
 
-    const message = data as { type: string; [key: string]: any; };
+    const message = data as { type: string; [key: string]: unknown; };
 
     switch (message.type) {
       case "session_update":

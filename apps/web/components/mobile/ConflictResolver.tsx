@@ -293,12 +293,15 @@ export default function ConflictResolver({
   } = useConflictDetection(userId);
 
   const conflicts = externalConflicts || internalConflicts;
-  const resolveConflict = onConflictResolved
-    ? async (id: string, resolution: ResolutionAction) => {
-      onConflictResolved(id, resolution);
-      return true;
+  const resolveConflict = useMemo(() => {
+    if (onConflictResolved) {
+      return async (id: string, resolution: ResolutionAction) => {
+        onConflictResolved(id, resolution);
+        return true;
+      };
     }
-    : internalResolveConflict;
+    return internalResolveConflict;
+  }, [onConflictResolved, internalResolveConflict]);
 
   const {
     canAutoResolve,

@@ -26,7 +26,7 @@ import type {
   CFMValidationResult,
   ValidationResponse,
 } from "../../types/compliance";
-import { CFMLicenseStatus, MedicalSpecialty } from "../../types/compliance";
+// import { CFMLicenseStatus, MedicalSpecialty } from "../../types/compliance"; // Unused imports
 
 import { cfmUtils, cfmValidationService } from "../../lib/compliance/cfm-professional-validation";
 
@@ -389,9 +389,9 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
     if (showValidation && crmNumber) {
       validateProfessional();
     }
-  }, [crmNumber, showValidation]);
+  }, [crmNumber, showValidation, validateProfessional]);
 
-  const validateProfessional = async () => {
+  const validateProfessional = useCallback(async () => {
     setIsLoading(true);
     try {
       const result = await cfmValidationService.validateLicense(crmNumber);
@@ -402,7 +402,7 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [crmNumber, onValidationComplete]);
 
   const professional = validationResult?.data;
 
@@ -537,9 +537,9 @@ export const CFMBatchValidator: React.FC<CFMBatchValidatorProps> = ({
     if (crmNumbers.length > 0) {
       validateBatch();
     }
-  }, [crmNumbers]);
+  }, [crmNumbers, validateBatch]);
 
-  const validateBatch = async () => {
+  const validateBatch = useCallback(async () => {
     setIsValidating(true);
     try {
       const result = await cfmValidationService.validateMultipleLicenses(crmNumbers);
@@ -550,7 +550,7 @@ export const CFMBatchValidator: React.FC<CFMBatchValidatorProps> = ({
     } finally {
       setIsValidating(false);
     }
-  };
+  }, [crmNumbers, onValidationComplete]);
 
   if (!results && !isValidating) {
     return null;

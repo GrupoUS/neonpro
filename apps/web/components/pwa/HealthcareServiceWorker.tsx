@@ -15,7 +15,7 @@ import {
   Wifi,
   WifiOff,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
@@ -100,37 +100,7 @@ export function useHealthcareServiceWorker() {
     dataUsage: { cached: 0, downloaded: 0, uploaded: 0 },
   });
 
-  useEffect(() => {
-    // Register service worker
-    registerServiceWorker();
-
-    // Setup online/offline listeners
-    const handleOnline = () => {
-      setState((prev) => ({ ...prev, isOnline: true }));
-      syncCriticalData();
-    };
-
-    const handleOffline = () => {
-      setState((prev) => ({ ...prev, isOnline: false }));
-    };
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    // Initial sync
-    syncCriticalData();
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, [
-    // Register service worker
-    registerServiceWorker, // Initial sync
-    syncCriticalData,
-  ]);
-
-  const registerServiceWorker = async () => {
+  const registerServiceWorker = useCallback(async () => {
     if ("serviceWorker" in navigator) {
       try {
         const registration = await navigator.serviceWorker.register("/sw.js");
@@ -144,9 +114,9 @@ export function useHealthcareServiceWorker() {
         // console.error("Service Worker registration failed");
       }
     }
-  };
+  }, []);
 
-  const syncCriticalData = async () => {
+  const syncCriticalData = useCallback(async () => {
     setState((prev) => ({ ...prev, syncInProgress: true }));
 
     try {
@@ -200,7 +170,33 @@ export function useHealthcareServiceWorker() {
       setState((prev) => ({ ...prev, syncInProgress: false }));
       // console.error("Critical data sync failed");
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    // Register service worker
+    registerServiceWorker();
+
+    // Setup online/offline listeners
+    const handleOnline = () => {
+      setState((prev) => ({ ...prev, isOnline: true }));
+      syncCriticalData();
+    };
+
+    const handleOffline = () => {
+      setState((prev) => ({ ...prev, isOnline: false }));
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    // Initial sync
+    syncCriticalData();
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [registerServiceWorker, syncCriticalData]);
 
   const updateApp = async () => {
     if ("serviceWorker" in navigator) {

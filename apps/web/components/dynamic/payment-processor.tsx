@@ -42,6 +42,7 @@ interface PaymentIntent {
   metadata?: Record<string, string>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface PaymentMethodData {
   type: "card" | "pix" | "boleto";
   card?: {
@@ -191,7 +192,7 @@ export function usePaymentProcessing() {
 
   // Process payment
   const processPayment = useCallback(
-    async (stripe: unknown, elements: unknown, paymentIntent: PaymentIntent) => {
+    async (stripe: unknown, elements: unknown, _paymentIntent: PaymentIntent) => {
       setIsProcessing(true);
       setError(null);
 

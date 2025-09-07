@@ -324,6 +324,7 @@ export class ComplianceReportGenerator {
   /**
    * Generate trend analysis section
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private async generateTrendAnalysis(trends: unknown[], config: ReportGenerationConfig): Promise<unknown> {
     return {
       overallTrend: this.calculateOverallTrend(trends),
@@ -364,7 +365,7 @@ export class ComplianceReportGenerator {
   /**
    * Generate recommendations based on compliance data
    */
-  private async generateRecommendations(data: ReportData, config: ReportGenerationConfig): Promise<unknown[]> {
+  private async generateRecommendations(data: ReportData, _config: ReportGenerationConfig): Promise<unknown[]> {
   const recommendations: unknown[] = [];
 
   // Framework-specific recommendations
@@ -395,7 +396,7 @@ export class ComplianceReportGenerator {
   /**
    * Apply template to report content
    */
-  private async applyTemplate(content: unknown, config: ReportGenerationConfig): Promise<string> {
+  private async applyTemplate(content: unknown, _config: ReportGenerationConfig): Promise<string> {
     const templateName = `${config.reportType}_${config.outputFormat}`;
     
     // Apply branding if provided
@@ -844,7 +845,7 @@ export class ComplianceReportGenerator {
   ] as unknown[];
 }
 
-  private async getCriticalViolationRecommendations(violations: ComplianceViolation[]): Promise<unknown[]> {
+  private async getCriticalViolationRecommendations(_violations: ComplianceViolation[]): Promise<unknown[]> {
   return [
     {
       title: "Address critical compliance violations immediately",

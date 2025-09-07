@@ -597,11 +597,11 @@ export class CFMTester {
     return { followsGuidelines: Math.random() > 0.3 };
   }
 
-  private async checkPatientDignityRespect(url: string): Promise<{ respectsDignity: boolean; }> {
+  private async checkPatientDignityRespect(_url: string): Promise<{ respectsDignity: boolean; }> {
     return { respectsDignity: Math.random() > 0.2 };
   }
 
-  private async checkPatientAutonomySupport(url: string): Promise<{ supportsAutonomy: boolean; }> {
+  private async checkPatientAutonomySupport(_url: string): Promise<{ supportsAutonomy: boolean; }> {
     return { supportsAutonomy: Math.random() > 0.3 };
   }
 

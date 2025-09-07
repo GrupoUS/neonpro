@@ -108,7 +108,7 @@ interface PhotoUploadData {
 }
 
 export function BeforeAfterSecureGallery({
-  treatmentSessionId,
+  _treatmentSessionId: treatmentSessionId,
   photos,
   sessions = [],
   consentStatus,

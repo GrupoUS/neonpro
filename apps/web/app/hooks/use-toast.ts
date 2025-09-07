@@ -56,9 +56,10 @@ export const useToast = () => {
   }, []);
 
   useEffect(() => {
+    const map = timersRef.current;
     return () => {
-      timersRef.current.forEach((timerId) => clearTimeout(timerId));
-      timersRef.current.clear();
+      map.forEach((timerId) => clearTimeout(timerId));
+      map.clear();
     };
   }, []);
 

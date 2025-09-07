@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { AlertTriangle, Clock, Heart, Phone, Search, User } from "lucide-react";
+import { AlertTriangle, Clock, /*Heart,*/ Phone, Search, User } from "lucide-react"; // Heart unused import
 import React, { useCallback, useEffect, useState } from "react";
 
 // Patient interface optimizada para emergency lookup

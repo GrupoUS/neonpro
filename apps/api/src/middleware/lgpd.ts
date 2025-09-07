@@ -295,73 +295,107 @@ export const lgpdMiddleware = (): MiddlewareHandler => {
     // Get route configuration
     const routeConfig = getRouteConfig(method, path);
 
-    if (routeConfig) {
-      // Extract patient ID for consent checking
-      const patientId = await extractPatientId(c);
+    // Guard against missing routeConfig - LGPD compliance requires configuration
+    if (!routeConfig) {
+      throw createError.internal(
+        `LGPD configuration missing for route ${method} ${path}. All routes must have LGPD configuration.`,
+      );
+    }
 
-      // Check consent requirements
-      if (routeConfig.requiresConsent.length > 0 && patientId) {
-        const hasValidConsent = consentStore.hasValidConsent(
-          patientId,
-          routeConfig.requiresConsent,
+    // Extract patient ID for consent checking
+    const patientId = await extractPatientId(c);
+
+    // Check consent requirements (honor allowAnonymous)
+    let consentValidated = false;
+    const requiredConsents = routeConfig.requiresConsent || [];
+    const allowsAnonymous = routeConfig.allowAnonymous === true;
+
+    if (requiredConsents.length === 0) {
+      consentValidated = true;
+    } else if (patientId) {
+      const hasValidConsent = consentStore.hasValidConsent(
+        patientId,
+        requiredConsents,
+      );
+
+      if (!hasValidConsent) {
+        const missingConsents = requiredConsents.filter(
+          (consent) => !consentStore.getConsent(patientId, consent)?.granted,
         );
 
-        if (!hasValidConsent) {
-          const missingConsents = routeConfig.requiresConsent.filter(
-            (consent) => !consentStore.getConsent(patientId, consent)?.granted,
-          );
-
-          throw createError.lgpdCompliance(
-            "Consentimento LGPD obrigatório não fornecido",
-            {
-              requiredConsents: routeConfig.requiresConsent,
-              missingConsents,
-              patientId,
-              article: "LGPD Art. 8º",
-            },
-          );
-        }
-      }
-
-      // Check data retention compliance
-      if (patientId && !validateDataRetention(routeConfig, patientId)) {
         throw createError.lgpdCompliance(
-          "Dados fora do período de retenção permitido",
+          "Consentimento LGPD obrigatório não fornecido",
           {
-            retentionPeriod: routeConfig.retentionPeriod,
-            article: "LGPD Art. 15º",
+            requiredConsents,
+            missingConsents,
+            patientId,
+            article: "LGPD Art. 8º",
           },
         );
       }
-
-      // Set LGPD compliance headers
-      c.res.headers.set("X-LGPD-Compliant", "true");
-      c.res.headers.set("X-LGPD-Basis", routeConfig.lawfulBasis.join(","));
-      c.res.headers.set(
-        "X-LGPD-Categories",
-        routeConfig.dataCategories.join(","),
-      );
-
-      if (routeConfig.retentionPeriod) {
-        c.res.headers.set(
-          "X-LGPD-Retention-Days",
-          routeConfig.retentionPeriod.toString(),
+      consentValidated = true;
+    } else {
+      if (!allowsAnonymous) {
+        throw createError.lgpdCompliance(
+          "Paciente não identificado para operação que exige consentimento",
+          {
+            requiredConsents,
+            missingConsents: requiredConsents,
+            patientId: null,
+            article: "LGPD Art. 8º",
+          },
         );
       }
-
-      // Store LGPD context for audit
-      c.set("lgpdContext", {
-        config: routeConfig,
-        patientId,
-        consentValidated: routeConfig.requiresConsent.length === 0
-          || (patientId
-            && consentStore.hasValidConsent(
-              patientId,
-              routeConfig.requiresConsent,
-            )),
-      });
+      // Anonymous access allowed; proceed without consent
+      consentValidated = false;
     }
 
+    // Check data retention compliance
+    if (patientId && !validateDataRetention(routeConfig, patientId)) {
+      throw createError.lgpdCompliance(
+        "Dados fora do período de retenção permitido",
+        {
+          retentionPeriod: routeConfig.retentionPeriod,
+          article: "LGPD Art. 15º",
+        },
+      );
+    }
+
+    // Set LGPD compliance headers
+    c.res.headers.set("X-LGPD-Compliant", "true");
+    c.res.headers.set("X-LGPD-Basis", routeConfig.lawfulBasis.join(","));
+    c.res.headers.set(
+      "X-LGPD-Categories",
+      routeConfig.dataCategories.join(","),
+    );
+
+    if (routeConfig.retentionPeriod) {
+      c.res.headers.set(
+        "X-LGPD-Retention-Days",
+        routeConfig.retentionPeriod.toString(),
+      );
+    }
+
+    // Additional LGPD headers
+    c.res.headers.set(
+      "X-LGPD-Explicit-Consent",
+      String(Boolean(routeConfig?.requireExplicitConsent)),
+    );
+    c.res.headers.set(
+      "X-LGPD-Allow-Anonymous",
+      String(Boolean(routeConfig?.allowAnonymous)),
+    );
+    c.res.headers.set(
+      "X-LGPD-Consent-Validated",
+      String(consentValidated),
+    );
+
+    // Store LGPD context for audit
+    c.set("lgpdContext", {
+      config: routeConfig,
+      patientId,
+      consentValidated,
+    });
     await next();
   };
 };
@@ -416,10 +450,10 @@ export const lgpdUtils = {
   },
 
   // Data minimization helper
-  minimizeData: <T extends Record<string, unknown>>(
+  minimizeData<T extends Record<string, unknown>>(
     data: T,
     allowedFields: (keyof T)[],
-  ): Partial<T> => {
+  ): Partial<T> {
     const minimized: Partial<T> = {};
     for (const field of allowedFields) {
       if (field in data) {
@@ -430,7 +464,7 @@ export const lgpdUtils = {
   },
 
   // Anonymize data for analytics
-  anonymizeData: <T extends Record<string, unknown>>(data: T): T => {
+  anonymizeData<T extends Record<string, unknown>>(data: T): T {
     const anonymized: Record<string, unknown> = { ...data };
 
     // Remove direct identifiers
@@ -452,16 +486,29 @@ export const lgpdUtils = {
     // Safe base64 helper that works in Node and browser-like environments
     const toBase64 = (value: string): string => {
       try {
-        // @ts-expect-error: Buffer not defined in browser but available in Node
-        if (typeof Buffer !== "undefined") return Buffer.from(value).toString("base64");
+        // Prefer Node Buffer when available (use globalThis to avoid TS issues)
+        const g = globalThis as unknown;
+        const maybeBuffer =
+          (g as { Buffer?: { from: (input: string) => { toString: (enc?: string) => string; }; }; })
+            .Buffer;
+        if (typeof maybeBuffer !== "undefined" && typeof maybeBuffer.from === "function") {
+          return maybeBuffer.from(value).toString("base64");
+        }
       } catch {}
-      // Fallback to btoa if available
+
+      // Fallback to btoa if available in the global scope (browser-like)
       try {
-        // @ts-expect-error: btoa may exist in some runtimes
-        if (typeof btoa === "function") return btoa(value);
+        const g = globalThis as unknown;
+        const maybeBtoa = (g as { btoa?: unknown; }).btoa;
+        if (typeof maybeBtoa === "function") {
+          return (maybeBtoa as (s: string) => string)(value);
+        }
       } catch {}
+
       // Last resort: simple hex encoding
-      return Array.from(value).map((c) => c.charCodeAt(0).toString(16)).join("");
+      return Array.from(value)
+        .map((c) => c.charCodeAt(0).toString(16))
+        .join("");
     };
 
     // Generate anonymous ID for analytics correlation

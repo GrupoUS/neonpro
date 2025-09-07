@@ -11,7 +11,7 @@ import {
 import type { ControlledSubstanceClass } from "@/lib/compliance/anvisa-controlled-substances";
 import { Search } from "lucide-react";
 import type React from "react";
-import { getSubstanceClassConfig, SUBSTANCE_CLASS_CONFIG } from "../../constants/anvisa-configs";
+import { getSubstanceClassConfig /*, SUBSTANCE_CLASS_CONFIG*/ } from "../../constants/anvisa-configs"; // SUBSTANCE_CLASS_CONFIG unused import
 import type { ANVISASubstance } from "../../types/compliance";
 
 interface ANVISASubstancesListProps {

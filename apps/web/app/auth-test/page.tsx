@@ -47,7 +47,7 @@ export default function AuthTestPage() {
     if (error) {
       clearError();
     }
-  }, [email, password, mfaCode]);
+  }, [email, password, mfaCode, error, clearError]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

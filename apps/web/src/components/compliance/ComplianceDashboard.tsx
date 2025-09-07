@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+// import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // Unused imports
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,11 +42,11 @@ import { toast } from "sonner";
 
 import type { ComplianceDashboardData } from "@/lib/compliance/compliance-dashboard";
 import {
-  ComplianceAlert,
+  // ComplianceAlert, // Unused import
   ComplianceDashboardService,
-  ComplianceMetrics,
-  ComplianceRiskLevel,
-  ComplianceScore,
+  // ComplianceMetrics, // Unused import
+  // ComplianceRiskLevel, // Unused import
+  // ComplianceScore, // Unused import
 } from "@/lib/compliance/compliance-dashboard";
 
 // Initialize Compliance Dashboard service

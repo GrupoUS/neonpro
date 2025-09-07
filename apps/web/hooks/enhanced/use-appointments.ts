@@ -186,7 +186,11 @@ export function useCreateAppointment() {
       if (!response.success) {
         throw new Error(response.error?.code || "Failed to create appointment");
       }
-      return response.data!;
+      const data = response.data;
+      if (data == null) {
+        throw new Error("Empty response data");
+      }
+      return data;
     },
 
     enableAuditLogging: true,
@@ -246,7 +250,11 @@ export function useUpdateAppointment(id: string) {
       if (!response.success) {
         throw new Error(response.error?.code || "Failed to update appointment");
       }
-      return response.data!;
+      const data = response.data;
+      if (data == null) {
+        throw new Error("Empty response data");
+      }
+      return data;
     },
 
     enableAuditLogging: true,
@@ -319,7 +327,11 @@ export function useCancelAppointment() {
       if (!response.success) {
         throw new Error(response.error?.code || "Failed to cancel appointment");
       }
-      return response.data!;
+      const data = response.data;
+      if (data == null) {
+        throw new Error("Empty response data");
+      }
+      return data;
     },
 
     enableAuditLogging: true,
@@ -442,7 +454,11 @@ export function useCheckInAppointment() {
           response.error?.code || "Failed to check in appointment",
         );
       }
-      return response.data!;
+      const data = response.data;
+      if (data == null) {
+        throw new Error("Empty response data");
+      }
+      return data;
     },
 
     enableAuditLogging: true,
@@ -505,7 +521,11 @@ export function useCompleteAppointment() {
           response.error?.code || "Failed to complete appointment",
         );
       }
-      return response.data!;
+      const data = response.data;
+      if (data == null) {
+        throw new Error("Empty response data");
+      }
+      return data;
     },
 
     enableAuditLogging: true,
@@ -578,7 +598,11 @@ export function useRescheduleAppointment() {
           response.error?.code || "Failed to reschedule appointment",
         );
       }
-      return response.data!;
+      const data = response.data;
+      if (data == null) {
+        throw new Error("Empty response data");
+      }
+      return data;
     },
 
     enableAuditLogging: true,
@@ -671,7 +695,11 @@ export function useWeeklySchedule(weekStart: string, professionalId?: string) {
       if (!response.success) {
         throw new Error("Failed to fetch weekly schedule");
       }
-      return response.data!;
+      const data = response.data;
+      if (data == null) {
+        throw new Error("Empty response data");
+      }
+      return data;
     },
     enableAuditLogging: false,
     sensitiveData: true,

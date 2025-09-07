@@ -345,13 +345,13 @@ export function usePerformanceMonitoring({
     const wsUrl = `${protocol}//${window.location.host}/api/performance-monitoring/websocket`;
 
     try {
-      wsRef.current = new WebSocket(wsUrl);
+      const ws = new WebSocket(wsUrl);
+      wsRef.current = ws;
 
-      wsRef.current.onopen = () => {
+      const handleOpen = () => {
         console.log("Performance monitoring WebSocket connected");
-
         // Send subscription with clinic and department filters
-        wsRef.current?.send(
+        ws.send(
           JSON.stringify({
             type: "subscribe",
             clinicId,
@@ -360,10 +360,9 @@ export function usePerformanceMonitoring({
         );
       };
 
-      wsRef.current.onmessage = (event) => {
+      const handleMessage = (event: MessageEvent) => {
         try {
           const message = JSON.parse(event.data);
-
           switch (message.type) {
             case "metrics_updated":
               fetchMetrics();
@@ -384,11 +383,11 @@ export function usePerformanceMonitoring({
         }
       };
 
-      wsRef.current.onerror = (error) => {
+      const handleError = (error: Event) => {
         console.error("Performance monitoring WebSocket error:", error);
       };
 
-      wsRef.current.onclose = () => {
+      const handleClose = () => {
         console.log("Performance monitoring WebSocket closed");
         // Attempt to reconnect after 10 seconds
         setTimeout(() => {
@@ -397,13 +396,23 @@ export function usePerformanceMonitoring({
           }
         }, 10_000);
       };
+
+      ws.addEventListener("open", handleOpen);
+      ws.addEventListener("message", handleMessage);
+      ws.addEventListener("error", handleError);
+      ws.addEventListener("close", handleClose);
     } catch (err) {
       console.error("Error creating WebSocket connection:", err);
     }
 
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
+      const ws = wsRef.current;
+      if (ws) {
+        try {
+          ws.close();
+        } catch {
+          // ignore
+        }
         wsRef.current = null;
       }
     };

@@ -2,7 +2,7 @@
 
 import {
   EmptyState,
-  ErrorBoundary,
+  // ErrorBoundary, // Unused import
   LoadingCard,
   StateManager,
 } from "@/components/forms/loading-error-states";
@@ -29,7 +29,7 @@ import {
   UserCheck,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // API Base URL
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
@@ -69,7 +69,7 @@ function useDashboardData() {
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -132,8 +132,9 @@ function useDashboardData() {
         return createdDate >= startOfMonth;
       }).length;
 
-      const lgpdCompliantPatients =
-        patients.filter((patient: unknown) => patient.lgpd_consent_given === true).length;
+      const lgpdCompliantPatients = patients.filter((patient: unknown) =>
+        patient.lgpd_consent_given === true
+      ).length;
 
       const dashboardStats: DashboardStats = {
         patients: {
@@ -172,11 +173,11 @@ function useDashboardData() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchDashboardData();
-  }, [user]);
+  }, [fetchDashboardData]);
 
   return { stats, loading, error, refetch: fetchDashboardData };
 }

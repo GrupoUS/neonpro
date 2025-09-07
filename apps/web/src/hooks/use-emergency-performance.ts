@@ -96,6 +96,19 @@ export function useEmergencyPerformance({
   const emergencyRequestsRef = useRef<Map<string, EmergencyRequest>>(new Map());
 
   // Initialize Performance Optimizer
+  const updateCacheHealth = useCallback(async (): Promise<void> => {
+    // In real implementation, would check actual cache status
+    setPerformanceState(prev => ({
+      ...prev,
+      cache_health: {
+        emergency_protocols_cached: true,
+        medications_cached: true,
+        professionals_cached: true,
+        last_cache_update: new Date(),
+      },
+    }));
+  }, []);
+
   useEffect(() => {
     const initializePerformanceOptimizer = async () => {
       try {
@@ -164,7 +177,7 @@ export function useEmergencyPerformance({
         clearInterval(performanceMonitoringRef.current);
       }
     };
-  }, [toast]);
+  }, [toast, startPerformanceMonitoring, updateCacheHealth]);
 
   // Start performance monitoring
   const startPerformanceMonitoring = useCallback(() => {
@@ -442,19 +455,6 @@ export function useEmergencyPerformance({
     }
 
     return symptoms;
-  };
-
-  const updateCacheHealth = async (): Promise<void> => {
-    // In real implementation, would check actual cache status
-    setPerformanceState(prev => ({
-      ...prev,
-      cache_health: {
-        emergency_protocols_cached: true,
-        medications_cached: true,
-        professionals_cached: true,
-        last_cache_update: new Date(),
-      },
-    }));
   };
 
   return {

@@ -32,7 +32,7 @@ import type {
 import PerformanceMetrics from "../no-show/performance-metrics";
 import type { RiskFactor } from "../no-show/risk-factor-breakdown";
 import RiskFactorBreakdown from "../no-show/risk-factor-breakdown";
-import RiskIndicator, { RiskIndicatorList, RiskLevel } from "../no-show/risk-indicator";
+import RiskIndicator, { RiskIndicatorList /*, RiskLevel*/ } from "../no-show/risk-indicator"; // RiskLevel unused import
 
 interface AntiNoShowDashboardExampleProps {
   className?: string;

@@ -16,7 +16,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Textarea,
+  // Textarea, // Unused import
 } from "@neonpro/ui";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";

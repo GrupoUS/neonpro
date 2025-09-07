@@ -135,22 +135,23 @@ export function PerformanceMetricsDashboard() {
 
     // Simulate real-time updates
     const interval = setInterval(() => {
-      if (metrics) {
-        setMetrics((prev) => ({
-          ...prev!,
+      setMetrics((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
           systemPerformance: {
-            ...prev?.systemPerformance,
+            ...prev.systemPerformance,
             cpuUsage: Math.floor(20 + Math.random() * 30),
             networkLatency: Math.floor(10 + Math.random() * 20),
           },
           applicationMetrics: {
-            ...prev?.applicationMetrics,
+            ...prev.applicationMetrics,
             responseTime: Math.floor(150 + Math.random() * 100),
             throughput: Math.floor(200 + Math.random() * 100),
             activeConnections: Math.floor(40 + Math.random() * 20),
           },
-        }));
-      }
+        };
+      });
     }, 5000);
 
     return () => clearInterval(interval);

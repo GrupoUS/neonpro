@@ -381,7 +381,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (!token) return false;
 
       const response = await AuthAPI.verifyToken(token);
-      return response.valid === true;
+      // Our AuthResponse uses { success, error } shape; treat success as validity
+      return response.success === true;
     } catch (error) {
       console.error("Token verification error:", error);
       return false;
@@ -393,7 +394,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!isAuthenticated) return;
 
     const interval = setInterval(() => {
-      refreshAuth();
+      void refreshAuth();
     }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(interval);
@@ -403,7 +404,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden && isAuthenticated) {
-        refreshAuth();
+        void refreshAuth();
       }
     };
 

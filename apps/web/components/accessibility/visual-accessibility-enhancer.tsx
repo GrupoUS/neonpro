@@ -24,20 +24,13 @@ import {
   Heart,
   Lightbulb,
   Moon,
-  MousePointer,
-  Move,
   Palette,
   Pill,
   Search,
-  Settings,
   Shield,
-  Stethoscope,
   Sun,
   Target,
   Type,
-  Users,
-  Volume2,
-  Zap,
 } from "lucide-react";
 import type React from "react";
 import {
@@ -235,7 +228,7 @@ const COLOR_BLINDNESS_TYPES_PT = {
   "monochromacy": "Monocromacia (Cegueira Total para Cores)",
 };
 
-const MEDICAL_VISUAL_CONTEXTS = {
+const _MEDICAL_VISUAL_CONTEXTS = {
   "post_cataract": {
     name_pt: "Pós-Cirurgia de Catarata",
     adjustments: {
@@ -619,7 +612,7 @@ export function VisualAccessibilityProvider({ children }: { children: React.Reac
   }, [updateSettings]);
 
   // Enhance focus
-  const enhanceFocus = useCallback((element: string) => {
+  const enhanceFocus = useCallback((_element: string) => {
     const focusCue = VISUAL_CUES.find(c => c.id === "focus_enhancement");
     if (focusCue && settings.focus_indicators_enhanced) {
       setAppliedVisualCues(prev => [...prev.filter(c => c.id !== "focus_enhancement"), focusCue]);

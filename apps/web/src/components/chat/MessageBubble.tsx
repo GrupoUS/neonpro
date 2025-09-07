@@ -8,7 +8,7 @@
 
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/types/chat";
-import { MessageType } from "@/types/chat";
+// import { MessageType } from "@/types/chat"; // Unused import
 import React, { useCallback, useState } from "react";
 
 // Icons (would be imported from lucide-react or similar)

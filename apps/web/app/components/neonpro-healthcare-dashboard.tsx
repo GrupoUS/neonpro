@@ -93,6 +93,7 @@ interface User {
   lastSeen: Date;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Activity {
   id: string;
   user: User;
@@ -125,6 +126,7 @@ interface Task {
   progress: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Project {
   id: string;
   name: string;
@@ -139,6 +141,7 @@ interface Project {
   tasks: Task[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Notification {
   id: string;
   title: string;

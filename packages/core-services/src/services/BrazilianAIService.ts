@@ -4,7 +4,7 @@
  */
 
 import { type LGPDTemplate, type PromptTemplate, templateManager } from "@neonpro/shared";
-import type { ServiceConfig, ServiceContext } from "../base/EnhancedServiceBase";
+import type { /* ServiceConfig, */ ServiceContext } from "../base/EnhancedServiceBase"; // Unused import: ServiceConfig
 import { AIService } from "./AIService";
 import type { ChatMessage, ChatRequest, ChatResponse, HealthcareContext } from "./AIService";
 import {

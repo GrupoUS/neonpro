@@ -1,5 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  /* CardContent, */ CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"; // CardContent unused import
 import { BarChart3, Calendar, Lock, Shield, Stethoscope, Users } from "lucide-react";
 import Link from "next/link";
 

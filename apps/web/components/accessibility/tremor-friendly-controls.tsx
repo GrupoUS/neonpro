@@ -17,15 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import type React from "react";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 // ================================================================================
 // TYPES & INTERFACES
@@ -122,7 +114,7 @@ export interface TremorFriendlyContextType {
 // CONSTANTS & CONFIGURATIONS
 // ================================================================================
 
-const HEALTHCARE_TARGET_CONFIGS = {
+const _HEALTHCARE_TARGET_CONFIGS = {
   "emergency-button": {
     target_size_multiplier: 2,
     dwell_time: 2000,
@@ -247,7 +239,7 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
   const movementHistory = useRef<{ x: number; y: number; timestamp: number; }[]>([]);
   const lastInteraction = useRef<number>(0);
   const dwellTimeout = useRef<NodeJS.Timeout | null>(null);
-  const stabilizationInterval = useRef<NodeJS.Timeout | null>(null);
+  const _stabilizationInterval = useRef<NodeJS.Timeout | null>(null);
 
   // ================================================================================
   // MOVEMENT STABILIZATION SYSTEM

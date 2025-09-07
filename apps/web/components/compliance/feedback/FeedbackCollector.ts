@@ -207,7 +207,7 @@ export class FeedbackCollector {
   /**
    * Get feedback by ID
    */
-  async getFeedback(feedbackId: string): Promise<UserFeedback | null> {
+  async getFeedback(_feedbackId: string): Promise<UserFeedback | null> {
     try {
       // In production, this would query the database
       // For now, return mock data or null
@@ -221,7 +221,7 @@ export class FeedbackCollector {
   /**
    * Get all feedback with filters
    */
-  async getFeedbackList(filters?: {
+  async getFeedbackList(_filters?: {
     type?: UserFeedback["type"];
     category?: UserFeedback["category"];
     status?: UserFeedback["status"];
@@ -369,7 +369,7 @@ export class FeedbackCollector {
   }
 
   // UI trigger methods (would integrate with actual UI components)
-  private async showErrorFeedbackModal(context: unknown): Promise<void> {
+  private async showErrorFeedbackModal(_context: unknown): Promise<void> {
     console.log("🔧 Showing error feedback modal");
     // Would show modal UI for error feedback
   }

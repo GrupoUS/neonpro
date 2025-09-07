@@ -234,11 +234,12 @@ export function useVoiceInteraction(
       setInterimTranscript(interimText);
     };
 
-    recognition.onerror = (event) => {
-      setError(`Erro de reconhecimento: ${event.error}`);
+    recognition.addEventListener("error", (event: unknown) => {
+      const err = (event as { error?: unknown; })?.error;
+      setError(`Erro de reconhecimento: ${String(err)}`);
       setState(VoiceState.ERROR);
       setIsListening(false);
-    };
+    });
 
     recognition.onend = () => {
       setIsListening(false);
@@ -305,7 +306,7 @@ export function useVoiceInteraction(
 
     utterance.onstart = () => setState(VoiceState.SPEAKING);
     utterance.onend = () => setState(VoiceState.IDLE);
-    utterance.onerror = () => setState(VoiceState.ERROR);
+    utterance.addEventListener("error", () => setState(VoiceState.ERROR));
 
     synthesisRef.current = utterance;
     window.speechSynthesis.speak(utterance);
@@ -657,7 +658,7 @@ export function VoiceInteractionUX({
                     <strong>Comandos Globais:</strong>
                     {Object.keys(VoiceCommands.global).map(cmd => (
                       <Badge key={cmd} variant="outline" className="ml-1 text-xs">
-                        " &quot;{cmd}&quot;"
+                        &quot;{cmd}&quot;
                       </Badge>
                     ))}
                   </div>

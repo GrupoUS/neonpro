@@ -331,7 +331,13 @@ export function useEmergencyVoiceCommands({
       recognitionInstance.removeEventListener("start", handleStart);
       recognitionInstance.removeEventListener("end", handleEnd);
     };
-  }, [recognition.error, enableContinuousListening, toast]);
+  }, [
+    recognition.error,
+    enableContinuousListening,
+    toast,
+    processEmergencyCommand,
+    startListening,
+  ]);
 
   // Process emergency commands
   const processEmergencyCommand = useCallback((transcript: string, confidence: number) => {

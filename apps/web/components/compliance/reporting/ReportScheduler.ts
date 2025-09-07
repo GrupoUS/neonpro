@@ -567,17 +567,17 @@ export class ReportScheduler {
     return `${config.location}/${report.id}`;
   }
 
-  private async notifyDashboard(report: GeneratedReport, config: unknown): Promise<void> {
+  private async notifyDashboard(report: GeneratedReport, _config: unknown): Promise<void> {
     console.log(`📊 Notifying dashboard about new report`);
     // Would implement dashboard notification
   }
 
   // Database operations (mock implementations)
-  private async saveSchedule(schedule: ReportSchedule): Promise<void> {
+  private async saveSchedule(_schedule: ReportSchedule): Promise<void> {
     // Would save to actual database
   }
 
-  private async removeSchedule(scheduleId: string): Promise<void> {
+  private async removeSchedule(_scheduleId: string): Promise<void> {
     // Would remove from actual database
   }
 
@@ -587,12 +587,12 @@ export class ReportScheduler {
   }
 
   // Analysis helper methods
-  private identifyImprovementAreas(scores: unknown[], violations: unknown[]): string[] {
+  private identifyImprovementAreas(_scores: unknown[], _violations: unknown[]): string[] {
     // Would analyze data to identify improvement opportunities
     return ["WCAG Color Contrast", "LGPD Consent Management"];
   }
 
-  private identifyAchievements(scores: unknown[], violations: unknown[]): string[] {
+  private identifyAchievements(_scores: unknown[], _violations: unknown[]): string[] {
     // Would analyze data to identify achievements
     return ["Zero Critical ANVISA Violations", "CFM Ethics Score Above 90%"];
   }

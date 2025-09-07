@@ -33,7 +33,7 @@ export interface RiskFactor {
   category: "historical" | "demographic" | "appointment" | "external" | "behavioral";
   trend?: "increasing" | "decreasing" | "stable";
   confidence: number; // 0-100
-  icon?: React.ComponentType<any>;
+  icon?: React.ComponentType<unknown>;
 }
 
 export interface RiskFactorBreakdownProps {

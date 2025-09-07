@@ -9,7 +9,7 @@ interface TestResult {
   testName: string;
   status: "pass" | "fail" | "warning";
   message: string;
-  details?: any;
+  details?: unknown;
   duration: number;
   timestamp: Date;
 }
@@ -444,7 +444,7 @@ class ProductionTestSuite {
    */
   private async executeTest(
     testName: string,
-    testFunction: () => Promise<any>,
+    testFunction: () => Promise<unknown>,
   ): Promise<void> {
     const startTime = Date.now();
 

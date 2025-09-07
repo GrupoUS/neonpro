@@ -6,7 +6,7 @@ import type {
   Intervention,
   StaffAlert,
 } from "@/types/staff-alerts";
-import { EscalationRule } from "@/types/staff-alerts";
+// import { EscalationRule } from "@/types/staff-alerts"; // Unused import
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseStaffAlertsOptions {
@@ -371,9 +371,8 @@ export function useStaffAlerts({
     try {
       wsRef.current = new WebSocket(wsUrl);
 
-      wsRef.current.onopen = () => {
+      const onOpen = () => {
         console.log("Staff alerts WebSocket connected");
-        // Send subscription with filters
         wsRef.current?.send(
           JSON.stringify({
             type: "subscribe",
@@ -381,42 +380,46 @@ export function useStaffAlerts({
           }),
         );
       };
+      wsRef.current?.addEventListener("open", onOpen);
 
-      wsRef.current.onmessage = (event) => {
+      const onMessage = (event: MessageEvent) => {
         try {
           const message = JSON.parse(event.data);
-
-          if (
-            message.type === "alert_created"
-            || message.type === "alert_updated"
-          ) {
+          if (message.type === "alert_created" || message.type === "alert_updated") {
             fetchAlerts();
           }
         } catch (err) {
           console.error("Error parsing WebSocket message:", err);
         }
       };
+      wsRef.current?.addEventListener("message", onMessage);
 
-      wsRef.current.onerror = (error) => {
-        console.error("Staff alerts WebSocket error:", error);
+      const onError = (event: Event) => {
+        console.error("Staff alerts WebSocket error:", event);
       };
+      wsRef.current?.addEventListener("error", onError);
 
-      wsRef.current.onclose = () => {
+      const onClose = () => {
         console.log("Staff alerts WebSocket closed");
-        // Attempt to reconnect after 5 seconds
         setTimeout(() => {
           if (realTimeUpdates) {
             subscribeToAlerts();
           }
         }, 5000);
       };
+      wsRef.current?.addEventListener("close", onClose);
     } catch (err) {
       console.error("Error creating WebSocket connection:", err);
     }
 
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
+      const ws = wsRef.current;
+      if (ws) {
+        ws.removeEventListener("open", onOpen as EventListener);
+        ws.removeEventListener("message", onMessage as EventListener);
+        ws.removeEventListener("error", onError as EventListener);
+        ws.removeEventListener("close", onClose as EventListener);
+        ws.close();
         wsRef.current = null;
       }
     };

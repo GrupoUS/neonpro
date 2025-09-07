@@ -7,11 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
+import React, { /*useEffect,*/ useState } from "react"; // useEffect unused import
 
 // Import all AI-First components
 import {
-  AILoadingStates,
+  // AILoadingStates, // Unused import
   MedicalQueryLoading,
   PatientAnalysisLoading,
   useAILoadingState,
@@ -29,18 +29,18 @@ import {
   ContextType,
   Department,
   QuickContextSwitcher,
-  SwitchReason,
+  // SwitchReason, // Unused import
   useContextSwitching,
   UserRole,
 } from "../ui/context-switching";
 import {
   AIErrorBoundary,
   AIErrorType,
-  classifyAIError,
-  withAIErrorBoundary,
+  // classifyAIError, // Unused import
+  // withAIErrorBoundary, // Unused import
 } from "../ui/error-boundary-ai";
 import {
-  useVoiceInteraction,
+  // useVoiceInteraction, // Unused import
   VoiceContext,
   VoiceInteractionUX,
   VoiceMode,

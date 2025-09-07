@@ -126,7 +126,7 @@ export function ResultsVisualization({
         {/* Simple bar chart visualization */}
         <div className="bg-gray-50 p-4 rounded-lg">
           <div className="flex items-end justify-between h-40 gap-2">
-            {chartData.data.slice(0, 8).map((point, index) => (
+            {chartData.data.slice(0, 8).map((point, _index) => (
               <div key={point.id} className="flex flex-col items-center gap-2 flex-1">
                 <div
                   className="bg-blue-500 rounded-t min-w-[20px] transition-all hover:bg-blue-600"

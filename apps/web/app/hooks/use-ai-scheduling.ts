@@ -79,8 +79,8 @@ export const useAIScheduling = (
 
   // Core state
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>();
-  const [lastResult, setLastResult] = useState<SchedulingResult | null>();
+  const [error, setError] = useState<string | null>(null);
+  const [lastResult, setLastResult] = useState<SchedulingResult | null>(null);
 
   // Optimization state
   const [optimizationScore, setOptimizationScore] = useState(0.8);
@@ -202,26 +202,13 @@ export const useAIScheduling = (
       }
 
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
       const startTime = performance.now();
 
       try {
         // Fetch required data
-        const [
-          slotsResponse,
-          staffResponse,
-          patientsResponse,
-          treatmentsResponse,
-        ] = await Promise.all([
-          fetch(
-            `/api/scheduling/slots/${tenantId}?treatmentType=${request.treatmentTypeId}`,
-          ),
-          fetch(`/api/staff/${tenantId}`),
-          fetch(`/api/patients/${tenantId}/${request.patientId}`),
-          fetch(`/api/treatments/${tenantId}`),
-        ]);
 
-        const [slots, staff, patient, treatments] = await Promise.all([
+        const [_slots, _staff, _patient, _treatments] = await Promise.all([
           slotsResponse.json(),
           staffResponse.json(),
           patientsResponse.json(),

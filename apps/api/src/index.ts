@@ -34,7 +34,7 @@ if (!requiredJwtSecret) {
 }
 
 // Import Hono and middleware
-import { type Context, Hono, type Next } from "hono";
+import { /* type Context, */ Hono /* , type Next */ } from "hono"; // Unused imports: Context, Next
 import { compress } from "hono/compress";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
@@ -98,11 +98,6 @@ const securityStack = createHealthcareAPISecurityStack(
 );
 
 const { middlewares: securityMiddlewares = [], orchestrator } = securityStack;
-
-// Create fallback middleware that passes through
-const passThroughMiddleware = async (context: Context, next: Next) => {
-  return await next();
-};
 
 // NOTE: securityStack.validationMiddlewares is currently unused. Remove when wiring validations.
 // const validationMiddlewares = securityStack.validationMiddlewares || {

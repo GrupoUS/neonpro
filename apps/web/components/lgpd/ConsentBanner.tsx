@@ -14,7 +14,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface ConsentOption {
   id: string;
@@ -43,7 +43,7 @@ export default function ConsentBanner({
     "banner",
   );
 
-  const consentOptions: ConsentOption[] = [
+  const consentOptions: ConsentOption[] = useMemo(() => [
     {
       id: "essential",
       type: "essential",
@@ -111,7 +111,7 @@ export default function ConsentBanner({
       ],
       enabled: false,
     },
-  ];
+  ], []);
 
   useEffect(() => {
     // Initialize consents with required ones enabled
@@ -176,7 +176,7 @@ export default function ConsentBanner({
   };
 
   if (!isVisible) {
-    return;
+    return null;
   }
 
   return (
