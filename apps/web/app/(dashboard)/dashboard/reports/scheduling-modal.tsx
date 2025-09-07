@@ -304,7 +304,7 @@ export default function SchedulingModal({
                       Dia da Semana
                     </Label>
                     <Select
-                      onValueChange={(value) => setDayOfWeek(Number(value))}
+                      onValueChange={(value: string) => setDayOfWeek(Number(value))}
                       value={dayOfWeek.toString()}
                     >
                       <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
@@ -327,7 +327,7 @@ export default function SchedulingModal({
                   <div className="space-y-2">
                     <Label className="font-medium text-white">Dia do Mês</Label>
                     <Select
-                      onValueChange={(value) => setDayOfMonth(Number(value))}
+                      onValueChange={(value: string) => setDayOfMonth(Number(value))}
                       value={dayOfMonth.toString()}
                     >
                       <SelectTrigger className="border-slate-700 bg-slate-800 text-white">

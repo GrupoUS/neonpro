@@ -3,7 +3,7 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AlertTriangle, CheckCircle2, Clock, Eye, RefreshCw, Search, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { SecurityAlertStatus } from "../../../types/badge-variants";
 import { Badge } from "../../ui/badge";
@@ -53,7 +53,7 @@ export function SecurityAlertsTable() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedAlert, setSelectedAlert] = useState<SecurityAlert | null>();
 
-  const fetchAlerts = async () => {
+  const fetchAlerts = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/security/alerts", {
@@ -74,7 +74,7 @@ export function SecurityAlertsTable() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchAlerts();

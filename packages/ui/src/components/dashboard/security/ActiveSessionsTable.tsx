@@ -13,7 +13,7 @@ import {
   Smartphone,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "../../ui/alert";
 import { Badge } from "../../ui/badge";
@@ -66,7 +66,7 @@ export function ActiveSessionsTable() {
   const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
   const [sessionToTerminate, setSessionToTerminate] = useState<string | null>(null);
 
-  const fetchSessions = async () => {
+  const fetchSessions = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/security/sessions", {
@@ -87,7 +87,7 @@ export function ActiveSessionsTable() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchSessions();

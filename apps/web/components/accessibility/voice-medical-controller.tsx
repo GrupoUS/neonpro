@@ -847,11 +847,8 @@ export function VoiceMedicalController({
     updateSettings,
     startListening,
     stopListening,
-    speak,
     vocabularies,
     loadVocabulary,
-    requestConsent,
-    revokeConsent,
     exportData,
     deleteData,
   } = useVoiceMedical();

@@ -17,7 +17,7 @@ import {
   Users,
   XCircle,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { SecurityMetrics } from "../../../lib/utils";
 import { Alert, AlertDescription } from "../../ui/alert";
 import { Badge } from "../../ui/badge";
@@ -41,7 +41,7 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>();
 
-  const loadMetrics = async () => {
+  const loadMetrics = useCallback(async () => {
     try {
       setError(undefined);
       const response = await fetch("/api/security/metrics");
@@ -60,7 +60,7 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, []);
 
   const handleRefresh = async () => {
     setRefreshing(true);

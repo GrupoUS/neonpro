@@ -81,7 +81,7 @@ export default function ChatPage({ searchParams }: ChatPageProps) {
 
         {/* Main Chat Interface */}
         <Tabs
-          onValueChange={(value) => setActiveInterface(value as "external" | "internal")}
+          onValueChange={(value: string) => setActiveInterface(value as "external" | "internal")}
           value={activeInterface}
         >
           <TabsList className="grid w-full grid-cols-2">

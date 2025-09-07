@@ -372,7 +372,7 @@ export abstract class HealthcareApiTemplate<T, CreateInput, UpdateInput> {
       },
     };
 
-    return c.json(response, { status: statusCode });
+    return c.json(response, statusCode as any);
   }
 
   // Get the configured Hono app

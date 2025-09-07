@@ -62,6 +62,7 @@
     "@neonpro/database": "workspace:*",
     "@neonpro/utils": "workspace:*",
     "date-fns": "^3.6.0",
+    "lru-cache": "^11.2.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
