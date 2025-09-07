@@ -60,11 +60,11 @@ class MockCacheService implements CacheService {
 }
 
 class MockAnalyticsService implements AnalyticsService {
-  async track(event: string, properties: unknown): Promise<void> {
+  async track(_event: string, _properties: unknown): Promise<void> {
     // // console.log(`Analytics: ${event}`, properties);
   }
 
-  async recordPerformance(operation: string, duration: number): Promise<void> {
+  async recordPerformance(_operation: string, _duration: number): Promise<void> {
     // // console.log(`Performance: ${operation} took ${duration}ms`);
   }
 }
@@ -93,17 +93,17 @@ class MockSecurityService implements SecurityService {
     this.rateLimits.delete(key);
   }
 
-  async auditOperation(operation: unknown): Promise<void> {
+  async auditOperation(_operation: unknown): Promise<void> {
     // // console.log("Security audit:", operation);
   }
 }
 
 class MockAuditService implements AuditService {
-  async logOperation(operation: string, details: unknown): Promise<void> {
+  async logOperation(_operation: string, _details: unknown): Promise<void> {
     // // console.log(`Audit: ${operation}`, details);
   }
 
-  async log(event: string, details: unknown): Promise<void> {
+  async log(_event: string, _details: unknown): Promise<void> {
     // // console.log(`Audit Log: ${event}`, details);
   }
 }

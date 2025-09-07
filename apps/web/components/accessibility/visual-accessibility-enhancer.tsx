@@ -15,20 +15,14 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Accessibility,
   Activity,
   AlertCircle,
   CheckCircle2,
-  Clock,
   Contrast,
   Eye,
   FileText,
-  Focus,
   Heart,
-  Home,
   Lightbulb,
-  Maximize2,
-  Monitor,
   Moon,
   MousePointer,
   Move,

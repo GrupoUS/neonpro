@@ -6,8 +6,19 @@ interface AuthMethods {
   password: string;
 }
 
+interface MockUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  fullName?: string;
+  isActive?: boolean;
+  permissions?: Record<string, string>;
+  lastLoginAt?: Date;
+}
+
 interface AuthState {
-  user: any | null;
+  user: MockUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   error: string | null;
@@ -15,7 +26,7 @@ interface AuthState {
 
 interface LoginResult {
   success: boolean;
-  user?: any;
+  user?: MockUser;
   error?: string;
 }
 
@@ -27,7 +38,7 @@ interface RegisterCredentials extends AuthMethods {
 
 interface RegisterResult {
   success: boolean;
-  user?: any;
+  user?: MockUser;
   error?: string;
 }
 

@@ -1,4 +1,4 @@
-import { LogCategory, logger, LogLevel } from "@/lib/logger";
+import { LogCategory, logger /*, LogLevel*/ } from "@/lib/logger"; // LogLevel unused import
 import { alertSystem, type MonitoringDashboard } from "@/lib/monitoring/alert-system";
 import { createClient } from "@/utils/supabase/server";
 import type { NextRequest } from "next/server";

@@ -16,10 +16,10 @@ import type {
 } from "@/app/types/phase4-validation";
 import {
   BrazilianHealthcareValidationPresets,
-  ValidationLabels,
-  ValidationLevel,
-  ValidationRequest,
-  ValidationResult,
+  // ValidationLabels, // Unused import
+  // ValidationLevel, // Unused import
+  // ValidationRequest, // Unused import
+  // ValidationResult, // Unused import
 } from "@/app/types/phase4-validation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -205,18 +205,34 @@ export function usePhase4Validation(
 
   // Handle WebSocket messages
   const handleWebSocketMessage = useCallback((data: unknown) => {
-    switch (data.type) {
+    // Type guard for WebSocket message structure
+    if (typeof data !== "object" || data === null || !("type" in data)) {
+      console.warn("Invalid WebSocket message format:", data);
+      return;
+    }
+
+    const message = data as { type: string; [key: string]: any; };
+
+    switch (message.type) {
       case "session_update":
-        updateSessionInState(data.session);
+        if ("session" in message) {
+          updateSessionInState(message.session);
+        }
         break;
       case "alert":
-        addAlert(data.alert);
+        if ("alert" in message) {
+          addAlert(message.alert);
+        }
         break;
       case "health_update":
-        setSystemHealth(data.health);
+        if ("health" in message) {
+          setSystemHealth(message.health);
+        }
         break;
       case "stats_update":
-        setStats(data.stats);
+        if ("stats" in message) {
+          setStats(message.stats);
+        }
         break;
     }
     setLastUpdate(new Date());

@@ -43,14 +43,6 @@ interface ScreenshotOptions {
   includeCSS?: boolean;
 }
 
-interface ImageProcessingOptions {
-  width?: number;
-  height?: number;
-  quality?: number;
-  format?: "png" | "jpeg" | "webp";
-  backgroundColor?: string;
-}
-
 interface SVGToImageOptions {
   width?: number;
   height?: number;

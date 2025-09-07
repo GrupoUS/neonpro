@@ -4,22 +4,10 @@ import { useStaffAlerts } from "@/app/hooks/use-staff-alerts";
 import { Alert as AlertUI, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// Removed unused Dialog imports
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
+// Removed unused Select imports
 // import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -29,7 +17,6 @@ import {
   ALERT_PRIORITY_LABELS_PT,
   ALERT_STATUS_LABELS_PT,
   DEPARTMENT_LABELS_PT,
-
 } from "@/types/staff-alerts";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -67,16 +54,13 @@ export function StaffAlertDashboard({
   const {
     alerts,
     stats,
-    isLoading,
+
     error,
-    filters,
     acknowledgeAlert,
     assignAlert,
     resolveAlert,
     dismissAlert,
     escalateAlert,
-    setFilters,
-    clearFilters,
     getUnreadCount,
   } = useStaffAlerts({
     staffMemberId,
@@ -88,6 +72,7 @@ export function StaffAlertDashboard({
 
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const [selectedAlert, setSelectedAlert] = useState<StaffAlert | null>(null);
 
   // Filter alerts based on search term and tab
   const filteredAlerts = alerts.filter((alert) => {

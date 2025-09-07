@@ -69,7 +69,7 @@ import {
   Zap,
 } from "lucide-react";
 import type React from "react";
-import { createContext, useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 
 // Constants for time calculations
 const MILLISECONDS_PER_SECOND = 1000;

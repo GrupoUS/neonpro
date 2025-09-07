@@ -17,7 +17,7 @@ const useMFA = () => ({
     methods: [],
     backupCodes: 0,
   }),
-  disableMfaMethod: async (method: any) => ({ success: true }),
+  disableMfaMethod: async (_method: unknown) => ({ success: true }),
   generateBackupCodes: async () => ({
     success: true,
     codes: ["123456", "789012"],
@@ -29,12 +29,12 @@ const useMFA = () => ({
     email: "user@example.com",
     backupCodesCount: 5,
   },
-  disableMfa: async (method?: any) => ({ success: true }),
+  disableMfa: async (_method?: unknown) => ({ success: true }),
   regenerateBackupCodes: async () => ({
     success: true,
     backupCodes: ["123456", "789012", "345678", "456789", "567890"],
   }),
-  isMethodEnabled: (method: any) => false,
+  isMethodEnabled: (_method: unknown) => false,
   hasBackupCodes: () => false,
   clearError: () => {},
   isLoading: false,
@@ -70,7 +70,9 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
       if (result.success) {
         setShowDisableConfirm(false);
       }
-    } catch {}
+    } catch (err) {
+      // ignore
+    }
   };
 
   const handleRegenerateBackupCodes = async () => {

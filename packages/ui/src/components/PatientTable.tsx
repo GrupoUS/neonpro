@@ -44,7 +44,7 @@ interface PatientTableSort {
   direction: "asc" | "desc";
 }
 
-type PatientTablePagination = PaginationProps;
+// type PatientTablePagination = PaginationProps; // unused type alias removed
 
 interface PatientTableAction {
   key: string;
@@ -129,8 +129,8 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
       patients,
       loading = false,
       searchValue = "",
-      onSearchChange,
-      sortBy,
+      _onSearchChange: onSearchChange,
+      _sortBy: sortBy,
       sortDirection = "asc",
       onSort,
       selectedPatients = [],
@@ -139,9 +139,9 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
       onPatientAction,
       onRefresh,
       pagination,
-      filters = [],
-      activeFilters = [],
-      onFilterChange,
+      _filters: filters = [],
+      _activeFilters: activeFilters = [],
+      _onFilterChange: onFilterChange,
       columns = defaultColumns,
       viewMode = "table",
       onViewModeChange,

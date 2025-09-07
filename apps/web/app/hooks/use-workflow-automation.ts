@@ -6,7 +6,7 @@ import type {
   WorkflowRule,
   WorkflowTemplate,
 } from "@/types/workflow-automation";
-import { ActionResult } from "@/types/workflow-automation";
+// import { ActionResult } from "@/types/workflow-automation"; // Unused import
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseWorkflowAutomationOptions {
@@ -715,6 +715,7 @@ export function useWorkflowAutomation({
       const cleanup = setupWebSocket();
       return cleanup;
     }
+    return () => {}; // Return cleanup function even if not using real-time updates
   }, [realTimeUpdates, setupWebSocket]);
 
   // Set up auto-refresh
@@ -725,13 +726,13 @@ export function useWorkflowAutomation({
         fetchExecutions();
         fetchQueues();
       }, refreshInterval);
-
-      return () => {
-        if (refreshIntervalRef.current) {
-          clearInterval(refreshIntervalRef.current);
-        }
-      };
     }
+
+    return () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+    };
   }, [autoRefresh, refreshInterval, fetchRules, fetchExecutions, fetchQueues]);
 
   return {

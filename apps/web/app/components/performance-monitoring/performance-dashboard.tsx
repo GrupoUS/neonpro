@@ -23,12 +23,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePerformanceMonitoring } from "@/hooks/use-performance-monitoring";
 import { cn } from "@/lib/utils";
 import type { ExportOptions, PerformanceKPI } from "@/types/performance-monitoring";
-import { CHART_COLORS, KPI_LABELS_PT } from "@/types/performance-monitoring";
+import { KPI_LABELS_PT } from "@/types/performance-monitoring";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
   Activity,
   BarChart3,
+  Clock,
   DollarSign,
   Download,
   LineChart,
@@ -54,8 +55,8 @@ interface PerformanceDashboardProps {
 export function PerformanceDashboard({
   clinicId,
   departmentIds = [],
-  staffMemberId,
-  compactMode = false,
+  staffMemberId: _staffMemberId,
+  compactMode: _compactMode = false,
 }: PerformanceDashboardProps) {
   const {
     metrics,
@@ -63,10 +64,8 @@ export function PerformanceDashboard({
     staffReports,
     roiCalculation,
     isLoading,
-    error,
     lastUpdated,
     filters,
-    setFilters,
     refreshData,
     exportReport,
   } = usePerformanceMonitoring({
@@ -77,7 +76,6 @@ export function PerformanceDashboard({
     refreshInterval: 300_000, // 5 minutes
   });
 
-  const [selectedPeriod, setSelectedPeriod] = useState("last30days");
   const [activeTab, setActiveTab] = useState("overview");
   const [isExporting, setIsExporting] = useState(false);
 

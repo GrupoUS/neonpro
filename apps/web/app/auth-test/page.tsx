@@ -286,9 +286,9 @@ export default function AuthTestPage() {
               <div className="flex flex-wrap gap-1">
                 {Object.keys(user.permissions || {}).length > 0
                   ? (
-                    Object.keys(user.permissions).map((permission: string) => (
+                    Object.keys(user.permissions || {}).map((permission: string) => (
                       <Badge key={permission} variant="secondary" className="text-xs">
-                        {user.permissions[permission] || permission}
+                        {(user.permissions && user.permissions[permission]) || permission}
                       </Badge>
                     ))
                   )

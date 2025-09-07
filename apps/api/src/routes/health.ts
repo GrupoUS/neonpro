@@ -297,18 +297,17 @@ health.get("/environment", async (c) => {
 // Supabase-specific health check
 health.get("/health/supabase", async (c) => {
   const supabaseHealth = await HealthCheckService.checkSupabaseHealth();
-  const statusCode = supabaseHealth.status === "healthy"
-    ? 200
-    : supabaseHealth.status === "degraded"
-    ? 200
-    : 503;
+  const statusCode: number =
+    supabaseHealth.status === "healthy" || supabaseHealth.status === "degraded"
+      ? 200
+      : 503;
 
   return c.json(
     {
       healthy: supabaseHealth.status === "healthy",
       ...supabaseHealth,
     },
-    statusCode as any,
+    statusCode,
   );
 });
 

@@ -15,13 +15,8 @@ import {
   Download, 
   FileText,
   FileSpreadsheet,
-  FileImage,
-  Eye,
-  Filter,
   Search,
   TrendingUp,
-  Calendar,
-  Users,
   Activity
 } from 'lucide-react';
 

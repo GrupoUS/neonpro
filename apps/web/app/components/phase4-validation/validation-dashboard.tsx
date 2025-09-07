@@ -10,7 +10,7 @@ import type {
   ValidationStatus,
   ValidationType,
 } from "@/app/types/phase4-validation";
-import { ValidationLabels, ValidationLevel } from "@/app/types/phase4-validation";
+import { ValidationLabels } from "@/app/types/phase4-validation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +20,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,26 +41,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+
 import {
   Activity,
   AlertCircle,
   AlertTriangle,
-  BarChart3,
   Calendar,
   CheckCircle2,
   Clock,
-  Database,
   DollarSign,
   Download,
   Edit,
   Eye,
   FileText,
-  Filter,
   Heart,
   Info,
-  PauseCircle,
-  PlayCircle,
   Plus,
   RefreshCw,
   Search,
@@ -75,7 +69,7 @@ import {
   Wifi,
   WifiOff,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 interface ValidationDashboardProps {
   clinic_id: string;
@@ -92,9 +86,6 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
 
   const [selectedTab, setSelectedTab] = useState("dashboard");
   const [selectedSession, setSelectedSession] = useState<ValidationSession | null>(null);
-  const [selectedRule, setSelectedRule] = useState<ValidationRule | null>(null);
-  const [isCreateRuleOpen, setIsCreateRuleOpen] = useState(false);
-  const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<ValidationStatus | "all">(
     "all",
@@ -172,17 +163,18 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
     }
   };
 
-  const handleValidateEntity = async (
-    type: ValidationType,
-    entityId: string,
-    data: unknown,
-  ) => {
-    try {
-      await validation.validateEntity(type, entityId, data as Record<string, unknown>);
-    } catch (error) {
-      console.error("Validation failed:", error);
-    }
-  };
+  // removed unused handleValidateEntity to satisfy lint rules
+  // const handleValidateEntity = async (
+  //   type: ValidationType,
+  //   entityId: string,
+  //   data: unknown,
+  // ) => {
+  // try {
+  //   await validation.validateEntity(type, entityId, data as Record<string, unknown>);
+  // } catch (error) {
+  //   console.error("Validation failed:", error);
+  // }
+  // };
 
   return (
     <div className="space-y-6 p-6">

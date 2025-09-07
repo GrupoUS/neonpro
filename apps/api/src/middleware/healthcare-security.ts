@@ -10,6 +10,7 @@
  * - Advanced audit logging
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MiddlewareHandler } from "hono";
 import type { RedisOptions } from "ioredis";
 
@@ -768,6 +769,7 @@ function parseTimeWindow(window: string): number {
 }
 
 // Helper function to get Redis client
+/***** eslint-disable typescript-eslint/no-explicit-any *****/
 async function getRedisClient() {
   // Implementation depends on your Redis setup
   // Example using ioredis:

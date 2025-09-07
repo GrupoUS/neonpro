@@ -10,7 +10,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
+  // DialogFooter, // Unused import
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";

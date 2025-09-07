@@ -14,7 +14,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { Outlet } from "@tanstack/react-router";
 
 export function DashboardLayout() {
-  const { user, loading } = useAuth();
+  const { /* user, */ loading } = useAuth();
 
   if (loading) {
     return (

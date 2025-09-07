@@ -10,16 +10,14 @@ import {
   CheckCircle,
   Clock,
   Cloud,
-  CloudOff,
   Database,
-  Download,
   RefreshCw,
   Upload,
   Users,
   Wifi,
   WifiOff,
 } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // Types para offline sync
 interface PatientCacheEntry {
@@ -108,7 +106,8 @@ const useOfflineSyncManager = () => {
         },
         lastAccessed: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
         lastModified: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000),
-        priority: i < 50 ? "critical" : i < 100 ? "high" : "normal" as any,
+        priority:
+          (i < 50 ? "critical" : i < 100 ? "high" : "normal") as PatientCacheEntry["priority"],
         size: 2048 + Math.floor(Math.random() * 1024), // ~2-3KB per patient
       }));
 
@@ -182,7 +181,7 @@ const useOfflineSyncManager = () => {
       let processed = 0;
       let failed = 0;
 
-      for (const action of [...criticalActions, ...highActions, ...normalActions]) {
+      for (const _action of [...criticalActions, ...highActions, ...normalActions]) {
         try {
           // Simulate API call
           await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
@@ -193,7 +192,7 @@ const useOfflineSyncManager = () => {
           } else {
             failed++;
           }
-        } catch (error) {
+        } catch (_error) {
           failed++;
         }
       }

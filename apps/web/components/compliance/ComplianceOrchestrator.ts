@@ -12,7 +12,6 @@ import { FeedbackCollector, ImprovementEngine } from './feedback';
 import type { 
   ComplianceFramework, 
   ComplianceScore, 
-  ComplianceViolation,
   SystemHealthCheck,
   IntegrationValidation 
 } from './types';
@@ -403,7 +402,7 @@ export class ComplianceOrchestrator {
   }
 
   // Health monitoring methods
-  private async checkServiceHealth(serviceName: string, service: unknown): Promise<unknown> {
+  private async checkServiceHealth(_serviceName: string, _service: unknown): Promise<{ connectivity: boolean; responseTime: number; lastUpdate: Date; }> {
     // Mock health check - would implement actual service-specific checks
     return {
       connectivity: true,
@@ -479,22 +478,22 @@ export class ComplianceOrchestrator {
   }
 
   // Emergency response handlers
-  private async handleCriticalViolation(details: unknown): Promise<void> {
+  private async handleCriticalViolation(_details: unknown): Promise<void> {
     console.log('🚨 Handling critical violation');
     // Immediate notification and remediation workflow
   }
 
-  private async handleAuditAlert(details: unknown): Promise<void> {
+  private async handleAuditAlert(_details: unknown): Promise<void> {
     console.log('⚠️ Handling audit alert');
     // Audit preparation acceleration
   }
 
-  private async handleSecurityBreach(details: unknown): Promise<void> {
+  private async handleSecurityBreach(_details: unknown): Promise<void> {
     console.log('🔒 Handling security breach');
     // Security incident response
   }
 
-  private async handleSystemFailure(details: unknown): Promise<void> {
+  private async handleSystemFailure(_details: unknown): Promise<void> {
     console.log('💥 Handling system failure');
     // System recovery procedures
   }
@@ -524,7 +523,7 @@ export class ComplianceOrchestrator {
     console.log('📊 Setting up feedback analysis');
   }
 
-  private async generateSystemRecommendations(testSuite: unknown, scores: unknown[], violations: unknown[]): Promise<string[]> {
+  private async generateSystemRecommendations(_testSuite: unknown, _scores: unknown[], _violations: unknown[]): Promise<string[]> {
     return [
       'Prioritize resolution of critical violations',
       'Enhance automated testing coverage',
@@ -532,7 +531,7 @@ export class ComplianceOrchestrator {
     ];
   }
 
-  private async prioritizeActions(testSuite: unknown, violations: unknown[]): Promise<unknown[]> {
+  private async prioritizeActions(_testSuite: unknown, _violations: unknown[]): Promise<unknown[]> {
     return [
       {
         priority: 'high' as const,

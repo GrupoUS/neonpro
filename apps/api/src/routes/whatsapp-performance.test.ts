@@ -261,7 +261,7 @@ describe("WhatsApp Performance and Compliance Tests", () => {
       const duration = performanceTracker.end();
 
       // All requests should succeed
-      responses.forEach((response, index) => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
       });
 

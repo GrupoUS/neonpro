@@ -429,6 +429,7 @@ export function usePerformanceMonitoring({
       const unsubscribe = subscribeToUpdates();
       return unsubscribe;
     }
+    return;
   }, [realTimeUpdates, subscribeToUpdates]);
 
   // Set up auto-refresh
@@ -444,6 +445,7 @@ export function usePerformanceMonitoring({
         }
       };
     }
+    return;
   }, [autoRefresh, refreshInterval, refreshData]);
 
   // Calculate ROI automatically when metrics are loaded

@@ -65,7 +65,7 @@ export function ExternalChatWidget({
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
@@ -152,7 +152,7 @@ export function ExternalChatWidget({
         const response = await onMessage(content.trim());
 
         // Adicionar resposta do assistente
-        const messageId = addMessage({
+        addMessage({
           content: response.response,
           role: "assistant",
           confidence: response.confidence,

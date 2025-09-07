@@ -23,7 +23,7 @@ import {
   Shield,
   Trash2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface DataProcessingRecord {
   id: string;
@@ -79,7 +79,7 @@ export default function LGPDComplianceDashboard() {
     loadUserData();
   }, [loadUserData]);
 
-  const loadUserData = async () => {
+  const loadUserData = useCallback(async () => {
     // Mock data - integrate with real API
     setDataProcessing([
       {
@@ -121,7 +121,7 @@ export default function LGPDComplianceDashboard() {
         description: "Comunicações de marketing e promoções",
       },
     ]);
-  };
+  }, []);
 
   const handleDataSubjectRight = async (rightType: keyof DataSubjectRights) => {
     switch (rightType) {

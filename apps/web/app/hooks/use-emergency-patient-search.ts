@@ -283,7 +283,7 @@ const mockEmergencyPatients: EmergencyPatient[] = [
 export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
   const [patients, setPatients] = useState<EmergencyPatient[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(null);
   const [cacheStatus, setCacheStatus] = useState<"fresh" | "stale" | "offline">(
     "fresh",
   );
@@ -307,7 +307,7 @@ export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
       options: SearchOptions = {},
     ): Promise<EmergencyPatient[]> => {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       try {
         // Simulate network delay for realistic testing
@@ -384,7 +384,7 @@ export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
   const getPatientById = useCallback(
     async (id: string): Promise<EmergencyPatient | null> => {
       setIsLoading(true);
-      setError(undefined);
+      setError(null);
 
       try {
         // Simulate network delay
@@ -399,12 +399,12 @@ export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
           setCacheStatus("fresh");
         }
 
-        return patient || undefined;
+        return patient || null;
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Erro ao carregar paciente";
         setError(errorMessage);
         setCacheStatus("offline");
-        return;
+        return null;
       } finally {
         setIsLoading(false);
       }
@@ -414,7 +414,7 @@ export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
 
   // Clear error state
   const clearError = useCallback(() => {
-    setError(undefined);
+    setError(null);
   }, []);
 
   // Memoize recent patients for performance

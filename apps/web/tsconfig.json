@@ -63,8 +63,9 @@
     "hooks/**/*",
     "contexts/**/*",
     "utils/**/*",
-    "src/hooks/**/*",
+    "src/**/*",
     "types/**/*",
+    "providers/**/*",
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],
@@ -82,7 +83,6 @@
     "app/components/neonpro-healthcare-dashboard.tsx",
     "app/components/performance-monitoring/**",
     "app/api/scheduling/**",
-    "src/types/analytics.ts",
     "src/lib/compliance/**",
     "src/hooks/useANVISA*.ts",
     "src/hooks/use-emergency-*.ts",
@@ -90,7 +90,6 @@
     "app/hooks/use-ai-scheduling.ts",
     "app/components/scheduling-analytics-dashboard.tsx",
     "app/dashboard/**",
-    "providers/**",
     "app/api/cron/drift-monitoring/**",
     "test-mvp-compilation.ts",
     "types/common.ts"

@@ -426,7 +426,7 @@ export class HealthcareInputValidator {
    */
   private async queryPatientByCPF(
     _cpf: string,
-  ): Promise<Array<{ id: string; cpf: string; }> | null> {
+  ): Promise<{ id: string; cpf: string; }[] | null> {
     // Placeholder for actual database query
     // In production, integrate with your database layer:
     // - Supabase: supabase.from('patients').select('id, cpf').eq('cpf', cpf)

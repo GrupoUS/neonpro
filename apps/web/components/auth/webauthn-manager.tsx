@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bluetooth, Nfc, Plus, Shield, Smartphone, Trash2, Usb } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface WebAuthnCredential {
   id: string;
@@ -26,11 +26,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
   const [error, setError] = useState<string | null>();
   const [isRegistering, setIsRegistering] = useState(false);
 
-  useEffect(() => {
-    fetchCredentials();
-  }, [fetchCredentials]);
-
-  const fetchCredentials = async () => {
+  const fetchCredentials = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/auth/webauthn/credentials");
@@ -44,7 +40,11 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchCredentials();
+  }, [fetchCredentials]);
 
   const isWebAuthnSupported = () => {
     return (

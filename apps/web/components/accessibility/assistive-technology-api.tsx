@@ -14,36 +14,6 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Accessibility,
-  Activity,
-  AlertCircle,
-  Brain,
-  CheckCircle2,
-  Clock,
-  Cpu,
-  Eye,
-  FileText,
-  Hand,
-  HardDrive,
-  Home,
-  Keyboard,
-  Lightbulb,
-  Link,
-  Monitor,
-  MousePointer,
-  Phone,
-  Radio,
-  Search,
-  Settings,
-  Shield,
-  Stethoscope,
-  Target,
-  Users,
-  Volume2,
-  Wifi,
-  Zap,
-} from "lucide-react";
 import type React from "react";
 import {
   createContext,
@@ -56,6 +26,27 @@ import {
 } from "react";
 
 // Import accessibility components for integration
+import {
+  Accessibility,
+  Activity,
+  AlertCircle,
+  Brain,
+  CheckCircle2,
+  Clock,
+  Cpu,
+  Eye,
+  FileText,
+  Hand,
+  HardDrive,
+  Lightbulb,
+  Link,
+  Phone,
+  Shield,
+  Target,
+  Volume2,
+  Wifi,
+  Zap,
+} from "lucide-react";
 import { useCognitiveAccessibility } from "./cognitive-accessibility-helper";
 import { useEyeTracking } from "./eye-tracking-interaction";
 import { useOneHandedOperation } from "./one-handed-operation-mode";

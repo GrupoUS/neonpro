@@ -1,11 +1,11 @@
 "use client";
 
-import { RiskIndicatorWithTooltip } from "@/components/no-show/risk-indicator";
+// import { RiskIndicatorWithTooltip } from "@/components/no-show/risk-indicator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEnhancedAppointments } from "@/hooks/use-no-show-prediction";
-import { INTERVENTION_ACTIONS_PT } from "@/types/no-show-prediction";
+
 import { AlertTriangle, ArrowRight, Calendar, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { APPOINTMENT_SKELETON_INDEXES, DASHBOARD_CONSTANTS } from "./constants";
@@ -26,7 +26,7 @@ interface AppointmentsListProps {
 
 export function AppointmentsList({
   appointmentsLoading,
-  todaysAppointments,
+  todaysAppointments: _todaysAppointments,
 }: AppointmentsListProps) {
   const router = useRouter();
 
@@ -100,7 +100,7 @@ export function AppointmentsList({
               </div>
               <div className="flex items-center text-muted-foreground text-sm">
                 <Clock className="mr-1 h-3 w-3" />
-                {"09:00"}
+                09:00
               </div>
             </div>
           );

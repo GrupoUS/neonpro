@@ -29,7 +29,7 @@ async function testSupabaseConnection() {
 
     // Test 2: Check if we can access the database (test with RPC call)
     console.log("\n🗄️  Testing Database Access...");
-    const { data, error } = await supabase.rpc("version");
+    const { error } = await supabase.rpc("version");
 
     if (error) {
       console.log(`❌ Database access error: ${error.message}`);
@@ -52,7 +52,7 @@ async function testSupabaseConnection() {
         console.log(`✅ Connected to database: ${schemaCheck || "Connected successfully"}`);
         console.log("ℹ️  Database is ready for table creation (this is expected for MVP)");
       }
-    } catch (err) {
+    } catch (_err) {
       console.log("ℹ️  Database schema check skipped (expected for MVP setup)");
     }
 

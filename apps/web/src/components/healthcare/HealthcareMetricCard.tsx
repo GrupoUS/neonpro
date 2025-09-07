@@ -83,7 +83,7 @@ export function HealthcareMetricCard({
   className,
   isLoading = false,
   onClick,
-  _patientId: _patientId,
+  _patientId,
   emergencyMode = false,
   lgpdCompliant = true,
   accessLevel = "public",

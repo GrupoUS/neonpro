@@ -1,6 +1,6 @@
 "use client";
 
-import { EmptyState, ErrorBoundary, StateManager } from "@/components/forms/loading-error-states";
+import { EmptyState, StateManager } from "@/components/forms/loading-error-states";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -14,11 +14,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
+// import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -32,7 +31,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/auth-context-new";
 import {
-  Activity,
   AlertTriangle,
   Calendar,
   Check,
@@ -44,7 +42,6 @@ import {
   Heart,
   Mail,
   MapPin,
-  MoreHorizontal,
   Phone,
   Plus,
   RefreshCw,

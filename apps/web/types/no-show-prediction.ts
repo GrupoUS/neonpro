@@ -15,6 +15,15 @@ export interface NoShowPrediction {
   updatedAt: Date;
 }
 
+export interface AppointmentWithRisk {
+  id: string;
+  patientId: string;
+  scheduledAt: string;
+  status: string;
+  type: string;
+  riskPrediction?: NoShowPrediction;
+}
+
 export interface RiskFactor {
   id: string;
   name: string;
@@ -273,6 +282,7 @@ export const RISK_THRESHOLDS = {
   LOW: 30,
   MEDIUM: 60,
   HIGH: 80,
+  CRITICAL: 95,
 } as const;
 
 export const INTERVENTION_TYPE_LABELS = {

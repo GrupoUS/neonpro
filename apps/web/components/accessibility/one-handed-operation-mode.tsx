@@ -16,24 +16,18 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Accessibility,
   Activity,
   AlertCircle,
-  Calendar,
   CheckCircle,
-  Clock,
   FileText,
   Gauge,
   Hand,
-  Heart,
   MousePointer,
   Phone,
-  Settings,
   Shield,
   Smartphone,
   Stethoscope,
   Target,
-  Users,
 } from "lucide-react";
 import type React from "react";
 import {
@@ -358,7 +352,7 @@ export function OneHandedOperationProvider({ children }: { children: React.React
   }));
 
   const [currentMedicalContext, setCurrentMedicalContext] = useState<string>("preference_based");
-  const [emergencyModeActive, setEmergencyModeActive] = useState(false);
+  const [/* emergencyModeActive */, setEmergencyModeActive] = useState(false);
   const [layoutAdaptationsActive, setLayoutAdaptationsActive] = useState<string[]>([]);
 
   // Analytics tracking
@@ -608,7 +602,7 @@ export function OneHandedOperationSettings() {
   } = useOneHandedOperation();
 
   const [activeTab, setActiveTab] = useState("basic");
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [/* showAdvanced */, /* setShowAdvanced */] = useState(false);
 
   const currentLayout = getOptimizedLayout();
 

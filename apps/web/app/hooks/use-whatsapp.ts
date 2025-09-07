@@ -82,7 +82,10 @@ export const useWhatsapp = (options: UseWhatsappOptions): UseWhatsappReturn => {
       if (response.success) {
         setConversations(response.data?.conversations || []);
       } else {
-        throw new Error(response.error || "Failed to load conversations");
+        const errorMessage = typeof response.error === "string"
+          ? response.error
+          : JSON.stringify(response.error) || "Failed to load conversations";
+        throw new Error(errorMessage);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to load conversations";
@@ -115,7 +118,10 @@ export const useWhatsapp = (options: UseWhatsappOptions): UseWhatsappReturn => {
         if (response.success) {
           setMessages(response.data?.messages || []);
         } else {
-          throw new Error(response.error || "Failed to load messages");
+          const errorMessage = typeof response.error === "string"
+            ? response.error
+            : JSON.stringify(response.error) || "Failed to load messages";
+          throw new Error(errorMessage);
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "Failed to load messages";
@@ -170,7 +176,10 @@ export const useWhatsapp = (options: UseWhatsappOptions): UseWhatsappReturn => {
 
         console.log("Message sent successfully");
       } else {
-        throw new Error(response.error || "Failed to send message");
+        const errorMessage = typeof response.error === "string"
+          ? response.error
+          : JSON.stringify(response.error) || "Failed to send message";
+        throw new Error(errorMessage);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to send message";
@@ -244,14 +253,14 @@ export const useWhatsapp = (options: UseWhatsappOptions): UseWhatsappReturn => {
       };
 
       scheduleRefresh();
-
-      return () => {
-        if (refreshTimeoutRef.current) {
-          clearTimeout(refreshTimeoutRef.current);
-          refreshTimeoutRef.current = null;
-        }
-      };
     }
+
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+        refreshTimeoutRef.current = null;
+      }
+    };
   }, [autoRefresh, refreshInterval, refreshData]);
 
   // Initial load

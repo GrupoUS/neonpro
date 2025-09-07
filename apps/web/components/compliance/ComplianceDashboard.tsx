@@ -55,10 +55,10 @@ interface ComplianceDashboardProps {
 export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
   const [complianceScores, setComplianceScores] = useState<ComplianceScore[]>([]);
   const [violations, setViolations] = useState<ComplianceViolation[]>([]);
-  const [trends, setTrends] = useState<Record<string, ComplianceTrendData>>({});
+  const [_trends, setTrends] = useState<Record<string, ComplianceTrendData>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | "all">("all");
-  const [refreshInterval, setRefreshInterval] = useState<number>(30_000); // 30 seconds
+  const [refreshInterval, _setRefreshInterval] = useState<number>(30_000); // 30 seconds
 
   const complianceService = useMemo(() => new ComplianceService(), []);
 

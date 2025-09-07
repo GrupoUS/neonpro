@@ -4,7 +4,6 @@
  */
 
 import type { ComplianceFramework, ComplianceViolation } from "../types";
-import { ComplianceCheckResult } from "../types";
 import { ANVISATester } from "./ANVISATester";
 import { CFMTester } from "./CFMTester";
 import { LGPDTester } from "./LGPDTester";
@@ -403,7 +402,7 @@ export class ComplianceTestRunner {
   /**
    * Generate test reports in various formats
    */
-  private async generateReports(suite: ComplianceTestSuite): Promise<void> {
+  private async generateReports(_suite: ComplianceTestSuite): Promise<void> {
     console.log("📄 Generating compliance test reports");
 
     // Implementation would generate reports based on config.outputFormat

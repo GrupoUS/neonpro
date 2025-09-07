@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+// Switch removed (unused)
 import {
   Table,
   TableBody,
@@ -38,25 +38,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/utils";
 import {
   Activity,
-  AlertCircle,
   AlertTriangle,
-  Calendar,
   CheckCircle,
   Clock,
-  Database,
   Download,
   Edit,
-  ExternalLink,
   Eye,
   FileCheck,
   FileText,
-  Filter,
   Globe,
-  History,
-  Lock,
-  Mail,
-  Package,
-  Phone,
   Plus,
   RefreshCw,
   Scale,
@@ -64,13 +54,11 @@ import {
   Settings,
   Shield,
   Trash2,
-  Unlock,
-  User,
   UserCheck,
   UserX,
 } from "lucide-react";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import type {
@@ -81,14 +69,7 @@ import type {
   LGPDDataProcessingActivity,
   LGPDProcessingPurpose,
 } from "@/lib/compliance/lgpd-consent-management";
-import {
-  LGPDConsentManagementService,
-  LGPDConsentWithdrawalRequest,
-  LGPDDataDeletionRequest,
-  LGPDDataPortabilityRequest,
-  LGPDDataRectificationRequest,
-  LGPDLegalBasis,
-} from "@/lib/compliance/lgpd-consent-management";
+import { LGPDConsentManagementService } from "@/lib/compliance/lgpd-consent-management";
 
 // Initialize LGPD service
 const lgpdService = LGPDConsentManagementService.getInstance();
@@ -257,10 +238,11 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
   });
 
   useEffect(() => {
-    loadData();
+    // eslint-disable-next-line no-void
+    void loadData();
   }, []);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -280,7 +262,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const calculateComplianceScore = (
     consents: LGPDConsentRecord[],
@@ -310,7 +292,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
     setComplianceScore(Math.max(0, score));
   };
 
-  const handleCreateConsent = async () => {
+  const handleCreateConsent = useCallback(async () => {
     try {
       const result = await lgpdService.collectConsent(formData.dataSubjectId, {
         processingActivityId: formData.processingActivityId,
@@ -340,9 +322,9 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
       console.error("Error creating consent:", error);
       toast.error("Erro interno ao registrar consentimento");
     }
-  };
+  }, [formData, consentRecords]);
 
-  const handleWithdrawConsent = async () => {
+  const handleWithdrawConsent = useCallback(async () => {
     if (!selectedConsent) {
       return;
     }
@@ -383,9 +365,9 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
       console.error("Error withdrawing consent:", error);
       toast.error("Erro interno ao retirar consentimento");
     }
-  };
+  }, [selectedConsent, withdrawalReason, consentRecords]);
 
-  const handleDataSubjectRequest = async (
+  const handleDataSubjectRequest = useCallback(async (
     type: "access" | "portability" | "deletion" | "rectification",
   ) => {
     try {
@@ -415,9 +397,9 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
       console.error("Error processing request:", error);
       toast.error("Erro interno ao processar solicitação");
     }
-  };
+  }, []);
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       dataSubjectId: "",
       dataSubjectName: "",
@@ -430,7 +412,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
       optionalConsents: [],
       communicationChannel: "web",
     });
-  };
+  }, []);
 
   const filteredConsentRecords = consentRecords.filter((consent) => {
     const matchesSearch = consent.dataSubjectId

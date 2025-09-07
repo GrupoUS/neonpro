@@ -4,8 +4,6 @@
  */
 
 import type { ComplianceFramework } from "../types";
-import type { AuditEvidence } from "./AuditPreparationEngine";
-import { AuditPreparation } from "./AuditPreparationEngine";
 
 export interface EvidenceTemplate {
   id: string;
@@ -643,7 +641,7 @@ export class EvidenceCollector {
     // Calculate quality score
     const validEvidence = collection.collectedEvidence.filter(e => e.validationStatus === "valid");
     collection.qualityScore = validEvidence.length > 0
-      ? Math.round(validEvidence.reduce((sum, e) => sum + 85, 0) / validEvidence.length)
+      ? Math.round(validEvidence.reduce((sum) => sum + 85, 0) / validEvidence.length)
       : 0; // Mock quality scoring
 
     collection.updatedAt = new Date();

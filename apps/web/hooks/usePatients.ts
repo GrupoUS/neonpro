@@ -20,7 +20,7 @@ interface PatientsHook {
 export function usePatients(): PatientsHook {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>();
+  const [error, setError] = useState<Error | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   const supabase = createClient();
@@ -58,7 +58,7 @@ export function usePatients(): PatientsHook {
 
   // Pacientes recentes (últimos 10 criados)
   const recentPatients = useMemo(() => {
-    return patients
+    return [...patients]
       .sort(
         (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       )
@@ -66,7 +66,7 @@ export function usePatients(): PatientsHook {
   }, [patients]);
 
   // Total count
-  const { length: totalCount } = patients;
+  const totalCount = patients.length;
 
   // Função para buscar paciente por ID
   const getPatientById = useCallback(

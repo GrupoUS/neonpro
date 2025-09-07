@@ -228,7 +228,7 @@ export class UnifiedAuditService {
       this.recordPerformanceMetrics(processingTime);
 
       return validatedEvent.id;
-    } catch (_error) {
+    } catch {
       this.errorCount++;
       const processingTime = performance.now() - startTime;
       this.recordPerformanceMetrics(processingTime);
@@ -549,7 +549,7 @@ export class UnifiedAuditService {
         events,
         totalCount: count || 0,
       };
-    } catch (_error) {
+    } catch {
       // // console.error("Failed to query audit events:", error);
       return { events: [], totalCount: 0 };
     }
@@ -561,7 +561,7 @@ export class UnifiedAuditService {
   private recordPerformanceMetrics(processingTime: number): void {
     // Ensure 'this' is bound correctly when used as a callback
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const self = this;
+    // const self = this; // removed unused variable
     this.totalEvents++;
     this.totalProcessingTime += processingTime;
   }
@@ -612,7 +612,7 @@ export class UnifiedAuditService {
       }
 
       return data?.length || 0;
-    } catch (_error) {
+    } catch {
       // // console.error("Failed to cleanup audit events:", error);
       return 0;
     }
@@ -768,7 +768,7 @@ export class UnifiedAuditService {
       if (error) {
         // // console.error("Retention cleanup failed:", error);
       }
-    } catch (_error) {
+    } catch {
       // // console.error("Retention cleanup error:", error);
     }
   }

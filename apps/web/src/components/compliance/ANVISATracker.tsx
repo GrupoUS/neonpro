@@ -37,22 +37,16 @@ import {
   Activity,
   AlertCircle,
   AlertTriangle,
-  Calendar,
   CheckCircle,
-  Clock,
   Download,
-  Edit,
   Eye,
   FileText,
-  Filter,
   Package,
   Pill,
   Plus,
   RefreshCw,
   Search,
   Shield,
-  Trash2,
-  User,
 } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
@@ -65,10 +59,7 @@ import type {
   ControlledSubstanceClass,
   PrescriptionType,
 } from "@/lib/compliance/anvisa-controlled-substances";
-import {
-  ANVISAControlledSubstancesService,
-  ANVISAValidationResult,
-} from "@/lib/compliance/anvisa-controlled-substances";
+import { ANVISAControlledSubstancesService } from "@/lib/compliance/anvisa-controlled-substances";
 
 // Initialize ANVISA service
 const anvisaService = ANVISAControlledSubstancesService.getInstance();
@@ -186,9 +177,6 @@ export const ANVISATracker: React.FC<ANVISATrackerProps> = ({ className }) => {
     ControlledPrescriptionStatus | "all"
   >("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [selectedPrescription] = useState<ControlledPrescription | null>(
-    null,
-  );
 
   const [formData, setFormData] = useState<PrescriptionFormData>({
     patientId: "",

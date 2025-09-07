@@ -182,6 +182,8 @@ function useDashboardData() {
 }
 
 // Stats Card Component
+type IconComponent = (props: { className?: string; }) => JSX.Element;
+
 function StatsCard({
   title,
   value,
@@ -193,7 +195,7 @@ function StatsCard({
   title: string;
   value: string | number;
   description?: string;
-  icon: unknown;
+  icon: IconComponent;
   trend?: { value: number; label: string; };
   color?: "default" | "green" | "red" | "blue" | "yellow";
 }) {

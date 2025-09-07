@@ -6,7 +6,7 @@ import type {
   Intervention,
   StaffAlert,
 } from "@/types/staff-alerts";
-import { EscalationRule, StaffMember } from "@/types/staff-alerts";
+import { EscalationRule } from "@/types/staff-alerts";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseStaffAlertsOptions {
@@ -433,6 +433,7 @@ export function useStaffAlerts({
       const unsubscribe = subscribeToAlerts();
       return unsubscribe;
     }
+    return;
   }, [realTimeUpdates, subscribeToAlerts]);
 
   // Set up auto-refresh
@@ -448,6 +449,7 @@ export function useStaffAlerts({
         }
       };
     }
+    return;
   }, [autoRefresh, refreshInterval, fetchAlerts]);
 
   return {

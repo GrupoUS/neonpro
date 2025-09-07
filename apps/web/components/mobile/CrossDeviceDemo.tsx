@@ -24,13 +24,9 @@ import { cn } from "@/lib/utils";
 import {
   Activity,
   AlertTriangle,
-  Calendar,
-  CheckCircle,
-  Clock,
   FileText,
   Heart,
   Monitor,
-  Pill,
   QrCode,
   RefreshCw,
   Smartphone,

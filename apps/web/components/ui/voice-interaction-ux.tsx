@@ -667,7 +667,7 @@ export function VoiceInteractionUX({
                       <strong>Comandos do Contexto:</strong>
                       {Object.keys(VoiceCommands[context]).map(cmd => (
                         <Badge key={cmd} variant="outline" className="ml-1 text-xs">
-                          " &quot;{cmd}&quot;"
+                          &quot;{cmd}&quot;
                         </Badge>
                       ))}
                     </div>

@@ -71,7 +71,7 @@ import {
   XCircle,
   Zap,
 } from "lucide-react";
-import React, { useCallback, useMemo, useState, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 // ====== MOCK MONITORING DATA ======
 const mockMonitoringData: HealthcareMonitoring = {
@@ -386,12 +386,12 @@ export default function RealTimeMonitoringDashboard({
     [],
   );
 
-  const _playAlertSound = useCallback(() => {
-    if (soundEnabled && typeof window !== "undefined") {
-      // In real implementation, play alert sound
-      console.log("Alert sound triggered");
-    }
-  }, [soundEnabled]);
+  // const _playAlertSound = useCallback(() => {
+  //   if (soundEnabled && typeof window !== "undefined") {
+  //     // In real implementation, play alert sound
+  //     console.log("Alert sound triggered");
+  //   }
+  // }, [soundEnabled]);
 
   // ====== COMPUTED VALUES ======
   const currentPatient = useMemo(

@@ -271,7 +271,7 @@ function PaymentMethodCard({ method, onSelect, isSelected }: unknown) {
 }
 
 function PaymentForm({ payment, selectedMethod }: unknown) {
-  const [pixKey, _setPixKey] = useState("pix@neonpro.com.br");
+  const [pixKey] = useState("pix@neonpro.com.br");
   const [installments, setInstallments] = useState(1);
 
   const renderPaymentFields = () => {

@@ -8,9 +8,7 @@ import type {
   ComplianceScore, 
   ComplianceViolation, 
   ComplianceTestResult} from '../types';
-import {
-  ComplianceReport 
-} from '../types';
+
 
 export interface ReportGenerationConfig {
   frameworks: ComplianceFramework[];

@@ -27,32 +27,23 @@ import { cn } from "@/lib/utils";
 import type {
   AlternativeTreatment,
   ComplicationPrediction,
-  OutcomePrediction,
   PatientOutcomePredictionProps,
   PredictiveIntelligence,
   RecoveryMilestone,
 } from "@/types/analytics";
 import {
-  Activity,
   AlertTriangle,
-  ArrowRight,
-  BarChart3,
   Brain,
   Calendar,
   CheckCircle,
   Clock,
   Eye,
-  Heart,
-  Info,
   Lightbulb,
-  PieChart,
   RefreshCw,
   Shield,
-  Star,
   Target,
   TrendingDown,
   TrendingUp,
-  Zap,
 } from "lucide-react";
 import React, { useCallback, useMemo, useState } from "react";
 
@@ -269,15 +260,14 @@ const alternativeTreatments: AlternativeTreatment[] = [
 ];
 
 export default function PatientOutcomePrediction({
-  patientId,
-  treatmentId,
+  patientId: _patientId,
+  treatmentId: _treatmentId,
   predictionModels = ["neonpro-prediction-v2.1"],
-  confidenceThreshold = 0.7,
+  confidenceThreshold: _confidenceThreshold = 0.7,
   showAlternatives = true,
-  interactiveCharts = true,
+  interactiveCharts: _interactiveCharts = true,
 }: PatientOutcomePredictionProps) {
   // ====== STATE MANAGEMENT ======
-  const [isLoading, setIsLoading] = useState(false);
   const [prediction, setPrediction] = useState<PredictiveIntelligence>(mockPredictionData);
   const [selectedModel, setSelectedModel] = useState(predictionModels[0]);
   const [activeTab, setActiveTab] = useState("prediction");

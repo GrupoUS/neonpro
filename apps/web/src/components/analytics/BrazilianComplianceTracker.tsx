@@ -25,13 +25,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import type {
-  ANVISAComplianceScore,
   BrazilianHealthcareIntelligence,
   BrazilianRegion,
   BrazilianState,
-  CFMComplianceScore,
   ComplianceViolation,
-  LGPDComplianceScore,
 } from "@/types/analytics";
 import {
   AlertTriangle,

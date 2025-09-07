@@ -33,21 +33,21 @@ export default function AgendaPage() {
     refreshAppointments,
   } = useAppointments();
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate] = useState(new Date());
 
-  // Transform appointments data for the calendar component
-  const calendarAppointments = appointments.map(appointment => ({
-    id: appointment.id,
-    patientId: appointment.patient_id,
-    patientName: appointment.patients?.name || "Nome não disponível",
-    patientAvatar: "", // Could be added from patient data
-    appointmentDate: new Date(appointment.appointment_date),
-    duration: appointment.services?.duration || 60,
-    type: appointment.services?.name || "Consulta",
-    status: appointment.status as "scheduled" | "confirmed" | "cancelled" | "completed",
-    notes: appointment.notes || "",
-    staffMember: appointment.staff_members?.name || "Profissional não definido",
-  }));
+  // Transform appointments data for the calendar component (reserved for future calendar view)
+  // const calendarAppointments = appointments.map(appointment => ({
+  //   id: appointment.id,
+  //   patientId: appointment.patient_id,
+  //   patientName: appointment.patients?.name || "Nome não disponível",
+  //   patientAvatar: "", // Could be added from patient data
+  //   appointmentDate: new Date(appointment.appointment_date),
+  //   duration: appointment.services?.duration || 60,
+  //   type: appointment.services?.name || "Consulta",
+  //   status: appointment.status as "scheduled" | "confirmed" | "cancelled" | "completed",
+  //   notes: appointment.notes || "",
+  //   staffMember: appointment.staff_members?.name || "Profissional não definido",
+  // }));
 
   const selectedDateAppointments = appointmentsByDate(selectedDate);
 

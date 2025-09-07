@@ -173,7 +173,7 @@ function isAllowedOrigin(origin: string, environment: string): boolean {
   return allowedOrigins.includes(origin);
 }
 
-function createSecurityHeaders(request: NextRequest): Headers {
+function createSecurityHeaders(_request: NextRequest): Headers {
   const headers = new Headers();
 
   // Basic security headers

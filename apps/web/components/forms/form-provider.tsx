@@ -3,7 +3,7 @@
 import type React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
 import type { ValidationSchema } from "./validation";
-import { validateSchema, ValidationResult } from "./validation";
+import { validateSchema /*, ValidationResult*/ } from "./validation"; // ValidationResult unused import
 
 export interface FormState {
   data: Record<string, unknown>;

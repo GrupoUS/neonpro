@@ -21,17 +21,17 @@ interface UseAISchedulingReturn {
 }
 
 export function useAIScheduling(
-  options: UseAISchedulingOptions,
+  _options: UseAISchedulingOptions,
 ): UseAISchedulingReturn {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>();
-  const [lastResult, setLastResult] = useState<SchedulingResult | null>();
+  const [error, setError] = useState<string | null>(null);
+  const [lastResult, setLastResult] = useState<SchedulingResult | null>(null);
   const [optimizationScore] = useState(0.95); // Mock high optimization score
-  const [analytics] = useState();
+  const [analytics] = useState<unknown>(null);
   const [processingTime] = useState(500); // Mock processing time
 
   const scheduleAppointment = useCallback(
-    async (data: unknown): Promise<SchedulingResult> => {
+    async (_data: unknown): Promise<SchedulingResult> => {
       setIsLoading(true);
       setError(undefined);
 

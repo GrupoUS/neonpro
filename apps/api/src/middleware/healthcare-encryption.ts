@@ -10,6 +10,7 @@
  * - Emergency access controls
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MiddlewareHandler } from "hono";
 import * as crypto from "node:crypto";
 import { HealthcareSecurityLogger } from "./healthcare-security";

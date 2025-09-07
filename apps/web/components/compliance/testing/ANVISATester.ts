@@ -578,7 +578,7 @@ export class ANVISATester {
       || url.includes("/prescription");
   }
 
-  private async validateMedicalRecord(url: string): Promise<MedicalRecordValidation> {
+  private async validateMedicalRecord(_url: string): Promise<MedicalRecordValidation> {
     return {
       hasDigitalSignature: Math.random() > 0.3,
       signatureValid: Math.random() > 0.2,
@@ -591,15 +591,15 @@ export class ANVISATester {
     };
   }
 
-  private async checkMandatoryFields(url: string): Promise<{ allPresent: boolean; }> {
+  private async checkMandatoryFields(_url: string): Promise<{ allPresent: boolean; }> {
     return { allPresent: Math.random() > 0.4 };
   }
 
-  private async checkDataFormatCompliance(url: string): Promise<{ isCompliant: boolean; }> {
+  private async checkDataFormatCompliance(_url: string): Promise<{ isCompliant: boolean; }> {
     return { isCompliant: Math.random() > 0.3 };
   }
 
-  private async validateDigitalSignature(url: string): Promise<MedicalRecordValidation> {
+  private async validateDigitalSignature(_url: string): Promise<MedicalRecordValidation> {
     return {
       hasDigitalSignature: Math.random() > 0.3,
       signatureValid: Math.random() > 0.2,
@@ -612,28 +612,30 @@ export class ANVISATester {
     };
   }
 
-  private async validateSignatureCertificate(url: string): Promise<{ isValid: boolean; }> {
+  private async validateSignatureCertificate(_url: string): Promise<{ isValid: boolean; }> {
     return { isValid: Math.random() > 0.2 };
   }
 
   private async checkDataProtectionMechanisms(
-    url: string,
+    _url: string,
   ): Promise<{ hasIntegrityChecks: boolean; }> {
     return { hasIntegrityChecks: Math.random() > 0.4 };
   }
 
   private async checkAccessControlMechanisms(
-    url: string,
+    _url: string,
   ): Promise<{ hasRoleBasedAccess: boolean; }> {
     return { hasRoleBasedAccess: Math.random() > 0.3 };
   }
 
-  private async checkBackupRecoverySystem(url: string): Promise<{ hasBackupProcedures: boolean; }> {
+  private async checkBackupRecoverySystem(
+    _url: string,
+  ): Promise<{ hasBackupProcedures: boolean; }> {
     return { hasBackupProcedures: Math.random() > 0.5 };
   }
 
   private async checkAuditTrailImplementation(
-    url: string,
+    _url: string,
   ): Promise<{ hasAuditLog: boolean; logsAllOperations: boolean; }> {
     return {
       hasAuditLog: Math.random() > 0.3,
@@ -642,7 +644,7 @@ export class ANVISATester {
   }
 
   private async checkPatientIdentificationSystem(
-    url: string,
+    _url: string,
   ): Promise<{ hasUniqueIdentifier: boolean; preventsMisidentification: boolean; }> {
     return {
       hasUniqueIdentifier: Math.random() > 0.2,
@@ -650,7 +652,7 @@ export class ANVISATester {
     };
   }
 
-  private async checkMedicalDeviceValidation(url: string): Promise<{ isValidated: boolean; }> {
+  private async checkMedicalDeviceValidation(_url: string): Promise<{ isValidated: boolean; }> {
     return { isValidated: Math.random() > 0.4 };
   }
 }

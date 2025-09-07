@@ -1,5 +1,5 @@
-import { LogCategory, logger, LogLevel } from "@/lib/logger";
-import type { PerformanceCategory, PerformanceMetric } from "@/lib/performance-monitor";
+import { LogCategory, logger /*, LogLevel*/ } from "@/lib/logger"; // LogLevel unused import
+import type { /*PerformanceCategory,*/ PerformanceMetric } from "@/lib/performance-monitor"; // PerformanceCategory unused import
 import { createClient } from "@/utils/supabase/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";

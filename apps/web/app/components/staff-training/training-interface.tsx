@@ -1,21 +1,11 @@
 "use client";
 
-import {
-  Dialog as AlertDialog,
-  DialogContent as AlertDialogContent,
-  DialogDescription as AlertDialogDescription,
-  DialogFooter as AlertDialogFooter,
-  DialogHeader as AlertDialogHeader,
-  DialogTitle as AlertDialogTitle,
-  DialogTrigger as AlertDialogTrigger,
-} from "@/components/ui/dialog";
-const AlertDialogAction = Button;
-const AlertDialogCancel = Button;
+// Removed unused AlertDialog imports and aliases
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
+// Removed unused Separator import
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { useStaffTraining } from "@/hooks/use-staff-training";
@@ -43,7 +33,7 @@ import {
   Users,
   Video,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface StaffTrainingInterfaceProps {
   userId?: string;
@@ -57,9 +47,9 @@ interface StaffTrainingInterfaceProps {
  * PWA-capable with offline support and Brazilian healthcare compliance
  */
 export function StaffTrainingInterface({
-  userId,
+  _userId: userId,
   userRole,
-  compactMode = false,
+  compactMode: _compactMode = false,
   offlineMode = false,
 }: StaffTrainingInterfaceProps) {
   const { toast } = useToast();
@@ -68,8 +58,6 @@ export function StaffTrainingInterface({
     progress: userProgress,
     isLoading,
     startModule,
-    completeSection,
-    completeModule,
   } = useStaffTraining();
 
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -77,9 +65,7 @@ export function StaffTrainingInterface({
     null,
   );
   const [isGeneratingCertificate, setIsGeneratingCertificate] = useState(false);
-  const [eligibleCertifications, setEligibleCertifications] = useState<
-    string[]
-  >([]);
+  const [eligibleCertifications] = useState<string[]>([]);
 
   // Removed certification eligibility check - not available in simplified hook
 
@@ -317,7 +303,7 @@ export function StaffTrainingInterface({
                           <Button
                             size="sm"
                             onClick={() => {
-                              setSelectedModule(trainingModule as any);
+                              setSelectedModule(trainingModule as unknown as TrainingModule);
                               setActiveTab("learning");
                             }}
                           >
@@ -388,7 +374,7 @@ export function StaffTrainingInterface({
                           </div>
                           <Button
                             size="sm"
-                            onClick={() => handleStartModule(module as any)}
+                            onClick={() => handleStartModule(module as unknown as TrainingModule)}
                             disabled={isLoading}
                           >
                             <Play className="h-3 w-3 mr-1" />
@@ -506,7 +492,7 @@ export function StaffTrainingInterface({
                       {!progress && canStart && (
                         <Button
                           className="flex-1"
-                          onClick={() => handleStartModule(module as any)}
+                          onClick={() => handleStartModule(module as unknown as TrainingModule)}
                           disabled={isLoading}
                         >
                           <Play className="h-3 w-3 mr-1" />
@@ -518,7 +504,7 @@ export function StaffTrainingInterface({
                         <Button
                           className="flex-1"
                           onClick={() => {
-                            setSelectedModule(module as any);
+                            setSelectedModule(module as unknown as TrainingModule);
                             setActiveTab("learning");
                           }}
                         >

@@ -212,8 +212,8 @@ const createChainableMock = (table?: string) => {
   let currentTable = table ?? "default";
   let op: "select" | "insert" | "upsert" | "update" | "delete" | null = null;
   let payload: any = null;
-  let filters: Array<(row: any) => boolean> = [];
-  let likeFilters: Array<(row: any) => boolean> = [];
+  let filters: ((row: any) => boolean)[] = [];
+  let likeFilters: ((row: any) => boolean)[] = [];
   let orderBy: { column: string; ascending: boolean; } | null = null;
   let limitCount: number | null = null;
   let useSingle = false;

@@ -1,5 +1,5 @@
 // Temporary hook for deployment build
-export const useEmergencyVoiceCommands = (options?: {
+export const useEmergencyVoiceCommands = (_options?: {
   onEmergencyDetected?: (intent: string, transcript: string) => void;
   onCommandExecuted?: (command: string, intent: string) => void;
 }) => {
@@ -10,9 +10,9 @@ export const useEmergencyVoiceCommands = (options?: {
     startListening: () => {},
     stopListening: () => {},
     toggleListening: () => {},
-    speakText: (text: string) => {},
+    speakText: (_text: string) => {},
     stopSpeaking: () => {},
-    announceEmergency: (message: string) => {},
+    announceEmergency: (_message: string) => {},
     isVoiceSupported: false,
     isActive: false,
     emergencyDetected: false,

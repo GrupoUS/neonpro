@@ -230,26 +230,32 @@ export const analyticsRoutes = new Hono()
           .slice(0, 4);
 
         // Get professional performance
-        const professionalStats = appointments?.reduce((acc, apt) => {
-          if (apt.professionals?.full_name && apt.status === "completed") {
-            const profName = apt.professionals.full_name;
-            if (!acc[apt.professional_id]) {
-              acc[apt.professional_id] = {
-                id: apt.professional_id,
-                name: profName,
-                appointments: 0,
-                revenue: 0,
-                rating: 4.8, // Mock rating for now
-              };
+        const professionalStats = appointments?.reduce(
+          (acc, apt) => {
+            if (apt.professionals?.full_name && apt.status === "completed") {
+              const profName = apt.professionals.full_name;
+              if (!acc[apt.professional_id]) {
+                acc[apt.professional_id] = {
+                  id: apt.professional_id,
+                  name: profName,
+                  appointments: 0,
+                  revenue: 0,
+                  rating: 4.8, // Mock rating for now
+                };
+              }
+              acc[apt.professional_id].appointments += 1;
+              acc[apt.professional_id].revenue += apt.total_amount || 0;
             }
-            acc[apt.professional_id].appointments += 1;
-            acc[apt.professional_id].revenue += apt.total_amount || 0;
-          }
-          return acc;
-        }, {} as Record<string, unknown>);
+            return acc;
+          },
+          {} as Record<
+            string,
+            { id: string; name: string; appointments: number; revenue: number; rating: number; }
+          >,
+        );
 
         const professionalPerformance = Object.values(professionalStats || {})
-          .sort((a: unknown, b: unknown) => b.revenue - a.revenue)
+          .sort((a, b) => b.revenue - a.revenue)
           .slice(0, 5);
 
         const mockDashboard = {
@@ -394,7 +400,7 @@ export const analyticsRoutes = new Hono()
         : 0;
 
       // Calculate daily revenue breakdown
-      const dailyRevenueMap = appointments?.reduce((acc, apt) => {
+      const dailyRevenueMap = (appointments || []).reduce((acc, apt) => {
         const date = apt.appointment_time.split("T")[0];
         if (!acc[date]) {
           acc[date] = { revenue: 0, appointments: 0 };
@@ -404,12 +410,12 @@ export const analyticsRoutes = new Hono()
         return acc;
       }, {} as Record<string, { revenue: number; appointments: number; }>);
 
-      const dailyRevenue = Object.entries(dailyRevenueMap || {})
+      const dailyRevenue = Object.entries(dailyRevenueMap)
         .map(([date, data]) => ({ date, ...data }))
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
       // Calculate revenue by category
-      const categoryRevenueMap = appointments?.reduce((acc, apt) => {
+      const categoryRevenueMap = (appointments || []).reduce((acc, apt) => {
         const category = apt.services?.category || "other";
         if (!acc[category]) {
           acc[category] = { revenue: 0, appointments: 0 };
@@ -419,7 +425,7 @@ export const analyticsRoutes = new Hono()
         return acc;
       }, {} as Record<string, { revenue: number; appointments: number; }>);
 
-      const byCategory = Object.entries(categoryRevenueMap || {})
+      const byCategory = Object.entries(categoryRevenueMap)
         .map(([category, data]) => ({
           category,
           revenue: data.revenue,

@@ -26,19 +26,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import {
   AlertTriangle,
-  ArrowRight,
   BarChart3,
-  Calendar,
   CheckCircle,
   Clock,
-  Edit,
   Eye,
   FileText,
   Filter,
-  MessageSquare,
   PauseCircle,
   PlayCircle,
-  RotateCcw,
   Search,
   Settings,
   Shield,
@@ -51,9 +46,7 @@ import {
 import type React from "react";
 import { useState } from "react";
 import type { ComplianceFramework } from "../types";
-import { ViolationSeverity } from "../types";
 import type { RemediationWorkflow } from "./RemediationEngine";
-import { RemediationStep, RemediationTimelineEvent } from "./RemediationEngine";
 
 interface WorkflowManagerProps {
   className?: string;
@@ -255,7 +248,7 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
         / workflows.filter(w => w.metrics.timeToResolution).length || 0,
   };
 
-  const handleAssignWorkflow = async (workflowId: string, assignee: string) => {
+  const _handleAssignWorkflow = async (workflowId: string, assignee: string) => {
     setWorkflows(prev =>
       prev.map(w =>
         w.id === workflowId

@@ -170,10 +170,18 @@ export function useNoShowPrediction({
   };
 }
 
+interface BaseAppointment {
+  id: string;
+  patientId: string;
+  scheduledAt: string;
+  status: string;
+  type: string;
+}
+
 /**
  * Enhanced hook that enriches appointments with risk predictions
  */
-export function useEnhancedAppointments(appointments: unknown[]) {
+export function useEnhancedAppointments(appointments: BaseAppointment[]) {
   const appointmentIds = appointments.map((apt) => apt.id);
   const { predictions, isLoading, error, getPredictionForAppointment } = useNoShowPrediction({
     appointmentIds,

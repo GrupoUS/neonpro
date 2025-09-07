@@ -238,7 +238,7 @@ export class SupabaseAuthAdapter {
         refreshToken,
         sessionId: session.sessionId,
       };
-    } catch (_error) {
+    } catch {
       // // console.error("Login error:", error);
       return { success: false, error: "Authentication service error" };
     }
@@ -295,7 +295,7 @@ export class SupabaseAuthAdapter {
         success: true,
         error: "Registration successful. Please check your email for confirmation.",
       };
-    } catch (_error) {
+    } catch {
       // // console.error("Registration error:", error);
       return { success: false, error: "Registration service error" };
     }
@@ -321,7 +321,7 @@ export class SupabaseAuthAdapter {
 
       // Log security event
       await this.logSecurityEvent("logout", { sessionId });
-    } catch (_error) {
+    } catch {
       // // console.error("Logout error:", error);
     }
   }
@@ -343,7 +343,7 @@ export class SupabaseAuthAdapter {
         .maybeSingle();
 
       return profile ? this.mapProfileToUser(profile) : null;
-    } catch (_error) {
+    } catch {
       // // console.error("Get current user error:", error);
       return null;
     }
@@ -386,7 +386,7 @@ export class SupabaseAuthAdapter {
         accessToken: data.session?.access_token,
         refreshToken: data.session?.refresh_token,
       };
-    } catch (_error) {
+    } catch {
       // // console.error("Refresh token error:", error);
       return { success: false, error: "Token refresh failed" };
     }
@@ -490,7 +490,7 @@ export class SupabaseAuthAdapter {
           details: details,
           risk_score: this.calculateRiskScore(type, details),
         });
-    } catch (_error) {
+    } catch {
       // // console.error("Failed to log security event:", error);
     }
   }

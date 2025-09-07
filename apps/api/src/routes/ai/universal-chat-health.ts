@@ -223,7 +223,7 @@ universalChatHealth.get("/health", async (c) => {
   const healthCheck = await UniversalChatHealthService.performHealthCheck();
   const statusCode = healthCheck.healthy ? 200 : 503;
 
-  return c.json(healthCheck, statusCode as any);
+  return c.json(healthCheck, statusCode as number);
 });
 
 export default universalChatHealth;

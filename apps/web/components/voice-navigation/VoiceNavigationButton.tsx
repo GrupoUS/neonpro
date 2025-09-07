@@ -35,7 +35,7 @@ export function VoiceNavigationButton({
   } = useVoiceNavigation();
 
   if (!isSupported) {
-    return;
+    return null;
   }
 
   const handleVoiceToggle = async () => {

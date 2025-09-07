@@ -374,17 +374,17 @@ export class FeedbackCollector {
     // Would show modal UI for error feedback
   }
 
-  private async showTaskCompletionRating(context: unknown): Promise<void> {
+  private async showTaskCompletionRating(_context: unknown): Promise<void> {
     console.log("⭐ Showing task completion rating");
     // Would show rating UI after task completion
   }
 
-  private async showUsabilityFeedbackWidget(context: unknown): Promise<void> {
+  private async showUsabilityFeedbackWidget(_context: unknown): Promise<void> {
     console.log("📋 Showing usability feedback widget");
     // Would show feedback widget
   }
 
-  private async showSessionEndSurvey(context: unknown): Promise<void> {
+  private async showSessionEndSurvey(_context: unknown): Promise<void> {
     console.log("📊 Showing session end survey");
     // Would show end-of-session survey
   }

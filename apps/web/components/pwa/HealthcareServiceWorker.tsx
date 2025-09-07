@@ -140,8 +140,8 @@ export function useHealthcareServiceWorker() {
         });
 
         setState((prev) => ({ ...prev, isInstalled: true }));
-      } catch (_error) { // Unused catch parameter
-        // console.error("Service Worker registration failed:", error);
+      } catch {
+        // console.error("Service Worker registration failed");
       }
     }
   };
@@ -196,9 +196,9 @@ export function useHealthcareServiceWorker() {
           uploaded: 67.8,
         },
       }));
-    } catch (_error) { // Unused catch parameter
+    } catch {
       setState((prev) => ({ ...prev, syncInProgress: false }));
-      // console.error("Critical data sync failed:", error);
+      // console.error("Critical data sync failed");
     }
   };
 
@@ -471,7 +471,7 @@ export function OfflineIndicator() {
   const { isOnline, cacheStatus } = useHealthcareServiceWorker();
 
   if (isOnline) {
-    return;
+    return null;
   }
 
   return (

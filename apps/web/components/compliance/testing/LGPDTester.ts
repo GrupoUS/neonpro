@@ -540,21 +540,21 @@ export class LGPDTester {
   }
 
   // Mock implementation methods (would be replaced with actual testing logic)
-  private async checkForConsentInterface(url: string): Promise<boolean> {
+  private async checkForConsentInterface(_url: string): Promise<boolean> {
     // Mock: Check DOM for consent banners, modals, or forms
     return Math.random() > 0.3;
   }
 
-  private async checkConsentGranularity(url: string): Promise<{ hasGranularOptions: boolean; }> {
+  private async checkConsentGranularity(_url: string): Promise<{ hasGranularOptions: boolean; }> {
     return { hasGranularOptions: Math.random() > 0.4 };
   }
 
-  private async checkConsentPersistence(url: string): Promise<{ isPersistent: boolean; }> {
+  private async checkConsentPersistence(_url: string): Promise<{ isPersistent: boolean; }> {
     return { isPersistent: Math.random() > 0.2 };
   }
 
   private async checkPrivacyNotice(
-    url: string,
+    _url: string,
   ): Promise<{ exists: boolean; isComplete: boolean; }> {
     return {
       exists: Math.random() > 0.1,
@@ -562,20 +562,20 @@ export class LGPDTester {
     };
   }
 
-  private async checkLegalBasisSpecification(url: string): Promise<{ isSpecified: boolean; }> {
+  private async checkLegalBasisSpecification(_url: string): Promise<{ isSpecified: boolean; }> {
     return { isSpecified: Math.random() > 0.3 };
   }
 
-  private async checkPurposeSpecification(url: string): Promise<{ isSpecific: boolean; }> {
+  private async checkPurposeSpecification(_url: string): Promise<{ isSpecific: boolean; }> {
     return { isSpecific: Math.random() > 0.4 };
   }
 
-  private async checkDataMinimization(url: string): Promise<{ isMinimized: boolean; }> {
+  private async checkDataMinimization(_url: string): Promise<{ isMinimized: boolean; }> {
     return { isMinimized: Math.random() > 0.5 };
   }
 
   private async checkRetentionPolicy(
-    url: string,
+    _url: string,
   ): Promise<{ isSpecified: boolean; isJustified: boolean; }> {
     return {
       isSpecified: Math.random() > 0.4,
@@ -583,11 +583,11 @@ export class LGPDTester {
     };
   }
 
-  private async checkDataSubjectRightsInterface(url: string): Promise<{ exists: boolean; }> {
+  private async checkDataSubjectRightsInterface(_url: string): Promise<{ exists: boolean; }> {
     return { exists: Math.random() > 0.3 };
   }
 
-  private async checkRightsImplementation(url: string): Promise<{
+  private async checkRightsImplementation(_url: string): Promise<{
     hasAccessRight: boolean;
     hasPortabilityRight: boolean;
   }> {
@@ -597,11 +597,13 @@ export class LGPDTester {
     };
   }
 
-  private async checkHiddenDataCollection(url: string): Promise<{ detected: boolean; }> {
+  private async checkHiddenDataCollection(_url: string): Promise<{ detected: boolean; }> {
     return { detected: Math.random() < 0.1 };
   }
 
-  private async checkThirdPartyDataSharing(url: string): Promise<{ undisclosedSharing: boolean; }> {
+  private async checkThirdPartyDataSharing(
+    _url: string,
+  ): Promise<{ undisclosedSharing: boolean; }> {
     return { undisclosedSharing: Math.random() < 0.2 };
   }
 }

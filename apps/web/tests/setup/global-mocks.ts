@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * Global Mock Setup for Integration Tests
  * Defines all global mocks used across integration tests

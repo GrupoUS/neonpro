@@ -580,19 +580,19 @@ export class CFMTester {
   }
 
   private async checkPatientSafetyMeasures(
-    url: string,
+    _url: string,
   ): Promise<{ hasAdequateProtection: boolean; }> {
     return { hasAdequateProtection: Math.random() > 0.3 };
   }
 
   private async checkProfessionalCompetenceValidation(
-    url: string,
+    _url: string,
   ): Promise<{ validatesCompetence: boolean; }> {
     return { validatesCompetence: Math.random() > 0.4 };
   }
 
   private async checkEthicsGuidelinesAdherence(
-    url: string,
+    _url: string,
   ): Promise<{ followsGuidelines: boolean; }> {
     return { followsGuidelines: Math.random() > 0.3 };
   }
@@ -606,12 +606,12 @@ export class CFMTester {
   }
 
   private async checkProfessionalResponsibility(
-    url: string,
+    _url: string,
   ): Promise<{ ensuresResponsibility: boolean; }> {
     return { ensuresResponsibility: Math.random() > 0.4 };
   }
 
-  private async checkContinuityOfCare(url: string): Promise<{ ensuresContinuity: boolean; }> {
+  private async checkContinuityOfCare(_url: string): Promise<{ ensuresContinuity: boolean; }> {
     return { ensuresContinuity: Math.random() > 0.5 };
   }
 
@@ -626,33 +626,35 @@ export class CFMTester {
   }
 
   private async checkProfessionalBoundaries(
-    url: string,
+    _url: string,
   ): Promise<{ maintainsBoundaries: boolean; }> {
     return { maintainsBoundaries: Math.random() > 0.3 };
   }
 
-  private async checkMedicalSecrecyProtection(url: string): Promise<{ protectsSecrecy: boolean; }> {
+  private async checkMedicalSecrecyProtection(
+    _url: string,
+  ): Promise<{ protectsSecrecy: boolean; }> {
     return { protectsSecrecy: Math.random() > 0.2 };
   }
 
   private async checkUnauthorizedDisclosurePrevention(
-    url: string,
+    _url: string,
   ): Promise<{ preventsDisclosure: boolean; }> {
     return { preventsDisclosure: Math.random() > 0.3 };
   }
 
-  private async checkInformedConsentProcess(url: string): Promise<{ hasProperProcess: boolean; }> {
+  private async checkInformedConsentProcess(_url: string): Promise<{ hasProperProcess: boolean; }> {
     return { hasProperProcess: Math.random() > 0.3 };
   }
 
   private async checkConsentInformationCompleteness(
-    url: string,
+    _url: string,
   ): Promise<{ isComplete: boolean; }> {
     return { isComplete: Math.random() > 0.4 };
   }
 
   private async checkProfessionalIdentificationDisplay(
-    url: string,
+    _url: string,
   ): Promise<{ displaysIdentification: boolean; }> {
     return { displaysIdentification: Math.random() > 0.3 };
   }

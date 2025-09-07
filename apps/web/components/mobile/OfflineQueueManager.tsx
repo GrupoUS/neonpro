@@ -21,7 +21,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import {
   Activity,
@@ -30,7 +29,6 @@ import {
   Clock,
   Cloud,
   CloudOff,
-  Download,
   Pause,
   Play,
   RefreshCw,
@@ -103,6 +101,11 @@ export interface OfflineQueueManagerProps {
   autoProcessEnabled?: boolean;
   maxQueueSize?: number;
 }
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// onCriticalActionQueued is accepted for future use by consumers; prefix to silence warning when unused
+// Keeping prop for API stability
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 // IndexedDB Queue Storage Service
 class QueueStorageService {
@@ -192,7 +195,7 @@ class QueueStorageService {
 
   async deleteAction(actionId: string): Promise<void> {
     if (!this.db) throw new Error("Database not initialized");
-    const db = this.db;
+    const db = this.db as IDBDatabase;
 
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(["actions"], "readwrite");
@@ -537,16 +540,16 @@ export default function OfflineQueueManager({
     clearProcessed,
   } = useOfflineQueue(userId, maxQueueSize);
 
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<number | undefined>();
 
   // Auto-process queue when online
   useEffect(() => {
     if (!autoProcessEnabled || isPaused) return;
 
     const startAutoProcessing = () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) window.clearInterval(intervalRef.current);
 
-      intervalRef.current = setInterval(async () => {
+      intervalRef.current = window.setInterval(async () => {
         if (networkInfo.isOnline && stats.queued > 0 && !isProcessing) {
           const result = await processQueue(networkInfo);
           if (result) {
@@ -560,7 +563,7 @@ export default function OfflineQueueManager({
 
     return () => {
       if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+        window.clearInterval(intervalRef.current);
       }
     };
   }, [
@@ -624,7 +627,7 @@ export default function OfflineQueueManager({
   };
 
   const formatActionType = (action: QueuedAction) => {
-    return `${action.type} ${action.entityType.replace("_", " ")}`;
+    return `${action.type} ${action.entityType.replace(/_/g, " ")}`;
   };
 
   return (
@@ -682,7 +685,7 @@ export default function OfflineQueueManager({
           <Alert>
             <CloudOff className="h-4 w-4" />
             <AlertDescription>
-              You're offline. Actions will be queued and synced when connection is restored.
+              You&apos;re offline. Actions will be queued and synced when connection is restored.
             </AlertDescription>
           </Alert>
         )}

@@ -135,8 +135,11 @@ export type {
   ValidationError,
   ValidationErrorResponse,
   WhatsappConversation,
+  WhatsappConversationFilters,
   WhatsappConversationStatus,
   WhatsappMessage,
+  WhatsappMessageFilters,
+  WhatsappPaginationOptions,
 } from "./types";
 
 // Package version and metadata

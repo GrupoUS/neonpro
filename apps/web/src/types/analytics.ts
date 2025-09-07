@@ -9,6 +9,806 @@
 
 import type { LucideIcon } from "lucide-react";
 
+// ====== BASIC TYPE DEFINITIONS ======
+
+export interface PopulationHealthMetrics {
+  totalPopulation: number;
+  healthScores: {
+    average: number;
+    median: number;
+    stdDev: number;
+  };
+  demographics: {
+    ageGroups: Record<string, number>;
+    genderDistribution: Record<string, number>;
+  };
+  prevalentConditions: {
+    condition: string;
+    prevalence: number;
+    trend: "increasing" | "decreasing" | "stable";
+  }[];
+}
+
+export interface RegionalHealthTrends {
+  region: string;
+  trends: {
+    metric: string;
+    values: { date: Date; value: number; }[];
+    trend: "improving" | "deteriorating" | "stable";
+  }[];
+  seasonalPatterns: Record<string, number>;
+}
+
+export interface CulturalHealthFactors {
+  culturalPractices: {
+    practice: string;
+    healthImpact: "positive" | "negative" | "neutral";
+    prevalence: number;
+  }[];
+  languageBarriers: {
+    percentage: number;
+    primaryLanguages: string[];
+  };
+  socialDeterminants: Record<string, number>;
+}
+
+export interface SocioeconomicHealthData {
+  incomeDistribution: Record<string, number>;
+  educationLevels: Record<string, number>;
+  accessToHealthcare: {
+    insured: number;
+    uninsured: number;
+    underinsured: number;
+  };
+  employmentStatus: Record<string, number>;
+}
+
+export interface EpidemiologicalInsights {
+  diseaseOutbreaks: {
+    disease: string;
+    cases: number;
+    fatalities: number;
+    geography: string;
+    timeline: Date[];
+  }[];
+  vaccinationRates: Record<string, number>;
+  mortalityRates: Record<string, number>;
+}
+
+export interface RegionalBenchmarks {
+  region: string;
+  benchmarks: Record<string, {
+    value: number;
+    percentile: number;
+    comparison: "above" | "below" | "at";
+  }>;
+}
+
+export interface NationalAverages {
+  country: string;
+  metrics: Record<string, {
+    average: number;
+    median: number;
+    range: [number, number];
+  }>;
+}
+
+export interface PeerComparisonMetrics {
+  peerGroup: string;
+  metrics: Record<string, {
+    value: number;
+    peerAverage: number;
+    ranking: number;
+    percentile: number;
+  }>;
+}
+
+export interface PerformanceRanking {
+  category: string;
+  rank: number;
+  totalEntities: number;
+  score: number;
+  improvements: string[];
+  achievements: string[];
+}
+
+export interface ActiveRegulation {
+  id: string;
+  name: string;
+  authority: string;
+  effectiveDate: Date;
+  requirements: string[];
+  penalties: {
+    violation: string;
+    penalty: string;
+    severity: "low" | "medium" | "high" | "critical";
+  }[];
+}
+
+export interface ComplianceRequirement {
+  id: string;
+  regulation: string;
+  description: string;
+  dueDate: Date;
+  status: "compliant" | "non-compliant" | "partially-compliant" | "pending";
+  evidence: string[];
+  responsible: string;
+}
+
+export interface AuditSchedule {
+  id: string;
+  type: string;
+  scheduledDate: Date;
+  duration: number;
+  auditor: string;
+  scope: string[];
+  preparation: string[];
+}
+
+export interface ViolationRisk {
+  regulation: string;
+  risk: "low" | "medium" | "high" | "critical";
+  likelihood: number;
+  impact: string;
+  mitigation: string[];
+  timeline: string;
+}
+
+export interface AnalyticsFilter {
+  field: string;
+  operator: "equals" | "not_equals" | "greater_than" | "less_than" | "contains" | "between";
+  value: unknown;
+  label?: string;
+}
+
+export interface AnalyticsPermission {
+  resource: string;
+  action: "view" | "edit" | "delete" | "export";
+  granted: boolean;
+  conditions?: Record<string, unknown>;
+}
+
+export interface RiskFactor {
+  id: string;
+  name: string;
+  category: string;
+  weight: number;
+  value: unknown;
+  impact: "positive" | "negative" | "neutral";
+  confidence: number;
+}
+
+export interface EscalationRule {
+  id: string;
+  name: string;
+  conditions: {
+    field: string;
+    operator: string;
+    value: unknown;
+  }[];
+  actions: {
+    type: string;
+    parameters: Record<string, unknown>;
+  }[];
+  priority: number;
+}
+
+export interface EffectivenessMetric {
+  metric: string;
+  value: number;
+  target: number;
+  variance: number;
+  trend: "improving" | "declining" | "stable";
+  period: string;
+}
+
+export interface BenchmarkData {
+  category: string;
+  value: number;
+  benchmark: number;
+  percentile: number;
+  comparison: "above" | "below" | "at";
+  peers: number;
+}
+
+export interface TrendFactor {
+  factor: string;
+  correlation: number;
+  significance: number;
+  impact: "positive" | "negative";
+}
+
+export interface TrendForecast {
+  metric: string;
+  forecast: {
+    date: Date;
+    value: number;
+    confidence: number;
+  }[];
+  accuracy: number;
+  methodology: string;
+}
+
+export interface TreatmentPhase {
+  phase: string;
+  startDate: Date;
+  endDate?: Date;
+  status: "planned" | "active" | "completed" | "cancelled";
+  outcomes: Record<string, unknown>;
+}
+
+export interface Milestone {
+  id: string;
+  name: string;
+  description: string;
+  dueDate: Date;
+  completed: boolean;
+  completedDate?: Date;
+}
+
+export interface RiskProfile {
+  patientId: string;
+  overallRisk: "low" | "medium" | "high" | "critical";
+  factors: RiskFactor[];
+  score: number;
+  lastUpdated: Date;
+}
+
+export interface CFMViolation {
+  id: string;
+  violationType: string;
+  description: string;
+  severity: "low" | "medium" | "high" | "critical";
+  detectedDate: Date;
+  status: "open" | "investigating" | "resolved";
+  penalty?: string;
+}
+
+export interface ANVISAViolation {
+  id: string;
+  violationType: string;
+  description: string;
+  severity: "low" | "medium" | "high" | "critical";
+  detectedDate: Date;
+  status: "open" | "investigating" | "resolved";
+  penalty?: string;
+}
+
+export interface LGPDViolation {
+  id: string;
+  violationType: string;
+  description: string;
+  severity: "low" | "medium" | "high" | "critical";
+  detectedDate: Date;
+  status: "open" | "investigating" | "resolved";
+  penalty?: string;
+}
+
+export interface SUSPerformanceMetrics {
+  indicator: string;
+  value: number;
+  target: number;
+  compliance: boolean;
+  trend: "improving" | "declining" | "stable";
+  period: string;
+}
+
+export interface AutoAction {
+  id: string;
+  name: string;
+  type: string;
+  trigger: string;
+  parameters: Record<string, unknown>;
+  enabled: boolean;
+}
+
+export interface RequiredAction {
+  id: string;
+  description: string;
+  priority: "low" | "medium" | "high" | "urgent";
+  dueDate: Date;
+  assignee: string;
+  status: "pending" | "in_progress" | "completed";
+}
+
+export interface TriggerCondition {
+  field: string;
+  operator: string;
+  value: unknown;
+  logicalOperator?: "AND" | "OR";
+}
+
+export interface EmergencyResponse {
+  id: string;
+  name: string;
+  triggers: TriggerCondition[];
+  actions: AutoAction[];
+  notifications: string[];
+  priority: "low" | "medium" | "high" | "critical";
+}
+
+export interface EscalationStep {
+  step: number;
+  description: string;
+  timeframe: number;
+  assignee: string;
+  actions: string[];
+}
+
+export interface NotifiedPerson {
+  id: string;
+  name: string;
+  role: string;
+  email: string;
+  phone?: string;
+  notificationMethods: string[];
+}
+
+export interface ActionResult {
+  actionId: string;
+  status: "success" | "failed" | "pending";
+  result?: unknown;
+  error?: string;
+  timestamp: Date;
+}
+
+export interface EscalationTrigger {
+  condition: TriggerCondition;
+  threshold: number;
+  timeframe: number;
+  escalationPath: EscalationStep[];
+}
+
+export interface OverrideRule {
+  id: string;
+  condition: TriggerCondition;
+  action: "allow" | "deny" | "modify";
+  parameters: Record<string, unknown>;
+  reason: string;
+}
+
+export interface ChartMetadata {
+  title: string;
+  description?: string;
+  type: string;
+  dataSource: string;
+  lastUpdated: Date;
+  refreshRate?: number;
+}
+
+export interface ChartScales {
+  x: {
+    type: "linear" | "logarithmic" | "category" | "time";
+    min?: number;
+    max?: number;
+    ticks?: unknown;
+  };
+  y: {
+    type: "linear" | "logarithmic" | "category" | "time";
+    min?: number;
+    max?: number;
+    ticks?: unknown;
+  };
+}
+
+export interface ChartPlugins {
+  legend: boolean;
+  tooltip: boolean;
+  zoom?: boolean;
+  annotations?: unknown[];
+}
+
+export interface ChartAnimation {
+  duration: number;
+  easing: string;
+  delay?: number;
+}
+
+export interface ChartInteraction {
+  hover: boolean;
+  click: boolean;
+  select?: boolean;
+  brush?: boolean;
+}
+
+export interface DashboardLayout {
+  columns: number;
+  rows: number;
+  widgets: {
+    id: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }[];
+}
+
+export interface DashboardFilter {
+  field: string;
+  type: "select" | "multiselect" | "date" | "range";
+  options?: unknown[];
+  value: unknown;
+}
+
+export interface DashboardPermission {
+  userId: string;
+  dashboardId: string;
+  permissions: string[];
+  granted: boolean;
+}
+
+export interface WidgetPosition {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface WidgetSize {
+  minWidth: number;
+  minHeight: number;
+  maxWidth?: number;
+  maxHeight?: number;
+}
+
+export interface WidgetConfiguration {
+  type: string;
+  parameters: Record<string, unknown>;
+  styling: Record<string, unknown>;
+  behavior: Record<string, unknown>;
+}
+
+export interface DataSource {
+  id: string;
+  name: string;
+  type: string;
+  connection: Record<string, unknown>;
+  schema?: Record<string, unknown>;
+  lastSync?: Date;
+}
+
+export interface WidgetPermission {
+  widgetId: string;
+  userId: string;
+  permissions: string[];
+  restrictions?: Record<string, unknown>;
+}
+
+export interface ReportSection {
+  id: string;
+  title: string;
+  content: unknown;
+  order: number;
+  type: "chart" | "table" | "text" | "image";
+}
+
+export interface ReportParameter {
+  name: string;
+  type: "string" | "number" | "date" | "boolean";
+  required: boolean;
+  defaultValue?: unknown;
+  options?: unknown[];
+}
+
+export interface AuditDetails {
+  auditId: string;
+  timestamp: Date;
+  action: string;
+  userId: string;
+  resource: string;
+  changes: Record<string, unknown>;
+}
+
+export interface AuditRetention {
+  category: string;
+  retentionPeriod: number;
+  archiveLocation?: string;
+  compressionEnabled: boolean;
+}
+
+export interface AuthenticationMethod {
+  type: "oauth" | "saml" | "ldap" | "api_key";
+  configuration: Record<string, unknown>;
+  enabled: boolean;
+}
+
+export interface SyncSchedule {
+  id: string;
+  dataSource: string;
+  frequency: "realtime" | "hourly" | "daily" | "weekly";
+  nextRun: Date;
+  enabled: boolean;
+}
+
+export interface IntegrationMetrics {
+  integration: string;
+  requests: number;
+  failures: number;
+  latency: number;
+  uptime: number;
+  lastSync: Date;
+}
+
+export interface DataTransformation {
+  field: string;
+  operation: "map" | "filter" | "aggregate" | "join";
+  parameters: Record<string, unknown>;
+  order: number;
+}
+
+export interface ValidationRule {
+  field: string;
+  rule: string;
+  parameters: Record<string, unknown>;
+  errorMessage: string;
+  severity: "warning" | "error";
+}
+
+export interface ValidationMetrics {
+  totalRecords: number;
+  validRecords: number;
+  invalidRecords: number;
+  warnings: number;
+  errors: number;
+  validationRate: number;
+}
+
+export interface DisplayOptions {
+  theme: "light" | "dark" | "auto";
+  fontSize: "small" | "medium" | "large";
+  colorScheme: string;
+  animations: boolean;
+}
+
+export interface ExportPreferences {
+  format: "csv" | "excel" | "pdf" | "json";
+  includeCharts: boolean;
+  includeData: boolean;
+  compression?: boolean;
+}
+
+export interface AccessibilitySettings {
+  highContrast: boolean;
+  fontSize: number;
+  screenReader: boolean;
+  keyboardNavigation: boolean;
+  alternativeText: boolean;
+}
+
+export interface PreventiveAction {
+  id: string;
+  name: string;
+  description: string;
+  type: "medication" | "lifestyle" | "monitoring" | "procedure";
+  priority: "low" | "medium" | "high" | "urgent";
+  dueDate: Date;
+  completed: boolean;
+  completedDate?: Date;
+}
+
+export interface ProfessionalMetrics {
+  professionalId: string;
+  specialization: string;
+  experienceYears: number;
+  patientSatisfactionScore: number;
+  successRate: number;
+  averageTreatmentTime: number;
+  certifications: string[];
+}
+
+export interface AbnormalPattern {
+  id: string;
+  pattern: string;
+  severity: "low" | "medium" | "high" | "critical";
+  frequency: number;
+  description: string;
+  detectedAt: Date;
+}
+
+export interface EmergencyProtocol {
+  id: string;
+  name: string;
+  triggers: string[];
+  steps: {
+    order: number;
+    description: string;
+    timeframe: string;
+    responsible: string;
+  }[];
+  priority: "low" | "medium" | "high" | "critical";
+}
+
+export interface AutoNotification {
+  id: string;
+  type: "email" | "sms" | "push" | "in_app";
+  recipient: string;
+  message: string;
+  scheduledFor: Date;
+  sent: boolean;
+  sentAt?: Date;
+}
+
+export interface TreatmentPlan {
+  id: string;
+  patientId: string;
+  diagnosis: string;
+  objectives: string[];
+  procedures: {
+    name: string;
+    scheduledDate: Date;
+    status: "planned" | "completed" | "cancelled";
+  }[];
+  estimatedDuration: number;
+  cost: number;
+}
+
+export interface PreventionAction {
+  id: string;
+  category: "primary" | "secondary" | "tertiary";
+  action: string;
+  target: string;
+  effectiveness: number;
+  cost: number;
+  timeframe: string;
+}
+
+export interface FollowUpPlan {
+  id: string;
+  patientId: string;
+  schedule: {
+    date: Date;
+    type: "consultation" | "exam" | "procedure";
+    description: string;
+  }[];
+  duration: number;
+  completed: boolean;
+}
+
+export interface RiskMitigationStep {
+  id: string;
+  riskFactor: string;
+  mitigation: string;
+  priority: number;
+  status: "pending" | "in_progress" | "completed";
+  effectiveness: number;
+}
+
+export interface ResourceRecommendation {
+  id: string;
+  resource: string;
+  type: "equipment" | "personnel" | "training" | "procedure";
+  justification: string;
+  priority: "low" | "medium" | "high";
+  cost: number;
+}
+
+export interface HealthIndicatorTrends {
+  indicator: string;
+  values: {
+    date: Date;
+    value: number;
+  }[];
+  trend: "improving" | "stable" | "declining";
+  projection: {
+    date: Date;
+    projectedValue: number;
+    confidence: number;
+  }[];
+}
+
+export interface RiskFactorMonitoring {
+  riskFactor: string;
+  currentLevel: number;
+  targetLevel: number;
+  monitoringFrequency: "daily" | "weekly" | "monthly";
+  alerts: {
+    threshold: number;
+    action: string;
+  }[];
+}
+
+export interface BehavioralMonitoring {
+  patientId: string;
+  behaviors: {
+    behavior: string;
+    frequency: number;
+    trend: "improving" | "stable" | "declining";
+    impact: "positive" | "negative" | "neutral";
+  }[];
+  interventions: string[];
+}
+
+export interface BloodPressureReading {
+  systolic: number;
+  diastolic: number;
+  timestamp: Date;
+  device: string;
+  notes?: string;
+}
+
+export interface AbnormalReading {
+  type: string;
+  value: number;
+  threshold: number;
+  severity: "low" | "medium" | "high" | "critical";
+  timestamp: Date;
+  followUpRequired: boolean;
+}
+
+export interface VitalTrendAnalysis {
+  vital: string;
+  trend: "improving" | "stable" | "declining";
+  rate: number;
+  significance: "low" | "medium" | "high";
+  prediction: {
+    date: Date;
+    value: number;
+  }[];
+}
+
+export interface Medication {
+  id: string;
+  name: string;
+  dosage: string;
+  frequency: string;
+  startDate: Date;
+  endDate?: Date;
+  sideEffects: string[];
+  interactions: string[];
+}
+
+export interface MissedDose {
+  medicationId: string;
+  scheduledTime: Date;
+  reportedTime?: Date;
+  reason?: string;
+  impact: "low" | "medium" | "high";
+}
+
+export interface SideEffect {
+  medicationId: string;
+  effect: string;
+  severity: "mild" | "moderate" | "severe";
+  onset: Date;
+  resolved: boolean;
+  resolvedDate?: Date;
+}
+
+export interface DrugInteraction {
+  medications: string[];
+  interactionType: string;
+  severity: "low" | "medium" | "high" | "critical";
+  description: string;
+  recommendation: string;
+}
+
+export interface AppointmentRecord {
+  id: string;
+  patientId: string;
+  professionalId: string;
+  scheduledDate: Date;
+  actualDate?: Date;
+  status: "scheduled" | "completed" | "cancelled" | "no_show";
+  type: string;
+  notes?: string;
+}
+
+export interface SeasonalPattern {
+  season: "spring" | "summer" | "fall" | "winter";
+  condition: string;
+  prevalence: number;
+  severity: number;
+  recommendations: string[];
+}
+
+export interface ANSConnectivityStatus {
+  connected: boolean;
+  lastSync: Date;
+  dataCompleteness: number;
+  errors: string[];
+  nextSync: Date;
+}
+
 // ====== CORE ANALYTICS INTERFACES ======
 
 export interface HealthcareAnalytics {

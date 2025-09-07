@@ -63,7 +63,7 @@ import {
   XCircle,
   Zap,
 } from "lucide-react";
-import React, { useCallback, useMemo, useState, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 // ====== MOCK DATA FOR DEMONSTRATION ======
 const mockAnalyticsData: HealthcareAnalytics = {
@@ -280,11 +280,13 @@ export default function AnalyticsDashboard({
   const [isLoading, setIsLoading] = useState(false);
   const [analytics] = useState<HealthcareAnalytics>(mockAnalyticsData);
   const [selectedDateRange] = useState(dateRange);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _setRealTimeData = setRealTimeData;
   const [activeTab, setActiveTab] = useState("overview");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [alerts] = useState<CriticalAlert[]>([]);
   const [expandedInsights, setExpandedInsights] = useState<string[]>([]);
-  const [realTimeData, setRealTimeData] = useState(realTimeEnabled);
+  const [realTimeData] = useState(realTimeEnabled);
   const [lastRefresh, setLastRefresh] = useState(new Date());
 
   // ====== REAL-TIME DATA SUBSCRIPTION ======

@@ -13,13 +13,15 @@ import { useState } from "react";
 
 // Mock hook for MVP
 const useMFA = () => ({
-  setupMfaMethod: async (method: any, options?: any) => ({
+  setupMfaMethod: async (_method: unknown, _options?: unknown) => ({
     success: true,
     secret: "mock-secret",
     qrCode: "mock-qr",
     backupCodes: ["123456", "789012", "345678", "456789", "567890"],
   }),
-  verifyMfaCode: async (method: any, code: any, sessionId?: any) => ({ success: true }),
+  verifyMfaCode: async (_method: unknown, _code: unknown, _sessionId?: unknown) => ({
+    success: true,
+  }),
   isLoading: false,
   error: null,
   clearError: () => {},
@@ -34,7 +36,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
   const { setupMfaMethod, verifyMfaCode, isLoading, error, clearError } = useMFA();
 
   const [step, setStep] = useState<"method" | "setup" | "verify">("method");
-  const [selectedMethod, setSelectedMethod] = useState<MfaMethod | null>();
+  const [selectedMethod, setSelectedMethod] = useState<MfaMethod | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");

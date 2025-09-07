@@ -433,7 +433,7 @@ export const errorHandler: ErrorHandler = (error, context) => {
   context.res.headers.set("X-Frame-Options", "DENY");
 
   // Return structured error response
-  return context.json(response, statusCode as any);
+  return context.json(response, statusCode as number);
 };
 
 /**
@@ -523,6 +523,14 @@ function isZodIssue(obj: unknown): obj is { path?: unknown[]; message?: unknown;
     )
   );
 }
-function hasStatus(error: unknown) {
-  throw new Error("Function not implemented.");
+function hasStatus(
+  error: unknown,
+): error is { status?: number | string; statusCode?: number | string; } {
+  if (!isErrorLike(error)) return false;
+  const s = (error as { status?: unknown; }).status;
+  const sc = (error as { statusCode?: unknown; }).statusCode;
+  return (
+    (typeof s === "number" || (typeof s === "string" && s.trim() !== ""))
+    || (typeof sc === "number" || (typeof sc === "string" && sc.trim() !== ""))
+  );
 }

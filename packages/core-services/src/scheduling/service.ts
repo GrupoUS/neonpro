@@ -145,7 +145,7 @@ export class AISchedulingService {
    */
   async updatePatientPreferences(
     patientId: string,
-    appointmentHistory: Array<{ date: Date; noShow?: boolean; cancellation?: unknown; }>,
+    appointmentHistory: { date: Date; noShow?: boolean; cancellation?: unknown; }[],
     tenantId: string,
   ): Promise<void> {
     // Analyze appointment patterns
@@ -249,8 +249,10 @@ export class AISchedulingService {
         timeRange,
       ),
       averageBookingTime: this.calculateAverageBookingTime(tenantId),
-      noShowRate: this.calculateNoShowRate(appointments as Array<{ noShow?: boolean; }>),
-      cancellationRate: this.calculateCancellationRate(appointments as Array<{ cancellation?: unknown; }>),
+      noShowRate: this.calculateNoShowRate(appointments as { noShow?: boolean; }[]),
+      cancellationRate: this.calculateCancellationRate(
+        appointments as { cancellation?: unknown; }[],
+      ),
       patientSatisfactionScore: await this.calculatePatientSatisfaction(tenantId),
       revenueOptimization: this.calculateRevenueOptimization(appointments),
       timeSlotEfficiency: this.calculateTimeSlotEfficiency(
@@ -351,7 +353,7 @@ export class AISchedulingService {
     if (!patient.history || patient.history.length === 0) {
       return 0.5; // Default complexity
     }
-    
+
     // Simple complexity calculation based on treatment history
     const complexTreatments = patient.history.filter((h: any) => h.duration > 60).length;
     return Math.min(complexTreatments / patient.history.length, 1);
@@ -444,11 +446,14 @@ export class AISchedulingService {
    */
   private async predictTreatmentTypeDemand(
     treatment: TreatmentType,
-    dailyDemand: Array<{ date: Date; predictedAppointments: number; confidence: number; }>,
+    dailyDemand: { date: Date; predictedAppointments: number; confidence: number; }[],
     historicalData: any[],
   ): Promise<number> {
     // Simple implementation: calculate based on historical popularity
-    const totalPredictedAppointments = dailyDemand.reduce((sum, day) => sum + day.predictedAppointments, 0);
+    const totalPredictedAppointments = dailyDemand.reduce(
+      (sum, day) => sum + day.predictedAppointments,
+      0,
+    );
     const treatmentPopularity = this.getTreatmentPopularity(treatment.id, historicalData);
     return Math.round(totalPredictedAppointments * treatmentPopularity);
   }
@@ -458,7 +463,7 @@ export class AISchedulingService {
    */
   private getTreatmentPopularity(treatmentId: string, historicalData: any[]): number {
     if (!historicalData.length) return 0.1; // Default 10% popularity
-    
+
     const treatmentCount = historicalData.filter((h: any) => h.treatmentId === treatmentId).length;
     return treatmentCount / historicalData.length;
   }
@@ -482,7 +487,7 @@ export class AISchedulingService {
         monthlyPattern: Array(12).fill(1), // Consistent monthly demand
       };
     }
-    
+
     // Would analyze actual patterns from historical data
     return {
       weeklyPattern: [3, 8, 8, 8, 8, 6, 2],
@@ -495,7 +500,7 @@ export class AISchedulingService {
    */
   private calculateTrendAdjustment(date: Date, historicalData: any[]): number {
     // Simple implementation - would use ML for actual trend analysis
-    return 1.0; // No adjustment
+    return 1; // No adjustment
   }
 
   /**
@@ -668,10 +673,10 @@ export class AISchedulingService {
   }
 
   private analyzeAppointmentPatterns(
-    history: Array<{ date: Date; noShow?: boolean; cancellation?: unknown; }>,
+    history: { date: Date; noShow?: boolean; cancellation?: unknown; }[],
   ): unknown {
     const patterns: {
-      preferredTimeSlots: Array<{ start: Date; end: Date; }>;
+      preferredTimeSlots: { start: Date; end: Date; }[];
       preferredDays: number[];
       treatmentSpacing: number;
       cancelationPatterns: unknown[];
@@ -715,7 +720,7 @@ export class AISchedulingService {
 
   private calculateStaffWorkload(
     staff: Staff[],
-    appointments: Array<{ staffId?: string; duration?: number; }>,
+    appointments: { staffId?: string; duration?: number; }[],
   ): Record<string, number> {
     const workload: Record<string, number> = {};
 
@@ -733,12 +738,12 @@ export class AISchedulingService {
     return workload;
   }
 
-  private identifyWorkloadImbalances(workload: Record<string, number>): Array<{
+  private identifyWorkloadImbalances(workload: Record<string, number>): {
     staffId: string;
     currentLoad: number;
     targetLoad: number;
     imbalance: number;
-  }> {
+  }[] {
     const values = Object.values(workload);
     const averageLoad = values.reduce((sum, load) => sum + load, 0) / values.length;
     const imbalances = [];
@@ -760,12 +765,12 @@ export class AISchedulingService {
   }
 
   private async generateRebalancingActions(
-    imbalances: Array<{
+    imbalances: {
       staffId: string;
       currentLoad: number;
       targetLoad: number;
       imbalance: number;
-    }>,
+    }[],
     _appointments: unknown[],
     _staff: Staff[],
   ): Promise<SchedulingAction[]> {
@@ -887,7 +892,9 @@ export class AISchedulingService {
   private async getAppointmentsInRange(
     _timeRange: { start: Date; end: Date; },
     _tenantId: string,
-  ): Promise<Array<{ staffId?: string; duration?: number; noShow?: boolean; cancellation?: unknown; }>> {
+  ): Promise<
+    { staffId?: string; duration?: number; noShow?: boolean; cancellation?: unknown; }[]
+  > {
     // Get appointments in date range
     return [];
   }
@@ -905,12 +912,12 @@ export class AISchedulingService {
     return this.analytics.averageBookingTime;
   }
 
-  private calculateNoShowRate(appointments: Array<{ noShow?: boolean; }>): number {
+  private calculateNoShowRate(appointments: { noShow?: boolean; }[]): number {
     const noShows = appointments.filter((apt) => apt.noShow).length;
     return appointments.length > 0 ? noShows / appointments.length : 0;
   }
 
-  private calculateCancellationRate(appointments: Array<{ cancellation?: unknown; }>): number {
+  private calculateCancellationRate(appointments: { cancellation?: unknown; }[]): number {
     const cancellations = appointments.filter((apt) => apt.cancellation).length;
     return appointments.length > 0 ? cancellations / appointments.length : 0;
   }

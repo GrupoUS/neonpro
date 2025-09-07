@@ -4,7 +4,6 @@
  */
 
 import type { ComplianceFramework, ComplianceViolation, ViolationSeverity } from "../types";
-import { ViolationStatus } from "../types";
 import type { ViolationDetectionRule } from "./ViolationDetector";
 
 export interface RemediationAction {
@@ -523,10 +522,8 @@ export class RemediationEngine {
    */
   private async generateRemediationActions(
     violation: ComplianceViolation,
-    detectionRule?: ViolationDetectionRule,
+    _detectionRule?: ViolationDetectionRule,
   ): Promise<RemediationAction[]> {
-    const actions: RemediationAction[] = [];
-
     // Get framework-specific actions
     const frameworkActions = Array.from(this.actions.values()).filter(action =>
       action.framework === violation.framework
@@ -774,8 +771,8 @@ export class RemediationEngine {
   }
 
   private async verifyAutoRemediation(
-    violationId: string,
-    appliedFixes: string[],
+    _violationId: string,
+    _appliedFixes: string[],
   ): Promise<{ passed: boolean; details: string; }> {
     // Mock verification - would implement actual verification logic
     const passed = Math.random() > 0.1; // 90% success rate

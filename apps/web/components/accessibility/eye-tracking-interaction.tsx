@@ -5,16 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  Crosshair,
-  Eye,
-  Settings,
-  Target,
-  Zap,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle2, Crosshair, Eye, Target, Zap } from "lucide-react";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
