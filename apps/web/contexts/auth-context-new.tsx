@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 // API Base URL - should be from environment
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
@@ -357,7 +357,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const refreshAuth = async (): Promise<void> => {
+  const refreshAuth = useCallback(async (): Promise<void> => {
     if (!isAuthenticated) return;
 
     try {
@@ -404,7 +404,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden && isAuthenticated) {
-        void refreshAuth();
+        refreshAuth();
       }
     };
 
