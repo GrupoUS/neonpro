@@ -91,6 +91,8 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
     "all",
   );
   const [typeFilter, setTypeFilter] = useState<ValidationType | "all">("all");
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [isCreateRuleOpen, setIsCreateRuleOpen] = useState(false);
 
   // Icon mapping for validation types
   const getTypeIcon = (type: ValidationType) => {
@@ -885,6 +887,120 @@ export function ValidationDashboard({ clinic_id }: ValidationDashboardProps) {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Configuration Dialog */}
+      <Dialog open={isConfigOpen} onOpenChange={setIsConfigOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Configurações de Validação</DialogTitle>
+            <DialogDescription>
+              Configure as opções de validação para o sistema
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="timeout">Timeout (segundos)</Label>
+                <Input
+                  id="timeout"
+                  type="number"
+                  placeholder="30"
+                  defaultValue="30"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="retries">Tentativas de Retry</Label>
+                <Input
+                  id="retries"
+                  type="number"
+                  placeholder="3"
+                  defaultValue="3"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="logLevel">Nível de Log</Label>
+              <Select defaultValue="info">
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o nível" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="debug">Debug</SelectItem>
+                  <SelectItem value="info">Info</SelectItem>
+                  <SelectItem value="warn">Warning</SelectItem>
+                  <SelectItem value="error">Error</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsConfigOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={() => setIsConfigOpen(false)}>
+                Salvar
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Rule Dialog */}
+      <Dialog open={isCreateRuleOpen} onOpenChange={setIsCreateRuleOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Nova Regra de Validação</DialogTitle>
+            <DialogDescription>
+              Crie uma nova regra personalizada para validação de dados
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="ruleName">Nome da Regra</Label>
+              <Input
+                id="ruleName"
+                placeholder="Digite o nome da regra"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ruleType">Tipo de Validação</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="patient_data">Dados do Paciente</SelectItem>
+                  <SelectItem value="clinical_data">Dados Clínicos</SelectItem>
+                  <SelectItem value="appointment">Agendamento</SelectItem>
+                  <SelectItem value="billing">Faturamento</SelectItem>
+                  <SelectItem value="insurance">Convênio</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ruleDescription">Descrição</Label>
+              <Input
+                id="ruleDescription"
+                placeholder="Descreva o que esta regra valida"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ruleCondition">Condição</Label>
+              <Input
+                id="ruleCondition"
+                placeholder="Ex: field.length > 0"
+              />
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsCreateRuleOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={() => setIsCreateRuleOpen(false)}>
+                Criar Regra
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

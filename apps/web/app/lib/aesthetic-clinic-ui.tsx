@@ -510,7 +510,7 @@ export function TreatmentPlanningInterface() {
             <div className="space-y-2">
               <Label htmlFor="treatment-type">Tipo de Tratamento</Label>
               <Select
-                onValueChange={(value) => setPlan({ ...plan, treatmentType: value })}
+                onValueChange={(value: string) => setPlan({ ...plan, treatmentType: value })}
                 value={plan.treatmentType}
               >
                 <SelectTrigger id="treatment-type">
@@ -529,7 +529,7 @@ export function TreatmentPlanningInterface() {
             <div className="space-y-2">
               <Label htmlFor="priority">Prioridade</Label>
               <Select
-                onValueChange={(value) =>
+                onValueChange={(value: string) =>
                   setPlan({ ...plan, priority: value as Treatment["priority"] })}
                 value={plan.priority}
               >
@@ -1449,7 +1449,7 @@ export function PatientConsultationForm() {
                 <div className="space-y-2">
                   <Label htmlFor="gender">Gênero</Label>
                   <Select
-                    onValueChange={(value) =>
+                    onValueChange={(value: string) =>
                       setFormData({
                         ...formData,
                         personalInfo: {
@@ -1553,7 +1553,7 @@ export function PatientConsultationForm() {
                     Principal Preocupação Estética
                   </Label>
                   <Select
-                    onValueChange={(value) =>
+                    onValueChange={(value: string) =>
                       setFormData({
                         ...formData,
                         aestheticConcerns: {
@@ -1625,7 +1625,7 @@ export function PatientConsultationForm() {
                 <div className="space-y-2">
                   <Label htmlFor="budget">Faixa de Orçamento</Label>
                   <Select
-                    onValueChange={(value) =>
+                    onValueChange={(value: string) =>
                       setFormData({
                         ...formData,
                         aestheticConcerns: {
@@ -1665,7 +1665,7 @@ export function PatientConsultationForm() {
                     Forma de Comunicação Preferida
                   </Label>
                   <Select
-                    onValueChange={(value) =>
+                    onValueChange={(value: string) =>
                       setFormData({
                         ...formData,
                         preferences: {
@@ -1690,7 +1690,7 @@ export function PatientConsultationForm() {
                 <div className="space-y-2">
                   <Label htmlFor="appointment-time">Horário Preferido</Label>
                   <Select
-                    onValueChange={(value) =>
+                    onValueChange={(value: string) =>
                       setFormData({
                         ...formData,
                         preferences: {
@@ -1715,7 +1715,7 @@ export function PatientConsultationForm() {
                 <div className="space-y-2">
                   <Label htmlFor="reminders">Frequência de Lembretes</Label>
                   <Select
-                    onValueChange={(value) =>
+                    onValueChange={(value: string) =>
                       setFormData({
                         ...formData,
                         preferences: {

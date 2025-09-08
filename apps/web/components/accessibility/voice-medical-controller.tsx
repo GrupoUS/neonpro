@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
+// import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Mic, MicOff, Shield, Stethoscope, Volume2 } from "lucide-react";
 import type React from "react";
@@ -1084,9 +1084,11 @@ export function VoiceMedicalController({
               <span className="text-sm">
                 Limiar de Confiança: {Math.round(settings.confidence_threshold * 100)}%
               </span>
-              <Slider
-                value={[settings.confidence_threshold]}
-                onValueChange={([value]) => updateSettings({ confidence_threshold: value })}
+              <input
+                type="range"
+                value={settings.confidence_threshold}
+                onChange={(e) =>
+                  updateSettings({ confidence_threshold: parseFloat(e.target.value) })}
                 min={0.5}
                 max={1}
                 step={0.05}
@@ -1096,9 +1098,10 @@ export function VoiceMedicalController({
 
             <div className="space-y-2">
               <span className="text-sm">Volume: {settings.volume_level}%</span>
-              <Slider
-                value={[settings.volume_level]}
-                onValueChange={([value]) => updateSettings({ volume_level: value })}
+              <input
+                type="range"
+                value={settings.volume_level}
+                onChange={(e) => updateSettings({ volume_level: parseInt(e.target.value) })}
                 min={0}
                 max={100}
                 step={5}
@@ -1108,9 +1111,10 @@ export function VoiceMedicalController({
 
             <div className="space-y-2">
               <span className="text-sm">Velocidade da Fala: {settings.speech_rate}x</span>
-              <Slider
-                value={[settings.speech_rate]}
-                onValueChange={([value]) => updateSettings({ speech_rate: value })}
+              <input
+                type="range"
+                value={settings.speech_rate}
+                onChange={(e) => updateSettings({ speech_rate: parseFloat(e.target.value) })}
                 min={0.5}
                 max={2}
                 step={0.1}
@@ -1186,9 +1190,11 @@ export function VoiceMedicalController({
                 <span className="text-sm">
                   Retenção de Dados: {settings.data_retention_days} dias
                 </span>
-                <Slider
-                  value={[settings.data_retention_days]}
-                  onValueChange={([value]) => updateSettings({ data_retention_days: value })}
+                <input
+                  type="range"
+                  value={settings.data_retention_days}
+                  onChange={(e) =>
+                    updateSettings({ data_retention_days: parseInt(e.target.value) })}
                   min={1}
                   max={365}
                   step={1}

@@ -45,10 +45,10 @@ export const toastHelpers = {
 
   // Error messages
   error: {
-    generic: () =>
+    generic: (message?: string) =>
       toast({
         title: "Erro inesperado",
-        description: "Algo deu errado. Tente novamente.",
+        description: message || "Algo deu errado. Tente novamente.",
         variant: "destructive",
       }),
     network: () =>
@@ -118,4 +118,11 @@ export const toastHelpers = {
         variant: "destructive",
       }),
   },
+
+  // Info messages
+  info: (message: string) =>
+    toast({
+      title: "Informação",
+      description: message,
+    }),
 };

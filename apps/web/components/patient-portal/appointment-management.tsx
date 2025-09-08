@@ -1,19 +1,5 @@
 "use client";
 
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../ui";
 import { cn } from "@neonpro/utils";
 import {
   AlertCircle,
@@ -33,6 +19,20 @@ import {
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../ui";
 
 // Mock data for appointments
 const mockAppointments = {

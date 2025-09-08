@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
+// import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -843,6 +843,12 @@ export function CognitiveAccessibilitySettings() {
     if (randomAid) {
       addMemoryAid({
         ...randomAid,
+        type: randomAid.type || "visual",
+        content: randomAid.content || "Lembrete padrão",
+        medical_context: randomAid.medical_context || "Geral",
+        frequency_minutes: randomAid.frequency_minutes || 60,
+        importance_level: randomAid.importance_level || 1,
+        portuguese_message: randomAid.portuguese_message || "Lembrete padrão",
         trigger_conditions: ["manual_add"],
       });
     }
@@ -1020,10 +1026,11 @@ export function CognitiveAccessibilitySettings() {
                   <label className="text-sm font-medium">
                     Intensidade das Pistas Visuais: {settings.visual_cues_intensity}%
                   </label>
-                  <Slider
-                    value={[settings.visual_cues_intensity]}
-                    onValueChange={([visual_cues_intensity]) =>
-                      updateSettings({ visual_cues_intensity })}
+                  <input
+                    type="range"
+                    value={settings.visual_cues_intensity}
+                    onChange={(e) =>
+                      updateSettings({ visual_cues_intensity: parseInt(e.target.value) })}
                     min={0}
                     max={100}
                     step={10}

@@ -181,17 +181,17 @@ export const noShowPredictionEngine = {
     // For now, return a mock structure to resolve build errors
     return {
       id,
-      patient_id: updates.patientId || "mock-patient-id",
-      appointment_id: updates.appointmentId || "mock-appointment-id",
+      patient_id: (updates as any)?.patientId || "mock-patient-id",
+      appointment_id: (updates as any)?.appointmentId || "mock-appointment-id",
       prediction_score: 0.5,
       risk_level: "medium" as const,
       confidence: 0.8,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      actual_outcome: updates.actual_outcome,
-      notes: updates.notes,
-      risk_factors: updates.riskFactors || [],
-      custom_weight: updates.customWeight,
+      actual_outcome: (updates as any)?.actual_outcome,
+      notes: (updates as any)?.notes,
+      risk_factors: (updates as any)?.riskFactors || [],
+      custom_weight: (updates as any)?.customWeight,
     };
   },
 

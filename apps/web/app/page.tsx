@@ -1,9 +1,9 @@
 "use client";
 
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui";
 import { useAppointments } from "@/hooks/useAppointments";
 import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
 import { usePatients } from "@/hooks/usePatients";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui";
 import { Building2, Calendar, Shield, TestTube, User } from "lucide-react";
 import Link from "next/link";
 import { PatientsList } from "../components/PatientsList";
@@ -14,7 +14,7 @@ import { MetricsCards } from "./components/dashboard/MetricsCards";
 interface Patient {
   id: string;
   name?: string;
-  status: string;
+  status?: string;
   avatar?: string;
 }
 
@@ -82,7 +82,7 @@ const QuickAccessSection = ({
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <PatientsList
         patientsLoading={patientsLoading}
-        recentPatients={recentPatients}
+        recentPatients={recentPatients.map(p => ({ ...p, status: p.status || "active" }))}
       />
 
       <AppointmentsList

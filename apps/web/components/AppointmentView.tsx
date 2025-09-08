@@ -1,20 +1,8 @@
 "use client";
 
 import {
-  AlertCircle,
-  Calendar as CalendarIcon,
-  CheckCircle,
-  Clock,
-  Edit,
-  Plus,
-  User,
-  XCircle,
-} from "lucide-react";
-import { useCallback, useState } from "react";
-import {
   Badge,
   Button,
-  Calendar,
   Card,
   CardContent,
   CardDescription,
@@ -35,6 +23,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui";
+import {
+  AlertCircle,
+  Calendar as CalendarIcon,
+  CheckCircle,
+  Clock,
+  Edit,
+  Plus,
+  User,
+  XCircle,
+} from "lucide-react";
+import { useCallback, useState } from "react";
 import type { Appointment, Professional } from "./types/healthcare";
 
 // Extended interfaces for AppointmentView specific needs
@@ -58,7 +57,8 @@ const MOCK_DOCTORS: Doctor[] = [
   {
     id: "1",
     name: "Dr. Ana Silva",
-    specialty: "Cardiologia",
+    specialization: "Cardiologia",
+    isActive: true,
     availability: {
       monday: ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"],
       tuesday: ["09:00", "10:00", "11:00", "14:00", "15:00"],
@@ -70,7 +70,8 @@ const MOCK_DOCTORS: Doctor[] = [
   {
     id: "2",
     name: "Dr. João Santos",
-    specialty: "Clínica Geral",
+    specialization: "Clínica Geral",
+    isActive: true,
     availability: {
       monday: ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00", "17:00"],
       tuesday: ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00"],
@@ -89,7 +90,7 @@ const APPOINTMENT_TYPES = [
 ];
 
 export default function AppointmentView() {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentViewData[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -98,7 +99,7 @@ export default function AppointmentView() {
     patientPhone: "",
     date: new Date(),
     time: "",
-    type: "consultation" as Appointment["type"],
+    type: "consultation" as AppointmentViewData["type"],
     doctor: "",
     notes: "",
   });
@@ -120,18 +121,20 @@ export default function AppointmentView() {
       return;
     }
 
-    const newAppointment: Appointment = {
+    const newAppointment: AppointmentViewData = {
       id: Date.now().toString(),
       patientName: formData.patientName,
       patientEmail: formData.patientEmail,
       patientPhone: formData.patientPhone,
+      service: appointmentType.label,
+      professional: selectedDoctor.name,
       date: formData.date,
       time: formData.time,
       duration: appointmentType.duration,
       type: formData.type,
       doctor: selectedDoctor.name,
-      specialty: selectedDoctor.specialty,
-      status: "scheduled",
+      specialty: selectedDoctor.specialization,
+      status: "confirmed",
       notes: formData.notes,
     };
 
@@ -155,14 +158,14 @@ export default function AppointmentView() {
 
   const handleStatusChange = (
     appointmentId: string,
-    newStatus: Appointment["status"],
+    newStatus: AppointmentViewData["status"],
   ) => {
     setAppointments((prev) =>
       prev.map((apt) => apt.id === appointmentId ? { ...apt, status: newStatus } : apt)
     );
   };
 
-  const getStatusBadge = (status: Appointment["status"]) => {
+  const getStatusBadge = (status: AppointmentViewData["status"]) => {
     const variants = {
       scheduled: "bg-blue-100 text-blue-800",
       confirmed: "bg-green-100 text-green-800",
@@ -205,12 +208,15 @@ export default function AppointmentView() {
       return [];
     }
 
-    const dayName = date.toLocaleDateString("en-US", { weekday: "lowercase" });
+    const dayName = date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
     return doctor.availability[dayName] || [];
   };
 
   const filteredAppointments = appointments.filter(
-    (apt) => apt.date.toDateString() === selectedDate.toDateString(),
+    (apt) => {
+      const aptDate = typeof apt.date === "string" ? new Date(apt.date) : apt.date;
+      return aptDate.toDateString() === selectedDate.toDateString();
+    },
   );
 
   return (
@@ -290,7 +296,7 @@ export default function AppointmentView() {
                   <SelectContent>
                     {MOCK_DOCTORS.map((doctor) => (
                       <SelectItem key={doctor.id} value={doctor.id}>
-                        {doctor.name} - {doctor.specialty}
+                        {doctor.name} - {doctor.specialization}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -302,7 +308,7 @@ export default function AppointmentView() {
                   onValueChange={(value) =>
                     setFormData((prev) => ({
                       ...prev,
-                      type: value as Appointment["type"],
+                      type: value as AppointmentViewData["type"],
                     }))}
                   value={formData.type}
                 >
@@ -342,12 +348,12 @@ export default function AppointmentView() {
 
             <div className="space-y-2">
               <Label htmlFor="date">Data</Label>
-              <Calendar
+              <Input
+                type="date"
                 className="rounded-md border"
-                disabled={(date) => date < new Date()}
-                mode="single"
-                onSelect={handleDateSelect}
-                selected={formData.date}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => handleDateSelect(new Date(e.target.value))}
+                value={formData.date.toISOString().split("T")[0]}
               />
             </div>
 
@@ -381,11 +387,11 @@ export default function AppointmentView() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Calendar
+            <Input
+              type="date"
               className="rounded-md border"
-              mode="single"
-              onSelect={handleDateSelect}
-              selected={selectedDate}
+              onChange={(e) => handleDateSelect(new Date(e.target.value))}
+              value={selectedDate.toISOString().split("T")[0]}
             />
           </CardContent>
         </Card>
@@ -485,7 +491,10 @@ export default function AppointmentView() {
                 <p className="font-medium text-sm">Hoje</p>
                 <p className="font-bold text-2xl">
                   {appointments.filter(
-                    (apt) => apt.date.toDateString() === new Date().toDateString(),
+                    (apt) => {
+                      const aptDate = typeof apt.date === "string" ? new Date(apt.date) : apt.date;
+                      return aptDate.toDateString() === new Date().toDateString();
+                    },
                   ).length}
                 </p>
               </div>

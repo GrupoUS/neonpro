@@ -1,20 +1,5 @@
 "use client";
 
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-  Progress,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../ui";
 import { cn } from "@neonpro/utils";
 import {
   AlertTriangle,
@@ -43,6 +28,21 @@ import {
   VolumeX,
 } from "lucide-react";
 import { useState } from "react";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Progress,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../ui";
 
 // Content types
 interface BaseContent {

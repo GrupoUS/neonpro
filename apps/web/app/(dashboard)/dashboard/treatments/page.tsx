@@ -271,7 +271,7 @@ export default function TreatmentsPage() {
       {/* Main Content Tabs */}
       <Tabs
         className="space-y-4"
-        onValueChange={(value) => setViewMode(value as ViewMode)}
+        onValueChange={(value: string) => setViewMode(value as ViewMode)}
         value={viewMode}
       >
         <TabsList className="grid w-full grid-cols-4">

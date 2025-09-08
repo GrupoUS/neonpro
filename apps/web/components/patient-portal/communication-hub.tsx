@@ -1,19 +1,5 @@
 "use client";
 
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../ui";
 import { cn } from "@neonpro/utils";
 import {
   AlertTriangle,
@@ -37,6 +23,20 @@ import {
   Video,
 } from "lucide-react";
 import { useState } from "react";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../ui";
 
 // Mock data for communications
 const mockCommunications = {

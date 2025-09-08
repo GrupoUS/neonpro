@@ -805,7 +805,7 @@ function AppointmentForm({
           <Label htmlFor="patient_id">Paciente *</Label>
           <Select
             value={formData.patient_id}
-            onValueChange={(value) => handleInputChange("patient_id", value)}
+            onValueChange={(value: string) => handleInputChange("patient_id", value)}
           >
             <SelectTrigger className={errors.patient_id ? "border-red-500" : ""}>
               <SelectValue placeholder="Selecionar paciente" />
@@ -825,7 +825,7 @@ function AppointmentForm({
           <Label htmlFor="professional_id">Profissional *</Label>
           <Select
             value={formData.professional_id}
-            onValueChange={(value) => handleInputChange("professional_id", value)}
+            onValueChange={(value: string) => handleInputChange("professional_id", value)}
           >
             <SelectTrigger className={errors.professional_id ? "border-red-500" : ""}>
               <SelectValue placeholder="Selecionar profissional" />
@@ -848,7 +848,7 @@ function AppointmentForm({
         <Label htmlFor="service_type_id">Serviço *</Label>
         <Select
           value={formData.service_type_id}
-          onValueChange={(value) => handleInputChange("service_type_id", value)}
+          onValueChange={(value: string) => handleInputChange("service_type_id", value)}
         >
           <SelectTrigger className={errors.service_type_id ? "border-red-500" : ""}>
             <SelectValue placeholder="Selecionar serviço" />
@@ -923,7 +923,7 @@ function AppointmentForm({
           <Label htmlFor="room_id">Sala</Label>
           <Select
             value={formData.room_id}
-            onValueChange={(value) => handleInputChange("room_id", value)}
+            onValueChange={(value: string) => handleInputChange("room_id", value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecionar sala (opcional)" />
@@ -942,7 +942,7 @@ function AppointmentForm({
           <Label htmlFor="priority">Prioridade</Label>
           <Select
             value={formData.priority.toString()}
-            onValueChange={(value) => handleInputChange("priority", parseInt(value))}
+            onValueChange={(value: string) => handleInputChange("priority", parseInt(value))}
           >
             <SelectTrigger>
               <SelectValue />
@@ -962,7 +962,7 @@ function AppointmentForm({
           <Label htmlFor="status">Status</Label>
           <Select
             value={formData.status}
-            onValueChange={(value) => handleInputChange("status", value)}
+            onValueChange={(value: string) => handleInputChange("status", value)}
           >
             <SelectTrigger>
               <SelectValue />
@@ -1516,7 +1516,7 @@ export default function AgendaPage() {
               {/* View Mode Selector */}
               <Tabs
                 value={viewMode}
-                onValueChange={(value) => setViewMode(value as "day" | "week" | "month")}
+                onValueChange={(value: string) => setViewMode(value as "day" | "week" | "month")}
               >
                 <TabsList>
                   <TabsTrigger value="month">Mês</TabsTrigger>

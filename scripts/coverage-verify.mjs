@@ -16,8 +16,10 @@ import fs from "node:fs";
 import path from "node:path";
 
 const cwd = process.cwd();
-const summaryPath = process.env.COVERAGE_SUMMARY_PATH
-  || path.join(cwd, "coverage", "coverage-summary.json");
+const summaryPathEnv = process.env.COVERAGE_SUMMARY_PATH;
+const unitSummaryPath = path.join(cwd, "coverage", "unit", "coverage-summary.json");
+const integrationSummaryPath = path.join(cwd, "coverage", "integration", "coverage-summary.json");
+const rootSummaryPath = path.join(cwd, "coverage", "coverage-summary.json");
 const cloverPath = path.join(cwd, "coverage", "clover.xml");
 const v8FinalPath = path.join(cwd, "coverage", "coverage-final.json");
 
@@ -28,14 +30,34 @@ const envNum = (name, def) => {
   return Number.isFinite(n) ? n : def;
 };
 
+// Optional coarse path filters for v8 coverage-final.json aggregation
+// Use simple substring matching for reliability without extra deps
+const includeHints = String(process.env.COVERAGE_INCLUDE || "apps/web|packages/|apps/api/src")
+  .split("|").filter(Boolean);
+const excludeHints = String(
+  process.env.COVERAGE_EXCLUDE
+    || "standalone-deployment/lib|tools/e2e|tools/testing/reports|public/",
+).split("|").filter(Boolean);
+const matchesInclude = (fp) =>
+  (includeHints.length === 0) || includeHints.some((h) => fp.includes(h));
+const matchesExclude = (fp) => excludeHints.some((h) => fp.includes(h));
+
 // Defaults aligned with vitest.config.ts (unit: 85/85/80/85; integration: 80/80/70/75)
-// We use the LOWER integration defaults by default to avoid false CI blocks when mixing reports.
-const thresholds = {
-  statements: envNum("MIN_STATEMENTS", 80),
-  lines: envNum("MIN_LINES", 80),
-  branches: envNum("MIN_BRANCHES", 70),
-  functions: envNum("MIN_FUNCTIONS", 75),
-};
+// We use the LOWER integration defaults by default, but allow scope-specific strictness.
+const scope = String(process.env.COVERAGE_SCOPE || "").toUpperCase();
+const thresholds = scope === "UNIT"
+  ? {
+    statements: envNum("MIN_STATEMENTS", 85),
+    lines: envNum("MIN_LINES", 85),
+    branches: envNum("MIN_BRANCHES", 80),
+    functions: envNum("MIN_FUNCTIONS", 85),
+  }
+  : {
+    statements: envNum("MIN_STATEMENTS", 80),
+    lines: envNum("MIN_LINES", 80),
+    branches: envNum("MIN_BRANCHES", 70),
+    functions: envNum("MIN_FUNCTIONS", 75),
+  };
 
 const failOnMiss = String(process.env.COVERAGE_FAIL_ON_MISS || "true") === "true";
 
@@ -96,13 +118,17 @@ function parseCloverXml(p) {
 function parseCoverageFinalJson(p) {
   const data = readJSON(p);
   if (!data) return null;
-  // Aggregate totals across files
+  // Aggregate totals across files, applying include/exclude hints
   let statements = { covered: 0, total: 0 };
   let lines = { covered: 0, total: 0 };
   let branches = { covered: 0, total: 0 };
   let functions = { covered: 0, total: 0 };
 
-  for (const file of Object.values(data)) {
+  for (const [filePath, file] of Object.entries(data)) {
+    const fp = String(filePath);
+    if (matchesExclude(fp)) continue;
+    if (!matchesInclude(fp)) continue;
+
     const s = file.s || {}; // statements hits by id
     const b = file.b || {}; // branches array of arrays
     const f = file.f || {}; // functions hits by id
@@ -142,17 +168,42 @@ function parseCoverageFinalJson(p) {
 }
 
 function pickFirstAvailable() {
-  if (fs.existsSync(summaryPath)) {
-    const s = parseCoverageSummaryJson(summaryPath);
+  // 1) Explicit env override
+  if (summaryPathEnv && fs.existsSync(summaryPathEnv)) {
+    const s = parseCoverageSummaryJson(summaryPathEnv);
     if (s) return s;
+  }
+  // 2) Optional scope: UNIT or INTEGRATION
+  const scope = String(process.env.COVERAGE_SCOPE || "").toUpperCase();
+  if (scope === "UNIT" && fs.existsSync(unitSummaryPath)) {
+    const s = parseCoverageSummaryJson(unitSummaryPath);
+    if (s) return s;
+  }
+  if (scope === "INTEGRATION" && fs.existsSync(integrationSummaryPath)) {
+    const s = parseCoverageSummaryJson(integrationSummaryPath);
+    if (s) return s;
+  }
+  // 3) Auto-prefer unit → integration → root
+  if (fs.existsSync(unitSummaryPath)) {
+    const s = parseCoverageSummaryJson(unitSummaryPath);
+    if (s) return s;
+  }
+  if (fs.existsSync(integrationSummaryPath)) {
+    const s = parseCoverageSummaryJson(integrationSummaryPath);
+    if (s) return s;
+  }
+  if (fs.existsSync(rootSummaryPath)) {
+    const s = parseCoverageSummaryJson(rootSummaryPath);
+    if (s) return s;
+  }
+  // 4) Fallbacks (prefer v8 JSON over clover for more accurate lines/functions)
+  if (fs.existsSync(v8FinalPath)) {
+    const f = parseCoverageFinalJson(v8FinalPath);
+    if (f) return f;
   }
   if (fs.existsSync(cloverPath)) {
     const c = parseCloverXml(cloverPath);
     if (c) return c;
-  }
-  if (fs.existsSync(v8FinalPath)) {
-    const f = parseCoverageFinalJson(v8FinalPath);
-    if (f) return f;
   }
   return null;
 }

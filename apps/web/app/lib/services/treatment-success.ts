@@ -18,7 +18,7 @@ export class TreatmentSuccessService {
     // Mock implementation for build compatibility
     return {
       id: outcomeId,
-      ...data,
+      ...(data as object),
       updated_at: new Date().toISOString(),
     };
   }

@@ -219,22 +219,22 @@ export function usePhase4Validation(
     switch (message.type) {
       case "session_update":
         if ("session" in message) {
-          updateSessionInState(message.session);
+          updateSessionInState(message.session as ValidationSession);
         }
         break;
       case "alert":
         if ("alert" in message) {
-          addAlert(message.alert);
+          addAlert(message.alert as ValidationAlert);
         }
         break;
       case "health_update":
         if ("health" in message) {
-          setSystemHealth(message.health);
+          setSystemHealth(message.health as SystemHealth);
         }
         break;
       case "stats_update":
         if ("stats" in message) {
-          setStats(message.stats);
+          setStats(message.stats as ValidationStats);
         }
         break;
     }

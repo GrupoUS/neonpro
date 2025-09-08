@@ -620,7 +620,7 @@ function PatientForm({
               <Label htmlFor="gender">Gênero</Label>
               <Select
                 value={formData.gender}
-                onValueChange={(value) => handleInputChange("gender", value)}
+                onValueChange={(value: string) => handleInputChange("gender", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecionar" />
@@ -638,7 +638,7 @@ function PatientForm({
               <Label htmlFor="marital_status">Estado Civil</Label>
               <Select
                 value={formData.marital_status}
-                onValueChange={(value) => handleInputChange("marital_status", value)}
+                onValueChange={(value: string) => handleInputChange("marital_status", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecionar" />
@@ -657,7 +657,7 @@ function PatientForm({
               <Label htmlFor="blood_type">Tipo Sanguíneo</Label>
               <Select
                 value={formData.blood_type}
-                onValueChange={(value) => handleInputChange("blood_type", value)}
+                onValueChange={(value: string) => handleInputChange("blood_type", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecionar" />

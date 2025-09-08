@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
+// import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -1174,11 +1174,15 @@ export function VisualAccessibilitySettings() {
                   <label className="text-sm font-medium">
                     Acuidade Visual: {settings.profile.visual_acuity_level}/10
                   </label>
-                  <Slider
-                    value={[settings.profile.visual_acuity_level]}
-                    onValueChange={([visual_acuity_level]) =>
+                  <input
+                    type="range"
+                    value={settings.profile.visual_acuity_level}
+                    onChange={(e) =>
                       updateSettings({
-                        profile: { ...settings.profile, visual_acuity_level },
+                        profile: {
+                          ...settings.profile,
+                          visual_acuity_level: parseInt(e.target.value),
+                        },
                       })}
                     min={1}
                     max={10}
@@ -1194,11 +1198,15 @@ export function VisualAccessibilitySettings() {
                   <label className="text-sm font-medium">
                     Sensibilidade à Luz: {settings.profile.light_sensitivity_level}/10
                   </label>
-                  <Slider
-                    value={[settings.profile.light_sensitivity_level]}
-                    onValueChange={([light_sensitivity_level]) =>
+                  <input
+                    type="range"
+                    value={settings.profile.light_sensitivity_level}
+                    onChange={(e) =>
                       updateSettings({
-                        profile: { ...settings.profile, light_sensitivity_level },
+                        profile: {
+                          ...settings.profile,
+                          light_sensitivity_level: parseInt(e.target.value),
+                        },
                       })}
                     min={1}
                     max={10}
@@ -1300,9 +1308,10 @@ export function VisualAccessibilitySettings() {
                 <label className="text-sm font-medium">
                   Espaçamento de Texto: {settings.text_spacing}x
                 </label>
-                <Slider
-                  value={[settings.text_spacing]}
-                  onValueChange={([text_spacing]) => updateSettings({ text_spacing })}
+                <input
+                  type="range"
+                  value={settings.text_spacing}
+                  onChange={(e) => updateSettings({ text_spacing: parseFloat(e.target.value) })}
                   min={0.8}
                   max={2}
                   step={0.1}
@@ -1314,9 +1323,10 @@ export function VisualAccessibilitySettings() {
                 <label className="text-sm font-medium">
                   Altura da Linha: {settings.line_height}x
                 </label>
-                <Slider
-                  value={[settings.line_height]}
-                  onValueChange={([line_height]) => updateSettings({ line_height })}
+                <input
+                  type="range"
+                  value={settings.line_height}
+                  onChange={(e) => updateSettings({ line_height: parseFloat(e.target.value) })}
                   min={1}
                   max={2.5}
                   step={0.1}
@@ -1328,9 +1338,10 @@ export function VisualAccessibilitySettings() {
                 <label className="text-sm font-medium">
                   Peso da Fonte: {settings.font_weight}
                 </label>
-                <Slider
-                  value={[settings.font_weight]}
-                  onValueChange={([font_weight]) => updateSettings({ font_weight })}
+                <input
+                  type="range"
+                  value={settings.font_weight}
+                  onChange={(e) => updateSettings({ font_weight: parseInt(e.target.value) })}
                   min={300}
                   max={900}
                   step={100}
@@ -1483,10 +1494,11 @@ export function VisualAccessibilitySettings() {
                   <label className="text-sm font-medium">
                     Nível de Ampliação: {settings.magnification_level}x
                   </label>
-                  <Slider
-                    value={[settings.magnification_level]}
-                    onValueChange={([magnification_level]) =>
-                      updateSettings({ magnification_level })}
+                  <input
+                    type="range"
+                    value={settings.magnification_level}
+                    onChange={(e) =>
+                      updateSettings({ magnification_level: parseFloat(e.target.value) })}
                     min={1.1}
                     max={3}
                     step={0.1}

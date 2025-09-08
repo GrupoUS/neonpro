@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
+// import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type React from "react";
@@ -487,7 +487,7 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
 
   // WebSocket connection for real-time AT communication
   const wsRef = useRef<WebSocket | null>(null);
-  const devicePollingRef = useRef<NodeJS.Timeout>();
+  const devicePollingRef = useRef<NodeJS.Timeout | null>(null);
 
   // Update settings with integration adjustments
   const updateSettings = useCallback((newSettings: Partial<ATIntegrationSettings>) => {
@@ -626,7 +626,7 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
 
       try {
         // Check if confirmation is required
-        if (command.confirmation_required && !params?.confirmed) {
+        if (command.confirmation_required && !(params as any)?.confirmed) {
           return {
             success: false,
             message_pt: "Confirmação necessária para executar este comando",
@@ -714,10 +714,11 @@ export function AssistiveTechnologyAPIProvider({ children }: { children: React.R
         try {
           // Simulate broadcasting to device
           if (
-            device.capabilities.includes("text_to_speech") && message.type === "command_feedback"
+            device.capabilities.includes("text_to_speech")
+            && (message as any).type === "command_feedback"
           ) {
             // Send TTS message to screen reader
-            console.log(`TTS to ${device.name}: ${message.message}`);
+            console.log(`TTS to ${device.name}: ${(message as any).message}`);
           }
 
           if (device.capabilities.includes("haptic_feedback") && settings.haptic_feedback_enabled) {
@@ -1215,9 +1216,11 @@ export function AssistiveTechnologyAPISettings() {
                   <label className="text-sm font-medium">
                     Intervalo de Sincronização: {settings.data_sync_interval}ms
                   </label>
-                  <Slider
-                    value={[settings.data_sync_interval]}
-                    onValueChange={([data_sync_interval]) => updateSettings({ data_sync_interval })}
+                  <input
+                    type="range"
+                    value={settings.data_sync_interval}
+                    onChange={(e) =>
+                      updateSettings({ data_sync_interval: parseInt(e.target.value) })}
                     min={100}
                     max={5000}
                     step={100}

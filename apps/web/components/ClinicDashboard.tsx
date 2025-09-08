@@ -1,20 +1,6 @@
 "use client";
 
 import {
-  Activity,
-  AlertCircle,
-  BarChart3,
-  Calendar,
-  Clock,
-  DollarSign,
-  FileText,
-  PieChart,
-  Star,
-  TrendingUp,
-  Users,
-} from "lucide-react";
-import { useState } from "react";
-import {
   Alert,
   AlertDescription,
   Avatar,
@@ -33,6 +19,20 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui";
+import {
+  Activity,
+  AlertCircle,
+  BarChart3,
+  Calendar,
+  Clock,
+  DollarSign,
+  FileText,
+  PieChart,
+  Star,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import { useState } from "react";
 
 interface ClinicMetrics {
   totalPatients: number;

@@ -327,7 +327,7 @@ export function PerformanceAnalytics({
                   {mockTeamKPIs.patientSatisfaction.current}/10
                 </div>
                 <div className="flex items-center space-x-2 text-muted-foreground text-xs">
-                  {getTrendIcon(mockTeamKPIs.patientSatisfaction.trend)}
+                  {getTrendIcon(mockTeamKPIs.patientSatisfaction.trend as "up" | "down" | "stable")}
                   <span>
                     {mockTeamKPIs.patientSatisfaction.change > 0 ? "+" : ""}
                     {mockTeamKPIs.patientSatisfaction.change} vs mês anterior
@@ -356,7 +356,7 @@ export function PerformanceAnalytics({
                   {mockTeamKPIs.averageResponseTime.current} min
                 </div>
                 <div className="flex items-center space-x-2 text-muted-foreground text-xs">
-                  {getTrendIcon(mockTeamKPIs.averageResponseTime.trend)}
+                  {getTrendIcon(mockTeamKPIs.averageResponseTime.trend as "up" | "down" | "stable")}
                   <span>
                     {mockTeamKPIs.averageResponseTime.change > 0 ? "+" : ""}
                     {Math.abs(mockTeamKPIs.averageResponseTime.change)} min vs mês anterior
@@ -388,7 +388,9 @@ export function PerformanceAnalytics({
                   {mockTeamKPIs.treatmentSuccessRate.current}%
                 </div>
                 <div className="flex items-center space-x-2 text-muted-foreground text-xs">
-                  {getTrendIcon(mockTeamKPIs.treatmentSuccessRate.trend)}
+                  {getTrendIcon(
+                    mockTeamKPIs.treatmentSuccessRate.trend as "up" | "down" | "stable",
+                  )}
                   <span>
                     +{mockTeamKPIs.treatmentSuccessRate.change}% vs mês anterior
                   </span>
@@ -416,7 +418,7 @@ export function PerformanceAnalytics({
                   {mockTeamKPIs.teamEfficiency.current}%
                 </div>
                 <div className="flex items-center space-x-2 text-muted-foreground text-xs">
-                  {getTrendIcon(mockTeamKPIs.teamEfficiency.trend)}
+                  {getTrendIcon(mockTeamKPIs.teamEfficiency.trend as "up" | "down" | "stable")}
                   <span>
                     +{mockTeamKPIs.teamEfficiency.change}% vs mês anterior
                   </span>

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Slider } from "@/components/ui/slider";
+// import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import {
   Activity,
@@ -1153,9 +1153,10 @@ export function TremorFriendlyControls({
 
               <div className="space-y-2">
                 <span className="text-sm">Sensibilidade: {settings.sensitivity}</span>
-                <Slider
-                  value={[settings.sensitivity]}
-                  onValueChange={([value]) => updateSettings({ sensitivity: value })}
+                <input
+                  type="range"
+                  value={settings.sensitivity}
+                  onChange={(e) => updateSettings({ sensitivity: parseInt(e.target.value) })}
                   min={1}
                   max={10}
                   step={1}
@@ -1171,9 +1172,11 @@ export function TremorFriendlyControls({
                 <span className="text-sm">
                   Janela de Estabilização: {settings.stabilization_window}ms
                 </span>
-                <Slider
-                  value={[settings.stabilization_window]}
-                  onValueChange={([value]) => updateSettings({ stabilization_window: value })}
+                <input
+                  type="range"
+                  value={settings.stabilization_window}
+                  onChange={(e) =>
+                    updateSettings({ stabilization_window: parseInt(e.target.value) })}
                   min={50}
                   max={1000}
                   step={50}
@@ -1185,9 +1188,10 @@ export function TremorFriendlyControls({
                 <span className="text-sm">
                   Limiar de Movimento: {settings.movement_threshold}px
                 </span>
-                <Slider
-                  value={[settings.movement_threshold]}
-                  onValueChange={([value]) => updateSettings({ movement_threshold: value })}
+                <input
+                  type="range"
+                  value={settings.movement_threshold}
+                  onChange={(e) => updateSettings({ movement_threshold: parseInt(e.target.value) })}
                   min={2}
                   max={50}
                   step={2}
@@ -1210,9 +1214,10 @@ export function TremorFriendlyControls({
               {settings.dwell_confirmation && (
                 <div className="space-y-2">
                   <span className="text-sm">Tempo de Permanência: {settings.dwell_time}ms</span>
-                  <Slider
-                    value={[settings.dwell_time]}
-                    onValueChange={([value]) => updateSettings({ dwell_time: value })}
+                  <input
+                    type="range"
+                    value={settings.dwell_time}
+                    onChange={(e) => updateSettings({ dwell_time: parseInt(e.target.value) })}
                     min={300}
                     max={3000}
                     step={100}
@@ -1234,9 +1239,11 @@ export function TremorFriendlyControls({
                   <span className="text-sm">
                     Multiplicador de Tamanho: {settings.target_size_multiplier.toFixed(1)}x
                   </span>
-                  <Slider
-                    value={[settings.target_size_multiplier]}
-                    onValueChange={([value]) => updateSettings({ target_size_multiplier: value })}
+                  <input
+                    type="range"
+                    value={settings.target_size_multiplier}
+                    onChange={(e) =>
+                      updateSettings({ target_size_multiplier: parseFloat(e.target.value) })}
                     min={1}
                     max={3}
                     step={0.1}

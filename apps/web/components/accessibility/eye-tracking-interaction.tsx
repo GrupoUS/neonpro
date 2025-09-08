@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
+// import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { AlertTriangle, CheckCircle2, Crosshair, Eye, Target, Zap } from "lucide-react";
 import type React from "react";
@@ -948,9 +948,10 @@ export function EyeTrackingInteraction({
 
               <div className="space-y-2">
                 <span className="text-sm">Tempo Padrão: {settings.default_dwell_time}ms</span>
-                <Slider
-                  value={[settings.default_dwell_time]}
-                  onValueChange={([value]) => updateSettings({ default_dwell_time: value })}
+                <input
+                  type="range"
+                  value={settings.default_dwell_time}
+                  onChange={(e) => updateSettings({ default_dwell_time: parseInt(e.target.value) })}
                   min={300}
                   max={3000}
                   step={100}
@@ -960,9 +961,10 @@ export function EyeTrackingInteraction({
 
               <div className="space-y-2">
                 <span className="text-sm">Tempo Médico: {settings.medical_dwell_time}ms</span>
-                <Slider
-                  value={[settings.medical_dwell_time]}
-                  onValueChange={([value]) => updateSettings({ medical_dwell_time: value })}
+                <input
+                  type="range"
+                  value={settings.medical_dwell_time}
+                  onChange={(e) => updateSettings({ medical_dwell_time: parseInt(e.target.value) })}
                   min={500}
                   max={5000}
                   step={100}
@@ -972,9 +974,11 @@ export function EyeTrackingInteraction({
 
               <div className="space-y-2">
                 <span className="text-sm">Emergência: {settings.emergency_dwell_time}ms</span>
-                <Slider
-                  value={[settings.emergency_dwell_time]}
-                  onValueChange={([value]) => updateSettings({ emergency_dwell_time: value })}
+                <input
+                  type="range"
+                  value={settings.emergency_dwell_time}
+                  onChange={(e) =>
+                    updateSettings({ emergency_dwell_time: parseInt(e.target.value) })}
                   min={1000}
                   max={5000}
                   step={200}
@@ -986,9 +990,11 @@ export function EyeTrackingInteraction({
                 <span className="text-sm">
                   Limiar de Confiança: {Math.round(settings.confidence_threshold * 100)}%
                 </span>
-                <Slider
-                  value={[settings.confidence_threshold]}
-                  onValueChange={([value]) => updateSettings({ confidence_threshold: value })}
+                <input
+                  type="range"
+                  value={settings.confidence_threshold}
+                  onChange={(e) =>
+                    updateSettings({ confidence_threshold: parseFloat(e.target.value) })}
                   min={0.5}
                   max={1}
                   step={0.05}

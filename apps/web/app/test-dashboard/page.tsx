@@ -5,7 +5,7 @@ import NeonProHealthcareDashboard from "../components/neonpro-healthcare-dashboa
 export default function TestDashboardPage() {
   return (
     <div className="min-h-screen bg-background">
-      <NeonProHealthcareDashboard />
+      <NeonProHealthcareDashboard userId="test-user" tenantId="test-tenant" />
     </div>
   );
 }

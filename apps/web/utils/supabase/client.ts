@@ -15,10 +15,19 @@ try {
 }
 
 export function createClient() {
-  return createBrowserClient(
-    clientEnv.supabase.url,
-    clientEnv.supabase.anonKey,
-  );
+  // Ensure a single GoTrueClient instance in the browser (avoids multi-instance warnings)
+  const globalForSupabase = globalThis as unknown as {
+    supabaseBrowserClient?: ReturnType<typeof createBrowserClient>;
+  };
+
+  if (!globalForSupabase.supabaseBrowserClient) {
+    globalForSupabase.supabaseBrowserClient = createBrowserClient(
+      clientEnv.supabase.url,
+      clientEnv.supabase.anonKey,
+    );
+  }
+
+  return globalForSupabase.supabaseBrowserClient;
 }
 
 export default createClient;

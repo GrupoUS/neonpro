@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
+// import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { AlertCircle, CheckCircle2, Pause, Play, RotateCcw, Settings, Zap } from "lucide-react";
 import type React from "react";
@@ -273,8 +273,8 @@ export function SwitchNavigationProvider({ children }: { children: React.ReactNo
     element.setAttribute("tabindex", element.getAttribute("tabindex") || "0");
 
     // Healthcare-specific attributes
-    if (settings.healthcare_mode && metadata?.healthcare_context) {
-      element.setAttribute("data-healthcare-priority", metadata.priority || "normal");
+    if (settings.healthcare_mode && (metadata as any)?.healthcare_context) {
+      element.setAttribute("data-healthcare-priority", (metadata as any).priority || "normal");
       element.setAttribute("aria-describedby", `${id}_healthcare_description`);
     }
   }, [settings.healthcare_mode]);
@@ -805,9 +805,10 @@ export function SwitchNavigationController({
 
             <div className="space-y-2">
               <span className="text-sm">Sensibilidade: {settings.sensitivity}</span>
-              <Slider
-                value={[settings.sensitivity]}
-                onValueChange={([value]) => updateSettings({ sensitivity: value })}
+              <input
+                type="range"
+                value={settings.sensitivity}
+                onChange={(e) => updateSettings({ sensitivity: parseInt(e.target.value) })}
                 min={1}
                 max={10}
                 step={1}
@@ -817,9 +818,10 @@ export function SwitchNavigationController({
 
             <div className="space-y-2">
               <span className="text-sm">Delay de Ativação: {settings.activation_delay}ms</span>
-              <Slider
-                value={[settings.activation_delay]}
-                onValueChange={([value]) => updateSettings({ activation_delay: value })}
+              <input
+                type="range"
+                value={settings.activation_delay}
+                onChange={(e) => updateSettings({ activation_delay: parseInt(e.target.value) })}
                 min={100}
                 max={2000}
                 step={100}
@@ -829,9 +831,10 @@ export function SwitchNavigationController({
 
             <div className="space-y-2">
               <span className="text-sm">Taxa de Repetição: {settings.repeat_rate}ms</span>
-              <Slider
-                value={[settings.repeat_rate]}
-                onValueChange={([value]) => updateSettings({ repeat_rate: value })}
+              <input
+                type="range"
+                value={settings.repeat_rate}
+                onChange={(e) => updateSettings({ repeat_rate: parseInt(e.target.value) })}
                 min={100}
                 max={1000}
                 step={50}

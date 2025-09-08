@@ -14,7 +14,7 @@ import {
 import { AlertTriangle, Plus, RefreshCw, Save, Shield, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import type { Schedule, ScheduleConflict } from "@/types/team-coordination"; // Mock schedule data for the current week
+import type { Schedule, ScheduleConflict } from "@/app/types/team-coordination"; // Mock schedule data for the current week
 
 const mockScheduleData: Schedule[] = [
   {
@@ -219,8 +219,8 @@ export function SchedulingSystem({
   const [viewMode, setViewMode] = useState<"week" | "day">("week");
   const [draggedSchedule, setDraggedSchedule] = useState<Schedule | null>();
   const [showConflicts, setShowConflicts] = useState(true);
-  // const [_isEditDialogOpen, setIsEditDialogOpen] = useState(false); // Commented out - not used
-  // const [_selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(); // Commented out - not used
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
   const filteredSchedules = useMemo(() => {
     if (selectedDepartment === "all") {
       return mockScheduleData;

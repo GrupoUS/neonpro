@@ -454,7 +454,7 @@ export default function SchedulingModal({
                       Retenção (dias)
                     </Label>
                     <Select
-                      onValueChange={(value) => setRetentionDays(Number(value))}
+                      onValueChange={(value: string) => setRetentionDays(Number(value))}
                       value={retentionDays.toString()}
                     >
                       <SelectTrigger className="border-slate-700 bg-slate-800 text-white">

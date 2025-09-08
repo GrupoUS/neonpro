@@ -1,8 +1,8 @@
 "use client";
 
+import { Alert, AlertDescription, LoadingSpinner } from "@/components/ui";
 import { useAuth } from "@/hooks/useAuth";
 import { usePermissions } from "@/hooks/usePermissions";
-import { Alert, AlertDescription, LoadingSpinner } from "@/components/ui";
 import { AlertTriangle, Shield } from "lucide-react";
 import { Suspense } from "react";
 

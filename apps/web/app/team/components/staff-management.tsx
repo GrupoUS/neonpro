@@ -1,6 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -29,7 +30,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Badge,
   Calendar,
   CheckCircle,
   Clock,
@@ -54,7 +54,7 @@ import type {
   HealthcareProfessional,
   LicenseStatus,
   ProfessionalRole,
-} from "@/types/team-coordination"; // Mock data for Brazilian healthcare professionals
+} from "@/app/types/team-coordination"; // Mock data for Brazilian healthcare professionals
 
 const mockStaffData: HealthcareProfessional[] = [
   {

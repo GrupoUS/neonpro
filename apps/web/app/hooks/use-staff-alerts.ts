@@ -368,45 +368,46 @@ export function useStaffAlerts({
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/api/staff-alerts/websocket`;
 
+    // Define handlers outside try block so they're accessible in cleanup
+    const onOpen = () => {
+      console.log("Staff alerts WebSocket connected");
+      wsRef.current?.send(
+        JSON.stringify({
+          type: "subscribe",
+          filters: { staffMemberId, department, ...filters },
+        }),
+      );
+    };
+
+    const onMessage = (event: MessageEvent) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (message.type === "alert_created" || message.type === "alert_updated") {
+          fetchAlerts();
+        }
+      } catch (err) {
+        console.error("Error parsing WebSocket message:", err);
+      }
+    };
+
+    const onError = (event: Event) => {
+      console.error("Staff alerts WebSocket error:", event);
+    };
+
+    const onClose = () => {
+      console.log("Staff alerts WebSocket closed");
+      setTimeout(() => {
+        if (realTimeUpdates) {
+          subscribeToAlerts();
+        }
+      }, 5000);
+    };
+
     try {
       wsRef.current = new WebSocket(wsUrl);
-
-      const onOpen = () => {
-        console.log("Staff alerts WebSocket connected");
-        wsRef.current?.send(
-          JSON.stringify({
-            type: "subscribe",
-            filters: { staffMemberId, department, ...filters },
-          }),
-        );
-      };
       wsRef.current?.addEventListener("open", onOpen);
-
-      const onMessage = (event: MessageEvent) => {
-        try {
-          const message = JSON.parse(event.data);
-          if (message.type === "alert_created" || message.type === "alert_updated") {
-            fetchAlerts();
-          }
-        } catch (err) {
-          console.error("Error parsing WebSocket message:", err);
-        }
-      };
       wsRef.current?.addEventListener("message", onMessage);
-
-      const onError = (event: Event) => {
-        console.error("Staff alerts WebSocket error:", event);
-      };
       wsRef.current?.addEventListener("error", onError);
-
-      const onClose = () => {
-        console.log("Staff alerts WebSocket closed");
-        setTimeout(() => {
-          if (realTimeUpdates) {
-            subscribeToAlerts();
-          }
-        }, 5000);
-      };
       wsRef.current?.addEventListener("close", onClose);
     } catch (err) {
       console.error("Error creating WebSocket connection:", err);

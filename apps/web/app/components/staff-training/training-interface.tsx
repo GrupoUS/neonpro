@@ -47,7 +47,7 @@ interface StaffTrainingInterfaceProps {
  * PWA-capable with offline support and Brazilian healthcare compliance
  */
 export function StaffTrainingInterface({
-  _userId: userId,
+  userId,
   userRole,
   compactMode: _compactMode = false,
   offlineMode = false,

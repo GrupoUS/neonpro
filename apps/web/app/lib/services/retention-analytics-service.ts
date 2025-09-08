@@ -277,7 +277,7 @@ export class RetentionAnalyticsService {
     // Mock implementation for build compatibility
     return {
       id: `strategy_${Math.random().toString(36).slice(2, 9)}`,
-      ...createData,
+      ...(createData as object),
       status: "active",
       is_active: true,
       execution_count: 0,

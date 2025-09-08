@@ -638,56 +638,57 @@ export function useWorkflowAutomation({
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/api/workflow-automation/websocket`;
 
+    // Define handlers outside try block so they're accessible in cleanup
+    const handleOpen = () => {
+      console.log("Workflow automation WebSocket connected");
+      // Subscribe to updates for this clinic
+      wsRef.current?.send(
+        JSON.stringify({
+          type: "subscribe",
+          clinicId,
+        }),
+      );
+    };
+
+    const handleMessage = (event: MessageEvent) => {
+      try {
+        const message = JSON.parse(event.data);
+        switch (message.type) {
+          case "rule_created":
+          case "rule_updated":
+            fetchRules();
+            break;
+          case "execution_started":
+          case "execution_completed":
+          case "execution_failed":
+            fetchExecutions();
+            break;
+          case "queue_metrics_updated":
+            fetchQueues();
+            break;
+        }
+      } catch (err) {
+        console.error("Error parsing WebSocket message:", err);
+      }
+    };
+
+    const handleError = (error: Event) => {
+      console.error("Workflow automation WebSocket error:", error);
+    };
+
+    const handleClose = () => {
+      console.log("Workflow automation WebSocket closed");
+      // Attempt to reconnect after 5 seconds
+      setTimeout(() => {
+        if (realTimeUpdates) {
+          setupWebSocket();
+        }
+      }, 5000);
+    };
+
     try {
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
-
-      const handleOpen = () => {
-        console.log("Workflow automation WebSocket connected");
-        // Subscribe to updates for this clinic
-        ws.send(
-          JSON.stringify({
-            type: "subscribe",
-            clinicId,
-          }),
-        );
-      };
-
-      const handleMessage = (event: MessageEvent) => {
-        try {
-          const message = JSON.parse(event.data);
-          switch (message.type) {
-            case "rule_created":
-            case "rule_updated":
-              fetchRules();
-              break;
-            case "execution_started":
-            case "execution_completed":
-            case "execution_failed":
-              fetchExecutions();
-              break;
-            case "queue_metrics_updated":
-              fetchQueues();
-              break;
-          }
-        } catch (err) {
-          console.error("Error parsing WebSocket message:", err);
-        }
-      };
-
-      const handleError = (error: Event) => {
-        console.error("Workflow automation WebSocket error:", error);
-      };
-
-      const handleClose = () => {
-        console.log("Workflow automation WebSocket closed");
-        // Attempt to reconnect after 5 seconds
-        setTimeout(() => {
-          if (realTimeUpdates) {
-            setupWebSocket();
-          }
-        }, 5000);
-      };
 
       ws.addEventListener("open", handleOpen);
       ws.addEventListener("message", handleMessage);

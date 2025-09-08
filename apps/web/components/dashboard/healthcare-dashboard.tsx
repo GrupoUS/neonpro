@@ -9,11 +9,14 @@
 import { AuditEventType, AuditSeverity, UnifiedAuditService } from "@neonpro/security";
 // ✅ Healthcare domain imports
 import { validateHealthcareAccess } from "@neonpro/security/auth";
-import { useHealthcarePermissions } from "../ui";
+import { useHealthcarePermissions } from "@neonpro/security/hooks";
 // ✅ Type imports
 import type { HealthcareDashboardData } from "@neonpro/types/healthcare";
 
 // ✅ Organized imports - UI components
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { motion } from "framer-motion";
 import {
   Alert,
   AlertDescription,
@@ -34,9 +37,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "../ui";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { motion } from "framer-motion";
 // ✅ Icons - only what we need
 import { Activity, AlertCircle, Calendar, Download, TrendingUp, Users } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";

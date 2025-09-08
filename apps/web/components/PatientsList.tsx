@@ -36,7 +36,7 @@ export function PatientsList({
       return "P";
     }
     return patient.name
-      .charAt(DASHBOARD_CONSTANTS.FIRST_CHAR_INDEX)
+      .charAt(0)
       .toUpperCase();
   };
 

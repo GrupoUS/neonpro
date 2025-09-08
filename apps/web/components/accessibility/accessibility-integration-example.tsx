@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
+// import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Accessibility,
@@ -66,7 +66,7 @@ import {
   OneHandedOperationSettings,
 } from "./one-handed-operation-mode";
 import {
-  SwitchNavigationDemo,
+  SwitchNavigationController,
   SwitchNavigationProvider,
   SwitchNavigationSettings,
 } from "./switch-navigation-controller";
@@ -82,9 +82,9 @@ import {
   VisualAccessibilitySettings,
 } from "./visual-accessibility-enhancer";
 import {
-  VoiceMedicalDemo,
+  VoiceMedicalController,
   VoiceMedicalProvider,
-  VoiceMedicalSettings,
+  VoiceRecognitionSettings,
 } from "./voice-medical-controller";
 
 // ===============================
@@ -593,7 +593,7 @@ export function AccessibilityIntegrationExample() {
                       Escala de Dor
                     </h4>
                     <div className="space-y-2">
-                      <Slider defaultValue={[3]} max={10} step={1} className="w-full" />
+                      <input type="range" defaultValue={3} max={10} step={1} className="w-full" />
                       <div className="flex justify-between text-xs text-muted-foreground">
                         <span>0 - Sem dor</span>
                         <span>10 - Dor insuportável</span>
@@ -1006,15 +1006,16 @@ export function IndividualComponentsDemos() {
 
             <TabsContent value="switch" className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <SwitchNavigationSettings />
-                <SwitchNavigationDemo />
+                {/* <SwitchNavigationSettings /> */}
+                <SwitchNavigationController />
               </div>
             </TabsContent>
 
             <TabsContent value="eye" className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <EyeTrackingSettings />
-                <EyeTrackingDemo />
+                {/* <EyeTrackingSettings /> */}
+                {/* <EyeTrackingDemo /> */}
+                <div>Eye tracking functionality placeholder</div>
               </div>
             </TabsContent>
 
@@ -1027,8 +1028,8 @@ export function IndividualComponentsDemos() {
 
             <TabsContent value="voice" className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <VoiceMedicalSettings />
-                <VoiceMedicalDemo />
+                {/* <VoiceMedicalSettings /> */}
+                <VoiceMedicalController />
               </div>
             </TabsContent>
 

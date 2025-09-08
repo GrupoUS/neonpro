@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
+// import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -356,7 +356,7 @@ export function OneHandedOperationProvider({ children }: { children: React.React
   const [layoutAdaptationsActive, setLayoutAdaptationsActive] = useState<string[]>([]);
 
   // Analytics tracking
-  const analyticsRef = useRef<NodeJS.Timeout>();
+  const analyticsRef = useRef<NodeJS.Timeout | null>(null);
 
   // Update settings with analytics tracking
   const updateSettings = useCallback((newSettings: Partial<OneHandedSettings>) => {
@@ -708,13 +708,14 @@ export function OneHandedOperationSettings() {
                   <label className="text-sm font-medium">
                     Tamanho Mínimo de Toque: {settings.touch_optimization.minimum_size}px
                   </label>
-                  <Slider
-                    value={[settings.touch_optimization.minimum_size]}
-                    onValueChange={([minimum_size]) =>
+                  <input
+                    type="range"
+                    value={settings.touch_optimization.minimum_size}
+                    onChange={(e) =>
                       updateSettings({
                         touch_optimization: {
                           ...settings.touch_optimization,
-                          minimum_size,
+                          minimum_size: parseInt(e.target.value),
                         },
                       })}
                     min={32}
@@ -728,13 +729,14 @@ export function OneHandedOperationSettings() {
                   <label className="text-sm font-medium">
                     Espaçamento entre Elementos: {settings.touch_optimization.spacing_multiplier}x
                   </label>
-                  <Slider
-                    value={[settings.touch_optimization.spacing_multiplier]}
-                    onValueChange={([spacing_multiplier]) =>
+                  <input
+                    type="range"
+                    value={settings.touch_optimization.spacing_multiplier}
+                    onChange={(e) =>
                       updateSettings({
                         touch_optimization: {
                           ...settings.touch_optimization,
-                          spacing_multiplier,
+                          spacing_multiplier: parseFloat(e.target.value),
                         },
                       })}
                     min={1}

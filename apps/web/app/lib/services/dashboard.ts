@@ -171,7 +171,7 @@ export class NeonProDashboardService {
 
     return {
       clinicId: data.clinic_id,
-      organizationId: data.clinics.organization_id,
+      organizationId: (data.clinics as any)?.organization_id,
       role: data.role || "user",
       permissions: data.permissions || [],
     };
@@ -345,13 +345,13 @@ export class NeonProDashboardService {
       endDate: new Date(project.end_date),
       budget: project.budget || 0,
       spent: project.spent || 0,
-      team: (project.project_members || []).map((member: unknown) => ({
+      team: (project.project_members || []).map((member: any) => ({
         id: member.user_id,
-        name: member.healthcare_professionals.users.name,
-        email: member.healthcare_professionals.users.email,
-        avatar: member.healthcare_professionals.users.avatar_url,
+        name: member.healthcare_professionals?.users?.name,
+        email: member.healthcare_professionals?.users?.email,
+        avatar: member.healthcare_professionals?.users?.avatar_url,
         role: member.role,
-        department: member.healthcare_professionals.department,
+        department: member.healthcare_professionals?.department,
         status: "offline", // Would need real-time data
         lastSeen: new Date(),
         permissions: [],
@@ -771,7 +771,7 @@ export class NeonProDashboardService {
   }
 
   private calculateProjectHealth(
-    project: unknown,
+    project: any,
   ): "healthy" | "at-risk" | "critical" {
     const budgetHealth = (project.spent || 0) / (project.budget || 1);
     const timeHealth = (Date.now() - new Date(project.start_date).getTime())

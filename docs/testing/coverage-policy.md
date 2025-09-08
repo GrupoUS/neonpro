@@ -1,95 +1,80 @@
----
-title: "Test Coverage Policy"
-last_updated: 2025-09-07
-form: reference
----
+# Coverage Policy
 
-See also: [Docs Orchestrator](../AGENTS.md) · [Coverage Policy](./coverage-policy.md)
+This document defines how we measure and enforce test coverage in the NeonPro monorepo.
 
-## Purpose
+## Thresholds (Global by scope)
 
-Define clear, pragmatic coverage expectations and CI gating rules for NeonPro.
+- Unit scope (Vitest project "unit")
+  - Statements: 85%
+  - Lines: 85%
+  - Branches: 80%
+  - Functions: 85%
+- Integration scope (Vitest project "integration")
+  - Statements: 80%
+  - Lines: 80%
+  - Branches: 70%
+  - Functions: 75%
 
-## Scope
+These align with vitest.config.ts and the coverage verification script in `scripts/coverage-verify.mjs`.
 
-- Unit tests (Vitest) — fast, isolated
-- Integration tests (Vitest) — API/database boundaries
-- E2E tests (Playwright) — critical user journeys
+## What is measured
 
-## Thresholds (Organization-Wide Baseline)
-
-We maintain different minimums for unit and integration layers due to inherent differences.
-
-- Unit (project="unit")
-  - statements: 85%
-  - lines: 85%
-  - branches: 80%
-  - functions: 85%
-- Integration (project="integration")
-  - statements: 80%
-  - lines: 80%
-  - branches: 70%
-  - functions: 75%
-
-Rationale: Matches vitest.config.ts defaults. The verify script uses the lower integration defaults when mixing coverage to avoid false negatives.
-
-## CI Gating
-
-- CI runs: `pnpm vitest run --project unit --coverage` and optionally integration.
-- Coverage artifacts are written to `coverage/`.
-- Gating command:
-
-```bash
-pnpm run coverage:verify
-```
-
-- Script reads `coverage/coverage-summary.json` first, then `clover.xml`, then `coverage-final.json`.
-- Env overrides:
-  - `MIN_STATEMENTS`, `MIN_LINES`, `MIN_BRANCHES`, `MIN_FUNCTIONS`
-  - `COVERAGE_SUMMARY_PATH` (path to summary JSON)
-  - `COVERAGE_FAIL_ON_MISS` (default `true`)
-
-Examples:
-
-```bash
-# Relax thresholds for a feature branch experiment
-MIN_LINES=70 MIN_STATEMENTS=70 pnpm run coverage:verify
-
-# Tighten thresholds for a release branch
-MIN_LINES=90 MIN_FUNCTIONS=90 pnpm run coverage:verify
-```
-
-## Workflow
-
-1. Add tests alongside code changes (prefer unit tests).
-2. Run fast checks locally:
-
-```bash
-pnpm vitest run --project unit --coverage --reporter=verbose
-pnpm run coverage:verify
-```
-
-3. If coverage fails:
-   - Add tests for uncovered branches and edge cases.
-   - Prefer testing public APIs over internals.
-   - Avoid mocking too much; test realistic behavior.
-
-4. On PRs: CI must pass coverage verification.
+- Source files under:
+  - apps/web/app/**/*.{ts,tsx}
+  - apps/web/components/**/*.{ts,tsx}
+  - apps/api/src/**/*.{ts,tsx}
+  - packages/_/src/**/_.{ts,tsx}
 
 ## Exclusions
 
-- Pure type modules (`@neonpro/types`)
-- Generated code
-- Migration files and config-only files
+- packages/health-dashboard/**
+- **/dist/**, **/build/**, **/.next/**, **/.turbo/**, **/lib/**
+- **/tests/**
 
-See `vitest.config.ts` for the authoritative include/exclude patterns.
+## How to run
 
-## Reporting
+- Run unit tests with coverage:
 
-Coverage HTML report in `coverage/index.html`. Open in browser for file-level insights.
+  pnpm vitest run --project unit --coverage
 
-## Future Improvements
+- Run integration tests with coverage:
 
-- Per-package thresholds to reflect domain-specific complexity
-- Trend tracking over time (weekly median)
-- Minimum changed-lines coverage gate
+  pnpm vitest run --project integration --coverage
+
+Artifacts are generated under `coverage/unit` and `coverage/integration` respectively.
+
+## Verification (Gating)
+
+Use the verification script to check thresholds. It prefers `coverage/**/coverage-summary.json`, falling back to `coverage/coverage-final.json` or `coverage/clover.xml`.
+
+- Verify (auto scope detection):
+
+  pnpm run coverage:verify
+
+- Verify unit scope strictly:
+
+  COVERAGE_SCOPE=UNIT pnpm run coverage:verify
+
+- Verify integration scope strictly:
+
+  COVERAGE_SCOPE=INTEGRATION pnpm run coverage:verify
+
+By default the script fails (exit code 1) when thresholds are not met. To only warn:
+
+COVERAGE_FAIL_ON_MISS=false pnpm run coverage:verify
+
+## Environment overrides (CI/Debug)
+
+You can override thresholds via env vars:
+
+- MIN_STATEMENTS, MIN_LINES, MIN_BRANCHES, MIN_FUNCTIONS
+
+Example (temporarily lower branches to 60% for a flaky suite):
+
+MIN_BRANCHES=60 pnpm run coverage:verify
+
+## Notes
+
+- coverage-summary.json is preferred; if missing, the script aggregates from `coverage-final.json` or approximates from `clover.xml`.
+- Keep exclusions aligned between `vitest.config.ts` and this policy.
+- Do not check in generated coverage artifacts; they are for local inspection and CI artifacts only.

@@ -55,7 +55,7 @@ export function RealLoginForm() {
       if (result.success) {
         toastHelpers.success.login();
         router.push("/dashboard");
-      } else if (result.requiresMfa) {
+      } else if ((result as any).requiresMfa) {
         setShowMfaInput(true);
         toastHelpers.info("Por favor, insira seu código de autenticação de dois fatores");
       } else {
@@ -207,7 +207,9 @@ export function RealLoginForm() {
             onClick={handleGoogleLogin}
             disabled={isSubmitting || isLoading}
           >
-            <Icons.google className="mr-2 h-4 w-4" />
+            <div className="mr-2 h-4 w-4">
+              <Icons.google />
+            </div>
             Google (Em breve)
           </Button>
         </CardContent>

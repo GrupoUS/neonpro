@@ -53,14 +53,18 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import type { CommunicationPriority, PatientHandoff, TeamMessage } from "@/types/team-coordination"; // Mock team messages with Brazilian healthcare context
+import type {
+  CommunicationPriority,
+  PatientHandoff,
+  TeamMessage,
+} from "@/app/types/team-coordination"; // Mock team messages with Brazilian healthcare context
 
 const mockTeamMessages: TeamMessage[] = [
   {
     id: "msg-001",
     senderId: "prof-001", // Dra. Maria Silva
     recipientIds: ["prof-002", "prof-003"],
-    channelId: undefined,
+    channelId: null,
     subject: "Paciente João Silva - Intercorrência Cardiológica",
     content:
       "Paciente apresentou episódio de arritmia às 14:30. ECG realizado, solicitando avaliação de emergência. Medicação antiarrítmica administrada conforme protocolo.",
@@ -80,7 +84,7 @@ const mockTeamMessages: TeamMessage[] = [
     containsPersonalData: true,
     createdAt: new Date("2024-08-21T14:35:00"),
     updatedAt: new Date("2024-08-21T14:35:00"),
-    editedAt: undefined,
+    editedAt: null,
     isDeleted: false,
   },
   {
@@ -93,8 +97,8 @@ const mockTeamMessages: TeamMessage[] = [
       "Ativação imediata equipe de trauma. Paciente politraumatizado chegando via SAMU. ETA: 5 minutos. Preparar sala cirúrgica e banco de sangue.",
     priority: "emergency",
     messageType: "alert",
-    patientId: undefined,
-    treatmentId: undefined,
+    patientId: null,
+    treatmentId: null,
     attachments: [],
     status: "delivered",
     readBy: {},
@@ -105,21 +109,21 @@ const mockTeamMessages: TeamMessage[] = [
     containsPersonalData: false,
     createdAt: new Date("2024-08-21T15:20:00"),
     updatedAt: new Date("2024-08-21T15:20:00"),
-    editedAt: undefined,
+    editedAt: null,
     isDeleted: false,
   },
   {
     id: "msg-003",
     senderId: "prof-003", // Enf. Ana Paula
     recipientIds: ["prof-001"],
-    channelId: undefined,
+    channelId: null,
     subject: "UTI - Relatório de Plantão",
     content:
       "Passagem de plantão UTI:\n• Leito 05: Paciente estável, VM com PEEP 8, FiO2 40%\n• Leito 06: Pós-operatório, extubado às 13h, sem intercorrências\n• Leito 07: Paciente crítico, família orientada sobre prognóstico",
     priority: "normal",
     messageType: "handoff",
-    patientId: undefined,
-    treatmentId: undefined,
+    patientId: null,
+    treatmentId: null,
     attachments: [],
     status: "read",
     readBy: {
@@ -132,7 +136,7 @@ const mockTeamMessages: TeamMessage[] = [
     containsPersonalData: true,
     createdAt: new Date("2024-08-21T16:00:00"),
     updatedAt: new Date("2024-08-21T16:00:00"),
-    editedAt: undefined,
+    editedAt: null,
     isDeleted: false,
   },
   {
@@ -145,8 +149,8 @@ const mockTeamMessages: TeamMessage[] = [
       "Lembrete para todos os profissionais: Treinamento sobre novas diretrizes LGPD na área da saúde é obrigatório. Prazo final: 30/08/2024. Acesse o portal de treinamento.",
     priority: "low",
     messageType: "text",
-    patientId: undefined,
-    treatmentId: undefined,
+    patientId: null,
+    treatmentId: null,
     attachments: [],
     status: "sent",
     readBy: {},
@@ -157,7 +161,7 @@ const mockTeamMessages: TeamMessage[] = [
     containsPersonalData: false,
     createdAt: new Date("2024-08-21T09:00:00"),
     updatedAt: new Date("2024-08-21T09:00:00"),
-    editedAt: undefined,
+    editedAt: null,
     isDeleted: false,
   },
 ]; // Mock patient handoff data
@@ -208,7 +212,7 @@ const mockPatientHandoffs: PatientHandoff[] = [
     ],
     status: "acknowledged",
     acknowledgedAt: new Date("2024-08-21T14:50:00"),
-    completedAt: undefined,
+    completedAt: null,
     notes: "Família orientada sobre quadro. Paciente colaborativo.",
     createdAt: new Date("2024-08-21T14:35:00"),
     updatedAt: new Date("2024-08-21T14:50:00"),
@@ -258,8 +262,8 @@ const mockPatientHandoffs: PatientHandoff[] = [
       "Culturas pendentes - aguardar resultado",
     ],
     status: "pending",
-    acknowledgedAt: undefined,
-    completedAt: undefined,
+    acknowledgedAt: null,
+    completedAt: null,
     notes: "Família presente, muito ansiosa. Necessita suporte emocional.",
     createdAt: new Date("2024-08-21T16:00:00"),
     updatedAt: new Date("2024-08-21T16:00:00"),
@@ -419,7 +423,7 @@ export function CommunicationHub({
   >("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-  // const [_selectedMessage, setSelectedMessage] = useState<TeamMessage | null>(); // Commented out - not used
+  const [_selectedMessage, setSelectedMessage] = useState<TeamMessage | null>(null);
   const [isComposeDialogOpen, setIsComposeDialogOpen] = useState(false);
   const [newMessage, setNewMessage] = useState({
     subject: "",
@@ -569,7 +573,7 @@ export function CommunicationHub({
 
                 {/* Priority Filter */}
                 <Select
-                  onValueChange={(value) =>
+                  onValueChange={(value: string) =>
                     setPriorityFilter(value as CommunicationPriority | "all")}
                   value={priorityFilter}
                 >
@@ -884,9 +888,9 @@ export function CommunicationHub({
                                 ? "Transferência"
                                 : handoff.handoffType === "shift_change"
                                 ? "Troca de Plantão"
-                                : handoff.handoffType === "discharge"
-                                ? "Alta"
-                                : "Consulta"}
+                                : handoff.handoffType === "emergency"
+                                ? "Emergência"
+                                : "Procedimento"}
                             </Badge>
                           </div>
                           <p className="text-muted-foreground text-sm">
@@ -914,7 +918,7 @@ export function CommunicationHub({
                                     : "SpO₂"}
                                 </div>
                                 <div className="mt-1 font-medium text-sm">
-                                  {value}
+                                  {String(value)}
                                 </div>
                               </div>
                             ),
@@ -1361,7 +1365,7 @@ export function CommunicationHub({
                 Prioridade
               </label>
               <Select
-                onValueChange={(value) =>
+                onValueChange={(value: string) =>
                   setNewMessage((prev) => ({
                     ...prev,
                     priority: value as CommunicationPriority,

@@ -28,17 +28,18 @@ import {
   TabsTrigger,
   Textarea,
 } from "@/components/ui";
+import { useAuth } from "@/contexts/auth-context";
 import { Activity, Camera, Edit, Lock, Save, Shield } from "lucide-react";
 import { useState } from "react";
 
 export default function ProfilePage() {
-  const { user, isLoaded } = useUser();
+  const { user, loading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.emailAddresses?.[0]?.emailAddress || "",
-    phone: user?.phoneNumbers?.[0]?.phoneNumber || "",
+    firstName: (user as any)?.firstName || "",
+    lastName: (user as any)?.lastName || "",
+    email: user?.email || "",
+    phone: (user as any)?.phone || "",
     bio: "",
     specialty: "",
     crm: "",
@@ -64,7 +65,7 @@ export default function ProfilePage() {
     }));
   };
 
-  if (!isLoaded) {
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-blue-600 border-b-2" />
@@ -123,18 +124,19 @@ export default function ProfilePage() {
               {/* Avatar Section */}
               <div className="flex items-center space-x-4">
                 <Avatar className="h-20 w-20">
-                  <AvatarImage src={user?.imageUrl} />
+                  <AvatarImage src={(user as any)?.imageUrl} />
                   <AvatarFallback className="text-lg">
-                    {user?.firstName?.[0]}
-                    {user?.lastName?.[0]}
+                    {(user as any)?.firstName?.[0] || user?.email?.[0]?.toUpperCase()}
+                    {(user as any)?.lastName?.[0] || ""}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <h3 className="font-medium text-lg">
-                    {user?.firstName} {user?.lastName}
+                    {(user as any)?.firstName || user?.email?.split("@")[0]}{" "}
+                    {(user as any)?.lastName || ""}
                   </h3>
                   <p className="text-muted-foreground text-sm">
-                    {user?.emailAddresses?.[0]?.emailAddress}
+                    {user?.email}
                   </p>
                   <Button className="mt-2" size="sm" variant="outline">
                     <Camera className="mr-2 h-4 w-4" />

@@ -172,7 +172,7 @@ export function LoginForm() {
               <Checkbox
                 id="remember"
                 checked={rememberMe}
-                onCheckedChange={setRememberMe}
+                onCheckedChange={(checked) => setRememberMe(checked === true)}
                 disabled={loading || isSubmitting}
               />
               <Label

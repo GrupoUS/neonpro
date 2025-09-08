@@ -33,7 +33,7 @@ export function createRiskAssessmentService(
   const service = {
     assessPatientRisk: vi
       .fn()
-      .mockImplementation(async (patientData: unknown) => {
+      .mockImplementation(async (patientData: any) => {
         // Mock implementation for testing
         const riskLevel = patientData.age > 65 ? "high" : "low";
         return {
@@ -48,7 +48,7 @@ export function createRiskAssessmentService(
 
     createTreatmentPrediction: vi
       .fn()
-      .mockImplementation(async (riskData: unknown) => {
+      .mockImplementation(async (riskData: any) => {
         return {
           treatmentId: `treatment-${Math.random().toString(36).slice(2, 9)}`,
           predictedOutcome: riskData.riskLevel === "high"
@@ -72,7 +72,7 @@ export function createRiskAssessmentService(
 
     processVitalSigns: vi
       .fn()
-      .mockImplementation(async (vitalSigns: unknown) => {
+      .mockImplementation(async (vitalSigns: any) => {
         const isStable = vitalSigns.heartRate >= 60 && vitalSigns.heartRate <= 100;
         return {
           processedAt: new Date().toISOString(),
@@ -123,7 +123,7 @@ export function createRiskAssessmentService(
     validateInputIntegrity: vi
       .fn()
       .mockImplementation(async (input: unknown) => {
-        const isValid = input && typeof input === "object" && input.id;
+        const isValid = input && typeof input === "object" && (input as any).id;
         return {
           valid: isValid,
           errors: isValid ? [] : ["missing_required_fields"],
@@ -134,7 +134,7 @@ export function createRiskAssessmentService(
     executeRiskAssessment: vi
       .fn()
       .mockImplementation(
-        async (patientData: unknown, doctorId: string, _options?: unknown) => {
+        async (patientData: any, doctorId: string, _options?: unknown) => {
           // Validate input integrity first
           if (!patientData?.id) {
             throw new Error("Invalid patient data: missing required fields");

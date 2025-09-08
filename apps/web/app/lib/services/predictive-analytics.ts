@@ -42,7 +42,7 @@ export class PredictiveAnalyticsService {
     // Mock implementation for build compatibility
     return {
       id,
-      ...body,
+      ...(body as object),
       updated_at: new Date().toISOString(),
     };
   }
@@ -67,7 +67,7 @@ export class PredictiveAnalyticsService {
     // Mock implementation for build compatibility
     return {
       id,
-      ...data,
+      ...(data as object),
       updated_at: new Date().toISOString(),
     };
   }

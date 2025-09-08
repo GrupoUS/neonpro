@@ -7,37 +7,37 @@
     /* TweakCN NEONPRO Healthcare Theme - Enhanced Foundation */
     /* Core Brand Colors - Brazilian Aesthetic Clinic Optimized */
     --primary: oklch(0.5854 0.2041 277.1173);
-    --primary-foreground: oklch(1 0 0);
+    --primary-foreground: oklch(1.0000 0 0);
     --primary-dark: oklch(0.4568 0.2146 277.0229);
     --primary-light: oklch(0.6801 0.1583 276.9349);
 
-    --secondary: oklch(0.8687 0.0043 56.366);
+    --secondary: oklch(0.8687 0.0043 56.3660);
     --secondary-foreground: oklch(0.4461 0.0263 256.8018);
 
-    --accent: oklch(0.9376 0.026 321.9388);
+    --accent: oklch(0.9376 0.0260 321.9388);
     --accent-foreground: oklch(0.3729 0.0306 259.7328);
 
     /* Core Interface Colors - WCAG 2.1 AA+ Compliant */
     --background: oklch(0.9232 0.0026 48.7171);
-    --foreground: oklch(0.2795 0.0368 260.031);
+    --foreground: oklch(0.2795 0.0368 260.0310);
 
     --card: oklch(0.9699 0.0013 106.4238);
-    --card-foreground: oklch(0.2795 0.0368 260.031);
+    --card-foreground: oklch(0.2795 0.0368 260.0310);
 
     --popover: oklch(0.9699 0.0013 106.4238);
-    --popover-foreground: oklch(0.2795 0.0368 260.031);
+    --popover-foreground: oklch(0.2795 0.0368 260.0310);
 
     --muted: oklch(0.9232 0.0026 48.7171);
-    --muted-foreground: oklch(0.551 0.0234 264.3637);
+    --muted-foreground: oklch(0.5510 0.0234 264.3637);
 
     /* Interactive Elements - Enhanced for Healthcare */
-    --border: oklch(0.8687 0.0043 56.366);
-    --input: oklch(0.8687 0.0043 56.366);
+    --border: oklch(0.8687 0.0043 56.3660);
+    --input: oklch(0.8687 0.0043 56.3660);
     --ring: oklch(0.5854 0.2041 277.1173);
 
     /* Status Colors - Healthcare Specific */
     --destructive: oklch(0.6368 0.2078 25.3313);
-    --destructive-foreground: oklch(1 0 0);
+    --destructive-foreground: oklch(1.0000 0 0);
 
     --success: oklch(0.6792 0.1943 142.495);
     --success-foreground: oklch(1 0 0);
@@ -69,12 +69,12 @@
 
     /* Sidebar Colors - Professional Healthcare Navigation */
     --sidebar-background: oklch(0.8687 0.0043 56.366);
-    --sidebar-foreground: oklch(0.2795 0.0368 260.031);
+    --sidebar-foreground: oklch(0.2795 0.0368 260.0310);
     --sidebar-primary: oklch(0.5854 0.2041 277.1173);
-    --sidebar-primary-foreground: oklch(1 0 0);
-    --sidebar-accent: oklch(0.9376 0.026 321.9388);
+    --sidebar-primary-foreground: oklch(1.0000 0 0);
+    --sidebar-accent: oklch(0.9376 0.0260 321.9388);
     --sidebar-accent-foreground: oklch(0.3729 0.0306 259.7328);
-    --sidebar-border: oklch(0.8687 0.0043 56.366);
+    --sidebar-border: oklch(0.8687 0.0043 56.3660);
     --sidebar-ring: oklch(0.5854 0.2041 277.1173);
 
     /* Typography & Layout - Medical Terminology Optimized */
@@ -85,31 +85,26 @@
     --radius-xl: 2rem;
 
     /* Font Families - Portuguese Medical Content */
-    --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
-    --font-serif: "Lora", "Georgia", serif;
-    --font-mono: "JetBrains Mono", "Consolas", monospace;
+    --font-sans: Inter, sans-serif;
+    --font-serif: Lora, serif;
+    --font-mono: Libre Baskerville, serif;
 
     /* Healthcare Shadows - Professional Medical Interface */
-    --shadow-color: oklch(0.4 0.02 260);
+    --shadow-color: hsl(240 4% 60%);
     --shadow-opacity: 0.18;
     --shadow-blur: 10px;
     --shadow-spread: 4px;
     --shadow-offset-x: 2px;
     --shadow-offset-y: 2px;
 
-    --shadow-2xs: 2px 2px 10px 4px oklch(0.4 0.02 260 / 0.09);
-    --shadow-xs: 2px 2px 10px 4px oklch(0.4 0.02 260 / 0.09);
-    --shadow-sm:
-      2px 2px 10px 4px oklch(0.4 0.02 260 / 0.18), 2px 1px 2px 3px oklch(0.4 0.02 260 / 0.18);
-    --shadow:
-      2px 2px 10px 4px oklch(0.4 0.02 260 / 0.18), 2px 1px 2px 3px oklch(0.4 0.02 260 / 0.18);
-    --shadow-md:
-      2px 2px 10px 4px oklch(0.4 0.02 260 / 0.18), 2px 2px 4px 3px oklch(0.4 0.02 260 / 0.18);
-    --shadow-lg:
-      2px 2px 10px 4px oklch(0.4 0.02 260 / 0.18), 2px 4px 6px 3px oklch(0.4 0.02 260 / 0.18);
-    --shadow-xl:
-      2px 2px 10px 4px oklch(0.4 0.02 260 / 0.18), 2px 8px 10px 3px oklch(0.4 0.02 260 / 0.18);
-    --shadow-2xl: 2px 2px 10px 4px oklch(0.4 0.02 260 / 0.45);
+    --shadow-2xs: 2px 2px 10px 4px hsl(240 4% 60% / 0.09);
+    --shadow-xs: 2px 2px 10px 4px hsl(240 4% 60% / 0.09);
+    --shadow-sm: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 1px 2px 3px hsl(240 4% 60% / 0.18);
+    --shadow: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 1px 2px 3px hsl(240 4% 60% / 0.18);
+    --shadow-md: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 2px 4px 3px hsl(240 4% 60% / 0.18);
+    --shadow-lg: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 4px 6px 3px hsl(240 4% 60% / 0.18);
+    --shadow-xl: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 8px 10px 3px hsl(240 4% 60% / 0.18);
+    --shadow-2xl: 2px 2px 10px 4px hsl(240 4% 60% / 0.45);
 
     /* Accessibility Enhancement Variables */
     --focus-ring-width: 3px;
@@ -122,29 +117,33 @@
     --animation-duration-normal: 200ms;
     --animation-duration-slow: 300ms;
     --animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
+    --sidebar: oklch(0.8687 0.0043 56.3660);
+    --letter-spacing: 0em;
+    --spacing: 0.25rem;
+    --tracking-normal: 0em;
   }
 
   .dark {
     /* TweakCN NEONPRO Dark Mode - Healthcare Night Interface */
-    --background: oklch(0.2392 0.0388 252.5089);
-    --foreground: oklch(0.8569 0.0111 95.1836);
+    --background: oklch(0.2092 0.0312 251.3554);
+    --foreground: oklch(0.7696 0.0748 82.1097);
 
-    --primary: oklch(0.6776 0.0653 81.7406);
+    --primary: oklch(0.7696 0.0748 82.1097);
     --primary-foreground: oklch(0.8569 0.0111 95.1836);
     --primary-dark: oklch(0.5854 0.0553 81.7406);
     --primary-light: oklch(0.7776 0.0753 81.7406);
 
-    --secondary: oklch(0.2392 0.0388 252.5089);
-    --secondary-foreground: oklch(0.8569 0.0111 95.1836);
+    --secondary: oklch(0.2092 0.0312 251.3554);
+    --secondary-foreground: oklch(0.7696 0.0748 82.1097);
 
     --accent: oklch(0.3896 0.0074 59.4734);
-    --accent-foreground: oklch(0.8717 0.0093 258.3382);
+    --accent-foreground: oklch(0.7696 0.0748 82.1097);
 
     --card: oklch(0.2392 0.0388 252.5089);
-    --card-foreground: oklch(0.8569 0.0111 95.1836);
+    --card-foreground: oklch(0.7696 0.0748 82.1097);
 
-    --popover: oklch(0.2392 0.0388 252.5089);
-    --popover-foreground: oklch(0.8569 0.0111 95.1836);
+    --popover: oklch(0.2092 0.0312 251.3554);
+    --popover-foreground: oklch(0.7696 0.0748 82.1097);
 
     --muted: oklch(0.6776 0.0653 81.7406);
     --muted-foreground: oklch(0.8569 0.0111 95.1836);
@@ -154,8 +153,8 @@
     --ring: oklch(0.6776 0.0653 81.7406);
 
     /* Status Colors Dark Mode - Enhanced Visibility */
-    --destructive: oklch(0.7368 0.2578 25.3313);
-    --destructive-foreground: oklch(0.2244 0.0074 67.437);
+    --destructive: oklch(0.6368 0.2078 25.3313);
+    --destructive-foreground: oklch(0.2244 0.0074 67.4370);
 
     --success: oklch(0.7792 0.2243 142.495);
     --success-foreground: oklch(0.2392 0.0388 252.5089);
@@ -187,24 +186,36 @@
 
     /* Sidebar Dark Mode */
     --sidebar-background: oklch(0.2392 0.0388 252.5089);
-    --sidebar-foreground: oklch(0.9288 0.0126 255.5078);
+    --sidebar-foreground: oklch(0.7696 0.0748 82.1097);
     --sidebar-primary: oklch(0.7466 0.0242 84.5921);
-    --sidebar-primary-foreground: oklch(0.372 0.0497 245.2138);
+    --sidebar-primary-foreground: oklch(0.3720 0.0497 245.2138);
     --sidebar-accent: oklch(0.3896 0.0074 59.4734);
-    --sidebar-accent-foreground: oklch(0.8569 0.0111 95.1836);
+    --sidebar-accent-foreground: oklch(0.7696 0.0748 82.1097);
     --sidebar-border: oklch(0.6776 0.0653 81.7406);
     --sidebar-ring: oklch(0.6776 0.0653 81.7406);
 
     /* Shadows Dark Mode */
-    --shadow-color: oklch(0 0 0);
-    --shadow-2xs: 2px 2px 10px 4px oklch(0 0 0 / 0.09);
-    --shadow-xs: 2px 2px 10px 4px oklch(0 0 0 / 0.09);
-    --shadow-sm: 2px 2px 10px 4px oklch(0 0 0 / 0.18), 2px 1px 2px 3px oklch(0 0 0 / 0.18);
-    --shadow: 2px 2px 10px 4px oklch(0 0 0 / 0.18), 2px 1px 2px 3px oklch(0 0 0 / 0.18);
-    --shadow-md: 2px 2px 10px 4px oklch(0 0 0 / 0.18), 2px 2px 4px 3px oklch(0 0 0 / 0.18);
-    --shadow-lg: 2px 2px 10px 4px oklch(0 0 0 / 0.18), 2px 4px 6px 3px oklch(0 0 0 / 0.18);
-    --shadow-xl: 2px 2px 10px 4px oklch(0 0 0 / 0.18), 2px 8px 10px 3px oklch(0 0 0 / 0.18);
-    --shadow-2xl: 2px 2px 10px 4px oklch(0 0 0 / 0.45);
+    --shadow-color: hsl(0 0% 0%);
+    --shadow-2xs: 2px 2px 10px 4px hsl(0 0% 0% / 0.09);
+    --shadow-xs: 2px 2px 10px 4px hsl(0 0% 0% / 0.09);
+    --shadow-sm: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 1px 2px 3px hsl(0 0% 0% / 0.18);
+    --shadow: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 1px 2px 3px hsl(0 0% 0% / 0.18);
+    --shadow-md: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 2px 4px 3px hsl(0 0% 0% / 0.18);
+    --shadow-lg: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 4px 6px 3px hsl(0 0% 0% / 0.18);
+    --shadow-xl: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 8px 10px 3px hsl(0 0% 0% / 0.18);
+    --shadow-2xl: 2px 2px 10px 4px hsl(0 0% 0% / 0.45);
+    --radius: 1.25rem;
+    --sidebar: oklch(0.2392 0.0388 252.5089);
+    --font-sans: Inter, sans-serif;
+    --font-serif: Lora, serif;
+    --font-mono: Libre Baskerville, serif;
+    --shadow-opacity: 0.18;
+    --shadow-blur: 10px;
+    --shadow-spread: 4px;
+    --shadow-offset-x: 2px;
+    --shadow-offset-y: 2px;
+    --letter-spacing: 0em;
+    --spacing: 0.25rem;
   }
 
   /* High Contrast Emergency Mode - Critical Healthcare Scenarios */
@@ -244,6 +255,20 @@
       --animation-duration-normal: 1ms;
       --animation-duration-slow: 1ms;
     }
+  }
+  .theme {
+    --font-sans: Inter, sans-serif;
+    --font-mono: Libre Baskerville, serif;
+    --font-serif: Lora, serif;
+    --radius: 1.25rem;
+    --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
+    --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+    --tracking-wide: calc(var(--tracking-normal) + 0.025em);
+    --tracking-wider: calc(var(--tracking-normal) + 0.05em);
+    --tracking-widest: calc(var(--tracking-normal) + 0.1em);
+  }
+  body {
+    letter-spacing: var(--tracking-normal);
   }
 }
 

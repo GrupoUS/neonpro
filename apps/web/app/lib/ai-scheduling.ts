@@ -4,6 +4,7 @@ import type {
   Conflict,
   DynamicSchedulingEvent,
   Patient,
+  RiskAssessment,
   SchedulingAction,
   SchedulingDecision,
   SchedulingRequest,
@@ -686,7 +687,7 @@ export class AISchedulingEngine {
 
   private calculateUtilizationScore(slot: AppointmentSlot): number {
     const hour = slot.start.getHours();
-    const { 8: targetUtilization } = 0;
+    const targetUtilization = 0.8; // Target 80% utilization
     const currentUtilization = this.getHourlyUtilization(hour);
 
     // Score higher for slots that improve utilization balance
@@ -750,7 +751,7 @@ export class AISchedulingEngine {
   private assessSchedulingRisks(
     slot: AppointmentSlot,
     request: SchedulingRequest,
-  ): unknown {
+  ): RiskAssessment {
     return {
       noShowRisk: slot.conflictScore * 0.3,
       overbookingRisk: this.calculateOverbookingRisk(slot),
@@ -760,7 +761,8 @@ export class AISchedulingEngine {
   }
 
   private calculateOverbookingRisk(slot: AppointmentSlot): number {
-    const utilization = this.getTimeSlotUtilization(slot.start);
+    const hour = slot.start.getHours();
+    const utilization = this.getHourlyUtilization(hour);
     return Math.max(0, utilization - 0.8) * 2; // Risk increases after 80% utilization
   }
 
@@ -845,7 +847,7 @@ export class AISchedulingEngine {
 
   private getHourlyUtilization(hour: number): number {
     // Implementation would track actual hourly utilization
-    const utilization = {
+    const utilization: Record<number, number> = {
       9: 0.8,
       10: 0.9,
       11: 0.95, // Peak morning

@@ -1,6 +1,5 @@
 "use client";
 
-import { useAppointments } from "@/hooks/useAppointments";
 import {
   Alert,
   AlertDescription,
@@ -16,6 +15,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui";
+import { useAppointments } from "@/hooks/useAppointments";
 // AppointmentCalendar component not available - will create mock
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";

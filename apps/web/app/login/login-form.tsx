@@ -37,7 +37,7 @@ export function LoginForm() {
         } else {
           toastHelpers.error.generic();
         }
-      } else if (data?.user) {
+      } else if ((data as any)?.user) {
         toastHelpers.success.login();
         // Redirect will be handled by auth context
       }
@@ -165,7 +165,11 @@ export function LoginForm() {
         >
           {loading
             ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            : <Icons.google className="mr-2 h-4 w-4" />}
+            : (
+              <div className="mr-2">
+                <Icons.google />
+              </div>
+            )}
           Continuar com Google
         </Button>
 

@@ -37,7 +37,6 @@ interface Conversation {
 }
 
 // UI Components
-import { cn } from "@/lib/utils";
 import {
   Alert,
   AlertDescription,
@@ -53,6 +52,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui";
+import { cn } from "@/lib/utils";
 
 // Custom components
 import { WhatsappChat } from "./whatsapp-chat";

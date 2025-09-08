@@ -1,19 +1,5 @@
 "use client";
 
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Progress,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../ui";
 import { cn } from "@neonpro/utils";
 import {
   Activity,
@@ -31,6 +17,20 @@ import {
   ZoomIn,
 } from "lucide-react";
 import { useState } from "react";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Progress,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../ui";
 
 // Mock data for treatment journey
 const mockTreatmentData = {

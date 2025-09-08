@@ -49,17 +49,17 @@ export class TemplateManager {
    */
   private loadTemplates(): void {
     // Load WhatsApp templates
-    WHATSAPP_PROMPT_TEMPLATES.forEach(template => {
+    WHATSAPP_PROMPT_TEMPLATES.forEach((template: PromptTemplate) => {
       this.templates.set(template.id, template);
     });
 
     // Load aesthetic procedure templates
-    AESTHETIC_PROCEDURE_TEMPLATES.forEach(template => {
+    AESTHETIC_PROCEDURE_TEMPLATES.forEach((template: PromptTemplate) => {
       this.templates.set(template.id, template);
     });
 
     // Load LGPD compliance templates
-    LGPD_COMPLIANCE_TEMPLATES.forEach(template => {
+    LGPD_COMPLIANCE_TEMPLATES.forEach((template: LGPDTemplate) => {
       this.templates.set(template.id, template);
     });
   }
@@ -69,12 +69,12 @@ export class TemplateManager {
    */
   private loadSystemPrompts(): void {
     // WhatsApp system prompts
-    Object.entries(WHATSAPP_SYSTEM_PROMPTS).forEach(([key, prompt]) => {
+    Object.entries(WHATSAPP_SYSTEM_PROMPTS).forEach(([key, prompt]: [string, string]) => {
       this.systemPrompts.set(`whatsapp-${key}`, prompt);
     });
 
     // LGPD system prompts
-    Object.entries(LGPD_SYSTEM_PROMPTS).forEach(([key, prompt]) => {
+    Object.entries(LGPD_SYSTEM_PROMPTS).forEach(([key, prompt]: [string, string]) => {
       this.systemPrompts.set(`lgpd-${key}`, prompt);
     });
   }
@@ -110,7 +110,6 @@ export class TemplateManager {
       // Filter by context
       if (
         options.context && template.context !== options.context && template.context !== "both"
-        && template.context !== "all"
       ) {
         matches = false;
       }
@@ -142,7 +141,7 @@ export class TemplateManager {
     const fallbackValues = options.fallbackValues || {};
 
     // Replace variables in template
-    rendered = rendered.replace(/\{\{(\w+)\}\}/g, (match, variableName) => {
+    rendered = rendered.replace(/\{\{(\w+)\}\}/g, (match: string, variableName: string) => {
       const value = variables[variableName] || fallbackValues[variableName];
       if (value !== undefined) {
         return options.escapeHtml ? this.escapeHtml(value) : value;
@@ -259,7 +258,7 @@ export class TemplateManager {
       "/": "&#x2F;",
       "`": "&#x60;",
     };
-    return text.replace(/[&<>"'`/]/g, (ch) => map[ch] || ch);
+    return text.replace(/[&<>"'`/]/g, (ch: string) => map[ch] || ch);
   }
 
   /**

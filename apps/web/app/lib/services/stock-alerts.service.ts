@@ -3,15 +3,13 @@ import {
   validateAcknowledgeAlert,
   validateCreateStockAlertConfig,
   validateResolveAlert,
-} from "@/lib/types/stock-alerts";
-import type {
-  AcknowledgeAlert,
-  AlertsQuery,
-  CreateStockAlertConfig,
-  ResolveAlert,
-  StockAlert,
-  StockAlertConfig,
-} from "@/lib/types/stock-alerts";
+  type AcknowledgeAlert,
+  type AlertsQuery,
+  type CreateStockAlertConfig,
+  type ResolveAlert,
+  type StockAlert,
+  type StockAlertConfig,
+} from "../types/stock-alerts";
 
 /**
  * Stock Alerts Service - Core business logic for managing stock alerts
@@ -82,8 +80,8 @@ export class StockAlertsService {
         is_active: validatedData.isActive,
         notification_channels: validatedData.notificationChannels,
         created_by: validatedData.createdBy,
-        created_at: validatedData.createdAt,
-        updated_at: validatedData.createdAt,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -335,7 +333,7 @@ export class StockAlertsService {
    * Determine if an alert should be triggered
    */
   private shouldTriggerAlert(
-    item: unknown,
+    item: any,
     config: StockAlertConfig,
   ): { trigger: boolean; message: string; } {
     const currentStock = item.current_quantity || 0;
@@ -397,7 +395,7 @@ export class StockAlertsService {
    * Create a new stock alert
    */
   private async createAlert(
-    item: unknown,
+    item: any,
     config: StockAlertConfig,
     message: string,
   ): Promise<StockAlert | null> {
@@ -419,7 +417,7 @@ export class StockAlertsService {
       .single();
 
     if (error) {
-      return;
+      return null;
     }
 
     return data;

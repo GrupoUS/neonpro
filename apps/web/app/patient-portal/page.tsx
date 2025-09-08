@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from "@/contexts/auth-context";
 import {
   Alert,
   AlertDescription,
@@ -25,6 +24,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui";
+import { useAuth } from "@/contexts/auth-context";
 import {
   Activity,
   AlertCircle,
@@ -182,14 +182,16 @@ export default function PatientPortalPage() {
             Portal do Paciente
           </h1>
           <p className="text-muted-foreground">
-            Bem-vindo, {user?.firstName}! Gerencie sua saúde de forma digital.
+            Bem-vindo,{" "}
+            {(user as any)?.firstName || user?.email?.split("@")[0]}! Gerencie sua saúde de forma
+            digital.
           </p>
         </div>
         <Avatar className="h-12 w-12">
-          <AvatarImage src={user?.imageUrl} />
+          <AvatarImage src={(user as any)?.imageUrl} />
           <AvatarFallback>
-            {user?.firstName?.[0]}
-            {user?.lastName?.[0]}
+            {(user as any)?.firstName?.[0] || user?.email?.[0]?.toUpperCase()}
+            {(user as any)?.lastName?.[0] || ""}
           </AvatarFallback>
         </Avatar>
       </div>

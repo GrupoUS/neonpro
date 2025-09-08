@@ -23,7 +23,7 @@ class ProgressTrackingService {
     // Mock implementation for build compatibility
     return {
       id,
-      ...data,
+      ...(data as object),
       updated_at: new Date().toISOString(),
     };
   }

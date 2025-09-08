@@ -52,7 +52,11 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import type { EquipmentStatus, FacilityRoom, MedicalEquipment } from "@/types/team-coordination"; // Mock medical equipment data with ANVISA compliance
+import type {
+  EquipmentStatus,
+  FacilityRoom,
+  MedicalEquipment,
+} from "@/app/types/team-coordination"; // Mock medical equipment data with ANVISA compliance
 
 const mockEquipmentData: MedicalEquipment[] = [
   {
@@ -69,7 +73,7 @@ const mockEquipmentData: MedicalEquipment[] = [
     nextInspectionDate: new Date("2024-07-15"),
     status: "available",
     currentLocation: "UTI - Setor A",
-    assignedTo: undefined,
+    assignedTo: null,
     reservations: [],
     lastMaintenanceDate: new Date("2024-01-10"),
     nextMaintenanceDate: new Date("2024-07-10"),
@@ -79,7 +83,7 @@ const mockEquipmentData: MedicalEquipment[] = [
     totalUsageHours: 2450,
     utilizationRate: 85,
     failureCount: 0,
-    lastFailureDate: undefined,
+    lastFailureDate: null,
     requiredTraining: ["Monitorização Avançada", "Interpretação de Arritmias"],
     safetyAlerts: [],
     operatingInstructions: "Seguir protocolo UTI para monitorização contínua",
@@ -101,7 +105,7 @@ const mockEquipmentData: MedicalEquipment[] = [
     nextInspectionDate: new Date("2024-08-01"), // Overdue!
     status: "maintenance",
     currentLocation: "Manutenção - Oficina",
-    assignedTo: undefined,
+    assignedTo: null,
     reservations: [],
     lastMaintenanceDate: new Date("2024-07-20"),
     nextMaintenanceDate: new Date("2024-10-20"),
@@ -143,7 +147,7 @@ const mockEquipmentData: MedicalEquipment[] = [
     totalUsageHours: 450,
     utilizationRate: 75,
     failureCount: 0,
-    lastFailureDate: undefined,
+    lastFailureDate: null,
     requiredTraining: ["Suporte Avançado de Vida", "Desfibrilação"],
     safetyAlerts: [],
     operatingInstructions: "Disponível para emergências 24/7",

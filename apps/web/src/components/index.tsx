@@ -1,5 +1,5 @@
 // UI Components
-export * from "./ui";
+export * from "@/components/ui";
 
 // Layout Components
 export * from "./layouts";
