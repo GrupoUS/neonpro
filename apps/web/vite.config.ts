@@ -1,9 +1,9 @@
 import { TanStackRouterVite, } from '@tanstack/router-vite-plugin'
 import react from '@vitejs/plugin-react'
-import path from 'path'
-import { defineConfig, } from 'vite'
-import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
+import path from 'path'
+import tailwindcss from 'tailwindcss'
+import { defineConfig, } from 'vite'
 
 // Healthcare-specific Vite configuration for NeonPro
 export default defineConfig({

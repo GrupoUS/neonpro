@@ -12,22 +12,6 @@ applyTo: "**/*"
 - **📚 Always Read the @source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
   - One‑line: Real monorepo structure (apps/packages) validated and categorized
   - Use when: Locating code, packages, or wiring across the repo
-- **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.
-- **MANDATORY** Use do gerenciador de tasks nativo do augment de forma mais ativa para acompanhar tudo o que precisa ser feito, criando atomic tasks para executar tudo o que foi solicitado em fases
-- **MANDATORY** use of `serena mcp` to search codebase and semantic code analysis, _DO NOT USE NATIVE SEARCH CODEBASE tool_
-- **MANDATORY** use of `supabase mcp` for database operations
-- **MANDATORY** use of `shadcn-ui mcp` to manage ui components
-- **MANDATORY** use of `archon mcp` for task and knowledge management
-- **MANDATORY** use of `desktop-commander mcp` for file and terminal operations and system management
-- **MANDATORY** invoke `sequential-thinking` first and then the `think` native tool before any other action; under ULTRATHINK, always use `think` to produce a 5‑step breakdown of next steps/strategies to clarify order and purpose.
-- **MANDATORY** Use Tavily MCP for all web searches (real-time info, trends, tech updates). DO NOT use native search tools (e.g., Search View, grep, file_search). Use Serena MCP for all codebase search and analysis.
-- **MANDATORY** use of `context7 mcp` for deep contextual understanding and analysis, _DO NOT USE NATIVE CONTEXT tool_
-- **NO INTERRUPTIONS**: Continue through ALL steps until problem fully solved.
-- **MANDATORY FIRST STEP**: Always begin with sequential-thinking tool.
-- **ONLY TERMINATE WHEN**: User query COMPLETELY resolved and Problem 100% solved.
-- **CRITICAL:This project uses Archon for knowledge management, task tracking, and project organization.**
-- Project uses A.P.T.E methodology (Analyze → Plan → Think → Execute) with quality standard ≥9.5/10, prefers Bun over npm for 3-5x performance improvements, and requires phased migration approach with rollback strategies.
-- User prefers comprehensive backend database architecture audits following a 4-phase structured approach: Architecture Analysis → Backend Integration Audit → Archon Project Creation → Task Execution, with mandatory use of serena mcp for codebase analysis, supabase mcp for database operations, and archon mcp for project management, following sequential-thinking → research → plan → implement → validate workflow.
 
 ## Pre-Development Guidelines
 
@@ -141,12 +125,6 @@ CONSTITUTIONAL_PRINCIPLES:
 - **🌐 tavily** - Real-time info
 - **🎨 shadcn-ui** - UI components
 
-### **🚨 Critical Rules**
-
-- NEVER skip mandatory sequence
-- NEVER use native codebase-retrieval
-- IF STUCK >3x: reassess with sequential-thinking
-
 ## Mandatory Development Steps
 
 ### 1. **Research & Decomposition** 🧠
@@ -158,9 +136,7 @@ CONSTITUTIONAL_PRINCIPLES:
 - Use `serena` (NEVER native) to understand current codebase
 - Break down feature into smaller components
 - Identify complexities, dependencies, and constraints
-- **Complexity ≥7**: Add context7 → tavily
-- **Stuck >3x**: See MCP Error Recovery (mcp-coordination.md)
-- MUST READ Project orchestrator: [`docs/AGENTS.md`](../docs/AGENTS.md)
+- **Complexity ≥7 or Stuck >3x**: consult official docs and best practices with context7 → tavily
 
 **Proactive Update Protocol (MANDATORY FINAL STEP)**
 
@@ -208,20 +184,6 @@ RESEARCH_EXECUTION_FRAMEWORK:
 - Use `serena` to analyze codebase complexity and dependencies
 - Mark tasks as in_progress when starting, completed when finished
 - **Follow:** [`docs/AGENTS.md`](../docs/AGENTS.md)
-
-**🎯 Ativação de Agentes APEX por Contexto**:
-
-```bash
-# Planejamento Técnico
-@apex-dev "planejar implementação de [feature]"
-
-# Planejamento de UI/UX
-@apex-ui-ux-designer "projetar interface para [funcionalidade]"
-
-# Planejamento com Pesquisa
-@apex-dev,apex-researcher "pesquisar e planejar sistema de [funcionalidade complexa]"
-```
-
 - Follow the Planning & Design Framework below
 
 ```yaml
@@ -325,9 +287,6 @@ validation:
 ### 6. **Memory Documentation Protocol** 📝
 
 **🔧 MCP**: desktop-commander + archon
-
-- **MANDATORY**: Follow Proactive Update Protocol from `docs/memory.md`:
-  - Use `desktop-commander` to create documentation files (chunked)
   - Use `archon` to create/update project documents and knowledge base
   - Create `mistakes/[error-category].md` if mistakes corrected
   - Create `features/[feature-name].md` for new features or modified behavior
@@ -342,36 +301,13 @@ validation:
 - `docs/database-schema/*.md` — DDL/relationships/RLS changes recorded alongside migrations.
 - `docs/apis/*.md` — Endpoint docs: path, method, purpose, request/response, auth, file path.
 
-### 10. **Documentation Folder Updates** 📚
-
-**🔧 MCP**: serena + desktop-commander
-
-- Use `serena` to analyze code changes and identify documentation impact
-- **Evaluate and Suggest**: Assess if documentation folders need updates:
-  - Application flows (`docs/architecture/aesthetic-platform-flows.md`) - if user flows modified
-  - API documentation (`docs/apis/`) - if endpoints created/modified
-  - Database schemas (`docs/database-schema/`) - if structure changed
-  - Any other relevant documentation folders
-- Use `desktop-commander` to create/update documentation files
-- Use `archon` to store documentation updates in knowledge base
-- **Suggest to User**: Recommend specific updates and ask user to review
-
-### 11. **Out-of-Scope Documentation**
-
-- Use o agente apex-researcher para criar documentação abrangente para:
-  - Novos conceitos ou padrões introduzidos
-  - Decisões arquiteturais complexas
-  - Guias de integração ou tutoriais
-  - Qualquer documentação fora dos protocolos padrão de memória e pastas
-
 ## Important Notes
 
 - **🚫 Never skip steps** unless explicitly told by the user
-- **🔧 Always follow MCP Mandatory Sequence**: sequential-thinking → archon → serena (NEVER native codebase-retrieval)
 - **📖 Always consult `/docs`** when uncertain, using `desktop-commander` for file operations
 - **✅ Complete each step** before moving to the next, using appropriate MCPs for each phase
 - **🔄 Iterate** until all quality checks pass
 - **📝 Document everything** for future reference using `archon` knowledge base
-- **🚨 If stuck >3 attempts**: Use sequential-thinking to reassess and try alternatives
+- **🚨 If stuck >3 attempts**: Use sequential-thinking to reassess and try alternatives using official docs and best practices with context7 → tavily
 
 ---

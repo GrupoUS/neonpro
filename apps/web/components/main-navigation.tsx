@@ -44,16 +44,16 @@ export function MainNavigation() {
   // Simple permission checks based on user role
   const canAccessPatients = React.useCallback(() => {
     return (
-      user && ['clinic_owner', 'clinic_manager', 'professional',].includes(user.role,)
+      user && user.role && ['clinic_owner', 'clinic_manager', 'professional',].includes(user.role,)
     )
   }, [user,],)
 
   const canAccessProfessionals = React.useCallback(() => {
-    return user && ['clinic_owner', 'clinic_manager',].includes(user.role,)
+    return user && user.role && ['clinic_owner', 'clinic_manager',].includes(user.role,)
   }, [user,],)
 
   const canAccessCompliance = React.useCallback(() => {
-    return user && ['clinic_owner', 'clinic_manager',].includes(user.role,)
+    return user && user.role && ['clinic_owner', 'clinic_manager',].includes(user.role,)
   }, [user,],)
 
   // Define navigation items based on user role and permissions

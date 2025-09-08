@@ -61,13 +61,16 @@ export interface ScheduleExecutionResult {
   duration: number
   success: boolean
   report?: GeneratedReport
-  distributionResults: {
-    email?: { success: boolean; recipients: string[]; error?: string }
-    webhook?: { success: boolean; statusCode?: number; error?: string }
-    storage?: { success: boolean; location?: string; error?: string }
-    dashboard?: { success: boolean; error?: string }
-  }
+  distributionResults: DistributionResults // <-- changed to explicit type
   error?: string
+}
+
+// Add concrete distribution results type
+export interface DistributionResults {
+  email?: { success: boolean; recipients: string[]; error?: string }
+  webhook?: { success: boolean; statusCode?: number; error?: string }
+  storage?: { success: boolean; location?: string; error?: string }
+  dashboard?: { success: boolean; error?: string }
 }
 
 export class ReportScheduler {
@@ -247,7 +250,7 @@ export class ReportScheduler {
         duration,
         success: true,
         report,
-        distributionResults: distributionResults as any,
+        distributionResults, // typed now, no `as any`
       }
     } catch (error) {
       const endTime = new Date()
@@ -262,7 +265,7 @@ export class ReportScheduler {
         endTime,
         duration,
         success: false,
-        distributionResults: {},
+        distributionResults: {} as DistributionResults, // explicit typing
         error: error instanceof Error ? error.message : 'Unknown error',
       }
     } finally {
@@ -464,20 +467,19 @@ export class ReportScheduler {
   private async distributeReport(
     report: GeneratedReport,
     schedule: ReportSchedule,
-  ): Promise<unknown> {
-    const results: unknown = {}
+  ): Promise<DistributionResults> {
+    const results: DistributionResults = {} as DistributionResults
 
     // Email distribution
     if (schedule.distribution.email?.enabled) {
       try {
         await (this.sendEmailReport as any)(report, schedule.distribution.email,)
-        const resultsAny = results as any
-        resultsAny.email = {
+        results.email = {
           success: true,
           recipients: schedule.distribution.email.recipients,
         }
       } catch (error) {
-        ;(results as any).email = {
+        results.email = {
           success: false,
           recipients: schedule.distribution.email.recipients,
           error: error instanceof Error ? error.message : 'Email sending failed',
@@ -492,9 +494,9 @@ export class ReportScheduler {
           report,
           schedule.distribution.webhook,
         )
-        ;(results as any).webhook = { success: true, statusCode, }
+        results.webhook = { success: true, statusCode, }
       } catch (error) {
-        ;(results as any).webhook = {
+        results.webhook = {
           success: false,
           error: error instanceof Error ? error.message : 'Webhook failed',
         }
@@ -505,9 +507,9 @@ export class ReportScheduler {
     if (schedule.distribution.storage?.enabled) {
       try {
         const location = await this.uploadToStorage(report, schedule.distribution.storage,)
-        ;(results as any).storage = { success: true, location, }
+        results.storage = { success: true, location, }
       } catch (error) {
-        ;(results as any).storage = {
+        results.storage = {
           success: false,
           error: error instanceof Error ? error.message : 'Storage upload failed',
         }
@@ -518,9 +520,9 @@ export class ReportScheduler {
     if (schedule.distribution.dashboard?.enabled) {
       try {
         await this.notifyDashboard(report, schedule.distribution.dashboard,)
-        ;(results as any).dashboard = { success: true, }
+        results.dashboard = { success: true, }
       } catch (error) {
-        ;(results as any).dashboard = {
+        results.dashboard = {
           success: false,
           error: error instanceof Error ? error.message : 'Dashboard notification failed',
         }
@@ -547,7 +549,7 @@ export class ReportScheduler {
       endTime,
       duration: endTime.getTime() - startTime.getTime(),
       success: true,
-      distributionResults: {},
+      distributionResults: {} as DistributionResults, // explicit typing
       error: `Skipped: ${reason}`,
     }
   }

@@ -4,6 +4,8 @@
     "**/.env.*local",
     "**/package.json",
     "**/tsconfig.json",
+    "pnpm-workspace.yaml",
+    "pnpm-lock.yaml",
     "dprint.json",
     "bunfig.toml",
     "bun.lock"
@@ -78,7 +80,7 @@
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**", "prisma/generated/**"]
+      "outputs": ["dist/**"]
     },
     "@neonpro/shared#build": {
       "dependsOn": [
@@ -117,14 +119,14 @@
       "outputs": [".eslintcache", "**/*.tsbuildinfo"],
       "outputLogs": "new-only",
       "cache": true,
-      "env": ["NODE_OPTIONS=--max-old-space-size=4096"]
+      "env": ["NODE_OPTIONS"]
     },
     "lint:fix": {
       "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json", ".eslintrc.*", ".oxlintrc.*"],
       "outputs": [".eslintcache", "**/*.tsbuildinfo"],
       "outputLogs": "new-only",
       "cache": true,
-      "env": ["NODE_OPTIONS=--max-old-space-size=4096"]
+      "env": ["NODE_OPTIONS"]
     },
     "type-check": {
       "dependsOn": ["^build"],
@@ -137,7 +139,7 @@
       "outputs": ["**/*.tsbuildinfo", ".turbo/type-check.log"],
       "outputLogs": "errors-only",
       "cache": true,
-      "env": ["NODE_OPTIONS=--max-old-space-size=8192"]
+      "env": ["NODE_OPTIONS"]
     },
     "format": {
       "inputs": [

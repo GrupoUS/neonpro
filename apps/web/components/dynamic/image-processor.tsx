@@ -146,7 +146,7 @@ export function useImageProcessing() {
         logging: false,
         width: element.scrollWidth,
         height: element.scrollHeight,
-      } as any)
+      } as any,)
 
       setProgress(60,)
 

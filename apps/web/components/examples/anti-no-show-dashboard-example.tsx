@@ -575,7 +575,7 @@ export function AntiNoShowDashboardExample({
             noShowMetrics={sampleNoShowMetrics}
             customMetrics={sampleCustomMetrics}
             timeRange={timeRange}
-            onTimeRangeChange={setTimeRange}
+            onTimeRangeChange={(range) => setTimeRange(range as "today" | "week" | "month" | "quarter" | "year")}
           />
         </TabsContent>
 

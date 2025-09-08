@@ -1,43 +1,42 @@
 ---
-[← Back to Docs Orchestrator](../AGENTS.md)
-
----
 title: "Architecture Orchestrator (docs/architecture) — v2"
 version: 2.0.0
 last_updated: 2025-09-02
 language: en
 form: "orchestrator"
 tags:
-  - orchestration
-  - architecture
-applyTo:
-  - "docs/architecture/**"
-related:
-  - "docs/AGENTS.md"
-  - "docs/architecture/README.md"
-llm:
+
+- orchestration
+- architecture
+  applyTo:
+- "docs/architecture/**"
+  related:
+- "docs/AGENTS.md"
+- "docs/architecture/AGENTS.md"
+- llm:
   mandatory_sequence:
-    - sequential-thinking
-    - task-management
-    - codebase-analysis
-  pre_read:
-    - path: "docs/AGENTS.md"
-      reason: "Root docs orchestrator"
-  retrieval_hints:
+  - sequential-thinking
+  - task-management
+  - codebase-analysis
+    pre_read:
+  - path: "docs/AGENTS.md"
+    reason: "Root docs orchestrator"
+    retrieval_hints:
     prefer:
-      - "docs/architecture/AGENTS.md"
-      - "docs/architecture/**/README.md"
-    avoid:
-      - "images/**"
-      - "*.pdf"
-  guardrails:
-    tone: "concise, professional, English"
-    formatting: "Markdown with clear headings and short lists"
-    stop_criteria: "finish only when the task is 100% resolved"
-  output_preferences:
-    - "Use short bullets"
-    - "Include relative paths in backticks"
-    - "Provide shell commands in fenced code blocks when applicable"
+    - "docs/architecture/AGENTS.md"
+    - "docs/architecture/**/README.md"
+      avoid:
+    - "images/**"
+    - "*.pdf"
+    - guardrails:
+      tone: "concise, professional, English"
+      formatting: "Markdown with clear headings and short lists"
+      stop_criteria: "finish only when the task is 100% resolved"
+      output_preferences:
+  - "Use short bullets"
+  - "Include relative paths in backticks"
+  - "Provide shell commands in fenced code blocks when applicable"
+
 ---
 
 # neonpro-architecture-orchestration-guide
@@ -126,42 +125,6 @@ llm:
   1. @platform-flows → 2) @system-architecture → 3) @source-tree
 - Review performance/security
   1. @tech-stack → 2) @frontend-architecture → 3) @source-tree
-
-## navigation-commands
-
-```bash
-# System
-@system-architecture "end-to-end overview"
-@source-tree "where is X?"
-
-# Frontend
-@frontend-architecture "layer patterns"
-@frontend-spec "implementation conventions"
-
-# Tech & Flows
-@tech-stack "versions and compatibility"
-@platform-flows "functional diagrams"
-```
-
-## intelligent-context-engineering
-
-```yaml
-CONTEXT_STRATEGY:
-  minimal_loading: "Load only 1-2 files per task"
-  primary_order:
-    - @system-architecture
-    - @source-tree
-    - @frontend-architecture
-    - @frontend-spec
-    - @tech-stack
-    - @platform-flows
-  when_to_load:
-    overview: [@system-architecture]
-    locate_code: [@source-tree]
-    design_frontend: [@frontend-architecture, @frontend-spec]
-    choose_technologies: [@tech-stack]
-    define_flows: [@platform-flows, @system-architecture]
-```
 
 ## references-correct-link-format
 

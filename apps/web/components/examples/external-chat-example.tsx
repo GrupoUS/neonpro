@@ -110,18 +110,25 @@ export function ExternalChatExample() {
     try {
       // Apply 8-second timeout to AI response
       const aiResponse = await withTimeout(simulateAIResponse(message,), 8000,)
-      const processedResponse = processAIResponse(message, aiResponse,)
+      const processedResponse = processAIResponse(message, {
+        ...aiResponse,
+        content: aiResponse.response,
+      },)
 
       if (processedResponse.shouldHandoff) {
         const handoffMsg = getHandoffMessage(processedResponse.reason,)
         return {
-          response: `${processedResponse.response.response}\n\n${handoffMsg}`,
-          confidence: processedResponse.response.confidence,
+          response: `${processedResponse.response.content}\n\n${handoffMsg}`,
+          confidence: aiResponse.confidence,
           requiresHumanHandoff: true,
         }
       }
 
-      return processedResponse.response
+      return {
+        response: processedResponse.response.content || '',
+        confidence: aiResponse.confidence,
+        requiresHumanHandoff: false,
+      }
     } catch (error) {
       console.error('Erro ao processar mensagem:', error,)
 
@@ -333,3 +340,5 @@ export function ExternalChatExample() {
     </div>
   )
 }
+
+export default ExternalChatExample

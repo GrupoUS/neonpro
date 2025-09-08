@@ -75,10 +75,6 @@ export default function LGPDComplianceDashboard() {
     description: '',
   },)
 
-  useEffect(() => {
-    loadUserData()
-  }, [loadUserData,],)
-
   const loadUserData = useCallback(async () => {
     // Mock data - integrate with real API
     setDataProcessing([
@@ -122,6 +118,10 @@ export default function LGPDComplianceDashboard() {
       },
     ],)
   }, [],)
+
+  useEffect(() => {
+    loadUserData()
+  }, [loadUserData,],)
 
   const handleDataSubjectRight = async (rightType: keyof DataSubjectRights,) => {
     switch (rightType) {
@@ -248,7 +248,7 @@ export default function LGPDComplianceDashboard() {
           <Button
             className="flex items-center space-x-2"
             key={tab.key}
-            onClick={() => setActiveTab(tab.key as unknown,)}
+            onClick={() => setActiveTab(tab.key as 'data' | 'consent' | 'overview' | 'rights',)}
             variant={activeTab === tab.key ? 'default' : 'ghost'}
           >
             {tab.icon}

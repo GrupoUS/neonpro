@@ -41,19 +41,19 @@ export const Route = createFileRoute('/dashboard',)({
       // Dashboard metrics
       queryClient.ensureQueryData({
         queryKey: QueryKeys.analytics.dashboard(userId,),
-        queryFn: () => Promise.resolve({ metrics: [], charts: [], }),
+        queryFn: () => Promise.resolve({ metrics: [], charts: [], },),
         staleTime: 5 * 60 * 1000, // 5 minutes
       },),
       // User permissions
       queryClient.ensureQueryData({
         queryKey: QueryKeys.auth.permissions(userId,),
-        queryFn: () => Promise.resolve({ permissions: [], role: 'user', }),
+        queryFn: () => Promise.resolve({ permissions: [], role: 'user', },),
         staleTime: 10 * 60 * 1000, // 10 minutes
       },),
       // Clinic information
       queryClient.ensureQueryData({
         queryKey: QueryKeys.clinics.detail(clinicId,),
-        queryFn: () => Promise.resolve({ name: 'Healthcare Clinic', settings: {}, }),
+        queryFn: () => Promise.resolve({ name: 'Healthcare Clinic', settings: {}, },),
         staleTime: 15 * 60 * 1000, // 15 minutes
       },),
     ],)
@@ -67,7 +67,9 @@ export const Route = createFileRoute('/dashboard',)({
     },)
 
     const successfulPreloads = preloadResults.filter(r => r.status === 'fulfilled').length
-    console.log(`Dashboard preloading: ${successfulPreloads}/${preloadResults.length} queries successful`,)
+    console.log(
+      `Dashboard preloading: ${successfulPreloads}/${preloadResults.length} queries successful`,
+    )
 
     return { preloadResults, }
   },

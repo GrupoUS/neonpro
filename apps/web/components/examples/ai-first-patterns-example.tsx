@@ -112,10 +112,8 @@ function AIFirstWorkflow() {
 
   const {
     isLoading,
-    progress,
     startLoading,
     stopLoading,
-    LoadingComponent,
   } = useAILoadingState('patient-analysis', 4,)
 
   const [error, setError,] = useState<Error | null>(null,)
@@ -158,9 +156,9 @@ function AIFirstWorkflow() {
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-2">
             <Button
-              variant={activeDemo === 'patient-analysis' ? 'default' : 'outline'}
+              variant={activeDemo === 'patient-triage' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setActiveDemo('patient-analysis',)}
+              onClick={() => setActiveDemo('patient-triage',)}
             >
               👨‍⚕️ Análise de Paciente
             </Button>
@@ -190,7 +188,7 @@ function AIFirstWorkflow() {
       </Card>
 
       {/* Patient Analysis Demo */}
-      {activeDemo === 'patient-analysis' && (
+      {activeDemo === 'patient-triage' && (
         <div className="space-y-6">
           <Card>
             <CardHeader>
@@ -285,8 +283,8 @@ function AIFirstWorkflow() {
                     <div className="flex items-center justify-between">
                       <h4 className="font-semibold">Resultados da Análise IA</h4>
                       <ConfidencePatterns
-                        score={aiResults.confidence}
-                        category="patient-analysis"
+                        score={aiResults.confidence ?? 0}
+                        category="patient-triage"
                         variant="badge"
                         showTooltip
                         context={`Análise de ${selectedPatient.name}`}
@@ -295,7 +293,7 @@ function AIFirstWorkflow() {
 
                     <Alert>
                       <AlertDescription>
-                        <strong>Resultado:</strong> {aiResults.result}
+                        <strong>Resultado:</strong> {String(aiResults.result)}
                       </AlertDescription>
                     </Alert>
 
@@ -304,17 +302,17 @@ function AIFirstWorkflow() {
                       confidenceScores={[
                         {
                           label: 'Avaliação de Risco',
-                          score: aiResults.confidence - 5,
+                          score: (aiResults.confidence ?? 0) - 5,
                           category: 'risk-assessment',
                         },
                         {
                           label: 'Sugestão de Tratamento',
-                          score: aiResults.confidence + 3,
+                          score: (aiResults.confidence ?? 0) + 3,
                           category: 'treatment-suggestion',
                         },
                         {
                           label: 'Análise Geral',
-                          score: aiResults.confidence,
+                          score: aiResults.confidence ?? 0,
                           category: 'general',
                         },
                       ]}
@@ -324,12 +322,12 @@ function AIFirstWorkflow() {
                     {/* Confidence trend */}
                     <ConfidenceTrend
                       trends={[
-                        { timestamp: '10:00', score: aiResults.confidence - 10, },
-                        { timestamp: '10:15', score: aiResults.confidence - 5, },
-                        { timestamp: '10:30', score: aiResults.confidence - 2, },
-                        { timestamp: '10:45', score: aiResults.confidence, },
+                        { timestamp: '10:00', score: (aiResults.confidence ?? 0) - 10, },
+                        { timestamp: '10:15', score: (aiResults.confidence ?? 0) - 5, },
+                        { timestamp: '10:30', score: (aiResults.confidence ?? 0) - 2, },
+                        { timestamp: '10:45', score: aiResults.confidence ?? 0, },
                       ]}
-                      category="patient-analysis"
+                      category="patient-triage"
                     />
                   </div>
                 </div>
@@ -708,3 +706,5 @@ function ComponentDocumentation() {
     </div>
   )
 }
+
+export { AIFirstPatternsExample }

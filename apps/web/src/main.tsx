@@ -64,7 +64,7 @@ const router = createRouter({
       complianceMode: 'strict' as const,
     },
   } satisfies HealthcareRootContext,
-})
+},)
 
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {

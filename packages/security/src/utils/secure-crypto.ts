@@ -61,6 +61,7 @@ function hasWebCrypto(): boolean {
 function createSecureRandomBytes(): SecureRandomBytes {
   if (isNode()) {
     // Use Node.js crypto
+    /* eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
     const crypto = require('node:crypto',)
     return (size: number,): Buffer => {
       return crypto.randomBytes(size,)
@@ -89,6 +90,7 @@ function createSecureRandomBytes(): SecureRandomBytes {
 function createSecureRandomUUID(): SecureRandomUUID {
   if (isNode()) {
     // Use Node.js crypto.randomUUID
+    /* eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
     const crypto = require('node:crypto',)
     return (): string => {
       if (typeof crypto.randomUUID === 'function') {
@@ -146,6 +148,7 @@ function generateUUIDv4(randomBytes: SecureRandomBytes,): string {
 function createSecureTimingSafeEqual(): SecureTimingSafeEqual {
   if (isNode()) {
     // Use Node.js crypto.timingSafeEqual
+    /* eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
     const crypto = require('node:crypto',)
     return (a: Buffer, b: Buffer,): boolean => {
       if (a.length !== b.length) {
@@ -176,6 +179,7 @@ function createSecureTimingSafeEqual(): SecureTimingSafeEqual {
 function createSecureCreateHMAC(): SecureCreateHMAC {
   if (isNode()) {
     // Use Node.js crypto.createHmac
+    /* eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
     const crypto = require('node:crypto',)
     return (algorithm: string, key: Buffer | string,): SecureHMAC => {
       const hmac = crypto.createHmac(algorithm, key,)

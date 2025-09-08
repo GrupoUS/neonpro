@@ -196,9 +196,7 @@ function Button({
             />
           </svg>
           <span className="sr-only">{loadingText ?? 'Processando...'}</span>
-          {loadingText && (
-            <span className="ml-1 inline-block">{loadingText}</span>
-          )}
+          {loadingText && <span className="ml-1 inline-block">{loadingText}</span>}
         </>
       )}
       {children}

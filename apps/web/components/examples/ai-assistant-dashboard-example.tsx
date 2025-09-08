@@ -157,7 +157,7 @@ export function AIAssistantDashboardExample() {
       setQueryResults(prev => [vizResult, ...prev.slice(0, 9,),])
       setSelectedResult(vizResult.id,)
 
-      result.type = 'mixed'
+      result.type = 'chart'
       result.response = 'Dashboard completo gerado. Visualize na aba "Resultados".'
     }
 
@@ -268,7 +268,8 @@ export function AIAssistantDashboardExample() {
             <PerformanceInsights
               userRole={userRole.name}
               timeRange={timeRange}
-              onTimeRangeChange={(range,) => setTimeRange(range as unknown,)}
+              onTimeRangeChange={(range,) =>
+                setTimeRange(range as 'today' | 'week' | 'month' | 'quarter',)}
               onExportData={handleExportPerformanceData}
               onRefreshData={handleRefreshPerformanceData}
             />
@@ -339,3 +340,5 @@ export function AIAssistantDashboardExample() {
     </div>
   )
 }
+
+export default AIAssistantDashboardExample

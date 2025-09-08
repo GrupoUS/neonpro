@@ -76,12 +76,12 @@ export const FormField: React.FC<FormFieldProps> = ({
   'data-testid': testId,
 },) => {
   const hasError = Boolean(error,)
-  const isValid = !hasError && value && !loading
+  const isValid: boolean = !hasError && Boolean(value,) && !loading
 
   const baseInputProps = {
     id,
     name,
-    value: value || '',
+    value: (value as string) || '',
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,) => {
       onChange?.(type === 'number' ? parseFloat(e.target.value,) : e.target.value,)
     },

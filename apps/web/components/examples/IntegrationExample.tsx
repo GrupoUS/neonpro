@@ -21,6 +21,7 @@ import type {
   CreateAppointmentSchema,
   CreatePatientSchema,
   LoginRequestSchema,
+  PatientBaseSchema,
 } from '@neonpro/shared/schemas'
 import type { z, } from 'zod'
 
@@ -28,6 +29,7 @@ import type { z, } from 'zod'
 type CreateAppointment = z.infer<typeof CreateAppointmentSchema>
 type CreatePatient = z.infer<typeof CreatePatientSchema>
 type Login = z.infer<typeof LoginRequestSchema>
+type Patient = z.infer<typeof PatientBaseSchema>
 import { useState, } from 'react'
 import { toast, } from 'sonner'
 
@@ -104,7 +106,8 @@ export function IntegrationExample() {
   }
 
   const handleCreateTestAppointment = async () => {
-    if (!patients?.data?.[0]) {
+    const patientsArray = patients?.data as Patient[] | undefined
+    if (!patientsArray || patientsArray.length === 0) {
       toast.error('Crie um paciente primeiro!',)
       return
     }
@@ -114,17 +117,19 @@ export function IntegrationExample() {
     tomorrow.setHours(14, 0, 0, 0,) // 2 PM tomorrow
 
     const testAppointment: CreateAppointment = {
-      patientId: patients.data[0].id,
-      professionalId: '550e8400-e29b-41d4-a716-446655440002', // Mock professional ID
-      clinicId: '550e8400-e29b-41d4-a716-446655440003', // Mock clinic ID
-      scheduledAt: tomorrow.toISOString(),
-      duration: 60,
+      patient_id: patientsArray[0]?.id || '',
+      professional_id: '550e8400-e29b-41d4-a716-446655440002', // Mock professional ID
+      clinic_id: '550e8400-e29b-41d4-a716-446655440003', // Mock clinic ID
+      scheduled_date: tomorrow.toISOString().split('T',)[0], // YYYY-MM-DD format
+      scheduled_time: '14:00', // HH:MM format
+      duration_minutes: 60,
       type: 'consultation',
       priority: 'normal',
-      title: 'Consulta de Avaliação Estética',
-      description: 'Primeira consulta para avaliação de tratamentos faciais',
-      treatmentArea: 'Face',
-      estimatedCost: 150,
+      chief_complaint: 'Consulta de Avaliação Estética',
+      notes: 'Primeira consulta para avaliação de tratamentos faciais na área facial',
+      estimated_cost: 150,
+      send_reminders: true,
+      reminder_methods: ['email',],
     }
 
     try {
@@ -209,10 +214,10 @@ export function IntegrationExample() {
                   ? <p>Carregando pacientes...</p>
                   : patientsError
                   ? <p className="text-red-600">Erro: {patientsError.message}</p>
-                  : patients?.data && patients.data.length > 0
+                  : patients?.data && Array.isArray(patients.data,) && patients.data.length > 0
                   ? (
                     <div className="space-y-2">
-                      {patients.data.map((patient,) => (
+                      {(patients.data as Patient[]).map((patient,) => (
                         <div
                           className="rounded border bg-white p-3"
                           key={patient.id}
@@ -243,7 +248,8 @@ export function IntegrationExample() {
                   </h2>
                   <button
                     className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-                    disabled={createAppointmentMutation.isPending || !patients?.data?.[0]}
+                    disabled={createAppointmentMutation.isPending || !patients?.data
+                      || !(patients.data as unknown as any[])?.length}
                     onClick={handleCreateTestAppointment}
                   >
                     {createAppointmentMutation.isPending
@@ -254,10 +260,11 @@ export function IntegrationExample() {
 
                 {appointmentsLoading
                   ? <p>Carregando agendamentos...</p>
-                  : appointments?.data && appointments.data.length > 0
+                  : appointments?.data && Array.isArray(appointments.data,)
+                      && appointments.data.length > 0
                   ? (
                     <div className="space-y-2">
-                      {appointments.data.map((appointment,) => (
+                      {(appointments.data as unknown as any[]).map((appointment: any,) => (
                         <div
                           className="rounded border bg-white p-3"
                           key={appointment.id}

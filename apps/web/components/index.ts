@@ -141,4 +141,4 @@ export const FASE4_COMPONENT_REGISTRY = {
 // 🤖 HEALTHCARE AI AGENT CHAT COMPONENT EXPORT
 // =============================================================================
 
-export { AgentChat, } from './AgentChat'
+// export { AgentChat, } from './AgentChat' // TODO: File not found
